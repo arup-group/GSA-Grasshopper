@@ -296,7 +296,7 @@ namespace GhSA.Util.Gsa
                                     + (point.Y + ")"))));
                         iPoint++;
                     }
-                    if (gsaProfile.voidPoints != null || gsaProfile.voidPoints.Count > 0)
+                    if (!(gsaProfile.voidPoints == null || !(gsaProfile.voidPoints.Count > 0)))
                     {
                         for (int i = 0; i < gsaProfile.voidPoints.Count; i++)
                         {

@@ -258,12 +258,15 @@ namespace GhSA.Components
             GsaProfile profile = new GsaProfile();
             if (_mode == FoldMode.Catalogue)
             {
+                profile.profileType = GsaProfile.profileTypes.Catalogue;
                 profile.catalogueIndex = catalogueIndex;
                 profile.catalogueProfileIndex = catalogueProfileIndex;
                 profile.catalogueTypeIndex = catalogueTypeIndex;
+                
             }
             if (_mode == FoldMode.Geometric)
             {
+                profile.profileType = GsaProfile.profileTypes.Geometric;
                 GH_Brep gh_Brep = new GH_Brep();
                 if (DA.GetData(0, ref gh_Brep))
                 {
@@ -280,6 +283,10 @@ namespace GhSA.Components
                         List<Point3d> ctrl_pts = new List<Point3d>();
                         if (edges[0].TryGetPolyline(out temp_crv))
                             ctrl_pts = temp_crv.ToList();
+                        else
+                        {
+                            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Cannot convert edge to Polyline");
+                        }    
                         Plane.FitPlaneToPoints(ctrl_pts, out plane);
                         Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.ChangeBasis(Plane.WorldXY, plane);
 
@@ -296,6 +303,7 @@ namespace GhSA.Components
 
                         if (edges.Length > 1)
                         {
+                            List<List<Point2d>> voidPoints = new List<List<Point2d>>();
                             for (int i = 1; i < edges.Length; i++)
                             {
                                 ctrl_pts.Clear();
@@ -314,9 +322,14 @@ namespace GhSA.Components
                                         Point2d pt2d = new Point2d(pt3d);
                                         pts.Add(pt2d);
                                     }
-                                    profile.voidPoints.Add(pts);
+                                    voidPoints.Add(pts);
+                                }
+                                else
+                                {
+                                    this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Cannot convert internal edge  to Polyline");
                                 }
                             }
+                            profile.voidPoints = voidPoints;
                         }
                     }
                 }
