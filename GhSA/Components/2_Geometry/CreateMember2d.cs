@@ -43,7 +43,7 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddBrepParameter("Brep", "B", "Planar Brep (non-planar geometry will be automatically converted to an average plane of exterior boundary control points))", GH_ParamAccess.item);
-            pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
             pManager.AddPointParameter("Incl. Point", "iPt", "Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
             pManager.AddCurveParameter("Incl. Curve", "iCrv", "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Targe mesh size", GH_ParamAccess.item, 0);
@@ -71,6 +71,9 @@ namespace GhSA.Components
                 Brep brep = new Brep();
                 if (GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
                 {
+                    // first import points and curves for inclusion before building member
+                    
+                    // 2 Points
                     List<Point3d> pts = new List<Point3d>();
                     List<GH_Point> ghpts = new List<GH_Point>();
                     if (DA.GetDataList(2, ghpts))
@@ -83,6 +86,7 @@ namespace GhSA.Components
                         }
                     }
 
+                    // 3 Curves
                     List<Curve> crvs = new List<Curve>();
                     List<GH_Curve> ghcrvs = new List<GH_Curve>();
                     if (DA.GetDataList(3, ghcrvs))
@@ -95,9 +99,25 @@ namespace GhSA.Components
                         }
                     }
 
+                    // now build new member with brep, crv and pts
                     GsaMember2d mem = new GsaMember2d(brep, crvs, pts);
-                    //mem.section 
 
+                    // add the rest
+                    // 1 section
+                    GsaProp2d prop2D = new GsaProp2d();
+                    GH_Integer gh_sec_idd = new GH_Integer();
+                    if (DA.GetData(1, ref prop2D))
+                        mem.Property = prop2D;
+                    else if (DA.GetData(1, ref gh_sec_idd))
+                    {
+                        int idd = 0;
+                        if (GH_Convert.ToInt32(gh_sec_idd, out idd, GH_Conversion.Both))
+                            mem.Property.ID = idd;
+                    }
+                    else
+                        mem.Property.ID = 1;
+
+                    // 4 mesh size
                     GH_Number ghmsz = new GH_Number();
                     if (DA.GetData(4, ref ghmsz))
                     {

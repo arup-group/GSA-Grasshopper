@@ -81,7 +81,7 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("2D Member", "Mem2d", "Modified GSA 2D Member", GH_ParamAccess.item);
             pManager.AddBrepParameter("Brep", "B", "Member Brep", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Section", "PA", "Change Section Property", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Section", "PA", "Change Section Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
             pManager.AddGenericParameter("Offset", "Off", "Get Member Offset", GH_ParamAccess.item);
             pManager.AddPointParameter("Incl. Points", "iPt", "Get Inclusion points", GH_ParamAccess.list);
             pManager.AddCurveParameter("Incl. Curves", "iCrv", "Get Inclusion curves", GH_ParamAccess.list);
@@ -116,7 +116,16 @@ namespace GhSA.Components
                         mem.Brep = brep;
 
                 // 2 section
-                // to be implemented
+                GsaProp2d prop2D = new GsaProp2d();
+                GH_Integer gh_sec_idd = new GH_Integer();
+                if (DA.GetData(2, ref prop2D))
+                    mem.Property = prop2D;
+                else if (DA.GetData(2, ref gh_sec_idd))
+                {
+                    int idd = 0;
+                    if (GH_Convert.ToInt32(gh_sec_idd, out idd, GH_Conversion.Both))
+                        mem.Property.ID = idd;
+                }
 
                 // 3 offset
                 GsaOffset offset = new GsaOffset();
@@ -157,6 +166,7 @@ namespace GhSA.Components
                 GsaMember2d tmpmem = new GsaMember2d(brep, crvs, pts);
                 tmpmem.ID = mem.ID;
                 tmpmem.member = mem.member;
+                tmpmem.Property = mem.Property;
                 mem = tmpmem;
 
                 // 6 mesh size
@@ -264,7 +274,7 @@ namespace GhSA.Components
 
                 DA.SetData(1, mem.Brep);
 
-                DA.SetData(2, mem.member.Property); //section property to be added
+                DA.SetData(2, mem.Property); 
 
                 GsaOffset gsaOffset = new GsaOffset();
                 gsaOffset.Z = mem.member.Offset.Z;

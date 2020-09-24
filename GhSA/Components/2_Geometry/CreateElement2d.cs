@@ -43,7 +43,7 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddMeshParameter("Mesh", "M", "Mesh to create GSA Element", GH_ParamAccess.item);
-            pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager.HideParameter(0);
@@ -64,7 +64,40 @@ namespace GhSA.Components
                 Mesh mesh = new Mesh();
                 if (GH_Convert.ToMesh(ghmesh, ref mesh, GH_Conversion.Both))
                 {
-                    DA.SetData(0, new GsaElement2dGoo(new GsaElement2d(mesh)));
+                    GsaElement2d elem = new GsaElement2d(mesh);
+
+                    // 1 section
+                    GsaProp2d prop2d = new GsaProp2d();
+                    GH_Integer gh_sec_idd = new GH_Integer();
+                    if (DA.GetData(1, ref prop2d))
+                    {
+                        List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
+                        for (int i = 0; i < elem.Elements.Count; i++)
+                            prop2Ds.Add(prop2d);
+                        elem.Properties = prop2Ds;
+                    }
+                    else if (DA.GetData(1, ref gh_sec_idd))
+                    {
+                        int idd = 0;
+                        if (GH_Convert.ToInt32(gh_sec_idd, out idd, GH_Conversion.Both))
+                        {
+                            prop2d.ID = idd;
+                            List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
+                            for (int i = 0; i < elem.Elements.Count; i++)
+                                prop2Ds.Add(prop2d);
+                            elem.Properties = prop2Ds;
+                        }
+                    }
+                    else
+                    {
+                        prop2d.ID = 1;
+                        List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
+                        for (int i = 0; i < elem.Elements.Count; i++)
+                            prop2Ds.Add(prop2d);
+                        elem.Properties = prop2Ds;
+                    }    
+
+                    DA.SetData(0, new GsaElement2dGoo(elem));
                 }
             }
         }

@@ -83,7 +83,7 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("1D Member", "Mem1d", "Modified GSA 1D Member", GH_ParamAccess.item);
             pManager.AddCurveParameter("Curve", "Crv", "Member Curve", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Section", "PB", "Change Section Property", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Section", "PB", "Change Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member Type", "Typ", "Get 1D Member Type", GH_ParamAccess.item);
             pManager.AddIntegerParameter("1D Element Type", "Ty1D", "Get Element 1D Type", GH_ParamAccess.item);
             pManager.AddGenericParameter("Offset", "Off", "Get Member Offset", GH_ParamAccess.item);
@@ -128,7 +128,16 @@ namespace GhSA.Components
                 }
 
                 // 2 section
-                // to be implemented
+                GsaSection section = new GsaSection();
+                GH_Integer gh_sec_idd = new GH_Integer();
+                if (DA.GetData(2, ref section))
+                    mem.Section = section;
+                else if (DA.GetData(2, ref gh_sec_idd))
+                {
+                    int idd = 0;
+                    if (GH_Convert.ToInt32(gh_sec_idd, out idd, GH_Conversion.Both))
+                        mem.Section.ID = idd;
+                }
 
                 // 3 type
                 GH_Integer ghint = new GH_Integer();
@@ -278,7 +287,7 @@ namespace GhSA.Components
                 // #### outputs ####
                 DA.SetData(0, new GsaMember1dGoo(mem));
                 DA.SetData(1, mem.PolyCurve);
-                DA.SetData(2, mem.member.Property); //section property to be added
+                DA.SetData(2, mem.Section);
 
                 DA.SetData(3, mem.member.Type);
 

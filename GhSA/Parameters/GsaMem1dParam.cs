@@ -58,6 +58,13 @@ namespace GhSA.Parameters
             set { m_rel2 = value; }
         }
 
+        public GsaSection Section
+        {
+            get { return m_section; }
+            set { m_section = value; }
+        }
+
+
 
         #region fields
         private Member m_member;
@@ -68,6 +75,7 @@ namespace GhSA.Parameters
         private List<string> m_topoType; //list of polyline curve type (arch or line) for member1d/2d
         private GsaBool6 m_rel1;
         private GsaBool6 m_rel2;
+        private GsaSection m_section;
         #endregion
 
         #region constructors
@@ -122,6 +130,8 @@ namespace GhSA.Parameters
                 dup.ReleaseStart = m_rel1.Duplicate();
             if (m_rel2 != null)
                 dup.ReleaseEnd = m_rel2.Duplicate();
+            if (m_section != null)
+                dup.Section = m_section.Duplicate();
 
             return dup;
         }

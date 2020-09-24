@@ -46,7 +46,7 @@ namespace GhSA.Components
         {
             
             pManager.AddGenericParameter("2D Element", "Elem2d", "GSA 2D Element to Modify", GH_ParamAccess.item);
-            pManager.AddGenericParameter("2D Property", "PA", "Change 2D Property", GH_ParamAccess.list);
+            pManager.AddGenericParameter("2D Property", "PA", "Change 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Offset", "Off", "Set Element Offset", GH_ParamAccess.list);
             pManager.AddIntegerParameter("2D Analysis Type", "Typ", "Set Element 2D Analysis Type", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Element2d Number", "ID", "Set Element Number. If ID is set it will replace any existing 2d Element in the model", GH_ParamAccess.list);
@@ -67,7 +67,7 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("2D Element", "Elem2d", "Modified GSA 2d Element", GH_ParamAccess.item);
             pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh", GH_ParamAccess.item);
-            pManager.AddGenericParameter("2D Property", "PA", "Get 2D Property", GH_ParamAccess.list);
+            pManager.AddGenericParameter("2D Property", "PA", "Get 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Offset", "Off", "Get Element Offset", GH_ParamAccess.list);
             pManager.AddIntegerParameter("2D Analysis Type", "Typ", "Get Element 2D Analysis Type", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
@@ -87,12 +87,31 @@ namespace GhSA.Components
                 elem = gsaElement2d.Duplicate();
 
                 // #### inputs ####
-                
+
                 // no good way of updating location of mesh on the fly // 
                 // suggest users re-create from scratch //
 
                 // 1 section
-                // to be implemented
+                List<GsaProp2d> prop2ds = new List<GsaProp2d>();
+                List<GH_Integer> gh_sec_idd = new List<GH_Integer>();
+                if (DA.GetDataList(1, prop2ds))
+                {
+                    elem.Properties = prop2ds;
+                }
+                else if (DA.GetDataList(1, gh_sec_idd))
+                {
+                    int idd = 0;
+                    for (int i = 0; i < gh_sec_idd.Count; i++)
+                    {
+                        if (GH_Convert.ToInt32(gh_sec_idd[i], out idd, GH_Conversion.Both))
+                        {
+                            GsaProp2d prop2d = new GsaProp2d();
+                            prop2d.ID = idd;
+                            prop2ds.Add(prop2d);
+                        }
+                    }
+                    elem.Properties = prop2ds;
+                }
 
                 // 2 offset
                 List<GsaOffset> offset = new List<GsaOffset>();
@@ -179,7 +198,6 @@ namespace GhSA.Components
                 DA.SetData(0, new GsaElement2dGoo(elem));
                 DA.SetData(1, elem.Mesh);
 
-                List<int> sections = new List<int>();
                 List<GsaOffset> offsets = new List<GsaOffset>();
                 //List<int> anal = new List<int>();
                 List<int> ids = new List<int>();
@@ -189,7 +207,6 @@ namespace GhSA.Components
                 List<int> pmems = new List<int>();
                 for (int i = 0; i < elem.Elements.Count; i++)
                 {
-                    sections.Add(elem.Elements[i].Property);
                     GsaOffset offset1 = new GsaOffset();
                     offset1.Z = elem.Elements[i].Offset.Z;
                     offsets.Add(offset1);
@@ -200,7 +217,7 @@ namespace GhSA.Components
                     try { pmems.Add(elem.Elements[i].ParentMember.Member); } catch (Exception) { pmems.Add(0); }
                     ;
                 }
-                DA.SetDataList(2, sections); //section property to be added
+                DA.SetDataList(2, elem.Properties); 
                 DA.SetDataList(3, offsets);
                 //DA.SetDataList(4, anal);
                 DA.SetDataList(5, elem.ID);

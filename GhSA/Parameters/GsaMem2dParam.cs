@@ -87,7 +87,11 @@ namespace GhSA.Parameters
             get { return incl_pts; }
             set { incl_pts = value; }
         }
-
+        public GsaProp2d Property
+        {
+            get { return m_prop; }
+            set { m_prop = value; }
+        }
 
         #region fields
         private Member m_member;
@@ -104,7 +108,7 @@ namespace GhSA.Parameters
         private PolyCurve m_crv; //Polyline for visualisation /member1d/member2d
         private List<Point3d> m_topo; // list of topology points for visualisation /member1d/member2d
         private List<string> m_topoType; //list of polyline curve type (arch or line) for member1d/2d
-        
+        private GsaProp2d m_prop;
         #endregion
 
         #region constructors
@@ -296,11 +300,16 @@ namespace GhSA.Parameters
                     dup.inclLines_topoType.Add(inclLines_topoType[i].ToList());
                 }
             }
+            if (m_prop != null)
+                dup.Property = m_prop.Duplicate();
 
             Point3dList inclpoint3Ds = new Point3dList(incl_pts);
             dup.incl_pts = new List<Point3d>(inclpoint3Ds.Duplicate());
 
             dup.ID = m_id;
+
+            if (m_prop != null)
+                dup.Property = m_prop.Duplicate();
 
             return dup;
         }
@@ -327,7 +336,11 @@ namespace GhSA.Parameters
         {
             string idd = " " + ID.ToString();
             if (ID == 0) { idd = ""; }
-            string typeTxt = "GSA " + m_member.Type.ToString().Substring(8) + " Member" + idd;
+            string typeTxt = "";
+            if (m_member.Type.ToString() != "VOID_CUTTER_2D")
+                typeTxt = "GSA " + m_member.Type.ToString().Substring(8) + " Member" + idd;
+            else
+                typeTxt = "GSA Void Cutter";
             string incl = "";
             if (!(incl_Lines == null & incl_pts == null))
                 if (incl_Lines.Count > 0 | incl_pts.Count > 0)

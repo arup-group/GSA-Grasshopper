@@ -52,6 +52,15 @@ namespace GhSA.Components
             pManager.AddIntegerParameter("Section Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
             pManager.AddTextParameter("Section Name", "Name", "Set Section name", GH_ParamAccess.item);
             pManager.AddColourParameter("Section Colour", "Col", "Set Section colour", GH_ParamAccess.item);
+
+            pManager[1].Optional = true;
+            pManager[2].Optional = true;
+            pManager[3].Optional = true;
+            pManager[4].Optional = true;
+            pManager[5].Optional = true;
+            pManager[6].Optional = true;
+            pManager[7].Optional = true;
+            pManager[8].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -62,6 +71,7 @@ namespace GhSA.Components
             pManager.AddGenericParameter("Material", "Mat", "Material Property", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Analysis Type", "Typ", "Material Analysis Type", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Section Pool", "Pool", "Section pool (default none)", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Section Offset", "Offs", "Set Section offset", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Section Number", "ID", "Original Section number (ID) if Section ever belonged to a GSA Model", GH_ParamAccess.item);
             pManager.AddTextParameter("Section Name", "Name", "Section name (default profile name)", GH_ParamAccess.item);
             pManager.AddColourParameter("Section Colour", "Col", "Section colour (default none)", GH_ParamAccess.item);
@@ -143,7 +153,7 @@ namespace GhSA.Components
                     // #### outputs ####
                     DA.SetData(0, new GsaSectionGoo(gsaSection));
 
-                    DA.SetData(1, gsaSection.Section.Profile); 
+                    DA.SetData(1, gsaSection.Section.Profile.Replace("%", " ")); 
                     //DA.SetData(2, gsaProp2d.Prop2d.Material); // to be implemented
                     DA.SetData(3, gsaSection.Section.MaterialAnalysisProperty);
                     DA.SetData(4, gsaSection.Section.Pool);

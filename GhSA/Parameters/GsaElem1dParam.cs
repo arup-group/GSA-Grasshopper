@@ -73,6 +73,11 @@ namespace GhSA.Parameters
                 //m_element.SetRelease(1, Bool6);
             }
         }
+        public GsaSection Section
+        {
+            get { return m_section; }
+            set { m_section = value; }
+        }
 
         #region fields
         private Element m_element; 
@@ -80,6 +85,7 @@ namespace GhSA.Parameters
         private int m_id;
         private GsaBool6 m_rel1;
         private GsaBool6 m_rel2;
+        private GsaSection m_section;
         #endregion
 
         #region constructors
@@ -117,6 +123,8 @@ namespace GhSA.Parameters
                 dup.ReleaseStart = m_rel1.Duplicate();
             if (m_rel2 != null)
                 dup.ReleaseEnd = m_rel2.Duplicate();
+            if (m_section != null)
+                dup.Section = m_section.Duplicate();
 
             return dup;
         }

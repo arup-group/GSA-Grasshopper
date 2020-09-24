@@ -42,7 +42,7 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Line", "Ln", "Line to create GSA Element", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Section", "PB", "GSA Section Property", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Section", "PB", "GSA Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager.HideParameter(0);
@@ -64,7 +64,21 @@ namespace GhSA.Components
                 if (GH_Convert.ToLine(ghln, ref ln, GH_Conversion.Both))
                 {
                     GsaElement1d elem = new GsaElement1d(new LineCurve(ln));
-                    
+
+                    // 1 section
+                    GsaSection section = new GsaSection();
+                    GH_Integer gh_sec_idd = new GH_Integer();
+                    if (DA.GetData(1, ref section))
+                        elem.Section = section;
+                    else if (DA.GetData(1, ref gh_sec_idd))
+                    {
+                        int idd = 0;
+                        if (GH_Convert.ToInt32(gh_sec_idd, out idd, GH_Conversion.Both))
+                            elem.Section.ID = idd;
+                    }
+                    else
+                        elem.Section.ID = 1;
+
                     DA.SetData(0, new GsaElement1dGoo(elem));
                 }
             }

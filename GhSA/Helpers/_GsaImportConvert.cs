@@ -64,6 +64,10 @@ namespace GhSA.Util.Gsa
             eDict = model.Elements(elemList);
             IReadOnlyDictionary<int, Node> nDict;
             nDict = model.Nodes("all");
+            IReadOnlyDictionary<int, Section> sDict;
+            sDict = model.Sections();
+            IReadOnlyDictionary<int, Prop2D> pDict;
+            pDict = model.Prop2Ds();
 
             // Create lists for Rhino lines and meshes
             DataTree<GsaElement1dGoo> elem1ds = new DataTree<GsaElement1dGoo>();
@@ -137,6 +141,12 @@ namespace GhSA.Util.Gsa
                         end.YY = elem.Release(1).YY;
                         end.ZZ = elem.Release(1).ZZ;
                         elem1d.ReleaseEnd = end;
+                        GsaSection section = new GsaSection();
+                        section.ID = elem.Property;
+                        Section tempSection = new Section();
+                        if (sDict.TryGetValue(section.ID, out tempSection))
+                            section.Section = tempSection;
+                        elem1d.Section = section;
                         elem1d.ID = key;
 
                         pts.Clear();
@@ -202,6 +212,17 @@ namespace GhSA.Util.Gsa
                         List<int> ids = new List<int>();
                         ids.Add(key);
                         elem2d.ID = ids;
+
+                        List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
+                        GsaProp2d prop2d = new GsaProp2d();
+                        prop2d.ID = elem.Property;
+                        Prop2D tempProp = new Prop2D();
+                        if (pDict.TryGetValue(prop2d.ID, out tempProp))
+                            prop2d.Prop2d = tempProp;
+                        prop2Ds.Add(prop2d);
+                        elem2d.Properties = prop2Ds;
+
+
                         if (join)
                         {
                             meshes.EnsurePath(prop);
@@ -217,6 +238,8 @@ namespace GhSA.Util.Gsa
                             List<Element> elemProps = new List<Element>();
                             elemProps.Add(elem);
                             elem2d.Elements = elemProps;
+                            elem2d.Properties = prop2Ds;
+                            elem2d.ID = ids;
                             elem2ds[path, key - 1] = new GsaElement2dGoo(elem2d.Duplicate());
                             //elem2ds.Add(new GsaElement2dGoo(elem2d.Duplicate()));
                         }
@@ -257,6 +280,15 @@ namespace GhSA.Util.Gsa
                         for (int i = 0; i < mesh.Faces.Count(); i++)
                             elemProps.Add(elements[ipath, 0]);
                         elem2d.Elements = elemProps;
+                        List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
+                        GsaProp2d prop2d = new GsaProp2d();
+                        prop2d.ID = ipath.Indices[0]+1;
+                        Prop2D tempProp = new Prop2D();
+                        if (pDict.TryGetValue(prop2d.ID, out tempProp))
+                            prop2d.Prop2d = tempProp;
+                        prop2Ds.Add(prop2d);
+                        elem2d.Properties = prop2Ds;
+
                         elem2ds.Add(new GsaElement2dGoo(elem2d.Duplicate()));
                     }
                 }
@@ -284,6 +316,10 @@ namespace GhSA.Util.Gsa
             mDict = model.Members(memList);
             IReadOnlyDictionary<int, Node> nDict;
             nDict = model.Nodes("all");
+            IReadOnlyDictionary<int, Section> sDict;
+            sDict = model.Sections();
+            IReadOnlyDictionary<int, Prop2D> pDict;
+            pDict = model.Prop2Ds();
 
             // Create lists for Rhino lines and meshes
             DataTree<GsaMember1dGoo> mem1ds = new DataTree<GsaMember1dGoo>();
@@ -316,7 +352,7 @@ namespace GhSA.Util.Gsa
                 }
             }
 
-            // Loop through all nodes in Node dictionary and add points to Rhino point list
+            // Loop through all members in Member dictionary 
             foreach (var key in mDict.Keys)
             {
                 if (mDict.TryGetValue(key, out mem))
@@ -396,6 +432,12 @@ namespace GhSA.Util.Gsa
                         mem1d = new GsaMember1d(topopts, topoType);
                         mem1d.ID = key;
                         mem1d.member = mem;
+                        GsaSection section = new GsaSection();
+                        section.ID = mem.Property;
+                        Section tempSection = new Section();
+                        if (sDict.TryGetValue(section.ID, out tempSection))
+                            section.Section = tempSection;
+                        mem1d.Section = section;
                         mem1ds.EnsurePath(prop);
                         path = new GH_Path(prop);
                         if (propGraft)
@@ -408,6 +450,12 @@ namespace GhSA.Util.Gsa
                         mem2d = new GsaMember2d(topopts, topoType, void_topo, void_topoType, incLines_topo, inclLines_topoType, incl_pts);
                         mem2d.member = mem;
                         mem2d.ID = key;
+                        GsaProp2d prop2d = new GsaProp2d();
+                        prop2d.ID = mem.Property;
+                        Prop2D tempProp = new Prop2D();
+                        if (pDict.TryGetValue(prop2d.ID, out tempProp))
+                            prop2d.Prop2d = tempProp;
+                        mem2d.Property = prop2d;
                         mem2ds.EnsurePath(prop);
                         path = new GH_Path(prop);
                         if (propGraft)

@@ -75,7 +75,7 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("1D Element", "Elem1d", "Modified GSA 1D Element", GH_ParamAccess.item);
             pManager.AddLineParameter("Line", "Ln", "Element Line", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Section", "PB", "Get Section Property", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Section", "PB", "Get Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
             pManager.AddGenericParameter("Offset", "Off", "Get Element Offset", GH_ParamAccess.item);
             pManager.AddGenericParameter("Start release", "B6-S", "Get Release (Bool6) at Start of Element", GH_ParamAccess.item);
             pManager.AddGenericParameter("End release", "B6-E", "Get Release (Bool6) at End of Element", GH_ParamAccess.item);
@@ -117,9 +117,16 @@ namespace GhSA.Components
                 }
 
                 // 2 section
-                // to be implemented
-
-                
+                GsaSection section = new GsaSection();
+                GH_Integer gh_sec_idd = new GH_Integer();
+                if (DA.GetData(2, ref section))
+                    elem.Section = section;
+                else if (DA.GetData(2, ref gh_sec_idd))
+                {
+                    int idd = 0;
+                    if (GH_Convert.ToInt32(gh_sec_idd, out idd, GH_Conversion.Both))
+                        elem.Section.ID = idd;
+                }    
 
                 // 3 offset
                 GsaOffset offset = new GsaOffset();
@@ -226,7 +233,7 @@ namespace GhSA.Components
                 DA.SetData(0, new GsaElement1dGoo(elem));
 
                 DA.SetData(1, elem.Line);
-                DA.SetData(2, elem.Element.Property); //section property to be added
+                DA.SetData(2, elem.Section); 
 
                 GsaOffset offset1 = new GsaOffset();
                 offset1.X1 = elem.Element.Offset.X1;

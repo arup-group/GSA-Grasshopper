@@ -44,13 +44,18 @@ namespace GhSA.Parameters
             get { return m_topoInt; }
             set { m_topoInt = value; }
         }
-
+        public List<GsaProp2d> Properties
+        {
+            get { return m_props; }
+            set { m_props = value; }
+        }
         #region fields
         private List<Element> m_elements; 
         private Mesh m_mesh;
         private List<List<int>> m_topoInt; // list of topology integers referring to the topo list of points
         private List<Point3d> m_topo; // list of topology points for visualisation
         private List<int> m_id;
+        private List<GsaProp2d> m_props;
         #endregion
 
         #region constructors
@@ -85,10 +90,17 @@ namespace GhSA.Parameters
             }
             if (m_id != null)
             {
-                int[] dupids = new int[0];
+                int[] dupids = new int[m_id.Count];
                 m_id.CopyTo(dupids);
                 dup.ID = new List<int>(dupids);
             }
+            if (m_props != null)
+            {
+                GsaProp2d[] dupprop = new GsaProp2d[m_props.Count];
+                m_props.CopyTo(dupprop);
+                dup.Properties = new List<GsaProp2d>(dupprop);
+            }
+
             return dup;
         }
         #endregion
