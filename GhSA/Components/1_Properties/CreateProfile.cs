@@ -72,7 +72,14 @@ namespace GhSA.Components
                     selections = new List<string>();
                 selections.Add(mainlist[0]);
             }
-                
+
+            if (_mode == FoldMode.Catalogue)
+                dropdownspacer = new List<string>(cataloguespacer);
+            else if (_mode == FoldMode.Geometric)
+                dropdownspacer = new List<string>(geometricspacer);
+            else 
+                dropdownspacer = new List<string>(standardspacer);
+
             switch (selections[0])
             {
                 case ("Catalogue"):
@@ -91,8 +98,6 @@ namespace GhSA.Components
                         dropdowncontents.Add(typelist);
                         dropdowncontents.Add(sectionlist);
                     }
-
-                    dropdownspacer = new List<string>(cataloguespacer);
                     
                     if (selections.Count < 2)
                     {
@@ -114,7 +119,6 @@ namespace GhSA.Components
                 case ("Standard"):
                     if (selections.Count == 1)
                         selections.Add(standardlist[0]);
-                    
 
                     // update inputs
                     switch (selections[1])
@@ -152,7 +156,7 @@ namespace GhSA.Components
                         dropdowncontents.Add(mainlist);
                         dropdowncontents.Add(standardlist);
                     }
-                    dropdownspacer = new List<string>(standardspacer);
+                    
                     break;
                 case ("Geometric"):
                     // update inputs
@@ -165,7 +169,7 @@ namespace GhSA.Components
                     {
                         dropdowncontents.Add(mainlist);
                     }
-                    dropdownspacer = new List<string>(geometricspacer);
+                    
                     break;
             }
         }
@@ -235,13 +239,6 @@ namespace GhSA.Components
         bool isGeneral;
         bool isB2B;
 
-        double d;
-        double b1;
-        double b2;
-        double tf1;
-        double tf2;
-        double tw;
-        double tw2;
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -256,14 +253,19 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaProfile profile = new GsaProfile();
+            #region catalogue
             if (_mode == FoldMode.Catalogue)
             {
                 profile.profileType = GsaProfile.profileTypes.Catalogue;
+
+                // need to implement the lists of cross sections
                 profile.catalogueIndex = catalogueIndex;
                 profile.catalogueProfileIndex = catalogueProfileIndex;
                 profile.catalogueTypeIndex = catalogueTypeIndex;
                 
             }
+            #endregion
+            #region geometric
             if (_mode == FoldMode.Geometric)
             {
                 profile.profileType = GsaProfile.profileTypes.Geometric;
@@ -335,7 +337,216 @@ namespace GhSA.Components
                 }
                 
             }
+            #endregion
+            #region standard section
+            if (_mode != FoldMode.Geometric & _mode != FoldMode.Catalogue)
+            {
+                profile.profileType = GsaProfile.profileTypes.Standard;
+                GH_Number gh_d = new GH_Number();
+                GH_Number gh_b1 = new GH_Number();
+                GH_Number gh_b2 = new GH_Number();
+                GH_Number gh_tw1 = new GH_Number();
+                GH_Number gh_tw2 = new GH_Number();
+                GH_Number gh_tf1 = new GH_Number();
+                GH_Number gh_tf2 = new GH_Number();
+                switch (selections[1])
+                {
+                    case "Rectangle":
+                        profile.stdShape = GsaProfile.stdShapeOptions.Rectangle;
 
+                        // 0 d
+                        DA.GetData(0, ref gh_d);
+
+                        // 1 b1
+                        DA.GetData(1, ref gh_b1);
+
+                        if (isTapered)
+                        {
+                            // 2 b2
+                            DA.GetData(2, ref gh_b2);
+                        }
+                        else
+                        {
+                            if (isHollow)
+                            {
+                                // 2 tw
+                                DA.GetData(2, ref gh_tw1);
+
+                                // 3 tw
+                                DA.GetData(3, ref gh_tf1);
+                            }
+                        }
+                        break;
+
+                    case "Circle":
+                        profile.stdShape = GsaProfile.stdShapeOptions.Circle;
+
+                        // 0 d
+                        DA.GetData(0, ref gh_d);
+                        
+                        if (isHollow)
+                        {
+                            if (isElliptical)
+                            {
+                                // 1 b1
+                                DA.GetData(1, ref gh_b1);
+
+                                // 2 tw
+                                DA.GetData(2, ref gh_tw1);
+                            }
+                            else
+                            {
+                                // 1 tw
+                                DA.GetData(1, ref gh_tw1);
+                            }
+                        }
+                        else
+                        {
+                            if (isElliptical)
+                            {
+                                // 1 b1
+                                DA.GetData(1, ref gh_b1);
+                            }
+                        }
+
+                        break;
+                    case "I section":
+                        profile.stdShape = GsaProfile.stdShapeOptions.I_section;
+
+                        // 0 d
+                        DA.GetData(0, ref gh_d);
+
+                        // 1 b1
+                        DA.GetData(1, ref gh_b1);
+
+                        // 2 tw1
+                        DA.GetData(2, ref gh_tw1);
+
+                        // 3 tf1
+                        DA.GetData(3, ref gh_tf1);
+                                                
+                        if (isGeneral)
+                        {
+                            if (isTapered)
+                            {
+                                // 4 b2
+                                DA.GetData(4, ref gh_b2);
+
+                                // 5 tw2
+                                DA.GetData(5, ref gh_tw2);
+
+                                // 6 tf2
+                                DA.GetData(6, ref gh_tf2);
+                            }
+                            else
+                            {
+                                // 4 b2
+                                DA.GetData(4, ref gh_b2);
+
+                                // 5 tf2
+                                DA.GetData(5, ref gh_tf2);
+                            }
+                        }
+                        break;
+                    case "Tee":
+                        profile.stdShape = GsaProfile.stdShapeOptions.Tee;
+                        // 0 d
+                        DA.GetData(0, ref gh_d);
+
+                        // 1 b1
+                        DA.GetData(1, ref gh_b1);
+
+                        // 2 tf1
+                        DA.GetData(2, ref gh_tf1);
+
+                        // 3 tw1
+                        DA.GetData(3, ref gh_tw1);
+
+                        if (isTapered)
+                        {
+                            // 4 tw2
+                            DA.GetData(4, ref gh_tw2);
+                        }
+                        break;
+                    case "Channel":
+                        profile.stdShape = GsaProfile.stdShapeOptions.Channel;
+                        // 0 d
+                        DA.GetData(0, ref gh_d);
+
+                        // 1 b1
+                        DA.GetData(1, ref gh_b1);
+
+                        // 2 tf1
+                        DA.GetData(2, ref gh_tf1);
+
+                        // 3 tw1
+                        DA.GetData(3, ref gh_tw1);
+                        break;
+                    case "Angle":
+                        profile.stdShape = GsaProfile.stdShapeOptions.Angle;
+                        // 0 d
+                        DA.GetData(0, ref gh_d);
+
+                        // 1 b1
+                        DA.GetData(1, ref gh_b1);
+
+                        // 2 tf1
+                        DA.GetData(2, ref gh_tf1);
+
+                        // 3 tw1
+                        DA.GetData(3, ref gh_tw1);
+                        break;
+                }
+
+                if (gh_d != null)
+                {
+                    double d = 0;
+                    if (GH_Convert.ToDouble(gh_d, out d, GH_Conversion.Both))
+                        profile.d = d;
+                }
+                if (gh_b1 != null)
+                {
+                    double b1 = 0;
+                    if (GH_Convert.ToDouble(gh_b1, out b1, GH_Conversion.Both))
+                        profile.b1 = b1;
+                }
+                if (gh_b2 != null)
+                {
+                    double b2 = 0;
+                    if (GH_Convert.ToDouble(gh_b2, out b2, GH_Conversion.Both))
+                        profile.b2 = b2;
+                }
+                if (gh_tw1 != null)
+                {
+                    double tw1 = 0;
+                    if (GH_Convert.ToDouble(gh_tw1, out tw1, GH_Conversion.Both))
+                        profile.tw1 = tw1;
+                }
+                if (gh_tw2 != null)
+                {
+                    double tw2 = 0;
+                    if (GH_Convert.ToDouble(gh_tw2, out tw2, GH_Conversion.Both))
+                        profile.tw2 = tw2;
+                }
+                if (gh_tf1 != null)
+                {
+                    double tf1 = 0;
+                    if (GH_Convert.ToDouble(gh_tf1, out tf1, GH_Conversion.Both))
+                        profile.tf1 = tf1;
+                }
+                if (gh_tf2 != null)
+                {
+                    double tf2 = 0;
+                    if (GH_Convert.ToDouble(gh_tf2, out tf2, GH_Conversion.Both))
+                        profile.tf2 = tf2;
+                }
+                profile.isB2B = isB2B;
+                profile.isElliptical = isElliptical;
+                profile.isGeneral = isGeneral;
+                profile.isHollow = isHollow;
+                profile.isTapered = isTapered;
+            }
+            #endregion
             // build string and output
             DA.SetData(0, ConvertSection.ProfileConversion(profile));
         }

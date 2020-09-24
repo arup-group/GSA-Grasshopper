@@ -100,7 +100,7 @@ namespace GhSA.Components
                     GH_String gh_n = new GH_String();
                     if (DA.GetData(4, ref gh_n))
                     {
-                        string name = profile;
+                        string name = "";
                         if (GH_Convert.ToString(gh_n, out name, GH_Conversion.Both))
                             sect.Section.Name = name;
                     }
@@ -114,6 +114,7 @@ namespace GhSA.Components
                             sect.Section.Colour = colour;
                     }
                 }
+                DA.SetData(0, new GsaSectionGoo(sect));
             }
         }
     }

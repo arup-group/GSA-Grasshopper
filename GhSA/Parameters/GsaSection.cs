@@ -85,7 +85,7 @@ namespace GhSA.Parameters
         public override string ToString()
         {
             string str = m_section.Profile;
-            return "GSA Section " + str;
+            return "GSA Section " + str.Replace("%", " ");
         }
 
         #endregion

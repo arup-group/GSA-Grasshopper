@@ -64,7 +64,7 @@ namespace GhSA.Util.Gsa
         public double b2;
         public double tf1;
         public double tf2;
-        public double tw;
+        public double tw1;
         public double tw2;
 
         public List<Point2d> perimeterPoints;
@@ -128,7 +128,7 @@ namespace GhSA.Util.Gsa
                         gsaProfile.b2 = gsaProfile.b2 * conversionFactor;
                         gsaProfile.tf1 = gsaProfile.tf1 * conversionFactor;
                         gsaProfile.tf2 = gsaProfile.tf2 * conversionFactor;
-                        gsaProfile.tw = gsaProfile.tw * conversionFactor;
+                        gsaProfile.tw1 = gsaProfile.tw1 * conversionFactor;
                         gsaProfile.tw2 = gsaProfile.tw2 * conversionFactor;
                     }
                         
@@ -166,17 +166,17 @@ namespace GhSA.Util.Gsa
                 {
                     if (gsaProfile.isTapered)
                     {
-                        return "STD TR" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.b2.ToString("N12");
+                        return "STD TR" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.b2.ToString("0.############");
                     }
                     else
                     {
                         if (gsaProfile.isHollow)
                         {
-                            return "STD RHS" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.tw.ToString("N12") + " " + gsaProfile.tf1.ToString("N12");
+                            return "STD RHS" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.tw1.ToString("0.############") + " " + gsaProfile.tf1.ToString("0.############");
                         }
                         else
                         {
-                            return "STD R" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12");
+                            return "STD R" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############");
                         }
                     }
                 }
@@ -186,22 +186,22 @@ namespace GhSA.Util.Gsa
                     {
                         if (gsaProfile.isElliptical)
                         {
-                            return "STD OVAL" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.tw.ToString("N12");
+                            return "STD OVAL" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.tw1.ToString("0.############");
                         }
                         else
                         {
-                            return "STD CHS" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.tw.ToString("N12");
+                            return "STD CHS" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.tw1.ToString("0.############");
                         }
                     }
                     else
                     {
                         if (gsaProfile.isElliptical)
                         {
-                            return "STD E" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " 2";
+                            return "STD E" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " 2";
                         }
                         else
                         {
-                            return "STD C" + unit + gsaProfile.d.ToString("N12");
+                            return "STD C" + unit + gsaProfile.d.ToString("0.############");
                         }
                     }
                 }
@@ -211,30 +211,30 @@ namespace GhSA.Util.Gsa
                     {
                         if (gsaProfile.isTapered)
                         {
-                            return "STD TI" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.b2.ToString("N12") + " "
-                                + gsaProfile.tw.ToString("N12") + " " + gsaProfile.tw2.ToString("N12") + " " + gsaProfile.tf1.ToString("N12") + " " + gsaProfile.tf2.ToString("N12");
+                            return "STD TI" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.b2.ToString("0.############") + " "
+                                + gsaProfile.tw1.ToString("0.############") + " " + gsaProfile.tw2.ToString("0.############") + " " + gsaProfile.tf1.ToString("0.############") + " " + gsaProfile.tf2.ToString("0.############");
                         }
                         else
                         {
-                            return "STD GI" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.b2.ToString("N12") + " "
-                                + gsaProfile.tw.ToString("N12") + " " + gsaProfile.tf1.ToString("N12") + " " + gsaProfile.tf2.ToString("N12");
+                            return "STD GI" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.b2.ToString("0.############") + " "
+                                + gsaProfile.tw1.ToString("0.############") + " " + gsaProfile.tf1.ToString("0.############") + " " + gsaProfile.tf2.ToString("0.############");
                         }
                     }
                     else
                     {
-                        return "STD I" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.tw.ToString("N12") + " " + gsaProfile.tf1.ToString("N12");
+                        return "STD I" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.tw1.ToString("0.############") + " " + gsaProfile.tf1.ToString("0.############");
                     }
                 }
                 else if (gsaProfile.stdShape == GsaProfile.stdShapeOptions.Tee)
                 {
                     if (gsaProfile.isTapered)
                     {
-                        return "STD TT" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.tw.ToString("N12") + " "
-                            + gsaProfile.tw2.ToString("N12") + " " + gsaProfile.tf1.ToString("N12");
+                        return "STD TT" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.tw1.ToString("0.############") + " "
+                            + gsaProfile.tw2.ToString("0.############") + " " + gsaProfile.tf1.ToString("0.############");
                     }
                     else
                     {
-                        return "STD T" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.tw.ToString("N12") + " " + gsaProfile.tf1.ToString("N12");
+                        return "STD T" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.tw1.ToString("0.############") + " " + gsaProfile.tf1.ToString("0.############");
                     }
                 }
 
@@ -242,11 +242,11 @@ namespace GhSA.Util.Gsa
                 {
                     if (gsaProfile.isB2B)
                     {
-                        return "STD DCH" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.tw.ToString("N12") + " " + gsaProfile.tf1.ToString("N12");
+                        return "STD DCH" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.tw1.ToString("0.############") + " " + gsaProfile.tf1.ToString("0.############");
                     }
                     else
                     {
-                        return "STD CH" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.tw.ToString("N12") + " " + gsaProfile.tf1.ToString("N12");
+                        return "STD CH" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.tw1.ToString("0.############") + " " + gsaProfile.tf1.ToString("0.############");
                     }
                 }
 
@@ -254,11 +254,11 @@ namespace GhSA.Util.Gsa
                 {
                     if (gsaProfile.isB2B)
                     {
-                        return "STD D" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.tw.ToString("N12") + " " + gsaProfile.tf1.ToString("N12");
+                        return "STD D" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.tw1.ToString("0.############") + " " + gsaProfile.tf1.ToString("0.############");
                     }
                     else
                     {
-                        return "STD A" + unit + gsaProfile.d.ToString("N12") + " " + gsaProfile.b1.ToString("N12") + " " + gsaProfile.tw.ToString("N12") + " " + gsaProfile.tf1.ToString("N12");
+                        return "STD A" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.tw1.ToString("0.############") + " " + gsaProfile.tf1.ToString("0.############");
                     }
                 }
                 else
@@ -335,19 +335,19 @@ namespace GhSA.Util.Gsa
         //        switch (Unit.Length_Section)
         //       {
         //           case "mm":
-        //               dimsString += (number[i] * 1000).ToString("N12") + (" ");
+        //               dimsString += (number[i] * 1000).ToString("0.############") + (" ");
         //               break;
         //           case "cm":
-        //               dimsString += (number[i] * 100).ToString("N12") + (" ");
+        //               dimsString += (number[i] * 100).ToString("0.############") + (" ");
         //               break;
         //           case "m":
-        //               dimsString += (number[i]).ToString("N12") + (" ");
+        //               dimsString += (number[i]).ToString("0.############") + (" ");
         //               break;
         //           case "in":
-        //               dimsString += (number[i] * 1000 / 25.4).ToString("N12") + (" ");
+        //               dimsString += (number[i] * 1000 / 25.4).ToString("0.############") + (" ");
         //               break;
         //           case "ft":
-        //               dimsString += (number[i] * 1000 / (12 * 25.4)).ToString("N12") + (" ");
+        //               dimsString += (number[i] * 1000 / (12 * 25.4)).ToString("0.############") + (" ");
         //               break;
         //       }
         //   }
