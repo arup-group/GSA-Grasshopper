@@ -97,7 +97,7 @@
     <Compile Include="Helpers\_GsaImportConvert.cs" />
     <Compile Include="Helpers\_GsaProfileConvert.cs" />
     <Compile Include="Helpers\_RibbonLayout.cs" />
-    <Compile Include="Components\0_Model\Open.cs" />
+    <Compile Include="Components\0_Model\OpenModel.cs" />
     <Compile Include="GhSAInfo.cs" />
     <Compile Include="Parameters\_Unit.cs" />
     <Compile Include="Parameters\GsaProp2d.cs" />

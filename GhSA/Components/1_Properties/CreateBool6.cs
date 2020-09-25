@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaBool6 : GH_Component
+    /// <summary>
+    /// Component to create a new Bool6
+    /// </summary>
+    public class CreateBool6 : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("f5909576-6796-4d6e-90d8-31a9b7ee6fb6");
-        public gsaBool6()
+        public CreateBool6()
           : base("Create Bool6", "Bool6", "Create GSA Bool6 to set releases and restraints",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat1())

@@ -14,13 +14,16 @@ using GhSA.Parameters;
 
 namespace GhSA.Components
 {
-    public class gsaGetGeometry : GH_Component, IGH_PreviewObject, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to retrieve geometric objects from a GSA model
+    /// </summary>
+    public class GetGeometry : GH_Component, IGH_PreviewObject, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("7879a335-cdf3-4412-9a29-c710778430ff");
-        public gsaGetGeometry()
+        public GetGeometry()
           : base("Get GSA Model Geometry", "GetGeo", "Get nodes, elements and members from GSA model",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat0())

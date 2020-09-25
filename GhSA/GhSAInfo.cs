@@ -8,6 +8,12 @@ namespace GhSA
 
     public class AddReferencePriority : GH_AssemblyPriority
     {
+        /// <summary>
+        /// This method finds the user's GSA installation folder and loads GsaAPI.dll so that this plugin does not need to ship with an additional dll file
+        /// 
+        /// Method also provides access rights to Grasshopper to read dynamically linked dll files in the GSA installation folder.
+        /// </summary>
+        /// <returns></returns>
         public override GH_LoadingInstruction PriorityLoad()
         {
             Assembly ass1 = Assembly.LoadFile(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\GsaAPI.dll");
@@ -33,7 +39,7 @@ namespace GhSA
         {
             get
             {
-                return "GhSA";
+                return "GSA";
             }
         }
         public override Bitmap Icon
@@ -49,7 +55,7 @@ namespace GhSA
             get
             {
                 //Return a short string describing the purpose of this GHA library.
-                return "";
+                return "GSA Plugin";
             }
         }
         public override Guid Id
@@ -65,7 +71,7 @@ namespace GhSA
             get
             {
                 //Return a string identifying you or your company.
-                return "";
+                return "Kristjan Nielsen / Arup";
             }
         }
         public override string AuthorContact
@@ -73,7 +79,7 @@ namespace GhSA
             get
             {
                 //Return a string representing your preferred contact details.
-                return "";
+                return "kristjan.nielsen@arup.com";
             }
         }
     }

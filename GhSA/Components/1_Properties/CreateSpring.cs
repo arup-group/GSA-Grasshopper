@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaSpring : GH_Component
+    /// <summary>
+    /// Component to create a new spring
+    /// </summary>
+    public class CreateSpring : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("e4b7c688-147b-4d91-b754-1a45c715b8db");
-        public gsaSpring()
+        public CreateSpring()
           : base("Create Spring", "Spring", "Create GSA Spring (Type: General)",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat1())

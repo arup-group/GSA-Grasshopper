@@ -10,6 +10,12 @@ using Rhino.Geometry;
 
 namespace GhSA.Util.Gsa
 {
+    /// <summary>
+    /// Profile class holds information about a profile
+    /// Type: Standard, Catalogue or Geometric
+    /// ShapeOptions for Standard type
+    /// Section units
+    /// </summary>
     public class GsaProfile
     {
         public enum profileTypes
@@ -70,10 +76,19 @@ namespace GhSA.Util.Gsa
         public List<Point2d> perimeterPoints;
         public List<List<Point2d>> voidPoints;
     }
-
+    /// <summary>
+    /// Helper class for Profile/Section conversions
+    /// </summary>
     public class ConvertSection
     {
-        public static GsaProfile updateSectUnit(GsaProfile gsaProfile, bool factorValues)
+        /// <summary>
+        /// Method to update section units. 
+        /// Use "factorValues" to automatically factor existing values to match new unit.
+        /// </summary>
+        /// <param name="gsaProfile"></param>
+        /// <param name="factorValues"></param>
+        /// <returns></returns>
+        public static GsaProfile UpdateSectUnit(GsaProfile gsaProfile, bool factorValues)
         {
             if (gsaProfile.sectUnit.ToString() != Unit.Length_Section)
             {
@@ -154,6 +169,17 @@ namespace GhSA.Util.Gsa
             }
             return gsaProfile;
         }
+        /// <summary>
+        /// Method to convert a GsaProfile to a string that can be read by GSA
+        /// (in GsaAPI.Section.Profile or GhSA.Parameters.GsaSection.Section.Profile)
+        /// 
+        /// NOTE: 
+        /// - Does not cover all profile types available in GSA (but all available in GsaProfile)
+        /// - Geometric can handle custom profiles with voids. Origin/anchor to be implemented.
+        /// - Catalogue profiles yet to be implemented
+        /// </summary>
+        /// <param name="gsaProfile"></param>
+        /// <returns></returns>
         public static string ProfileConversion(GsaProfile gsaProfile)
         {
             if (gsaProfile.profileType == GsaProfile.profileTypes.Standard)
@@ -323,38 +349,5 @@ namespace GhSA.Util.Gsa
             else
                 return null;
         }
-
-
-
-        //string dimensionString(params double[] number)
-        //{
-        //    string dimsString = "";
-        //
-        //    for (int i = 0; i < number.Length; i++)
-        //    {
-        //        switch (Unit.Length_Section)
-        //       {
-        //           case "mm":
-        //               dimsString += (number[i] * 1000).ToString("0.############") + (" ");
-        //               break;
-        //           case "cm":
-        //               dimsString += (number[i] * 100).ToString("0.############") + (" ");
-        //               break;
-        //           case "m":
-        //               dimsString += (number[i]).ToString("0.############") + (" ");
-        //               break;
-        //           case "in":
-        //               dimsString += (number[i] * 1000 / 25.4).ToString("0.############") + (" ");
-        //               break;
-        //           case "ft":
-        //               dimsString += (number[i] * 1000 / (12 * 25.4)).ToString("0.############") + (" ");
-        //               break;
-        //       }
-        //   }
-        //   return dimsString;
-        //   
-        //}
     }
-
-
 }

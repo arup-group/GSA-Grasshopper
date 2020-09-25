@@ -15,6 +15,13 @@ using GhSA.Components;
 
 namespace GhSA.UI
 {
+    /// <summary>
+    /// Class to create custom component UI with three buttons and 6 check box toggles underneath
+    /// 
+    /// This class is made for the CreateSupport component
+    /// 
+    /// To use this method override CreateAttributes() in component class and set m_attributes = new SupportComponentUI(...
+    /// </summary>
     public class SupportComponentUI : GH_ComponentAttributes
     {
         public SupportComponentUI(GH_Component owner, Action<bool,bool,bool,bool,bool,bool> updateHandle, string spacerText, bool resx, bool resy, bool resz, bool resxx, bool resyy, bool reszz) : base(owner)

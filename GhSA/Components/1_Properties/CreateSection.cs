@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaSection : GH_Component
+    /// <summary>
+    /// Component to create a new Section
+    /// </summary>
+    public class CreateSection : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("1167c4aa-b98b-47a7-ae85-1a3c976a1973");
-        public gsaSection()
+        public CreateSection()
           : base("Create Section", "Section", "Create GSA Section",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat1())

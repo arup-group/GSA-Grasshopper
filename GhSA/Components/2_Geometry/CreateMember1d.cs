@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaCreateMember1d : GH_Component, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new 1D Member
+    /// </summary>
+    public class CreateMember1d : GH_Component, IGH_PreviewObject
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("5c5b9efa-cdae-4be5-af40-ff2b590801dd");
-        public gsaCreateMember1d()
+        public CreateMember1d()
           : base("Create 1D Member", "Mem1D", "Create GSA 1D Member",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat2())

@@ -18,14 +18,17 @@ using GhSA.Util.Gsa;
 
 namespace GhSA.Components
 {
-    public class gsaProfile : GH_Component, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to create a profile text-string
+    /// </summary>
+    public class CreateProfile : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("ea9741e5-905e-4ecb-8270-a584e3f99aa3");
-        public gsaProfile()
-          : base("Create Profile", "Profile", "Create Profile string for GSA Section",
+        public CreateProfile()
+          : base("Create Profile", "Profile", "Create Profile text-string for GSA Section",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat1())
         {

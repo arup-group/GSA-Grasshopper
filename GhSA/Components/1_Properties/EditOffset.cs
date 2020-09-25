@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaOffsetEdit : GH_Component
+    /// <summary>
+    /// Component to edit an Offset and ouput the information
+    /// </summary>
+    public class EditOffset : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("1e094fcd-8f5f-4047-983c-e0e57a83ae52");
-        public gsaOffsetEdit()
+        public EditOffset()
           : base("Edit Offset", "OffsetEdit", "Modify GSA Offset or just get information about existing",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat1())

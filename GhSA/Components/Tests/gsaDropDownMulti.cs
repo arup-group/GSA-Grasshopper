@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
-using Grasshopper.Kernel;
-using Grasshopper;
+﻿using Grasshopper.Kernel;
 using Rhino.Geometry;
-using System.Windows.Forms;
-using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using System;
+using System.Collections.Generic;
 
 namespace GhSA.Components
 {
-    public class gsaDropDownTest1 : GH_Component, IGH_PreviewObject
+    /// <summary>
+    /// Dummy component with multi-dropdown functionality, showing how custom UI class UI.MultiDropDownComponentUI shall be called
+    /// </summary>
+    public class DropDownTest1 : GH_Component, IGH_PreviewObject
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("460a2412-ce15-49a6-b8da-e512ba92eeec");
-        public gsaDropDownTest1()
+        public DropDownTest1()
           : base("DropDownMulti", "DropDown2", "Create GSA Node Support",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat8())

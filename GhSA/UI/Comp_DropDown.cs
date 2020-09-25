@@ -11,7 +11,13 @@ using System.ComponentModel;
 
 namespace GhSA.UI
 {
-
+    /// <summary>
+    /// Class to create custom component UI with a single dropdown menu
+    /// 
+    /// Look at gsaDropDownSingle.cs for an example of how to call this method.
+    /// 
+    /// To use this method override CreateAttributes() in component class and set m_attributes = new DropDownComponentUI(...
+    /// </summary>
     public class DropDownComponentUI : GH_ComponentAttributes
     {
         public DropDownComponentUI(GH_Component owner, Action<string> clickHandle, List<string> dropdownContent, string selected, string spacerText = "", string initialdescription = "") : base(owner) 

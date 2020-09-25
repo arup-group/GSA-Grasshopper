@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaCreateElement2d : GH_Component, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new 2D Element
+    /// </summary>
+    public class CreateElement2d : GH_Component, IGH_PreviewObject
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("8f83d32a-c2df-4f47-9cfc-d2d4253703e1");
-        public gsaCreateElement2d()
+        public CreateElement2d()
           : base("Create 2D Element", "Elem2D", "Create GSA 2D Element",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat2())

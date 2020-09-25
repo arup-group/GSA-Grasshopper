@@ -12,8 +12,20 @@ using GhSA.Parameters;
 
 namespace GhSA.Util.Gsa
 {
+    /// <summary>
+    /// Class containing functions to import various object types from GSA
+    /// </summary>
     public class GsaImport
     {
+        /// <summary>
+        /// Method to import Nodes from a GSA model.
+        /// Will output a list of GhSA GsaNodes.
+        /// Filter nodes to import using nodeList input;
+        /// "all" or empty string ("") will import all nodes
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="nodeList"></param>
+        /// <returns></returns>
         public static List<GsaNode> GsaGetPoint(Model model, string nodeList)
         {
             // Create empty Gsa Node to work on:
@@ -35,10 +47,8 @@ namespace GhSA.Util.Gsa
                     n.node = node;
                     if(node.SpringProperty > 0)
                     {
-                        //GsaSpring spring = new GsaSpring();
-                        //sDict = model. //
-                        //spring.X = 
-                        //n.Spring = spring;
+                        // to be implement. GsaAPI spring missing.
+                        // get spring property from model
                     }
                     nodes.Add(n.Duplicate());
                 }
@@ -49,6 +59,17 @@ namespace GhSA.Util.Gsa
             //node.Dispose();
             return nodes;
         }
+        /// <summary>
+        /// Method to import 1D and 2D Elements from a GSA model.
+        /// Will output a tuple of GhSA GsaElement1d and GsaElement2d.
+        /// Filter elements to import using elemList input;
+        /// "all" or empty string ("") will import all elements. Default is "all"
+        /// "Join" bool = true; will try to join 2D element mesh faces into a joined meshes.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="elemList"></param>
+        /// <param name="join"></param>
+        /// <returns></returns>
         public static Tuple<DataTree<GsaElement1dGoo>, DataTree<GsaElement2dGoo>> GsaGetElem(Model model, string elemList = "all", bool join = true)
         {
             // Create empty GsaAPI Element to work on:
@@ -300,7 +321,17 @@ namespace GhSA.Util.Gsa
 
             return new Tuple<DataTree<GsaElement1dGoo>, DataTree<GsaElement2dGoo>>(elem1ds, elem2ds);
         }
-
+        /// <summary>
+        /// Method to import 1D and 2D Members from a GSA model.
+        /// Will output a tuple of GhSA GsaMember1d and GsaMember2d.
+        /// Filter members to import using memList input;
+        /// "all" or empty string ("") will import all elements. Default is "all"
+        /// "propGraft" bool = true; will put members in Grasshopper branch corrosponding to its property
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="memList"></param>
+        /// <param name="propGraft"></param>
+        /// <returns></returns>
         public static Tuple<DataTree<GsaMember1dGoo>, DataTree<GsaMember2dGoo>> GsaGetMemb(Model model, string memList = "all", bool propGraft = true)
         {
             // Create empty GsaAPI Element to work on:
@@ -478,6 +509,34 @@ namespace GhSA.Util.Gsa
             return new Tuple<DataTree<GsaMember1dGoo>, DataTree<GsaMember2dGoo>>(mem1ds, mem2ds);
         }
 
+        /// <summary>
+        /// Method to split/untangle a topology list from GSA into separate lists for
+        /// Topology, Voids, Inclusion lines and Inclusion points with corrosponding list for topology type.
+        /// 
+        /// Output tuple with three sub-tubles for:
+        /// - Topology: (Topology integers and topology types)
+        /// - Voids: (List of integers and list of topology types)
+        /// - Lines: (List of integers and list of topology types)
+        /// - Points: (Topology integers)
+        /// 
+        /// Example: gsa_topology = 
+        /// "7 8 9 a 10 11 7 V(12 13 a 14 15) L(16 a 18 17) 94 P 20 P(19 21 22) L(23 24) 84"
+        /// will results in:
+        /// 
+        /// Tuple1, Item1: Topology: (7, 8, 9, 10, 11, 7, 94, 84)
+        /// Tuple1, Item2: TopoType: ( ,  ,  ,  a,   ,  ,   ,   )
+        /// 
+        /// Tuple2, Item1: List(Voids): (12, 13, 14, 15)
+        /// Tuple2, Item2: List(VType): (  ,   ,  a,   )
+        /// 
+        /// Tuple3, Item1: List(Lines): (16, 18, 17) (23, 24)
+        /// Tuple3, Item2: List(LType): (  ,  a,   ) (  ,   )
+        /// 
+        /// Points: (20, 19, 21, 22)
+        /// 
+        /// </summary>
+        /// <param name="gsa_topology"></param>
+        /// <returns></returns>
         public static Tuple<Tuple<List<int>, List<string>>, Tuple<List<List<int>>, List<List<string>>>,
             Tuple<List<List<int>>, List<List<string>>>, List<int>> topology_detangler(string gsa_topology)
         {

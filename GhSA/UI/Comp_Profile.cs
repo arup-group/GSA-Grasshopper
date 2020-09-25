@@ -11,7 +11,15 @@ using System.ComponentModel;
 
 namespace GhSA.UI
 {
-
+    /// <summary>
+    /// Class to create custom component UI with multiple dropdowns and boolean toggle boxes
+    /// This class is customised to only work with the CreateProfile component
+    /// 
+    /// Note that it is the component's responsibility to dynamically update lists, this class is only displaying what it gets.
+    /// Look at CreateProfile.cs for an example of how to call this method.
+    /// 
+    /// To use this method override CreateAttributes() in component class and set m_attributes = new ProfileComponentUI(...
+    /// </summary>
     public class ProfileComponentUI : GH_ComponentAttributes
     {
         public ProfileComponentUI(GH_Component owner, Action<int, int, bool, bool, bool, bool, bool> clickHandle, List<List<string>> dropdownContents, List<string> selections, List<string> spacerTexts = null, List<string> initialdescriptions = null) : base(owner)

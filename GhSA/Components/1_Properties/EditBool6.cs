@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaBool6Info : GH_Component
+    /// <summary>
+    /// Component to edit a Bool6 and ouput the information
+    /// </summary>
+    public class EditBool6 : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("dad5064c-6648-45a5-8d98-afaae861e3b9");
-        public gsaBool6Info()
+        public EditBool6()
           : base("Edit Bool6", "Bool6Edit", "Modify GSA Bool6 or just get information about existing",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat1())

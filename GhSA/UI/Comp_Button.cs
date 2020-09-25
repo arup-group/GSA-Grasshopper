@@ -8,7 +8,13 @@ using System.Drawing;
 
 namespace GhSA.UI
 {
-
+    /// <summary>
+    /// Class to create custom component UI with a button
+    /// 
+    /// This class is made for the open and save components
+    /// 
+    /// To use this method override CreateAttributes() in component class and set m_attributes = new ButtonComponentUI(...
+    /// </summary>
     public class ButtonComponentUI : GH_ComponentAttributes
     {
         public ButtonComponentUI(GH_Component owner, string displayText, Action clickHandle, string spacerText = "") : base(owner) { buttonText = displayText; SpacerTxt = spacerText; action = clickHandle; }

@@ -11,9 +11,15 @@ using Rhino.Collections;
 
 namespace GhSA.Util.GH
 {
-    
+    /// <summary>
+    /// Tolerance class
+    /// </summary>
     public class Tolerance
     {
+        /// <summary>
+        /// Method to retrieve active document Rhino units
+        /// </summary>
+        /// <returns></returns>
         public static double RhinoDocTolerance()
         {
             try
@@ -27,10 +33,19 @@ namespace GhSA.Util.GH
             }
         }
     }
-
+    /// <summary>
+    /// Helper class to perform some decent geometry approximations from NURBS to poly-geometry
+    /// </summary>
     public class Convert
     {
-        //Convert Rhino to Gsa-likable geometry
+        /// <summary>
+        /// Method to convert a NURBS curve into a PolyCurve made of lines and arcs.
+        /// Automatically uses Rhino document tolerance if tolerance is not inputted
+        /// </summary>
+        /// <param name="crv"></param>
+        /// <param name="tolerance"></param>
+        /// <returns></returns>
+        
         public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertPolyCrv(Curve crv, double tolerance = -1)
         {
             if (tolerance < 0)
@@ -57,6 +72,24 @@ namespace GhSA.Util.GH
             return new Tuple<PolyCurve, List<Point3d>, List<string>>(m_crv, m_topo, crv_type);
         }
 
+        /// <summary>
+        /// Method to convert a NURBS Brep into a planar trimmed surface with PolyCurve
+        /// internal and external edges of lines and arcs
+        /// 
+        /// BRep conversion to planar routine first converts the external edge to a PolyCurve
+        /// of lines and arcs and uses these controlpoints to fit a plane through points.
+        /// 
+        /// Will output a Tuple containing:
+        /// - PolyCurve
+        /// - TopologyList of control points
+        /// - TopoTypeList (" " or "a") corrosponding to control points
+        /// - List of PolyCurves for internal (void) curves
+        /// - Corrosponding list of topology points
+        /// - Corrosponding list of topologytypes
+        /// </summary>
+        /// <param name="brep"></param>
+        /// <param name="tolerance"></param>
+        /// <returns></returns>
         public static Tuple<PolyCurve, List<Point3d>, List<string>, List<PolyCurve>, List<List<Point3d>>, List<List<string>>>
             ConvertPolyBrep(Brep brep, double tolerance = -1)
         {
@@ -108,7 +141,44 @@ namespace GhSA.Util.GH
                 (edge_crv, m_topo, m_topoType, void_crvs, void_topo, void_topoType);
         }
 
-
+        /// <summary>
+        /// Method to convert a NURBS Brep into a planar trimmed surface with PolyCurve
+        /// internal and external edges of lines and arcs. 
+        /// 
+        /// BRep conversion to planar routine first converts the external edge to a PolyCurve
+        /// of lines and arcs and uses these controlpoints to fit a plane through points.
+        /// 
+        /// Input list of curves and list of points to be included in 2D Member;
+        /// lines and curves will automatically be projected onto planar Brep plane
+        /// 
+        /// Will output 3 Tuples:
+        /// (edgeTuple, voidTuple, inclTuple)
+        /// 
+        /// edgeTuple:
+        /// (edge_crv, m_topo, m_topoType)
+        /// - PolyCurve
+        /// - TopologyList of control points
+        /// - TopoTypeList (" " or "a") corrosponding to control points
+        /// 
+        /// voidTuple:
+        /// (void_crvs, void_topo, void_topoType)
+        /// - List of PolyCurves for internal (void) curves
+        /// - Corrosponding list of topology points
+        /// - Corrosponding list of topologytypes
+        /// 
+        /// inclTuple:
+        /// (incl_crvs, incl_topo, incl_topoType, inclPts)
+        /// - List of PolyCurves for internal (void) curves
+        /// - Corrosponding list of topology points
+        /// - Corrosponding list of topologytypes
+        /// - List of inclusion points
+        /// 
+        /// </summary>
+        /// <param name="brep"></param>
+        /// <param name="inclCrvs"></param>
+        /// <param name="inclPts"></param>
+        /// <param name="tolerance"></param>
+        /// <returns></returns>
         public static Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
             ConvertPolyBrepInclusion(Brep brep, List<Curve> inclCrvs = null, List<Point3d> inclPts = null, double tolerance = -1)
         {

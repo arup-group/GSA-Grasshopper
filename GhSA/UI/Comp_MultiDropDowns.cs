@@ -11,7 +11,14 @@ using System.ComponentModel;
 
 namespace GhSA.UI
 {
-
+    /// <summary>
+    /// Class to create custom component UI with multiple dropdowns
+    /// 
+    /// Note that it is the component's responsibility to dynamically update lists, this class is only displaying what it gets.
+    /// Look at gsaDropDownMulti.cs for an example of how to call this method.
+    /// 
+    /// To use this method override CreateAttributes() in component class and set m_attributes = new MultiDropDownComponentUI(...
+    /// </summary>
     public class MultiDropDownComponentUI : GH_ComponentAttributes
     {
         public MultiDropDownComponentUI(GH_Component owner, Action<int, int> clickHandle, List<List<string>> dropdownContents, List<string> selections, List<string> spacerTexts = null, List<string> initialdescriptions = null) : base(owner)

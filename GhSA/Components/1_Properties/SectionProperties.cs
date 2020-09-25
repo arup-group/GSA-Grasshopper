@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaSectionProperties : GH_Component, IGH_PreviewObject
+    /// <summary>
+    /// Component to get geometric properties of a section
+    /// </summary>
+    public class GetSectionProperties : GH_Component, IGH_PreviewObject
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("6504a99f-a4e2-4e30-8251-de31ea83e8cb");
-        public gsaSectionProperties()
+        public GetSectionProperties()
           : base("Section Properties", "SectProp", "Get GSA Section Properties",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat1())

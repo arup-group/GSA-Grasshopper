@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaDropDownTest2 : GH_Component, IGH_PreviewObject
+    /// <summary>
+    /// Dummy component with dropdown functionality, showing how custom UI class UI.DropDownComponentUI shall be called
+    /// </summary>
+    public class DropDownTest2 : GH_Component, IGH_PreviewObject
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("d73be4e3-887f-4507-8400-99687460f31c");
-        public gsaDropDownTest2()
+        public DropDownTest2()
           : base("DropDownSingle", "DropDown1", "Create GSA Node Support",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat8())

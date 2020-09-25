@@ -15,6 +15,13 @@ using GhSA.Components;
 
 namespace GhSA.UI
 {
+    /// <summary>
+    /// Class to create custom component UI with 2 x 6 check box toggles
+    /// 
+    /// This class is made for the CreateMember1d component
+    /// 
+    /// To use this method override CreateAttributes() in component class and set m_attributes = new ReleasesComponentUI(...
+    /// </summary>
     public class ReleasesComponentUI : GH_ComponentAttributes
     {
         public ReleasesComponentUI(GH_Component owner, Action<bool,bool,bool,bool,bool,bool, bool, bool, bool, bool, bool, bool> updateHandle, 

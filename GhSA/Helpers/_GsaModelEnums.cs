@@ -11,6 +11,13 @@ using Grasshopper.Kernel.Types;
 
 namespace GhSA.Util.Gsa
 {
+    /// <summary>
+    /// Class to hold enums from GSA for Types for
+    /// 1D Elements (GsaAPI.ElementType)
+    /// 2D Elements (GsaAPI.AnalysisOrder)
+    /// 1D Members (GsaAPI.MemberType)
+    /// 2D Members (GsaAPI.MemberType)
+    /// </summary>
     public class GsaToModel
     {
         public static ElementType Element1dType(int type)

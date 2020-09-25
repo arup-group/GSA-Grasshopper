@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaSpringEdit : GH_Component
+    /// <summary>
+    /// Component to edit a Spring and ouput the information
+    /// </summary>
+    public class EditSpring : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("037f46d0-f0f6-4e99-8851-fc99d5e8205c");
-        public gsaSpringEdit()
+        public EditSpring()
           : base("Edit Spring", "SpringEdit", "Modify GSA Spring",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat1())

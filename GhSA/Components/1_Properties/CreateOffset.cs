@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaOffset : GH_Component
+    /// <summary>
+    /// Component to create a new Offset
+    /// </summary>
+    public class CreateOffset : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("78fe156d-6ab4-4683-96a4-2d40eb5cce8f");
-        public gsaOffset()
+        public CreateOffset()
           : base("Create Offset", "Offset", "Create GSA Offset",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat1())

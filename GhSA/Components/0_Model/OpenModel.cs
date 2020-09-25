@@ -12,13 +12,16 @@ using GhSA.Parameters;
 
 namespace GhSA.Components
 {
-    public class gsaOpen : GH_Component, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to open an existing GSA model
+    /// </summary>
+    public class OpenModel : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
-        public gsaOpen()
+        public OpenModel()
           : base("Open Model", "Open", "Open an existing GSA model",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat0())

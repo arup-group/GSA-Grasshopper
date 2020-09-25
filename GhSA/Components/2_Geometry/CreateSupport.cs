@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaCreateSupport : GH_Component, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new Node with restraints (support)
+    /// </summary>
+    public class CreateSupport : GH_Component, IGH_PreviewObject
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("d808e81f-6ae1-49d9-a8a5-2424a1763a69");
-        public gsaCreateSupport()
+        public CreateSupport()
           : base("Create Support", "Support", "Create GSA Node Support",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat2())

@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
+﻿using GhSA.Parameters;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using Rhino.Geometry;
+using System;
 
 namespace GhSA.Components
 {
-    public class gsaElement1dEdit : GH_Component, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a 1D Element
+    /// </summary>
+    public class EditElement1d : GH_Component, IGH_PreviewObject
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("aeb5f765-8721-41fc-a1b4-cfd78e05ce67");
-        public gsaElement1dEdit()
+        public EditElement1d()
           : base("Edit 1D Element", "Elem1dEdit", "Modify GSA 1D Element",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat2())

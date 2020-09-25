@@ -14,13 +14,16 @@ using System.Resources;
 
 namespace GhSA.Components
 {
-    public class gsaProp2dEdit : GH_Component, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a Prop2d and ouput the information
+    /// </summary>
+    public class EditProp2d : GH_Component, IGH_PreviewObject
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("4cfdee19-451b-4ee3-878b-93a86767ffef");
-        public gsaProp2dEdit()
+        public EditProp2d()
           : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat1())

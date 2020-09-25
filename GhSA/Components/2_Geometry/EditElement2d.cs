@@ -16,13 +16,16 @@ using Rhino.Collections;
 
 namespace GhSA.Components
 {
-    public class gsaElement2dEdit : GH_Component, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a 2D Element
+    /// </summary>
+    public class EditElement2d : GH_Component, IGH_PreviewObject
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("e9611aa7-88c1-4b5b-83d6-d9629e21ad8a");
-        public gsaElement2dEdit()
+        public EditElement2d()
           : base("Edit 2D Element", "Elem2dEdit", "Modify GSA 2D Element",
                 Ribbon.CategoryName.name(),
                 Ribbon.SubCategoryName.cat2())
