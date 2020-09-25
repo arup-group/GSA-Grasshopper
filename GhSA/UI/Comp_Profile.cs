@@ -128,14 +128,17 @@ namespace GhSA.UI
             for (int i = 0; i < dropdownlists.Count; i++) 
             {
                 //spacer and title
-                if (spacerTxts[i] != "")
+                if (spacerTxts.Count > i)
                 {
-                    h0 = 10;
-                    RectangleF tempSpacer = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
-                    if (SpacerBounds.Count == i || SpacerBounds[i] == null)
-                        SpacerBounds.Add(tempSpacer);
-                    else
-                        SpacerBounds[i] = tempSpacer;
+                    if (spacerTxts[i] != "")
+                    {
+                        h0 = 10;
+                        RectangleF tempSpacer = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
+                        if (SpacerBounds.Count == i || SpacerBounds[i] == null)
+                            SpacerBounds.Add(tempSpacer);
+                        else
+                            SpacerBounds[i] = tempSpacer;
+                    }
                 }
 
                 int h1 = 15; // height border
@@ -359,13 +362,16 @@ namespace GhSA.UI
                 Brush fontColour = UI.Colour.AnnotationTextDark;
                 for (i = 0; i < dropdownlists.Count; i++)
                 {
-                    
+
                     //Draw divider line
-                    if (spacerTxts[i] != "")
+                    if (spacerTxts.Count > i)
                     {
-                        graphics.DrawString(spacerTxts[i], GH_FontServer.Small, UI.Colour.AnnotationTextDark, SpacerBounds[i], GH_TextRenderingConstants.CenterCenter);
-                        graphics.DrawLine(spacer, SpacerBounds[i].X, SpacerBounds[i].Y + SpacerBounds[i].Height / 2, SpacerBounds[i].X + (SpacerBounds[i].Width - GH_FontServer.StringWidth(spacerTxts[i], GH_FontServer.Small)) / 2 - 4, SpacerBounds[i].Y + SpacerBounds[i].Height / 2);
-                        graphics.DrawLine(spacer, SpacerBounds[i].X + (SpacerBounds[i].Width - GH_FontServer.StringWidth(spacerTxts[i], GH_FontServer.Small)) / 2 + GH_FontServer.StringWidth(spacerTxts[i], GH_FontServer.Small) + 4, SpacerBounds[i].Y + SpacerBounds[i].Height / 2, SpacerBounds[i].X + SpacerBounds[i].Width, SpacerBounds[i].Y + SpacerBounds[i].Height / 2);
+                        if (spacerTxts[i] != "")
+                        {
+                            graphics.DrawString(spacerTxts[i], GH_FontServer.Small, UI.Colour.AnnotationTextDark, SpacerBounds[i], GH_TextRenderingConstants.CenterCenter);
+                            graphics.DrawLine(spacer, SpacerBounds[i].X, SpacerBounds[i].Y + SpacerBounds[i].Height / 2, SpacerBounds[i].X + (SpacerBounds[i].Width - GH_FontServer.StringWidth(spacerTxts[i], GH_FontServer.Small)) / 2 - 4, SpacerBounds[i].Y + SpacerBounds[i].Height / 2);
+                            graphics.DrawLine(spacer, SpacerBounds[i].X + (SpacerBounds[i].Width - GH_FontServer.StringWidth(spacerTxts[i], GH_FontServer.Small)) / 2 + GH_FontServer.StringWidth(spacerTxts[i], GH_FontServer.Small) + 4, SpacerBounds[i].Y + SpacerBounds[i].Height / 2, SpacerBounds[i].X + SpacerBounds[i].Width, SpacerBounds[i].Y + SpacerBounds[i].Height / 2);
+                        }
                     }
 
                     // Draw selected item

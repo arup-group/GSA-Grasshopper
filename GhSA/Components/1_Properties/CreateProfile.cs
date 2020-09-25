@@ -45,7 +45,7 @@ namespace GhSA.Components
         {
             if (first)
             {
-                setSelected(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B);
+                setSelected(loadlistid, loadselectid, isTapered, isHollow, isElliptical, isGeneral, isB2B);
                 first = false;
             }
 
@@ -54,6 +54,9 @@ namespace GhSA.Components
 
         public void setSelected(int dropdownlistidd, int selectedidd, bool taper, bool hollow, bool elliptical, bool general, bool b2b)
         {
+            loadlistid = dropdownlistidd; 
+            loadselectid = selectedidd;
+
             if (dropdownlistidd > 0)
             {
                 if (selections[dropdownlistidd] == null || selections.Count <= dropdownlistidd)
@@ -68,7 +71,7 @@ namespace GhSA.Components
             isGeneral = general;
             isB2B = b2b;
 
-            // update dropdown and spacer lists according to selection in first  list
+            // update dropdown and spacer lists according to selection in first list
             if (selections == null || selections.Count == 0)
             {
                 if (selections == null)
@@ -184,6 +187,8 @@ namespace GhSA.Components
         List<List<string>> dropdowncontents; // list that holds all dropdown contents
         List<string> dropdownspacer; // list that holds all dropdown spacer 
         List<string> selections;
+        int loadlistid; // for when component is saved and re-laoded
+        int loadselectid; // for when component is saved and re-laoded
 
         // first dropdown list
         List<string> mainlist = new List<string>(new string[]
@@ -831,11 +836,126 @@ namespace GhSA.Components
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
             writer.SetInt32("Mode", (int)_mode);
+            writer.SetInt32("loadselectid", loadselectid);
+            writer.SetInt32("loadlistid", loadlistid);
+            writer.SetInt32("catalogueIndex", catalogueIndex);
+            writer.SetInt32("catalogueTypeIndex", catalogueTypeIndex);
+            writer.SetInt32("catalogueProfileIndex", catalogueProfileIndex);
+            writer.SetBoolean("isTapered", isTapered);
+            writer.SetBoolean("isHollow", isHollow);
+            writer.SetBoolean("isElliptical", isElliptical);
+            writer.SetBoolean("isGeneral", isGeneral);
+            writer.SetBoolean("isB2B", isB2B);
+
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
             _mode = (FoldMode)reader.GetInt32("Mode");
+
+            loadlistid = reader.GetInt32("loadlistid");
+            loadselectid = reader.GetInt32("loadselectid");
+
+            catalogueIndex = reader.GetInt32("catalogueIndex");
+            catalogueTypeIndex = reader.GetInt32("catalogueTypeIndex");
+            catalogueProfileIndex = reader.GetInt32("catalogueProfileIndex");
+
+            isTapered = reader.GetBoolean("isTapered");
+            isHollow = reader.GetBoolean("isHollow");
+            isElliptical = reader.GetBoolean("isElliptical");
+            isGeneral = reader.GetBoolean("isGeneral");
+            isB2B = reader.GetBoolean("isB2B");
+
+            #region update dropdowncontents
+            if (!(0 > loadlistid))
+            {
+                switch (mainlist[loadlistid])
+                {
+                    case ("Catalogue"):
+                        // update inputs
+                        Mode1Clicked();
+
+                        // update dropdown lists
+                        if (dropdowncontents != null)
+                            dropdowncontents.Clear();
+                        if (dropdowncontents == null || dropdowncontents.Count == 0)
+                        {
+                            if (dropdowncontents == null)
+                                dropdowncontents = new List<List<string>>();
+                            dropdowncontents.Add(mainlist);
+                            dropdowncontents.Add(cataloguelist);
+                            dropdowncontents.Add(typelist);
+                            dropdowncontents.Add(sectionlist);
+                        }
+
+                        selections.Clear();
+                        selections.Add(cataloguelist[0]);
+                        selections.Add(typelist[0]);
+                        selections.Add(sectionlist[0]);
+
+                        break;
+                    case ("Standard"):
+                        selections.Clear();
+                        selections.Add(mainlist[1]);
+                        selections.Add(standardlist[loadselectid]);
+
+                        // update inputs
+                        switch (standardlist[loadselectid])
+                        {
+                            case "Rectangle":
+                                Mode2Clicked();
+
+                                break;
+                            case "Circle":
+                                Mode3Clicked();
+                                break;
+                            case "I section":
+                                Mode4Clicked();
+
+                                break;
+                            case "Tee":
+                                Mode5Clicked();
+                                break;
+                            case "Channel":
+                                Mode6Clicked();
+                                break;
+                            case "Angle":
+                                Mode7Clicked();
+                                break;
+                            default:
+                                selections[1] = standardlist[0];
+                                Mode2Clicked();
+                                break;
+                        }
+                        // update dropdown lists
+                        if (dropdowncontents != null)
+                            dropdowncontents.Clear();
+                        if (dropdowncontents == null || dropdowncontents.Count == 0)
+                        {
+                            dropdowncontents.Add(mainlist);
+                            dropdowncontents.Add(standardlist);
+                        }
+
+                        break;
+                    case ("Geometric"):
+                        selections.Clear();
+                        selections.Add(cataloguelist[2]);
+                        // update inputs
+                        Mode8Clicked();
+
+                        // update dropdown lists
+                        if (dropdowncontents != null)
+                            dropdowncontents.Clear();
+                        if (dropdowncontents == null || dropdowncontents.Count == 0)
+                        {
+                            dropdowncontents.Add(mainlist);
+                        }
+
+                        break;
+                }
+            }
+            #endregion
+            first = true;
             this.CreateAttributes();
             return base.Read(reader);
         }
