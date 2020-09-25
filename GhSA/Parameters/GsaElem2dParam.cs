@@ -373,7 +373,7 @@ namespace GhSA.Parameters
     }
 
     /// <summary>
-    /// This class provides a Parameter interface for the Data_GsaMember type.
+    /// This class provides a Parameter interface for the Data_GsaElement2d type.
     /// </summary>
     public class GsaElement2dParameter : GH_PersistentGeometryParam<GsaElement2dGoo>, IGH_PreviewObject
     {
@@ -388,7 +388,7 @@ namespace GhSA.Parameters
 
         //protected override Bitmap Icon => Resources.CrossSections;
 
-        //We do not allow users to pick boatshells, 
+        //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.
         protected override GH_GetterResult Prompt_Plural(ref List<GsaElement2dGoo> values)
         {

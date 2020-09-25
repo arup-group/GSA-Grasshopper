@@ -80,6 +80,7 @@
     <Compile Include="Components\2_Geometry\CreateElement1d.cs" />
     <Compile Include="Components\2_Geometry\CreateMember1d.cs" />
     <Compile Include="Components\2_Geometry\EditElement1d.cs" />
+    <Compile Include="Components\Tests\SetUnitsTest.cs" />
     <Compile Include="Components\ToBeDeleted\gsaElement2dInfo.cs" />
     <Compile Include="Components\2_Geometry\EditElement2d.cs" />
     <Compile Include="Components\ToBeDeleted\gsaElement1dInfo.cs" />
@@ -91,8 +92,8 @@
     <Compile Include="Components\ToBeDeleted\gsaNodeInfo.cs" />
     <Compile Include="Components\2_Geometry\CreateSupport.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
-    <Compile Include="Components\Tests\gsaDropDownMulti.cs" />
-    <Compile Include="Components\Tests\gsaDropDownSingle.cs" />
+    <Compile Include="Components\Tests\DropDownMulti.cs" />
+    <Compile Include="Components\Tests\DropDownSingle.cs" />
     <Compile Include="Helpers\_GsaModelEnums.cs" />
     <Compile Include="Helpers\_GsaImportConvert.cs" />
     <Compile Include="Helpers\_GsaProfileConvert.cs" />

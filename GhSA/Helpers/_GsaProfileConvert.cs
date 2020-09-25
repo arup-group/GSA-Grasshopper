@@ -185,8 +185,23 @@ namespace GhSA.Util.Gsa
             if (gsaProfile.profileType == GsaProfile.profileTypes.Standard)
             {
                 string unit = " ";
-                if (gsaProfile.sectUnit != GsaProfile.sectUnitOptions.u_mm)
-                    unit = "(" + gsaProfile.sectUnit.ToString() + ") ";
+
+                switch (gsaProfile.sectUnit)
+                {
+                    case GsaProfile.sectUnitOptions.u_cm:
+                        unit = "(cm) ";
+                        break;
+                    case GsaProfile.sectUnitOptions.u_m:
+                        unit = "(m) ";
+                        break;
+                    case GsaProfile.sectUnitOptions.u_in:
+                        unit = "(in) ";
+                        break;
+                    case GsaProfile.sectUnitOptions.u_ft:
+                        unit = "(ft) ";
+                        break;
+                }
+
 
                 if (gsaProfile.stdShape == GsaProfile.stdShapeOptions.Rectangle)
                 {

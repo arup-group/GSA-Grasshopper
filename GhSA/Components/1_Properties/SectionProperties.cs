@@ -50,15 +50,15 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Area", "A", "GSA Section Area", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia y-y", "Iyy", "GSA Section Moment of Intertia around local y-y axis", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia z-z", "Izz", "GSA Section Moment of Intertia around local z-z axis", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia y-z", "Iyz", "GSA Section Moment of Intertia around local y-z axis", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Torsion constant", "J", "GSA Section Torsion constant J", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Shear Area Factor in y", "Ky", "GSA Section Shear Area Factor in local y-direction", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Shear Area Factor in z", "Kz", "GSA Section Shear Area Factor in local z-direction", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Surface A/Length", "S/L", "GSA Section Surface Area per Unit Length", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Volume/Length", "V/L", "GSA Section Volume per Unit Length", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Area", "A", "GSA Section Area (" + Util.Unit.Length_Section + "\xB2)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Moment of Inertia y-y", "Iyy", "GSA Section Moment of Intertia around local y-y axis (" + Util.Unit.Length_Section + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Moment of Inertia z-z", "Izz", "GSA Section Moment of Intertia around local z-z axis (" + Util.Unit.Length_Section + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Moment of Inertia y-z", "Iyz", "GSA Section Moment of Intertia around local y-z axis (" + Util.Unit.Length_Section + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Torsion constant", "J", "GSA Section Torsion constant J (" + Util.Unit.Length_Section + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Shear Area Factor in y", "Ky", "GSA Section Shear Area Factor in local y-direction (-)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Shear Area Factor in z", "Kz", "GSA Section Shear Area Factor in local z-direction (-)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Surface A/Length", "S/L", "GSA Section Surface Area per Unit Length (" + Util.Unit.Length_Section + "\xB2/"+ Util.Unit.Length_Large + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Volume/Length", "V/L", "GSA Section Volume per Unit Length (" + Util.Unit.Length_Section + "\xB3/"+ Util.Unit.Length_Large + ")", GH_ParamAccess.item);
 
         }
         #endregion
@@ -80,15 +80,34 @@ namespace GhSA.Components
             }
             if (gsaSection != null)
             {
-                DA.SetData(0, gsaSection.Section.Area);
-                DA.SetData(1, gsaSection.Section.Iyy);
-                DA.SetData(2, gsaSection.Section.Izz);
-                DA.SetData(3, gsaSection.Section.Iyz);
-                DA.SetData(4, gsaSection.Section.J);
+                double conversionfactor = 1;
+                if (Util.Unit.Length_Section != "m")
+                {
+                    switch (Util.Unit.Length_Section)
+                    {
+                        case "mm":
+                            conversionfactor = 1000;
+                            break;
+                        case "cm":
+                            conversionfactor = 100;
+                            break;
+                        case "in":
+                            conversionfactor = 1000 / 25.4;
+                            break;
+                        case "ft":
+                            conversionfactor = 1000 / (12 * 25.4);
+                            break;
+                    }
+                }
+                DA.SetData(0, gsaSection.Section.Area * Math.Pow(conversionfactor, 2));
+                DA.SetData(1, gsaSection.Section.Iyy * Math.Pow(conversionfactor, 4));
+                DA.SetData(2, gsaSection.Section.Izz * Math.Pow(conversionfactor, 4));
+                DA.SetData(3, gsaSection.Section.Iyz * Math.Pow(conversionfactor, 4));
+                DA.SetData(4, gsaSection.Section.J * Math.Pow(conversionfactor, 4));
                 DA.SetData(5, gsaSection.Section.Ky);
                 DA.SetData(6, gsaSection.Section.Kz);
-                DA.SetData(7, gsaSection.Section.SurfaceAreaPerLength);
-                DA.SetData(8, gsaSection.Section.VolumePerLength);
+                DA.SetData(7, gsaSection.Section.SurfaceAreaPerLength * Math.Pow(conversionfactor, 2));
+                DA.SetData(8, gsaSection.Section.VolumePerLength * Math.Pow(conversionfactor, 3));
             }
         }
     }

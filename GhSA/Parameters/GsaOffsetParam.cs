@@ -248,7 +248,7 @@ namespace GhSA.Parameters
     }
 
     /// <summary>
-    /// This class provides a Parameter interface for the Data_GsaMember type.
+    /// This class provides a Parameter interface for the Data_GsaOffset type.
     /// </summary>
     public class GsaOffsetParameter : GH_PersistentParam<GsaOffsetGoo>
     {
@@ -263,7 +263,7 @@ namespace GhSA.Parameters
 
         //protected override Bitmap Icon => Resources.CrossSections;
 
-        //We do not allow users to pick boatshells, 
+        //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.
         protected override GH_GetterResult Prompt_Plural(ref List<GsaOffsetGoo> values)
         {

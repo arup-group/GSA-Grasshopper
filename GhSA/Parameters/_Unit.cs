@@ -12,11 +12,12 @@ namespace GhSA.Util
     /// </summary>
     public static class Unit
     {
+        private static bool setLength_Large = false;
         public static string Length_Large
         {
             get
             {
-                if (m_length_L == "")
+                if (!setLength_Large)
                 {
                     if (RhinoDoc.ActiveDoc.ModelUnitSystem.GetHashCode() == 2 || RhinoDoc.ActiveDoc.ModelUnitSystem.GetHashCode() == 3
                         || RhinoDoc.ActiveDoc.ModelUnitSystem.GetHashCode() == 4 || RhinoDoc.ActiveDoc.ModelUnitSystem.GetHashCode() == 8 ||
@@ -28,7 +29,11 @@ namespace GhSA.Util
                 }
                 return m_length_L;
             }
-            set { m_length_L = value; }
+            set 
+            {
+                setLength_Large = true;
+                m_length_L = StringTestLength(value); 
+            }
         }
         public static string Length_Small
         {
@@ -46,25 +51,12 @@ namespace GhSA.Util
                 }
                 return m_length_S;
             }
-            set { m_length_S = value; }
+            set { m_length_S = StringTestLength(value); }
         }
         public static string Length_Section
         {
-            get
-            {
-                if (m_length_section == "")
-                {
-                    if (RhinoDoc.ActiveDoc.ModelUnitSystem.GetHashCode() == 2 || RhinoDoc.ActiveDoc.ModelUnitSystem.GetHashCode() == 3
-                        || RhinoDoc.ActiveDoc.ModelUnitSystem.GetHashCode() == 4 || RhinoDoc.ActiveDoc.ModelUnitSystem.GetHashCode() == 8 ||
-                        RhinoDoc.ActiveDoc.ModelUnitSystem.GetHashCode() == 9)
-                    {
-                        m_length_section = RhinoUnitName(RhinoDoc.ActiveDoc.ModelUnitSystem);
-                    }
-                    // add convertion to meters if odd unit?
-                }
-                return m_length_section;
-            }
-            set { m_length_section = value; }
+            get { return m_length_section; }
+            set { m_length_section = StringTestLength(value); }
         }
         public static string RhinoDocUnit
         {
@@ -87,11 +79,32 @@ namespace GhSA.Util
         #region fields
         private static string m_length_L = "";
         private static string m_length_S = "";
-        private static string m_length_section = "";
+        private static string m_length_section = "mm";
         private static string m_RhinoUnitName = "";
         private static double m_ConversionToMeter;
         // other units to be added
         #endregion
+        /// <summary>
+        /// Method to convert bad strings to accepted inputs
+        /// if no match is found "m" is returned
+        /// </summary>
+        /// <param name="unitname"></param>
+        /// <returns></returns>
+        private static string StringTestLength(string unitname)
+        {
+            unitname = unitname.ToLower();
+            if (unitname.Contains("mm") | unitname.Contains("milimet") | unitname.Contains("millimet"))
+                return "mm";
+            if (unitname.Contains("cm") | unitname.Contains("centimet"))
+                return "cm";
+            if (unitname.Contains("m"))
+                return "m";
+            if (unitname.Contains("in") | unitname.Contains("\""))
+                return "in";
+            if (unitname.Contains("ft") | unitname.Contains("feet") | unitname.Contains("foot") | unitname.Contains("′") | unitname.Contains("'"))
+                return "ft";
+            return "m";
+        }
 
         /// <summary>
         /// Method to get the scaling factor from Rhino document units to meter
