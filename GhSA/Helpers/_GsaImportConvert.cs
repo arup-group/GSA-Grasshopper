@@ -40,12 +40,14 @@ namespace GhSA.Util.Gsa
             // Loop through all nodes in Node dictionary and add points to Rhino point list
             for (int i = 0; i < nDict.Keys.Max(); i++)
             {
-                if (nDict.TryGetValue(i+1, out Node node)) //1-base numbering
+                if (nDict.TryGetValue(i+1, out Node apinode)) //1-base numbering
                 {
-                    var p = node.Position;
-                    GsaNode n = new GsaNode(new Point3d(p.X, p.Y, p.Z), i + 1);
-                    n.node = node;
-                    if(node.SpringProperty > 0)
+                    var p = apinode.Position;
+                    GsaNode n = new GsaNode(new Point3d(p.X, p.Y, p.Z), i + 1)
+                    {
+                        node = apinode
+                    };
+                    if (apinode.SpringProperty > 0)
                     {
                         // to be implement. GsaAPI spring missing.
                         // get spring property from model
@@ -158,9 +160,11 @@ namespace GhSA.Util.Gsa
                             YY = elem.Release(1).YY,
                             ZZ = elem.Release(1).ZZ
                         };
-                        
-                        GsaSection section = new GsaSection();
-                        section.ID = elem.Property;
+
+                        GsaSection section = new GsaSection
+                        {
+                            ID = elem.Property
+                        };
                         Section tempSection = new Section();
                         if (sDict.TryGetValue(section.ID, out tempSection))
                             section.Section = tempSection;
@@ -205,9 +209,9 @@ namespace GhSA.Util.Gsa
                             double x = 0; double y = 0; double z = 0;
                             for (int i = 0; i < tempPts.Count; i++)
                             {
-                                x = x + tempPts[i].X; y = y + tempPts[i].Y; z = z + tempPts[i].Z;
+                                x += tempPts[i].X; y += tempPts[i].Y; z += tempPts[i].Z;
                             }
-                            x = x / tempPts.Count; y = y / tempPts.Count; z = z / tempPts.Count;
+                            x /= tempPts.Count; y /= tempPts.Count; z /= tempPts.Count;
                             tempMesh.Vertices.Add(new Point3d(x, y, z));
 
                             if (topo.Count == 6)
@@ -228,14 +232,18 @@ namespace GhSA.Util.Gsa
                                 tempMesh.Faces.AddFace(3, 7, 8, 6);
                             }
                         }
-                        List<int> ids = new List<int>();
-                        ids.Add(key);
-                        
+                        List<int> ids = new List<int>
+                        {
+                            key
+                        };
+
                         elem2d.ID = ids;
 
                         List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
-                        GsaProp2d prop2d = new GsaProp2d();
-                        prop2d.ID = elem.Property;
+                        GsaProp2d prop2d = new GsaProp2d
+                        {
+                            ID = elem.Property
+                        };
                         Prop2D tempProp = new Prop2D();
                         if (pDict.TryGetValue(prop2d.ID, out tempProp))
                             prop2d.Prop2d = tempProp;
@@ -255,8 +263,10 @@ namespace GhSA.Util.Gsa
                         else
                         {
                             elem2d = new GsaElement2d(tempMesh);
-                            List<Element> elemProps = new List<Element>();
-                            elemProps.Add(elem);
+                            List<Element> elemProps = new List<Element>
+                            {
+                                elem
+                            };
                             elem2d.Elements = elemProps;
                             elem2d.Properties = prop2Ds;
                             elem2d.ID = ids;
@@ -305,8 +315,10 @@ namespace GhSA.Util.Gsa
                             elemProps.Add(elements[ipath, 0]);
                         elem2d.Elements = elemProps;
                         List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
-                        GsaProp2d prop2d = new GsaProp2d();
-                        prop2d.ID = ipath.Indices[0]+1;
+                        GsaProp2d prop2d = new GsaProp2d
+                        {
+                            ID = ipath.Indices[0] + 1
+                        };
                         Prop2D tempProp = new Prop2D();
                         if (pDict.TryGetValue(prop2d.ID, out tempProp))
                             prop2d.Prop2d = tempProp;
@@ -335,14 +347,6 @@ namespace GhSA.Util.Gsa
         /// <returns></returns>
         public static Tuple<DataTree<GsaMember1dGoo>, DataTree<GsaMember2dGoo>> GsaGetMemb(Model model, string memList = "all", bool propGraft = true)
         {
-            // Create empty GsaAPI Element to work on:
-            Member mem = new Member();
-            Node node = new Node();
-
-            // Create GhSA elements to work on 
-            GsaMember1d mem1d = new GsaMember1d();
-            GsaMember2d mem2d = new GsaMember2d();
-
             // Create dictionaries to read list of elements and nodes:
             IReadOnlyDictionary<int, Member> mDict;
             mDict = model.Members(memList);
@@ -356,19 +360,7 @@ namespace GhSA.Util.Gsa
             // Create lists for Rhino lines and meshes
             DataTree<GsaMember1dGoo> mem1ds = new DataTree<GsaMember1dGoo>();
             DataTree<GsaMember2dGoo> mem2ds = new DataTree<GsaMember2dGoo>();
-
-            List<List<Point3d>> void_topo = new List<List<Point3d>>(); //list of lists of void points /member2d
-            List<List<string>> void_topoType = new List<List<string>>(); ////list of polyline curve type (arch or line) for void /member2d
-            List<List<Point3d>> incLines_topo = new List<List<Point3d>>(); //list of lists of line inclusion topology points /member2d
-            List<List<string>> inclLines_topoType = new List<List<string>>(); ////list of polyline curve type (arch or line) for inclusion /member2d
-            List<Point3d> incl_pts = new List<Point3d>(); //list of points for inclusion /member2d
-
-            PolyCurve m_crv = new PolyCurve(); //Polyline for visualisation /member1d/member2d
-            List<Point3d> topopts = new List<Point3d>(); // list of topology points for visualisation /member1d/member2d
-            List<string> topoType = new List<string>(); //list of polyline curve type (arch or line) for member1d/2d
-
-            GH_Path path = new GH_Path();
-
+            
             if (!propGraft)
             {
                 mem1ds.EnsurePath(0);
@@ -387,7 +379,7 @@ namespace GhSA.Util.Gsa
             // Loop through all members in Member dictionary 
             foreach (var key in mDict.Keys)
             {
-                if (mDict.TryGetValue(key, out mem))
+                if (mDict.TryGetValue(key, out Member mem))
                 {
                     int prop = 0;
                     if (propGraft) 
@@ -397,81 +389,95 @@ namespace GhSA.Util.Gsa
                     string toporg = mem.Topology; //original topology list
 
                     Tuple<Tuple<List<int>, List<string>>, Tuple<List<List<int>>, List<List<string>>>,
-                        Tuple<List<List<int>>, List<List<string>>>, List<int>> topologyTuple = topology_detangler(toporg);
+                        Tuple<List<List<int>>, List<List<string>>>, List<int>> topologyTuple = Topology_detangler(toporg);
                     Tuple<List<int>, List<string>> topoTuple = topologyTuple.Item1;
                     Tuple<List<List<int>>, List<List<string>>> voidTuple = topologyTuple.Item2;
                     Tuple<List<List<int>>, List<List<string>>> lineTuple = topologyTuple.Item3;
 
                     List<int> topo_int = topoTuple.Item1;
-                    topoType = topoTuple.Item2;
+                    List<string> topoType = topoTuple.Item2; //list of polyline curve type (arch or line) for member1d/2d
 
                     List<List<int>> void_topo_int = voidTuple.Item1;
-                    void_topoType = voidTuple.Item2;
+                    List<List<string>> void_topoType = voidTuple.Item2; //list of polyline curve type (arch or line) for void /member2d
 
                     List<List<int>> incLines_topo_int = lineTuple.Item1;
-                    inclLines_topoType = lineTuple.Item2;
+                    List<List<string>> inclLines_topoType = lineTuple.Item2; //list of polyline curve type (arch or line) for inclusion /member2d
 
                     List<int> inclpts = topologyTuple.Item4;
 
                     // replace topology integers with actual points
+                    List<Point3d> topopts = new List<Point3d>(); // list of topology points for visualisation /member1d/member2d
                     for (int i = 0; i < topo_int.Count; i++)
                     {
-                        if (nDict.TryGetValue(topo_int[i], out node))
+                        if (nDict.TryGetValue(topo_int[i], out Node node))
                         {
                             var p = node.Position;
                             topopts.Add(new Point3d(p.X, p.Y, p.Z));
                         }
+                        node.Dispose();
                     }
 
+                    //list of lists of void points /member2d
+                    List<List<Point3d>> void_topo = new List<List<Point3d>>(); 
                     for (int i = 0; i < void_topo_int.Count; i++)
                     {
                         void_topo.Add(new List<Point3d>());
                         for (int j = 0; j < void_topo_int[i].Count; j++)
                         {
-                            if (nDict.TryGetValue(void_topo_int[i][j], out node))
+                            if (nDict.TryGetValue(void_topo_int[i][j], out Node node))
                             {
                                 var p = node.Position;
                                 void_topo[i].Add(new Point3d(p.X, p.Y, p.Z));
                             }
+                            node.Dispose();
                         }
                     }
 
+                    //list of lists of line inclusion topology points /member2d
+                    List<List<Point3d>> incLines_topo = new List<List<Point3d>>(); 
                     for (int i = 0; i < incLines_topo_int.Count; i++)
                     {
                         incLines_topo.Add(new List<Point3d>());
                         for (int j = 0; j < incLines_topo_int[i].Count; j++)
                         {
-                            if (nDict.TryGetValue(incLines_topo_int[i][j], out node))
+                            if (nDict.TryGetValue(incLines_topo_int[i][j], out Node node))
                             {
                                 var p = node.Position;
                                 incLines_topo[i].Add(new Point3d(p.X, p.Y, p.Z));
                             }
+                            node.Dispose();
                         }
                     }
 
+                    //list of points for inclusion /member2d
+                    List<Point3d> incl_pts = new List<Point3d>(); 
                     for (int i = 0; i < inclpts.Count; i++)
                     {
-                        if (nDict.TryGetValue(inclpts[i], out node))
+                        if (nDict.TryGetValue(inclpts[i], out Node node))
                         {
                             var p = node.Position;
                             incl_pts.Add(new Point3d(p.X, p.Y, p.Z));
                         }
+                        node.Dispose();
                     }
 
                     if (mem.Type == MemberType.GENERIC_1D | mem.Type == MemberType.BEAM | mem.Type == MemberType.CANTILEVER |
                         mem.Type == MemberType.COLUMN | mem.Type == MemberType.COMPOS | mem.Type == MemberType.PILE)
                     {
-                        mem1d = new GsaMember1d(topopts, topoType);
-                        mem1d.ID = key;
-                        mem1d.member = mem;
-                        GsaSection section = new GsaSection();
-                        section.ID = mem.Property;
-                        Section tempSection = new Section();
-                        if (sDict.TryGetValue(section.ID, out tempSection))
+                        GsaMember1d mem1d = new GsaMember1d(topopts, topoType)
+                        {
+                            ID = key,
+                            member = mem
+                        };
+                        GsaSection section = new GsaSection
+                        {
+                            ID = mem.Property
+                        };
+                        if (sDict.TryGetValue(section.ID, out Section tempSection))
                             section.Section = tempSection;
                         mem1d.Section = section;
                         mem1ds.EnsurePath(prop);
-                        path = new GH_Path(prop);
+                        GH_Path path = new GH_Path(prop);
                         if (propGraft)
                             mem1ds.Add(new GsaMember1dGoo(mem1d.Duplicate()), path);
                         else
@@ -479,17 +485,20 @@ namespace GhSA.Util.Gsa
                     }
                     else
                     {
-                        mem2d = new GsaMember2d(topopts, topoType, void_topo, void_topoType, incLines_topo, inclLines_topoType, incl_pts);
-                        mem2d.member = mem;
-                        mem2d.ID = key;
-                        GsaProp2d prop2d = new GsaProp2d();
-                        prop2d.ID = mem.Property;
-                        Prop2D tempProp = new Prop2D();
-                        if (pDict.TryGetValue(prop2d.ID, out tempProp))
+                        GsaMember2d mem2d = new GsaMember2d(topopts, topoType, void_topo, void_topoType, incLines_topo, inclLines_topoType, incl_pts)
+                        {
+                            member = mem,
+                            ID = key
+                        };
+                        GsaProp2d prop2d = new GsaProp2d
+                        {
+                            ID = mem.Property
+                        };
+                        if (pDict.TryGetValue(prop2d.ID, out Prop2D tempProp))
                             prop2d.Prop2d = tempProp;
                         mem2d.Property = prop2d;
                         mem2ds.EnsurePath(prop);
-                        path = new GH_Path(prop);
+                        GH_Path path = new GH_Path(prop);
                         if (propGraft)
                             mem2ds.Add(new GsaMember2dGoo(mem2d.Duplicate()), path);
                         else
@@ -539,9 +548,8 @@ namespace GhSA.Util.Gsa
         /// <param name="gsa_topology"></param>
         /// <returns></returns>
         public static Tuple<Tuple<List<int>, List<string>>, Tuple<List<List<int>>, List<List<string>>>,
-            Tuple<List<List<int>>, List<List<string>>>, List<int>> topology_detangler(string gsa_topology)
+            Tuple<List<List<int>>, List<List<string>>>, List<int>> Topology_detangler(string gsa_topology)
         {
-            List<string> top = new List<string>();
             List<string> voids = new List<string>();
             List<string> lines = new List<string>();
             List<string> points = new List<string>();
@@ -551,7 +559,6 @@ namespace GhSA.Util.Gsa
 
             String[] strlist = gsa_topology.Split(spearator);
             List<String> topos = new List<String>(strlist);
-            List<String> topolist = new List<String>();
 
             // first split out anything in brackets and put them into lists for V, L or P
             // also remove those lines so that they dont appear twice in the end
@@ -659,13 +666,13 @@ namespace GhSA.Util.Gsa
                 if (topolos[i] == null)
                 {
                     topolos.RemoveAt(i);
-                    i = i - 1;
+                    i -= 1;
                     continue;
                 }
                 if (topolos[i].Length < 1)
                 {
                     topolos.RemoveAt(i);
-                    i = i - 1;
+                    i -= 1;
                     continue;
                 }
             }
@@ -678,13 +685,13 @@ namespace GhSA.Util.Gsa
                     pts.Add(topolos[i + 1]);
                     topolos.RemoveAt(i + 1);
                     topolos.RemoveAt(i);
-                    i = i - 1;
+                    i -= 1;
                     continue;
                 }
                 if (topolos[i].Length < 1)
                 {
                     topolos.RemoveAt(i);
-                    i = i - 1;
+                    i -= 1;
                     continue;
                 }
             }

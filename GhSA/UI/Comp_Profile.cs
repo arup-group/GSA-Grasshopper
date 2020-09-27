@@ -30,7 +30,7 @@ namespace GhSA.UI
             dropdownlists = dropdownContents;
             spacerTxts = spacerTexts;
             action = clickHandle;
-            initialTxts = (initialdescriptions == null) ? null : initialdescriptions; // if no description is inputted then null initialTxt
+            initialTxts = initialdescriptions ?? null; // if no description is inputted then null initialTxt
             if (selections == null)
             {
                 List<string> tempDisplaytxt = new List<string>();
@@ -46,23 +46,23 @@ namespace GhSA.UI
             isGeneral = general;
             isB2B = b2B;
         }
-        
-        List<string> spacerTxts; // list of descriptive texts above each dropdown
+
+        readonly List<string> spacerTxts; // list of descriptive texts above each dropdown
         List<RectangleF> SpacerBounds;
 
         List<RectangleF> BorderBound;// area where the selected item is displayed
         List<RectangleF> TextBound;// lefternmost part of the selected/displayed item
         List<RectangleF> ButtonBound;// right side bit where we place the button to unfold the dropdown list
 
-        List<string> displayTexts; // the selected item text
-        List<string> initialTxts; // initial text to be able to display a hint
+        readonly List<string> displayTexts; // the selected item text
+        readonly List<string> initialTxts; // initial text to be able to display a hint
 
-        List<List<string>> dropdownlists; // content lists of items for dropdown
+        readonly List<List<string>> dropdownlists; // content lists of items for dropdown
 
         List<List<RectangleF>> dropdownBounds;// list of bounds for each item in dropdown list
         List<RectangleF> dropdownBound;// surrounding bound for the entire dropdown list
 
-        Action<int, int, bool, bool, bool, bool, bool> action; //function sending back the selection to component (i = dropdowncontentlist, j = selected item in that list)
+        readonly Action<int, int, bool, bool, bool, bool, bool> action; //function sending back the selection to component (i = dropdowncontentlist, j = selected item in that list)
         
         List<bool> unfolded; // list of bools for unfolded or closed dropdown
 
@@ -87,7 +87,7 @@ namespace GhSA.UI
         bool isGeneral;
         bool isB2B;
 
-        float minWidth
+        float MinWidth
         {
             get
             {
@@ -106,7 +106,7 @@ namespace GhSA.UI
                 float num = Math.Max(Math.Max(sp, di), 90);
                 return num;
             }
-            set { minWidth = value; }
+            set { MinWidth = value; }
         }
         protected override void Layout()
         {
@@ -363,12 +363,13 @@ namespace GhSA.UI
             if (channel == GH_CanvasChannel.Objects)
             {
                 Pen spacer = new Pen(UI.Colour.SpacerColour);
-                Pen pen = new Pen(UI.Colour.GsaDarkBlue);
-                pen.Width = 0.5f;
-                int i = 0;
+                Pen pen = new Pen(UI.Colour.GsaDarkBlue)
+                {
+                    Width = 0.5f
+                };
                 Font font = new Font(GH_FontServer.FamilyStandard, 7);
                 Brush fontColour = UI.Colour.AnnotationTextDark;
-                for (i = 0; i < dropdownlists.Count; i++)
+                for (int i = 0; i < dropdownlists.Count; i++)
                 {
 
                     //Draw divider line
@@ -618,7 +619,7 @@ namespace GhSA.UI
         protected void FixLayout()
         {
             float width = this.Bounds.Width;
-            float num = Math.Max(width, minWidth);
+            float num = Math.Max(width, MinWidth);
             float num2 = 0f;
             if (num > this.Bounds.Width)
             {

@@ -350,19 +350,19 @@ namespace GhSA.Parameters
                 if (incl_Lines.Count > 0)
                     incl = incl + incl_Lines.Count + " inclusion line";
                 if (incl_Lines.Count > 1)
-                    incl = incl + "s";
+                    incl += "s";
             }
             
             if (incl_Lines != null & incl_pts != null)
                 if (incl_Lines.Count > 0 & incl_pts.Count > 0)
-                    incl = incl + " and ";
+                    incl += " and ";
             
             if (incl_pts != null)
             {
                 if (incl_pts.Count > 0)
                     incl = incl + incl_pts.Count + " inclusion point";
                 if (incl_pts.Count > 1)
-                    incl = incl + "s";
+                    incl += "s";
             }
 
             return typeTxt + incl;

@@ -292,7 +292,7 @@ namespace GhSA.Parameters
                 if (Value == null) { return BoundingBox.Empty; }
                 if (Value.point == null) { return BoundingBox.Empty; }
                 Point3d pt = Value.point;
-                pt.Z = pt.Z + 0.001;
+                pt.Z += 0.001;
                 Line ln = new Line(Value.point, pt);
                 LineCurve crv = new LineCurve(ln);
                 return crv.GetBoundingBox(false); 
@@ -303,7 +303,7 @@ namespace GhSA.Parameters
             if (Value == null) { return BoundingBox.Empty; }
             if (Value.point == null) { return BoundingBox.Empty; }
             Point3d pt = Value.point;
-            pt.Z = pt.Z + 0.001;
+            pt.Z += 0.001;
             Line ln = new Line(Value.point, pt);
             LineCurve crv = new LineCurve(ln);
             return crv.GetBoundingBox(xform); //BoundingBox.Empty; //Value.point.GetBoundingBox(xform);

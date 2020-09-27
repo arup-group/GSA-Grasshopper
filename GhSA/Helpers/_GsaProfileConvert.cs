@@ -138,13 +138,13 @@ namespace GhSA.Util.Gsa
                                 conversionFactor = toMeters * 1000 / (12 * 25.4);
                                 break;
                         }
-                        gsaProfile.d = gsaProfile.d * conversionFactor;
-                        gsaProfile.b1 = gsaProfile.b1 * conversionFactor;
-                        gsaProfile.b2 = gsaProfile.b2 * conversionFactor;
-                        gsaProfile.tf1 = gsaProfile.tf1 * conversionFactor;
-                        gsaProfile.tf2 = gsaProfile.tf2 * conversionFactor;
-                        gsaProfile.tw1 = gsaProfile.tw1 * conversionFactor;
-                        gsaProfile.tw2 = gsaProfile.tw2 * conversionFactor;
+                        gsaProfile.d *= conversionFactor;
+                        gsaProfile.b1 *= conversionFactor;
+                        gsaProfile.b2 *= conversionFactor;
+                        gsaProfile.tf1 *= conversionFactor;
+                        gsaProfile.tf2 *= conversionFactor;
+                        gsaProfile.tw1 *= conversionFactor;
+                        gsaProfile.tw2 *= conversionFactor;
                     }
                         
                     switch (Unit.Length_Section)
@@ -332,7 +332,7 @@ namespace GhSA.Util.Gsa
                         else
                             profile += " M";
 
-                        profile = profile + ("("
+                        profile += ("("
                                     + (point.X + ("|"
                                     + (point.Y + ")"))));
                         iPoint++;
@@ -349,7 +349,7 @@ namespace GhSA.Util.Gsa
                                 else
                                     profile += " M";
 
-                                profile = profile + ("("
+                                profile += ("("
                                             + (point.X + ("|"
                                             + (point.Y + ")"))));
                                 iPoint++;

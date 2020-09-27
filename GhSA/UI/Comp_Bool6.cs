@@ -36,7 +36,7 @@ namespace GhSA.UI
             SpacerTxt = spacerText;
         }
 
-        private Action<bool, bool, bool, bool, bool, bool> update;
+        private readonly Action<bool, bool, bool, bool, bool, bool> update;
 
         #region Custom layout logic
         // restraints set by component
@@ -49,7 +49,7 @@ namespace GhSA.UI
 
         // text boxes bounds for pre-set restraints
         RectangleF SpacerBounds;
-        string SpacerTxt;
+        readonly string SpacerTxt;
 
         // annotation text bounds
         RectangleF xTxtBounds;
@@ -67,7 +67,7 @@ namespace GhSA.UI
         RectangleF yyBounds;
         RectangleF zzBounds;
 
-        float minWidth
+        float MinWidth
         {
             get
             {
@@ -75,7 +75,7 @@ namespace GhSA.UI
             }
             set
             {
-                minWidth = value;
+                MinWidth = value;
             }
         }
 
@@ -94,7 +94,6 @@ namespace GhSA.UI
             if (SpacerTxt != "")
             {
                 h0 = 10;
-                int txtwidth = GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small);
                 SpacerBounds = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
             }
 
@@ -123,7 +122,7 @@ namespace GhSA.UI
         protected void FixLayout()
         {
             float width = this.Bounds.Width;
-            float num = Math.Max(width, minWidth);
+            float num = Math.Max(width, MinWidth);
             float num2 = 0f;
             if (num > this.Bounds.Width)
             {
@@ -220,8 +219,6 @@ namespace GhSA.UI
                     Brush myBrush = new SolidBrush(myColour);
 
                     //Text boxes
-                    Brush activeTextBrush = Brushes.White;
-                    Brush passiveTextBrush = myBrush;
                     Brush activeFillBrush = myBrush;
                     Brush passiveFillBrush = Brushes.LightGray;
                     Color borderColour = myColour;
