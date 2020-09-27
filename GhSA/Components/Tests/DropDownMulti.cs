@@ -81,39 +81,39 @@ namespace GhSA.Components
         List<string> selections;
 
         // first dropdown list
-        List<string> dropdownlist = new List<string>(new string[]
+        readonly List<string> dropdownlist = new List<string>(new string[]
         {
             "Concrete", "Steel"
         });
 
         // second dropdown list - we set initial value here (or leave blank) and change it  
         // later depending on selection from first dropdown list to one for the sub-lists
-        List<string> dropdownitems = new List<string>(new string[]
+        readonly List<string> dropdownitems = new List<string>(new string[]
         {
             "Select material first"
         });
 
         // first sublist for second dropdown list
-        List<string> dropdownitems1 = new List<string>(new string[]
+        readonly List<string> dropdownitems1 = new List<string>(new string[]
         {
             "C12/15", "C16/20", "C20/25", "C25/30", "C30/37", "C35/45", "C40/50", 
             "C45/55", "C50/60", "C55/67", "C60/75", "C70/85", "C80/95", "C90/105"
         });
-        
+
         // second sublist for second dropdown list
-        List<string> dropdownitems2 = new List<string>(new string[]
+        readonly List<string> dropdownitems2 = new List<string>(new string[]
         {
             "S235", "S275", "S355", "S420", "S460"
         });
-        
+
         // list of spacers to inform user the content of dropdown
-        List<string> dropdownspacer = new List<string>(new string[]
+        readonly List<string> dropdownspacer = new List<string>(new string[]
         {
             "Material", "Grade",
         });
-        
+
         // initial description to be displayed before user selection
-        List<string> dropdowndescription = new List<string>(new string[]
+        readonly List<string> dropdowndescription = new List<string>(new string[]
         {
             "Select material", "Select grade",
         });

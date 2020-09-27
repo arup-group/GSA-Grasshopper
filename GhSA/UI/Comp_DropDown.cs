@@ -31,17 +31,17 @@ namespace GhSA.UI
         }
 
         string displayText; // the selected item text
-        List<string> dropdownlist;//list of elements for dropdown
+        readonly List<string> dropdownlist;//list of elements for dropdown
         RectangleF BorderBound;// area where the selected item is displayed
         RectangleF TextBound;// leftern-most part of the selected/displayed item
         RectangleF ButtonBound;// right side bit where we place the button to unfold the dropdown list
         List<RectangleF> dropdownBounds;// list of bounds for each item in dropdown list
         RectangleF dropdownBound;// surrounding bound for the entire dropdown list
         bool unfolded;
-        Action<string> action;
-        string initialTxt;
+        readonly Action<string> action;
+        readonly string initialTxt;
         RectangleF SpacerBounds;
-        string SpacerTxt;
+        readonly string SpacerTxt;
 
         float minWidth
         {

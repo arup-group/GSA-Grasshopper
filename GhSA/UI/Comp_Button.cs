@@ -18,13 +18,13 @@ namespace GhSA.UI
     public class ButtonComponentUI : GH_ComponentAttributes
     {
         public ButtonComponentUI(GH_Component owner, string displayText, Action clickHandle, string spacerText = "") : base(owner) { buttonText = displayText; SpacerTxt = spacerText; action = clickHandle; }
-        
-        string buttonText; // text to be displayed
+
+        readonly string buttonText; // text to be displayed
         System.Drawing.RectangleF ButtonBounds; // area for button to be displayed
-        Action action;
+        readonly Action action;
 
         RectangleF SpacerBounds; // spacer between standard component and button
-        string SpacerTxt; // text to be displayed on spacer
+        readonly string SpacerTxt; // text to be displayed on spacer
 
         float minWidth {
             get 

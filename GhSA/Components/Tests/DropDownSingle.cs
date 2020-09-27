@@ -70,7 +70,7 @@ namespace GhSA.Components
         #endregion
 
         #region Input and output
-        List<string> dropdownitems = new List<string>(new string[]
+        readonly List<string> dropdownitems = new List<string>(new string[]
         {
             "C20/25", "C30/37", "C40/50"
         });

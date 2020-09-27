@@ -37,8 +37,10 @@ namespace GhSA.UI.ButtonsUI
             else
             {
                 graphics.FillRectangle(passiveFill, center.X - size / 2, center.Y - size / 2, size, size);
-                Pen pen = new Pen(passiveEdge);
-                pen.Width = size / 8;
+                Pen pen = new Pen(passiveEdge)
+                {
+                    Width = size / 8
+                };
                 graphics.DrawRectangle(pen, center.X - size / 2, center.Y - size / 2, size, size);
             }
 
@@ -54,8 +56,10 @@ namespace GhSA.UI.ButtonsUI
     {
         public static void DrawDropDownButton(Graphics graphics, PointF center, Color colour, int rectanglesize)
         {
-            Pen pen = new Pen(new SolidBrush(colour));
-            pen.Width = rectanglesize / 8;
+            Pen pen = new Pen(new SolidBrush(colour))
+            {
+                Width = rectanglesize / 8
+            };
 
             graphics.DrawLines(
                 pen, new PointF[]

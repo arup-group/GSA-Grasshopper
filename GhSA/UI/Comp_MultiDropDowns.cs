@@ -37,23 +37,23 @@ namespace GhSA.UI
             else
                 displayTexts = selections;
         }
-        
-        List<string> spacerTxts; // list of descriptive texts above each dropdown
+
+        readonly List<string> spacerTxts; // list of descriptive texts above each dropdown
         List<RectangleF> SpacerBounds;
 
         List<RectangleF> BorderBound;// area where the selected item is displayed
         List<RectangleF> TextBound;// lefternmost part of the selected/displayed item
         List<RectangleF> ButtonBound;// right side bit where we place the button to unfold the dropdown list
 
-        List<string> displayTexts; // the selected item text
-        List<string> initialTxts; // initial text to be able to display a hint
+        readonly List<string> displayTexts; // the selected item text
+        readonly List<string> initialTxts; // initial text to be able to display a hint
 
-        List<List<string>> dropdownlists; // content lists of items for dropdown
+        readonly List<List<string>> dropdownlists; // content lists of items for dropdown
 
         List<List<RectangleF>> dropdownBounds;// list of bounds for each item in dropdown list
         List<RectangleF> dropdownBound;// surrounding bound for the entire dropdown list
 
-        Action<int, int> action; //function sending back the selection to component (i = dropdowncontentlist, j = selected item in that list)
+        readonly Action<int, int> action; //function sending back the selection to component (i = dropdowncontentlist, j = selected item in that list)
         
         List<bool> unfolded; // list of bools for unfolded or closed dropdown
         

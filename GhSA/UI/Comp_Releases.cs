@@ -45,8 +45,9 @@ namespace GhSA.UI
             SpacerTxt1 = spacerText1;
             SpacerTxt2 = spacerText2;
         }
+
         // function that sends back the user input to the component
-        Action<bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool> update;
+        readonly Action<bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool> update;
 
         #region Custom layout logic
         // restraints set by component
@@ -67,8 +68,8 @@ namespace GhSA.UI
         // text boxes bounds for pre-set restraints
         RectangleF SpacerBounds1;
         RectangleF SpacerBounds2;
-        string SpacerTxt1;
-        string SpacerTxt2;
+        readonly string SpacerTxt1;
+        readonly string SpacerTxt2;
 
         // annotation text bounds
         RectangleF xTxtBounds1;
@@ -98,7 +99,7 @@ namespace GhSA.UI
         RectangleF yyBounds2;
         RectangleF zzBounds2;
 
-        float minWidth
+        float MinWidth
         {
             get
             {
@@ -106,7 +107,7 @@ namespace GhSA.UI
             }
             set
             {
-                minWidth = value;
+                MinWidth = value;
             }
         }
 
@@ -125,7 +126,6 @@ namespace GhSA.UI
             if (SpacerTxt1 != "")
             {
                 h0 = 10;
-                int txtwidth = GH_FontServer.StringWidth(SpacerTxt1, GH_FontServer.Small);
                 SpacerBounds1 = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
             }
 
@@ -154,7 +154,6 @@ namespace GhSA.UI
             if (SpacerTxt2 != "")
             {
                 h0 = 10;
-                int txtwidth = GH_FontServer.StringWidth(SpacerTxt2, GH_FontServer.Small);
                 SpacerBounds2 = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
             }
 
@@ -180,7 +179,7 @@ namespace GhSA.UI
         protected void FixLayout()
         {
             float width = this.Bounds.Width;
-            float num = Math.Max(width, minWidth);
+            float num = Math.Max(width, MinWidth);
             float num2 = 0f;
             if (num > this.Bounds.Width)
             {
@@ -322,14 +321,11 @@ namespace GhSA.UI
             {
                 case GH_CanvasChannel.Objects:
                     //We need to draw everything outselves.
-                    GH_Component comp = Owner as GH_Component;
 
                     Color myColour = UI.Colour.GsaDarkBlue;
                     Brush myBrush = new SolidBrush(myColour);
 
                     //Text boxes
-                    Brush activeTextBrush = Brushes.White;
-                    Brush passiveTextBrush = myBrush;
                     Brush activeFillBrush = myBrush;
                     Brush passiveFillBrush = Brushes.LightGray;
                     Color borderColour = myColour;
