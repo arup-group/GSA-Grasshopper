@@ -42,11 +42,15 @@ namespace GhSA.Components
         public override void CreateAttributes()
         {
             if (first)
+            {
                 selecteditem = _mode.ToString();
-            m_attributes = new UI.DropDownComponentUI(this, setSelected, dropdownitems, selecteditem, "Element Type");
+                first = false;
+            }
+                
+            m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Element Type");
         }
 
-        public void setSelected(string selected)
+        public void SetSelected(string selected)
         {
             selecteditem = selected;
             switch (selected)
@@ -74,7 +78,7 @@ namespace GhSA.Components
         #endregion
 
         #region Input and output
-        List<string> dropdownitems = new List<string>(new string[]
+        readonly List<string> dropdownitems = new List<string>(new string[]
         {
             "Plane Stress",
             "Fabric",

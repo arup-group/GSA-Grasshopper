@@ -39,10 +39,10 @@ namespace GhSA.Components
         //This region overrides the typical component layout
         public override void CreateAttributes()
         {
-            m_attributes = new UI.ReleasesComponentUI(this, setReleases, "Start Release", "End Release", x1, y1, z1, xx1, yy1, zz1, x2, y2, z2, xx2, yy2, zz2);
+            m_attributes = new UI.ReleasesComponentUI(this, SetReleases, "Start Release", "End Release", x1, y1, z1, xx1, yy1, zz1, x2, y2, z2, xx2, yy2, zz2);
         }
 
-        public void setReleases(bool resx1, bool resy1, bool resz1, bool resxx1, bool resyy1, bool reszz1,
+        public void SetReleases(bool resx1, bool resy1, bool resz1, bool resxx1, bool resyy1, bool reszz1,
             bool resx2, bool resy2, bool resz2, bool resxx2, bool resyy2, bool reszz2)
         {
             x1 = resx1;
@@ -140,24 +140,28 @@ namespace GhSA.Components
                 if (GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both))
                 {
                     GsaMember1d mem = new GsaMember1d(crv);
-                    
-                    GsaBool6 rel1 = new GsaBool6();
-                    rel1.X = x1;
-                    rel1.Y = y1;
-                    rel1.Z = z1;
-                    rel1.XX = xx1;
-                    rel1.YY = yy1;
-                    rel1.ZZ = zz1;
+
+                    GsaBool6 rel1 = new GsaBool6
+                    {
+                        X = x1,
+                        Y = y1,
+                        Z = z1,
+                        XX = xx1,
+                        YY = yy1,
+                        ZZ = zz1
+                    };
 
                     mem.ReleaseStart = rel1;
 
-                    GsaBool6 rel2 = new GsaBool6();
-                    rel2.X = x2;
-                    rel2.Y = y2;
-                    rel2.Z = z2;
-                    rel2.XX = xx2;
-                    rel2.YY = yy2;
-                    rel2.ZZ = zz2;
+                    GsaBool6 rel2 = new GsaBool6
+                    {
+                        X = x2,
+                        Y = y2,
+                        Z = z2,
+                        XX = xx2,
+                        YY = yy2,
+                        ZZ = zz2
+                    };
                     mem.ReleaseEnd = rel2;
 
                     // 1 section
@@ -167,8 +171,7 @@ namespace GhSA.Components
                         mem.Section = section;
                     else if (DA.GetData(1, ref gh_sec_idd))
                     {
-                        int idd = 0;
-                        if (GH_Convert.ToInt32(gh_sec_idd, out idd, GH_Conversion.Both))
+                        if (GH_Convert.ToInt32(gh_sec_idd, out int idd, GH_Conversion.Both))
                             mem.Section.ID = idd;
                     }
                     else

@@ -12,6 +12,8 @@ namespace GhSA.Util
     /// </summary>
     public static class Unit
     {
+        
+        
         private static bool setLength_Large = false;
         public static string Length_Large
         {

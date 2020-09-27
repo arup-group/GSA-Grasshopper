@@ -45,14 +45,14 @@ namespace GhSA.Components
         {
             if (first)
             {
-                setSelected(loadlistid, loadselectid, isTapered, isHollow, isElliptical, isGeneral, isB2B);
+                SetSelected(loadlistid, loadselectid, isTapered, isHollow, isElliptical, isGeneral, isB2B);
                 first = false;
             }
 
-            m_attributes = new UI.ProfileComponentUI(this, setSelected, dropdowncontents, selections, dropdownspacer, null, isTapered, isHollow, isElliptical, isGeneral, isB2B);
+            m_attributes = new UI.ProfileComponentUI(this, SetSelected, dropdowncontents, selections, dropdownspacer, null, isTapered, isHollow, isElliptical, isGeneral, isB2B);
         }
 
-        public void setSelected(int dropdownlistidd, int selectedidd, bool taper, bool hollow, bool elliptical, bool general, bool b2b)
+        public void SetSelected(int dropdownlistidd, int selectedidd, bool taper, bool hollow, bool elliptical, bool general, bool b2b)
         {
             loadlistid = dropdownlistidd; 
             loadselectid = selectedidd;
@@ -191,46 +191,44 @@ namespace GhSA.Components
         int loadselectid = -1; // for when component is saved and re-laoded
 
         // first dropdown list
-        List<string> mainlist = new List<string>(new string[]
+        readonly List<string> mainlist = new List<string>(new string[]
         {
             "Catalogue", "Standard", "Geometric"
         });
 
         // second dropdown list - we set initial value here (or leave blank) and change it  
         // later depending on selection from first dropdown list to one for the sub-lists
-        List<string> standardlist = new List<string>(new string[]
+        readonly List<string> standardlist = new List<string>(new string[]
         {
             "Rectangle", "Circle", "I section", "Tee", "Channel", "Angle"
         });
 
         // first sublist for second dropdown list
-        List<string> cataloguelist = new List<string>(new string[]
+        readonly List<string> cataloguelist = new List<string>(new string[]
         {
             "Europrofile", "To", "be", "implemented"
         });
 
         // second sublist for second dropdown list
-        List<string> typelist = new List<string>(new string[]
+        readonly List<string> typelist = new List<string>(new string[]
         {
             "EP IPE Beams", "EP HE Beams"
         });
-
-        List<string> sectionlist = new List<string>(new string[]
+        readonly List<string> sectionlist = new List<string>(new string[]
         {
             "HE100.AA", "HE100.A", "HE100.B", "HE100.M"
         });
 
         // list of spacers to inform user the content of dropdown
-        List<string> cataloguespacer = new List<string>(new string[]
+        readonly List<string> cataloguespacer = new List<string>(new string[]
         {
             "Method", "Catalogue", "Type", "Profile"
         });
-
-        List<string> standardspacer = new List<string>(new string[]
+        readonly List<string> standardspacer = new List<string>(new string[]
         {
             "Method", "Shape"
         });
-        List<string> geometricspacer = new List<string>(new string[]
+        readonly List<string> geometricspacer = new List<string>(new string[]
         {
             "Method"
         });
@@ -288,16 +286,14 @@ namespace GhSA.Components
                         Curve[] edges = Curve.JoinCurves(edgeSegments);
 
                         // find the best fit plane
-                        Plane plane = new Plane();
-                        Polyline temp_crv;
                         List<Point3d> ctrl_pts = new List<Point3d>();
-                        if (edges[0].TryGetPolyline(out temp_crv))
-                            ctrl_pts = temp_crv.ToList();
+                        if (edges[0].TryGetPolyline(out Polyline tempCrv))
+                            ctrl_pts = tempCrv.ToList();
                         else
                         {
                             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Cannot convert edge to Polyline");
                         }    
-                        Plane.FitPlaneToPoints(ctrl_pts, out plane);
+                        Plane.FitPlaneToPoints(ctrl_pts, out Plane plane);
                         Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.ChangeBasis(Plane.WorldXY, plane);
 
                         profile.geoType = GsaProfile.geoTypes.Perim;
@@ -322,9 +318,9 @@ namespace GhSA.Components
                                     for (int j = 0; j < edges.Length; j++)
                                         edges[j] = Curve.ProjectToPlane(edges[j], plane);
                                 }
-                                if (edges[i].TryGetPolyline(out temp_crv))
+                                if (edges[i].TryGetPolyline(out tempCrv))
                                 {
-                                    ctrl_pts = temp_crv.ToList();
+                                    ctrl_pts = tempCrv.ToList();
                                     pts = new List<Point2d>();
                                     foreach (Point3d pt3d in ctrl_pts)
                                     {
@@ -509,44 +505,37 @@ namespace GhSA.Components
 
                 if (gh_d != null)
                 {
-                    double d = 0;
-                    if (GH_Convert.ToDouble(gh_d, out d, GH_Conversion.Both))
+                    if (GH_Convert.ToDouble(gh_d, out double d, GH_Conversion.Both))
                         profile.d = d;
                 }
                 if (gh_b1 != null)
                 {
-                    double b1 = 0;
-                    if (GH_Convert.ToDouble(gh_b1, out b1, GH_Conversion.Both))
+                    if (GH_Convert.ToDouble(gh_b1, out double b1, GH_Conversion.Both))
                         profile.b1 = b1;
                 }
                 if (gh_b2 != null)
                 {
-                    double b2 = 0;
-                    if (GH_Convert.ToDouble(gh_b2, out b2, GH_Conversion.Both))
+                    if (GH_Convert.ToDouble(gh_b2, out double b2, GH_Conversion.Both))
                         profile.b2 = b2;
                 }
                 if (gh_tw1 != null)
                 {
-                    double tw1 = 0;
-                    if (GH_Convert.ToDouble(gh_tw1, out tw1, GH_Conversion.Both))
+                    if (GH_Convert.ToDouble(gh_tw1, out double tw1, GH_Conversion.Both))
                         profile.tw1 = tw1;
                 }
                 if (gh_tw2 != null)
                 {
-                    double tw2 = 0;
-                    if (GH_Convert.ToDouble(gh_tw2, out tw2, GH_Conversion.Both))
+                    if (GH_Convert.ToDouble(gh_tw2, out double tw2, GH_Conversion.Both))
                         profile.tw2 = tw2;
                 }
                 if (gh_tf1 != null)
                 {
-                    double tf1 = 0;
-                    if (GH_Convert.ToDouble(gh_tf1, out tf1, GH_Conversion.Both))
+                    if (GH_Convert.ToDouble(gh_tf1, out double tf1, GH_Conversion.Both))
                         profile.tf1 = tf1;
                 }
                 if (gh_tf2 != null)
                 {
-                    double tf2 = 0;
-                    if (GH_Convert.ToDouble(gh_tf2, out tf2, GH_Conversion.Both))
+                    if (GH_Convert.ToDouble(gh_tf2, out double tf2, GH_Conversion.Both))
                         profile.tf2 = tf2;
                 }
                 profile.isB2B = isB2B;
@@ -625,7 +614,7 @@ namespace GhSA.Components
             RecordUndoEvent(myMode.ToString() + " Parameter");
 
             // set number of input parameters
-            int param = 0;
+            int param;
             if (isTapered)
                 param = 3;
             else
@@ -637,7 +626,7 @@ namespace GhSA.Components
             }
             //handle exception when we come from Geometric mode where 
             //first input paraemter is of curve type and must be deleted
-            int par2 = 0;
+            int par2;
             if (_mode == FoldMode.Geometric)
                 par2 = 0;
             else
@@ -665,7 +654,7 @@ namespace GhSA.Components
             RecordUndoEvent(myMode.ToString() + " Parameter");
 
             // set number of input parameters
-            int param = 0;
+            int param;
             if (isHollow)
             {
                 if (isElliptical)
@@ -704,7 +693,7 @@ namespace GhSA.Components
             RecordUndoEvent(myMode.ToString() + " Parameter");
 
             // set number of input parameters
-            int param = 0;
+            int param;
             if (isGeneral)
             {
                 if (isTapered)
@@ -738,7 +727,7 @@ namespace GhSA.Components
             RecordUndoEvent(myMode.ToString() + " Parameter");
 
             // set number of input parameters
-            int param = 0;
+            int param;
             if (isTapered)
                 param = 5;
             else

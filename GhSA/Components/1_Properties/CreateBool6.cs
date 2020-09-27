@@ -39,10 +39,10 @@ namespace GhSA.Components
         //This region overrides the typical component layout
         public override void CreateAttributes()
         {
-            m_attributes = new UI.Bool6ComponentUI(this, setBool, "Set 6 DOF" , x, y, z, xx, yy, zz);
+            m_attributes = new UI.Bool6ComponentUI(this, SetBool, "Set 6 DOF" , x, y, z, xx, yy, zz);
         }
 
-        public void setBool(bool resx, bool resy, bool resz, bool resxx, bool resyy, bool reszz)
+        public void SetBool(bool resx, bool resy, bool resz, bool resxx, bool resyy, bool reszz)
         {
             x = resx;
             y = resy;
@@ -133,13 +133,15 @@ namespace GhSA.Components
             GH_Boolean ghBolZZ = new GH_Boolean();
             if (DA.GetData(5, ref ghBolZZ))
                 GH_Convert.ToBoolean(ghBolZZ, out zz, GH_Conversion.Both);
-            GsaBool6 bool6 = new GsaBool6();
-            bool6.X = x;
-            bool6.Y = y;
-            bool6.Z = z;
-            bool6.XX = xx;
-            bool6.YY = yy;
-            bool6.ZZ = zz;
+            GsaBool6 bool6 = new GsaBool6
+            {
+                X = x,
+                Y = y,
+                Z = z,
+                XX = xx,
+                YY = yy,
+                ZZ = zz
+            };
             DA.SetData(0, new GsaBool6Goo(bool6.Duplicate())); // output as Goo-type for consistency. 
         }
     }
