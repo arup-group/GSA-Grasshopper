@@ -392,11 +392,13 @@ namespace GhSA.Components
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
             writer.SetInt32("Mode", (int)_mode);
+            writer.SetString("select", selecteditem);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
             _mode = (FoldMode)reader.GetInt32("Mode");
+            selecteditem = reader.GetString("select");
             this.CreateAttributes();
             return base.Read(reader);
         }

@@ -22,7 +22,10 @@ namespace GhSA.UI
     /// </summary>
     public class ProfileComponentUI : GH_ComponentAttributes
     {
-        public ProfileComponentUI(GH_Component owner, Action<int, int, bool, bool, bool, bool, bool> clickHandle, List<List<string>> dropdownContents, List<string> selections, List<string> spacerTexts = null, List<string> initialdescriptions = null) : base(owner)
+        public ProfileComponentUI(GH_Component owner, 
+            Action<int, int, bool, bool, bool, bool, bool> clickHandle, 
+            List<List<string>> dropdownContents, List<string> selections, List<string> spacerTexts = null, List<string> initialdescriptions = null,
+            bool tapered = false, bool hollow = false, bool elliptical = false, bool general = false, bool b2B = false) : base(owner)
         {
             dropdownlists = dropdownContents;
             spacerTxts = spacerTexts;
@@ -37,6 +40,11 @@ namespace GhSA.UI
             }
             else
                 displayTexts = selections;
+            isTapered = tapered;
+            isHollow = hollow;
+            isElliptical = elliptical;
+            isGeneral = general;
+            isB2B = b2B;
         }
         
         List<string> spacerTxts; // list of descriptive texts above each dropdown

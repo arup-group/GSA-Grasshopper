@@ -49,7 +49,7 @@ namespace GhSA.Components
                 first = false;
             }
 
-            m_attributes = new UI.ProfileComponentUI(this, setSelected, dropdowncontents, selections, dropdownspacer);
+            m_attributes = new UI.ProfileComponentUI(this, setSelected, dropdowncontents, selections, dropdownspacer, null, isTapered, isHollow, isElliptical, isGeneral, isB2B);
         }
 
         public void setSelected(int dropdownlistidd, int selectedidd, bool taper, bool hollow, bool elliptical, bool general, bool b2b)
@@ -187,8 +187,8 @@ namespace GhSA.Components
         List<List<string>> dropdowncontents; // list that holds all dropdown contents
         List<string> dropdownspacer; // list that holds all dropdown spacer 
         List<string> selections;
-        int loadlistid; // for when component is saved and re-laoded
-        int loadselectid; // for when component is saved and re-laoded
+        int loadlistid = -1; // for when component is saved and re-laoded
+        int loadselectid = -1; // for when component is saved and re-laoded
 
         // first dropdown list
         List<string> mainlist = new List<string>(new string[]
@@ -835,6 +835,7 @@ namespace GhSA.Components
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
+            // we need to save all the items that we want to reappear when a GH file is saved and re-opened
             writer.SetInt32("Mode", (int)_mode);
             writer.SetInt32("loadselectid", loadselectid);
             writer.SetInt32("loadlistid", loadlistid);
@@ -847,11 +848,55 @@ namespace GhSA.Components
             writer.SetBoolean("isGeneral", isGeneral);
             writer.SetBoolean("isB2B", isB2B);
 
+            // to save the dropdownlist content, spacer list and selection list 
+            // loop through the lists and save number of lists as well
+            writer.SetInt32("dropdownCount", dropdowncontents.Count);
+            for (int i = 0; i< dropdowncontents.Count; i++)
+            {
+                writer.SetInt32("dropdowncontentsCount" + i, dropdowncontents[i].Count);
+                for (int j = 0; j < dropdowncontents[i].Count; j++)
+                    writer.SetString("dropdowncontents" + i + j, dropdowncontents[i][j]);
+            }
+            // spacer list
+            writer.SetInt32("spacerCount", dropdownspacer.Count);
+            for (int i = 0; i < dropdownspacer.Count; i++)
+                writer.SetString("spacercontents" + i, dropdownspacer[i]);
+            // selection list
+            writer.SetInt32("selectionCount", selections.Count);
+            for (int i = 0; i < selections.Count; i++)
+                writer.SetString("selectioncontents" + i, selections[i]);
+
+
+
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
+            // when a GH file is opened we need to read in the data that was previously set by user
+
             _mode = (FoldMode)reader.GetInt32("Mode");
+
+            // dropdown content list
+            int dropdownCount = reader.GetInt32("dropdownCount");
+            dropdowncontents = new List<List<string>>();
+            for (int i = 0; i < dropdownCount; i++)
+            {
+                int dropdowncontentsCount = reader.GetInt32("dropdowncontentsCount" + i);
+                List<string> tempcontent = new List<string>();
+                for (int j = 0; j < dropdowncontentsCount; j++)
+                    tempcontent.Add(reader.GetString("dropdowncontents" + i + j));
+                dropdowncontents.Add(tempcontent);
+            }
+            // spacer list
+            int dropdownspacerCount = reader.GetInt32("spacerCount");
+            dropdownspacer = new List<string>();
+            for (int i = 0; i < dropdownspacerCount; i++)
+                dropdownspacer.Add(reader.GetString("spacercontents" + i));
+            // selection list
+            int selectionsCount = reader.GetInt32("selectionCount");
+            selections = new List<string>();
+            for (int i = 0; i < selectionsCount; i++)
+                selections.Add(reader.GetString("selectioncontents" + i));
 
             loadlistid = reader.GetInt32("loadlistid");
             loadselectid = reader.GetInt32("loadselectid");
@@ -866,96 +911,8 @@ namespace GhSA.Components
             isGeneral = reader.GetBoolean("isGeneral");
             isB2B = reader.GetBoolean("isB2B");
 
-            #region update dropdowncontents
-            if (!(0 > loadlistid))
-            {
-                switch (mainlist[loadlistid])
-                {
-                    case ("Catalogue"):
-                        // update inputs
-                        Mode1Clicked();
-
-                        // update dropdown lists
-                        if (dropdowncontents != null)
-                            dropdowncontents.Clear();
-                        if (dropdowncontents == null || dropdowncontents.Count == 0)
-                        {
-                            if (dropdowncontents == null)
-                                dropdowncontents = new List<List<string>>();
-                            dropdowncontents.Add(mainlist);
-                            dropdowncontents.Add(cataloguelist);
-                            dropdowncontents.Add(typelist);
-                            dropdowncontents.Add(sectionlist);
-                        }
-
-                        selections.Clear();
-                        selections.Add(cataloguelist[0]);
-                        selections.Add(typelist[0]);
-                        selections.Add(sectionlist[0]);
-
-                        break;
-                    case ("Standard"):
-                        selections.Clear();
-                        selections.Add(mainlist[1]);
-                        selections.Add(standardlist[loadselectid]);
-
-                        // update inputs
-                        switch (standardlist[loadselectid])
-                        {
-                            case "Rectangle":
-                                Mode2Clicked();
-
-                                break;
-                            case "Circle":
-                                Mode3Clicked();
-                                break;
-                            case "I section":
-                                Mode4Clicked();
-
-                                break;
-                            case "Tee":
-                                Mode5Clicked();
-                                break;
-                            case "Channel":
-                                Mode6Clicked();
-                                break;
-                            case "Angle":
-                                Mode7Clicked();
-                                break;
-                            default:
-                                selections[1] = standardlist[0];
-                                Mode2Clicked();
-                                break;
-                        }
-                        // update dropdown lists
-                        if (dropdowncontents != null)
-                            dropdowncontents.Clear();
-                        if (dropdowncontents == null || dropdowncontents.Count == 0)
-                        {
-                            dropdowncontents.Add(mainlist);
-                            dropdowncontents.Add(standardlist);
-                        }
-
-                        break;
-                    case ("Geometric"):
-                        selections.Clear();
-                        selections.Add(cataloguelist[2]);
-                        // update inputs
-                        Mode8Clicked();
-
-                        // update dropdown lists
-                        if (dropdowncontents != null)
-                            dropdowncontents.Clear();
-                        if (dropdowncontents == null || dropdowncontents.Count == 0)
-                        {
-                            dropdowncontents.Add(mainlist);
-                        }
-
-                        break;
-                }
-            }
-            #endregion
-            first = true;
+            // we need to recreate the custom UI again as this is created before this read IO is called
+            // otherwise the component will not display the selected items on the canvas
             this.CreateAttributes();
             return base.Read(reader);
         }
