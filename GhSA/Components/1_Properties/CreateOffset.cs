@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("78fe156d-6ab4-4683-96a4-2d40eb5cce8f");
         public CreateOffset()
           : base("Create Offset", "Offset", "Create GSA Offset",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat1())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat1())
         {
         }
 
@@ -79,13 +79,15 @@ namespace GhSA.Components
             GH_Number ghOffsetZ = new GH_Number();
             if (DA.GetData(3, ref ghOffsetZ))
                 GH_Convert.ToDouble(ghOffsetZ, out z, GH_Conversion.Both);
-            
-            GsaOffset offset = new GsaOffset();
-            offset.X1 = x1;
-            offset.X2 = x2;
-            offset.Y = y;
-            offset.Z = z;
-            
+
+            GsaOffset offset = new GsaOffset
+            {
+                X1 = x1,
+                X2 = x2,
+                Y = y,
+                Z = z
+            };
+
             DA.SetData(0, new GsaOffsetGoo(offset.Duplicate()));
         }
     }

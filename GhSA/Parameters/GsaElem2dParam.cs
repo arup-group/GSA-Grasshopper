@@ -79,8 +79,10 @@ namespace GhSA.Parameters
 
         public GsaElement2d Duplicate()
         {
-            GsaElement2d dup = new GsaElement2d();
-            dup.m_elements = m_elements; //add clone or duplicate if available
+            GsaElement2d dup = new GsaElement2d
+            {
+                m_elements = m_elements //add clone or duplicate if available
+            };
             if (m_mesh != null)
             {
                 dup.m_mesh = (Mesh)m_mesh.Duplicate();
@@ -217,7 +219,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GsaElement2d)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
@@ -226,7 +228,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Element)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value.Elements[0];
                 return true;
@@ -236,7 +238,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Mesh)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value.Mesh;
                 return true;
@@ -245,7 +247,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GH_Mesh)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                 {
                     target = (Q)(object)new GH_Mesh(Value.Mesh);
@@ -255,7 +257,7 @@ namespace GhSA.Parameters
             }
 
 
-            target = default(Q);
+            target = default;
             return false;
         }
         public override bool CastFrom(object source)
@@ -306,8 +308,10 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Mesh == null) { return null; }
 
-            GsaElement2d elem = new GsaElement2d();
-            elem.Elements = Value.Elements;
+            GsaElement2d elem = new GsaElement2d
+            {
+                Elements = Value.Elements
+            };
             Mesh xMs = Value.Mesh;
             xMs.Transform(xform);
             elem.Mesh = xMs;
@@ -322,8 +326,10 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Mesh == null) { return null; }
 
-            GsaElement2d elem = new GsaElement2d();
-            elem.Elements = Value.Elements;
+            GsaElement2d elem = new GsaElement2d
+            {
+                Elements = Value.Elements
+            };
             Mesh xMs = Value.Mesh;
             xmorph.Morph(xMs);
             elem.Mesh = xMs;
@@ -378,7 +384,7 @@ namespace GhSA.Parameters
     public class GsaElement2dParameter : GH_PersistentGeometryParam<GsaElement2dGoo>, IGH_PreviewObject
     {
         public GsaElement2dParameter()
-          : base(new GH_InstanceDescription("GSA 2D Element", "Element 2D", "Maintains a collection of GSA 2D Element data.", GhSA.Components.Ribbon.CategoryName.name(), GhSA.Components.Ribbon.SubCategoryName.cat9()))
+          : base(new GH_InstanceDescription("GSA 2D Element", "Element 2D", "Maintains a collection of GSA 2D Element data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -400,16 +406,20 @@ namespace GhSA.Parameters
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
 

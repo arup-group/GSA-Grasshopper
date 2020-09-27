@@ -26,7 +26,7 @@ namespace GhSA.UI
         RectangleF SpacerBounds; // spacer between standard component and button
         readonly string SpacerTxt; // text to be displayed on spacer
 
-        float minWidth {
+        float MinWidth {
             get 
             {
                 float num = Math.Max(Math.Max(
@@ -36,7 +36,7 @@ namespace GhSA.UI
                 
                 return num;
             } 
-            set {minWidth = value;}}
+            set {MinWidth = value;}}
         protected override void Layout()
         {
             base.Layout();
@@ -47,12 +47,10 @@ namespace GhSA.UI
             int s = 2; //spacing to edges and internal between boxes
 
             int h0 = 0;
-            int txtwidth = 0;
             //spacer and title
             if (SpacerTxt != "")
             {
                 h0 = 10;
-                txtwidth = GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small);
                 SpacerBounds = new RectangleF(Bounds.X, Bounds.Bottom + s/2, Bounds.Width, h0);
             }
 
@@ -71,8 +69,10 @@ namespace GhSA.UI
             if (channel == GH_CanvasChannel.Objects)
             {
                 Pen spacer = new Pen(UI.Colour.SpacerColour);
-                Pen pen = new Pen(UI.Colour.BorderColour);
-                pen.Width = 0.5f;
+                Pen pen = new Pen(UI.Colour.BorderColour)
+                {
+                    Width = 0.5f
+                };
                 //Draw divider line
                 if (SpacerTxt != "")
                 {
@@ -104,7 +104,7 @@ namespace GhSA.UI
         protected void FixLayout()
         {
             float width = this.Bounds.Width;
-            float num = Math.Max(width, minWidth);
+            float num = Math.Max(width, MinWidth);
             float num2 = 0f;
             if (num > this.Bounds.Width)
             {

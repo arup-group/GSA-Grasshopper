@@ -52,9 +52,11 @@ namespace GhSA.Parameters
         
         public GsaProp2d Duplicate()
         {
-            GsaProp2d dup = new GsaProp2d();
-            dup.Prop2d = m_prop2d;
-            dup.ID = m_idd;
+            GsaProp2d dup = new GsaProp2d
+            {
+                Prop2d = m_prop2d,
+                ID = m_idd
+            };
             return dup;
         }
         #endregion
@@ -153,7 +155,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GsaProp2d)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
@@ -162,13 +164,13 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Prop2D)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
             }
 
-            target = default(Q);
+            target = default;
             return false;
         }
         public override bool CastFrom(object source)
@@ -187,8 +189,7 @@ namespace GhSA.Parameters
             }
 
             //Cast from double
-            double thk = 0;
-            if (GH_Convert.ToDouble(source, out thk, GH_Conversion.Both))
+            if (GH_Convert.ToDouble(source, out double thk, GH_Conversion.Both))
             {
                 //Value.Prop2d.Thickness = thk; // To be added; GsaAPI bug
             }
@@ -205,7 +206,7 @@ namespace GhSA.Parameters
     public class GsaProp2dParameter : GH_PersistentParam<GsaProp2dGoo>
     {
         public GsaProp2dParameter()
-          : base(new GH_InstanceDescription("GSA 2D Property", "Prop2d", "GSA 2D Property", GhSA.Components.Ribbon.CategoryName.name(), GhSA.Components.Ribbon.SubCategoryName.cat9()))
+          : base(new GH_InstanceDescription("GSA 2D Property", "Prop2d", "GSA 2D Property", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -225,16 +226,20 @@ namespace GhSA.Parameters
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
 

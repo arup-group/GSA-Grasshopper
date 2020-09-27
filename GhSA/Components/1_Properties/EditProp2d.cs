@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("4cfdee19-451b-4ee3-878b-93a86767ffef");
         public EditProp2d()
           : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat1())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat1())
         {
         }
 
@@ -85,8 +85,7 @@ namespace GhSA.Components
             GsaProp2d gsaProp2d = new GsaProp2d();
             if (DA.GetData(0, ref gsaProp2d))
             {
-                GsaProp2d prop = new GsaProp2d();
-                prop = gsaProp2d.Duplicate();
+                GsaProp2d prop = gsaProp2d.Duplicate();
 
                 // #### inputs ####
                 // 1 thickness
@@ -102,9 +101,7 @@ namespace GhSA.Components
                 // 3 analysis type
                 int analtype = 0; //prop.Prop2d.Thickness;
                 if (DA.GetData(3, ref analtype))
-                {
                     prop.Prop2d.MaterialAnalysisProperty = analtype;
-                }
 
                 // 4 alignment
                 string ali = "";
@@ -129,33 +126,24 @@ namespace GhSA.Components
                 GH_Integer ghID = new GH_Integer();
                 if (DA.GetData(6, ref ghID))
                 {
-                    int id = new int();
-                    if (GH_Convert.ToInt32(ghID, out id, GH_Conversion.Both))
-                    {
+                    if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
                         prop.ID = id;
-                    }
                 }
 
                 // 7 name
                 GH_String ghnm = new GH_String();
                 if (DA.GetData(7, ref ghnm))
                 {
-                    string name = "";
-                    if (GH_Convert.ToString(ghnm, out name, GH_Conversion.Both))
-                    {
+                    if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
                         prop.Prop2d.Name = name;
-                    }
                 }
 
                 // 8 Colour
                 GH_Colour ghcol = new GH_Colour();
                 if (DA.GetData(8, ref ghcol))
                 {
-                    System.Drawing.Color col = new System.Drawing.Color();
-                    if (GH_Convert.ToColor(ghcol, out col, GH_Conversion.Both))
-                    {
+                    if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
                         prop.Prop2d.Colour = col;
-                    }
                 }
 
                 //#### outputs ####

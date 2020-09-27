@@ -51,22 +51,28 @@ namespace GhSA.Parameters
         }
         public GsaSection(string profile)
         {
-            m_section = new Section();
-            m_section.Profile = profile;
+            m_section = new Section
+            {
+                Profile = profile
+            };
             m_idd = 0;
         }
         public GsaSection(string profile, int ID)
         {
-            m_section = new Section();
-            m_section.Profile = profile;
+            m_section = new Section
+            {
+                Profile = profile
+            };
             m_idd = ID;
         }
 
         public GsaSection Duplicate()
         {
-            GsaSection dup = new GsaSection();
-            dup.Section = m_section;
-            dup.ID = m_idd;
+            GsaSection dup = new GsaSection
+            {
+                Section = m_section,
+                ID = m_idd
+            };
             return dup;
         }
         #endregion
@@ -165,7 +171,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GsaSection)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
@@ -174,13 +180,13 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Section)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
             }
 
-            target = default(Q);
+            target = default;
             return false;
         }
         public override bool CastFrom(object source)
@@ -200,16 +206,14 @@ namespace GhSA.Parameters
 
 
             //Cast from string
-            string name = "";
-            if (GH_Convert.ToString(source, out name, GH_Conversion.Both))
+            if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
             {
                 Value.Section.Profile = name;
                 return true;
             }
 
             //Cast from integer
-            int idd = 0;
-            if (GH_Convert.ToInt32(source, out idd, GH_Conversion.Both))
+            if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both))
             {
                 Value.ID = idd;
             }
@@ -226,7 +230,7 @@ namespace GhSA.Parameters
     public class GsaSectionParameter : GH_PersistentParam<GsaSectionGoo>
     {
         public GsaSectionParameter()
-          : base(new GH_InstanceDescription("GSA Section", "Section", "GSA Section with profile", GhSA.Components.Ribbon.CategoryName.name(), GhSA.Components.Ribbon.SubCategoryName.cat9()))
+          : base(new GH_InstanceDescription("GSA Section", "Section", "GSA Section with profile", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -246,16 +250,20 @@ namespace GhSA.Parameters
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
 

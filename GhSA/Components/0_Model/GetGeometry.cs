@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("7879a335-cdf3-4412-9a29-c710778430ff");
         public GetGeometry()
           : base("Get GSA Model Geometry", "GetGeo", "Get nodes, elements and members from GSA model",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat0())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat0())
         {
         }
 

@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("dad5064c-6648-45a5-8d98-afaae861e3b9");
         public EditBool6()
           : base("Edit Bool6", "Bool6Edit", "Modify GSA Bool6 or just get information about existing",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat1())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat1())
         {
         }
 

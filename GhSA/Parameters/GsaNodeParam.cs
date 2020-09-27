@@ -17,7 +17,7 @@ namespace GhSA.Parameters
 
     {
         #region fields
-        public Node node { get; set; } = new Node();
+        public Node Node { get; set; } = new Node();
         private Plane m_plane;
         private int m_id;
         private GsaSpring m_spring;
@@ -37,23 +37,23 @@ namespace GhSA.Parameters
         #region constructors
         public GsaNode()
         {
-            node = null;
+            Node = null;
         }
 
         public GsaNode(Point3d position)
         {
-            node.Position.X = position.X;
-            node.Position.Y = position.Y;
-            node.Position.Z = position.Z;
+            Node.Position.X = position.X;
+            Node.Position.Y = position.Y;
+            Node.Position.Z = position.Z;
             m_plane = Plane.WorldXY;
             m_plane.Origin = position;
         }
 
         public GsaNode(Point3d position, int ID)
         {
-            node.Position.X = position.X;
-            node.Position.Y = position.Y;
-            node.Position.Z = position.Z;
+            Node.Position.X = position.X;
+            Node.Position.Y = position.Y;
+            Node.Position.Z = position.Z;
             m_id = ID;
             m_plane = Plane.WorldXY;
             m_plane.Origin = position;
@@ -61,95 +61,97 @@ namespace GhSA.Parameters
 
         public GsaNode(Point3d position, GsaBool6 bool6)
         {
-            node.Position.X = position.X;
-            node.Position.Y = position.Y;
-            node.Position.Z = position.Z;
-            node.Restraint.X = bool6.X;
-            node.Restraint.Y = bool6.Y;
-            node.Restraint.Z = bool6.Z;
-            node.Restraint.XX = bool6.XX;
-            node.Restraint.YY = bool6.YY;
-            node.Restraint.ZZ = bool6.ZZ;
+            Node.Position.X = position.X;
+            Node.Position.Y = position.Y;
+            Node.Position.Z = position.Z;
+            Node.Restraint.X = bool6.X;
+            Node.Restraint.Y = bool6.Y;
+            Node.Restraint.Z = bool6.Z;
+            Node.Restraint.XX = bool6.XX;
+            Node.Restraint.YY = bool6.YY;
+            Node.Restraint.ZZ = bool6.ZZ;
             m_plane = Plane.WorldXY;
             m_plane.Origin = position;
         }
 
         public GsaNode(Point3d position, int ID, GsaBool6 bool6, Plane plane)
         {
-            node.Position.X = position.X;
-            node.Position.Y = position.Y;
-            node.Position.Z = position.Z;
+            Node.Position.X = position.X;
+            Node.Position.Y = position.Y;
+            Node.Position.Z = position.Z;
             m_id = ID;
-            node.Restraint.X = bool6.X;
-            node.Restraint.Y = bool6.Y;
-            node.Restraint.Z = bool6.Z;
-            node.Restraint.XX = bool6.XX;
-            node.Restraint.YY = bool6.YY;
-            node.Restraint.ZZ = bool6.ZZ;
+            Node.Restraint.X = bool6.X;
+            Node.Restraint.Y = bool6.Y;
+            Node.Restraint.Z = bool6.Z;
+            Node.Restraint.XX = bool6.XX;
+            Node.Restraint.YY = bool6.YY;
+            Node.Restraint.ZZ = bool6.ZZ;
             m_plane = plane;
             m_plane.Origin = position;
         }
         public GsaNode(Point3d position, bool restraintX, bool restraintY, bool restraintZ, bool restraintXX, bool restraintYY, bool restraintZZ)
         {
-            node.Position.X = position.X;
-            node.Position.Y = position.Y;
-            node.Position.Z = position.Z;
-            node.Restraint.X = restraintX; 
-            node.Restraint.Y = restraintY;
-            node.Restraint.Z = restraintZ;
-            node.Restraint.XX = restraintXX; 
-            node.Restraint.YY = restraintYY;
-            node.Restraint.ZZ = restraintZZ;
+            Node.Position.X = position.X;
+            Node.Position.Y = position.Y;
+            Node.Position.Z = position.Z;
+            Node.Restraint.X = restraintX; 
+            Node.Restraint.Y = restraintY;
+            Node.Restraint.Z = restraintZ;
+            Node.Restraint.XX = restraintXX; 
+            Node.Restraint.YY = restraintYY;
+            Node.Restraint.ZZ = restraintZZ;
             m_plane = Plane.WorldXY;
             m_plane.Origin = position;
         }
         public GsaNode(Point3d position, bool restraintX, bool restraintY, bool restraintZ, bool restraintXX, bool restraintYY, bool restraintZZ, Plane localPlane)
         {
-            node.Position.X = position.X;
-            node.Position.Y = position.Y;
-            node.Position.Z = position.Z;
-            node.Restraint.X = restraintX;
-            node.Restraint.Y = restraintY;
-            node.Restraint.Z = restraintZ;
-            node.Restraint.XX = restraintXX;
-            node.Restraint.YY = restraintYY;
-            node.Restraint.ZZ = restraintZZ;
+            Node.Position.X = position.X;
+            Node.Position.Y = position.Y;
+            Node.Position.Z = position.Z;
+            Node.Restraint.X = restraintX;
+            Node.Restraint.Y = restraintY;
+            Node.Restraint.Z = restraintZ;
+            Node.Restraint.XX = restraintXX;
+            Node.Restraint.YY = restraintYY;
+            Node.Restraint.ZZ = restraintZZ;
             m_plane = localPlane;
             m_plane.Origin = position;
         }
         public GsaNode(Point3d position, bool restraintX, bool restraintY, bool restraintZ, bool restraintXX, bool restraintYY, bool restraintZZ, Plane localPlane,
             string name, System.Drawing.Color colour, int damperProp, int massProp, int springProp)
         {
-            node.Position.X = position.X;
-            node.Position.Y = position.Y;
-            node.Position.Z = position.Z;
-            node.Restraint.X = restraintX;
-            node.Restraint.Y = restraintY;
-            node.Restraint.Z = restraintZ;
-            node.Restraint.XX = restraintXX;
-            node.Restraint.YY = restraintYY;
-            node.Restraint.ZZ = restraintZZ;
+            Node.Position.X = position.X;
+            Node.Position.Y = position.Y;
+            Node.Position.Z = position.Z;
+            Node.Restraint.X = restraintX;
+            Node.Restraint.Y = restraintY;
+            Node.Restraint.Z = restraintZ;
+            Node.Restraint.XX = restraintXX;
+            Node.Restraint.YY = restraintYY;
+            Node.Restraint.ZZ = restraintZZ;
             m_plane = localPlane;
             m_plane.Origin = position;
-            node.Name = name;
-            node.Colour = colour;
-            node.DamperProperty = damperProp;
-            node.MassProperty = massProp;
-            node.SpringProperty = springProp;
+            Node.Name = name;
+            Node.Colour = colour;
+            Node.DamperProperty = damperProp;
+            Node.MassProperty = massProp;
+            Node.SpringProperty = springProp;
         }
 
         public GsaNode Duplicate()
         {
-            GsaNode dup = new GsaNode(); 
-            dup.node = node; //add clone or duplicate if available
-            Point3dList pt = new Point3dList(point);
+            GsaNode dup = new GsaNode
+            {
+                Node = Node //add clone or duplicate if available
+            };
+            Point3dList pt = new Point3dList(Point);
             Point3dList duppt = pt.Duplicate();
-            dup.point = duppt[0];
+            dup.Point = duppt[0];
             if (m_id != 0)
                 dup.ID = m_id;
             if(m_spring != null)
                 dup.Spring = m_spring.Duplicate();
-            dup.m_plane = localAxis.Clone();
+            dup.m_plane = LocalAxis.Clone();
             return dup;
         }
 
@@ -161,26 +163,26 @@ namespace GhSA.Parameters
         {
             get
             {
-                if (node == null) { return false; }
+                if (Node == null) { return false; }
                 return true;
             }
         }
        
         
-        public Plane localAxis
+        public Plane LocalAxis
         {
             get { return m_plane; }
             set { m_plane = value; }
         }
 
-        public Point3d point
+        public Point3d Point
         {
             get 
             { 
-                if (node == null) { return new Point3d(); }
-                return new Point3d(node.Position.X, node.Position.Y, node.Position.Z); 
+                if (Node == null) { return new Point3d(); }
+                return new Point3d(Node.Position.X, Node.Position.Y, Node.Position.Z); 
             }
-            set { node.Position.X = value.X; node.Position.Y = value.Y; node.Position.Z = value.Z; }
+            set { Node.Position.X = value.X; Node.Position.Y = value.Y; Node.Position.Z = value.Z; }
         }
 
         #endregion
@@ -188,29 +190,28 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            if (node == null) { return "Null Node"; }
+            if (Node == null) { return "Null Node"; }
             string idd = " " + ID.ToString() + " ";
             if (ID == 0) { idd = " "; }
-            string nodeTxt = "Gsa Node" + idd + "(" + point.ToString() + ") " + System.Environment.NewLine;
+            string nodeTxt = "Gsa Node" + idd + "(" + Point.ToString() + ") " + System.Environment.NewLine;
             string localTxt = "";
-            if (localAxis != Plane.WorldXY)
-                localTxt = System.Environment.NewLine + "Local axis (" + localAxis.ToString() + ") ";
-            string sptTxt = "Free";
+            if (LocalAxis != Plane.WorldXY)
+                localTxt = System.Environment.NewLine + "Local axis (" + LocalAxis.ToString() + ") ";
 
-            sptTxt = "X: " + (node.Restraint.X ? "Fix" : "Free") +
-                   ", Y: " + (node.Restraint.Y ? "Fix" : "Free") +
-                   ", Z: " + (node.Restraint.Z ? "Fix" : "Free") +
-                   ", XX: " + (node.Restraint.XX ? "Fix" : "Free") +
-                   ", YY: " + (node.Restraint.YY ? "Fix" : "Free") +
-                   ", ZZ: " + (node.Restraint.ZZ ? "Fix" : "Free");
-            if (!node.Restraint.X & !node.Restraint.Y & !node.Restraint.Z &
-                !node.Restraint.XX & !node.Restraint.YY & !node.Restraint.ZZ)
+            string sptTxt = "X: " + (Node.Restraint.X ? "Fix" : "Free") +
+                   ", Y: " + (Node.Restraint.Y ? "Fix" : "Free") +
+                   ", Z: " + (Node.Restraint.Z ? "Fix" : "Free") +
+                   ", XX: " + (Node.Restraint.XX ? "Fix" : "Free") +
+                   ", YY: " + (Node.Restraint.YY ? "Fix" : "Free") +
+                   ", ZZ: " + (Node.Restraint.ZZ ? "Fix" : "Free");
+            if (!Node.Restraint.X & !Node.Restraint.Y & !Node.Restraint.Z &
+                !Node.Restraint.XX & !Node.Restraint.YY & !Node.Restraint.ZZ)
                 sptTxt = "Free";
-            if (node.Restraint.X & node.Restraint.Y & node.Restraint.Z &
-                !node.Restraint.XX & !node.Restraint.YY & !node.Restraint.ZZ)
+            if (Node.Restraint.X & Node.Restraint.Y & Node.Restraint.Z &
+                !Node.Restraint.XX & !Node.Restraint.YY & !Node.Restraint.ZZ)
                 sptTxt = "Pinned";
-            if (node.Restraint.X & node.Restraint.Y & node.Restraint.Z &
-                node.Restraint.XX & node.Restraint.YY & node.Restraint.ZZ)
+            if (Node.Restraint.X & Node.Restraint.Y & Node.Restraint.Z &
+                Node.Restraint.XX & Node.Restraint.YY & Node.Restraint.ZZ)
                 sptTxt = "Fixed";
 
             return nodeTxt + "Restraint: " + sptTxt + localTxt;
@@ -235,7 +236,7 @@ namespace GhSA.Parameters
                 node = null;
             else
             {
-                if (node.node == null)
+                if (node.Node == null)
                     node = null;
             }
             this.Value = node;
@@ -266,7 +267,7 @@ namespace GhSA.Parameters
             {
                 //if (Value == null) { return "No internal BoatShell instance"; }
                 if (Value.IsValid) { return string.Empty; }
-                return Value.point.IsValid.ToString(); //Todo: beef this up to be more informative.
+                return Value.Point.IsValid.ToString(); //Todo: beef this up to be more informative.
             }
         }
         public override string ToString()
@@ -290,10 +291,10 @@ namespace GhSA.Parameters
             get
             {
                 if (Value == null) { return BoundingBox.Empty; }
-                if (Value.point == null) { return BoundingBox.Empty; }
-                Point3d pt = Value.point;
+                if (Value.Point == null) { return BoundingBox.Empty; }
+                Point3d pt = Value.Point;
                 pt.Z += 0.001;
-                Line ln = new Line(Value.point, pt);
+                Line ln = new Line(Value.Point, pt);
                 LineCurve crv = new LineCurve(ln);
                 return crv.GetBoundingBox(false); 
             }
@@ -301,10 +302,10 @@ namespace GhSA.Parameters
         public override BoundingBox GetBoundingBox(Transform xform)
         {
             if (Value == null) { return BoundingBox.Empty; }
-            if (Value.point == null) { return BoundingBox.Empty; }
-            Point3d pt = Value.point;
+            if (Value.Point == null) { return BoundingBox.Empty; }
+            Point3d pt = Value.Point;
             pt.Z += 0.001;
-            Line ln = new Line(Value.point, pt);
+            Line ln = new Line(Value.Point, pt);
             LineCurve crv = new LineCurve(ln);
             return crv.GetBoundingBox(xform); //BoundingBox.Empty; //Value.point.GetBoundingBox(xform);
         }
@@ -320,7 +321,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GsaNode)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
@@ -329,9 +330,9 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Node)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
-                    target = (Q)(object)Value.node;
+                    target = (Q)(object)Value.Node;
                 return true;
             }
 
@@ -339,30 +340,30 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Point3d)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
-                    target = (Q)(object)Value.point;
+                    target = (Q)(object)Value.Point;
                 return true;
             }
             if (typeof(Q).IsAssignableFrom(typeof(GH_Point)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
-                    target = (Q)(object)new GH_Point(Value.point);
+                    target = (Q)(object)new GH_Point(Value.Point);
                 return true;
             }
 
             if (typeof(Q).IsAssignableFrom(typeof(Point)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
-                    target = (Q)(object)new Point(Value.point);
+                    target = (Q)(object)new Point(Value.Point);
                 return true;
             }
 
-            target = default(Q);
+            target = default;
             return false;
         }
         public override bool CastFrom(object source)
@@ -383,7 +384,7 @@ namespace GhSA.Parameters
             //Cast from GsaAPI Node
             if (typeof(Node).IsAssignableFrom(source.GetType()))
             {
-                Value.node = (Node)source;
+                Value.Node = (Node)source;
                 return true;
             }
 
@@ -406,9 +407,9 @@ namespace GhSA.Parameters
         public override IGH_GeometricGoo Transform(Transform xform)
         {
             if (Value == null) { return null; }
-            if (Value.point == null) { return null; }
+            if (Value.Point == null) { return null; }
 
-            Point3d pt = Value.point;
+            Point3d pt = Value.Point;
             pt.Transform(xform);
             GsaNode node = new GsaNode(pt);
             return new GsaNodeGoo(node);
@@ -417,9 +418,9 @@ namespace GhSA.Parameters
         public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
         {
             if (Value == null) { return null; }
-            if (Value.point == null) { return null; }
+            if (Value.Point == null) { return null; }
 
-            Point3d pt = Value.point;
+            Point3d pt = Value.Point;
             pt = xmorph.MorphPoint(pt);
             GsaNode node = new GsaNode(pt);
             return new GsaNodeGoo(node);
@@ -441,12 +442,12 @@ namespace GhSA.Parameters
             if (Value == null) { return; }
 
 
-            if (Value.point.IsValid)
+            if (Value.Point.IsValid)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawPoint(Value.point, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Node);
+                    args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Node);
                 else
-                    args.Pipeline.DrawPoint(Value.point, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.NodeSelected);
+                    args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.NodeSelected);
             }
         }
         #endregion
@@ -458,7 +459,7 @@ namespace GhSA.Parameters
     public class GsaNodeParameter : GH_PersistentGeometryParam<GsaNodeGoo>, IGH_PreviewObject
     {
         public GsaNodeParameter()
-          : base(new GH_InstanceDescription("GSA Node", "Node", "Maintains a collection of GSA Node data.", GhSA.Components.Ribbon.CategoryName.name(), GhSA.Components.Ribbon.SubCategoryName.cat9()))
+          : base(new GH_InstanceDescription("GSA Node", "Node", "Maintains a collection of GSA Node data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -480,16 +481,20 @@ namespace GhSA.Parameters
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
 

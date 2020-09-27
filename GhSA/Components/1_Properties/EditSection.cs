@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("27dcadbd-4735-4110-8c30-931b37ec5f5a");
         public EditSection()
           : base("Edit Section", "SectionEdit", "Modify GSA Section",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat1())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat1())
         {
         }
 
@@ -124,33 +124,24 @@ namespace GhSA.Components
                     GH_Integer ghID = new GH_Integer();
                     if (DA.GetData(6, ref ghID))
                     {
-                        int id = new int();
-                        if (GH_Convert.ToInt32(ghID, out id, GH_Conversion.Both))
-                        {
+                        if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
                             gsaSection.ID = id;
-                        }
                     }
 
                     // 7 name
                     GH_String ghnm = new GH_String();
                     if (DA.GetData(7, ref ghnm))
                     {
-                        string name = "";
-                        if (GH_Convert.ToString(ghnm, out name, GH_Conversion.Both))
-                        {
+                        if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
                             gsaSection.Section.Name = name;
-                        }
                     }
 
                     // 8 Colour
                     GH_Colour ghcol = new GH_Colour();
                     if (DA.GetData(8, ref ghcol))
                     {
-                        System.Drawing.Color col = new System.Drawing.Color();
-                        if (GH_Convert.ToColor(ghcol, out col, GH_Conversion.Both))
-                        {
+                        if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
                             gsaSection.Section.Colour = col;
-                        }
                     }
 
                     // #### outputs ####

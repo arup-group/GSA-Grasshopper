@@ -23,7 +23,7 @@ namespace GhSA.UI
         public DropDownComponentUI(GH_Component owner, Action<string> clickHandle, List<string> dropdownContent, string selected, string spacerText = "", string initialdescription = "") : base(owner) 
         {
             initialTxt = (initialdescription == "") ? null : initialdescription; // if no description is inputted then null initialTxt
-            displayText = (selected == null) ? initialdescription : selected; // if selected input is null (eg first/initial draw of component) then set displaytext to initial description
+            displayText = selected ?? initialdescription; // if selected input is null (eg first/initial draw of component) then set displaytext to initial description
             displayText = (displayText == "") ? dropdownContent[0] : displayText; // in case no initial description is set and we are in first/inital run then set displaytext to first dropdowncontent item
             SpacerTxt = spacerText; 
             action = clickHandle;
@@ -43,7 +43,7 @@ namespace GhSA.UI
         RectangleF SpacerBounds;
         readonly string SpacerTxt;
 
-        float minWidth
+        float MinWidth
         {
             get
             {
@@ -54,7 +54,7 @@ namespace GhSA.UI
 
                 return num;
             }
-            set { minWidth = value; }
+            set { MinWidth = value; }
         }
         protected override void Layout()
         {
@@ -66,12 +66,10 @@ namespace GhSA.UI
             int s = 2; //spacing to edges and internal between boxes
 
             int h0 = 0;
-            int txtwidth = 0;
             //spacer and title
             if (SpacerTxt != "")
             {
                 h0 = 10;
-                txtwidth = GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small);
                 SpacerBounds = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
             }
 
@@ -222,7 +220,7 @@ namespace GhSA.UI
         protected void FixLayout()
         {
             float width = this.Bounds.Width;
-            float num = Math.Max(width, minWidth);
+            float num = Math.Max(width, MinWidth);
             float num2 = 0f;
             if (num > this.Bounds.Width)
             {

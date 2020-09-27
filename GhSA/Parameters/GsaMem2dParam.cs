@@ -19,7 +19,7 @@ namespace GhSA.Parameters
     public class GsaMember2d
 
     {
-        public Member member
+        public Member Member
         {
             get { return m_member; }
             set { m_member = value; }
@@ -127,9 +127,11 @@ namespace GhSA.Parameters
 
         public GsaMember2d(Brep brep, int prop = 1)
         {
-            m_member = new Member();
-            m_member.Type = MemberType.GENERIC_2D;
-            m_member.Property = prop;
+            m_member = new Member
+            {
+                Type = MemberType.GENERIC_2D,
+                Property = prop
+            };
 
             Tuple<PolyCurve, List<Point3d>, List<string>, List<PolyCurve>, List<List<Point3d>>, List<List<string>>> convertBrep
                 = Util.GH.Convert.ConvertPolyBrep(brep);
@@ -145,9 +147,11 @@ namespace GhSA.Parameters
 
         public GsaMember2d(Brep brep, List<Point3d> includePoints, List<Curve> includeCurves = null, int prop = 1)
         {
-            m_member = new Member();
-            m_member.Type = MemberType.GENERIC_2D;
-            m_member.Property = prop;
+            m_member = new Member
+            {
+                Type = MemberType.GENERIC_2D,
+                Property = prop
+            };
 
             Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
                 convertBrepInclusion = Util.GH.Convert.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
@@ -172,9 +176,11 @@ namespace GhSA.Parameters
 
         public GsaMember2d(Brep brep, List<Curve> includeCurves, List<Point3d> includePoints = null, int prop = 1)
         {
-            m_member = new Member();
-            m_member.Type = MemberType.GENERIC_2D;
-            m_member.Property = prop;
+            m_member = new Member
+            {
+                Type = MemberType.GENERIC_2D,
+                Property = prop
+            };
 
             Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
                 convertBrepInclusion = Util.GH.Convert.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
@@ -206,9 +212,11 @@ namespace GhSA.Parameters
             List<Point3d> includePoints = null,
             int prop = 1)
         {
-            m_member = new Member();
-            m_member.Type = MemberType.GENERIC_2D;
-            m_member.Property = prop;
+            m_member = new Member
+            {
+                Type = MemberType.GENERIC_2D,
+                Property = prop
+            };
 
             if (topology[0] != topology[topology.Count - 1])
             {
@@ -262,8 +270,10 @@ namespace GhSA.Parameters
 
         public GsaMember2d Duplicate()
         {
-            GsaMember2d dup = new GsaMember2d();
-            dup.m_member = m_member; //add clone or duplicate if available
+            GsaMember2d dup = new GsaMember2d
+            {
+                m_member = m_member //add clone or duplicate if available
+            };
             if (m_brep != null)
                 dup.m_brep = m_brep.DuplicateBrep();
             if (m_crv != null)
@@ -336,7 +346,7 @@ namespace GhSA.Parameters
         {
             string idd = " " + ID.ToString();
             if (ID == 0) { idd = ""; }
-            string typeTxt = "";
+            string typeTxt;
             if (m_member.Type.ToString() != "VOID_CUTTER_2D")
                 typeTxt = "GSA " + m_member.Type.ToString().Substring(8) + " Member" + idd;
             else
@@ -462,7 +472,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GsaMember2d)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
@@ -471,9 +481,9 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Member)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
-                    target = (Q)(object)Value.member;
+                    target = (Q)(object)Value.Member;
                 return true;
             }
 
@@ -481,7 +491,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Curve)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value.PolyCurve;
                 return true;
@@ -489,7 +499,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GH_Curve)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                 {
                     target = (Q)(object)new GH_Curve(Value.PolyCurve);
@@ -503,7 +513,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(PolyCurve)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                 {
                     target = (Q)(object)Value.PolyCurve;
@@ -517,7 +527,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Polyline)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                 {
                     target = (Q)(object)Value.PolyCurve;
@@ -530,7 +540,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Line)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                 {
                     target = (Q)(object)Value.PolyCurve.ToPolyline(0.05, 5, 0, 0);
@@ -545,7 +555,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Brep)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                 {
                     target = (Q)(object)Value.Brep;
@@ -558,7 +568,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GH_Brep)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                 {
                     target = (Q)(object)new GH_Brep(Value.Brep);
@@ -572,7 +582,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(List<Point3d>)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value.Topology;
                 return true;
@@ -580,13 +590,13 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(List<GH_Point>)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value.Topology;
                 return true;
             }
 
-            target = default(Q);
+            target = default;
             return false;
         }
         public override bool CastFrom(object source)
@@ -607,7 +617,7 @@ namespace GhSA.Parameters
             //Cast from GsaAPI Member
             if (typeof(Member).IsAssignableFrom(source.GetType()))
             {
-                Value.member = (Member)source;
+                Value.Member = (Member)source;
                 return true;
             }
 
@@ -631,8 +641,10 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Brep == null & Value.PolyCurve == null) { return null; }
 
-            GsaMember2d mem = new GsaMember2d();
-            mem.member = Value.member;
+            GsaMember2d mem = new GsaMember2d
+            {
+                Member = Value.Member
+            };
 
             List<Point3d> pts = Value.Topology;
             Point3dList xpts = new Point3dList(pts);
@@ -697,8 +709,10 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Brep == null & Value.PolyCurve == null) { return null; }
 
-            GsaMember2d mem = new GsaMember2d();
-            mem.member = Value.member;
+            GsaMember2d mem = new GsaMember2d
+            {
+                Member = Value.Member
+            };
 
             List<Point3d> pts = Value.Topology;
             for (int i = 0; i < pts.Count; i++)
@@ -845,7 +859,7 @@ namespace GhSA.Parameters
     public class GsaMember2dParameter : GH_PersistentGeometryParam<GsaMember2dGoo>, IGH_PreviewObject
     {
         public GsaMember2dParameter()
-          : base(new GH_InstanceDescription("GSA 2D Member", "Member 2D", "Maintains a collection of GSA 2D Member data.", GhSA.Components.Ribbon.CategoryName.name(), GhSA.Components.Ribbon.SubCategoryName.cat9()))
+          : base(new GH_InstanceDescription("GSA 2D Member", "Member 2D", "Maintains a collection of GSA 2D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -867,16 +881,20 @@ namespace GhSA.Parameters
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
 

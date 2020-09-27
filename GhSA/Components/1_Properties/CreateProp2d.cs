@@ -27,8 +27,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("3fd61492-b5ff-47ea-8c7c-89cf639b32dc");
         public CreateProp2d()
           : base("Create 2D Property", "Prop2d", "Create GSA 2D Property",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat1())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat1())
         {
         }
 

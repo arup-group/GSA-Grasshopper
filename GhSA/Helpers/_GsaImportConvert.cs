@@ -45,7 +45,7 @@ namespace GhSA.Util.Gsa
                     var p = apinode.Position;
                     GsaNode n = new GsaNode(new Point3d(p.X, p.Y, p.Z), i + 1)
                     {
-                        node = apinode
+                        Node = apinode
                     };
                     if (apinode.SpringProperty > 0)
                     {
@@ -467,7 +467,7 @@ namespace GhSA.Util.Gsa
                         GsaMember1d mem1d = new GsaMember1d(topopts, topoType)
                         {
                             ID = key,
-                            member = mem
+                            Member = mem
                         };
                         GsaSection section = new GsaSection
                         {
@@ -487,7 +487,7 @@ namespace GhSA.Util.Gsa
                     {
                         GsaMember2d mem2d = new GsaMember2d(topopts, topoType, void_topo, void_topoType, incLines_topo, inclLines_topoType, incl_pts)
                         {
-                            member = mem,
+                            Member = mem,
                             ID = key
                         };
                         GsaProp2d prop2d = new GsaProp2d

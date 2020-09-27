@@ -81,11 +81,13 @@ namespace GhSA.Parameters
         public GsaOffset Duplicate()
         {
             if (this == null) { return null; }
-            GsaOffset dup = new GsaOffset();
-            dup.X1 = m_x1;
-            dup.Y = m_y;
-            dup.Z = m_z;
-            dup.X2 = m_x2;
+            GsaOffset dup = new GsaOffset
+            {
+                X1 = m_x1,
+                Y = m_y,
+                Z = m_z,
+                X2 = m_x2
+            };
             //dup.m_offset.X1 = dup.X1;
             //dup.m_offset.X2 = dup.X2;
             //dup.m_offset.Y = dup.Y;
@@ -196,7 +198,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GsaOffset)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
@@ -205,14 +207,14 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Offset)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
             }
 
 
-            target = default(Q);
+            target = default;
             return false;
         }
         public override bool CastFrom(object source)
@@ -232,8 +234,7 @@ namespace GhSA.Parameters
 
 
             //Cast from double
-            double myval = 0;
-            if (GH_Convert.ToDouble(source, out myval, GH_Conversion.Both))
+            if (GH_Convert.ToDouble(source, out double myval, GH_Conversion.Both))
             {
                 Value.Z = myval;
                 // if input to parameter is a single number convert it to the most common Z-offset
@@ -253,7 +254,7 @@ namespace GhSA.Parameters
     public class GsaOffsetParameter : GH_PersistentParam<GsaOffsetGoo>
     {
         public GsaOffsetParameter()
-          : base(new GH_InstanceDescription("GSA Offset", "Offset", "GSA Offset (for use with 2D elements or members only Z-value used)", GhSA.Components.Ribbon.CategoryName.name(), GhSA.Components.Ribbon.SubCategoryName.cat9()))
+          : base(new GH_InstanceDescription("GSA Offset", "Offset", "GSA Offset (for use with 2D elements or members only Z-value used)", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -275,16 +276,20 @@ namespace GhSA.Parameters
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
 

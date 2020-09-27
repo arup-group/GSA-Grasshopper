@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("d808e81f-6ae1-49d9-a8a5-2424a1763a69");
         public CreateSupport()
           : base("Create Support", "Support", "Create GSA Node Support",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat2())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat2())
         {
         }
 
@@ -39,10 +39,10 @@ namespace GhSA.Components
         //This region overrides the typical component layout
         public override void CreateAttributes()
         {
-            m_attributes = new UI.SupportComponentUI(this, setRestraints, "Restraints", x, y, z, xx, yy, zz);
+            m_attributes = new UI.SupportComponentUI(this, SetRestraints, "Restraints", x, y, z, xx, yy, zz);
         }
 
-        public void setRestraints(bool resx, bool resy, bool resz, bool resxx, bool resyy, bool reszz)
+        public void SetRestraints(bool resx, bool resy, bool resz, bool resxx, bool resyy, bool reszz)
         {
             x = resx;
             y = resy;
@@ -140,14 +140,14 @@ namespace GhSA.Components
                     if (DA.GetData(3, ref spring))
                         node.Spring = spring;
 
-                    node.localAxis = localAxis;
+                    node.LocalAxis = localAxis;
                     
-                    node.node.Restraint.X = x;
-                    node.node.Restraint.Y = y;
-                    node.node.Restraint.Z = z;
-                    node.node.Restraint.XX = xx;
-                    node.node.Restraint.YY = yy;
-                    node.node.Restraint.ZZ = zz;
+                    node.Node.Restraint.X = x;
+                    node.Node.Restraint.Y = y;
+                    node.Node.Restraint.Z = z;
+                    node.Node.Restraint.XX = xx;
+                    node.Node.Restraint.YY = yy;
+                    node.Node.Restraint.ZZ = zz;
 
                     DA.SetData(0, new GsaNodeGoo(node.Duplicate()));
                 }

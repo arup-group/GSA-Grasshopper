@@ -23,8 +23,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
         public OpenModel()
           : base("Open Model", "Open", "Open an existing GSA model",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat0())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat0())
         {
         }
 
@@ -125,8 +125,10 @@ namespace GhSA.Components
         {
             Model model = new Model();
             model.Open(fileName);
-            GsaModel gsaModel = new GsaModel();
-            gsaModel.Model = model;
+            GsaModel gsaModel = new GsaModel
+            {
+                Model = model
+            };
             DA.SetData(0, gsaModel);
         }
     }

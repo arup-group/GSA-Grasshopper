@@ -84,13 +84,15 @@ namespace GhSA.Parameters
         public GsaSpring Duplicate()
         {
             if (this == null) { return null; }
-            GsaSpring dup = new GsaSpring();
-            dup.X = m_x;
-            dup.Y = m_y;
-            dup.Z = m_z;
-            dup.XX = m_xx;
-            dup.YY = m_yy;
-            dup.ZZ = m_zz;
+            GsaSpring dup = new GsaSpring
+            {
+                X = m_x,
+                Y = m_y,
+                Z = m_z,
+                XX = m_xx,
+                YY = m_yy,
+                ZZ = m_zz
+            };
 
             return dup;
         }
@@ -199,7 +201,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GsaSpring)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
@@ -208,14 +210,14 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Double6)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
             }
 
 
-            target = default(Q);
+            target = default;
             return false;
         }
         public override bool CastFrom(object source)
@@ -235,8 +237,7 @@ namespace GhSA.Parameters
 
 
             //Cast from double
-            double myval = 0;
-            if (GH_Convert.ToDouble(source, out myval, GH_Conversion.Both))
+            if (GH_Convert.ToDouble(source, out double myval, GH_Conversion.Both))
             {
                 Value.X = myval;
                 // if input to parameter is a single number convert it to an axial spring
@@ -256,7 +257,7 @@ namespace GhSA.Parameters
     public class GsaSpringParameter : GH_PersistentParam<GsaSpringGoo>
     {
         public GsaSpringParameter()
-          : base(new GH_InstanceDescription("GSA Spring", "Spring", "GSA Spring (Type: General)", GhSA.Components.Ribbon.CategoryName.name(), GhSA.Components.Ribbon.SubCategoryName.cat9()))
+          : base(new GH_InstanceDescription("GSA Spring", "Spring", "GSA Spring (Type: General)", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -278,16 +279,20 @@ namespace GhSA.Parameters
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
 

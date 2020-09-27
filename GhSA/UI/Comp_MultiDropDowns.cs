@@ -26,7 +26,7 @@ namespace GhSA.UI
             dropdownlists = dropdownContents;
             spacerTxts = spacerTexts;
             action = clickHandle;
-            initialTxts = (initialdescriptions == null) ? null : initialdescriptions; // if no description is inputted then null initialTxt
+            initialTxts = initialdescriptions ?? null; // if no description is inputted then null initialTxt
             if (selections == null)
             {
                 List<string> tempDisplaytxt = new List<string>();
@@ -58,7 +58,7 @@ namespace GhSA.UI
         List<bool> unfolded; // list of bools for unfolded or closed dropdown
         
 
-        float minWidth
+        float MinWidth
         {
             get
             {
@@ -77,7 +77,7 @@ namespace GhSA.UI
                 float num = Math.Max(Math.Max(sp, di), 90);
                 return num;
             }
-            set { minWidth = value; }
+            set { MinWidth = value; }
         }
         protected override void Layout()
         {
@@ -187,8 +187,10 @@ namespace GhSA.UI
             if (channel == GH_CanvasChannel.Objects)
             {
                 Pen spacer = new Pen(UI.Colour.SpacerColour);
-                Pen pen = new Pen(UI.Colour.GsaDarkBlue);
-                pen.Width = 0.5f;
+                Pen pen = new Pen(UI.Colour.GsaDarkBlue)
+                {
+                    Width = 0.5f
+                };
 
                 for (int i = 0; i < dropdownlists.Count; i++)
                 {
@@ -320,7 +322,7 @@ namespace GhSA.UI
         protected void FixLayout()
         {
             float width = this.Bounds.Width;
-            float num = Math.Max(width, minWidth);
+            float num = Math.Max(width, MinWidth);
             float num2 = 0f;
             if (num > this.Bounds.Width)
             {

@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("037f46d0-f0f6-4e99-8851-fc99d5e8205c");
         public EditSpring()
           : base("Edit Spring", "SpringEdit", "Modify GSA Spring",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat1())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat1())
         {
         }
 

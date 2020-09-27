@@ -18,20 +18,20 @@ namespace GhSA.Util.Gsa
     /// </summary>
     public class GsaProfile
     {
-        public enum profileTypes
+        public enum ProfileTypes
         {
             [Description("Standard")] Standard,
             [Description("Catalogue")] Catalogue,
             [Description("Geometric")] Geometric
         }
-        public enum geoTypes
+        public enum GeoTypes
         {
             [Description("Perimeter")] Perim
             //[Description("Thin Wall")] ThinWall, // removed temporarily as not currently implemented (ADSEC-563)
             //[Description("Point")] Point         // removed temporarily as not currently implemented (ADSEC-563)
         }
 
-        public enum stdShapeOptions
+        public enum StdShapeOptions
         {
             [Description("Rectangle")] Rectangle,
             [Description("Circle")] Circle,
@@ -41,7 +41,7 @@ namespace GhSA.Util.Gsa
             [Description("Angle")] Angle,
         }
 
-        public enum sectUnitOptions
+        public enum SectUnitOptions
         {
             [Description("mm")] u_mm,
             [Description("cm")] u_cm,
@@ -50,10 +50,10 @@ namespace GhSA.Util.Gsa
             [Description("in")] u_in,
         }
 
-        public profileTypes profileType;
-        public stdShapeOptions stdShape;
-        public geoTypes geoType;
-        public sectUnitOptions sectUnit = sectUnitOptions.u_mm;
+        public ProfileTypes profileType;
+        public StdShapeOptions stdShape;
+        public GeoTypes geoType;
+        public SectUnitOptions sectUnit = SectUnitOptions.u_mm;
 
         public int catalogueIndex;
         public int catalogueTypeIndex;
@@ -150,19 +150,19 @@ namespace GhSA.Util.Gsa
                     switch (Unit.Length_Section)
                     {
                         case "mm":
-                            gsaProfile.sectUnit = GsaProfile.sectUnitOptions.u_mm;
+                            gsaProfile.sectUnit = GsaProfile.SectUnitOptions.u_mm;
                             break;
                         case "cm":
-                            gsaProfile.sectUnit = GsaProfile.sectUnitOptions.u_cm;
+                            gsaProfile.sectUnit = GsaProfile.SectUnitOptions.u_cm;
                             break;
                         case "m":
-                            gsaProfile.sectUnit = GsaProfile.sectUnitOptions.u_m;
+                            gsaProfile.sectUnit = GsaProfile.SectUnitOptions.u_m;
                             break;
                         case "in":
-                            gsaProfile.sectUnit = GsaProfile.sectUnitOptions.u_in;
+                            gsaProfile.sectUnit = GsaProfile.SectUnitOptions.u_in;
                             break;
                         case "ft":
-                            gsaProfile.sectUnit = GsaProfile.sectUnitOptions.u_ft;
+                            gsaProfile.sectUnit = GsaProfile.SectUnitOptions.u_ft;
                             break;
                     }
                 }
@@ -182,28 +182,28 @@ namespace GhSA.Util.Gsa
         /// <returns></returns>
         public static string ProfileConversion(GsaProfile gsaProfile)
         {
-            if (gsaProfile.profileType == GsaProfile.profileTypes.Standard)
+            if (gsaProfile.profileType == GsaProfile.ProfileTypes.Standard)
             {
                 string unit = " ";
 
                 switch (gsaProfile.sectUnit)
                 {
-                    case GsaProfile.sectUnitOptions.u_cm:
+                    case GsaProfile.SectUnitOptions.u_cm:
                         unit = "(cm) ";
                         break;
-                    case GsaProfile.sectUnitOptions.u_m:
+                    case GsaProfile.SectUnitOptions.u_m:
                         unit = "(m) ";
                         break;
-                    case GsaProfile.sectUnitOptions.u_in:
+                    case GsaProfile.SectUnitOptions.u_in:
                         unit = "(in) ";
                         break;
-                    case GsaProfile.sectUnitOptions.u_ft:
+                    case GsaProfile.SectUnitOptions.u_ft:
                         unit = "(ft) ";
                         break;
                 }
 
 
-                if (gsaProfile.stdShape == GsaProfile.stdShapeOptions.Rectangle)
+                if (gsaProfile.stdShape == GsaProfile.StdShapeOptions.Rectangle)
                 {
                     if (gsaProfile.isTapered)
                     {
@@ -221,7 +221,7 @@ namespace GhSA.Util.Gsa
                         }
                     }
                 }
-                else if (gsaProfile.stdShape == GsaProfile.stdShapeOptions.Circle)
+                else if (gsaProfile.stdShape == GsaProfile.StdShapeOptions.Circle)
                 {
                     if (gsaProfile.isHollow)
                     {
@@ -246,7 +246,7 @@ namespace GhSA.Util.Gsa
                         }
                     }
                 }
-                else if (gsaProfile.stdShape == GsaProfile.stdShapeOptions.I_section)
+                else if (gsaProfile.stdShape == GsaProfile.StdShapeOptions.I_section)
                 {
                     if (gsaProfile.isGeneral)
                     {
@@ -266,7 +266,7 @@ namespace GhSA.Util.Gsa
                         return "STD I" + unit + gsaProfile.d.ToString("0.############") + " " + gsaProfile.b1.ToString("0.############") + " " + gsaProfile.tw1.ToString("0.############") + " " + gsaProfile.tf1.ToString("0.############");
                     }
                 }
-                else if (gsaProfile.stdShape == GsaProfile.stdShapeOptions.Tee)
+                else if (gsaProfile.stdShape == GsaProfile.StdShapeOptions.Tee)
                 {
                     if (gsaProfile.isTapered)
                     {
@@ -279,7 +279,7 @@ namespace GhSA.Util.Gsa
                     }
                 }
 
-                else if (gsaProfile.stdShape == GsaProfile.stdShapeOptions.Channel)
+                else if (gsaProfile.stdShape == GsaProfile.StdShapeOptions.Channel)
                 {
                     if (gsaProfile.isB2B)
                     {
@@ -291,7 +291,7 @@ namespace GhSA.Util.Gsa
                     }
                 }
 
-                else if (gsaProfile.stdShape == GsaProfile.stdShapeOptions.Angle)
+                else if (gsaProfile.stdShape == GsaProfile.StdShapeOptions.Angle)
                 {
                     if (gsaProfile.isB2B)
                     {
@@ -307,7 +307,7 @@ namespace GhSA.Util.Gsa
                     return "STD something else";
                 }
             }
-            else if (gsaProfile.profileType == GsaProfile.profileTypes.Catalogue)
+            else if (gsaProfile.profileType == GsaProfile.ProfileTypes.Catalogue)
             {
                 //let catalogueName = gsaProfile.catalogueNames[gsaProfile.catalogueIndex]
                 //let typeName = gsaProfile.catalogueTypes(catalogueName)[gsaProfile.catalogueTypeIndex]
@@ -315,12 +315,12 @@ namespace GhSA.Util.Gsa
                 //return "CAT " + typeAbbrev + " " + gsaProfile.sectionNames(catalogueName, typeName)[gsaProfile.catalogueProfileIndex]
                 return "CAT"; //to be implemented
             }
-            else if (gsaProfile.profileType == GsaProfile.profileTypes.Geometric)
+            else if (gsaProfile.profileType == GsaProfile.ProfileTypes.Geometric)
             {
-                if (gsaProfile.geoType == GsaProfile.geoTypes.Perim)
+                if (gsaProfile.geoType == GsaProfile.GeoTypes.Perim)
                 {
                     string unit = "";
-                    if (gsaProfile.sectUnit != GsaProfile.sectUnitOptions.u_mm)
+                    if (gsaProfile.sectUnit != GsaProfile.SectUnitOptions.u_mm)
                         unit = "(" + gsaProfile.sectUnit.ToString() + ") ";
 
                     var profile = "GEO P" + unit;

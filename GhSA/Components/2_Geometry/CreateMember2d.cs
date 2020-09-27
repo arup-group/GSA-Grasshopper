@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("df0c2786-9e46-4500-ab63-0c4162a580d4");
         public CreateMember2d()
           : base("Create 2D Member", "Mem2D", "Create GSA Member 2D",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat2())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat2())
         {
         }
 
@@ -113,8 +113,7 @@ namespace GhSA.Components
                         mem.Property = prop2D;
                     else if (DA.GetData(1, ref gh_sec_idd))
                     {
-                        int idd = 0;
-                        if (GH_Convert.ToInt32(gh_sec_idd, out idd, GH_Conversion.Both))
+                        if (GH_Convert.ToInt32(gh_sec_idd, out int idd, GH_Conversion.Both))
                             mem.Property.ID = idd;
                     }
                     else
@@ -124,9 +123,8 @@ namespace GhSA.Components
                     GH_Number ghmsz = new GH_Number();
                     if (DA.GetData(4, ref ghmsz))
                     {
-                        double m_size = 0;
-                        GH_Convert.ToDouble(ghmsz, out m_size, GH_Conversion.Both);
-                        mem.member.MeshSize = m_size;
+                        GH_Convert.ToDouble(ghmsz, out double m_size, GH_Conversion.Both);
+                        mem.Member.MeshSize = m_size;
                     }
 
                     DA.SetData(0, new GsaMember2dGoo(mem));

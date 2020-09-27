@@ -80,16 +80,11 @@
     <Compile Include="Components\2_Geometry\CreateElement1d.cs" />
     <Compile Include="Components\2_Geometry\CreateMember1d.cs" />
     <Compile Include="Components\2_Geometry\EditElement1d.cs" />
-    <Compile Include="Components\Tests\SetUnitsTest.cs" />
-    <Compile Include="Components\ToBeDeleted\gsaElement2dInfo.cs" />
+    <Compile Include="Components\0_Model\SetUnits.cs" />
     <Compile Include="Components\2_Geometry\EditElement2d.cs" />
-    <Compile Include="Components\ToBeDeleted\gsaElement1dInfo.cs" />
-    <Compile Include="Components\ToBeDeleted\gsaMember2dInfo.cs" />
     <Compile Include="Components\2_Geometry\EditMember2d.cs" />
     <Compile Include="Components\2_Geometry\EditMember1d.cs" />
     <Compile Include="Components\2_Geometry\EditNode.cs" />
-    <Compile Include="Components\ToBeDeleted\gsaMember1dInfo.cs" />
-    <Compile Include="Components\ToBeDeleted\gsaNodeInfo.cs" />
     <Compile Include="Components\2_Geometry\CreateSupport.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
     <Compile Include="Components\Tests\DropDownMulti.cs" />

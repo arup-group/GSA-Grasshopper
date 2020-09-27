@@ -88,14 +88,16 @@ namespace GhSA.Parameters
         
         public GsaBool6 Duplicate()
         {
-            GsaBool6 dup = new GsaBool6();
-            dup.X = m_x;
-            dup.Y = m_y;
-            dup.Z = m_z;
-            dup.XX = m_xx;
-            dup.YY = m_yy;
-            dup.ZZ = m_zz;
-            
+            GsaBool6 dup = new GsaBool6
+            {
+                X = m_x,
+                Y = m_y,
+                Z = m_z,
+                XX = m_xx,
+                YY = m_yy,
+                ZZ = m_zz
+            };
+
             return dup;
         }
         #endregion
@@ -202,7 +204,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GsaBool6)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
@@ -211,14 +213,14 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Bool6)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
             }
 
 
-            target = default(Q);
+            target = default;
             return false;
         }
         public override bool CastFrom(object source)
@@ -238,8 +240,7 @@ namespace GhSA.Parameters
 
 
             //Cast from Bool
-            bool mybool = false;
-            if (GH_Convert.ToBoolean(source, out mybool, GH_Conversion.Both))
+            if (GH_Convert.ToBoolean(source, out bool mybool, GH_Conversion.Both))
             {
                 Value.X = mybool;
                 Value.Y = mybool;
@@ -251,8 +252,7 @@ namespace GhSA.Parameters
             }
 
             //Cast from string
-            string mystring = null;
-            if (GH_Convert.ToString(source, out mystring, GH_Conversion.Both))
+            if (GH_Convert.ToString(source, out string mystring, GH_Conversion.Both))
             {
                 mystring = mystring.Trim();
                 mystring = mystring.ToLower();
@@ -312,7 +312,7 @@ namespace GhSA.Parameters
     public class GsaBool6Parameter : GH_PersistentParam<GsaBool6Goo>
     {
         public GsaBool6Parameter()
-          : base(new GH_InstanceDescription("GSA Bool6", "Bool6", "Bool6 to set releases and restraints", GhSA.Components.Ribbon.CategoryName.name(), GhSA.Components.Ribbon.SubCategoryName.cat9()))
+          : base(new GH_InstanceDescription("GSA Bool6", "Bool6", "Bool6 to set releases and restraints", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -332,16 +332,20 @@ namespace GhSA.Parameters
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
 

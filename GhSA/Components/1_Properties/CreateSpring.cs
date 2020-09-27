@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("e4b7c688-147b-4d91-b754-1a45c715b8db");
         public CreateSpring()
           : base("Create Spring", "Spring", "Create GSA Spring (Type: General)",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat1())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat1())
         {
         }
 
@@ -91,13 +91,15 @@ namespace GhSA.Components
             GH_Number ghSprZZ = new GH_Number();
             if (DA.GetData(5, ref ghSprZZ))
                 GH_Convert.ToDouble(ghSprZZ, out zz, GH_Conversion.Both);
-            GsaSpring Spring = new GsaSpring();
-            Spring.X = x;
-            Spring.Y = y;
-            Spring.Z = z;
-            Spring.XX = xx;
-            Spring.YY = yy;
-            Spring.ZZ = zz;
+            GsaSpring Spring = new GsaSpring
+            {
+                X = x,
+                Y = y,
+                Z = z,
+                XX = xx,
+                YY = yy,
+                ZZ = zz
+            };
             DA.SetData(0, new GsaSpringGoo(Spring.Duplicate()));
         }
     }

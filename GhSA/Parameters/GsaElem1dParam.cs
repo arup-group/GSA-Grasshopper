@@ -98,10 +98,12 @@ namespace GhSA.Parameters
 
         public GsaElement1d(LineCurve line, int prop = 1)
         {
-            m_element = new Element();
-            m_element.Type = ElementType.BEAM;
-            m_element.Property = prop;
-            
+            m_element = new Element
+            {
+                Type = ElementType.BEAM,
+                Property = prop
+            };
+
             m_line = line;
         }
 
@@ -113,8 +115,10 @@ namespace GhSA.Parameters
 
         public GsaElement1d Duplicate()
         {
-            GsaElement1d dup = new GsaElement1d();
-            dup.m_element = m_element; //add clone or duplicate if available
+            GsaElement1d dup = new GsaElement1d
+            {
+                m_element = m_element //add clone or duplicate if available
+            };
             if (m_line != null)
                 dup.m_line = (LineCurve)m_line.Duplicate();
             dup.ID = m_id;
@@ -245,7 +249,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GsaElement1d)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value;
                 return true;
@@ -254,7 +258,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Element)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value.Element;
                 return true;
@@ -264,7 +268,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Line)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value.Line;
                 return true;
@@ -272,7 +276,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GH_Line)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                 {
                     GH_Line ghLine = new GH_Line();
@@ -285,7 +289,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(Curve)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                     target = (Q)(object)Value.Line;
                 return true;
@@ -293,7 +297,7 @@ namespace GhSA.Parameters
             if (typeof(Q).IsAssignableFrom(typeof(GH_Curve)))
             {
                 if (Value == null)
-                    target = default(Q);
+                    target = default;
                 else
                 {
                     target = (Q)(object)new GH_Curve(Value.Line);
@@ -303,7 +307,7 @@ namespace GhSA.Parameters
             }
 
 
-            target = default(Q);
+            target = default;
             return false;
         }
         public override bool CastFrom(object source)
@@ -349,8 +353,10 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Line == null) { return null; }
 
-            GsaElement1d elem = new GsaElement1d();
-            elem.Element = Value.Element;
+            GsaElement1d elem = new GsaElement1d
+            {
+                Element = Value.Element
+            };
             LineCurve xLn = Value.Line;
             xLn.Transform(xform);
             elem.Line = xLn;
@@ -363,8 +369,10 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Line == null) { return null; }
 
-            GsaElement1d elem = new GsaElement1d();
-            elem.Element = Value.Element;
+            GsaElement1d elem = new GsaElement1d
+            {
+                Element = Value.Element
+            };
             LineCurve xLn = Value.Line;
             xmorph.Morph(xLn);
             elem.Line = xLn;
@@ -419,7 +427,7 @@ namespace GhSA.Parameters
     public class GsaElement1dParameter : GH_PersistentGeometryParam<GsaElement1dGoo>, IGH_PreviewObject
     {
         public GsaElement1dParameter()
-          : base(new GH_InstanceDescription("GSA 1D Element", "Element 1D", "Maintains a collection of GSA 1D Element data.", GhSA.Components.Ribbon.CategoryName.name(), GhSA.Components.Ribbon.SubCategoryName.cat9()))
+          : base(new GH_InstanceDescription("GSA 1D Element", "Element 1D", "Maintains a collection of GSA 1D Element data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -441,16 +449,20 @@ namespace GhSA.Parameters
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
         {
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = "Not available";
-            item.Visible = false;
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
             return item;
         }
 

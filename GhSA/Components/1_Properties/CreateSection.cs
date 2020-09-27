@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("1167c4aa-b98b-47a7-ae85-1a3c976a1973");
         public CreateSection()
           : base("Create Section", "Section", "Create GSA Section",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat1())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat1())
         {
         }
 
@@ -72,10 +72,8 @@ namespace GhSA.Components
             GH_String gh_profile = new GH_String();
             if (DA.GetData(0, ref gh_profile))
             {
-                string profile = "";
-                if (GH_Convert.ToString(gh_profile, out profile, GH_Conversion.Both))
+                if (GH_Convert.ToString(gh_profile, out string profile, GH_Conversion.Both))
                 {
-                    
                     sect.Section.Profile = profile;
 
                     // 1 material
@@ -85,8 +83,7 @@ namespace GhSA.Components
                     GH_Integer gh_pool = new GH_Integer();
                     if (DA.GetData(2, ref gh_pool))
                     {
-                        int pool = 0;
-                        if (GH_Convert.ToInt32(gh_pool, out pool, GH_Conversion.Both))
+                        if (GH_Convert.ToInt32(gh_pool, out int pool, GH_Conversion.Both))
                             sect.Section.Pool = pool;
                     }
 
@@ -94,8 +91,7 @@ namespace GhSA.Components
                     GH_Integer gh_id = new GH_Integer();
                     if (DA.GetData(3, ref gh_id))
                     {
-                        int idd = 0;
-                        if (GH_Convert.ToInt32(gh_id, out idd, GH_Conversion.Both))
+                        if (GH_Convert.ToInt32(gh_id, out int idd, GH_Conversion.Both))
                             sect.ID = idd;
                     }
 
@@ -103,8 +99,7 @@ namespace GhSA.Components
                     GH_String gh_n = new GH_String();
                     if (DA.GetData(4, ref gh_n))
                     {
-                        string name = "";
-                        if (GH_Convert.ToString(gh_n, out name, GH_Conversion.Both))
+                        if (GH_Convert.ToString(gh_n, out string name, GH_Conversion.Both))
                             sect.Section.Name = name;
                     }
 
@@ -112,8 +107,7 @@ namespace GhSA.Components
                     GH_Colour gh_Colour = new GH_Colour();
                     if (DA.GetData(5, ref gh_Colour))
                     {
-                        System.Drawing.Color colour = new System.Drawing.Color();
-                        if (GH_Convert.ToColor(gh_Colour, out colour, GH_Conversion.Both))
+                        if (GH_Convert.ToColor(gh_Colour, out System.Drawing.Color colour, GH_Conversion.Both))
                             sect.Section.Colour = colour;
                     }
                 }

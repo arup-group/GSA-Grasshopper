@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("8f83d32a-c2df-4f47-9cfc-d2d4253703e1");
         public CreateElement2d()
           : base("Create 2D Element", "Elem2D", "Create GSA 2D Element",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat2())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat2())
         {
         }
 
@@ -81,8 +81,7 @@ namespace GhSA.Components
                     }
                     else if (DA.GetData(1, ref gh_sec_idd))
                     {
-                        int idd = 0;
-                        if (GH_Convert.ToInt32(gh_sec_idd, out idd, GH_Conversion.Both))
+                        if (GH_Convert.ToInt32(gh_sec_idd, out int idd, GH_Conversion.Both))
                         {
                             prop2d.ID = idd;
                             List<GsaProp2d> prop2Ds = new List<GsaProp2d>();

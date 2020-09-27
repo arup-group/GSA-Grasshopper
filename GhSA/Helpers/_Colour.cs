@@ -161,10 +161,12 @@ namespace GhSA.UI
         {
             get 
             {
-                DisplayMaterial material = new DisplayMaterial();
-                material.Diffuse = Color.FromArgb(50, 150, 150, 150);
-                material.Emission = Color.FromArgb(50, 45, 45, 45);
-                material.Transparency = 0.1;
+                DisplayMaterial material = new DisplayMaterial
+                {
+                    Diffuse = Color.FromArgb(50, 150, 150, 150),
+                    Emission = Color.FromArgb(50, 45, 45, 45),
+                    Transparency = 0.1
+                };
                 return material;
             } 
         }
@@ -173,10 +175,12 @@ namespace GhSA.UI
         {
             get
             {
-                DisplayMaterial material = new DisplayMaterial();
-                material.Diffuse = Color.FromArgb(5, 150, 150, 150);
-                material.Emission = Color.FromArgb(5, 5, 5, 5);
-                material.Transparency = 0.2;
+                DisplayMaterial material = new DisplayMaterial
+                {
+                    Diffuse = Color.FromArgb(5, 150, 150, 150),
+                    Emission = Color.FromArgb(5, 5, 5, 5),
+                    Transparency = 0.2
+                };
                 return material;
             }
         }

@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("d73be4e3-887f-4507-8400-99687460f31c");
         public DropDownTest2()
           : base("DropDownSingle", "DropDown1", "Create GSA Node Support",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat8())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat8())
         {
         }
 
@@ -60,10 +60,10 @@ namespace GhSA.Components
         
         public override void CreateAttributes()
         {
-            m_attributes = new UI.DropDownComponentUI(this, setSelected, dropdownitems, selecteditem, "Concrete Grade");
+            m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Concrete Grade");
         }
 
-        public void setSelected(string selected)
+        public void SetSelected(string selected)
         {
             selecteditem = selected;
         }

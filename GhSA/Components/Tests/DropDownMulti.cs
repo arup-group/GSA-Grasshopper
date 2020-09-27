@@ -16,8 +16,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("460a2412-ce15-49a6-b8da-e512ba92eeec");
         public DropDownTest1()
           : base("DropDownMulti", "DropDown2", "Create GSA Node Support",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat8())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat8())
         {
         }
 

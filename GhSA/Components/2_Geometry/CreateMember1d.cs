@@ -25,8 +25,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("5c5b9efa-cdae-4be5-af40-ff2b590801dd");
         public CreateMember1d()
           : base("Create 1D Member", "Mem1D", "Create GSA 1D Member",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat2())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat2())
         {
         }
 

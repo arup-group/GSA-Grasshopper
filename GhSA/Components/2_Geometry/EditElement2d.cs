@@ -27,8 +27,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("e9611aa7-88c1-4b5b-83d6-d9629e21ad8a");
         public EditElement2d()
           : base("Edit 2D Element", "Elem2dEdit", "Modify GSA 2D Element",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat2())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat2())
         {
         }
 
@@ -86,8 +86,7 @@ namespace GhSA.Components
             GsaElement2d gsaElement2d = new GsaElement2d();
             if (DA.GetData(0, ref gsaElement2d))
             {
-                GsaElement2d elem = new GsaElement2d();
-                elem = gsaElement2d.Duplicate();
+                GsaElement2d elem = gsaElement2d.Duplicate();
 
                 // #### inputs ####
 
@@ -103,13 +102,14 @@ namespace GhSA.Components
                 }
                 else if (DA.GetDataList(1, gh_sec_idd))
                 {
-                    int idd = 0;
                     for (int i = 0; i < gh_sec_idd.Count; i++)
                     {
-                        if (GH_Convert.ToInt32(gh_sec_idd[i], out idd, GH_Conversion.Both))
+                        if (GH_Convert.ToInt32(gh_sec_idd[i], out int idd, GH_Conversion.Both))
                         {
-                            GsaProp2d prop2d = new GsaProp2d();
-                            prop2d.ID = idd;
+                            GsaProp2d prop2d = new GsaProp2d
+                            {
+                                ID = idd
+                            };
                             prop2ds.Add(prop2d);
                         }
                     }
@@ -128,10 +128,9 @@ namespace GhSA.Components
                 List<GH_Integer> ghinteg = new List<GH_Integer>();
                 if (DA.GetDataList(3, ghinteg))
                 {
-                    int type = new int();
                     for (int i = 0; i < ghinteg.Count; i++)
                     {
-                        if (GH_Convert.ToInt32(ghinteg[i], out type, GH_Conversion.Both))
+                        if (GH_Convert.ToInt32(ghinteg[i], out int type, GH_Conversion.Both))
                         {
                             //elem.Elements[i].Type = Util.Gsa.GsaToModel.Element2dType(type); Note: Type on 2D element should be analysis order - GsaAPI bug?
                         }
@@ -142,28 +141,21 @@ namespace GhSA.Components
                 List<GH_Integer> ghID = new List<GH_Integer>();
                 if (DA.GetDataList(4, ghID))
                 {
-                    int id = new int();
                     for (int i = 0; i < ghID.Count; i++)
                     {
-                        if (GH_Convert.ToInt32(ghID[i], out id, GH_Conversion.Both))
-                        {
+                        if (GH_Convert.ToInt32(ghID[i], out int id, GH_Conversion.Both))
                             elem.ID[i] = id;
-                        }
                     }
-                        
                 }
 
                 // 5 name
                 List<GH_String> ghnm = new List<GH_String>();
                 if (DA.GetDataList(5, ghnm))
                 {
-                    string name = "";
                     for (int i = 0; i < ghnm.Count; i++)
                     {
-                        if (GH_Convert.ToString(ghnm[i], out name, GH_Conversion.Both))
-                        {
+                        if (GH_Convert.ToString(ghnm[i], out string name, GH_Conversion.Both))
                             elem.Elements[i].Name = name;
-                        }
                     }
                 }
 
@@ -171,13 +163,10 @@ namespace GhSA.Components
                 List<GH_Integer> ghgrp = new List<GH_Integer>();
                 if (DA.GetDataList(6, ghgrp))
                 {
-                    int grp = new int();
                     for (int i = 0; i < ghgrp.Count; i++)
                     {
-                        if (GH_Convert.ToInt32(ghgrp[i], out grp, GH_Conversion.Both))
-                        {
+                        if (GH_Convert.ToInt32(ghgrp[i], out int grp, GH_Conversion.Both))
                             elem.Elements[i].Group = grp;
-                        }
                     }
                 }
 
@@ -185,13 +174,10 @@ namespace GhSA.Components
                 List<GH_Colour> ghcol = new List<GH_Colour>();
                 if (DA.GetDataList(7, ghcol))
                 {
-                    System.Drawing.Color col = new System.Drawing.Color();
                     for (int i = 0; i < ghcol.Count; i++)
                     {
-                        if (GH_Convert.ToColor(ghcol[i], out col, GH_Conversion.Both))
-                        {
+                        if (GH_Convert.ToColor(ghcol[i], out System.Drawing.Color col, GH_Conversion.Both))
                             elem.Elements[i].Colour = col;
-                        }
                     }
                 }
 
@@ -203,15 +189,16 @@ namespace GhSA.Components
 
                 List<GsaOffset> offsets = new List<GsaOffset>();
                 //List<int> anal = new List<int>();
-                List<int> ids = new List<int>();
                 List<string> names = new List<string>();
                 List<int> groups = new List<int>();
                 List<System.Drawing.Color> colours = new List<System.Drawing.Color>();
                 List<int> pmems = new List<int>();
                 for (int i = 0; i < elem.Elements.Count; i++)
                 {
-                    GsaOffset offset1 = new GsaOffset();
-                    offset1.Z = elem.Elements[i].Offset.Z;
+                    GsaOffset offset1 = new GsaOffset
+                    {
+                        Z = elem.Elements[i].Offset.Z
+                    };
                     offsets.Add(offset1);
                     //anal.Add(gsaElement2d.Elements[i].Type);
                     names.Add(elem.Elements[i].Name);

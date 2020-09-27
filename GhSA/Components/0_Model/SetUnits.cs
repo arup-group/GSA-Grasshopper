@@ -23,8 +23,8 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("7804c8d8-07b9-43f2-af07-1a056dce8c6d");
         public EditGsaUnits()
           : base("Edit GSA Units", "Unit", "Set GSA Units for this document",
-                Ribbon.CategoryName.name(),
-                Ribbon.SubCategoryName.cat0())
+                Ribbon.CategoryName.Name(),
+                Ribbon.SubCategoryName.Cat0())
         {
         }
 
@@ -67,36 +67,35 @@ namespace GhSA.Components
             {
                 if (Instances.ActiveCanvas.Document.Attributes[i].DocObject.NickName == "Profile") //set nickname here
                 {
-                    GH_Component comp = Instances.ActiveCanvas.Document.Attributes[i] as GH_Component;
-                    if (comp != null)
+                if (Instances.ActiveCanvas.Document.Attributes[i] is GH_Component comp)
+                {
+                    comp.ExpireSolution(true);
+                    for (int j = 0; j < comp.Params.Input.Count; j++)
                     {
-                        comp.ExpireSolution(true);
-                        for (int j = 0; j < comp.Params.Input.Count; j++)
-                        {
-                            for (int k = 0; k < comp.Params.Input[j].Sources.Count; k++)
-                                comp.Params.Input[j].Sources[k].Attributes.PerformLayout();
-                        }
+                        for (int k = 0; k < comp.Params.Input[j].Sources.Count; k++)
+                            comp.Params.Input[j].Sources[k].Attributes.PerformLayout();
                     }
-                    
-                    
-                    
-                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.ExpireSolution(true);
-
-                    
-                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.Attributes.PerformLayout();
-                    //Instances.ActiveCanvas.Document.Attributes[i].PerformLayout();
-                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.Attributes.ExpireLayout();
-                    //Instances.ActiveCanvas.Document.Attributes[i].ExpireLayout();
-                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.CreateAttributes();
-
-                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.ExpirePreview(true);
-                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnAttributesChanged();
-                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnDisplayExpired(true);
-                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnObjectChanged(GH_ObjectEventType.Layout);
-                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnObjectChanged(GH_ObjectEventType.PersistentData);
-                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnPingDocument();
-                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnPreviewExpired(true);
                 }
+
+
+
+                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.ExpireSolution(true);
+
+
+                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.Attributes.PerformLayout();
+                //Instances.ActiveCanvas.Document.Attributes[i].PerformLayout();
+                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.Attributes.ExpireLayout();
+                //Instances.ActiveCanvas.Document.Attributes[i].ExpireLayout();
+                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.CreateAttributes();
+
+                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.ExpirePreview(true);
+                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnAttributesChanged();
+                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnDisplayExpired(true);
+                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnObjectChanged(GH_ObjectEventType.Layout);
+                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnObjectChanged(GH_ObjectEventType.PersistentData);
+                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnPingDocument();
+                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnPreviewExpired(true);
+            }
             }
         }
 
@@ -105,20 +104,21 @@ namespace GhSA.Components
             GH_String ghnm = new GH_String();
             if (DA.GetData(0, ref ghnm))
             {
-                string SectU = "";
-                if (GH_Convert.ToString(ghnm, out SectU, GH_Conversion.Both))
+                if (GH_Convert.ToString(ghnm, out string SectU, GH_Conversion.Both))
                 {
                     Util.Unit.Length_Section = SectU;
                     UpdateCanvas();
                 }
             }
 
-            List<string> units = new List<string>();
-            units.Add("Length Large: " + Util.Unit.Length_Large);
-            units.Add("Length Small: " + Util.Unit.Length_Small);
-            units.Add("Length Section: " + Util.Unit.Length_Section);
-            units.Add("Rhino document unit: " + Util.Unit.RhinoDocUnit);
-            units.Add("Rhino unit conversion to meter: " + Util.Unit.RhinoDocFactorToMeter.ToString());
+            List<string> units = new List<string>
+            {
+                "Length Large: " + Util.Unit.Length_Large,
+                "Length Small: " + Util.Unit.Length_Small,
+                "Length Section: " + Util.Unit.Length_Section,
+                "Rhino document unit: " + Util.Unit.RhinoDocUnit,
+                "Rhino unit conversion to meter: " + Util.Unit.RhinoDocFactorToMeter.ToString()
+            };
 
             DA.SetDataList(0, units);
         }

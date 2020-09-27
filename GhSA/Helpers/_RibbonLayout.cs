@@ -14,7 +14,7 @@ namespace GhSA.Components.Ribbon
 	/// </summary>
 	public class CategoryName
 	{
-		public static string name()
+		public static string Name()
 		{
 			return "GSA";
 		}
@@ -30,52 +30,52 @@ namespace GhSA.Components.Ribbon
 	/// </summary>
 	internal class SubCategoryName
 	{
-		public static string cat0()
+		public static string Cat0()
 		{
 			return new string(' ', 10) + "Model";
 		}
 
-		public static string cat1()
+		public static string Cat1()
 		{
 			return new string(' ', 9) + "Properties";
 		}
 
-		public static string cat2()
+		public static string Cat2()
 		{
 			return new string(' ', 8) + "Geometry";
 		}
 
-		public static string cat3()
+		public static string Cat3()
 		{
 			return new string(' ', 7) + "Loads";
 		}
 
-		public static string cat4()
+		public static string Cat4()
 		{
 			return new string(' ', 6) + "Analyse";
 		}
 
-		public static string cat5()
+		public static string Cat5()
 		{
 			return new string(' ', 5) + "Results";
 		}
 
-		public static string cat6()
+		public static string Cat6()
 		{
 			return "";
 		}
 
-		public static string cat7()
+		public static string Cat7()
 		{
 			return "";
 		}
 
-		public static string cat8()
+		public static string Cat8()
 		{
 			return "test";
 		}
 
-		public static string cat9()
+		public static string Cat9()
 		{
 			return "Parameters";
 		}
