@@ -90,7 +90,7 @@ namespace GhSA.Components
         }
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            Params.Input[0].Optional = (fileName == null) ? false : true; //filename can have input from user input
+            Params.Input[0].Optional = fileName != null; //filename can have input from user input
             Params.Input[0].ClearRuntimeMessages(); // this needs to be called to avoid having a runtime warning message after changed to optional
 
             //    Params.Output[i].NickName = "P";

@@ -140,11 +140,11 @@ namespace GhSA.Util
         }
         #region fields
         private static string m_force = "kN";
-        private static string m_length_L = "";
-        private static string m_length_S = "";
+        private static string m_length_L = "m";
+        private static string m_length_S = "mm";
         private static string m_length_section = "mm";
         private static string m_mass = "t";
-        private static string m_temperature = "C";
+        private static string m_temperature = "°C";
         private static string m_stress = "N/mm\xB2";
         private static string m_strain = "mε";
         private static string m_velocity = "m/s";
@@ -212,13 +212,13 @@ namespace GhSA.Util
             if (unitname.Contains("slug"))
                 return "slug";
             if (unitname.Contains("kip.s2/in") | unitname.Contains("kip s2/in") | unitname.Contains("kip s^2/in") | unitname.Contains("kip.s^2/in") | unitname.Contains("kip*s2/in") | unitname.Contains("kip*s^2/in"))
-                return "kip.s2/in";
+                return "kip·s\xB2/in";
             if (unitname.Contains("kip.s2/ft") | unitname.Contains("kip s2/ft") | unitname.Contains("kip s^2/ft") | unitname.Contains("kip.s^2/ft") | unitname.Contains("kip*s2/ft") | unitname.Contains("kip*s^2/ft"))
-                return "kip.s2/ft";
+                return "kip·s\xB2/ft";
             if (unitname.Contains("lbf.s2/in") | unitname.Contains("lbf s2/in") | unitname.Contains("lbf s^2/in") | unitname.Contains("lbf.s^2/in") | unitname.Contains("lbf*s2/in") | unitname.Contains("lbf*s^2/in"))
-                return "lbf.s2/in";
+                return "lbf·s\xB2/in";
             if (unitname.Contains("lbf.s2/ft") | unitname.Contains("lbf s2/ft") | unitname.Contains("lbf s^2/ft") | unitname.Contains("lbf.s^2/ft") | unitname.Contains("lbf*s2/ft") | unitname.Contains("lbf*s^2/ft"))
-                return "lbf.s2/ft";
+                return "lbf·s\xB2/ft";
             if (unitname.Contains("kip") | unitname.Contains("kilo p") | unitname.Contains("kilop"))
                 return "kip";
             if (unitname.Contains("lb") | unitname.Contains("pound"))
@@ -231,12 +231,12 @@ namespace GhSA.Util
         {
             unitname = unitname.ToLower();
             if (unitname.Contains("c"))
-                return "C";
+                return "°C";
             if (unitname.Contains("k"))
                 return "K";
             if (unitname.Contains("f"))
-                return "F";
-            return "C";
+                return "°F";
+            return "°C";
         }
         private static string StringTestStress(string unitname)
         {
@@ -250,18 +250,18 @@ namespace GhSA.Util
             if (unitname.Contains("pa"))
                 return "Pa";
             if (unitname.Contains("n/mm"))
-                return "N/mm2";
+                return "N/mm\xB2";
             if (unitname.Contains("n/m"))
-                return "N/m2";
+                return "N/m\xB2";
             if (unitname.Contains("kip"))
-                return "kip/in2";
+                return "kip/in\xB2";
             if (unitname.Contains("psi"))
                 return "psi";
             if (unitname.Contains("psf"))
                 return "psf";
             if (unitname.Contains("ksi"))
                 return "ksi";
-            return "N/mm2";
+            return "N/mm\xB2";
         }
         private static string StringTestStrain(string unitname)
         {
@@ -303,15 +303,15 @@ namespace GhSA.Util
         {
             unitname = unitname.ToLower();
             if (unitname.Contains("mm/s"))
-                return "mm/s2";
+                return "mm/s\xB2";
             if (unitname.Contains("cm/s"))
-                return "cm/s2";
+                return "cm/s\xB2";
             if (unitname.Contains("m/s"))
-                return "m/s2";
+                return "m/s\xB2";
             if (unitname.Contains("ft/s"))
-                return "ft/s2";
+                return "ft/s\xB2";
             if (unitname.Contains("in/s"))
-                return "in/s2";
+                return "in/s\xB2";
             if (unitname.Contains("%g"))
                 return "%g";
             if (unitname.Contains("mil"))
@@ -332,9 +332,9 @@ namespace GhSA.Util
             if (unitname.Contains("j"))
                 return "J";
             if (unitname.Contains("in"))
-                return "in.lbf";
+                return "in·lbf";
             if (unitname.Contains("ft"))
-                return "ft.lbf";
+                return "ft·lbf";
             if (unitname.Contains("cal"))
                 return "cal";
             if (unitname.Contains("btu"))
@@ -345,12 +345,12 @@ namespace GhSA.Util
         {
             unitname = unitname.ToLower();
             if (unitname.Contains("deg") | unitname.Contains("°"))
-                return "deg";
+                return "Degree";
             if (unitname.Contains("grad"))
-                return "grade";
+                return "Gradian";
             if (unitname.Contains("rad"))
-                return "rad";
-            return "deg";
+                return "Radian";
+            return "Degree";
         }
         private static string StringTestTime(string unitname, int default_out = -1)
         {

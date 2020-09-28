@@ -138,8 +138,8 @@ namespace GhSA.Components
             pManager[2].Optional = true;
             pManager[3].Optional = true;
 
-            _mode = FoldMode.List;
-            Message = "Import as List" + System.Environment.NewLine + "Right-click to change";
+            _mode = FoldMode.Graft;
+            Message = "Graft by Property" + System.Environment.NewLine + "Right-click to change";
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -179,7 +179,7 @@ namespace GhSA.Components
                 Tuple<DataTree<GsaMember1dGoo>, DataTree<GsaMember2dGoo>> memberTuple = Util.Gsa.GsaImport.GsaGetMemb(model, memList, graft);
 
                 List<GsaNodeGoo> gsaNodes = nodes.ConvertAll(x => new GsaNodeGoo(x));
-
+                
                 DA.SetDataList(0, gsaNodes);
                 DA.SetDataTree(1, elementTuple.Item1);
                 DA.SetDataTree(2, elementTuple.Item2);

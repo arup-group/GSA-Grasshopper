@@ -43,14 +43,28 @@ namespace GhSA.Components
         
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Section Unist", "SecU", "Set units for Sections", GH_ParamAccess.item);
-            pManager[0].Optional = true;
+            pManager.AddTextParameter("Force Unit", "Force", "Set unit for Forces", GH_ParamAccess.item);
+            pManager.AddTextParameter("Length Large Unit", "Geometry", "Set unit for modelled geometry. By default Rhino Document Unit is used", GH_ParamAccess.item);
+            pManager.AddTextParameter("Length Small Unit", "Deflections", "Set unit for Cross-Sections", GH_ParamAccess.item);
+            pManager.AddTextParameter("Section Length Unit", "Section", "Set unit for Cross-Sections", GH_ParamAccess.item);
+            pManager.AddTextParameter("Mass unit", "Mass", "Set unit for Mass", GH_ParamAccess.item);
+            pManager.AddTextParameter("Temperature unit", "Temperature", "Set unit for Temperature", GH_ParamAccess.item);
+            pManager.AddTextParameter("Stress unit", "Stress", "Set unit for Stress", GH_ParamAccess.item);
+            pManager.AddTextParameter("Strain unit", "Strain", "Set unit for Strain", GH_ParamAccess.item);
+            pManager.AddTextParameter("Velocity unit", "Velocity", "Set unit for Velocity", GH_ParamAccess.item);
+            pManager.AddTextParameter("Acceleration unit", "Acceleration", "Set unit for Acceleration", GH_ParamAccess.item);
+            pManager.AddTextParameter("Energy unit", "Energy", "Set unit for Energy", GH_ParamAccess.item);
+            pManager.AddTextParameter("Angle unit", "Angle", "Set unit for Angle", GH_ParamAccess.item);
+            pManager.AddTextParameter("Time Short unit", "Time S", "Set unit for Time - short", GH_ParamAccess.item);
+            pManager.AddTextParameter("Time Medium unit", "Time M", "Set unit for Time - medium", GH_ParamAccess.item);
+            pManager.AddTextParameter("Time Long unit", "Time L", "Set unit for Time - Long", GH_ParamAccess.item);
+            for (int i = 0; i < pManager.ParamCount; i++)
+                pManager[i].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddTextParameter("Units", "Units", "List of all units in document", GH_ParamAccess.list);
-            
         }
         #endregion
         private void UpdateCanvas()
@@ -67,60 +81,201 @@ namespace GhSA.Components
             {
                 if (Instances.ActiveCanvas.Document.Attributes[i].DocObject.NickName == "Profile") //set nickname here
                 {
-                if (Instances.ActiveCanvas.Document.Attributes[i] is GH_Component comp)
-                {
-                    comp.ExpireSolution(true);
-                    for (int j = 0; j < comp.Params.Input.Count; j++)
+                    if (Instances.ActiveCanvas.Document.Attributes[i] is GH_Component comp)
                     {
-                        for (int k = 0; k < comp.Params.Input[j].Sources.Count; k++)
-                            comp.Params.Input[j].Sources[k].Attributes.PerformLayout();
+                        comp.ExpireSolution(true);
+                        for (int j = 0; j < comp.Params.Input.Count; j++)
+                        {
+                            for (int k = 0; k < comp.Params.Input[j].Sources.Count; k++)
+                                comp.Params.Input[j].Sources[k].Attributes.PerformLayout();
+                        }
                     }
+
+
+
+                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.ExpireSolution(true);
+
+
+                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.Attributes.PerformLayout();
+                    //Instances.ActiveCanvas.Document.Attributes[i].PerformLayout();
+                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.Attributes.ExpireLayout();
+                    //Instances.ActiveCanvas.Document.Attributes[i].ExpireLayout();
+                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.CreateAttributes();
+
+                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.ExpirePreview(true);
+                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnAttributesChanged();
+                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnDisplayExpired(true);
+                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnObjectChanged(GH_ObjectEventType.Layout);
+                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnObjectChanged(GH_ObjectEventType.PersistentData);
+                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnPingDocument();
+                    //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnPreviewExpired(true);
                 }
-
-
-
-                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.ExpireSolution(true);
-
-
-                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.Attributes.PerformLayout();
-                //Instances.ActiveCanvas.Document.Attributes[i].PerformLayout();
-                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.Attributes.ExpireLayout();
-                //Instances.ActiveCanvas.Document.Attributes[i].ExpireLayout();
-                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.CreateAttributes();
-
-                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.ExpirePreview(true);
-                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnAttributesChanged();
-                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnDisplayExpired(true);
-                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnObjectChanged(GH_ObjectEventType.Layout);
-                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnObjectChanged(GH_ObjectEventType.PersistentData);
-                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnPingDocument();
-                //Instances.ActiveCanvas.Document.Attributes[i].DocObject.OnPreviewExpired(true);
-            }
             }
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            GH_String ghnm = new GH_String();
-            if (DA.GetData(0, ref ghnm))
+            bool update = false;
+
+            GH_String ghstr = new GH_String();
+            if (DA.GetData(0, ref ghstr))
             {
-                if (GH_Convert.ToString(ghnm, out string SectU, GH_Conversion.Both))
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.LengthSection = SectU;
-                    UpdateCanvas();
+                    Util.Unit.Force = unit;
+                    update = true;
                 }
             }
 
+            ghstr = new GH_String();
+            if (DA.GetData(1, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.LengthLarge = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(2, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.LengthSmall = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(3, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.LengthSection = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(4, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.Mass = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(5, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.Temperature = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(6, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.Stress = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(7, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.Strain = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(8, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.Velocity = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(9, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.Acceleration = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(10, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.Energy = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(11, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.Angle = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(12, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.TimeShort = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(13, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.TimeMedium = unit;
+                    update = true;
+                }
+            }
+            ghstr = new GH_String();
+            if (DA.GetData(14, ref ghstr))
+            {
+                if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
+                {
+                    Util.Unit.TimeLong = unit;
+                    update = true;
+                }
+            }
             List<string> units = new List<string>
             {
-                "Length Large: " + Util.Unit.LengthLarge,
+                "Force: " + Util.Unit.Force,
+                "Length Large: " + Util.Unit.LengthLarge
+                + ((Util.Unit.LengthLarge == Util.Unit.RhinoDocUnit) ? "" : System.Environment.NewLine + "NB: Not similar to Rhino Document units!"),
                 "Length Small: " + Util.Unit.LengthSmall,
                 "Length Section: " + Util.Unit.LengthSection,
-                "Rhino document unit: " + Util.Unit.RhinoDocUnit,
-                "Rhino unit conversion to meter: " + Util.Unit.RhinoDocFactorToMeter.ToString()
+                "Mass: " + Util.Unit.Mass,
+                "Temperature: " + Util.Unit.Temperature,
+                "Stress: " + Util.Unit.Stress,
+                "Strain: " + Util.Unit.Strain,
+                "Velocity: " + Util.Unit.Velocity,
+                "Acceleration: " + Util.Unit.Acceleration,
+                "Energy: " + Util.Unit.Energy,
+                "Angle: " + Util.Unit.Angle,
+                "Time - short: " + Util.Unit.TimeShort,
+                "Time - medium: " + Util.Unit.TimeMedium,
+                "Time - long: " + Util.Unit.TimeLong,
             };
-
+            if (update)
+                UpdateCanvas();
             DA.SetDataList(0, units);
+            
         }
     }
 }

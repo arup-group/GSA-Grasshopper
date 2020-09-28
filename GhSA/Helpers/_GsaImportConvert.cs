@@ -102,11 +102,13 @@ namespace GhSA.Util.Gsa
                 int max = eDict.Count;
                 if (max > 0)
                 {
-                    for (int i = 0; i < eDict.Keys.ElementAt(max - 1); i++)
-                    {
-                        elem1ds.Branches[0].Add(null);
-                        elem2ds.Branches[0].Add(null);
-                    }
+                    //elem1ds.Branches[0].. = new List<GsaElement1dGoo>(max);
+                    //elem2ds.Branches[0] = new List<GsaElement2dGoo>(max);
+                    //for (int i = 0; i < eDict.Keys.ElementAt(max - 1); i++)
+                    //{
+                    //    elem1ds.Branches[0].Add(null);
+                    //    elem2ds.Branches[0].Add(null);
+                    //}
                 }
             }
 
@@ -175,9 +177,10 @@ namespace GhSA.Util.Gsa
                         elem1ds.EnsurePath(prop);
                         path = new GH_Path(prop);
                         if (join)
-                            elem1ds.Add(new GsaElement1dGoo(elem1d.Duplicate()), path);
+                            elem1ds.Add(new GsaElement1dGoo(elem1d), path);
                         else
-                            elem1ds[path, key - 1] = new GsaElement1dGoo(elem1d.Duplicate());
+                            elem1ds.Insert(new GsaElement1dGoo(elem1d), path, key - 1);
+                            //elem1ds[path, key - 1] = new GsaElement1dGoo(elem1d.Duplicate());
                     }
 
                     // Shells (2D elements)
@@ -270,7 +273,8 @@ namespace GhSA.Util.Gsa
                             elem2d.Elements = elemProps;
                             elem2d.Properties = prop2Ds;
                             elem2d.ID = ids;
-                            elem2ds[path, key - 1] = new GsaElement2dGoo(elem2d.Duplicate());
+                            elem2ds.Insert(new GsaElement2dGoo(elem2d), path, key - 1);
+                            //elem2ds[path, key - 1] = new GsaElement2dGoo(elem2d.Duplicate());
                             //elem2ds.Add(new GsaElement2dGoo(elem2d.Duplicate()));
                         }
 
@@ -324,13 +328,11 @@ namespace GhSA.Util.Gsa
                         prop2Ds.Add(prop2d);
                         elem2d.Properties = prop2Ds;
 
-                        elem2ds.Add(new GsaElement2dGoo(elem2d.Duplicate()));
+                        elem2ds.Add(new GsaElement2dGoo(elem2d));
                     }
                 }
             }
             
-            
-
             return new Tuple<DataTree<GsaElement1dGoo>, DataTree<GsaElement2dGoo>>(elem1ds, elem2ds);
         }
         /// <summary>
