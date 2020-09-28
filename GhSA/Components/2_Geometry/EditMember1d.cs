@@ -133,7 +133,7 @@ namespace GhSA.Components
 
                 // 2 section
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-                if (DA.GetData(1, ref gh_typ))
+                if (DA.GetData(2, ref gh_typ))
                 {
                     GsaSection section = new GsaSection();
                     if (gh_typ.Value is GsaSection)

@@ -81,9 +81,9 @@ namespace GhSA.Components
                             if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
                                 prop2d.ID = idd;
                         }
-                        else
-                            prop2d.ID = 1;
                     }
+                    else
+                        prop2d.ID = 1;
                     List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
                     for (int i = 0; i < elem.Elements.Count; i++)
                         prop2Ds.Add(prop2d);

@@ -118,9 +118,9 @@ namespace GhSA.Components
                             if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
                                 prop2d.ID = idd;
                         }
-                        else
-                            prop2d.ID = 1;
                     }
+                    else
+                        prop2d.ID = 1;
                     mem.Property = prop2d;
 
                     // 4 mesh size

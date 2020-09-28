@@ -52,7 +52,12 @@ namespace GhSA.Util.GH
                 tolerance = Tolerance.RhinoDocTolerance();
             
             PolyCurve m_crv = crv.ToArcsAndLines(tolerance * 20, 5, 0, 0);
-            Curve[] segments = m_crv.DuplicateSegments();
+            Curve[] segments;
+            if (m_crv != null)
+                segments = m_crv.DuplicateSegments();
+            else
+                segments = new Curve[] { crv };
+                
             List<string> crv_type = new List<string>();
             List<Point3d> m_topo = new List<Point3d>();
             

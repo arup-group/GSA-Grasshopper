@@ -147,20 +147,20 @@ namespace GhSA.Components
                 }
 
                 //#### outputs ####
-                DA.SetData(0, new GsaProp2dGoo(gsaProp2d));
+                DA.SetData(0, new GsaProp2dGoo(prop));
 
                 //DA.SetData(1, gsaProp2d.Thickness); // GsaAPI to be updated
                 //DA.SetData(2, gsaProp2d.Prop2d.Material); // to be implemented
-                DA.SetData(3, gsaProp2d.Prop2d.MaterialAnalysisProperty); // GsaAPI to be updated
+                DA.SetData(3, prop.Prop2d.MaterialAnalysisProperty); // GsaAPI to be updated
                                                                           //DA.SetData(4, gsaProp2d.??); GsaAPI to include alignment / reference surface
 
                 GsaOffset gsaoffset = new GsaOffset();
                 //offset.Z = gsaProp2d.Prop2d.Offset; // GsaAPI to include prop2d offset
                 DA.SetData(5, gsaoffset);
 
-                DA.SetData(6, gsaProp2d.ID);
-                DA.SetData(7, gsaProp2d.Prop2d.Name);
-                DA.SetData(8, gsaProp2d.Prop2d.Colour);
+                DA.SetData(6, prop.ID);
+                DA.SetData(7, prop.Prop2d.Name);
+                DA.SetData(8, prop.Prop2d.Colour);
             }
         }
     }

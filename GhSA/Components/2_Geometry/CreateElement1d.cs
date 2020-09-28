@@ -80,9 +80,9 @@ namespace GhSA.Components
                             if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
                                 section.ID = idd;
                         }
-                        else
-                            section.ID = 1;
                     }
+                    else
+                        section.ID = 1;
                     elem.Section = section;
 
                     DA.SetData(0, new GsaElement1dGoo(elem));

@@ -94,21 +94,25 @@ namespace GhSA.Components
                 // suggest users re-create from scratch //
 
                 // 1 section
-                GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-                if (DA.GetData(1, ref gh_typ))
+                List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
+                if (DA.GetDataList(2, gh_types))
                 {
-                    GsaProp2d prop2d = new GsaProp2d();
-                    if (gh_typ.Value is GsaProp2d)
-                        gh_typ.CastTo(ref prop2d);
-                    else if (gh_typ.Value is GH_Number)
+                    for (int i = 0; i< gh_types.Count; i++)
                     {
-                        if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
-                            prop2d.ID = idd;
+                        GH_ObjectWrapper gh_typ = gh_types[i];
+                        GsaProp2d prop2d = new GsaProp2d();
+                        if (gh_typ.Value is GsaProp2d)
+                            gh_typ.CastTo(ref prop2d);
+                        else if (gh_typ.Value is GH_Number)
+                        {
+                            if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
+                                prop2d.ID = idd;
+                        }
+                        List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
+                        for (int j = 0; j < elem.Elements.Count; j++)
+                            prop2Ds.Add(prop2d);
+                        elem.Properties = prop2Ds;
                     }
-                    List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
-                    for (int i = 0; i < elem.Elements.Count; i++)
-                        prop2Ds.Add(prop2d);
-                    elem.Properties = prop2Ds;
                 }
                 
 

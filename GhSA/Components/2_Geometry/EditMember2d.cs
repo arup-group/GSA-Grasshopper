@@ -120,7 +120,7 @@ namespace GhSA.Components
                 // 2 section
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
                 
-                if (DA.GetData(1, ref gh_typ))
+                if (DA.GetData(2, ref gh_typ))
                 {
                     GsaProp2d prop2d = new GsaProp2d();
                     if (gh_typ.Value is GsaProp2d)

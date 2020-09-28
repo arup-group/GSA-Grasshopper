@@ -44,7 +44,7 @@ namespace GhSA.Components
             if (first)
             {
                 selecteditem = _mode.ToString();
-                first = false;
+                //first = false;
             }
                 
             m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Element Type");
@@ -102,6 +102,7 @@ namespace GhSA.Components
             pManager[2].Optional = true;
             if (first)
             {
+                first = false;
                 //register input parameter
                 Params.RegisterInputParam(new Param_Integer());
                 Params.RegisterInputParam(new Param_String());
