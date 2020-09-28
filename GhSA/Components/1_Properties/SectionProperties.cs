@@ -69,7 +69,7 @@ namespace GhSA.Components
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(0, ref gh_typ))
             {
-                if (gh_typ.Value is GsaSection)
+                if (gh_typ.Value is GsaSectionGoo)
                     gh_typ.CastTo(ref gsaSection);
                 else
                 {

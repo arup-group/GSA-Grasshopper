@@ -28,7 +28,7 @@ namespace GhSA.Components
         {
         }
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
         //protected override Bitmap Icon => Resources.CrossSections;
         #endregion
