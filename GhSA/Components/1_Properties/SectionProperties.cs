@@ -50,15 +50,15 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Area", "A", "GSA Section Area (" + Util.Unit.Length_Section + "\xB2)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia y-y", "Iyy", "GSA Section Moment of Intertia around local y-y axis (" + Util.Unit.Length_Section + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia z-z", "Izz", "GSA Section Moment of Intertia around local z-z axis (" + Util.Unit.Length_Section + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia y-z", "Iyz", "GSA Section Moment of Intertia around local y-z axis (" + Util.Unit.Length_Section + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Torsion constant", "J", "GSA Section Torsion constant J (" + Util.Unit.Length_Section + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Area", "A", "GSA Section Area (" + Util.Unit.LengthSection + "\xB2)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Moment of Inertia y-y", "Iyy", "GSA Section Moment of Intertia around local y-y axis (" + Util.Unit.LengthSection + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Moment of Inertia z-z", "Izz", "GSA Section Moment of Intertia around local z-z axis (" + Util.Unit.LengthSection + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Moment of Inertia y-z", "Iyz", "GSA Section Moment of Intertia around local y-z axis (" + Util.Unit.LengthSection + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Torsion constant", "J", "GSA Section Torsion constant J (" + Util.Unit.LengthSection + "\x2074)", GH_ParamAccess.item);
             pManager.AddNumberParameter("Shear Area Factor in y", "Ky", "GSA Section Shear Area Factor in local y-direction (-)", GH_ParamAccess.item);
             pManager.AddNumberParameter("Shear Area Factor in z", "Kz", "GSA Section Shear Area Factor in local z-direction (-)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Surface A/Length", "S/L", "GSA Section Surface Area per Unit Length (" + Util.Unit.Length_Section + "\xB2/"+ Util.Unit.Length_Large + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Volume/Length", "V/L", "GSA Section Volume per Unit Length (" + Util.Unit.Length_Section + "\xB3/"+ Util.Unit.Length_Large + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Surface A/Length", "S/L", "GSA Section Surface Area per Unit Length (" + Util.Unit.LengthSection + "\xB2/"+ Util.Unit.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Volume/Length", "V/L", "GSA Section Volume per Unit Length (" + Util.Unit.LengthSection + "\xB3/"+ Util.Unit.LengthLarge + ")", GH_ParamAccess.item);
 
         }
         #endregion
@@ -81,9 +81,9 @@ namespace GhSA.Components
             if (gsaSection != null)
             {
                 double conversionfactor = 1;
-                if (Util.Unit.Length_Section != "m")
+                if (Util.Unit.LengthSection != "m")
                 {
-                    switch (Util.Unit.Length_Section)
+                    switch (Util.Unit.LengthSection)
                     {
                         case "mm":
                             conversionfactor = 1000;

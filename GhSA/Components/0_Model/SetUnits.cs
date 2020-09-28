@@ -106,16 +106,16 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghnm, out string SectU, GH_Conversion.Both))
                 {
-                    Util.Unit.Length_Section = SectU;
+                    Util.Unit.LengthSection = SectU;
                     UpdateCanvas();
                 }
             }
 
             List<string> units = new List<string>
             {
-                "Length Large: " + Util.Unit.Length_Large,
-                "Length Small: " + Util.Unit.Length_Small,
-                "Length Section: " + Util.Unit.Length_Section,
+                "Length Large: " + Util.Unit.LengthLarge,
+                "Length Small: " + Util.Unit.LengthSmall,
+                "Length Section: " + Util.Unit.LengthSection,
                 "Rhino document unit: " + Util.Unit.RhinoDocUnit,
                 "Rhino unit conversion to meter: " + Util.Unit.RhinoDocFactorToMeter.ToString()
             };

@@ -546,7 +546,7 @@ namespace GhSA.Components
             }
             #endregion
             #region units
-            switch (Util.Unit.Length_Section)
+            switch (Util.Unit.LengthSection)
             {
                 case "mm":
                     profile.sectUnit = GsaProfile.SectUnitOptions.u_mm;
@@ -930,13 +930,13 @@ namespace GhSA.Components
             {
                 int i = 0;
                 Params.Input[i].NickName = "d";
-                Params.Input[i].Name = "Depth (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Depth (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Depth";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "b";
-                Params.Input[i].Name = "Width (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Width (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Width";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
@@ -945,10 +945,10 @@ namespace GhSA.Components
                 {
                     i++;
                     Params.Input[i-1].NickName = "b1";
-                    Params.Input[i-1].Name = "Start Width (" + Util.Unit.Length_Section + ")";
+                    Params.Input[i-1].Name = "Start Width (" + Util.Unit.LengthSection + ")";
                     Params.Input[i-1].Description = "Section Width at Start";
                     Params.Input[i].NickName = "b2";
-                    Params.Input[i].Name = "End Width (" + Util.Unit.Length_Section + ")";
+                    Params.Input[i].Name = "End Width (" + Util.Unit.LengthSection + ")";
                     Params.Input[i].Description = "Section Width at End";
                     Params.Input[i].Access = GH_ParamAccess.item;
                     Params.Input[i].Optional = false;
@@ -959,13 +959,13 @@ namespace GhSA.Components
                     {
                         i++;
                         Params.Input[i].NickName = "tw";
-                        Params.Input[i].Name = "Web THK  (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Web THK  (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Section Web Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
                         i++;
                         Params.Input[i].NickName = "tf";
-                        Params.Input[i].Name = "Flange THK  (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Flange THK  (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Section Flange Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -976,7 +976,7 @@ namespace GhSA.Components
             {
                 int i = 0;
                 Params.Input[i].NickName = "d";
-                Params.Input[i].Name = "Depth (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Depth (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Depth";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
@@ -986,13 +986,13 @@ namespace GhSA.Components
                     {
                         i++;
                         Params.Input[i].NickName = "b";
-                        Params.Input[i].Name = "Width (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Width (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Section Width";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
                         i++;
                         Params.Input[i].NickName = "tw";
-                        Params.Input[i].Name = "Thickness (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Thickness (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Section Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -1001,7 +1001,7 @@ namespace GhSA.Components
                     {
                         i++;
                         Params.Input[i].NickName = "tw";
-                        Params.Input[i].Name = "Thickness (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Thickness (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Section Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -1013,7 +1013,7 @@ namespace GhSA.Components
                     {
                         i++;
                         Params.Input[i].NickName = "b";
-                        Params.Input[i].Name = "Width (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Width (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Section Width";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -1025,25 +1025,25 @@ namespace GhSA.Components
             {
                 int i = 0;
                 Params.Input[i].NickName = "d";
-                Params.Input[i].Name = "Depth (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Depth (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Depth";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "b";
-                Params.Input[i].Name = "Width (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Width (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Width";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tw";
-                Params.Input[i].Name = "Web THK (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Web THK (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Web Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tf";
-                Params.Input[i].Name = "Flange THK (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Flange THK (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Flange Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
@@ -1054,31 +1054,31 @@ namespace GhSA.Components
                     {
                         i = 1;
                         Params.Input[i].NickName = "bt";
-                        Params.Input[i].Name = "Top Width (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Top Width (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Top Flange Width";
                         i++;
                         Params.Input[i].NickName = "twt";
-                        Params.Input[i].Name = "Top Web THK (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Top Web THK (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Web Thickness at Top of Web";
                         i++;
                         Params.Input[i].NickName = "tft";
-                        Params.Input[i].Name = "Top Flange THK (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Top Flange THK (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Top Flange Thickness";
                         i++;
                         Params.Input[i].NickName = "bb";
-                        Params.Input[i].Name = "Bottom Width (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Bottom Width (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Bottom Flange Width";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
                         i++;
                         Params.Input[i].NickName = "twb";
-                        Params.Input[i].Name = "Bottom Web THK (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Bottom Web THK (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Web Thickness at Bottom of Web";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
                         i++;
                         Params.Input[i].NickName = "tfb";
-                        Params.Input[i].Name = "Bottom Flange THK (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Bottom Flange THK (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Bottom Flange Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -1087,25 +1087,25 @@ namespace GhSA.Components
                     {
                         i = 1;
                         Params.Input[i].NickName = "bt";
-                        Params.Input[i].Name = "Top Width (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Top Width (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Top Flange Width";
                         i++;
                         Params.Input[i].NickName = "tw";
-                        Params.Input[i].Name = "Web Thickness (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Web Thickness (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Web Thickness";
                         i++;
                         Params.Input[i].NickName = "tft";
-                        Params.Input[i].Name = "Top Flange THK (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Top Flange THK (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Top Flange Thickness";
                         i++;
                         Params.Input[i].NickName = "bb";
-                        Params.Input[i].Name = "Bottom Width (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Bottom Width (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Bottom Flange Width";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
                         i++;
                         Params.Input[i].NickName = "tfb";
-                        Params.Input[i].Name = "Bottom Flange THK (" + Util.Unit.Length_Section + ")";
+                        Params.Input[i].Name = "Bottom Flange THK (" + Util.Unit.LengthSection + ")";
                         Params.Input[i].Description = "Bottom Flange Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -1117,25 +1117,25 @@ namespace GhSA.Components
             {
                 int i = 0;
                 Params.Input[i].NickName = "d";
-                Params.Input[i].Name = "Depth (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Depth (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Depth";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "b";
-                Params.Input[i].Name = "Width (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Width (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Width";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tf";
-                Params.Input[i].Name = "Flange Thickness (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Flange Thickness (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Web Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tw";
-                Params.Input[i].Name = "Web Thickness (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Web Thickness (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Flange Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
@@ -1144,11 +1144,11 @@ namespace GhSA.Components
                 {
                     i = 3;
                     Params.Input[i].NickName = "twt";
-                    Params.Input[i].Name = "Top Web THK (" + Util.Unit.Length_Section + ")";
+                    Params.Input[i].Name = "Top Web THK (" + Util.Unit.LengthSection + ")";
                     Params.Input[i].Description = "Top Flange Thickness";
                     i++;
                     Params.Input[i].NickName = "twb";
-                    Params.Input[i].Name = "Bottom Web THK (" + Util.Unit.Length_Section + ")";
+                    Params.Input[i].Name = "Bottom Web THK (" + Util.Unit.LengthSection + ")";
                     Params.Input[i].Description = "Bottom Web Thickness";
                     Params.Input[i].Access = GH_ParamAccess.item;
                     Params.Input[i].Optional = false;
@@ -1159,25 +1159,25 @@ namespace GhSA.Components
             {
                 int i = 0;
                 Params.Input[i].NickName = "d";
-                Params.Input[i].Name = "Depth (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Depth (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Depth";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "b";
-                Params.Input[i].Name = "Width (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Width (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Flange Width";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tf";
-                Params.Input[i].Name = "Flange Thickness (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Flange Thickness (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Web Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tw";
-                Params.Input[i].Name = "Web Thickness (" + Util.Unit.Length_Section + ")";
+                Params.Input[i].Name = "Web Thickness (" + Util.Unit.LengthSection + ")";
                 Params.Input[i].Description = "Section Flange Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
