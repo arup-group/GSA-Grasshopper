@@ -118,14 +118,19 @@ namespace GhSA.Components
                         mem.Brep = brep;
 
                 // 2 section
-                GsaProp2d prop2D = new GsaProp2d();
-                GH_Integer gh_sec_idd = new GH_Integer();
-                if (DA.GetData(2, ref prop2D))
-                    mem.Property = prop2D;
-                else if (DA.GetData(2, ref gh_sec_idd))
+                GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+                
+                if (DA.GetData(1, ref gh_typ))
                 {
-                    if (GH_Convert.ToInt32(gh_sec_idd, out int idd, GH_Conversion.Both))
-                        mem.Property.ID = idd;
+                    GsaProp2d prop2d = new GsaProp2d();
+                    if (gh_typ.Value is GsaProp2d)
+                        gh_typ.CastTo(ref prop2d);
+                    else if (gh_typ.Value is GH_Number)
+                    {
+                        if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
+                            prop2d.ID = idd;
+                    }
+                    mem.Property = prop2d;
                 }
 
                 // 3 offset

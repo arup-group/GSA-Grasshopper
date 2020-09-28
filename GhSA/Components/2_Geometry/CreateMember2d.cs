@@ -107,17 +107,21 @@ namespace GhSA.Components
 
                     // add the rest
                     // 1 section
-                    GsaProp2d prop2D = new GsaProp2d();
-                    GH_Integer gh_sec_idd = new GH_Integer();
-                    if (DA.GetData(1, ref prop2D))
-                        mem.Property = prop2D;
-                    else if (DA.GetData(1, ref gh_sec_idd))
+                    GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+                    GsaProp2d prop2d = new GsaProp2d();
+                    if (DA.GetData(1, ref gh_typ))
                     {
-                        if (GH_Convert.ToInt32(gh_sec_idd, out int idd, GH_Conversion.Both))
-                            mem.Property.ID = idd;
+                        if (gh_typ.Value is GsaProp2d)
+                            gh_typ.CastTo(ref prop2d);
+                        else if (gh_typ.Value is GH_Number)
+                        {
+                            if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
+                                prop2d.ID = idd;
+                        }
+                        else
+                            prop2d.ID = 1;
                     }
-                    else
-                        mem.Property.ID = 1;
+                    mem.Property = prop2d;
 
                     // 4 mesh size
                     GH_Number ghmsz = new GH_Number();

@@ -94,27 +94,23 @@ namespace GhSA.Components
                 // suggest users re-create from scratch //
 
                 // 1 section
-                List<GsaProp2d> prop2ds = new List<GsaProp2d>();
-                List<GH_Integer> gh_sec_idd = new List<GH_Integer>();
-                if (DA.GetDataList(1, prop2ds))
+                GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+                if (DA.GetData(1, ref gh_typ))
                 {
-                    elem.Properties = prop2ds;
-                }
-                else if (DA.GetDataList(1, gh_sec_idd))
-                {
-                    for (int i = 0; i < gh_sec_idd.Count; i++)
+                    GsaProp2d prop2d = new GsaProp2d();
+                    if (gh_typ.Value is GsaProp2d)
+                        gh_typ.CastTo(ref prop2d);
+                    else if (gh_typ.Value is GH_Number)
                     {
-                        if (GH_Convert.ToInt32(gh_sec_idd[i], out int idd, GH_Conversion.Both))
-                        {
-                            GsaProp2d prop2d = new GsaProp2d
-                            {
-                                ID = idd
-                            };
-                            prop2ds.Add(prop2d);
-                        }
+                        if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
+                            prop2d.ID = idd;
                     }
-                    elem.Properties = prop2ds;
+                    List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
+                    for (int i = 0; i < elem.Elements.Count; i++)
+                        prop2Ds.Add(prop2d);
+                    elem.Properties = prop2Ds;
                 }
+                
 
                 // 2 offset
                 List<GsaOffset> offset = new List<GsaOffset>();

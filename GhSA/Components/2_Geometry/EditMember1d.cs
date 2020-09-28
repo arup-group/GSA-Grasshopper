@@ -132,15 +132,20 @@ namespace GhSA.Components
                 }
 
                 // 2 section
-                GsaSection section = new GsaSection();
-                GH_Integer gh_sec_idd = new GH_Integer();
-                if (DA.GetData(2, ref section))
-                    mem.Section = section;
-                else if (DA.GetData(2, ref gh_sec_idd))
+                GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+                if (DA.GetData(1, ref gh_typ))
                 {
-                    if (GH_Convert.ToInt32(gh_sec_idd, out int idd, GH_Conversion.Both))
-                        mem.Section.ID = idd;
+                    GsaSection section = new GsaSection();
+                    if (gh_typ.Value is GsaSection)
+                        gh_typ.CastTo(ref section);
+                    else if (gh_typ.Value is GH_Number)
+                    {
+                        if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
+                            section.ID = idd;
+                    }
+                    mem.Section = section;
                 }
+                
 
                 // 3 type
                 GH_Integer ghint = new GH_Integer();

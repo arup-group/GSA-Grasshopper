@@ -38,12 +38,12 @@ namespace GhSA.Parameters
         {
             get 
             {
-                m_rel1.X = m_element.Release(0).X;
-                m_rel1.Y = m_element.Release(0).Y;
-                m_rel1.Z = m_element.Release(0).Z;
-                m_rel1.XX = m_element.Release(0).XX;
-                m_rel1.YY = m_element.Release(0).YY;
-                m_rel1.ZZ = m_element.Release(0).ZZ;
+                //m_rel1.X = m_element.Release(0).X;
+                //m_rel1.Y = m_element.Release(0).Y;
+                //m_rel1.Z = m_element.Release(0).Z;
+                //m_rel1.XX = m_element.Release(0).XX;
+                //m_rel1.YY = m_element.Release(0).YY;
+                //m_rel1.ZZ = m_element.Release(0).ZZ;
                 return m_rel1; 
             } // copy release end when GsaAPI.Bool6 works?
             set { m_rel1 = value; }
@@ -52,12 +52,12 @@ namespace GhSA.Parameters
         {
             get 
             {
-                m_rel2.X = m_element.Release(1).X;
-                m_rel2.Y = m_element.Release(1).Y;
-                m_rel2.Z = m_element.Release(1).Z;
-                m_rel2.XX = m_element.Release(1).XX;
-                m_rel2.YY = m_element.Release(1).YY;
-                m_rel2.ZZ = m_element.Release(1).ZZ;
+                //m_rel2.X = m_element.Release(1).X;
+                //m_rel2.Y = m_element.Release(1).Y;
+                //m_rel2.Z = m_element.Release(1).Z;
+                //m_rel2.XX = m_element.Release(1).XX;
+                //m_rel2.YY = m_element.Release(1).YY;
+                //m_rel2.ZZ = m_element.Release(1).ZZ;
                 return m_rel2; 
             }
             set 

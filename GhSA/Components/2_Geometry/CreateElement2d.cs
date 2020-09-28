@@ -70,34 +70,24 @@ namespace GhSA.Components
                     GsaElement2d elem = new GsaElement2d(mesh);
 
                     // 1 section
+                    GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
                     GsaProp2d prop2d = new GsaProp2d();
-                    GH_Integer gh_sec_idd = new GH_Integer();
-                    if (DA.GetData(1, ref prop2d))
+                    if (DA.GetData(1, ref gh_typ))
                     {
-                        List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
-                        for (int i = 0; i < elem.Elements.Count; i++)
-                            prop2Ds.Add(prop2d);
-                        elem.Properties = prop2Ds;
-                    }
-                    else if (DA.GetData(1, ref gh_sec_idd))
-                    {
-                        if (GH_Convert.ToInt32(gh_sec_idd, out int idd, GH_Conversion.Both))
+                        if (gh_typ.Value is GsaProp2d)
+                            gh_typ.CastTo(ref prop2d);
+                        else if (gh_typ.Value is GH_Number)
                         {
-                            prop2d.ID = idd;
-                            List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
-                            for (int i = 0; i < elem.Elements.Count; i++)
-                                prop2Ds.Add(prop2d);
-                            elem.Properties = prop2Ds;
+                            if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
+                                prop2d.ID = idd;
                         }
+                        else
+                            prop2d.ID = 1;
                     }
-                    else
-                    {
-                        prop2d.ID = 1;
-                        List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
-                        for (int i = 0; i < elem.Elements.Count; i++)
-                            prop2Ds.Add(prop2d);
-                        elem.Properties = prop2Ds;
-                    }    
+                    List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
+                    for (int i = 0; i < elem.Elements.Count; i++)
+                        prop2Ds.Add(prop2d);
+                    elem.Properties = prop2Ds;
 
                     DA.SetData(0, new GsaElement2dGoo(elem));
                 }

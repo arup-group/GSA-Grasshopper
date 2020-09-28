@@ -69,17 +69,21 @@ namespace GhSA.Components
                     GsaElement1d elem = new GsaElement1d(new LineCurve(ln));
 
                     // 1 section
+                    GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
                     GsaSection section = new GsaSection();
-                    GH_Integer gh_sec_idd = new GH_Integer();
-                    if (DA.GetData(1, ref section))
-                        elem.Section = section;
-                    else if (DA.GetData(1, ref gh_sec_idd))
+                    if (DA.GetData(1, ref gh_typ))
                     {
-                        if (GH_Convert.ToInt32(gh_sec_idd, out int idd, GH_Conversion.Both))
-                            elem.Section.ID = idd;
+                        if (gh_typ.Value is GsaSection)
+                            gh_typ.CastTo(ref section);
+                        else if (gh_typ.Value is GH_Number)
+                        {
+                            if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
+                                section.ID = idd;
+                        }
+                        else
+                            section.ID = 1;
                     }
-                    else
-                        elem.Section.ID = 1;
+                    elem.Section = section;
 
                     DA.SetData(0, new GsaElement1dGoo(elem));
                 }
