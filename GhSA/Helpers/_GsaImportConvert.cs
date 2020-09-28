@@ -257,7 +257,7 @@ namespace GhSA.Util.Gsa
                             elements.EnsurePath(prop);
                             path = new GH_Path(prop);
 
-                            meshes.Add(tempMesh, path);
+                            meshes.Add(tempMesh.DuplicateMesh(), path);
                             elements.Add(elem, path);
                         }
                         else
@@ -276,7 +276,6 @@ namespace GhSA.Util.Gsa
 
                         tempMesh.Dispose();
                         elem.Dispose();
-                        
                     }
                 }
             }
