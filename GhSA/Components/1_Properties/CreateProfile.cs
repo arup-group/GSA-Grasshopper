@@ -222,15 +222,15 @@ namespace GhSA.Components
         // list of spacers to inform user the content of dropdown
         readonly List<string> cataloguespacer = new List<string>(new string[]
         {
-            "Method", "Catalogue", "Type", "Profile"
+            "Profile type", "Catalogue", "Type", "Profile"
         });
         readonly List<string> standardspacer = new List<string>(new string[]
         {
-            "Method", "Shape"
+            "Profile type", "Shape"
         });
         readonly List<string> geometricspacer = new List<string>(new string[]
         {
-            "Method"
+            "Profile type"
         });
         #endregion
 

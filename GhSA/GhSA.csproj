@@ -95,6 +95,7 @@
     <Compile Include="Helpers\_RibbonLayout.cs" />
     <Compile Include="Components\0_Model\OpenModel.cs" />
     <Compile Include="GhSAInfo.cs" />
+    <Compile Include="Parameters\GsaLoadParam.cs" />
     <Compile Include="Parameters\_Unit.cs" />
     <Compile Include="Parameters\GsaProp2d.cs" />
     <Compile Include="Parameters\GsaSection.cs" />

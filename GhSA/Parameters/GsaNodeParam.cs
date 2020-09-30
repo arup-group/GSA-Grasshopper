@@ -59,6 +59,22 @@ namespace GhSA.Parameters
             m_plane.Origin = position;
         }
 
+        public Plane LocalAxis
+        {
+            get { return m_plane; }
+            set { m_plane = value; }
+        }
+
+        public Point3d Point
+        {
+            get
+            {
+                if (Node == null) { return new Point3d(); }
+                return new Point3d(Node.Position.X, Node.Position.Y, Node.Position.Z);
+            }
+            set { Node.Position.X = value.X; Node.Position.Y = value.Y; Node.Position.Z = value.Z; }
+        }
+
         public GsaNode(Point3d position, GsaBool6 bool6)
         {
             Node.Position.X = position.X;
@@ -169,21 +185,7 @@ namespace GhSA.Parameters
         }
        
         
-        public Plane LocalAxis
-        {
-            get { return m_plane; }
-            set { m_plane = value; }
-        }
-
-        public Point3d Point
-        {
-            get 
-            { 
-                if (Node == null) { return new Point3d(); }
-                return new Point3d(Node.Position.X, Node.Position.Y, Node.Position.Z); 
-            }
-            set { Node.Position.X = value.X; Node.Position.Y = value.Y; Node.Position.Z = value.Z; }
-        }
+        
 
         #endregion
 

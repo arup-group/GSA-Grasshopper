@@ -29,7 +29,7 @@ namespace GhSA.Util.GH
             }
             catch (global::System.Exception)
             {
-                return 0.01;
+                return 0.001;
             }
         }
     }

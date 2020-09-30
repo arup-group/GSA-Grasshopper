@@ -17,8 +17,6 @@ namespace GhSA
         public override GH_LoadingInstruction PriorityLoad()
         {
             Assembly ass1 = Assembly.LoadFile(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\GsaAPI.dll");
-            //Assembly ass2 = Assembly.LoadFile(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\System.Data.SQLite.dll");
-            //Assembly ass3 = Assembly.LoadFile(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\System.Data.SQLite.Linq.dll");
 
             const string name = "PATH";
             string pathvar = System.Environment.GetEnvironmentVariable(name);
@@ -27,7 +25,6 @@ namespace GhSA
             System.Environment.SetEnvironmentVariable(name, value, target);
 
             // ### Create Category icon ###
-            //Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", Properties.Resources.GsaIcon);
             Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
 
             return GH_LoadingInstruction.Proceed;
