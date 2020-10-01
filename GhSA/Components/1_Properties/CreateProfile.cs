@@ -203,11 +203,13 @@ namespace GhSA.Components
             "Rectangle", "Circle", "I section", "Tee", "Channel", "Angle"
         });
 
-        // first sublist for second dropdown list
-        readonly List<string> cataloguelist = new List<string>(new string[]
-        {
-            "Europrofile", "To", "be", "implemented"
-        });
+        // first sublist for second dropdown list - commented out 
+        //readonly List<string> cataloguelist = new List<string>(new string[]
+        //{
+        //    "Europrofile", "To", "be", "implemented"
+        //});
+
+        readonly List<string> cataloguelist = SqlReader.GetListDataFromSQLite("type", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
 
         // second sublist for second dropdown list
         readonly List<string> typelist = new List<string>(new string[]
