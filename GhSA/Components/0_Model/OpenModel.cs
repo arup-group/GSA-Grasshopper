@@ -129,6 +129,9 @@ namespace GhSA.Components
             {
                 Model = model
             };
+            
+            Util.GsaTitles.SetTitles(model);
+            
             DA.SetData(0, gsaModel);
         }
     }

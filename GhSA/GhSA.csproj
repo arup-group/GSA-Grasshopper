@@ -63,6 +63,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\0_Model\EditTitles.cs" />
     <Compile Include="Components\1_Properties\CreateOffset.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
     <Compile Include="Components\1_Properties\CreateSection.cs" />
@@ -80,7 +81,7 @@
     <Compile Include="Components\2_Geometry\CreateElement1d.cs" />
     <Compile Include="Components\2_Geometry\CreateMember1d.cs" />
     <Compile Include="Components\2_Geometry\EditElement1d.cs" />
-    <Compile Include="Components\0_Model\SetUnits.cs" />
+    <Compile Include="Components\0_Model\EditUnits.cs" />
     <Compile Include="Components\2_Geometry\EditElement2d.cs" />
     <Compile Include="Components\2_Geometry\EditMember2d.cs" />
     <Compile Include="Components\2_Geometry\EditMember1d.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Components\0_Model\OpenModel.cs" />
     <Compile Include="GhSAInfo.cs" />
     <Compile Include="Parameters\GsaLoadParam.cs" />
+    <Compile Include="Parameters\_Titles.cs" />
     <Compile Include="Parameters\_Unit.cs" />
     <Compile Include="Parameters\GsaProp2d.cs" />
     <Compile Include="Parameters\GsaSection.cs" />

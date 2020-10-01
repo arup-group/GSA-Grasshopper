@@ -10,7 +10,7 @@ namespace GhSA.Util
     /// <summary>
     /// Class to hold units used in Grasshopper GSA file. 
     /// </summary>
-    public static class Unit
+    public static class GsaUnit
     {
         
 

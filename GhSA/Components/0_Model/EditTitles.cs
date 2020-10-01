@@ -122,7 +122,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.Force = unit;
+                    Util.GsaUnit.Force = unit;
                     update = true;
                 }
             }
@@ -132,7 +132,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.LengthLarge = unit;
+                    Util.GsaUnit.LengthLarge = unit;
                     update = true;
                 }
             }
@@ -141,7 +141,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.LengthSmall = unit;
+                    Util.GsaUnit.LengthSmall = unit;
                     update = true;
                 }
             }
@@ -150,7 +150,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.LengthSection = unit;
+                    Util.GsaUnit.LengthSection = unit;
                     update = true;
                 }
             }
@@ -159,7 +159,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.Mass = unit;
+                    Util.GsaUnit.Mass = unit;
                     update = true;
                 }
             }
@@ -168,7 +168,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.Temperature = unit;
+                    Util.GsaUnit.Temperature = unit;
                     update = true;
                 }
             }
@@ -177,7 +177,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.Stress = unit;
+                    Util.GsaUnit.Stress = unit;
                     update = true;
                 }
             }
@@ -186,7 +186,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.Strain = unit;
+                    Util.GsaUnit.Strain = unit;
                     update = true;
                 }
             }
@@ -195,7 +195,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.Velocity = unit;
+                    Util.GsaUnit.Velocity = unit;
                     update = true;
                 }
             }
@@ -204,7 +204,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.Acceleration = unit;
+                    Util.GsaUnit.Acceleration = unit;
                     update = true;
                 }
             }
@@ -213,7 +213,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.Energy = unit;
+                    Util.GsaUnit.Energy = unit;
                     update = true;
                 }
             }
@@ -222,7 +222,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.Angle = unit;
+                    Util.GsaUnit.Angle = unit;
                     update = true;
                 }
             }
@@ -231,7 +231,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.TimeShort = unit;
+                    Util.GsaUnit.TimeShort = unit;
                     update = true;
                 }
             }
@@ -240,7 +240,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.TimeMedium = unit;
+                    Util.GsaUnit.TimeMedium = unit;
                     update = true;
                 }
             }
@@ -249,28 +249,28 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string unit, GH_Conversion.Both))
                 {
-                    Util.Unit.TimeLong = unit;
+                    Util.GsaUnit.TimeLong = unit;
                     update = true;
                 }
             }
             List<string> units = new List<string>
             {
-                "Force: " + Util.Unit.Force,
-                "Length Large: " + Util.Unit.LengthLarge
-                + ((Util.Unit.LengthLarge == Util.Unit.RhinoDocUnit) ? "" : System.Environment.NewLine + "NB: Not similar to Rhino Document units!"),
-                "Length Small: " + Util.Unit.LengthSmall,
-                "Length Section: " + Util.Unit.LengthSection,
-                "Mass: " + Util.Unit.Mass,
-                "Temperature: " + Util.Unit.Temperature,
-                "Stress: " + Util.Unit.Stress,
-                "Strain: " + Util.Unit.Strain,
-                "Velocity: " + Util.Unit.Velocity,
-                "Acceleration: " + Util.Unit.Acceleration,
-                "Energy: " + Util.Unit.Energy,
-                "Angle: " + Util.Unit.Angle,
-                "Time - short: " + Util.Unit.TimeShort,
-                "Time - medium: " + Util.Unit.TimeMedium,
-                "Time - long: " + Util.Unit.TimeLong,
+                "Force: " + Util.GsaUnit.Force,
+                "Length Large: " + Util.GsaUnit.LengthLarge
+                + ((Util.GsaUnit.LengthLarge == Util.GsaUnit.RhinoDocUnit) ? "" : System.Environment.NewLine + "NB: Not similar to Rhino Document units!"),
+                "Length Small: " + Util.GsaUnit.LengthSmall,
+                "Length Section: " + Util.GsaUnit.LengthSection,
+                "Mass: " + Util.GsaUnit.Mass,
+                "Temperature: " + Util.GsaUnit.Temperature,
+                "Stress: " + Util.GsaUnit.Stress,
+                "Strain: " + Util.GsaUnit.Strain,
+                "Velocity: " + Util.GsaUnit.Velocity,
+                "Acceleration: " + Util.GsaUnit.Acceleration,
+                "Energy: " + Util.GsaUnit.Energy,
+                "Angle: " + Util.GsaUnit.Angle,
+                "Time - short: " + Util.GsaUnit.TimeShort,
+                "Time - medium: " + Util.GsaUnit.TimeMedium,
+                "Time - long: " + Util.GsaUnit.TimeLong,
             };
             if (update)
                 UpdateCanvas();
