@@ -389,22 +389,6 @@ namespace GhSA.Parameters
         }
         #endregion
         
-        
-        
-        
-        
-        
-        
-        
-        
-        // ### need to update the below! ###
-        
-        
-        
-        
-        
-        
-        
         #region properties
         public override bool IsValid
         {
@@ -426,17 +410,17 @@ namespace GhSA.Parameters
         public override string ToString()
         {
             if (Value == null)
-                return "Null GSA Bool6";
+                return "Null GSA Load";
             else
                 return Value.ToString();
         }
         public override string TypeName
         {
-            get { return ("GSA Bool6"); }
+            get { return ("GSA Load"); }
         }
         public override string TypeDescription
         {
-            get { return ("GSA Bool6 to set releases and restraints"); }
+            get { return ("GSA Load containing different load types"); }
         }
 
 
@@ -446,10 +430,10 @@ namespace GhSA.Parameters
         public override bool CastTo<Q>(ref Q target)
         {
             // This function is called when Grasshopper needs to convert this 
-            // instance of GsaBool6 into some other type Q.            
+            // instance of GsaLoad into some other type Q.            
 
 
-            if (typeof(Q).IsAssignableFrom(typeof(GsaBool6)))
+            if (typeof(Q).IsAssignableFrom(typeof(GsaLoad)))
             {
                 if (Value == null)
                     target = default;
@@ -458,15 +442,73 @@ namespace GhSA.Parameters
                 return true;
             }
 
-            if (typeof(Q).IsAssignableFrom(typeof(Bool6)))
+            if (typeof(Q).IsAssignableFrom(typeof(GH_Plane)))
             {
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
-                return true;
+                {
+                    if (Value.LoadType == GsaLoad.LoadTypes.GridArea)
+                    {
+                        GH_Plane ghpln = new GH_Plane();
+                        GH_Convert.ToGHPlane(Value.AreaLoad.GridSurface.LocalAxis, GH_Conversion.Both, ref ghpln);
+                        target = (Q)(object)ghpln;
+                        return true;
+                    }
+                    if (Value.LoadType == GsaLoad.LoadTypes.GridLine)
+                    {
+                        GH_Plane ghpln = new GH_Plane();
+                        GH_Convert.ToGHPlane(Value.LineLoad.GridSurface.LocalAxis, GH_Conversion.Both, ref ghpln);
+                        target = (Q)(object)ghpln;
+                        return true;
+                    }
+                    if (Value.LoadType == GsaLoad.LoadTypes.GridPoint)
+                    {
+                        GH_Plane ghpln = new GH_Plane();
+                        GH_Convert.ToGHPlane(Value.PointLoad.GridSurface.LocalAxis, GH_Conversion.Both, ref ghpln);
+                        target = (Q)(object)ghpln;
+                        return true;
+                    }
+                }
+                return false;
             }
-
+            if (typeof(Q).IsAssignableFrom(typeof(GH_Point)))
+            {
+                if (Value == null)
+                    target = default;
+                else
+                {
+                    if (Value.LoadType == GsaLoad.LoadTypes.GridPoint)
+                    {
+                        Point3d point = new Point3d();
+                        point.X = Value.PointLoad.GridPointLoad.X;
+                        point.Y = Value.PointLoad.GridPointLoad.Y;
+                        point.X = Value.PointLoad.GridSurface.LocalAxis.OriginZ;
+                        GH_Point ghpt = new GH_Point();
+                        GH_Convert.ToGHPoint(point, GH_Conversion.Both, ref ghpt);
+                        target = (Q)(object)ghpt;
+                        return true;
+                    }
+                }
+                return false;
+            }
+            if (typeof(Q).IsAssignableFrom(typeof(GH_Curve)))
+            {
+                if (Value == null)
+                    target = default;
+                else
+                {
+                    if (Value.LoadType == GsaLoad.LoadTypes.GridLine)
+                    {
+                        List<Point3d> pts = new List<Point3d>();
+                        string def = Value.LineLoad.GridLineLoad.PolyLineDefinition; //implement converter
+                        // to be done
+                        //target = (Q)(object)ghpt;
+                        //return true;
+                    }
+                }
+                return false;
+            }
 
             target = default;
             return false;
@@ -474,79 +516,19 @@ namespace GhSA.Parameters
         public override bool CastFrom(object source)
         {
             // This function is called when Grasshopper needs to convert other data 
-            // into GsaBool6.
+            // into GsaLoad.
 
 
             if (source == null) { return false; }
 
-            //Cast from GsaBool6
-            if (typeof(GsaBool6).IsAssignableFrom(source.GetType()))
+            //Cast from GsaLoad
+            if (typeof(GsaLoad).IsAssignableFrom(source.GetType()))
             {
-                Value = (GsaBool6)source;
+                Value = (GsaLoad)source;
                 return true;
             }
 
 
-            //Cast from Bool
-            if (GH_Convert.ToBoolean(source, out bool mybool, GH_Conversion.Both))
-            {
-                Value.X = mybool;
-                Value.Y = mybool;
-                Value.Z = mybool;
-                Value.XX = mybool;
-                Value.YY = mybool;
-                Value.ZZ = mybool;
-                return true;
-            }
-
-            //Cast from string
-            if (GH_Convert.ToString(source, out string mystring, GH_Conversion.Both))
-            {
-                mystring = mystring.Trim();
-                mystring = mystring.ToLower();
-
-                if (mystring == "free")
-                {
-                    Value.X = false;
-                    Value.Y = false;
-                    Value.Z = false;
-                    Value.XX = false;
-                    Value.YY = false;
-                    Value.ZZ = false;
-                    return true;
-                }
-                if (mystring == "pin" | mystring == "pinned")
-                {
-                    Value.X = true;
-                    Value.Y = true;
-                    Value.Z = true;
-                    Value.XX = false;
-                    Value.YY = false;
-                    Value.ZZ = false;
-                    return true;
-                }
-                if (mystring == "fix" | mystring == "fixed")
-                {
-                    Value.X = true;
-                    Value.Y = true;
-                    Value.Z = true;
-                    Value.XX = true;
-                    Value.YY = true;
-                    Value.ZZ = true;
-                    return true;
-                }
-                if (mystring == "release" | mystring == "released" | mystring == "hinge" | mystring == "hinged" | mystring == "charnier")
-                {
-                    Value.X = false;
-                    Value.Y = false;
-                    Value.Z = false;
-                    Value.XX = false;
-                    Value.YY = true;
-                    Value.ZZ = true;
-                    return true;
-                }
-                return false;
-            }
             return false;
         }
         #endregion
@@ -555,12 +537,12 @@ namespace GhSA.Parameters
     }
 
     /// <summary>
-    /// This class provides a Parameter interface for the Data_GsaBool6 type.
+    /// This class provides a Parameter interface for the Data_GsaLoad type.
     /// </summary>
-    public class GsaBool6Parameter : GH_PersistentParam<GsaBool6Goo>
+    public class GsaLoadParameter : GH_PersistentParam<GsaLoadGoo>
     {
-        public GsaBool6Parameter()
-          : base(new GH_InstanceDescription("GSA Bool6", "Bool6", "Bool6 to set releases and restraints", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+        public GsaLoadParameter()
+          : base(new GH_InstanceDescription("GSA Load", "Load", "GSA Load", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -570,11 +552,11 @@ namespace GhSA.Parameters
 
         //protected override Bitmap Icon => Resources.CrossSections;
 
-        protected override GH_GetterResult Prompt_Plural(ref List<GsaBool6Goo> values)
+        protected override GH_GetterResult Prompt_Plural(ref List<GsaLoadGoo> values)
         {
             return GH_GetterResult.cancel;
         }
-        protected override GH_GetterResult Prompt_Singular(ref GsaBool6Goo value)
+        protected override GH_GetterResult Prompt_Singular(ref GsaLoadGoo value)
         {
             return GH_GetterResult.cancel;
         }
@@ -610,5 +592,4 @@ namespace GhSA.Parameters
         }
         #endregion
     }
-
 }
