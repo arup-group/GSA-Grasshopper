@@ -51,10 +51,8 @@ namespace GhSA.Util
         private static string m_subtitle;
         private static string m_title;
         #endregion
-    }
-    public class GsaTitles
-    {
-        public void SetTitles(Model model)
+
+        public static void SetTitles(Model model)
         {
             GsaAPI.Titles titles = model.Titles();
             titles.Calculation = GsaTitles.Calculation;
@@ -63,9 +61,9 @@ namespace GhSA.Util
             titles.Notes = GsaTitles.Notes;
             titles.SubTitle = GsaTitles.SubTitle;
             titles.Title = GsaTitles.Title;
-            //model.Titles() = titles;
+            //model.Titles() = titles; GsaAPI needs to be updated to allow setting titles
         }
-        public void GetTitles(Model model)
+        public static void GetTitles(Model model)
         {
             GsaAPI.Titles titles = model.Titles();
             GsaTitles.Calculation = titles.Calculation;
@@ -77,5 +75,4 @@ namespace GhSA.Util
             //model.Titles() = titles;
         }
     }
-    
 }

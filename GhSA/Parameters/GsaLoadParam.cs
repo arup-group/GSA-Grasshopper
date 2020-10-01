@@ -43,7 +43,7 @@ namespace GhSA.Parameters
             get { return m_nodeload; }
             set { m_nodeload = value; }
         }
-        
+
         public NodeLoadType NodeLoadType;
 
         #region fields
@@ -274,7 +274,7 @@ namespace GhSA.Parameters
         private GsaGridLineLoad m_gridline;
         private GsaGridAreaLoad m_gridarea;
         #endregion
-    
+
         #region constructors
         public GsaLoad(GsaGravityLoad gravityload)
         {
@@ -388,7 +388,7 @@ namespace GhSA.Parameters
             return new GsaLoadGoo(Value == null ? null : Value.Duplicate());
         }
         #endregion
-        
+
         #region properties
         public override bool IsValid
         {
