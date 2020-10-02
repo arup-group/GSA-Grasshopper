@@ -44,7 +44,16 @@ namespace GhSA.Parameters
             set { m_nodeload = value; }
         }
 
-        public NodeLoadType NodeLoadType;
+        public NodeLoadTypes NodeLoadType;
+
+        public enum NodeLoadTypes // direct copy from GSA API enums
+        {
+            NODE_LOAD = 0,
+            APPLIED_DISP = 1,
+            SETTLEMENT = 2,
+            GRAVITY = 3,
+            NUM_TYPES = 4
+        }
 
         #region fields
         private NodeLoad m_nodeload;
@@ -53,7 +62,7 @@ namespace GhSA.Parameters
         public GsaNodeLoad()
         {
             m_nodeload = new NodeLoad();
-            NodeLoadType = NodeLoadType.NODE_LOAD;
+            NodeLoadType = NodeLoadTypes.NODE_LOAD;
         }
         #endregion
     }
@@ -64,7 +73,16 @@ namespace GhSA.Parameters
             get { return m_beamload; }
             set { m_beamload = value; }
         }
-        public BeamLoadType BeamLoadType;
+        public enum BeamLoadTypes // direct copy from GSA API enums
+        {
+            UNDEF = 0,
+            POINT = 1,
+            UNIFORM = 2,
+            LINEAR = 3,
+            PATCH = 4,
+            TRILINEAR = 5
+        }
+        public BeamLoadTypes BeamLoadType;
         #region fields
         private BeamLoad m_beamload;
         #endregion
@@ -72,7 +90,7 @@ namespace GhSA.Parameters
         public GsaBeamLoad()
         {
             m_beamload = new BeamLoad();
-            BeamLoadType = BeamLoadType.LINEAR;
+            BeamLoadType = BeamLoadTypes.LINEAR;
         }
         #endregion
     }
@@ -83,7 +101,14 @@ namespace GhSA.Parameters
             get { return m_faceload; }
             set { m_faceload = value; }
         }
-        public FaceLoadType FaceLoadType;
+        public enum FaceLoadTypes // direct copy from GSA API enums
+        {
+            UNDEF = 0,
+            CONSTANT = 1,
+            GENERAL = 2,
+            POINT = 3
+        }
+        public FaceLoadTypes FaceLoadType;
         #region fields
         private FaceLoad m_faceload;
         #endregion
@@ -91,7 +116,7 @@ namespace GhSA.Parameters
         public GsaFaceLoad()
         {
             m_faceload = new FaceLoad();
-            FaceLoadType = FaceLoadType.CONSTANT;
+            FaceLoadType = FaceLoadTypes.CONSTANT;
         }
         #endregion
     }
@@ -157,26 +182,27 @@ namespace GhSA.Parameters
             get { return m_gridlineload; }
             set { m_gridlineload = value; }
         }
-        public GridLineLoad.PolyLineType PolyLineType
-        {
-            get { return m_linetype; }
-            set { m_linetype = value; }
-        }
+        
         public GsaGridSurface GridSurface
         {
             get { return m_gridsrf; }
             set { m_gridsrf = value; }
         }
+        public enum PolyLineTypes // direct copy from GSA API enums
+        {
+            EXPLICIT_POLYLINE = 0,
+            POLYLINE_REFERENCE = 1
+        }
+        public PolyLineTypes PolyLineType;
         #region fields
         private GridLineLoad m_gridlineload;
-        private GridLineLoad.PolyLineType m_linetype;
         private GsaGridSurface m_gridsrf;
         #endregion
         #region constructor
         public GsaGridLineLoad()
         {
             m_gridlineload = new GridLineLoad();
-            m_linetype = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
+            PolyLineType = PolyLineTypes.EXPLICIT_POLYLINE;
             m_gridsrf = new GsaGridSurface();
         }
         #endregion
@@ -188,26 +214,27 @@ namespace GhSA.Parameters
             get { return m_gridareaload; }
             set { m_gridareaload = value; }
         }
-        public GridAreaPolyLineType PolyLineType
-        {
-            get { return m_linetype; }
-            set { m_linetype = value; }
-        }
         public GsaGridSurface GridSurface
         {
             get { return m_gridsrf; }
             set { m_gridsrf = value; }
         }
+        public enum PolyLineTypes // direct copy from GSA API enums
+        {
+            PLANE = 1,
+            POLYREF = 2,
+            POLYGON = 3
+        }
+        public PolyLineTypes PolyLineType;
         #region fields
         private GridAreaLoad m_gridareaload;
-        private GridAreaPolyLineType m_linetype;
         private GsaGridSurface m_gridsrf;
         #endregion
         #region constructor
         public GsaGridAreaLoad()
         {
             m_gridareaload = new GridAreaLoad();
-            m_linetype = GridAreaPolyLineType.PLANE;
+            PolyLineType = PolyLineTypes.PLANE;
             m_gridsrf = new GsaGridSurface();
         }
         #endregion
@@ -546,7 +573,7 @@ namespace GhSA.Parameters
         {
         }
 
-        public override Guid ComponentGuid => new Guid("9bf01532-2035-4105-9c56-5e88b87f5220");
+        public override Guid ComponentGuid => new Guid("2833ef04-c595-4b05-8db3-622c75fa9a25");
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
