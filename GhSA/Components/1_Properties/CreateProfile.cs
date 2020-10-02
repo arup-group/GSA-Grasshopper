@@ -99,10 +99,10 @@ namespace GhSA.Components
                     {
                         if (dropdowncontents == null)
                             dropdowncontents = new List<List<string>>();
-                        dropdowncontents.Add(mainlist);
-                        dropdowncontents.Add(cataloguelist);
-                        dropdowncontents.Add(typelist);
-                        dropdowncontents.Add(sectionlist);
+                        dropdowncontents.Add(mainlist); //fixed
+                        dropdowncontents.Add(cataloguelist); //fixed
+                        dropdowncontents.Add(typelist); //variable
+                        dropdowncontents.Add(sectionlist); //variable
                     }
                     
                     if (selections.Count < 2)
@@ -114,11 +114,11 @@ namespace GhSA.Components
                     if (dropdownlistidd > 0)
                     {
                         if (dropdownlistidd == 1)
-                            catalogueIndex = selectedidd;
+                            catalogueIndex = selectedidd; //to be updated
                         if (dropdownlistidd == 2)
-                            catalogueTypeIndex = selectedidd;
+                            catalogueTypeIndex = selectedidd; //to be updated
                         if (dropdownlistidd == 3)
-                            catalogueProfileIndex = selectedidd;
+                            catalogueProfileIndex = selectedidd; //to be updated
                     }
                         
                     break;

@@ -73,16 +73,6 @@ namespace GhSA.Parameters
             get { return m_beamload; }
             set { m_beamload = value; }
         }
-        public enum BeamLoadTypes // direct copy from GSA API enums
-        {
-            UNDEF = 0,
-            POINT = 1,
-            UNIFORM = 2,
-            LINEAR = 3,
-            PATCH = 4,
-            TRILINEAR = 5
-        }
-        public BeamLoadTypes BeamLoadType;
         #region fields
         private BeamLoad m_beamload;
         #endregion
@@ -90,7 +80,7 @@ namespace GhSA.Parameters
         public GsaBeamLoad()
         {
             m_beamload = new BeamLoad();
-            BeamLoadType = BeamLoadTypes.LINEAR;
+            m_beamload.Type = GsaAPI.BeamLoadType.LINEAR;
         }
         #endregion
     }
@@ -101,14 +91,7 @@ namespace GhSA.Parameters
             get { return m_faceload; }
             set { m_faceload = value; }
         }
-        public enum FaceLoadTypes // direct copy from GSA API enums
-        {
-            UNDEF = 0,
-            CONSTANT = 1,
-            GENERAL = 2,
-            POINT = 3
-        }
-        public FaceLoadTypes FaceLoadType;
+        
         #region fields
         private FaceLoad m_faceload;
         #endregion
@@ -116,7 +99,7 @@ namespace GhSA.Parameters
         public GsaFaceLoad()
         {
             m_faceload = new FaceLoad();
-            FaceLoadType = FaceLoadTypes.CONSTANT;
+            m_faceload.Type = FaceLoadType.CONSTANT;
         }
         #endregion
     }
@@ -384,8 +367,7 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            string str = LoadType.ToString();
-            return "GSA Load " + str;
+            return "GSA " + LoadType.ToString() + " Load";
         }
 
         #endregion
@@ -559,8 +541,6 @@ namespace GhSA.Parameters
             return false;
         }
         #endregion
-
-
     }
 
     /// <summary>
@@ -575,7 +555,7 @@ namespace GhSA.Parameters
 
         public override Guid ComponentGuid => new Guid("2833ef04-c595-4b05-8db3-622c75fa9a25");
 
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
         //protected override Bitmap Icon => Resources.CrossSections;
 

@@ -108,6 +108,10 @@
     <Compile Include="Components\2_Geometry\EditNode.cs" />
     <Compile Include="Components\2_Geometry\CreateSupport.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
+    <Compile Include="Components\3_Loads\CreateBeamLoads.cs" />
+    <Compile Include="Components\3_Loads\CreateFaceLoads.cs" />
+    <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
+    <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
     <Compile Include="Components\Tests\DropDownMulti.cs" />
     <Compile Include="Components\Tests\DropDownSingle.cs" />
     <Compile Include="Helpers\_GsaModelEnums.cs" />
@@ -144,7 +148,6 @@
     <Compile Include="UI\Comp_Support.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Components\3_Loads\" />
     <Folder Include="Components\4_Analysis\" />
     <Folder Include="Components\5_Results\" />
   </ItemGroup>
