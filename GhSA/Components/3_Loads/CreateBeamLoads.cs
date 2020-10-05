@@ -171,7 +171,7 @@ namespace GhSA.Components
 
             double load1 = 0;
             if (DA.GetData(5, ref load1))
-                load1 = load1 * -1000; //convert to kN
+                load1 *= -1000; //convert to kN
             
             switch (_mode)
             {
@@ -183,7 +183,7 @@ namespace GhSA.Components
                         // get data
                         double pos = 0;
                         if (DA.GetData(6, ref pos))
-                            pos = pos * -1;
+                            pos *= -1;
 
                         // set position and value
                         beamLoad.BeamLoad.SetValue(0, load1);
@@ -208,7 +208,7 @@ namespace GhSA.Components
                         // get data
                         double load2 = 0;
                         if (DA.GetData(6, ref load2))
-                            load2 = load2 * -1000; //convert to kN
+                            load2 *= -1000; //convert to kN
 
                         // set value
                         beamLoad.BeamLoad.SetValue(0, load1);
@@ -224,15 +224,15 @@ namespace GhSA.Components
                         // get data
                         double pos1 = 0;
                         if (DA.GetData(6, ref pos1))
-                            pos1 = pos1 * -1;
+                            pos1 *= -1;
 
                         double pos2 = 1;
                         if (DA.GetData(8, ref pos2))
-                            pos2 = pos2 * -1;
+                            pos2 *= -1;
 
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
-                            load2 = load2 * -1000; //convert to kN
+                            load2 *= -1000; //convert to kN
 
                         // set value
                         beamLoad.BeamLoad.SetValue(0, load1);
@@ -250,15 +250,15 @@ namespace GhSA.Components
                         // get data
                         double pos1 = 0;
                         if (DA.GetData(6, ref pos1))
-                            pos1 = pos1 * -1;
+                            pos1 *= -1;
 
                         double pos2 = 1;
                         if (DA.GetData(8, ref pos2))
-                            pos2 = pos2 * -1;
+                            pos2 *= -1;
 
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
-                            load2 = load2 * -1000; //convert to kN
+                            load2 *= -1000; //convert to kN
 
                         // set value
                         beamLoad.BeamLoad.SetValue(0, load1);

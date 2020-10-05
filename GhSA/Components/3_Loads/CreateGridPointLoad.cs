@@ -29,9 +29,8 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
-            pManager.AddPointParameter("Point", "Pt", "Point. If you input grid plane below only x and y coordinates will be used from this point, but if not a new Grid Plane (xy-plane) will be created at the z-elevation of this point.", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane or plane (optional). If no input here then the point's z-coordinate will be used for an xy-plane at that elevation.", GH_ParamAccess.item);
-            pManager.AddTextParameter("Elements", "El", "Element list (by default all)", GH_ParamAccess.item, "all");
+            pManager.AddPointParameter("Point", "Pt", "Point. If you input grid plane below only x and y coordinates will be used from this point, but if not a new Grid Plane Surface (xy-plane) will be created at the z-elevation of this point.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface or Plane (optional). If no input here then the point's z-coordinate will be used for an xy-plane at that elevation.", GH_ParamAccess.item);
             pManager.AddTextParameter("Direction", "Di", "Load direction (default z)." +
                     System.Environment.NewLine + "Accepted inputs are:" +
                     System.Environment.NewLine + "x" +
@@ -47,7 +46,6 @@ namespace GhSA.Components
             pManager[2].Optional = true;
             pManager[3].Optional = true;
             pManager[4].Optional = true;
-            pManager[5].Optional = true;
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -57,13 +55,12 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaGridPointLoad gridpointload = new GsaGridPointLoad();
-            GsaGridSurface gridsrf = new GsaGridSurface(); 
 
             // 0 Load case
             int lc = 1;
             GH_Integer gh_lc = new GH_Integer();
             if (DA.GetData(0, ref gh_lc))
-                GH_Convert.ToInt32_Primary(gh_lc, ref lc);
+                GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
             gridpointload.GridPointLoad.Case = lc;
 
             // 1 Point
@@ -75,48 +72,38 @@ namespace GhSA.Components
             gridpointload.GridPointLoad.Y = pt.Y;
 
             // 2 Plane
-            GsaGridPlane gridplane;
+            GsaGridPlaneSurface grdplnsrf;
             Plane pln = Plane.Unset;
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(2, ref gh_typ))
             {
-                if (gh_typ.Value is GsaGridPlane)
+                if (gh_typ.Value is GsaGridPlaneSurface)
                 {
-                    GsaGridPlane temppln = new GsaGridPlane();
+                    GsaGridPlaneSurface temppln = new GsaGridPlaneSurface();
                     gh_typ.CastTo(ref temppln);
-                    gridplane = temppln.Duplicate();
+                    grdplnsrf = temppln.Duplicate();
                 }
                 else
                 {
                     gh_typ.CastTo(ref pln);
-                    gridplane = new GsaGridPlane(pln);
+                    grdplnsrf = new GsaGridPlaneSurface(pln);
                 }
             }
             else
             {
                 pln = Plane.WorldXY;
                 pln.Origin = pt;
-                gridplane = new GsaGridPlane(pln);
+                grdplnsrf = new GsaGridPlaneSurface(pln);
             }
-            gridsrf.GridPlane = gridplane;
+            gridpointload.GridPlaneSurface = grdplnsrf;
 
-            // 3 element/beam list
-            string beamList = "all"; 
-            GH_String gh_bl = new GH_String();
-            if (DA.GetData(3, ref gh_bl))
-                GH_Convert.ToString_Primary(gh_bl, ref beamList);
-
-            gridsrf.GridSurface.Elements = beamList;
-            
-            gridpointload.GridSurface = gridsrf;
-
-            // 4 direction
+            // 3 direction
             string dir = "Z";
             Direction direc = Direction.Z;
 
             GH_String gh_dir = new GH_String();
-            if (DA.GetData(2, ref gh_dir))
-                GH_Convert.ToString_Primary(gh_dir, ref dir);
+            if (DA.GetData(3, ref gh_dir))
+                GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
             dir = dir.ToUpper();
             if (dir == "X")
                 direc = Direction.X;
@@ -125,23 +112,24 @@ namespace GhSA.Components
 
             gridpointload.GridPointLoad.Direction = direc;
 
-            // 5 Axis
+            // 4 Axis
             int axis = 0;
             gridpointload.GridPointLoad.AxisProperty = 0; 
             GH_Integer gh_ax = new GH_Integer();
-            if (DA.GetData(5, ref gh_ax))
+            if (DA.GetData(4, ref gh_ax))
             {
                 GH_Convert.ToInt32_Primary(gh_ax, ref axis);
                 if (axis == 0 || axis == -1)
                     gridpointload.GridPointLoad.AxisProperty = axis;
             }
 
-            // 6 load value
+            // 5 load value
             double load = 0;
-            if (DA.GetData(6, ref load))
-                load = load * -1000; //convert to kN
-
+            if (DA.GetData(5, ref load))
+                load *= -1000; //convert to kN
             gridpointload.GridPointLoad.Value = load;
+
+            // convert to goo
             GsaLoad gsaLoad = new GsaLoad(gridpointload);
             DA.SetData(0, new GsaLoadGoo(gsaLoad));
         }

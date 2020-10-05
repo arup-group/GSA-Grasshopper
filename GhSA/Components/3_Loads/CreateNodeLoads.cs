@@ -145,7 +145,7 @@ namespace GhSA.Components
 
             double load = 0;
             if (DA.GetData(3, ref load))
-                load = load * -1000; //convert to kN
+                load *= -1000; //convert to kN
 
             nodeLoad.NodeLoad.Value = load;
 

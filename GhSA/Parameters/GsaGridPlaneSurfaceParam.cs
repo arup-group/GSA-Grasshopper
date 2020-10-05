@@ -11,14 +11,15 @@ using Rhino.Collections;
 namespace GhSA.Parameters
 {
     /// <summary>
-    /// Grid Plane class, this class defines the basic properties and methods for any Gsa Grid Plane
+    /// Grid Plane Surface class, this class defines the basic properties and methods for any Gsa Grid Plane Surface
     /// </summary>
-    public class GsaGridPlane
+    public class GsaGridPlaneSurface
 
     {
         #region fields
         private Plane m_plane;
         private GridPlane m_gridplane;
+        private GridSurface m_gridsrf;
         private Axis m_axis;
         #endregion
         public Plane Plane
@@ -36,19 +37,33 @@ namespace GhSA.Parameters
             get { return m_axis; }
             set { m_axis = value; }
         }
+        public GridSurface GridSurface
+        {
+            get { return m_gridsrf; }
+            set { m_gridsrf = value; }
+        }
 
         #region constructors
-        public GsaGridPlane()
+        public GsaGridPlaneSurface()
         {
             m_plane = Plane.Unset;
             m_gridplane = new GridPlane();
+            m_gridsrf = new GridSurface();
             m_axis = new Axis();
         }
 
-        public GsaGridPlane(Plane plane)
+        public GsaGridPlaneSurface(Plane plane)
         {
             m_plane = plane;
             m_gridplane = new GridPlane();
+            m_gridsrf = new GridSurface
+            {
+                Direction = 0,
+                Elements = "all",
+                ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL,
+                ExpansionType = GridSurfaceExpansionType.PLANE_CORNER,
+                SpanType = GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS
+            };
             m_axis = new Axis();
             m_axis.Origin.X = plane.OriginX;
             m_axis.Origin.Y = plane.OriginY;
@@ -70,12 +85,15 @@ namespace GhSA.Parameters
             m_axis.XYPlane.Z = plane.YAxis.Z;
         }
 
-        public GsaGridPlane Duplicate()
+        public GsaGridPlaneSurface Duplicate()
         {
-            GsaGridPlane dup = new GsaGridPlane();
-            dup.Plane = m_plane;
-            dup.GridPlane = m_gridplane;
-            dup.Axis = m_axis;
+            GsaGridPlaneSurface dup = new GsaGridPlaneSurface
+            {
+                Plane = m_plane,
+                GridPlane = m_gridplane,
+                GridSurface = m_gridsrf,
+                Axis = m_axis
+            };
             return dup;
         }
 
@@ -110,14 +128,14 @@ namespace GhSA.Parameters
     /// <summary>
     /// GsaNode Goo wrapper class, makes sure GsaNode can be used in Grasshopper.
     /// </summary>
-    public class GsaGridPlaneGoo : GH_GeometricGoo<GsaGridPlane>, IGH_PreviewData
+    public class GsaGridPlaneSurfaceGoo : GH_GeometricGoo<GsaGridPlaneSurface>, IGH_PreviewData
     {
         #region constructors
-        public GsaGridPlaneGoo()
+        public GsaGridPlaneSurfaceGoo()
         {
-            this.Value = new GsaGridPlane();
+            this.Value = new GsaGridPlaneSurface();
         }
-        public GsaGridPlaneGoo(GsaGridPlane gridplane)
+        public GsaGridPlaneSurfaceGoo(GsaGridPlaneSurface gridplane)
         {
             if (gridplane == null)
                 gridplane = null;
@@ -133,9 +151,9 @@ namespace GhSA.Parameters
         {
             return DuplicateGsaNode();
         }
-        public GsaGridPlaneGoo DuplicateGsaNode()
+        public GsaGridPlaneSurfaceGoo DuplicateGsaNode()
         {
-            return new GsaGridPlaneGoo(Value == null ? new GsaGridPlane() : Value.Duplicate());
+            return new GsaGridPlaneSurfaceGoo(Value == null ? new GsaGridPlaneSurface() : Value.Duplicate());
         }
         #endregion
 
@@ -206,7 +224,7 @@ namespace GhSA.Parameters
             // instance of GsaGridPlane into some other type Q.            
             
 
-            if (typeof(Q).IsAssignableFrom(typeof(GsaGridPlane)))
+            if (typeof(Q).IsAssignableFrom(typeof(GsaGridPlaneSurface)))
             {
                 if (Value == null)
                     target = default;
@@ -240,9 +258,9 @@ namespace GhSA.Parameters
             if (source == null) { return false; }
 
             //Cast from GsaGridPlane
-            if (typeof(GsaGridPlane).IsAssignableFrom(source.GetType()))
+            if (typeof(GsaGridPlaneSurface).IsAssignableFrom(source.GetType()))
             {
-                Value = (GsaGridPlane)source;
+                Value = (GsaGridPlaneSurface)source;
                 return true;
             }
 
@@ -251,7 +269,7 @@ namespace GhSA.Parameters
 
             if (GH_Convert.ToPlane(source, ref pln, GH_Conversion.Both))
             {
-                GsaGridPlane gridplane = new GsaGridPlane(pln);
+                GsaGridPlaneSurface gridplane = new GsaGridPlaneSurface(pln);
                 this.Value = gridplane;
                 return true;
             }
@@ -268,8 +286,8 @@ namespace GhSA.Parameters
 
             Plane pln = Value.Plane;
             pln.Transform(xform);
-            GsaGridPlane gridplane = new GsaGridPlane(pln);
-            return new GsaGridPlaneGoo(gridplane);
+            GsaGridPlaneSurface gridplane = new GsaGridPlaneSurface(pln);
+            return new GsaGridPlaneSurfaceGoo(gridplane);
         }
 
         public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
@@ -279,8 +297,8 @@ namespace GhSA.Parameters
 
             Plane pln = Value.Plane;
             xmorph.Morph(ref pln);
-            GsaGridPlane gridplane = new GsaGridPlane(pln);
-            return new GsaGridPlaneGoo(gridplane);
+            GsaGridPlaneSurface gridplane = new GsaGridPlaneSurface(pln);
+            return new GsaGridPlaneSurfaceGoo(gridplane);
         }
 
         #endregion
@@ -321,10 +339,10 @@ namespace GhSA.Parameters
     /// <summary>
     /// This class provides a Parameter interface for the Data_GsaNode type.
     /// </summary>
-    public class GsaGridPlaneParameter : GH_PersistentGeometryParam<GsaGridPlaneGoo>, IGH_PreviewObject
+    public class GsaGridPlaneParameter : GH_PersistentGeometryParam<GsaGridPlaneSurfaceGoo>, IGH_PreviewObject
     {
         public GsaGridPlaneParameter()
-          : base(new GH_InstanceDescription("GSA Grid Plane", "GridPlane", "Maintains a collection of GSA Grid Plane data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("GSA Grid Plane Surface", "GrdPlnSrf", "Maintains a collection of GSA Grid Plane Surface data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -336,11 +354,11 @@ namespace GhSA.Parameters
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.
-        protected override GH_GetterResult Prompt_Plural(ref List<GsaGridPlaneGoo> values)
+        protected override GH_GetterResult Prompt_Plural(ref List<GsaGridPlaneSurfaceGoo> values)
         {
             return GH_GetterResult.cancel;
         }
-        protected override GH_GetterResult Prompt_Singular(ref GsaGridPlaneGoo value)
+        protected override GH_GetterResult Prompt_Singular(ref GsaGridPlaneSurfaceGoo value)
         {
             return GH_GetterResult.cancel;
         }

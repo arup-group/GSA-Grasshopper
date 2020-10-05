@@ -123,7 +123,7 @@
     <Compile Include="GhSAInfo.cs" />
     <Compile Include="Helpers\_SqlReader.cs" />
     <Compile Include="Parameters\GsaLoadParam.cs" />
-    <Compile Include="Parameters\GsaGridPlaneParam.cs" />
+    <Compile Include="Parameters\GsaGridPlaneSurfaceParam.cs" />
     <Compile Include="Parameters\_Titles.cs" />
     <Compile Include="Parameters\_Unit.cs" />
     <Compile Include="Parameters\GsaProp2d.cs" />

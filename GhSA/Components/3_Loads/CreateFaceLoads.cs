@@ -167,7 +167,7 @@ namespace GhSA.Components
 
                         double load1 = 0;
                         if (DA.GetData(5, ref load1))
-                            load1 = load1 * -1000; //convert to kN
+                            load1 *= -1000; //convert to kN
 
                         // set position and value
                         faceLoad.FaceLoad.SetValue(0, load1);
@@ -188,16 +188,16 @@ namespace GhSA.Components
 
                         double load1 = 0;
                         if (DA.GetData(5, ref load1))
-                            load1 = load1 * -1000; //convert to kN
+                            load1 *= -1000; //convert to kN
                         double load2 = 0;
                         if (DA.GetData(6, ref load2))
-                            load2 = load2 * -1000; //convert to kN
+                            load2 *= -1000; //convert to kN
                         double load3 = 0;
                         if (DA.GetData(7, ref load3))
-                            load3 = load3 * -1000; //convert to kN
+                            load3 *= -1000; //convert to kN
                         double load4 = 0;
                         if (DA.GetData(8, ref load4))
-                            load4 = load4 * -1000; //convert to kN
+                            load4 *= -1000; //convert to kN
 
                         // set value
                         faceLoad.FaceLoad.SetValue(0, load1);
@@ -221,7 +221,7 @@ namespace GhSA.Components
 
                         double load1 = 0;
                         if (DA.GetData(5, ref load1))
-                            load1 = load1 * -1000; //convert to kN
+                            load1 *= -1000; //convert to kN
                         double r = 0;
                         DA.GetData(6, ref r);
                             
@@ -247,11 +247,11 @@ namespace GhSA.Components
 
                         double load1 = 0;
                         if (DA.GetData(5, ref load1))
-                            load1 = load1 * -1000; //convert to kN
+                            load1 *= -1000; //convert to kN
 
                         double load2 = 0;
                         if (DA.GetData(6, ref load2))
-                            load2 = load2 * -1000; //convert to kN
+                            load2 *= -1000; //convert to kN
 
                         // set value
                         faceLoad.FaceLoad.SetValue(0, load1);
