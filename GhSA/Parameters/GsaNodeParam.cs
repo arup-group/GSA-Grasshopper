@@ -294,9 +294,11 @@ namespace GhSA.Parameters
             {
                 if (Value == null) { return BoundingBox.Empty; }
                 if (Value.Point == null) { return BoundingBox.Empty; }
-                Point3d pt = Value.Point;
-                pt.Z += 0.001;
-                Line ln = new Line(Value.Point, pt);
+                Point3d pt1 = Value.Point;
+                pt1.Z += 0.25;
+                Point3d pt2 = Value.Point;
+                pt2.Z += -0.25;
+                Line ln = new Line(pt1, pt2);
                 LineCurve crv = new LineCurve(ln);
                 return crv.GetBoundingBox(false); 
             }
