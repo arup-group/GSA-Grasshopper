@@ -44,18 +44,18 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Job Number", "JN", "Set Job Number for this GSA Model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Initials", "Init", "Set Initials for this GSA Model", GH_ParamAccess.item);
+            pManager.AddTextParameter("Initials", "Ini", "Set Initials for this GSA Model", GH_ParamAccess.item);
             pManager.AddTextParameter("Title", "Tit", "Set Title for this GSA Model", GH_ParamAccess.item);
             pManager.AddTextParameter("Sub Title", "Sub", "Set Sub Title for this GSA Model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Calculation", "Calc", "Set Calculation Heading for this GSA Model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Notes", "Note", "Set Notes for this GSA Model", GH_ParamAccess.item);
+            pManager.AddTextParameter("Calculation", "Cal", "Set Calculation Heading for this GSA Model", GH_ParamAccess.item);
+            pManager.AddTextParameter("Notes", "Nt", "Set Notes for this GSA Model", GH_ParamAccess.item);
             for (int i = 0; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("titles", "titles", "List of all titles in document", GH_ParamAccess.list);
+            pManager.AddTextParameter("Titles", "Titles", "List of all Titles in document", GH_ParamAccess.list);
         }
         #endregion
 

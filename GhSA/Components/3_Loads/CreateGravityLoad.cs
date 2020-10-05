@@ -14,10 +14,8 @@ namespace GhSA.Components
             : base("Create Gravity Load", "GravityLoad", "Create GSA Gravity Load",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat3())
-        { }
-
+        { this.Hidden = true; } // sets the initial state of the component to hidden
         public override Guid ComponentGuid => new Guid("f9099874-92fa-4608-b4ed-a788df85a407");
-
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
         //protected override Bitmap Icon => Resources.CrossSections;

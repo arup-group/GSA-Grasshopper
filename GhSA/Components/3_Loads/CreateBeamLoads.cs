@@ -19,10 +19,8 @@ namespace GhSA.Components
             : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat3())
-        { }
-
+        { this.Hidden = true; } // sets the initial state of the component to hidden
         public override Guid ComponentGuid => new Guid("a2bc3c66-eb22-43ec-9936-84d2944be414");
-
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
         //protected override Bitmap Icon => Resources.CrossSections;
@@ -521,5 +519,4 @@ namespace GhSA.Components
         }
         #endregion
     }
-
 }

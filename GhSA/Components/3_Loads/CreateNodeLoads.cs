@@ -16,10 +16,8 @@ namespace GhSA.Components
             : base("Create Node Load", "NodeLoad", "Create GSA Node Load",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat3())
-        { }
-
+        { this.Hidden = true; } // sets the initial state of the component to hidden
         public override Guid ComponentGuid => new Guid("0e30f030-8fc0-4ffa-afd9-02b18c094006");
-
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
         //protected override Bitmap Icon => Resources.CrossSections;
@@ -37,6 +35,7 @@ namespace GhSA.Components
 
             m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Load Type");
         }
+
 
         public void SetSelected(string selected)
         {
@@ -83,6 +82,7 @@ namespace GhSA.Components
             pManager.AddNumberParameter("Value (" + Util.GsaUnit.Force + ")", "V", "Load Value (" + Util.GsaUnit.Force + ")", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[2].Optional = true;
+            
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -91,6 +91,7 @@ namespace GhSA.Components
         
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            
             GsaNodeLoad nodeLoad = new GsaNodeLoad();
 
             // Node load type
