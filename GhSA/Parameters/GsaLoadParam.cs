@@ -110,27 +110,20 @@ namespace GhSA.Parameters
             get { return m_gridsurface; }
             set { m_gridsurface = value; }
         }
-        public GridPlane GridPlane
+        public GsaGridPlane GridPlane
         {
             get { return m_gridplane; }
             set { m_gridplane = value; }
         }
-        public Plane LocalAxis
-        {
-            get { return m_plane; }
-            set { m_plane = value; }
-        }
         #region fields
         private GridSurface m_gridsurface;
-        private GridPlane m_gridplane;
-        private Plane m_plane;
+        private GsaGridPlane m_gridplane;
         #endregion
         #region constructor
         public GsaGridSurface()
         {
             m_gridsurface = new GridSurface();
-            m_gridplane = new GridPlane();
-            m_plane = new Plane();
+            m_gridplane = new GsaGridPlane();
         }
         #endregion
     }
@@ -451,6 +444,37 @@ namespace GhSA.Parameters
                 return true;
             }
 
+            if (typeof(Q).IsAssignableFrom(typeof(GsaGridPlaneGoo)))
+            {
+                if (Value == null)
+                    target = default;
+                else
+                {
+                    if (Value.AreaLoad != null)
+                    {
+                        GsaGridPlane gridplane = Value.AreaLoad.GridSurface.GridPlane;
+                        GsaGridPlaneGoo gpgoo = new GsaGridPlaneGoo(gridplane);
+                        target = (Q)(object)gpgoo;
+                        return true;
+                    }
+                    if (Value.LineLoad != null)
+                    {
+                        GsaGridPlane gridplane = Value.LineLoad.GridSurface.GridPlane;
+                        GsaGridPlaneGoo gpgoo = new GsaGridPlaneGoo(gridplane);
+                        target = (Q)(object)gpgoo;
+                        return true;
+                    }
+                    if (Value.PointLoad != null)
+                    {
+                        GsaGridPlane gridplane = Value.PointLoad.GridSurface.GridPlane;
+                        GsaGridPlaneGoo gpgoo = new GsaGridPlaneGoo(gridplane);
+                        target = (Q)(object)gpgoo;
+                        return true;
+                    }
+                }
+                return true;
+            }
+
             if (typeof(Q).IsAssignableFrom(typeof(GH_Plane)))
             {
                 if (Value == null)
@@ -460,21 +484,21 @@ namespace GhSA.Parameters
                     if (Value.LoadType == GsaLoad.LoadTypes.GridArea)
                     {
                         GH_Plane ghpln = new GH_Plane();
-                        GH_Convert.ToGHPlane(Value.AreaLoad.GridSurface.LocalAxis, GH_Conversion.Both, ref ghpln);
+                        GH_Convert.ToGHPlane(Value.AreaLoad.GridSurface.GridPlane.Plane, GH_Conversion.Both, ref ghpln);
                         target = (Q)(object)ghpln;
                         return true;
                     }
                     if (Value.LoadType == GsaLoad.LoadTypes.GridLine)
                     {
                         GH_Plane ghpln = new GH_Plane();
-                        GH_Convert.ToGHPlane(Value.LineLoad.GridSurface.LocalAxis, GH_Conversion.Both, ref ghpln);
+                        GH_Convert.ToGHPlane(Value.LineLoad.GridSurface.GridPlane.Plane, GH_Conversion.Both, ref ghpln);
                         target = (Q)(object)ghpln;
                         return true;
                     }
                     if (Value.LoadType == GsaLoad.LoadTypes.GridPoint)
                     {
                         GH_Plane ghpln = new GH_Plane();
-                        GH_Convert.ToGHPlane(Value.PointLoad.GridSurface.LocalAxis, GH_Conversion.Both, ref ghpln);
+                        GH_Convert.ToGHPlane(Value.PointLoad.GridSurface.GridPlane.Plane, GH_Conversion.Both, ref ghpln);
                         target = (Q)(object)ghpln;
                         return true;
                     }
@@ -492,7 +516,7 @@ namespace GhSA.Parameters
                         Point3d point = new Point3d();
                         point.X = Value.PointLoad.GridPointLoad.X;
                         point.Y = Value.PointLoad.GridPointLoad.Y;
-                        point.X = Value.PointLoad.GridSurface.LocalAxis.OriginZ;
+                        point.Z = Value.PointLoad.GridSurface.GridPlane.Plane.OriginZ;
                         GH_Point ghpt = new GH_Point();
                         GH_Convert.ToGHPoint(point, GH_Conversion.Both, ref ghpt);
                         target = (Q)(object)ghpt;

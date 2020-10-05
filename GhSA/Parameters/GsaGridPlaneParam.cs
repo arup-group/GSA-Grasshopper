@@ -11,7 +11,7 @@ using Rhino.Collections;
 namespace GhSA.Parameters
 {
     /// <summary>
-    /// Node class, this class defines the basic properties and methods for any Gsa Node
+    /// Grid Plane class, this class defines the basic properties and methods for any Gsa Grid Plane
     /// </summary>
     public class GsaGridPlane
 
@@ -215,12 +215,16 @@ namespace GhSA.Parameters
                 return true;
             }
 
-            if (typeof(Q).IsAssignableFrom(typeof(Plane)))
+            if (typeof(Q).IsAssignableFrom(typeof(GH_Plane)))
             {
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.Plane;
+                {
+                    GH_Plane pln = new GH_Plane();
+                    GH_Convert.ToGHPlane(Value.Plane, GH_Conversion.Both, ref pln);
+                    target = (Q)(object)pln;
+                }
                 return true;
             }
 
@@ -299,13 +303,13 @@ namespace GhSA.Parameters
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
-                    GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 1, System.Drawing.Color.Gray, System.Drawing.Color.Red, System.Drawing.Color.Green);
+                    GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, System.Drawing.Color.LightGray, System.Drawing.Color.Red, System.Drawing.Color.Green);
                     args.Pipeline.DrawPoint(Value.Plane.Origin, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Node);
                 }
                     
                 else
                 {
-                    GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 1, System.Drawing.Color.Gray, System.Drawing.Color.Red, System.Drawing.Color.Green);
+                    GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, System.Drawing.Color.DarkGray, System.Drawing.Color.Red, System.Drawing.Color.Green);
                     args.Pipeline.DrawPoint(Value.Plane.Origin, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.NodeSelected);
                 }
                     
