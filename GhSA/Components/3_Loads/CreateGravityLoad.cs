@@ -68,7 +68,8 @@ namespace GhSA.Components
             factor.X = vect.X; factor.Y = vect.Y; factor.Z = vect.Z;
             gravityLoad.GravityLoad.Factor = factor;
 
-            DA.SetData(0, new GsaLoad(gravityLoad));
+            GsaLoad gsaLoad = new GsaLoad(gravityLoad);
+            DA.SetData(0, new GsaLoadGoo(gsaLoad));
             
         }
     }

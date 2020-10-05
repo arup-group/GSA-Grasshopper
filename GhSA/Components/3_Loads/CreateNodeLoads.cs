@@ -149,7 +149,8 @@ namespace GhSA.Components
 
             nodeLoad.NodeLoad.Value = load;
 
-            DA.SetData(0, new GsaLoad(nodeLoad));
+            GsaLoad gsaLoad = new GsaLoad(nodeLoad);
+            DA.SetData(0, new GsaLoadGoo(gsaLoad));
         }
 
         #region menu override

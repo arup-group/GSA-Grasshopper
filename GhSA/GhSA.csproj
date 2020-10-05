@@ -108,6 +108,8 @@
     <Compile Include="Components\2_Geometry\EditNode.cs" />
     <Compile Include="Components\2_Geometry\CreateSupport.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
+    <Compile Include="Components\3_Loads\CreateGridSurface.cs" />
+    <Compile Include="Components\3_Loads\CreateGridPlane.cs" />
     <Compile Include="Components\3_Loads\CreateBeamLoads.cs" />
     <Compile Include="Components\3_Loads\CreateFaceLoads.cs" />
     <Compile Include="Components\3_Loads\CreateGridPointLoad.cs" />

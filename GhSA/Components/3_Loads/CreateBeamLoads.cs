@@ -117,14 +117,14 @@ namespace GhSA.Components
             int lc = 1;
             GH_Integer gh_lc = new GH_Integer();
             if (DA.GetData(0, ref gh_lc))
-                GH_Convert.ToInt32_Primary(gh_lc, ref lc);
+                GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
             beamLoad.BeamLoad.Case = lc;
 
             //element/beam list
             string beamList = ""; //pick an initial name that is sure not to be used...
             GH_String gh_bl = new GH_String();
             if (DA.GetData(1, ref gh_bl))
-                GH_Convert.ToString_Primary(gh_bl, ref beamList);
+                GH_Convert.ToString(gh_bl, out beamList, GH_Conversion.Both);
             //var isNumeric = int.TryParse(beamList, out int n);
             //if (isNumeric)
             //    beamList = "PB" + n;
@@ -136,7 +136,7 @@ namespace GhSA.Components
             GH_Integer gh_ax = new GH_Integer();
             if (DA.GetData(2, ref gh_ax))
             {
-                GH_Convert.ToInt32_Primary(gh_ax, ref axis);
+                GH_Convert.ToInt32(gh_ax, out axis, GH_Conversion.Both);
                 if (axis == 0 || axis == -1)
                     beamLoad.BeamLoad.AxisProperty = axis;
             }
@@ -147,7 +147,7 @@ namespace GhSA.Components
             
             GH_String gh_dir = new GH_String();
             if (DA.GetData(5, ref gh_dir))
-                GH_Convert.ToString_Primary(gh_dir, ref dir);
+                GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
             dir = dir.ToUpper();
             if (dir == "X")
                 direc = Direction.X;
@@ -166,7 +166,7 @@ namespace GhSA.Components
             bool prj = false;
             GH_Boolean gh_prj = new GH_Boolean();
             if (DA.GetData(4, ref gh_prj))
-                GH_Convert.ToBoolean_Primary(gh_prj, ref prj);
+                GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
             beamLoad.BeamLoad.IsProjected = prj;
 
             double load1 = 0;
@@ -272,8 +272,8 @@ namespace GhSA.Components
                     throw new ArgumentOutOfRangeException();
             }
 
-            
-            DA.SetData(0, new GsaLoad(beamLoad));
+            GsaLoad gsaLoad = new GsaLoad(beamLoad);
+            DA.SetData(0, new GsaLoadGoo(gsaLoad));
         }
 
         #region menu override

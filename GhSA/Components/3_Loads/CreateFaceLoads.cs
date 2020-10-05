@@ -265,8 +265,9 @@ namespace GhSA.Components
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
-            DA.SetData(0, new GsaLoad(faceLoad));
+
+            GsaLoad gsaLoad = new GsaLoad(faceLoad);
+            DA.SetData(0, new GsaLoadGoo(gsaLoad));
         }
 
         #region menu override
