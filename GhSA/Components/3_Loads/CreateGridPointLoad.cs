@@ -118,7 +118,7 @@ namespace GhSA.Components
             GH_Integer gh_ax = new GH_Integer();
             if (DA.GetData(4, ref gh_ax))
             {
-                GH_Convert.ToInt32_Primary(gh_ax, ref axis);
+                GH_Convert.ToInt32(gh_ax, out axis, GH_Conversion.Both);
                 if (axis == 0 || axis == -1)
                     gridpointload.GridPointLoad.AxisProperty = axis;
             }

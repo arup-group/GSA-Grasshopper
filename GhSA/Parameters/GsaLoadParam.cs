@@ -144,12 +144,7 @@ namespace GhSA.Parameters
             get { return m_gridplanesrf; }
             set { m_gridplanesrf = value; }
         }
-        public enum PolyLineTypes // direct copy from GSA API enums
-        {
-            EXPLICIT_POLYLINE = 0,
-            POLYLINE_REFERENCE = 1
-        }
-        public PolyLineTypes PolyLineType;
+        
         #region fields
         private GridLineLoad m_gridlineload;
         private GsaGridPlaneSurface m_gridplanesrf;
@@ -158,7 +153,7 @@ namespace GhSA.Parameters
         public GsaGridLineLoad()
         {
             m_gridlineload = new GridLineLoad();
-            PolyLineType = PolyLineTypes.EXPLICIT_POLYLINE;
+            m_gridlineload.PolyLineReference = 0; // explicit type = 0
             m_gridplanesrf = new GsaGridPlaneSurface();
         }
         #endregion
