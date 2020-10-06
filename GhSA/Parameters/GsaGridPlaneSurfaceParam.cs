@@ -324,13 +324,11 @@ namespace GhSA.Parameters
                     GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, System.Drawing.Color.LightGray, System.Drawing.Color.Red, System.Drawing.Color.Green);
                     args.Pipeline.DrawPoint(Value.Plane.Origin, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Node);
                 }
-                    
                 else
                 {
                     GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, System.Drawing.Color.DarkGray, System.Drawing.Color.Red, System.Drawing.Color.Green);
                     args.Pipeline.DrawPoint(Value.Plane.Origin, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.NodeSelected);
                 }
-                    
             }
         }
         #endregion
@@ -342,7 +340,7 @@ namespace GhSA.Parameters
     public class GsaGridPlaneParameter : GH_PersistentGeometryParam<GsaGridPlaneSurfaceGoo>, IGH_PreviewObject
     {
         public GsaGridPlaneParameter()
-          : base(new GH_InstanceDescription("GSA Grid Plane Surface", "GrdPlnSrf", "Maintains a collection of GSA Grid Plane Surface data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("GSA Grid Plane Surface", "GrdPlnSrf", "Maintains a collection of GSA Grid Plane and Grid Surface data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 

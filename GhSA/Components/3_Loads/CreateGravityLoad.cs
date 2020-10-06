@@ -49,14 +49,14 @@ namespace GhSA.Components
             int lc = 1;
             GH_Integer gh_lc = new GH_Integer();
             if (DA.GetData(0, ref gh_lc))
-                GH_Convert.ToInt32_Primary(gh_lc, ref lc);
+                GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
             gravityLoad.GravityLoad.Case = lc;
 
             //element/beam list
             string beamList = "all"; 
             GH_String gh_bl = new GH_String();
             if (DA.GetData(1, ref gh_bl))
-                GH_Convert.ToString_Primary(gh_bl, ref beamList);
+                GH_Convert.ToString(gh_bl, out beamList, GH_Conversion.Both);
             gravityLoad.GravityLoad.Elements = beamList;
 
             //factor
@@ -64,7 +64,7 @@ namespace GhSA.Components
             Vector3d vect = new Vector3d(0, 0, -1);
             GH_Vector gh_factor = new GH_Vector();
             if (DA.GetData(2, ref gh_factor))
-                GH_Convert.ToVector3d_Primary(gh_factor, ref vect);
+                GH_Convert.ToVector3d(gh_factor, ref vect, GH_Conversion.Both);
             factor.X = vect.X; factor.Y = vect.Y; factor.Z = vect.Z;
             gravityLoad.GravityLoad.Factor = factor;
 

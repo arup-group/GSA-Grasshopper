@@ -162,7 +162,7 @@ namespace GhSA.Components
                         double dir = 0;
                         if (GH_Convert.ToDouble(ghdir, out dir, GH_Conversion.Both))
                             if (dir > 180 || dir < -180)
-                                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Angle value must be between -180 and 180 degrees");
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
                         gps.GridSurface.Direction = dir;
                     }
                     

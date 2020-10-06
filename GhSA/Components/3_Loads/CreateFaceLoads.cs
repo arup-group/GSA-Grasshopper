@@ -109,14 +109,14 @@ namespace GhSA.Components
             int lc = 1;
             GH_Integer gh_lc = new GH_Integer();
             if (DA.GetData(0, ref gh_lc))
-                GH_Convert.ToInt32_Primary(gh_lc, ref lc);
+                GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
             faceLoad.FaceLoad.Case = lc;
 
             //element/beam list
             string elemList = ""; 
             GH_String gh_el = new GH_String();
             if (DA.GetData(1, ref gh_el))
-                GH_Convert.ToString_Primary(gh_el, ref elemList);
+                GH_Convert.ToString(gh_el, out elemList, GH_Conversion.Both);
             //var isNumeric = int.TryParse(elemList, out int n);
             //if (isNumeric)
             //    elemList = "PA" + n;
@@ -129,7 +129,7 @@ namespace GhSA.Components
             GH_Integer gh_ax = new GH_Integer();
             if (DA.GetData(2, ref gh_ax))
             {
-                GH_Convert.ToInt32_Primary(gh_ax, ref axis);
+                GH_Convert.ToInt32(gh_ax, out axis, GH_Conversion.Both);
                 if (axis == 0 || axis ==-1)
                     faceLoad.FaceLoad.AxisProperty = axis;
             }
@@ -140,7 +140,7 @@ namespace GhSA.Components
             
             GH_String gh_dir = new GH_String();
             if (DA.GetData(3, ref gh_dir))
-                GH_Convert.ToString_Primary(gh_dir, ref dir);
+                GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
             dir = dir.ToUpper();
             if (dir == "X")
                 direc = Direction.X;
@@ -161,7 +161,7 @@ namespace GhSA.Components
                         bool prj = false;
                         GH_Boolean gh_prj = new GH_Boolean();
                         if (DA.GetData(4, ref gh_prj))
-                            GH_Convert.ToBoolean_Primary(gh_prj, ref prj);
+                            GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
                         faceLoad.FaceLoad.IsProjected = prj;
 
 
@@ -183,7 +183,7 @@ namespace GhSA.Components
                         bool prj = false;
                         GH_Boolean gh_prj = new GH_Boolean();
                         if (DA.GetData(4, ref gh_prj))
-                            GH_Convert.ToBoolean_Primary(gh_prj, ref prj);
+                            GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
                         faceLoad.FaceLoad.IsProjected = prj;
 
                         double load1 = 0;
@@ -216,7 +216,7 @@ namespace GhSA.Components
                         bool prj = false;
                         GH_Boolean gh_prj = new GH_Boolean();
                         if (DA.GetData(4, ref gh_prj))
-                            GH_Convert.ToBoolean_Primary(gh_prj, ref prj);
+                            GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
                         faceLoad.FaceLoad.IsProjected = prj;
 
                         double load1 = 0;

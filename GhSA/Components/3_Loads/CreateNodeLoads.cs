@@ -112,14 +112,14 @@ namespace GhSA.Components
             int lc = 1;
             GH_Integer gh_lc = new GH_Integer();
             if (DA.GetData(0, ref gh_lc))
-                GH_Convert.ToInt32_Primary(gh_lc, ref lc);
+                GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
             nodeLoad.NodeLoad.Case = lc;
 
             //element/beam list
             string nodeList = "all"; 
             GH_String gh_nl = new GH_String();
             if (DA.GetData(1, ref gh_nl))
-                GH_Convert.ToString_Primary(gh_nl, ref nodeList);
+                GH_Convert.ToString(gh_nl, out nodeList, GH_Conversion.Both);
             nodeLoad.NodeLoad.Nodes = nodeList;
 
             //direction
@@ -128,7 +128,7 @@ namespace GhSA.Components
 
             GH_String gh_dir = new GH_String();
             if (DA.GetData(2, ref gh_dir))
-                GH_Convert.ToString_Primary(gh_dir, ref dir);
+                GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
             dir = dir.ToUpper();
             if (dir == "X")
                 direc = Direction.X;
