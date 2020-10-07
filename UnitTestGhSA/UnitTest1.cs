@@ -13,6 +13,7 @@ namespace UnitTestGhSA
         public void TestMethod1()
         {
             Assembly ass1 = Assembly.LoadFile(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\GsaAPI.dll");
+            
             GsaNode node = new GsaNode(new Point3d(10, 15, 7.8));
             
             Assert.AreEqual(10, node.Point.X);

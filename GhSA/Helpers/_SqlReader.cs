@@ -9,7 +9,7 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GhSA.Parameters;
 using System.Data.SQLite;
-using System.Data.SQLite.Linq;
+using System.Data;
 
 namespace GhSA.Util.Gsa
 {
@@ -44,8 +44,16 @@ namespace GhSA.Util.Gsa
 
             using (var db = Connection(filePath))
             {
-                //result = db.
+                db.Open();
                 //result = db.Query<string>("Select CAT_NAME from Catalogues").ToList();
+                SQLiteCommand cmd = db.CreateCommand();
+                cmd.CommandText = @"Select CAT_NAME from Catalogues";
+                cmd.CommandType = CommandType.Text;
+                SQLiteDataReader r = cmd.ExecuteReader();
+                while (r.Read())
+                {
+                    result.Add(Convert.ToString(r["CAT_NAME"]));
+                }
             }
             return result;
         }
