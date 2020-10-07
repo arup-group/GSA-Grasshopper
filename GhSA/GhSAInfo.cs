@@ -16,6 +16,7 @@ namespace GhSA
         /// <returns></returns>
         public override GH_LoadingInstruction PriorityLoad()
         {
+            // set folder to latest GSA version.
             Assembly ass1 = Assembly.LoadFile(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\GsaAPI.dll");
             Assembly ass2 = Assembly.LoadFile(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\System.Data.SQLite.dll");
 
