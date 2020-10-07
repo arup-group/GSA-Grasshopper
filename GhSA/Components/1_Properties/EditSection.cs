@@ -73,11 +73,11 @@ namespace GhSA.Components
 
             pManager.AddGenericParameter("Material", "Mat", "Material Property", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Analysis Type", "Typ", "Material Analysis Type", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Section Pool", "Pool", "Section pool (default none)", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Section Offset", "Offs", "Set Section offset", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Section Pool", "Pool", "Section pool", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Section Offset", "Offs", "Section offset", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Section Number", "ID", "Original Section number (ID) if Section ever belonged to a GSA Model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Section Name", "Name", "Section name (default profile name)", GH_ParamAccess.item);
-            pManager.AddColourParameter("Section Colour", "Col", "Section colour (default none)", GH_ParamAccess.item);
+            pManager.AddTextParameter("Section Name", "Name", "Section name", GH_ParamAccess.item);
+            pManager.AddColourParameter("Section Colour", "Col", "Section colour", GH_ParamAccess.item);
 
         }
         #endregion

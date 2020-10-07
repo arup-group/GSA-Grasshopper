@@ -724,5 +724,63 @@ namespace GhSA.Util.Gsa
             return new Tuple<Tuple<List<int>, List<string>>, Tuple<List<List<int>>, List<List<string>>>,
             Tuple<List<List<int>>, List<List<string>>>, List<int>>(topoTuple, voidTuple, lineTuple, inclpoint);
         }
+        /// <summary>
+        /// Method to import Sections from a GSA model.
+        /// Will output a list of GhSA GsaSections.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static List<GsaSection> GsaGetSections(Model model)
+        {
+            List<GsaSection> sections = new List<GsaSection>();
+
+            // Create dictionary to read list of sections:
+            IReadOnlyDictionary<int, Section> sDict;
+            sDict = model.Sections();
+
+            // Loop through all sections in Section dictionary and create new GsaSections
+            for (int i = 0; i < sDict.Keys.Max(); i++)
+            {
+                if (sDict.TryGetValue(i + 1, out Section apisection)) //1-base numbering
+                {
+                    GsaSection sect = new GsaSection();
+                    sect.Section = apisection;
+                    sect.ID = i + 1;
+                    sections.Add(sect.Duplicate());
+                }
+                else
+                    sections.Add(null);
+            }
+            return sections;
+        }
+        /// <summary>
+        /// Method to import Prop2ds from a GSA model.
+        /// Will output a list of GhSA GsaProp2d.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static List<GsaProp2d> GsaGetProp2ds(Model model)
+        {
+            List<GsaProp2d> prop2ds = new List<GsaProp2d>();
+
+            // Create dictionary to read list of sections:
+            IReadOnlyDictionary<int, Prop2D> sDict;
+            sDict = model.Prop2Ds();
+
+            // Loop through all sections in Section dictionary and create new GsaSections
+            for (int i = 0; i < sDict.Keys.Max(); i++)
+            {
+                if (sDict.TryGetValue(i + 1, out Prop2D apisection)) //1-base numbering
+                {
+                    GsaProp2d prop = new GsaProp2d();
+                    prop.Prop2d = apisection;
+                    prop.ID = i + 1;
+                    prop2ds.Add(prop.Duplicate());
+                }
+                else
+                    prop2ds.Add(null);
+            }
+            return prop2ds;
+        }
     }
 }
