@@ -24,7 +24,7 @@ namespace GhSA.Components
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("7879a335-cdf3-4412-9a29-c710778430ff");
         public GetGeometry()
-          : base("Get GSA Model Geometry", "GetGeo", "Get nodes, elements and members from GSA model",
+          : base("Get Model Geometry", "GetGeo", "Get nodes, elements and members from GSA model",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         {
@@ -145,10 +145,10 @@ namespace GhSA.Components
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Nodes", "Nodes", "Nodes from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("1D Elements", "Elem1D", "GSA 1D Elements from GSA Model", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("2D Elements", "Elem2D", "GSA 2D Elements from GSA Model", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("1D Members", "Mem1D", "GSA 1D Members from GSA Model", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("2D Members", "Mem2D", "GSA 2D Members from GSA Model", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("1D Elements", "Elem1D", "1D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("2D Elements", "Elem2D", "2D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("1D Members", "Mem1D", "1D Members (Design Layer) from GSA Model", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("2D Members", "Mem2D", "2D Members (Design Layer) from GSA Model", GH_ParamAccess.tree);
         }
         #endregion
 
