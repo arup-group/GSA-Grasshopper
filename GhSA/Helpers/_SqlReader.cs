@@ -9,7 +9,7 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GhSA.Parameters;
 using System.Data.SQLite;
-using Dapper;
+using System.Data.SQLite.Linq;
 
 namespace GhSA.Util.Gsa
 {
@@ -44,7 +44,8 @@ namespace GhSA.Util.Gsa
 
             using (var db = Connection(filePath))
             {
-                result = db.Query<string>("Select CAT_NAME from Catalogues").ToList();
+                //result = db.
+                //result = db.Query<string>("Select CAT_NAME from Catalogues").ToList();
             }
             return result;
         }
