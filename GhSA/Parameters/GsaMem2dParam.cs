@@ -654,6 +654,7 @@ namespace GhSA.Parameters
             
             if (Value.VoidTopology != null)
             {
+                mem.VoidTopology = new List<List<Point3d>>();
                 for (int i = 0; i < Value.VoidTopology.Count; i++)
                 {
                     xpts = new Point3dList(Value.VoidTopology[i]);
@@ -665,12 +666,14 @@ namespace GhSA.Parameters
 
             if (Value.InclusionLines != null)
             {
+                mem.InclusionLines = new List<PolyCurve>();
                 for (int i = 0; i < Value.InclusionLines.Count; i++)
                 {
                     PolyCurve xLn = Value.InclusionLines[i];
                     xLn.Transform(xform);
                     mem.InclusionLines.Add(xLn);
                 }
+                mem.IncLinesTopology = new List<List<Point3d>>();
                 for (int i = 0; i < Value.IncLinesTopology.Count; i++)
                 {
                     xpts = new Point3dList(Value.IncLinesTopology[i]);
@@ -721,6 +724,7 @@ namespace GhSA.Parameters
 
             if (Value.VoidTopology != null)
             {
+                mem.VoidTopology = new List<List<Point3d>>();
                 for (int i = 0; i < Value.VoidTopology.Count; i++)
                 {
                     pts = Value.VoidTopology[i];
@@ -733,12 +737,14 @@ namespace GhSA.Parameters
 
             if (Value.InclusionLines != null)
             {
+                mem.InclusionLines = new List<PolyCurve>();
                 for (int i = 0; i < Value.InclusionLines.Count; i++)
                 {
                     PolyCurve xLn = Value.InclusionLines[i];
                     xmorph.Morph(xLn);
                     mem.InclusionLines.Add(xLn);
                 }
+                mem.IncLinesTopology = new List<List<Point3d>>();
                 for (int i = 0; i < Value.IncLinesTopology.Count; i++)
                 {
                     pts = Value.IncLinesTopology[i];
