@@ -63,8 +63,8 @@ namespace GhSA.Components
                 model = gsaModel.Model;
 
 
-                List<GsaSection> sections = Util.Gsa.GsaImport.GsaGetSections(model);
-                List<GsaProp2d> prop2Ds = Util.Gsa.GsaImport.GsaGetProp2ds(model);
+                List<GsaSectionGoo> sections = Util.Gsa.GsaImport.GsaGetSections(model);
+                List<GsaProp2dGoo> prop2Ds = Util.Gsa.GsaImport.GsaGetProp2ds(model);
                 // spring import missing in GsaAPI. To be implemented
 
                 DA.SetDataList(0, sections);

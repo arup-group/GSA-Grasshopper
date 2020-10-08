@@ -48,13 +48,13 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+            pManager.AddGenericParameter("Gravity Loads", "Grav", "Gravity Loads from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Node Loads", "Node", "Node Loads from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Beam Loads", "Beam", "Beam Loads from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Face Loads", "Face", "Face Loads from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Grid Point Loads", "Point", "Grid Point Loads from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Grid Line Loads", "Line", "Grid Line Loads from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Grid Area Loads", "Area", "Grid Area Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surfaces from GSA Model", GH_ParamAccess.list);
         }
         #endregion
 
@@ -66,13 +66,21 @@ namespace GhSA.Components
                 Model model = new Model();
                 model = gsaModel.Model;
 
+                List<GsaLoadGoo> gravity = Util.Gsa.GsaImport.GsaGetGravityLoads(model);
+                List<GsaLoadGoo> node = Util.Gsa.GsaImport.GsaGetNodeLoads(model);
+                List<GsaLoadGoo> beam = Util.Gsa.GsaImport.GsaGetBeamLoads(model);
+                List<GsaLoadGoo> face = Util.Gsa.GsaImport.GsaGetFaceLoads(model);
+                List<GsaLoadGoo> point = Util.Gsa.GsaImport.GsaGetGridPointLoads(model);
+                List<GsaLoadGoo> line = Util.Gsa.GsaImport.GsaGetGridLineLoads(model);
+                List<GsaLoadGoo> area = Util.Gsa.GsaImport.GsaGetGridAreaLoads(model);
 
-                List<GsaSection> sections = Util.Gsa.GsaImport.GsaGetSections(model);
-                List<GsaProp2d> prop2Ds = Util.Gsa.GsaImport.GsaGetProp2ds(model);
-                // spring import missing in GsaAPI. To be implemented
-
-                DA.SetDataList(0, sections);
-                DA.SetDataList(1, prop2Ds);
+                DA.SetDataList(0, gravity);
+                DA.SetDataList(1, node);
+                DA.SetDataList(2, beam);
+                DA.SetDataList(3, face);
+                DA.SetDataList(4, point);
+                DA.SetDataList(5, line);
+                DA.SetDataList(6, area);
             }
         }
     }

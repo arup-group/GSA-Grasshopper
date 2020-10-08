@@ -726,13 +726,13 @@ namespace GhSA.Util.Gsa
         }
         /// <summary>
         /// Method to import Sections from a GSA model.
-        /// Will output a list of GhSA GsaSections.
+        /// Will output a list of GhSA GsaSectionsGoo.
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static List<GsaSection> GsaGetSections(Model model)
+        public static List<GsaSectionGoo> GsaGetSections(Model model)
         {
-            List<GsaSection> sections = new List<GsaSection>();
+            List<GsaSectionGoo> sections = new List<GsaSectionGoo>();
 
             // Create dictionary to read list of sections:
             IReadOnlyDictionary<int, Section> sDict;
@@ -746,7 +746,7 @@ namespace GhSA.Util.Gsa
                     GsaSection sect = new GsaSection();
                     sect.Section = apisection;
                     sect.ID = i + 1;
-                    sections.Add(sect.Duplicate());
+                    sections.Add(new GsaSectionGoo(sect));
                 }
                 else
                     sections.Add(null);
@@ -755,13 +755,13 @@ namespace GhSA.Util.Gsa
         }
         /// <summary>
         /// Method to import Prop2ds from a GSA model.
-        /// Will output a list of GhSA GsaProp2d.
+        /// Will output a list of GhSA GsaProp2dGoo.
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static List<GsaProp2d> GsaGetProp2ds(Model model)
+        public static List<GsaProp2dGoo> GsaGetProp2ds(Model model)
         {
-            List<GsaProp2d> prop2ds = new List<GsaProp2d>();
+            List<GsaProp2dGoo> prop2ds = new List<GsaProp2dGoo>();
 
             // Create dictionary to read list of Properties:
             IReadOnlyDictionary<int, Prop2D> sDict;
@@ -775,7 +775,7 @@ namespace GhSA.Util.Gsa
                     GsaProp2d prop = new GsaProp2d();
                     prop.Prop2d = apisection;
                     prop.ID = i + 1;
-                    prop2ds.Add(prop.Duplicate());
+                    prop2ds.Add(new GsaProp2dGoo(prop));
                 }
                 else
                     prop2ds.Add(null);
@@ -783,75 +783,101 @@ namespace GhSA.Util.Gsa
             return prop2ds;
         }
         /// <summary>
+        /// Method to import Beam Loads from a GSA model.
+        /// Will output a list of GhSA GsaLoadsGoo.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static List<GsaLoadGoo> GsaGetGravityLoads(Model model)
+        {
+            List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
+
+            List<GravityLoad> gloads = model.GravityLoads().ToList();
+
+            // Loop through all loads in list and create new GsaLoads
+            for (int i = 0; i < gloads.Count; i++)
+            {
+                GsaGravityLoad myload = new GsaGravityLoad();
+                myload.GravityLoad = gloads[i];
+                GsaLoad load = new GsaLoad(myload);
+                loads.Add(new GsaLoadGoo(load));
+            }
+            return loads;
+        }
+        /// <summary>
         /// Method to import Node Loads from a GSA model.
         /// Will output a list of GhSA GsaLoads.
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static List<GsaLoad> GsaGetNodeLoads(Model model)
+        public static List<GsaLoadGoo> GsaGetNodeLoads(Model model)
         {
-            List<GsaLoad> loads = new List<GsaLoad>();
+            List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
 
             // NodeLoads come in varioys types, depending on GsaAPI.NodeLoadType:
             foreach (NodeLoadType typ in Enum.GetValues(typeof(NodeLoadType)))
             {
-                List<NodeLoad> nloads = model.NodeLoads(typ).ToList();
-
-                GsaNodeLoad.NodeLoadTypes ntyp = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
-                switch (typ)
+                try // some GsaAPI.NodeLoadTypes are currently not supported in the API and throws an error
                 {
-                    case NodeLoadType.APPLIED_DISP:
-                        ntyp = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;
-                        break;
-                    case NodeLoadType.GRAVITY:
-                        ntyp = GsaNodeLoad.NodeLoadTypes.GRAVITY;
-                        break;
-                    case NodeLoadType.NODE_LOAD:
-                        ntyp = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
-                        break;
-                    case NodeLoadType.NUM_TYPES:
-                        ntyp = GsaNodeLoad.NodeLoadTypes.NUM_TYPES;
-                        break;
-                    case NodeLoadType.SETTLEMENT:
-                        ntyp = GsaNodeLoad.NodeLoadTypes.SETTLEMENT;
-                        break;
-                }
+                    List<NodeLoad> gsaloads = model.NodeLoads(typ).ToList();
+                    GsaNodeLoad.NodeLoadTypes ntyp = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
+                    switch (typ)
+                    {
+                        case NodeLoadType.APPLIED_DISP:
+                            ntyp = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;
+                            break;
+                        case NodeLoadType.GRAVITY:
+                            ntyp = GsaNodeLoad.NodeLoadTypes.GRAVITY;
+                            break;
+                        case NodeLoadType.NODE_LOAD:
+                            ntyp = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
+                            break;
+                        case NodeLoadType.NUM_TYPES:
+                            ntyp = GsaNodeLoad.NodeLoadTypes.NUM_TYPES;
+                            break;
+                        case NodeLoadType.SETTLEMENT:
+                            ntyp = GsaNodeLoad.NodeLoadTypes.SETTLEMENT;
+                            break;
+                    }
 
-                // Loop through all loads in list and create new GsaLoads
-                for (int i = 0; i < nloads.Count; i++)
+                    // Loop through all loads in list and create new GsaLoads
+                    for (int i = 0; i < gsaloads.Count; i++)
+                    {
+                        GsaNodeLoad myload = new GsaNodeLoad();
+                        myload.NodeLoad = gsaloads[i];
+                        myload.NodeLoadType = ntyp;
+                        GsaLoad load = new GsaLoad(myload);
+                        loads.Add(new GsaLoadGoo(load));
+                    }
+                }
+                catch (Exception)
                 {
-                    GsaNodeLoad nload = new GsaNodeLoad();
-                    nload.NodeLoad = nloads[i];
-                    nload.NodeLoadType = ntyp;
 
-                    loads.Add(new GsaLoad(nload));
                 }
+                
             }
-
             return loads;
         }
-
         /// <summary>
         /// Method to import Beam Loads from a GSA model.
         /// Will output a list of GhSA GsaLoads.
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static List<GsaLoad> GsaGetBeamLoads(Model model)
+        public static List<GsaLoadGoo> GsaGetBeamLoads(Model model)
         {
-            List<GsaLoad> loads = new List<GsaLoad>();
+            List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
 
-            List<BeamLoad> bloads = model.BeamLoads().ToList();
+            List<BeamLoad> gsaloads = model.BeamLoads().ToList();
 
             // Loop through all loads in list and create new GsaLoads
-            for (int i = 0; i < bloads.Count; i++)
+            for (int i = 0; i < gsaloads.Count; i++)
             {
-                GsaBeamLoad bload = new GsaBeamLoad();
-                bload.BeamLoad = bloads[i];
-
-                loads.Add(new GsaLoad(bload));
+                GsaBeamLoad myload = new GsaBeamLoad();
+                myload.BeamLoad = gsaloads[i];
+                GsaLoad load = new GsaLoad(myload);
+                loads.Add(new GsaLoadGoo(load));
             }
-
             return loads;
         }
         /// <summary>
@@ -860,70 +886,143 @@ namespace GhSA.Util.Gsa
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static List<GsaLoad> GsaGetFaceLoads(Model model)
+        public static List<GsaLoadGoo> GsaGetFaceLoads(Model model)
         {
-            List<GsaLoad> loads = new List<GsaLoad>();
+            List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
 
-            List<FaceLoad> floads = model.FaceLoads().ToList();
+            List<FaceLoad> gsaloads = model.FaceLoads().ToList();
 
             // Loop through all loads in list and create new GsaLoads
-            for (int i = 0; i < floads.Count; i++)
+            for (int i = 0; i < gsaloads.Count; i++)
             {
-                GsaFaceLoad fload = new GsaFaceLoad();
-                fload.FaceLoad = floads[i];
-
-                loads.Add(new GsaLoad(fload));
+                GsaFaceLoad myload = new GsaFaceLoad();
+                myload.FaceLoad = gsaloads[i];
+                GsaLoad load = new GsaLoad(myload);
+                loads.Add(new GsaLoadGoo(load));
             }
-
             return loads;
         }
         /// <summary>
-        /// Method to import Gird Point Loads from a GSA model.
+        /// Method to import Grid Point Loads from a GSA model.
         /// Will output a list of GhSA GsaLoads.
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static List<GsaLoad> GsaGetGridPointLoads(Model model)
+        public static List<GsaLoadGoo> GsaGetGridPointLoads(Model model)
         {
-            List<GsaLoad> loads = new List<GsaLoad>();
+            List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
 
-            List<GridPointLoad> gploads = model.GridPointLoads().ToList();
+            List<GridPointLoad> gsaloads = model.GridPointLoads().ToList();
 
             // Loop through all loads in list and create new GsaLoads
-            for (int i = 0; i < gploads.Count; i++)
+            for (int i = 0; i < gsaloads.Count; i++)
             {
                 // Get Grid Point Load
-                GsaGridPointLoad gpload = new GsaGridPointLoad();
-                gpload.GridPointLoad = gploads[i];
+                GsaGridPointLoad myload = new GsaGridPointLoad();
+                myload.GridPointLoad = gsaloads[i];
 
-                // Get Grid Surface
-                IReadOnlyDictionary<int, GridSurface> sDict;
-                sDict = model.GridSurfaces();
-                sDict.TryGetValue(gploads[i].GridSurface, out GridSurface gs);
-                gpload.GridPlaneSurface.GridSurface = gs;
+                // Get GridPlaneSurface
+                myload.GridPlaneSurface = GsaGetGridPlaneSurface(model, gsaloads[i].GridSurface);
 
-                // Get Grid Plane
-                IReadOnlyDictionary<int, GridPlane> pDict;
-                pDict = model.GridPlanes();
-                pDict.TryGetValue(gs.GridPlane, out GridPlane gp);
-                gpload.GridPlaneSurface.GridPlane = gp;
-
-                // Get Axis
-                IReadOnlyDictionary<int, Axis> aDict;
-                aDict = model.Axes();
-                aDict.TryGetValue(gp.AxisProperty, out Axis ax);
-
-                // Create Plane
-                Plane pln = new Plane(
-                    new Point3d(ax.Origin.X, ax.Origin.Y, ax.Origin.Z),
-                    new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
-                    new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z));
-                gpload.GridPlaneSurface.Plane = pln;
-
-                loads.Add(new GsaLoad(gpload));
+                // Add load to list
+                GsaLoad load = new GsaLoad(myload);
+                loads.Add(new GsaLoadGoo(load));
             }
-
             return loads;
+        }
+        /// <summary>
+        /// Method to import Grid Line Loads from a GSA model.
+        /// Will output a list of GhSA GsaLoads.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static List<GsaLoadGoo> GsaGetGridLineLoads(Model model)
+        {
+            List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
+
+            List<GridLineLoad> gsaloads = model.GridLineLoads().ToList();
+
+            // Loop through all loads in list and create new GsaLoads
+            for (int i = 0; i < gsaloads.Count; i++)
+            {
+                // Get Grid Point Load
+                GsaGridLineLoad myload = new GsaGridLineLoad();
+                myload.GridLineLoad = gsaloads[i];
+
+                // Get GridPlaneSurface
+                myload.GridPlaneSurface = GsaGetGridPlaneSurface(model, gsaloads[i].GridSurface);
+
+                // Add load to list
+                GsaLoad load = new GsaLoad(myload);
+                loads.Add(new GsaLoadGoo(load));
+            }
+            return loads;
+        }
+        /// <summary>
+        /// Method to import Grid Area Loads from a GSA model.
+        /// Will output a list of GhSA GsaLoads.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static List<GsaLoadGoo> GsaGetGridAreaLoads(Model model)
+        {
+            List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
+
+            List<GridAreaLoad> gsaloads = model.GridAreaLoads().ToList();
+
+            // Loop through all loads in list and create new GsaLoads
+            for (int i = 0; i < gsaloads.Count; i++)
+            {
+                // Get Grid Point Load
+                GsaGridAreaLoad myload = new GsaGridAreaLoad();
+                myload.GridAreaLoad = gsaloads[i];
+
+                // Get GridPlaneSurface
+                myload.GridPlaneSurface = GsaGetGridPlaneSurface(model, gsaloads[i].GridSurface);
+
+                // Add load to list
+                GsaLoad load = new GsaLoad(myload);
+                loads.Add(new GsaLoadGoo(load));
+            }
+            return loads;
+        }
+        /// <summary>
+        /// Method to get GsaGridPlaneSurface including grid surface, grid plane and axis from GSA Model
+        /// Will output a new GsaGridPlaneSurface.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static GsaGridPlaneSurface GsaGetGridPlaneSurface(Model model, int gridsrf_ID)
+        {
+            // GridPlaneSurface
+            GsaGridPlaneSurface gps = new GsaGridPlaneSurface();
+
+            // Get Grid Surface
+            IReadOnlyDictionary<int, GridSurface> sDict;
+            sDict = model.GridSurfaces();
+            sDict.TryGetValue(gridsrf_ID, out GridSurface gs);
+            gps.GridSurface = gs;
+
+            // Get Grid Plane
+            IReadOnlyDictionary<int, GridPlane> pDict;
+            pDict = model.GridPlanes();
+            pDict.TryGetValue(gs.GridPlane, out GridPlane gp);
+            gps.GridPlane = gp;
+
+            // Get Axis
+            IReadOnlyDictionary<int, Axis> aDict;
+            aDict = model.Axes();
+            aDict.TryGetValue(gp.AxisProperty, out Axis ax);
+            gps.Axis = ax;
+
+            // Construct Plane from Axis
+            Plane pln = new Plane(
+                new Point3d(ax.Origin.X, ax.Origin.Y, ax.Origin.Z + gp.Elevation), // for new origin Z-coordinate we add axis origin and grid plane elevation
+                new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
+                new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z));
+            gps.Plane = pln;
+            
+            return gps;
         }
     }
 }
