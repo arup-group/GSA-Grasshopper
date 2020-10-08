@@ -70,12 +70,19 @@
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\System.Data.SQLite.Linq.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncComponentBase\GH_AsyncComponent.cs" />
+    <Compile Include="AsyncComponentBase\IAsyncComponentWorker.cs" />
+    <Compile Include="Components\Tests\Sample_PrimeCalculatorAsyncComponent.cs" />
+    <Compile Include="Components\Tests\Sample_UslessCyclesComponent.cs" />
     <Compile Include="Components\0_Model\EditTitles.cs" />
     <Compile Include="Components\0_Model\GetLoads.cs" />
     <Compile Include="Components\0_Model\GetProperties.cs" />
@@ -113,8 +120,10 @@
     <Compile Include="Components\3_Loads\CreateGridPointLoad.cs" />
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
+    <Compile Include="Components\4_Analysis\Analyse.cs" />
     <Compile Include="Components\Tests\DropDownMulti.cs" />
     <Compile Include="Components\Tests\DropDownSingle.cs" />
+    <Compile Include="Helpers\_GsaCreateModelHelper.cs" />
     <Compile Include="Helpers\_GsaModelEnums.cs" />
     <Compile Include="Helpers\_GsaImportConvert.cs" />
     <Compile Include="Helpers\_GsaProfileConvert.cs" />
@@ -150,7 +159,6 @@
     <Compile Include="UI\Comp_Support.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Components\4_Analysis\" />
     <Folder Include="Components\5_Results\" />
   </ItemGroup>
   <ItemGroup>

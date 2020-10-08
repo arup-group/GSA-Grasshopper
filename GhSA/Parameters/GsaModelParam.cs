@@ -52,17 +52,18 @@ namespace GhSA.Parameters
         {
             Model dup = new Model();
 
+            dup = m_model; //no duplication for now
             //duplicate the incoming model ### Shallow copy funcitonality in GsaAPI welcome here....
             if (m_model != null)
             {
-                System.Collections.ObjectModel.ReadOnlyDictionary<int, Node> nodes = m_model.Nodes();
-                dup.SetNodes(nodes);
+                //System.Collections.ObjectModel.ReadOnlyDictionary<int, Node> nodes = m_model.Nodes();
+                //dup.SetNodes(nodes);
 
-                System.Collections.ObjectModel.ReadOnlyDictionary<int, Element> elems = m_model.Elements();
-                dup.SetElements(elems);
+                //System.Collections.ObjectModel.ReadOnlyDictionary<int, Element> elems = m_model.Elements();
+                //dup.SetElements(elems);
 
-                System.Collections.ObjectModel.ReadOnlyDictionary<int, Member> mems = m_model.Members();
-                dup.SetMembers(mems);
+                //System.Collections.ObjectModel.ReadOnlyDictionary<int, Member> mems = m_model.Members();
+                //dup.SetMembers(mems);
 
                 //ToDo
                 //model.SetAnalysisCaseDescription;

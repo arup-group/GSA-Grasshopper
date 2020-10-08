@@ -58,6 +58,7 @@ namespace GhSA.Components
             pManager.AddTextParameter("Time Short unit", "Time S", "Set unit for Time - short", GH_ParamAccess.item);
             pManager.AddTextParameter("Time Medium unit", "Time M", "Set unit for Time - medium", GH_ParamAccess.item);
             pManager.AddTextParameter("Time Long unit", "Time L", "Set unit for Time - Long", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Tolerance", "Tolerance", "Set Tolerance (using Length Large Unit)", GH_ParamAccess.item);
             for (int i = 0; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
         }
@@ -253,6 +254,15 @@ namespace GhSA.Components
                     update = true;
                 }
             }
+            GH_Number ghnum = new GH_Number();
+            if (DA.GetData(15, ref ghnum))
+            {
+                if (GH_Convert.ToDouble(ghnum, out double tol, GH_Conversion.Both))
+                {
+                    Util.GsaUnit.Tolerance = tol;
+                    update = true;
+                }
+            }
             List<string> units = new List<string>
             {
                 "Force: " + Util.GsaUnit.Force,
@@ -271,6 +281,7 @@ namespace GhSA.Components
                 "Time - short: " + Util.GsaUnit.TimeShort,
                 "Time - medium: " + Util.GsaUnit.TimeMedium,
                 "Time - long: " + Util.GsaUnit.TimeLong,
+                "Tolerance: " + Util.GsaUnit.Tolerance
             };
             if (update)
                 UpdateCanvas();

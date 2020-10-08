@@ -12,7 +12,11 @@ namespace GhSA.Util
     /// </summary>
     public static class GsaUnit
     {
-        
+        public static double Tolerance
+        {
+            get { return m_tolerance; }
+            set { m_tolerance = value; }
+        }
 
         private static bool setLength_Large = false;
         public static string LengthLarge
@@ -157,7 +161,8 @@ namespace GhSA.Util
         
         private static string m_RhinoUnitName = "";
         private static double m_ConversionToMeter;
-        
+        private static double m_tolerance = Util.GH.Tolerance.RhinoDocTolerance();
+
         #endregion
         /// <summary>
         /// Method to convert bad strings to accepted inputs
