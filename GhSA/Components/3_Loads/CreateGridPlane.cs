@@ -100,7 +100,20 @@ namespace GhSA.Components
                     {
                         double elev = 0;
                         if (GH_Convert.ToDouble(ghnum, out elev, GH_Conversion.Both))
+                        {
                             gps.GridPlane.Elevation = elev;
+                            
+                            // if elevation is set we want to move the plane in it's normal direction
+                            Vector3d vec = pln.Normal;
+                            vec.Unitize();
+                            vec.X *= elev;
+                            vec.Y *= elev;
+                            vec.Z *= elev;
+                            Transform xform = Transform.Translation(vec);
+                            pln.Transform(xform);
+                            gps.Plane = pln;
+                            // note this wont move the Grid Plane Axis gps.Axis
+                        }
                     }
                     
                     // 2 Name

@@ -99,12 +99,13 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // 0 Plane
-            GsaGridPlaneSurface gps;
             Plane pln = Plane.Unset;
+            GsaGridPlaneSurface gps;
+            
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(0, ref gh_typ))
             {
-                if (gh_typ.Value is GsaGridPlaneSurface)
+                if (gh_typ.Value is GsaGridPlaneSurfaceGoo)
                 {
                     GsaGridPlaneSurface temppln = new GsaGridPlaneSurface();
                     gh_typ.CastTo(ref temppln);
@@ -112,8 +113,13 @@ namespace GhSA.Components
                 }
                 else
                 {
-                    gh_typ.CastTo(ref pln);
-                    gps = new GsaGridPlaneSurface(pln);
+                    if (gh_typ.CastTo(ref pln))
+                        gps = new GsaGridPlaneSurface(pln);
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Cannot convert your input to GridPlaneSurface or Plane");
+                        return;
+                    }
                 }
             }
             else

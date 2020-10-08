@@ -17,7 +17,8 @@ namespace GhSA.Parameters
 
     {
         #region fields
-        private Plane m_plane;
+        private Plane m_plane;  // plane at display point (Axis + elevation) 
+                                //remember to substract elevation when creating an axis from this plane!
         private GridPlane m_gridplane;
         private GridSurface m_gridsrf;
         private Axis m_axis;
@@ -35,7 +36,24 @@ namespace GhSA.Parameters
         public Axis Axis
         {
             get { return m_axis; }
-            set { m_axis = value; }
+            set 
+            { 
+                m_axis = value;
+                m_plane.OriginX = m_axis.Origin.X;
+                m_plane.OriginY = m_axis.Origin.Y;
+                if (m_gridplane != null)
+                {
+                    if (m_gridplane.Elevation != 0)
+                        m_plane.OriginZ = m_axis.Origin.Z + m_gridplane.Elevation;
+                }
+                else
+                    m_plane.OriginZ = m_axis.Origin.Z;
+                
+                m_plane = new Plane(m_plane.Origin,
+                    new Vector3d(m_axis.XVector.X, m_axis.XVector.Y, m_axis.XVector.Z),
+                    new Vector3d(m_axis.XYPlane.X, m_axis.XYPlane.Y, m_axis.XYPlane.Z)
+                    );
+            }
         }
         public GridSurface GridSurface
         {
@@ -67,16 +85,8 @@ namespace GhSA.Parameters
             m_axis = new Axis();
             m_axis.Origin.X = plane.OriginX;
             m_axis.Origin.Y = plane.OriginY;
-            if (plane.Normal.Z > 0)
-            {
-                m_axis.Origin.Z = plane.OriginZ;
-                m_gridplane.Elevation = 0;
-            }
-            else
-            {
-                m_axis.Origin.Z = 0;
-                m_gridplane.Elevation = plane.OriginZ;
-            }
+            m_axis.Origin.Z = plane.OriginZ;
+            
             m_axis.XVector.X = plane.XAxis.X;
             m_axis.XVector.Y = plane.XAxis.Y;
             m_axis.XVector.Z = plane.XAxis.Z;
@@ -109,17 +119,13 @@ namespace GhSA.Parameters
                 return true;
             }
         }
-       
-        
-        
-
         #endregion
 
         #region methods
         public override string ToString()
         {
 
-            return "GridPlane " + GridPlane.Name;
+            return "GridPlaneSurface " + GridPlane.Name + " " + GridSurface.Name;
         }
 
         #endregion
@@ -321,12 +327,12 @@ namespace GhSA.Parameters
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
-                    GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, System.Drawing.Color.LightGray, System.Drawing.Color.Red, System.Drawing.Color.Green);
+                    GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, System.Drawing.Color.Gray, System.Drawing.Color.Red, System.Drawing.Color.Green);
                     args.Pipeline.DrawPoint(Value.Plane.Origin, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Node);
                 }
                 else
                 {
-                    GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, System.Drawing.Color.DarkGray, System.Drawing.Color.Red, System.Drawing.Color.Green);
+                    GH_Plane.DrawPlane(args.Pipeline, Value.Plane, 16, 16, System.Drawing.Color.LightGray, System.Drawing.Color.Red, System.Drawing.Color.Green);
                     args.Pipeline.DrawPoint(Value.Plane.Origin, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.NodeSelected);
                 }
             }
