@@ -321,7 +321,6 @@ namespace GhSA.Parameters
         {
             // This function is called when Grasshopper needs to convert this 
             // instance of GsaNode into some other type Q.            
-            
 
             if (typeof(Q).IsAssignableFrom(typeof(GsaNode)))
             {

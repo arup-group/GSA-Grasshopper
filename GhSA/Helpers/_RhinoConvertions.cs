@@ -301,20 +301,20 @@ namespace GhSA.Util.GH
         public static Tuple<List<Element>, List<Point3d>, List<List<int>>> ConvertMesh(Mesh mesh, int prop = 1)
         {
             List<Element> elems = new List<Element>();
-            List<Point3d> topoPts = new List<Point3d>();
+            List<Point3d> topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
             List<List<int>> topoInts = new List<List<int>>();
-            List<int> topo = new List<int>();
-            for (int i = 0; i < mesh.Vertices.Count; i++)
-                topoPts.Add(mesh.Vertices[i]);
+            
+            //for (int i = 0; i < mesh.Vertices.Count; i++)
+            //    topoPts.Add(mesh.Vertices[i]);
 
             for (int i = 0; i < mesh.Faces.Count; i++)
             {
                 Element elem = new Element();
-                topo.Clear();
+                List<int> topo = new List<int>();
                 topo.Add(mesh.Faces[i].A);
                 topo.Add(mesh.Faces[i].B);
                 topo.Add(mesh.Faces[i].C);
-                if (mesh.Faces[i].C != mesh.Faces[i].D)
+                if (mesh.Faces[i].IsQuad)
                 {
                     topo.Add(mesh.Faces[i].D);
                     elem.Type = ElementType.QUAD4;

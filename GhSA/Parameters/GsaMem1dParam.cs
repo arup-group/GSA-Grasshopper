@@ -68,7 +68,7 @@ namespace GhSA.Parameters
 
         #region fields
         private Member m_member;
-        private int m_id;
+        private int m_id = 0;
 
         private PolyCurve m_crv; //Polyline for visualisation /member1d/member2d
         private List<Point3d> m_topo; // list of topology points for visualisation /member1d/member2d

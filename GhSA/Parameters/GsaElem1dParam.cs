@@ -82,7 +82,7 @@ namespace GhSA.Parameters
         #region fields
         private Element m_element; 
         private LineCurve m_line;
-        private int m_id;
+        private int m_id = 0;
         private GsaBool6 m_rel1;
         private GsaBool6 m_rel2;
         private GsaSection m_section;

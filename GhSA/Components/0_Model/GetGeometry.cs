@@ -155,8 +155,17 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaModel gsaModel = new GsaModel();
-            if (DA.GetData(0, ref gsaModel))
+            GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+            if (DA.GetData(0, ref gh_typ))
             {
+                if (gh_typ.Value is GsaModelGoo)
+                    gh_typ.CastTo(ref gsaModel);
+                else
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
+                    return;
+                }
+            
                 // import lists
                 string nodeList = "all";
                 if (DA.GetData(1, ref nodeList))

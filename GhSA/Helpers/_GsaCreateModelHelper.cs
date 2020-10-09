@@ -21,7 +21,7 @@ namespace GhSA.Util.Gsa
         /// <returns></returns>
         public static int ExistingNode(IReadOnlyDictionary<int, Node> existNodes, Node testNode)
         {
-            Node gsaNode = new Node();
+            Node gsaNode;
             double tolerance = Util.GsaUnit.Tolerance;
             foreach (int key in existNodes.Keys)
             {
@@ -36,7 +36,6 @@ namespace GhSA.Util.Gsa
                     }
                 }
             }
-            gsaNode.Dispose();
             return 0;
         }
         /// <summary>
@@ -48,9 +47,9 @@ namespace GhSA.Util.Gsa
         /// <param name="tolerance"></param>
         /// <param name="nodesToBeSet"></param>
         /// <returns></returns>
-        public static int ExistingNodePoint(IReadOnlyDictionary<int, Node> existNodes, Point3d testPoint)
+        public static int ExistingNodePoint(Dictionary<int, Node> existNodes, Point3d testPoint)
         {
-            Node gsaNode = new Node();
+            Node gsaNode;
             double tolerance = Util.GsaUnit.Tolerance;
             foreach (int key in existNodes.Keys)
             {
@@ -65,7 +64,6 @@ namespace GhSA.Util.Gsa
                     }
                 }
             }
-            gsaNode.Dispose();
             return 0;
         }
 

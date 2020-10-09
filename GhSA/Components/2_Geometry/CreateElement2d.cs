@@ -55,7 +55,6 @@ namespace GhSA.Components
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("2D Element", "Elem2d", "GSA 2D Element", GH_ParamAccess.item);
-            
         }
         #endregion
 

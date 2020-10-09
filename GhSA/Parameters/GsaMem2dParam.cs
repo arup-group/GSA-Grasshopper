@@ -95,7 +95,7 @@ namespace GhSA.Parameters
 
         #region fields
         private Member m_member;
-        private int m_id;
+        private int m_id = 0;
         private Brep m_brep; //brep for visualisation /member2d
         private List<PolyCurve> void_crvs; //converted edgecurve /member2d
         private List<List<Point3d>> void_topo; //list of lists of void points /member2d

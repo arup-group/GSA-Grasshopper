@@ -38,10 +38,10 @@ namespace GhSA.Parameters
             m_model = new Model();
         }
 
-        public GsaModel(GsaModel model)
-        {
-            m_model = model.Model;
-        }
+        //public GsaModel(Model model)
+        //{
+        //    m_model = model;
+        //}
 
         //public GsaModel(Model model)
         //{ 
@@ -50,12 +50,14 @@ namespace GhSA.Parameters
 
         public GsaModel Duplicate()
         {
-            Model dup = new Model();
-
-            dup = m_model; //no duplication for now
+            GsaModel dup = new GsaModel();
+            
             //duplicate the incoming model ### Shallow copy funcitonality in GsaAPI welcome here....
             if (m_model != null)
             {
+                dup.Model = m_model; //no duplication for now
+
+                //Could duplicate all lists ourselves:
                 //System.Collections.ObjectModel.ReadOnlyDictionary<int, Node> nodes = m_model.Nodes();
                 //dup.SetNodes(nodes);
 
@@ -79,8 +81,7 @@ namespace GhSA.Parameters
                 //model.SetProp2Ds;
                 //model.SetSections;
             }
-            this.Model = dup;
-            return this;
+            return dup;
         }
         #endregion
 
@@ -166,7 +167,7 @@ namespace GhSA.Parameters
         }
         public override string TypeDescription
         {
-            get { return ("GSA Model without results"); }
+            get { return ("GSA Model"); }
         }
 
 
@@ -178,6 +179,14 @@ namespace GhSA.Parameters
             // This function is called when Grasshopper needs to convert this 
             // instance of GsaModel into some other type Q.            
 
+            if (typeof(Q).IsAssignableFrom(typeof(GsaModelGoo)))
+            {
+                if (Value == null)
+                    target = default;
+                else
+                    target = (Q)(object)this;
+                return true;
+            }
 
             if (typeof(Q).IsAssignableFrom(typeof(GsaModel)))
             {
@@ -236,7 +245,7 @@ namespace GhSA.Parameters
     public class GsaModelParameter : GH_PersistentParam<GsaModelGoo>
     {
         public GsaModelParameter()
-          : base(new GH_InstanceDescription("GSA Model", "GSA", "A GSA model without results", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("GSA Model", "GSA", "A GSA Model", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 

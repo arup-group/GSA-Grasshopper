@@ -124,7 +124,13 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             Model model = new Model();
+            
+            string tempfile = "";
+            if (DA.GetData(0, ref tempfile))
+                fileName = tempfile;
+            
             model.Open(fileName);
+           
             GsaModel gsaModel = new GsaModel
             {
                 Model = model
@@ -132,7 +138,7 @@ namespace GhSA.Components
             
             Util.GsaTitles.GetTitles(model);
             
-            DA.SetData(0, gsaModel);
+            DA.SetData(0, new GsaModelGoo(gsaModel));
         }
     }
 }

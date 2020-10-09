@@ -74,7 +74,7 @@ namespace GhSA.Parameters
             m_elements = convertMesh.Item1;
             m_topo = convertMesh.Item2;
             m_topoInt = convertMesh.Item3;
-            m_id = null; // new List<int>(new int[m_mesh.Faces.Count()]);
+            m_id = new List<int>(new int[m_mesh.Faces.Count()]);
         }
 
         public GsaElement2d Duplicate()
@@ -308,15 +308,14 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Mesh == null) { return null; }
 
-            GsaElement2d elem = new GsaElement2d
-            {
-                Elements = Value.Elements
-            };
+            GsaElement2d elem = Value.Duplicate();
+            
             Mesh xMs = Value.Mesh;
             xMs.Transform(xform);
             elem.Mesh = xMs;
-            elem.TopoInt = Value.TopoInt;
-            elem.Topology = Value.Topology;
+            Point3dList pts = new Point3dList(Value.Topology);
+            pts.Transform(xform);
+            elem.Topology = pts.ToList();
 
             return new GsaElement2dGoo(elem);
         }
