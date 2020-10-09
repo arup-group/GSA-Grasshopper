@@ -330,6 +330,7 @@ namespace GhSA.Components
                         {
                             GsaElement1d element1d = Elem1ds[i];
                             LineCurve line = element1d.Line;
+                            Element apiElement = element1d.Element;
 
                             // update topology list to fit model nodes
                             List<int> topo = new List<int>();
@@ -355,15 +356,30 @@ namespace GhSA.Components
                                 nodeid++;
                             }
                             // update topology in Element
-                            element1d.Element.Topology = new ReadOnlyCollection<int>(topo);
+                            apiElement.Topology = new ReadOnlyCollection<int>(topo);
 
-
-                            if (Elem1ds[i].ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+                            // section
+                            if (element1d.Section.ID > 0)
                             {
-                                elems[Elem1ds[i].ID] = Elem1ds[i].Element;
+                                gsa.SetSection(element1d.Section.ID, element1d.Section.Section);
+                                apiElement.Property = element1d.Section.ID;
                             }
                             else
-                                elems.Add(elemid++, Elem1ds[i].Element);
+                            {
+                                apiElement.Property = gsa.AddSection(element1d.Section.Section);
+                            }
+
+                            // set apielement in dictionary
+                            if (element1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+                            {
+                                elems[element1d.ID] = apiElement;
+                            }
+                            else
+                            {
+                                elems.Add(elemid, apiElement);
+                                elemid++;
+                            }
+                               
                         }
 
                         // 👉 Checking for cancellation!
@@ -405,6 +421,18 @@ namespace GhSA.Components
                                 //update topology in Element
                                 apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
 
+                                // section
+                                if (element2d.Properties[j].ID > 0)
+                                {
+                                    gsa.SetProp2D(element2d.Properties[j].ID, element2d.Properties[j].Prop2d);
+                                    apiMeshElement.Property = element2d.Properties[j].ID;
+                                }
+                                else
+                                {
+                                    apiMeshElement.Property = gsa.AddProp2D(element2d.Properties[j].Prop2d);
+                                }
+
+                                // set api element in dictionary
                                 if (element2d.ID[j] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
                                 {
                                     elems[element2d.ID[j]] = apiMeshElement;
@@ -448,7 +476,7 @@ namespace GhSA.Components
                         if (Mem1ds[i] != null)
                         {
                             GsaMember1d member1d = Mem1ds[i];
-                            Member apiMemeber = member1d.Member;
+                            Member apiMember = member1d.Member;
 
                             // update topology list to fit model nodes
                             string topo = "";
@@ -483,17 +511,27 @@ namespace GhSA.Components
                                 if (CancellationToken.IsCancellationRequested) return;
                             }
                             // set topology in api member
-                            apiMemeber.Topology = topo;
+                            apiMember.Topology = topo;
 
-                            //Mem1ds[i].Section.
-
-                            if (member1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+                            // Section
+                            if (member1d.Section.ID > 0)
                             {
-                                mems[member1d.ID] = apiMemeber;
+                                gsa.SetSection(member1d.Section.ID, member1d.Section.Section);
+                                apiMember.Property = member1d.Section.ID;
                             }
                             else
                             {
-                                mems.Add(memid, apiMemeber);
+                                apiMember.Property = gsa.AddSection(member1d.Section.Section);
+                            }
+
+                            // set apimember in dictionary
+                            if (member1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+                            {
+                                mems[member1d.ID] = apiMember;
+                            }
+                            else
+                            {
+                                mems.Add(memid, apiMember);
                                 memid++;
                             }
                                 
@@ -513,6 +551,7 @@ namespace GhSA.Components
                         if (Mem2ds[i] != null)
                         {
                             GsaMember2d member2d = Mem2ds[i];
+                            Member apimember = member2d.Member;
 
                             // update topology list to fit model nodes
                             string topo = "";
@@ -642,18 +681,28 @@ namespace GhSA.Components
                                 if (CancellationToken.IsCancellationRequested) return;
                             }
 
-                            // update topology for member
-                            member2d.Member.Topology = topo;
+                            // update topology for api member
+                            apimember.Topology = topo;
 
-                            //Mem1ds[i].Section.
-
-                            if (member2d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+                            // section
+                            if (member2d.Property.ID > 0)
                             {
-                                mems[member2d.ID] = member2d.Member;
+                                gsa.SetProp2D(member2d.Property.ID, member2d.Property.Prop2d);
+                                apimember.Property = member2d.Property.ID;
                             }
                             else
                             {
-                                mems.Add(memid, member2d.Member);
+                                apimember.Property = gsa.AddProp2D(member2d.Property.Prop2d);
+                            }
+
+                            // set apimember in dictionary
+                            if (member2d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+                            {
+                                mems[member2d.ID] = apimember;
+                            }
+                            else
+                            {
+                                mems.Add(memid, apimember);
                                 memid++;
                             }
                         }
@@ -663,7 +712,75 @@ namespace GhSA.Components
                         //ReportProgress("Creating Mem2Ds" + (i / (Mem2ds.Count - 1)).ToString("0%"));
                     }
                 }
+                #endregion
 
+                #region loads
+                // ### Loads ###
+                ReportProgress("Creating Loads");
+                // We let the existing loads (if any) survive and just add new loads
+
+                // Get existing loads
+                List<GravityLoad> gravityLoads = new List<GravityLoad>();
+                List<NodeLoad> nodeLoads_node = new List<NodeLoad>();
+                List<NodeLoad> nodeLoads_displ = new List<NodeLoad>();
+                List<NodeLoad> nodeLoads_settle = new List<NodeLoad>();
+                List<BeamLoad> beamLoads = new List<BeamLoad>();
+                List<FaceLoad> faceLoads = new List<FaceLoad>();
+                List<GridPointLoad> gridPointLoads = new List<GridPointLoad>();
+                List<GridLineLoad> gridLineLoads = new List<GridLineLoad>();
+                List<GridAreaLoad> gridAreaLoads = new List<GridAreaLoad>();
+
+                if (Loads != null)
+                {
+                    for (int i = 0; i < Loads.Count; i++)
+                    {
+                        if (Loads[i] != null)
+                        {
+                            GsaLoad load = Loads[i];
+                            switch (load.LoadType)
+                            {
+                                case GsaLoad.LoadTypes.Gravity:
+                                    gravityLoads.Add(load.GravityLoad.GravityLoad);
+                                    break;
+                                case GsaLoad.LoadTypes.Node:
+                                    if (load.NodeLoad.NodeLoadType == GsaNodeLoad.NodeLoadTypes.APPLIED_DISP)
+                                        nodeLoads_displ.Add(load.NodeLoad.NodeLoad);
+                                    if (load.NodeLoad.NodeLoadType == GsaNodeLoad.NodeLoadTypes.NODE_LOAD)
+                                        nodeLoads_node.Add(load.NodeLoad.NodeLoad);
+                                    if (load.NodeLoad.NodeLoadType == GsaNodeLoad.NodeLoadTypes.SETTLEMENT)
+                                        nodeLoads_settle.Add(load.NodeLoad.NodeLoad);
+                                    break;
+                                case GsaLoad.LoadTypes.Beam:
+                                    beamLoads.Add(load.BeamLoad.BeamLoad);
+                                    break;
+                                case GsaLoad.LoadTypes.Face:
+                                    faceLoads.Add(load.FaceLoad.FaceLoad);
+                                    break;
+                                case GsaLoad.LoadTypes.GridPoint:
+                                    load.PointLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.PointLoad.GridPlaneSurface.Axis);
+                                    load.PointLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.PointLoad.GridPlaneSurface.GridPlane);
+                                    load.PointLoad.GridPointLoad.GridSurface = gsa.AddGridSurface(load.PointLoad.GridPlaneSurface.GridSurface);
+                                    gridPointLoads.Add(load.PointLoad.GridPointLoad);
+                                    break;
+                                case GsaLoad.LoadTypes.GridLine:
+                                    load.LineLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.LineLoad.GridPlaneSurface.Axis);
+                                    load.LineLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.LineLoad.GridPlaneSurface.GridPlane);
+                                    load.LineLoad.GridLineLoad.GridSurface = gsa.AddGridSurface(load.LineLoad.GridPlaneSurface.GridSurface);
+                                    gridLineLoads.Add(load.LineLoad.GridLineLoad);
+                                    break;
+                                case GsaLoad.LoadTypes.GridArea:
+                                    load.AreaLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.AreaLoad.GridPlaneSurface.Axis);
+                                    load.AreaLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.AreaLoad.GridPlaneSurface.GridPlane);
+                                    load.AreaLoad.GridAreaLoad.GridSurface = gsa.AddGridSurface(load.AreaLoad.GridPlaneSurface.GridSurface);
+                                    gridAreaLoads.Add(load.AreaLoad.GridAreaLoad);
+                                    break;
+                            }
+                        }
+                        // 👉 Checking for cancellation!
+                        if (CancellationToken.IsCancellationRequested) return;
+                        //ReportProgress("Creating Loads " + (i / (Loads.Count - 1)).ToString("0%"));
+                    }
+                }
                 #endregion
 
                 if (CancellationToken.IsCancellationRequested) return;
@@ -681,7 +798,35 @@ namespace GhSA.Components
 
                 ReportProgress("Create Elements from Members");
                 gsa.CreateElementsFromMembers();
-                
+
+                ReportProgress("Setting Loads");
+                //gravity load
+                ReadOnlyCollection<GravityLoad> setgrav = new ReadOnlyCollection<GravityLoad>(gravityLoads);
+                gsa.AddGravityLoads(setgrav);
+                //node loads
+                ReadOnlyCollection<NodeLoad> setnode_disp = new ReadOnlyCollection<NodeLoad>(nodeLoads_displ);
+                gsa.AddNodeLoads(NodeLoadType.APPLIED_DISP, setnode_disp);
+                ReadOnlyCollection<NodeLoad> setnode_node = new ReadOnlyCollection<NodeLoad>(nodeLoads_node);
+                gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, setnode_node);
+                ReadOnlyCollection<NodeLoad> setnode_setl = new ReadOnlyCollection<NodeLoad>(nodeLoads_settle);
+                gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, setnode_setl);
+                //beam loads
+                ReadOnlyCollection<BeamLoad> setbeam = new ReadOnlyCollection<BeamLoad>(beamLoads);
+                gsa.AddBeamLoads(setbeam);
+                //face loads
+                ReadOnlyCollection<FaceLoad> setface = new ReadOnlyCollection<FaceLoad>(faceLoads);
+                gsa.AddFaceLoads(setface);
+                //grid point loads
+                ReadOnlyCollection<GridPointLoad> setpoint = new ReadOnlyCollection<GridPointLoad>(gridPointLoads);
+                gsa.AddGridPointLoads(setpoint);
+                //grid line loads
+                ReadOnlyCollection<GridLineLoad> setline = new ReadOnlyCollection<GridLineLoad>(gridLineLoads);
+                gsa.AddGridLineLoads(setline);
+                //grid area loads
+                ReadOnlyCollection<GridAreaLoad> setarea = new ReadOnlyCollection<GridAreaLoad>(gridAreaLoads);
+                gsa.AddGridAreaLoads(setarea);
+
+                //analysis
                 IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
                 foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
                 {
