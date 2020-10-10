@@ -207,11 +207,13 @@ namespace GhSA.Components
 
                 // Let's work just on the model (not wrapped)
                 GsaAPI.Model gsa = WorkModel.Model;
-                
+                string progress = "";
+                string tempprogress = "";
 
                 #region nodes
                 // ### Nodes ###
-                ReportProgress("Creating Nodes");
+                tempprogress = "Creating Nodes";
+                ReportProgress(progress + tempprogress);
                 // We take out the existing nodes in the model and work on that dictionary
 
                 // Get existing nodes
@@ -303,17 +305,21 @@ namespace GhSA.Components
 
                         // 👉 Checking for cancellation!
                         if (CancellationToken.IsCancellationRequested) return;
+                        tempprogress = "Creating Nodes..." + (i / (Nodes.Count - 1)).ToString("0%");
+                        ReportProgress(progress + tempprogress);
                         //ReportProgress("Creating Nodes " + (i / (Nodes.Count - 1)).ToString("0%"));
                     }
-
                 }
-
+                tempprogress = "";
+                progress += "Creating Nodes...Done" + System.Environment.NewLine;
+                ReportProgress(progress + tempprogress);
                 #endregion
 
                 #region Elements
                 // ### Elements ###
                 // We take out the existing elements in the model and work on that dictionary
-                ReportProgress("Creating Elem1Ds");
+                tempprogress = "Creating Elem1Ds";
+                ReportProgress(progress + tempprogress);
                 // Get existing elements
                 IReadOnlyDictionary<int, Element> gsaElems = gsa.Elements();
                 Dictionary<int, Element> elems = gsaElems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -382,10 +388,16 @@ namespace GhSA.Components
 
                         // 👉 Checking for cancellation!
                         if (CancellationToken.IsCancellationRequested) return;
-                        //ReportProgress("Creating Elem1Ds " + (i / (Elem1ds.Count - 1)).ToString("0%"));
+                        tempprogress = "Creating Elem1Ds..." + (i / (Elem1ds.Count - 1)).ToString("0%");
+                        ReportProgress(progress + tempprogress);
                     }
                 }
-                ReportProgress("Creating Elem2Ds");
+                tempprogress = "";
+                progress += "Creating Elem1Ds...Done" + System.Environment.NewLine;
+                ReportProgress(progress + tempprogress);
+
+                tempprogress = "Creating Elem2Ds";
+                ReportProgress(progress + tempprogress);
                 if (Elem2ds != null)
                 {
                     // Elem2ds
@@ -450,17 +462,23 @@ namespace GhSA.Components
 
                             // 👉 Checking for cancellation!
                             if (CancellationToken.IsCancellationRequested) return;
-                            //ReportProgress("Creating Elem2Ds " + (i / (Elem2ds.Count - 1)).ToString("0%"));
+                            tempprogress = "Creating Elem2Ds..." + (i / (Elem2ds.Count - 1)).ToString("0%");
+                            ReportProgress(progress + tempprogress);
                         }
                     }
                 }
+                tempprogress = "";
+                progress += "Creating Elem1Ds...Done" + System.Environment.NewLine;
+                ReportProgress(progress + tempprogress);
+
 
                 #endregion
 
                 #region Members
                 // ### Members ###
                 // We take out the existing members in the model and work on that dictionary
-                ReportProgress("Creating Mem1Ds");
+                tempprogress = "Creating Mem1Ds";
+                ReportProgress(progress + tempprogress);
                 // Get existing members
                 IReadOnlyDictionary<int, Member> gsaMems = gsa.Members();
                 Dictionary<int, Member> mems = gsaMems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -537,10 +555,16 @@ namespace GhSA.Components
 
                         // 👉 Checking for cancellation!
                         if (CancellationToken.IsCancellationRequested) return;
-                        //ReportProgress("Creating Mem1Ds " + (i / (Mem1ds.Count - 1)).ToString("0%"));
+                        tempprogress = "Creating Mem1Ds..." + (i / (Mem1ds.Count - 1)).ToString("0%");
+                        ReportProgress(progress + tempprogress);
                     }
                 }
-                ReportProgress("Creating Mem2Ds");
+                tempprogress = "";
+                progress += "Creating Mem1Ds...Done" + System.Environment.NewLine;
+                ReportProgress(progress + tempprogress);
+                
+                tempprogress = "Creating Mem2Ds";
+                ReportProgress(progress + tempprogress);
                 if (Mem2ds != null)
                 {
                     // Mem2ds
@@ -708,9 +732,16 @@ namespace GhSA.Components
 
                         // 👉 Checking for cancellation!
                         if (CancellationToken.IsCancellationRequested) return;
-                        //ReportProgress("Creating Mem2Ds" + (i / (Mem2ds.Count - 1)).ToString("0%"));
+                        tempprogress = "Creating Mem1Ds..." + (i / (Mem2ds.Count - 1)).ToString("0%");
+                        ReportProgress(progress + tempprogress);
                     }
                 }
+                tempprogress = "";
+                progress += "Creating Mem2Ds...Done" + System.Environment.NewLine;
+                ReportProgress(progress + tempprogress);
+
+                tempprogress = "Creating Loads";
+                ReportProgress(progress + tempprogress);
                 #endregion
 
                 #region loads
@@ -777,28 +808,33 @@ namespace GhSA.Components
                         }
                         // 👉 Checking for cancellation!
                         if (CancellationToken.IsCancellationRequested) return;
-                        //ReportProgress("Creating Loads " + (i / (Loads.Count - 1)).ToString("0%"));
+                        tempprogress = "Creating Loads..." + (i / (Loads.Count - 1)).ToString("0%");
+                        ReportProgress(progress + tempprogress);
                     }
                 }
-                #endregion
+                tempprogress = "";
+                progress += "Creating Loads...Done" + System.Environment.NewLine;
+                ReportProgress(progress + tempprogress);
 
+                #endregion
+                tempprogress = "Setting nodes";
+                ReportProgress(progress + tempprogress);
                 if (CancellationToken.IsCancellationRequested) return;
-                ReportProgress("Setting Nodes");
                 ReadOnlyDictionary<int, Node> setnodes = new ReadOnlyDictionary<int, Node>(nodes);
                 gsa.SetNodes(setnodes);
 
-                ReportProgress("Setting Elements");
+                tempprogress = "Setting elements";
+                ReportProgress(progress + tempprogress);
                 ReadOnlyDictionary<int, Element> setelem = new ReadOnlyDictionary<int, Element>(elems);
                 gsa.SetElements(setelem);
 
-                ReportProgress("Setting Members");
+                tempprogress = "Setting members";
+                ReportProgress(progress + tempprogress);
                 ReadOnlyDictionary<int, Member> setmem = new ReadOnlyDictionary<int, Member>(mems);
                 gsa.SetMembers(setmem);
 
-                ReportProgress("Create Elements from Members");
-                gsa.CreateElementsFromMembers();
-
-                ReportProgress("Setting Loads");
+                tempprogress = "Setting loads";
+                ReportProgress(progress + tempprogress);
                 //gravity load
                 ReadOnlyCollection<GravityLoad> setgrav = new ReadOnlyCollection<GravityLoad>(gravityLoads);
                 gsa.AddGravityLoads(setgrav);
@@ -825,15 +861,35 @@ namespace GhSA.Components
                 ReadOnlyCollection<GridAreaLoad> setarea = new ReadOnlyCollection<GridAreaLoad>(gridAreaLoads);
                 gsa.AddGridAreaLoads(setarea);
 
+                tempprogress = "";
+                progress += "Setting objects...Done" + System.Environment.NewLine;
+                ReportProgress(progress + tempprogress);
+
+                // Create elements from members
+                tempprogress = "Meshing members...";
+                ReportProgress(progress + tempprogress);
+                
+                gsa.CreateElementsFromMembers();
+
+                tempprogress = "";
+                progress += "Meshing members...Done" + System.Environment.NewLine;
+                ReportProgress(progress + tempprogress);
+
+
                 //analysis
+                tempprogress = "Running analysis...";
+                ReportProgress(progress + tempprogress);
                 IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
                 foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
                 {
-                    ReportProgress("Analysing Task " + task.Key);
+                    tempprogress = "Running analysis Task + task.Key";
+                    ReportProgress(progress + tempprogress);
                     gsa.Analyse(task.Key);
                 }
 
-                ReportProgress("Analysis done");
+                tempprogress = "";
+                progress += "Analysis...Done" + System.Environment.NewLine;
+                ReportProgress(progress + tempprogress);
                 WorkModel.Model = gsa;
 
                 //gsa.SaveAs("C:\\Users\\Kristjan.Nielsen\\Desktop\\GsaGH_test.gwb");
@@ -842,4 +898,3 @@ namespace GhSA.Components
         }
     }
 }
-;

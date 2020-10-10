@@ -183,7 +183,7 @@ namespace GrasshopperAsyncComponent
 
           SetData = false;
 
-          Message = "";
+          //Message = "";
           OnDisplayExpired(true);
         }
       }
