@@ -67,6 +67,7 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaSection sect = new GsaSection();
+            
 
             //profile
             GH_String gh_profile = new GH_String();
@@ -74,6 +75,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(gh_profile, out string profile, GH_Conversion.Both))
                 {
+                    sect.Section = new Section();
                     sect.Section.Profile = profile;
 
                     // 1 material

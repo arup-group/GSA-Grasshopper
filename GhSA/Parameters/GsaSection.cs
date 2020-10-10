@@ -39,15 +39,15 @@ namespace GhSA.Parameters
 
         #region fields
         Section m_section;
-        int m_idd;
-        //GsaMaterial m_material;
+        int m_idd = 0;
+
+        //GsaMaterial m_material; to be added when GsaAPI supports materials
         #endregion
 
         #region constructors
         public GsaSection()
         {
-            m_section = new Section();
-            m_idd = 0;
+            m_section = null;
         }
         public GsaSection(string profile)
         {
@@ -55,7 +55,6 @@ namespace GhSA.Parameters
             {
                 Profile = profile
             };
-            m_idd = 0;
         }
         public GsaSection(string profile, int ID)
         {

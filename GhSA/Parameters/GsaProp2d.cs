@@ -39,15 +39,14 @@ namespace GhSA.Parameters
 
         #region fields
         Prop2D m_prop2d;
-        int m_idd;
+        int m_idd = 0;
         //GsaMaterial m_material;
         #endregion
 
         #region constructors
         public GsaProp2d()
         {
-            m_prop2d = new Prop2D();
-            m_idd = 0;
+            m_prop2d = null;
         }
         
         public GsaProp2d Duplicate()

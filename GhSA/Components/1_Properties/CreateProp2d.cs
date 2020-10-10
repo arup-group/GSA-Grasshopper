@@ -123,6 +123,7 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaProp2d prop = new GsaProp2d();
+            prop.Prop2d = new Prop2D();
 
             // element type (picked in dropdown)
             prop.Prop2d.Type = Property2D_Type.UNDEF;

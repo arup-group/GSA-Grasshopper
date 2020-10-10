@@ -748,13 +748,13 @@ namespace GhSA.Util.Gsa
             sDict = model.Sections();
 
             // Loop through all sections in Section dictionary and create new GsaSections
-            for (int i = 0; i < sDict.Keys.Max(); i++)
+            foreach (int key in sDict.Keys)
             {
-                if (sDict.TryGetValue(i + 1, out Section apisection)) //1-base numbering
+                if (sDict.TryGetValue(key, out Section apisection)) //1-base numbering
                 {
                     GsaSection sect = new GsaSection();
                     sect.Section = apisection;
-                    sect.ID = i + 1;
+                    sect.ID = key;
                     sections.Add(new GsaSectionGoo(sect));
                 }
                 else
@@ -777,13 +777,13 @@ namespace GhSA.Util.Gsa
             sDict = model.Prop2Ds();
 
             // Loop through all sections in Properties dictionary and create new GsaProp2d
-            for (int i = 0; i < sDict.Keys.Max(); i++)
+            foreach (int key in sDict.Keys)
             {
-                if (sDict.TryGetValue(i + 1, out Prop2D apisection)) //1-base numbering
+                if (sDict.TryGetValue(key, out Prop2D apisection)) //1-base numbering
                 {
                     GsaProp2d prop = new GsaProp2d();
                     prop.Prop2d = apisection;
-                    prop.ID = i + 1;
+                    prop.ID = key;
                     prop2ds.Add(new GsaProp2dGoo(prop));
                 }
                 else

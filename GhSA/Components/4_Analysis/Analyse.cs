@@ -216,10 +216,6 @@ namespace GhSA.Components
 
                 // Get existing nodes
                 IReadOnlyDictionary<int, Node> gsaNodes = gsa.Nodes();
-                int nodeid = 1;
-                if (gsaNodes.Count > 0)
-                    nodeid = gsaNodes.Keys.Max() + 1; //counter that we keep up to date for every new node added to dictionary
-
                 Dictionary<int, Node> nodes = gsaNodes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
                 // Add/Set Nodes
@@ -297,7 +293,11 @@ namespace GhSA.Components
                                     nodes[id] = apiNode;
                                 }
                                 else
-                                    nodes.Add(nodeid++, apiNode);
+                                {
+                                    int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
+                                    nodes.Add(key, apiNode);
+                                }
+                                    
                             }
                         }
 
@@ -316,9 +316,6 @@ namespace GhSA.Components
                 ReportProgress("Creating Elem1Ds");
                 // Get existing elements
                 IReadOnlyDictionary<int, Element> gsaElems = gsa.Elements();
-                int elemid = 1;
-                if (gsaElems.Count > 0)
-                    elemid = gsaElems.Keys.Max() + 1;
                 Dictionary<int, Element> elems = gsaElems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
                 if (Elem1ds != null)
@@ -340,9 +337,9 @@ namespace GhSA.Components
                                 topo.Add(id);
                             else
                             {
-                                nodes.Add(nodeid, Util.Gsa.ModelNodes.NodeFromPoint(line.PointAtStart));
-                                topo.Add(nodeid);
-                                nodeid++;
+                                int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
+                                nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(line.PointAtStart));
+                                topo.Add(key);
                             }
 
                             //End node
@@ -351,18 +348,19 @@ namespace GhSA.Components
                                 topo.Add(id);
                             else
                             {
-                                nodes.Add(nodeid, Util.Gsa.ModelNodes.NodeFromPoint(line.PointAtEnd));
-                                topo.Add(nodeid);
-                                nodeid++;
+                                int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
+                                nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(line.PointAtEnd));
+                                topo.Add(key);
                             }
                             // update topology in Element
-                            apiElement.Topology = new ReadOnlyCollection<int>(topo);
+                            apiElement.Topology = new ReadOnlyCollection<int>(topo.ToList());
 
                             // section
                             if (element1d.Section.ID > 0)
                             {
-                                gsa.SetSection(element1d.Section.ID, element1d.Section.Section);
-                                apiElement.Property = element1d.Section.ID;
+                                apiElement.Property = element1d.Section.ID; // set section ID in element
+                                if (element1d.Section.Section != null) // section can refer to an ID only, meaning that the section must already exist in the model. Else we set it in the model:
+                                    gsa.SetSection(element1d.Section.ID, element1d.Section.Section);
                             }
                             else
                             {
@@ -376,8 +374,8 @@ namespace GhSA.Components
                             }
                             else
                             {
-                                elems.Add(elemid, apiElement);
-                                elemid++;
+                                int key = (elems.Count > 0) ? elems.Keys.Max() + 1 : 1;
+                                elems.Add(key, apiElement);
                             }
                                
                         }
@@ -414,18 +412,20 @@ namespace GhSA.Components
                                         topo.Add(id);
                                     else
                                     {
-                                        nodes.Add(nodeid, Util.Gsa.ModelNodes.NodeFromPoint(meshVerticies[meshVertexIndex[k]]));
-                                        topo.Add(nodeid++);
+                                        int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
+                                        nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(meshVerticies[meshVertexIndex[k]]));
+                                        topo.Add(key);
                                     }
                                 }
                                 //update topology in Element
-                                apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
+                                apiMeshElement.Topology = new ReadOnlyCollection<int>(topo.ToList());
 
                                 // section
                                 if (element2d.Properties[j].ID > 0)
                                 {
-                                    gsa.SetProp2D(element2d.Properties[j].ID, element2d.Properties[j].Prop2d);
                                     apiMeshElement.Property = element2d.Properties[j].ID;
+                                    if (element2d.Properties[j].Prop2d != null)
+                                        gsa.SetProp2D(element2d.Properties[j].ID, element2d.Properties[j].Prop2d);
                                 }
                                 else
                                 {
@@ -439,8 +439,8 @@ namespace GhSA.Components
                                 }
                                 else
                                 {
-                                    elems.Add(elemid, apiMeshElement);
-                                    elemid++;
+                                    int key = (elems.Count > 0) ? elems.Keys.Max() + 1 : 1;
+                                    elems.Add(key, apiMeshElement);
                                 }
                                     
 
@@ -463,9 +463,6 @@ namespace GhSA.Components
                 ReportProgress("Creating Mem1Ds");
                 // Get existing members
                 IReadOnlyDictionary<int, Member> gsaMems = gsa.Members();
-                int memid = 1;
-                if (gsaMems.Count > 0)
-                    memid = gsaMems.Keys.Max() + 1;
                 Dictionary<int, Member> mems = gsaMems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
                 if (Mem1ds != null)
@@ -499,9 +496,9 @@ namespace GhSA.Components
                                     topo += id;
                                 else
                                 {
-                                    nodes.Add(nodeid, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                    topo += nodeid;
-                                    nodeid++;
+                                    int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
+                                    nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                    topo += key;
                                 }
 
                                 if (j != member1d.Topology.Count - 1)
@@ -511,13 +508,14 @@ namespace GhSA.Components
                                 if (CancellationToken.IsCancellationRequested) return;
                             }
                             // set topology in api member
-                            apiMember.Topology = topo;
+                            apiMember.Topology = string.Copy(topo);
 
                             // Section
                             if (member1d.Section.ID > 0)
                             {
-                                gsa.SetSection(member1d.Section.ID, member1d.Section.Section);
                                 apiMember.Property = member1d.Section.ID;
+                                if (member1d.Section.Section != null)
+                                    gsa.SetSection(member1d.Section.ID, member1d.Section.Section);
                             }
                             else
                             {
@@ -531,8 +529,8 @@ namespace GhSA.Components
                             }
                             else
                             {
-                                mems.Add(memid, apiMember);
-                                memid++;
+                                int key = (mems.Count > 0) ? mems.Keys.Max() + 1 : 1;
+                                mems.Add(key, apiMember);
                             }
                                 
                         }
@@ -575,9 +573,9 @@ namespace GhSA.Components
                                     topo += id;
                                 else
                                 {
-                                    nodes.Add(nodeid, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                    topo += nodeid;
-                                    nodeid++;
+                                    int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
+                                    nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                    topo += key;
                                 }
 
                                 if (j != member2d.Topology.Count - 1)
@@ -586,8 +584,8 @@ namespace GhSA.Components
                                 // 👉 Checking for cancellation!
                                 if (CancellationToken.IsCancellationRequested) return;
                             }
-                            // Loop through the voidtopology list
 
+                            // Loop through the voidtopology list
                             for (int j = 0; j < member2d.VoidTopology.Count; j++)
                             {
                                 for (int k = 0; k < Mem2ds[i].VoidTopology[j].Count; k++)
@@ -596,7 +594,7 @@ namespace GhSA.Components
                                     string voidtopologytype = member2d.VoidTopologyType[j][k];
 
                                     if (k == 0)
-                                        topo += "V(";
+                                        topo += " V(";
                                     if (voidtopologytype == "" | voidtopologytype == " ")
                                         topo += " ";
                                     else
@@ -607,9 +605,9 @@ namespace GhSA.Components
                                         topo += id;
                                     else
                                     {
-                                        nodes.Add(nodeid, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                        topo += nodeid;
-                                        nodeid++;
+                                        int key = nodes.Keys.Max() + 1;
+                                        nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                        topo += key;
                                     }
 
                                     if (k != member2d.VoidTopology[j].Count - 1)
@@ -630,7 +628,7 @@ namespace GhSA.Components
                                     string inclineTopologytype = member2d.IncLinesTopologyType[j][k];
 
                                     if (k == 0)
-                                        topo += "L(";
+                                        topo += " L(";
                                     if (inclineTopologytype == "" | inclineTopologytype == " ")
                                         topo += " ";
                                     else
@@ -641,9 +639,9 @@ namespace GhSA.Components
                                         topo += id;
                                     else
                                     {
-                                        nodes.Add(nodeid, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                        topo += nodeid;
-                                        nodeid++;
+                                        int key = nodes.Keys.Max() + 1;
+                                        nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                        topo += key;
                                     }
 
                                     if (k != member2d.IncLinesTopology[j].Count - 1)
@@ -660,16 +658,16 @@ namespace GhSA.Components
                             {
                                 Point3d pt = member2d.InclusionPoints[j];
                                 if (j == 0)
-                                    topo += "P(";
+                                    topo += " P(";
 
                                 int id = Util.Gsa.ModelNodes.ExistingNodePoint(nodes, pt);
                                 if (id > 0)
                                     topo += id;
                                 else
                                 {
-                                    nodes.Add(nodeid, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                    topo += nodeid;
-                                    nodeid++;
+                                    int key = nodes.Keys.Max() + 1;
+                                    nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                    topo += key;
                                 }
 
                                 if (j != member2d.InclusionPoints.Count - 1)
@@ -682,13 +680,14 @@ namespace GhSA.Components
                             }
 
                             // update topology for api member
-                            apimember.Topology = topo;
+                            apimember.Topology = string.Copy(topo);
 
                             // section
                             if (member2d.Property.ID > 0)
                             {
-                                gsa.SetProp2D(member2d.Property.ID, member2d.Property.Prop2d);
                                 apimember.Property = member2d.Property.ID;
+                                if (member2d.Property.Prop2d != null)
+                                    gsa.SetProp2D(member2d.Property.ID, member2d.Property.Prop2d);
                             }
                             else
                             {
@@ -702,8 +701,8 @@ namespace GhSA.Components
                             }
                             else
                             {
-                                mems.Add(memid, apimember);
-                                memid++;
+                                int key = (mems.Count > 0) ? mems.Keys.Max() + 1 : 1;
+                                mems.Add(key, apimember);
                             }
                         }
 
