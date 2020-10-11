@@ -136,7 +136,7 @@ namespace GhSA.Components
                 Model = model
             };
             
-            Util.GsaTitles.GetTitles(model);
+            Util.GsaTitles.GetTitlesFromGSA(model);
             
             DA.SetData(0, new GsaModelGoo(gsaModel));
         }

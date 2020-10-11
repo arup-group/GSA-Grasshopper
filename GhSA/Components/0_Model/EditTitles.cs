@@ -66,7 +66,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.JobNumber = title;
+                    Util.GsaTitles.SetJobNumber(title);
                 }
             }
 
@@ -75,7 +75,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.Initials = title;
+                    Util.GsaTitles.SetInitials(title);
                 }
             }
             ghstr = new GH_String();
@@ -83,7 +83,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.Title = title;
+                    Util.GsaTitles.SetTitle(title);
                 }
             }
             ghstr = new GH_String();
@@ -91,7 +91,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.SubTitle = title;
+                    Util.GsaTitles.SetSubTitle(title);
                 }
             }
             ghstr = new GH_String();
@@ -99,7 +99,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.Calculation = title;
+                    Util.GsaTitles.SetCalculation(title);
                 }
             }
             ghstr = new GH_String();
@@ -107,7 +107,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.Notes = title;
+                    Util.GsaTitles.SetNotes(title);
                 }
             }
             
