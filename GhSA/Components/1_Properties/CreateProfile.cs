@@ -209,17 +209,13 @@ namespace GhSA.Components
         //    "Europrofile", "To", "be", "implemented"
         //});
 
-        readonly List<string> cataloguelist = SqlReader.GetListDataFromSQLite("type", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
+        readonly List<string> cataloguelist = SqlReader.GetCataloguesDataFromSQLite(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
 
         // second sublist for second dropdown list
-        readonly List<string> typelist = new List<string>(new string[]
-        {
-            "EP IPE Beams", "EP HE Beams"
-        });
-        readonly List<string> sectionlist = new List<string>(new string[]
-        {
-            "HE100.AA", "HE100.A", "HE100.B", "HE100.M"
-        });
+        readonly List<string> typelist = SqlReader.GetTypesDataFromSQLite("euro", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
+
+        readonly List<string> sectionlist = SqlReader.GetSectionsDataFromSQLite("ipe", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
+
 
         // list of spacers to inform user the content of dropdown
         readonly List<string> cataloguespacer = new List<string>(new string[]
