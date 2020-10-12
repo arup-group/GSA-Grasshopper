@@ -15,6 +15,7 @@ using GhSA.Parameters;
 using System.Resources;
 using System.Linq;
 using GhSA.Util.Gsa;
+using System.IO;
 
 namespace GhSA.Components
 {
@@ -101,8 +102,20 @@ namespace GhSA.Components
                             dropdowncontents = new List<List<string>>();
                         dropdowncontents.Add(mainlist); //fixed
                         dropdowncontents.Add(cataloguelist); //fixed
-                        dropdowncontents.Add(typelist); //variable
-                        dropdowncontents.Add(sectionlist); //variable
+
+                        // if second list (i.e. catalogue list) is changed, update types list to account for that catalogue
+                        if (dropdownlistidd == 1)
+                        {
+                            typelist = SqlReader.GetTypesDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd], Path.Combine(GsaPath.GetPath, "sectlib.db3"));
+                        }
+                        dropdowncontents.Add(typelist);
+                        // if third list (i.e. types list) is changed, update sections list to account for these section types
+                        if (dropdownlistidd == 2)
+                        {
+                            sectionlist = SqlReader.GetSectionsDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd], Path.Combine(GsaPath.GetPath, "sectlib.db3"));
+                        }
+                        dropdowncontents.Add(sectionlist); 
+                        
                     }
                     
                     if (selections.Count < 2)
@@ -118,7 +131,11 @@ namespace GhSA.Components
                         if (dropdownlistidd == 2)
                             catalogueTypeIndex = selectedidd; //to be updated
                         if (dropdownlistidd == 3)
+                        {
                             catalogueProfileIndex = selectedidd; //to be updated
+                            catalogueProfileName = dropdowncontents[dropdownlistidd][selectedidd];
+                        }
+
                     }
                         
                     break;
@@ -209,12 +226,12 @@ namespace GhSA.Components
         //    "Europrofile", "To", "be", "implemented"
         //});
 
-        readonly List<string> cataloguelist = SqlReader.GetCataloguesDataFromSQLite(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
+        readonly List<string> cataloguelist = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(GsaPath.GetPath, "sectlib.db3"));
 
         // second sublist for second dropdown list
-        readonly List<string> typelist = SqlReader.GetTypesDataFromSQLite("euro", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
+        List<string> typelist = SqlReader.GetTypesDataFromSQLite("euro", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
 
-        readonly List<string> sectionlist = SqlReader.GetSectionsDataFromSQLite("ipe", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
+        List<string> sectionlist = SqlReader.GetSectionsDataFromSQLite("ipe", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
 
 
         // list of spacers to inform user the content of dropdown
@@ -236,6 +253,8 @@ namespace GhSA.Components
         int catalogueIndex;
         int catalogueTypeIndex;
         int catalogueProfileIndex;
+
+        string catalogueProfileName;
 
         bool isTapered;
         bool isHollow;
@@ -266,6 +285,7 @@ namespace GhSA.Components
                 profile.catalogueIndex = catalogueIndex;
                 profile.catalogueProfileIndex = catalogueProfileIndex;
                 profile.catalogueTypeIndex = catalogueTypeIndex;
+                profile.catalogueProfileName = catalogueProfileName;
                 
             }
             #endregion
@@ -829,6 +849,7 @@ namespace GhSA.Components
             writer.SetInt32("catalogueIndex", catalogueIndex);
             writer.SetInt32("catalogueTypeIndex", catalogueTypeIndex);
             writer.SetInt32("catalogueProfileIndex", catalogueProfileIndex);
+            writer.SetString("catalogueProfileName", catalogueProfileName);
             writer.SetBoolean("isTapered", isTapered);
             writer.SetBoolean("isHollow", isHollow);
             writer.SetBoolean("isElliptical", isElliptical);
@@ -891,6 +912,7 @@ namespace GhSA.Components
             catalogueIndex = reader.GetInt32("catalogueIndex");
             catalogueTypeIndex = reader.GetInt32("catalogueTypeIndex");
             catalogueProfileIndex = reader.GetInt32("catalogueProfileIndex");
+            catalogueProfileName = reader.GetString("catalogueProfileName");
 
             isTapered = reader.GetBoolean("isTapered");
             isHollow = reader.GetBoolean("isHollow");

@@ -146,6 +146,7 @@
     <Compile Include="Components\4_Analysis\Analyse.cs" />
     <Compile Include="Components\Tests\DropDownMulti.cs" />
     <Compile Include="Components\Tests\DropDownSingle.cs" />
+    <Compile Include="Helpers\_GsaPath.cs" />
     <Compile Include="Helpers\_GsaCreateModelHelper.cs" />
     <Compile Include="Helpers\_GsaModelEnums.cs" />
     <Compile Include="Helpers\_GsaImportConvert.cs" />
