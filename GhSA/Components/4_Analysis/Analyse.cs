@@ -205,19 +205,27 @@ namespace GhSA.Components
                 // Get Section Property input
                 gh_types = new List<GH_ObjectWrapper>();
                 List<GsaSection> in_sect = new List<GsaSection>();
-                if (DA.GetDataList(4, gh_types))
+                List<GsaProp2d> in_prop = new List<GsaProp2d>();
+                if (DA.GetDataList(5, gh_types))
                 {
                     for (int i = 0; i < gh_types.Count; i++)
                     {
                         gh_typ = gh_types[i];
-                        if (gh_typ.Value is GsaLoadGoo)
+                        if (gh_typ.Value is GsaSectionGoo)
                         {
-                            GsaLoad gsa = null;
+                            GsaSection gsa = new GsaSection();
                             gh_typ.CastTo(ref gsa);
-                            in_loads.Add(gsa);
+                            in_sect.Add(gsa);
+                        }
+                        if (gh_typ.Value is GsaSectionGoo)
+                        {
+                            GsaProp2d gsa = new GsaProp2d();
+                            gh_typ.CastTo(ref gsa);
+                            in_prop.Add(gsa);
                         }
                     }
-                    Loads = in_loads;
+                    Sections = in_sect;
+                    Prop2Ds = in_prop;
                 }
             }
 
@@ -248,6 +256,12 @@ namespace GhSA.Components
                 // Get existing nodes
                 IReadOnlyDictionary<int, Node> gsaNodes = gsa.Nodes();
                 Dictionary<int, Node> nodes = gsaNodes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                
+                // create a counter for creating new nodes
+                int newNodeID = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1; //checking the existing model nodes
+                int existingNodeMaxID = Nodes.Max(x => x.ID); // max ID in new nodes
+                if (existingNodeMaxID > newNodeID)
+                    newNodeID = existingNodeMaxID + 1;
 
                 // Add/Set Nodes
                 if (Nodes != null)
@@ -289,7 +303,10 @@ namespace GhSA.Components
                                 }
                             }
                             if (node.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+                            {
                                 nodes[node.ID] = apiNode;
+                            }
+                                
                             else
                             {
                                 // get existing node id if any:
@@ -320,15 +337,14 @@ namespace GhSA.Components
                                         if (gsaNode.SpringProperty > 0)
                                             apiNode.SpringProperty = gsaNode.SpringProperty;
                                     }
-
+                                    // replace existing node with new merged node
                                     nodes[id] = apiNode;
                                 }
                                 else
                                 {
-                                    int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
-                                    nodes.Add(key, apiNode);
+                                    nodes.Add(newNodeID, apiNode);
+                                    newNodeID++;
                                 }
-                                    
                             }
                         }
 
@@ -352,6 +368,15 @@ namespace GhSA.Components
                 // Get existing elements
                 IReadOnlyDictionary<int, Element> gsaElems = gsa.Elements();
                 Dictionary<int, Element> elems = gsaElems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                // create a counter for creating new elements
+                int newElemID = (elems.Count > 0) ? elems.Keys.Max() + 1 : 1; //checking the existing model nodes
+                int existingElem1dMaxID = Elem1ds.Max(x => x.ID); // max ID in new Elem1ds
+                int existingElem2dMaxID = Elem2ds.Max(x => x.ID.Max()); // max ID in new Elem2ds
+                if (existingElem1dMaxID > newElemID)
+                    newElemID = existingElem1dMaxID + 1;
+                if (existingElem2dMaxID > newElemID)
+                    newElemID = existingElem2dMaxID + 1;
 
                 if (Elem1ds != null)
                 {
@@ -383,9 +408,9 @@ namespace GhSA.Components
                                 topo.Add(id);
                             else
                             {
-                                int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
-                                nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(line.PointAtEnd));
-                                topo.Add(key);
+                                nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(line.PointAtEnd));
+                                topo.Add(newNodeID);
+                                newNodeID++;
                             }
                             // update topology in Element
                             apiElement.Topology = new ReadOnlyCollection<int>(topo.ToList());
@@ -409,8 +434,8 @@ namespace GhSA.Components
                             }
                             else
                             {
-                                int key = (elems.Count > 0) ? elems.Keys.Max() + 1 : 1;
-                                elems.Add(key, apiElement);
+                                elems.Add(newElemID, apiElement);
+                                newElemID++;
                             }
                                
                         }
@@ -453,9 +478,9 @@ namespace GhSA.Components
                                         topo.Add(id);
                                     else
                                     {
-                                        int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
-                                        nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(meshVerticies[meshVertexIndex[k]]));
-                                        topo.Add(key);
+                                        nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(meshVerticies[meshVertexIndex[k]]));
+                                        topo.Add(newNodeID);
+                                        newNodeID++;
                                     }
                                 }
                                 //update topology in Element
@@ -480,8 +505,8 @@ namespace GhSA.Components
                                 }
                                 else
                                 {
-                                    int key = (elems.Count > 0) ? elems.Keys.Max() + 1 : 1;
-                                    elems.Add(key, apiMeshElement);
+                                    elems.Add(newElemID, apiMeshElement);
+                                    newElemID++;
                                 }
                                     
 
@@ -497,7 +522,7 @@ namespace GhSA.Components
                     }
                 }
                 tempprogress = "";
-                progress += "Creating Elem1Ds...Done" + System.Environment.NewLine;
+                progress += "Creating Elem2Ds...Done" + System.Environment.NewLine;
                 ReportProgress(progress + tempprogress);
 
 
@@ -508,9 +533,19 @@ namespace GhSA.Components
                 // We take out the existing members in the model and work on that dictionary
                 tempprogress = "Creating Mem1Ds";
                 ReportProgress(progress + tempprogress);
+
                 // Get existing members
                 IReadOnlyDictionary<int, Member> gsaMems = gsa.Members();
                 Dictionary<int, Member> mems = gsaMems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                // create a counter for creating new members
+                int newMemberID = (mems.Count > 0) ? mems.Keys.Max() + 1 : 1; //checking the existing model nodes
+                int existingMem1dMaxID = Mem1ds.Max(x => x.ID); // max ID in new Elem1ds
+                int existingMem2dMaxID = Mem2ds.Max(x => x.ID); // max ID in new Elem2ds
+                if (existingMem1dMaxID > newMemberID)
+                    newMemberID = existingMem1dMaxID + 1;
+                if (existingMem2dMaxID > newMemberID)
+                    newMemberID = existingMem2dMaxID + 1;
 
                 if (Mem1ds != null)
                 {
@@ -543,9 +578,9 @@ namespace GhSA.Components
                                     topo += id;
                                 else
                                 {
-                                    int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
-                                    nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                    topo += key;
+                                    nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                    topo += newNodeID;
+                                    newNodeID++;
                                 }
 
                                 if (j != member1d.Topology.Count - 1)
@@ -576,8 +611,8 @@ namespace GhSA.Components
                             }
                             else
                             {
-                                int key = (mems.Count > 0) ? mems.Keys.Max() + 1 : 1;
-                                mems.Add(key, apiMember);
+                                mems.Add(newMemberID, apiMember);
+                                newMemberID++;
                             }
                                 
                         }
@@ -626,9 +661,9 @@ namespace GhSA.Components
                                     topo += id;
                                 else
                                 {
-                                    int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
-                                    nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                    topo += key;
+                                    nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                    topo += newNodeID;
+                                    newNodeID++;
                                 }
 
                                 if (j != member2d.Topology.Count - 1)
@@ -658,9 +693,9 @@ namespace GhSA.Components
                                         topo += id;
                                     else
                                     {
-                                        int key = nodes.Keys.Max() + 1;
-                                        nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                        topo += key;
+                                        nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                        topo += newNodeID;
+                                        newNodeID++;
                                     }
 
                                     if (k != member2d.VoidTopology[j].Count - 1)
@@ -692,9 +727,9 @@ namespace GhSA.Components
                                         topo += id;
                                     else
                                     {
-                                        int key = nodes.Keys.Max() + 1;
-                                        nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                        topo += key;
+                                        nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                        topo += newNodeID;
+                                        newNodeID++;
                                     }
 
                                     if (k != member2d.IncLinesTopology[j].Count - 1)
@@ -718,9 +753,9 @@ namespace GhSA.Components
                                     topo += id;
                                 else
                                 {
-                                    int key = nodes.Keys.Max() + 1;
-                                    nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                    topo += key;
+                                    nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                    topo += newNodeID;
+                                    newNodeID++;
                                 }
 
                                 if (j != member2d.InclusionPoints.Count - 1)
@@ -754,8 +789,8 @@ namespace GhSA.Components
                             }
                             else
                             {
-                                int key = (mems.Count > 0) ? mems.Keys.Max() + 1 : 1;
-                                mems.Add(key, apimember);
+                                mems.Add(newMemberID, apimember);
+                                newMemberID++;
                             }
                         }
 
@@ -846,6 +881,7 @@ namespace GhSA.Components
                 ReportProgress(progress + tempprogress);
 
                 #endregion
+
                 tempprogress = "Setting nodes";
                 ReportProgress(progress + tempprogress);
                 if (CancellationToken.IsCancellationRequested) return;
