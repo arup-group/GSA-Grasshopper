@@ -46,10 +46,6 @@
       <HintPath>..\packages\RhinoCommon.6.10.18308.14011\lib\net45\Eto.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="GhSA, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\GhSA.dll</HintPath>
-    </Reference>
     <Reference Include="GH_IO, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
       <HintPath>..\packages\Grasshopper.6.10.18308.14011\lib\net45\GH_IO.dll</HintPath>
       <Private>False</Private>
@@ -57,6 +53,10 @@
     <Reference Include="Grasshopper, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=dda4f5ec2cd80803, processorArchitecture=MSIL">
       <HintPath>..\packages\Grasshopper.6.10.18308.14011\lib\net45\Grasshopper.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="GSA, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\gsagrasshoppertest2\GSA-Grasshopper\UnitTestGhSA\bin\Debug\GSA.dll</HintPath>
     </Reference>
     <Reference Include="GsaAPI">
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>

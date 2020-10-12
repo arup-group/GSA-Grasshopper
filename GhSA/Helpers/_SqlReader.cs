@@ -44,7 +44,6 @@ namespace GhSA.Util.Gsa
             using (var db = Connection(filePath))
             {
                 db.Open();
-                //result = db.Query<string>("Select CAT_NAME from Catalogues").ToList();
                 SQLiteCommand cmd = db.CreateCommand();
                 cmd.CommandText = @"Select CAT_NAME from Catalogues";
                 cmd.CommandType = CommandType.Text;
@@ -73,7 +72,6 @@ namespace GhSA.Util.Gsa
             using (var db = Connection(filePath))
             {
                 db.Open();
-                //result = db.Query<string>("Select CAT_NAME from Catalogues").ToList();
                 SQLiteCommand cmd = db.CreateCommand();
                 cmd.CommandText = $"Select TYPE_NAME from Types where TYPE_CAT_NUM = (Select CAT_NUM from Catalogues where CAT_NAME LIKE '%{catalogue}%' )";
                 cmd.CommandType = CommandType.Text;
@@ -103,7 +101,6 @@ namespace GhSA.Util.Gsa
             using (var db = Connection(filePath))
             {
                 db.Open();
-                //result = db.Query<string>("Select CAT_NAME from Catalogues").ToList();
                 SQLiteCommand cmd = db.CreateCommand();
                 cmd.CommandText = $"Select SECT_NAME from Sect where SECT_TYPE_NUM = (Select TYPE_NUM from Types where Type_Name LIKE '%{type}%'  )";
                 cmd.CommandType = CommandType.Text;
