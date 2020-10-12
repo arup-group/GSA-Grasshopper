@@ -256,16 +256,18 @@ namespace GhSA.Components
                 // Get existing nodes
                 IReadOnlyDictionary<int, Node> gsaNodes = gsa.Nodes();
                 Dictionary<int, Node> nodes = gsaNodes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                
+
                 // create a counter for creating new nodes
                 int newNodeID = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1; //checking the existing model nodes
-                int existingNodeMaxID = Nodes.Max(x => x.ID); // max ID in new nodes
-                if (existingNodeMaxID > newNodeID)
-                    newNodeID = existingNodeMaxID + 1;
 
                 // Add/Set Nodes
                 if (Nodes != null)
                 {
+                    // update counter if new nodes have set ID higher than existing max
+                    int existingNodeMaxID = Nodes.Max(x => x.ID); // max ID in new nodes
+                    if (existingNodeMaxID > newNodeID)
+                        newNodeID = existingNodeMaxID + 1;
+
                     for (int i = 0; i < Nodes.Count; i++)
                     {
                         if (Nodes[i] != null)
@@ -350,8 +352,8 @@ namespace GhSA.Components
 
                         // 👉 Checking for cancellation!
                         if (CancellationToken.IsCancellationRequested) return;
-                        tempprogress = "Creating Nodes..." + (i / (Nodes.Count - 1)).ToString("0%");
-                        ReportProgress(progress + tempprogress);
+                        //tempprogress = "Creating Nodes..." + (i / (Nodes.Count - 1)).ToString("0%");
+                        //ReportProgress(progress + tempprogress);
                         //ReportProgress("Creating Nodes " + (i / (Nodes.Count - 1)).ToString("0%"));
                     }
                 }
@@ -371,12 +373,18 @@ namespace GhSA.Components
 
                 // create a counter for creating new elements
                 int newElemID = (elems.Count > 0) ? elems.Keys.Max() + 1 : 1; //checking the existing model nodes
-                int existingElem1dMaxID = Elem1ds.Max(x => x.ID); // max ID in new Elem1ds
-                int existingElem2dMaxID = Elem2ds.Max(x => x.ID.Max()); // max ID in new Elem2ds
-                if (existingElem1dMaxID > newElemID)
-                    newElemID = existingElem1dMaxID + 1;
-                if (existingElem2dMaxID > newElemID)
-                    newElemID = existingElem2dMaxID + 1;
+                if (Elem1ds != null)
+                {
+                    int existingElem1dMaxID = Elem1ds.Max(x => x.ID); // max ID in new Elem1ds
+                    if (existingElem1dMaxID > newElemID)
+                        newElemID = existingElem1dMaxID + 1;
+                }
+                if (Elem2ds != null)
+                {
+                    int existingElem2dMaxID = Elem2ds.Max(x => x.ID.Max()); // max ID in new Elem2ds
+                    if (existingElem2dMaxID > newElemID)
+                        newElemID = existingElem2dMaxID + 1;
+                }
 
                 if (Elem1ds != null)
                 {
@@ -442,8 +450,8 @@ namespace GhSA.Components
 
                         // 👉 Checking for cancellation!
                         if (CancellationToken.IsCancellationRequested) return;
-                        tempprogress = "Creating Elem1Ds..." + (i / (Elem1ds.Count - 1)).ToString("0%");
-                        ReportProgress(progress + tempprogress);
+                        //tempprogress = "Creating Elem1Ds..." + (i / (Elem1ds.Count - 1)).ToString("0%");
+                        //ReportProgress(progress + tempprogress);
                     }
                 }
                 tempprogress = "";
@@ -516,8 +524,8 @@ namespace GhSA.Components
 
                             // 👉 Checking for cancellation!
                             if (CancellationToken.IsCancellationRequested) return;
-                            tempprogress = "Creating Elem2Ds..." + (i / (Elem2ds.Count - 1)).ToString("0%");
-                            ReportProgress(progress + tempprogress);
+                            //tempprogress = "Creating Elem2Ds..." + (i / (Elem2ds.Count - 1)).ToString("0%");
+                            //ReportProgress(progress + tempprogress);
                         }
                     }
                 }
@@ -540,12 +548,18 @@ namespace GhSA.Components
 
                 // create a counter for creating new members
                 int newMemberID = (mems.Count > 0) ? mems.Keys.Max() + 1 : 1; //checking the existing model nodes
-                int existingMem1dMaxID = Mem1ds.Max(x => x.ID); // max ID in new Elem1ds
-                int existingMem2dMaxID = Mem2ds.Max(x => x.ID); // max ID in new Elem2ds
-                if (existingMem1dMaxID > newMemberID)
-                    newMemberID = existingMem1dMaxID + 1;
-                if (existingMem2dMaxID > newMemberID)
-                    newMemberID = existingMem2dMaxID + 1;
+                if (Mem1ds != null)
+                {
+                    int existingMem1dMaxID = Mem1ds.Max(x => x.ID); // max ID in new Elem1ds
+                    if (existingMem1dMaxID > newMemberID)
+                        newMemberID = existingMem1dMaxID + 1;
+                }
+                if (Mem2ds != null)
+                {
+                    int existingMem2dMaxID = Mem2ds.Max(x => x.ID); // max ID in new Elem2ds
+                    if (existingMem2dMaxID > newMemberID)
+                        newMemberID = existingMem2dMaxID + 1;
+                }
 
                 if (Mem1ds != null)
                 {
@@ -619,8 +633,8 @@ namespace GhSA.Components
 
                         // 👉 Checking for cancellation!
                         if (CancellationToken.IsCancellationRequested) return;
-                        tempprogress = "Creating Mem1Ds..." + (i / (Mem1ds.Count - 1)).ToString("0%");
-                        ReportProgress(progress + tempprogress);
+                        //tempprogress = "Creating Mem1Ds..." + (i / (Mem1ds.Count - 1)).ToString("0%");
+                        //ReportProgress(progress + tempprogress);
                     }
                 }
                 tempprogress = "";
@@ -796,8 +810,8 @@ namespace GhSA.Components
 
                         // 👉 Checking for cancellation!
                         if (CancellationToken.IsCancellationRequested) return;
-                        tempprogress = "Creating Mem1Ds..." + (i / (Mem2ds.Count - 1)).ToString("0%");
-                        ReportProgress(progress + tempprogress);
+                        //tempprogress = "Creating Mem1Ds..." + (i / (Mem2ds.Count - 1)).ToString("0%");
+                        //ReportProgress(progress + tempprogress);
                     }
                 }
                 tempprogress = "";
@@ -947,7 +961,7 @@ namespace GhSA.Components
                 IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
                 foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
                 {
-                    tempprogress = "Running analysis Task + task.Key";
+                    tempprogress = "Running analysis Task" + task.Key;
                     ReportProgress(progress + tempprogress);
                     gsa.Analyse(task.Key);
                 }
