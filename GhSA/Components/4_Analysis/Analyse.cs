@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel.Data;
 using GsaAPI;
 using Rhino.Geometry;
 using GhSA.Parameters;
@@ -39,6 +40,7 @@ namespace GhSA.Components
             pManager.AddGenericParameter("1D Members", "Mem1D", "1D Members to add/set in Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("2D Members", "Mem2D", "2D Members to add/set in Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Loads", "Load", "Loads to add/set in Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Section / Prop2D", "SecProp", "Sections and Prop2Ds to set in Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Analysis Settings", "ASet", "Analysis Method and Settings for Model", GH_ParamAccess.list);
             for (int i = 0; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
@@ -61,8 +63,10 @@ namespace GhSA.Components
             List<GsaMember1d> Mem1ds { get; set; }
             List<GsaMember2d> Mem2ds { get; set; }
             List<GsaLoad> Loads { get; set; }
+            List<GsaSection> Sections { get; set; }
+            List<GsaProp2d> Prop2Ds { get; set; }
             #endregion
-            
+
             public override void GetData(IGH_DataAccess DA, GH_ComponentParamServer Params)
             {
                 // Get Model input
@@ -82,6 +86,13 @@ namespace GhSA.Components
                         //return;
                     }
                 }
+
+                //Get main data input
+                //GH_Structure<GH_Curve> gh_Curves;
+                //DA.GetDataTree(0, out gh_Curves);
+
+                //GH_Structure<Grasshopper.Kernel.Types.IGH_GeometricGoo> gh_Geo;
+                //DA.GetDataTree(1, out gh_Geo);
 
                 // Get Node input
                 List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
@@ -176,6 +187,24 @@ namespace GhSA.Components
                 // Get Loads input
                 gh_types = new List<GH_ObjectWrapper>();
                 List<GsaLoad> in_loads = new List<GsaLoad>();
+                if (DA.GetDataList(4, gh_types))
+                {
+                    for (int i = 0; i < gh_types.Count; i++)
+                    {
+                        gh_typ = gh_types[i];
+                        if (gh_typ.Value is GsaLoadGoo)
+                        {
+                            GsaLoad gsa = null;
+                            gh_typ.CastTo(ref gsa);
+                            in_loads.Add(gsa);
+                        }
+                    }
+                    Loads = in_loads;
+                }
+
+                // Get Section Property input
+                gh_types = new List<GH_ObjectWrapper>();
+                List<GsaSection> in_sect = new List<GsaSection>();
                 if (DA.GetDataList(4, gh_types))
                 {
                     for (int i = 0; i < gh_types.Count; i++)

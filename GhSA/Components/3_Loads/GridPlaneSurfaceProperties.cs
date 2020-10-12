@@ -78,11 +78,14 @@ namespace GhSA.Components
                 DA.SetData(6, gps.GridPlane.ToleranceBelow);
                 DA.SetData(7, gps.GridSurface.Name);
                 DA.SetData(8, gps.GridSurface.Elements);
-                DA.SetData(9, gps.GridSurface.ElementType.ToString());
+                string elemtype = gps.GridSurface.ElementType.ToString();
+                DA.SetData(9, Char.ToUpper(elemtype[0]) + elemtype.Substring(1).ToLower().Replace("_", " "));
                 DA.SetData(10, gps.GridSurface.Tolerance);
-                DA.SetData(11, gps.GridSurface.SpanType.ToString());
+                string spantype = gps.GridSurface.SpanType.ToString();
+                DA.SetData(11, Char.ToUpper(spantype[0]) + spantype.Substring(1).ToLower().Replace("_", " "));
                 DA.SetData(12, gps.GridSurface.Direction);
-                DA.SetData(13, gps.GridSurface.ExpansionType.ToString());
+                string expantype = gps.GridSurface.ExpansionType.ToString();
+                DA.SetData(13, Char.ToUpper(expantype[0]) + expantype.Substring(1).ToLower().Replace("_", " "));
                 bool simple = false;
                 if (gps.GridSurface.SpanType == GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS)
                     simple = true;

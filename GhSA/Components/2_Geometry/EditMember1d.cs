@@ -277,7 +277,7 @@ namespace GhSA.Components
                     Y = mem.Member.Offset.Y,
                     Z = mem.Member.Offset.Z
                 };
-                DA.SetData(5, gsaOffset);
+                DA.SetData(5, new GsaOffsetGoo(gsaOffset));
 
                 DA.SetData(6, mem.ReleaseStart);
                 DA.SetData(7, mem.ReleaseEnd);

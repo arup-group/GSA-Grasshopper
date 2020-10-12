@@ -263,7 +263,7 @@ namespace GhSA.Components
                 {
                     Z = mem.Member.Offset.Z
                 };
-                DA.SetData(3, gsaOffset);
+                DA.SetData(3, new GsaOffsetGoo(gsaOffset));
 
                 DA.SetDataList(4, mem.InclusionPoints);
                 DA.SetDataList(5, mem.InclusionLines);

@@ -156,7 +156,7 @@ namespace GhSA.Components
 
                 GsaOffset gsaoffset = new GsaOffset();
                 //offset.Z = gsaProp2d.Prop2d.Offset; // GsaAPI to include prop2d offset
-                DA.SetData(5, gsaoffset);
+                DA.SetData(5, new GsaOffsetGoo(gsaoffset));
 
                 DA.SetData(6, prop.ID);
                 DA.SetData(7, prop.Prop2d.Name);
