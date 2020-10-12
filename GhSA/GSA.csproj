@@ -103,6 +103,7 @@
   <ItemGroup>
     <Compile Include="AsyncComponentBase\GH_AsyncComponent.cs" />
     <Compile Include="AsyncComponentBase\IAsyncComponentWorker.cs" />
+    <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\Tests\Sample_PrimeCalculatorAsyncComponent.cs" />
     <Compile Include="Components\Tests\Sample_UslessCyclesComponent.cs" />
     <Compile Include="Components\0_Model\EditTitles.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="Helpers\_RhinoConvertions.cs" />
     <Compile Include="Parameters\GsaSpringParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\Comp_TripleButton.cs" />
     <Compile Include="UI\Comp_Button.cs" />
     <Compile Include="Helpers\_Colour.cs" />
     <Compile Include="UI\Comp_Profile.cs" />

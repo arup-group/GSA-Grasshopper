@@ -41,7 +41,7 @@ namespace GhSA.Components
             pManager.AddGenericParameter("2D Members", "Mem2D", "2D Members to add/set in Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Loads", "Load", "Loads to add/set in Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Section / Prop2D", "SecProp", "Sections and Prop2Ds to set in Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Analysis Settings", "ASet", "Analysis Method and Settings for Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Analysis Settings", "ATasks", "Analysis Method and Settings for Model", GH_ParamAccess.list);
             for (int i = 0; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
         }
@@ -247,10 +247,9 @@ namespace GhSA.Components
                 string progress = "";
                 string tempprogress = "";
 
-                #region nodes
+                #region Nodes
                 // ### Nodes ###
-                tempprogress = "Creating Nodes";
-                ReportProgress(progress + tempprogress);
+                
                 // We take out the existing nodes in the model and work on that dictionary
 
                 // Get existing nodes
@@ -263,6 +262,9 @@ namespace GhSA.Components
                 // Add/Set Nodes
                 if (Nodes != null)
                 {
+                    tempprogress = "Creating Nodes";
+                    ReportProgress(progress + tempprogress);
+
                     // update counter if new nodes have set ID higher than existing max
                     int existingNodeMaxID = Nodes.Max(x => x.ID); // max ID in new nodes
                     if (existingNodeMaxID > newNodeID)
@@ -356,17 +358,16 @@ namespace GhSA.Components
                         //ReportProgress(progress + tempprogress);
                         //ReportProgress("Creating Nodes " + (i / (Nodes.Count - 1)).ToString("0%"));
                     }
+                    tempprogress = "";
+                    progress += "Creating Nodes...Done" + System.Environment.NewLine;
+                    ReportProgress(progress + tempprogress);
                 }
-                tempprogress = "";
-                progress += "Creating Nodes...Done" + System.Environment.NewLine;
-                ReportProgress(progress + tempprogress);
                 #endregion
 
                 #region Elements
                 // ### Elements ###
                 // We take out the existing elements in the model and work on that dictionary
-                tempprogress = "Creating Elem1Ds";
-                ReportProgress(progress + tempprogress);
+                
                 // Get existing elements
                 IReadOnlyDictionary<int, Element> gsaElems = gsa.Elements();
                 Dictionary<int, Element> elems = gsaElems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -385,10 +386,13 @@ namespace GhSA.Components
                     if (existingElem2dMaxID > newElemID)
                         newElemID = existingElem2dMaxID + 1;
                 }
-
+                
+                // Elem1ds
                 if (Elem1ds != null)
                 {
-                    // Elem1ds
+                    tempprogress = "Creating Elem1Ds";
+                    ReportProgress(progress + tempprogress);
+                    
                     for (int i = 0; i < Elem1ds.Count; i++)
                     {
                         if (Elem1ds[i] != null)
@@ -453,16 +457,17 @@ namespace GhSA.Components
                         //tempprogress = "Creating Elem1Ds..." + (i / (Elem1ds.Count - 1)).ToString("0%");
                         //ReportProgress(progress + tempprogress);
                     }
+                    tempprogress = "";
+                    progress += "Creating Elem1Ds...Done" + System.Environment.NewLine;
+                    ReportProgress(progress + tempprogress);
                 }
-                tempprogress = "";
-                progress += "Creating Elem1Ds...Done" + System.Environment.NewLine;
-                ReportProgress(progress + tempprogress);
 
-                tempprogress = "Creating Elem2Ds";
-                ReportProgress(progress + tempprogress);
+                // Elem2ds
                 if (Elem2ds != null)
                 {
-                    // Elem2ds
+                    tempprogress = "Creating Elem2Ds";
+                    ReportProgress(progress + tempprogress);
+                    
                     for (int i = 0; i < Elem2ds.Count; i++)
                     {
                         if (Elem2ds[i] != null)
@@ -528,19 +533,16 @@ namespace GhSA.Components
                             //ReportProgress(progress + tempprogress);
                         }
                     }
+                    tempprogress = "";
+                    progress += "Creating Elem2Ds...Done" + System.Environment.NewLine;
+                    ReportProgress(progress + tempprogress);
                 }
-                tempprogress = "";
-                progress += "Creating Elem2Ds...Done" + System.Environment.NewLine;
-                ReportProgress(progress + tempprogress);
-
-
                 #endregion
 
                 #region Members
                 // ### Members ###
                 // We take out the existing members in the model and work on that dictionary
-                tempprogress = "Creating Mem1Ds";
-                ReportProgress(progress + tempprogress);
+               
 
                 // Get existing members
                 IReadOnlyDictionary<int, Member> gsaMems = gsa.Members();
@@ -561,9 +563,12 @@ namespace GhSA.Components
                         newMemberID = existingMem2dMaxID + 1;
                 }
 
+                // Mem1ds
                 if (Mem1ds != null)
                 {
-                    // Mem1ds
+                    tempprogress = "Creating Mem1Ds";
+                    ReportProgress(progress + tempprogress);
+
                     for (int i = 0; i < Mem1ds.Count; i++)
                     {
                         if (Mem1ds[i] != null)
@@ -636,16 +641,17 @@ namespace GhSA.Components
                         //tempprogress = "Creating Mem1Ds..." + (i / (Mem1ds.Count - 1)).ToString("0%");
                         //ReportProgress(progress + tempprogress);
                     }
+                    tempprogress = "";
+                    progress += "Creating Mem1Ds...Done" + System.Environment.NewLine;
+                    ReportProgress(progress + tempprogress);
                 }
-                tempprogress = "";
-                progress += "Creating Mem1Ds...Done" + System.Environment.NewLine;
-                ReportProgress(progress + tempprogress);
-                
-                tempprogress = "Creating Mem2Ds";
-                ReportProgress(progress + tempprogress);
+
+                // Mem2ds
                 if (Mem2ds != null)
                 {
-                    // Mem2ds
+                    tempprogress = "Creating Mem2Ds";
+                    ReportProgress(progress + tempprogress);
+
                     for (int i = 0; i < Mem2ds.Count; i++)
                     {
                         if (Mem2ds[i] != null)
@@ -813,18 +819,16 @@ namespace GhSA.Components
                         //tempprogress = "Creating Mem1Ds..." + (i / (Mem2ds.Count - 1)).ToString("0%");
                         //ReportProgress(progress + tempprogress);
                     }
+                    tempprogress = "";
+                    progress += "Creating Mem2Ds...Done" + System.Environment.NewLine;
+                    ReportProgress(progress + tempprogress);
                 }
-                tempprogress = "";
-                progress += "Creating Mem2Ds...Done" + System.Environment.NewLine;
-                ReportProgress(progress + tempprogress);
 
-                tempprogress = "Creating Loads";
-                ReportProgress(progress + tempprogress);
+                
                 #endregion
 
-                #region loads
+                #region Loads
                 // ### Loads ###
-                ReportProgress("Creating Loads");
                 // We let the existing loads (if any) survive and just add new loads
 
                 // Get existing loads
@@ -840,6 +844,9 @@ namespace GhSA.Components
 
                 if (Loads != null)
                 {
+                    tempprogress = "Creating Loads";
+                    ReportProgress(progress + tempprogress);
+
                     for (int i = 0; i < Loads.Count; i++)
                     {
                         if (Loads[i] != null)
@@ -889,13 +896,115 @@ namespace GhSA.Components
                         tempprogress = "Creating Loads..." + (i / (Loads.Count - 1)).ToString("0%");
                         ReportProgress(progress + tempprogress);
                     }
+                    tempprogress = "";
+                    progress += "Creating Loads...Done" + System.Environment.NewLine;
+                    ReportProgress(progress + tempprogress);
                 }
-                tempprogress = "";
-                progress += "Creating Loads...Done" + System.Environment.NewLine;
-                ReportProgress(progress + tempprogress);
-
                 #endregion
 
+                #region Sections
+                // ### Sections ###
+                // We take out the existing sections in the model and work on that dictionary
+
+                // Get existing nodes
+                IReadOnlyDictionary<int, Section> gsaSections = gsa.Sections();
+                Dictionary<int, Section> sections = gsaSections.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                // create a counter for creating new nodes
+                int newSectionID = (sections.Count > 0) ? sections.Keys.Max() + 1 : 1; //checking the existing model
+
+                // Add/Set Nodes
+                if (Sections != null)
+                {
+                    tempprogress = "Creating Sections";
+                    ReportProgress(progress + tempprogress);
+
+                    // update counter if new nodes have set ID higher than existing max
+                    int existingSectionsMaxID = Sections.Max(x => x.ID); // max ID in new 
+                    if (existingSectionsMaxID > newSectionID)
+                        newSectionID = existingSectionsMaxID + 1;
+
+                    for (int i = 0; i < Sections.Count; i++)
+                    {
+                        if (Sections[i] != null)
+                        {
+                            GsaSection section = Sections[i];
+                            Section apiSection = section.Section;
+
+                            if (section.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+                            {
+                                sections[section.ID] = apiSection;
+                            }
+                            else
+                            {
+                                sections.Add(newSectionID, apiSection);
+                                newSectionID++;
+                            }
+                        }
+
+                        // 👉 Checking for cancellation!
+                        if (CancellationToken.IsCancellationRequested) return;
+                        //tempprogress = "Creating Sections..." + (i / (Sections.Count - 1)).ToString("0%");
+                        //ReportProgress(progress + tempprogress);
+                    }
+                    tempprogress = "";
+                    progress += "Creating Sections...Done" + System.Environment.NewLine;
+                    ReportProgress(progress + tempprogress);
+                }
+                #endregion
+
+                #region Prop2ds
+                // ### Sections ###
+                // We take out the existing sections in the model and work on that dictionary
+
+                // Get existing nodes
+                IReadOnlyDictionary<int, Prop2D> gsaProp2ds = gsa.Prop2Ds();
+                Dictionary<int, Prop2D> prop2ds = gsaProp2ds.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                // create a counter for creating new nodes
+                int newProp2dID = (gsaProp2ds.Count > 0) ? gsaProp2ds.Keys.Max() + 1 : 1; //checking the existing model
+
+                // Prop2Ds
+                if (Prop2Ds != null)
+                {
+                    tempprogress = "Creating Prop2Ds";
+                    ReportProgress(progress + tempprogress);
+
+                    // update counter if new nodes have set ID higher than existing max
+                    int existingProp2dMaxID = Prop2Ds.Max(x => x.ID); // max ID in new 
+                    if (existingProp2dMaxID > newProp2dID)
+                        newProp2dID = existingProp2dMaxID + 1;
+
+                    for (int i = 0; i < Prop2Ds.Count; i++)
+                    {
+                        if (Prop2Ds[i] != null)
+                        {
+                            GsaProp2d prop2d = Prop2Ds[i];
+                            Prop2D apiProp2d = prop2d.Prop2d;
+
+                            if (prop2d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+                            {
+                                prop2ds[prop2d.ID] = apiProp2d;
+                            }
+                            else
+                            {
+                                prop2ds.Add(newProp2dID, apiProp2d);
+                                newProp2dID++;
+                            }
+                        }
+
+                        // 👉 Checking for cancellation!
+                        if (CancellationToken.IsCancellationRequested) return;
+                        //tempprogress = "Creating Sections..." + (i / (Sections.Count - 1)).ToString("0%");
+                        //ReportProgress(progress + tempprogress);
+                    }
+                    tempprogress = "";
+                    progress += "Creating Prop2ds...Done" + System.Environment.NewLine;
+                    ReportProgress(progress + tempprogress);
+                }
+                #endregion
+
+                #region set stuff in model
                 tempprogress = "Setting nodes";
                 ReportProgress(progress + tempprogress);
                 if (CancellationToken.IsCancellationRequested) return;
@@ -940,10 +1049,22 @@ namespace GhSA.Components
                 ReadOnlyCollection<GridAreaLoad> setarea = new ReadOnlyCollection<GridAreaLoad>(gridAreaLoads);
                 gsa.AddGridAreaLoads(setarea);
 
+                tempprogress = "Setting sections";
+                ReportProgress(progress + tempprogress);
+                ReadOnlyDictionary<int, Section> setsect = new ReadOnlyDictionary<int, Section>(sections);
+                gsa.SetSections(setsect);
+
+                tempprogress = "Setting prop2ds";
+                ReportProgress(progress + tempprogress);
+                ReadOnlyDictionary<int, Prop2D> setpr2d = new ReadOnlyDictionary<int, Prop2D>(prop2ds);
+                gsa.SetProp2Ds(setpr2d);
+
                 tempprogress = "";
                 progress += "Setting objects...Done" + System.Environment.NewLine;
                 ReportProgress(progress + tempprogress);
+                #endregion
 
+                #region meshing
                 // Create elements from members
                 tempprogress = "Meshing members...";
                 ReportProgress(progress + tempprogress);
@@ -953,8 +1074,9 @@ namespace GhSA.Components
                 tempprogress = "";
                 progress += "Meshing members...Done" + System.Environment.NewLine;
                 ReportProgress(progress + tempprogress);
+                #endregion
 
-
+                #region analysis
                 //analysis
                 tempprogress = "Running analysis...";
                 ReportProgress(progress + tempprogress);
@@ -969,6 +1091,10 @@ namespace GhSA.Components
                 tempprogress = "";
                 progress += "Analysis...Done" + System.Environment.NewLine;
                 ReportProgress(progress + tempprogress);
+
+                #endregion 
+
+
                 WorkModel.Model = gsa;
 
                 //gsa.SaveAs("C:\\Users\\Kristjan.Nielsen\\Desktop\\GsaGH_test.gwb");

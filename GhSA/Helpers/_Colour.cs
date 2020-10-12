@@ -41,6 +41,11 @@ namespace GhSA.UI
             get { return Color.FromArgb(255, 244, 244, 244); }
         }
 
+        public static Color GsaDarkGrey
+        {
+            get { return Color.FromArgb(255, 164, 164, 164); }
+        }
+
         public static Color GsaDarkPurple
         {
             get { return Color.FromArgb(255, 136, 0, 136); }
@@ -56,10 +61,19 @@ namespace GhSA.UI
         {
             get { return new SolidBrush(GsaDarkBlue); }
         }
+        public static Brush InactiveButtonColor
+        {
+            get { return new SolidBrush(Color.FromArgb(255, 216, 216, 216)); }
+        }
 
         public static Color BorderColour
         {
             get {  return GsaLightGrey; }
+        }
+
+        public static Brush InactiveBorderColor
+        {
+            get { return new SolidBrush(Color.FromArgb(0, 216, 216, 216)); }
         }
 
         public static Color SpacerColour
@@ -70,6 +84,11 @@ namespace GhSA.UI
         public static Brush AnnotationTextDark
         {
             get { return Brushes.Black; }
+        }
+
+        public static Brush AnnotationTextDarkGrey
+        {
+            get { return new SolidBrush(GsaDarkGrey); }
         }
 
         public static Brush AnnotationTextBright

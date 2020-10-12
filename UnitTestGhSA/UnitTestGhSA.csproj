@@ -56,7 +56,7 @@
     </Reference>
     <Reference Include="GSA, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\gsagrasshoppertest2\GSA-Grasshopper\UnitTestGhSA\bin\Debug\GSA.dll</HintPath>
+      <HintPath>bin\Debug\GSA.dll</HintPath>
     </Reference>
     <Reference Include="GsaAPI">
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>

@@ -25,10 +25,15 @@ namespace GhSA.Parameters
             set { m_model = value; }
         }
 
-
+        public string FileName
+        {
+            get { return m_filename; }
+            set { m_filename = value; }
+        }
 
         #region fields
         private Model m_model;
+        private string m_filename = "";
 
         #endregion
 
@@ -56,6 +61,7 @@ namespace GhSA.Parameters
             if (m_model != null)
             {
                 dup.Model = m_model; //no duplication for now
+                dup.FileName = m_filename;
 
                 //Could duplicate all lists ourselves:
                 //System.Collections.ObjectModel.ReadOnlyDictionary<int, Node> nodes = m_model.Nodes();
