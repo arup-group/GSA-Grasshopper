@@ -61,6 +61,7 @@ namespace GhSA.Util.Gsa
         public int catalogueProfileIndex;
 
         public string catalogueProfileName;
+        public string catalogueTypeName;
 
         public bool isTapered;
         public bool isHollow;
@@ -312,19 +313,21 @@ namespace GhSA.Util.Gsa
             }
             else if (gsaProfile.profileType == GsaProfile.ProfileTypes.Catalogue)
             {
+                string outputTypeABRString = "";
                 string outputSectionString = "";
+                
 
                 if(gsaProfile.catalogueProfileName !=null)
                 {
-                    //MessageBox.Show(gsaProfile.catalogueProfileName.ToString());
                     outputSectionString = gsaProfile.catalogueProfileName.ToString();
+                    outputTypeABRString = gsaProfile.catalogueTypeName.ToString();
                 }
                 
                 //let catalogueName = gsaProfile.catalogueNames[gsaProfile.catalogueIndex]
                 //let typeName = gsaProfile.catalogueTypes(catalogueName)[gsaProfile.catalogueTypeIndex]
                 //let typeAbbrev = gsaProfile.catalogueTypeAbbrev(catalogueName, typeName)
                 //return "CAT " + typeAbbrev + " " + gsaProfile.sectionNames(catalogueName, typeName)[gsaProfile.catalogueProfileIndex]
-                return $"CAT {outputSectionString}"; //to be implemented
+                return $"CAT {outputTypeABRString} {outputSectionString}"; //to be implemented
             }
             else if (gsaProfile.profileType == GsaProfile.ProfileTypes.Geometric)
             {
