@@ -73,8 +73,8 @@ namespace GhSA.Util.Gsa
             {
                 db.Open();
                 SQLiteCommand cmd = db.CreateCommand();
-                cmd.CommandText = $"Select TYPE_NAME from Types where TYPE_CAT_NUM = (Select CAT_NUM from Catalogues where CAT_NAME LIKE '%{catalogue}%' )";
-                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = $"Select TYPE_NAME || ' -- ' || TYPE_ABR as TYPE_NAME from Types where TYPE_CAT_NUM = (Select CAT_NUM from Catalogues where CAT_NAME LIKE '%{catalogue}%' )";
+                cmd.CommandType = CommandType.Text; 
                 SQLiteDataReader r = cmd.ExecuteReader();
                 while (r.Read())
                 {
