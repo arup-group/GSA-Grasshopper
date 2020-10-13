@@ -62,6 +62,7 @@
     </Reference>
     <Reference Include="GH_IO, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
       <HintPath>..\packages\Grasshopper.6.10.18308.14011\lib\net45\GH_IO.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Grasshopper, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=dda4f5ec2cd80803, processorArchitecture=MSIL">
       <HintPath>..\packages\Grasshopper.6.10.18308.14011\lib\net45\Grasshopper.dll</HintPath>
@@ -104,13 +105,13 @@
     <Compile Include="AsyncComponentBase\GH_AsyncComponent.cs" />
     <Compile Include="AsyncComponentBase\IAsyncComponentWorker.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
+    <Compile Include="Components\1_Properties\CreateProfile.cs" />
     <Compile Include="Components\Tests\Sample_PrimeCalculatorAsyncComponent.cs" />
     <Compile Include="Components\Tests\Sample_UslessCyclesComponent.cs" />
     <Compile Include="Components\0_Model\EditTitles.cs" />
     <Compile Include="Components\0_Model\GetLoads.cs" />
     <Compile Include="Components\0_Model\GetProperties.cs" />
     <Compile Include="Components\1_Properties\CreateOffset.cs" />
-    <Compile Include="Components\1_Properties\CreateProfile.cs" />
     <Compile Include="Components\1_Properties\CreateSection.cs" />
     <Compile Include="Components\1_Properties\CreateProp2d.cs" />
     <Compile Include="Components\1_Properties\SectionProperties.cs" />

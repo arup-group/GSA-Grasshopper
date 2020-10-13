@@ -52,6 +52,7 @@ namespace GhSA.Util.Gsa
                 {
                     result.Add(Convert.ToString(r["CAT_NAME"]));
                 }
+                db.Close();
             }
             return result;
         }
@@ -74,12 +75,13 @@ namespace GhSA.Util.Gsa
                 db.Open();
                 SQLiteCommand cmd = db.CreateCommand();
                 cmd.CommandText = $"Select TYPE_NAME || ' -- ' || TYPE_ABR as TYPE_NAME from Types where TYPE_CAT_NUM = (Select CAT_NUM from Catalogues where CAT_NAME LIKE '%{catalogue}%' )";
-                cmd.CommandType = CommandType.Text; 
+                cmd.CommandType = CommandType.Text;
                 SQLiteDataReader r = cmd.ExecuteReader();
                 while (r.Read())
                 {
                     result.Add(Convert.ToString(r["TYPE_NAME"]));
                 }
+                db.Close();
             }
             return result;
         }
@@ -109,6 +111,7 @@ namespace GhSA.Util.Gsa
                 {
                     result.Add(Convert.ToString(r["SECT_NAME"]));
                 }
+                db.Close();
             }
             return result;
         }
