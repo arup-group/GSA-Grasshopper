@@ -444,8 +444,7 @@ namespace GhSA.Parameters
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
             if (Value == null) { return; }
-
-
+            
             if (Value.Point.IsValid)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not

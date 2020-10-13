@@ -121,7 +121,7 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("GSA Model", "GSA", "GSA model containing geometry", GH_ParamAccess.item);
+            pManager.AddGenericParameter("GSA Model", "GSA", "GSA model containing some geometry", GH_ParamAccess.item);
             pManager.AddTextParameter("Node filter list", "No", "Filter import by list." + System.Environment.NewLine +
                 "Node list should take the form:" + System.Environment.NewLine +
                 " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
