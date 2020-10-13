@@ -112,7 +112,7 @@ namespace GhSA.Components
                         // if third list (i.e. types list) is changed, update sections list to account for these section types
                         if (dropdownlistidd == 2)
                         {
-                            sectionlist = SqlReader.GetSectionsDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd], Path.Combine(GsaPath.GetPath, "sectlib.db3"));
+                            sectionlist = SqlReader.GetSectionsDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd].Split(new string[] { " -- " }, StringSplitOptions.None)[0], Path.Combine(GsaPath.GetPath, "sectlib.db3"));
                         }
                         dropdowncontents.Add(sectionlist); 
                         
@@ -129,7 +129,10 @@ namespace GhSA.Components
                         if (dropdownlistidd == 1)
                             catalogueIndex = selectedidd; //to be updated
                         if (dropdownlistidd == 2)
+                        {
                             catalogueTypeIndex = selectedidd; //to be updated
+                            catalogueTypeName = dropdowncontents[dropdownlistidd][selectedidd].Split(new string[] { " -- " }, StringSplitOptions.None)[1];
+                        }
                         if (dropdownlistidd == 3)
                         {
                             catalogueProfileIndex = selectedidd; //to be updated
@@ -229,9 +232,9 @@ namespace GhSA.Components
         readonly List<string> cataloguelist = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(GsaPath.GetPath, "sectlib.db3"));
 
         // second sublist for second dropdown list
-        List<string> typelist = SqlReader.GetTypesDataFromSQLite("euro", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
+        List<string> typelist = SqlReader.GetTypesDataFromSQLite("british", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
 
-        List<string> sectionlist = SqlReader.GetSectionsDataFromSQLite("ipe", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
+        List<string> sectionlist = SqlReader.GetSectionsDataFromSQLite("Universal Beams (BS4", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
 
 
         // list of spacers to inform user the content of dropdown
@@ -255,6 +258,7 @@ namespace GhSA.Components
         int catalogueProfileIndex;
 
         string catalogueProfileName;
+        string catalogueTypeName;
 
         bool isTapered;
         bool isHollow;
@@ -286,7 +290,8 @@ namespace GhSA.Components
                 profile.catalogueProfileIndex = catalogueProfileIndex;
                 profile.catalogueTypeIndex = catalogueTypeIndex;
                 profile.catalogueProfileName = catalogueProfileName;
-                
+                profile.catalogueTypeName = catalogueTypeName;
+
             }
             #endregion
             #region geometric
@@ -850,6 +855,7 @@ namespace GhSA.Components
             writer.SetInt32("catalogueTypeIndex", catalogueTypeIndex);
             writer.SetInt32("catalogueProfileIndex", catalogueProfileIndex);
             writer.SetString("catalogueProfileName", catalogueProfileName);
+            writer.SetString("catalogueTypeName", catalogueTypeName);
             writer.SetBoolean("isTapered", isTapered);
             writer.SetBoolean("isHollow", isHollow);
             writer.SetBoolean("isElliptical", isElliptical);
@@ -913,6 +919,7 @@ namespace GhSA.Components
             catalogueTypeIndex = reader.GetInt32("catalogueTypeIndex");
             catalogueProfileIndex = reader.GetInt32("catalogueProfileIndex");
             catalogueProfileName = reader.GetString("catalogueProfileName");
+            catalogueTypeName = reader.GetString("catalogueTypeName");
 
             isTapered = reader.GetBoolean("isTapered");
             isHollow = reader.GetBoolean("isHollow");
