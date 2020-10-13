@@ -55,7 +55,7 @@ namespace GhSA.Components
 
         public void SetSelected(int dropdownlistidd, int selectedidd, bool taper, bool hollow, bool elliptical, bool general, bool b2b)
         {
-            loadlistid = dropdownlistidd; 
+            loadlistid = dropdownlistidd;
             loadselectid = selectedidd;
 
             if (dropdownlistidd > 0)
@@ -65,7 +65,7 @@ namespace GhSA.Components
                 else
                     selections[dropdownlistidd] = dropdowncontents[dropdownlistidd][selectedidd];
             }
-            
+
             isTapered = taper;
             isHollow = hollow;
             isElliptical = elliptical;
@@ -84,7 +84,7 @@ namespace GhSA.Components
                 dropdownspacer = new List<string>(cataloguespacer);
             else if (_mode == FoldMode.Geometric)
                 dropdownspacer = new List<string>(geometricspacer);
-            else 
+            else
                 dropdownspacer = new List<string>(standardspacer);
 
             switch (selections[0])
@@ -114,10 +114,10 @@ namespace GhSA.Components
                         {
                             sectionlist = SqlReader.GetSectionsDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd].Split(new string[] { " -- " }, StringSplitOptions.None)[0], Path.Combine(GsaPath.GetPath, "sectlib.db3"));
                         }
-                        dropdowncontents.Add(sectionlist); 
-                        
+                        dropdowncontents.Add(sectionlist);
+
                     }
-                    
+
                     if (selections.Count < 2)
                     {
                         selections.Add(cataloguelist[0]);
@@ -140,7 +140,7 @@ namespace GhSA.Components
                         }
 
                     }
-                        
+
                     break;
                 case ("Standard"):
                     if (selections.Count == 1)
@@ -182,7 +182,7 @@ namespace GhSA.Components
                         dropdowncontents.Add(mainlist);
                         dropdowncontents.Add(standardlist);
                     }
-                    
+
                     break;
                 case ("Geometric"):
                     // update inputs
@@ -195,7 +195,7 @@ namespace GhSA.Components
                     {
                         dropdowncontents.Add(mainlist);
                     }
-                    
+
                     break;
             }
         }
@@ -270,7 +270,7 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            
+
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -302,7 +302,7 @@ namespace GhSA.Components
                 if (DA.GetData(0, ref gh_Brep))
                 {
                     Brep brep = new Brep();
-                    if(GH_Convert.ToBrep(gh_Brep, ref brep, GH_Conversion.Both))
+                    if (GH_Convert.ToBrep(gh_Brep, ref brep, GH_Conversion.Both))
                     {
                         // get edge curves from Brep
                         Curve[] edgeSegments = brep.DuplicateEdgeCurves();
@@ -315,7 +315,7 @@ namespace GhSA.Components
                         else
                         {
                             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Cannot convert edge to Polyline");
-                        }    
+                        }
                         Plane.FitPlaneToPoints(ctrl_pts, out Plane plane);
                         Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.ChangeBasis(Plane.WorldXY, plane);
 
@@ -362,7 +362,7 @@ namespace GhSA.Components
                         }
                     }
                 }
-                
+
             }
             #endregion
             #region standard section
@@ -378,7 +378,7 @@ namespace GhSA.Components
                 GH_Number gh_tf2 = new GH_Number();
                 switch (selections[1])
                 {
-                    
+
                     case "Rectangle":
                         profile.stdShape = GsaProfile.StdShapeOptions.Rectangle;
 
@@ -411,7 +411,7 @@ namespace GhSA.Components
 
                         // 0 d
                         DA.GetData(0, ref gh_d);
-                        
+
                         if (isHollow)
                         {
                             if (isElliptical)
@@ -452,7 +452,7 @@ namespace GhSA.Components
 
                         // 3 tf1
                         DA.GetData(3, ref gh_tf1);
-                                                
+
                         if (isGeneral)
                         {
                             if (isTapered)
@@ -613,7 +613,7 @@ namespace GhSA.Components
 
             // set number of input parameters
             int param = 0;
-            
+
             //remove input parameters
             while (Params.Input.Count > param)
                 Params.UnregisterInputParameter(Params.Input[param], true);
@@ -865,7 +865,7 @@ namespace GhSA.Components
             // to save the dropdownlist content, spacer list and selection list 
             // loop through the lists and save number of lists as well
             writer.SetInt32("dropdownCount", dropdowncontents.Count);
-            for (int i = 0; i< dropdowncontents.Count; i++)
+            for (int i = 0; i < dropdowncontents.Count; i++)
             {
                 writer.SetInt32("dropdowncontentsCount" + i, dropdowncontents[i].Count);
                 for (int j = 0; j < dropdowncontents[i].Count; j++)
@@ -967,13 +967,13 @@ namespace GhSA.Components
                 Params.Input[i].Description = "Section Width";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
-                
+
                 if (isTapered)
                 {
                     i++;
-                    Params.Input[i-1].NickName = "b1";
-                    Params.Input[i-1].Name = "Start Width (" + Util.GsaUnit.LengthSection + ")";
-                    Params.Input[i-1].Description = "Section Width at Start";
+                    Params.Input[i - 1].NickName = "b1";
+                    Params.Input[i - 1].Name = "Start Width (" + Util.GsaUnit.LengthSection + ")";
+                    Params.Input[i - 1].Description = "Section Width at Start";
                     Params.Input[i].NickName = "b2";
                     Params.Input[i].Name = "End Width (" + Util.GsaUnit.LengthSection + ")";
                     Params.Input[i].Description = "Section Width at End";
@@ -1046,7 +1046,7 @@ namespace GhSA.Components
                         Params.Input[i].Optional = false;
                     }
                 }
-                
+
             }
             if (_mode == FoldMode.I_section)
             {
