@@ -172,7 +172,7 @@ namespace GhSA.Components
                     {
                         case (FoldMode.Displacement):
                             values = result.Displacement;
-                            unitfactor = 1;
+                            unitfactor = 0.001;
                             break;
                         case (FoldMode.Reaction):
                             values = result.Reaction;
@@ -207,8 +207,8 @@ namespace GhSA.Components
                             d = values.ZZ;
                             break;
                     }
-                    if (Math.Abs(d) > dmax)
-                        dmax = Math.Abs(d);
+                    if (Math.Abs(d) / unitfactor > dmax)
+                        dmax = Math.Abs(d) / unitfactor;
                         
                     xyz.Add(new Vector3d(values.X / unitfactor, values.Y / unitfactor, values.Z / unitfactor));
                     xxyyzz.Add(new Vector3d(values.XX / unitfactor, values.YY / unitfactor, values.ZZ / unitfactor));
@@ -235,7 +235,7 @@ namespace GhSA.Components
                     if (nodes[i] != null)
                     {
                         pts.Add(nodes[i].Point);
-                        t = xyz[i].Z * unitfactor;
+                        t = Math.Abs(xyz[i].Z);
                         if (dmax != 0)
                             col.Add(gH_Gradient.ColourAt(t / dmax));
                         else
@@ -251,7 +251,7 @@ namespace GhSA.Components
                 DA.SetDataList(4, ts);
             }
         }
-        
+
         #region menu override
         private enum FoldMode
         {
