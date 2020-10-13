@@ -16,14 +16,14 @@ namespace GhSA.Components
     /// <summary>
     /// Component to open an existing GSA model
     /// </summary>
-    public class OpenModel : GH_Component, IGH_VariableParameterComponent
+    public class SaveModel : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
-        public OpenModel()
-          : base("Open Model", "Open", "Open an existing GSA model",
+        public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
+        public SaveModel()
+          : base("Save Model", "Save", "Saves your GSA model from this parametric nightmare",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         {
@@ -38,34 +38,81 @@ namespace GhSA.Components
         //This region overrides the typical component layout
         public override void CreateAttributes()
         {
-            m_attributes = new UI.ButtonComponentUI(this, "Open", OpenFile, "Open GSA file");
-
+            m_attributes = new UI.Button3ComponentUI(this, "Save", "Save As", "Open in GSA", SaveFile, SaveAsFile, OpenGSAexe, true, "Save GSA file");
         }
 
-        public void OpenFile()
+        public void SaveFile()
         {
-            var fdi = new Rhino.UI.OpenFileDialog { Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*" };
-            var res = fdi.ShowOpenDialog();
-            if (res) // == DialogResult.OK)
+            if (fileName == null | fileName == "")
+                SaveAsFile();
+            else
             {
-                fileName = fdi.FileName;
-                (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-                Params.OnParametersChanged();
-                ExpireSolution(true);
+                string mes = gsaSaveModel.SaveAs(fileName).ToString();
+                if (mes == GsaAPI.ReturnValue.GS_OK.ToString())
+                {
+                    canOpen = true;
+                    //this.OnAttributesChanged();
+                    //CreateAttributes();
+                    mes = "Saved file";
+                    //ExpireSolution(true);
+                }
+                else
+                {
+                    mes = Char.ToUpper(mes[3]) + mes.Substring(4).ToLower().Replace("_", " ");
+                }
+                this.Message = mes;
             }
         }
 
+        public void SaveAsFile()
+        {
+            var fdi = new Rhino.UI.SaveFileDialog { Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*" };
+            var res = fdi.ShowSaveDialog();
+            if (res) // == DialogResult.OK)
+            {
+                fileName = fdi.FileName;
+                usersetFileName = true;
+                string mes = gsaSaveModel.SaveAs(fileName).ToString();
+                if (mes == GsaAPI.ReturnValue.GS_OK.ToString())
+                {
+                    canOpen = true;
+                    //CreateAttributes();
+                    mes = "Saved file";
+                    //ExpireSolution(true);
+                }
+                else
+                {
+                    mes = Char.ToUpper(mes[3]) + mes.Substring(4).ToLower().Replace("_", " ");
+                }
+                this.Message = mes;
+            }
+        }
+
+        public void OpenGSAexe()
+        {
+            if (fileName != null)
+            {
+                if (fileName != "")
+                {
+                    if (canOpen)
+                        System.Diagnostics.Process.Start(fileName);
+                }
+            }
+        }
         #endregion
 
         #region Input and output
         // This region handles input and output parameters
 
         string fileName = null;
+        bool usersetFileName = false;
+        Model gsaSaveModel;
+        bool canOpen = false;
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Filename and path", "File", "GSA model to open and work with." + System.Environment.NewLine +
-                    System.Environment.NewLine + "Input either path component, a text string with path and " +
-                    System.Environment.NewLine + "filename or an existing GSA model created in Grasshopper.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("GSA Model", "GSA", "GSA model to save", GH_ParamAccess.item);
+            pManager.AddTextParameter("File and Path", "File", "Filename and path", GH_ParamAccess.item);
+            pManager[1].Optional = true;
         }
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
@@ -125,25 +172,35 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             Model model = new Model();
-            
-            string tempfile = "";
-            if (DA.GetData(0, ref tempfile))
-                fileName = tempfile;
-            
-            model.Open(fileName);
-
-            GsaModel gsaModel = new GsaModel
+            GsaModel gsaModel = new GsaModel();
+            GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+            if (DA.GetData(0, ref gh_typ))
             {
-                Model = model,
-                FileName = fileName
-            };
-            
-            Util.GsaTitles.GetTitlesFromGSA(model);
+                if (gh_typ.Value is GsaModelGoo)
+                {
+                    gh_typ.CastTo(ref gsaModel);
+                    gsaSaveModel = gsaModel.Model;
+                    Message = "";
+                }
+                else
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
+                    return;
+                }
 
-            string mes = Path.GetFileName(fileName);
-            mes = mes.Substring(0, mes.Length - 4);
-            Message = mes;
-            DA.SetData(0, new GsaModelGoo(gsaModel));
+                if (!usersetFileName)
+                {
+                    if (gsaModel.FileName != "")
+                        fileName = gsaModel.FileName;
+                }
+
+                string tempfile = "";
+                if (DA.GetData(1, ref tempfile))
+                    fileName = tempfile;
+
+
+                DA.SetData(0, new GsaModelGoo(gsaModel));
+            }
         }
     }
 }
