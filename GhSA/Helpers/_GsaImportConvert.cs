@@ -26,7 +26,7 @@ namespace GhSA.Util.Gsa
         /// <param name="model"></param>
         /// <param name="nodeList"></param>
         /// <returns></returns>
-        public static List<GsaNode> GsaGetPoint(Model model, string nodeList)
+        public static List<GsaNode> GsaGetPoint(Model model, string nodeList, bool removeEmptyIDs = false)
         {
             // Create empty Gsa Node to work on:
             //Node node = new Node();
@@ -37,29 +37,57 @@ namespace GhSA.Util.Gsa
             IReadOnlyDictionary<int, Node> nDict;
             nDict = model.Nodes(nodeList);
 
-            if (nDict.Count > 0)
+            if (!removeEmptyIDs)
             {
-                // Loop through all nodes in Node dictionary and add points to Rhino point list
-                for (int i = 0; i < nDict.Keys.Max(); i++)
+                if (nDict.Count > 0)
                 {
-                    if (nDict.TryGetValue(i + 1, out Node apinode)) //1-base numbering
+                    // Loop through all nodes in Node dictionary and add points to Rhino point list
+                    for (int i = 0; i < nDict.Keys.Max(); i++)
                     {
-                        var p = apinode.Position;
-                        GsaNode n = new GsaNode(new Point3d(p.X, p.Y, p.Z), i + 1)
+                        if (nDict.TryGetValue(i + 1, out Node apinode)) //1-base numbering
                         {
-                            Node = apinode
-                        };
-                        if (apinode.SpringProperty > 0)
-                        {
-                            // to be implement. GsaAPI spring missing.
-                            // get spring property from model
+                            var p = apinode.Position;
+                            GsaNode n = new GsaNode(new Point3d(p.X, p.Y, p.Z), i + 1)
+                            {
+                                Node = apinode
+                            };
+                            if (apinode.SpringProperty > 0)
+                            {
+                                // to be implement. GsaAPI spring missing.
+                                // get spring property from model
+                            }
+                            nodes.Add(n.Duplicate());
                         }
-                        nodes.Add(n.Duplicate());
+                        else
+                            nodes.Add(null);
                     }
-                    else
-                        nodes.Add(null);
                 }
             }
+            else
+            {
+                if (nDict.Count > 0)
+                {
+                    // Loop through all nodes in Node dictionary and add points to Rhino point list
+                    foreach (int key in nDict.Keys)
+                    {
+                        if (nDict.TryGetValue(key, out Node apinode)) //1-base numbering
+                        {
+                            var p = apinode.Position;
+                            GsaNode n = new GsaNode(new Point3d(p.X, p.Y, p.Z), key)
+                            {
+                                Node = apinode
+                            };
+                            if (apinode.SpringProperty > 0)
+                            {
+                                // to be implement. GsaAPI spring missing.
+                                // get spring property from model
+                            }
+                            nodes.Add(n.Duplicate());
+                        }
+                    }
+                }
+            }
+            
             return nodes;
         }
         /// <summary>

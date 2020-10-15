@@ -214,5 +214,57 @@ namespace GhSA.UI
             get { return GsaGold; }
         }
 
+        public static Grasshopper.GUI.Gradient.GH_Gradient Stress_Gradient(List<System.Drawing.Color> colours = null)
+        {
+
+            Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = new Grasshopper.GUI.Gradient.GH_Gradient();
+
+            if (colours.Count < 2 || colours == null)
+            {
+                gH_Gradient.AddGrip(-1, System.Drawing.Color.FromArgb(0, 0, 206));
+                gH_Gradient.AddGrip(-0.666, System.Drawing.Color.FromArgb(0, 127, 229));
+                gH_Gradient.AddGrip(-0.333, System.Drawing.Color.FromArgb(90, 220, 186));
+                gH_Gradient.AddGrip(0, System.Drawing.Color.FromArgb(205, 254, 114));
+                gH_Gradient.AddGrip(0.333, System.Drawing.Color.FromArgb(255, 220, 71));
+                gH_Gradient.AddGrip(0.666, System.Drawing.Color.FromArgb(255, 127, 71));
+                gH_Gradient.AddGrip(1, System.Drawing.Color.FromArgb(205, 0, 71));
+            }
+            else
+            {
+                for (int i = 0; i < colours.Count; i++)
+                {
+                    double t = 1.0 - 2.0 / ((double)colours.Count - 1.0) * (double)i;
+                    gH_Gradient.AddGrip(t, colours[i]);
+                }
+            }
+
+            return gH_Gradient;
+        }
+        public static Grasshopper.GUI.Gradient.GH_Gradient Deflection_Gradient(List<System.Drawing.Color> colours = null)
+        {
+
+            Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = new Grasshopper.GUI.Gradient.GH_Gradient();
+
+            if (colours.Count < 2 || colours == null)
+            {
+                gH_Gradient.AddGrip(1, System.Drawing.Color.FromArgb(205, 0, 71));
+                gH_Gradient.AddGrip(0.833333333, System.Drawing.Color.FromArgb(255, 127, 71));
+                gH_Gradient.AddGrip(0.666666667, System.Drawing.Color.FromArgb(255, 220, 71));
+                gH_Gradient.AddGrip(0.5, System.Drawing.Color.FromArgb(205, 254, 114));
+                gH_Gradient.AddGrip(0.333333333, System.Drawing.Color.FromArgb(90, 220, 186));
+                gH_Gradient.AddGrip(0.166666667, System.Drawing.Color.FromArgb(0, 127, 229));
+                gH_Gradient.AddGrip(0, System.Drawing.Color.FromArgb(0, 0, 206));
+            }
+            else
+            {
+                for (int i = 0; i < colours.Count; i++)
+                {
+                    double t = 1.0 - 1.0 / ((double)colours.Count - 1.0) * (double)i;
+                    gH_Gradient.AddGrip(t, colours[i]);
+                }
+            }
+
+            return gH_Gradient;
+        }
     }
 }
