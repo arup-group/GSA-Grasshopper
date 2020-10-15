@@ -26,7 +26,7 @@ namespace GhSA.Util.Gsa
         /// <param name="model"></param>
         /// <param name="nodeList"></param>
         /// <returns></returns>
-        public static List<GsaNode> GsaGetPoint(Model model, string nodeList, bool completeList = true)
+        public static List<GsaNode> GsaGetPoint(Model model, string nodeList, bool removeEmptyIDs = false)
         {
             // Create empty Gsa Node to work on:
             //Node node = new Node();
@@ -37,7 +37,7 @@ namespace GhSA.Util.Gsa
             IReadOnlyDictionary<int, Node> nDict;
             nDict = model.Nodes(nodeList);
 
-            if (completeList)
+            if (!removeEmptyIDs)
             {
                 if (nDict.Count > 0)
                 {

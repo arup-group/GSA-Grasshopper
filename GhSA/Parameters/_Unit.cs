@@ -154,7 +154,7 @@ namespace GhSA.Util
         private static string m_velocity = "m/s";
         private static string m_acceleration = "m/s\xB2";
         private static string m_energy = "MJ";
-        private static string m_angle = "degree";
+        private static string m_angle = "rad";
         private static string m_time_short = "s";
         private static string m_time_medium = "min";
         private static string m_time_long = "day";

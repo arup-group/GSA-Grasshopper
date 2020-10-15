@@ -153,12 +153,14 @@
     <Compile Include="Helpers\_GsaModelEnums.cs" />
     <Compile Include="Helpers\_GsaImportConvert.cs" />
     <Compile Include="Helpers\_GsaProfileConvert.cs" />
+    <Compile Include="Helpers\_GsaResultsHelper.cs" />
     <Compile Include="Helpers\_RibbonLayout.cs" />
     <Compile Include="Components\0_Model\OpenModel.cs" />
     <Compile Include="GhSAInfo.cs" />
     <Compile Include="Helpers\_SqlReader.cs" />
     <Compile Include="Parameters\GsaLoadParam.cs" />
     <Compile Include="Parameters\GsaGridPlaneSurfaceParam.cs" />
+    <Compile Include="Parameters\_ResultPoint.cs" />
     <Compile Include="Parameters\_Titles.cs" />
     <Compile Include="Parameters\_Unit.cs" />
     <Compile Include="Parameters\GsaProp2d.cs" />

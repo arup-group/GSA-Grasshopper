@@ -221,13 +221,13 @@ namespace GhSA.UI
 
             if (colours.Count < 2 || colours == null)
             {
-                gH_Gradient.AddGrip(-1, System.Drawing.Color.FromArgb(205, 0, 71));
-                gH_Gradient.AddGrip(-0.666, System.Drawing.Color.FromArgb(255, 127, 71));
-                gH_Gradient.AddGrip(-0.333, System.Drawing.Color.FromArgb(255, 220, 71));
+                gH_Gradient.AddGrip(-1, System.Drawing.Color.FromArgb(0, 0, 206));
+                gH_Gradient.AddGrip(-0.666, System.Drawing.Color.FromArgb(0, 127, 229));
+                gH_Gradient.AddGrip(-0.333, System.Drawing.Color.FromArgb(90, 220, 186));
                 gH_Gradient.AddGrip(0, System.Drawing.Color.FromArgb(205, 254, 114));
-                gH_Gradient.AddGrip(0.333, System.Drawing.Color.FromArgb(90, 220, 186));
-                gH_Gradient.AddGrip(0.666, System.Drawing.Color.FromArgb(0, 127, 229));
-                gH_Gradient.AddGrip(1, System.Drawing.Color.FromArgb(0, 0, 206));
+                gH_Gradient.AddGrip(0.333, System.Drawing.Color.FromArgb(255, 220, 71));
+                gH_Gradient.AddGrip(0.666, System.Drawing.Color.FromArgb(255, 127, 71));
+                gH_Gradient.AddGrip(1, System.Drawing.Color.FromArgb(205, 0, 71));
             }
             else
             {
@@ -240,8 +240,6 @@ namespace GhSA.UI
 
             return gH_Gradient;
         }
-
-
         public static Grasshopper.GUI.Gradient.GH_Gradient Deflection_Gradient(List<System.Drawing.Color> colours = null)
         {
 

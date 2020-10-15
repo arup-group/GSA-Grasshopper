@@ -18,7 +18,7 @@ namespace GhSA.Parameters
     {
         #region fields
         public Node Node { get; set; } = new Node();
-        private Plane m_plane;
+        private Plane m_plane = Plane.Unset;
         private int m_id;
         private GsaSpring m_spring;
         #endregion
@@ -60,8 +60,6 @@ namespace GhSA.Parameters
             Node.Position.X = position.X;
             Node.Position.Y = position.Y;
             Node.Position.Z = position.Z;
-            m_plane = Plane.WorldXY;
-            m_plane.Origin = position;
         }
 
         public GsaNode(Point3d position, int ID)
@@ -70,8 +68,6 @@ namespace GhSA.Parameters
             Node.Position.Y = position.Y;
             Node.Position.Z = position.Z;
             m_id = ID;
-            m_plane = Plane.WorldXY;
-            m_plane.Origin = position;
         }
 
         
@@ -87,8 +83,6 @@ namespace GhSA.Parameters
             Node.Restraint.XX = bool6.XX;
             Node.Restraint.YY = bool6.YY;
             Node.Restraint.ZZ = bool6.ZZ;
-            m_plane = Plane.WorldXY;
-            m_plane.Origin = position;
         }
 
         public GsaNode(Point3d position, int ID, GsaBool6 bool6, Plane plane)
@@ -117,8 +111,6 @@ namespace GhSA.Parameters
             Node.Restraint.XX = restraintXX; 
             Node.Restraint.YY = restraintYY;
             Node.Restraint.ZZ = restraintZZ;
-            m_plane = Plane.WorldXY;
-            m_plane.Origin = position;
         }
         public GsaNode(Point3d position, bool restraintX, bool restraintY, bool restraintZ, bool restraintXX, bool restraintYY, bool restraintZZ, Plane localPlane)
         {
@@ -168,7 +160,8 @@ namespace GhSA.Parameters
                 dup.ID = m_id;
             if(m_spring != null)
                 dup.Spring = m_spring.Duplicate();
-            dup.m_plane = LocalAxis.Clone();
+            if (m_plane.IsValid)
+                dup.m_plane = LocalAxis.Clone();
             return dup;
         }
 
@@ -184,9 +177,6 @@ namespace GhSA.Parameters
                 return true;
             }
         }
-       
-        
-        
 
         #endregion
 
@@ -198,10 +188,13 @@ namespace GhSA.Parameters
             if (ID == 0) { idd = " "; }
             string nodeTxt = "Gsa Node" + idd + "(" + Point.ToString() + ") " + System.Environment.NewLine;
             string localTxt = "";
-            if (LocalAxis != Plane.WorldXY)
-                localTxt = System.Environment.NewLine + "Local axis (" + LocalAxis.ToString() + ") ";
+            if (LocalAxis != Plane.Unset)
+            {
+                if (LocalAxis != Plane.WorldXY)
+                    localTxt = System.Environment.NewLine + "Local axis (" + LocalAxis.ToString() + ") ";
+            }
 
-            string sptTxt = "X: " + (Node.Restraint.X ? "Fix" : "Free") +
+            string sptTxt = "Restraint: " + "X: " + (Node.Restraint.X ? "Fix" : "Free") +
                    ", Y: " + (Node.Restraint.Y ? "Fix" : "Free") +
                    ", Z: " + (Node.Restraint.Z ? "Fix" : "Free") +
                    ", XX: " + (Node.Restraint.XX ? "Fix" : "Free") +
@@ -209,15 +202,15 @@ namespace GhSA.Parameters
                    ", ZZ: " + (Node.Restraint.ZZ ? "Fix" : "Free");
             if (!Node.Restraint.X & !Node.Restraint.Y & !Node.Restraint.Z &
                 !Node.Restraint.XX & !Node.Restraint.YY & !Node.Restraint.ZZ)
-                sptTxt = "Free";
+                sptTxt = "";
             if (Node.Restraint.X & Node.Restraint.Y & Node.Restraint.Z &
                 !Node.Restraint.XX & !Node.Restraint.YY & !Node.Restraint.ZZ)
-                sptTxt = "Pinned";
+                sptTxt = "Restraint: Pinned";
             if (Node.Restraint.X & Node.Restraint.Y & Node.Restraint.Z &
                 Node.Restraint.XX & Node.Restraint.YY & Node.Restraint.ZZ)
-                sptTxt = "Fixed";
+                sptTxt = "Restraint: Fixed";
 
-            return nodeTxt + "Restraint: " + sptTxt + localTxt;
+            return nodeTxt + sptTxt + localTxt;
         }
 
         #endregion
