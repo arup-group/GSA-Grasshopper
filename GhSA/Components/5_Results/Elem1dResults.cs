@@ -160,10 +160,10 @@ namespace GhSA.Components
                 "Node list should take the form:" + System.Environment.NewLine +
                 " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            pManager.AddIntegerParameter("No. Positions", "Num", "Number of results (positions) for each line", GH_ParamAccess.item, 10);
+            pManager.AddIntegerParameter("No. Positions", "Pos", "Number of results (positions) for each line", GH_ParamAccess.item, 10);
             pManager.AddColourParameter("Colour", "Col", "Optional list of colours to override default colours" +
                 System.Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Scalar", "Scl", "Scale the result display size", GH_ParamAccess.item, 10);
+            pManager.AddNumberParameter("Scalar", "Scal", "Scale the result display size", GH_ParamAccess.item, 10);
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
