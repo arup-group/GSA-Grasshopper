@@ -225,14 +225,11 @@ namespace GhSA.Components
                     for (int i = 0; i < gh_Colours.Count; i++)
                     {
                         System.Drawing.Color color = new System.Drawing.Color();
-                        GH_Convert.ToColor_Primary(gh_Colours[i], ref color);
+                        GH_Convert.ToColor(gh_Colours[i], out color, GH_Conversion.Both);
                         colors.Add(color);
                     }
                 }
                 Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = UI.Colour.Stress_Gradient(colors);
-                //if (_mode == FoldMode.Displacement)
-                //    gH_Gradient = UI.Colour.Deflection_Gradient(colors);
-
 
                 // Get scalar 
                 GH_Number gh_Scale = new GH_Number();
@@ -415,9 +412,6 @@ namespace GhSA.Components
                                     t = Math.Sqrt(Math.Pow(xxyyzz[i].X, 2) + Math.Pow(xxyyzz[i].Y, 2) + Math.Pow(xxyyzz[i].Z, 2));
                                     break;
                             }
-                            // if displacement mode we are only looking at relative displacements for visualisation
-                            //if (_mode == FoldMode.Displacement)
-                            //  t = Math.Abs(t);
 
                             //normalised value between -1 and 1
                             double tnorm = 2 * (t - dmin) / (dmax - dmin) - 1;
