@@ -61,24 +61,38 @@ namespace GhSA.Components
             {
                 if (selectedidd == 0)
                 {
-                    dropdowncontents[1] = dropdowndisplacement;
-                    selections[0] = dropdowncontents[0][0];
-                    selections[1] = dropdowncontents[1][3];
-                    Mode1Clicked();
+                    if (dropdowncontents[1] != dropdowndisplacement)
+                    {
+                        dropdowncontents[1] = dropdowndisplacement;
+                        selections[0] = dropdowncontents[0][0];
+                        selections[1] = dropdowncontents[1][3];
+                        getresults = true;
+                        Mode1Clicked();
+                    }
+                    
                 }
                 if (selectedidd == 1)
                 {
-                    dropdowncontents[1] = dropdownreaction;
-                    selections[0] = dropdowncontents[0][1];
-                    selections[1] = dropdowncontents[1][3];
-                    Mode2Clicked();
+                    if (dropdowncontents[1] != dropdownreaction)
+                    {
+                        dropdowncontents[1] = dropdownreaction;
+                        selections[0] = dropdowncontents[0][1];
+                        selections[1] = dropdowncontents[1][3];
+                        getresults = true;
+                        Mode2Clicked();
+                    }
+                        
                 }
                 if (selectedidd == 2)
                 {
-                    dropdowncontents[1] = dropdownforce;
-                    selections[0] = dropdowncontents[0][2];
-                    selections[1] = dropdowncontents[1][3];
-                    Mode3Clicked();
+                    if (dropdowncontents[1] != dropdownforce)
+                    {
+                        dropdowncontents[1] = dropdownforce;
+                        selections[0] = dropdowncontents[0][2];
+                        selections[1] = dropdowncontents[1][3];
+                        getresults = true;
+                        Mode3Clicked();
+                    }
                 }
             }
             else
@@ -187,6 +201,32 @@ namespace GhSA.Components
             pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Util.GsaUnit.LengthSmall + ")", GH_ParamAccess.list);
         }
 
+        #region fields
+        List<Vector3d> xyz = new List<Vector3d>();
+        List<Vector3d> xxyyzz = new List<Vector3d>();
+
+        double dmax_x;
+        double dmax_y;
+        double dmax_z;
+        double dmax_xx;
+        double dmax_yy;
+        double dmax_zz;
+        double dmax_xyz;
+        double dmax_xxyyzz;
+        double dmin_x;
+        double dmin_y;
+        double dmin_z;
+        double dmin_xx;
+        double dmin_yy;
+        double dmin_zz;
+        double dmin_xyz;
+        double dmin_xxyyzz;
+        bool getresults = true;
+
+        int analCase = 0;
+        string nodeList = "";
+        #endregion
+
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Model to work on
@@ -208,14 +248,12 @@ namespace GhSA.Components
                 // Get analysis case 
                 GH_Integer gh_aCase = new GH_Integer();
                 DA.GetData(1, ref gh_aCase);
-                int analCase = 1;
-                GH_Convert.ToInt32(gh_aCase, out analCase, GH_Conversion.Both);
+                GH_Convert.ToInt32(gh_aCase, out int tempanalCase, GH_Conversion.Both);
 
                 // Get node filter list
                 GH_String gh_noList = new GH_String();
                 DA.GetData(2, ref gh_noList);
-                string nodeList = "all";
-                GH_Convert.ToString(gh_noList, out nodeList, GH_Conversion.Both);
+                GH_Convert.ToString(gh_noList, out string tempnodeList, GH_Conversion.Both);
 
                 // Get colours
                 List<Grasshopper.Kernel.Types.GH_Colour> gh_Colours = new List<Grasshopper.Kernel.Types.GH_Colour>();
@@ -238,124 +276,162 @@ namespace GhSA.Components
                 GH_Convert.ToDouble(gh_Scale, out scale, GH_Conversion.Both);
                 #endregion
 
-                #region Get results from GSA
-                // ### Get results ###
-                //Get analysis case from model
-                AnalysisCaseResult analysisCaseResult = null;
-                gsaModel.Model.Results().TryGetValue(analCase, out analysisCaseResult);
-                if (analysisCaseResult == null)
+                #region get results?
+                // check if we must get results or just update display
+                if (analCase == 0 || analCase != tempanalCase)
                 {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Case " + analCase + " does not exist in file,");
-                    return;
+                    analCase = tempanalCase;
+                    getresults = true;
                 }
-                IReadOnlyDictionary<int, NodeResult> results = analysisCaseResult.NodeResults(nodeList);
-                IReadOnlyDictionary<int, Node> nodes = gsaModel.Model.Nodes(nodeList);
+
+                if (nodeList == "" || nodeList != tempnodeList)
+                {
+                    nodeList = tempnodeList;
+                    getresults = true;
+                }
                 #endregion
 
-                #region Create results output
-                // ### Loop through results ###
-                // new lists of vectors to output results in:
-                List<Vector3d> xyz = new List<Vector3d>();
-                List<Vector3d> xxyyzz = new List<Vector3d>();
-
-                // maximum and minimum result values for colouring later
-                double dmax = 0;
-                double dmin = 0;
-                double unitfactorxyz = 1;
-                double unitfactorxxyyzz = 1;
-
-                // if reaction type, then we reuse the nodeList to filter support nodes from the rest
-                if (_mode == FoldMode.Reaction)
-                    nodeList = "";
-
-                foreach (var key in results.Keys)
+                if (getresults)
                 {
-                    NodeResult result;
-                    Double6 values = null;
-                    double d = 0;
+                    #region Get results from GSA
+                    // ### Get results ###
+                    //Get analysis case from model
+                    AnalysisCaseResult analysisCaseResult = null;
+                    gsaModel.Model.Results().TryGetValue(analCase, out analysisCaseResult);
+                    if (analysisCaseResult == null)
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Case " + analCase + " does not exist in file,");
+                        return;
+                    }
+                    IReadOnlyDictionary<int, NodeResult> results = analysisCaseResult.NodeResults(nodeList);
+                    IReadOnlyDictionary<int, Node> nodes = gsaModel.Model.Nodes(nodeList);
+                    #endregion
 
+                    #region Create results output
+                    // ### Loop through results ###
+                    // clear any existing lists of vectors to output results in:
+                    xyz = new List<Vector3d>();
+                    xxyyzz = new List<Vector3d>();
+
+                    // maximum and minimum result values for colouring later
+                    dmax_x = 0;
+                    dmax_y = 0;
+                    dmax_z = 0;
+                    dmax_xx = 0;
+                    dmax_yy = 0;
+                    dmax_zz = 0;
+                    dmax_xyz = 0;
+                    dmax_xxyyzz = 0;
+                    dmin_x = 0;
+                    dmin_y = 0;
+                    dmin_z = 0;
+                    dmin_xx = 0;
+                    dmin_yy = 0;
+                    dmin_zz = 0;
+                    dmin_xyz = 0;
+                    dmin_xxyyzz = 0;
+
+                    double unitfactorxyz = 1;
+                    double unitfactorxxyyzz = 1;
+
+                    // if reaction type, then we reuse the nodeList to filter support nodes from the rest
                     if (_mode == FoldMode.Reaction)
+                        nodeList = "";
+
+                    foreach (var key in results.Keys)
                     {
-                        bool isSupport = false;
-                        Node node = new Node();
-                        nodes.TryGetValue(key, out node);
-                        NodalRestraint rest = node.Restraint;
-                        if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ)
-                            isSupport = true;
-                        if (!isSupport)
-                            break;
-                        else
+                        NodeResult result;
+                        Double6 values = null;
+                        double d = 0;
+
+                        if (_mode == FoldMode.Reaction)
                         {
-                            if (nodeList == "")
-                                nodeList = key.ToString();
+                            bool isSupport = false;
+                            Node node = new Node();
+                            nodes.TryGetValue(key, out node);
+                            NodalRestraint rest = node.Restraint;
+                            if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ)
+                                isSupport = true;
+                            if (!isSupport)
+                                continue;
                             else
-                                nodeList += " " + key;
+                            {
+                                if (nodeList == "")
+                                    nodeList = key.ToString();
+                                else
+                                    nodeList += " " + key;
+                            }
                         }
-                    }
-                    
-                    results.TryGetValue(key, out result);
-                    switch (_mode)
-                    {
-                        case (FoldMode.Displacement):
-                            values = result.Displacement;
-                            unitfactorxyz = 0.001;
-                            unitfactorxxyyzz = 1;
-                            break;
-                        case (FoldMode.Reaction):
-                            values = result.Reaction;
-                            unitfactorxyz = 1000;
-                            unitfactorxxyyzz = 1000;
-                            break;
-                        case (FoldMode.SpringForce):
-                            values = result.SpringForce;
-                            unitfactorxyz = 1000;
-                            unitfactorxxyyzz = 1000;
-                            break;
-                        case (FoldMode.Constraint):
-                            values = result.Constraint;
-                            break;
-                    }
-                    switch (_disp)
-                    {
-                        case (DisplayValue.X):
-                            d = values.X;
-                            break;
-                        case (DisplayValue.Y):
-                            d = values.Y;
-                            break;
-                        case (DisplayValue.Z):
-                            d = values.Z;
-                            break;
-                        case (DisplayValue.resXYZ):
-                            d = Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2));
-                            break;
-                        case (DisplayValue.XX):
-                            d = values.XX;
-                            break;
-                        case (DisplayValue.YY):
-                            d = values.YY;
-                            break;
-                        case (DisplayValue.ZZ):
-                            d = values.ZZ;
-                            break;
-                        case (DisplayValue.resXXYYZZ):
-                            d = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2));
-                            break;
 
+                        results.TryGetValue(key, out result);
+                        switch (_mode)
+                        {
+                            case (FoldMode.Displacement):
+                                values = result.Displacement;
+                                unitfactorxyz = 0.001;
+                                unitfactorxxyyzz = 1;
+                                break;
+                            case (FoldMode.Reaction):
+                                values = result.Reaction;
+                                unitfactorxyz = 1000;
+                                unitfactorxxyyzz = 1000;
+                                break;
+                            case (FoldMode.SpringForce):
+                                values = result.SpringForce;
+                                unitfactorxyz = 1000;
+                                unitfactorxxyyzz = 1000;
+                                break;
+                            case (FoldMode.Constraint):
+                                values = result.Constraint;
+                                break;
+                        }
+                        
+
+                        // update max and min values
+                        if (values.X / unitfactorxyz > dmax_x)
+                            dmax_x = values.X / unitfactorxyz;
+                        if (values.Y / unitfactorxyz > dmax_y)
+                            dmax_y = values.Y / unitfactorxyz;
+                        if (values.Z / unitfactorxyz > dmax_z)
+                            dmax_z = values.Z / unitfactorxyz;
+                        if (Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz > dmax_xyz)
+                            dmax_xyz = Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz;
+
+                        if (values.XX / unitfactorxxyyzz > dmax_xx)
+                            dmax_xx = values.XX / unitfactorxxyyzz;
+                        if (values.YY / unitfactorxxyyzz > dmax_yy)
+                            dmax_yy = values.YY / unitfactorxxyyzz;
+                        if (values.ZZ / unitfactorxxyyzz > dmax_zz)
+                            dmax_zz = values.ZZ / unitfactorxxyyzz;
+                        if (Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz > dmax_xxyyzz)
+                            dmax_xxyyzz = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz;
+
+                        if (values.X / unitfactorxyz < dmin_x)
+                            dmin_x = values.X / unitfactorxyz;
+                        if (values.Y / unitfactorxyz < dmin_y)
+                            dmin_y = values.Y / unitfactorxyz;
+                        if (values.Z / unitfactorxyz < dmin_z)
+                            dmin_z = values.Z / unitfactorxyz;
+                        if (Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz < dmin_xyz)
+                            dmin_xyz = Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz;
+
+                        if (values.XX / unitfactorxxyyzz < dmin_xx)
+                            dmin_xx = values.XX / unitfactorxxyyzz;
+                        if (values.YY / unitfactorxxyyzz < dmin_yy)
+                            dmin_yy = values.YY / unitfactorxxyyzz;
+                        if (values.ZZ / unitfactorxxyyzz < dmin_zz)
+                            dmin_zz = values.ZZ / unitfactorxxyyzz;
+                        if (Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz < dmin_xxyyzz)
+                            dmin_xxyyzz = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz;
+
+                        // add the values to the vector lists
+                        xyz.Add(new Vector3d(values.X / unitfactorxyz, values.Y / unitfactorxyz, values.Z / unitfactorxyz));
+                        xxyyzz.Add(new Vector3d(values.XX / unitfactorxxyyzz, values.YY / unitfactorxxyyzz, values.ZZ / unitfactorxxyyzz));
                     }
-
-                    // update max and min values
-                    double unitfact = ((int)_disp < 4) ? unitfactorxyz : unitfactorxxyyzz;
-                    if (d / unitfact > dmax)
-                        dmax = d / unitfact;
-                    if (d / unitfact < dmin)
-                        dmin = d / unitfact;
-
-                    // add the values to the vector lists
-                    xyz.Add(new Vector3d(values.X / unitfactorxyz, values.Y / unitfactorxyz, values.Z / unitfactorxyz));
-                    xxyyzz.Add(new Vector3d(values.XX / unitfactorxxyyzz, values.YY / unitfactorxxyyzz, values.ZZ / unitfactorxxyyzz));
+                    #endregion
+                    getresults = false;
                 }
-                #endregion
+
 
                 #region Result point values
                 // ### Coloured Result Points ###
@@ -369,6 +445,44 @@ namespace GhSA.Components
                 List<System.Drawing.Color> cs = new List<System.Drawing.Color>();
 
                 // round max and min to reasonable numbers
+                double dmax = 0;
+                double dmin = 0;
+                switch (_disp)
+                {
+                    case (DisplayValue.X):
+                        dmax = dmax_x;
+                        dmin = dmin_x;
+                        break;
+                    case (DisplayValue.Y):
+                        dmax = dmax_y;
+                        dmin = dmin_y;
+                        break;
+                    case (DisplayValue.Z):
+                        dmax = dmax_z;
+                        dmin = dmin_z;
+                        break;
+                    case (DisplayValue.resXYZ):
+                        dmax = dmax_xyz;
+                        dmin = dmin_xyz;
+                        break;
+                    case (DisplayValue.XX):
+                        dmax = dmax_xx;
+                        dmin = dmin_xx;
+                        break;
+                    case (DisplayValue.YY):
+                        dmax = dmax_yy;
+                        dmin = dmin_yy;
+                        break;
+                    case (DisplayValue.ZZ):
+                        dmax = dmax_zz;
+                        dmin = dmin_zz;
+                        break;
+                    case (DisplayValue.resXXYYZZ):
+                        dmax = dmax_xxyyzz;
+                        dmin = dmin_xxyyzz;
+                        break;
+                }
+
                 List<double> rounded = Util.Gsa.ResultHelper.SmartRounder(new List<double>(new double[] { dmax, dmin }));
                 dmax = rounded[0];
                 dmin = rounded[1];

@@ -312,6 +312,23 @@ namespace GhSA.Components
                     List<int> parentMember = new List<int>();
 
                     // maximum and minimum result values for colouring later
+                    dmax_x = 0;
+                    dmax_y = 0;
+                    dmax_z = 0;
+                    dmax_xx = 0;
+                    dmax_yy = 0;
+                    dmax_zz = 0;
+                    dmax_xyz = 0;
+                    dmax_xxyyzz = 0;
+                    dmin_x = 0;
+                    dmin_y = 0;
+                    dmin_z = 0;
+                    dmin_xx = 0;
+                    dmin_yy = 0;
+                    dmin_zz = 0;
+                    dmin_xyz = 0;
+                    dmin_xxyyzz = 0;
+
                     double unitfactorxyz = 1;
                     double unitfactorxxyyzz = 1;
 
