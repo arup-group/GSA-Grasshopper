@@ -14,20 +14,21 @@ using GsaAPI;
 using GhSA.Parameters;
 using System.Resources;
 using System.Linq;
+using Grasshopper.Kernel.Data;
 
 namespace GhSA.Components
 {
     /// <summary>
     /// Component to create a new Prop2d
     /// </summary>
-    public class NodeResults : GH_Component, IGH_VariableParameterComponent
+    public class Elem1DResults : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("7a8250b8-781e-4aeb-a05b-1b1fce9fbe3b");
-        public NodeResults()
-          : base("Node Results", "NodeResult", "Get GSA Node Results",
+        public override Guid ComponentGuid => new Guid("79cd1187-2b27-4bee-a77f-4f94c98e73c3");
+        public Elem1DResults()
+          : base("1D Element Results", "Elem1dResults", "Get 1D Element Results from GSA",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat5())
         {
@@ -66,6 +67,7 @@ namespace GhSA.Components
                         dropdowncontents[1] = dropdowndisplacement;
                         selections[0] = dropdowncontents[0][0];
                         selections[1] = dropdowncontents[1][3];
+                        _disp = DisplayValue.resXYZ;
                         getresults = true;
                         Mode1Clicked();
                     }
@@ -73,25 +75,14 @@ namespace GhSA.Components
                 }
                 if (selectedidd == 1)
                 {
-                    if (dropdowncontents[1] != dropdownreaction)
-                    {
-                        dropdowncontents[1] = dropdownreaction;
-                        selections[0] = dropdowncontents[0][1];
-                        selections[1] = dropdowncontents[1][3];
-                        getresults = true;
-                        Mode2Clicked();
-                    }
-                        
-                }
-                if (selectedidd == 2)
-                {
                     if (dropdowncontents[1] != dropdownforce)
                     {
                         dropdowncontents[1] = dropdownforce;
-                        selections[0] = dropdowncontents[0][2];
-                        selections[1] = dropdowncontents[1][3];
+                        selections[0] = dropdowncontents[0][1];
+                        selections[1] = dropdowncontents[1][5];
+                        _disp = DisplayValue.YY;
                         getresults = true;
-                        Mode3Clicked();
+                        Mode2Clicked();
                     }
                 }
             }
@@ -133,8 +124,7 @@ namespace GhSA.Components
         readonly List<string> dropdownitems = new List<string>(new string[]
         {
             "Displacement",
-            "Reaction",
-            "Spring Force"
+            "Force",
         });
 
         readonly List<string> dropdowndisplacement = new List<string>(new string[]
@@ -149,30 +139,17 @@ namespace GhSA.Components
             "Resolved |R|",
         });
 
-        readonly List<string> dropdownreaction = new List<string>(new string[]
-        {
-            "Reaction Fx",
-            "Reaction Fy",
-            "Reaction Fz",
-            "Resolved |F|",
-            "Reaction Mxx",
-            "Reaction Myy",
-            "Reaction Mzz",
-            "Resolved |M|",
-        });
-
         readonly List<string> dropdownforce = new List<string>(new string[]
         {
-            "Force Fx",
-            "Force Fy",
-            "Force Fz",
+            "Axial Force Fx",
+            "Shear Force Fy",
+            "Shear Force Fz",
             "Resolved |F|",
-            "Moment Mxx",
+            "Torsion Mxx",
             "Moment Myy",
             "Moment Mzz",
             "Resolved |M|",
         });
-
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -183,28 +160,31 @@ namespace GhSA.Components
                 "Node list should take the form:" + System.Environment.NewLine +
                 " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            pManager.AddColourParameter("Colour", "Col", "Optional list of colours to override default colours." +
+            pManager.AddIntegerParameter("No. Positions", "Pos", "Number of results (positions) for each line", GH_ParamAccess.item, 10);
+            pManager.AddColourParameter("Colour", "Col", "Optional list of colours to override default colours" +
                 System.Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
             pManager.AddNumberParameter("Scalar", "Scal", "Scale the result display size", GH_ParamAccess.item, 10);
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
             pManager[4].Optional = true;
+            pManager[5].Optional = true;
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddVectorParameter("Translation", "U", "X, Y, Z translation values (" + Util.GsaUnit.LengthSmall + ")", GH_ParamAccess.list);
-            pManager.AddVectorParameter("Rotation", "R", "XX, YY, ZZ rotation values (" + Util.GsaUnit.Angle + ")", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Point", "Pt", "Position", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Result Colour", "Col", "Colours representing the result value at each point", GH_ParamAccess.list);
+            pManager.AddVectorParameter("Translation", "U", "X, Y, Z translation values (" + Util.GsaUnit.LengthSmall + ")", GH_ParamAccess.tree);
+            pManager.AddVectorParameter("Rotation", "R", "XX, YY, ZZ rotation values (" + Util.GsaUnit.Angle + ")", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Line", "Ln", "Line with result values", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Result Colour", "Col", "Colours representing the result value at each point", GH_ParamAccess.tree);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
             pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Util.GsaUnit.LengthSmall + ")", GH_ParamAccess.list);
         }
 
         #region fields
-        List<Vector3d> xyz = new List<Vector3d>();
-        List<Vector3d> xxyyzz = new List<Vector3d>();
-
+        // new lists of vectors to output results in:
+        DataTree<Vector3d> xyz_out = new DataTree<Vector3d>();
+        DataTree<Vector3d> xxyyzz_out = new DataTree<Vector3d>();
+        DataTree<Line> segmentlines = new DataTree<Line>();
         double dmax_x;
         double dmax_y;
         double dmax_z;
@@ -224,7 +204,8 @@ namespace GhSA.Components
         bool getresults = true;
 
         int analCase = 0;
-        string nodeList = "";
+        string elemList = "";
+        int positionsCount = 0;
         #endregion
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -251,14 +232,19 @@ namespace GhSA.Components
                 GH_Convert.ToInt32(gh_aCase, out int tempanalCase, GH_Conversion.Both);
 
                 // Get node filter list
-                GH_String gh_noList = new GH_String();
-                DA.GetData(2, ref gh_noList);
-                GH_Convert.ToString(gh_noList, out string tempnodeList, GH_Conversion.Both);
+                GH_String gh_elList = new GH_String();
+                DA.GetData(2, ref gh_elList);
+                GH_Convert.ToString(gh_elList, out string tempelemList, GH_Conversion.Both);
+
+                // Get number of divisions
+                GH_Integer gh_Div = new GH_Integer();
+                DA.GetData(3, ref gh_Div);
+                GH_Convert.ToInt32(gh_Div, out int temppositionsCount, GH_Conversion.Both);
 
                 // Get colours
                 List<Grasshopper.Kernel.Types.GH_Colour> gh_Colours = new List<Grasshopper.Kernel.Types.GH_Colour>();
                 List<System.Drawing.Color> colors = new List<System.Drawing.Color>();
-                if (DA.GetDataList(3, gh_Colours))
+                if (DA.GetDataList(4, gh_Colours))
                 {
                     for (int i = 0; i < gh_Colours.Count; i++)
                     {
@@ -271,7 +257,7 @@ namespace GhSA.Components
 
                 // Get scalar 
                 GH_Number gh_Scale = new GH_Number();
-                DA.GetData(4, ref gh_Scale);
+                DA.GetData(5, ref gh_Scale);
                 double scale = 1;
                 GH_Convert.ToDouble(gh_Scale, out scale, GH_Conversion.Both);
                 #endregion
@@ -284,13 +270,20 @@ namespace GhSA.Components
                     getresults = true;
                 }
 
-                if (nodeList == "" || nodeList != tempnodeList)
+                if (elemList == "" || elemList != tempelemList)
                 {
-                    nodeList = tempnodeList;
+                    elemList = tempelemList;
+                    getresults = true;
+                }
+
+                if (positionsCount == 0 || positionsCount != temppositionsCount)
+                {
+                    positionsCount = temppositionsCount;
                     getresults = true;
                 }
                 #endregion
 
+                #region Create results output
                 if (getresults)
                 {
                     #region Get results from GSA
@@ -303,15 +296,20 @@ namespace GhSA.Components
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Case " + analCase + " does not exist in file,");
                         return;
                     }
-                    IReadOnlyDictionary<int, NodeResult> results = analysisCaseResult.NodeResults(nodeList);
-                    IReadOnlyDictionary<int, Node> nodes = gsaModel.Model.Nodes(nodeList);
+                    IReadOnlyDictionary<int, Element1DResult> globalResults = analysisCaseResult.Element1DResults(elemList, positionsCount);
+                    IReadOnlyDictionary<int, Element> elems = gsaModel.Model.Elements(elemList);
+                    IReadOnlyDictionary<int, Node> nodes = gsaModel.Model.Nodes();
                     #endregion
 
-                    #region Create results output
+
                     // ### Loop through results ###
-                    // clear any existing lists of vectors to output results in:
-                    xyz = new List<Vector3d>();
-                    xxyyzz = new List<Vector3d>();
+                    // clear existing result lists
+                    xyz_out = new DataTree<Vector3d>();
+                    xxyyzz_out = new DataTree<Vector3d>();
+                    segmentlines = new DataTree<Line>();
+
+                    List<int> elemID = new List<int>();
+                    List<int> parentMember = new List<int>();
 
                     // maximum and minimum result values for colouring later
                     dmax_x = 0;
@@ -334,115 +332,114 @@ namespace GhSA.Components
                     double unitfactorxyz = 1;
                     double unitfactorxxyyzz = 1;
 
-                    // if reaction type, then we reuse the nodeList to filter support nodes from the rest
-                    if (_mode == FoldMode.Reaction)
-                        nodeList = "";
-
-                    foreach (var key in results.Keys)
+                    foreach (int key in globalResults.Keys)
                     {
-                        NodeResult result;
-                        Double6 values = null;
-                        double d = 0;
+                        // lists for results
+                        Element1DResult elementResults;
+                        globalResults.TryGetValue(key, out elementResults);
+                        List<Double6> values = new List<Double6>();
+                        List<Vector3d> xyz = new List<Vector3d>();
+                        List<Vector3d> xxyyzz = new List<Vector3d>();
 
-                        if (_mode == FoldMode.Reaction)
-                        {
-                            bool isSupport = false;
-                            Node node = new Node();
-                            nodes.TryGetValue(key, out node);
-                            NodalRestraint rest = node.Restraint;
-                            if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ)
-                                isSupport = true;
-                            if (!isSupport)
-                                continue;
-                            else
-                            {
-                                if (nodeList == "")
-                                    nodeList = key.ToString();
-                                else
-                                    nodeList += " " + key;
-                            }
-                        }
+                        // list for element geometry and info
+                        Element element = new Element();
+                        elems.TryGetValue(key, out element);
+                        Node start = new Node();
+                        nodes.TryGetValue(element.Topology[0], out start);
+                        Node end = new Node();
+                        nodes.TryGetValue(element.Topology[1], out end);
+                        Line ln = new Line(
+                            new Point3d(start.Position.X, start.Position.Y, start.Position.Z),
+                            new Point3d(end.Position.X, end.Position.Y, end.Position.Z));
+                        elemID.Add(key);
+                        parentMember.Add(element.ParentMember.Member);
 
-                        results.TryGetValue(key, out result);
+                        // set the result type dependent on user selection in dropdown
                         switch (_mode)
                         {
                             case (FoldMode.Displacement):
-                                values = result.Displacement;
+                                values = elementResults.Displacement.ToList();
                                 unitfactorxyz = 0.001;
                                 unitfactorxxyyzz = 1;
                                 break;
-                            case (FoldMode.Reaction):
-                                values = result.Reaction;
+                            case (FoldMode.Force):
+                                values = elementResults.Force.ToList();
                                 unitfactorxyz = 1000;
                                 unitfactorxxyyzz = 1000;
-                                break;
-                            case (FoldMode.SpringForce):
-                                values = result.SpringForce;
-                                unitfactorxyz = 1000;
-                                unitfactorxxyyzz = 1000;
-                                break;
-                            case (FoldMode.Constraint):
-                                values = result.Constraint;
                                 break;
                         }
-                        
 
-                        // update max and min values
-                        if (values.X / unitfactorxyz > dmax_x)
-                            dmax_x = values.X / unitfactorxyz;
-                        if (values.Y / unitfactorxyz > dmax_y)
-                            dmax_y = values.Y / unitfactorxyz;
-                        if (values.Z / unitfactorxyz > dmax_z)
-                            dmax_z = values.Z / unitfactorxyz;
-                        if (Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz > dmax_xyz)
-                            dmax_xyz = Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz;
+                        // prepare the line segments
+                        int segments = Math.Max(1, values.Count - 1); // number of segment lines is 1 less than number of points
+                        int segment = 0; // counter for segments
+                        List<Line> segmentedlines = new List<Line>();
 
-                        if (values.XX / unitfactorxxyyzz > dmax_xx)
-                            dmax_xx = values.XX / unitfactorxxyyzz;
-                        if (values.YY / unitfactorxxyyzz > dmax_yy)
-                            dmax_yy = values.YY / unitfactorxxyyzz;
-                        if (values.ZZ / unitfactorxxyyzz > dmax_zz)
-                            dmax_zz = values.ZZ / unitfactorxxyyzz;
-                        if (Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz > dmax_xxyyzz)
-                            dmax_xxyyzz = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz;
+                        // loop through the results
+                        foreach (Double6 result in values)
+                        {
+                            // update max and min values
+                            if (result.X / unitfactorxyz > dmax_x)
+                                dmax_x = result.X / unitfactorxyz;
+                            if (result.Y / unitfactorxyz > dmax_y)
+                                dmax_y = result.Y / unitfactorxyz;
+                            if (result.Z / unitfactorxyz > dmax_z)
+                                dmax_z = result.Z / unitfactorxyz;
+                            if (Math.Sqrt(Math.Pow(result.X, 2) + Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2)) / unitfactorxyz > dmax_xyz)
+                                dmax_xyz = Math.Sqrt(Math.Pow(result.X, 2) + Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2)) / unitfactorxyz;
 
-                        if (values.X / unitfactorxyz < dmin_x)
-                            dmin_x = values.X / unitfactorxyz;
-                        if (values.Y / unitfactorxyz < dmin_y)
-                            dmin_y = values.Y / unitfactorxyz;
-                        if (values.Z / unitfactorxyz < dmin_z)
-                            dmin_z = values.Z / unitfactorxyz;
-                        if (Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz < dmin_xyz)
-                            dmin_xyz = Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz;
+                            if (result.XX / unitfactorxxyyzz > dmax_xx)
+                                dmax_xx = result.XX / unitfactorxxyyzz;
+                            if (result.YY / unitfactorxxyyzz > dmax_yy)
+                                dmax_yy = result.YY / unitfactorxxyyzz;
+                            if (result.ZZ / unitfactorxxyyzz > dmax_zz)
+                                dmax_zz = result.ZZ / unitfactorxxyyzz;
+                            if (Math.Sqrt(Math.Pow(result.XX, 2) + Math.Pow(result.YY, 2) + Math.Pow(result.ZZ, 2)) / unitfactorxxyyzz > dmax_xxyyzz)
+                                dmax_xxyyzz = Math.Sqrt(Math.Pow(result.XX, 2) + Math.Pow(result.YY, 2) + Math.Pow(result.ZZ, 2)) / unitfactorxxyyzz;
 
-                        if (values.XX / unitfactorxxyyzz < dmin_xx)
-                            dmin_xx = values.XX / unitfactorxxyyzz;
-                        if (values.YY / unitfactorxxyyzz < dmin_yy)
-                            dmin_yy = values.YY / unitfactorxxyyzz;
-                        if (values.ZZ / unitfactorxxyyzz < dmin_zz)
-                            dmin_zz = values.ZZ / unitfactorxxyyzz;
-                        if (Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz < dmin_xxyyzz)
-                            dmin_xxyyzz = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz;
+                            if (result.X / unitfactorxyz < dmin_x)
+                                dmin_x = result.X / unitfactorxyz;
+                            if (result.Y / unitfactorxyz < dmin_y)
+                                dmin_y = result.Y / unitfactorxyz;
+                            if (result.Z / unitfactorxyz < dmin_z)
+                                dmin_z = result.Z / unitfactorxyz;
+                            if (Math.Sqrt(Math.Pow(result.X, 2) + Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2)) / unitfactorxyz < dmin_xyz)
+                                dmin_xyz = Math.Sqrt(Math.Pow(result.X, 2) + Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2)) / unitfactorxyz;
 
-                        // add the values to the vector lists
-                        xyz.Add(new Vector3d(values.X / unitfactorxyz, values.Y / unitfactorxyz, values.Z / unitfactorxyz));
-                        xxyyzz.Add(new Vector3d(values.XX / unitfactorxxyyzz, values.YY / unitfactorxxyyzz, values.ZZ / unitfactorxxyyzz));
+                            if (result.XX / unitfactorxxyyzz < dmin_xx)
+                                dmin_xx = result.XX / unitfactorxxyyzz;
+                            if (result.YY / unitfactorxxyyzz < dmin_yy)
+                                dmin_yy = result.YY / unitfactorxxyyzz;
+                            if (result.ZZ / unitfactorxxyyzz < dmin_zz)
+                                dmin_zz = result.ZZ / unitfactorxxyyzz;
+                            if (Math.Sqrt(Math.Pow(result.XX, 2) + Math.Pow(result.YY, 2) + Math.Pow(result.ZZ, 2)) / unitfactorxxyyzz < dmin_xxyyzz)
+                                dmin_xxyyzz = Math.Sqrt(Math.Pow(result.XX, 2) + Math.Pow(result.YY, 2) + Math.Pow(result.ZZ, 2)) / unitfactorxxyyzz;
+
+                            // add the values to the vector lists
+                            xyz.Add(new Vector3d(result.X / unitfactorxyz, result.Y / unitfactorxyz, result.Z / unitfactorxyz));
+                            xxyyzz.Add(new Vector3d(result.XX / unitfactorxxyyzz, result.YY / unitfactorxxyyzz, result.ZZ / unitfactorxxyyzz));
+
+                            // create ResultLines
+                            if (segment < segments)
+                            {
+                                Line segmentline = new Line(
+                                    ln.PointAt((double)segment / segments),
+                                    ln.PointAt((double)(segment + 1) / segments)
+                                    );
+                                segment++;
+                                segmentedlines.Add(segmentline);
+                            }
+                        }
+                        // add the vector list to the out tree
+                        xyz_out.AddRange(xyz, new GH_Path(key));
+                        xxyyzz_out.AddRange(xxyyzz, new GH_Path(key));
+                        segmentlines.AddRange(segmentedlines, new GH_Path(key));
                     }
-                    #endregion
                     getresults = false;
                 }
+                #endregion
 
-
-                #region Result point values
-                // ### Coloured Result Points ###
-
-                // Get nodes for point location and restraint check in case of reaction force
-                List<GsaNode> gsanodes = Util.Gsa.GsaImport.GsaGetPoint(gsaModel.Model, nodeList, true);
-
-                //Find Colour and Values for legend output
-                
-                List<double> ts = new List<double>();
-                List<System.Drawing.Color> cs = new List<System.Drawing.Color>();
+                #region Result line values
+                // ### Coloured Result Lines ###
 
                 // round max and min to reasonable numbers
                 double dmax = 0;
@@ -486,71 +483,109 @@ namespace GhSA.Components
                 List<double> rounded = Util.Gsa.ResultHelper.SmartRounder(new List<double>(new double[] { dmax, dmin }));
                 dmax = rounded[0];
                 dmin = rounded[1];
-                
-                // Loop through nodes and set result colour into ResultPoint format
-                List<ResultPoint> pts = new List<ResultPoint>();
-                List<System.Drawing.Color> col = new List<System.Drawing.Color>();
-                
-                for (int i = 0; i < gsanodes.Count; i++)
+
+                // Loop through segmented lines and set result colour into ResultLine format
+                DataTree<ResultLine> lines_out = new DataTree<ResultLine>();
+                DataTree<System.Drawing.Color> col_out = new DataTree<System.Drawing.Color>();
+
+
+                foreach (GH_Path path in segmentlines.Paths)
                 {
-                    if (gsanodes[i] != null)
+                    List<ResultLine> lns = new List<ResultLine>();
+                    List<System.Drawing.Color> col = new List<System.Drawing.Color>();
+
+                    List<Line> segmentedlines = segmentlines.Branch(path);
+
+                    for (int j = 0; j < segmentedlines.Count; j++)
                     {
                         if (!(dmin == 0 & dmax == 0))
                         {
-                            double t = 0;
+                            Line segmentline = segmentedlines[j];
+                            int nextj = j + 1;
+
+                            double t1 = 0;
+                            double t2 = 0;
+
                             // pick the right value to display
                             switch (_disp)
                             {
                                 case (DisplayValue.X):
-                                    t = xyz[i].X;
+                                    t1 = xyz_out[path, j].X;
+                                    t2 = xyz_out[path, j + 1].X;
                                     break;
                                 case (DisplayValue.Y):
-                                    t = xyz[i].Y;
+                                    t1 = xyz_out[path, j].Y;
+                                    t2 = xyz_out[path, j + 1].Y;
                                     break;
                                 case (DisplayValue.Z):
-                                    t = xyz[i].Z;
+                                    t1 = xyz_out[path, j].Z;
+                                    t2 = xyz_out[path, j + 1].Z;
                                     break;
                                 case (DisplayValue.resXYZ):
-                                    t = Math.Sqrt(Math.Pow(xyz[i].X, 2) + Math.Pow(xyz[i].Y, 2) + Math.Pow(xyz[i].Z, 2));
+                                    t1 = Math.Sqrt(Math.Pow(xyz_out[path, j].X, 2) + Math.Pow(xyz_out[path, j].Y, 2) + Math.Pow(xyz_out[path, j].Z, 2));
+                                    t2 = Math.Sqrt(Math.Pow(xyz_out[path, j + 1].X, 2) + Math.Pow(xyz_out[path, j + 1].Y, 2) + Math.Pow(xyz_out[path, j + 1].Z, 2));
                                     break;
                                 case (DisplayValue.XX):
-                                    t = xxyyzz[i].X;
+                                    t1 = xxyyzz_out[path, j].X;
+                                    t2 = xxyyzz_out[path, nextj].X;
                                     break;
                                 case (DisplayValue.YY):
-                                    t = xxyyzz[i].Y;
+                                    t1 = xxyyzz_out[path, j].Y;
+                                    t2 = xxyyzz_out[path, nextj].Y;
                                     break;
                                 case (DisplayValue.ZZ):
-                                    t = xxyyzz[i].Z;
+                                    t1 = xxyyzz_out[path, j].Z;
+                                    t2 = xxyyzz_out[path, nextj].Z;
                                     break;
                                 case (DisplayValue.resXXYYZZ):
-                                    t = Math.Sqrt(Math.Pow(xxyyzz[i].X, 2) + Math.Pow(xxyyzz[i].Y, 2) + Math.Pow(xxyyzz[i].Z, 2));
+                                    t1 = Math.Sqrt(Math.Pow(xxyyzz_out[path, j].X, 2) + Math.Pow(xxyyzz_out[path, j].Y, 2) + Math.Pow(xxyyzz_out[path, j].Z, 2));
+                                    t2 = Math.Sqrt(Math.Pow(xxyyzz_out[path, nextj].X, 2) + Math.Pow(xxyyzz_out[path, nextj].Y, 2) + Math.Pow(xxyyzz_out[path, nextj].Z, 2));
                                     break;
                             }
 
                             //normalised value between -1 and 1
-                            double tnorm = 2 * (t - dmin) / (dmax - dmin) - 1;
+                            double tnorm1 = 2 * (t1 - dmin) / (dmax - dmin) - 1;
+                            double tnorm2 = 2 * (t2 - dmin) / (dmax - dmin) - 1;
 
                             // get colour for that normalised value
-                            System.Drawing.Color valcol = gH_Gradient.ColourAt(tnorm);
+                        
+                            System.Drawing.Color valcol1 = double.IsNaN(tnorm1) ? System.Drawing.Color.Black : gH_Gradient.ColourAt(tnorm1);
+                            System.Drawing.Color valcol2 = double.IsNaN(tnorm2) ? System.Drawing.Color.Black : gH_Gradient.ColourAt(tnorm2);
 
-                            // set the size of the point for ResultPoint class. Size is calculated from 0-base, so not a normalised value between extremes
-                            float size = (t >= 0 && dmax != 0) ? 
-                                Math.Max(2, (float)(t / dmax * scale)) : 
-                                Math.Max(2, (float)(Math.Abs(t) / Math.Abs(dmin) * scale));
+                            // set the size of the line ends for ResultLine class. Size is calculated from 0-base, so not a normalised value between extremes
+                            float size1 = (t1 >= 0 && dmax != 0) ?
+                                Math.Max(2, (float)(t1 / dmax * scale)) :
+                                Math.Max(2, (float)(Math.Abs(t1) / Math.Abs(dmin) * scale));
+                            if (double.IsNaN(size1))
+                                size1 = 2;
+                            float size2 = (t2 >= 0 && dmax != 0) ?
+                                Math.Max(2, (float)(t2 / dmax * scale)) :
+                                Math.Max(2, (float)(Math.Abs(t2) / Math.Abs(dmin) * scale));
+                            if (double.IsNaN(size2))
+                                size2 = 2;
 
-                            // add our special resultpoint to the list of points
-                            pts.Add(new ResultPoint(gsanodes[i].Point, t, valcol, size));
+                            // add our special resultline to the list of lines
+                            lns.Add(new ResultLine(segmentline, t1, t2, valcol1, valcol2, size1, size2));
 
                             // add the colour to the colours list
-                            col.Add(valcol);
+                            col.Add(valcol1);
+                            if (j == segmentedlines.Count - 1)
+                                col.Add(valcol2);
                         }
                     }
+                    lines_out.AddRange(lns, path);
+                    col_out.AddRange(col, path);
                 }
                 #endregion 
 
                 #region Legend
                 // ### Legend ###
                 // loop through number of grip points in gradient to create legend
+
+                //Find Colour and Values for legend output
+                List<double> ts = new List<double>();
+                List<System.Drawing.Color> cs = new List<System.Drawing.Color>();
+
                 for (int i = 0; i < gH_Gradient.GripCount; i++)
                 {
                     double t = dmin + (dmax - dmin) / ((double)gH_Gradient.GripCount - 1) * (double)i;
@@ -565,22 +600,22 @@ namespace GhSA.Components
                 #endregion
 
                 // set outputs
-                DA.SetDataList(0, xyz);
-                DA.SetDataList(1, xxyyzz);
-                DA.SetDataList(2, pts);
-                DA.SetDataList(3, col);
+                DA.SetDataTree(0, xyz_out);
+                DA.SetDataTree(1, xxyyzz_out);
+                DA.SetDataTree(2, lines_out);
+                DA.SetDataTree(3, col_out);
                 DA.SetDataList(4, cs);
                 DA.SetDataList(5, ts);
             }
         }
 
+
+
         #region menu override
         private enum FoldMode
         {
             Displacement,
-            Reaction,
-            SpringForce,
-            Constraint
+            Force
         }
         private FoldMode _mode = FoldMode.Displacement;
 
@@ -611,36 +646,11 @@ namespace GhSA.Components
         }
         private void Mode2Clicked()
         {
-            if (_mode == FoldMode.Reaction)
+            if (_mode == FoldMode.Force)
                 return;
 
             RecordUndoEvent(_mode.ToString() + " Parameters");
-            _mode = FoldMode.Reaction;
-
-            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-            Params.OnParametersChanged();
-            ExpireSolution(true);
-        }
-        private void Mode3Clicked()
-        {
-            if (_mode == FoldMode.SpringForce)
-                return;
-
-            RecordUndoEvent(_mode.ToString() + " Parameters");
-            _mode = FoldMode.SpringForce;
-
-            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-            Params.OnParametersChanged();
-            ExpireSolution(true);
-        }
-
-        private void Mode4Clicked()
-        {
-            if (_mode == FoldMode.Constraint)
-                return;
-
-            RecordUndoEvent(_mode.ToString() + " Parameters");
-            _mode = FoldMode.Constraint;
+            _mode = FoldMode.Force;
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -664,9 +674,7 @@ namespace GhSA.Components
             dropdowncontents.Add(dropdownitems);
             if (_mode == FoldMode.Displacement)
                 dropdowncontents.Add(dropdowndisplacement);
-            if (_mode == FoldMode.Reaction)
-                dropdowncontents.Add(dropdownreaction);
-            if (_mode == FoldMode.SpringForce)
+            if (_mode == FoldMode.Force)
                 dropdowncontents.Add(dropdownforce);
 
             selections = new List<string>();
@@ -716,7 +724,7 @@ namespace GhSA.Components
 
             }
 
-            if (_mode == FoldMode.Reaction | _mode == FoldMode.SpringForce)
+            if (_mode == FoldMode.Force)
             {
                 Params.Output[0].NickName = "F";
                 Params.Output[0].Name = "Force";
