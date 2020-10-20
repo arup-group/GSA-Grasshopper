@@ -2,7 +2,7 @@
 
 GSA-Grasshopper is a .NET component library giving Grasshopper access to Oasys GSA files allowing interfacing with existing models as well as creating and editing new ones.
 
-![Alt text](readme-screenshot.jpg?raw=true "Title")
+![Alt text](readme-screenshot.JPG?raw=true "Title")
 
   - [Installation](#installation)
   - [List of components by category](#list-of-components-by-category)
