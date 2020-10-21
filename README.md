@@ -88,7 +88,7 @@ yak install gsagrasshopper
 | **Create Grid Plane:** | Create a new Grid Plane; a plane used for Grid Plane Surface
 | **Create Grid Surface:** | Create a new Grid Surface; used for all Grid Load types
 | **Grid Plane Surface Properties:** | Get the properties of a Grid Plane and Grid Surface
-| **Analysis Case:** | Create analysis cases
+| Analysis Case: | Create analysis cases (to be done)
 <br/>
 
 ### Analysis
@@ -96,7 +96,7 @@ yak install gsagrasshopper
 |Component |Description|
 | ----------- | ------------- |
 | **Analyse:** | Assemble all objects and run analysis
-| **Analysis tasks:** | Create/Set Analysis tasks and analysis settings
+| Analysis tasks: | Create/Set Analysis tasks and analysis settings (to be done)
 <br/>
 
 ### Results
@@ -106,9 +106,9 @@ yak install gsagrasshopper
 | **Node results:** | Get typical node results as displacement or reaction forces
 | **Element 1D Results:** | Get typically bending moments or other internal force types
 | **Element 2D Results:** | Get surface plot with relevant internal forces
-| **Member 1D Results:** | Gets more design type results (utilisation)
-| **Member 2D Results:** | Gets typically design or reinforcement plot
-| **Design Tasks:** | Get design task results
+| Member 1D Results: | Gets more design type results (utilisation) (to be done)
+| Member 2D Results: | Gets typically design or reinforcement plot (to be done)
+| Design Tasks: | Get design task results (to be done)
 <br/>
 
 ## Contributing
