@@ -32,32 +32,32 @@ namespace GhSA.Components.Ribbon
 	{
 		public static string Cat0()
 		{
-			return new string(' ', 10) + "Model";
+			return new string(' ', 6) + "Model";
 		}
 
 		public static string Cat1()
 		{
-			return new string(' ', 9) + "Properties";
+			return new string(' ', 5) + "Properties";
 		}
 
 		public static string Cat2()
 		{
-			return new string(' ', 8) + "Geometry";
+			return new string(' ', 4) + "Geometry";
 		}
 
 		public static string Cat3()
 		{
-			return new string(' ', 7) + "Loads";
+			return new string(' ', 3) + "Loads";
 		}
 
 		public static string Cat4()
 		{
-			return new string(' ', 6) + "Analyse";
+			return new string(' ', 2) + "Analyse";
 		}
 
 		public static string Cat5()
 		{
-			return new string(' ', 5) + "Results";
+			return new string(' ', 1) + "Results";
 		}
 
 		public static string Cat6()
@@ -77,7 +77,7 @@ namespace GhSA.Components.Ribbon
 
 		public static string Cat9()
 		{
-			return "Parameters";
+			return "Params";
 		}
 	}
 }

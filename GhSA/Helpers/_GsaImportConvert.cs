@@ -307,8 +307,6 @@ namespace GhSA.Util.Gsa
                                 elem2d.Properties = prop2Ds;
                                 elem2d.ID = ids;
                                 elem2ds.Insert(new GsaElement2dGoo(elem2d), path, key - 1);
-                                //elem2ds[path, key - 1] = new GsaElement2dGoo(elem2d.Duplicate());
-                                //elem2ds.Add(new GsaElement2dGoo(elem2d.Duplicate()));
                             }
 
                             tempMesh.Dispose();

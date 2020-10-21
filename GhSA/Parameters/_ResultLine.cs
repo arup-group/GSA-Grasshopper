@@ -50,7 +50,7 @@ namespace GhSA.Parameters
 
         public override string ToString()
         {
-            return string.Format("LineResult: L{0:0.0},V1{1:0.0},V2{1:0.0}", Value.Length, m_result1, m_result2);
+            return string.Format("LineResult: L:{0:0.0}, Val1:{1:0.0}, Val2:{2:0.0}", Value.Length, m_result1, m_result2);
         }
         public override string TypeName
         {

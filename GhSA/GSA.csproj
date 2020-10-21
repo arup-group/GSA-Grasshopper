@@ -106,11 +106,10 @@
     <Compile Include="AsyncComponentBase\IAsyncComponentWorker.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
+    <Compile Include="Components\5_Results\Elem2dResults.cs" />
     <Compile Include="Components\5_Results\GlobalResult.cs" />
     <Compile Include="Components\5_Results\Elem1dResults.cs" />
     <Compile Include="Components\5_Results\NodeResults.cs" />
-    <Compile Include="Components\Tests\Sample_PrimeCalculatorAsyncComponent.cs" />
-    <Compile Include="Components\Tests\Sample_UslessCyclesComponent.cs" />
     <Compile Include="Components\0_Model\EditTitles.cs" />
     <Compile Include="Components\0_Model\GetLoads.cs" />
     <Compile Include="Components\0_Model\GetProperties.cs" />
@@ -148,8 +147,6 @@
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
     <Compile Include="Components\4_Analysis\Analyse.cs" />
-    <Compile Include="Components\Tests\DropDownMulti.cs" />
-    <Compile Include="Components\Tests\DropDownSingle.cs" />
     <Compile Include="Helpers\_GsaPath.cs" />
     <Compile Include="Helpers\_GsaCreateModelHelper.cs" />
     <Compile Include="Helpers\_GsaModelEnums.cs" />
@@ -162,6 +159,7 @@
     <Compile Include="Helpers\_SqlReader.cs" />
     <Compile Include="Parameters\GsaLoadParam.cs" />
     <Compile Include="Parameters\GsaGridPlaneSurfaceParam.cs" />
+    <Compile Include="Parameters\_ResultMesh.cs" />
     <Compile Include="Parameters\_ResultLine.cs" />
     <Compile Include="Parameters\_ResultPoint.cs" />
     <Compile Include="Parameters\_Titles.cs" />
@@ -190,7 +188,9 @@
     <Compile Include="UI\Comp_Releases.cs" />
     <Compile Include="UI\Comp_Support.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Components\Lab\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
