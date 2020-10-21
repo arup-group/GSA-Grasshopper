@@ -136,7 +136,7 @@ namespace GhSA.Components
             "Rotation Rxx",
             "Rotation Ryy",
             "Rotation Rzz",
-            "Resolved |R|",
+            "Resolved |R|"
         });
 
         readonly List<string> dropdownforce = new List<string>(new string[]
@@ -156,9 +156,9 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA model containing some results", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Load Case", "LC", "Load Case (default 1)", GH_ParamAccess.item, 1);
-            pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + System.Environment.NewLine +
-                "Node list should take the form:" + System.Environment.NewLine +
-                " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
+            pManager.AddTextParameter("Element filter list", "El", "Filter import by list." + System.Environment.NewLine +
+                "Element list should take the form:" + System.Environment.NewLine +
+                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
             pManager.AddIntegerParameter("No. Positions", "Pos", "Number of results (positions) for each line", GH_ParamAccess.item, 10);
             pManager.AddColourParameter("Colour", "Col", "Optional list of colours to override default colours" +
@@ -231,7 +231,7 @@ namespace GhSA.Components
                 DA.GetData(1, ref gh_aCase);
                 GH_Convert.ToInt32(gh_aCase, out int tempanalCase, GH_Conversion.Both);
 
-                // Get node filter list
+                // Get element filter list
                 GH_String gh_elList = new GH_String();
                 DA.GetData(2, ref gh_elList);
                 GH_Convert.ToString(gh_elList, out string tempelemList, GH_Conversion.Both);
@@ -557,12 +557,12 @@ namespace GhSA.Components
                                 Math.Max(2, (float)(t1 / dmax * scale)) :
                                 Math.Max(2, (float)(Math.Abs(t1) / Math.Abs(dmin) * scale));
                             if (double.IsNaN(size1))
-                                size1 = 2;
+                                size1 = 1;
                             float size2 = (t2 >= 0 && dmax != 0) ?
                                 Math.Max(2, (float)(t2 / dmax * scale)) :
                                 Math.Max(2, (float)(Math.Abs(t2) / Math.Abs(dmin) * scale));
                             if (double.IsNaN(size2))
-                                size2 = 2;
+                                size2 = 1;
 
                             // add our special resultline to the list of lines
                             lns.Add(new ResultLine(segmentline, t1, t2, valcol1, valcol2, size1, size2));
@@ -711,11 +711,11 @@ namespace GhSA.Components
             {
                 Params.Output[0].NickName = "U";
                 Params.Output[0].Name = "Translation";
-                Params.Output[0].Description = "X, Y, Z Translation values (" + Util.GsaUnit.LengthSmall + ")";
+                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Util.GsaUnit.LengthSmall + ")";
 
                 Params.Output[1].NickName = "R";
                 Params.Output[1].Name = "Rotation";
-                Params.Output[1].Description = "XX, YY, ZZ Rotation values (" + Util.GsaUnit.Angle + ")";
+                Params.Output[1].Description = "Rotation Vector [Rxx, Ryy, Rzz] (" + Util.GsaUnit.Angle + ")";
 
                 if ((int)_disp < 4)
                     Params.Output[5].Description = "Legend Values (" + Util.GsaUnit.LengthSmall + ")";
@@ -728,11 +728,11 @@ namespace GhSA.Components
             {
                 Params.Output[0].NickName = "F";
                 Params.Output[0].Name = "Force";
-                Params.Output[0].Description = "X, Y, Z Force values (" + Util.GsaUnit.Force + ")";
+                Params.Output[0].Description = "Force Vector [Nx, Vy, Vz] (" + Util.GsaUnit.Force + ")";
 
                 Params.Output[1].NickName = "M";
                 Params.Output[1].Name = "Moment";
-                Params.Output[1].Description = "XX, YY, ZZ Moment values (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Output[1].Description = "Moment Vector [Mxx, Myy, Mzz] (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
 
                 if ((int)_disp < 4)
                     Params.Output[5].Description = "Legend Values (" + Util.GsaUnit.Force + ")";

@@ -263,7 +263,7 @@ namespace GhSA.Parameters
 
         public override Guid ComponentGuid => new Guid("74f4dbb6-78c5-40b3-a4c6-259e3c7b716c");
 
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
         //protected override Bitmap Icon => Resources.CrossSections;
 
