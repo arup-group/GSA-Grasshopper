@@ -118,4 +118,4 @@ Please make sure to update tests as appropriate.
 <br/>
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+This plugin is free to use, however in order to perform any meaningful tasks you must have GSA installed on your machine. For licensing of GSA refer to Oasys Software licensing terms: https://www.oasys-software.com/support/licensing-of-oasys-software/
