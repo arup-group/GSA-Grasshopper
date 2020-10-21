@@ -32,17 +32,17 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        //protected override Bitmap Icon => Resources.CrossSections;
+        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.EditMem1D;
         #endregion
 
         #region Custom UI
         //This region overrides the typical component layout
-        
+
 
         #endregion
 
         #region Input and output
-        
+
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             
@@ -110,9 +110,6 @@ namespace GhSA.Components
                 GsaMember1d mem = gsaMember1d.Duplicate();
 
                 // #### inputs ####
-
-                
-
                 // 1 section
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
                 if (DA.GetData(1, ref gh_typ))

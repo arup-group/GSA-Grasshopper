@@ -32,16 +32,16 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
 
-        //protected override Bitmap Icon => Resources.CrossSections;
+        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.CreateElem1D;
         #endregion
 
         #region Custom UI
         //This region overrides the typical component layout
-                
+
         #endregion
 
         #region Input and output
-        
+
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Line", "Ln", "Line to create GSA Element", GH_ParamAccess.item);

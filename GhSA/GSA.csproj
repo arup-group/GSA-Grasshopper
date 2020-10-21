@@ -177,6 +177,11 @@
     <Compile Include="Helpers\_RhinoConvertions.cs" />
     <Compile Include="Parameters\GsaSpringParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="UI\Comp_TripleButton.cs" />
     <Compile Include="UI\Comp_Button.cs" />
     <Compile Include="Helpers\_Colour.cs" />
@@ -194,6 +199,63 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditTitles.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditUnits.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GetGeometry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GetLoads.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GetProperties.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\OpenModel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\SaveModel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateElem1D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateElem2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateMem1D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateMem2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditElem1D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditElem2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditMem1D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditMem2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateSupport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditNode.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
