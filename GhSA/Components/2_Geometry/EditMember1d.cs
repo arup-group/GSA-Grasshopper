@@ -47,7 +47,6 @@ namespace GhSA.Components
         {
             
             pManager.AddGenericParameter("1D Member", "Mem1d", "GSA 1D Member to Modify", GH_ParamAccess.item);
-            pManager.AddCurveParameter("Curve", "Crv", "Reposition Member Curve (will be converted to Arcs and Lines automatically if NURBS)", GH_ParamAccess.item);
             pManager.AddGenericParameter("Section", "PB", "Change Section Property", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member Type", "Typ", "Set 1D Member Type", GH_ParamAccess.item);
             pManager.AddIntegerParameter("1D Element Type", "Ty1D", "Set Element 1D Type", GH_ParamAccess.item);
@@ -79,7 +78,6 @@ namespace GhSA.Components
             pManager[13].Optional = true;
             pManager[14].Optional = true;
             pManager[15].Optional = true;
-            pManager[16].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -113,27 +111,11 @@ namespace GhSA.Components
 
                 // #### inputs ####
 
-                // 1 curve
-                GH_Curve ghcrv = new GH_Curve();
-                if (DA.GetData(1, ref ghcrv))
-                {
-                    Curve crv = null;
-                    if (GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both))
-                    {
-                        GsaMember1d tmpmem = new GsaMember1d(crv)
-                        {
-                            ID = mem.ID,
-                            Member = mem.Member,
-                            ReleaseEnd = mem.ReleaseEnd,
-                            ReleaseStart = mem.ReleaseStart
-                        };
-                        mem = tmpmem;
-                    }
-                }
+                
 
-                // 2 section
+                // 1 section
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-                if (DA.GetData(2, ref gh_typ))
+                if (DA.GetData(1, ref gh_typ))
                 {
                     GsaSection section = new GsaSection();
                     if (gh_typ.Value is GsaSection)
@@ -147,25 +129,25 @@ namespace GhSA.Components
                 }
                 
 
-                // 3 type
+                // 2 type
                 GH_Integer ghint = new GH_Integer();
-                if (DA.GetData(4, ref ghint))
+                if (DA.GetData(2, ref ghint))
                 {
                     if (GH_Convert.ToInt32(ghint, out int type, GH_Conversion.Both))
                         mem.Member.Type = Util.Gsa.GsaToModel.Member1dType(type);
                 }
                 
-                // 4 element type
+                // 3 element type
                 GH_Integer ghinteg = new GH_Integer();
-                if (DA.GetData(4, ref ghinteg))
+                if (DA.GetData(3, ref ghinteg))
                 {
                     if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both))
                         mem.Member.Type1D = Util.Gsa.GsaToModel.Element1dType(type);
                 }
 
-                // 5 offset
+                // 4 offset
                 GsaOffset offset = new GsaOffset();
-                if (DA.GetData(5, ref offset))
+                if (DA.GetData(4, ref offset))
                 {
                     mem.Member.Offset.X1 = offset.X1;
                     mem.Member.Offset.X2 = offset.X2;
@@ -173,47 +155,47 @@ namespace GhSA.Components
                     mem.Member.Offset.Z = offset.Z;
                 }
 
-                // 6 start release
+                // 5 start release
                 GsaBool6 start = new GsaBool6();
-                if (DA.GetData(6, ref start))
+                if (DA.GetData(5, ref start))
                 {
                     mem.ReleaseStart = start;
                 }
 
-                // 7 end release
+                // 6 end release
                 GsaBool6 end = new GsaBool6();
-                if (DA.GetData(7, ref end))
+                if (DA.GetData(6, ref end))
                 {
                     mem.ReleaseEnd = end;
                 }
 
-                // 8 orientation angle
+                // 7 orientation angle
                 GH_Number ghangle = new GH_Number();
-                if (DA.GetData(8, ref ghangle))
+                if (DA.GetData(7, ref ghangle))
                 {
                     if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
                         mem.Member.OrientationAngle = angle;
                 }
 
-                // 9 orientation node
+                // 8 orientation node
                 GH_Integer ghori = new GH_Integer();
-                if (DA.GetData(9, ref ghori))
+                if (DA.GetData(8, ref ghori))
                 {
                     if (GH_Convert.ToInt32(ghori, out int orient, GH_Conversion.Both))
                         mem.Member.OrientationNode = orient;
                 }
 
-                // 10 mesh size
+                // 9 mesh size
                 GH_Number ghmsz = new GH_Number();
-                if (DA.GetData(10, ref ghmsz))
+                if (DA.GetData(9, ref ghmsz))
                 {
                     if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
                         mem.Member.MeshSize = msz;
                 }
 
-                // 11 mesh with others
+                // 10 mesh with others
                 GH_Boolean ghbool = new GH_Boolean();
-                if (DA.GetData(11, ref ghbool))
+                if (DA.GetData(10, ref ghbool))
                 {
                     if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
                     {
@@ -221,41 +203,41 @@ namespace GhSA.Components
                     }
                 }
 
-                // 12 ID
+                // 11 ID
                 GH_Integer ghID = new GH_Integer();
-                if (DA.GetData(12, ref ghID))
+                if (DA.GetData(11, ref ghID))
                 {
                     if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
                         mem.ID = id;
                 }
 
-                // 13 name
+                // 12 name
                 GH_String ghnm = new GH_String();
-                if (DA.GetData(13, ref ghnm))
+                if (DA.GetData(12, ref ghnm))
                 {
                     if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
                         mem.Member.Name = name;
                 }
 
-                // 14 Group
+                // 13 Group
                 GH_Integer ghgrp = new GH_Integer();
-                if (DA.GetData(14, ref ghgrp))
+                if (DA.GetData(13, ref ghgrp))
                 {
                     if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
                         mem.Member.Group = grp;
                 }
 
-                // 15 Colour
+                // 14 Colour
                 GH_Colour ghcol = new GH_Colour();
-                if (DA.GetData(15, ref ghcol))
+                if (DA.GetData(14, ref ghcol))
                 {
                     if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
                         mem.Member.Colour = col;
                 }
 
-                // 16 Dummy
+                // 15 Dummy
                 GH_Boolean ghdum = new GH_Boolean();
-                if (DA.GetData(16, ref ghdum))
+                if (DA.GetData(15, ref ghdum))
                 {
                     if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
                         mem.Member.IsDummy = dum;
