@@ -394,6 +394,7 @@
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)$(ProjectName).gha"
 Copy "$(TargetPath)" "$(SolutionDir)\UnitTestGhSA\bin\$(ConfigurationName)\$(ProjectName).dll"
+Copy "$(TargetPath)" "$(SolutionDir)$(ProjectName).gha"
 Erase "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
