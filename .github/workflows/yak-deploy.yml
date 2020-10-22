@@ -27,4 +27,4 @@ jobs:
         run: |
           curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
           ./yak build
-          ls
+          ./yak push gsagrasshopperyaktest-100.11.2-rh6_10-any.yak
