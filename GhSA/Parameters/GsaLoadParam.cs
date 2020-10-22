@@ -558,7 +558,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
-        //protected override Bitmap Icon => Resources.CrossSections;
+        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaLoad;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaLoadGoo> values)
         {

@@ -155,7 +155,7 @@
     <Compile Include="Helpers\_GsaResultsHelper.cs" />
     <Compile Include="Helpers\_RibbonLayout.cs" />
     <Compile Include="Components\0_Model\OpenModel.cs" />
-    <Compile Include="GhSAInfo.cs" />
+    <Compile Include="GSAInfo.cs" />
     <Compile Include="Helpers\_SqlReader.cs" />
     <Compile Include="Parameters\GsaLoadParam.cs" />
     <Compile Include="Parameters\GsaGridPlaneSurfaceParam.cs" />
@@ -340,6 +340,48 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\NodeResults.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GSA.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaBool6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaElem1D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaElem2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaGridPlane.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaMem1D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaMem2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaModel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaNode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaOffset.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaProp2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaSection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaSpring.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

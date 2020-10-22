@@ -320,7 +320,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        //protected override Bitmap Icon => Resources.CrossSections;
+        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaBool6;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaBool6Goo> values)
         {

@@ -21,7 +21,7 @@ namespace GhSA.Components
                 Ribbon.SubCategoryName.Cat3())
         { } 
         public override Guid ComponentGuid => new Guid("cb5c1d72-e414-447b-b5db-ce18d76e2f4d");
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GridPlaneProperties;
         #endregion

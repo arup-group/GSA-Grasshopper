@@ -17,14 +17,11 @@ namespace GhSA
         public override GH_LoadingInstruction PriorityLoad()
         {
             // set folder to latest GSA version.
-            //Assembly ass1 = Assembly.LoadFile(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\GsaAPI.dll");
             Assembly ass1 = Assembly.LoadFile(Util.Gsa.GsaPath.GetPath + "\\GsaAPI.dll");
-            //Assembly ass2 = Assembly.LoadFile(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\System.Data.SQLite.dll");
             Assembly ass2 = Assembly.LoadFile(Util.Gsa.GsaPath.GetPath + "\\System.Data.SQLite.dll");
 
             const string name = "PATH";
             string pathvar = System.Environment.GetEnvironmentVariable(name);
-            //var value = pathvar + ";" + Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\";
             var value = pathvar + ";" + Util.Gsa.GsaPath.GetPath + "\\";
             var target = EnvironmentVariableTarget.Process;
             System.Environment.SetEnvironmentVariable(name, value, target);
@@ -35,7 +32,7 @@ namespace GhSA
             return GH_LoadingInstruction.Proceed;
         }
     }
-    public class GhSAInfo : GH_AssemblyInfo
+    public class GSAInfo : GH_AssemblyInfo
     {
         public override string Name
         {
@@ -44,14 +41,7 @@ namespace GhSA
                 return "GSA";
             }
         }
-        public override Bitmap Icon
-        {
-            get
-            {
-                //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
-            }
-        }
+        public override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GSA;
         public override string Description
         {
             get
