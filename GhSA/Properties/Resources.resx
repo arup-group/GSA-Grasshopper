@@ -118,6 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Analyse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Analyse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AnalysisTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\AnalysisTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BeamLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\BeamLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateBool6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateBool6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="CreateElem1D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateElem1D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -130,8 +142,26 @@
   <data name="CreateMem2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateMem2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="CreateOffset" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateOffset.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateProfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateProfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateProp2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateProp2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateSection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateSpring" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateSpring.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="CreateSupport" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateSupport.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditBool6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EditBool6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditElem1D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditElem1D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -148,11 +178,32 @@
   <data name="EditNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="EditOffset" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EditOffset.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditProp2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EditProp2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EditSection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditSpring" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EditSpring.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="EditTitles" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditTitles.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditUnits" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditUnits.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Elem1dResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Elem1dResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Elem2dResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Elem2dResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FaceLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\FaceLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="GetGeometry" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\GetGeometry.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -163,10 +214,43 @@
   <data name="GetProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\GetProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="GlobalResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GlobalResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GravityLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GravityLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridAreaLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GridAreaLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridLineLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GridLineLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridPlane" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GridPlane.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridPlaneProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GridPlaneProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridPointLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GridPointLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GridSurface" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GridSurface.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NodeLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\NodeLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NodeResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\NodeResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="OpenModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\OpenModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SaveModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SaveModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SectionProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SectionProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

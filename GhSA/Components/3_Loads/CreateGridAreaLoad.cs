@@ -20,7 +20,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("9d775938-69fc-441f-b766-9cd1d8259e5a");
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        //protected override Bitmap Icon => Resources.CrossSections;
+        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GridAreaLoad;
         #endregion
 
         #region Custom UI

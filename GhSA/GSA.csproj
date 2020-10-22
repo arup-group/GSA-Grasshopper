@@ -257,6 +257,90 @@
   <ItemGroup>
     <None Include="Properties\Icons\EditNode.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateBool6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateOffset.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateProfile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateProp2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateSection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateSpring.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditBool6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditOffset.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditProp2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditSection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditSpring.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\SectionProperties.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Analyse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\AnalysisTask.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\BeamLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\FaceLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GravityLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GridAreaLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GridLineLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GridPlane.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GridPlaneProperties.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GridPointLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GridSurface.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\NodeLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Elem1dResults.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Elem2dResults.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GlobalResults.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\NodeResults.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
