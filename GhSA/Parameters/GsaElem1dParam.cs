@@ -45,8 +45,19 @@ namespace GhSA.Parameters
                 //m_rel1.YY = m_element.Release(0).YY;
                 //m_rel1.ZZ = m_element.Release(0).ZZ;
                 return m_rel1; 
-            } // copy release end when GsaAPI.Bool6 works?
-            set { m_rel1 = value; }
+            } 
+            set 
+            { 
+                m_rel1 = value;
+                //Bool6 bool6 = new Bool6();
+                //bool6.X = m_rel1.X;
+                //bool6.Y = m_rel1.Y;
+                //bool6.Z = m_rel1.Z;
+                //bool6.XX = m_rel1.XX;
+                //bool6.YY = m_rel1.YY;
+                //bool6.ZZ = m_rel1.ZZ;
+                //m_element.SetRelease(0, Bool6);
+            }
         }
         public GsaBool6 ReleaseEnd
         {

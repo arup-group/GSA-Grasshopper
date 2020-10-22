@@ -30,17 +30,17 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        //protected override Bitmap Icon => Resources.CrossSections;
+        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.EditTitles;
         #endregion
 
         #region Custom UI
         //This region overrides the typical component layout
-        
+
 
         #endregion
 
         #region Input and output
-        
+
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Job Number", "JN", "Set Job Number for this GSA Model", GH_ParamAccess.item);

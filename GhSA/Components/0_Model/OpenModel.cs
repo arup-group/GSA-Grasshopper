@@ -11,6 +11,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GhSA.Parameters;
 
+
 namespace GhSA.Components
 {
     /// <summary>
@@ -31,7 +32,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        //protected override Bitmap Icon => Resources.CrossSections;
+        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.OpenModel;
         #endregion
 
         #region Custom UI

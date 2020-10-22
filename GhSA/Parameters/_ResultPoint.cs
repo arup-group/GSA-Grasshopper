@@ -44,7 +44,7 @@ namespace GhSA.Parameters
 
         public override string ToString()
         {
-            return string.Format("NodeResult: {0:0.0},{1:0.0},{2:0.0},{3:0.0}", Value.X, Value.Y, Value.Z, m_result);
+            return string.Format("NodeResult: P:{0:0.0},{1:0.0},{2:0.0}, Val:{3:0.0}", Value.X, Value.Y, Value.Z, m_result);
         }
         public override string TypeName
         {

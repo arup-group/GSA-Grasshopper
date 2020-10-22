@@ -32,17 +32,17 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        //protected override Bitmap Icon => Resources.CrossSections;
+        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.EditProp2D;
         #endregion
 
         #region Custom UI
         //This region overrides the typical component layout
-        
+
 
         #endregion
 
         #region Input and output
-        
+
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             
