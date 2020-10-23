@@ -30,10 +30,16 @@ namespace GhSA.Parameters
             get { return m_filename; }
             set { m_filename = value; }
         }
+        public Guid GUID
+        {
+            get { return m_guid; }
+            set { m_guid = value; }
+        }
 
         #region fields
         private Model m_model;
         private string m_filename = "";
+        private Guid m_guid = Guid.NewGuid();
 
         #endregion
 
@@ -60,32 +66,13 @@ namespace GhSA.Parameters
             //duplicate the incoming model ### Shallow copy funcitonality in GsaAPI welcome here....
             if (m_model != null)
             {
-                dup.Model = m_model; //no duplication for now
+                // workaround duplicate model
+                string tempfilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Oasys") + "GSA-Grasshopper_temp.gwb";
+                m_model.SaveAs(tempfilename);
+                dup.Model = new Model();
+                dup.Model.Open(tempfilename);
                 dup.FileName = m_filename;
-
-                //Could duplicate all lists ourselves:
-                //System.Collections.ObjectModel.ReadOnlyDictionary<int, Node> nodes = m_model.Nodes();
-                //dup.SetNodes(nodes);
-
-                //System.Collections.ObjectModel.ReadOnlyDictionary<int, Element> elems = m_model.Elements();
-                //dup.SetElements(elems);
-
-                //System.Collections.ObjectModel.ReadOnlyDictionary<int, Member> mems = m_model.Members();
-                //dup.SetMembers(mems);
-
-                //ToDo
-                //model.SetAnalysisCaseDescription;
-                //model.SetAxes;
-                //model.SetBeamLoad;
-                //model.SetFaceLoad;
-                //model.SetGravityLoad;
-                //model.SetGridAreaLoad;
-                //model.SetGridLineLoad;
-                //model.SetGridPlanes;
-                //model.SetGridSurfaces;
-                //model.SetNodeLoad;
-                //model.SetProp2Ds;
-                //model.SetSections;
+                dup.m_guid = Guid.NewGuid();
             }
             return dup;
         }

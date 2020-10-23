@@ -52,7 +52,7 @@ namespace GhSA.Components
             pManager.AddPointParameter("Node Position", "Pt", "Position (x, y, z) of Node", GH_ParamAccess.item);
             pManager.AddPlaneParameter("Node local axis", "Pl", "Local axis (Plane) of Node", GH_ParamAccess.item);
             pManager.AddGenericParameter("Node Restraints", "B6", "Restraints (Bool6) of Node", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Node Spring", "PS", "Local axis (Plane) of Node", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Node Spring", "PS", "Spring (Type: General)", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -71,7 +71,7 @@ namespace GhSA.Components
             pManager.AddPlaneParameter("Node local axis", "Pl", "Local axis (Plane) of Node", GH_ParamAccess.item);
             pManager.HideParameter(4);
             pManager.AddGenericParameter("Node Restraints", "Re", "Restraints (Bool6) of Node", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Node Spring", "Sp", "Local axis (Plane) of Node", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Node Spring", "Sp", "Spring attached to Node", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Connected Elements", "El", "Connected Element IDs in Model that Node once belonged to", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Connected Members", "Mem", "Connected Member IDs in Model that Node once belonged to", GH_ParamAccess.list);
         }
@@ -128,12 +128,12 @@ namespace GhSA.Components
                 GsaBool6 restraint = new GsaBool6();
                 if (DA.GetData(5, ref restraint))
                 {
-                    restraint.X = gsaNode.Node.Restraint.X;
-                    restraint.Y = gsaNode.Node.Restraint.Y;
-                    restraint.Z = gsaNode.Node.Restraint.Z;
-                    restraint.XX = gsaNode.Node.Restraint.XX;
-                    restraint.YY = gsaNode.Node.Restraint.YY;
-                    restraint.ZZ = gsaNode.Node.Restraint.ZZ;
+                    gsaNode.Node.Restraint.X = restraint.X;
+                    gsaNode.Node.Restraint.Y = restraint.Y;
+                    gsaNode.Node.Restraint.Z = restraint.Z;
+                    gsaNode.Node.Restraint.XX = restraint.XX;
+                    gsaNode.Node.Restraint.YY = restraint.YY;
+                    gsaNode.Node.Restraint.ZZ = restraint.ZZ;
                 }
 
                 GsaSpring spring = new GsaSpring();
