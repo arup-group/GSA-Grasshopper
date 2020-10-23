@@ -352,9 +352,9 @@ namespace GhSA.Parameters
 
         public override Guid ComponentGuid => new Guid("161e2439-83b6-4fda-abb9-2ed938612530");
 
-        public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.quarternary;
 
-        //protected override Bitmap Icon => Resources.CrossSections;
+        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaGridPlane;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

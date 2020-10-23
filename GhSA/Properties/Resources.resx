@@ -238,6 +238,48 @@
   <data name="GridSurface" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\GridSurface.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="GSA" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GSA.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaBool6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaBool6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaElem1D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaElem1D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaElem2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaElem2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaGridPlane" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaGridPlane.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaMem1D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaMem1D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaMem2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaMem2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaOffset" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaOffset.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaProp2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaProp2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaSection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaSpring" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GsaSpring.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="NodeLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\NodeLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
