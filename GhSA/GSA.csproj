@@ -106,6 +106,7 @@
     <Compile Include="AsyncComponentBase\IAsyncComponentWorker.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
+    <Compile Include="Components\4_Analysis\GhAnalyse.cs" />
     <Compile Include="Components\5_Results\Elem2dResults.cs" />
     <Compile Include="Components\5_Results\GlobalResult.cs" />
     <Compile Include="Components\5_Results\Elem1dResults.cs" />
@@ -146,7 +147,7 @@
     <Compile Include="Components\3_Loads\CreateGridPointLoad.cs" />
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
-    <Compile Include="Components\4_Analysis\Analyse.cs" />
+    <Compile Include="Components\4_Analysis\AsyncAnalyse.cs" />
     <Compile Include="Helpers\_GsaPath.cs" />
     <Compile Include="Helpers\_GsaCreateModelHelper.cs" />
     <Compile Include="Helpers\_GsaModelEnums.cs" />

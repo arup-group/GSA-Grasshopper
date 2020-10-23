@@ -225,20 +225,33 @@ namespace GhSA.Components
 
         int analCase = 0;
         string nodeList = "";
+        GsaModel gsaModel;
         #endregion
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Model to work on
-            GsaModel gsaModel = new GsaModel();
-            
+            GsaModel in_Model = new GsaModel();
+
             // Get Model
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(0, ref gh_typ))
             {
                 #region Inputs
                 if (gh_typ.Value is GsaModelGoo)
-                    gh_typ.CastTo(ref gsaModel);
+                {
+                    gh_typ.CastTo(ref in_Model);
+                    if (gsaModel != null)
+                    {
+                        if (in_Model.GUID != gsaModel.GUID)
+                        {
+                            gsaModel = in_Model;
+                            getresults = true;
+                        }
+                    }
+                    else
+                        gsaModel = in_Model;
+                }
                 else
                 {
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
