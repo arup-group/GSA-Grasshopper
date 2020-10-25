@@ -17,14 +17,14 @@ namespace GhSA.Components
     /// <summary>
     /// Component to retrieve non-geometric objects from a GSA model
     /// </summary>
-    public class GetProperties : GH_Component
+    public class GetAnalysis : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("fa497db7-8bdd-438d-888f-83a85d6cd48a");
-        public GetProperties()
-          : base("Get Model Properties", "GetProps", "Get Sections, 2D Properties and Springs from GSA model",
+        public override Guid ComponentGuid => new Guid("f5926fb3-06e5-4b18-b037-6234fff16586");
+        public GetAnalysis()
+           : base("Get Model Properties", "GetProps", "Get Sections, 2D Properties and Springs from GSA model",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         {

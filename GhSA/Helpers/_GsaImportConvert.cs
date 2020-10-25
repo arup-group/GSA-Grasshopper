@@ -132,17 +132,6 @@ namespace GhSA.Util.Gsa
                 {
                     elem1ds.EnsurePath(0);
                     elem2ds.EnsurePath(0);
-                    int max = eDict.Count;
-                    if (max > 0)
-                    {
-                        //elem1ds.Branches[0].. = new List<GsaElement1dGoo>(max);
-                        //elem2ds.Branches[0] = new List<GsaElement2dGoo>(max);
-                        //for (int i = 0; i < eDict.Keys.ElementAt(max - 1); i++)
-                        //{
-                        //    elem1ds.Branches[0].Add(null);
-                        //    elem2ds.Branches[0].Add(null);
-                        //}
-                    }
                 }
 
                 // Loop through all nodes in Node dictionary and add points to Rhino point list
@@ -167,7 +156,6 @@ namespace GhSA.Util.Gsa
                                         var p = node.Position;
                                         pts.Add(new Point3d(p.X, p.Y, p.Z));
                                     }
-                                    //node.Dispose();
                                 }
                             }
                             Line line = new Line(pts[0], pts[1]);
@@ -229,7 +217,6 @@ namespace GhSA.Util.Gsa
                                         var p = node.Position;
                                         tempMesh.Vertices.Add(new Point3d(p.X, p.Y, p.Z));
                                     }
-                                    //node.Dispose();
                                 }
                             }
 
@@ -308,9 +295,6 @@ namespace GhSA.Util.Gsa
                                 elem2d.ID = ids;
                                 elem2ds.Insert(new GsaElement2dGoo(elem2d), path, key - 1);
                             }
-
-                            //tempMesh.Dispose();
-                            //elem.Dispose();
                         }
                     }
                 }
@@ -449,7 +433,6 @@ namespace GhSA.Util.Gsa
                                 var p = node.Position;
                                 topopts.Add(new Point3d(p.X, p.Y, p.Z));
                             }
-                            node.Dispose();
                         }
 
                         //list of lists of void points /member2d
@@ -464,7 +447,6 @@ namespace GhSA.Util.Gsa
                                     var p = node.Position;
                                     void_topo[i].Add(new Point3d(p.X, p.Y, p.Z));
                                 }
-                                node.Dispose();
                             }
                         }
 
@@ -480,7 +462,6 @@ namespace GhSA.Util.Gsa
                                     var p = node.Position;
                                     incLines_topo[i].Add(new Point3d(p.X, p.Y, p.Z));
                                 }
-                                node.Dispose();
                             }
                         }
 
@@ -493,7 +474,6 @@ namespace GhSA.Util.Gsa
                                 var p = node.Position;
                                 incl_pts.Add(new Point3d(p.X, p.Y, p.Z));
                             }
-                            node.Dispose();
                         }
 
                         if (mem.Type == MemberType.GENERIC_1D | mem.Type == MemberType.BEAM | mem.Type == MemberType.CANTILEVER |

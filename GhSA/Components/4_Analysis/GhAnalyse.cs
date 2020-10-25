@@ -78,6 +78,16 @@ namespace GhSA.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            GsaModel WorkModel = new GsaModel();
+            Nodes = null;
+            Elem1ds = null;
+            Elem2ds = null;
+            Mem1ds = null;
+            Mem2ds = null;
+            Loads = null;
+            Sections = null;
+            Prop2Ds = null;
+
             #region GetData
             // Get Model input
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -382,9 +392,9 @@ namespace GhSA.Components
                             topo.Add(id);
                         else
                         {
-                            int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
-                            nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(line.PointAtStart));
-                            topo.Add(key);
+                            nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(line.PointAtStart));
+                            topo.Add(newNodeID);
+                            newNodeID++;
                         }
 
                         //End node

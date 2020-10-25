@@ -104,6 +104,7 @@
   <ItemGroup>
     <Compile Include="AsyncComponentBase\GH_AsyncComponent.cs" />
     <Compile Include="AsyncComponentBase\IAsyncComponentWorker.cs" />
+    <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
     <Compile Include="Components\4_Analysis\GhAnalyse.cs" />
