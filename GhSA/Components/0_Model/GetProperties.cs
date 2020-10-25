@@ -59,9 +59,7 @@ namespace GhSA.Components
             GsaModel gsaModel = new GsaModel();
             if (DA.GetData(0, ref gsaModel))
             {
-                Model model = new Model();
-                model = gsaModel.Model;
-
+                Model model = gsaModel.Model;
 
                 List<GsaSectionGoo> sections = Util.Gsa.GsaImport.GsaGetSections(model);
                 List<GsaProp2dGoo> prop2Ds = Util.Gsa.GsaImport.GsaGetProp2ds(model);

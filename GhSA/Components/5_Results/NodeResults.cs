@@ -355,7 +355,6 @@ namespace GhSA.Components
                     {
                         NodeResult result;
                         Double6 values = null;
-                        double d = 0;
 
                         if (_mode == FoldMode.Reaction)
                         {

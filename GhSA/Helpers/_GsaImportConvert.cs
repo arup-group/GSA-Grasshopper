@@ -167,7 +167,7 @@ namespace GhSA.Util.Gsa
                                         var p = node.Position;
                                         pts.Add(new Point3d(p.X, p.Y, p.Z));
                                     }
-                                    node.Dispose();
+                                    //node.Dispose();
                                 }
                             }
                             Line line = new Line(pts[0], pts[1]);
@@ -229,7 +229,7 @@ namespace GhSA.Util.Gsa
                                         var p = node.Position;
                                         tempMesh.Vertices.Add(new Point3d(p.X, p.Y, p.Z));
                                     }
-                                    node.Dispose();
+                                    //node.Dispose();
                                 }
                             }
 
@@ -309,8 +309,8 @@ namespace GhSA.Util.Gsa
                                 elem2ds.Insert(new GsaElement2dGoo(elem2d), path, key - 1);
                             }
 
-                            tempMesh.Dispose();
-                            elem.Dispose();
+                            //tempMesh.Dispose();
+                            //elem.Dispose();
                         }
                     }
                 }

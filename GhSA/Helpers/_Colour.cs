@@ -155,16 +155,6 @@ namespace GhSA.UI
             get { return GsaDarkPurple; }
         }
 
-        public static Color Member2dEdge
-        {
-            get { return GsaBlue; }
-        }
-
-        public static Color Member2dEdgeSelected
-        {
-            get { return GsaDarkPurple; }
-        }
-
         public static Color Element2dEdge
         {
             get { return GsaBlue; }
@@ -174,11 +164,47 @@ namespace GhSA.UI
         {
             get { return GsaDarkPurple; }
         }
+        
 
-
-        public static DisplayMaterial Member2dFace
+        public static DisplayMaterial Element2dFace
         {
             get 
+            {
+                DisplayMaterial material = new DisplayMaterial
+                {
+                    Diffuse = Color.FromArgb(50, 150, 150, 150),
+                    Emission = Color.FromArgb(50, 150, 150, 150),
+                    Transparency = 0.1
+                };
+                return material;
+            } 
+        }
+
+        public static DisplayMaterial Element2dFaceSelected
+        {
+            get
+            {
+                DisplayMaterial material = new DisplayMaterial
+                {
+                    Diffuse = Color.FromArgb(5, 150, 150, 150),
+                    Emission = Color.FromArgb(5, 150, 150, 150),
+                    Transparency = 0.2
+                };
+                return material;
+            }
+        }
+        public static Color Member2dEdge
+        {
+            get { return GsaBlue; }
+        }
+
+        public static Color Member2dEdgeSelected
+        {
+            get { return GsaDarkPurple; }
+        }
+        public static DisplayMaterial Member2dFace
+        {
+            get
             {
                 DisplayMaterial material = new DisplayMaterial
                 {
@@ -187,7 +213,7 @@ namespace GhSA.UI
                     Transparency = 0.1
                 };
                 return material;
-            } 
+            }
         }
 
         public static DisplayMaterial Member2dFaceSelected
@@ -203,7 +229,6 @@ namespace GhSA.UI
                 return material;
             }
         }
-
         public static Color Member2dInclPt
         {
             get { return GsaGold; }

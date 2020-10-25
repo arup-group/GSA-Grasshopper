@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GhSA.Parameters;
-
+using Grasshopper.Kernel.Data;
 
 namespace GhSA.Components
 {
@@ -145,8 +145,10 @@ namespace GhSA.Components
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Nodes", "Nodes", "Nodes from GSA Model", GH_ParamAccess.list);
+            pManager.HideParameter(0);
             pManager.AddGenericParameter("1D Elements", "Elem1D", "1D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.tree);
             pManager.AddGenericParameter("2D Elements", "Elem2D", "2D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.tree);
+            pManager.HideParameter(2);
             pManager.AddGenericParameter("1D Members", "Mem1D", "1D Members (Design Layer) from GSA Model", GH_ParamAccess.tree);
             pManager.AddGenericParameter("2D Members", "Mem2D", "2D Members (Design Layer) from GSA Model", GH_ParamAccess.tree);
         }
@@ -177,23 +179,82 @@ namespace GhSA.Components
                 if (DA.GetData(3, ref memList))
                     memList = memList.ToString();
 
-                Model model = new Model();
-                model = gsaModel.Model;
+                Model model = gsaModel.Model;
 
                 bool graft = false;
                 if (_mode == FoldMode.Graft)
                     graft = true;
+
                 List<GsaNode> nodes = Util.Gsa.GsaImport.GsaGetPoint(model, nodeList);
                 Tuple<DataTree<GsaElement1dGoo>, DataTree<GsaElement2dGoo>> elementTuple = Util.Gsa.GsaImport.GsaGetElem(model, elemList, graft);
                 Tuple<DataTree<GsaMember1dGoo>, DataTree<GsaMember2dGoo>> memberTuple = Util.Gsa.GsaImport.GsaGetMemb(model, memList, graft);
 
                 List<GsaNodeGoo> gsaNodes = nodes.ConvertAll(x => new GsaNodeGoo(x));
-                
                 DA.SetDataList(0, gsaNodes);
                 DA.SetDataTree(1, elementTuple.Item1);
                 DA.SetDataTree(2, elementTuple.Item2);
                 DA.SetDataTree(3, memberTuple.Item1);
                 DA.SetDataTree(4, memberTuple.Item2);
+
+                element2ds = elementTuple.Item2.AllData();
+            }
+        }
+
+        List<GsaElement2dGoo> element2ds;
+        public override void DrawViewportMeshes(IGH_PreviewArgs args)
+        {
+            
+            base.DrawViewportMeshes(args);
+
+            foreach (GsaElement2dGoo element in element2ds)
+            {
+                if (element == null) { continue; }
+                //Draw shape.
+                if (element.Value.Mesh != null)
+                {
+                    if (!(element.Value.Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
+                    {
+                        if (this.Attributes.Selected)
+                            args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFace);
+                        else
+                            args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFaceSelected);
+                    }
+                }
+            }
+        }
+
+        public override void DrawViewportWires(IGH_PreviewArgs args)
+        {
+            base.DrawViewportWires(args);
+
+            foreach (GsaElement2dGoo element in element2ds)
+            {
+                if (element == null) { continue; }
+                //Draw lines
+                if (element.Value.Mesh != null)
+                {
+                    if (element.Value.Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
+                    {
+                        for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+                        {
+                            if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i).Length > 1)
+                                args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
+                        }
+                    }
+                    else
+                    {
+                        if (this.Attributes.Selected) 
+                        {
+                            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+                                args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
+                        }
+                        else
+                        {
+                            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+                                args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 2);
+                        }
+                    }
+                }
             }
         }
     }

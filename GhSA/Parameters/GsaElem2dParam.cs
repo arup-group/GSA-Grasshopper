@@ -213,7 +213,7 @@ namespace GhSA.Parameters
         public override bool CastTo<Q>(out Q target)
         {
             // This function is called when Grasshopper needs to convert this 
-            // instance of GsaMember into some other type Q.            
+            // instance of GsaElement2D into some other type Q.            
 
 
             if (typeof(Q).IsAssignableFrom(typeof(GsaElement2d)))
@@ -224,7 +224,7 @@ namespace GhSA.Parameters
                     target = (Q)(object)Value;
                 return true;
             }
-
+            
             if (typeof(Q).IsAssignableFrom(typeof(Element)))
             {
                 if (Value == null)
@@ -349,9 +349,9 @@ namespace GhSA.Parameters
         {
             //Draw shape.
             if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Member2dFace);
+                args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
             else
-                args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Member2dFaceSelected);
+                args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFaceSelected);
         }
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
@@ -368,11 +368,9 @@ namespace GhSA.Parameters
                 else
                 {
                     for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
-                        args.Pipeline.DrawLine(Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 3);
+                        args.Pipeline.DrawLine(Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
                 }
-                
             }
-                    
         }
         #endregion
     }
