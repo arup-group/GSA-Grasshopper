@@ -75,10 +75,15 @@ namespace GhSA.Components
                     {
                         if (gh_typ.Value is GsaSection)
                             gh_typ.CastTo(ref section);
-                        else if (gh_typ.Value is GH_Number)
+                        else
                         {
-                            if (GH_Convert.ToInt32((GH_Number)gh_typ.Value, out int idd, GH_Conversion.Both))
+                            if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
                                 section.ID = idd;
+                            else
+                            {
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+                                return;
+                            }
                         }
                     }
                     else
