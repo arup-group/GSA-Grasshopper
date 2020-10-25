@@ -215,9 +215,9 @@ namespace GhSA.Components
                     if (!(element.Value.Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
                     {
                         if (this.Attributes.Selected)
-                            args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFace);
-                        else
                             args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFaceSelected);
+                        else
+                            args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFace);
                     }
                 }
             }
@@ -251,7 +251,7 @@ namespace GhSA.Components
                         else
                         {
                             for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-                                args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 2);
+                                args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 1);
                         }
                     }
                 }

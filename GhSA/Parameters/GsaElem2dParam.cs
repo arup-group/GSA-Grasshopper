@@ -363,7 +363,7 @@ namespace GhSA.Parameters
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
                     for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
-                        args.Pipeline.DrawLine(Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 2);
+                        args.Pipeline.DrawLine(Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 1);
                 }
                 else
                 {
