@@ -223,7 +223,7 @@ namespace GhSA.Components
                             gh_typ.CastTo(ref gsasection);
                             in_sect.Add(gsasection);
                         }
-                        if (gh_typ.Value is GsaSectionGoo)
+                        if (gh_typ.Value is GsaProp2dGoo)
                         {
                             GsaProp2d gsaprop = new GsaProp2d();
                             gh_typ.CastTo(ref gsaprop);
@@ -943,6 +943,7 @@ namespace GhSA.Components
                 gsa.SetSections(setsect);
 
                 ReadOnlyDictionary<int, Prop2D> setpr2d = new ReadOnlyDictionary<int, Prop2D>(prop2ds);
+                gsa.SetProp2Ds(setpr2d);
                 #endregion
 
                 #region meshing

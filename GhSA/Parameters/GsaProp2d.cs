@@ -74,6 +74,7 @@ namespace GhSA.Parameters
         public override string ToString()
         {
             string str = m_prop2d.Type.ToString();
+            str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
             return "GSA 2D Property " + str;
         }
 

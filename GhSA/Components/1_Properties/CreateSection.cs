@@ -79,7 +79,13 @@ namespace GhSA.Components
                     sect.Section.Profile = profile;
 
                     // 1 material
-                    // to be implemented
+                    // to include GsaMaterial when this becomes available in GsaAPI
+                    GH_Integer gh_mat = new GH_Integer();
+                    if (DA.GetData(1, ref gh_mat))
+                    {
+                        if (GH_Convert.ToInt32(gh_mat, out int mat, GH_Conversion.Both))
+                            sect.Section.MaterialAnalysisProperty = mat;
+                    }
 
                     // 2 pool
                     GH_Integer gh_pool = new GH_Integer();
