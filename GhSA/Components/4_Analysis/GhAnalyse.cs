@@ -78,6 +78,7 @@ namespace GhSA.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            #region GetData
             GsaModel WorkModel = new GsaModel();
             Nodes = null;
             Elem1ds = null;
@@ -88,7 +89,6 @@ namespace GhSA.Components
             Sections = null;
             Prop2Ds = null;
 
-            #region GetData
             // Get Model input
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(0, ref gh_typ))

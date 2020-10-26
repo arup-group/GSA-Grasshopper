@@ -16,7 +16,7 @@ namespace GhSA.Components
     {
         #region Name and Ribbon Layout
         public Analyse()
-            : base("Analyse Model", "Analyse", "Assemble and Analyse a GSA Model",
+            : base("Async Analyse Model", "AsyncAnalyse", "Assemble and Analyse a GSA Model using Multi-threading",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat4())
         { BaseWorker = new AnalysisWorker(); }
@@ -70,6 +70,17 @@ namespace GhSA.Components
 
             public override void GetData(IGH_DataAccess DA, GH_ComponentParamServer Params)
             {
+                #region GetData
+                WorkModel = new GsaModel();
+                Nodes = null;
+                Elem1ds = null;
+                Elem2ds = null;
+                Mem1ds = null;
+                Mem2ds = null;
+                Loads = null;
+                Sections = null;
+                Prop2Ds = null;
+
                 // Get Model input
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
                 if (DA.GetData(0, ref gh_typ))
@@ -83,17 +94,11 @@ namespace GhSA.Components
                     }
                     else
                     {
-                        //AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input to Model");
-                        //return;
+                        //GH_Component comp = base as GH_Component;
+                        //comp.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input to Model");
+                        return;
                     }
                 }
-
-                //Get main data input
-                //GH_Structure<GH_Curve> gh_Curves;
-                //DA.GetDataTree(0, out gh_Curves);
-
-                //GH_Structure<Grasshopper.Kernel.Types.IGH_GeometricGoo> gh_Geo;
-                //DA.GetDataTree(1, out gh_Geo);
 
                 // Get Node input
                 List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
@@ -105,14 +110,14 @@ namespace GhSA.Components
                         gh_typ = gh_types[i];
                         if (gh_typ.Value is GsaNodeGoo)
                         {
-                            GsaNode gsa = new GsaNode();
-                            gh_typ.CastTo(ref gsa);
-                            in_nodes.Add(gsa);
+                            GsaNode gsanode = new GsaNode();
+                            gh_typ.CastTo(ref gsanode);
+                            in_nodes.Add(gsanode);
                         }
                     }
                     Nodes = in_nodes;
                 }
-                
+
                 // Get Element1d input
                 gh_types = new List<GH_ObjectWrapper>();
                 List<GsaElement1d> in_elem1ds = new List<GsaElement1d>();
@@ -123,9 +128,9 @@ namespace GhSA.Components
                         gh_typ = gh_types[i];
                         if (gh_typ.Value is GsaElement1dGoo)
                         {
-                            GsaElement1d gsa = new GsaElement1d();
-                            gh_typ.CastTo(ref gsa);
-                            in_elem1ds.Add(gsa);
+                            GsaElement1d gsaelem1 = new GsaElement1d();
+                            gh_typ.CastTo(ref gsaelem1);
+                            in_elem1ds.Add(gsaelem1);
                         }
                     }
                     Elem1ds = in_elem1ds;
@@ -141,9 +146,9 @@ namespace GhSA.Components
                         gh_typ = gh_types[i];
                         if (gh_typ.Value is GsaElement2dGoo)
                         {
-                            GsaElement2d gsa = new GsaElement2d();
-                            gh_typ.CastTo(ref gsa);
-                            in_elem2ds.Add(gsa);
+                            GsaElement2d gsaelem2 = new GsaElement2d();
+                            gh_typ.CastTo(ref gsaelem2);
+                            in_elem2ds.Add(gsaelem2);
                         }
                     }
                     Elem2ds = in_elem2ds;
@@ -159,9 +164,9 @@ namespace GhSA.Components
                         gh_typ = gh_types[i];
                         if (gh_typ.Value is GsaMember1dGoo)
                         {
-                            GsaMember1d gsa = new GsaMember1d();
-                            gh_typ.CastTo(ref gsa);
-                            in_mem1ds.Add(gsa);
+                            GsaMember1d gsamem1 = new GsaMember1d();
+                            gh_typ.CastTo(ref gsamem1);
+                            in_mem1ds.Add(gsamem1);
                         }
                     }
                     Mem1ds = in_mem1ds;
@@ -177,9 +182,9 @@ namespace GhSA.Components
                         gh_typ = gh_types[i];
                         if (gh_typ.Value is GsaMember2dGoo)
                         {
-                            GsaMember2d gsa = new GsaMember2d();
-                            gh_typ.CastTo(ref gsa);
-                            in_mem2ds.Add(gsa);
+                            GsaMember2d gsamem2 = new GsaMember2d();
+                            gh_typ.CastTo(ref gsamem2);
+                            in_mem2ds.Add(gsamem2);
                         }
                     }
                     Mem2ds = in_mem2ds;
@@ -195,9 +200,9 @@ namespace GhSA.Components
                         gh_typ = gh_types[i];
                         if (gh_typ.Value is GsaLoadGoo)
                         {
-                            GsaLoad gsa = null;
-                            gh_typ.CastTo(ref gsa);
-                            in_loads.Add(gsa);
+                            GsaLoad gsaload = null;
+                            gh_typ.CastTo(ref gsaload);
+                            in_loads.Add(gsaload);
                         }
                     }
                     Loads = in_loads;
@@ -214,20 +219,21 @@ namespace GhSA.Components
                         gh_typ = gh_types[i];
                         if (gh_typ.Value is GsaSectionGoo)
                         {
-                            GsaSection gsa = new GsaSection();
-                            gh_typ.CastTo(ref gsa);
-                            in_sect.Add(gsa);
+                            GsaSection gsasection = new GsaSection();
+                            gh_typ.CastTo(ref gsasection);
+                            in_sect.Add(gsasection);
                         }
                         if (gh_typ.Value is GsaSectionGoo)
                         {
-                            GsaProp2d gsa = new GsaProp2d();
-                            gh_typ.CastTo(ref gsa);
-                            in_prop.Add(gsa);
+                            GsaProp2d gsaprop = new GsaProp2d();
+                            gh_typ.CastTo(ref gsaprop);
+                            in_prop.Add(gsaprop);
                         }
                     }
                     Sections = in_sect;
                     Prop2Ds = in_prop;
                 }
+                #endregion
             }
 
             public override void SetData(IGH_DataAccess DA)
@@ -240,17 +246,12 @@ namespace GhSA.Components
 
             public override void DoWork(Action<string, double> ReportProgress, Action Done)
             {
-                // 👉 Checking for cancellation!
-                if (CancellationToken.IsCancellationRequested) return;
-
+                #region DoWork
                 // Let's work just on the model (not wrapped)
                 GsaAPI.Model gsa = WorkModel.Model;
-                string progress = "";
-                string tempprogress = "";
 
                 #region Nodes
                 // ### Nodes ###
-                
                 // We take out the existing nodes in the model and work on that dictionary
 
                 // Get existing nodes
@@ -263,9 +264,6 @@ namespace GhSA.Components
                 // Add/Set Nodes
                 if (Nodes != null)
                 {
-                    tempprogress = "Creating Nodes";
-                    //ReportProgress(progress + tempprogress, 0);
-
                     // update counter if new nodes have set ID higher than existing max
                     int existingNodeMaxID = Nodes.Max(x => x.ID); // max ID in new nodes
                     if (existingNodeMaxID > newNodeID)
@@ -311,7 +309,7 @@ namespace GhSA.Components
                             {
                                 nodes[node.ID] = apiNode;
                             }
-                                
+
                             else
                             {
                                 // get existing node id if any:
@@ -352,22 +350,14 @@ namespace GhSA.Components
                                 }
                             }
                         }
-
-                        // 👉 Checking for cancellation!
-                        if (CancellationToken.IsCancellationRequested) return;
-                        tempprogress = "Creating Nodes..." + (i / (Nodes.Count - 1)).ToString("0%");
-                        //ReportProgress(progress + tempprogress, 0);
                     }
-                    tempprogress = "";
-                    progress += "Creating Nodes...Done" + System.Environment.NewLine;
-                    //ReportProgress(progress + tempprogress, 0);
                 }
                 #endregion
 
                 #region Elements
                 // ### Elements ###
                 // We take out the existing elements in the model and work on that dictionary
-                
+
                 // Get existing elements
                 IReadOnlyDictionary<int, Element> gsaElems = gsa.Elements();
                 Dictionary<int, Element> elems = gsaElems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -386,13 +376,10 @@ namespace GhSA.Components
                     if (existingElem2dMaxID > newElemID)
                         newElemID = existingElem2dMaxID + 1;
                 }
-                
+
                 // Elem1ds
                 if (Elem1ds != null)
                 {
-                    tempprogress = "Creating Elem1Ds";
-                    //ReportProgress(progress + tempprogress, 0);
-                    
                     for (int i = 0; i < Elem1ds.Count; i++)
                     {
                         if (Elem1ds[i] != null)
@@ -409,9 +396,9 @@ namespace GhSA.Components
                                 topo.Add(id);
                             else
                             {
-                                int key = (nodes.Count > 0) ? nodes.Keys.Max() + 1 : 1;
-                                nodes.Add(key, Util.Gsa.ModelNodes.NodeFromPoint(line.PointAtStart));
-                                topo.Add(key);
+                                nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(line.PointAtStart));
+                                topo.Add(newNodeID);
+                                newNodeID++;
                             }
 
                             //End node
@@ -449,25 +436,14 @@ namespace GhSA.Components
                                 elems.Add(newElemID, apiElement);
                                 newElemID++;
                             }
-                               
-                        }
 
-                        // 👉 Checking for cancellation!
-                        if (CancellationToken.IsCancellationRequested) return;
-                        tempprogress = "Creating Elem1Ds..." + (i / (Elem1ds.Count - 1)).ToString("0%");
-                        //ReportProgress(progress + tempprogress, 0);
+                        }
                     }
-                    tempprogress = "";
-                    progress += "Creating Elem1Ds...Done" + System.Environment.NewLine;
-                    //ReportProgress(progress + tempprogress, 0);
                 }
 
                 // Elem2ds
                 if (Elem2ds != null)
                 {
-                    tempprogress = "Creating Elem2Ds";
-                    //ReportProgress(progress + tempprogress, 0);
-                    
                     for (int i = 0; i < Elem2ds.Count; i++)
                     {
                         if (Elem2ds[i] != null)
@@ -482,7 +458,7 @@ namespace GhSA.Components
                                 List<int> meshVertexIndex = element2d.TopoInt[j];
 
                                 List<int> topo = new List<int>(); // temp topologylist
-                                
+
                                 //Loop through topology
                                 for (int k = 0; k < meshVertexIndex.Count; k++)
                                 {
@@ -521,28 +497,16 @@ namespace GhSA.Components
                                     elems.Add(newElemID, apiMeshElement);
                                     newElemID++;
                                 }
-                                    
-
-                                // 👉 Checking for cancellation!
-                                if (CancellationToken.IsCancellationRequested) return;
                             }
-
-                            // 👉 Checking for cancellation!
-                            if (CancellationToken.IsCancellationRequested) return;
-                            tempprogress = "Creating Elem2Ds..." + (i / (Elem2ds.Count - 1)).ToString("0%");
-                            //ReportProgress(progress + tempprogress, 0);
                         }
                     }
-                    tempprogress = "";
-                    progress += "Creating Elem2Ds...Done" + System.Environment.NewLine;
-                    //ReportProgress(progress + tempprogress, 0);
                 }
                 #endregion
 
                 #region Members
                 // ### Members ###
                 // We take out the existing members in the model and work on that dictionary
-               
+
 
                 // Get existing members
                 IReadOnlyDictionary<int, Member> gsaMems = gsa.Members();
@@ -566,9 +530,6 @@ namespace GhSA.Components
                 // Mem1ds
                 if (Mem1ds != null)
                 {
-                    tempprogress = "Creating Mem1Ds";
-                    //ReportProgress(progress + tempprogress, 0);
-
                     for (int i = 0; i < Mem1ds.Count; i++)
                     {
                         if (Mem1ds[i] != null)
@@ -604,9 +565,6 @@ namespace GhSA.Components
 
                                 if (j != member1d.Topology.Count - 1)
                                     topo += " ";
-
-                                // 👉 Checking for cancellation!
-                                if (CancellationToken.IsCancellationRequested) return;
                             }
                             // set topology in api member
                             apiMember.Topology = string.Copy(topo);
@@ -633,25 +591,14 @@ namespace GhSA.Components
                                 mems.Add(newMemberID, apiMember);
                                 newMemberID++;
                             }
-                                
-                        }
 
-                        // 👉 Checking for cancellation!
-                        if (CancellationToken.IsCancellationRequested) return;
-                        tempprogress = "Creating Mem1Ds..." + (i / (Mem1ds.Count - 1)).ToString("0%");
-                        //ReportProgress(progress + tempprogress, 0);
+                        }
                     }
-                    tempprogress = "";
-                    progress += "Creating Mem1Ds...Done" + System.Environment.NewLine;
-                    //ReportProgress(progress + tempprogress, 0);
                 }
 
                 // Mem2ds
                 if (Mem2ds != null)
                 {
-                    tempprogress = "Creating Mem2Ds";
-                    //ReportProgress(progress + tempprogress, 0);
-
                     for (int i = 0; i < Mem2ds.Count; i++)
                     {
                         if (Mem2ds[i] != null)
@@ -688,9 +635,6 @@ namespace GhSA.Components
 
                                 if (j != member2d.Topology.Count - 1)
                                     topo += " ";
-
-                                // 👉 Checking for cancellation!
-                                if (CancellationToken.IsCancellationRequested) return;
                             }
 
                             // Loop through the voidtopology list
@@ -722,9 +666,6 @@ namespace GhSA.Components
                                         topo += " ";
                                     else
                                         topo += ")";
-
-                                    // 👉 Checking for cancellation!
-                                    if (CancellationToken.IsCancellationRequested) return;
                                 }
                             }
                             // Loop through the inclusion lines topology list
@@ -756,9 +697,6 @@ namespace GhSA.Components
                                         topo += " ";
                                     else
                                         topo += ")";
-
-                                    // 👉 Checking for cancellation!
-                                    if (CancellationToken.IsCancellationRequested) return;
                                 }
                             }
                             // Loop through the inclucion point topology list
@@ -782,9 +720,6 @@ namespace GhSA.Components
                                     topo += " ";
                                 else
                                     topo += ")";
-
-                                // 👉 Checking for cancellation!
-                                if (CancellationToken.IsCancellationRequested) return;
                             }
 
                             // update topology for api member
@@ -813,18 +748,8 @@ namespace GhSA.Components
                                 newMemberID++;
                             }
                         }
-
-                        // 👉 Checking for cancellation!
-                        if (CancellationToken.IsCancellationRequested) return;
-                        tempprogress = "Creating Mem1Ds..." + (i / (Mem2ds.Count - 1)).ToString("0%");
-                        ReportProgress(progress + tempprogress, 0);
                     }
-                    tempprogress = "";
-                    progress += "Creating Mem2Ds...Done" + System.Environment.NewLine;
-                    //ReportProgress(progress + tempprogress, 0);
                 }
-
-                
                 #endregion
 
                 #region Loads
@@ -844,9 +769,6 @@ namespace GhSA.Components
 
                 if (Loads != null)
                 {
-                    tempprogress = "Creating Loads";
-                    //ReportProgress(progress + tempprogress, 0);
-
                     for (int i = 0; i < Loads.Count; i++)
                     {
                         if (Loads[i] != null)
@@ -891,14 +813,7 @@ namespace GhSA.Components
                                     break;
                             }
                         }
-                        // 👉 Checking for cancellation!
-                        if (CancellationToken.IsCancellationRequested) return;
-                        tempprogress = "Creating Loads..." + (i / (Loads.Count - 1)).ToString("0%");
-                        //ReportProgress(progress + tempprogress, 0);
                     }
-                    tempprogress = "";
-                    progress += "Creating Loads...Done" + System.Environment.NewLine;
-                    //ReportProgress(progress + tempprogress, 0);
                 }
                 #endregion
 
@@ -918,9 +833,6 @@ namespace GhSA.Components
                 {
                     if (Sections.Count != 0)
                     {
-                        tempprogress = "Creating Sections";
-                        //ReportProgress(progress + tempprogress, 0);
-
                         // update counter if new nodes have set ID higher than existing max
                         int existingSectionsMaxID = Sections.Max(x => x.ID); // max ID in new 
                         if (existingSectionsMaxID > newSectionID)
@@ -943,15 +855,7 @@ namespace GhSA.Components
                                     newSectionID++;
                                 }
                             }
-
-                            // 👉 Checking for cancellation!
-                            if (CancellationToken.IsCancellationRequested) return;
-                            tempprogress = "Creating Sections..." + (i / (Sections.Count - 1)).ToString("0%");
-                            //ReportProgress(progress + tempprogress, 0);
                         }
-                        tempprogress = "";
-                        progress += "Creating Sections...Done" + System.Environment.NewLine;
-                        //ReportProgress(progress + tempprogress, 0);
                     }
                 }
                 #endregion
@@ -972,9 +876,6 @@ namespace GhSA.Components
                 {
                     if (Prop2Ds.Count != 0)
                     {
-                        tempprogress = "Creating Prop2Ds";
-                        //ReportProgress(progress + tempprogress, 0);
-
                         // update counter if new nodes have set ID higher than existing max
                         int existingProp2dMaxID = Prop2Ds.Max(x => x.ID); // max ID in new 
                         if (existingProp2dMaxID > newProp2dID)
@@ -997,38 +898,21 @@ namespace GhSA.Components
                                     newProp2dID++;
                                 }
                             }
-
-                            // 👉 Checking for cancellation!
-                            if (CancellationToken.IsCancellationRequested) return;
-                            tempprogress = "Creating Sections..." + (i / (Sections.Count - 1)).ToString("0%");
-                            //ReportProgress(progress + tempprogress, 0);
                         }
-                        tempprogress = "";
-                        progress += "Creating Prop2ds...Done" + System.Environment.NewLine;
-                        //ReportProgress(progress + tempprogress, 0);
                     }
                 }
                 #endregion
 
                 #region set stuff in model
-                tempprogress = "Setting nodes";
-                //ReportProgress(progress + tempprogress, 0);
-                if (CancellationToken.IsCancellationRequested) return;
                 ReadOnlyDictionary<int, Node> setnodes = new ReadOnlyDictionary<int, Node>(nodes);
                 gsa.SetNodes(setnodes);
 
-                tempprogress = "Setting elements";
-                //ReportProgress(progress + tempprogress, 0);
                 ReadOnlyDictionary<int, Element> setelem = new ReadOnlyDictionary<int, Element>(elems);
                 gsa.SetElements(setelem);
 
-                tempprogress = "Setting members";
-                //ReportProgress(progress + tempprogress, 0);
                 ReadOnlyDictionary<int, Member> setmem = new ReadOnlyDictionary<int, Member>(mems);
                 gsa.SetMembers(setmem);
 
-                tempprogress = "Setting loads";
-                //ReportProgress(progress + tempprogress, 0);
                 //gravity load
                 ReadOnlyCollection<GravityLoad> setgrav = new ReadOnlyCollection<GravityLoad>(gravityLoads);
                 gsa.AddGravityLoads(setgrav);
@@ -1055,54 +939,31 @@ namespace GhSA.Components
                 ReadOnlyCollection<GridAreaLoad> setarea = new ReadOnlyCollection<GridAreaLoad>(gridAreaLoads);
                 gsa.AddGridAreaLoads(setarea);
 
-                tempprogress = "Setting sections";
-                //ReportProgress(progress + tempprogress, 0);
                 ReadOnlyDictionary<int, Section> setsect = new ReadOnlyDictionary<int, Section>(sections);
                 gsa.SetSections(setsect);
 
-                tempprogress = "Setting prop2ds";
-                //ReportProgress(progress + tempprogress, 0);
                 ReadOnlyDictionary<int, Prop2D> setpr2d = new ReadOnlyDictionary<int, Prop2D>(prop2ds);
-                gsa.SetProp2Ds(setpr2d);
-
-                tempprogress = "";
-                progress += "Setting objects...Done" + System.Environment.NewLine;
-                //ReportProgress(progress + tempprogress, 0);
                 #endregion
 
                 #region meshing
                 // Create elements from members
-                tempprogress = "Meshing members...";
-                //ReportProgress(progress + tempprogress, 0);
-                
                 gsa.CreateElementsFromMembers();
-
-                tempprogress = "";
-                progress += "Meshing members...Done" + System.Environment.NewLine;
-                //ReportProgress(progress + tempprogress, 0);
                 #endregion
 
                 #region analysis
                 //analysis
-                tempprogress = "Running analysis...";
-                //ReportProgress(progress + tempprogress, 0);
                 IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
                 foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
                 {
-                    tempprogress = "Running analysis Task" + task.Key;
-                    //ReportProgress(progress + tempprogress, 0);
                     gsa.Analyse(task.Key);
                 }
 
-                tempprogress = "";
-                //progress += "Analysis...Done" + System.Environment.NewLine;
-                //ReportProgress(progress + tempprogress, 0);
-
-                #endregion 
+                #endregion
 
                 WorkModel.Model = gsa;
 
                 //gsa.SaveAs("C:\\Users\\Kristjan.Nielsen\\Desktop\\GsaGH_test.gwb");
+                #endregion
                 Done();
             }
         }
