@@ -206,18 +206,21 @@ namespace GhSA.Components
             
             base.DrawViewportMeshes(args);
 
-            foreach (GsaElement2dGoo element in element2ds)
+            if (element2ds != null)
             {
-                if (element == null) { continue; }
-                //Draw shape.
-                if (element.Value.Mesh != null)
+                foreach (GsaElement2dGoo element in element2ds)
                 {
-                    if (!(element.Value.Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
+                    if (element == null) { continue; }
+                    //Draw shape.
+                    if (element.Value.Mesh != null)
                     {
-                        if (this.Attributes.Selected)
-                            args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFaceSelected);
-                        else
-                            args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFace);
+                        if (!(element.Value.Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
+                        {
+                            if (this.Attributes.Selected)
+                                args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFaceSelected);
+                            else
+                                args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFace);
+                        }
                     }
                 }
             }
@@ -227,31 +230,34 @@ namespace GhSA.Components
         {
             base.DrawViewportWires(args);
 
-            foreach (GsaElement2dGoo element in element2ds)
+            if (element2ds != null)
             {
-                if (element == null) { continue; }
-                //Draw lines
-                if (element.Value.Mesh != null)
+                foreach (GsaElement2dGoo element in element2ds)
                 {
-                    if (element.Value.Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
+                    if (element == null) { continue; }
+                    //Draw lines
+                    if (element.Value.Mesh != null)
                     {
-                        for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-                        {
-                            if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i).Length > 1)
-                                args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
-                        }
-                    }
-                    else
-                    {
-                        if (this.Attributes.Selected) 
+                        if (element.Value.Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
                         {
                             for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-                                args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
+                            {
+                                if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i).Length > 1)
+                                    args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
+                            }
                         }
                         else
                         {
-                            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-                                args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 1);
+                            if (this.Attributes.Selected)
+                            {
+                                for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+                                    args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
+                            }
+                            else
+                            {
+                                for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+                                    args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 1);
+                            }
                         }
                     }
                 }

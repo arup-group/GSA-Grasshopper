@@ -121,6 +121,9 @@
   <data name="Analyse" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\icons\1x\Analyse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="AnalyseAsync" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\icons\1x\AnalyseAsync.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="AnalysisTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\icons\1x\AnalysisTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
