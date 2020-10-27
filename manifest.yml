@@ -1,7 +1,0 @@
----
-name: gsagrasshopperyaktest
-version: 100.11.2
-authors:
-- Kristjan Nielsen
-description: Grasshopper component library for interfacing with GSA
-url: https://github.com/arup-group/GSA-Grasshopper

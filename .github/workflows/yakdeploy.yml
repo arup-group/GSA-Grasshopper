@@ -1,12 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: CD to Yak server
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
   push:
-    branches: [ feature-sqlite-lists ]
+    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -26,6 +26,7 @@ jobs:
       - name: Run a multi-line script
         run: |
           curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
+          ./yak spec
           ./yak build
-          env
-          ./yak push gsagrasshopperyaktest-100.11.2-rh6_10-any.yak
+          $YAK_FILENAME = dir *.yak 
+          ./yak push $YAK_FILENAME.Name

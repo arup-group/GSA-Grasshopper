@@ -60,8 +60,8 @@ namespace GhSA.Util.Gsa
         public int catalogueTypeIndex;
         public int catalogueProfileIndex;
 
-        public string catalogueProfileName;
-        public string catalogueTypeName;
+        public string catalogueProfileName = "";
+        public string catalogueTypeName = "";
 
         public bool isTapered;
         public bool isHollow;
