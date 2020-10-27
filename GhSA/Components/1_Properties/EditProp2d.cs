@@ -47,14 +47,12 @@ namespace GhSA.Components
         {
             
             pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property to get or set information for", GH_ParamAccess.item);
-            pManager.AddTextParameter("Thickness", "Thk", "Set Property Thickness", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Material", "Mat", "Set Material Property", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Analysis Type", "Typ", "Set Material Analysis Type", GH_ParamAccess.item);
-            pManager.AddTextParameter("Alignment", "Alig", "Set Surface Reference", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Offset", "Offs", "Set Offset", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Prop2d Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Prop2d Name", "Name", "Set Name of 2D Proerty", GH_ParamAccess.item);
+            pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
             pManager.AddColourParameter("Prop2d Colour", "Col", "Set 2D Property Colour", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Axis", "Ax", "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Material", "Mat", "Set Material Property", GH_ParamAccess.item);
+            pManager.AddTextParameter("Thickness", "Thk", "Set Property Thickness", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -62,21 +60,17 @@ namespace GhSA.Components
             pManager[4].Optional = true;
             pManager[5].Optional = true;
             pManager[6].Optional = true;
-            pManager[7].Optional = true;
-            pManager[8].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property with changes", GH_ParamAccess.item);
-            pManager.AddTextParameter("Thickness", "Thk", "Property Thickness", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Material", "Mat", "Material Property", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Analysis Type", "Typ", "Material Analysis Type", GH_ParamAccess.item);
-            pManager.AddTextParameter("Alignment", "Alig", "Surface Reference", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Offset", "Offs", "Offset", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Prop2d Number", "ID", "Original 2D Property number (ID) if 2D Property ever belonged to a GSA Model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Prop2d Name", "Name", "Name of 2D Proerty", GH_ParamAccess.item);
-            pManager.AddColourParameter("Prop2d Colour", "Colour", "2D Property Colour", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property to get or set information for", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Prop2d Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
+            pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
+            pManager.AddColourParameter("Prop2d Colour", "Col", "Set 2D Property Colour", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Axis", "Ax", "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Material", "Mat", "Set Material Property", GH_ParamAccess.item);
+            pManager.AddTextParameter("Thickness", "Thk", "Set Property Thickness", GH_ParamAccess.item);
         }
         #endregion
 
@@ -88,79 +82,67 @@ namespace GhSA.Components
                 GsaProp2d prop = gsaProp2d.Duplicate();
 
                 // #### inputs ####
-                // 1 thickness
-                string thk = ""; //prop.Prop2d.Thickness;
-                if (DA.GetData(1, ref thk))
-                {
-                    //prop.Prop2d.Thickness = thk;
-                }
-
-                // 2 Material
-                // to be implemented
-                
-                // 3 analysis type
-                int analtype = 0; //prop.Prop2d.Thickness;
-                if (DA.GetData(3, ref analtype))
-                    prop.Prop2d.MaterialAnalysisProperty = analtype;
-
-                // 4 alignment
-                string ali = "";
-                if (DA.GetData(4, ref ali))
-                {
-                    // to be implement / GsaAPI can handle alignment / reference surface
-                }
-
-                // 5 offset
-                GsaOffset offsetGSA = new GsaOffset();
-                double offset = 0;
-                if (DA.GetData(5, ref offsetGSA))
-                {
-                    //prop.Prop2d.Offeset = offsetGSA.Z;
-                }
-                else if (DA.GetData(5, ref offset))
-                {
-                    //prop.Prop2d.Offeset = offset;
-                }
-
-                // 6 ID
+                // 1 ID
                 GH_Integer ghID = new GH_Integer();
-                if (DA.GetData(6, ref ghID))
+                if (DA.GetData(1, ref ghID))
                 {
                     if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
                         prop.ID = id;
                 }
 
-                // 7 name
+                // 2 name
                 GH_String ghnm = new GH_String();
-                if (DA.GetData(7, ref ghnm))
+                if (DA.GetData(2, ref ghnm))
                 {
                     if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
                         prop.Prop2d.Name = name;
                 }
 
-                // 8 Colour
+                // 3 Colour
                 GH_Colour ghcol = new GH_Colour();
-                if (DA.GetData(8, ref ghcol))
+                if (DA.GetData(3, ref ghcol))
                 {
                     if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
                         prop.Prop2d.Colour = col;
                 }
 
+                // 4 Axis
+                GH_Integer ghax = new GH_Integer();
+                if (DA.GetData(4, ref ghax))
+                {
+                    if (GH_Convert.ToInt32(ghax, out int axis, GH_Conversion.Both))
+                    {
+                        axis = Math.Min(1, axis);
+                        axis = Math.Max(0, axis);
+                        prop.Prop2d.AxisProperty = axis;
+                    }
+                }
+
+                // 5 Material
+                // to include GsaMaterial when this becomes available in GsaAPI
+                GH_Integer gh_mat = new GH_Integer();
+                if (DA.GetData(5, ref gh_mat))
+                {
+                    if (GH_Convert.ToInt32(gh_mat, out int mat, GH_Conversion.Both))
+                        prop.Prop2d.MaterialAnalysisProperty = mat;
+                }
+
+                // 6 thickness
+                string thk = ""; //prop.Prop2d.Thickness;
+                if (DA.GetData(6, ref thk))
+                {
+                    //prop.Prop2d.Thickness = thk;
+                }
+
                 //#### outputs ####
                 DA.SetData(0, new GsaProp2dGoo(prop));
+                DA.SetData(1, prop.ID);
+                DA.SetData(2, prop.Prop2d.Name);
+                DA.SetData(3, prop.Prop2d.Colour);
+                DA.SetData(4, gsaProp2d.Prop2d.AxisProperty);
+                DA.SetData(5, gsaProp2d.Prop2d.MaterialAnalysisProperty);
+                //DA.SetData(6, gsaProp2d.Thickness); // GsaAPI to be updated
 
-                //DA.SetData(1, gsaProp2d.Thickness); // GsaAPI to be updated
-                //DA.SetData(2, gsaProp2d.Prop2d.Material); // to be implemented
-                DA.SetData(3, prop.Prop2d.MaterialAnalysisProperty); // GsaAPI to be updated
-                                                                          //DA.SetData(4, gsaProp2d.??); GsaAPI to include alignment / reference surface
-
-                GsaOffset gsaoffset = new GsaOffset();
-                //offset.Z = gsaProp2d.Prop2d.Offset; // GsaAPI to include prop2d offset
-                DA.SetData(5, new GsaOffsetGoo(gsaoffset));
-
-                DA.SetData(6, prop.ID);
-                DA.SetData(7, prop.Prop2d.Name);
-                DA.SetData(8, prop.Prop2d.Colour);
             }
         }
     }

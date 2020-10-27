@@ -42,7 +42,7 @@ namespace GhSA
                 return "GSA";
             }
         }
-        public override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GSA;
+        public override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaModel;
         public override string Description
         {
             get

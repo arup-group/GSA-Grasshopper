@@ -67,7 +67,7 @@ namespace GhSA.Components
             pManager.AddGenericParameter("Section", "PB", "GSA Section with changes", GH_ParamAccess.item);
             pManager.AddTextParameter("Section Profile", "Prfl", "Profile describtion", GH_ParamAccess.item);
 
-            pManager.AddGenericParameter("Material", "Mat", "Material Property", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Material", "Mat", "Section Material or Reference ID for Material Property in Existing GSA Model", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Section Pool", "Pool", "Section pool", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Section Number", "ID", "Original Section number (ID) if Section ever belonged to a GSA Model", GH_ParamAccess.item);
             pManager.AddTextParameter("Section Name", "Name", "Section name", GH_ParamAccess.item);

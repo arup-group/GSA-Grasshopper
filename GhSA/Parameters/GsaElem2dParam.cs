@@ -325,10 +325,7 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Mesh == null) { return null; }
 
-            GsaElement2d elem = new GsaElement2d
-            {
-                Elements = Value.Elements
-            };
+            GsaElement2d elem = Value.Duplicate();
             Mesh xMs = Value.Mesh;
             xmorph.Morph(xMs);
             elem.Mesh = xMs;
@@ -389,7 +386,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaElem2D;
+        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaElement2D;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

@@ -406,9 +406,13 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Point == null) { return null; }
 
+            GsaNode node = Value.Duplicate();
             Point3d pt = Value.Point;
             pt.Transform(xform);
-            GsaNode node = new GsaNode(pt);
+            node.Node.Position.X = pt.X;
+            node.Node.Position.Y = pt.Y;
+            node.Node.Position.Z = pt.Z;
+            node.Point = pt;
             return new GsaNodeGoo(node);
         }
 

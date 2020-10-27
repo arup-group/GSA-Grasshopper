@@ -105,9 +105,7 @@ namespace GhSA.Components
                 first = false;
                 //register input parameter
                 Params.RegisterInputParam(new Param_Integer());
-                Params.RegisterInputParam(new Param_String());
-                Params.RegisterInputParam(new Param_Integer());
-                Params.RegisterInputParam(new Param_Integer());
+                Params.RegisterInputParam(new Param_GenericObject());
                 Params.RegisterInputParam(new Param_Number());
 
                 (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -167,48 +165,56 @@ namespace GhSA.Components
                 GH_Integer gh_Axis = new GH_Integer();
                 DA.GetData(3, ref gh_Axis);
                 int axis = 0;
-                GH_Convert.ToInt32_Primary(gh_Axis, ref axis);
+                if (GH_Convert.ToInt32_Primary(gh_Axis, ref axis))
+                {
+                    axis = Math.Min(1, axis);
+                    axis = Math.Max(0, axis);
+                }
                 prop.Prop2d.AxisProperty = axis;
 
 
                 if (_mode != FoldMode.Fabric)
                 {
                     //Material type
-                    GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-                    MaterialType matType = MaterialType.CONCRETE;
-                    if (DA.GetData(4, ref gh_typ))
+                    GH_Integer gh_mat = new GH_Integer();
+                    if (DA.GetData(4, ref gh_mat))
                     {
-                        if (gh_typ.Value is MaterialType)
-                            gh_typ.CastTo(ref matType);
-                        if (gh_typ.Value is GH_String)
-                        {
-                            string typ = "CONCRETE";
-                            GH_Convert.ToString_Primary(gh_typ, ref typ);
-                            if (typ.ToUpper() == "STEEL")
-                                matType = MaterialType.STEEL;
-                            if (typ.ToUpper() == "CONCRETE")
-                                matType = MaterialType.CONCRETE;
-                            if (typ.ToUpper() == "FRP")
-                                matType = MaterialType.FRP;
-                            if (typ.ToUpper() == "ALUMINIUM")
-                                matType = MaterialType.ALUMINIUM;
-                            if (typ.ToUpper() == "TIMBER")
-                                matType = MaterialType.TIMBER;
-                            if (typ.ToUpper() == "GLASS")
-                                matType = MaterialType.GLASS;
-                            if (typ.ToUpper() == "FABRIC")
-                                matType = MaterialType.FABRIC;
-                            if (typ.ToUpper() == "GENERIC")
-                                matType = MaterialType.GENERIC;
-                        }
+                        if (GH_Convert.ToInt32(gh_mat, out int mat, GH_Conversion.Both))
+                            prop.Prop2d.MaterialAnalysisProperty = mat;
                     }
-                    prop.Prop2d.MaterialType = matType;
+                    //MaterialType matType = MaterialType.CONCRETE;
+                    //if (DA.GetData(4, ref gh_typ))
+                    //{
+                    //    if (gh_typ.Value is MaterialType)
+                    //        gh_typ.CastTo(ref matType);
+                    //    if (gh_typ.Value is GH_String)
+                    //    {
+                    //        string typ = "CONCRETE";
+                    //        GH_Convert.ToString_Primary(gh_typ, ref typ);
+                    //        if (typ.ToUpper() == "STEEL")
+                    //            matType = MaterialType.STEEL;
+                    //        if (typ.ToUpper() == "CONCRETE")
+                    //            matType = MaterialType.CONCRETE;
+                    //        if (typ.ToUpper() == "FRP")
+                    //            matType = MaterialType.FRP;
+                    //        if (typ.ToUpper() == "ALUMINIUM")
+                    //            matType = MaterialType.ALUMINIUM;
+                    //        if (typ.ToUpper() == "TIMBER")
+                    //            matType = MaterialType.TIMBER;
+                    //        if (typ.ToUpper() == "GLASS")
+                    //            matType = MaterialType.GLASS;
+                    //        if (typ.ToUpper() == "FABRIC")
+                    //            matType = MaterialType.FABRIC;
+                    //       if (typ.ToUpper() == "GENERIC")
+                    //            matType = MaterialType.GENERIC;
+                    //    }
+                    //}
+                    //prop.Prop2d.MaterialType = matType;
 
                     //thickness
                     GH_Number gh_THK = new GH_Number();
-
                     double thickness = 0.2;
-                    if (DA.GetData(7, ref gh_THK))
+                    if (DA.GetData(5, ref gh_THK))
                         GH_Convert.ToDouble_Primary(gh_THK, ref thickness);
                     //prop.Prop2d.Thickness = thickness;
                 }
@@ -216,23 +222,23 @@ namespace GhSA.Components
                     prop.Prop2d.MaterialType = MaterialType.FABRIC;
 
                 //handle that the last two inputs are at different -1 index for fabric mode
-                int fab = 0;
-                if (_mode == FoldMode.Fabric)
-                    fab = 1;
+                //int fab = 0;
+                //if (_mode == FoldMode.Fabric)
+                //    fab = 1;
 
                 //grade
-                GH_Integer gh_grd = new GH_Integer();
-                DA.GetData(5 - fab, ref gh_grd);
-                int grade = 1;
-                GH_Convert.ToInt32_Primary(gh_grd, ref grade);
-                prop.Prop2d.MaterialGradeProperty = grade;
+                //GH_Integer gh_grd = new GH_Integer();
+                //DA.GetData(5 - fab, ref gh_grd);
+                //int grade = 1;
+                //GH_Convert.ToInt32_Primary(gh_grd, ref grade);
+                //prop.Prop2d.MaterialGradeProperty = grade;
 
                 //analysis
-                GH_Integer gh_anal = new GH_Integer();
-                DA.GetData(6 - fab, ref gh_anal);
-                int analysis = 1;
-                GH_Convert.ToInt32_Primary(gh_anal, ref analysis);
-                prop.Prop2d.MaterialAnalysisProperty = analysis;
+                //GH_Integer gh_anal = new GH_Integer();
+                //DA.GetData(6 - fab, ref gh_anal);
+                //int analysis = 1;
+                //GH_Convert.ToInt32_Primary(gh_anal, ref analysis);
+                //prop.Prop2d.MaterialAnalysisProperty = analysis;
             }
 
             DA.SetData(0, new GsaProp2dGoo(prop));
@@ -266,9 +272,7 @@ namespace GhSA.Components
 
                 //register input parameter
                 Params.RegisterInputParam(new Param_Integer());
-                Params.RegisterInputParam(new Param_String());
-                Params.RegisterInputParam(new Param_Integer());
-                Params.RegisterInputParam(new Param_Integer());
+                Params.RegisterInputParam(new Param_GenericObject());
                 Params.RegisterInputParam(new Param_Number());
             }
             _mode = FoldMode.PlaneStress;
@@ -291,8 +295,8 @@ namespace GhSA.Components
 
             //register input parameter
             Params.RegisterInputParam(new Param_Integer());
-            Params.RegisterInputParam(new Param_Integer());
-            Params.RegisterInputParam(new Param_Integer());
+            Params.RegisterInputParam(new Param_GenericObject());
+            
 
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -313,9 +317,7 @@ namespace GhSA.Components
 
                 //register input parameter
                 Params.RegisterInputParam(new Param_Integer());
-                Params.RegisterInputParam(new Param_String());
-                Params.RegisterInputParam(new Param_Integer());
-                Params.RegisterInputParam(new Param_Integer());
+                Params.RegisterInputParam(new Param_GenericObject());
                 Params.RegisterInputParam(new Param_Number());
             }
             _mode = FoldMode.FlatPlate;
@@ -339,9 +341,7 @@ namespace GhSA.Components
 
                 //register input parameter
                 Params.RegisterInputParam(new Param_Integer());
-                Params.RegisterInputParam(new Param_String());
-                Params.RegisterInputParam(new Param_Integer());
-                Params.RegisterInputParam(new Param_Integer());
+                Params.RegisterInputParam(new Param_GenericObject());
                 Params.RegisterInputParam(new Param_Number());
             }
             _mode = FoldMode.Shell;
@@ -365,9 +365,7 @@ namespace GhSA.Components
 
                 //register input parameter
                 Params.RegisterInputParam(new Param_Integer());
-                Params.RegisterInputParam(new Param_String());
-                Params.RegisterInputParam(new Param_Integer());
-                Params.RegisterInputParam(new Param_Integer());
+                Params.RegisterInputParam(new Param_GenericObject());
                 Params.RegisterInputParam(new Param_Number());
             }
             _mode = FoldMode.CurvedShell;
@@ -437,32 +435,41 @@ namespace GhSA.Components
                 Params.Input[i].Description = "Axis as integer: Global (0) or Topological (1) (by default Global)";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = true;
-                i++;
-                Params.Input[i].NickName = "Mt";
-                Params.Input[i].Name = "Material Type";
-                Params.Input[i].Description = "Material type (default 'Concrete')" +
-                    System.Environment.NewLine + "Steel" +
-                    System.Environment.NewLine + "Concrete" +
-                    System.Environment.NewLine + "FRP" +
-                    System.Environment.NewLine + "Aluminium" +
-                    System.Environment.NewLine + "Timber" +
-                    System.Environment.NewLine + "Glass" +
-                    System.Environment.NewLine + "Fabric" +
-                    System.Environment.NewLine + "Generic";
-                Params.Input[i].Access = GH_ParamAccess.item;
-                Params.Input[i].Optional = true;
-                i++;
-                Params.Input[i].NickName = "Mg";
-                Params.Input[i].Name = "Material Grade";
-                Params.Input[i].Description = "Material grade (default 1)";
-                Params.Input[i].Access = GH_ParamAccess.item;
-                Params.Input[i].Optional = true;
+
                 i++;
                 Params.Input[i].NickName = "Mat";
-                Params.Input[i].Name = "Analysis Material";
-                Params.Input[i].Description = "Analysis material (default from Grade)";
+                Params.Input[i].Name = "Material";
+                Params.Input[i].Description = "Prop2D Material or Reference ID for Material Property in Existing GSA Model";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = true;
+
+                //i++;
+                //Params.Input[i].NickName = "Mt";
+                //Params.Input[i].Name = "Material Type";
+                //Params.Input[i].Description = "Material type (default 'Concrete')" +
+                //    System.Environment.NewLine + "Steel" +
+                //    System.Environment.NewLine + "Concrete" +
+                //    System.Environment.NewLine + "FRP" +
+                //    System.Environment.NewLine + "Aluminium" +
+                //    System.Environment.NewLine + "Timber" +
+                //    System.Environment.NewLine + "Glass" +
+                //    System.Environment.NewLine + "Fabric" +
+                //    System.Environment.NewLine + "Generic";
+                //Params.Input[i].Access = GH_ParamAccess.item;
+                //Params.Input[i].Optional = true;
+                //i++;
+                //Params.Input[i].NickName = "Mg";
+                //Params.Input[i].Name = "Material Grade";
+                //Params.Input[i].Description = "Material grade (default 1)";
+                //Params.Input[i].Access = GH_ParamAccess.item;
+                //Params.Input[i].Optional = true;
+                //i++;
+                //Params.Input[i].NickName = "Mat";
+                //Params.Input[i].Name = "Analysis Material";
+                //Params.Input[i].Description = "Analysis material (default from Grade)";
+                //Params.Input[i].Access = GH_ParamAccess.item;
+                //Params.Input[i].Optional = true;
+
                 i++;
                 Params.Input[i].NickName = "Thk";
                 Params.Input[i].Name = "Thickness [m]";
@@ -480,17 +487,24 @@ namespace GhSA.Components
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = true;
                 i++;
-                Params.Input[i].NickName = "Mg";
-                Params.Input[i].Name = "Material Grade";
-                Params.Input[i].Description = "Material grade (default 1)";
+                Params.Input[i].NickName = "Mat";
+                Params.Input[i].Name = "Material";
+                Params.Input[i].Description = "Prop2D Material or Reference ID for Material Property in Existing GSA Model";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = true;
-                i++;
-                Params.Input[i].NickName = "Ma";
-                Params.Input[i].Name = "Analysis Material";
-                Params.Input[i].Description = "Analysis material (default from Grade)";
-                Params.Input[i].Access = GH_ParamAccess.item;
-                Params.Input[i].Optional = true;
+
+                //i++;
+                //Params.Input[i].NickName = "Mg";
+                //Params.Input[i].Name = "Material Grade";
+                //Params.Input[i].Description = "Material grade (default 1)";
+                //Params.Input[i].Access = GH_ParamAccess.item;
+                //Params.Input[i].Optional = true;
+                //i++;
+                //Params.Input[i].NickName = "Ma";
+                //Params.Input[i].Name = "Analysis Material";
+                //Params.Input[i].Description = "Analysis material (default from Grade)";
+                //Params.Input[i].Access = GH_ParamAccess.item;
+                //Params.Input[i].Optional = true;
 
             }
         }

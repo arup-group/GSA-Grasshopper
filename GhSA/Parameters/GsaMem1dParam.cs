@@ -386,10 +386,7 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.PolyCurve == null) { return null; }
 
-            GsaMember1d mem = new GsaMember1d
-            {
-                Member = Value.Member
-            };
+            GsaMember1d mem = Value.Duplicate();
 
             List<Point3d> pts = Value.Topology;
             Point3dList xpts = new Point3dList(pts);
@@ -403,7 +400,6 @@ namespace GhSA.Parameters
                 crv.Transform(xform);
                 mem.PolyCurve = crv;
             }
-
             
             return new GsaMember1dGoo(mem);
         }

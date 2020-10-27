@@ -270,10 +270,8 @@ namespace GhSA.Parameters
 
         public GsaMember2d Duplicate()
         {
-            GsaMember2d dup = new GsaMember2d
-            {
-                m_member = m_member //add clone or duplicate if available
-            };
+            GsaMember2d dup = new GsaMember2d();
+            dup.m_member = m_member;
             if (m_brep != null)
                 dup.m_brep = m_brep.DuplicateBrep();
             if (m_crv != null)
@@ -641,10 +639,7 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Brep == null & Value.PolyCurve == null) { return null; }
 
-            GsaMember2d mem = new GsaMember2d
-            {
-                Member = Value.Member
-            };
+            GsaMember2d mem = Value.Duplicate();
 
             List<Point3d> pts = Value.Topology;
             Point3dList xpts = new Point3dList(pts);
@@ -689,7 +684,6 @@ namespace GhSA.Parameters
                 mem.InclusionPoints = xpts.ToList();
             }
 
-
             if (Value.Brep != null)
             {
                 Brep brep = Value.Brep.DuplicateBrep();
@@ -702,7 +696,6 @@ namespace GhSA.Parameters
                 crv.Transform(xform);
                 mem.PolyCurve = crv;
             }
-
             
             return new GsaMember2dGoo(mem);
         }

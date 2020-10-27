@@ -45,7 +45,7 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Profile", "Prfl", "Cross-Section Profile", GH_ParamAccess.item);
-            pManager.AddTextParameter("Material", "Mat", "Section Material", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Material", "Mat", "Section Material or Reference ID for Material Property in Existing GSA Model", GH_ParamAccess.item);
             pManager.AddNumberParameter("Pool", "Pool", "Section Pool", GH_ParamAccess.item, 0);
             pManager.AddNumberParameter("Number", "ID", "Section number PB# (default appended to model = 0). Will overwrite any existing section with same number", GH_ParamAccess.item, 0);
             pManager.AddTextParameter("Name", "Na", "Section name", GH_ParamAccess.item);

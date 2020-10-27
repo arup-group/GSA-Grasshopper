@@ -126,10 +126,9 @@ namespace GhSA.Parameters
 
         public GsaElement1d Duplicate()
         {
-            GsaElement1d dup = new GsaElement1d
-            {
-                m_element = m_element //add clone or duplicate if available
-            };
+            GsaElement1d dup = new GsaElement1d();
+            dup.m_element = m_element;
+            
             if (m_line != null)
                 dup.m_line = (LineCurve)m_line.Duplicate();
             dup.ID = m_id;
@@ -364,10 +363,7 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Line == null) { return null; }
 
-            GsaElement1d elem = new GsaElement1d
-            {
-                Element = Value.Element
-            };
+            GsaElement1d elem = Value.Duplicate();
             LineCurve xLn = Value.Line;
             xLn.Transform(xform);
             elem.Line = xLn;
@@ -380,10 +376,7 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Line == null) { return null; }
 
-            GsaElement1d elem = new GsaElement1d
-            {
-                Element = Value.Element
-            };
+            GsaElement1d elem = Value.Duplicate();
             LineCurve xLn = Value.Line;
             xmorph.Morph(xLn);
             elem.Line = xLn;

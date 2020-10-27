@@ -303,9 +303,9 @@ namespace GSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap EditTitles {
+        public static System.Drawing.Bitmap EditTitle {
             get {
-                object obj = ResourceManager.GetObject("EditTitles", resourceCulture);
+                object obj = ResourceManager.GetObject("EditTitle", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -346,6 +346,16 @@ namespace GSA.Properties {
         public static System.Drawing.Bitmap FaceLoad {
             get {
                 object obj = ResourceManager.GetObject("FaceLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GetAnalysis {
+            get {
+                object obj = ResourceManager.GetObject("GetAnalysis", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -463,16 +473,6 @@ namespace GSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GSA {
-            get {
-                object obj = ResourceManager.GetObject("GSA", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap GsaBool6 {
             get {
                 object obj = ResourceManager.GetObject("GsaBool6", resourceCulture);
@@ -493,9 +493,9 @@ namespace GSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaElem2D {
+        public static System.Drawing.Bitmap GsaElement2D {
             get {
-                object obj = ResourceManager.GetObject("GsaElem2D", resourceCulture);
+                object obj = ResourceManager.GetObject("GsaElement2D", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
