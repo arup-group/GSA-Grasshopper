@@ -253,12 +253,12 @@ namespace GhSA.Components
         #endregion
 
         #region other user selection
-        int catalogueIndex;
-        int catalogueTypeIndex;
-        int catalogueProfileIndex;
+        int catalogueIndex = 0;
+        int catalogueTypeIndex = 0;
+        int catalogueProfileIndex = 0;
 
-        string catalogueProfileName;
-        string catalogueTypeName;
+        string catalogueProfileName = "";
+        string catalogueTypeName = "";
 
         bool isTapered;
         bool isHollow;
@@ -280,6 +280,10 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaProfile profile = new GsaProfile();
+
+            // default to FoldMode catalogue
+            _mode = FoldMode.Catalogue;
+
             #region catalogue
             if (_mode == FoldMode.Catalogue)
             {
