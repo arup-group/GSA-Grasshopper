@@ -28,5 +28,6 @@ jobs:
           curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
           ./yak spec
           ./yak build
+          env
           YAK_FILENAME=$(dir *.yak)
           ./yak push $YAK_FILENAME
