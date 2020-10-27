@@ -22,7 +22,7 @@ namespace GhSA.Components
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("78fe156d-6ab4-4683-96a4-2d40eb5cce8f");
+        public override Guid ComponentGuid => new Guid("ba62abd3-cd48-4dd2-9cd1-d89c921dd108");
         public CreateOffset()
           : base("Create Offset", "Offset", "Create GSA Offset",
                 Ribbon.CategoryName.Name(),
