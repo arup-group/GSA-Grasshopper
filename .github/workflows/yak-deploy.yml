@@ -26,6 +26,7 @@ jobs:
       - name: Run a multi-line script
         run: |
           curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
+          ./yak spec
           ./yak build
-          env
-          ./yak push gsagrasshopperyaktest-100.11.2-rh6_10-any.yak
+          YAK_FILENAME=$(dir *.yak)
+          ./yak push $YAK_FILENAME
