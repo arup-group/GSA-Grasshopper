@@ -19,10 +19,12 @@ GSA-Grasshopper is a .NET component library giving Grasshopper access to Oasys G
 
 ## Installation
 
-Use the Rhino package manager [yak](https://developer.rhino3d.com/guides/yak/what-is-yak/) to install GSA-Grasshopper. It will then be shown as GSA in your tabs.
+Use the Rhino package manager [yak](https://developer.rhino3d.com/guides/yak/what-is-yak/) to install GSA-Grasshopper. You can either use the Rhino interface or the yak CLI tool. For the Rhino interface, simply type TestPackageManager in the Rhino command line and search for GSA. In the future, when you share a file using this plugin with a colleague who doesnt have it installed, they will automatically be prompted to download the [latest version](https://developer.rhino3d.com/guides/yak/package-restore-in-grasshopper/). <br/>
+
+Alternatively, to install via the yak CLI:
 
 ```bash
-yak install gsagrasshopper
+yak install GSA
 ```
 <br/>
 
