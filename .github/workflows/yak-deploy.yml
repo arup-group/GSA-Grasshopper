@@ -29,5 +29,5 @@ jobs:
           ./yak spec
           ./yak build
           env
-          YAK_FILENAME=$(dir *.yak)
-          ./yak push $YAK_FILENAME
+          $YAK_FILENAME = dir *.yak 
+          ./yak push $YAK_FILENAME.Name
