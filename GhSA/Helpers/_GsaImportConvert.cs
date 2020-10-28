@@ -1031,10 +1031,19 @@ namespace GhSA.Util.Gsa
             gps.Axis = ax;
 
             // Construct Plane from Axis
-            Plane pln = new Plane(
+            Plane pln = new Plane();
+            if (ax != null )
+            {
+                pln = new Plane(
                 new Point3d(ax.Origin.X, ax.Origin.Y, ax.Origin.Z + gp.Elevation), // for new origin Z-coordinate we add axis origin and grid plane elevation
                 new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
                 new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z));
+            }
+            else
+            {
+                pln = Plane.WorldXY;
+                pln.OriginZ = gp.Elevation;  
+            }
             gps.Plane = pln;
             
             return gps;
