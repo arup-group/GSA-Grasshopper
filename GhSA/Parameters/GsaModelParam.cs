@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 using GsaAPI;
 using Grasshopper.Kernel;
@@ -17,6 +19,7 @@ namespace GhSA.Parameters
     /// <summary>
     /// Model class, this class defines the basic properties and methods for any Gsa Model
     /// </summary>
+    [Serializable]
     public class GsaModel
 
     {
@@ -123,19 +126,27 @@ namespace GhSA.Parameters
             gsaModel.Model = gsa;
             return gsaModel;
         }
+        public GsaModel Clone()
+        {
+            GsaModel clone = new GsaModel();
+
+            // workaround duplicate model
+            string tempfilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Oasys") + "GSA-Grasshopper_temp.gwb";
+            m_model.SaveAs(tempfilename);
+            clone.Model.Open(tempfilename);
+
+            clone.FileName = m_filename;
+            clone.m_guid = Guid.NewGuid();
+            return clone;
+        }
 
         public GsaModel Duplicate() // I think duplicate is called by Grasshopper every time the Goo-parameter is created. Avoid copying the potential heavy data here
         {
             GsaModel dup = new GsaModel();
             
-            //duplicate the incoming model ### Shallow copy funcitonality in GsaAPI welcome here....
+            //duplicate the incoming model ### 
             if (m_model != null)
             {
-                // workaround duplicate model
-                //string tempfilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Oasys") + "GSA-Grasshopper_temp.gwb";
-                //m_model.SaveAs(tempfilename);
-                //dup.Model = new Model();
-                //dup.Model.Open(tempfilename);
                 dup.Model = m_model;
                 dup.FileName = m_filename;
                 dup.m_guid = Guid.NewGuid();

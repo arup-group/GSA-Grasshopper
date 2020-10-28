@@ -66,6 +66,7 @@ namespace GhSA.Components
             List<GsaLoad> Loads { get; set; }
             List<GsaSection> Sections { get; set; }
             List<GsaProp2d> Prop2Ds { get; set; }
+            List<GsaGridPlaneSurface> GridPlaneSurfaces { get; set; }
             #endregion
 
             public override void GetData(IGH_DataAccess DA, GH_ComponentParamServer Params)
@@ -80,6 +81,7 @@ namespace GhSA.Components
                 Loads = null;
                 Sections = null;
                 Prop2Ds = null;
+                GridPlaneSurfaces = null;
 
                 // Get Model input
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -90,7 +92,7 @@ namespace GhSA.Components
                         GsaModel in_model = new GsaModel();
                         gh_typ.CastTo(ref in_model);
 
-                        WorkModel = in_model.Duplicate(); // use Copy when GsaAPI allows to deepclone;
+                        WorkModel = in_model.Clone(); // use Copy when GsaAPI allows to deepclone;
                     }
                     else
                     {
@@ -193,6 +195,7 @@ namespace GhSA.Components
                 // Get Loads input
                 gh_types = new List<GH_ObjectWrapper>();
                 List<GsaLoad> in_loads = new List<GsaLoad>();
+                List<GsaGridPlaneSurface> in_gps = new List<GsaGridPlaneSurface>();
                 if (DA.GetDataList(6, gh_types))
                 {
                     for (int i = 0; i < gh_types.Count; i++)
@@ -204,8 +207,15 @@ namespace GhSA.Components
                             gh_typ.CastTo(ref gsaload);
                             in_loads.Add(gsaload);
                         }
+                        if (gh_typ.Value is GsaGridPlaneSurfaceGoo)
+                        {
+                            GsaGridPlaneSurface gsaGPS = new GsaGridPlaneSurface();
+                            gh_typ.CastTo(ref gsaGPS);
+                            in_gps.Add(gsaGPS);
+                        }
                     }
                     Loads = in_loads;
+                    GridPlaneSurfaces = in_gps;
                 }
 
                 // Get Section Property input
@@ -812,6 +822,20 @@ namespace GhSA.Components
                                     gridAreaLoads.Add(load.AreaLoad.GridAreaLoad);
                                     break;
                             }
+                        }
+                    }
+                }
+
+                if (GridPlaneSurfaces != null)
+                {
+                    for (int i = 0; i < GridPlaneSurfaces.Count; i++)
+                    {
+                        if (GridPlaneSurfaces[i] != null)
+                        {
+                            GsaGridPlaneSurface gps = GridPlaneSurfaces[i];
+                            gps.GridPlane.AxisProperty = gsa.AddAxis(gps.Axis);
+                            gps.GridSurface.GridPlane = gsa.AddGridPlane(gps.GridPlane);
+                            gsa.AddGridSurface(gps.GridSurface);
                         }
                     }
                 }

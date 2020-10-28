@@ -44,10 +44,10 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("X1", "X1", "X1 - Start axial offset", GH_ParamAccess.item, 0);
-            pManager.AddNumberParameter("X2", "X2", "X2 - End axial offset", GH_ParamAccess.item, 0);
-            pManager.AddNumberParameter("Y", "Y", "Y", GH_ParamAccess.item, 0);
-            pManager.AddNumberParameter("Z", "Z", "Z", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Offset X1", "X1", "X1 - Start axial offset (" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Offset X2", "X2", "X2 - End axial offset (" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Offset Y", "Y", "Y Offset (" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Offset Z", "Z", "Z Offset (" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item, 0);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
