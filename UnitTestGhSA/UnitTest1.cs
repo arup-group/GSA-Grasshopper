@@ -4,6 +4,7 @@ using NUnit.Framework;
 using GhSA;
 using GhSA.Parameters;
 using Rhino.Geometry;
+using GsaAPI;
 
 namespace UnitTestGhSA
 {
@@ -26,6 +27,9 @@ namespace UnitTestGhSA
         public void TestCreateGsaSectionCat()
         {
             UnitTestGhSA.Helper.LoadAPI();
+            GsaAPI.Model model = new GsaAPI.Model();
+            string installPath = GhSA.Util.Gsa.GsaPath.GetPath;
+            model.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
 
             string profile = "CAT HE HE200.B";
             GsaSection section = new GsaSection(profile);
