@@ -92,7 +92,7 @@ namespace GhSA.Components
                         GsaModel in_model = new GsaModel();
                         gh_typ.CastTo(ref in_model);
 
-                        WorkModel = in_model.Duplicate(); // use Copy when GsaAPI allows to deepclone;
+                        WorkModel = in_model.Clone(); // use Copy when GsaAPI allows to deepclone;
                     }
                     else
                     {
