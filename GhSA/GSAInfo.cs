@@ -80,7 +80,7 @@ namespace GhSA
             get
             {
                 //Return a string representing your preferred contact details.
-                return "0.1.3-alpha";
+                return "0.1.4-alpha";
             }
         }
     }
