@@ -55,6 +55,8 @@ namespace GhSA.Components
             pManager.AddGenericParameter("Grid Point Loads", "Point", "Grid Point Loads from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Grid Line Loads", "Line", "Grid Line Loads from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Grid Area Loads", "Area", "Grid Area Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Grid Plane Surfaces", "GPS", "Grid Plane Surfaces from GSA Model", GH_ParamAccess.list);
+            pManager.HideParameter(7);
         }
         #endregion
 
@@ -73,6 +75,11 @@ namespace GhSA.Components
                 List<GsaLoadGoo> point = Util.Gsa.GsaImport.GsaGetGridPointLoads(model);
                 List<GsaLoadGoo> line = Util.Gsa.GsaImport.GsaGetGridLineLoads(model);
                 List<GsaLoadGoo> area = Util.Gsa.GsaImport.GsaGetGridAreaLoads(model);
+                
+                List<GsaGridPlaneSurfaceGoo> gps = new List<GsaGridPlaneSurfaceGoo>();
+                IReadOnlyDictionary<int, GridSurface> gsaGridSurfaces = model.GridSurfaces();
+                foreach (int key in gsaGridSurfaces.Keys)
+                    gps.Add(new GsaGridPlaneSurfaceGoo(Util.Gsa.GsaImport.GsaGetGridPlaneSurface(model, key)));
 
                 DA.SetDataList(0, gravity);
                 DA.SetDataList(1, node);
@@ -81,6 +88,7 @@ namespace GhSA.Components
                 DA.SetDataList(4, point);
                 DA.SetDataList(5, line);
                 DA.SetDataList(6, area);
+                DA.SetDataList(7, gps);
             }
         }
     }

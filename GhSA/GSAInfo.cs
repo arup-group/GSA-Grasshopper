@@ -64,7 +64,7 @@ namespace GhSA
             get
             {
                 //Return a string identifying you or your company.
-                return "Kristjan Nielsen / Arup";
+                return "Oasys";
             }
         }
         public override string AuthorContact
@@ -80,7 +80,7 @@ namespace GhSA
             get
             {
                 //Return a string representing your preferred contact details.
-                return "0.1.2";
+                return "0.1.3-alpha";
             }
         }
     }

@@ -38,21 +38,24 @@ namespace GhSA.Parameters
             get { return m_axis; }
             set 
             { 
-                m_axis = value;
-                m_plane.OriginX = m_axis.Origin.X;
-                m_plane.OriginY = m_axis.Origin.Y;
-                if (m_gridplane != null)
+                if (value != null)
                 {
-                    if (m_gridplane.Elevation != 0)
-                        m_plane.OriginZ = m_axis.Origin.Z + m_gridplane.Elevation;
+                    m_axis = value;
+                    m_plane.OriginX = m_axis.Origin.X;
+                    m_plane.OriginY = m_axis.Origin.Y;
+                    if (m_gridplane != null)
+                    {
+                        if (m_gridplane.Elevation != 0)
+                            m_plane.OriginZ = m_axis.Origin.Z + m_gridplane.Elevation;
+                    }
+                    else
+                        m_plane.OriginZ = m_axis.Origin.Z;
+
+                    m_plane = new Plane(m_plane.Origin,
+                        new Vector3d(m_axis.XVector.X, m_axis.XVector.Y, m_axis.XVector.Z),
+                        new Vector3d(m_axis.XYPlane.X, m_axis.XYPlane.Y, m_axis.XYPlane.Z)
+                        );
                 }
-                else
-                    m_plane.OriginZ = m_axis.Origin.Z;
-                
-                m_plane = new Plane(m_plane.Origin,
-                    new Vector3d(m_axis.XVector.X, m_axis.XVector.Y, m_axis.XVector.Z),
-                    new Vector3d(m_axis.XYPlane.X, m_axis.XYPlane.Y, m_axis.XYPlane.Z)
-                    );
             }
         }
         public GridSurface GridSurface
