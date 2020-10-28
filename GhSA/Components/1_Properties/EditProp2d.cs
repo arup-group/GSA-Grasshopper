@@ -65,12 +65,13 @@ namespace GhSA.Components
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property to get or set information for", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Prop2d Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
-            pManager.AddColourParameter("Prop2d Colour", "Col", "Set 2D Property Colour", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Axis", "Ax", "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Material", "Mat", "Set Material Property", GH_ParamAccess.item);
-            pManager.AddTextParameter("Thickness", "Thk", "Set Property Thickness", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Prop2d Number", "ID", " 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
+            pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
+            pManager.AddColourParameter("Prop2d Colour", "Col", "2D Property Colour", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Axis", "Ax", "Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Material", "Mat", "Material Property", GH_ParamAccess.item);
+            pManager.AddTextParameter("Thickness", "Thk", "Property Thickness", GH_ParamAccess.item);
+            pManager.AddTextParameter("Type", "Typ", "2D Property Type", GH_ParamAccess.item);
         }
         #endregion
 
@@ -134,6 +135,8 @@ namespace GhSA.Components
                     //prop.Prop2d.Thickness = thk;
                 }
 
+                
+
                 //#### outputs ####
                 DA.SetData(0, new GsaProp2dGoo(prop));
                 DA.SetData(1, prop.ID);
@@ -142,6 +145,10 @@ namespace GhSA.Components
                 DA.SetData(4, gsaProp2d.Prop2d.AxisProperty);
                 DA.SetData(5, gsaProp2d.Prop2d.MaterialAnalysisProperty);
                 //DA.SetData(6, gsaProp2d.Thickness); // GsaAPI to be updated
+
+                string str = gsaProp2d.Prop2d.Type.ToString();
+                str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
+                DA.SetData(7, str);
 
             }
         }
