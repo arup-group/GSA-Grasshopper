@@ -111,6 +111,8 @@ namespace GhSA.Parameters
             m_topo = convertCrv.Item2;
             m_topoType = convertCrv.Item3;
 
+            m_section = new GsaSection();
+
             Topology = m_topo;
             TopologyType = m_topoType;
         }

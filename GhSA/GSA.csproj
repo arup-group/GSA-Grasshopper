@@ -104,6 +104,7 @@
   <ItemGroup>
     <Compile Include="AsyncComponentBase\GH_AsyncComponent.cs" />
     <Compile Include="AsyncComponentBase\WorkerInstance.cs" />
+    <Compile Include="Components\0_Model\Version.cs" />
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
@@ -571,6 +572,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\AnalyseAsync.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\GsaVersion.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

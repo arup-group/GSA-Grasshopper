@@ -433,7 +433,8 @@ namespace GhSA.Components
                             }
                             else
                             {
-                                apiElement.Property = gsa.AddSection(element1d.Section.Section);
+                                if (element1d.Section.Section != null)
+                                    apiElement.Property = gsa.AddSection(element1d.Section.Section);
                             }
 
                             // set apielement in dictionary
@@ -494,7 +495,8 @@ namespace GhSA.Components
                                 }
                                 else
                                 {
-                                    apiMeshElement.Property = gsa.AddProp2D(element2d.Properties[j].Prop2d);
+                                    if (element2d.Properties[j].Prop2d != null)
+                                        apiMeshElement.Property = gsa.AddProp2D(element2d.Properties[j].Prop2d);
                                 }
 
                                 // set api element in dictionary
@@ -588,7 +590,8 @@ namespace GhSA.Components
                             }
                             else
                             {
-                                apiMember.Property = gsa.AddSection(member1d.Section.Section);
+                                if (member1d.Section.Section != null)
+                                    apiMember.Property = gsa.AddSection(member1d.Section.Section);
                             }
 
                             // set apimember in dictionary
@@ -647,89 +650,101 @@ namespace GhSA.Components
                                     topo += " ";
                             }
 
+
                             // Loop through the voidtopology list
-                            for (int j = 0; j < member2d.VoidTopology.Count; j++)
+                            if (member2d.VoidTopology != null)
                             {
-                                for (int k = 0; k < Mem2ds[i].VoidTopology[j].Count; k++)
+                                for (int j = 0; j < member2d.VoidTopology.Count; j++)
                                 {
-                                    Point3d pt = member2d.VoidTopology[j][k];
-                                    string voidtopologytype = member2d.VoidTopologyType[j][k];
-
-                                    if (k == 0)
-                                        topo += " V(";
-                                    if (voidtopologytype == "" | voidtopologytype == " ")
-                                        topo += " ";
-                                    else
-                                        topo += voidtopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
-
-                                    int id = Util.Gsa.ModelNodes.ExistingNodePoint(nodes, pt);
-                                    if (id > 0)
-                                        topo += id;
-                                    else
+                                    for (int k = 0; k < Mem2ds[i].VoidTopology[j].Count; k++)
                                     {
-                                        nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                        topo += newNodeID;
-                                        newNodeID++;
-                                    }
+                                        Point3d pt = member2d.VoidTopology[j][k];
+                                        string voidtopologytype = member2d.VoidTopologyType[j][k];
 
-                                    if (k != member2d.VoidTopology[j].Count - 1)
-                                        topo += " ";
-                                    else
-                                        topo += ")";
+                                        if (k == 0)
+                                            topo += " V(";
+                                        if (voidtopologytype == "" | voidtopologytype == " ")
+                                            topo += " ";
+                                        else
+                                            topo += voidtopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
+
+                                        int id = Util.Gsa.ModelNodes.ExistingNodePoint(nodes, pt);
+                                        if (id > 0)
+                                            topo += id;
+                                        else
+                                        {
+                                            nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                            topo += newNodeID;
+                                            newNodeID++;
+                                        }
+
+                                        if (k != member2d.VoidTopology[j].Count - 1)
+                                            topo += " ";
+                                        else
+                                            topo += ")";
+                                    }
                                 }
                             }
-                            // Loop through the inclusion lines topology list
-                            for (int j = 0; j < member2d.IncLinesTopology.Count; j++)
+
+                            // Loop through the inclusion lines topology list  
+                            if (member2d.IncLinesTopology != null)
                             {
-                                for (int k = 0; k < member2d.IncLinesTopology[j].Count; k++)
+                                for (int j = 0; j < member2d.IncLinesTopology.Count; j++)
                                 {
-                                    Point3d pt = member2d.IncLinesTopology[j][k];
-                                    string inclineTopologytype = member2d.IncLinesTopologyType[j][k];
-
-                                    if (k == 0)
-                                        topo += " L(";
-                                    if (inclineTopologytype == "" | inclineTopologytype == " ")
-                                        topo += " ";
-                                    else
-                                        topo += inclineTopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
-
-                                    int id = Util.Gsa.ModelNodes.ExistingNodePoint(nodes, pt);
-                                    if (id > 0)
-                                        topo += id;
-                                    else
+                                    for (int k = 0; k < member2d.IncLinesTopology[j].Count; k++)
                                     {
-                                        nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                        topo += newNodeID;
-                                        newNodeID++;
-                                    }
+                                        Point3d pt = member2d.IncLinesTopology[j][k];
+                                        string inclineTopologytype = member2d.IncLinesTopologyType[j][k];
 
-                                    if (k != member2d.IncLinesTopology[j].Count - 1)
-                                        topo += " ";
-                                    else
-                                        topo += ")";
+                                        if (k == 0)
+                                            topo += " L(";
+                                        if (inclineTopologytype == "" | inclineTopologytype == " ")
+                                            topo += " ";
+                                        else
+                                            topo += inclineTopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
+
+                                        int id = Util.Gsa.ModelNodes.ExistingNodePoint(nodes, pt);
+                                        if (id > 0)
+                                            topo += id;
+                                        else
+                                        {
+                                            nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                            topo += newNodeID;
+                                            newNodeID++;
+                                        }
+
+                                        if (k != member2d.IncLinesTopology[j].Count - 1)
+                                            topo += " ";
+                                        else
+                                            topo += ")";
+                                    }
                                 }
                             }
+
                             // Loop through the inclucion point topology list
-                            for (int j = 0; j < member2d.InclusionPoints.Count; j++)
+                            if (member2d.InclusionPoints != null)
                             {
-                                Point3d pt = member2d.InclusionPoints[j];
-                                if (j == 0)
-                                    topo += " P(";
-
-                                int id = Util.Gsa.ModelNodes.ExistingNodePoint(nodes, pt);
-                                if (id > 0)
-                                    topo += id;
-                                else
+                                for (int j = 0; j < member2d.InclusionPoints.Count; j++)
                                 {
-                                    nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
-                                    topo += newNodeID;
-                                    newNodeID++;
-                                }
+                                    Point3d pt = member2d.InclusionPoints[j];
+                                    if (j == 0)
+                                        topo += " P(";
 
-                                if (j != member2d.InclusionPoints.Count - 1)
-                                    topo += " ";
-                                else
-                                    topo += ")";
+                                    int id = Util.Gsa.ModelNodes.ExistingNodePoint(nodes, pt);
+                                    if (id > 0)
+                                        topo += id;
+                                    else
+                                    {
+                                        nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                        topo += newNodeID;
+                                        newNodeID++;
+                                    }
+
+                                    if (j != member2d.InclusionPoints.Count - 1)
+                                        topo += " ";
+                                    else
+                                        topo += ")";
+                                }
                             }
 
                             // update topology for api member
@@ -744,7 +759,8 @@ namespace GhSA.Components
                             }
                             else
                             {
-                                apimember.Property = gsa.AddProp2D(member2d.Property.Prop2d);
+                                if (member2d.Property.Prop2d != null)
+                                    apimember.Property = gsa.AddProp2D(member2d.Property.Prop2d);
                             }
 
                             // set apimember in dictionary
