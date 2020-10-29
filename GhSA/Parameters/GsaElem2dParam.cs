@@ -74,7 +74,12 @@ namespace GhSA.Parameters
             m_elements = convertMesh.Item1;
             m_topo = convertMesh.Item2;
             m_topoInt = convertMesh.Item3;
+            
             m_id = new List<int>(new int[m_mesh.Faces.Count()]);
+
+            m_props = new List<GsaProp2d>();
+            for (int i = 0; i < m_mesh.Faces.Count(); i++)
+                m_props.Add(new GsaProp2d());
         }
 
         public GsaElement2d Duplicate()

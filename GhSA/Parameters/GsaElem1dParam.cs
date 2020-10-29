@@ -112,9 +112,9 @@ namespace GhSA.Parameters
             m_element = new Element
             {
                 Type = ElementType.BEAM,
-                Property = prop
+                Property = prop,
             };
-
+            m_section = new GsaSection();
             m_line = line;
         }
 

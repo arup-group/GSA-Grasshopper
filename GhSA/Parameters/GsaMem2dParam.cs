@@ -142,6 +142,8 @@ namespace GhSA.Parameters
             void_topo = convertBrep.Item5;
             void_topoType = convertBrep.Item6;
 
+            m_prop = new GsaProp2d();
+
             m_brep = Util.GH.Convert.BuildBrep(m_crv, void_crvs);
         }
 
