@@ -81,6 +81,33 @@ namespace GhSA.Parameters
             for (int i = 0; i < m_mesh.Faces.Count(); i++)
                 m_props.Add(new GsaProp2d());
         }
+        public GsaElement2d Clone()
+        {
+            GsaElement2d clones = this.Duplicate();
+            for (int i = 0; i < clones.Elements.Count; i++)
+            {
+                Element clone = new Element();
+                Element original = clones.Elements[i];
+                clone.Colour = original.Colour;
+                clone.Group = original.Group;
+                clone.IsDummy = original.IsDummy;
+                clone.Name = original.Name.ToString();
+                clone.Offset.X1 = original.Offset.X1;
+                clone.Offset.X2 = original.Offset.X2;
+                clone.Offset.Y = original.Offset.Y;
+                clone.Offset.Z = original.Offset.Z;
+                clone.OrientationAngle = original.OrientationAngle;
+                clone.OrientationNode = original.OrientationNode;
+                clone.ParentMember = original.ParentMember;
+                clone.Property = original.Property;
+                clone.Topology = original.Topology;
+                clone.Type = original.Type;
+
+                clones.Elements[i] = clone;
+            }
+            
+            return clones;
+        }
 
         public GsaElement2d Duplicate()
         {

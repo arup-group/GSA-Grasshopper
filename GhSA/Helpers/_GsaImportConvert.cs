@@ -56,7 +56,7 @@ namespace GhSA.Util.Gsa
                                 // to be implement. GsaAPI spring missing.
                                 // get spring property from model
                             }
-                            nodes.Add(n.Duplicate());
+                            nodes.Add(n);
                         }
                         else
                             nodes.Add(null);

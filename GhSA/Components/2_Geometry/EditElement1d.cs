@@ -90,7 +90,7 @@ namespace GhSA.Components
             GsaElement1d gsaElement1d = new GsaElement1d();
             if (DA.GetData(0, ref gsaElement1d))
             {
-                GsaElement1d elem = gsaElement1d.Duplicate();
+                GsaElement1d elem = gsaElement1d.Clone();
 
                 // #### inputs ####
                 // 1 curve

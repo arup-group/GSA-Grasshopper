@@ -105,7 +105,7 @@ namespace GhSA.Components
             GsaMember2d gsaMember2d = new GsaMember2d();
             if (DA.GetData(0, ref gsaMember2d))
             {
-                GsaMember2d mem = gsaMember2d.Duplicate();
+                GsaMember2d mem = gsaMember2d.Clone();
 
                 // #### inputs ####
 

@@ -116,7 +116,28 @@ namespace GhSA.Parameters
             Topology = m_topo;
             TopologyType = m_topoType;
         }
+        public GsaMember1d Clone()
+        {
+            GsaMember1d clone = this.Duplicate();
+            clone.Member = new Member();
+            clone.Member.Colour = m_member.Colour;
+            clone.Member.Group = m_member.Group;
+            clone.Member.IsDummy = m_member.IsDummy;
+            clone.Member.MeshSize = m_member.MeshSize;
+            clone.Member.Name = m_member.Name.ToString();
+            clone.Member.Offset.X1 = m_member.Offset.X1;
+            clone.Member.Offset.X2 = m_member.Offset.X2;
+            clone.Member.Offset.Y = m_member.Offset.Y;
+            clone.Member.Offset.Z = m_member.Offset.Z;
+            clone.Member.OrientationAngle = m_member.OrientationAngle;
+            clone.Member.OrientationNode = m_member.OrientationNode;
+            clone.Member.Property = m_member.Property;
+            clone.Member.Topology = m_member.Topology;
+            clone.Member.Type = m_member.Type;
+            clone.Member.Type1D = m_member.Type1D;
 
+            return clone;
+        }
 
         public GsaMember1d Duplicate()
         {
