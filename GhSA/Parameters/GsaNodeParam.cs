@@ -151,11 +151,20 @@ namespace GhSA.Parameters
         {
             GsaNode dup = new GsaNode
             {
-                Node = Node //add clone or duplicate if available
+                Node = new Node() //add clone or duplicate if available
             };
+            dup.Node.AxisProperty = Node.AxisProperty;
+            dup.Node.Colour = Node.Colour;
+            dup.Node.DamperProperty = Node.DamperProperty;
+            dup.Node.MassProperty = Node.MassProperty;
+            dup.Node.Name = Node.Name;
+            dup.Node.Restraint = Node.Restraint;
+            dup.Node.SpringProperty = Node.SpringProperty;
+
             Point3dList pt = new Point3dList(Point);
             Point3dList duppt = pt.Duplicate();
             dup.Point = duppt[0];
+
             if (m_id != 0)
                 dup.ID = m_id;
             if(m_spring != null)
@@ -407,11 +416,9 @@ namespace GhSA.Parameters
             if (Value.Point == null) { return null; }
 
             GsaNode node = Value.Duplicate();
-            Point3d pt = Value.Point;
+            Point3d pt = node.Point;
             pt.Transform(xform);
-            node.Node.Position.X = pt.X;
-            node.Node.Position.Y = pt.Y;
-            node.Node.Position.Z = pt.Z;
+            
             node.Point = pt;
             return new GsaNodeGoo(node);
         }
@@ -421,9 +428,13 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Point == null) { return null; }
 
-            Point3d pt = Value.Point;
+            GsaNode node = Value.Duplicate();
+
+            Point3d pt = node.Point;
             pt = xmorph.MorphPoint(pt);
-            GsaNode node = new GsaNode(pt);
+
+            node.Point = pt;
+
             return new GsaNodeGoo(node);
         }
 
