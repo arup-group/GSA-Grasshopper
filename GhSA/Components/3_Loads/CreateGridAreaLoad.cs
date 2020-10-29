@@ -157,7 +157,6 @@ namespace GhSA.Components
                     // set polyline in grid line load
                     gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
                     gridareaload.GridAreaLoad.PolyLineDefinition = desc;
-                    
                 }
                 else
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not convert Brep edge to Polyline");

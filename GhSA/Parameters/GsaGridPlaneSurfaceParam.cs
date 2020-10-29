@@ -82,8 +82,8 @@ namespace GhSA.Parameters
                 Direction = 0,
                 Elements = "all",
                 ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL,
-                ExpansionType = GridSurfaceExpansionType.PLANE_CORNER,
-                SpanType = GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS
+                ExpansionType = GridSurfaceExpansionType.UNDEF,
+                SpanType = GridSurface.Span_Type.ONE_WAY
             };
             m_axis = new Axis();
             m_axis.Origin.X = plane.OriginX;
