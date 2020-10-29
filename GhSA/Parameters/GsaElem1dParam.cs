@@ -123,6 +123,26 @@ namespace GhSA.Parameters
         //    m_element = element;
         //    m_line = line;
         //}
+        public GsaElement1d Clone()
+        {
+            GsaElement1d clone = this.Duplicate();
+            clone.Element = new Element();
+            clone.Element.Colour = m_element.Colour;
+            clone.Element.Group = m_element.Group;
+            clone.Element.IsDummy = m_element.IsDummy;
+            clone.Element.Name = m_element.Name.ToString();
+            clone.Element.Offset.X1 = m_element.Offset.X1;
+            clone.Element.Offset.X2 = m_element.Offset.X2;
+            clone.Element.Offset.Y = m_element.Offset.Y;
+            clone.Element.Offset.Z = m_element.Offset.Z;
+            clone.Element.OrientationAngle = m_element.OrientationAngle;
+            clone.Element.OrientationNode = m_element.OrientationNode;
+            clone.Element.ParentMember = m_element.ParentMember;
+            clone.Element.Property = m_element.Property;
+            clone.Element.Topology = m_element.Topology;
+            clone.Element.Type = m_element.Type;
+            return clone;
+        }
 
         public GsaElement1d Duplicate()
         {

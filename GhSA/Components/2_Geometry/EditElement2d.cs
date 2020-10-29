@@ -86,7 +86,7 @@ namespace GhSA.Components
             GsaElement2d gsaElement2d = new GsaElement2d();
             if (DA.GetData(0, ref gsaElement2d))
             {
-                GsaElement2d elem = gsaElement2d.Duplicate();
+                GsaElement2d elem = gsaElement2d.Clone();
 
                 // #### inputs ####
 
