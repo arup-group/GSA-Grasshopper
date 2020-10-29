@@ -76,7 +76,7 @@ namespace GhSA.Components
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(2, ref gh_typ))
             {
-                if (gh_typ.Value is GsaGridPlaneSurface)
+                if (gh_typ.Value is GsaGridPlaneSurfaceGoo)
                 {
                     GsaGridPlaneSurface temppln = new GsaGridPlaneSurface();
                     gh_typ.CastTo(ref temppln);
@@ -148,6 +148,7 @@ namespace GhSA.Components
                     desc += "(" + Util.GsaUnit.LengthLarge + ")";
 
                     // set polyline in grid line load
+                    gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
                     gridlineload.GridLineLoad.PolyLineDefinition = desc;
                 }
                 else
