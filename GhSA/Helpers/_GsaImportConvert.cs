@@ -1015,36 +1015,41 @@ namespace GhSA.Util.Gsa
             // Get Grid Surface
             IReadOnlyDictionary<int, GridSurface> sDict;
             sDict = model.GridSurfaces();
-            sDict.TryGetValue(gridsrf_ID, out GridSurface gs);
-            gps.GridSurface = gs;
-
-            // Get Grid Plane
-            IReadOnlyDictionary<int, GridPlane> pDict;
-            pDict = model.GridPlanes();
-            pDict.TryGetValue(gs.GridPlane, out GridPlane gp);
-            gps.GridPlane = gp;
-
-            // Get Axis
-            IReadOnlyDictionary<int, Axis> aDict;
-            aDict = model.Axes();
-            aDict.TryGetValue(gp.AxisProperty, out Axis ax);
-            gps.Axis = ax;
-
-            // Construct Plane from Axis
-            Plane pln = new Plane();
-            if (ax != null )
+            if (sDict.Count > 0)
             {
-                pln = new Plane(
-                new Point3d(ax.Origin.X, ax.Origin.Y, ax.Origin.Z + gp.Elevation), // for new origin Z-coordinate we add axis origin and grid plane elevation
-                new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
-                new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z));
+                sDict.TryGetValue(gridsrf_ID, out GridSurface gs);
+                gps.GridSurface = gs;
+
+                // Get Grid Plane
+                IReadOnlyDictionary<int, GridPlane> pDict;
+                pDict = model.GridPlanes();
+                pDict.TryGetValue(gs.GridPlane, out GridPlane gp);
+                gps.GridPlane = gp;
+
+                // Get Axis
+                IReadOnlyDictionary<int, Axis> aDict;
+                aDict = model.Axes();
+                aDict.TryGetValue(gp.AxisProperty, out Axis ax);
+                gps.Axis = ax;
+
+                // Construct Plane from Axis
+                Plane pln = new Plane();
+                if (ax != null)
+                {
+                    pln = new Plane(
+                    new Point3d(ax.Origin.X, ax.Origin.Y, ax.Origin.Z + gp.Elevation), // for new origin Z-coordinate we add axis origin and grid plane elevation
+                    new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
+                    new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z));
+                }
+                else
+                {
+                    pln = Plane.WorldXY;
+                    pln.OriginZ = gp.Elevation;
+                }
+                gps.Plane = pln;
             }
             else
-            {
-                pln = Plane.WorldXY;
-                pln.OriginZ = gp.Elevation;  
-            }
-            gps.Plane = pln;
+                return null;
             
             return gps;
         }
