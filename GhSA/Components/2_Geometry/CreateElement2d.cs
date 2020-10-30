@@ -73,7 +73,7 @@ namespace GhSA.Components
                     GsaProp2d prop2d = new GsaProp2d();
                     if (DA.GetData(1, ref gh_typ))
                     {
-                        if (gh_typ.Value is GsaProp2d)
+                        if (gh_typ.Value is GsaProp2dGoo)
                             gh_typ.CastTo(ref prop2d);
                         else
                         {

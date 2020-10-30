@@ -169,7 +169,7 @@ namespace GhSA.Components
                     GsaSection section = new GsaSection();
                     if (DA.GetData(1, ref gh_typ))
                     {
-                        if (gh_typ.Value is GsaSection)
+                        if (gh_typ.Value is GsaSectionGoo)
                             gh_typ.CastTo(ref section);
                         else
                         {
