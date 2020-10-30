@@ -152,7 +152,7 @@ namespace GhSA.Components
             {
                 double tol = 10;
                 if (GH_Convert.ToDouble(ghtol, out tol, GH_Conversion.Both))
-                gps.GridSurface.Tolerance = tol;
+                    gps.GridSurface.Tolerance = tol;
             }
 
             switch (_mode)
@@ -163,7 +163,7 @@ namespace GhSA.Components
                     
                     // 4 span direction
                     GH_Number ghdir = new GH_Number();
-                    if (DA.GetData(3, ref ghdir))
+                    if (DA.GetData(4, ref ghdir))
                     {
                         double dir = 0;
                         if (GH_Convert.ToDouble(ghdir, out dir, GH_Conversion.Both))

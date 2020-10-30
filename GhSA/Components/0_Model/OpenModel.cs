@@ -45,7 +45,7 @@ namespace GhSA.Components
 
         public void OpenFile()
         {
-            var fdi = new Rhino.UI.OpenFileDialog { Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*" };
+            var fdi = new Rhino.UI.OpenFileDialog { Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*" }; //"GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*"
             var res = fdi.ShowOpenDialog();
             if (res) // == DialogResult.OK)
             {
@@ -130,21 +130,30 @@ namespace GhSA.Components
             string tempfile = "";
             if (DA.GetData(0, ref tempfile))
                 fileName = tempfile;
-            
-            model.Open(fileName);
 
-            GsaModel gsaModel = new GsaModel
+            ReturnValue status = model.Open(fileName);
+
+            if (status == 0)
             {
-                Model = model,
-                FileName = fileName
-            };
-            
-            Util.GsaTitles.GetTitlesFromGSA(model);
+                GsaModel gsaModel = new GsaModel
+                {
+                    Model = model,
+                    FileName = fileName
+                };
 
-            string mes = Path.GetFileName(fileName);
-            mes = mes.Substring(0, mes.Length - 4);
-            Message = mes;
-            DA.SetData(0, new GsaModelGoo(gsaModel));
+                Util.GsaTitles.GetTitlesFromGSA(model);
+
+                string mes = Path.GetFileName(fileName);
+                mes = mes.Substring(0, mes.Length - 4);
+                Message = mes;
+                DA.SetData(0, new GsaModelGoo(gsaModel));
+            }
+            else
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + System.Environment.NewLine + status.ToString());
+                return;
+            }
+
         }
     }
 }
