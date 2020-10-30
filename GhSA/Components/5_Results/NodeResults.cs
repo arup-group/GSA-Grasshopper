@@ -313,7 +313,7 @@ namespace GhSA.Components
                     gsaModel.Model.Results().TryGetValue(analCase, out analysisCaseResult);
                     if (analysisCaseResult == null)
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Case " + analCase + " does not exist in file,");
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No results exist for Analysis Case " + analCase + " in file");
                         return;
                     }
                     IReadOnlyDictionary<int, NodeResult> results = analysisCaseResult.NodeResults(nodeList);
