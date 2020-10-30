@@ -79,7 +79,7 @@ namespace GhSA
         {
             get
             {
-                return "0.1.6-alpha";
+                return "0.1.7-alpha";
             }
         }
     }
