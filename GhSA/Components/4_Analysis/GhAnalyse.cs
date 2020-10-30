@@ -990,9 +990,13 @@ namespace GhSA.Components
             #region analysis
             //analysis
             IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
+            if (gsaTasks.Count < 1)
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contains no Analysis Tasks");
+
             foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
             {
-                gsa.Analyse(task.Key);
+                if (!(gsa.Analyse(task.Key)))
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
             }
 
             #endregion
