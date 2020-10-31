@@ -338,3 +338,8 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# yak
+yak.exe
+dist/*
+!dist/manifest.yml

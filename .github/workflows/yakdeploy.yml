@@ -26,8 +26,9 @@ jobs:
       - name: Run a multi-line script
         run: |
           curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
-          ./yak spec
-          Add-Content -Path .\manifest.yml -Value 'icon_url: https://github.com/arup-group/GSA-Grasshopper/raw/master/GhSA/Properties/GsaGhLogo.png'
-          ./yak build
-          $YAK_FILENAME = dir *.yak 
-          ./yak push $YAK_FILENAME.Name
+          .\yak version
+          cp -v GSA.gha dist\
+          cd dist
+          ..\yak build
+          cd ..
+          ls dist\*.yak |% {.\yak push $_.FullName}
