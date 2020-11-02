@@ -25,9 +25,7 @@ namespace GhSA.Components
           : base("Edit GSA Titles", "Title", "Set GSA Titles for this document",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
-        {
-        }
-
+        { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.EditTitle;

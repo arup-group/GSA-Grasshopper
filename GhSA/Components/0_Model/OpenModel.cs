@@ -27,8 +27,7 @@ namespace GhSA.Components
           : base("Open Model", "Open", "Open an existing GSA model",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
-        {
-        }
+        { this.Hidden = true; } // sets the initial state of the component to hidden
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
@@ -126,34 +125,83 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             Model model = new Model();
-            
-            string tempfile = "";
-            if (DA.GetData(0, ref tempfile))
-                fileName = tempfile;
 
-            ReturnValue status = model.Open(fileName);
-
-            if (status == 0)
+            GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+            if (DA.GetData(0, ref gh_typ))
             {
-                GsaModel gsaModel = new GsaModel
+                if (gh_typ.Value is GH_String)
                 {
-                    Model = model,
-                    FileName = fileName
-                };
+                    string tempfile = "";
+                    if (GH_Convert.ToString(gh_typ, out tempfile, GH_Conversion.Both))
+                        fileName = tempfile;
 
-                Util.GsaTitles.GetTitlesFromGSA(model);
+                    if (!fileName.EndsWith(".gwb"))
+                        fileName = fileName + ".gwb";
 
-                string mes = Path.GetFileName(fileName);
-                mes = mes.Substring(0, mes.Length - 4);
-                Message = mes;
-                DA.SetData(0, new GsaModelGoo(gsaModel));
+                    ReturnValue status = model.Open(fileName);
+
+                    if (status == 0)
+                    {
+                        GsaModel gsaModel = new GsaModel
+                        {
+                            Model = model,
+                            FileName = fileName
+                        };
+
+                        Util.GsaTitles.GetTitlesFromGSA(model);
+
+                        string mes = Path.GetFileName(fileName);
+                        mes = mes.Substring(0, mes.Length - 4);
+                        Message = mes;
+                        DA.SetData(0, new GsaModelGoo(gsaModel));
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + System.Environment.NewLine + status.ToString());
+                        return;
+                    }
+                }
+                else if (gh_typ.Value is GsaAPI.Model)
+                {
+                    gh_typ.CastTo(ref model);
+                    GsaModel gsaModel = new GsaModel
+                    {
+                        Model = model,
+                    };
+
+                    DA.SetData(0, new GsaModelGoo(gsaModel));
+                }
+                else
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model");
+                    return;
+                }
             }
             else
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + System.Environment.NewLine + status.ToString());
-                return;
-            }
+                ReturnValue status = model.Open(fileName);
 
+                if (status == 0)
+                {
+                    GsaModel gsaModel = new GsaModel
+                    {
+                        Model = model,
+                        FileName = fileName
+                    };
+
+                    Util.GsaTitles.GetTitlesFromGSA(model);
+
+                    string mes = Path.GetFileName(fileName);
+                    mes = mes.Substring(0, mes.Length - 4);
+                    Message = mes;
+                    DA.SetData(0, new GsaModelGoo(gsaModel));
+                }
+                else
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + System.Environment.NewLine + status.ToString());
+                    return;
+                }
+            }
         }
     }
 }

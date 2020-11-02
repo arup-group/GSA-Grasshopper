@@ -26,9 +26,7 @@ namespace GhSA.Components
           : base("Save Model", "Save", "Saves your GSA model from this parametric nightmare",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
-        {
-        }
-
+        { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
         protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.SaveModel;
