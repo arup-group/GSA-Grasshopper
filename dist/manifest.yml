@@ -1,0 +1,8 @@
+---
+name: GSA
+version: $version
+authors:
+- Oasys
+description: GSA Plugin
+url: https://github.com/arup-group/GSA-Grasshopper
+icon_url: https://raw.githubusercontent.com/arup-group/GSA-Grasshopper/master/GhSA/Properties/GsaGhLogo.png
