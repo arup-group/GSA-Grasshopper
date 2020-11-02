@@ -814,21 +814,84 @@ namespace GhSA.Components
                                 faceLoads.Add(load.FaceLoad.FaceLoad);
                                 break;
                             case GsaLoad.LoadTypes.GridPoint:
-                                load.PointLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.PointLoad.GridPlaneSurface.Axis);
-                                load.PointLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.PointLoad.GridPlaneSurface.GridPlane);
-                                load.PointLoad.GridPointLoad.GridSurface = gsa.AddGridSurface(load.PointLoad.GridPlaneSurface.GridSurface);
+                                if (load.PointLoad.GridPlaneSurface.AxisID > 0)
+                                {
+                                    load.PointLoad.GridPlaneSurface.GridPlane.AxisProperty = load.PointLoad.GridPlaneSurface.AxisID;
+                                    gsa.SetAxis(load.PointLoad.GridPlaneSurface.GridPlane.AxisProperty, load.PointLoad.GridPlaneSurface.Axis);
+                                }
+                                else
+                                    load.PointLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.PointLoad.GridPlaneSurface.Axis);
+
+                                if (load.PointLoad.GridPlaneSurface.GridPlaneID > 0)
+                                {
+                                    load.PointLoad.GridPlaneSurface.GridSurface.GridPlane = load.PointLoad.GridPlaneSurface.GridPlaneID;
+                                    gsa.SetGridPlane(load.PointLoad.GridPlaneSurface.GridSurface.GridPlane, load.PointLoad.GridPlaneSurface.GridPlane);
+                                }
+                                else
+                                    load.PointLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.PointLoad.GridPlaneSurface.GridPlane);
+
+                                if (load.PointLoad.GridPlaneSurface.GridSurfaceID > 0)
+                                {
+                                    load.PointLoad.GridPointLoad.GridSurface = load.PointLoad.GridPlaneSurface.GridSurfaceID;
+                                    gsa.SetGridSurface(load.PointLoad.GridPointLoad.GridSurface, load.PointLoad.GridPlaneSurface.GridSurface);
+                                }
+                                else
+                                    load.PointLoad.GridPointLoad.GridSurface = gsa.AddGridSurface(load.PointLoad.GridPlaneSurface.GridSurface);
+                                
                                 gridPointLoads.Add(load.PointLoad.GridPointLoad);
                                 break;
                             case GsaLoad.LoadTypes.GridLine:
-                                load.LineLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.LineLoad.GridPlaneSurface.Axis);
-                                load.LineLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.LineLoad.GridPlaneSurface.GridPlane);
-                                load.LineLoad.GridLineLoad.GridSurface = gsa.AddGridSurface(load.LineLoad.GridPlaneSurface.GridSurface);
+                                if (load.LineLoad.GridPlaneSurface.AxisID > 0)
+                                {
+                                    load.LineLoad.GridPlaneSurface.GridPlane.AxisProperty = load.LineLoad.GridPlaneSurface.AxisID;
+                                    gsa.SetAxis(load.LineLoad.GridPlaneSurface.GridPlane.AxisProperty, load.LineLoad.GridPlaneSurface.Axis);
+                                }
+                                else
+                                    load.LineLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.LineLoad.GridPlaneSurface.Axis);
+
+                                if (load.LineLoad.GridPlaneSurface.GridPlaneID > 0)
+                                {
+                                    load.LineLoad.GridPlaneSurface.GridSurface.GridPlane = load.LineLoad.GridPlaneSurface.GridPlaneID;
+                                    gsa.SetGridPlane(load.LineLoad.GridPlaneSurface.GridSurface.GridPlane, load.LineLoad.GridPlaneSurface.GridPlane);
+                                }
+                                else
+                                    load.LineLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.LineLoad.GridPlaneSurface.GridPlane);
+
+                                if (load.LineLoad.GridPlaneSurface.GridSurfaceID > 0)
+                                {
+                                    load.LineLoad.GridLineLoad.GridSurface = load.LineLoad.GridPlaneSurface.GridSurfaceID;
+                                    gsa.SetGridSurface(load.LineLoad.GridLineLoad.GridSurface, load.LineLoad.GridPlaneSurface.GridSurface);
+                                }
+                                else
+                                    load.LineLoad.GridLineLoad.GridSurface = gsa.AddGridSurface(load.LineLoad.GridPlaneSurface.GridSurface);
+                                
                                 gridLineLoads.Add(load.LineLoad.GridLineLoad);
                                 break;
                             case GsaLoad.LoadTypes.GridArea:
-                                load.AreaLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.AreaLoad.GridPlaneSurface.Axis);
-                                load.AreaLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.AreaLoad.GridPlaneSurface.GridPlane);
-                                load.AreaLoad.GridAreaLoad.GridSurface = gsa.AddGridSurface(load.AreaLoad.GridPlaneSurface.GridSurface);
+                                if (load.AreaLoad.GridPlaneSurface.AxisID > 0)
+                                {
+                                    load.AreaLoad.GridPlaneSurface.GridPlane.AxisProperty = load.AreaLoad.GridPlaneSurface.AxisID;
+                                    gsa.SetAxis(load.AreaLoad.GridPlaneSurface.GridPlane.AxisProperty, load.AreaLoad.GridPlaneSurface.Axis);
+                                }
+                                else
+                                    load.AreaLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.AreaLoad.GridPlaneSurface.Axis);
+
+                                if (load.AreaLoad.GridPlaneSurface.GridPlaneID > 0)
+                                {
+                                    load.AreaLoad.GridPlaneSurface.GridSurface.GridPlane = load.AreaLoad.GridPlaneSurface.GridPlaneID;
+                                    gsa.SetGridPlane(load.AreaLoad.GridPlaneSurface.GridSurface.GridPlane, load.AreaLoad.GridPlaneSurface.GridPlane);
+                                }
+                                else
+                                    load.AreaLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.AreaLoad.GridPlaneSurface.GridPlane);
+
+                                if (load.AreaLoad.GridPlaneSurface.GridSurfaceID > 0)
+                                {
+                                    load.AreaLoad.GridAreaLoad.GridSurface = load.AreaLoad.GridPlaneSurface.GridSurfaceID;
+                                    gsa.SetGridSurface(load.AreaLoad.GridAreaLoad.GridSurface, load.AreaLoad.GridPlaneSurface.GridSurface);
+                                }
+                                else
+                                    load.AreaLoad.GridAreaLoad.GridSurface = gsa.AddGridSurface(load.AreaLoad.GridPlaneSurface.GridSurface);
+
                                 gridAreaLoads.Add(load.AreaLoad.GridAreaLoad);
                                 break;
                         }

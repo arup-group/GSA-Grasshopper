@@ -72,6 +72,7 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Grid Plane", "GPl", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces", GH_ParamAccess.item, 0);
             pManager.AddTextParameter("Elements", "El", "Elements for which the load should be expanded to. Default all", GH_ParamAccess.item, "all");
             pManager.AddTextParameter("Name", "Na", "Name of Grid Surface", GH_ParamAccess.item);
             pManager.AddNumberParameter("Tolerance (" + Util.GsaUnit.LengthSmall + ")", "Tol", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 10);
@@ -80,6 +81,7 @@ namespace GhSA.Components
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
+            pManager[4].Optional = true;
 
             if (first)
             {
@@ -128,27 +130,36 @@ namespace GhSA.Components
                 gps = new GsaGridPlaneSurface(pln);
             }
 
-            // 1 Elements
+            //1 ID
+            GH_Integer ghint = new GH_Integer();
+            if (DA.GetData(1, ref ghint))
+            {
+                int id = 0;
+                GH_Convert.ToInt32(ghint, out id, GH_Conversion.Both);
+                gps.GridSurfaceID = id;
+            }
+
+            // 2 Elements
             GH_String ghelem = new GH_String();
-            if (DA.GetData(1, ref ghelem))
+            if (DA.GetData(2, ref ghelem))
             {
                 string elem = "";
                 if (GH_Convert.ToString(ghelem, out elem, GH_Conversion.Both))
                     gps.GridSurface.Elements = elem;
             }
 
-            // 2 Name
+            // 3 Name
             GH_String ghtxt = new GH_String();
-            if (DA.GetData(2, ref ghtxt))
+            if (DA.GetData(3, ref ghtxt))
             {
                 string name = "";
                 if (GH_Convert.ToString(ghtxt, out name, GH_Conversion.Both))
                     gps.GridSurface.Name = name;
             }
 
-            // 3 Tolerance
+            // 4 Tolerance
             GH_Number ghtol = new GH_Number();
-            if (DA.GetData(3, ref ghtol))
+            if (DA.GetData(4, ref ghtol))
             {
                 double tol = 10;
                 if (GH_Convert.ToDouble(ghtol, out tol, GH_Conversion.Both))
@@ -161,9 +172,9 @@ namespace GhSA.Components
                     gps.GridSurface.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
                     gps.GridSurface.SpanType = GridSurface.Span_Type.ONE_WAY;
                     
-                    // 4 span direction
+                    // 5 span direction
                     GH_Number ghdir = new GH_Number();
-                    if (DA.GetData(4, ref ghdir))
+                    if (DA.GetData(5, ref ghdir))
                     {
                         double dir = 0;
                         if (GH_Convert.ToDouble(ghdir, out dir, GH_Conversion.Both))
@@ -177,10 +188,10 @@ namespace GhSA.Components
                 case FoldMode.One_Dimensional_Two_Way:
                     gps.GridSurface.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
                     
-                    // 4 expansion method
+                    // 5 expansion method
                     int exp = 0;
                     GH_Integer ghexp = new GH_Integer();
-                    if (DA.GetData(4, ref ghexp))
+                    if (DA.GetData(5, ref ghexp))
                         GH_Convert.ToInt32_Primary(ghexp, ref exp);
                     gps.GridSurface.ExpansionType = GridSurfaceExpansionType.PLANE_CORNER;
                     if (exp == 1)
@@ -190,10 +201,10 @@ namespace GhSA.Components
                     if (exp == 3)
                         gps.GridSurface.ExpansionType = GridSurfaceExpansionType.LEGACY;
 
-                    // 5 simplify tributary area
+                    // 6 simplify tributary area
                     bool simple = true;
                     GH_Boolean ghsim = new GH_Boolean();
-                    if (DA.GetData(5, ref ghsim))
+                    if (DA.GetData(6, ref ghsim))
                         GH_Convert.ToBoolean(ghsim, out simple, GH_Conversion.Both);
                     if (simple)
                         gps.GridSurface.SpanType = GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;

@@ -22,6 +22,9 @@ namespace GhSA.Parameters
         private GridPlane m_gridplane;
         private GridSurface m_gridsrf;
         private Axis m_axis;
+        private int m_gridplnID = 0;
+        private int m_gridsrfID = 0;
+        private int m_axisID = 0;
         #endregion
         public Plane Plane
         {
@@ -33,14 +36,30 @@ namespace GhSA.Parameters
             get { return m_gridplane; }
             set { m_gridplane = value; }
         }
+        public int GridPlaneID
+        {
+            get { return m_gridplnID; }
+            set { m_gridplnID = value; }
+        }
+        
+        public GridSurface GridSurface
+        {
+            get { return m_gridsrf; }
+            set { m_gridsrf = value; }
+        }
+        public int GridSurfaceID
+        {
+            get { return m_gridsrfID; }
+            set { m_gridsrfID = value; }
+        }
         public Axis Axis
         {
             get { return m_axis; }
             set 
-            { 
+            {
+                m_axis = value;
                 if (value != null)
                 {
-                    m_axis = value;
                     m_plane.OriginX = m_axis.Origin.X;
                     m_plane.OriginY = m_axis.Origin.Y;
                     if (m_gridplane != null)
@@ -58,12 +77,11 @@ namespace GhSA.Parameters
                 }
             }
         }
-        public GridSurface GridSurface
+        public int AxisID
         {
-            get { return m_gridsrf; }
-            set { m_gridsrf = value; }
+            get { return m_axisID; }
+            set { m_axisID = value; }
         }
-
         #region constructors
         public GsaGridPlaneSurface()
         {

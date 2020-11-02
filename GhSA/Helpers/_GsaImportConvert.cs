@@ -1019,18 +1019,35 @@ namespace GhSA.Util.Gsa
             {
                 sDict.TryGetValue(gridsrf_ID, out GridSurface gs);
                 gps.GridSurface = gs;
+                gps.GridSurfaceID = gridsrf_ID;
 
                 // Get Grid Plane
                 IReadOnlyDictionary<int, GridPlane> pDict;
                 pDict = model.GridPlanes();
                 pDict.TryGetValue(gs.GridPlane, out GridPlane gp);
                 gps.GridPlane = gp;
+                gps.GridPlaneID = gs.GridPlane;
 
                 // Get Axis
                 IReadOnlyDictionary<int, Axis> aDict;
                 aDict = model.Axes();
                 aDict.TryGetValue(gp.AxisProperty, out Axis ax);
+                if (ax == null)
+                {
+                    ax = new Axis();
+                    ax.Origin.X = 0;
+                    ax.Origin.Y = 0;
+                    ax.Origin.Z = 0;
+                    ax.XVector.X = 1;
+                    ax.XVector.Y = 0;
+                    ax.XVector.Y = 0;
+                    ax.XYPlane.X = 0;
+                    ax.XYPlane.Y = 1;
+                    ax.XYPlane.Z = 0;
+                }
                 gps.Axis = ax;
+                gps.AxisID = gp.AxisProperty;
+                
 
                 // Construct Plane from Axis
                 Plane pln = new Plane();

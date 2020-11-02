@@ -38,22 +38,25 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            //pManager.AddGenericParameter("Grid Plane", "GridPlane", "GSA Grid Plane", GH_ParamAccess.item);
-            pManager.AddPlaneParameter("Grid Plane", "Pln", "GSA Grid Plane (Axis + Elevation)", GH_ParamAccess.item);
-            pManager.AddTextParameter("Grid Plane Name", "NaP", "GSA Grid Plane Name", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("is Storey?", "St", "GSA Grid Plane is Storey type", GH_ParamAccess.item);
-            pManager.AddPlaneParameter("Axis", "Axis", "GSA Grid Plane Axis as plane", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Elevation", "Elv", "GSA Grid Plane Elevation", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Grid Plane Tolerance Above", "tolA", "GSA Grid Plane Tolerance Above (for Storey Type)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Grid Plane Tolerance Below", "tolB", "GSA Grid Plane Tolerance Below (for Storey Type)", GH_ParamAccess.item);
-            pManager.AddTextParameter("Grid Surface Name", "NaS", "GSA Grid Surface Name", GH_ParamAccess.item);
-            pManager.AddTextParameter("Elements", "Elem", "GSA Grid Surface Elements", GH_ParamAccess.item);
-            pManager.AddTextParameter("Element Type", "Typ", "GSA Grid Surface Element Type", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Grid Surface Tolerance", "tol", "GSA Grid Surface Tolerance", GH_ParamAccess.item);
-            pManager.AddTextParameter("Span Type", "Span", "GSA Grid Surface Span Type", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Span Direction", "Dir", "GSA Grid Surface Span Direction", GH_ParamAccess.item);
-            pManager.AddTextParameter("Expansion Type", "Exp", "GSA Grid Surface Expansion Type", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Simplified Tributary Area", "Simp", "GSA Grid Surface Simplified Tributary Area", GH_ParamAccess.item);
+            pManager.AddPlaneParameter("Grid Plane", "Pln", "GSA Grid Plane (Axis + Elevation)", GH_ParamAccess.item); //0
+            pManager.AddIntegerParameter("Grid Plane ID", "IdGP", "GSA Grid Plane ID", GH_ParamAccess.item); //1
+            pManager.AddTextParameter("Grid Plane Name", "NaP", "GSA Grid Plane Name", GH_ParamAccess.item); //2
+            pManager.AddBooleanParameter("is Storey?", "St", "GSA Grid Plane is Storey type", GH_ParamAccess.item); //3
+            pManager.AddPlaneParameter("Axis", "Axis", "GSA Grid Plane Axis as plane", GH_ParamAccess.item); //4
+            pManager.AddIntegerParameter("Axis ID", "IdA", "GSA Axis ID", GH_ParamAccess.item); //5
+            pManager.AddNumberParameter("Elevation", "Elv", "GSA Grid Plane Elevation", GH_ParamAccess.item); //6
+            pManager.AddNumberParameter("Grid Plane Tolerance Above", "tolA", "GSA Grid Plane Tolerance Above (for Storey Type)", GH_ParamAccess.item); //7
+            pManager.AddNumberParameter("Grid Plane Tolerance Below", "tolB", "GSA Grid Plane Tolerance Below (for Storey Type)", GH_ParamAccess.item); //8
+            
+            pManager.AddTextParameter("Grid Surface Name", "NaS", "GSA Grid Surface Name", GH_ParamAccess.item); //9
+            pManager.AddIntegerParameter("Grid Surface ID", "IdGS", "GSA Grid Surface ID", GH_ParamAccess.item); //10
+            pManager.AddTextParameter("Elements", "Elem", "GSA Grid Surface Elements", GH_ParamAccess.item); //11
+            pManager.AddTextParameter("Element Type", "Typ", "GSA Grid Surface Element Type", GH_ParamAccess.item); //12
+            pManager.AddNumberParameter("Grid Surface Tolerance", "tol", "GSA Grid Surface Tolerance", GH_ParamAccess.item); //13
+            pManager.AddTextParameter("Span Type", "Span", "GSA Grid Surface Span Type", GH_ParamAccess.item); //14
+            pManager.AddNumberParameter("Span Direction", "Dir", "GSA Grid Surface Span Direction", GH_ParamAccess.item); //15
+            pManager.AddTextParameter("Expansion Type", "Exp", "GSA Grid Surface Expansion Type", GH_ParamAccess.item); //16
+            pManager.AddBooleanParameter("Simplified Tributary Area", "Simp", "GSA Grid Surface Simplified Tributary Area", GH_ParamAccess.item); //17
         }
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -66,30 +69,34 @@ namespace GhSA.Components
 
                 //DA.SetData(0, gridplane);
                 DA.SetData(0, gps.Plane);
-                DA.SetData(1, gps.GridPlane.Name);
-                DA.SetData(2, gps.GridPlane.IsStoreyType);
+                DA.SetData(1, gps.GridPlaneID);
+                DA.SetData(2, gps.GridPlane.Name);
+                DA.SetData(3, gps.GridPlane.IsStoreyType);
                 Plane axis = new Plane(new Point3d(gps.Axis.Origin.X, gps.Axis.Origin.Y, gps.Axis.Origin.Z),
                     new Vector3d(gps.Axis.XVector.X, gps.Axis.XVector.Y, gps.Axis.XVector.Z),
                     new Vector3d(gps.Axis.XYPlane.X, gps.Axis.XYPlane.Y, gps.Axis.XYPlane.Z)
                     );
-                DA.SetData(3, axis);
-                DA.SetData(4, gps.GridPlane.Elevation);
-                DA.SetData(5, gps.GridPlane.ToleranceAbove);
-                DA.SetData(6, gps.GridPlane.ToleranceBelow);
-                DA.SetData(7, gps.GridSurface.Name);
-                DA.SetData(8, gps.GridSurface.Elements);
+                DA.SetData(4, axis);
+                DA.SetData(5, gps.AxisID);
+                DA.SetData(6, gps.GridPlane.Elevation);
+                DA.SetData(7, gps.GridPlane.ToleranceAbove);
+                DA.SetData(8, gps.GridPlane.ToleranceBelow);
+                
+                DA.SetData(9, gps.GridSurface.Name);
+                DA.SetData(10, gps.GridSurfaceID);
+                DA.SetData(11, gps.GridSurface.Elements);
                 string elemtype = gps.GridSurface.ElementType.ToString();
-                DA.SetData(9, Char.ToUpper(elemtype[0]) + elemtype.Substring(1).ToLower().Replace("_", " "));
-                DA.SetData(10, gps.GridSurface.Tolerance);
+                DA.SetData(12, Char.ToUpper(elemtype[0]) + elemtype.Substring(1).ToLower().Replace("_", " "));
+                DA.SetData(13, gps.GridSurface.Tolerance);
                 string spantype = gps.GridSurface.SpanType.ToString();
-                DA.SetData(11, Char.ToUpper(spantype[0]) + spantype.Substring(1).ToLower().Replace("_", " "));
-                DA.SetData(12, gps.GridSurface.Direction);
+                DA.SetData(14, Char.ToUpper(spantype[0]) + spantype.Substring(1).ToLower().Replace("_", " "));
+                DA.SetData(15, gps.GridSurface.Direction);
                 string expantype = gps.GridSurface.ExpansionType.ToString();
-                DA.SetData(13, Char.ToUpper(expantype[0]) + expantype.Substring(1).ToLower().Replace("_", " "));
+                DA.SetData(16, Char.ToUpper(expantype[0]) + expantype.Substring(1).ToLower().Replace("_", " "));
                 bool simple = false;
                 if (gps.GridSurface.SpanType == GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS)
                     simple = true;
-                DA.SetData(14, simple);
+                DA.SetData(17, simple);
 
             }
         }
