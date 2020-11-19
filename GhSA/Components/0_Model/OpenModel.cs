@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Drawing;
 using Grasshopper.Kernel.Attributes;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.GUI;
@@ -49,6 +50,25 @@ namespace GhSA.Components
             if (res) // == DialogResult.OK)
             {
                 fileName = fdi.FileName;
+
+                //add panel input with string
+                //instantiate  new panel
+                var panel = new Grasshopper.Kernel.Special.GH_Panel();
+                panel.CreateAttributes();
+
+                panel.Attributes.Pivot = new PointF((float)Attributes.DocObject.Attributes.Bounds.Left -
+                    panel.Attributes.Bounds.Width - 30, (float)Params.Input[0].Attributes.Pivot.Y - panel.Attributes.Bounds.Height/2);
+
+                //populate value list with our own data
+                panel.UserText = fileName;
+
+                //Until now, the panel is a hypothetical object.
+                // This command makes it 'real' and adds it to the canvas.
+                Grasshopper.Instances.ActiveCanvas.Document.AddObject(panel, false);
+
+                //Connect the new slider to this component
+                Params.Input[0].AddSource(panel);
+
                 (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
                 Params.OnParametersChanged();
                 ExpireSolution(true);
