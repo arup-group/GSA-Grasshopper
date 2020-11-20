@@ -26,7 +26,10 @@ jobs:
       - name: Run a multi-line script
         run: |
           curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
-          ./yak spec
-          ./yak build
-          $YAK_FILENAME = dir *.yak 
-          ./yak push $YAK_FILENAME.Name
+          .\yak version
+          cp -v GSA.gha dist\
+          cd dist
+          ..\yak spec
+          ..\yak build
+          cd ..
+          ls dist\*.yak |% {.\yak push $_.FullName}
