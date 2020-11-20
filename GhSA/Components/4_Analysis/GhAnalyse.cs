@@ -121,6 +121,11 @@ namespace GhSA.Components
                         gh_typ.CastTo(ref gsanode);
                         in_nodes.Add(gsanode);
                     }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Nodes input");
+                        return;
+                    }
                 }
                 Nodes = in_nodes;
             }
@@ -138,6 +143,11 @@ namespace GhSA.Components
                         GsaElement1d gsaelem1 = new GsaElement1d();
                         gh_typ.CastTo(ref gsaelem1);
                         in_elem1ds.Add(gsaelem1);
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Elem1D input");
+                        return;
                     }
                 }
                 Elem1ds = in_elem1ds;
@@ -157,6 +167,11 @@ namespace GhSA.Components
                         gh_typ.CastTo(ref gsaelem2);
                         in_elem2ds.Add(gsaelem2);
                     }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Elem2D input");
+                        return;
+                    }
                 }
                 Elem2ds = in_elem2ds;
             }
@@ -175,6 +190,11 @@ namespace GhSA.Components
                         gh_typ.CastTo(ref gsamem1);
                         in_mem1ds.Add(gsamem1);
                     }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Mem1D input");
+                        return;
+                    }
                 }
                 Mem1ds = in_mem1ds;
             }
@@ -192,6 +212,11 @@ namespace GhSA.Components
                         GsaMember2d gsamem2 = new GsaMember2d();
                         gh_typ.CastTo(ref gsamem2);
                         in_mem2ds.Add(gsamem2);
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Mem2D input");
+                        return;
                     }
                 }
                 Mem2ds = in_mem2ds;
@@ -212,11 +237,16 @@ namespace GhSA.Components
                         gh_typ.CastTo(ref gsaload);
                         in_loads.Add(gsaload);
                     }
-                    if (gh_typ.Value is GsaGridPlaneSurfaceGoo)
+                    else if (gh_typ.Value is GsaGridPlaneSurfaceGoo)
                     {
                         GsaGridPlaneSurface gsaGPS = new GsaGridPlaneSurface();
                         gh_typ.CastTo(ref gsaGPS);
                         in_gps.Add(gsaGPS);
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Loads input");
+                        return;
                     }
                 }
                 Loads = in_loads;
@@ -238,11 +268,16 @@ namespace GhSA.Components
                         gh_typ.CastTo(ref gsasection);
                         in_sect.Add(gsasection);
                     }
-                    if (gh_typ.Value is GsaProp2dGoo)
+                    else if (gh_typ.Value is GsaProp2dGoo)
                     {
                         GsaProp2d gsaprop = new GsaProp2d();
                         gh_typ.CastTo(ref gsaprop);
                         in_prop.Add(gsaprop);
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Property (PA PB) input");
+                        return;
                     }
                 }
                 Sections = in_sect;

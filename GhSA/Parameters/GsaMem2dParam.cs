@@ -369,7 +369,7 @@ namespace GhSA.Parameters
             if (ID == 0) { idd = ""; }
             string typeTxt;
             if (m_member.Type.ToString() != "VOID_CUTTER_2D")
-                typeTxt = "GSA " + m_member.Type.ToString().Substring(8) + " Member" + idd;
+                typeTxt = "GSA " + m_member.Type.ToString() + " Member" + idd;
             else
                 typeTxt = "GSA Void Cutter";
             string incl = "";

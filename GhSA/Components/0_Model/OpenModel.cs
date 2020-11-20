@@ -83,7 +83,7 @@ namespace GhSA.Components
         string fileName = null;
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Filename and path", "File", "GSA model to open and work with." + System.Environment.NewLine +
+            pManager.AddGenericParameter("Filename and path", "File", "GSA model to open and work with." + 
                     System.Environment.NewLine + "Input either path component, a text string with path and " +
                     System.Environment.NewLine + "filename or an existing GSA model created in Grasshopper.", GH_ParamAccess.item);
         }
