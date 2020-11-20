@@ -29,6 +29,7 @@ jobs:
           .\yak version
           cp -v GSA.gha dist\
           cd dist
+          ..\yak spec
           ..\yak build
           cd ..
           ls dist\*.yak |% {.\yak push $_.FullName}
