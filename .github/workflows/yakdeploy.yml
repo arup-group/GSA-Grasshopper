@@ -32,5 +32,5 @@ jobs:
           cd dist
           ..\yak spec
           ..\yak build
-          cd ..
-          ls dist\*.yak |% {.\yak push $_.FullName}
+          $YAK_FILENAME = dir *.yak 
+          ..\yak push $YAK_FILENAME.Name
