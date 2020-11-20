@@ -19,7 +19,8 @@ namespace GhSA.Components
             : base("Async Analyse Model", "AsyncAnalyse", "Assemble and Analyse a GSA Model using Multi-threading",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat4())
-        { BaseWorker = new AnalysisWorker(); }
+        { BaseWorker = new AnalysisWorker(); this.Hidden = true; }
+
         public override Guid ComponentGuid => new Guid("b9ca86f7-fda1-4c5e-ae75-5e570d4885e9");
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
@@ -96,8 +97,7 @@ namespace GhSA.Components
                     }
                     else
                     {
-                        //GH_Component comp = base as GH_Component;
-                        //comp.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input to Model");
+                        this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input to Model");
                         return;
                     }
                 }
@@ -115,6 +115,11 @@ namespace GhSA.Components
                             GsaNode gsanode = new GsaNode();
                             gh_typ.CastTo(ref gsanode);
                             in_nodes.Add(gsanode);
+                        }
+                        else
+                        {
+                            this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Nodes input");
+                            return;
                         }
                     }
                     Nodes = in_nodes;
@@ -134,6 +139,12 @@ namespace GhSA.Components
                             gh_typ.CastTo(ref gsaelem1);
                             in_elem1ds.Add(gsaelem1);
                         }
+                        else
+                        {
+                            this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Elem1D input");
+                            
+                            return;
+                        }
                     }
                     Elem1ds = in_elem1ds;
                 }
@@ -151,6 +162,11 @@ namespace GhSA.Components
                             GsaElement2d gsaelem2 = new GsaElement2d();
                             gh_typ.CastTo(ref gsaelem2);
                             in_elem2ds.Add(gsaelem2);
+                        }
+                        else
+                        {
+                            this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Elem2D input");
+                            return;
                         }
                     }
                     Elem2ds = in_elem2ds;
@@ -170,6 +186,11 @@ namespace GhSA.Components
                             gh_typ.CastTo(ref gsamem1);
                             in_mem1ds.Add(gsamem1);
                         }
+                        else
+                        {
+                            this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Mem1D input");
+                            return;
+                        }
                     }
                     Mem1ds = in_mem1ds;
                 }
@@ -187,6 +208,11 @@ namespace GhSA.Components
                             GsaMember2d gsamem2 = new GsaMember2d();
                             gh_typ.CastTo(ref gsamem2);
                             in_mem2ds.Add(gsamem2);
+                        }
+                        else
+                        {
+                            this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Mem2D input");
+                            return;
                         }
                     }
                     Mem2ds = in_mem2ds;
@@ -207,11 +233,16 @@ namespace GhSA.Components
                             gh_typ.CastTo(ref gsaload);
                             in_loads.Add(gsaload);
                         }
-                        if (gh_typ.Value is GsaGridPlaneSurfaceGoo)
+                        else if (gh_typ.Value is GsaGridPlaneSurfaceGoo)
                         {
                             GsaGridPlaneSurface gsaGPS = new GsaGridPlaneSurface();
                             gh_typ.CastTo(ref gsaGPS);
                             in_gps.Add(gsaGPS);
+                        }
+                        else
+                        {
+                            this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Loads input");
+                            return;
                         }
                     }
                     Loads = in_loads;
@@ -233,11 +264,16 @@ namespace GhSA.Components
                             gh_typ.CastTo(ref gsasection);
                             in_sect.Add(gsasection);
                         }
-                        if (gh_typ.Value is GsaProp2dGoo)
+                        else if (gh_typ.Value is GsaProp2dGoo)
                         {
                             GsaProp2d gsaprop = new GsaProp2d();
                             gh_typ.CastTo(ref gsaprop);
                             in_prop.Add(gsaprop);
+                        }
+                        else
+                        {
+                            this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Property (PA PB) input");
+                            return;
                         }
                     }
                     Sections = in_sect;
@@ -259,7 +295,7 @@ namespace GhSA.Components
                 #region DoWork
                 // Let's work just on the model (not wrapped)
                 GsaAPI.Model gsa = WorkModel.Model;
-
+                
                 #region Nodes
                 // ### Nodes ###
                 // We take out the existing nodes in the model and work on that dictionary
@@ -281,6 +317,9 @@ namespace GhSA.Components
 
                     for (int i = 0; i < Nodes.Count; i++)
                     {
+                        if (CancellationToken.IsCancellationRequested) return;
+                        ReportProgress("Nodes", (double)i / (Nodes.Count - 1));
+
                         if (Nodes[i] != null)
                         {
                             GsaNode node = Nodes[i];
@@ -392,6 +431,9 @@ namespace GhSA.Components
                 {
                     for (int i = 0; i < Elem1ds.Count; i++)
                     {
+                        if (CancellationToken.IsCancellationRequested) return;
+                        ReportProgress("Elem1D", (double)i / (Elem1ds.Count - 1));
+
                         if (Elem1ds[i] != null)
                         {
                             GsaElement1d element1d = Elem1ds[i];
@@ -457,6 +499,9 @@ namespace GhSA.Components
                 {
                     for (int i = 0; i < Elem2ds.Count; i++)
                     {
+                        if (CancellationToken.IsCancellationRequested) return;
+                        ReportProgress("Elem2D", (double)i / (Elem2ds.Count - 1));
+
                         if (Elem2ds[i] != null)
                         {
                             GsaElement2d element2d = Elem2ds[i];
@@ -544,6 +589,9 @@ namespace GhSA.Components
                 {
                     for (int i = 0; i < Mem1ds.Count; i++)
                     {
+                        if (CancellationToken.IsCancellationRequested) return;
+                        ReportProgress("Mem1D", (double)i / (Mem1ds.Count - 1));
+
                         if (Mem1ds[i] != null)
                         {
                             GsaMember1d member1d = Mem1ds[i];
@@ -614,6 +662,9 @@ namespace GhSA.Components
                 {
                     for (int i = 0; i < Mem2ds.Count; i++)
                     {
+                        if (CancellationToken.IsCancellationRequested) return;
+                        ReportProgress("Mem2D", (double)i / (Mem2ds.Count - 1));
+
                         if (Mem2ds[i] != null)
                         {
                             GsaMember2d member2d = Mem2ds[i];
@@ -797,6 +848,9 @@ namespace GhSA.Components
                 {
                     for (int i = 0; i < Loads.Count; i++)
                     {
+                        if (CancellationToken.IsCancellationRequested) return;
+                        ReportProgress("Loads", (double)i / (Loads.Count - 1));
+
                         if (Loads[i] != null)
                         {
                             GsaLoad load = Loads[i];
@@ -820,21 +874,84 @@ namespace GhSA.Components
                                     faceLoads.Add(load.FaceLoad.FaceLoad);
                                     break;
                                 case GsaLoad.LoadTypes.GridPoint:
-                                    load.PointLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.PointLoad.GridPlaneSurface.Axis);
-                                    load.PointLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.PointLoad.GridPlaneSurface.GridPlane);
-                                    load.PointLoad.GridPointLoad.GridSurface = gsa.AddGridSurface(load.PointLoad.GridPlaneSurface.GridSurface);
+                                    if (load.PointLoad.GridPlaneSurface.AxisID > 0)
+                                    {
+                                        load.PointLoad.GridPlaneSurface.GridPlane.AxisProperty = load.PointLoad.GridPlaneSurface.AxisID;
+                                        gsa.SetAxis(load.PointLoad.GridPlaneSurface.GridPlane.AxisProperty, load.PointLoad.GridPlaneSurface.Axis);
+                                    }
+                                    else
+                                        load.PointLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.PointLoad.GridPlaneSurface.Axis);
+
+                                    if (load.PointLoad.GridPlaneSurface.GridPlaneID > 0)
+                                    {
+                                        load.PointLoad.GridPlaneSurface.GridSurface.GridPlane = load.PointLoad.GridPlaneSurface.GridPlaneID;
+                                        gsa.SetGridPlane(load.PointLoad.GridPlaneSurface.GridSurface.GridPlane, load.PointLoad.GridPlaneSurface.GridPlane);
+                                    }
+                                    else
+                                        load.PointLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.PointLoad.GridPlaneSurface.GridPlane);
+
+                                    if (load.PointLoad.GridPlaneSurface.GridSurfaceID > 0)
+                                    {
+                                        load.PointLoad.GridPointLoad.GridSurface = load.PointLoad.GridPlaneSurface.GridSurfaceID;
+                                        gsa.SetGridSurface(load.PointLoad.GridPointLoad.GridSurface, load.PointLoad.GridPlaneSurface.GridSurface);
+                                    }
+                                    else
+                                        load.PointLoad.GridPointLoad.GridSurface = gsa.AddGridSurface(load.PointLoad.GridPlaneSurface.GridSurface);
+
                                     gridPointLoads.Add(load.PointLoad.GridPointLoad);
                                     break;
                                 case GsaLoad.LoadTypes.GridLine:
-                                    load.LineLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.LineLoad.GridPlaneSurface.Axis);
-                                    load.LineLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.LineLoad.GridPlaneSurface.GridPlane);
-                                    load.LineLoad.GridLineLoad.GridSurface = gsa.AddGridSurface(load.LineLoad.GridPlaneSurface.GridSurface);
+                                    if (load.LineLoad.GridPlaneSurface.AxisID > 0)
+                                    {
+                                        load.LineLoad.GridPlaneSurface.GridPlane.AxisProperty = load.LineLoad.GridPlaneSurface.AxisID;
+                                        gsa.SetAxis(load.LineLoad.GridPlaneSurface.GridPlane.AxisProperty, load.LineLoad.GridPlaneSurface.Axis);
+                                    }
+                                    else
+                                        load.LineLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.LineLoad.GridPlaneSurface.Axis);
+
+                                    if (load.LineLoad.GridPlaneSurface.GridPlaneID > 0)
+                                    {
+                                        load.LineLoad.GridPlaneSurface.GridSurface.GridPlane = load.LineLoad.GridPlaneSurface.GridPlaneID;
+                                        gsa.SetGridPlane(load.LineLoad.GridPlaneSurface.GridSurface.GridPlane, load.LineLoad.GridPlaneSurface.GridPlane);
+                                    }
+                                    else
+                                        load.LineLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.LineLoad.GridPlaneSurface.GridPlane);
+
+                                    if (load.LineLoad.GridPlaneSurface.GridSurfaceID > 0)
+                                    {
+                                        load.LineLoad.GridLineLoad.GridSurface = load.LineLoad.GridPlaneSurface.GridSurfaceID;
+                                        gsa.SetGridSurface(load.LineLoad.GridLineLoad.GridSurface, load.LineLoad.GridPlaneSurface.GridSurface);
+                                    }
+                                    else
+                                        load.LineLoad.GridLineLoad.GridSurface = gsa.AddGridSurface(load.LineLoad.GridPlaneSurface.GridSurface);
+
                                     gridLineLoads.Add(load.LineLoad.GridLineLoad);
                                     break;
                                 case GsaLoad.LoadTypes.GridArea:
-                                    load.AreaLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.AreaLoad.GridPlaneSurface.Axis);
-                                    load.AreaLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.AreaLoad.GridPlaneSurface.GridPlane);
-                                    load.AreaLoad.GridAreaLoad.GridSurface = gsa.AddGridSurface(load.AreaLoad.GridPlaneSurface.GridSurface);
+                                    if (load.AreaLoad.GridPlaneSurface.AxisID > 0)
+                                    {
+                                        load.AreaLoad.GridPlaneSurface.GridPlane.AxisProperty = load.AreaLoad.GridPlaneSurface.AxisID;
+                                        gsa.SetAxis(load.AreaLoad.GridPlaneSurface.GridPlane.AxisProperty, load.AreaLoad.GridPlaneSurface.Axis);
+                                    }
+                                    else
+                                        load.AreaLoad.GridPlaneSurface.GridPlane.AxisProperty = gsa.AddAxis(load.AreaLoad.GridPlaneSurface.Axis);
+
+                                    if (load.AreaLoad.GridPlaneSurface.GridPlaneID > 0)
+                                    {
+                                        load.AreaLoad.GridPlaneSurface.GridSurface.GridPlane = load.AreaLoad.GridPlaneSurface.GridPlaneID;
+                                        gsa.SetGridPlane(load.AreaLoad.GridPlaneSurface.GridSurface.GridPlane, load.AreaLoad.GridPlaneSurface.GridPlane);
+                                    }
+                                    else
+                                        load.AreaLoad.GridPlaneSurface.GridSurface.GridPlane = gsa.AddGridPlane(load.AreaLoad.GridPlaneSurface.GridPlane);
+
+                                    if (load.AreaLoad.GridPlaneSurface.GridSurfaceID > 0)
+                                    {
+                                        load.AreaLoad.GridAreaLoad.GridSurface = load.AreaLoad.GridPlaneSurface.GridSurfaceID;
+                                        gsa.SetGridSurface(load.AreaLoad.GridAreaLoad.GridSurface, load.AreaLoad.GridPlaneSurface.GridSurface);
+                                    }
+                                    else
+                                        load.AreaLoad.GridAreaLoad.GridSurface = gsa.AddGridSurface(load.AreaLoad.GridPlaneSurface.GridSurface);
+
                                     gridAreaLoads.Add(load.AreaLoad.GridAreaLoad);
                                     break;
                             }
@@ -880,6 +997,9 @@ namespace GhSA.Components
 
                         for (int i = 0; i < Sections.Count; i++)
                         {
+                            if (CancellationToken.IsCancellationRequested) return;
+                            ReportProgress("Sections", (double)i / (Sections.Count - 1));
+
                             if (Sections[i] != null)
                             {
                                 GsaSection section = Sections[i];
@@ -923,6 +1043,9 @@ namespace GhSA.Components
 
                         for (int i = 0; i < Prop2Ds.Count; i++)
                         {
+                            if (CancellationToken.IsCancellationRequested) return;
+                            ReportProgress("Prop2D", (double)i / (Prop2Ds.Count - 1));
+
                             if (Prop2Ds[i] != null)
                             {
                                 GsaProp2d prop2d = Prop2Ds[i];
@@ -943,7 +1066,11 @@ namespace GhSA.Components
                 }
                 #endregion
 
+
+
                 #region set stuff in model
+                if (CancellationToken.IsCancellationRequested) return;
+                ReportProgress("Assemble Model", -1);
                 ReadOnlyDictionary<int, Node> setnodes = new ReadOnlyDictionary<int, Node>(nodes);
                 gsa.SetNodes(setnodes);
 
@@ -988,7 +1115,9 @@ namespace GhSA.Components
 
                 #region meshing
                 // Create elements from members
+                ReportProgress("Meshing", -1);
                 gsa.CreateElementsFromMembers();
+                ReportProgress("Meshing", 1);
                 #endregion
 
                 #region analysis
@@ -999,7 +1128,10 @@ namespace GhSA.Components
 
                 foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
                 {
-                    if (!(gsa.Analyse(task.Key)))
+                    if (CancellationToken.IsCancellationRequested) return;
+                    ReportProgress("Analysing Task " + task.Key.ToString(), -1);
+                    
+                        if (!(gsa.Analyse(task.Key)))
                     {
                         //AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
                     }

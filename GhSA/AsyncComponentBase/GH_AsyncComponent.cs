@@ -91,17 +91,41 @@ namespace GrasshopperAsyncComponent
             if (Workers.Count == 0) return;
             if (Workers.Count == 1)
             {
-                Message = ProgressReports.Values.Last().ToString("0.00%");
+                //Message = ProgressReports.Values.Last().ToString("0.00%");
+                
+                string msg = "";
+                foreach (string key in ProgressReports.Keys)
+                {
+                    ProgressReports.TryGetValue(key, out double val);
+                    if (val < 0)
+                        msg = key + System.Environment.NewLine + msg;
+                    else
+                        msg = key + " " + val.ToString("0%") + System.Environment.NewLine + msg;
+                }
+
+                Message = msg;
             }
             else
             {
-                double total = 0;
-                foreach (var kvp in ProgressReports)
+                //double total = 0;
+                //foreach (var kvp in ProgressReports)
+                //{
+                //    total += kvp.Value;
+                //}
+
+                //Message = (total / Workers.Count).ToString("0.00%");
+
+                string msg = "";
+                foreach (string key in ProgressReports.Keys)
                 {
-                    total += kvp.Value;
+                    ProgressReports.TryGetValue(key, out double val);
+                    if (val < 0)
+                        msg = key + System.Environment.NewLine + msg;
+                    else
+                        msg = key + " " + val.ToString("0%") + System.Environment.NewLine + msg;
                 }
 
-                Message = (total / Workers.Count).ToString("0.00%");
+                Message = msg;
             }
 
             Rhino.RhinoApp.InvokeOnUiThread((Action)delegate
@@ -123,7 +147,7 @@ namespace GrasshopperAsyncComponent
 
             State = 0;
 
-            var test = Params.Output[0].VolatileData;
+            //var test = Params.Output[0].VolatileData;
         }
 
         protected override void AfterSolveInstance()
@@ -132,7 +156,7 @@ namespace GrasshopperAsyncComponent
             if (State == 0 && Tasks.Count > 0)
             {
                 foreach (var task in Tasks) task.Start();
-                var test = Params.Output[0].VolatileData;
+                //var test = Params.Output[0].VolatileData;
             }
         }
 

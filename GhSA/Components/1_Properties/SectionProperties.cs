@@ -27,9 +27,7 @@ namespace GhSA.Components
           : base("Section Properties", "SectProp", "Get GSA Section Properties",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat1())
-        {
-        }
-
+        { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.SectionProperties;

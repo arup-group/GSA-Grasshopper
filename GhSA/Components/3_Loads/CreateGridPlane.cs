@@ -67,13 +67,16 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddPlaneParameter("Plane", "Pl", "Plane for Axis and Grid Plane definition. Note that an XY-plane will be created with an axis origin Z = 0 " +
+            pManager.AddGenericParameter("Plane", "Pl", "Plane for Axis and Grid Plane definition. Note that an XY-plane will be created with an axis origin Z = 0 " +
                 "and the height location will be controlled by Grid Plane elevation. For all none-XY plane inputs, the Grid Plane elevation will be 0", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Grid Plane ID", "ID", "GSA Grid Plane ID. Setting this will replace any existing Grid Planes", GH_ParamAccess.item, 0);
             pManager.AddNumberParameter("Grid Elevation", "Ev", "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.", GH_ParamAccess.item, 0);
             pManager.AddTextParameter("Name", "Na", "Name of Grid Plane", GH_ParamAccess.item);
 
+            pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
+            pManager[3].Optional = true;
 
             _mode = FoldMode.General;
         }
@@ -84,76 +87,83 @@ namespace GhSA.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            Plane pln = Plane.WorldXY;
+
             // 0 Plane
             GH_Plane gh_pln = new GH_Plane();
             if (DA.GetData(0, ref gh_pln))
+                GH_Convert.ToPlane(gh_pln, ref pln, GH_Conversion.Both);
+
+            // create gsa gridplanesurface from plane
+            GsaGridPlaneSurface gps = new GsaGridPlaneSurface(pln);
+
+            GH_Integer ghint = new GH_Integer();
+            if (DA.GetData(1, ref ghint))
             {
-                Plane pln = Plane.Unset;
-                if (GH_Convert.ToPlane(gh_pln, ref pln, GH_Conversion.Both))
+                int id = 0;
+                GH_Convert.ToInt32(ghint, out id, GH_Conversion.Both);
+                gps.GridPlaneID = id;
+            }
+
+            // 1 Grid elevation
+            GH_Number ghnum = new GH_Number();
+            if (DA.GetData(1, ref ghnum))
+            {
+                double elev = 0;
+                if (GH_Convert.ToDouble(ghnum, out elev, GH_Conversion.Both))
                 {
-                    // create gsa gridplanesurface from plane
-                    GsaGridPlaneSurface gps = new GsaGridPlaneSurface(pln);
+                    gps.GridPlane.Elevation = elev;
 
-                    // 1 Grid elevation
-                    GH_Number ghnum = new GH_Number();
-                    if (DA.GetData(1, ref ghnum))
-                    {
-                        double elev = 0;
-                        if (GH_Convert.ToDouble(ghnum, out elev, GH_Conversion.Both))
-                        {
-                            gps.GridPlane.Elevation = elev;
-                            
-                            // if elevation is set we want to move the plane in it's normal direction
-                            Vector3d vec = pln.Normal;
-                            vec.Unitize();
-                            vec.X *= elev;
-                            vec.Y *= elev;
-                            vec.Z *= elev;
-                            Transform xform = Transform.Translation(vec);
-                            pln.Transform(xform);
-                            gps.Plane = pln;
-                            // note this wont move the Grid Plane Axis gps.Axis
-                        }
-                    }
-                    
-                    // 2 Name
-                    GH_String ghtxt = new GH_String();
-                    if (DA.GetData(2, ref ghtxt))
-                    {
-                        string name = "";
-                        if (GH_Convert.ToString(ghtxt, out name, GH_Conversion.Both))
-                            gps.GridPlane.Name = name;
-                    }
-
-                    // set is story
-                    if (_mode == FoldMode.General)
-                        gps.GridPlane.IsStoreyType = false;
-                    else
-                    {
-                        gps.GridPlane.IsStoreyType = true;
-                        
-                        // 3 tolerance above
-                        GH_Number ghtola = new GH_Number();
-                        if (DA.GetData(3, ref ghtola))
-                        {
-                            double tola = 0;
-                            if (GH_Convert.ToDouble(ghtola, out tola, GH_Conversion.Both))
-                                gps.GridPlane.ToleranceAbove = tola;
-                        }
-
-                        // 4 tolerance above
-                        GH_Number ghtolb = new GH_Number();
-                        if (DA.GetData(4, ref ghtolb))
-                        {
-                            double tolb = 0;
-                            if (GH_Convert.ToDouble(ghtolb, out tolb, GH_Conversion.Both))
-                                gps.GridPlane.ToleranceBelow = tolb;
-                        }
-                    }
-
-                    DA.SetData(0, new GsaGridPlaneSurfaceGoo(gps));
+                    // if elevation is set we want to move the plane in it's normal direction
+                    Vector3d vec = pln.Normal;
+                    vec.Unitize();
+                    vec.X *= elev;
+                    vec.Y *= elev;
+                    vec.Z *= elev;
+                    Transform xform = Transform.Translation(vec);
+                    pln.Transform(xform);
+                    gps.Plane = pln;
+                    // note this wont move the Grid Plane Axis gps.Axis
                 }
             }
+
+            // 2 Name
+            GH_String ghtxt = new GH_String();
+            if (DA.GetData(2, ref ghtxt))
+            {
+                string name = "";
+                if (GH_Convert.ToString(ghtxt, out name, GH_Conversion.Both))
+                    gps.GridPlane.Name = name;
+            }
+
+            // set is story
+            if (_mode == FoldMode.General)
+                gps.GridPlane.IsStoreyType = false;
+            else
+            {
+                gps.GridPlane.IsStoreyType = true;
+
+                // 3 tolerance above
+                GH_Number ghtola = new GH_Number();
+                if (DA.GetData(3, ref ghtola))
+                {
+                    double tola = 0;
+                    if (GH_Convert.ToDouble(ghtola, out tola, GH_Conversion.Both))
+                        gps.GridPlane.ToleranceAbove = tola;
+                }
+
+                // 4 tolerance above
+                GH_Number ghtolb = new GH_Number();
+                if (DA.GetData(4, ref ghtolb))
+                {
+                    double tolb = 0;
+                    if (GH_Convert.ToDouble(ghtolb, out tolb, GH_Conversion.Both))
+                        gps.GridPlane.ToleranceBelow = tolb;
+                }
+            }
+
+            DA.SetData(0, new GsaGridPlaneSurfaceGoo(gps));
+
         }
 
         #region menu override
