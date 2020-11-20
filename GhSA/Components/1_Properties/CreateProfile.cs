@@ -282,7 +282,7 @@ namespace GhSA.Components
             GsaProfile profile = new GsaProfile();
 
             // default to FoldMode catalogue
-            _mode = FoldMode.Catalogue;
+            //_mode = FoldMode.Catalogue;
 
             #region catalogue
             if (_mode == FoldMode.Catalogue)
