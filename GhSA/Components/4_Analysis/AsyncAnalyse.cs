@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Grasshopper.Kernel.Data;
 using GsaAPI;
 using Rhino.Geometry;
 using GhSA.Parameters;
@@ -93,7 +92,7 @@ namespace GhSA.Components
                         GsaModel in_model = new GsaModel();
                         gh_typ.CastTo(ref in_model);
 
-                        WorkModel = in_model.Clone(); // use Copy when GsaAPI allows to deepclone;
+                        WorkModel = in_model; 
                     }
                     else
                     {
@@ -293,8 +292,11 @@ namespace GhSA.Components
             public override void DoWork(Action<string, double> ReportProgress, Action Done)
             {
                 #region DoWork
+                ReportProgress("Clone model", -1);
+                GsaModel analysisModel = WorkModel.Clone(); // use Copy when GsaAPI allows to deepclone;
+
                 // Let's work just on the model (not wrapped)
-                GsaAPI.Model gsa = WorkModel.Model;
+                GsaAPI.Model gsa = analysisModel.Model;
                 
                 #region Nodes
                 // ### Nodes ###
@@ -1124,25 +1126,25 @@ namespace GhSA.Components
                 //analysis
                 IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
                 if (gsaTasks.Count < 1)
-                    //AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contains no Analysis Tasks");
+                    ReportProgress("Model contains no Analysis Tasks", -255);
 
                 foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
                 {
                     if (CancellationToken.IsCancellationRequested) return;
                     ReportProgress("Analysing Task " + task.Key.ToString(), -1);
                     
-                        if (!(gsa.Analyse(task.Key)))
+                    if (!(gsa.Analyse(task.Key)))
                     {
-                        //AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
+                        ReportProgress("Warning Analysis Case " + task.Key + " could not be analysed", -10);
                     }
                 }
-
                 #endregion
 
                 WorkModel.Model = gsa;
 
                 //gsa.SaveAs("C:\\Users\\Kristjan.Nielsen\\Desktop\\GsaGH_test.gwb");
                 #endregion
+                ReportProgress("", -1);
                 Done();
             }
         }

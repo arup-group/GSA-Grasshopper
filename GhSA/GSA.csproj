@@ -104,6 +104,8 @@
   <ItemGroup>
     <Compile Include="AsyncComponentBase\GH_AsyncComponent.cs" />
     <Compile Include="AsyncComponentBase\WorkerInstance.cs" />
+    <Compile Include="Components\0_Model\AsyncOpenModel.cs" />
+    <Compile Include="Components\0_Model\AsyncSaveModel.cs" />
     <Compile Include="Components\0_Model\Version.cs" />
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
     <Compile Include="Components\4_Analysis\AsyncAnalyse.cs" />
+    <Compile Include="Helpers\_GsaMesher.cs" />
     <Compile Include="Helpers\_GsaPath.cs" />
     <Compile Include="Helpers\_GsaCreateModelHelper.cs" />
     <Compile Include="Helpers\_GsaModelEnums.cs" />

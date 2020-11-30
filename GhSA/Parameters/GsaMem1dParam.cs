@@ -185,7 +185,8 @@ namespace GhSA.Parameters
         {
             string idd = " " + ID.ToString();
             if (ID == 0) { idd = ""; }
-            string typeTxt = "GSA " + m_member.Type.ToString() + " Member" + idd;
+            string mes = m_member.Type.ToString();
+            string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
 
             return typeTxt;
         }

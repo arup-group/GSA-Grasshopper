@@ -5,12 +5,16 @@ using System.Drawing;
 using Grasshopper.Kernel.Attributes;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.GUI;
+using Grasshopper;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GhSA.Parameters;
+using System.Linq;
+using System.Collections.ObjectModel;
+using GrasshopperAsyncComponent;
 
 
 namespace GhSA.Components
@@ -18,19 +22,19 @@ namespace GhSA.Components
     /// <summary>
     /// Component to open an existing GSA model
     /// </summary>
-    public class OpenModel : GH_Component, IGH_VariableParameterComponent
+    public class AsyncOpenModel : GH_AsyncComponent, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
-        public OpenModel()
-          : base("Open Model", "Open", "Open an existing GSA model",
+        public override Guid ComponentGuid => new Guid("3f158860-c1dd-4f20-92eb-88e7c2b461bf");
+        public AsyncOpenModel()
+          : base("Open Model 2", "Open Async", "Open an existing GSA model",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
-        { this.Hidden = true; } // sets the initial state of the component to hidden
+        { BaseWorker = new OpenWorker(); this.Hidden = true; }
 
-        public override GH_Exposure Exposure => GH_Exposure.hidden;
+        public override GH_Exposure Exposure => GH_Exposure.primary;
 
         protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.OpenModel;
         #endregion
@@ -40,7 +44,6 @@ namespace GhSA.Components
         public override void CreateAttributes()
         {
             m_attributes = new UI.ButtonComponentUI(this, "Open", OpenFile, "Open GSA file");
-
         }
 
         public void OpenFile()
@@ -52,6 +55,10 @@ namespace GhSA.Components
                 fileName = fdi.FileName;
 
                 //add panel input with string
+                //delete existing inputs if any
+                while (Params.Input[0].Sources.Count > 0)
+                    Instances.ActiveCanvas.Document.RemoveObject(Params.Input[0].Sources[0], false);
+
                 //instantiate  new panel
                 var panel = new Grasshopper.Kernel.Special.GH_Panel();
                 panel.CreateAttributes();
@@ -74,13 +81,12 @@ namespace GhSA.Components
                 ExpireSolution(true);
             }
         }
-
         #endregion
 
         #region Input and output
         // This region handles input and output parameters
 
-        string fileName = null;
+        public static string fileName = null;
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Filename and path", "File", "GSA model to open and work with." + 
@@ -142,85 +148,77 @@ namespace GhSA.Components
         }
         #endregion
 
-        protected override void SolveInstance(IGH_DataAccess DA)
+        public class OpenWorker : WorkerInstance
         {
+            public OpenWorker() : base(null) { }
+            public override WorkerInstance Duplicate() => new OpenWorker();
+
+            #region fields
             Model model = new Model();
+            string fileName = AsyncOpenModel.fileName;
+            #endregion
 
-            GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-            if (DA.GetData(0, ref gh_typ))
+            public override void GetData(IGH_DataAccess DA, GH_ComponentParamServer Params)
             {
-                if (gh_typ.Value is GH_String)
+                #region GetData
+                GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+
+                if (DA.GetData(0, ref gh_typ))
                 {
-                    string tempfile = "";
-                    if (GH_Convert.ToString(gh_typ, out tempfile, GH_Conversion.Both))
-                        fileName = tempfile;
-
-                    if (!fileName.EndsWith(".gwb"))
-                        fileName = fileName + ".gwb";
-
-                    ReturnValue status = model.Open(fileName);
-
-                    if (status == 0)
+                    if (gh_typ.Value is GH_String)
                     {
+                        string tempfile = "";
+                        if (GH_Convert.ToString(gh_typ, out tempfile, GH_Conversion.Both))
+                            fileName = tempfile;
+
+                        if (!fileName.EndsWith(".gwb"))
+                            fileName = fileName + ".gwb";
+                    }
+                    else if (gh_typ.Value is GsaAPI.Model)
+                    {
+                        gh_typ.CastTo(ref model);
                         GsaModel gsaModel = new GsaModel
                         {
                             Model = model,
-                            FileName = fileName
                         };
-
-                        Util.GsaTitles.GetTitlesFromGSA(model);
-
-                        string mes = Path.GetFileName(fileName);
-                        mes = mes.Substring(0, mes.Length - 4);
-                        Message = mes;
-                        DA.SetData(0, new GsaModelGoo(gsaModel));
-                    }
-                    else
-                    {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + System.Environment.NewLine + status.ToString());
-                        return;
                     }
                 }
-                else if (gh_typ.Value is GsaAPI.Model)
-                {
-                    gh_typ.CastTo(ref model);
-                    GsaModel gsaModel = new GsaModel
-                    {
-                        Model = model,
-                    };
-
-                    DA.SetData(0, new GsaModelGoo(gsaModel));
-                }
-                else
-                {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model");
-                    return;
-                }
+                #endregion
             }
-            else
+
+            public override void SetData(IGH_DataAccess DA)
             {
+                // 👉 Checking for cancellation!
+                if (CancellationToken.IsCancellationRequested) return;
+
+                GsaModel gsaModel = new GsaModel
+                {
+                    Model = model,
+                    FileName = fileName
+                };
+                DA.SetData(0, new GsaModelGoo(gsaModel));
+            }
+
+            public override void DoWork(Action<string, double> ReportProgress, Action Done)
+            {
+                ReportProgress("Opening model...", -1);
                 ReturnValue status = model.Open(fileName);
 
                 if (status == 0)
                 {
-                    GsaModel gsaModel = new GsaModel
-                    {
-                        Model = model,
-                        FileName = fileName
-                    };
-
                     Util.GsaTitles.GetTitlesFromGSA(model);
 
                     string mes = Path.GetFileName(fileName);
                     mes = mes.Substring(0, mes.Length - 4);
-                    Message = mes;
-                    DA.SetData(0, new GsaModelGoo(gsaModel));
+                    ReportProgress(mes, -1);
                 }
                 else
                 {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + System.Environment.NewLine + status.ToString());
+                    string mes  = "Unable to open Model" + System.Environment.NewLine + status.ToString();
+                    ReportProgress(mes, -20);
                     return;
                 }
+                Done();
             }
         }
     }
