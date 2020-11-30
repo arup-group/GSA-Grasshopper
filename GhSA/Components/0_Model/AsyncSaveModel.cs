@@ -221,15 +221,24 @@ namespace GhSA.Components
             {
                 if (save)
                 {
-                    string mes = "";
                     if (fileName != null)
                     {
                         ReportProgress("Saving model...", -1);
-                        ReturnValue res = model.Model.SaveAs(fileName);
-                        if (res != ReturnValue.GS_OK)
-                            ReportProgress(res.ToString(), -20);
-                        else
-                            canOpen = true;
+                        try
+                        {
+                            ReturnValue res = model.Model.SaveAs(fileName);
+                            if (res != ReturnValue.GS_OK)
+                                ReportProgress(res.ToString(), -20);
+                            else
+                            {
+                                canOpen = true;
+                                Done();
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            ReportProgress(e.Message, -20);
+                        }
                     }
                     else
                     {
@@ -238,9 +247,11 @@ namespace GhSA.Components
                         if (res != ReturnValue.GS_OK)
                             ReportProgress(res.ToString(), -20);
                         else
+                        {
                             canOpen = true;
+                            Done();
+                        }
                     }
-                    Done();
                 }
                 else
                     return;
