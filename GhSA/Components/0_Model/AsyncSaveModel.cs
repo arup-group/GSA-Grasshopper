@@ -11,23 +11,24 @@ using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GhSA.Parameters;
+using GrasshopperAsyncComponent;
 
 namespace GhSA.Components
 {
     /// <summary>
     /// Component to open an existing GSA model
     /// </summary>
-    public class SaveModel : GH_Component, IGH_VariableParameterComponent
+    public class AsyncSaveModel : GH_AsyncComponent, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
-        public SaveModel()
-          : base("Save Model", "Save", "Saves your GSA model from this parametric nightmare",
+        public override Guid ComponentGuid => new Guid("333fa19b-5521-412f-a864-13cfe451283b");
+        public AsyncSaveModel()
+          : base("Save Model 2", "Save Async", "Saves your GSA model from this parametric nightmare",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
-        { this.Hidden = true; } // sets the initial state of the component to hidden
+        { BaseWorker = new SaveWorker(); this.Hidden = true; }// sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
         protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.SaveModel;
@@ -46,20 +47,9 @@ namespace GhSA.Components
                 SaveAsFile();
             else
             {
-                string mes = gsaSaveModel.SaveAs(fileName).ToString();
-                if (mes == GsaAPI.ReturnValue.GS_OK.ToString())
-                {
-                    canOpen = true;
-                    //this.OnAttributesChanged();
-                    //CreateAttributes();
-                    mes = "Saved file";
-                    //ExpireSolution(true);
-                }
-                else
-                {
-                    mes = Char.ToUpper(mes[3]) + mes.Substring(4).ToLower().Replace("_", " ");
-                }
-                this.Message = mes;
+                save = true;
+                Params.OnParametersChanged();
+                ExpireSolution(true);
             }
         }
 
@@ -71,69 +61,63 @@ namespace GhSA.Components
             {
                 fileName = fdi.FileName;
                 usersetFileName = true;
-                string mes = gsaSaveModel.SaveAs(fileName).ToString();
-                if (mes == GsaAPI.ReturnValue.GS_OK.ToString())
-                {
-                    canOpen = true;
-                    //CreateAttributes();
-                    mes = "Saved file";
+                save = true;
 
-                    //add panel input with string
-                    //delete existing inputs if any
-                    while (Params.Input[2].Sources.Count > 0)
-                        Grasshopper.Instances.ActiveCanvas.Document.RemoveObject(Params.Input[2].Sources[0], false);
+                //add panel input with string
+                //delete existing inputs if any
+                while (Params.Input[2].Sources.Count > 0)
+                    Grasshopper.Instances.ActiveCanvas.Document.RemoveObject(Params.Input[2].Sources[0], false);
 
-                    //instantiate  new panel
-                    var panel = new Grasshopper.Kernel.Special.GH_Panel();
-                    panel.CreateAttributes();
+                //instantiate  new panel
+                var panel = new Grasshopper.Kernel.Special.GH_Panel();
+                panel.CreateAttributes();
 
-                    panel.Attributes.Pivot = new PointF((float)Attributes.DocObject.Attributes.Bounds.Left -
-                        panel.Attributes.Bounds.Width - 40, (float)Attributes.DocObject.Attributes.Bounds.Bottom - panel.Attributes.Bounds.Height);
+                panel.Attributes.Pivot = new PointF((float)Attributes.DocObject.Attributes.Bounds.Left -
+                    panel.Attributes.Bounds.Width - 40, (float)Attributes.DocObject.Attributes.Bounds.Bottom - panel.Attributes.Bounds.Height);
 
-                    //populate value list with our own data
-                    panel.UserText = fileName;
+                //populate value list with our own data
+                panel.UserText = fileName;
 
-                    //Until now, the panel is a hypothetical object.
-                    // This command makes it 'real' and adds it to the canvas.
-                    Grasshopper.Instances.ActiveCanvas.Document.AddObject(panel, false);
+                //Until now, the panel is a hypothetical object.
+                // This command makes it 'real' and adds it to the canvas.
+                Grasshopper.Instances.ActiveCanvas.Document.AddObject(panel, false);
 
-                    //Connect the new slider to this component
-                    Params.Input[2].AddSource(panel);
-                    Params.OnParametersChanged();
-                    ExpireSolution(true);
-                }
-                else
-                {
-                    mes = Char.ToUpper(mes[3]) + mes.Substring(4).ToLower().Replace("_", " ");
-                }
-                this.Message = mes;
+                //Connect the new slider to this component
+                Params.Input[2].AddSource(panel);
+                Params.OnParametersChanged();
+                ExpireSolution(true);
             }
         }
 
         public void OpenGSAexe()
         {
+            Message = "Opening GSA...";
             if (fileName != null)
             {
                 if (fileName != "")
                 {
                     if (canOpen)
+                    {
                         System.Diagnostics.Process.Start(fileName);
+                    }
                 }
             }
+            else
+                Message = "Save first";
         }
         #endregion
 
         #region Input and output
         // This region handles input and output parameters
 
-        string fileName = null;
-        bool usersetFileName = false;
-        Model gsaSaveModel;
-        bool canOpen = false;
+        public static string fileName = null;
+        public static bool usersetFileName = false;
+        public static bool save = false;
+        public static bool canOpen = false;
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA model to save", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Save?", "Save", "Input 'True' to save or use button", GH_ParamAccess.item, false);
+            pManager.AddBooleanParameter("Save?", "Save", "Input 'True' to save or use button", GH_ParamAccess.item);
             pManager.AddTextParameter("File and Path", "File", "Filename and path", GH_ParamAccess.item);
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -193,43 +177,73 @@ namespace GhSA.Components
         }
         #endregion
 
-        protected override void SolveInstance(IGH_DataAccess DA)
+        public class SaveWorker : WorkerInstance
         {
-            Model model = new Model();
-            GsaModel gsaModel = new GsaModel();
-            GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-            if (DA.GetData(0, ref gh_typ))
-            {
-                if (gh_typ.Value is GsaModelGoo)
-                {
-                    gh_typ.CastTo(ref gsaModel);
-                    gsaSaveModel = gsaModel.Model;
-                    Message = "";
-                }
-                else
-                {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
-                    return;
-                }
+            public SaveWorker() : base(null) { }
+            public override WorkerInstance Duplicate() => new SaveWorker();
 
-                if (!usersetFileName)
+            #region fields
+            GsaModel model = null;
+            #endregion
+
+            public override void GetData(IGH_DataAccess DA, GH_ComponentParamServer Params)
+            {
+                #region GetData
+                GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+                if (DA.GetData(0, ref gh_typ))
                 {
-                    if (gsaModel.FileName != "")
-                        fileName = gsaModel.FileName;
+                    if (gh_typ.Value is GsaModelGoo)
+                    {
+                        gh_typ.CastTo(ref model);
+                    }
+                    if (!usersetFileName)
+                    {
+                        fileName = model.FileName;
+                    }
                 }
 
                 string tempfile = "";
                 if (DA.GetData(2, ref tempfile))
-                    fileName = tempfile;
-
-                bool save = false;
-                if (DA.GetData(1, ref save))
                 {
-                    if (save)
-                        Message = gsaSaveModel.SaveAs(fileName).ToString();
+                    fileName = tempfile;
                 }
 
-                DA.SetData(0, new GsaModelGoo(gsaModel));
+                DA.GetData(1, ref save);
+                #endregion
+            }
+
+            public override void SetData(IGH_DataAccess DA)
+            {
+                DA.SetData(0, new GsaModelGoo(model));
+            }
+
+            public override void DoWork(Action<string, double> ReportProgress, Action Done)
+            {
+                if (save)
+                {
+                    string mes = "";
+                    if (fileName != null)
+                    {
+                        ReportProgress("Saving model...", -1);
+                        ReturnValue res = model.Model.SaveAs(fileName);
+                        if (res != ReturnValue.GS_OK)
+                            ReportProgress(res.ToString(), -20);
+                        else
+                            canOpen = true;
+                    }
+                    else
+                    {
+                        ReportProgress("Saving model...", -1);
+                        ReturnValue res = model.Model.Save();
+                        if (res != ReturnValue.GS_OK)
+                            ReportProgress(res.ToString(), -20);
+                        else
+                            canOpen = true;
+                    }
+                    Done();
+                }
+                else
+                    return;
             }
         }
     }

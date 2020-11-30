@@ -98,7 +98,27 @@ namespace GrasshopperAsyncComponent
                 {
                     ProgressReports.TryGetValue(key, out double val);
                     if (val < 0)
-                        msg = key + System.Environment.NewLine + msg;
+                    {
+                        if (val == -1)
+                            msg = key + System.Environment.NewLine + msg;
+                        if (val == -255)
+                        {
+                            msg = "";
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, key);
+                        }
+                        if (val == -10)
+                        {
+                            Message = "";
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, key);
+                            return;
+                        }
+                        if (val == -20)
+                        {
+                            Message = "";
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, key);
+                            return;
+                        }
+                    }
                     else
                         msg = key + " " + val.ToString("0%") + System.Environment.NewLine + msg;
                 }
@@ -120,7 +140,27 @@ namespace GrasshopperAsyncComponent
                 {
                     ProgressReports.TryGetValue(key, out double val);
                     if (val < 0)
-                        msg = key + System.Environment.NewLine + msg;
+                    {
+                        if (val == -1)
+                            msg = key + System.Environment.NewLine + msg;
+                        if (val == -255)
+                        {
+                            msg = "";
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, key);
+                        }
+                        if (val == -10)
+                        {
+                            Message = "";
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, key);
+                            return;
+                        }
+                        if (val == -20)
+                        {
+                            Message = "";
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, key);
+                            return;
+                        }
+                    }
                     else
                         msg = key + " " + val.ToString("0%") + System.Environment.NewLine + msg;
                 }
