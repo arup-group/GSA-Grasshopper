@@ -97,6 +97,7 @@ namespace GhSA.Components
             // create gsa gridplanesurface from plane
             GsaGridPlaneSurface gps = new GsaGridPlaneSurface(pln);
 
+            // 1 Grid plane ID
             GH_Integer ghint = new GH_Integer();
             if (DA.GetData(1, ref ghint))
             {
@@ -105,9 +106,9 @@ namespace GhSA.Components
                 gps.GridPlaneID = id;
             }
 
-            // 1 Grid elevation
+            // 2 Grid elevation
             GH_Number ghnum = new GH_Number();
-            if (DA.GetData(1, ref ghnum))
+            if (DA.GetData(2, ref ghnum))
             {
                 double elev = 0;
                 if (GH_Convert.ToDouble(ghnum, out elev, GH_Conversion.Both))
@@ -127,9 +128,9 @@ namespace GhSA.Components
                 }
             }
 
-            // 2 Name
+            // 3 Name
             GH_String ghtxt = new GH_String();
-            if (DA.GetData(2, ref ghtxt))
+            if (DA.GetData(3, ref ghtxt))
             {
                 string name = "";
                 if (GH_Convert.ToString(ghtxt, out name, GH_Conversion.Both))
@@ -143,18 +144,18 @@ namespace GhSA.Components
             {
                 gps.GridPlane.IsStoreyType = true;
 
-                // 3 tolerance above
+                // 4 tolerance above
                 GH_Number ghtola = new GH_Number();
-                if (DA.GetData(3, ref ghtola))
+                if (DA.GetData(4, ref ghtola))
                 {
                     double tola = 0;
                     if (GH_Convert.ToDouble(ghtola, out tola, GH_Conversion.Both))
                         gps.GridPlane.ToleranceAbove = tola;
                 }
 
-                // 4 tolerance above
+                // 5 tolerance above
                 GH_Number ghtolb = new GH_Number();
-                if (DA.GetData(4, ref ghtolb))
+                if (DA.GetData(5, ref ghtolb))
                 {
                     double tolb = 0;
                     if (GH_Convert.ToDouble(ghtolb, out tolb, GH_Conversion.Both))
