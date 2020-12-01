@@ -123,7 +123,9 @@ namespace GhSA.Parameters
                 Plane = m_plane,
                 GridPlane = m_gridplane,
                 GridSurface = m_gridsrf,
-                Axis = m_axis
+                Axis = m_axis,
+                GridPlaneID = m_gridplnID,
+                GridSurfaceID = m_gridsrfID
             };
             return dup;
         }
