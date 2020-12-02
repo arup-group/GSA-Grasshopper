@@ -308,12 +308,15 @@ namespace GhSA.Parameters
                     return dup;
                 case LoadTypes.GridPoint:
                     dup = new GsaLoad(m_gridpoint);
+                    dup.PointLoad.GridPlaneSurface = m_gridpoint.GridPlaneSurface.Duplicate();
                     return dup;
                 case LoadTypes.GridLine:
                     dup = new GsaLoad(m_gridline);
+                    dup.LineLoad.GridPlaneSurface = m_gridline.GridPlaneSurface.Duplicate();
                     return dup;
                 case LoadTypes.GridArea:
                     dup = new GsaLoad(m_gridarea);
+                    dup.AreaLoad.GridPlaneSurface = m_gridarea.GridPlaneSurface.Duplicate();
                     return dup;
             }
             return default;
