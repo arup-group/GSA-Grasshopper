@@ -83,10 +83,24 @@ namespace GhSA.Components
                     grdplnsrf = temppln.Duplicate();
                     pln = grdplnsrf.Plane;
                 }
-                else
+                else if (gh_typ.Value is Plane)
                 {
                     gh_typ.CastTo(ref pln);
                     grdplnsrf = new GsaGridPlaneSurface(pln);
+                }
+                else
+                {
+                    int id = 0;
+                    if (GH_Convert.ToInt32(gh_typ.Value, out id, GH_Conversion.Both))
+                    {
+                        gridlineload.GridPlaneSurface.GridSurfaceID = id;
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
+                            System.Environment.NewLine + "If no input here then the line's best-fit plane will be used");
+                        return;
+                    }
                 }
             }
             
@@ -156,7 +170,8 @@ namespace GhSA.Components
             }
 
             // now we can set the gridplanesurface:
-            gridlineload.GridPlaneSurface = grdplnsrf;
+            if (gridlineload.GridPlaneSurface.GridSurfaceID == 0)
+                gridlineload.GridPlaneSurface = grdplnsrf;
 
 
             // 3 direction

@@ -69,7 +69,7 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("Plane", "Pl", "Plane for Axis and Grid Plane definition. Note that an XY-plane will be created with an axis origin Z = 0 " +
                 "and the height location will be controlled by Grid Plane elevation. For all none-XY plane inputs, the Grid Plane elevation will be 0", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Grid Plane ID", "ID", "GSA Grid Plane ID. Setting this will replace any existing Grid Planes", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Grid Plane ID", "ID", "GSA Grid Plane ID. Setting this will replace any existing Grid Planes in GSA model", GH_ParamAccess.item, 0);
             pManager.AddNumberParameter("Grid Elevation", "Ev", "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.", GH_ParamAccess.item, 0);
             pManager.AddTextParameter("Name", "Na", "Name of Grid Plane", GH_ParamAccess.item);
 
@@ -185,8 +185,8 @@ namespace GhSA.Components
             _mode = FoldMode.General;
 
             //remove input parameters
-            while (Params.Input.Count > 3)
-                Params.UnregisterInputParameter(Params.Input[3], true);
+            while (Params.Input.Count > 4)
+                Params.UnregisterInputParameter(Params.Input[4], true);
             
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -226,6 +226,26 @@ namespace GhSA.Components
             return base.Read(reader);
         }
         
+        #endregion
+        #region IGH_VariableParameterComponent null implementation
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            if (_mode == FoldMode.Storey)
+            {
+                Params.Input[4].NickName = "tA";
+                Params.Input[4].Name = "Tolerance Above (" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[4].Description = "Tolerance Above Grid Plane";
+                Params.Input[4].Access = GH_ParamAccess.item;
+                Params.Input[4].Optional = true;
+
+                Params.Input[5].NickName = "tB";
+                Params.Input[5].Name = "Tolerance Below (" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[5].Description = "Tolerance Above Grid Plane";
+                Params.Input[5].Access = GH_ParamAccess.item;
+                Params.Input[5].Optional = true;
+            }
+        }
+
         bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
         {
             return false;
@@ -241,25 +261,6 @@ namespace GhSA.Components
         bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
         {
             return false;
-        }
-        #endregion
-        #region IGH_VariableParameterComponent null implementation
-        void IGH_VariableParameterComponent.VariableParameterMaintenance()
-        {
-            if (_mode == FoldMode.Storey)
-            {
-                Params.Input[3].NickName = "tA";
-                Params.Input[3].Name = "Tolerance Above (" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[3].Description = "Tolerance Above Grid Plane";
-                Params.Input[3].Access = GH_ParamAccess.item;
-                Params.Input[3].Optional = true;
-
-                Params.Input[4].NickName = "tB";
-                Params.Input[4].Name = "Tolerance Below (" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[4].Description = "Tolerance Above Grid Plane";
-                Params.Input[4].Access = GH_ParamAccess.item;
-                Params.Input[4].Optional = true;
-            }
         }
         #endregion
     }
