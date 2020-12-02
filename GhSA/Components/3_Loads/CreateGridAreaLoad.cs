@@ -71,6 +71,7 @@ namespace GhSA.Components
             // Do plane input first as to see if we need to project polyline onto grid plane
             // 2 Plane 
             Plane pln = Plane.Unset;
+            bool planeSet = false;
             GsaGridPlaneSurface grdplnsrf = new GsaGridPlaneSurface();
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(2, ref gh_typ))
@@ -81,11 +82,13 @@ namespace GhSA.Components
                     gh_typ.CastTo(ref temppln);
                     grdplnsrf = temppln.Duplicate();
                     pln = grdplnsrf.Plane;
+                    planeSet = true;
                 }
                 else if(gh_typ.Value is Plane)
                 {
                     gh_typ.CastTo(ref pln);
                     grdplnsrf = new GsaGridPlaneSurface(pln);
+                    planeSet = true;
                 }
                 else
                 {
@@ -128,31 +131,31 @@ namespace GhSA.Components
                     List<Point3d> ctrl_pts = ln.ToList();
                     
                     // plane
-                    if (pln == Plane.Unset)
+                    if (!planeSet)
                     {
                         // calculate best fit plane:
                         Plane.FitPlaneToPoints(ctrl_pts, out pln);
-
+                        pln.XAxis = Vector3d.XAxis;
+                        pln.YAxis = Vector3d.YAxis;
+                        pln.ZAxis = Vector3d.ZAxis;
                         // create grid plane surface from best fit plane
                         grdplnsrf = new GsaGridPlaneSurface(pln);
                     }
-                    else
-                    {
-                        // project original curve onto grid plane
-                        crv = Curve.ProjectToPlane(crv, pln);
 
-                        // convert to polyline again
-                        crv.TryGetPolyline(out ln);
+                    // project original curve onto grid plane
+                    crv = Curve.ProjectToPlane(crv, pln);
 
-                        //get control points again
-                        ctrl_pts = ln.ToList();
-                    }
+                    // convert to polyline again
+                    crv.TryGetPolyline(out ln);
+
+                    //get control points again
+                    ctrl_pts = ln.ToList();
 
                     // string to write polyline description to
                     string desc = "";
 
                     // loop through all points
-                    for (int i = 0; i < ctrl_pts.Count; i++)
+                    for (int i = 0; i < ctrl_pts.Count - 1; i++)
                     {
                         if (i > 0)
                             desc += " ";
