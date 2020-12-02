@@ -30,11 +30,11 @@ namespace GhSA.Components
         //This region overrides the typical component layout
         public override void CreateAttributes()
         {
-            if (first)
-            {
-                selecteditem = "1D, One-way span";
-                
-            }
+            //if (first)
+            //{
+            //    selecteditem = "1D, One-way span";
+            //    
+            //}
 
             m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Type");
         }
@@ -65,14 +65,14 @@ namespace GhSA.Components
             "2D"
         });
 
-        string selecteditem;
+        string selecteditem = "1D, One-way span";
 
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Grid Plane", "GPl", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model", GH_ParamAccess.item, 0);
             pManager.AddTextParameter("Elements", "El", "Elements for which the load should be expanded to. Default all", GH_ParamAccess.item, "all");
             pManager.AddTextParameter("Name", "Na", "Name of Grid Surface", GH_ParamAccess.item);
             pManager.AddNumberParameter("Tolerance (" + Util.GsaUnit.LengthSmall + ")", "Tol", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 10);
@@ -85,13 +85,11 @@ namespace GhSA.Components
 
             if (first)
             {
-                first = false;
                 _mode = FoldMode.One_Dimensional_One_Way;
                 pManager.AddNumberParameter("Span Direction", "Dir", "Span Direction (" + Util.GsaUnit.Angle + ") between -180 and 180 degrees", GH_ParamAccess.item, 0);
-                pManager[4].Optional = true;
+                pManager[5].Optional = true;
+                first = false;
             }
-
-            
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -130,7 +128,7 @@ namespace GhSA.Components
                 gps = new GsaGridPlaneSurface(pln);
             }
 
-            //1 ID
+            // 1 ID
             GH_Integer ghint = new GH_Integer();
             if (DA.GetData(1, ref ghint))
             {
@@ -216,7 +214,6 @@ namespace GhSA.Components
                 case FoldMode.Two_Dimensional:
                     gps.GridSurface.ElementType = GridSurface.Element_Type.TWO_DIMENSIONAL;
                     break;
-
             }
 
             DA.SetData(0, new GsaGridPlaneSurfaceGoo(gps));
@@ -241,8 +238,8 @@ namespace GhSA.Components
             _mode = FoldMode.One_Dimensional_One_Way;
 
             //remove input parameters
-            while (Params.Input.Count > 4)
-                Params.UnregisterInputParameter(Params.Input[4], true);
+            while (Params.Input.Count > 5)
+                Params.UnregisterInputParameter(Params.Input[5], true);
 
             //add input parameters
             Params.RegisterInputParam(new Param_Number());
@@ -260,8 +257,8 @@ namespace GhSA.Components
             _mode = FoldMode.One_Dimensional_Two_Way;
 
             //remove input parameters
-            while (Params.Input.Count > 4)
-                Params.UnregisterInputParameter(Params.Input[4], true);
+            while (Params.Input.Count > 5)
+                Params.UnregisterInputParameter(Params.Input[5], true);
 
             //add input parameters
             Params.RegisterInputParam(new Param_Integer());
@@ -280,8 +277,8 @@ namespace GhSA.Components
             _mode = FoldMode.Two_Dimensional;
 
             //remove input parameters
-            while (Params.Input.Count > 4)
-                Params.UnregisterInputParameter(Params.Input[4], true);
+            while (Params.Input.Count > 5)
+                Params.UnregisterInputParameter(Params.Input[5], true);
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -300,11 +297,44 @@ namespace GhSA.Components
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
             _mode = (FoldMode)reader.GetInt32("Mode");
+            first = false;
             selecteditem = reader.GetString("select");
             this.CreateAttributes();
             return base.Read(reader);
         }
         
+        #endregion
+        #region IGH_VariableParameterComponent null implementation
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            if (_mode == FoldMode.One_Dimensional_One_Way)
+            {
+                Params.Input[5].NickName = "Dir";
+                Params.Input[5].Name = "Span Direction";
+                Params.Input[5].Description = "Span Direction (" + Util.GsaUnit.Angle + ") between -180 and 180 degrees";
+                Params.Input[5].Access = GH_ParamAccess.item;
+                Params.Input[5].Optional = true;
+            }
+            if (_mode == FoldMode.One_Dimensional_Two_Way)
+            {
+                Params.Input[5].NickName = "Exp";
+                Params.Input[5].Name = "Load Expansion";
+                Params.Input[5].Description = "Load Expansion: " + System.Environment.NewLine + "Accepted inputs are:" +
+                    System.Environment.NewLine + "0 : Corner (plane)" +
+                    System.Environment.NewLine + "1 : Smooth (plane)" +
+                    System.Environment.NewLine + "2 : Plane" +
+                    System.Environment.NewLine + "3 : Legacy";
+                Params.Input[5].Access = GH_ParamAccess.item;
+                Params.Input[5].Optional = true;
+
+                Params.Input[6].NickName = "Sim";
+                Params.Input[6].Name = "Simplify";
+                Params.Input[6].Description = "Simplify Tributary Area (default: True)";
+                Params.Input[6].Access = GH_ParamAccess.item;
+                Params.Input[6].Optional = true;
+            }
+        }
+
         bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
         {
             return false;
@@ -322,36 +352,6 @@ namespace GhSA.Components
             return false;
         }
         #endregion
-        #region IGH_VariableParameterComponent null implementation
-        void IGH_VariableParameterComponent.VariableParameterMaintenance()
-        {
-            if (_mode == FoldMode.One_Dimensional_One_Way)
-            {
-                Params.Input[4].NickName = "Dir";
-                Params.Input[4].Name = "Span Direction";
-                Params.Input[4].Description = "Span Direction (" + Util.GsaUnit.Angle + ") between -180 and 180 degrees";
-                Params.Input[4].Access = GH_ParamAccess.item;
-                Params.Input[4].Optional = true;
-            }
-            if (_mode == FoldMode.One_Dimensional_Two_Way)
-            {
-                Params.Input[4].NickName = "Exp";
-                Params.Input[4].Name = "Load Expansion";
-                Params.Input[4].Description = "Load Expansion: " + System.Environment.NewLine + "Accepted inputs are:" +
-                    System.Environment.NewLine + "0 : Corner (plane)" +
-                    System.Environment.NewLine + "1 : Smooth (plane)" +
-                    System.Environment.NewLine + "2 : Plane" +
-                    System.Environment.NewLine + "3 : Legacy";
-                Params.Input[4].Access = GH_ParamAccess.item;
-                Params.Input[4].Optional = true;
 
-                Params.Input[5].NickName = "Sim";
-                Params.Input[5].Name = "Simplify";
-                Params.Input[5].Description = "Simplify Tributary Area (default: True)";
-                Params.Input[5].Access = GH_ParamAccess.item;
-                Params.Input[5].Optional = true;
-            }
-        }
-        #endregion
     }
 }

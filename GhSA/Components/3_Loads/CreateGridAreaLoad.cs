@@ -87,15 +87,20 @@ namespace GhSA.Components
                     gh_typ.CastTo(ref pln);
                     grdplnsrf = new GsaGridPlaneSurface(pln);
                 }
-                else if (gh_typ.Value is Int32)
+                else
                 {
                     int id = 0;
-                    gh_typ.CastTo(ref id);
-                    gridareaload.GridPlaneSurface.GridSurfaceID = id;
+                    if (GH_Convert.ToInt32(gh_typ.Value, out id, GH_Conversion.Both))
+                    {
+                        gridareaload.GridPlaneSurface.GridSurfaceID = id;
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
+                            System.Environment.NewLine + "If no input here then the brep's best-fit plane will be used");
+                        return;
+                    }
                 }
-                else
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
-                        System.Environment.NewLine + "If no input here then the brep's best-fit plane will be used");
             }
             
             // we wait setting the gridplanesurface until we have run the polyline input

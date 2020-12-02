@@ -88,17 +88,19 @@ namespace GhSA.Components
                     gh_typ.CastTo(ref pln);
                     grdplnsrf = new GsaGridPlaneSurface(pln);
                 }
-                else if (gh_typ.Value is Int32)
-                {
-                    int id = 0;
-                    gh_typ.CastTo(ref id);
-                    gridlineload.GridPlaneSurface.GridSurfaceID = id;
-                }
                 else
                 {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
-                                            System.Environment.NewLine + "If no input here then the line's best-fit plane will be used");
-                    return;
+                    int id = 0;
+                    if (GH_Convert.ToInt32(gh_typ.Value, out id, GH_Conversion.Both))
+                    {
+                        gridlineload.GridPlaneSurface.GridSurfaceID = id;
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
+                            System.Environment.NewLine + "If no input here then the line's best-fit plane will be used");
+                        return;
+                    }
                 }
             }
             

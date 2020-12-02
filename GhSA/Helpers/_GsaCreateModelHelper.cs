@@ -76,4 +76,47 @@ namespace GhSA.Util.Gsa
             return gsaNode;
         }
     }
+    class ModelAxis
+    {
+        /// <summary>
+        /// This method checks if the testAxis is within tolerance of an existing axis and returns the 
+        /// axis ID if found. Will return 0 if no existing axis is found within the tolerance.
+        /// </summary>
+        /// <param name="existNodes"></param>
+        /// <param name="testNode"></param>
+        /// <param name="tolerance"></param>
+        /// <param name="nodesToBeSet"></param>
+        /// <returns></returns>
+        public static int ExistingAxis(IReadOnlyDictionary<int, Axis> existAxes, Axis testAxis)
+        {
+            Axis gsaAxis;
+            double tolerance = Util.GsaUnit.Tolerance;
+            foreach (int key in existAxes.Keys)
+            {
+                if (existAxes.TryGetValue(key, out gsaAxis))
+                {
+                    if (Math.Pow((testAxis.Origin.X - testAxis.Origin.X), 2)
+                        + Math.Pow((testAxis.Origin.Y - testAxis.Origin.Y), 2)
+                        + Math.Pow((testAxis.Origin.Z - testAxis.Origin.Z), 2)
+                        < Math.Pow(tolerance, 2))
+                    {
+                        if (Math.Pow((testAxis.XVector.X - testAxis.XVector.X), 2)
+                        + Math.Pow((testAxis.XVector.Y - testAxis.XVector.Y), 2)
+                        + Math.Pow((testAxis.XVector.Z - testAxis.XVector.Z), 2)
+                        < Math.Pow(tolerance, 2))
+                        {
+                            if (Math.Pow((testAxis.XYPlane.X - testAxis.XYPlane.X), 2)
+                            + Math.Pow((testAxis.XYPlane.Y - testAxis.XYPlane.Y), 2)
+                            + Math.Pow((testAxis.XYPlane.Z - testAxis.XYPlane.Z), 2)
+                            < Math.Pow(tolerance, 2))
+                            {
+                                return key;
+                            }
+                        }
+                    }
+                }
+            }
+            return 0;
+        }
+    }
 }

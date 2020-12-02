@@ -90,19 +90,20 @@ namespace GhSA.Components
                     grdplnsrf = new GsaGridPlaneSurface(pln);
                     gridpointload.GridPlaneSurface = grdplnsrf;
                 }
-                else if (gh_typ.Value is Int32)
-                {
-                    int id = 0;
-                    gh_typ.CastTo(ref id);
-                    gridpointload.GridPlaneSurface.GridSurfaceID = id;
-                }
                 else
                 {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
-                        System.Environment.NewLine + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation.");
-                    return;
+                    int id = 0;
+                    if (GH_Convert.ToInt32(gh_typ.Value, out id, GH_Conversion.Both))
+                    {
+                        gridpointload.GridPlaneSurface.GridSurfaceID = id;
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
+                            System.Environment.NewLine + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
+                        return;
+                    }
                 }
-                    
             }
             else
             {
