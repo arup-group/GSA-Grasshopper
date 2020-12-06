@@ -133,6 +133,16 @@ namespace GSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CreateElementsFromMembers {
+            get {
+                object obj = ResourceManager.GetObject("CreateElementsFromMembers", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap CreateMem1D {
             get {
                 object obj = ResourceManager.GetObject("CreateMem1D", resourceCulture);

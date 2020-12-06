@@ -110,6 +110,7 @@
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
+    <Compile Include="Components\2_Geometry\ElemFromMem.cs" />
     <Compile Include="Components\3_Loads\LoadProperties.cs" />
     <Compile Include="Components\4_Analysis\GhAnalyse.cs" />
     <Compile Include="Components\5_Results\Elem2dResults.cs" />
@@ -582,6 +583,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\LoadProp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\CreateElementsFromMembers.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
