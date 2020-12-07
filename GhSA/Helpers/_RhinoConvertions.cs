@@ -265,7 +265,10 @@ namespace GhSA.Util.GH
                 curves.AddRange(voidCurves);
 
             Brep[] brep = Brep.CreatePlanarBreps(curves, tolerance);
-            return brep[0];
+            if (brep == null)
+                return null;
+            else
+                return brep[0];
         }
 
         public static PolyCurve ConvertCurve(Curve curve, double tolerance = -1)
