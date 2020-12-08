@@ -53,7 +53,15 @@ namespace GhSA.Components
             pManager.AddVectorParameter("Total Force Reactions", "ΣRF", "Sum of all Rection Forces in GSA Model (" + Util.GsaUnit.Force + ")", GH_ParamAccess.item);
             pManager.AddVectorParameter("Total Moment Reactions", "ΣRM", "Sum of all Reaction Moments in GSA Model (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item);
             pManager.AddVectorParameter("Effective Mass", "Σkg", "Effective Mass in GSA Model (" + Util.GsaUnit.Mass + ")", GH_ParamAccess.item);
-            //pManager.AddVectorParameter("Effective Inertia", "ΣI", "Effective Inertia in GSA Model", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Effective Inertia", "ΣI", "Effective Inertia in GSA Model", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Mode", "Mo", "Mode number if LC is a dynamic task", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Modal", "Md", "Modal results in vector form:" + System.Environment.NewLine + 
+                "x: Modal Mass" + System.Environment.NewLine +
+                "y: Modal Stiffness" + System.Environment.NewLine +
+                "z: Modal Geometric Stiffness", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Frequency", "f", "Frequency of selected LoadCase / mode", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Factor", "LF", "Load Factor for selected LoadCase / mode", GH_ParamAccess.item);
+            
         }
         #endregion
 
@@ -122,17 +130,32 @@ namespace GhSA.Components
                     analysisCaseResult.Global.EffectiveMass.Y,
                     analysisCaseResult.Global.EffectiveMass.Z);
 
-                //Vector3d effStiff = new Vector3d(
-                //    analysisCaseResult.Global.EffectiveInertia.X,
-                 //   analysisCaseResult.Global.EffectiveInertia.Y,
-                 //   analysisCaseResult.Global.EffectiveInertia.Z);
+                Vector3d effStiff;
+                if (analysisCaseResult.Global.EffectiveInertia != null)
+                {
+                    effStiff = new Vector3d(
+                        analysisCaseResult.Global.EffectiveInertia.X,
+                        analysisCaseResult.Global.EffectiveInertia.Y,
+                        analysisCaseResult.Global.EffectiveInertia.Z);
+                }
+                else
+                    effStiff = new Vector3d();
+
+                Vector3d modal = new Vector3d(
+                    analysisCaseResult.Global.ModalMass,
+                    analysisCaseResult.Global.ModalStiffness,
+                    analysisCaseResult.Global.ModalGeometricStiffness);
 
                 DA.SetData(0, force);
                 DA.SetData(1, moment);
                 DA.SetData(2, reaction);
                 DA.SetData(3, reactionmoment);
                 DA.SetData(4, effMass);
-                //DA.SetData(5, effStiff);
+                DA.SetData(5, effStiff);
+                DA.SetData(6, analysisCaseResult.Global.Mode);
+                DA.SetData(7, modal);
+                DA.SetData(8, analysisCaseResult.Global.Frequency);
+                DA.SetData(9, analysisCaseResult.Global.LoadFactor);
             }
         }
     }
