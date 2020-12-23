@@ -10,24 +10,24 @@ namespace UnitTestGhSA
 {
     public class UnitTest1
     {
-        
+
         [TestCase]
         public void TestCreateGsaNode()
         {
             UnitTestGhSA.Helper.LoadAPI();
 
             GsaNode node = new GsaNode(new Point3d(10, 15, 7.8));
-            
+
             Assert.AreEqual(10, node.Point.X);
             Assert.AreEqual(15, node.Point.Y);
             Assert.AreEqual(7.8, node.Point.Z);
         }
-        
+
         [TestCase]
         public void TestCreateGsaSectionCat()
         {
             UnitTestGhSA.Helper.LoadAPI();
-            GsaAPI.Model model = new GsaAPI.Model();
+            Model model = new Model();
             string installPath = GhSA.Util.Gsa.GsaPath.GetPath;
             model.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
 
@@ -36,7 +36,7 @@ namespace UnitTestGhSA
 
             double area = section.Section.Area * Math.Pow(10, 6);
 
-            Assert.AreEqual(7808.12, area);
+            Assert.AreEqual(7808.121, area);
         }
 
         [TestCase]
