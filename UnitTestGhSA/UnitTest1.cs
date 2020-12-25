@@ -14,7 +14,7 @@ namespace UnitTestGhSA
         [TestCase]
         public void TestCreateGsaNode()
         {
-            UnitTestGhSA.Helper.LoadAPI();
+            UnitTestGhSA.Helper.LoadRefs();
 
             GsaNode node = new GsaNode(new Point3d(10, 15, 7.8));
 
@@ -26,7 +26,7 @@ namespace UnitTestGhSA
         [TestCase]
         public void TestCreateGsaSectionCat()
         {
-            UnitTestGhSA.Helper.LoadAPI();
+            UnitTestGhSA.Helper.LoadRefs();
             Model model = new Model();
             string installPath = GhSA.Util.Gsa.GsaPath.GetPath;
             model.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
@@ -42,7 +42,7 @@ namespace UnitTestGhSA
         [TestCase]
         public void TestCreateGsaSectionRect()
         {
-            UnitTestGhSA.Helper.LoadAPI();
+            UnitTestGhSA.Helper.LoadRefs();
 
             string profile = "STD R 15 20";
             GsaSection section = new GsaSection(profile);

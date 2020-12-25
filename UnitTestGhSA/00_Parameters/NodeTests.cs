@@ -14,7 +14,7 @@ namespace UnitTestGhSA
         // each test class much first initiate / load the GsaAPI using reflection
         public void InitiateAPI()
         {
-            Assert.IsTrue(UnitTestGhSA.Helper.LoadAPI());
+            Assert.IsTrue(UnitTestGhSA.Helper.LoadRefs());
         }
 
         [TestCase]
@@ -97,7 +97,24 @@ namespace UnitTestGhSA
             Assert.AreEqual(-40, node.LocalAxis.OriginX);
             Assert.AreEqual(-3.654, node.LocalAxis.OriginY);
             Assert.AreEqual(-99, node.LocalAxis.OriginZ);
+            Assert.AreEqual(0, node.LocalAxis.Normal.X);
             Assert.AreEqual(1, node.LocalAxis.Normal.Y);
+            Assert.AreEqual(0, node.LocalAxis.Normal.Z);
+        }
+        [TestCase]
+        public void TestDuplicateNode()
+        {
+            GsaNode node = new GsaNode(new Point3d(-3.3, 0, 1.5));
+
+            GsaNode duplicate = node.Duplicate();
+
+            Point3d newPt = new Point3d(3.3, 1, -1.5);
+
+            node.Point = newPt;
+
+            Assert.AreNotEqual(node.Node.Position.X, duplicate.Node.Position.X);
+            Assert.AreNotEqual(node.Node.Position.Y, duplicate.Node.Position.Y);
+            Assert.AreNotEqual(node.Node.Position.Z, duplicate.Node.Position.Z);
         }
     }
 }

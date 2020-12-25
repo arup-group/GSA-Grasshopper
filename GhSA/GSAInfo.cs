@@ -6,7 +6,6 @@ using GsaAPI;
 
 namespace GhSA
 {
-
     public class AddReferencePriority : GH_AssemblyPriority
     {
         /// <summary>
@@ -42,7 +41,7 @@ namespace GhSA
                 return "GSA";
             }
         }
-        public override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaModel;
+        public override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaModel;
         public override string Description
         {
             get

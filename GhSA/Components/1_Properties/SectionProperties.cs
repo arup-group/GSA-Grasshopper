@@ -30,7 +30,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.SectionProperties;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.SectionProperties;
         #endregion
 
         #region Custom UI

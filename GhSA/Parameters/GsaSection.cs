@@ -237,7 +237,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaSection;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaSection;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaSectionGoo> values)
         {

@@ -1,5 +1,4 @@
 ﻿using System;
-
 using NUnit.Framework;
 using GhSA;
 using GhSA.Parameters;
@@ -14,7 +13,7 @@ namespace UnitTestGhSA
         // each test class much first initiate / load the GsaAPI using reflection
         public void InitiateAPI()
         {
-            Assert.IsTrue(UnitTestGhSA.Helper.LoadAPI());
+            Assert.IsTrue(UnitTestGhSA.Helper.LoadRefs());
         }
 
         [TestCase]
