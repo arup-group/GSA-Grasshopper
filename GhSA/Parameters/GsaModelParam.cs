@@ -53,16 +53,11 @@ namespace GhSA.Parameters
             m_model = new Model();
         }
 
-        //public GsaModel(Model model)
-        //{
-        //    m_model = model;
-        //}
-
-        //public GsaModel(Model model)
-        //{ 
-        //    m_model = model;
-        //}
-        public GsaModel Copy()
+        /// <summary>
+        /// NB! -work in progress, do NOT call this method
+        /// </summary>
+        /// <returns></returns>
+        public GsaModel Copy() // work in progress
         {
             // Let's work just on the model (not wrapped)
             Model gsa = new Model();
@@ -142,16 +137,16 @@ namespace GhSA.Parameters
 
         public GsaModel Duplicate() // I think duplicate is called by Grasshopper every time the Goo-parameter is created. Avoid copying the potential heavy data here
         {
-            GsaModel dup = new GsaModel();
-            
             //duplicate the incoming model ### 
             if (m_model != null)
             {
+                GsaModel dup = new GsaModel();
                 dup.Model = m_model;
                 dup.FileName = m_filename;
                 dup.m_guid = Guid.NewGuid();
+                return dup;
             }
-            return dup;
+            return null;
         }
 
         #region properties
