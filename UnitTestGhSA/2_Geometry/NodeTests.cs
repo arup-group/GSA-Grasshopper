@@ -104,17 +104,52 @@ namespace UnitTestGhSA
         [TestCase]
         public void TestDuplicateNode()
         {
+            // create new node with some properties
             GsaNode node = new GsaNode(new Point3d(-3.3, 0, 1.5));
+            node.LocalAxis = Plane.WorldYZ;
+            node.ID = 3;
+            node.Node.Name = "Mariam";
 
+            // duplicate node
             GsaNode duplicate = node.Duplicate();
 
-            Point3d newPt = new Point3d(3.3, 1, -1.5);
+            // check that original and duplicate are the same
+            // check that original and duplicate are not the same
+            Assert.AreEqual(node.Node.Position.X, duplicate.Node.Position.X);
+            Assert.AreEqual(node.Node.Position.Y, duplicate.Node.Position.Y);
+            Assert.AreEqual(node.Node.Position.Z, duplicate.Node.Position.Z);
 
-            node.Point = newPt;
+            Assert.AreEqual(duplicate.LocalAxis.OriginX, node.LocalAxis.OriginX);
+            Assert.AreEqual(duplicate.LocalAxis.OriginY, node.LocalAxis.OriginY);
+            Assert.AreEqual(duplicate.LocalAxis.OriginZ, node.LocalAxis.OriginZ);
+            Assert.AreEqual(duplicate.LocalAxis.Normal.X, node.LocalAxis.Normal.X);
+            Assert.AreEqual(duplicate.LocalAxis.Normal.Y, node.LocalAxis.Normal.Y);
+            Assert.AreEqual(duplicate.LocalAxis.Normal.Z, node.LocalAxis.Normal.Z);
 
+            Assert.AreEqual(node.ID, duplicate.ID);
+            Assert.AreEqual(node.Node.Name, duplicate.Node.Name);
+
+
+            // make changes to original node
+            node.Point = new Point3d(3.3, 1, -1.5);
+            node.LocalAxis = Plane.Unset;
+            node.ID = 2;
+            node.Node.Name = "Kristjan";
+
+            // check that original and duplicate are not the same
             Assert.AreNotEqual(node.Node.Position.X, duplicate.Node.Position.X);
             Assert.AreNotEqual(node.Node.Position.Y, duplicate.Node.Position.Y);
             Assert.AreNotEqual(node.Node.Position.Z, duplicate.Node.Position.Z);
+
+            Assert.AreNotEqual(duplicate.LocalAxis.OriginX, node.LocalAxis.OriginX);
+            Assert.AreNotEqual(duplicate.LocalAxis.OriginY, node.LocalAxis.OriginY);
+            Assert.AreNotEqual(duplicate.LocalAxis.OriginZ, node.LocalAxis.OriginZ);
+            Assert.AreNotEqual(duplicate.LocalAxis.Normal.X, node.LocalAxis.Normal.X);
+            Assert.AreNotEqual(duplicate.LocalAxis.Normal.Y, node.LocalAxis.Normal.Y);
+            Assert.AreNotEqual(duplicate.LocalAxis.Normal.Z, node.LocalAxis.Normal.Z);
+
+            Assert.AreNotEqual(node.ID, duplicate.ID);
+            Assert.AreNotEqual(node.Node.Name, duplicate.Node.Name);
         }
     }
 }

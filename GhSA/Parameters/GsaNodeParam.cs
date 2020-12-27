@@ -18,7 +18,7 @@ namespace GhSA.Parameters
     {
         #region fields
         public Node Node { get; set; } = new Node();
-        private Plane m_plane = Plane.Unset;
+        private Plane m_plane; // = Plane.WorldXY;
         private int m_id;
         private GsaSpring m_spring;
         #endregion
@@ -69,8 +69,6 @@ namespace GhSA.Parameters
             Node.Position.Z = position.Z;
             m_id = ID;
         }
-
-        
 
         public GsaNode(Point3d position, GsaBool6 bool6)
         {
@@ -161,15 +159,18 @@ namespace GhSA.Parameters
             dup.Node.Restraint = Node.Restraint;
             dup.Node.SpringProperty = Node.SpringProperty;
 
-            Point3dList pt = new Point3dList(Point);
-            Point3dList duppt = pt.Duplicate();
-            dup.Point = duppt[0];
+            dup.Point = new Point3d
+            {
+                X = Node.Position.X,
+                Y = Node.Position.Y,
+                Z = Node.Position.Z,
+            };
 
             if (m_id != 0)
                 dup.ID = m_id;
             if(m_spring != null)
                 dup.Spring = m_spring.Duplicate();
-            if (m_plane.IsValid)
+            if (m_plane != null)
                 dup.m_plane = LocalAxis.Clone();
             return dup;
         }
