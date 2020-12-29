@@ -88,10 +88,6 @@ namespace GhSA.Parameters
                 Z = m_z,
                 X2 = m_x2
             };
-            //dup.m_offset.X1 = dup.X1;
-            //dup.m_offset.X2 = dup.X2;
-            //dup.m_offset.Y = dup.Y;
-            //dup.m_offset.Z = dup.Z;
 
             return dup;
         }
