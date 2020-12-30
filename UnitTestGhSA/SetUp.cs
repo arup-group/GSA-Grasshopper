@@ -5,25 +5,26 @@ using GsaAPI;
 using GhSA;
 using GhSA.Parameters;
 
+// A SetUpFixture outside of any namespace provides SetUp and TearDown for the entire assembly.
+[SetUpFixture]
+public class SetUp
+{
+    [OneTimeSetUp]
+    public void RunBeforeAnyTests()
+    {
+        UnitTestGhSA.Initiate.LoadRefs();
+        UnitTestGhSA.Initiate.UseGsaAPI();
+    }
+
+    [OneTimeTearDown]
+    public void RunAfterAnyTests()
+    {
+        // Executes once after the test run. (Optional)
+    }
+}
+
 namespace UnitTestGhSA
 {
-    // A SetUpFixture outside of any namespace provides SetUp and TearDown for the entire assembly.
-    [SetUpFixture]
-    public class SetUp
-    {
-        [OneTimeSetUp]
-        public void RunBeforeAnyTests()
-        {
-            UnitTestGhSA.Initiate.LoadRefs();
-            UnitTestGhSA.Initiate.UseGsaAPI();
-        }
-
-        [OneTimeTearDown]
-        public void RunAfterAnyTests()
-        {
-            // Executes once after the test run. (Optional)
-        }
-    }
     public class Initiate
     {
         public static bool LoadRefs()
@@ -63,7 +64,7 @@ namespace UnitTestGhSA
             // model containing CAT section profiles which I
             // think loads the SectLib.db3 SQL lite database
             m.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
-            
+
             // get rid of the model again
             m.Close();
             m.Dispose();

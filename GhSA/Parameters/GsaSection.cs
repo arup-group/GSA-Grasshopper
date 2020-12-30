@@ -67,6 +67,7 @@ namespace GhSA.Parameters
 
         public GsaSection Duplicate()
         {
+            if (this == null) { return null; }
             GsaSection dup = new GsaSection
             {
                 Section = new Section

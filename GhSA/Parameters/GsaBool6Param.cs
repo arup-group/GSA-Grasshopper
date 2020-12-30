@@ -88,6 +88,7 @@ namespace GhSA.Parameters
         
         public GsaBool6 Duplicate()
         {
+            if (this == null) { return null; }
             GsaBool6 dup = new GsaBool6
             {
                 X = m_x,

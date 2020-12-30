@@ -147,18 +147,21 @@ namespace GhSA.Parameters
 
         public GsaNode Duplicate()
         {
+            if (this == null) { return null; }
             GsaNode dup = new GsaNode
             {
-                Node = new Node() //add clone or duplicate if available
+                Node = new Node
+                {
+                    AxisProperty = Node.AxisProperty,
+                    Colour = Node.Colour,
+                    DamperProperty = Node.DamperProperty,
+                    MassProperty = Node.MassProperty,
+                    Name = Node.Name,
+                    Restraint = Node.Restraint,
+                    SpringProperty = Node.SpringProperty,
+                }
             };
-            dup.Node.AxisProperty = Node.AxisProperty;
-            dup.Node.Colour = Node.Colour;
-            dup.Node.DamperProperty = Node.DamperProperty;
-            dup.Node.MassProperty = Node.MassProperty;
-            dup.Node.Name = Node.Name;
-            dup.Node.Restraint = Node.Restraint;
-            dup.Node.SpringProperty = Node.SpringProperty;
-
+            
             dup.Point = new Point3d
             {
                 X = Node.Position.X,
@@ -171,7 +174,7 @@ namespace GhSA.Parameters
             if(m_spring != null)
                 dup.Spring = m_spring.Duplicate();
             if (m_plane != null)
-                dup.m_plane = LocalAxis.Clone();
+                dup.LocalAxis = LocalAxis.Clone();
             return dup;
         }
 

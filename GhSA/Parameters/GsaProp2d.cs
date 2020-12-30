@@ -51,6 +51,7 @@ namespace GhSA.Parameters
         
         public GsaProp2d Duplicate()
         {
+            if (this == null) { return null; }
             GsaProp2d dup = new GsaProp2d
             {
                 Prop2d = new Prop2D

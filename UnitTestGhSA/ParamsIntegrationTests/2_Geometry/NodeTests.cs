@@ -6,7 +6,7 @@ using GhSA.Parameters;
 using Rhino.Geometry;
 using GsaAPI;
 
-namespace UnitTestGhSA
+namespace ParamsIntegrationTests
 {
     public class NodeTests
     {
