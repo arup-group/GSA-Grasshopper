@@ -47,7 +47,7 @@ namespace GhSA.Parameters
         #region constructors
         public GsaSection()
         {
-            m_section = null;
+            m_section = new Section();
         }
         public GsaSection(string profile)
         {
@@ -69,7 +69,15 @@ namespace GhSA.Parameters
         {
             GsaSection dup = new GsaSection
             {
-                Section = m_section,
+                Section = new Section
+                {
+                    MaterialAnalysisProperty = m_section.MaterialAnalysisProperty,
+                    MaterialGradeProperty = m_section.MaterialGradeProperty,
+                    MaterialType = m_section.MaterialType,
+                    Name = m_section.Name,
+                    Pool = m_section.Pool,
+                    Profile = m_section.Profile
+                },
                 ID = m_idd
             };
             return dup;

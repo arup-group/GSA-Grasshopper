@@ -62,13 +62,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="1_Properties\SectionTests.cs" />
     <Compile Include="1_Properties\OffsetTests.cs" />
     <Compile Include="1_Properties\Bool6Tests.cs" />
     <Compile Include="2_Geometry\NodeTests.cs" />
-    <Compile Include="LoadReferences.cs" />
+    <Compile Include="SetUp.cs" />
     <Compile Include="0_Model\ModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnitTest1.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

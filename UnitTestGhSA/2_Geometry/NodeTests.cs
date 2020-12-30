@@ -11,13 +11,6 @@ namespace UnitTestGhSA
     public class NodeTests
     {
         [TestCase]
-        // each test class much first initiate / load the GsaAPI using reflection
-        public void InitiateAPI()
-        {
-            Assert.IsTrue(UnitTestGhSA.Helper.LoadRefs());
-        }
-
-        [TestCase]
         public void TestCreateGsaNodeFromPt()
         {
             GsaNode node = new GsaNode(new Point3d(10, 15, 7.8));

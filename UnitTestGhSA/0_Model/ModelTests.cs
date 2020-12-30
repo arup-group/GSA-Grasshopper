@@ -10,13 +10,6 @@ namespace UnitTestGhSA
     public class ModelTests
     {
         [TestCase]
-        // each test class much first initiate / load the GsaAPI using reflection
-        public void InitiateAPI()
-        {
-            Assert.IsTrue(UnitTestGhSA.Helper.LoadRefs());
-        }
-
-        [TestCase]
         public void TestOpenModel()
         {
             // create new GH-GSA model 

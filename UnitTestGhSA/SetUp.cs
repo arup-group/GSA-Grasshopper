@@ -1,9 +1,30 @@
 ﻿using System;
 using System.Reflection;
+using NUnit.Framework;
+using GsaAPI;
+using GhSA;
+using GhSA.Parameters;
 
 namespace UnitTestGhSA
 {
-    public class Helper
+    // A SetUpFixture outside of any namespace provides SetUp and TearDown for the entire assembly.
+    [SetUpFixture]
+    public class SetUp
+    {
+        [OneTimeSetUp]
+        public void RunBeforeAnyTests()
+        {
+            UnitTestGhSA.Initiate.LoadRefs();
+            UnitTestGhSA.Initiate.UseGsaAPI();
+        }
+
+        [OneTimeTearDown]
+        public void RunAfterAnyTests()
+        {
+            // Executes once after the test run. (Optional)
+        }
+    }
+    public class Initiate
     {
         public static bool LoadRefs()
         {
@@ -29,6 +50,23 @@ namespace UnitTestGhSA
             //Assembly ass7 = Assembly.LoadFile(ghpath + "\\Grasshopper.dll");
 
             return true;
+        }
+        public static void UseGsaAPI()
+        {
+            // create new GH-GSA model 
+            Model m = new Model();
+
+            // get the GSA install path
+            string installPath = GhSA.Util.Gsa.GsaPath.GetPath;
+
+            // open existing GSA model (steel design sample)
+            // model containing CAT section profiles which I
+            // think loads the SectLib.db3 SQL lite database
+            m.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
+            
+            // get rid of the model again
+            m.Close();
+            m.Dispose();
         }
     }
 }
