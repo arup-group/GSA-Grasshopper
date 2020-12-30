@@ -75,6 +75,7 @@ namespace GhSA.Parameters
                     MaterialGradeProperty = m_section.MaterialGradeProperty,
                     MaterialType = m_section.MaterialType,
                     Name = m_section.Name,
+                    Colour = m_section.Colour,
                     Pool = m_section.Pool,
                     Profile = m_section.Profile
                 },

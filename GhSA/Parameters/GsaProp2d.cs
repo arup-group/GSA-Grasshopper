@@ -53,9 +53,20 @@ namespace GhSA.Parameters
         {
             GsaProp2d dup = new GsaProp2d
             {
-                Prop2d = m_prop2d,
+                Prop2d = new Prop2D
+                {
+                    MaterialAnalysisProperty = m_prop2d.MaterialAnalysisProperty,
+                    MaterialGradeProperty = m_prop2d.MaterialGradeProperty,
+                    MaterialType = m_prop2d.MaterialType,
+                    Name = m_prop2d.Name,
+                    Colour = m_prop2d.Colour,
+                    Description = m_prop2d.Description,
+                    Type = m_prop2d.Type,
+                    AxisProperty = m_prop2d.AxisProperty
+                },
                 ID = m_idd
             };
+            
             return dup;
         }
         #endregion

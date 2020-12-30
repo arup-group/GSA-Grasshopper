@@ -73,6 +73,7 @@ namespace UnitTestGhSA
             double area = section.Section.Area * Math.Pow(10, 6);
             Assert.AreEqual(7808.121, area);
         }
+
         [TestCase]
         public void TestDuplicateSection()
         {
@@ -91,7 +92,7 @@ namespace UnitTestGhSA
             GsaSection dup = orig.Duplicate();
 
             // make some changes to original
-            string profile2 = "STD R 15 20";
+            string profile2 = "STD%R%15%20";
             double myarea2 = 15 * 20;
             orig.Section.Profile = profile2;
             orig.Section.MaterialAnalysisProperty = 4;
@@ -101,9 +102,11 @@ namespace UnitTestGhSA
             orig.Section.Pool = 99;
 
             double area2 = orig.Section.Area * Math.Pow(10, 6);
+            Assert.AreEqual(profile2, orig.Section.Profile);
             Assert.AreEqual(myarea2, area2);
 
             double area1 = dup.Section.Area * Math.Pow(10, 6);
+            Assert.AreEqual(profile, dup.Section.Profile);
             Assert.AreEqual(myarea1, area1);
 
             Assert.AreEqual(1, dup.Section.MaterialAnalysisProperty);
@@ -119,6 +122,15 @@ namespace UnitTestGhSA
                 orig.Section.MaterialType.ToString());
             Assert.AreEqual("kris", orig.Section.Name);
             Assert.AreEqual(99, orig.Section.Pool);
+        }
+
+        [TestCase]
+        public void TestDuplicateEmptySection()
+        {
+            GsaSection section = new GsaSection();
+
+            GsaSection dup = section.Duplicate();
+            Assert.IsNotNull(dup);
         }
     }
 }

@@ -62,6 +62,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="1_Properties\Prop2dTests.cs" />
     <Compile Include="1_Properties\SectionTests.cs" />
     <Compile Include="1_Properties\OffsetTests.cs" />
     <Compile Include="1_Properties\Bool6Tests.cs" />
