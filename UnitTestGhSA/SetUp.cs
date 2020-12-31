@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using NUnit.Framework;
+using NUnit;
 using GsaAPI;
 using GhSA;
 using GhSA.Parameters;
+using System.Runtime.InteropServices;
 
 // A SetUpFixture outside of any namespace provides SetUp and TearDown for the entire assembly.
 [SetUpFixture]
@@ -15,6 +17,7 @@ public class SetUp
         UnitTestGhSA.Initiate.LoadRefs();
         UnitTestGhSA.Initiate.UseGsaAPI();
         UnitTestGhSA.Initiate.SetUnits();
+        UnitTestGhSA.Initiate.InitiateRhinoGH();
     }
 
     [OneTimeTearDown]
@@ -28,7 +31,7 @@ namespace UnitTestGhSA
 {
     public class Initiate
     {
-        public static bool LoadRefs()
+        public static void LoadRefs()
         {
             // set folder to latest GSA version.
             Assembly ass1 = Assembly.LoadFile(GhSA.Util.Gsa.GsaPath.GetPath + "\\GsaAPI.dll");
@@ -39,19 +42,6 @@ namespace UnitTestGhSA
             var value = pathvar + ";" + GhSA.Util.Gsa.GsaPath.GetPath + "\\";
             var target = EnvironmentVariableTarget.Process;
             System.Environment.SetEnvironmentVariable(name, value, target);
-
-            // load RhinoCommon + GH dlls
-            //string rhinopath = "C:\\Users\\Kristjan.Nielsen\\source\\repos\\GhSA\\packages\\RhinoCommon.6.10.18308.14011\\lib\\net45";
-            //string rhinopath = "C:\\Program Files\\Rhino 6\\System";
-            //Assembly ass3 = Assembly.LoadFile(rhinopath + "\\RhinoCommon.dll");
-            //Assembly ass4 = Assembly.LoadFile(rhinopath + "\\Eto.dll");
-            //Assembly ass5 = Assembly.LoadFile(rhinopath + "\\Rhino.UI.dll");
-
-            //string ghpath = "C:\\Program Files\\Rhino 6\\Plug-ins\\Grasshopper";
-            //Assembly ass6 = Assembly.LoadFile(ghpath + "\\GH_IO.dll");
-            //Assembly ass7 = Assembly.LoadFile(ghpath + "\\Grasshopper.dll");
-
-            return true;
         }
         public static void UseGsaAPI()
         {
@@ -75,5 +65,61 @@ namespace UnitTestGhSA
         {
             GhSA.Util.GsaUnit.SetUnits_kN_m();
         }
+
+        public static void InitiateRhinoGH()
+        {
+            // Ensure we are 64 bit
+            Assert.IsTrue(Environment.Is64BitProcess, "Tests must be run as x64");
+
+            // Set path to rhino system directory
+            string envPath = Environment.GetEnvironmentVariable("path");
+            string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            string systemDir = System.IO.Path.Combine(programFiles, "Rhino 7", "System");
+            
+            Assert.IsTrue(System.IO.Directory.Exists(systemDir), "Rhino system dir not found: {0}", systemDir);
+
+            Environment.SetEnvironmentVariable("path", envPath + ";" + systemDir);
+
+            // Add hook for .Net assmbly resolve (for RhinoCommmon.dll and Grasshopper.dll)
+            AppDomain.CurrentDomain.AssemblyResolve += ResolveRhinoCommon;
+            AppDomain.CurrentDomain.AssemblyResolve += ResolveGrasshopper;
+
+            // Start headless Rhino process
+            LaunchInProcess(0, 0);
+        }
+
+        private static Assembly ResolveRhinoCommon(object sender, ResolveEventArgs args)
+        {
+            var name = args.Name;
+
+            if (!name.StartsWith("RhinoCommon", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+            string fullPath = AppDomain.CurrentDomain.BaseDirectory;
+
+            var path = System.IO.Path.Combine(fullPath, "RhinoCommon.dll");
+            return Assembly.LoadFrom(path);
+        }
+
+        private static Assembly ResolveGrasshopper(object sender, ResolveEventArgs args)
+        {
+            var name = args.Name;
+
+            if (!name.StartsWith("Grasshopper", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+            string fullPath = AppDomain.CurrentDomain.BaseDirectory;
+
+            var path = System.IO.Path.Combine(fullPath, "Grasshopper.dll");
+            return Assembly.LoadFrom(path);
+        }
+        
+        [DllImport("RhinoLibrary.dll")]
+        internal static extern int LaunchInProcess(int reserved1, int reserved2);
+
+        [DllImport("RhinoLibrary.dll")]
+        internal static extern int ExitInProcess();
     }
 }
