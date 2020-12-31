@@ -164,6 +164,26 @@ namespace GhSA.Util
         private static double m_tolerance = Util.GH.Tolerance.RhinoDocTolerance();
 
         #endregion
+
+        public static void SetUnits_kN_m()
+        {
+            Force = "kN";
+            LengthLarge = "m";
+            LengthSmall = "mm";
+            LengthSection = "mm";
+            Mass = "t";
+            Temperature = "°C";
+            Stress = "N/mm\xB2";
+            Strain = "mε";
+            Velocity = "m/s";
+            Acceleration = "m/s\xB2";
+            Energy = "MJ";
+            Angle = "rad";
+            TimeShort = "s";
+            TimeMedium = "min";
+            TimeLong = "day";
+        }
+
         /// <summary>
         /// Method to convert bad strings to accepted inputs
         /// if no match is found "m" is returned

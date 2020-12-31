@@ -14,6 +14,7 @@ public class SetUp
     {
         UnitTestGhSA.Initiate.LoadRefs();
         UnitTestGhSA.Initiate.UseGsaAPI();
+        UnitTestGhSA.Initiate.SetUnits();
     }
 
     [OneTimeTearDown]
@@ -68,6 +69,11 @@ namespace UnitTestGhSA
             // get rid of the model again
             m.Close();
             m.Dispose();
+        }
+
+        public static void SetUnits()
+        {
+            GhSA.Util.GsaUnit.SetUnits_kN_m();
         }
     }
 }
