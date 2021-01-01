@@ -14,9 +14,18 @@ public class SetUp
     [OneTimeSetUp]
     public void RunBeforeAnyTests()
     {
+        // Executes once before any test run
+        
+        // load GsaAPI.dll and set process user-rights to GSA installation folder
         UnitTestGhSA.Initiate.LoadRefs();
+
+        // use GsaAPI once to open a model and force loading of sectlib.db3 SQL library
         UnitTestGhSA.Initiate.UseGsaAPI();
+
+        // set units used in the unit-test (kN-m). Avoids conflict with trying to read Rhino doc units
         UnitTestGhSA.Initiate.SetUnits();
+
+        // setup Rhino7 (headless) and resolve assembly conflicts for RhinoCommon.dll and Grasshopper.dll
         UnitTestGhSA.Initiate.InitiateRhinoGH();
     }
 
@@ -24,6 +33,9 @@ public class SetUp
     public void RunAfterAnyTests()
     {
         // Executes once after the test run. (Optional)
+
+        // kill Rhino7 headless process
+        UnitTestGhSA.Initiate.ExitInProcess();
     }
 }
 
