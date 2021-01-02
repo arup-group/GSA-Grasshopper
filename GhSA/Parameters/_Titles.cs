@@ -93,7 +93,7 @@ namespace GhSA.Util
         }
         public static void SetInitials(string initials)
         {
-            GsaTitles.Calculation = initials;
+            GsaTitles.Initials = initials;
             m_initials_byuser = true;
         }
         public static void SetJobNumber(string jobnumber)

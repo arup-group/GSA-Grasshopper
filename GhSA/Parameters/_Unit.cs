@@ -193,9 +193,9 @@ namespace GhSA.Util
         private static string StringTestLength(string unitname)
         {
             unitname = unitname.ToLower();
-            if (unitname.Contains("mm") | unitname.Contains("milimet") | unitname.Contains("millimet"))
+            if (unitname.Contains("mm") | unitname.Contains("milim") | unitname.Contains("millim"))
                 return "mm";
-            if (unitname.Contains("cm") | unitname.Contains("centimet"))
+            if (unitname.Contains("cm") | unitname.Contains("centim"))
                 return "cm";
             if (unitname.Contains("m"))
                 return "m";

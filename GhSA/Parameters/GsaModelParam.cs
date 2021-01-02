@@ -21,7 +21,6 @@ namespace GhSA.Parameters
     /// </summary>
     [Serializable]
     public class GsaModel
-
     {
         public Model Model
         {
@@ -37,7 +36,6 @@ namespace GhSA.Parameters
         public Guid GUID
         {
             get { return m_guid; }
-            set { m_guid = value; }
         }
 
         #region fields

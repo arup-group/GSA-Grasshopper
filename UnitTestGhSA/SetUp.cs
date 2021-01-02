@@ -24,21 +24,38 @@ public class SetUp
 
         // set units used in the unit-test (kN-m). Avoids conflict with trying to read Rhino doc units
         UnitTestGhSA.Initiate.SetUnits();
-
-        // setup Rhino7 (headless) and resolve assembly conflicts for RhinoCommon.dll and Grasshopper.dll
-        UnitTestGhSA.Initiate.InitiateRhinoGH();
     }
 
     [OneTimeTearDown]
     public void RunAfterAnyTests()
     {
         // Executes once after the test run. (Optional)
-
-        // kill Rhino7 headless process
-        UnitTestGhSA.Initiate.ExitInProcess();
     }
 }
+namespace ComponentsTest
+{
+    [SetUpFixture]
+    public class SetUp
+    {
+        [OneTimeSetUp]
+        public void RunBeforeAnyTests()
+        {
+            // Executes once before test runs in ComponentsTest class
 
+            // setup Rhino7 (headless) and resolve assembly conflicts for RhinoCommon.dll and Grasshopper.dll
+            UnitTestGhSA.Initiate.InitiateRhinoGH();
+        }
+
+        [OneTimeTearDown]
+        public void RunAfterAnyTests()
+        {
+            // Executes once after the test run. (Optional)
+
+            // kill Rhino7 headless process
+            UnitTestGhSA.Initiate.ExitInProcess();
+        }
+    }
+}
 namespace UnitTestGhSA
 {
     public class Initiate
