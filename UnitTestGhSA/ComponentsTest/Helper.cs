@@ -36,7 +36,7 @@ namespace ComponentsTest
             component.Params.Input[index].AddSource(input);
         }
 
-        public static void SetInput(GH_Component component, Param_GenericObject generic_input, int index = 0)
+        public static void SetInput(GH_Component component, object generic_input, int index = 0)
         {
             // instantiate new GH_Generic param
             var input = new Param_GenericObject();
@@ -100,9 +100,10 @@ namespace ComponentsTest
             // run component calculation
             component.ExpireSolution(true);
             // read output data
-            component.Params.Output[0].CollectData();
+            component.Params.Output[index].CollectData();
 
             // set output data to Gsa-goo type
+            component.Params.Output[index].VolatileData.Flatten();
             return component.Params.Output[index].VolatileData.get_Branch(0)[0];
         }
 
@@ -111,7 +112,7 @@ namespace ComponentsTest
             // run component calculation
             component.ExpireSolution(true);
             // read output data
-            component.Params.Output[0].CollectData();
+            component.Params.Output[index].CollectData();
 
             // set output data to Gsa-goo type
             return component.Params.Output[index].VolatileData.get_Branch(branch)[item];
