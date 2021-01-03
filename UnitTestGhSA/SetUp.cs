@@ -15,15 +15,15 @@ public class SetUp
     public void RunBeforeAnyTests()
     {
         // Executes once before any test run
-        
+
         // load GsaAPI.dll and set process user-rights to GSA installation folder
-        UnitTestGhSA.Initiate.LoadRefs();
+        UnitTestGhSA.InitiateGsa.LoadRefs();
 
         // use GsaAPI once to open a model and force loading of sectlib.db3 SQL library
-        UnitTestGhSA.Initiate.UseGsaAPI();
+        UnitTestGhSA.InitiateGsa.UseGsaAPI();
 
         // set units used in the unit-test (kN-m). Avoids conflict with trying to read Rhino doc units
-        UnitTestGhSA.Initiate.SetUnits();
+        UnitTestGhSA.InitiateGsa.SetUnits();
     }
 
     [OneTimeTearDown]
@@ -35,15 +35,26 @@ public class SetUp
 namespace ComponentsTest
 {
     [SetUpFixture]
-    public class SetUp
+    public class SetUpComponentsTest
     {
         [OneTimeSetUp]
         public void RunBeforeAnyTests()
         {
             // Executes once before test runs in ComponentsTest class
 
+            // add current project (for GSA.gha) to grasshopper folder:
+            string rootfolder = AppDomain.CurrentDomain.BaseDirectory;
+            rootfolder = rootfolder.Split(new string[] { "UnitTestGhSA" }, StringSplitOptions.None)[0];
+            //string rootfolder = System.IO.Directory.GetParent(
+            //    System.IO.Directory.GetParent(
+            //        System.IO.Directory.GetParent(
+            //            System.IO.Directory.GetParent(
+            //                AppDomain.CurrentDomain.BaseDirectory).FullName).FullName).FullName).FullName;
+
+            Grasshopper.Folders.CustomAssemblyFolders.Add(rootfolder);
+
             // setup Rhino7 (headless) and resolve assembly conflicts for RhinoCommon.dll and Grasshopper.dll
-            UnitTestGhSA.Initiate.InitiateRhinoGH();
+            UnitTestGhSA.InitiateRhinoGH.LoadRhino7GH();
         }
 
         [OneTimeTearDown]
@@ -52,13 +63,13 @@ namespace ComponentsTest
             // Executes once after the test run. (Optional)
 
             // kill Rhino7 headless process
-            UnitTestGhSA.Initiate.ExitInProcess();
+            UnitTestGhSA.InitiateRhinoGH.ExitInProcess();
         }
     }
 }
 namespace UnitTestGhSA
 {
-    public class Initiate
+    public class InitiateGsa
     {
         public static void LoadRefs()
         {
@@ -94,8 +105,10 @@ namespace UnitTestGhSA
         {
             GhSA.Util.GsaUnit.SetUnits_kN_m();
         }
-
-        public static void InitiateRhinoGH()
+    }
+    public class InitiateRhinoGH
+    { 
+        public static void LoadRhino7GH()
         {
             // Ensure we are 64 bit
             Assert.IsTrue(Environment.Is64BitProcess, "Tests must be run as x64");
