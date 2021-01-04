@@ -26,10 +26,29 @@ namespace GhSA
             var target = EnvironmentVariableTarget.Process;
             System.Environment.SetEnvironmentVariable(name, value, target);
 
+            InitiateGsaAPI.UseGsaAPI();
+
             // ### Create Category icon ###
             Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
 
             return GH_LoadingInstruction.Proceed;
+        }
+
+    }
+    public class InitiateGsaAPI
+    {
+        public static void UseGsaAPI()
+        {
+            // create new GH-GSA model 
+            Model m = new Model();
+
+            // get the GSA install path
+            string installPath = GhSA.Util.Gsa.GsaPath.GetPath; 
+
+            // open existing GSA model (steel design sample)
+            // model containing CAT section profiles which I
+            // think loads the SectLib.db3 SQL lite database
+            m.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
         }
     }
     public class GSAInfo : GH_AssemblyInfo

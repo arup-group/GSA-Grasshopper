@@ -45,11 +45,6 @@ namespace ComponentsTest
             // add current project (for GSA.gha) to grasshopper folder:
             string rootfolder = AppDomain.CurrentDomain.BaseDirectory;
             rootfolder = rootfolder.Split(new string[] { "UnitTestGhSA" }, StringSplitOptions.None)[0];
-            //string rootfolder = System.IO.Directory.GetParent(
-            //    System.IO.Directory.GetParent(
-            //        System.IO.Directory.GetParent(
-            //            System.IO.Directory.GetParent(
-            //                AppDomain.CurrentDomain.BaseDirectory).FullName).FullName).FullName).FullName;
 
             Grasshopper.Folders.CustomAssemblyFolders.Add(rootfolder);
 
@@ -95,10 +90,6 @@ namespace UnitTestGhSA
             // model containing CAT section profiles which I
             // think loads the SectLib.db3 SQL lite database
             m.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
-
-            // get rid of the model again
-            m.Close();
-            m.Dispose();
         }
 
         public static void SetUnits()

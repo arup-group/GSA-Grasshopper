@@ -256,9 +256,9 @@ namespace GhSA.Util.Gsa
                                 }
                             }
                             List<int> ids = new List<int>
-                        {
-                            key
-                        };
+                            {
+                                key
+                            };
 
                             elem2d.ID = ids;
 
@@ -758,9 +758,11 @@ namespace GhSA.Util.Gsa
             {
                 if (sDict.TryGetValue(key, out Section apisection)) //1-base numbering
                 {
-                    GsaSection sect = new GsaSection();
-                    sect.Section = apisection;
-                    sect.ID = key;
+                    GsaSection sect = new GsaSection
+                    {
+                        ID = key,
+                        Section = apisection
+                    };
                     sections.Add(new GsaSectionGoo(sect));
                 }
                 else
@@ -787,9 +789,11 @@ namespace GhSA.Util.Gsa
             {
                 if (sDict.TryGetValue(key, out Prop2D apisection)) //1-base numbering
                 {
-                    GsaProp2d prop = new GsaProp2d();
-                    prop.Prop2d = apisection;
-                    prop.ID = key;
+                    GsaProp2d prop = new GsaProp2d
+                    {
+                        ID = key,
+                        Prop2d = apisection
+                    };
                     prop2ds.Add(new GsaProp2dGoo(prop));
                 }
                 else

@@ -340,6 +340,9 @@ namespace GhSA.UI
                         font = GH_FontServer.Standard;
                     }
 
+                    // adjust fontsize to high resolution displays
+                    font = new Font(font.FontFamily, font.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
+
                     //draw the component
                     base.RenderComponentCapsule(canvas, graphics, true, true, true, true, true, true);
 

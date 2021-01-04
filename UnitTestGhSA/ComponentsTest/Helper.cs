@@ -97,22 +97,29 @@ namespace ComponentsTest
 
         public static object GetOutput(GH_Component component, int index = 0)
         {
-            // run component calculation
-            component.ExpireSolution(true);
-            // read output data
-            component.Params.Output[index].CollectData();
+            if (component.Params.Output[index].VolatileDataCount == 0)
+            {
+                // run component calculation
+                component.ExpireSolution(true);
+
+                // read output data
+                component.Params.Output[index].CollectData();
+            }
 
             // set output data to Gsa-goo type
-            component.Params.Output[index].VolatileData.Flatten();
             return component.Params.Output[index].VolatileData.get_Branch(0)[0];
         }
 
         public static object GetOutput(GH_Component component, int index, int branch = 0, int item = 0)
         {
-            // run component calculation
-            component.ExpireSolution(true);
-            // read output data
-            component.Params.Output[index].CollectData();
+            if(component.Params.Output[index].VolatileDataCount == 0)
+            {
+                // run component calculation
+                component.ExpireSolution(true);
+
+                // read output data
+                component.Params.Output[index].CollectData();
+            }
 
             // set output data to Gsa-goo type
             return component.Params.Output[index].VolatileData.get_Branch(branch)[item];

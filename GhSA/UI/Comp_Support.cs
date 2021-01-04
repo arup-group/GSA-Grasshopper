@@ -289,15 +289,22 @@ namespace GhSA.UI
                         s = 10;
                         font = GH_FontServer.Standard;
                     }
+                    
+                    // adjust fontsize to high resolution displays
+                    font = new Font(font.FontFamily, font.Size/GH_GraphicsUtil.UiScale, FontStyle.Regular);
+
+                    Font sml = GH_FontServer.Small;
+                    // adjust fontsize to high resolution displays
+                    sml = new Font(sml.FontFamily, sml.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
 
                     //draw the component
                     base.RenderComponentCapsule(canvas, graphics, true, true, true, true, true, true);
 
                     Pen pen = new Pen(borderColour);
 
-                    graphics.DrawString(SpacerTxt, GH_FontServer.Small, annoText, SpacerBounds, GH_TextRenderingConstants.CenterCenter);
-                    graphics.DrawLine(pen, SpacerBounds.X, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small)) / 2 - 4, SpacerBounds.Y + SpacerBounds.Height / 2);
-                    graphics.DrawLine(pen, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small)) / 2 + GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small) + 4, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + SpacerBounds.Width, SpacerBounds.Y + SpacerBounds.Height / 2);
+                    graphics.DrawString(SpacerTxt, sml, annoText, SpacerBounds, GH_TextRenderingConstants.CenterCenter);
+                    graphics.DrawLine(pen, SpacerBounds.X, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 - 4, SpacerBounds.Y + SpacerBounds.Height / 2);
+                    graphics.DrawLine(pen, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 + GH_FontServer.StringWidth(SpacerTxt, sml) + 4, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + SpacerBounds.Width, SpacerBounds.Y + SpacerBounds.Height / 2);
 
                     graphics.DrawRectangle(pen, TxtFreeBounds.X, TxtFreeBounds.Y, TxtFreeBounds.Width, TxtFreeBounds.Height);
                     graphics.DrawRectangle(pen, TxtPinBounds.X, TxtPinBounds.Y, TxtPinBounds.Width, TxtPinBounds.Height);

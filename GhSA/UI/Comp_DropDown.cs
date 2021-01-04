@@ -115,16 +115,21 @@ namespace GhSA.UI
                 if (displayText == initialTxt)
                     pen = new Pen(UI.Colour.BorderColour);
                 pen.Width = 0.5f;
+                Font sml = GH_FontServer.Small;
+                // adjust fontsize to high resolution displays
+                sml = new Font(sml.FontFamily, sml.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
                 //Draw divider line
                 if (SpacerTxt != "")
                 {
-                    graphics.DrawString(SpacerTxt, GH_FontServer.Small, UI.Colour.AnnotationTextDark, SpacerBounds, GH_TextRenderingConstants.CenterCenter);
-                    graphics.DrawLine(spacer, SpacerBounds.X, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small)) / 2 - 4, SpacerBounds.Y + SpacerBounds.Height / 2);
-                    graphics.DrawLine(spacer, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small)) / 2 + GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small) + 4, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + SpacerBounds.Width, SpacerBounds.Y + SpacerBounds.Height / 2);
+                    graphics.DrawString(SpacerTxt, sml, UI.Colour.AnnotationTextDark, SpacerBounds, GH_TextRenderingConstants.CenterCenter);
+                    graphics.DrawLine(spacer, SpacerBounds.X, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 - 4, SpacerBounds.Y + SpacerBounds.Height / 2);
+                    graphics.DrawLine(spacer, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 + GH_FontServer.StringWidth(SpacerTxt, sml) + 4, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + SpacerBounds.Width, SpacerBounds.Y + SpacerBounds.Height / 2);
                 }
 
                 // Draw selected item
                 Font font = new Font(GH_FontServer.FamilyStandard, 7);
+                // adjust fontsize to high resolution displays
+                font = new Font(font.FontFamily, font.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
                 Brush fontColour = UI.Colour.AnnotationTextDark;
                 // background
                 Brush background = new SolidBrush(UI.Colour.GsaLightGrey);
@@ -132,7 +137,7 @@ namespace GhSA.UI
                 // border
                 graphics.DrawRectangle(pen, BorderBound.X, BorderBound.Y, BorderBound.Width, BorderBound.Height);
                 // text
-                graphics.DrawString(displayText, (displayText == initialTxt) ? GH_FontServer.Small : font, (displayText == initialTxt) ? Brushes.Gray : fontColour, TextBound, GH_TextRenderingConstants.NearCenter);
+                graphics.DrawString(displayText, (displayText == initialTxt) ? sml : font, (displayText == initialTxt) ? Brushes.Gray : fontColour, TextBound, GH_TextRenderingConstants.NearCenter);
                 // draw dropdown arrow
                 ButtonsUI.DropDownArrow.DrawDropDownButton(graphics, new PointF(ButtonBound.X + ButtonBound.Width / 2, ButtonBound.Y + ButtonBound.Height / 2), UI.Colour.GsaDarkBlue, 15);
 

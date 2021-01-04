@@ -93,30 +93,43 @@ namespace GhSA.UI
                 {
                     Width = 0.5f
                 };
+
+                Font reg = GH_FontServer.Standard;
+                // adjust fontsize to high resolution displays
+                reg = new Font(reg.FontFamily, reg.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
+
+                Font ita = GH_FontServer.StandardItalic;
+                // adjust fontsize to high resolution displays
+                ita = new Font(ita.FontFamily, ita.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
+
+                Font sml = GH_FontServer.Small;
+                // adjust fontsize to high resolution displays
+                sml = new Font(sml.FontFamily, sml.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
+
                 //Draw divider line
                 if (SpacerTxt != "")
                 {
-                    graphics.DrawString(SpacerTxt, GH_FontServer.Small, UI.Colour.AnnotationTextDark, SpacerBounds, GH_TextRenderingConstants.CenterCenter);
-                    graphics.DrawLine(spacer, SpacerBounds.X, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small)) / 2 - 4, SpacerBounds.Y + SpacerBounds.Height / 2);
-                    graphics.DrawLine(spacer, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small)) / 2 + GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small) + 4, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + SpacerBounds.Width, SpacerBounds.Y + SpacerBounds.Height / 2);
+                    graphics.DrawString(SpacerTxt, sml, UI.Colour.AnnotationTextDark, SpacerBounds, GH_TextRenderingConstants.CenterCenter);
+                    graphics.DrawLine(spacer, SpacerBounds.X, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 - 4, SpacerBounds.Y + SpacerBounds.Height / 2);
+                    graphics.DrawLine(spacer, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 + GH_FontServer.StringWidth(SpacerTxt, sml) + 4, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + SpacerBounds.Width, SpacerBounds.Y + SpacerBounds.Height / 2);
                 }
 
                 // Draw button 1 box
                 graphics.FillRectangle(UI.Colour.ButtonColor, Button1Bounds);
                 graphics.DrawRectangle(pen, Button1Bounds.X, Button1Bounds.Y, Button1Bounds.Width, Button1Bounds.Height);
-                graphics.DrawString(button1Text, GH_FontServer.Standard, UI.Colour.AnnotationTextBright, Button1Bounds, GH_TextRenderingConstants.CenterCenter);
+                graphics.DrawString(button1Text, reg, UI.Colour.AnnotationTextBright, Button1Bounds, GH_TextRenderingConstants.CenterCenter);
 
                 // Draw button 2 box
                 graphics.FillRectangle(UI.Colour.ButtonColor, Button2Bounds);
                 graphics.DrawRectangle(pen, Button2Bounds.X, Button2Bounds.Y, Button2Bounds.Width, Button2Bounds.Height);
-                graphics.DrawString(button2Text, GH_FontServer.Standard, UI.Colour.AnnotationTextBright, Button2Bounds, GH_TextRenderingConstants.CenterCenter);
+                graphics.DrawString(button2Text, reg, UI.Colour.AnnotationTextBright, Button2Bounds, GH_TextRenderingConstants.CenterCenter);
 
                 // Draw button 3 box
                 Brush button3color = (greyoutButton3) ? UI.Colour.InactiveButtonColor : UI.Colour.ButtonColor;
                 graphics.FillRectangle(button3color, Button3Bounds);
                 graphics.DrawRectangle(pen, Button3Bounds.X, Button3Bounds.Y, Button3Bounds.Width, Button3Bounds.Height);
                 graphics.DrawString(button3Text, 
-                    (greyoutButton3) ? GH_FontServer.StandardItalic : GH_FontServer.Standard,
+                    (greyoutButton3) ? ita : reg,
                     (greyoutButton3) ? UI.Colour.AnnotationTextDarkGrey : UI.Colour.AnnotationTextBright, 
                     Button3Bounds, 
                     GH_TextRenderingConstants.CenterCenter);
