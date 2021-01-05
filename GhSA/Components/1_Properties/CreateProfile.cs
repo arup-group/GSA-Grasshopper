@@ -222,12 +222,6 @@ namespace GhSA.Components
             "Rectangle", "Circle", "I section", "Tee", "Channel", "Angle"
         });
 
-        // first sublist for second dropdown list - commented out 
-        //readonly List<string> cataloguelist = new List<string>(new string[]
-        //{
-        //    "Europrofile", "To", "be", "implemented"
-        //});
-
         readonly List<string> cataloguelist = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(GsaPath.GetPath, "sectlib.db3"));
 
         // second sublist for second dropdown list

@@ -47,11 +47,12 @@ namespace GhSA.UI
         {
             get
             {
-                float num = Math.Max(Math.Max(
-                    GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small) + 8,
-                    GH_FontServer.StringWidth(displayText, GH_FontServer.Standard)) + 8,
-                    90);
-
+                List<string> spacers = new List<string>();
+                spacers.Add(SpacerTxt);
+                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
+                List<string> buttons = new List<string>();
+                float bt = GhSA.UI.ComponentUI.MaxTextWidth(dropdownlist, new Font(GH_FontServer.FamilyStandard, 7));
+                float num = Math.Max(Math.Max(sp, bt), 90);
                 return num;
             }
             set { MinWidth = value; }
@@ -224,27 +225,57 @@ namespace GhSA.UI
 
         protected void FixLayout()
         {
-            float width = this.Bounds.Width;
-            float num = Math.Max(width, MinWidth);
-            float num2 = 0f;
-            if (num > this.Bounds.Width)
+            float width = this.Bounds.Width; // initial component width before UI overrides
+            float num = Math.Max(width, MinWidth); // number for new width
+            float num2 = 0f; // value for increased width (if any)
+
+            // first check if original component must be widened
+            if (num > width)
             {
-                num2 = num - this.Bounds.Width;
-                this.Bounds = new RectangleF(this.Bounds.X - num2 / 2f, this.Bounds.Y, num, this.Bounds.Height);
+                num2 = num - width; // change in width
+                // update component bounds to new width
+                this.Bounds = new RectangleF(
+                    this.Bounds.X - num2 / 2f,
+                    this.Bounds.Y,
+                    num,
+                    this.Bounds.Height);
             }
+
+            // secondly update position of input and output parameter text
+            // first find the maximum text width of parameters
+
             foreach (IGH_Param item in base.Owner.Params.Output)
             {
-                PointF pivot = item.Attributes.Pivot;
-                RectangleF bounds = item.Attributes.Bounds;
-                item.Attributes.Pivot = new PointF(pivot.X, pivot.Y);
-                item.Attributes.Bounds = new RectangleF(bounds.Location.X, bounds.Location.Y, bounds.Width + num2 / 2f, bounds.Height);
+                PointF pivot = item.Attributes.Pivot; // original anchor location of output
+                RectangleF bounds = item.Attributes.Bounds; // text box itself
+                item.Attributes.Pivot = new PointF(
+                    pivot.X + num2 / 2f, // move anchor to the right
+                    pivot.Y);
+                item.Attributes.Bounds = new RectangleF(
+                    bounds.Location.X + num2 / 2f,  // move text box to the right
+                    bounds.Location.Y,
+                    bounds.Width,
+                    bounds.Height);
+            }
+            // for input params first find the widest input text box as these are right-aligned
+            float inputwidth = 0f;
+            foreach (IGH_Param item in base.Owner.Params.Input)
+            {
+                if (inputwidth < item.Attributes.Bounds.Width)
+                    inputwidth = item.Attributes.Bounds.Width;
             }
             foreach (IGH_Param item2 in base.Owner.Params.Input)
             {
-                PointF pivot2 = item2.Attributes.Pivot;
+                PointF pivot2 = item2.Attributes.Pivot; // original anchor location of input
                 RectangleF bounds2 = item2.Attributes.Bounds;
-                item2.Attributes.Pivot = new PointF(pivot2.X - num2 / 2f, pivot2.Y);
-                item2.Attributes.Bounds = new RectangleF(bounds2.Location.X - num2 / 2f, bounds2.Location.Y, bounds2.Width + num2 / 2f, bounds2.Height);
+                item2.Attributes.Pivot = new PointF(
+                    pivot2.X - num2 / 2f + inputwidth, // move to the left, move back by max input width
+                    pivot2.Y);
+                item2.Attributes.Bounds = new RectangleF(
+                     bounds2.Location.X - num2 / 2f,
+                     bounds2.Location.Y,
+                     bounds2.Width,
+                     bounds2.Height);
             }
         }
     }
