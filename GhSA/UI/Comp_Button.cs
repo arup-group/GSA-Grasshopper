@@ -27,6 +27,7 @@ namespace GhSA.UI
         RectangleF SpacerBounds; // spacer between standard component and button
         readonly string SpacerTxt; // text to be displayed on spacer
 
+        bool mouseDown;
         float MinWidth {
             get 
             {
@@ -73,7 +74,7 @@ namespace GhSA.UI
             if (channel == GH_CanvasChannel.Objects)
             {
                 Pen spacer = new Pen(UI.Colour.SpacerColour);
-                Pen pen = new Pen(UI.Colour.BorderColour)
+                Pen pen = new Pen(mouseDown ? UI.Colour.ClickedBorderColour : UI.Colour.BorderColour)
                 {
                     Width = 0.5f
                 };
@@ -94,9 +95,9 @@ namespace GhSA.UI
                 }
 
                 // Draw button box
-                graphics.FillRectangle(UI.Colour.ButtonColor, ButtonBounds);
+                graphics.FillRectangle(mouseDown ? UI.Colour.ClickedButtonColor : UI.Colour.ButtonColor, ButtonBounds);
                 graphics.DrawRectangle(pen, ButtonBounds.X, ButtonBounds.Y, ButtonBounds.Width, ButtonBounds.Height);
-                graphics.DrawString(buttonText, font, UI.Colour.AnnotationTextBright, ButtonBounds, GH_TextRenderingConstants.CenterCenter);
+                graphics.DrawString(buttonText, font, mouseDown? UI.Colour.AnnotationTextDark : UI.Colour.AnnotationTextBright, ButtonBounds, GH_TextRenderingConstants.CenterCenter);
             }
         }
         public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
@@ -106,12 +107,33 @@ namespace GhSA.UI
                 System.Drawing.RectangleF rec = ButtonBounds;
                 if (rec.Contains(e.CanvasLocation))
                 {
-                    action();
-                    return GH_ObjectResponse.Handled;
+                    mouseDown = true;
+                    Owner.ExpireSolution(true);
+                    return GH_ObjectResponse.Capture;
                 }
             }
             return base.RespondToMouseDown(sender, e);
         }
+
+        public override GH_ObjectResponse RespondToMouseUp(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                System.Drawing.RectangleF rec = ButtonBounds;
+                if (rec.Contains(e.CanvasLocation))
+                {
+                    if (mouseDown)
+                    {
+                        mouseDown = false;
+                        action();
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Release;
+                    }
+                }
+            }
+            return base.RespondToMouseUp(sender, e);
+        }
+
 
         protected void FixLayout()
         {

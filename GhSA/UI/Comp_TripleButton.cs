@@ -41,6 +41,10 @@ namespace GhSA.UI
         readonly Action action3;
         readonly bool greyoutButton3;
 
+        bool mouseDown1;
+        bool mouseDown2;
+        bool mouseDown3;
+
         RectangleF SpacerBounds; // spacer between standard component and button
         readonly string SpacerTxt; // text to be displayed on spacer
 
@@ -93,11 +97,18 @@ namespace GhSA.UI
             if (channel == GH_CanvasChannel.Objects)
             {
                 Pen spacer = new Pen(UI.Colour.SpacerColour);
-                Pen pen = new Pen(UI.Colour.BorderColour)
+                Pen pen1 = new Pen(mouseDown1 ? UI.Colour.ClickedBorderColour : UI.Colour.BorderColour)
                 {
                     Width = 0.5f
                 };
-
+                Pen pen2 = new Pen(mouseDown2 ? UI.Colour.ClickedBorderColour : UI.Colour.BorderColour)
+                {
+                    Width = 0.5f
+                };
+                Pen pen3 = new Pen(mouseDown3 ? UI.Colour.ClickedBorderColour : UI.Colour.BorderColour)
+                {
+                    Width = 0.5f
+                };
                 Font reg = GH_FontServer.Standard;
                 // adjust fontsize to high resolution displays
                 reg = new Font(reg.FontFamily, reg.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
@@ -119,22 +130,22 @@ namespace GhSA.UI
                 }
 
                 // Draw button 1 box
-                graphics.FillRectangle(UI.Colour.ButtonColor, Button1Bounds);
-                graphics.DrawRectangle(pen, Button1Bounds.X, Button1Bounds.Y, Button1Bounds.Width, Button1Bounds.Height);
-                graphics.DrawString(button1Text, reg, UI.Colour.AnnotationTextBright, Button1Bounds, GH_TextRenderingConstants.CenterCenter);
+                graphics.FillRectangle(mouseDown1 ? UI.Colour.ClickedButtonColor : UI.Colour.ButtonColor, Button1Bounds);
+                graphics.DrawRectangle(pen1, Button1Bounds.X, Button1Bounds.Y, Button1Bounds.Width, Button1Bounds.Height);
+                graphics.DrawString(button1Text, reg, mouseDown1 ? UI.Colour.AnnotationTextDark : UI.Colour.AnnotationTextBright, Button1Bounds, GH_TextRenderingConstants.CenterCenter);
 
                 // Draw button 2 box
-                graphics.FillRectangle(UI.Colour.ButtonColor, Button2Bounds);
-                graphics.DrawRectangle(pen, Button2Bounds.X, Button2Bounds.Y, Button2Bounds.Width, Button2Bounds.Height);
-                graphics.DrawString(button2Text, reg, UI.Colour.AnnotationTextBright, Button2Bounds, GH_TextRenderingConstants.CenterCenter);
+                graphics.FillRectangle(mouseDown2 ? UI.Colour.ClickedButtonColor : UI.Colour.ButtonColor, Button2Bounds);
+                graphics.DrawRectangle(pen2, Button2Bounds.X, Button2Bounds.Y, Button2Bounds.Width, Button2Bounds.Height);
+                graphics.DrawString(button2Text, reg, mouseDown2 ? UI.Colour.AnnotationTextDark : UI.Colour.AnnotationTextBright, Button2Bounds, GH_TextRenderingConstants.CenterCenter);
 
                 // Draw button 3 box
-                Brush button3color = (greyoutButton3) ? UI.Colour.InactiveButtonColor : UI.Colour.ButtonColor;
+                Brush button3color = (greyoutButton3) ? UI.Colour.InactiveButtonColor : mouseDown3 ? UI.Colour.ClickedButtonColor : UI.Colour.ButtonColor;
                 graphics.FillRectangle(button3color, Button3Bounds);
-                graphics.DrawRectangle(pen, Button3Bounds.X, Button3Bounds.Y, Button3Bounds.Width, Button3Bounds.Height);
+                graphics.DrawRectangle(pen3, Button3Bounds.X, Button3Bounds.Y, Button3Bounds.Width, Button3Bounds.Height);
                 graphics.DrawString(button3Text, 
                     (greyoutButton3) ? ita : reg,
-                    (greyoutButton3) ? UI.Colour.AnnotationTextDarkGrey : UI.Colour.AnnotationTextBright, 
+                    (greyoutButton3) ? UI.Colour.AnnotationTextDarkGrey : mouseDown3 ? UI.Colour.AnnotationTextDark : UI.Colour.AnnotationTextBright, 
                     Button3Bounds, 
                     GH_TextRenderingConstants.CenterCenter);
             }
@@ -146,23 +157,79 @@ namespace GhSA.UI
                 System.Drawing.RectangleF rec1 = Button1Bounds;
                 if (rec1.Contains(e.CanvasLocation))
                 {
-                    action1();
-                    return GH_ObjectResponse.Handled;
+                    mouseDown1 = true;
+                    mouseDown2 = false;
+                    mouseDown3 = false;
+                    Owner.ExpireSolution(true);
+                    return GH_ObjectResponse.Capture;
                 }
                 System.Drawing.RectangleF rec2 = Button2Bounds;
                 if (rec2.Contains(e.CanvasLocation))
                 {
-                    action2();
-                    return GH_ObjectResponse.Handled;
+                    mouseDown1 = false;
+                    mouseDown2 = true;
+                    mouseDown3 = false;
+                    Owner.ExpireSolution(true);
+                    return GH_ObjectResponse.Capture;
                 }
                 System.Drawing.RectangleF rec3 = Button3Bounds;
                 if (rec3.Contains(e.CanvasLocation))
                 {
-                    action3();
-                    return GH_ObjectResponse.Handled;
+                    mouseDown1 = false;
+                    mouseDown2 = false;
+                    mouseDown3 = true; ;
+                    Owner.ExpireSolution(true);
+                    return GH_ObjectResponse.Capture;
                 }
             }
             return base.RespondToMouseDown(sender, e);
+        }
+
+        public override GH_ObjectResponse RespondToMouseUp(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                System.Drawing.RectangleF rec1 = Button1Bounds;
+                if (rec1.Contains(e.CanvasLocation))
+                {
+                    if (mouseDown1)
+                    {
+                        mouseDown1 = false;
+                        mouseDown2 = false;
+                        mouseDown3 = false;
+                        action1();
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Release;
+                    }
+                }
+                System.Drawing.RectangleF rec2 = Button2Bounds;
+                if (rec2.Contains(e.CanvasLocation))
+                {
+                    if (mouseDown2)
+                    {
+                        mouseDown1 = false;
+                        mouseDown2 = false;
+                        mouseDown3 = false;
+                        action2();
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Release;
+                    }
+                }
+                System.Drawing.RectangleF rec3 = Button3Bounds;
+                if (rec3.Contains(e.CanvasLocation))
+                {
+                    if (mouseDown3)
+                    {
+                        mouseDown1 = false;
+                        mouseDown2 = false;
+                        mouseDown3 = false;
+                        action3();
+                        Owner.ExpireSolution(true);
+                        return GH_ObjectResponse.Release;
+                    }
+                }
+            }
+            return base.RespondToMouseUp(sender, e);
         }
 
         protected void FixLayout()

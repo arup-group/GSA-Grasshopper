@@ -35,6 +35,10 @@ namespace GhSA.UI
         {
             get { return Color.FromArgb(255, 0, 92, 175); }
         }
+        public static Color GsaLightBlue
+        {
+            get { return Color.FromArgb(255, 130, 169, 241); }
+        }
 
         public static Color GsaLightGrey
         {
@@ -61,6 +65,10 @@ namespace GhSA.UI
         {
             get { return new SolidBrush(GsaDarkBlue); }
         }
+        public static Brush ClickedButtonColor
+        {
+            get { return new SolidBrush(GsaLightBlue); }
+        }
         public static Brush InactiveButtonColor
         {
             get { return new SolidBrush(Color.FromArgb(255, 216, 216, 216)); }
@@ -69,6 +77,11 @@ namespace GhSA.UI
         public static Color BorderColour
         {
             get {  return GsaLightGrey; }
+        }
+
+        public static Color ClickedBorderColour
+        {
+            get { return Color.Black; }
         }
 
         public static Brush InactiveBorderColor
