@@ -144,13 +144,13 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Nodes", "Nodes", "Nodes from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Nodes", "No", "Nodes from GSA Model", GH_ParamAccess.list);
             pManager.HideParameter(0);
-            pManager.AddGenericParameter("1D Elements", "Elem1D", "1D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("2D Elements", "Elem2D", "2D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("1D Elements", "E1D", "1D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("2D Elements", "E2D", "2D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.tree);
             pManager.HideParameter(2);
-            pManager.AddGenericParameter("1D Members", "Mem1D", "1D Members (Design Layer) from GSA Model", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("2D Members", "Mem2D", "2D Members (Design Layer) from GSA Model", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("1D Members", "M1D", "1D Members (Design Layer) from GSA Model", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("2D Members", "M2D", "2D Members (Design Layer) from GSA Model", GH_ParamAccess.tree);
         }
         #endregion
 

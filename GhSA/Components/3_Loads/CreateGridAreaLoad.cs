@@ -54,7 +54,7 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid Area Load", "Load", "GSA Grid Area Load", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid Area Load", "Ld", "GSA Grid Area Load", GH_ParamAccess.item);
         }
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)

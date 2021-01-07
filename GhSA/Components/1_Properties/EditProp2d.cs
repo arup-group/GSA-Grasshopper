@@ -47,10 +47,10 @@ namespace GhSA.Components
             pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property to get or set information for", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Prop2d Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
             pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
-            pManager.AddColourParameter("Prop2d Colour", "Col", "Set 2D Property Colour", GH_ParamAccess.item);
+            pManager.AddColourParameter("Prop2d Colour", "Co", "Set 2D Property Colour", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Axis", "Ax", "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Material", "Mat", "Set Material Property", GH_ParamAccess.item);
-            pManager.AddTextParameter("Thickness", "Thk", "Set Property Thickness", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Material", "Ma", "Set Material Property", GH_ParamAccess.item);
+            pManager.AddTextParameter("Thickness", "Th", "Set Property Thickness", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;

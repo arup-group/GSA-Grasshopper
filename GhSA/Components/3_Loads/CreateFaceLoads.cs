@@ -98,7 +98,7 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Face Load", "Load", "GSA Face Load", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Face Load", "Ld", "GSA Face Load", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

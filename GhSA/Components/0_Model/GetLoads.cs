@@ -46,13 +46,13 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Gravity Loads", "Grav", "Gravity Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Node Loads", "Node", "Node Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Beam Loads", "Beam", "Beam Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Face Loads", "Face", "Face Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Grid Point Loads", "Point", "Grid Point Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Grid Line Loads", "Line", "Grid Line Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Grid Area Loads", "Area", "Grid Area Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Gravity Loads", "Gr", "Gravity Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Node Loads", "No", "Node Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Beam Loads", "Be", "Beam Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Face Loads", "Fa", "Face Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Grid Point Loads", "Pt", "Grid Point Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Grid Line Loads", "Ln", "Grid Line Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Grid Area Loads", "Ar", "Grid Area Loads from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Grid Plane Surfaces", "GPS", "Grid Plane Surfaces from GSA Model", GH_ParamAccess.list);
             pManager.HideParameter(7);
         }

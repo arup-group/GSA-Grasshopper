@@ -218,13 +218,13 @@ namespace GhSA.Parameters
     public class GsaProp2dParameter : GH_PersistentParam<GsaProp2dGoo>
     {
         public GsaProp2dParameter()
-          : base(new GH_InstanceDescription("GSA 2D Property", "Prop2d", "GSA 2D Property", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("2D Property", "PA", "GSA 2D Property", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("05a034ad-683d-479b-9768-5c04379c0606");
 
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaProp2D;
 

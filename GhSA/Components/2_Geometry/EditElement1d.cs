@@ -38,19 +38,19 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             
-            pManager.AddGenericParameter("1D Element", "Elem1d", "GSA 1D Element to Modify", GH_ParamAccess.item);
-            pManager.AddLineParameter("Line", "Ln", "Reposition Element Line", GH_ParamAccess.item);
+            pManager.AddGenericParameter("1D Element", "E1D", "GSA 1D Element to Modify", GH_ParamAccess.item);
+            pManager.AddLineParameter("Line", "L", "Reposition Element Line", GH_ParamAccess.item);
             pManager.AddGenericParameter("Section", "PB", "Change Section Property", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Offset", "Off", "Set Element Offset", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Start release", "B6-S", "Set Release (Bool6) at Start of Element", GH_ParamAccess.item);
-            pManager.AddGenericParameter("End release", "B6-E", "Set Release (Bool6) at End of Element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset", "Of", "Set Element Offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Start release", "B6s", "Set Release (Bool6) at Start of Element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("End release", "B6e", "Set Release (Bool6) at End of Element", GH_ParamAccess.item);
             pManager.AddNumberParameter("Orientation Angle", "OrA", "Set Element Orientation Angle in degrees", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Orientation Node", "OrN", "Set Element Orientation Node (ID referring to node number in model)", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Type", "Typ", "Set Element Type", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Type", "Ty", "Set Element Type", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Number", "ID", "Set Element Number. If ID is set it will replace any existing 1D Element in the model", GH_ParamAccess.item);
             pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Group", "Grp", "Set Element Group", GH_ParamAccess.item);
-            pManager.AddColourParameter("Colour", "Col", "Set Element Colour", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Group", "Gr", "Set Element Group", GH_ParamAccess.item);
+            pManager.AddColourParameter("Colour", "Co", "Set Element Colour", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -68,20 +68,20 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("1D Element", "Elem1d", "Modified GSA 1D Element", GH_ParamAccess.item);
-            pManager.AddLineParameter("Line", "Ln", "Element Line", GH_ParamAccess.item);
+            pManager.AddGenericParameter("1D Element", "E1D", "Modified GSA 1D Element", GH_ParamAccess.item);
+            pManager.AddLineParameter("Line", "L", "Element Line", GH_ParamAccess.item);
             pManager.AddGenericParameter("Section", "PB", "Get Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Offset", "Off", "Get Element Offset", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Start release", "B6-S", "Get Release (Bool6) at Start of Element", GH_ParamAccess.item);
-            pManager.AddGenericParameter("End release", "B6-E", "Get Release (Bool6) at End of Element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset", "Of", "Get Element Offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Start release", "B6s", "Get Release (Bool6) at Start of Element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("End release", "B6e", "Get Release (Bool6) at End of Element", GH_ParamAccess.item);
             pManager.AddNumberParameter("Orientation Angle", "OrA", "Get Element Orientation Angle in degrees", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Orientation Node", "OrN", "Get Element Orientation Node (ID referring to node number in model)", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Type", "Typ", "Get Element Type", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Type", "Ty", "Get Element Type", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Number", "ID", "Get Element Number. If ID is set it will replace any existing 1D Element in the model", GH_ParamAccess.item);
             pManager.AddTextParameter("Name", "Na", "Get Element Name", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Group", "Grp", "Get Element Group", GH_ParamAccess.item);
-            pManager.AddColourParameter("Colour", "Col", "Get Element Colour", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Parent Members", "ParM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.item);
+            pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
         }
         #endregion
 

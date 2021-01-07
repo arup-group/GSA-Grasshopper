@@ -30,7 +30,7 @@ namespace GhSA.Components
         #region input and output
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Load", "Load", "Load to get some info out of", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Load", "Ld", "Load to get some info out of", GH_ParamAccess.item);
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {

@@ -250,7 +250,7 @@ namespace GhSA.Parameters
     public class GsaOffsetParameter : GH_PersistentParam<GsaOffsetGoo>
     {
         public GsaOffsetParameter()
-          : base(new GH_InstanceDescription("GSA Offset", "Offset", "GSA Offset (for use with 2D elements or members only Z-value used)", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Offset", "Of", "GSA Offset", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 

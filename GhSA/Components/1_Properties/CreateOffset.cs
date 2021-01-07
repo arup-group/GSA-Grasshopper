@@ -55,7 +55,7 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("GSA Offset", "Off", "GSA Offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset", "Of", "GSA Offset", GH_ParamAccess.item);
         }
         #endregion
 

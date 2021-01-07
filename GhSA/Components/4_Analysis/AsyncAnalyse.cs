@@ -8,6 +8,7 @@ using Rhino.Geometry;
 using GhSA.Parameters;
 using GrasshopperAsyncComponent;
 using System.Collections.Generic;
+using Grasshopper.Kernel.Data;
 
 namespace GhSA.Components
 {
@@ -34,14 +35,14 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Model", "GSA", "(Optional) Existing Model to append to", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Nodes", "Nodes", "Nodes to add/set in Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("1D Elements", "Elem1D", "1D Elements to add/set in Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("2D Elements", "Elem2D", "2D Elements to add/set in Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("1D Members", "Mem1D", "1D Members to add/set in Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("2D Members", "Mem2D", "2D Members to add/set in Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Loads", "Loads", "Loads to add/set in Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Section / Prop2D", "PA PB", "Sections and Prop2Ds to set in Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Analysis Settings", "ATasks", "Analysis Method and Settings for Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Nodes", "No", "Nodes to add/set in Model", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("1D Elements", "E1D", "1D Elements to add/set in Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("2D Elements", "E2D", "2D Elements to add/set in Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("1D Members", "M1D", "1D Members to add/set in Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("2D Members", "M2D", "2D Members to add/set in Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Loads", "Ld", "Loads to add/set in Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Section / Prop2D", "P", "Sections and Prop2Ds to set in Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Analysis Settings", "--", "Analysis Method and Settings for Model", GH_ParamAccess.list);
             for (int i = 0; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
         }
@@ -103,8 +104,9 @@ namespace GhSA.Components
 
                 // Get Node input
                 List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
+                GH_Structure<GH_ObjectWrapper> ghtree_types = new GH_Structure<GH_ObjectWrapper>();
                 List<GsaNode> in_nodes = new List<GsaNode>();
-                if (DA.GetDataList(1, gh_types))
+                if (DA.GetDataTree(1, out ghtree_types))
                 {
                     for (int i = 0; i < gh_types.Count; i++)
                     {

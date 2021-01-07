@@ -49,7 +49,7 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid Point Load", "Load", "GSA Grid Point Load", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid Point Load", "Ld", "GSA Grid Point Load", GH_ParamAccess.item);
         }
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)

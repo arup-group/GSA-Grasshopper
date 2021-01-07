@@ -37,7 +37,7 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Gravity load", "Load", "GSA Gravity Load", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Gravity load", "Ld", "GSA Gravity Load", GH_ParamAccess.item);
         }
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)

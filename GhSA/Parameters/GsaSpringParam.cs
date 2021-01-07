@@ -257,7 +257,7 @@ namespace GhSA.Parameters
     public class GsaSpringParameter : GH_PersistentParam<GsaSpringGoo>
     {
         public GsaSpringParameter()
-          : base(new GH_InstanceDescription("GSA Spring", "Spring", "GSA Spring (Type: General)", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Spring", "PS", "GSA Spring (Type: General)", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 

@@ -46,22 +46,22 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             
-            pManager.AddGenericParameter("1D Member", "Mem1d", "GSA 1D Member to Modify", GH_ParamAccess.item);
+            pManager.AddGenericParameter("1D Member", "M1D", "GSA 1D Member to Modify", GH_ParamAccess.item);
             pManager.AddGenericParameter("Section", "PB", "Change Section Property", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Member Type", "Typ", "Set 1D Member Type", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("1D Element Type", "Ty1D", "Set Element 1D Type", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Offset", "Off", "Set Member Offset", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Start release", "B6-S", "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
-            pManager.AddGenericParameter("End release", "B6-E", "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Member Type", "mT", "Set 1D Member Type", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("1D Element Type", "eT", "Set Element 1D Type", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Start release", "B6s", "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
+            pManager.AddGenericParameter("End release", "B6e", "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
             pManager.AddNumberParameter("Orientation Angle", "OrA", "Set Member Orientation Angle in degrees", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Orientation Node", "OrN", "Set Member Orientation Node (ID referring to node number in model)", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item, true);
             pManager.AddIntegerParameter("Member1d Number", "ID", "Set Member Number. If ID is set it will replace any existing 1D Member in the model", GH_ParamAccess.item);
             pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Member1d Group", "Grp", "Set Member 1D Group", GH_ParamAccess.item);
-            pManager.AddColourParameter("Member1d Colour", "Col", "Set Member 1D Colour", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Dummy Member", "Dum", "Set Member to Dummy", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Member1d Group", "Gr", "Set Member 1D Group", GH_ParamAccess.item);
+            pManager.AddColourParameter("Member1d Colour", "Co", "Set Member 1D Colour", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Dummy Member", "Dm", "Set Member to Dummy", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -82,23 +82,23 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("1D Member", "Mem1d", "Modified GSA 1D Member", GH_ParamAccess.item);
-            pManager.AddCurveParameter("Curve", "Crv", "Member Curve", GH_ParamAccess.item);
+            pManager.AddGenericParameter("1D Member", "M1D", "Modified GSA 1D Member", GH_ParamAccess.item);
+            pManager.AddCurveParameter("Curve", "C", "Member Curve", GH_ParamAccess.item);
             pManager.AddGenericParameter("Section", "PB", "Change Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Member Type", "Typ", "Get 1D Member Type", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("1D Element Type", "Ty1D", "Get Element 1D Type", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Offset", "Off", "Get Member Offset", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Start release", "B6-S", "Get Release (Bool6) at Start of Member", GH_ParamAccess.item);
-            pManager.AddGenericParameter("End release", "B6-E", "Get Release (Bool6) at End of Member", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Member Type", "mT", "Get 1D Member Type", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("1D Element Type", "eT", "Get Element 1D Type", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Start release", "B6s", "Get Release (Bool6) at Start of Member", GH_ParamAccess.item);
+            pManager.AddGenericParameter("End release", "B6e", "Get Release (Bool6) at End of Member", GH_ParamAccess.item);
             pManager.AddNumberParameter("Orientation Angle", "OrA", "Get Member Orientation Angle in degrees", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Orientation Node", "OrN", "Get Member Orientation Node (ID referring to node number in model)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Mesh Size", "MSz", "Get Member Mesh Size", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Mesh With Others", "MwO", "Get if to mesh with others", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Mesh Size", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member1d Number", "ID", "Get Member Number", GH_ParamAccess.item);
             pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Member Group", "Grp", "Get Member Group", GH_ParamAccess.item);
-            pManager.AddColourParameter("Member Colour", "Col", "Get Member Colour", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Dummy Member", "Dum", "Get it Member is Dummy", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
+            pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Dummy Member", "Dm", "Get it Member is Dummy", GH_ParamAccess.item);
         }
         #endregion
 
@@ -275,7 +275,8 @@ namespace GhSA.Components
                 DA.SetData(12, mem.ID);
                 DA.SetData(13, mem.Member.Name);
                 DA.SetData(14, mem.Member.Group);
-                DA.SetData(15, mem.Member.Colour);
+                if (Params.Input[14].SourceCount > 0)
+                    DA.SetData(15, mem.Member.Colour);
 
                 DA.SetData(16, mem.Member.IsDummy);
             }

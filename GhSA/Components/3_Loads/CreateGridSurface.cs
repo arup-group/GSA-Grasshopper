@@ -71,11 +71,11 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid Plane", "GPl", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model", GH_ParamAccess.item, 0);
             pManager.AddTextParameter("Elements", "El", "Elements for which the load should be expanded to. Default all", GH_ParamAccess.item, "all");
             pManager.AddTextParameter("Name", "Na", "Name of Grid Surface", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Tolerance (" + Util.GsaUnit.LengthSmall + ")", "Tol", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 10);
+            pManager.AddNumberParameter("Tolerance (" + Util.GsaUnit.LengthSmall + ")", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 10);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -86,14 +86,14 @@ namespace GhSA.Components
             if (first)
             {
                 _mode = FoldMode.One_Dimensional_One_Way;
-                pManager.AddNumberParameter("Span Direction", "Dir", "Span Direction (" + Util.GsaUnit.Angle + ") between -180 and 180 degrees", GH_ParamAccess.item, 0);
+                pManager.AddNumberParameter("Span Direction", "Di", "Span Direction (" + Util.GsaUnit.Angle + ") between -180 and 180 degrees", GH_ParamAccess.item, 0);
                 pManager[5].Optional = true;
                 first = false;
             }
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid Surface", "GridSurface", "GSA Grid Surface", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid Surface", "GPS", "GSA Grid Surface", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

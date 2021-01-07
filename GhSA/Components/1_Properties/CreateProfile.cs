@@ -267,7 +267,7 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Profile", "Prfl", "Profile for GSA Section", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Profile", "Pf", "Profile for GSA Section", GH_ParamAccess.item);
         }
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)

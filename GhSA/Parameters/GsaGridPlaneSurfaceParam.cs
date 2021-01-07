@@ -369,13 +369,13 @@ namespace GhSA.Parameters
     public class GsaGridPlaneParameter : GH_PersistentGeometryParam<GsaGridPlaneSurfaceGoo>, IGH_PreviewObject
     {
         public GsaGridPlaneParameter()
-          : base(new GH_InstanceDescription("GSA Grid Plane Surface", "GrdPlnSrf", "Maintains a collection of GSA Grid Plane and Grid Surface data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Grid Plane Surface", "GPS", "Maintains a collection of GSA Grid Plane and Grid Surface data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("161e2439-83b6-4fda-abb9-2ed938612530");
 
-        public override GH_Exposure Exposure => GH_Exposure.quarternary;
+        public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaGridPlane;
 

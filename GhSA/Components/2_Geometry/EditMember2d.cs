@@ -48,21 +48,21 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             
-            pManager.AddGenericParameter("2D Member", "Mem2d", "GSA 2D Member to Modify", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Member", "M2D", "GSA 2D Member to Modify", GH_ParamAccess.item);
             pManager.AddBrepParameter("Brep", "B", "Reposition Member Brep (non-planar geometry will be automatically converted to an average plane from exterior boundary control points)", GH_ParamAccess.item);
             pManager.AddGenericParameter("2D Property", "PA", "Change 2D Property", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Offset", "Off", "Set Member Offset", GH_ParamAccess.item);
-            pManager.AddPointParameter("Incl. Points", "iPt", "Add Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
-            pManager.AddCurveParameter("Incl. Curves", "iCrv", "Add Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
+            pManager.AddPointParameter("Incl. Points", "(P)", "Add Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
+            pManager.AddCurveParameter("Incl. Curves", "(C)", "Add Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Set Targe mesh size", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item, true);
-            pManager.AddIntegerParameter("Member Type", "Typ", "Set 2D Member Type", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("2D Analysis Type", "Ty2D", "Set Member 2d Analysis Type", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Member Type", "Ty", "Set 2D Member Type", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("2D Analysis Type", "mT", "Set Member 2d Analysis Type", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member2d Number", "ID", "Set Member Number. If ID is set it will replace any existing 2d Member in the model", GH_ParamAccess.item);
             pManager.AddTextParameter("Member2d Name", "Na", "Set Name of Member2d", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Member2d Group", "Grp", "Set Member 2d Group", GH_ParamAccess.item);
-            pManager.AddColourParameter("Member2d Colour", "Col", "Set Member 2d Colour", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Dummy Member", "Dum", "Set Member to Dummy", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Member2d Group", "Gr", "Set Member 2d Group", GH_ParamAccess.item);
+            pManager.AddColourParameter("Member2d Colour", "Co", "Set Member 2d Colour", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Dummy Member", "Dm", "Set Member to Dummy", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -85,18 +85,18 @@ namespace GhSA.Components
             pManager.AddGenericParameter("2D Member", "Mem2d", "Modified GSA 2D Member", GH_ParamAccess.item);
             pManager.AddBrepParameter("Brep", "B", "Member Brep", GH_ParamAccess.item);
             pManager.AddGenericParameter("Section", "PA", "Change Section Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Offset", "Off", "Get Member Offset", GH_ParamAccess.item);
-            pManager.AddPointParameter("Incl. Points", "iPt", "Get Inclusion points", GH_ParamAccess.list);
-            pManager.AddCurveParameter("Incl. Curves", "iCrv", "Get Inclusion curves", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
+            pManager.AddPointParameter("Incl. Points", "(P)", "Get Inclusion points", GH_ParamAccess.list);
+            pManager.AddCurveParameter("Incl. Curves", "(C)", "Get Inclusion curves", GH_ParamAccess.list);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Get Targe mesh size", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Member Type", "Typ", "Get 2D Member Type", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("2D Analysis Type", "Ty2D", "Get Member 2D Analysis Type", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Member Type", "Ty", "Get 2D Member Type", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("2D Analysis Type", "mT", "Get Member 2D Analysis Type", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
             pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Member Group", "Grp", "Get Member Group", GH_ParamAccess.item);
-            pManager.AddColourParameter("Member Colour", "Col", "Get Member Colour", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Dummy Member", "Dum", "Get if Member is Dummy", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
+            pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Dummy Member", "Dm", "Get if Member is Dummy", GH_ParamAccess.item);
         }
         #endregion
 

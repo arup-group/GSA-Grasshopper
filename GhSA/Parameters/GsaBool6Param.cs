@@ -313,7 +313,7 @@ namespace GhSA.Parameters
     public class GsaBool6Parameter : GH_PersistentParam<GsaBool6Goo>
     {
         public GsaBool6Parameter()
-          : base(new GH_InstanceDescription("GSA Bool6", "Bool6", "Bool6 to set releases and restraints", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Bool6", "B6", "GSA Bool6 to set releases and restraints", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 

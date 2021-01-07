@@ -106,7 +106,7 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Beam Load", "Load", "GSA Beam Load", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Beam Load", "Ld", "GSA Beam Load", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

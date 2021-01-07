@@ -47,8 +47,8 @@ namespace GhSA.Components
         {
             pManager.AddBrepParameter("Brep", "B", "Planar Brep (non-planar geometry will be automatically converted to an average plane of exterior boundary control points))", GH_ParamAccess.item);
             pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
-            pManager.AddPointParameter("Incl. Point", "iPt", "Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
-            pManager.AddCurveParameter("Incl. Curve", "iCrv", "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
+            pManager.AddPointParameter("Incl. Point", "(P)", "Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
+            pManager.AddCurveParameter("Incl. Curve", "(C)", "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Targe mesh size", GH_ParamAccess.item, 0);
 
             pManager.HideParameter(0);

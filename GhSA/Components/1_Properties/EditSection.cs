@@ -44,13 +44,13 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Section", "PB", "GSA Section to get or set information for", GH_ParamAccess.item);
-            pManager.AddTextParameter("Section Profile", "Prfl", "Profile name following GSA naming convetion (eg 'STD I 1000 500 15 25')", GH_ParamAccess.item);
+            pManager.AddTextParameter("Section Profile", "Pf", "Profile name following GSA naming convetion (eg 'STD I 1000 500 15 25')", GH_ParamAccess.item);
 
-            pManager.AddGenericParameter("Material", "Mat", "Set Material Property", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Section Pool", "Pool", "Set Section pool", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Material", "Ma", "Set Material Property", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Section Pool", "Po", "Set Section pool", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Section Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Section Name", "Name", "Set Section name", GH_ParamAccess.item);
-            pManager.AddColourParameter("Section Colour", "Col", "Set Section colour", GH_ParamAccess.item);
+            pManager.AddTextParameter("Section Name", "Na", "Set Section name", GH_ParamAccess.item);
+            pManager.AddColourParameter("Section Colour", "Co", "Set Section colour", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -63,13 +63,13 @@ namespace GhSA.Components
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Section", "PB", "GSA Section with changes", GH_ParamAccess.item);
-            pManager.AddTextParameter("Section Profile", "Prfl", "Profile describtion", GH_ParamAccess.item);
+            pManager.AddTextParameter("Section Profile", "Pf", "Profile describtion", GH_ParamAccess.item);
 
-            pManager.AddGenericParameter("Material", "Mat", "Section Material or Reference ID for Material Property in Existing GSA Model", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Section Pool", "Pool", "Section pool", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Material", "Ma", "Section Material or Reference ID for Material Property in Existing GSA Model", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Section Pool", "Po", "Section pool", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Section Number", "ID", "Original Section number (ID) if Section ever belonged to a GSA Model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Section Name", "Name", "Section name", GH_ParamAccess.item);
-            pManager.AddColourParameter("Section Colour", "Col", "Section colour", GH_ParamAccess.item);
+            pManager.AddTextParameter("Section Name", "Na", "Section name", GH_ParamAccess.item);
+            pManager.AddColourParameter("Section Colour", "Co", "Section colour", GH_ParamAccess.item);
 
         }
         #endregion

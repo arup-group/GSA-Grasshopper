@@ -48,14 +48,14 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             
-            pManager.AddGenericParameter("2D Element", "Elem2d", "GSA 2D Element to Modify", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Element", "E2D", "GSA 2D Element to Modify", GH_ParamAccess.item);
             pManager.AddGenericParameter("2D Property", "PA", "Change 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Offset", "Off", "Set Element Offset", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("2D Analysis Type", "Typ", "Set Element 2D Analysis Type", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Offset", "Of", "Set Element Offset", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("2D Analysis Type", "Ty", "Set Element 2D Analysis Type", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Element2d Number", "ID", "Set Element Number. If ID is set it will replace any existing 2d Element in the model", GH_ParamAccess.list);
             pManager.AddTextParameter("Element2d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Element2d Group", "Grp", "Set Element Group", GH_ParamAccess.list);
-            pManager.AddColourParameter("Element2d Colour", "Col", "Set Element Colour", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Element2d Group", "Gr", "Set Element Group", GH_ParamAccess.list);
+            pManager.AddColourParameter("Element2d Colour", "Co", "Set Element Colour", GH_ParamAccess.list);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -68,16 +68,16 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("2D Element", "Elem2d", "Modified GSA 2d Element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Element", "E2D", "Modified GSA 2d Element", GH_ParamAccess.item);
             pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh", GH_ParamAccess.item);
             pManager.AddGenericParameter("2D Property", "PA", "Get 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Offset", "Off", "Get Element Offset", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("2D Analysis Type", "Typ", "Get Element 2D Analysis Type", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Offset", "Of", "Get Element Offset", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("2D Analysis Type", "Ty", "Get Element 2D Analysis Type", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
             pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Group", "Grp", "Get Element Group", GH_ParamAccess.list);
-            pManager.AddColourParameter("Colour", "Col", "Get Element Colour", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Parent Members", "ParM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
+            pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
         }
         #endregion
 

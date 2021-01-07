@@ -86,7 +86,7 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Node Load", "Load", "GSA Node Load", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Node Load", "Ld", "GSA Node Load", GH_ParamAccess.item);
         }
         
         protected override void SolveInstance(IGH_DataAccess DA)

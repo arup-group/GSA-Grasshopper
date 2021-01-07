@@ -45,8 +45,8 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("1D Members", "Mem1d", "GSA 1D Member to create 1D Elements from", GH_ParamAccess.list);
-            pManager.AddGenericParameter("1D Members", "Mem2d", "GSA 2D Member to create 2D Elements from", GH_ParamAccess.list);
+            pManager.AddGenericParameter("1D Members", "M1D", "GSA 1D Member to create 1D Elements from", GH_ParamAccess.list);
+            pManager.AddGenericParameter("1D Members", "M2D", "GSA 2D Member to create 2D Elements from", GH_ParamAccess.list);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -54,8 +54,8 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("1D Elements", "Elem1d", "GSA 1D Elements", GH_ParamAccess.list);
-            pManager.AddGenericParameter("2D Elements", "Elem2d", "GSA 2D Elements", GH_ParamAccess.list);
+            pManager.AddGenericParameter("1D Elements", "E1D", "GSA 1D Elements", GH_ParamAccess.list);
+            pManager.AddGenericParameter("2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
         }
         #endregion
 

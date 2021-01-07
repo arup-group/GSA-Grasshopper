@@ -94,7 +94,7 @@ namespace GhSA.Components
         {
             pManager.AddNumberParameter("Number", "ID", "Property number PA# (default appended to model = 0). Will overwrite any existing property with same number", GH_ParamAccess.item, 0);
             pManager.AddTextParameter("Name", "Na", "GSA 2D Property Name", GH_ParamAccess.item);
-            pManager.AddColourParameter("Colour", "Col", "GSA 2D Property Colour)", GH_ParamAccess.item);
+            pManager.AddColourParameter("Colour", "Co", "GSA 2D Property Colour)", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
