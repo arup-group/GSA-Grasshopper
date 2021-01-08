@@ -132,7 +132,7 @@ namespace GhSA.Parameters
             {
                 Member = new Member
                 {
-                    Colour = Colour, //don't copy object.colour, this will be default = black if not set
+                    Colour = Colour.ToArgb(), //don't copy object.colour, this will be default = black if not set
                     Group = m_member.Group,
                     IsDummy = m_member.IsDummy,
                     MeshSize = m_member.MeshSize,
@@ -477,30 +477,43 @@ namespace GhSA.Parameters
             if (Value.PolyCurve != null)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2); //UI.Colour.Member1d
+                {
+                    if (Value.Member.IsDummy)
+                        args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Dummy1D, false);
+                    else
+                        args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2); //UI.Colour.Member1d
+                }
                 else
-                    args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
+                {
+                    if (Value.Member.IsDummy)
+                        args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Member1dSelected, false);
+                    else
+                        args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
+                }
             }
 
             //Draw points.
             if (Value.Topology != null)
             {
-                List<Point3d> pts = Value.Topology;
-                for (int i = 0; i < pts.Count; i++)
+                if (!Value.Member.IsDummy)
                 {
-                    if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                    List<Point3d> pts = Value.Topology;
+                    for (int i = 0; i < pts.Count; i++)
                     {
-                        if (i == 0 | i == pts.Count - 1) // draw first point bigger
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Member1dNode);
+                        if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                        {
+                            if (i == 0 | i == pts.Count - 1) // draw first point bigger
+                                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Member1dNode);
+                            else
+                                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, UI.Colour.Member1dNode);
+                        }
                         else
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, UI.Colour.Member1dNode);
-                    }
-                    else
-                    {
-                        if (i == 0 | i == pts.Count - 1) // draw first point bigger
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Member1dNodeSelected);
-                        else
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 2, UI.Colour.Member1dNodeSelected);
+                        {
+                            if (i == 0 | i == pts.Count - 1) // draw first point bigger
+                                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Member1dNodeSelected);
+                            else
+                                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 2, UI.Colour.Member1dNodeSelected);
+                        }
                     }
                 }
             }

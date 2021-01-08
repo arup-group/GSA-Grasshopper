@@ -228,7 +228,7 @@ namespace GhSA.Parameters
             {
                 Member = new Member()
                 {
-                    Colour = Colour, //don't copy object.colour, this will be default = black if not set
+                    Colour = Colour.ToArgb(), //don't copy object.colour, this will be default = black if not set
                     Group = m_member.Group,
                     IsDummy = m_member.IsDummy,
                     MeshSize = m_member.MeshSize,
@@ -771,7 +771,10 @@ namespace GhSA.Parameters
             if (Value.Brep != null)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdge, -1);
+                {
+                    if (!Value.Member.IsDummy)
+                        args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdge, -1);
+                }
                 else
                     args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdgeSelected, -1);
             }
@@ -780,14 +783,29 @@ namespace GhSA.Parameters
             if (Value.PolyCurve != null & Value.Brep == null)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1d, 2);
+                {
+                    if (Value.Member.IsDummy)
+                        args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Dummy1D, false);
+                    else
+                        args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1d, 2);
+                }
                 else
-                    args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
+                {
+                    if (Value.Member.IsDummy)
+                        args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Member1dSelected, false);
+                    else
+                        args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
+                }
             }
             if (Value.InclusionLines != null)
             {
                 for (int i = 0; i < Value.InclusionLines.Count; i++)
-                    args.Pipeline.DrawCurve(Value.InclusionLines[i], UI.Colour.Member2dInclLn, 2);
+                {
+                    if (Value.Member.IsDummy)
+                        args.Pipeline.DrawDottedPolyline(Value.IncLinesTopology[i], UI.Colour.Member1dSelected, false);
+                    else
+                        args.Pipeline.DrawCurve(Value.InclusionLines[i], UI.Colour.Member2dInclLn, 2);
+                }
             }
 
             //Draw points.
@@ -799,9 +817,9 @@ namespace GhSA.Parameters
                     if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                     {
                         if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) // draw first point bigger
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Member1dNode);
+                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 3, (Value.Member.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
                         else
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, UI.Colour.Member1dNode);
+                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.Member.IsDummy)? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
                     }
                     else
                     {
@@ -810,17 +828,13 @@ namespace GhSA.Parameters
                         else
                             args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 2, UI.Colour.Member1dNodeSelected);
                     }
-
                 }
-
             }
             if (Value.InclusionPoints != null)
             {
                 for (int i = 0; i < Value.InclusionPoints.Count; i++)
-                    args.Pipeline.DrawPoint(Value.InclusionPoints[i], Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Member2dInclPt);
+                    args.Pipeline.DrawPoint(Value.InclusionPoints[i], Rhino.Display.PointStyle.RoundSimple, 3, (Value.Member.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member2dInclPt);
             }
-
-
         }
         #endregion
     }

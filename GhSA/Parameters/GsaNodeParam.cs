@@ -164,7 +164,7 @@ namespace GhSA.Parameters
                 Node = new Node
                 {
                     AxisProperty = Node.AxisProperty,
-                    Colour = Colour, //don't copy object.colour, this will be default = black if not set
+                    Colour = Colour.ToArgb(), //don't copy object.colour, this will be default = black if not set
                     DamperProperty = Node.DamperProperty,
                     MassProperty = Node.MassProperty,
                     Name = Node.Name,

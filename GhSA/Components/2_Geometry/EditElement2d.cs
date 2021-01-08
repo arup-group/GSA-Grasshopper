@@ -72,6 +72,7 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("2D Element", "E2D", "Modified GSA 2d Element", GH_ParamAccess.item);
             pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh", GH_ParamAccess.item);
+            pManager.HideParameter(1);
             pManager.AddGenericParameter("2D Property", "PA", "Get 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Offset", "Of", "Get Element Offset", GH_ParamAccess.list);
             pManager.AddIntegerParameter("2D Analysis Type", "Ty", "Get Element 2D Analysis Type", GH_ParamAccess.list);

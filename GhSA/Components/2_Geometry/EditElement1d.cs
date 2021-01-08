@@ -72,6 +72,7 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("1D Element", "E1D", "Modified GSA 1D Element", GH_ParamAccess.item);
             pManager.AddLineParameter("Line", "L", "Element Line", GH_ParamAccess.item);
+            pManager.HideParameter(1);
             pManager.AddGenericParameter("Section", "PB", "Get Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
             pManager.AddGenericParameter("Offset", "Of", "Get Element Offset", GH_ParamAccess.item);
             pManager.AddGenericParameter("Start release", "B6s", "Get Release (Bool6) at Start of Element", GH_ParamAccess.item);

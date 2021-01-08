@@ -148,6 +148,11 @@ namespace GhSA.UI
             get { return GsaDarkGreen; }
         }
 
+        public static Color Dummy1D
+        {
+            get { return Color.FromArgb(255, 143, 143, 143); }
+        }
+
         public static Color Member1d
         {
             get { return GsaGreen; }

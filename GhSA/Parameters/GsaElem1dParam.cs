@@ -140,7 +140,7 @@ namespace GhSA.Parameters
             GsaElement1d dup = new GsaElement1d();
             dup.m_element = new Element()
             {
-                Colour = Colour, //don't copy object.colour, this will be default = black if not set
+                Colour = Colour.ToArgb(), //don't copy object.colour, this will be default = black if not set
                 Group = m_element.Group,
                 IsDummy = m_element.IsDummy,
                 Name = m_element.Name.ToString(),
@@ -433,15 +433,25 @@ namespace GhSA.Parameters
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
-                    args.Pipeline.DrawCurve(Value.Line, Value.Colour, 2);
-                    args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
-                    args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
+                    if (Value.Element.IsDummy)
+                        args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, UI.Colour.Dummy1D);
+                    else
+                    {
+                        args.Pipeline.DrawCurve(Value.Line, Value.Colour, 2);
+                        args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
+                        args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
+                    }
                 }
                 else
                 {
-                    args.Pipeline.DrawCurve(Value.Line, UI.Colour.Element1dSelected, 2);
-                    args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
-                    args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
+                    if (Value.Element.IsDummy)
+                        args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, UI.Colour.Element1dSelected);
+                    else
+                    {
+                        args.Pipeline.DrawCurve(Value.Line, UI.Colour.Element1dSelected, 2);
+                        args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
+                        args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
+                    }
                 }
             }
         }
