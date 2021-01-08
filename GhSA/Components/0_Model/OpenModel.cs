@@ -25,12 +25,12 @@ namespace GhSA.Components
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
         public OpenModel()
-          : base("Open Model", "OpenGSA", "Open an existing GSA model",
+          : base("Open Model", "Open", "Open an existing GSA model",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         { this.Hidden = true; } // sets the initial state of the component to hidden
 
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.OpenModel;
         #endregion

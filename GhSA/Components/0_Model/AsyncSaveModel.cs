@@ -25,7 +25,7 @@ namespace GhSA.Components
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("333fa19b-5521-412f-a864-13cfe451283b");
         public AsyncSaveModel()
-          : base("Save Model 2", "Save Async", "Saves your GSA model from this parametric nightmare",
+          : base("Save Model", "SaveGSA", "Saves your GSA model from this parametric nightmare",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         { BaseWorker = new SaveWorker(); this.Hidden = true; }// sets the initial state of the component to hidden
