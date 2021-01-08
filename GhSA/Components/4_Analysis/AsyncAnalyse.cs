@@ -35,7 +35,7 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Model", "GSA", "(Optional) Existing Model to append to", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Nodes", "No", "Nodes to add/set in Model", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Nodes", "No", "Nodes to add/set in Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("1D Elements", "E1D", "1D Elements to add/set in Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("2D Elements", "E2D", "2D Elements to add/set in Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("1D Members", "M1D", "1D Members to add/set in Model", GH_ParamAccess.list);
@@ -104,10 +104,12 @@ namespace GhSA.Components
 
                 // Get Node input
                 List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
-                GH_Structure<GH_ObjectWrapper> ghtree_types = new GH_Structure<GH_ObjectWrapper>();
+                GH_Structure<IGH_Goo> ghtree_types = new GH_Structure<IGH_Goo>();
                 List<GsaNode> in_nodes = new List<GsaNode>();
-                if (DA.GetDataTree(1, out ghtree_types))
+                if (DA.GetDataList(1, gh_types))
                 {
+                    //ghtree_types.Flatten();
+                    //gh_types = ghtree_types[0];
                     for (int i = 0; i < gh_types.Count; i++)
                     {
                         gh_typ = gh_types[i];
@@ -282,21 +284,21 @@ namespace GhSA.Components
                 }
                 #endregion
             }
-
             public override void SetData(IGH_DataAccess DA)
             {
                 // 👉 Checking for cancellation!
                 if (CancellationToken.IsCancellationRequested) return;
 
                 DA.SetData(0, new GsaModelGoo(WorkModel));
+                //base.Parent.Message = analysed ? "Analysis complete" : "Model assembled";
             }
 
             public override void DoWork(Action<string, double> ReportProgress, Action Done)
             {
                 #region DoWork
-                ReportProgress("Clone model", -1);
+                ReportProgress("Cloning model...", -2);
                 GsaModel analysisModel = WorkModel.Clone(); // use Copy when GsaAPI allows to deepclone;
-
+                ReportProgress("Model cloned", -1);
                 // Let's work just on the model (not wrapped)
                 GsaAPI.Model gsa = analysisModel.Model;
                 
@@ -322,7 +324,7 @@ namespace GhSA.Components
                     for (int i = 0; i < Nodes.Count; i++)
                     {
                         if (CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Nodes", (double)i / (Nodes.Count - 1));
+                        ReportProgress("Nodes ", (double)i / (Nodes.Count - 1));
 
                         if (Nodes[i] != null)
                         {
@@ -405,6 +407,7 @@ namespace GhSA.Components
                         }
                     }
                 }
+                ReportProgress("Nodes assembled", -2);
                 #endregion
 
                 #region Elements
@@ -436,7 +439,7 @@ namespace GhSA.Components
                     for (int i = 0; i < Elem1ds.Count; i++)
                     {
                         if (CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Elem1D", (double)i / (Elem1ds.Count - 1));
+                        ReportProgress("Elem1D ", (double)i / (Elem1ds.Count - 1));
 
                         if (Elem1ds[i] != null)
                         {
@@ -497,6 +500,7 @@ namespace GhSA.Components
                         }
                     }
                 }
+                ReportProgress("Elem1D assembled", -2);
 
                 // Elem2ds
                 if (Elem2ds != null)
@@ -504,7 +508,7 @@ namespace GhSA.Components
                     for (int i = 0; i < Elem2ds.Count; i++)
                     {
                         if (CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Elem2D", (double)i / (Elem2ds.Count - 1));
+                        ReportProgress("Elem2D ", (double)i / (Elem2ds.Count - 1));
 
                         if (Elem2ds[i] != null)
                         {
@@ -562,6 +566,7 @@ namespace GhSA.Components
                         }
                     }
                 }
+                ReportProgress("Elem2D assembled", -2);
                 #endregion
 
                 #region Members
@@ -594,7 +599,7 @@ namespace GhSA.Components
                     for (int i = 0; i < Mem1ds.Count; i++)
                     {
                         if (CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Mem1D", (double)i / (Mem1ds.Count - 1));
+                        ReportProgress("Mem1D ", (double)i / (Mem1ds.Count - 1));
 
                         if (Mem1ds[i] != null)
                         {
@@ -660,6 +665,7 @@ namespace GhSA.Components
                         }
                     }
                 }
+                ReportProgress("Mem1D assembled", -2);
 
                 // Mem2ds
                 if (Mem2ds != null)
@@ -667,7 +673,7 @@ namespace GhSA.Components
                     for (int i = 0; i < Mem2ds.Count; i++)
                     {
                         if (CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Mem2D", (double)i / (Mem2ds.Count - 1));
+                        ReportProgress("Mem2D ", (double)i / (Mem2ds.Count - 1));
 
                         if (Mem2ds[i] != null)
                         {
@@ -831,6 +837,7 @@ namespace GhSA.Components
                         }
                     }
                 }
+                ReportProgress("Mem2D assembled", -2);
                 #endregion
 
                 #region Loads
@@ -852,6 +859,8 @@ namespace GhSA.Components
                 {
                     for (int i = 0; i < Loads.Count; i++)
                     {
+                        if (CancellationToken.IsCancellationRequested) return;
+                        ReportProgress("Loads ", (double)i / (Loads.Count - 1));
                         if (Loads[i] != null)
                         {
                             GsaLoad load = Loads[i];
@@ -1042,6 +1051,7 @@ namespace GhSA.Components
                         }
                     }
                 }
+                ReportProgress("Loads assembled", -2);
                 #endregion
 
                 #region Sections
@@ -1068,7 +1078,7 @@ namespace GhSA.Components
                         for (int i = 0; i < Sections.Count; i++)
                         {
                             if (CancellationToken.IsCancellationRequested) return;
-                            ReportProgress("Sections", (double)i / (Sections.Count - 1));
+                            ReportProgress("Sections ", (double)i / (Sections.Count - 1));
 
                             if (Sections[i] != null)
                             {
@@ -1088,6 +1098,7 @@ namespace GhSA.Components
                         }
                     }
                 }
+                ReportProgress("Sections assembled", -2);
                 #endregion
 
                 #region Prop2ds
@@ -1114,7 +1125,7 @@ namespace GhSA.Components
                         for (int i = 0; i < Prop2Ds.Count; i++)
                         {
                             if (CancellationToken.IsCancellationRequested) return;
-                            ReportProgress("Prop2D", (double)i / (Prop2Ds.Count - 1));
+                            ReportProgress("Prop2D ", (double)i / (Prop2Ds.Count - 1));
 
                             if (Prop2Ds[i] != null)
                             {
@@ -1134,13 +1145,14 @@ namespace GhSA.Components
                         }
                     }
                 }
+                ReportProgress("Prop2D assembled", -2);
                 #endregion
 
 
 
                 #region set stuff in model
                 if (CancellationToken.IsCancellationRequested) return;
-                ReportProgress("Assemble Model", -1);
+                //ReportProgress("Assemble model", -2);
                 ReadOnlyDictionary<int, Node> setnodes = new ReadOnlyDictionary<int, Node>(nodes);
                 gsa.SetNodes(setnodes);
 
@@ -1181,39 +1193,43 @@ namespace GhSA.Components
 
                 ReadOnlyDictionary<int, Prop2D> setpr2d = new ReadOnlyDictionary<int, Prop2D>(prop2ds);
                 gsa.SetProp2Ds(setpr2d);
+                ReportProgress("Model assembled", -2);
                 #endregion
 
                 #region meshing
                 // Create elements from members
-                ReportProgress("Meshing", -1);
+                ReportProgress("Meshing", 0);
                 gsa.CreateElementsFromMembers();
-                ReportProgress("Meshing", 1);
+                ReportProgress("Model meshed", -2);
                 #endregion
 
                 #region analysis
                 //analysis
                 IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
                 if (gsaTasks.Count < 1)
-                    ReportProgress("Model contains no Analysis Tasks", -255);
-
-                foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
                 {
-                    if (CancellationToken.IsCancellationRequested) return;
-                    ReportProgress("Analysing Task " + task.Key.ToString(), -1);
-                    
-                    if (!(gsa.Analyse(task.Key)))
-                    {
-                        ReportProgress("Warning Analysis Case " + task.Key + " could not be analysed", -10);
-                    }
+                    ReportProgress("Model contains no Analysis Tasks", -255);
+                    ReportProgress("Model assembled", -1);
                 }
-                #endregion
+                else
+                {
+                    foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
+                    {
+                        if (CancellationToken.IsCancellationRequested) return;
+                        ReportProgress("Analysing Task " + task.Key.ToString(), -2);
 
+                        if (!(gsa.Analyse(task.Key)))
+                        {
+                            ReportProgress("Warning Analysis Case " + task.Key + " could not be analysed", -10);
+                        }
+                    }
+                    ReportProgress("Model analysed", -1);
+                }
+
+                #endregion
                 WorkModel.Model = gsa;
-
-                //gsa.SaveAs("C:\\Users\\Kristjan.Nielsen\\Desktop\\GsaGH_test.gwb");
-                #endregion
-                ReportProgress("", -1);
                 Done();
+                #endregion
             }
         }
     }

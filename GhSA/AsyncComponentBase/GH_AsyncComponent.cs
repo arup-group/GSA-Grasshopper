@@ -96,7 +96,14 @@ namespace GrasshopperAsyncComponent
                     if (val < 0)
                     {
                         if (val == -1)
-                            msg = key + System.Environment.NewLine + msg;
+                        {
+                            msg = key.ToString();
+                            ProgressReports.Clear();
+                            break;
+                        }
+                            
+                        if (val == -2)
+                            msg = key.ToString() + System.Environment.NewLine + msg;
                         if (val == -255)
                         {
                             msg = "";
@@ -256,7 +263,7 @@ namespace GrasshopperAsyncComponent
             Tasks.Clear();
 
             SetData = false;
-
+            
             Message = "Done";
             OnDisplayExpired(true);
         }

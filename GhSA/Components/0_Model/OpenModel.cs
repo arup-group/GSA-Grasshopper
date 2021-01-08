@@ -101,8 +101,8 @@ namespace GhSA.Components
         #region Input and output
         // This region handles input and output parameters
 
-        public static string fileName = null;
-        public static Guid panelGUID = new Guid();
+        string fileName = null;
+        Guid panelGUID = new Guid();
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Filename and path", "File", "GSA model to open and work with." + 

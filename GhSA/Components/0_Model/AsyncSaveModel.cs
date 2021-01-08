@@ -249,6 +249,7 @@ namespace GhSA.Components
                         else
                         {
                             canOpen = true;
+                            ReportProgress("Model saved", -1);
                             Done();
                         }
                     }

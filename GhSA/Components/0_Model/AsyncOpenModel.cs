@@ -52,7 +52,7 @@ namespace GhSA.Components
             var res = fdi.ShowOpenDialog();
             if (res) // == DialogResult.OK)
             {
-                fileName = fdi.FileName;
+                string file = fdi.FileName;
 
                 // instantiate  new panel
                 var panel = new Grasshopper.Kernel.Special.GH_Panel();
@@ -72,7 +72,7 @@ namespace GhSA.Components
                         // update the UserText in existing panel
                         //RecordUndoEvent("Changed OpenGSA Component input");
                         panel = input as Grasshopper.Kernel.Special.GH_Panel;
-                        panel.UserText = fileName;
+                        panel.UserText = file;
                         panel.ExpireSolution(true); // update the display of the panel
                     }
 
@@ -81,7 +81,7 @@ namespace GhSA.Components
                 }
 
                 //populate panel with our own content
-                panel.UserText = fileName;
+                panel.UserText = file;
 
                 // record the panel's GUID if new, so that we can update it on change
                 panelGUID = panel.InstanceGuid;
@@ -95,27 +95,26 @@ namespace GhSA.Components
 
                 (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
                 Params.OnParametersChanged();
-                // ### having issues with the component not updating correctly on change to input
-                ExpireSolution(true);
-                
+                Params.Input[0].ClearRuntimeMessages();
+                CancellationSources.Add(new System.Threading.CancellationTokenSource());
+                ClearData();
             }
         }
         #endregion
 
         #region Input and output
         // This region handles input and output parameters
+        private static Guid panelGUID = new Guid();
 
-        public static string fileName = null;
-        public static Guid panelGUID = new Guid();
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Filename and path", "File", "GSA model to open and work with." + 
                     System.Environment.NewLine + "Input either path component, a text string with path and " +
                     System.Environment.NewLine + "filename or an existing GSA model created in Grasshopper.", GH_ParamAccess.item);
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "This component uses Async to not block the UI thread" +
-                    System.Environment.NewLine + "This means GH doesnt freeze if you try open a large file or from a jobdrive from home" +
-                    System.Environment.NewLine + "However, sometimes this component outputs an empty model." +
-                    System.Environment.NewLine + "Disable and Enable the component should solve this (Ctrl+E)");
+            //this.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "This component uses Async to not block the UI thread" +
+            //        System.Environment.NewLine + "This means GH doesnt freeze if you try open a large file or from a jobdrive from home" +
+            //        System.Environment.NewLine + "However, sometimes this component outputs an empty model." +
+            //        System.Environment.NewLine + "Disable and Enable the component should solve this (Ctrl+E)");
         }
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
@@ -141,14 +140,8 @@ namespace GhSA.Components
         }
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            Params.Input[0].Optional = fileName != null; //filename can have input from user input
-            Params.Input[0].ClearRuntimeMessages(); // this needs to be called to avoid having a runtime warning message after changed to optional
-
-            //    Params.Output[i].NickName = "P";
-            //    Params.Output[i].Name = "Points";
-            //    Params.Output[i].Description = "Points imported from GSA";
-            //    Params.Output[i].Access = GH_ParamAccess.list;
-
+            //Params.Input[0].Optional = file != ""; //file can be stored inside component from user input
+            //Params.Input[0].ClearRuntimeMessages(); // this needs to be called to avoid having a runtime warning message after changed to optional
         }
         #endregion
         #endregion
@@ -158,13 +151,13 @@ namespace GhSA.Components
         // component states will be remembered when reopening GH script
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            writer.SetString("File", (string)fileName);
+            //writer.SetString("File", (string)file);
             writer.SetGuid("Guid", (Guid)panelGUID);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            fileName = (string)reader.GetString("File");
+            //file = (string)reader.GetString("File");
             panelGUID = (Guid)reader.GetGuid("Guid");
             return base.Read(reader);
         }
@@ -176,70 +169,61 @@ namespace GhSA.Components
             public override WorkerInstance Duplicate() => new OpenWorker();
 
             #region fields
-            Model model = new Model();
-            string fileName = AsyncOpenModel.fileName;
+            GsaModel GsaModel = new GsaModel();
             #endregion
-
+            #region GetData
             public override void GetData(IGH_DataAccess DA, GH_ComponentParamServer Params)
             {
-                #region GetData
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-
                 if (DA.GetData(0, ref gh_typ))
                 {
                     if (gh_typ.Value is GH_String)
                     {
                         string tempfile = "";
                         if (GH_Convert.ToString(gh_typ, out tempfile, GH_Conversion.Both))
-                            fileName = tempfile;
-
-                        if (!fileName.EndsWith(".gwb"))
-                            fileName = fileName + ".gwb";
+                        {
+                            if (!tempfile.EndsWith(".gwb"))
+                                tempfile = tempfile + ".gwb";
+                            GsaModel.FileName = tempfile;
+                        }
                     }
                     else if (gh_typ.Value is GsaAPI.Model)
                     {
+                        GsaAPI.Model model = new Model();
                         gh_typ.CastTo(ref model);
-                        GsaModel gsaModel = new GsaModel
-                        {
-                            Model = model,
-                        };
+                        GsaModel.Model = model;
                     }
                 }
-                #endregion
             }
-
+            #endregion
             public override void SetData(IGH_DataAccess DA)
             {
                 // 👉 Checking for cancellation!
                 if (CancellationToken.IsCancellationRequested) return;
 
-                GsaModel gsaModel = new GsaModel
-                {
-                    Model = model,
-                    FileName = fileName
-                };
-                DA.SetData(0, new GsaModelGoo(gsaModel));
+                DA.SetData(0, new GsaModelGoo(GsaModel));
             }
 
             public override void DoWork(Action<string, double> ReportProgress, Action Done)
             {
-                ReportProgress("Opening model...", -1);
+                ReportProgress("Opening model...", -2);
+                Model model = new Model();
+                string fileName = GsaModel.FileName;
                 ReturnValue status = model.Open(fileName);
+                GsaModel.Model = model;
 
-                if (status == 0)
+                if (status != 0)
                 {
-                    Util.GsaTitles.GetTitlesFromGSA(model);
-
-                    string mes = Path.GetFileName(fileName);
-                    mes = mes.Substring(0, mes.Length - 4);
-                    ReportProgress(mes, -1);
-                }
-                else
-                {
-                    string mes  = "Unable to open Model" + System.Environment.NewLine + status.ToString();
-                    ReportProgress(mes, -20);
+                    string message  = "Unable to open Model" + System.Environment.NewLine + status.ToString();
+                    ReportProgress(message, -20);
                     return;
                 }
+
+                ReportProgress("Updating units...", -2);
+                Util.GsaTitles.GetTitlesFromGSA(model);
+
+                string mes = Path.GetFileNameWithoutExtension(fileName);
+                ReportProgress(mes, -1);
                 Done();
             }
         }

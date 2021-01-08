@@ -114,6 +114,7 @@ namespace GhSA.UI
         protected override void Layout()
         {
             base.Layout();
+            
             // Set the actual layout of the component here:
 
             // first change the width to suit; using max to determine component visualisation style
