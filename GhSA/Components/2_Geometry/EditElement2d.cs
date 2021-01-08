@@ -56,6 +56,7 @@ namespace GhSA.Components
             pManager.AddTextParameter("Element2d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Element2d Group", "Gr", "Set Element Group", GH_ParamAccess.list);
             pManager.AddColourParameter("Element2d Colour", "Co", "Set Element Colour", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Dummy Element", "Dm", "Set Element to Dummy", GH_ParamAccess.list);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -64,6 +65,7 @@ namespace GhSA.Components
             pManager[5].Optional = true;
             pManager[6].Optional = true;
             pManager[7].Optional = true;
+            pManager[8].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -77,6 +79,7 @@ namespace GhSA.Components
             pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
             pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
         }
         #endregion
@@ -186,6 +189,16 @@ namespace GhSA.Components
                     }
                 }
 
+                // 8 Dummy
+                List<GH_Boolean> ghdum = new List<GH_Boolean>();
+                if (DA.GetDataList(8, ghdum))
+                {
+                    for (int i = 0; i < ghdum.Count; i++)
+                    {
+                        if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both))
+                            elem.Elements[i].IsDummy = dum;
+                    }
+                }
 
                 // #### outputs ####
 
@@ -198,6 +211,7 @@ namespace GhSA.Components
                 List<int> groups = new List<int>();
                 List<System.Drawing.Color> colours = new List<System.Drawing.Color>();
                 List<int> pmems = new List<int>();
+                List<bool> dums = new List<bool>();
                 for (int i = 0; i < elem.Elements.Count; i++)
                 {
                     GsaOffset offset1 = new GsaOffset
@@ -209,6 +223,7 @@ namespace GhSA.Components
                     names.Add(elem.Elements[i].Name);
                     groups.Add(elem.Elements[i].Group);
                     colours.Add((System.Drawing.Color)elem.Elements[i].Colour);
+                    dums.Add(elem.Elements[i].IsDummy);
                     try { pmems.Add(elem.Elements[i].ParentMember.Member); } catch (Exception) { pmems.Add(0); }
                     ;
                 }
@@ -219,7 +234,8 @@ namespace GhSA.Components
                 DA.SetDataList(6, names);
                 DA.SetDataList(7, groups);
                 DA.SetDataList(8, colours);
-                DA.SetDataList(9, pmems);
+                DA.SetDataList(9, dums);
+                DA.SetDataList(10, pmems);
             }
         }
     }

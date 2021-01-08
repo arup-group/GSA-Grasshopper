@@ -51,6 +51,7 @@ namespace GhSA.Components
             pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Group", "Gr", "Set Element Group", GH_ParamAccess.item);
             pManager.AddColourParameter("Colour", "Co", "Set Element Colour", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Dummy Element", "Dm", "Set Element to Dummy", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -64,6 +65,7 @@ namespace GhSA.Components
             pManager[10].Optional = true;
             pManager[11].Optional = true;
             pManager[12].Optional = true;
+            pManager[13].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -81,7 +83,9 @@ namespace GhSA.Components
             pManager.AddTextParameter("Name", "Na", "Get Element Name", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.item);
             pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
+            
         }
         #endregion
 
@@ -212,6 +216,14 @@ namespace GhSA.Components
                         elem.Element.Colour = col;
                 }
 
+                // 13 Dummy
+                GH_Boolean ghdum = new GH_Boolean();
+                if (DA.GetData(13, ref ghdum))
+                {
+                    if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
+                        elem.Element.IsDummy = dum;
+                }
+
                 // #### outputs ####
                 DA.SetData(0, new GsaElement1dGoo(elem));
 
@@ -239,8 +251,9 @@ namespace GhSA.Components
                 DA.SetData(10, elem.Element.Name);
                 DA.SetData(11, elem.Element.Group);
                 DA.SetData(12, elem.Element.Colour);
+                DA.SetData(13, elem.Element.IsDummy);
 
-                try { DA.SetData(13, elem.Element.ParentMember.Member); } catch (Exception) { }
+                try { DA.SetData(14, elem.Element.ParentMember.Member); } catch (Exception) { }
                 //DA.SetData(16, gsaElement1d.Element.IsDummy);
             }
         }
