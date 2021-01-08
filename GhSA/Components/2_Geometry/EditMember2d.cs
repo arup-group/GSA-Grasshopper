@@ -275,7 +275,7 @@ namespace GhSA.Components
                 DA.SetDataList(5, mem.InclusionLines);
 
                 DA.SetData(6, mem.Member.MeshSize);
-                //DA.SetData(7, mem.member.MeshWithOthers);
+                //DA.SetData(7, mem.Member.MeshWithOthers);
 
                 DA.SetData(8, mem.Member.Type);
                 DA.SetData(9, mem.Member.Type2D);

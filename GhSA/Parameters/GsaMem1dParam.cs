@@ -141,7 +141,7 @@ namespace GhSA.Parameters
                     OrientationAngle = m_member.OrientationAngle,
                     OrientationNode = m_member.OrientationNode,
                     Property = m_member.Property,
-                    Topology = m_member.Topology,
+                    Topology = m_member.Topology.ToString(),
                     Type = m_member.Type,
                     Type1D = m_member.Type1D
                 }

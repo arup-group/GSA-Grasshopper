@@ -125,74 +125,17 @@ namespace GhSA.Parameters
         public GsaMember2d()
         {
             m_member = new Member();
-        }
-
-        //public GsaMember(List<Point3d> topology, MemberType memberType)
-        //{
-        //    m_member = new Member();
-        //    m_member.Type = memberType;
-        //    m_topo = topology;
-        //}
-
-
-        public GsaMember2d(Brep brep, int prop = 1)
-        {
-            m_member = new Member
-            {
-                Type = MemberType.GENERIC_2D,
-                Property = prop
-            };
-
-            Tuple<PolyCurve, List<Point3d>, List<string>, List<PolyCurve>, List<List<Point3d>>, List<List<string>>> convertBrep
-                = Util.GH.Convert.ConvertPolyBrep(brep);
-            m_crv = convertBrep.Item1;
-            m_topo = convertBrep.Item2;
-            m_topoType = convertBrep.Item3;
-            void_crvs = convertBrep.Item4;
-            void_topo = convertBrep.Item5;
-            void_topoType = convertBrep.Item6;
-
             m_prop = new GsaProp2d();
-
-            m_brep = Util.GH.Convert.BuildBrep(m_crv, void_crvs);
         }
 
-        public GsaMember2d(Brep brep, List<Point3d> includePoints, List<Curve> includeCurves = null, int prop = 1)
+        public GsaMember2d(Brep brep, List<Curve> includeCurves = null, List<Point3d> includePoints = null, int prop = 1)
         {
             m_member = new Member
             {
                 Type = MemberType.GENERIC_2D,
                 Property = prop
             };
-
-            Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
-                convertBrepInclusion = Util.GH.Convert.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
-
-            Tuple<PolyCurve, List<Point3d>, List<string>> edgeTuple = convertBrepInclusion.Item1;
-            Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>> voidTuple = convertBrepInclusion.Item2;
-            Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>> inclTuple = convertBrepInclusion.Item3;
-
-            m_crv = edgeTuple.Item1;
-            m_topo = edgeTuple.Item2;
-            m_topoType = edgeTuple.Item3;
-            void_crvs = voidTuple.Item1;
-            void_topo = voidTuple.Item2;
-            void_topoType = voidTuple.Item3;
-            incl_Lines = inclTuple.Item1;
-            incLines_topo = inclTuple.Item2;
-            inclLines_topoType = inclTuple.Item3;
-            incl_pts = inclTuple.Item4;
-
-            m_brep = Util.GH.Convert.BuildBrep(m_crv, void_crvs);
-        }
-
-        public GsaMember2d(Brep brep, List<Curve> includeCurves, List<Point3d> includePoints = null, int prop = 1)
-        {
-            m_member = new Member
-            {
-                Type = MemberType.GENERIC_2D,
-                Property = prop
-            };
+            m_prop = new GsaProp2d();
 
             Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
                 convertBrepInclusion = Util.GH.Convert.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
@@ -283,23 +226,28 @@ namespace GhSA.Parameters
         {
             GsaMember2d dup = new GsaMember2d()
             {
-                m_member = new Member()
+                Member = new Member()
                 {
                     Colour = Colour, //don't copy object.colour, this will be default = black if not set
                     Group = m_member.Group,
                     IsDummy = m_member.IsDummy,
                     MeshSize = m_member.MeshSize,
                     Name = m_member.Name.ToString(),
+                    Offset = m_member.Offset,
                     OrientationAngle = m_member.OrientationAngle,
                     OrientationNode = m_member.OrientationNode,
                     Property = m_member.Property,
-                    Topology = m_member.Topology,
+                    Topology = m_member.Topology.ToString(),
                     Type = m_member.Type,
                     Type2D = m_member.Type2D
                 }
             };
 
-            dup.m_member = m_member;
+            dup.Member.Offset.X1 = m_member.Offset.X1;
+            dup.Member.Offset.X2 = m_member.Offset.X2;
+            dup.Member.Offset.Y = m_member.Offset.Y;
+            dup.Member.Offset.Z = m_member.Offset.Z;
+
             if (m_brep != null)
                 dup.m_brep = m_brep.DuplicateBrep();
             if (m_crv != null)
@@ -627,7 +575,6 @@ namespace GhSA.Parameters
         {
             // This function is called when Grasshopper needs to convert other data 
             // into GsaMember.
-
 
             if (source == null) { return false; }
 

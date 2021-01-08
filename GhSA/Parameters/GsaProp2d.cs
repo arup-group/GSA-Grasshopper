@@ -46,7 +46,7 @@ namespace GhSA.Parameters
         #region constructors
         public GsaProp2d()
         {
-            m_prop2d = null;
+            m_prop2d = new Prop2D();
         }
         
         public GsaProp2d Duplicate()

@@ -62,7 +62,7 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("2D Member", "Mem2d", "GSA 2D Member", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Member", "M2D", "GSA 2D Member", GH_ParamAccess.item);
         }
         #endregion
 
