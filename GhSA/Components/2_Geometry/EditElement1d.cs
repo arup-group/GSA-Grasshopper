@@ -90,7 +90,7 @@ namespace GhSA.Components
             GsaElement1d gsaElement1d = new GsaElement1d();
             if (DA.GetData(0, ref gsaElement1d))
             {
-                GsaElement1d elem = gsaElement1d.Clone();
+                GsaElement1d elem = gsaElement1d;
 
                 // #### inputs ####
                 // 1 curve
@@ -117,7 +117,7 @@ namespace GhSA.Components
                 if (DA.GetData(2, ref gh_typ))
                 {
                     GsaSection section = new GsaSection();
-                    if (gh_typ.Value is GsaSection)
+                    if (gh_typ.Value is GsaSectionGoo)
                         gh_typ.CastTo(ref section);
                     else
                     {

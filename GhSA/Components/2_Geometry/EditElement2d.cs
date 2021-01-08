@@ -101,7 +101,7 @@ namespace GhSA.Components
                     {
                         GH_ObjectWrapper gh_typ = gh_types[i];
                         GsaProp2d prop2d = new GsaProp2d();
-                        if (gh_typ.Value is GsaProp2d)
+                        if (gh_typ.Value is GsaProp2dGoo)
                             gh_typ.CastTo(ref prop2d);
                         else
                         {

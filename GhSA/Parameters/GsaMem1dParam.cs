@@ -64,7 +64,16 @@ namespace GhSA.Parameters
             set { m_section = value; }
         }
 
-
+        public System.Drawing.Color Colour
+        {
+            get 
+            {
+                if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                    m_member.Colour = UI.Colour.Member1d;
+                return (System.Drawing.Color)m_member.Colour; 
+            }
+            set { m_member.Colour = value; }
+        }
 
         #region fields
         private Member m_member;
@@ -116,35 +125,31 @@ namespace GhSA.Parameters
             Topology = m_topo;
             TopologyType = m_topoType;
         }
-        public GsaMember1d Clone()
-        {
-            GsaMember1d clone = this.Duplicate();
-            clone.Member = new Member();
-            clone.Member.Colour = m_member.Colour;
-            clone.Member.Group = m_member.Group;
-            clone.Member.IsDummy = m_member.IsDummy;
-            clone.Member.MeshSize = m_member.MeshSize;
-            clone.Member.Name = m_member.Name.ToString();
-            clone.Member.Offset.X1 = m_member.Offset.X1;
-            clone.Member.Offset.X2 = m_member.Offset.X2;
-            clone.Member.Offset.Y = m_member.Offset.Y;
-            clone.Member.Offset.Z = m_member.Offset.Z;
-            clone.Member.OrientationAngle = m_member.OrientationAngle;
-            clone.Member.OrientationNode = m_member.OrientationNode;
-            clone.Member.Property = m_member.Property;
-            clone.Member.Topology = m_member.Topology;
-            clone.Member.Type = m_member.Type;
-            clone.Member.Type1D = m_member.Type1D;
-
-            return clone;
-        }
-
+        
         public GsaMember1d Duplicate()
         {
             GsaMember1d dup = new GsaMember1d
             {
-                m_member = m_member //add clone or duplicate if available
+                Member = new Member
+                {
+                    Colour = Colour, //don't copy object.colour, this will be default = black if not set
+                    Group = m_member.Group,
+                    IsDummy = m_member.IsDummy,
+                    MeshSize = m_member.MeshSize,
+                    Name = m_member.Name.ToString(),
+                    Offset = m_member.Offset,
+                    OrientationAngle = m_member.OrientationAngle,
+                    OrientationNode = m_member.OrientationNode,
+                    Property = m_member.Property,
+                    Topology = m_member.Topology,
+                    Type = m_member.Type,
+                    Type1D = m_member.Type1D
+                }
             };
+            dup.Member.Offset.X1 = m_member.Offset.X1;
+            dup.Member.Offset.X2 = m_member.Offset.X2;
+            dup.Member.Offset.Y = m_member.Offset.Y;
+            dup.Member.Offset.Z = m_member.Offset.Z;
 
             if (m_crv != null)
                 dup.m_crv = m_crv.DuplicatePolyCurve();
@@ -187,7 +192,7 @@ namespace GhSA.Parameters
             if (ID == 0) { idd = ""; }
             string mes = m_member.Type.ToString();
             string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
-
+            typeTxt = typeTxt.Replace("1d", "1D");
             return typeTxt;
         }
 
@@ -472,7 +477,7 @@ namespace GhSA.Parameters
             if (Value.PolyCurve != null)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1d, 2);
+                    args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2); //UI.Colour.Member1d
                 else
                     args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
             }

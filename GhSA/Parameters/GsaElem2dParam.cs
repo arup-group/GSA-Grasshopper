@@ -49,6 +49,34 @@ namespace GhSA.Parameters
             get { return m_props; }
             set { m_props = value; }
         }
+        public List<System.Drawing.Color> Colours
+        {
+            get
+            {
+                List<System.Drawing.Color> cols = new List<System.Drawing.Color>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if ((System.Drawing.Color)m_elements[i].Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                    {
+                        m_elements[i].Colour = System.Drawing.Color.FromArgb(50, 150, 150, 150);
+                    }
+                    cols.Add((System.Drawing.Color)m_elements[i].Colour);
+                    Mesh.VertexColors.SetColor(Mesh.Faces.GetFace(i), (System.Drawing.Color)m_elements[i].Colour);
+                }
+                return cols;
+            }
+            set 
+            {
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (value[i] != null)
+                    {
+                        m_elements[i].Colour = value[i];
+                        Mesh.VertexColors.SetColor(Mesh.Faces.GetFace(i), (System.Drawing.Color)m_elements[i].Colour);
+                    }
+                }
+            }
+        }
         #region fields
         private List<Element> m_elements; 
         private Mesh m_mesh;
@@ -111,10 +139,30 @@ namespace GhSA.Parameters
 
         public GsaElement2d Duplicate()
         {
-            GsaElement2d dup = new GsaElement2d
+            GsaElement2d dup = new GsaElement2d();
+            for (int i = 0; i < m_elements.Count; i++)
             {
-                m_elements = m_elements //add clone or duplicate if available
-            };
+                dup.Elements[i] = new Element()
+                {
+                    //don't copy object.colour, this will be default = black if not set
+                    Group = m_elements[i].Group,
+                    IsDummy = m_elements[i].IsDummy,
+                    Name = m_elements[i].Name.ToString(),
+                    OrientationNode = m_elements[i].OrientationNode,
+                    OrientationAngle = m_elements[i].OrientationAngle,
+                    Offset = m_elements[i].Offset,
+                    ParentMember = m_elements[i].ParentMember,
+                    Property = m_elements[i].Property,
+                    Topology = m_elements[i].Topology,
+                    Type = m_elements[i].Type
+                };
+                dup.Elements[i].Offset.X1 = m_elements[i].Offset.X1;
+                dup.Elements[i].Offset.X2 = m_elements[i].Offset.X2;
+                dup.Elements[i].Offset.Y = m_elements[i].Offset.Y;
+                dup.Elements[i].Offset.Z = m_elements[i].Offset.Z;
+            }
+            dup.Colours = Colours.ToList();
+
             if (m_mesh != null)
             {
                 dup.m_mesh = (Mesh)m_mesh.Duplicate();

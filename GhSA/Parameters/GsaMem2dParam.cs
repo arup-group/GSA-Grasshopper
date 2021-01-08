@@ -92,6 +92,16 @@ namespace GhSA.Parameters
             get { return m_prop; }
             set { m_prop = value; }
         }
+        public System.Drawing.Color Colour
+        {
+            get
+            {
+                if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                    m_member.Colour = System.Drawing.Color.FromArgb(50, 150, 150, 150);
+                return (System.Drawing.Color)m_member.Colour;
+            }
+            set { m_member.Colour = value; }
+        }
 
         #region fields
         private Member m_member;
@@ -268,32 +278,27 @@ namespace GhSA.Parameters
 
             m_brep = Util.GH.Convert.BuildBrep(m_crv, void_crvs);
         }
-
-        public GsaMember2d Clone()
-        {
-            GsaMember2d clone = this.Duplicate();
-            clone.Member = new Member();
-            clone.Member.Colour = m_member.Colour;
-            clone.Member.Group = m_member.Group;
-            clone.Member.IsDummy = m_member.IsDummy;
-            clone.Member.MeshSize = m_member.MeshSize;
-            clone.Member.Name = m_member.Name.ToString();
-            clone.Member.Offset.X1 = m_member.Offset.X1;
-            clone.Member.Offset.X2 = m_member.Offset.X2;
-            clone.Member.Offset.Y = m_member.Offset.Y;
-            clone.Member.Offset.Z = m_member.Offset.Z;
-            clone.Member.OrientationAngle = m_member.OrientationAngle;
-            clone.Member.OrientationNode = m_member.OrientationNode;
-            clone.Member.Property = m_member.Property;
-            clone.Member.Topology = m_member.Topology;
-            clone.Member.Type = m_member.Type;
-            clone.Member.Type2D = m_member.Type2D;
-
-            return clone;
-        }
+        
         public GsaMember2d Duplicate()
         {
-            GsaMember2d dup = new GsaMember2d();
+            GsaMember2d dup = new GsaMember2d()
+            {
+                m_member = new Member()
+                {
+                    Colour = Colour, //don't copy object.colour, this will be default = black if not set
+                    Group = m_member.Group,
+                    IsDummy = m_member.IsDummy,
+                    MeshSize = m_member.MeshSize,
+                    Name = m_member.Name.ToString(),
+                    OrientationAngle = m_member.OrientationAngle,
+                    OrientationNode = m_member.OrientationNode,
+                    Property = m_member.Property,
+                    Topology = m_member.Topology,
+                    Type = m_member.Type,
+                    Type2D = m_member.Type2D
+                }
+            };
+
             dup.m_member = m_member;
             if (m_brep != null)
                 dup.m_brep = m_brep.DuplicateBrep();
@@ -369,7 +374,7 @@ namespace GhSA.Parameters
             if (ID == 0) { idd = ""; }
             string mes = m_member.Type.ToString();
             string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
-
+            typeTxt = typeTxt.Replace("2d", "2D");
             string incl = "";
             if (!(incl_Lines == null & incl_pts == null))
                 if (incl_Lines.Count > 0 | incl_pts.Count > 0)
@@ -806,7 +811,7 @@ namespace GhSA.Parameters
             if (Value.Brep != null)
             {
                 if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFace);
+                    args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFaceCustom(Value.Colour)); //UI.Colour.Member2dFace
                 else
                     args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFaceSelected);
             }

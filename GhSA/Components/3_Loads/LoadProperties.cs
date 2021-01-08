@@ -36,7 +36,7 @@ namespace GhSA.Components
         {
             pManager.AddIntegerParameter("Load case", "LC", "Load case number)", GH_ParamAccess.item);
             pManager.AddTextParameter("Name", "Na", "Load name", GH_ParamAccess.item);
-            pManager.AddTextParameter("Elements or Nodes", "El", "Element or Node list", GH_ParamAccess.item);
+            pManager.AddTextParameter("Elements or Nodes", "El", "Element or Node list that load is applied to", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Axis", "Ax", "Axis Property (0 : Global // -1 : Local", GH_ParamAccess.item);
             pManager.AddTextParameter("Direction", "Di", "Load direction", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected", GH_ParamAccess.item);

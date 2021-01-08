@@ -73,7 +73,10 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model", GH_ParamAccess.item, 0);
-            pManager.AddTextParameter("Elements", "El", "Elements for which the load should be expanded to. Default all", GH_ParamAccess.item, "all");
+            pManager.AddTextParameter("Element list", "El", "List of Elements for which load should be expanded to (by default 'all')." + System.Environment.NewLine +
+               "Element list should take the form:" + System.Environment.NewLine +
+               " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+               "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
             pManager.AddTextParameter("Name", "Na", "Name of Grid Surface", GH_ParamAccess.item);
             pManager.AddNumberParameter("Tolerance (" + Util.GsaUnit.LengthSmall + ")", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 10);
 

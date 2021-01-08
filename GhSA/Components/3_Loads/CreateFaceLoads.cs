@@ -76,7 +76,10 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
-            pManager.AddTextParameter("Elements", "El", "2D element list", GH_ParamAccess.item);
+            pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to." + System.Environment.NewLine +
+                "Element list should take the form:" + System.Environment.NewLine +
+                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Axis", "Ax", "Load axis (default Local). " +
                     System.Environment.NewLine + "Accepted inputs are:" +
                     System.Environment.NewLine + "0 : Global" +
@@ -105,14 +108,14 @@ namespace GhSA.Components
         {
             GsaFaceLoad faceLoad = new GsaFaceLoad();
             
-            //Load case
+            // 0 Load case
             int lc = 1;
             GH_Integer gh_lc = new GH_Integer();
             if (DA.GetData(0, ref gh_lc))
                 GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
             faceLoad.FaceLoad.Case = lc;
 
-            //element/beam list
+            // 1 element/beam list
             string elemList = ""; 
             GH_String gh_el = new GH_String();
             if (DA.GetData(1, ref gh_el))
@@ -123,7 +126,7 @@ namespace GhSA.Components
 
             faceLoad.FaceLoad.Elements = elemList;
 
-            //axis
+            // 2 axis
             int axis = -1;
             faceLoad.FaceLoad.AxisProperty = 0; //Note there is currently a bug/undocumented in GsaAPI that cannot translate an integer into axis type (Global, Local or edformed local)
             GH_Integer gh_ax = new GH_Integer();
@@ -134,14 +137,14 @@ namespace GhSA.Components
                     faceLoad.FaceLoad.AxisProperty = axis;
             }
             
-            //direction
+            // 3 direction
             string dir = "Z";
             Direction direc = Direction.Z;
             
             GH_String gh_dir = new GH_String();
             if (DA.GetData(3, ref gh_dir))
                 GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
-            dir = dir.ToUpper();
+            dir = dir.ToUpper().Trim();
             if (dir == "X")
                 direc = Direction.X;
             if (dir == "Y")
@@ -167,7 +170,12 @@ namespace GhSA.Components
 
                         double load1 = 0;
                         if (DA.GetData(5, ref load1))
-                            load1 *= -1000; //convert to kN
+                        {
+                            if (direc == Direction.Z)
+                                load1 *= -1000; //convert to kN
+                            else
+                                load1 *= 1000;
+                        }
 
                         // set position and value
                         faceLoad.FaceLoad.SetValue(0, load1);
@@ -188,16 +196,36 @@ namespace GhSA.Components
 
                         double load1 = 0;
                         if (DA.GetData(5, ref load1))
-                            load1 *= -1000; //convert to kN
+                        {
+                            if (direc == Direction.Z)
+                                load1 *= -1000; //convert to kN
+                            else
+                                load1 *= 1000;
+                        }
                         double load2 = 0;
                         if (DA.GetData(6, ref load2))
-                            load2 *= -1000; //convert to kN
+                        {
+                            if (direc == Direction.Z)
+                                load2 *= -1000; //convert to kN
+                            else
+                                load2 *= 1000;
+                        }
                         double load3 = 0;
                         if (DA.GetData(7, ref load3))
-                            load3 *= -1000; //convert to kN
+                        {
+                            if (direc == Direction.Z)
+                                load3 *= -1000; //convert to kN
+                            else
+                                load3 *= 1000;
+                        }
                         double load4 = 0;
                         if (DA.GetData(8, ref load4))
-                            load4 *= -1000; //convert to kN
+                        {
+                            if (direc == Direction.Z)
+                                load4 *= -1000; //convert to kN
+                            else
+                                load4 *= 1000;
+                        }
 
                         // set value
                         faceLoad.FaceLoad.SetValue(0, load1);
@@ -221,7 +249,12 @@ namespace GhSA.Components
 
                         double load1 = 0;
                         if (DA.GetData(5, ref load1))
-                            load1 *= -1000; //convert to kN
+                        {
+                            if (direc == Direction.Z)
+                                load1 *= -1000; //convert to kN
+                            else
+                                load1 *= 1000;
+                        }
                         double r = 0;
                         DA.GetData(6, ref r);
                             
@@ -247,11 +280,21 @@ namespace GhSA.Components
 
                         double load1 = 0;
                         if (DA.GetData(5, ref load1))
-                            load1 *= -1000; //convert to kN
+                        {
+                            if (direc == Direction.Z)
+                                load1 *= -1000; //convert to kN
+                            else
+                                load1 *= 1000;
+                        }
 
                         double load2 = 0;
                         if (DA.GetData(6, ref load2))
-                            load2 *= -1000; //convert to kN
+                        {
+                            if (direc == Direction.Z)
+                                load2 *= -1000; //convert to kN
+                            else
+                                load2 *= 1000;
+                        }
 
                         // set value
                         faceLoad.FaceLoad.SetValue(0, load1);

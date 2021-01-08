@@ -52,9 +52,9 @@ namespace GhSA.Components
             pManager.AddBrepParameter("Brep", "B", "Reposition Member Brep (non-planar geometry will be automatically converted to an average plane from exterior boundary control points)", GH_ParamAccess.item);
             pManager.AddGenericParameter("2D Property", "PA", "Change 2D Property", GH_ParamAccess.item);
             pManager.AddGenericParameter("Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
-            pManager.AddPointParameter("Incl. Points", "(P)", "Add Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
-            pManager.AddCurveParameter("Incl. Curves", "(C)", "Add Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Mesh Size", "Ms", "Set Targe mesh size", GH_ParamAccess.item);
+            pManager.AddPointParameter("Incl. Points", "(P)", "Add inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
+            pManager.AddCurveParameter("Incl. Curves", "(C)", "Add inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Mesh Size", "Ms", "Set target mesh size", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item, true);
             pManager.AddIntegerParameter("Member Type", "Ty", "Set 2D Member Type", GH_ParamAccess.item);
             pManager.AddIntegerParameter("2D Analysis Type", "mT", "Set Member 2d Analysis Type", GH_ParamAccess.item);
@@ -82,8 +82,9 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("2D Member", "Mem2d", "Modified GSA 2D Member", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Member", "M2D", "Modified GSA 2D Member", GH_ParamAccess.item);
             pManager.AddBrepParameter("Brep", "B", "Member Brep", GH_ParamAccess.item);
+            pManager.HideParameter(1);
             pManager.AddGenericParameter("Section", "PA", "Change Section Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
             pManager.AddGenericParameter("Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
             pManager.AddPointParameter("Incl. Points", "(P)", "Get Inclusion points", GH_ParamAccess.list);
@@ -105,7 +106,7 @@ namespace GhSA.Components
             GsaMember2d gsaMember2d = new GsaMember2d();
             if (DA.GetData(0, ref gsaMember2d))
             {
-                GsaMember2d mem = gsaMember2d.Clone();
+                GsaMember2d mem = gsaMember2d;
 
                 // #### inputs ####
 
@@ -123,7 +124,7 @@ namespace GhSA.Components
                 if (DA.GetData(2, ref gh_typ))
                 {
                     GsaProp2d prop2d = new GsaProp2d();
-                    if (gh_typ.Value is GsaProp2d)
+                    if (gh_typ.Value is GsaProp2dGoo)
                         gh_typ.CastTo(ref prop2d);
                     else
                     {

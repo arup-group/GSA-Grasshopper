@@ -49,6 +49,17 @@ namespace GhSA.Parameters
             set { Node.Position.X = value.X; Node.Position.Y = value.Y; Node.Position.Z = value.Z; }
         }
 
+        public System.Drawing.Color Colour
+        {
+            get
+            {
+                if ((System.Drawing.Color)Node.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                    Node.Colour = UI.Colour.Node;
+                return (System.Drawing.Color)Node.Colour;
+            }
+            set { Node.Colour = value; }
+        }
+
         #region constructors
         public GsaNode()
         {
@@ -153,7 +164,7 @@ namespace GhSA.Parameters
                 Node = new Node
                 {
                     AxisProperty = Node.AxisProperty,
-                    Colour = Node.Colour,
+                    Colour = Colour, //don't copy object.colour, this will be default = black if not set
                     DamperProperty = Node.DamperProperty,
                     MassProperty = Node.MassProperty,
                     Name = Node.Name,
@@ -460,7 +471,7 @@ namespace GhSA.Parameters
             if (Value.Point.IsValid)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Node);
+                    args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, (System.Drawing.Color)Value.Node.Colour);
                 else
                     args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.NodeSelected);
             }

@@ -185,12 +185,22 @@ namespace GhSA.UI
             {
                 DisplayMaterial material = new DisplayMaterial
                 {
-                    Diffuse = Color.FromArgb(50, 150,150,150),
+                    Diffuse = Color.FromArgb(50, 150, 150, 150),
                     Emission = Color.FromArgb(50, 190, 190, 190),
                     Transparency = 0.1
                 };
                 return material;
             } 
+        }
+        public static DisplayMaterial Element2dFaceCustom(Color colour)
+        {
+            DisplayMaterial material = new DisplayMaterial()
+            {
+                Diffuse = colour,
+                Emission = Color.FromArgb(50, 190, 190, 190),
+                Transparency = 0.1
+            };
+            return material;
         }
 
         public static DisplayMaterial Element2dFaceSelected
@@ -227,6 +237,17 @@ namespace GhSA.UI
                 };
                 return material;
             }
+        }
+
+        public static DisplayMaterial Member2dFaceCustom(Color colour)
+        {
+            DisplayMaterial material = new DisplayMaterial()
+            {
+                Diffuse = colour,
+                Emission = Color.FromArgb(50, 45, 45, 45),
+                Transparency = 0.1
+            };
+            return material;
         }
 
         public static DisplayMaterial Member2dFaceSelected

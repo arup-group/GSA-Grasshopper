@@ -84,6 +84,7 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("1D Member", "M1D", "Modified GSA 1D Member", GH_ParamAccess.item);
             pManager.AddCurveParameter("Curve", "C", "Member Curve", GH_ParamAccess.item);
+            pManager.HideParameter(1);
             pManager.AddGenericParameter("Section", "PB", "Change Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member Type", "mT", "Get 1D Member Type", GH_ParamAccess.item);
             pManager.AddIntegerParameter("1D Element Type", "eT", "Get Element 1D Type", GH_ParamAccess.item);
@@ -107,7 +108,7 @@ namespace GhSA.Components
             GsaMember1d gsaMember1d = new GsaMember1d();
             if (DA.GetData(0, ref gsaMember1d))
             {
-                GsaMember1d mem = gsaMember1d.Clone();
+                GsaMember1d mem = gsaMember1d;
 
                 // #### inputs ####
                 // 1 section
@@ -275,8 +276,8 @@ namespace GhSA.Components
                 DA.SetData(12, mem.ID);
                 DA.SetData(13, mem.Member.Name);
                 DA.SetData(14, mem.Member.Group);
-                if (Params.Input[14].SourceCount > 0)
-                    DA.SetData(15, mem.Member.Colour);
+                //if (Params.Input[14].SourceCount > 0)
+                DA.SetData(15, mem.Member.Colour);
 
                 DA.SetData(16, mem.Member.IsDummy);
             }

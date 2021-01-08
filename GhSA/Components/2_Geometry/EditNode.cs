@@ -47,12 +47,13 @@ namespace GhSA.Components
         {
             
             pManager.AddGenericParameter("Node", "No", "GSA Node to Edit. If no input a new node will be created.", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Node number", "ID", "If Node ID is set it will replace any existing nodes in the model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Node Name", "Na", "Name of Node", GH_ParamAccess.item);
-            pManager.AddPointParameter("Node Position", "Pt", "Position (x, y, z) of Node", GH_ParamAccess.item);
-            pManager.AddPlaneParameter("Node local axis", "Pl", "Local axis (Plane) of Node", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Node Restraints", "B6", "Restraints (Bool6) of Node", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Node Spring", "PS", "Spring (Type: General)", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Node number", "ID", "Set Node number (ID) - if Node ID is set it will replace any existing nodes in the model", GH_ParamAccess.item);
+            pManager.AddTextParameter("Node Name", "Na", "Set Name of Node", GH_ParamAccess.item);
+            pManager.AddPointParameter("Node Position", "Pt", "Set new Position (x, y, z) of Node", GH_ParamAccess.item);
+            pManager.AddPlaneParameter("Node local axis", "Pl", "Set Local axis (Plane) of Node", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Node Restraints", "B6", "Set Restraints (Bool6) of Node", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Node Spring", "PS", "Set Spring (Type: General)", GH_ParamAccess.item);
+            pManager.AddColourParameter("Node Colour", "Co", "Set colour of node", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -60,6 +61,7 @@ namespace GhSA.Components
             pManager[4].Optional = true;
             pManager[5].Optional = true;
             pManager[6].Optional = true;
+            pManager[7].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -68,12 +70,14 @@ namespace GhSA.Components
             pManager.AddIntegerParameter("Node number", "ID", "Original Node number (ID) if Node ever belonged to a GSA Model", GH_ParamAccess.item);
             pManager.AddTextParameter("Node Name", "Na", "Name of Node", GH_ParamAccess.item);
             pManager.AddPointParameter("Node Position", "Pt", "Position (x, y, z) of Node", GH_ParamAccess.item);
+            pManager.HideParameter(3);
             pManager.AddPlaneParameter("Node local axis", "Pl", "Local axis (Plane) of Node", GH_ParamAccess.item);
             pManager.HideParameter(4);
-            pManager.AddGenericParameter("Node Restraints", "Re", "Restraints (Bool6) of Node", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Node Spring", "Sp", "Spring attached to Node", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Node Restraints", "B6", "Restraints (Bool6) of Node", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Node Spring", "PS", "Spring attached to Node", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Connected Elements", "El", "Connected Element IDs in Model that Node once belonged to", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Connected Members", "Mem", "Connected Member IDs in Model that Node once belonged to", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Connected Members", "Me", "Connected Member IDs in Model that Node once belonged to", GH_ParamAccess.list);
+            pManager.AddColourParameter("Node Colour", "Co", "Get colour of node", GH_ParamAccess.item);
         }
         #endregion
 
@@ -139,10 +143,17 @@ namespace GhSA.Components
                 GsaSpring spring = new GsaSpring();
                 if (DA.GetData(6, ref spring))
                 {
-                    if (gsaNode.Spring != null)
+                    if (spring != null)
                         gsaNode.Spring = spring;
                 }
-
+                
+                // 7 Colour
+                GH_Colour ghcol = new GH_Colour();
+                if (DA.GetData(7, ref ghcol))
+                {
+                    if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
+                        gsaNode.Colour = col;
+                }
 
                 // #### outputs ####
                 DA.SetData(0, new GsaNodeGoo(gsaNode));
@@ -176,6 +187,7 @@ namespace GhSA.Components
 
                 try { DA.SetDataList(8, gsaNode.Node.ConnectedMembers); } catch (Exception) { }
 
+                DA.SetData(9, gsaNode.Colour);
             }
         }
     }

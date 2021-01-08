@@ -90,6 +90,17 @@ namespace GhSA.Parameters
             set { m_section = value; }
         }
 
+        public System.Drawing.Color Colour
+        {
+            get
+            {
+                if ((System.Drawing.Color)m_element.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                    m_element.Colour = UI.Colour.Member1d;
+                return (System.Drawing.Color)m_element.Colour;
+            }
+            set { m_element.Colour = value; }
+        }
+
         #region fields
         private Element m_element; 
         private LineCurve m_line;
@@ -123,32 +134,29 @@ namespace GhSA.Parameters
         //    m_element = element;
         //    m_line = line;
         //}
-        public GsaElement1d Clone()
-        {
-            GsaElement1d clone = this.Duplicate();
-            clone.Element = new Element();
-            clone.Element.Colour = m_element.Colour;
-            clone.Element.Group = m_element.Group;
-            clone.Element.IsDummy = m_element.IsDummy;
-            clone.Element.Name = m_element.Name.ToString();
-            clone.Element.Offset.X1 = m_element.Offset.X1;
-            clone.Element.Offset.X2 = m_element.Offset.X2;
-            clone.Element.Offset.Y = m_element.Offset.Y;
-            clone.Element.Offset.Z = m_element.Offset.Z;
-            clone.Element.OrientationAngle = m_element.OrientationAngle;
-            clone.Element.OrientationNode = m_element.OrientationNode;
-            clone.Element.ParentMember = m_element.ParentMember;
-            clone.Element.Property = m_element.Property;
-            clone.Element.Topology = m_element.Topology;
-            clone.Element.Type = m_element.Type;
-            return clone;
-        }
 
         public GsaElement1d Duplicate()
         {
             GsaElement1d dup = new GsaElement1d();
-            dup.m_element = m_element;
-            
+            dup.m_element = new Element()
+            {
+                Colour = Colour, //don't copy object.colour, this will be default = black if not set
+                Group = m_element.Group,
+                IsDummy = m_element.IsDummy,
+                Name = m_element.Name.ToString(),
+                Offset = m_element.Offset,
+                OrientationAngle = m_element.OrientationAngle,
+                OrientationNode = m_element.OrientationNode,
+                ParentMember = m_element.ParentMember,
+                Property = m_element.Property,
+                Topology = m_element.Topology,
+                Type = m_element.Type,
+            };
+            dup.Element.Offset.X1 = m_element.Offset.X1;
+            dup.Element.Offset.X2 = m_element.Offset.X2;
+            dup.Element.Offset.Y = m_element.Offset.Y;
+            dup.Element.Offset.Z = m_element.Offset.Z;
+
             if (m_line != null)
                 dup.m_line = (LineCurve)m_line.Duplicate();
             dup.ID = m_id;
@@ -420,14 +428,12 @@ namespace GhSA.Parameters
         {
             if (Value == null) { return; }
 
-            
-
             //Draw lines
             if (Value.Line != null)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
-                    args.Pipeline.DrawCurve(Value.Line, UI.Colour.Element1d, 2);
+                    args.Pipeline.DrawCurve(Value.Line, Value.Colour, 2);
                     args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
                     args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
                 }
@@ -437,10 +443,7 @@ namespace GhSA.Parameters
                     args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
                     args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
                 }
-
-                
             }
-                    
         }
         #endregion
     }
