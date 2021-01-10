@@ -597,8 +597,13 @@ namespace GhSA.Parameters
 
             if (GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both))
             {
-                GsaMember2d member = new GsaMember2d(brep);
-                this.Value = member;
+                List<Point3d> pts = new List<Point3d>();
+                List<Curve> crvs = new List<Curve>();
+                GsaMember2d mem = new GsaMember2d(brep, crvs, pts);
+                GsaProp2d prop2d = new GsaProp2d();
+                prop2d.ID = 1;
+                mem.Property = prop2d;
+                this.Value = mem;
                 return true;
             }
 
