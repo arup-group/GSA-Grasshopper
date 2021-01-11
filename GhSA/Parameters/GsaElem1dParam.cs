@@ -140,17 +140,17 @@ namespace GhSA.Parameters
             GsaElement1d dup = new GsaElement1d();
             dup.m_element = new Element()
             {
-                Colour = Colour.ToArgb(), //don't copy object.colour, this will be default = black if not set
-                Group = m_element.Group,
-                IsDummy = m_element.IsDummy,
-                Name = m_element.Name.ToString(),
-                Offset = m_element.Offset,
-                OrientationAngle = m_element.OrientationAngle,
-                OrientationNode = m_element.OrientationNode,
-                ParentMember = m_element.ParentMember,
-                Property = m_element.Property,
-                Topology = m_element.Topology,
-                Type = m_element.Type,
+                Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
+                Group = Element.Group,
+                IsDummy = Element.IsDummy,
+                Name = Element.Name.ToString(),
+                Offset = Element.Offset,
+                OrientationAngle = Element.OrientationAngle,
+                OrientationNode = Element.OrientationNode,
+                ParentMember = Element.ParentMember,
+                Property = Element.Property,
+                Topology = Element.Topology,
+                Type = GsaToModel.Element1dType((int)Element.Type)
             };
             dup.Element.Offset.X1 = m_element.Offset.X1;
             dup.Element.Offset.X2 = m_element.Offset.X2;
@@ -182,8 +182,6 @@ namespace GhSA.Parameters
                 return true;
             }
         }
-        
-
         #endregion
 
         #region methods
@@ -193,7 +191,6 @@ namespace GhSA.Parameters
             if (ID == 0) { idd = ""; }
             return "GSA 1D Element" + idd;
         }
-
         #endregion
     }
 
@@ -211,9 +208,8 @@ namespace GhSA.Parameters
         {
             if (element == null)
                 element = new GsaElement1d();
-            this.Value = element;
+            this.Value = element.Duplicate();
         }
-
 
         public override IGH_GeometricGoo DuplicateGeometry()
         {
@@ -289,7 +285,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -392,7 +388,7 @@ namespace GhSA.Parameters
             if (Value.Line == null) { return null; }
 
             GsaElement1d elem = Value.Duplicate();
-            LineCurve xLn = Value.Line;
+            LineCurve xLn = elem.Line;
             xLn.Transform(xform);
             elem.Line = xLn;
 

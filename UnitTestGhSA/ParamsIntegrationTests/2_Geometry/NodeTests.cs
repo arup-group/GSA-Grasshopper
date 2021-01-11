@@ -1,5 +1,4 @@
 ﻿using System;
-
 using NUnit.Framework;
 using GhSA;
 using GhSA.Parameters;
@@ -99,6 +98,7 @@ namespace ParamsIntegrationTests
         {
             // create new node with some properties
             GsaNode node = new GsaNode(new Point3d(-3.3, 0, 1.5));
+            node.Colour = System.Drawing.Color.Red;
             node.LocalAxis = Plane.WorldYZ;
             node.ID = 3;
             node.Node.Name = "Mariam";
@@ -107,7 +107,6 @@ namespace ParamsIntegrationTests
             GsaNode duplicate = node.Duplicate();
 
             // check that original and duplicate are the same
-            // check that original and duplicate are not the same
             Assert.AreEqual(node.Node.Position.X, duplicate.Node.Position.X);
             Assert.AreEqual(node.Node.Position.Y, duplicate.Node.Position.Y);
             Assert.AreEqual(node.Node.Position.Z, duplicate.Node.Position.Z);
@@ -120,12 +119,14 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(duplicate.LocalAxis.Normal.Z, node.LocalAxis.Normal.Z);
 
             Assert.AreEqual(node.ID, duplicate.ID);
+            Assert.AreEqual(node.Colour, duplicate.Colour);
             Assert.AreEqual(node.Node.Name, duplicate.Node.Name);
 
 
             // make changes to original node
             node.Point = new Point3d(3.3, 1, -1.5);
             node.LocalAxis = Plane.Unset;
+            node.Colour = System.Drawing.Color.Blue;
             node.ID = 2;
             node.Node.Name = "Kristjan";
 
@@ -142,6 +143,7 @@ namespace ParamsIntegrationTests
             Assert.AreNotEqual(duplicate.LocalAxis.Normal.Z, node.LocalAxis.Normal.Z);
 
             Assert.AreNotEqual(node.ID, duplicate.ID);
+            Assert.AreNotEqual(node.Colour, duplicate.Colour);
             Assert.AreNotEqual(node.Node.Name, duplicate.Node.Name);
         }
     }

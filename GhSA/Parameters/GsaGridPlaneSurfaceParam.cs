@@ -173,7 +173,7 @@ namespace GhSA.Parameters
                 if (gridplane.Plane == null)
                     gridplane = null;
             }
-            this.Value = gridplane;
+            this.Value = gridplane.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -258,7 +258,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -312,8 +312,8 @@ namespace GhSA.Parameters
         {
             if (Value == null) { return null; }
             if (Value.Plane == null) { return null; }
-
-            Plane pln = Value.Plane;
+            GsaGridPlaneSurface dup = Value.Duplicate();
+            Plane pln = dup.Plane;
             pln.Transform(xform);
             GsaGridPlaneSurface gridplane = new GsaGridPlaneSurface(pln);
             return new GsaGridPlaneSurfaceGoo(gridplane);
@@ -323,8 +323,8 @@ namespace GhSA.Parameters
         {
             if (Value == null) { return null; }
             if (Value.Plane == null) { return null; }
-
-            Plane pln = Value.Plane;
+            GsaGridPlaneSurface dup = Value.Duplicate();
+            Plane pln = dup.Plane;
             xmorph.Morph(ref pln);
             GsaGridPlaneSurface gridplane = new GsaGridPlaneSurface(pln);
             return new GsaGridPlaneSurfaceGoo(gridplane);

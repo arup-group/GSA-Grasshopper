@@ -140,7 +140,7 @@ namespace GhSA.Parameters
             {
                 GsaModel dup = new GsaModel();
                 dup.Model = m_model;
-                dup.FileName = m_filename;
+                dup.FileName = m_filename.ToString();
                 dup.m_guid = Guid.NewGuid();
                 return dup;
             }
@@ -241,21 +241,12 @@ namespace GhSA.Parameters
             // This function is called when Grasshopper needs to convert this 
             // instance of GsaModel into some other type Q.            
 
-            if (typeof(Q).IsAssignableFrom(typeof(GsaModelGoo)))
-            {
-                if (Value == null)
-                    target = default;
-                else
-                    target = (Q)(object)this;
-                return true;
-            }
-
             if (typeof(Q).IsAssignableFrom(typeof(GsaModel)))
             {
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 

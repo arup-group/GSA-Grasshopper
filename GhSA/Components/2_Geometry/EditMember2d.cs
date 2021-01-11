@@ -106,7 +106,7 @@ namespace GhSA.Components
             GsaMember2d gsaMember2d = new GsaMember2d();
             if (DA.GetData(0, ref gsaMember2d))
             {
-                GsaMember2d mem = gsaMember2d;
+                GsaMember2d mem = gsaMember2d.Duplicate();
 
                 // #### inputs ####
 
@@ -179,7 +179,8 @@ namespace GhSA.Components
                 {
                     ID = mem.ID,
                     Member = mem.Member,
-                    Property = mem.Property
+                    Property = mem.Property,
+                    Colour = mem.Colour
                 };
                 mem = tmpmem;
 
@@ -214,7 +215,7 @@ namespace GhSA.Components
                 if (DA.GetData(9, ref ghinteg))
                 {
                     if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both))
-                        mem.Member.Type2D = Util.Gsa.GsaToModel.Element2dType(type);
+                        mem.Member.Type2D = Util.Gsa.GsaToModel.AnalysisOrder(type);
                 }
 
                 // 10 ID

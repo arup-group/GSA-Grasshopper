@@ -228,34 +228,34 @@ namespace GhSA.Parameters
             {
                 Member = new Member()
                 {
-                    Colour = Colour.ToArgb(), //don't copy object.colour, this will be default = black if not set
-                    Group = m_member.Group,
-                    IsDummy = m_member.IsDummy,
-                    MeshSize = m_member.MeshSize,
-                    Name = m_member.Name.ToString(),
-                    Offset = m_member.Offset,
-                    OrientationAngle = m_member.OrientationAngle,
-                    OrientationNode = m_member.OrientationNode,
-                    Property = m_member.Property,
-                    Topology = m_member.Topology.ToString(),
-                    Type = m_member.Type,
-                    Type2D = m_member.Type2D
+                    Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
+                    Group = Member.Group,
+                    IsDummy = Member.IsDummy,
+                    MeshSize = Member.MeshSize,
+                    Name = Member.Name.ToString(),
+                    Offset = Member.Offset,
+                    OrientationAngle = Member.OrientationAngle,
+                    OrientationNode = Member.OrientationNode,
+                    Property = Member.Property,
+                    Topology = Member.Topology.ToString(),
+                    Type = GsaToModel.Member2dType((int)Member.Type),
+                    Type2D = GsaToModel.AnalysisOrder((int) Member.Type2D)
                 }
             };
 
-            dup.Member.Offset.X1 = m_member.Offset.X1;
-            dup.Member.Offset.X2 = m_member.Offset.X2;
-            dup.Member.Offset.Y = m_member.Offset.Y;
-            dup.Member.Offset.Z = m_member.Offset.Z;
+            dup.Member.Offset.X1 = Member.Offset.X1;
+            dup.Member.Offset.X2 = Member.Offset.X2;
+            dup.Member.Offset.Y = Member.Offset.Y;
+            dup.Member.Offset.Z = Member.Offset.Z;
 
             if (m_brep != null)
-                dup.m_brep = m_brep.DuplicateBrep();
+                dup.m_brep = Brep.DuplicateBrep();
             if (m_crv != null)
-                dup.m_crv = m_crv.DuplicatePolyCurve();
+                dup.m_crv = PolyCurve.DuplicatePolyCurve();
 
-            Point3dList point3Ds = new Point3dList(m_topo);
+            Point3dList point3Ds = new Point3dList(Topology);
             dup.Topology = new List<Point3d>(point3Ds.Duplicate());
-            dup.TopologyType = m_topoType.ToList();
+            dup.TopologyType = TopologyType.ToList();
 
             if (void_crvs != null)
             {
@@ -285,15 +285,12 @@ namespace GhSA.Parameters
                 }
             }
             if (m_prop != null)
-                dup.Property = m_prop.Duplicate();
+                dup.Property = Property.Duplicate();
 
             Point3dList inclpoint3Ds = new Point3dList(incl_pts);
             dup.incl_pts = new List<Point3d>(inclpoint3Ds.Duplicate());
 
-            dup.ID = m_id;
-
-            if (m_prop != null)
-                dup.Property = m_prop.Duplicate();
+            dup.ID = ID;
 
             return dup;
         }
@@ -367,7 +364,7 @@ namespace GhSA.Parameters
         {
             if (member == null)
                 member = new GsaMember2d();
-            this.Value = member;
+            this.Value = member.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -446,7 +443,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -594,7 +591,6 @@ namespace GhSA.Parameters
 
             //Cast from Brep
             Brep brep = new Brep();
-
             if (GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both))
             {
                 List<Point3d> pts = new List<Point3d>();
@@ -619,11 +615,11 @@ namespace GhSA.Parameters
 
             GsaMember2d mem = Value.Duplicate();
 
-            List<Point3d> pts = Value.Topology;
+            List<Point3d> pts = mem.Topology.ToList();
             Point3dList xpts = new Point3dList(pts);
             xpts.Transform(xform);
             mem.Topology = xpts.ToList();
-            mem.TopologyType = Value.TopologyType;
+            mem.TopologyType = Value.TopologyType.ToList();
             
             if (Value.VoidTopology != null)
             {

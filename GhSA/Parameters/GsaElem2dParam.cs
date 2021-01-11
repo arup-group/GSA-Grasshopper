@@ -145,16 +145,16 @@ namespace GhSA.Parameters
                 dup.Elements[i] = new Element()
                 {
                     //don't copy object.colour, this will be default = black if not set
-                    Group = m_elements[i].Group,
-                    IsDummy = m_elements[i].IsDummy,
-                    Name = m_elements[i].Name.ToString(),
-                    OrientationNode = m_elements[i].OrientationNode,
-                    OrientationAngle = m_elements[i].OrientationAngle,
-                    Offset = m_elements[i].Offset,
-                    ParentMember = m_elements[i].ParentMember,
-                    Property = m_elements[i].Property,
-                    Topology = m_elements[i].Topology,
-                    Type = m_elements[i].Type
+                    Group = Elements[i].Group,
+                    IsDummy = Elements[i].IsDummy,
+                    Name = Elements[i].Name.ToString(),
+                    OrientationNode = Elements[i].OrientationNode,
+                    OrientationAngle = Elements[i].OrientationAngle,
+                    Offset = Elements[i].Offset,
+                    ParentMember = Elements[i].ParentMember,
+                    Property = Elements[i].Property,
+                    Topology = Elements[i].Topology,
+                    Type = GsaToModel.Element2dType((int)Elements[i].Type)
                 };
                 dup.Elements[i].Offset.X1 = m_elements[i].Offset.X1;
                 dup.Elements[i].Offset.X2 = m_elements[i].Offset.X2;
@@ -224,7 +224,7 @@ namespace GhSA.Parameters
         {
             if (element == null)
                 element = new GsaElement2d();
-            this.Value = element;
+            this.Value = element.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -301,7 +301,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
             
@@ -390,7 +390,7 @@ namespace GhSA.Parameters
 
             GsaElement2d elem = Value.Duplicate();
             
-            Mesh xMs = Value.Mesh;
+            Mesh xMs = elem.Mesh;
             xMs.Transform(xform);
             elem.Mesh = xMs;
             Point3dList pts = new Point3dList(Value.Topology);

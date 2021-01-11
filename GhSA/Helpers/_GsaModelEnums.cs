@@ -67,24 +67,59 @@ namespace GhSA.Util.Gsa
             }
             return ElementType.BEAM;
         }
-        public static AnalysisOrder Element2dType(int type)
+        public static ElementType Element2dType(int type)
+        {
+            switch (type)
+            {
+                case 5:
+                    {
+                        return ElementType.QUAD4;
+                    }
+                case 6:
+                    {
+                        return ElementType.QUAD8;
+                    }
+                case 7:
+                    {
+                        return ElementType.TRI3;
+                    }
+                case 8:
+                    {
+                        return ElementType.TRI6;
+                    }
+                case 28:
+                    {
+                        return ElementType.TWO_D;
+                    }
+                case 31:
+                    {
+                        return ElementType.TWO_D_FE;
+                    }
+                case 32:
+                    {
+                        return ElementType.TWO_D_LOAD;
+                    }
+            }
+            return ElementType.TWO_D;
+        }
+        public static AnalysisOrder AnalysisOrder(int type)
         {
             switch (type)
             {
                 case 0:
                     {
-                        return AnalysisOrder.LINEAR;
+                        return GsaAPI.AnalysisOrder.LINEAR;
                     }
                 case 1:
                     {
-                        return AnalysisOrder.QUADRATIC;
+                        return GsaAPI.AnalysisOrder.QUADRATIC;
                     }
                 case 2:
                     {
-                        return AnalysisOrder.RIGID_DIAPHRAGM;
+                        return GsaAPI.AnalysisOrder.RIGID_DIAPHRAGM;
                     }
             }
-            return AnalysisOrder.LINEAR;
+            return GsaAPI.AnalysisOrder.LINEAR;
         }
 
 

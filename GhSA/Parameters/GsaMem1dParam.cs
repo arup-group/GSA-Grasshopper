@@ -132,18 +132,18 @@ namespace GhSA.Parameters
             {
                 Member = new Member
                 {
-                    Colour = Colour.ToArgb(), //don't copy object.colour, this will be default = black if not set
-                    Group = m_member.Group,
-                    IsDummy = m_member.IsDummy,
-                    MeshSize = m_member.MeshSize,
-                    Name = m_member.Name.ToString(),
-                    Offset = m_member.Offset,
-                    OrientationAngle = m_member.OrientationAngle,
-                    OrientationNode = m_member.OrientationNode,
-                    Property = m_member.Property,
-                    Topology = m_member.Topology.ToString(),
-                    Type = m_member.Type,
-                    Type1D = m_member.Type1D
+                    Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
+                    Group = Member.Group,
+                    IsDummy = Member.IsDummy,
+                    MeshSize = Member.MeshSize,
+                    Name = Member.Name.ToString(),
+                    Offset = Member.Offset,
+                    OrientationAngle = Member.OrientationAngle,
+                    OrientationNode = Member.OrientationNode,
+                    Property = Member.Property,
+                    Topology = Member.Topology.ToString(),
+                    Type = GsaToModel.Member1dType((int)Member.Type),
+                    Type1D = GsaToModel.Element1dType((int)Member.Type1D)
                 }
             };
             dup.Member.Offset.X1 = m_member.Offset.X1;
@@ -213,7 +213,7 @@ namespace GhSA.Parameters
         {
             if (member == null)
                 member = new GsaMember1d();
-            this.Value = member;
+            this.Value = member.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -290,7 +290,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -367,7 +367,6 @@ namespace GhSA.Parameters
                 return true;
             }
 
-
             target = default;
             return false;
         }
@@ -417,11 +416,11 @@ namespace GhSA.Parameters
 
             GsaMember1d mem = Value.Duplicate();
 
-            List<Point3d> pts = Value.Topology;
+            List<Point3d> pts = Value.Topology.ToList();
             Point3dList xpts = new Point3dList(pts);
             xpts.Transform(xform);
             mem.Topology = xpts.ToList();
-            mem.TopologyType = Value.TopologyType;
+            mem.TopologyType = Value.TopologyType.ToList();
             
             if (Value.PolyCurve != null)
             {

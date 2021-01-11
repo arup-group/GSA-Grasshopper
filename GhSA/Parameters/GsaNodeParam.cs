@@ -164,7 +164,7 @@ namespace GhSA.Parameters
                 Node = new Node
                 {
                     AxisProperty = Node.AxisProperty,
-                    Colour = Colour.ToArgb(), //don't copy object.colour, this will be default = black if not set
+                    Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
                     DamperProperty = Node.DamperProperty,
                     MassProperty = Node.MassProperty,
                     Name = Node.Name,
@@ -259,7 +259,7 @@ namespace GhSA.Parameters
                 if (node.Node == null)
                     node = null;
             }
-            this.Value = node;
+            this.Value = node.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -344,7 +344,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -411,14 +411,12 @@ namespace GhSA.Parameters
 
             //Cast from Point3d
             Point3d pt = new Point3d();
-
             if (GH_Convert.ToPoint3d(source, ref pt, GH_Conversion.Both))
             {
                 GsaNode node = new GsaNode(pt);
                 this.Value = node;
                 return true;
             }
-            
 
             return false;
         }
@@ -539,11 +537,7 @@ namespace GhSA.Parameters
         public void DrawViewportWires(IGH_PreviewArgs args)
         {
             //Use a standard method to draw gunk, you don't have to specifically implement this.
-            
-            
             Preview_DrawWires(args);
-            
-
         }
 
         private bool m_hidden = false;

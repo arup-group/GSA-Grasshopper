@@ -72,6 +72,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentsTest\0_Model\OpenTest.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="ParamsIntegrationTests\1_Properties\SectionTests.cs" />
     <Compile Include="ParamsIntegrationTests\1_Properties\OffsetTests.cs" />
     <Compile Include="ParamsIntegrationTests\1_Properties\Bool6Tests.cs" />
+    <Compile Include="ParamsIntegrationTests\2_Geometry\Mem2dTests.cs" />
     <Compile Include="ParamsIntegrationTests\2_Geometry\NodeTests.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="ParamsIntegrationTests\0_Model\ModelTests.cs" />
