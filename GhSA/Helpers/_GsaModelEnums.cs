@@ -178,5 +178,56 @@ namespace GhSA.Util.Gsa
             }
             return MemberType.GENERIC_2D;
         }
+        public static Property2D_Type Prop2dType(int type)
+        {
+            switch (type)
+            {
+                case 3:
+                    {
+                        return Property2D_Type.AXISYMMETRIC;
+                    }
+                case 7:
+                    {
+                        return Property2D_Type.CURVED_SHELL;
+                    }
+                case 4:
+                    {
+                        return Property2D_Type.FABRIC;
+                    }
+                case 10:
+                    {
+                        return Property2D_Type.LOAD;
+                    }
+                case 11:
+                    {
+                        return Property2D_Type.NUM_TYPE;
+                    }
+                case 5:
+                    {
+                        return Property2D_Type.PLATE;
+                    }
+                case 2:
+                    {
+                        return Property2D_Type.PL_STRAIN;
+                    }
+                case 1:
+                    {
+                        return Property2D_Type.PL_STRESS;
+                    }
+                case 6:
+                    {
+                        return Property2D_Type.SHELL;
+                    }
+                case 8:
+                    {
+                        return Property2D_Type.TORSION;
+                    }
+                case 9:
+                    {
+                        return Property2D_Type.WALL;
+                    }
+            }
+            return Property2D_Type.UNDEF;
+        }
     }
 }

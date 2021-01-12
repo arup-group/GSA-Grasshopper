@@ -62,7 +62,7 @@ namespace GhSA.Parameters
                     Name = m_prop2d.Name,
                     Colour = m_prop2d.Colour,
                     Description = m_prop2d.Description,
-                    Type = m_prop2d.Type,
+                    Type = GsaToModel.Prop2dType((int)m_prop2d.Type),
                     AxisProperty = m_prop2d.AxisProperty
                 },
                 ID = m_idd

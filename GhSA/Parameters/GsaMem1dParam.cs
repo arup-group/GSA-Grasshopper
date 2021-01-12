@@ -92,6 +92,7 @@ namespace GhSA.Parameters
         {
             m_member = new Member();
             m_crv = new PolyCurve();
+            m_section = new GsaSection();
         }
 
         public GsaMember1d(List<Point3d> topology, List<string> topo_type = null)
@@ -103,6 +104,8 @@ namespace GhSA.Parameters
             m_crv = Util.GH.Convert.BuildCurve(topology, topo_type);
             m_topo = topology;
             m_topoType = topo_type;
+
+            m_section = new GsaSection();
 
             Topology = m_topo;
             TopologyType = m_topoType;

@@ -40,6 +40,8 @@ namespace ParamsIntegrationTests
             mem.Member.IsDummy = true;
             mem.Member.Offset.Z = -0.45;
             mem.Member.Property = 2;
+            mem.Member.Type2D = AnalysisOrder.LINEAR;
+            mem.Member.Type = MemberType.SLAB;
 
             Assert.AreEqual(mem.Brep.Vertices[0].Location.X, mem.Topology[0].X);
             Assert.AreEqual(mem.Brep.Vertices[0].Location.Y, mem.Topology[0].Y);
@@ -59,6 +61,8 @@ namespace ParamsIntegrationTests
             Assert.IsTrue(mem.Member.IsDummy);
             Assert.AreEqual(-0.45, mem.Member.Offset.Z);
             Assert.AreEqual(2, mem.Member.Property);
+            Assert.AreEqual(AnalysisOrder.LINEAR, mem.Member.Type2D);
+            Assert.AreEqual(MemberType.SLAB, mem.Member.Type);
         }
         
         [TestCase]
@@ -94,6 +98,8 @@ namespace ParamsIntegrationTests
             original.Member.Offset.X1 = 0.33;
             original.Member.Property = 1;
             original.Property.ID = 3;
+            original.Member.Type2D = AnalysisOrder.RIGID_DIAPHRAGM;
+            original.Member.Type = MemberType.GENERIC_2D;
 
             // create duplicate
             GsaMember2d dup = original.Duplicate();
@@ -123,6 +129,8 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(0.33, dup.Member.Offset.X1);
             Assert.AreEqual(1, dup.Member.Property);
             Assert.AreEqual(3, dup.Property.ID);
+            Assert.AreEqual(AnalysisOrder.RIGID_DIAPHRAGM, dup.Member.Type2D);
+            Assert.AreEqual(MemberType.GENERIC_2D, dup.Member.Type);
 
             // make some changes to original
             // create a list of corner points
@@ -147,6 +155,8 @@ namespace ParamsIntegrationTests
             original.Member.Offset.X1 = 0.12;
             original.Member.Property = 3;
             original.Property.ID = 44;
+            original.Member.Type2D = AnalysisOrder.QUADRATIC;
+            original.Member.Type = MemberType.WALL;
 
             // check that orignal are not equal to duplicate
             Assert.AreNotEqual(original.Brep.Vertices[0].Location.X, dup.Topology[0].X);
@@ -169,6 +179,8 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(0.33, dup.Member.Offset.X1);
             Assert.AreEqual(1, dup.Member.Property);
             Assert.AreEqual(3, dup.Property.ID);
+            Assert.AreEqual(AnalysisOrder.RIGID_DIAPHRAGM, dup.Member.Type2D);
+            Assert.AreEqual(MemberType.GENERIC_2D, dup.Member.Type);
 
             // check that changes are made to original
             Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 0, 0), original.Member.Colour);
@@ -179,6 +191,8 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(0.12, original.Member.Offset.X1);
             Assert.AreEqual(3, original.Member.Property);
             Assert.AreEqual(44, original.Property.ID);
+            Assert.AreEqual(AnalysisOrder.QUADRATIC, original.Member.Type2D);
+            Assert.AreEqual(MemberType.WALL, original.Member.Type);
         }
     }
 }
