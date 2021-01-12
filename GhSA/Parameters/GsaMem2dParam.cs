@@ -238,8 +238,8 @@ namespace GhSA.Parameters
                     OrientationNode = Member.OrientationNode,
                     Property = Member.Property,
                     Topology = Member.Topology.ToString(),
-                    Type = GsaToModel.Member2dType((int)Member.Type),
-                    Type2D = GsaToModel.AnalysisOrder((int) Member.Type2D)
+                    Type = Member.Type, // GsaToModel.Member2dType((int)Member.Type),
+                    Type2D = Member.Type2D //GsaToModel.AnalysisOrder((int) Member.Type2D)
                 }
             };
 

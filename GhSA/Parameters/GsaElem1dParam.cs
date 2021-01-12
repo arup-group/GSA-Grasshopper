@@ -150,7 +150,7 @@ namespace GhSA.Parameters
                 ParentMember = Element.ParentMember,
                 Property = Element.Property,
                 Topology = Element.Topology,
-                Type = GsaToModel.Element1dType((int)Element.Type)
+                Type = Element.Type //GsaToModel.Element1dType((int)Element.Type)
             };
             dup.Element.Offset.X1 = m_element.Offset.X1;
             dup.Element.Offset.X2 = m_element.Offset.X2;

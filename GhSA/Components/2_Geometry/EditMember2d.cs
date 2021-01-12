@@ -56,8 +56,16 @@ namespace GhSA.Components
             pManager.AddCurveParameter("Incl. Curves", "(C)", "Add inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Set target mesh size", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item, true);
-            pManager.AddIntegerParameter("Member Type", "Ty", "Set 2D Member Type", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("2D Analysis Type", "mT", "Set Member 2d Analysis Type", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Member Type", "Ty", "Set 2D Member Type" + System.Environment.NewLine
+                + "Default is 1: Generic 2D - Accepted inputs are:" + System.Environment.NewLine +
+                "4: Slab" + System.Environment.NewLine +
+                "5: Wall" + System.Environment.NewLine + 
+                "7: Ribbed Slab" + System.Environment.NewLine + 
+                "12: Void-cutter", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("2D Analysis Type", "mT", "Set Member 2d Analysis Type" + System.Environment.NewLine +
+                "Default is 0: Linear - Accepted inputs are:" + System.Environment.NewLine +
+                "1: Quadratic" + System.Environment.NewLine +
+                "2: Rigid Diaphragm", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member2d Number", "ID", "Set Member Number. If ID is set it will replace any existing 2d Member in the model", GH_ParamAccess.item);
             pManager.AddTextParameter("Member2d Name", "Na", "Set Name of Member2d", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member2d Group", "Gr", "Set Member 2d Group", GH_ParamAccess.item);
@@ -207,7 +215,7 @@ namespace GhSA.Components
                 if (DA.GetData(8, ref ghint))
                 {
                     if (GH_Convert.ToInt32(ghint, out int type, GH_Conversion.Both))
-                        mem.Member.Type = Util.Gsa.GsaToModel.Member2dType(type);
+                        mem.Member.Type = (MemberType)type;//Util.Gsa.GsaToModel.Member2dType(type);
                 }
                 
                 // 9 element type / analysis order
@@ -215,7 +223,7 @@ namespace GhSA.Components
                 if (DA.GetData(9, ref ghinteg))
                 {
                     if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both))
-                        mem.Member.Type2D = Util.Gsa.GsaToModel.AnalysisOrder(type);
+                        mem.Member.Type2D = (AnalysisOrder)type; //Util.Gsa.GsaToModel.AnalysisOrder(type);
                 }
 
                 // 10 ID

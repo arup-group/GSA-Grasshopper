@@ -145,8 +145,8 @@ namespace GhSA.Parameters
                     OrientationNode = Member.OrientationNode,
                     Property = Member.Property,
                     Topology = Member.Topology.ToString(),
-                    Type = GsaToModel.Member1dType((int)Member.Type),
-                    Type1D = GsaToModel.Element1dType((int)Member.Type1D)
+                    Type = Member.Type, //GsaToModel.Member1dType((int)Member.Type),
+                    Type1D = Member.Type1D //GsaToModel.Element1dType((int)Member.Type1D)
                 }
             };
             dup.Member.Offset.X1 = m_member.Offset.X1;

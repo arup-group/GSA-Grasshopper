@@ -3,6 +3,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 using System;
+using GsaAPI;
 
 namespace GhSA.Components
 {
@@ -46,7 +47,18 @@ namespace GhSA.Components
             pManager.AddGenericParameter("End release", "B6e", "Set Release (Bool6) at End of Element", GH_ParamAccess.item);
             pManager.AddNumberParameter("Orientation Angle", "OrA", "Set Element Orientation Angle in degrees", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Orientation Node", "OrN", "Set Element Orientation Node (ID referring to node number in model)", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Type", "Ty", "Set Element Type", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Type", "Ty", "Set Element Type" + System.Environment.NewLine + 
+                "Accepted inputs are:" + System.Environment.NewLine +
+                "1: Bar" + System.Environment.NewLine +
+                "2: Beam" + System.Environment.NewLine +
+                "3: Spring" + System.Environment.NewLine +
+                "9: Link" + System.Environment.NewLine +
+                "10: Cable" + System.Environment.NewLine +
+                "19: Spacer" + System.Environment.NewLine +
+                "20: Strut" + System.Environment.NewLine +
+                "21: Tie" + System.Environment.NewLine +
+                "23: Rod" + System.Environment.NewLine +
+                "24: Damper", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Number", "ID", "Set Element Number. If ID is set it will replace any existing 1D Element in the model", GH_ParamAccess.item);
             pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Group", "Gr", "Set Element Group", GH_ParamAccess.item);
@@ -182,7 +194,7 @@ namespace GhSA.Components
                 if (DA.GetData(8, ref ghinteg))
                 {
                     if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both))
-                        elem.Element.Type = Util.Gsa.GsaToModel.Element1dType(type);
+                        elem.Element.Type = (ElementType)type; // Util.Gsa.GsaToModel.Element1dType(type);
                 }
 
                 // 9 ID
