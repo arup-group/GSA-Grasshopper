@@ -24,12 +24,22 @@ public class SetUp
 
         // set units used in the unit-test (kN-m). Avoids conflict with trying to read Rhino doc units
         UnitTestGhSA.InitiateGsa.SetUnits();
+
+        // add current project (for GSA.gha) to grasshopper folder:
+        string rootfolder = AppDomain.CurrentDomain.BaseDirectory;
+        rootfolder = rootfolder.Split(new string[] { "UnitTestGhSA" }, StringSplitOptions.None)[0];
+
+        Grasshopper.Folders.CustomAssemblyFolders.Add(rootfolder);
+
+        // setup Rhino7 (headless) and resolve assembly conflicts for RhinoCommon.dll and Grasshopper.dll
+        UnitTestGhSA.InitiateRhinoGH.LoadRhino7GH();
     }
 
     [OneTimeTearDown]
     public void RunAfterAnyTests()
     {
         // Executes once after the test run. (Optional)
+        UnitTestGhSA.InitiateRhinoGH.ExitInProcess();
     }
 }
 namespace ComponentsTest
@@ -41,15 +51,7 @@ namespace ComponentsTest
         public void RunBeforeAnyTests()
         {
             // Executes once before test runs in ComponentsTest class
-
-            // add current project (for GSA.gha) to grasshopper folder:
-            string rootfolder = AppDomain.CurrentDomain.BaseDirectory;
-            rootfolder = rootfolder.Split(new string[] { "UnitTestGhSA" }, StringSplitOptions.None)[0];
-
-            Grasshopper.Folders.CustomAssemblyFolders.Add(rootfolder);
-
-            // setup Rhino7 (headless) and resolve assembly conflicts for RhinoCommon.dll and Grasshopper.dll
-            UnitTestGhSA.InitiateRhinoGH.LoadRhino7GH();
+            
         }
 
         [OneTimeTearDown]
@@ -57,8 +59,6 @@ namespace ComponentsTest
         {
             // Executes once after the test run. (Optional)
 
-            // kill Rhino7 headless process
-            UnitTestGhSA.InitiateRhinoGH.ExitInProcess();
         }
     }
 }
