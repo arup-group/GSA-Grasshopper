@@ -79,6 +79,7 @@ namespace ParamsIntegrationTests
             orig.Member.Offset.X2 = 0.1;
             orig.Member.Property = 3;
             orig.Section.ID = 4;
+            orig.Member.Group = 99;
             orig.Member.Type1D = ElementType.BAR;
             orig.Member.Type = MemberType.COLUMN;
 
@@ -93,6 +94,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(0.1, dup.Member.Offset.X2);
             Assert.AreEqual(3, dup.Member.Property);
             Assert.AreEqual(4, dup.Section.ID);
+            Assert.AreEqual(99, dup.Member.Group);
             Assert.AreEqual(ElementType.BAR, dup.Member.Type1D);
             Assert.AreEqual(MemberType.COLUMN, dup.Member.Type);
 
@@ -104,6 +106,7 @@ namespace ParamsIntegrationTests
             orig.Member.Offset.X2 = 0.4;
             orig.Member.Property = 2;
             orig.Section.ID = 1;
+            orig.Member.Group = 4;
             orig.Member.Type1D = ElementType.BEAM;
             orig.Member.Type = MemberType.BEAM;
 
@@ -115,6 +118,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(0.1, dup.Member.Offset.X2);
             Assert.AreEqual(3, dup.Member.Property);
             Assert.AreEqual(4, dup.Section.ID);
+            Assert.AreEqual(99, dup.Member.Group);
             Assert.AreEqual(ElementType.BAR, dup.Member.Type1D);
             Assert.AreEqual(MemberType.COLUMN, dup.Member.Type);
 
@@ -126,6 +130,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(0.4, orig.Member.Offset.X2);
             Assert.AreEqual(2, orig.Member.Property);
             Assert.AreEqual(1, orig.Section.ID);
+            Assert.AreEqual(4, orig.Member.Group);
             Assert.AreEqual(ElementType.BEAM, orig.Member.Type1D);
             Assert.AreEqual(MemberType.BEAM, orig.Member.Type);
         }

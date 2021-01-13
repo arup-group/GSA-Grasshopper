@@ -77,15 +77,16 @@
   <ItemGroup>
     <Compile Include="ComponentsTest\0_Model\OpenTest.cs" />
     <Compile Include="ComponentsTest\1_Properties\OffsetTests.cs" />
-    <Compile Include="ComponentsTest\Helper.cs" />
+    <Compile Include="ComponentsTest\ComponentTestHelper.cs" />
     <Compile Include="ParamsIntegrationTests\1_Properties\Prop2dTests.cs" />
     <Compile Include="ParamsIntegrationTests\1_Properties\SectionTests.cs" />
     <Compile Include="ParamsIntegrationTests\1_Properties\OffsetTests.cs" />
     <Compile Include="ParamsIntegrationTests\1_Properties\Bool6Tests.cs" />
+    <Compile Include="ParamsIntegrationTests\2_Geometry\Elem1dTests.cs" />
     <Compile Include="ParamsIntegrationTests\2_Geometry\Mem1dTests .cs" />
     <Compile Include="ParamsIntegrationTests\2_Geometry\Mem2dTests.cs" />
     <Compile Include="ParamsIntegrationTests\2_Geometry\NodeTests.cs" />
-    <Compile Include="Setup.cs" />
+    <Compile Include="UnitTestSetup.cs" />
     <Compile Include="ParamsIntegrationTests\0_Model\ModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
