@@ -51,7 +51,6 @@ namespace GhSA.Components
             pManager.AddGenericParameter("2D Element", "E2D", "GSA 2D Element to Modify", GH_ParamAccess.item);
             pManager.AddGenericParameter("2D Property", "PA", "Change 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Offset", "Of", "Set Element Offset", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("2D Analysis Type", "Ty", "Set Element 2D Analysis Type", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Element2d Number", "ID", "Set Element Number. If ID is set it will replace any existing 2d Element in the model", GH_ParamAccess.list);
             pManager.AddTextParameter("Element2d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Element2d Group", "Gr", "Set Element Group", GH_ParamAccess.list);
@@ -65,7 +64,6 @@ namespace GhSA.Components
             pManager[5].Optional = true;
             pManager[6].Optional = true;
             pManager[7].Optional = true;
-            pManager[8].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -75,7 +73,9 @@ namespace GhSA.Components
             pManager.HideParameter(1);
             pManager.AddGenericParameter("2D Property", "PA", "Get 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Offset", "Of", "Get Element Offset", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("2D Analysis Type", "Ty", "Get Element 2D Analysis Type", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Element Type", "Ty", "Get Element 2D Type." + System.Environment.NewLine
+                + "Type can not be set; it is either Tri3 or Quad4" + System.Environment.NewLine
+                + "depending on Rhino/Grasshopper mesh face type" , GH_ParamAccess.list);
             pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
             pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
@@ -90,7 +90,7 @@ namespace GhSA.Components
             GsaElement2d gsaElement2d = new GsaElement2d();
             if (DA.GetData(0, ref gsaElement2d))
             {
-                GsaElement2d elem = gsaElement2d.Clone();
+                GsaElement2d elem = gsaElement2d;
 
                 // #### inputs ####
 
@@ -134,21 +134,22 @@ namespace GhSA.Components
                 }
 
                 // 3 element type / analysis order
-                List<GH_Integer> ghinteg = new List<GH_Integer>();
-                if (DA.GetDataList(3, ghinteg))
-                {
-                    for (int i = 0; i < ghinteg.Count; i++)
-                    {
-                        if (GH_Convert.ToInt32(ghinteg[i], out int type, GH_Conversion.Both))
-                        {
-                            //elem.Elements[i].Type = Util.Gsa.GsaToModel.Element2dType(type); Note: Type on 2D element should be analysis order - GsaAPI bug?
-                        }
-                    }
-                }
+                //List<GH_Integer> ghinteg = new List<GH_Integer>();
+                //if (DA.GetDataList(3, ghinteg))
+                //{
+                //    for (int i = 0; i < ghinteg.Count; i++)
+                //    {
+                //        if (GH_Convert.ToInt32(ghinteg[i], out int type, GH_Conversion.Both))
+                //        {
+                //            elem.Elements[i].Type = ElementType.
+                //            //elem.Elements[i].Type = Util.Gsa.GsaToModel.Element2dType(type); Note: Type on 2D element should be analysis order - GsaAPI bug?
+                //        }
+                //    }
+                //}
 
-                // 4 ID
+                // 3 ID
                 List<GH_Integer> ghID = new List<GH_Integer>();
-                if (DA.GetDataList(4, ghID))
+                if (DA.GetDataList(3, ghID))
                 {
                     for (int i = 0; i < ghID.Count; i++)
                     {
@@ -157,9 +158,9 @@ namespace GhSA.Components
                     }
                 }
 
-                // 5 name
+                // 4 name
                 List<GH_String> ghnm = new List<GH_String>();
-                if (DA.GetDataList(5, ghnm))
+                if (DA.GetDataList(4, ghnm))
                 {
                     for (int i = 0; i < ghnm.Count; i++)
                     {
@@ -168,9 +169,9 @@ namespace GhSA.Components
                     }
                 }
 
-                // 6 Group
+                // 5 Group
                 List<GH_Integer> ghgrp = new List<GH_Integer>();
-                if (DA.GetDataList(6, ghgrp))
+                if (DA.GetDataList(5, ghgrp))
                 {
                     for (int i = 0; i < ghgrp.Count; i++)
                     {
@@ -179,9 +180,9 @@ namespace GhSA.Components
                     }
                 }
 
-                // 7 Colour
+                // 6 Colour
                 List<GH_Colour> ghcol = new List<GH_Colour>();
-                if (DA.GetDataList(7, ghcol))
+                if (DA.GetDataList(6, ghcol))
                 {
                     for (int i = 0; i < ghcol.Count; i++)
                     {
@@ -190,9 +191,9 @@ namespace GhSA.Components
                     }
                 }
 
-                // 8 Dummy
+                // 7 Dummy
                 List<GH_Boolean> ghdum = new List<GH_Boolean>();
-                if (DA.GetDataList(8, ghdum))
+                if (DA.GetDataList(7, ghdum))
                 {
                     for (int i = 0; i < ghdum.Count; i++)
                     {
@@ -207,7 +208,7 @@ namespace GhSA.Components
                 DA.SetData(1, elem.Mesh);
 
                 List<GsaOffset> offsets = new List<GsaOffset>();
-                //List<int> anal = new List<int>();
+                List<string> type = new List<string>();
                 List<string> names = new List<string>();
                 List<int> groups = new List<int>();
                 List<System.Drawing.Color> colours = new List<System.Drawing.Color>();
@@ -220,7 +221,7 @@ namespace GhSA.Components
                         Z = elem.Elements[i].Offset.Z
                     };
                     offsets.Add(offset1);
-                    //anal.Add(gsaElement2d.Elements[i].Type);
+                    type.Add(gsaElement2d.Elements[i].TypeAsString());
                     names.Add(elem.Elements[i].Name);
                     groups.Add(elem.Elements[i].Group);
                     colours.Add((System.Drawing.Color)elem.Elements[i].Colour);
@@ -230,7 +231,7 @@ namespace GhSA.Components
                 }
                 DA.SetDataList(2, elem.Properties); 
                 DA.SetDataList(3, offsets);
-                //DA.SetDataList(4, anal);
+                DA.SetDataList(4, type);
                 DA.SetDataList(5, elem.ID);
                 DA.SetDataList(6, names);
                 DA.SetDataList(7, groups);

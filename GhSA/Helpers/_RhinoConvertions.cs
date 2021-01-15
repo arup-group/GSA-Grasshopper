@@ -306,9 +306,6 @@ namespace GhSA.Util.GH
             List<Element> elems = new List<Element>();
             List<Point3d> topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
             List<List<int>> topoInts = new List<List<int>>();
-            
-            //for (int i = 0; i < mesh.Vertices.Count; i++)
-            //    topoPts.Add(mesh.Vertices[i]);
 
             for (int i = 0; i < mesh.Faces.Count; i++)
             {

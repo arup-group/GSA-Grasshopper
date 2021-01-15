@@ -224,29 +224,30 @@ namespace GhSA.Parameters
         
         public GsaMember2d Duplicate()
         {
+            if (this == null) { return null; }
             GsaMember2d dup = new GsaMember2d()
             {
                 Member = new Member()
                 {
                     Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
-                    Group = Member.Group,
-                    IsDummy = Member.IsDummy,
-                    MeshSize = Member.MeshSize,
-                    Name = Member.Name.ToString(),
-                    Offset = Member.Offset,
-                    OrientationAngle = Member.OrientationAngle,
-                    OrientationNode = Member.OrientationNode,
-                    Property = Member.Property,
-                    Topology = Member.Topology.ToString(),
-                    Type = Member.Type, // GsaToModel.Member2dType((int)Member.Type),
-                    Type2D = Member.Type2D //GsaToModel.AnalysisOrder((int) Member.Type2D)
+                    Group = m_member.Group,
+                    IsDummy = m_member.IsDummy,
+                    MeshSize = m_member.MeshSize,
+                    Name = m_member.Name.ToString(),
+                    Offset = m_member.Offset,
+                    OrientationAngle = m_member.OrientationAngle,
+                    OrientationNode = m_member.OrientationNode,
+                    Property = m_member.Property,
+                    Topology = m_member.Topology.ToString(),
+                    Type = m_member.Type, // GsaToModel.Member2dType((int)Member.Type),
+                    Type2D = m_member.Type2D //GsaToModel.AnalysisOrder((int) Member.Type2D)
                 }
             };
 
-            dup.Member.Offset.X1 = Member.Offset.X1;
-            dup.Member.Offset.X2 = Member.Offset.X2;
-            dup.Member.Offset.Y = Member.Offset.Y;
-            dup.Member.Offset.Z = Member.Offset.Z;
+            dup.Member.Offset.X1 = m_member.Offset.X1;
+            dup.Member.Offset.X2 = m_member.Offset.X2;
+            dup.Member.Offset.Y = m_member.Offset.Y;
+            dup.Member.Offset.Z = m_member.Offset.Z;
 
             if (m_brep != null)
                 dup.m_brep = Brep.DuplicateBrep();

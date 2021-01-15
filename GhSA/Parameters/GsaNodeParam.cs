@@ -168,7 +168,15 @@ namespace GhSA.Parameters
                     DamperProperty = Node.DamperProperty,
                     MassProperty = Node.MassProperty,
                     Name = Node.Name,
-                    Restraint = Node.Restraint,
+                    Restraint = new NodalRestraint
+                    {
+                        X = Node.Restraint.X,
+                        Y = Node.Restraint.Y,
+                        Z = Node.Restraint.Z,
+                        XX = Node.Restraint.XX,
+                        YY = Node.Restraint.YY,
+                        ZZ = Node.Restraint.ZZ,
+                    },
                     SpringProperty = Node.SpringProperty,
                 }
             };

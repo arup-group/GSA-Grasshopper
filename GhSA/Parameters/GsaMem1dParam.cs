@@ -131,22 +131,23 @@ namespace GhSA.Parameters
         
         public GsaMember1d Duplicate()
         {
+            if (this == null) { return null; }
             GsaMember1d dup = new GsaMember1d
             {
                 Member = new Member
                 {
                     Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
-                    Group = Member.Group,
-                    IsDummy = Member.IsDummy,
-                    MeshSize = Member.MeshSize,
-                    Name = Member.Name.ToString(),
-                    Offset = Member.Offset,
-                    OrientationAngle = Member.OrientationAngle,
-                    OrientationNode = Member.OrientationNode,
-                    Property = Member.Property,
-                    Topology = Member.Topology.ToString(),
-                    Type = Member.Type, //GsaToModel.Member1dType((int)Member.Type),
-                    Type1D = Member.Type1D //GsaToModel.Element1dType((int)Member.Type1D)
+                    Group = m_member.Group,
+                    IsDummy = m_member.IsDummy,
+                    MeshSize = m_member.MeshSize,
+                    Name = m_member.Name.ToString(),
+                    Offset = m_member.Offset,
+                    OrientationAngle = m_member.OrientationAngle,
+                    OrientationNode = m_member.OrientationNode,
+                    Property = m_member.Property,
+                    Topology = m_member.Topology.ToString(),
+                    Type = m_member.Type, //GsaToModel.Member1dType((int)Member.Type),
+                    Type1D = m_member.Type1D //GsaToModel.Element1dType((int)Member.Type1D)
                 }
             };
             dup.Member.Offset.X1 = m_member.Offset.X1;

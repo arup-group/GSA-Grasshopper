@@ -59,9 +59,9 @@ namespace GhSA.Parameters
                     MaterialAnalysisProperty = m_prop2d.MaterialAnalysisProperty,
                     MaterialGradeProperty = m_prop2d.MaterialGradeProperty,
                     MaterialType = m_prop2d.MaterialType,
-                    Name = m_prop2d.Name,
+                    Name = m_prop2d.Name.ToString(),
                     Colour = m_prop2d.Colour,
-                    Description = m_prop2d.Description,
+                    Description = m_prop2d.Description.ToString(),
                     Type = m_prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
                     AxisProperty = m_prop2d.AxisProperty
                 },
