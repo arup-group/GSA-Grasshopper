@@ -201,7 +201,7 @@ namespace GhSA.UI
         {
             DisplayMaterial material = new DisplayMaterial()
             {
-                Diffuse = colour,
+                Diffuse = Color.FromArgb(50, colour.R, colour.G, colour.B),
                 Emission = Color.FromArgb(50, 190, 190, 190),
                 Transparency = 0.1
             };
