@@ -62,7 +62,7 @@ namespace GhSA.Parameters
                     }
                     cols.Add((System.Drawing.Color)m_elements[i].Colour);
 
-                    Mesh.VertexColors.SetColor(Mesh.Faces.GetFace(i), (System.Drawing.Color)m_elements[i].Colour);
+                    Mesh.VertexColors.SetColor(i, (System.Drawing.Color)m_elements[i].Colour);
                 }
                 return cols;
             }
@@ -73,7 +73,7 @@ namespace GhSA.Parameters
                     if (value[i] != null)
                     {
                         m_elements[i].Colour = value[i];
-                        Mesh.VertexColors.SetColor(Mesh.Faces.GetFace(i), (System.Drawing.Color)m_elements[i].Colour);
+                        Mesh.VertexColors.SetColor(i, (System.Drawing.Color)m_elements[i].Colour);
                     }
                 }
             }
@@ -120,6 +120,8 @@ namespace GhSA.Parameters
             dup.m_topo = m_topo.ToList();
             dup.m_topoInt = m_topoInt.ToList();
 
+            dup.m_props = new List<GsaProp2d>();
+
             for (int i = 0; i < m_elements.Count; i++)
             {
                 dup.m_elements.Add(new Element()
@@ -140,21 +142,22 @@ namespace GhSA.Parameters
                 dup.m_elements[i].Offset.X2 = m_elements[i].Offset.X2;
                 dup.m_elements[i].Offset.Y = m_elements[i].Offset.Y;
                 dup.m_elements[i].Offset.Z = m_elements[i].Offset.Z;
+
+                if (m_props[i] != null)
+                    dup.m_props.Add(m_props[i].Duplicate());
+                else
+                    dup.m_props.Add(new GsaProp2d());
             }
-            dup.Colours = Colours.ToList();
-            
+
+            dup.Colours = new List<System.Drawing.Color>(Colours);
+
             if (m_id != null)
             {
                 int[] dupids = new int[m_id.Count];
                 m_id.CopyTo(dupids);
                 dup.ID = new List<int>(dupids);
             }
-            if (m_props != null)
-            {
-                GsaProp2d[] dupprop = new GsaProp2d[m_props.Count];
-                m_props.CopyTo(dupprop);
-                dup.Properties = new List<GsaProp2d>(dupprop);
-            }
+            
 
             return dup;
         }
@@ -399,7 +402,15 @@ namespace GhSA.Parameters
         {
             //Draw shape.
             if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
+            {
+                // args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
+                for (int i = 0; i < Value.Mesh.Faces.Count; i++)
+                {
+                    int[] face = new int[] { i };
+                    args.Pipeline.DrawMeshShaded(Value.Mesh,
+                        UI.Colour.Element2dFaceCustom(Value.Colours[i]), face);
+                }
+            }
             else
                 args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFaceSelected);
         }
