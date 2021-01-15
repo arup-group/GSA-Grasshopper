@@ -137,20 +137,21 @@ namespace GhSA.Parameters
 
         public GsaElement1d Duplicate()
         {
+            if (this == null) { return null; }
             GsaElement1d dup = new GsaElement1d();
             dup.m_element = new Element()
             {
                 Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
-                Group = Element.Group,
-                IsDummy = Element.IsDummy,
-                Name = Element.Name.ToString(),
-                Offset = Element.Offset,
-                OrientationAngle = Element.OrientationAngle,
-                OrientationNode = Element.OrientationNode,
-                ParentMember = Element.ParentMember,
-                Property = Element.Property,
-                Topology = Element.Topology,
-                Type = Element.Type //GsaToModel.Element1dType((int)Element.Type)
+                Group = m_element.Group,
+                IsDummy = m_element.IsDummy,
+                Name = m_element.Name.ToString(),
+                Offset = m_element.Offset,
+                OrientationAngle = m_element.OrientationAngle,
+                OrientationNode = m_element.OrientationNode,
+                ParentMember = m_element.ParentMember,
+                Property = m_element.Property,
+                Topology = m_element.Topology,
+                Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
             };
             dup.Element.Offset.X1 = m_element.Offset.X1;
             dup.Element.Offset.X2 = m_element.Offset.X2;

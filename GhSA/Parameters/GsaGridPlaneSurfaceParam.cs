@@ -118,12 +118,38 @@ namespace GhSA.Parameters
 
         public GsaGridPlaneSurface Duplicate()
         {
+            if (this == null) { return null; }
             GsaGridPlaneSurface dup = new GsaGridPlaneSurface
             {
-                Plane = m_plane,
-                GridPlane = m_gridplane,
-                GridSurface = m_gridsrf,
-                Axis = m_axis,
+                Plane = m_plane.Clone(),
+                GridPlane = new GridPlane
+                {
+                    AxisProperty = m_gridplane.AxisProperty,
+                    Elevation = m_gridplane.Elevation,
+                    IsStoreyType = m_gridplane.IsStoreyType,
+                    Name = m_gridplane.Name.ToString(),
+                    ToleranceAbove = m_gridplane.ToleranceAbove,
+                    ToleranceBelow = m_gridplane.ToleranceBelow
+                },
+                GridSurface = new GridSurface
+                {
+                    Direction = m_gridsrf.Direction,
+                    Elements = m_gridsrf.Elements.ToString(),
+                    ElementType = m_gridsrf.ElementType,
+                    ExpansionType = m_gridsrf.ExpansionType,
+                    GridPlane = m_gridsrf.GridPlane,
+                    Name = m_gridsrf.Name.ToString(),
+                    SpanType = m_gridsrf.SpanType,
+                    Tolerance = m_gridsrf.Tolerance
+                },
+                Axis = new Axis
+                { 
+                    Name = m_axis.Name.ToString(),
+                    Origin = new Vector3 { X = m_axis.Origin.X, Y = m_axis.Origin.Y, Z = m_axis.Origin.Z },
+                    Type = m_axis.Type,
+                    XVector = new Vector3 { X = m_axis.XVector.X, Y = m_axis.XVector.Y, Z = m_axis.XVector.Z },
+                    XYPlane = new Vector3 { X = m_axis.XYPlane.X, Y = m_axis.XYPlane.Y, Z = m_axis.XYPlane.Z }
+                },
                 GridPlaneID = m_gridplnID,
                 GridSurfaceID = m_gridsrfID
             };

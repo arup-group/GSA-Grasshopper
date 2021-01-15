@@ -61,6 +61,7 @@ namespace GhSA.Parameters
                         m_elements[i].Colour = System.Drawing.Color.FromArgb(50, 150, 150, 150);
                     }
                     cols.Add((System.Drawing.Color)m_elements[i].Colour);
+
                     Mesh.VertexColors.SetColor(Mesh.Faces.GetFace(i), (System.Drawing.Color)m_elements[i].Colour);
                 }
                 return cols;
@@ -93,7 +94,6 @@ namespace GhSA.Parameters
             m_mesh = new Mesh();
         }
 
-
         public GsaElement2d(Mesh mesh, int prop = 1)
         {
             m_elements = new List<Element>();
@@ -109,67 +109,40 @@ namespace GhSA.Parameters
             for (int i = 0; i < m_mesh.Faces.Count(); i++)
                 m_props.Add(new GsaProp2d());
         }
-        public GsaElement2d Clone()
-        {
-            GsaElement2d clones = this.Duplicate();
-            for (int i = 0; i < clones.Elements.Count; i++)
-            {
-                Element clone = new Element();
-                Element original = clones.Elements[i];
-                clone.Colour = original.Colour;
-                clone.Group = original.Group;
-                clone.IsDummy = original.IsDummy;
-                clone.Name = original.Name.ToString();
-                clone.Offset.X1 = original.Offset.X1;
-                clone.Offset.X2 = original.Offset.X2;
-                clone.Offset.Y = original.Offset.Y;
-                clone.Offset.Z = original.Offset.Z;
-                clone.OrientationAngle = original.OrientationAngle;
-                clone.OrientationNode = original.OrientationNode;
-                clone.ParentMember = original.ParentMember;
-                clone.Property = original.Property;
-                clone.Topology = original.Topology;
-                clone.Type = original.Type;
-
-                clones.Elements[i] = clone;
-            }
-            
-            return clones;
-        }
 
         public GsaElement2d Duplicate()
         {
+            if (this == null) { return null; }
+            if (m_mesh == null) { return null; }
+
             GsaElement2d dup = new GsaElement2d();
+            dup.m_mesh = (Mesh)m_mesh.Duplicate();
+            dup.m_topo = m_topo.ToList();
+            dup.m_topoInt = m_topoInt.ToList();
+
             for (int i = 0; i < m_elements.Count; i++)
             {
-                dup.Elements[i] = new Element()
+                dup.m_elements.Add(new Element()
                 {
                     //don't copy object.colour, this will be default = black if not set
-                    Group = Elements[i].Group,
-                    IsDummy = Elements[i].IsDummy,
-                    Name = Elements[i].Name.ToString(),
-                    OrientationNode = Elements[i].OrientationNode,
-                    OrientationAngle = Elements[i].OrientationAngle,
-                    Offset = Elements[i].Offset,
-                    ParentMember = Elements[i].ParentMember,
-                    Property = Elements[i].Property,
-                    Topology = Elements[i].Topology,
-                    Type = Elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
-                };
-                dup.Elements[i].Offset.X1 = m_elements[i].Offset.X1;
-                dup.Elements[i].Offset.X2 = m_elements[i].Offset.X2;
-                dup.Elements[i].Offset.Y = m_elements[i].Offset.Y;
-                dup.Elements[i].Offset.Z = m_elements[i].Offset.Z;
+                    Group = m_elements[i].Group,
+                    IsDummy = m_elements[i].IsDummy,
+                    Name = m_elements[i].Name.ToString(),
+                    OrientationNode = m_elements[i].OrientationNode,
+                    OrientationAngle = m_elements[i].OrientationAngle,
+                    Offset = m_elements[i].Offset,
+                    ParentMember = m_elements[i].ParentMember,
+                    Property = m_elements[i].Property,
+                    Topology = m_elements[i].Topology,
+                    Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
+                });
+                dup.m_elements[i].Offset.X1 = m_elements[i].Offset.X1;
+                dup.m_elements[i].Offset.X2 = m_elements[i].Offset.X2;
+                dup.m_elements[i].Offset.Y = m_elements[i].Offset.Y;
+                dup.m_elements[i].Offset.Z = m_elements[i].Offset.Z;
             }
             dup.Colours = Colours.ToList();
-
-            if (m_mesh != null)
-            {
-                dup.m_mesh = (Mesh)m_mesh.Duplicate();
-                Point3dList point3Ds = new Point3dList(m_topo);
-                dup.Topology = new List<Point3d>(point3Ds.Duplicate());
-                dup.m_topoInt = m_topoInt.ToList();
-            }
+            
             if (m_id != null)
             {
                 int[] dupids = new int[m_id.Count];
