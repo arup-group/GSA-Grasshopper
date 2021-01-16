@@ -25,32 +25,56 @@ namespace GhSA.Parameters
         private int m_gridplnID = 0;
         private int m_gridsrfID = 0;
         private int m_axisID = 0;
+        private Guid m_gp_guid;
+        private Guid m_gs_guid;
         #endregion
         public Plane Plane
         {
             get { return m_plane; }
-            set { m_plane = value; }
+            set 
+            {
+                m_gp_guid = new Guid();
+                m_plane = value; 
+            }
         }
         public GridPlane GridPlane
         {
             get { return m_gridplane; }
-            set { m_gridplane = value; }
+            set 
+            {
+                m_gp_guid = new Guid();
+                m_gridplane = value; 
+            }
         }
         public int GridPlaneID
         {
             get { return m_gridplnID; }
-            set { m_gridplnID = value; }
+            set 
+            {
+                m_gp_guid = new Guid();
+                m_gridplnID = value; 
+            }
         }
         
         public GridSurface GridSurface
         {
             get { return m_gridsrf; }
-            set { m_gridsrf = value; }
+            set 
+            {
+                m_gs_guid = new Guid();
+                m_gp_guid = new Guid();
+                m_gridsrf = value; 
+            }
         }
         public int GridSurfaceID
         {
             get { return m_gridsrfID; }
-            set { m_gridsrfID = value; }
+            set 
+            {
+                m_gs_guid = new Guid();
+                m_gp_guid = new Guid();
+                m_gridsrfID = value; 
+            }
         }
         public Axis Axis
         {
@@ -58,6 +82,7 @@ namespace GhSA.Parameters
             set 
             {
                 m_axis = value;
+                m_gp_guid = new Guid();
                 if (value != null)
                 {
                     m_plane.OriginX = m_axis.Origin.X;
@@ -80,14 +105,28 @@ namespace GhSA.Parameters
         public int AxisID
         {
             get { return m_axisID; }
-            set { m_axisID = value; }
+            set 
+            {
+                m_gp_guid = new Guid();
+                m_axisID = value; 
+            }
+        }
+        public Guid GridPlaneGUID
+        {
+            get { return m_gp_guid; }
+        }
+        public Guid GridSurfaceGUID
+        {
+            get { return m_gs_guid; }
         }
         #region constructors
         public GsaGridPlaneSurface()
         {
             m_plane = Plane.Unset;
             m_gridplane = new GridPlane();
+            m_gp_guid = new Guid();
             m_gridsrf = new GridSurface();
+            m_gs_guid = new Guid();
             m_axis = new Axis();
         }
 
@@ -95,6 +134,7 @@ namespace GhSA.Parameters
         {
             m_plane = plane;
             m_gridplane = new GridPlane();
+            m_gp_guid = new Guid();
             m_gridsrf = new GridSurface
             {
                 Direction = 0,
@@ -103,6 +143,7 @@ namespace GhSA.Parameters
                 ExpansionType = GridSurfaceExpansionType.UNDEF,
                 SpanType = GridSurface.Span_Type.ONE_WAY
             };
+            m_gs_guid = new Guid();
             m_axis = new Axis();
             m_axis.Origin.X = plane.OriginX;
             m_axis.Origin.Y = plane.OriginY;
@@ -153,6 +194,8 @@ namespace GhSA.Parameters
                 GridPlaneID = m_gridplnID,
                 GridSurfaceID = m_gridsrfID
             };
+            dup.m_gs_guid = m_gs_guid;
+            dup.m_gp_guid = m_gp_guid;
             return dup;
         }
 
