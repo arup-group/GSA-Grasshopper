@@ -104,7 +104,7 @@ namespace GhSA.Components
 
         #region Input and output
         // This region handles input and output parameters
-        private static Guid panelGUID = new Guid();
+        private static Guid panelGUID = Guid.NewGuid();
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {

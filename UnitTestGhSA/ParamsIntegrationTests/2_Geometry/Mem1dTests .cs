@@ -45,7 +45,7 @@ namespace ParamsIntegrationTests
 
             // loop through segments and check they are either arc or line
             for (int i = 0; i < mem.PolyCurve.SegmentCount; i++)
-                Assert.IsTrue(mem.PolyCurve.SegmentCurve(i).IsArc() ^ mem.PolyCurve.SegmentCurve(i).IsLinear());
+                Assert.IsTrue(mem.PolyCurve.SegmentCurve(i).IsLinear() || mem.PolyCurve.SegmentCurve(i).IsArc());
             
             Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 0, 0), mem.Member.Colour);
             Assert.AreEqual(3, mem.ID);

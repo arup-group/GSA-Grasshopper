@@ -33,7 +33,8 @@ namespace GhSA.Util
                     }
                     // add convertion to meters if odd unit?
                 }
-                return m_length_L;
+                //return m_length_L; 
+                return "m"; // always set unit to m 
             }
             set 
             {

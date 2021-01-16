@@ -57,6 +57,7 @@ namespace GhSA.Components
             pManager.AddNumberParameter("Span Direction", "Di", "Grid Surface Span Direction", GH_ParamAccess.item); //15
             pManager.AddTextParameter("Expansion Type", "Ex", "Grid Surface Expansion Type", GH_ParamAccess.item); //16
             pManager.AddBooleanParameter("Simplified Tributary Area", "Sf", "Grid Surface Simplified Tributary Area", GH_ParamAccess.item); //17
+            pManager.AddTextParameter("Guid", "Guid", "Gu", GH_ParamAccess.item);
         }
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -64,10 +65,6 @@ namespace GhSA.Components
             GsaGridPlaneSurface gps = new GsaGridPlaneSurface();
             if(DA.GetData(0, ref gps))
             {
-                //GsaGridPlaneSurface gridplane = new GsaGridPlaneSurface();
-                //gridplane.GridPlane = gps.GridPlane;
-
-                //DA.SetData(0, gridplane);
                 DA.SetData(0, gps.Plane);
                 DA.SetData(1, gps.GridPlaneID);
                 DA.SetData(2, gps.GridPlane.Name);
@@ -97,7 +94,7 @@ namespace GhSA.Components
                 if (gps.GridSurface.SpanType == GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS)
                     simple = true;
                 DA.SetData(17, simple);
-
+                DA.SetData(18, gps.GridPlaneGUID.ToString() + " - " + gps.GridSurfaceGUID.ToString());
             }
         }
     }
