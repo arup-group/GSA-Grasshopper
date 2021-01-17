@@ -38,12 +38,14 @@ namespace GhSA.Parameters
         {
             get 
             {
-                //m_rel1.X = m_element.Release(0).X;
-                //m_rel1.Y = m_element.Release(0).Y;
-                //m_rel1.Z = m_element.Release(0).Z;
-                //m_rel1.XX = m_element.Release(0).XX;
-                //m_rel1.YY = m_element.Release(0).YY;
-                //m_rel1.ZZ = m_element.Release(0).ZZ;
+                Bool6 rel1 = m_element.Release(0);
+                m_rel1 = new GsaBool6();
+                m_rel1.X = rel1.X;
+                m_rel1.Y = rel1.Y;
+                m_rel1.Z = rel1.Z;
+                m_rel1.XX = rel1.XX;
+                m_rel1.YY = rel1.YY;
+                m_rel1.ZZ = rel1.ZZ;
                 return m_rel1; 
             } 
             set 
@@ -63,13 +65,15 @@ namespace GhSA.Parameters
         {
             get 
             {
-                //m_rel2.X = m_element.Release(1).X;
-                //m_rel2.Y = m_element.Release(1).Y;
-                //m_rel2.Z = m_element.Release(1).Z;
-                //m_rel2.XX = m_element.Release(1).XX;
-                //m_rel2.YY = m_element.Release(1).YY;
-                //m_rel2.ZZ = m_element.Release(1).ZZ;
-                return m_rel2; 
+                Bool6 rel2 = m_element.Release(1);
+                m_rel2 = new GsaBool6();
+                m_rel2.X = rel2.X;
+                m_rel2.Y = rel2.Y;
+                m_rel2.Z = rel2.Z;
+                m_rel2.XX = rel2.XX;
+                m_rel2.YY = rel2.YY;
+                m_rel2.ZZ = rel2.ZZ;
+                return m_rel2;
             }
             set 
             { 

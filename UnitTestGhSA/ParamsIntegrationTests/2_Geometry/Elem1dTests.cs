@@ -126,5 +126,23 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(3, orig.Element.OrientationNode);
             Assert.AreEqual(2, orig.Element.Property);
         }
+
+        [TestCase]
+        public void TestCreateGsaElem1dGetReleases()
+        {
+            // create new line
+            Line ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
+
+            // create element
+            GsaElement1d elem = new GsaElement1d(new LineCurve(ln));
+
+            GsaBool6 rel1 = elem.ReleaseStart;
+            Assert.IsFalse(rel1.X);
+            Assert.IsFalse(rel1.Y);
+            Assert.IsFalse(rel1.Z);
+            Assert.IsFalse(rel1.XX);
+            Assert.IsFalse(rel1.YY);
+            Assert.IsFalse(rel1.ZZ);
+        }
     }
 }
