@@ -332,43 +332,35 @@ namespace GhSA.Util.GH
             // duplicate incoming mesh
             Mesh m = (Mesh)mesh.Duplicate();
 
+            // test if mesh is closed
+            if (!m.IsClosed)
+            {
+                // try fill holes
+                m.FillHoles();
+
+                // if not succesfull return null
+                if (!m.IsClosed)
+                    return null;
+            }
+
+            // weld mesh (collapse verticies)
+            m.Weld(Math.PI);
+
             // triangulate all faces
             m.Faces.ConvertQuadsToTriangles();
 
-            // weld mesh (collapse verticies)
-            m.Weld(Math.PI);
-
-            // test if mesh is closed
-            if (!m.IsClosed)
-            {
-                // try fill holes
-                m.FillHoles();
-
-                // if succesfull weld new mesh
-                if (m.IsClosed)
-                    m.Weld(Math.PI);
-                else
-                    return null;
-            }
-            return m;   
+            return mesh;   
         }
         public static Mesh ConvertBrepToTriMeshSolid(Brep brep)
         {
-            // duplicate incoming brep
-            Brep b = (Brep)brep.Duplicate();
-            
-            // try cap holes
-            b.CapPlanarHoles(Math.PI);
-
             // convert to mesh
-            MeshingParameters mparams = MeshingParameters.Minimal;
-            Mesh m = Mesh.CreateFromBrep(brep, mparams)[0];
-
-            // triangulate all faces if any
-            m.Faces.ConvertQuadsToTriangles();
-
-            // weld mesh (collapse verticies)
-            m.Weld(Math.PI);
+            MeshingParameters mparams = MeshingParameters.FastRenderMesh;
+            mparams.JaggedSeams = false;
+            mparams.SimplePlanes = true;
+            
+            Mesh[] ms = Mesh.CreateFromBrep(brep, mparams);
+            Mesh m = new Mesh();
+            m.Append(ms);
 
             // test if mesh is closed
             if (!m.IsClosed)
@@ -376,12 +368,17 @@ namespace GhSA.Util.GH
                 // try fill holes
                 m.FillHoles();
 
-                // if succesfull weld new mesh
-                if (m.IsClosed)
-                    m.Weld(Math.PI);
-                else
+                // if not succesfull return null
+                if (!m.IsClosed)
                     return null;
             }
+
+            // weld mesh (collapse verticies)
+            m.Weld(Math.PI);
+
+            // triangulate all faces
+            m.Faces.ConvertQuadsToTriangles();
+
             return m;
         }
     }

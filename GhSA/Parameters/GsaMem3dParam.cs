@@ -14,7 +14,7 @@ using Rhino.Collections;
 namespace GhSA.Parameters
 {
     /// <summary>
-    /// Member1d class, this class defines the basic properties and methods for any Gsa Member 1d
+    /// Member3d class, this class defines the basic properties and methods for any Gsa Member 3d
     /// </summary>
     public class GsaMember3d
 
@@ -56,7 +56,7 @@ namespace GhSA.Parameters
         private Member m_member;
         private int m_id = 0;
 
-        private Mesh m_mesh; //Polyline for visualisation /member1d/member2d
+        private Mesh m_mesh; 
         private GsaSection m_section;
         #endregion
 
@@ -139,6 +139,7 @@ namespace GhSA.Parameters
             string mes = m_member.Type.ToString();
             string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
             typeTxt = typeTxt.Replace("3d", "3D");
+            typeTxt = typeTxt + " " + SolidMesh.Vertices.Count();
             return typeTxt;
         }
 
@@ -297,9 +298,17 @@ namespace GhSA.Parameters
                 return true;
             }
 
+            //Cast from Brep
+            Brep brep = new Brep();
+            if (GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both))
+            {
+                GsaMember3d member = new GsaMember3d(brep);
+                this.Value = member;
+                return true;
+            }
             
             //Cast from Mesh
-            Mesh mesh = null;
+            Mesh mesh = new Mesh();
 
             if (GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both))
             {
@@ -365,17 +374,17 @@ namespace GhSA.Parameters
             //Draw shape
             if (Value.SolidMesh != null)
             {
-                Mesh preview = Value.SolidMesh.DuplicateMesh();
-                ReduceMeshParameters mparam = new ReduceMeshParameters
-                { AllowDistortion = false };
-                preview.Reduce(mparam);
+                //Mesh preview = Value.SolidMesh.DuplicateMesh();
+                //ReduceMeshParameters mparam = new ReduceMeshParameters
+                //{ AllowDistortion = false };
+                //preview.Reduce(mparam);
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
                     if (!Value.Member.IsDummy)
-                        args.Pipeline.DrawMeshWires(preview, UI.Colour.Member2dEdge, -1);
+                        args.Pipeline.DrawMeshWires(Value.SolidMesh, UI.Colour.Member2dEdge, -1);
                 }
                 else
-                    args.Pipeline.DrawMeshWires(preview, UI.Colour.Member2dEdgeSelected, -1);
+                    args.Pipeline.DrawMeshWires(Value.SolidMesh, UI.Colour.Member2dEdgeSelected, -1);
             }
             
         }
@@ -383,12 +392,12 @@ namespace GhSA.Parameters
     }
 
     /// <summary>
-    /// This class provides a Parameter interface for the Data_GsaMember1d type.
+    /// This class provides a Parameter interface for the Data_GsaMember3d type.
     /// </summary>
     public class GsaMember3dParameter : GH_PersistentGeometryParam<GsaMember3dGoo>, IGH_PreviewObject
     {
         public GsaMember3dParameter()
-          : base(new GH_InstanceDescription("3D Member", "M3D", "Maintains a collection of GSA 1D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("3D Member", "M3D", "Maintains a collection of GSA 3D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 

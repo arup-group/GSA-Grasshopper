@@ -64,6 +64,7 @@ namespace GhSA.Components
             List<GsaElement2d> Elem2ds { get; set; }
             List<GsaMember1d> Mem1ds { get; set; }
             List<GsaMember2d> Mem2ds { get; set; }
+            List<GsaMember3d> Mem3ds { get; set; }
             List<GsaLoad> Loads { get; set; }
             List<GsaSection> Sections { get; set; }
             List<GsaProp2d> Prop2Ds { get; set; }
@@ -79,6 +80,7 @@ namespace GhSA.Components
                 Elem2ds = null;
                 Mem1ds = null;
                 Mem2ds = null;
+                Mem3ds = null;
                 Loads = null;
                 Sections = null;
                 Prop2Ds = null;
@@ -201,6 +203,7 @@ namespace GhSA.Components
                 // Get Member2d input
                 gh_types = new List<GH_ObjectWrapper>();
                 List<GsaMember2d> in_mem2ds = new List<GsaMember2d>();
+                List<GsaMember3d> in_mem3ds = new List<GsaMember3d>();
                 if (DA.GetDataList(5, gh_types))
                 {
                     for (int i = 0; i < gh_types.Count; i++)
@@ -212,6 +215,12 @@ namespace GhSA.Components
                             gh_typ.CastTo(ref gsamem2);
                             in_mem2ds.Add(gsamem2);
                         }
+                        else if (gh_typ.Value is GsaMember3dGoo)
+                        {
+                            GsaMember3d gsamem3 = new GsaMember3d();
+                            gh_typ.CastTo(ref gsamem3);
+                            in_mem3ds.Add(gsamem3);
+                        }
                         else
                         {
                             this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Mem2D input");
@@ -219,6 +228,7 @@ namespace GhSA.Components
                         }
                     }
                     Mem2ds = in_mem2ds;
+                    Mem3ds = in_mem3ds;
                 }
 
                 // Get Loads input
@@ -838,6 +848,78 @@ namespace GhSA.Components
                     }
                 }
                 ReportProgress("Mem2D assembled", -2);
+
+                // Mem3ds
+                if (Mem3ds != null)
+                {
+                    for (int i = 0; i < Mem3ds.Count; i++)
+                    {
+                        if (CancellationToken.IsCancellationRequested) return;
+                        ReportProgress("Mem3D ", (double)i / (Mem3ds.Count - 1));
+
+                        if (Mem3ds[i] != null)
+                        {
+                            GsaMember3d member3d = Mem3ds[i];
+                            Member apiMember = member3d.Member;
+
+                            // update topology list to fit model nodes
+                            string topo = "";
+
+                            // Loop through the face list
+                            for (int j = 0; j < member3d.SolidMesh.Faces.Count; j++)
+                            {
+                                for (int k = 0; k < 3; k++)
+                                {
+                                    int faceint = 0; 
+                                    if (k == 0)
+                                        faceint = member3d.SolidMesh.Faces[j].A;
+                                    if (k == 1)
+                                        faceint = member3d.SolidMesh.Faces[j].B;
+                                    if (k == 2)
+                                        faceint = member3d.SolidMesh.Faces[j].C;
+                                    
+                                    // vertex point of current face corner
+                                    Point3d pt = member3d.SolidMesh.Vertices[faceint];
+
+                                    // add space if we are not in first iteration
+                                    if (k > 0)
+                                        topo += " ";
+
+                                    // check point against existing nodes in model
+                                    int id = Util.Gsa.ModelNodes.ExistingNodePoint(nodes, pt);
+                                    if (id > 0)
+                                        topo += id;
+                                    else
+                                    {
+                                        nodes.Add(newNodeID, Util.Gsa.ModelNodes.NodeFromPoint(pt));
+                                        topo += newNodeID;
+                                        newNodeID++;
+                                    }
+                                }
+                                // add ";" between face lists, unless we are in final iteration
+                                if (j != member3d.SolidMesh.Faces.Count - 1)
+                                    topo += "; ";
+                            }
+                            // set topology in api member
+                            apiMember.Topology = string.Copy(topo);
+
+                            // Section
+                            // to be done
+
+                            // set apimember in dictionary
+                            if (member3d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+                            {
+                                mems[member3d.ID] = apiMember;
+                            }
+                            else
+                            {
+                                mems.Add(newMemberID, apiMember);
+                                newMemberID++;
+                            }
+                        }
+                    }
+                }
+                ReportProgress("Mem3D assembled", -2);
                 #endregion
 
                 #region Loads
@@ -1371,7 +1453,7 @@ namespace GhSA.Components
                 #region meshing
                 // Create elements from members
                 ReportProgress("Meshing", 0);
-                gsa.CreateElementsFromMembers();
+                //gsa.CreateElementsFromMembers();
                 ReportProgress("Model meshed", -2);
                 #endregion
 
