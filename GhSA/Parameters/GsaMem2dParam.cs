@@ -37,7 +37,7 @@ namespace GhSA.Parameters
         public Brep Brep
         {
             get { return m_brep; }
-            set { m_brep = Util.GH.Convert.ConvertBrep(value); }
+            set { m_brep = Util.GH.Convert.ConvertBrepToArcLineEdges(value); }
         }
 
         public List<Point3d> Topology
@@ -179,7 +179,7 @@ namespace GhSA.Parameters
                 topology_type.Add("");
             }
                 
-            m_crv = Util.GH.Convert.BuildCurve(topology, topology_type);
+            m_crv = Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(topology, topology_type);
             m_topo = topology;
             m_topoType = topology_type;
 
@@ -195,9 +195,9 @@ namespace GhSA.Parameters
                         void_topology_type[i].Add("");
                     }
                     if (void_topology_type != null)
-                        void_crvs.Add(Util.GH.Convert.BuildCurve(void_topology[i], void_topology_type[i]));
+                        void_crvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(void_topology[i], void_topology_type[i]));
                     else
-                        void_crvs.Add(Util.GH.Convert.BuildCurve(void_topology[i]));
+                        void_crvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(void_topology[i]));
                 }
             }
             void_topo = void_topology;
@@ -209,9 +209,9 @@ namespace GhSA.Parameters
                 for (int i = 0; i < inlcusion_lines_topology.Count; i++)
                 {
                     if (inclusion_topology_type != null)
-                        incl_Lines.Add(Util.GH.Convert.BuildCurve(inlcusion_lines_topology[i], inclusion_topology_type[i]));
+                        incl_Lines.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(inlcusion_lines_topology[i], inclusion_topology_type[i]));
                     else
-                        incl_Lines.Add(Util.GH.Convert.BuildCurve(inlcusion_lines_topology[i]));
+                        incl_Lines.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(inlcusion_lines_topology[i]));
                 }
             }
             incLines_topo = inlcusion_lines_topology;

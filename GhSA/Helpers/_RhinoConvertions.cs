@@ -277,7 +277,7 @@ namespace GhSA.Util.GH
             return convertCrv.Item1;
         }
 
-        public static PolyCurve BuildCurve(List<Point3d> topology, List<string> topo_type=null)
+        public static PolyCurve BuildArcLineCurveFromPtsAndTopoType(List<Point3d> topology, List<string> topo_type=null)
         {
             PolyCurve crvs = new PolyCurve();
 
@@ -294,14 +294,14 @@ namespace GhSA.Util.GH
             return crvs;
         }
 
-        public static Brep ConvertBrep(Brep brep, double tolerance = -1)
+        public static Brep ConvertBrepToArcLineEdges(Brep brep, double tolerance = -1)
         {
             Tuple<PolyCurve, List<Point3d>, List<string>, List<PolyCurve>, List<List<Point3d>>, List<List<string>>> convertBrep
                 = GH.Convert.ConvertPolyBrep(brep, tolerance);
             return BuildBrep(convertBrep.Item1, convertBrep.Item4);
         }
 
-        public static Tuple<List<Element>, List<Point3d>, List<List<int>>> ConvertMesh(Mesh mesh, int prop = 1)
+        public static Tuple<List<Element>, List<Point3d>, List<List<int>>> ConvertMeshToElem2d(Mesh mesh, int prop = 1)
         {
             List<Element> elems = new List<Element>();
             List<Point3d> topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
@@ -326,6 +326,63 @@ namespace GhSA.Util.GH
                 elems.Add(elem);
             }
             return new Tuple<List<Element>, List<Point3d>, List<List<int>>>(elems, topoPts, topoInts);
+        }
+        public static Mesh ConvertMeshToTriMeshSolid(Mesh mesh)
+        {
+            // duplicate incoming mesh
+            Mesh m = (Mesh)mesh.Duplicate();
+
+            // triangulate all faces
+            m.Faces.ConvertQuadsToTriangles();
+
+            // weld mesh (collapse verticies)
+            m.Weld(Math.PI);
+
+            // test if mesh is closed
+            if (!m.IsClosed)
+            {
+                // try fill holes
+                m.FillHoles();
+
+                // if succesfull weld new mesh
+                if (m.IsClosed)
+                    m.Weld(Math.PI);
+                else
+                    return null;
+            }
+            return m;   
+        }
+        public static Mesh ConvertBrepToTriMeshSolid(Brep brep)
+        {
+            // duplicate incoming brep
+            Brep b = (Brep)brep.Duplicate();
+            
+            // try cap holes
+            b.CapPlanarHoles(Math.PI);
+
+            // convert to mesh
+            MeshingParameters mparams = MeshingParameters.Minimal;
+            Mesh m = Mesh.CreateFromBrep(brep, mparams)[0];
+
+            // triangulate all faces if any
+            m.Faces.ConvertQuadsToTriangles();
+
+            // weld mesh (collapse verticies)
+            m.Weld(Math.PI);
+
+            // test if mesh is closed
+            if (!m.IsClosed)
+            {
+                // try fill holes
+                m.FillHoles();
+
+                // if succesfull weld new mesh
+                if (m.IsClosed)
+                    m.Weld(Math.PI);
+                else
+                    return null;
+            }
+            return m;
         }
     }
 }

@@ -175,6 +175,7 @@
     <Compile Include="Helpers\_SqlReader.cs" />
     <Compile Include="Parameters\GsaLoadParam.cs" />
     <Compile Include="Parameters\GsaGridPlaneSurfaceParam.cs" />
+    <Compile Include="Parameters\GsaMem3dParam.cs" />
     <Compile Include="Parameters\_ResultMesh.cs" />
     <Compile Include="Parameters\_ResultLine.cs" />
     <Compile Include="Parameters\_ResultPoint.cs" />

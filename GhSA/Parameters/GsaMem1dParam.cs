@@ -101,7 +101,7 @@ namespace GhSA.Parameters
             {
                 Type = MemberType.GENERIC_1D
             };
-            m_crv = Util.GH.Convert.BuildCurve(topology, topo_type);
+            m_crv = Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
             m_topo = topology;
             m_topoType = topo_type;
 

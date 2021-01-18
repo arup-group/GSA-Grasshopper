@@ -98,7 +98,7 @@ namespace GhSA.Parameters
         {
             m_elements = new List<Element>();
             m_mesh = mesh;
-            Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMesh(mesh, prop);
+            Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(mesh, prop);
             m_elements = convertMesh.Item1;
             m_topo = convertMesh.Item2;
             m_topoInt = convertMesh.Item3;
@@ -382,7 +382,7 @@ namespace GhSA.Parameters
             if (Value.Mesh == null) { return null; }
 
             GsaElement2d elem = Value.Duplicate();
-            Mesh xMs = Value.Mesh;
+            Mesh xMs = elem.Mesh;
             xmorph.Morph(xMs);
             elem.Mesh = xMs;
             elem.TopoInt = Value.TopoInt;
