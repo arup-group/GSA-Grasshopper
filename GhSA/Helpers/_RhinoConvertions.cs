@@ -354,7 +354,7 @@ namespace GhSA.Util.GH
         public static Mesh ConvertBrepToTriMeshSolid(Brep brep)
         {
             // convert to mesh
-            MeshingParameters mparams = MeshingParameters.FastRenderMesh;
+            MeshingParameters mparams = MeshingParameters.Minimal;
             mparams.JaggedSeams = false;
             mparams.SimplePlanes = true;
             
