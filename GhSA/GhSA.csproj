@@ -118,6 +118,7 @@
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
+    <Compile Include="Components\2_Geometry\CreateMember3d.cs" />
     <Compile Include="Components\2_Geometry\ElemFromMem.cs" />
     <Compile Include="Components\3_Loads\LoadProperties.cs" />
     <Compile Include="Components\4_Analysis\GhAnalyse.cs" />

@@ -127,8 +127,6 @@ namespace GhSA.Parameters
                 return true;
             }
         }
-        
-
         #endregion
 
         #region methods
