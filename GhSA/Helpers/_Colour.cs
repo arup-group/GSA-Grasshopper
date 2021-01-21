@@ -191,18 +191,18 @@ namespace GhSA.UI
                 DisplayMaterial material = new DisplayMaterial
                 {
                     Diffuse = Color.FromArgb(50, 150, 150, 150),
-                    Emission = Color.FromArgb(50, 190, 190, 190),
+                    Emission = Color.White, // Color.FromArgb(50, 190, 190, 190),
                     Transparency = 0.1
                 };
                 return material;
             } 
         }
-        public static DisplayMaterial Element2dFaceCustom(Color colour)
+        public static DisplayMaterial FaceCustom(Color colour)
         {
             DisplayMaterial material = new DisplayMaterial()
             {
                 Diffuse = Color.FromArgb(50, colour.R, colour.G, colour.B),
-                Emission = Color.FromArgb(50, 190, 190, 190),
+                Emission = Color.White, // Color.FromArgb(50, 190, 190, 190),
                 Transparency = 0.1
             };
             return material;
@@ -215,7 +215,7 @@ namespace GhSA.UI
                 DisplayMaterial material = new DisplayMaterial
                 {
                     Diffuse = Color.FromArgb(5, 150, 150, 150),
-                    Emission = Color.FromArgb(5, 150, 150, 150),
+                    Emission = Color.White, //Color.FromArgb(5, 150, 150, 150),
                     Transparency = 0.2
                 };
                 return material;
@@ -237,24 +237,26 @@ namespace GhSA.UI
                 DisplayMaterial material = new DisplayMaterial
                 {
                     Diffuse = Color.FromArgb(50, 150, 150, 150),
-                    Emission = Color.FromArgb(50, 45, 45, 45),
+                    Emission = Color.White, //Color.FromArgb(50, 45, 45, 45),
                     Transparency = 0.1
                 };
                 return material;
             }
         }
-
-        public static DisplayMaterial Member2dFaceCustom(Color colour)
+        public static DisplayMaterial Dummy2D
         {
-            DisplayMaterial material = new DisplayMaterial()
+            get
             {
-                Diffuse = colour,
-                Emission = Color.FromArgb(50, 45, 45, 45),
-                Transparency = 0.1
-            };
-            return material;
+                DisplayMaterial material = new DisplayMaterial
+                {
+                    Diffuse = Color.FromArgb(1, 143, 143, 143),
+                    Emission = Color.White, //Color.FromArgb(1, 45, 45, 45),
+                    Transparency = 0.9
+                };
+                return material;
+            }
         }
-
+        
         public static DisplayMaterial Member2dFaceSelected
         {
             get

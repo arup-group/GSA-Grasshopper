@@ -449,7 +449,8 @@ namespace GhSA.Components
                 // ### Coloured Result Points ###
 
                 // Get nodes for point location and restraint check in case of reaction force
-                List<GsaNode> gsanodes = Util.Gsa.GsaImport.GsaGetPoint(gsaModel.Model, nodeList, true);
+                IReadOnlyDictionary<int, Node> nDict = gsaModel.Model.Nodes(nodeList);
+                List<GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodes(nDict, gsaModel.Model);
 
                 //Find Colour and Values for legend output
                 
@@ -505,7 +506,7 @@ namespace GhSA.Components
                 
                 for (int i = 0; i < gsanodes.Count; i++)
                 {
-                    if (gsanodes[i] != null)
+                    if (gsanodes[i].Value != null)
                     {
                         if (!(dmin == 0 & dmax == 0))
                         {
@@ -551,7 +552,7 @@ namespace GhSA.Components
                                 Math.Max(2, (float)(Math.Abs(t) / Math.Abs(dmin) * scale));
 
                             // add our special resultpoint to the list of points
-                            pts.Add(new ResultPoint(gsanodes[i].Point, t, valcol, size));
+                            pts.Add(new ResultPoint(gsanodes[i].Value.Point, t, valcol, size));
 
                             // add the colour to the colours list
                             col.Add(valcol);

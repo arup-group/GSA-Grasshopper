@@ -15,7 +15,7 @@ namespace GhSA.Util.Gsa
     /// <summary>
     /// Class containing functions to import various object types from GSA
     /// </summary>
-    public class GsaImport
+    public class _oldGsaImport
     {
         /// <summary>
         /// Method to import Nodes from a GSA model.

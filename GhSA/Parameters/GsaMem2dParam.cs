@@ -97,7 +97,7 @@ namespace GhSA.Parameters
             get
             {
                 if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
-                    m_member.Colour = System.Drawing.Color.FromArgb(50, 150, 150, 150);
+                    m_member.Colour = UI.Colour.Member2dEdge;
                 return (System.Drawing.Color)m_member.Colour;
             }
             set { m_member.Colour = value; }
@@ -760,7 +760,7 @@ namespace GhSA.Parameters
             if (Value.Brep != null)
             {
                 if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFaceCustom(Value.Colour)); //UI.Colour.Member2dFace
+                    args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFace); //UI.Colour.Member2dFace
                 else
                     args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFaceSelected);
             }
@@ -769,13 +769,13 @@ namespace GhSA.Parameters
         {
             if (Value == null) { return; }
 
-            //Draw shape
+            // Draw shape
             if (Value.Brep != null)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
                     if (!Value.Member.IsDummy)
-                        args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdge, -1);
+                        args.Pipeline.DrawBrepWires(Value.Brep, (System.Drawing.Color)Value.Member.Colour, -1);
                 }
                 else
                     args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdgeSelected, -1);
@@ -789,7 +789,7 @@ namespace GhSA.Parameters
                     if (Value.Member.IsDummy)
                         args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Dummy1D, false);
                     else
-                        args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1d, 2);
+                        args.Pipeline.DrawCurve(Value.PolyCurve, (System.Drawing.Color)Value.Member.Colour, 2);
                 }
                 else
                 {
@@ -799,6 +799,7 @@ namespace GhSA.Parameters
                         args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
                 }
             }
+
             if (Value.InclusionLines != null)
             {
                 for (int i = 0; i < Value.InclusionLines.Count; i++)

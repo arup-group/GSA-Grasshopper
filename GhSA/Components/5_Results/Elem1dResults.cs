@@ -19,7 +19,7 @@ using Grasshopper.Kernel.Data;
 namespace GhSA.Components
 {
     /// <summary>
-    /// Component to create a new Prop2d
+    /// Component to get Element1D results
     /// </summary>
     public class Elem1DResults : GH_Component, IGH_VariableParameterComponent
     {

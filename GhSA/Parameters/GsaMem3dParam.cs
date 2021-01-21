@@ -137,7 +137,6 @@ namespace GhSA.Parameters
             string mes = m_member.Type.ToString();
             string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
             typeTxt = typeTxt.Replace("3d", "3D");
-            typeTxt = typeTxt + " " + SolidMesh.Vertices.Count();
             return typeTxt;
         }
 
@@ -359,10 +358,15 @@ namespace GhSA.Parameters
             //Draw shape.
             if (Value.SolidMesh != null)
             {
-                if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawMeshShaded(Value.SolidMesh, UI.Colour.Element2dFace); //UI.Colour.Member2dFace
+                if (!Value.Member.IsDummy)
+                {
+                    if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                        args.Pipeline.DrawMeshShaded(Value.SolidMesh, UI.Colour.Element2dFace); //UI.Colour.Member2dFace
+                    else
+                        args.Pipeline.DrawMeshShaded(Value.SolidMesh, UI.Colour.Element2dFaceSelected);
+                }
                 else
-                    args.Pipeline.DrawMeshShaded(Value.SolidMesh, UI.Colour.Element2dFaceSelected);
+                    args.Pipeline.DrawMeshShaded(Value.SolidMesh, UI.Colour.Dummy2D);
             }
         }
         public void DrawViewportWires(GH_PreviewWireArgs args)
@@ -372,28 +376,74 @@ namespace GhSA.Parameters
             //Draw lines
             if (Value.SolidMesh != null)
             {
+                // Draw edges
                 Rhino.Geometry.Collections.MeshTopologyEdgeList edges = Value.SolidMesh.TopologyEdges;
-                for (int i = 0; i < edges.Count; i++)
+                if (Value.SolidMesh.FaceNormals.Count < Value.SolidMesh.Faces.Count)
+                    Value.SolidMesh.FaceNormals.ComputeFaceNormals();
+                if (Value.Member.IsDummy)
                 {
-                    int[] faceID = edges.GetConnectedFaces(i);
-                    Vector3d vec1 = Value.SolidMesh.FaceNormals[faceID[0]];
-                    Vector3d vec2 = Value.SolidMesh.FaceNormals[faceID[1]];
-                    vec1.Unitize(); vec2.Unitize();
-                    if (!vec1.Equals(vec2) || faceID.Length > 2)
+                    for (int i = 0; i < edges.Count; i++)
                     {
-                        if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                            args.Pipeline.DrawLine(edges.EdgeLine(i), UI.Colour.Element2dEdge, 2);
+                        int[] faceID = edges.GetConnectedFaces(i);
+                        Vector3d vec1 = Value.SolidMesh.FaceNormals[faceID[0]];
+                        Vector3d vec2 = Value.SolidMesh.FaceNormals[faceID[1]];
+                        vec1.Unitize(); vec2.Unitize();
+                        if (!vec1.Equals(vec2) || faceID.Length > 2)
+                        {
+                            if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                            {
+                                Polyline hidden = new Polyline();
+                                hidden.Add(edges.EdgeLine(i).PointAt(0));
+                                hidden.Add(edges.EdgeLine(i).PointAt(1));
+                                args.Pipeline.DrawDottedPolyline(hidden, UI.Colour.Dummy1D, false);
+                            }
+                            else
+                            {
+                                Polyline hidden = new Polyline();
+                                hidden.Add(edges.EdgeLine(i).PointAt(0));
+                                hidden.Add(edges.EdgeLine(i).PointAt(1));
+                                args.Pipeline.DrawDottedPolyline(hidden, UI.Colour.Member2dEdgeSelected, false);
+                            }
+                        }
                         else
-                            args.Pipeline.DrawLine(edges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
+                        {
+                            
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    for (int i = 0; i < edges.Count; i++)
                     {
-                        Polyline hidden = new Polyline();
-                        hidden.Add(edges.EdgeLine(i).PointAt(0));
-                        hidden.Add(edges.EdgeLine(i).PointAt(1));
-                        args.Pipeline.DrawDottedPolyline(hidden, UI.Colour.Dummy1D, false);
+                        int[] faceID = edges.GetConnectedFaces(i);
+                        Vector3d vec1 = Value.SolidMesh.FaceNormals[faceID[0]];
+                        Vector3d vec2 = Value.SolidMesh.FaceNormals[faceID[1]];
+                        vec1.Unitize(); vec2.Unitize();
+                        if (!vec1.Equals(vec2) || faceID.Length > 2)
+                        {
+                            if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                                args.Pipeline.DrawLine(edges.EdgeLine(i), (System.Drawing.Color)Value.Member.Colour, 2);
+                            else
+                                args.Pipeline.DrawLine(edges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
+                        }
+                        else
+                        {
+                            Polyline hidden = new Polyline();
+                            hidden.Add(edges.EdgeLine(i).PointAt(0));
+                            hidden.Add(edges.EdgeLine(i).PointAt(1));
+                            args.Pipeline.DrawDottedPolyline(hidden, UI.Colour.Dummy1D, false);
+                        }
                     }
-                }   
+                }
+                // draw points
+                List<Point3d> pts = new List<Point3d>(Value.SolidMesh.Vertices.ToPoint3dArray());
+                for (int i = 0; i < pts.Count; i++)
+                {
+                    if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                        args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.Member.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
+                    else
+                        args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Member1dNodeSelected);
+                }
             }
         }
         #endregion

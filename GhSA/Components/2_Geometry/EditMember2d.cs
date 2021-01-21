@@ -50,7 +50,7 @@ namespace GhSA.Components
             
             pManager.AddGenericParameter("2D Member", "M2D", "GSA 2D Member to Modify", GH_ParamAccess.item);
             pManager.AddBrepParameter("Brep", "B", "Reposition Member Brep (non-planar geometry will be automatically converted to an average plane from exterior boundary control points)", GH_ParamAccess.item);
-            pManager.AddGenericParameter("2D Property", "PA", "Change 2D Property", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Property", "PA", "Change Section Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
             pManager.AddGenericParameter("Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
             pManager.AddPointParameter("Incl. Points", "(P)", "Add inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
             pManager.AddCurveParameter("Incl. Curves", "(C)", "Add inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
@@ -93,7 +93,7 @@ namespace GhSA.Components
             pManager.AddGenericParameter("2D Member", "M2D", "Modified GSA 2D Member", GH_ParamAccess.item);
             pManager.AddBrepParameter("Brep", "B", "Member Brep", GH_ParamAccess.item);
             pManager.HideParameter(1);
-            pManager.AddGenericParameter("Section", "PA", "Change Section Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Property", "PA", "Get 2D Section Property", GH_ParamAccess.item);
             pManager.AddGenericParameter("Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
             pManager.AddPointParameter("Incl. Points", "(P)", "Get Inclusion points", GH_ParamAccess.list);
             pManager.AddCurveParameter("Incl. Curves", "(C)", "Get Inclusion curves", GH_ParamAccess.list);

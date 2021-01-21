@@ -408,7 +408,7 @@ namespace GhSA.Parameters
                 {
                     int[] face = new int[] { i };
                     args.Pipeline.DrawMeshShaded(Value.Mesh,
-                        UI.Colour.Element2dFaceCustom(Value.Colours[i]), face);
+                        UI.Colour.FaceCustom(Value.Colours[i]), face);
                 }
             }
             else

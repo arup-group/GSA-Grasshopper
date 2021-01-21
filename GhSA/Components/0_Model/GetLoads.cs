@@ -66,18 +66,22 @@ namespace GhSA.Components
                 Model model = new Model();
                 model = gsaModel.Model;
 
-                List<GsaLoadGoo> gravity = Util.Gsa.GsaImport.GsaGetGravityLoads(model);
-                List<GsaLoadGoo> node = Util.Gsa.GsaImport.GsaGetNodeLoads(model);
-                List<GsaLoadGoo> beam = Util.Gsa.GsaImport.GsaGetBeamLoads(model);
-                List<GsaLoadGoo> face = Util.Gsa.GsaImport.GsaGetFaceLoads(model);
-                List<GsaLoadGoo> point = Util.Gsa.GsaImport.GsaGetGridPointLoads(model);
-                List<GsaLoadGoo> line = Util.Gsa.GsaImport.GsaGetGridLineLoads(model);
-                List<GsaLoadGoo> area = Util.Gsa.GsaImport.GsaGetGridAreaLoads(model);
+                List<GsaLoadGoo> gravity = Util.Gsa.FromGSA.GetGravityLoads(model.GravityLoads());
+                List<GsaLoadGoo> node = Util.Gsa.FromGSA.GetNodeLoads(model);
+                List<GsaLoadGoo> beam = Util.Gsa.FromGSA.GetBeamLoads(model.BeamLoads());
+                List<GsaLoadGoo> face = Util.Gsa.FromGSA.GetFaceLoads(model.FaceLoads());
+
+                IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
+                IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
+                IReadOnlyDictionary<int, Axis> axDict = model.Axes();
+                List<GsaLoadGoo> point = Util.Gsa.FromGSA.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict);
+                List<GsaLoadGoo> line = Util.Gsa.FromGSA.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict);
+                List<GsaLoadGoo> area = Util.Gsa.FromGSA.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict, axDict);
                 
                 List<GsaGridPlaneSurfaceGoo> gps = new List<GsaGridPlaneSurfaceGoo>();
-                IReadOnlyDictionary<int, GridSurface> gsaGridSurfaces = model.GridSurfaces();
-                foreach (int key in gsaGridSurfaces.Keys)
-                    gps.Add(new GsaGridPlaneSurfaceGoo(Util.Gsa.GsaImport.GsaGetGridPlaneSurface(model, key)));
+                
+                foreach (int key in srfDict.Keys)
+                    gps.Add(new GsaGridPlaneSurfaceGoo(Util.Gsa.FromGSA.GetGridPlaneSurface(srfDict, plnDict, axDict, key)));
 
                 DA.SetDataList(0, gravity);
                 DA.SetDataList(1, node);

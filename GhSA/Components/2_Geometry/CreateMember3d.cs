@@ -46,7 +46,7 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGeometryParameter("Solid", "S", "Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
-            pManager.AddGenericParameter("3D Prop", "P", "3D Property", GH_ParamAccess.item);
+            pManager.AddGenericParameter("3D Prop", "P3", "3D Property", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Targe mesh size", GH_ParamAccess.item, 0);
 
             pManager[1].Optional = true;
@@ -61,30 +61,23 @@ namespace GhSA.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            
-
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(0, ref gh_typ))
             {
                 GsaMember3d mem = new GsaMember3d();
-
-                if (gh_typ.Value is GH_Brep)
-                {
-                    Brep brep = new Brep();
-                    if (GH_Convert.ToBrep(gh_typ.Value, ref brep, GH_Conversion.Both))
-                        mem = new GsaMember3d(brep);
-                }
-                else if (gh_typ.Value is GH_Mesh)
-                {
-                    Mesh mesh = new Mesh();
-                    if (GH_Convert.ToMesh(gh_typ.Value, ref mesh, GH_Conversion.Both))
-                        mem = new GsaMember3d(mesh);
-                }
+                Brep brep = new Brep();
+                Mesh mesh = new Mesh();
+                if (GH_Convert.ToBrep(gh_typ.Value, ref brep, GH_Conversion.Both))
+                    mem = new GsaMember3d(brep);
+                else if (GH_Convert.ToMesh(gh_typ.Value, ref mesh, GH_Conversion.Both))
+                    mem = new GsaMember3d(mesh);
                 else
                 {
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input to a 3D Member");
                     return;
                 }
+
+                // 1 prop3d to be implemented GsaAPI
 
                 // 2 mesh size
                 GH_Number ghmsz = new GH_Number();

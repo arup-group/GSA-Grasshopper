@@ -119,6 +119,7 @@
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
     <Compile Include="Components\2_Geometry\CreateMember3d.cs" />
+    <Compile Include="Components\2_Geometry\EditMember3d.cs" />
     <Compile Include="Components\2_Geometry\ElemFromMem.cs" />
     <Compile Include="Components\3_Loads\LoadProperties.cs" />
     <Compile Include="Components\4_Analysis\GhAnalyse.cs" />
@@ -163,11 +164,12 @@
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
     <Compile Include="Components\4_Analysis\AsyncAnalyse.cs" />
+    <Compile Include="Helpers\_old_GsaImportConvert.cs" />
     <Compile Include="Helpers\_GsaMesher.cs" />
     <Compile Include="Helpers\_GsaPath.cs" />
     <Compile Include="Helpers\_GsaCreateModelHelper.cs" />
     <Compile Include="Helpers\_GsaModelEnums.cs" />
-    <Compile Include="Helpers\_GsaImportConvert.cs" />
+    <Compile Include="Helpers\_GsaImport.cs" />
     <Compile Include="Helpers\_GsaProfileConvert.cs" />
     <Compile Include="Helpers\_GsaResultsHelper.cs" />
     <Compile Include="Helpers\_RibbonLayout.cs" />
