@@ -165,10 +165,10 @@
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
     <Compile Include="Components\4_Analysis\AsyncAnalyse.cs" />
     <Compile Include="Helpers\_old_GsaImportConvert.cs" />
-    <Compile Include="Helpers\_GsaMesher.cs" />
+    <Compile Include="Helpers\_GsaExport.cs" />
     <Compile Include="Helpers\_GsaPath.cs" />
     <Compile Include="Helpers\_GsaCreateModelHelper.cs" />
-    <Compile Include="Helpers\_GsaModelEnums.cs" />
+    <Compile Include="Helpers\_old_GsaModelEnums.cs" />
     <Compile Include="Helpers\_GsaImport.cs" />
     <Compile Include="Helpers\_GsaProfileConvert.cs" />
     <Compile Include="Helpers\_GsaResultsHelper.cs" />

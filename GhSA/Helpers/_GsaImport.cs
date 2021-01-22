@@ -31,7 +31,7 @@ namespace GhSA.Util.Gsa
             List<GsaNodeGoo> nodes = new List<GsaNodeGoo>();
 
             // Placeholder in case we need to get local axis
-            IReadOnlyDictionary<int, Axis> axDict = null;
+            IReadOnlyDictionary<int, GsaAPI.Axis> axDict = null;
             bool getAxes = true;
 
             foreach (KeyValuePair<int, Node> item in nDict)
@@ -52,7 +52,7 @@ namespace GhSA.Util.Gsa
                         axDict = model.Axes();
                         getAxes = false;
                     }
-                    axDict.TryGetValue(item.Value.AxisProperty, out Axis axis);
+                    axDict.TryGetValue(item.Value.AxisProperty, out GsaAPI.Axis axis);
                     gsaNode.LocalAxis = AxisToPlane(axis);
                 }
                 nodes.Add(new GsaNodeGoo(gsaNode));
@@ -65,7 +65,7 @@ namespace GhSA.Util.Gsa
         /// </summary>
         /// <param name="axis">GSA Axis to create plane from</param>
         /// <returns></returns>
-        public static Plane AxisToPlane(Axis axis)
+        public static Plane AxisToPlane(GsaAPI.Axis axis)
         {
             Plane pln = new Plane
             {
@@ -591,6 +591,13 @@ namespace GhSA.Util.Gsa
                             if (sDict.TryGetValue(mem.Property, out Section tempSection))
                                 section.Section = tempSection;
 
+                            // check if Mem1D topology has minimum 2 points
+                            // if invalid we try import settings, props, ets
+                            // so it can be used by other components. We use
+                            // the same point twice and create a 0-length line
+                            if (topopts.Count < 2)
+                                topopts.Add(topopts[0]);
+
                             // create the element from list of points and type description
                             GsaMember1d mem1d = new GsaMember1d(topopts, topoType);
                             mem1d.ID = key;
@@ -1107,7 +1114,7 @@ namespace GhSA.Util.Gsa
         /// <param name="axDict">Axes Dictionary</param>
         /// <returns></returns>
         public static List<GsaLoadGoo> GetGridPointLoads(ReadOnlyCollection<GridPointLoad> pointLoads,
-            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict)
+            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, GsaAPI.Axis> axDict)
         {
             List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
 
@@ -1139,7 +1146,7 @@ namespace GhSA.Util.Gsa
         /// <param name="axDict">Axes Dictionary</param>
         /// <returns></returns>
         public static List<GsaLoadGoo> GetGridLineLoads(ReadOnlyCollection<GridLineLoad> lineLoads,
-            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict)
+            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, GsaAPI.Axis> axDict)
         {
             List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
 
@@ -1171,7 +1178,7 @@ namespace GhSA.Util.Gsa
         /// <param name="axDict">Axes Dictionary</param>
         /// <returns></returns>
         public static List<GsaLoadGoo> GetGridAreaLoads(ReadOnlyCollection<GridAreaLoad> areaLoads, 
-            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict)
+            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, GsaAPI.Axis> axDict)
         {
             List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
 
@@ -1209,7 +1216,7 @@ namespace GhSA.Util.Gsa
         /// <param name="axDict">Axes Dictionary</param>
         /// <param name="gridsrf_ID">ID/Key/number of Grid Surface in GSA model to convert</param>
         /// <returns></returns>
-        public static GsaGridPlaneSurface GetGridPlaneSurface(IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, int gridsrf_ID)
+        public static GsaGridPlaneSurface GetGridPlaneSurface(IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, GsaAPI.Axis> axDict, int gridsrf_ID)
         {
             // GridPlaneSurface
             GsaGridPlaneSurface gps = new GsaGridPlaneSurface();
@@ -1227,10 +1234,10 @@ namespace GhSA.Util.Gsa
                 gps.GridPlaneID = gs.GridPlane;
 
                 // Get Axis
-                axDict.TryGetValue(gp.AxisProperty, out Axis ax);
+                axDict.TryGetValue(gp.AxisProperty, out GsaAPI.Axis ax);
                 if (ax == null)
                 {
-                    ax = new Axis();
+                    ax = new GsaAPI.Axis();
                     ax.Origin.X = 0;
                     ax.Origin.Y = 0;
                     ax.Origin.Z = 0;

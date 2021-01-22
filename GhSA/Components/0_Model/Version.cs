@@ -61,7 +61,7 @@ namespace GhSA.Components
 
             DA.SetData(0, gsaplugin.Version);
             DA.SetData(1, gsaplugin.Location);
-            DA.SetData(2, Util.Gsa.GsaPath.GetPath);
+            DA.SetData(2, Util.Gsa.InstallationFolderPath.GetPath);
         }
     }
 }

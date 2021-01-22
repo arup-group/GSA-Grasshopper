@@ -14,6 +14,7 @@ using GsaAPI;
 using GhSA.Parameters;
 using System.Resources;
 using System.Linq;
+using GhSA.Util;
 using GhSA.Util.Gsa;
 using System.IO;
 
@@ -105,13 +106,13 @@ namespace GhSA.Components
                         // if second list (i.e. catalogue list) is changed, update types list to account for that catalogue
                         if (dropdownlistidd == 1)
                         {
-                            typelist = SqlReader.GetTypesDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd], Path.Combine(GsaPath.GetPath, "sectlib.db3"));
+                            typelist = SqlReader.GetTypesDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd], Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"));
                         }
                         dropdowncontents.Add(typelist);
                         // if third list (i.e. types list) is changed, update sections list to account for these section types
                         if (dropdownlistidd == 2)
                         {
-                            sectionlist = SqlReader.GetSectionsDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd].Split(new string[] { " -- " }, StringSplitOptions.None)[0], Path.Combine(GsaPath.GetPath, "sectlib.db3"));
+                            sectionlist = SqlReader.GetSectionsDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd].Split(new string[] { " -- " }, StringSplitOptions.None)[0], Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"));
                         }
                         dropdowncontents.Add(sectionlist);
 
@@ -222,7 +223,7 @@ namespace GhSA.Components
             "Rectangle", "Circle", "I section", "Tee", "Channel", "Angle"
         });
 
-        readonly List<string> cataloguelist = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(GsaPath.GetPath, "sectlib.db3"));
+        readonly List<string> cataloguelist = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"));
 
         // second sublist for second dropdown list
         List<string> typelist = SqlReader.GetTypesDataFromSQLite("british", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
@@ -272,7 +273,7 @@ namespace GhSA.Components
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            GsaProfile profile = new GsaProfile();
+            Profile profile = new Profile();
 
             // default to FoldMode catalogue
             //_mode = FoldMode.Catalogue;
@@ -280,7 +281,7 @@ namespace GhSA.Components
             #region catalogue
             if (_mode == FoldMode.Catalogue)
             {
-                profile.profileType = GsaProfile.ProfileTypes.Catalogue;
+                profile.profileType = Profile.ProfileTypes.Catalogue;
 
                 // need to implement the lists of cross sections
                 profile.catalogueIndex = catalogueIndex;
@@ -294,7 +295,7 @@ namespace GhSA.Components
             #region geometric
             if (_mode == FoldMode.Geometric)
             {
-                profile.profileType = GsaProfile.ProfileTypes.Geometric;
+                profile.profileType = Profile.ProfileTypes.Geometric;
                 GH_Brep gh_Brep = new GH_Brep();
                 if (DA.GetData(0, ref gh_Brep))
                 {
@@ -316,7 +317,7 @@ namespace GhSA.Components
                         Plane.FitPlaneToPoints(ctrl_pts, out Plane plane);
                         Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.ChangeBasis(Plane.WorldXY, plane);
 
-                        profile.geoType = GsaProfile.GeoTypes.Perim;
+                        profile.geoType = Profile.GeoTypes.Perim;
 
                         List<Point2d> pts = new List<Point2d>();
                         foreach (Point3d pt3d in ctrl_pts)
@@ -365,7 +366,7 @@ namespace GhSA.Components
             #region standard section
             if (_mode != FoldMode.Geometric & _mode != FoldMode.Catalogue)
             {
-                profile.profileType = GsaProfile.ProfileTypes.Standard;
+                profile.profileType = Profile.ProfileTypes.Standard;
                 GH_Number gh_d = new GH_Number();
                 GH_Number gh_b1 = new GH_Number();
                 GH_Number gh_b2 = new GH_Number();
@@ -377,7 +378,7 @@ namespace GhSA.Components
                 {
 
                     case "Rectangle":
-                        profile.stdShape = GsaProfile.StdShapeOptions.Rectangle;
+                        profile.stdShape = Profile.StdShapeOptions.Rectangle;
 
                         // 0 d
                         DA.GetData(0, ref gh_d);
@@ -404,7 +405,7 @@ namespace GhSA.Components
                         break;
 
                     case "Circle":
-                        profile.stdShape = GsaProfile.StdShapeOptions.Circle;
+                        profile.stdShape = Profile.StdShapeOptions.Circle;
 
                         // 0 d
                         DA.GetData(0, ref gh_d);
@@ -436,7 +437,7 @@ namespace GhSA.Components
 
                         break;
                     case "I section":
-                        profile.stdShape = GsaProfile.StdShapeOptions.I_section;
+                        profile.stdShape = Profile.StdShapeOptions.I_section;
 
                         // 0 d
                         DA.GetData(0, ref gh_d);
@@ -474,7 +475,7 @@ namespace GhSA.Components
                         }
                         break;
                     case "Tee":
-                        profile.stdShape = GsaProfile.StdShapeOptions.Tee;
+                        profile.stdShape = Profile.StdShapeOptions.Tee;
                         // 0 d
                         DA.GetData(0, ref gh_d);
 
@@ -494,7 +495,7 @@ namespace GhSA.Components
                         }
                         break;
                     case "Channel":
-                        profile.stdShape = GsaProfile.StdShapeOptions.Channel;
+                        profile.stdShape = Profile.StdShapeOptions.Channel;
                         // 0 d
                         DA.GetData(0, ref gh_d);
 
@@ -508,7 +509,7 @@ namespace GhSA.Components
                         DA.GetData(3, ref gh_tw1);
                         break;
                     case "Angle":
-                        profile.stdShape = GsaProfile.StdShapeOptions.Angle;
+                        profile.stdShape = Profile.StdShapeOptions.Angle;
                         // 0 d
                         DA.GetData(0, ref gh_d);
 
@@ -569,19 +570,19 @@ namespace GhSA.Components
             switch (Util.GsaUnit.LengthSection)
             {
                 case "mm":
-                    profile.sectUnit = GsaProfile.SectUnitOptions.u_mm;
+                    profile.sectUnit = Profile.SectUnitOptions.u_mm;
                     break;
                 case "cm":
-                    profile.sectUnit = GsaProfile.SectUnitOptions.u_cm;
+                    profile.sectUnit = Profile.SectUnitOptions.u_cm;
                     break;
                 case "m":
-                    profile.sectUnit = GsaProfile.SectUnitOptions.u_m;
+                    profile.sectUnit = Profile.SectUnitOptions.u_m;
                     break;
                 case "in":
-                    profile.sectUnit = GsaProfile.SectUnitOptions.u_in;
+                    profile.sectUnit = Profile.SectUnitOptions.u_in;
                     break;
                 case "ft":
-                    profile.sectUnit = GsaProfile.SectUnitOptions.u_ft;
+                    profile.sectUnit = Profile.SectUnitOptions.u_ft;
                     break;
             }
             #endregion

@@ -136,7 +136,7 @@ namespace GhSA.Components
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameters failed to collect data");
             #endregion
 
-            Model model = GhSA.Util.GsaMesher.GsaReMesh(in_mem3ds, in_mem2ds, in_mem1ds);
+            Model model = GhSA.Util.Gsa.ToGSA.AssembleModel(in_mem3ds, in_mem2ds, in_mem1ds);
 
             model.CreateElementsFromMembers();
 

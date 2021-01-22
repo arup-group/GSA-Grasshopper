@@ -11,7 +11,7 @@ using GhSA.Parameters;
 using System.Data.SQLite;
 using System.Data;
 
-namespace GhSA.Util.Gsa
+namespace GhSA.Util
 {
     /// <summary>
     /// Class containing functions to interface with SQLite db files.

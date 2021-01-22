@@ -18,7 +18,7 @@ namespace GhSA.Util.Gsa
     /// 1D Members (GsaAPI.MemberType)
     /// 2D Members (GsaAPI.MemberType)
     /// </summary>
-    public class GsaToModel
+    public class _oldGsaToModel
     {
         public static ElementType Element1dType(int type)
         {

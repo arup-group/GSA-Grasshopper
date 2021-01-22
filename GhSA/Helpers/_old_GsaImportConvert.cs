@@ -1033,12 +1033,12 @@ namespace GhSA.Util.Gsa
                 gps.GridPlaneID = gs.GridPlane;
 
                 // Get Axis
-                IReadOnlyDictionary<int, Axis> aDict;
+                IReadOnlyDictionary<int, GsaAPI.Axis> aDict;
                 aDict = model.Axes();
-                aDict.TryGetValue(gp.AxisProperty, out Axis ax);
+                aDict.TryGetValue(gp.AxisProperty, out GsaAPI.Axis ax);
                 if (ax == null)
                 {
-                    ax = new Axis();
+                    ax = new GsaAPI.Axis();
                     ax.Origin.X = 0;
                     ax.Origin.Y = 0;
                     ax.Origin.Z = 0;

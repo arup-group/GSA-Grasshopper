@@ -17,7 +17,7 @@ namespace GhSA.Util.Gsa
     /// Will be modified to account for different GSA versions etc.
     /// 
     /// </summary>
-    public class GsaPath
+    public class InstallationFolderPath
     {
         // File path to GSA folder
         public static string GetPath

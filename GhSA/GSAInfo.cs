@@ -17,12 +17,12 @@ namespace GhSA
         public override GH_LoadingInstruction PriorityLoad()
         {
             // set folder to latest GSA version.
-            Assembly ass1 = Assembly.LoadFile(Util.Gsa.GsaPath.GetPath + "\\GsaAPI.dll");
-            Assembly ass2 = Assembly.LoadFile(Util.Gsa.GsaPath.GetPath + "\\System.Data.SQLite.dll");
+            Assembly ass1 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
+            Assembly ass2 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\System.Data.SQLite.dll");
 
             const string name = "PATH";
             string pathvar = System.Environment.GetEnvironmentVariable(name);
-            var value = pathvar + ";" + Util.Gsa.GsaPath.GetPath + "\\";
+            var value = pathvar + ";" + Util.Gsa.InstallationFolderPath.GetPath + "\\";
             var target = EnvironmentVariableTarget.Process;
             System.Environment.SetEnvironmentVariable(name, value, target);
 
@@ -46,7 +46,7 @@ namespace GhSA
             Model m = new Model();
 
             // get the GSA install path
-            string installPath = GhSA.Util.Gsa.GsaPath.GetPath; 
+            string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath; 
 
             // open existing GSA model (steel design sample)
             // model containing CAT section profiles which I

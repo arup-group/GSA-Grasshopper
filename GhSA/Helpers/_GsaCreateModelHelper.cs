@@ -8,24 +8,21 @@ using System.Threading.Tasks;
 
 namespace GhSA.Util.Gsa
 {
-    class ModelNodes
+    class Nodes
     {
         /// <summary>
         /// This method checks if the testNode is within tolerance of an existing node and returns the 
         /// node ID if found. Will return 0 if no existing node is found within the tolerance.
         /// </summary>
-        /// <param name="existNodes"></param>
-        /// <param name="testNode"></param>
-        /// <param name="tolerance"></param>
-        /// <param name="nodesToBeSet"></param>
+        /// <param name="existNodes">Dictionary of existing nodes to check against</param>
+        /// <param name="testNode">Node to test for</param>
         /// <returns></returns>
-        public static int ExistingNode(IReadOnlyDictionary<int, Node> existNodes, Node testNode)
+        public static int GetExistingNodeID(IReadOnlyDictionary<int, Node> existNodes, Node testNode)
         {
-            Node gsaNode;
             double tolerance = Util.GsaUnit.Tolerance;
             foreach (int key in existNodes.Keys)
             {
-                if (existNodes.TryGetValue(key, out gsaNode))
+                if (existNodes.TryGetValue(key, out Node gsaNode))
                 {
                     if (Math.Pow((testNode.Position.X - gsaNode.Position.X), 2)
                         + Math.Pow((testNode.Position.Y - gsaNode.Position.Y), 2)
@@ -42,18 +39,15 @@ namespace GhSA.Util.Gsa
         /// This method checks if the testNode is within tolerance of an existing node and returns the 
         /// node ID if found. Will return 0 if no existing node is found within the tolerance.
         /// </summary>
-        /// <param name="existNodes"></param>
-        /// <param name="testNode"></param>
-        /// <param name="tolerance"></param>
-        /// <param name="nodesToBeSet"></param>
+        /// <param name="existNodes">Dictionary of existing nodes to check against</param>
+        /// <param name="testPoint">Point to test for</param>
         /// <returns></returns>
-        public static int ExistingNodePoint(Dictionary<int, Node> existNodes, Point3d testPoint)
+        public static int GetExistingNodeID(Dictionary<int, Node> existNodes, Point3d testPoint)
         {
-            Node gsaNode;
             double tolerance = Util.GsaUnit.Tolerance;
             foreach (int key in existNodes.Keys)
             {
-                if (existNodes.TryGetValue(key, out gsaNode))
+                if (existNodes.TryGetValue(key, out Node gsaNode))
                 {
                     if (Math.Pow((testPoint.X - gsaNode.Position.X), 2)
                         + Math.Pow((testPoint.Y - gsaNode.Position.Y), 2)
@@ -76,24 +70,21 @@ namespace GhSA.Util.Gsa
             return gsaNode;
         }
     }
-    class ModelAxis
+    class Axis
     {
         /// <summary>
         /// This method checks if the testAxis is within tolerance of an existing axis and returns the 
         /// axis ID if found. Will return 0 if no existing axis is found within the tolerance.
         /// </summary>
-        /// <param name="existNodes"></param>
-        /// <param name="testNode"></param>
-        /// <param name="tolerance"></param>
-        /// <param name="nodesToBeSet"></param>
+        /// <param name="existAxes">Dictionary of axis to check against</param>
+        /// <param name="testAxis">Axis to check for</param>
         /// <returns></returns>
-        public static int ExistingAxis(IReadOnlyDictionary<int, Axis> existAxes, Axis testAxis)
+        public static int GetExistingAxisID(IReadOnlyDictionary<int, GsaAPI.Axis> existAxes, GsaAPI.Axis testAxis)
         {
-            Axis gsaAxis;
             double tolerance = Util.GsaUnit.Tolerance;
             foreach (int key in existAxes.Keys)
             {
-                if (existAxes.TryGetValue(key, out gsaAxis))
+                if (existAxes.TryGetValue(key, out GsaAPI.Axis gsaAxis))
                 {
                     if (Math.Pow((testAxis.Origin.X - testAxis.Origin.X), 2)
                         + Math.Pow((testAxis.Origin.Y - testAxis.Origin.Y), 2)
