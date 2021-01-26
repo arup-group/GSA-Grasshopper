@@ -64,7 +64,7 @@ namespace GhSA.Util.Gsa.ToGSA
             else
             {
                 // get existing node id if any:
-                int id = Nodes.GetExistingNodeID(existingNodes, apiNode);
+                int id = GetExistingNodeID(existingNodes, apiNode);
                 if (id > 0) // if within tolerance of existing node
                 {
                     // get GSA node
@@ -107,7 +107,7 @@ namespace GhSA.Util.Gsa.ToGSA
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
-            int nodeidcounter = existingNodes.Keys.Max() + 1;
+            int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
 
             // Add/Set Nodes
             if (nodes != null)

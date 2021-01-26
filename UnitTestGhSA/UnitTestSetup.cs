@@ -69,12 +69,12 @@ namespace UnitTestGhSA
         public static void LoadRefs()
         {
             // set folder to latest GSA version.
-            Assembly ass1 = Assembly.LoadFile(GhSA.Util.Gsa.GsaPath.GetPath + "\\GsaAPI.dll");
-            Assembly ass2 = Assembly.LoadFile(GhSA.Util.Gsa.GsaPath.GetPath + "\\System.Data.SQLite.dll");
+            Assembly ass1 = Assembly.LoadFile(GhSA.Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
+            Assembly ass2 = Assembly.LoadFile(GhSA.Util.Gsa.InstallationFolderPath.GetPath + "\\System.Data.SQLite.dll");
 
             const string name = "PATH";
             string pathvar = System.Environment.GetEnvironmentVariable(name);
-            var value = pathvar + ";" + GhSA.Util.Gsa.GsaPath.GetPath + "\\";
+            var value = pathvar + ";" + GhSA.Util.Gsa.InstallationFolderPath.GetPath + "\\";
             var target = EnvironmentVariableTarget.Process;
             System.Environment.SetEnvironmentVariable(name, value, target);
         }
@@ -84,7 +84,7 @@ namespace UnitTestGhSA
             Model m = new Model();
 
             // get the GSA install path
-            string installPath = GhSA.Util.Gsa.GsaPath.GetPath;
+            string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath;
 
             // open existing GSA model (steel design sample)
             // model containing CAT section profiles which I

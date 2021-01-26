@@ -16,7 +16,7 @@ namespace ParamsIntegrationTests
             GsaModel m = new GsaModel();
 
             // get the GSA install path
-            string installPath = GhSA.Util.Gsa.GsaPath.GetPath;
+            string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath;
 
             // open existing GSA model (steel design sample)
             ReturnValue returnValue = m.Model.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
@@ -31,7 +31,7 @@ namespace ParamsIntegrationTests
             GsaModel m = new GsaModel();
 
             // get the GSA install path
-            string installPath = GhSA.Util.Gsa.GsaPath.GetPath;
+            string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath;
 
             // open existing GSA model (steel design sample)
             m.Model.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
@@ -50,7 +50,7 @@ namespace ParamsIntegrationTests
             GsaModel m = new GsaModel();
 
             // get the GSA install path
-            string installPath = GhSA.Util.Gsa.GsaPath.GetPath;
+            string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath;
 
             // open existing GSA model (steel design sample)
             ReturnValue returnValue = m.Model.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");

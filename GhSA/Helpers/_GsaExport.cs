@@ -9,6 +9,94 @@ using System.Threading;
 
 namespace GhSA.Util.Gsa.ToGSA
 {
+    public class Models
+    {
+        public static GsaModel MergeModel(List<GsaModel> models)
+        {
+            if (models != null)
+            {
+                if (models.Count > 1)
+                {
+                    GsaModel model = new GsaModel();
+                    models.Reverse();
+                    for (int i = 0; i < models.Count - 1; i++)
+                    {
+                        model = MergeModel(model, models[i]);
+                    }
+                    GsaModel clone = models[models.Count - 1].Clone();
+                    clone = MergeModel(clone, model);
+                    return clone;
+                }
+                else
+                {
+                    if (models.Count > 0)
+                        return models[0].Clone();
+                }
+            }
+            return null;
+        }
+
+        public static GsaModel MergeModel(GsaModel maintainIDs, GsaModel appendIDs)
+        {
+            // open the copyfrom model
+            Model model = maintainIDs.Model;
+
+            // get dictionaries from model
+            IReadOnlyDictionary<int, Node> nDict = model.Nodes();
+            IReadOnlyDictionary<int, Element> eDict = model.Elements();
+            IReadOnlyDictionary<int, Member> mDict = model.Members();
+            IReadOnlyDictionary<int, Section> sDict = model.Sections();
+            IReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
+
+            // get nodes
+            List<GsaNodeGoo> goonodes = Util.Gsa.FromGSA.GetNodes(nDict, model);
+            List<GsaNode> nodes = goonodes.Select(n => n.Value).ToList();
+
+            // get elements
+            Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>> elementTuple
+                = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict);
+            List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
+            List<GsaElement2d> elem2ds = elementTuple.Item2.Select(n => n.Value).ToList();
+
+            // get members
+            Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>> memberTuple
+                = Util.Gsa.FromGSA.GetMembers(mDict, nDict, sDict, pDict);
+            List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
+            List<GsaMember2d> mem2ds = memberTuple.Item2.Select(n => n.Value).ToList();
+
+            // get properties
+            List<GsaSectionGoo> goosections = FromGSA.GetSections(sDict);
+            List<GsaSection> sections = goosections.Select(n => n.Value).ToList();
+            List<GsaProp2dGoo> gooprop2Ds = FromGSA.GetProp2ds(pDict);
+            List<GsaProp2d> prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
+
+            // get loads
+            List<GsaLoadGoo> gooloads = new List<GsaLoadGoo>();
+            gooloads.AddRange(FromGSA.GetGravityLoads(model.GravityLoads()));
+            gooloads.AddRange(FromGSA.GetNodeLoads(model));
+            gooloads.AddRange(FromGSA.GetBeamLoads(model.BeamLoads()));
+            gooloads.AddRange(FromGSA.GetFaceLoads(model.FaceLoads()));
+
+            IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
+            IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
+            IReadOnlyDictionary<int, Axis> axDict = model.Axes();
+
+            gooloads.AddRange(FromGSA.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict));
+            gooloads.AddRange(FromGSA.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict));
+            gooloads.AddRange(FromGSA.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict, axDict));
+            List<GsaLoad> loads = gooloads.Select(n => n.Value).ToList();
+
+            // get grid plane surfaces
+            List<GsaGridPlaneSurfaceGoo> gpsgoo = new List<GsaGridPlaneSurfaceGoo>();
+            foreach (int key in srfDict.Keys)
+                gpsgoo.Add(new GsaGridPlaneSurfaceGoo(Util.Gsa.FromGSA.GetGridPlaneSurface(srfDict, plnDict, axDict, key)));
+            List<GsaGridPlaneSurface> gps = gpsgoo.Select(n => n.Value).ToList();
+
+            // return new assembled model
+            maintainIDs.Model = Assemble.AssembleModel(appendIDs, nodes, elem1ds, elem2ds, mem1ds, mem2ds, null, sections, prop2Ds, loads, gps);
+            return maintainIDs;
+        }
+    }
     public class Assemble
     {
         public static Model AssembleModel(List<GsaMember3d> member3Ds = null, List<GsaMember2d> member2Ds = null, List<GsaMember1d> member1Ds = null)
@@ -61,7 +149,9 @@ namespace GhSA.Util.Gsa.ToGSA
             )
         {
             // Set model to work on
-            GsaAPI.Model gsa = model.Model;
+            Model gsa = new Model();
+            if (model != null)
+                gsa = model.Model;
 
             #region Nodes
             // ### Nodes ###
@@ -99,15 +189,21 @@ namespace GhSA.Util.Gsa.ToGSA
             // been set in the incoming elements and start appending from there to avoid accidentially overwriting 
             if (elem1ds != null)
             {
-                int existingElem1dMaxID = elem1ds.Max(x => x.ID); // max ID in new Elem1ds
-                if (existingElem1dMaxID > newElementID)
-                    newElementID = existingElem1dMaxID + 1;
+                if (elem1ds.Count > 0)
+                {
+                    int existingElem1dMaxID = elem1ds.Max(x => x.ID); // max ID in new Elem1ds
+                    if (existingElem1dMaxID > newElementID)
+                        newElementID = existingElem1dMaxID + 1;
+                }
             }
             if (elem2ds != null)
             {
-                int existingElem2dMaxID = elem2ds.Max(x => x.ID.Max()); // max ID in new Elem2ds
-                if (existingElem2dMaxID > newElementID)
-                    newElementID = existingElem2dMaxID + 1;
+                if (elem2ds.Count > 0)
+                {
+                    int existingElem2dMaxID = elem2ds.Max(x => x.ID.Max()); // max ID in new Elem2ds
+                    if (existingElem2dMaxID > newElementID)
+                        newElementID = existingElem2dMaxID + 1;
+                }
             }
             
             // Set / add 1D elements to dictionary
@@ -136,23 +232,32 @@ namespace GhSA.Util.Gsa.ToGSA
             // been set in the incoming elements and start appending from there to avoid accidentially overwriting 
             if (mem1ds != null)
             {
-                int existingMem1dMaxID = mem1ds.Max(x => x.ID); // max ID in new Elem1ds
-                if (existingMem1dMaxID > newMemberID)
-                    newMemberID = existingMem1dMaxID + 1;
+                if (mem1ds.Count > 0)
+                {
+                    int existingMem1dMaxID = mem1ds.Max(x => x.ID); // max ID in new Elem1ds
+                    if (existingMem1dMaxID > newMemberID)
+                        newMemberID = existingMem1dMaxID + 1;
+                }
             }
 
             if (mem2ds != null)
             {
-                int existingMem2dMaxID = mem2ds.Max(x => x.ID); // max ID in new Elem2ds
-                if (existingMem2dMaxID > newMemberID)
-                    newMemberID = existingMem2dMaxID + 1;
+                if (mem2ds.Count > 0)
+                {
+                    int existingMem2dMaxID = mem2ds.Max(x => x.ID); // max ID in new Elem2ds
+                    if (existingMem2dMaxID > newMemberID)
+                        newMemberID = existingMem2dMaxID + 1;
+                }
             }
 
             if (mem3ds != null)
             {
-                int existingMem3dMaxID = mem3ds.Max(x => x.ID); // max ID in new Elem2ds
-                if (existingMem3dMaxID > newMemberID)
-                    newMemberID = existingMem3dMaxID + 1;
+                if (mem3ds.Count > 0)
+                {
+                    int existingMem3dMaxID = mem3ds.Max(x => x.ID); // max ID in new Elem2ds
+                    if (existingMem3dMaxID > newMemberID)
+                        newMemberID = existingMem3dMaxID + 1;
+                }
             }
 
             // Set / add 1D members to dictionary

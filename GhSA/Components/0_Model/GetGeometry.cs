@@ -170,23 +170,8 @@ namespace GhSA.Components
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
                     return;
                 }
-            
-                // import lists
-                //string nodeList = "all";
-                //if (DA.GetData(1, ref nodeList))
-                //    nodeList = nodeList.ToString();
-                //string elemList = "all";
-                //if (DA.GetData(2, ref elemList))
-                //    elemList = elemList.ToString();
-                //string memList = "all";
-                //if (DA.GetData(3, ref memList))
-                //    memList = memList.ToString();
 
                 Model model = gsaModel.Model;
-
-                //bool graft = false;
-                //if (_mode == FoldMode.Graft)
-                //    graft = true;
 
                 // get dictionaries from model
                 IReadOnlyDictionary<int, Node> nDict = model.Nodes();
