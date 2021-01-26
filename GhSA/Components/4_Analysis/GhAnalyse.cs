@@ -352,7 +352,7 @@ namespace GhSA.Components
                         else
                         {
                             // get existing node id if any:
-                            int id = Util.Gsa.Nodes.GetExistingNodeID(nodes, apiNode);
+                            int id = Util.Gsa.ToGSA.Helper.Nodes.GetExistingNodeID(nodes, apiNode);
                             if (id > 0) // if within tolerance of existing node
                             {
                                 // get GSA node
@@ -430,23 +430,23 @@ namespace GhSA.Components
                         // update topology list to fit model nodes
                         List<int> topo = new List<int>();
                         //Start node
-                        int id = Util.Gsa.Nodes.GetExistingNodeID(nodes, line.PointAtStart);
+                        int id = Util.Gsa.ToGSA.Helper.Nodes.GetExistingNodeID(nodes, line.PointAtStart);
                         if (id > 0)
                             topo.Add(id);
                         else
                         {
-                            nodes.Add(newNodeID, Util.Gsa.Nodes.NodeFromPoint(line.PointAtStart));
+                            nodes.Add(newNodeID, Util.Gsa.ToGSA.Helper.Nodes.NodeFromPoint(line.PointAtStart));
                             topo.Add(newNodeID);
                             newNodeID++;
                         }
 
                         //End node
-                        id = Util.Gsa.Nodes.GetExistingNodeID(nodes, line.PointAtEnd);
+                        id = Util.Gsa.ToGSA.Helper.Nodes.GetExistingNodeID(nodes, line.PointAtEnd);
                         if (id > 0)
                             topo.Add(id);
                         else
                         {
-                            nodes.Add(newNodeID, Util.Gsa.Nodes.NodeFromPoint(line.PointAtEnd));
+                            nodes.Add(newNodeID, Util.Gsa.ToGSA.Helper.Nodes.NodeFromPoint(line.PointAtEnd));
                             topo.Add(newNodeID);
                             newNodeID++;
                         }
@@ -502,12 +502,12 @@ namespace GhSA.Components
                             //Loop through topology
                             for (int k = 0; k < meshVertexIndex.Count; k++)
                             {
-                                int id = Util.Gsa.Nodes.GetExistingNodeID(nodes, meshVerticies[meshVertexIndex[k]]);
+                                int id = Util.Gsa.ToGSA.Helper.Nodes.GetExistingNodeID(nodes, meshVerticies[meshVertexIndex[k]]);
                                 if (id > 0)
                                     topo.Add(id);
                                 else
                                 {
-                                    nodes.Add(newNodeID, Util.Gsa.Nodes.NodeFromPoint(meshVerticies[meshVertexIndex[k]]));
+                                    nodes.Add(newNodeID, Util.Gsa.ToGSA.Helper.Nodes.NodeFromPoint(meshVerticies[meshVertexIndex[k]]));
                                     topo.Add(newNodeID);
                                     newNodeID++;
                                 }
@@ -594,12 +594,12 @@ namespace GhSA.Components
                                     topo += topologyType.ToLower() + " "; // add topology type (nothing or "a") in front of node id
                             }
 
-                            int id = Util.Gsa.Nodes.GetExistingNodeID(nodes, pt);
+                            int id = Util.Gsa.ToGSA.Helper.Nodes.GetExistingNodeID(nodes, pt);
                             if (id > 0)
                                 topo += id;
                             else
                             {
-                                nodes.Add(newNodeID, Util.Gsa.Nodes.NodeFromPoint(pt));
+                                nodes.Add(newNodeID, Util.Gsa.ToGSA.Helper.Nodes.NodeFromPoint(pt));
                                 topo += newNodeID;
                                 newNodeID++;
                             }
@@ -665,12 +665,12 @@ namespace GhSA.Components
                                     topo += topologyType.ToLower() + " "; // add topology type (nothing or "a") in front of node id
                             }
 
-                            int id = Util.Gsa.Nodes.GetExistingNodeID(nodes, pt);
+                            int id = Util.Gsa.ToGSA.Helper.Nodes.GetExistingNodeID(nodes, pt);
                             if (id > 0)
                                 topo += id;
                             else
                             {
-                                nodes.Add(newNodeID, Util.Gsa.Nodes.NodeFromPoint(pt));
+                                nodes.Add(newNodeID, Util.Gsa.ToGSA.Helper.Nodes.NodeFromPoint(pt));
                                 topo += newNodeID;
                                 newNodeID++;
                             }
@@ -697,12 +697,12 @@ namespace GhSA.Components
                                     else
                                         topo += voidtopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
 
-                                    int id = Util.Gsa.Nodes.GetExistingNodeID(nodes, pt);
+                                    int id = Util.Gsa.ToGSA.Helper.Nodes.GetExistingNodeID(nodes, pt);
                                     if (id > 0)
                                         topo += id;
                                     else
                                     {
-                                        nodes.Add(newNodeID, Util.Gsa.Nodes.NodeFromPoint(pt));
+                                        nodes.Add(newNodeID, Util.Gsa.ToGSA.Helper.Nodes.NodeFromPoint(pt));
                                         topo += newNodeID;
                                         newNodeID++;
                                     }
@@ -732,12 +732,12 @@ namespace GhSA.Components
                                     else
                                         topo += inclineTopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
 
-                                    int id = Util.Gsa.Nodes.GetExistingNodeID(nodes, pt);
+                                    int id = Util.Gsa.ToGSA.Helper.Nodes.GetExistingNodeID(nodes, pt);
                                     if (id > 0)
                                         topo += id;
                                     else
                                     {
-                                        nodes.Add(newNodeID, Util.Gsa.Nodes.NodeFromPoint(pt));
+                                        nodes.Add(newNodeID, Util.Gsa.ToGSA.Helper.Nodes.NodeFromPoint(pt));
                                         topo += newNodeID;
                                         newNodeID++;
                                     }
@@ -759,12 +759,12 @@ namespace GhSA.Components
                                 if (j == 0)
                                     topo += " P(";
 
-                                int id = Util.Gsa.Nodes.GetExistingNodeID(nodes, pt);
+                                int id = Util.Gsa.ToGSA.Helper.Nodes.GetExistingNodeID(nodes, pt);
                                 if (id > 0)
                                     topo += id;
                                 else
                                 {
-                                    nodes.Add(newNodeID, Util.Gsa.Nodes.NodeFromPoint(pt));
+                                    nodes.Add(newNodeID, Util.Gsa.ToGSA.Helper.Nodes.NodeFromPoint(pt));
                                     topo += newNodeID;
                                     newNodeID++;
                                 }
@@ -883,7 +883,7 @@ namespace GhSA.Components
                                 else
                                 {
                                     // check if there's already an axis with same properties in the model:
-                                    int axID = Util.Gsa.Axis.GetExistingAxisID(gsa.Axes(), axis);
+                                    int axID = Util.Gsa.ToGSA.Helper.Axes.GetExistingAxisID(gsa.Axes(), axis);
                                     if (axID > 0)
                                         gridpln.AxisProperty = axID; // set the id if axis exist
                                     else
@@ -989,7 +989,7 @@ namespace GhSA.Components
                                 else
                                 {
                                     // check if there's already an axis with same properties in the model:
-                                    int axID = Util.Gsa.Axis.GetExistingAxisID(gsa.Axes(), axis);
+                                    int axID = Util.Gsa.ToGSA.Helper.Axes.GetExistingAxisID(gsa.Axes(), axis);
                                     if (axID > 0)
                                         gridpln.AxisProperty = axID; // set the id if axis exist
                                     else
@@ -1095,7 +1095,7 @@ namespace GhSA.Components
                                 else
                                 {
                                     // check if there's already an axis with same properties in the model:
-                                    int axID = Util.Gsa.Axis.GetExistingAxisID(gsa.Axes(), axis);
+                                    int axID = Util.Gsa.ToGSA.Helper.Axes.GetExistingAxisID(gsa.Axes(), axis);
                                     if (axID > 0)
                                         gridpln.AxisProperty = axID; // set the id if axis exist
                                     else

@@ -190,7 +190,7 @@ namespace GhSA.Components
                             FileName = fileName
                         };
 
-                        Util.GsaTitles.GetTitlesFromGSA(model);
+                        Titles.GetTitlesFromGSA(model);
 
                         string mes = Path.GetFileName(fileName);
                         mes = mes.Substring(0, mes.Length - 4);
@@ -231,7 +231,7 @@ namespace GhSA.Components
                         FileName = fileName
                     };
 
-                    Util.GsaTitles.GetTitlesFromGSA(model);
+                    Titles.GetTitlesFromGSA(model);
 
                     string mes = Path.GetFileName(fileName);
                     mes = mes.Substring(0, mes.Length - 4);

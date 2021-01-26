@@ -82,7 +82,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "xx" +
                     System.Environment.NewLine + "yy" +
                     System.Environment.NewLine + "zz", GH_ParamAccess.item, "z");
-            pManager.AddNumberParameter("Value (" + Util.GsaUnit.Force + ")", "V", "Load Value (" + Util.GsaUnit.Force + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value (" + Units.Force + ")", "V", "Load Value (" + Units.Force + ")", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[2].Optional = true;
             

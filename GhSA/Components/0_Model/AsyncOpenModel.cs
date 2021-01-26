@@ -220,7 +220,7 @@ namespace GhSA.Components
                 }
 
                 ReportProgress("Updating units...", -2);
-                Util.GsaTitles.GetTitlesFromGSA(model);
+                Titles.GetTitlesFromGSA(model);
 
                 string mes = Path.GetFileNameWithoutExtension(fileName);
                 ReportProgress(mes, -1);

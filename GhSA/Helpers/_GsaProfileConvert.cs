@@ -94,10 +94,10 @@ namespace GhSA.Util.Gsa
         /// <returns></returns>
         public static Profile UpdateSectUnit(Profile gsaProfile, bool factorValues)
         {
-            if (gsaProfile.sectUnit.ToString() != GsaUnit.LengthSection)
+            if (gsaProfile.sectUnit.ToString() != Units.LengthSection)
             {
-                if (GsaUnit.LengthSection == "mm" || GsaUnit.LengthSection == "cm" || GsaUnit.LengthSection == "m" ||
-                GsaUnit.LengthSection == "ft" || GsaUnit.LengthSection == "in")
+                if (Units.LengthSection == "mm" || Units.LengthSection == "cm" || Units.LengthSection == "m" ||
+                Units.LengthSection == "ft" || Units.LengthSection == "in")
                 {
                     
                     if (factorValues)
@@ -105,7 +105,7 @@ namespace GhSA.Util.Gsa
                         double conversionFactor = 1;
                         // convert current unit back to meters, I know that one
                         double toMeters = 1;
-                        switch (GsaUnit.LengthSection)
+                        switch (Units.LengthSection)
                         {
                             case "mm":
                                 toMeters = 1/1000;
@@ -151,7 +151,7 @@ namespace GhSA.Util.Gsa
                         gsaProfile.tw2 *= conversionFactor;
                     }
                         
-                    switch (GsaUnit.LengthSection)
+                    switch (Units.LengthSection)
                     {
                         case "mm":
                             gsaProfile.sectUnit = Profile.SectUnitOptions.u_mm;

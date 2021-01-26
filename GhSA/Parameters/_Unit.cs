@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Rhino;
 
-namespace GhSA.Util
+namespace GhSA
 {
     /// <summary>
     /// Class to hold units used in Grasshopper GSA file. 
     /// </summary>
-    public static class GsaUnit
+    public static class Units
     {
         public static double Tolerance
         {

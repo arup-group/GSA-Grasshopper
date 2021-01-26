@@ -90,7 +90,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "y" +
                     System.Environment.NewLine + "z", GH_ParamAccess.item, "z");
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
-            pManager.AddNumberParameter("Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)", "V", "Load Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)", "V", "Load Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[2].Optional = true;
@@ -485,8 +485,8 @@ namespace GhSA.Components
                 Params.Input[4].Optional = true;
                 
                 Params.Input[5].NickName = "V";
-                Params.Input[5].Name = "Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
-                Params.Input[5].Description = "Load Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
+                Params.Input[5].Name = "Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[5].Description = "Load Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = false;
             }
@@ -500,26 +500,26 @@ namespace GhSA.Components
                 Params.Input[4].Optional = true;
 
                 Params.Input[5].NickName = "V1";
-                Params.Input[5].Name = "Value 1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
-                Params.Input[5].Description = "Load Value Corner 1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
+                Params.Input[5].Name = "Value 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[5].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
 
                 Params.Input[6].NickName = "V2";
-                Params.Input[6].Name = "Value 2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
-                Params.Input[6].Description = "Load Value Corner 2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
+                Params.Input[6].Name = "Value 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[6].Description = "Load Value Corner 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = true;
 
                 Params.Input[7].NickName = "V3";
-                Params.Input[7].Name = "Value 3 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
-                Params.Input[7].Description = "Load Value Corner 3 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
+                Params.Input[7].Name = "Value 3 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[7].Description = "Load Value Corner 3 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = true;
 
                 Params.Input[8].NickName = "V4";
-                Params.Input[8].Name = "Value 4 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
-                Params.Input[8].Description = "Load Value Corner 4 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
+                Params.Input[8].Name = "Value 4 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[8].Description = "Load Value Corner 4 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[8].Access = GH_ParamAccess.item;
                 Params.Input[8].Optional = true;
             }
@@ -533,8 +533,8 @@ namespace GhSA.Components
                 Params.Input[4].Optional = true;
 
                 Params.Input[5].NickName = "V";
-                Params.Input[5].Name = "Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
-                Params.Input[5].Description = "Load Value Corner 1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
+                Params.Input[5].Name = "Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[5].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = false;
 
@@ -566,14 +566,14 @@ namespace GhSA.Components
                 Params.Input[4].Optional = false;
 
                 Params.Input[5].NickName = "V1";
-                Params.Input[5].Name = "Value 1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
-                Params.Input[5].Description = "Load Value Corner 1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
+                Params.Input[5].Name = "Value 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[5].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = false;
 
                 Params.Input[6].NickName = "V2";
-                Params.Input[6].Name = "Value 2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
-                Params.Input[6].Description = "Load Value Corner 2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)";
+                Params.Input[6].Name = "Value 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[6].Description = "Load Value Corner 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = false;
             }

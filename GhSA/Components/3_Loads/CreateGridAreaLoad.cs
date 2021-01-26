@@ -43,7 +43,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "0 : Global" +
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
-            pManager.AddNumberParameter("Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)", "V", "Load Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)", "V", "Load Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -169,7 +169,7 @@ namespace GhSA.Components
                         desc += "(" + temppt.X + "," + temppt.Y + ")";
                     }
                     // add units to the end
-                    desc += "(" + Util.GsaUnit.LengthLarge + ")";
+                    desc += "(" + Units.LengthLarge + ")";
 
                     // set polyline in grid line load
                     gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;

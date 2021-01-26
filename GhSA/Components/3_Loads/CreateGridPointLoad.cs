@@ -40,7 +40,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "Accepted inputs are:" +
                     System.Environment.NewLine + "0 : Global" +
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
-            pManager.AddNumberParameter("Value (" + Util.GsaUnit.Force + ")", "V", "Load Value (" + Util.GsaUnit.Force + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value (" + Units.Force + ")", "V", "Load Value (" + Units.Force + ")", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[2].Optional = true;

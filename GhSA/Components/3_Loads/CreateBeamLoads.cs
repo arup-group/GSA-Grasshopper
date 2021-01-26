@@ -98,7 +98,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "zz", GH_ParamAccess.item, "z");
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
 
-            pManager.AddNumberParameter("Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", "V", "Load Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value (" + Units.Force + "/" + Units.LengthLarge + ")", "V", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[2].Optional = true;
@@ -456,8 +456,8 @@ namespace GhSA.Components
             if (_mode == FoldMode.Point)
             {
                 Params.Input[5].NickName = "V";
-                Params.Input[5].Name = "Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[5].Description = "Load Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[5].Name = "Value (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[5].Description = "Load Value (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = false;
                 
@@ -480,14 +480,14 @@ namespace GhSA.Components
             if (_mode == FoldMode.Linear)
             {
                 Params.Input[5].NickName = "V1";
-                Params.Input[5].Name = "Value Start (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[5].Description = "Load Value at Beam Start (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[5].Name = "Value Start (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[5].Description = "Load Value at Beam Start (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
 
                 Params.Input[6].NickName = "V2";
-                Params.Input[6].Name = "Value End (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[6].Description = "Load Value at Beam End (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[6].Name = "Value End (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[6].Description = "Load Value at Beam End (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = true;
             }
@@ -495,8 +495,8 @@ namespace GhSA.Components
             if (_mode == FoldMode.Patch)
             {
                 Params.Input[5].NickName = "V1";
-                Params.Input[5].Name = "Load t1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[5].Description = "Load Value at Position 1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[5].Name = "Load t1 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[5].Description = "Load Value at Position 1 (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
 
@@ -507,8 +507,8 @@ namespace GhSA.Components
                 Params.Input[6].Optional = true;
 
                 Params.Input[7].NickName = "V2";
-                Params.Input[7].Name = "Load t2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[7].Description = "Load Value at Position 2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[7].Name = "Load t2 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[7].Description = "Load Value at Position 2 (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = true;
 
@@ -522,8 +522,8 @@ namespace GhSA.Components
             if (_mode == FoldMode.Trilinear)
             {
                 Params.Input[5].NickName = "V1";
-                Params.Input[5].Name = "Load t1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[5].Description = "Load Value at Position 1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[5].Name = "Load t1 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[5].Description = "Load Value at Position 1 (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
 
@@ -534,8 +534,8 @@ namespace GhSA.Components
                 Params.Input[6].Optional = true;
 
                 Params.Input[7].NickName = "V2";
-                Params.Input[7].Name = "Load t2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[7].Description = "Load Value at Position 2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[7].Name = "Load t2 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[7].Description = "Load Value at Position 2 (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = true;
 

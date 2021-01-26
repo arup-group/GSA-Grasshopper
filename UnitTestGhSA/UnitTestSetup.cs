@@ -94,7 +94,7 @@ namespace UnitTestGhSA
 
         public static void SetUnits()
         {
-            GhSA.Util.GsaUnit.SetUnits_kN_m();
+            GhSA.Units.SetUnits_kN_m();
         }
     }
     public class InitiateRhinoGH

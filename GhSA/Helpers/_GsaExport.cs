@@ -2,20 +2,18 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GsaAPI;
 using Rhino.Geometry;
-using Grasshopper;
 using GhSA.Parameters;
+using System.Threading;
 
-namespace GhSA.Util.Gsa
+namespace GhSA.Util.Gsa.ToGSA
 {
-    public class ToGSA
+    public class Assemble
     {
         public static Model AssembleModel(List<GsaMember3d> member3Ds = null, List<GsaMember2d> member2Ds = null, List<GsaMember1d> member1Ds = null)
         {
-            // temporary model to set members in
+            // new model to set members in
             Model gsa = new Model();
 
             // list of topology nodes
@@ -24,71 +22,17 @@ namespace GhSA.Util.Gsa
             // counter for creating nodes
             int id = 1;
 
-            // List to set members in
+            // Create list of members to write to
             List<Member> mems = new List<Member>();
+            
+            // add converted 1D members
+            mems.AddRange(Members.ConvertMember1D(member1Ds, ref nodes, ref id));
 
-            #region member1d
-            // member1Ds
-            if (member1Ds != null)
-            {
-                if (member1Ds.Count > 0)
-                {
-                    for (int i = 0; i < member1Ds.Count; i++)
-                    {
-                        if (member1Ds[i] != null)
-                        {
-                            GsaMember1d member1d = member1Ds[i];
+            // add converted 2D members
+            mems.AddRange(Members.ConvertMember2D(member2Ds, ref nodes, ref id));
 
-                            Member apiMember = ConvertMember1D(member1d, ref nodes, ref id);
-
-                            mems.Add(apiMember);
-                        }
-                    }
-                }
-            }
-            #endregion
-
-            #region member2d
-            // member2Ds
-            if (member2Ds != null)
-            {
-                if (member2Ds.Count > 0)
-                {
-                    for (int i = 0; i < member2Ds.Count; i++)
-                    {
-                        if (member2Ds[i] != null)
-                        {
-                            GsaMember2d member2d = member2Ds[i];
-
-                            Member apiMember = ConvertMember2D(member2d, ref nodes, ref id);
-
-                            mems.Add(apiMember);
-                        }
-                    }
-                }
-            }
-            #endregion
-
-            #region member3d
-            // member3Ds
-            if (member3Ds != null)
-            {
-                if (member3Ds.Count > 0)
-                {
-                    for (int i = 0; i < member3Ds.Count; i++)
-                    {
-                        if (member3Ds[i] != null)
-                        {
-                            GsaMember3d member3d = member3Ds[i];
-
-                            Member apiMember = ConvertMember3D(member3d, ref nodes, ref id);
-
-                            mems.Add(apiMember);
-                        }
-                    }
-                }
-            }
-            #endregion
+            // add converted 3D members
+            mems.AddRange(Members.ConvertMember3D(member3Ds, ref nodes, ref id));
 
             #region create model
             Dictionary<int, Node> nodeDic = nodes
@@ -107,225 +51,229 @@ namespace GhSA.Util.Gsa
             return gsa;
         }
 
-        public static Member ConvertMember1D(GsaMember1d member1d, ref List<Node> nodes, ref int id)
+        public static Model AssembleModel(GsaModel model, List<GsaNode> nodes, 
+            List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
+            List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
+            List<GsaSection> sections, List<GsaProp2d> prop2Ds, 
+            List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
+            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
+            Action<string, double> ReportProgress = null
+            )
         {
-            // take out api member
-            Member apimember = member1d.Member;
+            // Set model to work on
+            GsaAPI.Model gsa = model.Model;
 
-            // create topology string to build
-            string topo = "";
+            #region Nodes
+            // ### Nodes ###
+            // We take out the existing nodes in the model and work on that dictionary
 
-            // Loop through the topology list
-            for (int j = 0; j < member1d.Topology.Count; j++)
+            // Get existing nodes
+            IReadOnlyDictionary<int, Node> gsaNodes = gsa.Nodes();
+            Dictionary<int, Node> apinodes = gsaNodes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            // Get existing axes
+            IReadOnlyDictionary<int, Axis> gsaAxes = gsa.Axes();
+            Dictionary<int, Axis> apiaxes = gsaAxes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            // Set / add nodes to dictionary
+            Nodes.ConvertNode(nodes, ref apinodes, ref apiaxes, workerInstance, ReportProgress);
+            #endregion
+
+
+            #region Elements
+            // ### Elements ###
+            // We take out the existing elements in the model and work on that dictionary
+
+            // Get existing elements
+            IReadOnlyDictionary<int, Element> gsaElems = gsa.Elements();
+            Dictionary<int, Element> elems = gsaElems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            // Get existing sections
+            IReadOnlyDictionary<int, Section> gsaSections = gsa.Sections();
+            Dictionary<int, Section> apisections = gsaSections.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            // create a counter for creating new elements
+            int newElementID = (elems.Count > 0) ? elems.Keys.Max() + 1 : 1; //checking the existing model
+
+            // as both elem1d and elem2d will be set in the same table, we check the highest ID that may have
+            // been set in the incoming elements and start appending from there to avoid accidentially overwriting 
+            if (elem1ds != null)
             {
-                string topologyType = member1d.TopologyType[j];
-                if (j > 0)
-                {
-                    if (topologyType == "" | topologyType == " ")
-                        topo += " ";
-                    else
-                        topo += topologyType.ToLower() + " "; // add topology type (nothing or "a") in front of node id
-                }
-
-                Point3d pt = member1d.Topology[j];
-                Node node = new Node();
-                node.Position.X = pt.X;
-                node.Position.Y = pt.Y;
-                node.Position.Z = pt.Z;
-                nodes.Add(node);
-
-                topo += id++;
-
-                if (j != member1d.Topology.Count - 1)
-                    topo += " ";
+                int existingElem1dMaxID = elem1ds.Max(x => x.ID); // max ID in new Elem1ds
+                if (existingElem1dMaxID > newElementID)
+                    newElementID = existingElem1dMaxID + 1;
             }
-            // set topology in api member
-            apimember.Topology = string.Copy(topo);
-
-            return apimember;
-        }
-
-        public static Member ConvertMember2D(GsaMember2d member2d, ref List<Node> nodes, ref int id)
-        {
-            // take out api member
-            Member apimember = member2d.Member;
-
-            // create string to build topology
-            string topo = "";
-
-            #region outline topology
-            // Loop through the topology list
-            for (int j = 0; j < member2d.Topology.Count; j++)
+            if (elem2ds != null)
             {
-                string topologyType = member2d.TopologyType[j];
+                int existingElem2dMaxID = elem2ds.Max(x => x.ID.Max()); // max ID in new Elem2ds
+                if (existingElem2dMaxID > newElementID)
+                    newElementID = existingElem2dMaxID + 1;
+            }
+            
+            // Set / add 1D elements to dictionary
+            Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, ref apisections, workerInstance, ReportProgress);
 
-                if (j > 0)
-                {
-                    if (topologyType == "" | topologyType == " ")
-                        topo += " ";
-                    else
-                        topo += topologyType.ToLower() + " "; // add topology type (nothing or "a") in front of node id
-                }
+            // Get existing prop2ds
+            IReadOnlyDictionary<int, Prop2D> gsaProp2ds = gsa.Prop2Ds();
+            Dictionary<int, Prop2D> apiprop2ds = gsaProp2ds.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-                Point3d pt = member2d.Topology[j];
-                Node node = new Node();
-                node.Position.X = pt.X;
-                node.Position.Y = pt.Y;
-                node.Position.Z = pt.Z;
-                nodes.Add(node);
+            // Set / add 2D elements to dictionary
+            Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, ref apiprop2ds, workerInstance, ReportProgress);
+            #endregion
 
-                topo += id++;
+            #region Members
+            // ### Members ###
+            // We take out the existing members in the model and work on that dictionary
 
-                if (j != member2d.Topology.Count - 1)
-                    topo += " ";
+            // Get existing members
+            IReadOnlyDictionary<int, Member> gsaMems = gsa.Members();
+            Dictionary<int, Member> mems = gsaMems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            // create a counter for creating new members
+            int newMemberID = (mems.Count > 0) ? mems.Keys.Max() + 1 : 1; //checking the existing model
+
+            // as both mem1d, mem2d and mem3dwill be set in the same table, we check the highest ID that may have
+            // been set in the incoming elements and start appending from there to avoid accidentially overwriting 
+            if (mem1ds != null)
+            {
+                int existingMem1dMaxID = mem1ds.Max(x => x.ID); // max ID in new Elem1ds
+                if (existingMem1dMaxID > newMemberID)
+                    newMemberID = existingMem1dMaxID + 1;
+            }
+
+            if (mem2ds != null)
+            {
+                int existingMem2dMaxID = mem2ds.Max(x => x.ID); // max ID in new Elem2ds
+                if (existingMem2dMaxID > newMemberID)
+                    newMemberID = existingMem2dMaxID + 1;
+            }
+
+            if (mem3ds != null)
+            {
+                int existingMem3dMaxID = mem3ds.Max(x => x.ID); // max ID in new Elem2ds
+                if (existingMem3dMaxID > newMemberID)
+                    newMemberID = existingMem3dMaxID + 1;
+            }
+
+            // Set / add 1D members to dictionary
+            Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, ref apisections, workerInstance, ReportProgress);
+
+            // Set / add 2D members to dictionary
+            Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, ref apiprop2ds, workerInstance, ReportProgress);
+
+            // Set / add 3D members to dictionary
+            Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, workerInstance, ReportProgress);
+            #endregion
+
+            #region Loads
+            // ### Loads ###
+            // We let the existing loads (if any) survive and just add new loads
+
+            // Get existing loads
+            List<GravityLoad> gravityLoads = new List<GravityLoad>();
+            List<NodeLoad> nodeLoads_node = new List<NodeLoad>();
+            List<NodeLoad> nodeLoads_displ = new List<NodeLoad>();
+            List<NodeLoad> nodeLoads_settle = new List<NodeLoad>();
+            List<BeamLoad> beamLoads = new List<BeamLoad>();
+            List<FaceLoad> faceLoads = new List<FaceLoad>();
+            List<GridPointLoad> gridPointLoads = new List<GridPointLoad>();
+            List<GridLineLoad> gridLineLoads = new List<GridLineLoad>();
+            List<GridAreaLoad> gridAreaLoads = new List<GridAreaLoad>();
+            
+            IReadOnlyDictionary<int, GridPlane> gsaGPln = gsa.GridPlanes();
+            Dictionary<int, GridPlane> apiGridPlanes = gsaGPln.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            IReadOnlyDictionary<int, GridSurface> gsaGSrf = gsa.GridSurfaces();
+            Dictionary<int, GridSurface> apiGridSurfaces = gsaGSrf.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            // lists to keep track of duplicated grid planes and grid surfaces
+            Dictionary<Guid, int> gp_guid = new Dictionary<Guid, int>();
+            Dictionary<Guid, int> gs_guid = new Dictionary<Guid, int>();
+
+            // Set / add loads to lists
+            Loads.ConvertLoad(loads, ref gravityLoads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle,
+                ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads,
+                ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, 
+                workerInstance, ReportProgress);
+
+            // Set / add Grid plane surfaces
+            Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
+                ref gp_guid, ref gs_guid, workerInstance, ReportProgress);
+            #endregion
+
+            #region Properties
+            // ### Sections ###
+            // add / set sections
+            Sections.ConvertSection(sections, ref apisections, workerInstance, ReportProgress);
+
+            // ### Prop2ds ###
+            // add / set prop2ds
+            Prop2ds.ConvertProp2d(prop2Ds, ref apiprop2ds, workerInstance, ReportProgress);
+            #endregion
+
+            #region set stuff in model
+            if (workerInstance != null)
+            {
+                if (workerInstance.CancellationToken.IsCancellationRequested) return null;
+            }
+            //nodes
+            ReadOnlyDictionary<int, Node> setnodes = new ReadOnlyDictionary<int, Node>(apinodes);
+            gsa.SetNodes(setnodes);
+            //elements
+            ReadOnlyDictionary<int, Element> setelem = new ReadOnlyDictionary<int, Element>(elems);
+            gsa.SetElements(setelem);
+            //members
+            ReadOnlyDictionary<int, Member> setmem = new ReadOnlyDictionary<int, Member>(mems);
+            gsa.SetMembers(setmem);
+            //gravity load
+            ReadOnlyCollection<GravityLoad> setgrav = new ReadOnlyCollection<GravityLoad>(gravityLoads);
+            gsa.AddGravityLoads(setgrav);
+            //node loads
+            ReadOnlyCollection<NodeLoad> setnode_disp = new ReadOnlyCollection<NodeLoad>(nodeLoads_displ);
+            gsa.AddNodeLoads(NodeLoadType.APPLIED_DISP, setnode_disp);
+            ReadOnlyCollection<NodeLoad> setnode_node = new ReadOnlyCollection<NodeLoad>(nodeLoads_node);
+            gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, setnode_node);
+            ReadOnlyCollection<NodeLoad> setnode_setl = new ReadOnlyCollection<NodeLoad>(nodeLoads_settle);
+            gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, setnode_setl);
+            //beam loads
+            ReadOnlyCollection<BeamLoad> setbeam = new ReadOnlyCollection<BeamLoad>(beamLoads);
+            gsa.AddBeamLoads(setbeam);
+            //face loads
+            ReadOnlyCollection<FaceLoad> setface = new ReadOnlyCollection<FaceLoad>(faceLoads);
+            gsa.AddFaceLoads(setface);
+            //grid point loads
+            ReadOnlyCollection<GridPointLoad> setpoint = new ReadOnlyCollection<GridPointLoad>(gridPointLoads);
+            gsa.AddGridPointLoads(setpoint);
+            //grid line loads
+            ReadOnlyCollection<GridLineLoad> setline = new ReadOnlyCollection<GridLineLoad>(gridLineLoads);
+            gsa.AddGridLineLoads(setline);
+            //grid area loads
+            ReadOnlyCollection<GridAreaLoad> setarea = new ReadOnlyCollection<GridAreaLoad>(gridAreaLoads);
+            gsa.AddGridAreaLoads(setarea);
+            //axes
+            ReadOnlyDictionary<int, Axis> setax = new ReadOnlyDictionary<int, Axis>(apiaxes);
+            gsa.SetAxes(setax);
+            //gridplanes
+            ReadOnlyDictionary<int, GridPlane> setgp = new ReadOnlyDictionary<int, GridPlane>(apiGridPlanes);
+            gsa.SetGridPlanes(setgp);
+            //gridsurfaces
+            ReadOnlyDictionary<int, GridSurface> setgs = new ReadOnlyDictionary<int, GridSurface>(apiGridSurfaces);
+            gsa.SetGridSurfaces(setgs);
+            //sections
+            ReadOnlyDictionary<int, Section> setsect = new ReadOnlyDictionary<int, Section>(apisections);
+            gsa.SetSections(setsect);
+            //prop2ds
+            ReadOnlyDictionary<int, Prop2D> setpr2d = new ReadOnlyDictionary<int, Prop2D>(apiprop2ds);
+            gsa.SetProp2Ds(setpr2d);
+
+
+            if (workerInstance != null)
+            {
+                ReportProgress("Model assembled", -2);
             }
             #endregion
 
-            #region voids
-            // Loop through the voidtopology list
-            if (member2d.VoidTopology != null)
-            {
-                for (int j = 0; j < member2d.VoidTopology.Count; j++)
-                {
-                    for (int k = 0; k < member2d.VoidTopology[j].Count; k++)
-                    {
-                        string voidtopologytype = member2d.VoidTopologyType[j][k];
-
-                        if (k == 0)
-                            topo += " V(";
-                        if (voidtopologytype == "" | voidtopologytype == " ")
-                            topo += " ";
-                        else
-                            topo += voidtopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
-
-                        Point3d pt = member2d.VoidTopology[j][k];
-                        Node node = new Node();
-                        node.Position.X = pt.X;
-                        node.Position.Y = pt.Y;
-                        node.Position.Z = pt.Z;
-                        nodes.Add(node);
-
-                        topo += id++;
-
-                        if (k != member2d.VoidTopology[j].Count - 1)
-                            topo += " ";
-                        else
-                            topo += ")";
-                    }
-                }
-            }
-            #endregion
-
-            #region inclusion lines
-            // Loop through the inclusion lines topology list  
-            if (member2d.IncLinesTopology != null)
-            {
-                for (int j = 0; j < member2d.IncLinesTopology.Count; j++)
-                {
-                    for (int k = 0; k < member2d.IncLinesTopology[j].Count; k++)
-                    {
-                        string inclineTopologytype = member2d.IncLinesTopologyType[j][k];
-
-                        if (k == 0)
-                            topo += " L(";
-                        if (inclineTopologytype == "" | inclineTopologytype == " ")
-                            topo += " ";
-                        else
-                            topo += inclineTopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
-
-                        Point3d pt = member2d.IncLinesTopology[j][k];
-                        Node node = new Node();
-                        node.Position.X = pt.X;
-                        node.Position.Y = pt.Y;
-                        node.Position.Z = pt.Z;
-                        nodes.Add(node);
-
-                        topo += id++;
-
-                        if (k != member2d.IncLinesTopology[j].Count - 1)
-                            topo += " ";
-                        else
-                            topo += ")";
-                    }
-                }
-            }
-            #endregion
-
-            #region inclusion points
-            // Loop through the inclucion point topology list
-            if (member2d.InclusionPoints != null)
-            {
-                for (int j = 0; j < member2d.InclusionPoints.Count; j++)
-                {
-                    if (j == 0)
-                        topo += " P(";
-
-                    Point3d pt = member2d.InclusionPoints[j];
-                    Node node = new Node();
-                    node.Position.X = pt.X;
-                    node.Position.Y = pt.Y;
-                    node.Position.Z = pt.Z;
-                    nodes.Add(node);
-
-                    topo += id++;
-
-                    if (j != member2d.InclusionPoints.Count - 1)
-                        topo += " ";
-                    else
-                        topo += ")";
-                }
-            }
-            #endregion
-
-            // update topology for api member
-            apimember.Topology = string.Copy(topo);
-
-            return apimember;
-        }
-
-        public static Member ConvertMember3D(GsaMember3d member3d, ref List<Node> nodes, ref int id)
-        {
-            // take out api member
-            Member apimember = member3d.Member;
-
-            // create string to build topology list
-            string topo = "";
-
-            // Loop through the face list
-            for (int j = 0; j < member3d.SolidMesh.Faces.Count; j++)
-            {
-                for (int k = 0; k < 3; k++)
-                {
-                    int faceint = 0;
-                    if (k == 0)
-                        faceint = member3d.SolidMesh.Faces[j].A;
-                    if (k == 1)
-                        faceint = member3d.SolidMesh.Faces[j].B;
-                    if (k == 2)
-                        faceint = member3d.SolidMesh.Faces[j].C;
-
-                    // vertex point of current face corner
-                    Point3d pt = member3d.SolidMesh.Vertices[faceint];
-                    Node node = new Node();
-                    node.Position.X = pt.X;
-                    node.Position.Y = pt.Y;
-                    node.Position.Z = pt.Z;
-                    nodes.Add(node);
-
-                    // add space if we are not in first iteration
-                    if (k > 0)
-                        topo += " ";
-
-                    topo += id++;
-                }
-                // add ";" between face lists, unless we are in final iteration
-                if (j != member3d.SolidMesh.Faces.Count - 1)
-                    topo += "; ";
-            }
-            // set topology in api member
-            apimember.Topology = string.Copy(topo);
-
-            return apimember;
+            return gsa;
         }
     }
 }

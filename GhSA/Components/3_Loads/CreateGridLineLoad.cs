@@ -43,8 +43,8 @@ namespace GhSA.Components
                     System.Environment.NewLine + "0 : Global" +
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
-            pManager.AddNumberParameter("Value Start (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", "V1", "Load Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ") at Start of Line", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Value End (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", "V2", "Load Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ") at End of Line (default : Start Value)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value Start (" + Units.Force + "/" + Units.LengthLarge + ")", "V1", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ") at Start of Line", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value End (" + Units.Force + "/" + Units.LengthLarge + ")", "V2", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ") at End of Line (default : Start Value)", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[2].Optional = true;
@@ -165,7 +165,7 @@ namespace GhSA.Components
                         desc += "(" + temppt.X + "," + temppt.Y + ")";
                     }
                     // add units to the end
-                    desc += "(" + Util.GsaUnit.LengthLarge + ")";
+                    desc += "(" + Units.LengthLarge + ")";
 
                     // set polyline in grid line load
                     gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;

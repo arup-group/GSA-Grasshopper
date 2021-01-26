@@ -132,22 +132,32 @@ namespace GhSA.Components
                 }
             }
 
+            // manually add a warning if no input is set, as all three inputs are optional
             if (in_mem1ds.Count < 1 & in_mem2ds.Count < 1 & in_mem3ds.Count < 1)
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameters failed to collect data");
             #endregion
 
-            Model model = GhSA.Util.Gsa.ToGSA.AssembleModel(in_mem3ds, in_mem2ds, in_mem1ds);
+            // assemble temp model
+            Model model = GhSA.Util.Gsa.ToGSA.Assemble.AssembleModel(in_mem3ds, in_mem2ds, in_mem1ds);
 
+            // call the meshing algorithm
             model.CreateElementsFromMembers();
 
+            // extract elements from model
             Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>> elementTuple
                 = Util.Gsa.FromGSA.GetElements(model.Elements(), model.Nodes(), model.Sections(), model.Prop2Ds());
 
+            // temporarily set third output to GsaModel to test if it is working
+            // replace with Elem3d when this is done
             GsaModel outModel = new GsaModel();
             outModel.Model = model;
+
+            // set output
             DA.SetDataList(0, elementTuple.Item1);
             DA.SetDataList(1, elementTuple.Item2);
             DA.SetData(2, new GsaModelGoo(outModel));
+            
+            // custom display settings for element2d mesh
             element2ds = elementTuple.Item2;
         }
         List<GsaElement2dGoo> element2ds;

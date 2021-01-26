@@ -78,7 +78,7 @@ namespace GhSA.Components
                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
             pManager.AddTextParameter("Name", "Na", "Name of Grid Surface", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Tolerance (" + Util.GsaUnit.LengthSmall + ")", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 10);
+            pManager.AddNumberParameter("Tolerance (" + Units.LengthSmall + ")", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 10);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -89,7 +89,7 @@ namespace GhSA.Components
             if (first)
             {
                 _mode = FoldMode.One_Dimensional_One_Way;
-                pManager.AddNumberParameter("Span Direction", "Di", "Span Direction (" + Util.GsaUnit.Angle + ") between -180 and 180 degrees", GH_ParamAccess.item, 0);
+                pManager.AddNumberParameter("Span Direction", "Di", "Span Direction (" + Units.Angle + ") between -180 and 180 degrees", GH_ParamAccess.item, 0);
                 pManager[5].Optional = true;
                 first = false;
             }
@@ -333,7 +333,7 @@ namespace GhSA.Components
             {
                 Params.Input[5].NickName = "Dir";
                 Params.Input[5].Name = "Span Direction";
-                Params.Input[5].Description = "Span Direction (" + Util.GsaUnit.Angle + ") between -180 and 180 degrees";
+                Params.Input[5].Description = "Span Direction (" + Units.Angle + ") between -180 and 180 degrees";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
             }

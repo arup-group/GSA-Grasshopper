@@ -1,12 +1,5 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.Kernel;
+﻿using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Rhino.DocObjects;
 using Rhino.Display;
 
 namespace GhSA.UI
