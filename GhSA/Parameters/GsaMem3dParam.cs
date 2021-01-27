@@ -463,7 +463,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaMem1D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaMem3D;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

@@ -163,6 +163,16 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CreateMem3D {
+            get {
+                object obj = ResourceManager.GetObject("CreateMem3D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap CreateOffset {
             get {
                 object obj = ResourceManager.GetObject("CreateOffset", resourceCulture);
@@ -266,6 +276,16 @@ namespace GhSA.Properties {
         public static System.Drawing.Bitmap EditMem2D {
             get {
                 object obj = ResourceManager.GetObject("EditMem2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap EditMem3D {
+            get {
+                object obj = ResourceManager.GetObject("EditMem3D", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -556,6 +576,16 @@ namespace GhSA.Properties {
         public static System.Drawing.Bitmap GsaMem2D {
             get {
                 object obj = ResourceManager.GetObject("GsaMem2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GsaMem3D {
+            get {
+                object obj = ResourceManager.GetObject("GsaMem3D", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

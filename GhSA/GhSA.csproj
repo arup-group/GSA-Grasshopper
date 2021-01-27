@@ -604,6 +604,15 @@
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\CreateElementsFromMembers.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\CreateMem3D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\EditMem3D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\GsaMem3D.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
