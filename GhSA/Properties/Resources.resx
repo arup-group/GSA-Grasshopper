@@ -148,6 +148,9 @@
   <data name="CreateMem2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\icons\1x\CreateMem2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="CreateMem3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\icons\1x\CreateMem3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="CreateOffset" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\icons\1x\CreateOffset.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -180,6 +183,9 @@
   </data>
   <data name="EditMem2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\icons\1x\EditMem2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditMem3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\icons\1x\EditMem3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\icons\1x\EditNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -267,6 +273,9 @@
   </data>
   <data name="GsaMem2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\icons\1x\GsaMem2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GsaMem3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\icons\1x\GsaMem3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="GsaModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\icons\1x\GsaModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

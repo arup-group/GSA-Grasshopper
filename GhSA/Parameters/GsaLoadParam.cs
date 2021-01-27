@@ -34,6 +34,17 @@ namespace GhSA.Parameters
         {
             m_gravityload = new GravityLoad();
         }
+        public GsaGravityLoad Duplicate()
+        {
+            if (this == null) { return null; }
+            GsaGravityLoad dup = new GsaGravityLoad();
+            dup.m_gravityload.Case = m_gravityload.Case;
+            dup.m_gravityload.Elements = m_gravityload.Elements.ToString();
+            dup.m_gravityload.Nodes = m_gravityload.Nodes.ToString();
+            dup.m_gravityload.Name = m_gravityload.Name.ToString();
+            dup.m_gravityload.Factor = m_gravityload.Factor;
+            return dup;
+        }
         #endregion
     }
     public class GsaNodeLoad
@@ -64,6 +75,19 @@ namespace GhSA.Parameters
             m_nodeload = new NodeLoad();
             NodeLoadType = NodeLoadTypes.NODE_LOAD;
         }
+        public GsaNodeLoad Duplicate()
+        {
+            if (this == null) { return null; }
+            GsaNodeLoad dup = new GsaNodeLoad();
+            dup.m_nodeload.AxisProperty = m_nodeload.AxisProperty;
+            dup.m_nodeload.Case = m_nodeload.Case;
+            dup.m_nodeload.Direction = m_nodeload.Direction;
+            dup.m_nodeload.Nodes = m_nodeload.Nodes.ToString();
+            dup.m_nodeload.Name = m_nodeload.Name.ToString();
+            dup.m_nodeload.Value = m_nodeload.Value;
+            dup.NodeLoadType = NodeLoadType;
+            return dup;
+        }
         #endregion
     }
     public class GsaBeamLoad
@@ -81,8 +105,49 @@ namespace GhSA.Parameters
         {
             m_beamload = new BeamLoad
             {
-                Type = GsaAPI.BeamLoadType.LINEAR
+                Type = GsaAPI.BeamLoadType.UNIFORM
             };
+        }
+        public GsaBeamLoad Duplicate()
+        {
+            if (this == null) { return null; }
+            GsaBeamLoad dup = new GsaBeamLoad();
+            dup.m_beamload.AxisProperty = m_beamload.AxisProperty;
+            dup.m_beamload.Case = m_beamload.Case;
+            dup.m_beamload.Direction = m_beamload.Direction;
+            dup.m_beamload.Elements = m_beamload.Elements.ToString();
+            dup.m_beamload.Name = m_beamload.Name.ToString();
+            dup.m_beamload.IsProjected = m_beamload.IsProjected;
+            dup.m_beamload.Type = m_beamload.Type;
+            if (m_beamload.Type == BeamLoadType.POINT)
+            {
+                dup.m_beamload.SetPosition(0, m_beamload.Position(0));
+                dup.m_beamload.SetValue(0, m_beamload.Value(0));
+            }
+            if (m_beamload.Type == BeamLoadType.UNIFORM)
+            {
+                dup.m_beamload.SetValue(0, m_beamload.Value(0));
+            }
+            if (m_beamload.Type == BeamLoadType.LINEAR)
+            {
+                dup.m_beamload.SetValue(0, m_beamload.Value(0));
+                dup.m_beamload.SetValue(1, m_beamload.Value(1));
+            }
+            if (m_beamload.Type == BeamLoadType.PATCH)
+            {
+                dup.m_beamload.SetPosition(0, m_beamload.Position(0));
+                dup.m_beamload.SetPosition(1, m_beamload.Position(1));
+                dup.m_beamload.SetValue(0, m_beamload.Value(0));
+                dup.m_beamload.SetValue(1, m_beamload.Value(1));
+            }
+            if (m_beamload.Type == BeamLoadType.TRILINEAR)
+            {
+                dup.m_beamload.SetPosition(0, m_beamload.Position(0));
+                dup.m_beamload.SetPosition(1, m_beamload.Position(1));
+                dup.m_beamload.SetValue(0, m_beamload.Value(0));
+                dup.m_beamload.SetValue(1, m_beamload.Value(1));
+            }
+            return dup;
         }
         #endregion
     }
@@ -104,6 +169,39 @@ namespace GhSA.Parameters
             {
                 Type = FaceLoadType.CONSTANT
             };
+        }
+        public GsaFaceLoad Duplicate()
+        {
+            if (this == null) { return null; }
+            GsaFaceLoad dup = new GsaFaceLoad();
+            dup.m_faceload.AxisProperty = m_faceload.AxisProperty;
+            dup.m_faceload.Case = m_faceload.Case;
+            dup.m_faceload.Direction = m_faceload.Direction;
+            dup.m_faceload.Elements = m_faceload.Elements.ToString();
+            dup.m_faceload.Name = m_faceload.Name.ToString();
+            dup.m_faceload.Type = m_faceload.Type;
+            if (m_faceload.Type == FaceLoadType.CONSTANT)
+            {
+                dup.m_faceload.IsProjected = m_faceload.IsProjected;
+                dup.m_faceload.SetValue(0, m_faceload.Value(0));
+            }
+            if (m_faceload.Type == FaceLoadType.GENERAL)
+            {
+                dup.m_faceload.IsProjected = m_faceload.IsProjected;
+                dup.m_faceload.SetValue(0, m_faceload.Value(0));
+                dup.m_faceload.SetValue(1, m_faceload.Value(1));
+                dup.m_faceload.SetValue(2, m_faceload.Value(2));
+                dup.m_faceload.SetValue(3, m_faceload.Value(3));
+            }
+            if (m_faceload.Type == FaceLoadType.POINT)
+            {
+                dup.m_faceload.IsProjected = m_faceload.IsProjected;
+                dup.m_faceload.SetValue(0, m_faceload.Value(0));
+                dup.m_faceload.Position = m_faceload.Position; // 
+                //note Vector2 currently only get in GsaAPI
+                // duplicate Position.X and Position.Y when fixed
+            }
+            return dup;
         }
         #endregion
     }
@@ -128,6 +226,21 @@ namespace GhSA.Parameters
         {
             m_gridpointload = new GridPointLoad();
             m_gridplnsrf = new GsaGridPlaneSurface();
+        }
+        public GsaGridPointLoad Duplicate()
+        {
+            if (this == null) { return null; }
+            GsaGridPointLoad dup = new GsaGridPointLoad();
+            dup.m_gridpointload.AxisProperty = m_gridpointload.AxisProperty;
+            dup.m_gridpointload.Case = m_gridpointload.Case;
+            dup.m_gridpointload.Direction = m_gridpointload.Direction;
+            dup.m_gridpointload.GridSurface = m_gridpointload.GridSurface;
+            dup.m_gridpointload.Name = m_gridpointload.Name.ToString();
+            dup.m_gridpointload.X = m_gridpointload.X;
+            dup.m_gridpointload.Y = m_gridpointload.Y;
+            dup.m_gridpointload.Value = m_gridpointload.Value;
+            dup.m_gridplnsrf = m_gridplnsrf.Duplicate();
+            return dup;
         }
         #endregion
     }
@@ -156,6 +269,24 @@ namespace GhSA.Parameters
             m_gridlineload.PolyLineReference = 0; // explicit type = 0
             m_gridplanesrf = new GsaGridPlaneSurface();
         }
+        public GsaGridLineLoad Duplicate()
+        {
+            if (this == null) { return null; }
+            GsaGridLineLoad dup = new GsaGridLineLoad();
+            dup.m_gridlineload.AxisProperty = m_gridlineload.AxisProperty;
+            dup.m_gridlineload.Case = m_gridlineload.Case;
+            dup.m_gridlineload.Direction = m_gridlineload.Direction;
+            dup.m_gridlineload.GridSurface = m_gridlineload.GridSurface;
+            dup.m_gridlineload.IsProjected = m_gridlineload.IsProjected;
+            dup.m_gridlineload.Name = m_gridlineload.Name.ToString();
+            dup.m_gridlineload.PolyLineDefinition = m_gridlineload.PolyLineDefinition.ToString();
+            dup.m_gridlineload.PolyLineReference = m_gridlineload.PolyLineReference;
+            dup.m_gridlineload.Type = m_gridlineload.Type;
+            dup.m_gridlineload.ValueAtStart = m_gridlineload.ValueAtStart;
+            dup.m_gridlineload.ValueAtEnd = m_gridlineload.ValueAtEnd;
+            dup.m_gridplanesrf = m_gridplanesrf.Duplicate();
+            return dup;
+        }
         #endregion
     }
     public class GsaGridAreaLoad
@@ -170,13 +301,6 @@ namespace GhSA.Parameters
             get { return m_gridplanesrf; }
             set { m_gridplanesrf = value; }
         }
-        public enum PolyLineTypes // direct copy from GSA API enums
-        {
-            PLANE = 1,
-            POLYREF = 2,
-            POLYGON = 3
-        }
-        public PolyLineTypes PolyLineType;
         #region fields
         private GridAreaLoad m_gridareaload;
         private GsaGridPlaneSurface m_gridplanesrf;
@@ -185,8 +309,25 @@ namespace GhSA.Parameters
         public GsaGridAreaLoad()
         {
             m_gridareaload = new GridAreaLoad();
-            PolyLineType = PolyLineTypes.PLANE;
+            m_gridareaload.Type = GsaAPI.GridAreaPolyLineType.PLANE;
             m_gridplanesrf = new GsaGridPlaneSurface();
+        }
+        public GsaGridAreaLoad Duplicate()
+        {
+            if (this == null) { return null; }
+            GsaGridAreaLoad dup = new GsaGridAreaLoad();
+            dup.m_gridareaload.AxisProperty = m_gridareaload.AxisProperty;
+            dup.m_gridareaload.Case = m_gridareaload.Case;
+            dup.m_gridareaload.Direction = m_gridareaload.Direction;
+            dup.m_gridareaload.GridSurface = m_gridareaload.GridSurface;
+            dup.m_gridareaload.IsProjected = m_gridareaload.IsProjected;
+            dup.m_gridareaload.Name = m_gridareaload.Name.ToString();
+            dup.m_gridareaload.PolyLineDefinition = m_gridareaload.PolyLineDefinition.ToString();
+            dup.m_gridareaload.PolyLineReference = m_gridareaload.PolyLineReference;
+            dup.m_gridareaload.Type = m_gridareaload.Type;
+            dup.m_gridareaload.Value = m_gridareaload.Value;
+            dup.m_gridplanesrf = m_gridplanesrf.Duplicate();
+            return dup;
         }
         #endregion
     }
@@ -291,31 +432,32 @@ namespace GhSA.Parameters
         }
         public GsaLoad Duplicate()
         {
+            if (this == null) { return null; }
             GsaLoad dup;
             switch (LoadType)
             {
                 case LoadTypes.Gravity:
-                    dup = new GsaLoad(m_gravity);
+                    dup = new GsaLoad(m_gravity.Duplicate());
                     return dup;
                 case LoadTypes.Node:
-                    dup = new GsaLoad(m_node);
+                    dup = new GsaLoad(m_node.Duplicate());
                     return dup;
                 case LoadTypes.Beam:
-                    dup = new GsaLoad(m_beam);
+                    dup = new GsaLoad(m_beam.Duplicate());
                     return dup;
                 case LoadTypes.Face:
-                    dup = new GsaLoad(m_face);
+                    dup = new GsaLoad(m_face.Duplicate());
                     return dup;
                 case LoadTypes.GridPoint:
-                    dup = new GsaLoad(m_gridpoint);
+                    dup = new GsaLoad(m_gridpoint.Duplicate());
                     dup.PointLoad.GridPlaneSurface = m_gridpoint.GridPlaneSurface.Duplicate();
                     return dup;
                 case LoadTypes.GridLine:
-                    dup = new GsaLoad(m_gridline);
+                    dup = new GsaLoad(m_gridline.Duplicate());
                     dup.LineLoad.GridPlaneSurface = m_gridline.GridPlaneSurface.Duplicate();
                     return dup;
                 case LoadTypes.GridArea:
-                    dup = new GsaLoad(m_gridarea);
+                    dup = new GsaLoad(m_gridarea.Duplicate());
                     dup.AreaLoad.GridPlaneSurface = m_gridarea.GridPlaneSurface.Duplicate();
                     return dup;
             }
@@ -331,8 +473,6 @@ namespace GhSA.Parameters
                 return true;
             }
         }
-
-
         #endregion
 
         #region methods
@@ -418,7 +558,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -553,15 +693,15 @@ namespace GhSA.Parameters
     public class GsaLoadParameter : GH_PersistentParam<GsaLoadGoo>
     {
         public GsaLoadParameter()
-          : base(new GH_InstanceDescription("GSA Load", "Load", "GSA Load", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Load", "Ld", "GSA Load", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("2833ef04-c595-4b05-8db3-622c75fa9a25");
 
-        public override GH_Exposure Exposure => GH_Exposure.quarternary;
+        public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaLoad;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaLoad;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaLoadGoo> values)
         {

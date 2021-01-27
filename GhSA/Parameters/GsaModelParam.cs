@@ -21,7 +21,6 @@ namespace GhSA.Parameters
     /// </summary>
     [Serializable]
     public class GsaModel
-
     {
         public Model Model
         {
@@ -37,7 +36,6 @@ namespace GhSA.Parameters
         public Guid GUID
         {
             get { return m_guid; }
-            set { m_guid = value; }
         }
 
         #region fields
@@ -53,16 +51,11 @@ namespace GhSA.Parameters
             m_model = new Model();
         }
 
-        //public GsaModel(Model model)
-        //{
-        //    m_model = model;
-        //}
-
-        //public GsaModel(Model model)
-        //{ 
-        //    m_model = model;
-        //}
-        public GsaModel Copy()
+        /// <summary>
+        /// NB! -work in progress, do NOT call this method
+        /// </summary>
+        /// <returns></returns>
+        public GsaModel Copy() // work in progress
         {
             // Let's work just on the model (not wrapped)
             Model gsa = new Model();
@@ -142,16 +135,16 @@ namespace GhSA.Parameters
 
         public GsaModel Duplicate() // I think duplicate is called by Grasshopper every time the Goo-parameter is created. Avoid copying the potential heavy data here
         {
-            GsaModel dup = new GsaModel();
-            
             //duplicate the incoming model ### 
             if (m_model != null)
             {
+                GsaModel dup = new GsaModel();
                 dup.Model = m_model;
-                dup.FileName = m_filename;
+                dup.FileName = m_filename.ToString();
                 dup.m_guid = Guid.NewGuid();
+                return dup;
             }
-            return dup;
+            return null;
         }
 
         #region properties
@@ -248,21 +241,12 @@ namespace GhSA.Parameters
             // This function is called when Grasshopper needs to convert this 
             // instance of GsaModel into some other type Q.            
 
-            if (typeof(Q).IsAssignableFrom(typeof(GsaModelGoo)))
-            {
-                if (Value == null)
-                    target = default;
-                else
-                    target = (Q)(object)this;
-                return true;
-            }
-
             if (typeof(Q).IsAssignableFrom(typeof(GsaModel)))
             {
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -322,7 +306,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaModel;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaModel;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

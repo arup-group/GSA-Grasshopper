@@ -25,32 +25,54 @@ namespace GhSA.Parameters
         private int m_gridplnID = 0;
         private int m_gridsrfID = 0;
         private int m_axisID = 0;
+        private Guid m_gp_guid;
+        private Guid m_gs_guid;
         #endregion
         public Plane Plane
         {
             get { return m_plane; }
-            set { m_plane = value; }
+            set 
+            {
+                m_gp_guid = Guid.NewGuid();
+                m_plane = value; 
+            }
         }
         public GridPlane GridPlane
         {
             get { return m_gridplane; }
-            set { m_gridplane = value; }
+            set 
+            {
+                m_gp_guid = Guid.NewGuid();
+                m_gridplane = value; 
+            }
         }
         public int GridPlaneID
         {
             get { return m_gridplnID; }
-            set { m_gridplnID = value; }
+            set 
+            {
+                m_gp_guid = Guid.NewGuid();
+                m_gridplnID = value; 
+            }
         }
         
         public GridSurface GridSurface
         {
             get { return m_gridsrf; }
-            set { m_gridsrf = value; }
+            set 
+            {
+                m_gs_guid = Guid.NewGuid();
+                m_gridsrf = value; 
+            }
         }
         public int GridSurfaceID
         {
             get { return m_gridsrfID; }
-            set { m_gridsrfID = value; }
+            set 
+            {
+                m_gs_guid = Guid.NewGuid();
+                m_gridsrfID = value; 
+            }
         }
         public Axis Axis
         {
@@ -58,6 +80,7 @@ namespace GhSA.Parameters
             set 
             {
                 m_axis = value;
+                m_gp_guid = Guid.NewGuid();
                 if (value != null)
                 {
                     m_plane.OriginX = m_axis.Origin.X;
@@ -80,14 +103,28 @@ namespace GhSA.Parameters
         public int AxisID
         {
             get { return m_axisID; }
-            set { m_axisID = value; }
+            set 
+            {
+                m_gp_guid = Guid.NewGuid();
+                m_axisID = value; 
+            }
+        }
+        public Guid GridPlaneGUID
+        {
+            get { return m_gp_guid; }
+        }
+        public Guid GridSurfaceGUID
+        {
+            get { return m_gs_guid; }
         }
         #region constructors
         public GsaGridPlaneSurface()
         {
             m_plane = Plane.Unset;
             m_gridplane = new GridPlane();
+            m_gp_guid = Guid.NewGuid();
             m_gridsrf = new GridSurface();
+            m_gs_guid = Guid.NewGuid();
             m_axis = new Axis();
         }
 
@@ -95,6 +132,8 @@ namespace GhSA.Parameters
         {
             m_plane = plane;
             m_gridplane = new GridPlane();
+            m_gp_guid = Guid.NewGuid();
+
             m_gridsrf = new GridSurface
             {
                 Direction = 0,
@@ -103,6 +142,8 @@ namespace GhSA.Parameters
                 ExpansionType = GridSurfaceExpansionType.UNDEF,
                 SpanType = GridSurface.Span_Type.ONE_WAY
             };
+            m_gs_guid = Guid.NewGuid();
+
             m_axis = new Axis();
             m_axis.Origin.X = plane.OriginX;
             m_axis.Origin.Y = plane.OriginY;
@@ -118,15 +159,43 @@ namespace GhSA.Parameters
 
         public GsaGridPlaneSurface Duplicate()
         {
+            if (this == null) { return null; }
             GsaGridPlaneSurface dup = new GsaGridPlaneSurface
             {
-                Plane = m_plane,
-                GridPlane = m_gridplane,
-                GridSurface = m_gridsrf,
-                Axis = m_axis,
+                Plane = m_plane.Clone(),
+                GridPlane = new GridPlane
+                {
+                    AxisProperty = m_gridplane.AxisProperty,
+                    Elevation = m_gridplane.Elevation,
+                    IsStoreyType = m_gridplane.IsStoreyType,
+                    Name = m_gridplane.Name.ToString(),
+                    ToleranceAbove = m_gridplane.ToleranceAbove,
+                    ToleranceBelow = m_gridplane.ToleranceBelow
+                },
+                GridSurface = new GridSurface
+                {
+                    Direction = m_gridsrf.Direction,
+                    Elements = m_gridsrf.Elements.ToString(),
+                    ElementType = m_gridsrf.ElementType,
+                    ExpansionType = m_gridsrf.ExpansionType,
+                    GridPlane = m_gridsrf.GridPlane,
+                    Name = m_gridsrf.Name.ToString(),
+                    SpanType = m_gridsrf.SpanType,
+                    Tolerance = m_gridsrf.Tolerance
+                },
+                Axis = new Axis
+                { 
+                    Name = m_axis.Name.ToString(),
+                    Origin = new Vector3 { X = m_axis.Origin.X, Y = m_axis.Origin.Y, Z = m_axis.Origin.Z },
+                    Type = m_axis.Type,
+                    XVector = new Vector3 { X = m_axis.XVector.X, Y = m_axis.XVector.Y, Z = m_axis.XVector.Z },
+                    XYPlane = new Vector3 { X = m_axis.XYPlane.X, Y = m_axis.XYPlane.Y, Z = m_axis.XYPlane.Z }
+                },
                 GridPlaneID = m_gridplnID,
                 GridSurfaceID = m_gridsrfID
             };
+            dup.m_gs_guid = new Guid(m_gs_guid.ToString());
+            dup.m_gp_guid = new Guid(m_gp_guid.ToString());
             return dup;
         }
 
@@ -173,7 +242,7 @@ namespace GhSA.Parameters
                 if (gridplane.Plane == null)
                     gridplane = null;
             }
-            this.Value = gridplane;
+            this.Value = gridplane.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -258,7 +327,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -312,8 +381,8 @@ namespace GhSA.Parameters
         {
             if (Value == null) { return null; }
             if (Value.Plane == null) { return null; }
-
-            Plane pln = Value.Plane;
+            GsaGridPlaneSurface dup = Value.Duplicate();
+            Plane pln = dup.Plane;
             pln.Transform(xform);
             GsaGridPlaneSurface gridplane = new GsaGridPlaneSurface(pln);
             return new GsaGridPlaneSurfaceGoo(gridplane);
@@ -323,8 +392,8 @@ namespace GhSA.Parameters
         {
             if (Value == null) { return null; }
             if (Value.Plane == null) { return null; }
-
-            Plane pln = Value.Plane;
+            GsaGridPlaneSurface dup = Value.Duplicate();
+            Plane pln = dup.Plane;
             xmorph.Morph(ref pln);
             GsaGridPlaneSurface gridplane = new GsaGridPlaneSurface(pln);
             return new GsaGridPlaneSurfaceGoo(gridplane);
@@ -369,15 +438,15 @@ namespace GhSA.Parameters
     public class GsaGridPlaneParameter : GH_PersistentGeometryParam<GsaGridPlaneSurfaceGoo>, IGH_PreviewObject
     {
         public GsaGridPlaneParameter()
-          : base(new GH_InstanceDescription("GSA Grid Plane Surface", "GrdPlnSrf", "Maintains a collection of GSA Grid Plane and Grid Surface data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Grid Plane Surface", "GPS", "Maintains a collection of GSA Grid Plane and Grid Surface data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("161e2439-83b6-4fda-abb9-2ed938612530");
 
-        public override GH_Exposure Exposure => GH_Exposure.quarternary;
+        public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaGridPlane;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaGridPlane;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

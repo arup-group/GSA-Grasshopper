@@ -30,7 +30,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GetLoads;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GetLoads;
         #endregion
 
         #region Custom UI
@@ -46,13 +46,13 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Gravity Loads", "Grav", "Gravity Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Node Loads", "Node", "Node Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Beam Loads", "Beam", "Beam Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Face Loads", "Face", "Face Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Grid Point Loads", "Point", "Grid Point Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Grid Line Loads", "Line", "Grid Line Loads from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Grid Area Loads", "Area", "Grid Area Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Gravity Loads", "Gr", "Gravity Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Node Loads", "No", "Node Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Beam Loads", "Be", "Beam Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Face Loads", "Fa", "Face Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Grid Point Loads", "Pt", "Grid Point Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Grid Line Loads", "Ln", "Grid Line Loads from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Grid Area Loads", "Ar", "Grid Area Loads from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("Grid Plane Surfaces", "GPS", "Grid Plane Surfaces from GSA Model", GH_ParamAccess.list);
             pManager.HideParameter(7);
         }
@@ -66,18 +66,22 @@ namespace GhSA.Components
                 Model model = new Model();
                 model = gsaModel.Model;
 
-                List<GsaLoadGoo> gravity = Util.Gsa.GsaImport.GsaGetGravityLoads(model);
-                List<GsaLoadGoo> node = Util.Gsa.GsaImport.GsaGetNodeLoads(model);
-                List<GsaLoadGoo> beam = Util.Gsa.GsaImport.GsaGetBeamLoads(model);
-                List<GsaLoadGoo> face = Util.Gsa.GsaImport.GsaGetFaceLoads(model);
-                List<GsaLoadGoo> point = Util.Gsa.GsaImport.GsaGetGridPointLoads(model);
-                List<GsaLoadGoo> line = Util.Gsa.GsaImport.GsaGetGridLineLoads(model);
-                List<GsaLoadGoo> area = Util.Gsa.GsaImport.GsaGetGridAreaLoads(model);
+                List<GsaLoadGoo> gravity = Util.Gsa.FromGSA.GetGravityLoads(model.GravityLoads());
+                List<GsaLoadGoo> node = Util.Gsa.FromGSA.GetNodeLoads(model);
+                List<GsaLoadGoo> beam = Util.Gsa.FromGSA.GetBeamLoads(model.BeamLoads());
+                List<GsaLoadGoo> face = Util.Gsa.FromGSA.GetFaceLoads(model.FaceLoads());
+
+                IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
+                IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
+                IReadOnlyDictionary<int, Axis> axDict = model.Axes();
+                List<GsaLoadGoo> point = Util.Gsa.FromGSA.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict);
+                List<GsaLoadGoo> line = Util.Gsa.FromGSA.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict);
+                List<GsaLoadGoo> area = Util.Gsa.FromGSA.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict, axDict);
                 
                 List<GsaGridPlaneSurfaceGoo> gps = new List<GsaGridPlaneSurfaceGoo>();
-                IReadOnlyDictionary<int, GridSurface> gsaGridSurfaces = model.GridSurfaces();
-                foreach (int key in gsaGridSurfaces.Keys)
-                    gps.Add(new GsaGridPlaneSurfaceGoo(Util.Gsa.GsaImport.GsaGetGridPlaneSurface(model, key)));
+                
+                foreach (int key in srfDict.Keys)
+                    gps.Add(new GsaGridPlaneSurfaceGoo(Util.Gsa.FromGSA.GetGridPlaneSurface(srfDict, plnDict, axDict, key)));
 
                 DA.SetDataList(0, gravity);
                 DA.SetDataList(1, node);

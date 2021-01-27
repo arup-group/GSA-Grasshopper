@@ -32,7 +32,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.CreateMem1D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateMem1D;
         #endregion
 
         #region Custom UI
@@ -117,7 +117,7 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddCurveParameter("Curve", "Crv", "Curve (will be converted to Arcs and Lines automatically if NURBS)", GH_ParamAccess.item);
+            pManager.AddCurveParameter("Curve", "C", "Curve (will be converted to Arcs and Lines automatically if NURBS)", GH_ParamAccess.item);
             pManager.AddGenericParameter("Section", "PB", "GSA Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
@@ -126,7 +126,7 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("1D Member", "Mem1d", "GSA 1D Member", GH_ParamAccess.item);
+            pManager.AddGenericParameter("1D Member", "M1D", "GSA 1D Member", GH_ParamAccess.item);
             
         }
         #endregion

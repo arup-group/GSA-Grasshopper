@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using GsaAPI;
 using Rhino;
 
-namespace GhSA.Util
+namespace GhSA
 {
     /// <summary>
     /// Class to hold Titles used in Grasshopper GSA file. 
     /// </summary>
-    public static class GsaTitles
+    public static class Titles
     {
         public static string Calculation
         {
@@ -61,59 +61,59 @@ namespace GhSA.Util
         public static void SetTitlesInGSA(Model model)
         {
             GsaAPI.Titles titles = model.Titles();
-            titles.Calculation = GsaTitles.Calculation;
-            titles.Initials = GsaTitles.Initials;
-            titles.JobNumber = GsaTitles.JobNumber;
-            titles.Notes = GsaTitles.Notes;
-            titles.SubTitle = GsaTitles.SubTitle;
-            titles.Title = GsaTitles.Title;
+            titles.Calculation = Titles.Calculation;
+            titles.Initials = Titles.Initials;
+            titles.JobNumber = Titles.JobNumber;
+            titles.Notes = Titles.Notes;
+            titles.SubTitle = Titles.SubTitle;
+            titles.Title = Titles.Title;
             //model.Titles() = titles; GsaAPI needs to be updated to allow setting titles
         }
         public static void GetTitlesFromGSA(Model model)
         {
             GsaAPI.Titles titles = model.Titles();
             if (!m_calculation_byuser)
-                GsaTitles.Calculation = titles.Calculation;
+                Titles.Calculation = titles.Calculation;
             if (!m_initials_byuser)
-                GsaTitles.Initials = titles.Initials;
+                Titles.Initials = titles.Initials;
             if (!m_jobnumber_byuser)
-                GsaTitles.JobNumber = titles.JobNumber;
+                Titles.JobNumber = titles.JobNumber;
             if (!m_notes_byuser)
-                GsaTitles.Notes = titles.Notes;
+                Titles.Notes = titles.Notes;
             if (!m_subtitle_byuser)
-                GsaTitles.SubTitle = titles.SubTitle;
+                Titles.SubTitle = titles.SubTitle;
             if (!m_title_byuser)
-                GsaTitles.Title = titles.Title;
+                Titles.Title = titles.Title;
         }
 
         public static void SetCalculation(string calculation)
         {
-            GsaTitles.Calculation = calculation;
+            Titles.Calculation = calculation;
             m_calculation_byuser = true;
         }
         public static void SetInitials(string initials)
         {
-            GsaTitles.Calculation = initials;
+            Titles.Initials = initials;
             m_initials_byuser = true;
         }
         public static void SetJobNumber(string jobnumber)
         {
-            GsaTitles.JobNumber = jobnumber;
+            Titles.JobNumber = jobnumber;
             m_jobnumber_byuser = true;
         }
         public static void SetNotes(string notes)
         {
-            GsaTitles.Notes = notes;
+            Titles.Notes = notes;
             m_notes_byuser = true;
         }
         public static void SetSubTitle(string subtitle)
         {
-            GsaTitles.SubTitle = subtitle;
+            Titles.SubTitle = subtitle;
             m_subtitle_byuser = true;
         }
         public static void SetTitle(string title)
         {
-            GsaTitles.Title = title;
+            Titles.Title = title;
             m_title_byuser = true;
         }
     }

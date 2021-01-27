@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Rhino;
 
-namespace GhSA.Util
+namespace GhSA
 {
     /// <summary>
     /// Class to hold units used in Grasshopper GSA file. 
     /// </summary>
-    public static class GsaUnit
+    public static class Units
     {
         public static double Tolerance
         {
@@ -33,7 +33,8 @@ namespace GhSA.Util
                     }
                     // add convertion to meters if odd unit?
                 }
-                return m_length_L;
+                //return m_length_L; 
+                return "m"; // always set unit to m 
             }
             set 
             {
@@ -164,6 +165,26 @@ namespace GhSA.Util
         private static double m_tolerance = Util.GH.Tolerance.RhinoDocTolerance();
 
         #endregion
+
+        public static void SetUnits_kN_m()
+        {
+            Force = "kN";
+            LengthLarge = "m";
+            LengthSmall = "mm";
+            LengthSection = "mm";
+            Mass = "t";
+            Temperature = "°C";
+            Stress = "N/mm\xB2";
+            Strain = "mε";
+            Velocity = "m/s";
+            Acceleration = "m/s\xB2";
+            Energy = "MJ";
+            Angle = "rad";
+            TimeShort = "s";
+            TimeMedium = "min";
+            TimeLong = "day";
+        }
+
         /// <summary>
         /// Method to convert bad strings to accepted inputs
         /// if no match is found "m" is returned
@@ -173,9 +194,9 @@ namespace GhSA.Util
         private static string StringTestLength(string unitname)
         {
             unitname = unitname.ToLower();
-            if (unitname.Contains("mm") | unitname.Contains("milimet") | unitname.Contains("millimet"))
+            if (unitname.Contains("mm") | unitname.Contains("milim") | unitname.Contains("millim"))
                 return "mm";
-            if (unitname.Contains("cm") | unitname.Contains("centimet"))
+            if (unitname.Contains("cm") | unitname.Contains("centim"))
                 return "cm";
             if (unitname.Contains("m"))
                 return "m";

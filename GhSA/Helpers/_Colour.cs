@@ -1,12 +1,5 @@
-﻿using System;
-using System.Drawing;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.Kernel;
+﻿using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Rhino.DocObjects;
 using Rhino.Display;
 
 namespace GhSA.UI
@@ -35,6 +28,10 @@ namespace GhSA.UI
         {
             get { return Color.FromArgb(255, 0, 92, 175); }
         }
+        public static Color GsaLightBlue
+        {
+            get { return Color.FromArgb(255, 130, 169, 241); }
+        }
 
         public static Color GsaLightGrey
         {
@@ -61,6 +58,10 @@ namespace GhSA.UI
         {
             get { return new SolidBrush(GsaDarkBlue); }
         }
+        public static Brush ClickedButtonColor
+        {
+            get { return new SolidBrush(GsaLightBlue); }
+        }
         public static Brush InactiveButtonColor
         {
             get { return new SolidBrush(Color.FromArgb(255, 216, 216, 216)); }
@@ -69,6 +70,11 @@ namespace GhSA.UI
         public static Color BorderColour
         {
             get {  return GsaLightGrey; }
+        }
+
+        public static Color ClickedBorderColour
+        {
+            get { return Color.Black; }
         }
 
         public static Brush InactiveBorderColor
@@ -135,6 +141,11 @@ namespace GhSA.UI
             get { return GsaDarkGreen; }
         }
 
+        public static Color Dummy1D
+        {
+            get { return Color.FromArgb(255, 143, 143, 143); }
+        }
+
         public static Color Member1d
         {
             get { return GsaGreen; }
@@ -172,12 +183,22 @@ namespace GhSA.UI
             {
                 DisplayMaterial material = new DisplayMaterial
                 {
-                    Diffuse = Color.FromArgb(50, 150,150,150),
-                    Emission = Color.FromArgb(50, 190, 190, 190),
+                    Diffuse = Color.FromArgb(50, 150, 150, 150),
+                    Emission = Color.White, // Color.FromArgb(50, 190, 190, 190),
                     Transparency = 0.1
                 };
                 return material;
             } 
+        }
+        public static DisplayMaterial FaceCustom(Color colour)
+        {
+            DisplayMaterial material = new DisplayMaterial()
+            {
+                Diffuse = Color.FromArgb(50, colour.R, colour.G, colour.B),
+                Emission = Color.White, // Color.FromArgb(50, 190, 190, 190),
+                Transparency = 0.1
+            };
+            return material;
         }
 
         public static DisplayMaterial Element2dFaceSelected
@@ -187,7 +208,7 @@ namespace GhSA.UI
                 DisplayMaterial material = new DisplayMaterial
                 {
                     Diffuse = Color.FromArgb(5, 150, 150, 150),
-                    Emission = Color.FromArgb(5, 150, 150, 150),
+                    Emission = Color.White, //Color.FromArgb(5, 150, 150, 150),
                     Transparency = 0.2
                 };
                 return material;
@@ -209,13 +230,26 @@ namespace GhSA.UI
                 DisplayMaterial material = new DisplayMaterial
                 {
                     Diffuse = Color.FromArgb(50, 150, 150, 150),
-                    Emission = Color.FromArgb(50, 45, 45, 45),
+                    Emission = Color.White, //Color.FromArgb(50, 45, 45, 45),
                     Transparency = 0.1
                 };
                 return material;
             }
         }
-
+        public static DisplayMaterial Dummy2D
+        {
+            get
+            {
+                DisplayMaterial material = new DisplayMaterial
+                {
+                    Diffuse = Color.FromArgb(1, 143, 143, 143),
+                    Emission = Color.White, //Color.FromArgb(1, 45, 45, 45),
+                    Transparency = 0.9
+                };
+                return material;
+            }
+        }
+        
         public static DisplayMaterial Member2dFaceSelected
         {
             get

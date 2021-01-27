@@ -46,16 +46,28 @@ namespace GhSA.Parameters
         #region constructors
         public GsaProp2d()
         {
-            m_prop2d = null;
+            m_prop2d = new Prop2D();
         }
         
         public GsaProp2d Duplicate()
         {
+            if (this == null) { return null; }
             GsaProp2d dup = new GsaProp2d
             {
-                Prop2d = m_prop2d,
+                Prop2d = new Prop2D
+                {
+                    MaterialAnalysisProperty = m_prop2d.MaterialAnalysisProperty,
+                    MaterialGradeProperty = m_prop2d.MaterialGradeProperty,
+                    MaterialType = m_prop2d.MaterialType,
+                    Name = m_prop2d.Name.ToString(),
+                    Colour = m_prop2d.Colour,
+                    Description = m_prop2d.Description.ToString(),
+                    Type = m_prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
+                    AxisProperty = m_prop2d.AxisProperty
+                },
                 ID = m_idd
             };
+            
             return dup;
         }
         #endregion
@@ -157,7 +169,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -206,15 +218,15 @@ namespace GhSA.Parameters
     public class GsaProp2dParameter : GH_PersistentParam<GsaProp2dGoo>
     {
         public GsaProp2dParameter()
-          : base(new GH_InstanceDescription("GSA 2D Property", "Prop2d", "GSA 2D Property", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("2D Property", "PA", "GSA 2D Property", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("05a034ad-683d-479b-9768-5c04379c0606");
 
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaProp2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaProp2D;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaProp2dGoo> values)
         {

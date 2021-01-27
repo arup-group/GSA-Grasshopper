@@ -14,6 +14,7 @@ using GsaAPI;
 using GhSA.Parameters;
 using System.Resources;
 using System.Linq;
+using GhSA.Util;
 using GhSA.Util.Gsa;
 using System.IO;
 
@@ -36,7 +37,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.CreateProfile;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateProfile;
         #endregion
 
         #region Custom UI
@@ -105,13 +106,13 @@ namespace GhSA.Components
                         // if second list (i.e. catalogue list) is changed, update types list to account for that catalogue
                         if (dropdownlistidd == 1)
                         {
-                            typelist = SqlReader.GetTypesDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd], Path.Combine(GsaPath.GetPath, "sectlib.db3"));
+                            typelist = SqlReader.GetTypesDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd], Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"));
                         }
                         dropdowncontents.Add(typelist);
                         // if third list (i.e. types list) is changed, update sections list to account for these section types
                         if (dropdownlistidd == 2)
                         {
-                            sectionlist = SqlReader.GetSectionsDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd].Split(new string[] { " -- " }, StringSplitOptions.None)[0], Path.Combine(GsaPath.GetPath, "sectlib.db3"));
+                            sectionlist = SqlReader.GetSectionsDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd].Split(new string[] { " -- " }, StringSplitOptions.None)[0], Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"));
                         }
                         dropdowncontents.Add(sectionlist);
 
@@ -222,13 +223,7 @@ namespace GhSA.Components
             "Rectangle", "Circle", "I section", "Tee", "Channel", "Angle"
         });
 
-        // first sublist for second dropdown list - commented out 
-        //readonly List<string> cataloguelist = new List<string>(new string[]
-        //{
-        //    "Europrofile", "To", "be", "implemented"
-        //});
-
-        readonly List<string> cataloguelist = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(GsaPath.GetPath, "sectlib.db3"));
+        readonly List<string> cataloguelist = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"));
 
         // second sublist for second dropdown list
         List<string> typelist = SqlReader.GetTypesDataFromSQLite("british", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
@@ -273,12 +268,12 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Profile", "Prfl", "Profile for GSA Section", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Profile", "Pf", "Profile for GSA Section", GH_ParamAccess.item);
         }
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            GsaProfile profile = new GsaProfile();
+            Profile profile = new Profile();
 
             // default to FoldMode catalogue
             //_mode = FoldMode.Catalogue;
@@ -286,7 +281,7 @@ namespace GhSA.Components
             #region catalogue
             if (_mode == FoldMode.Catalogue)
             {
-                profile.profileType = GsaProfile.ProfileTypes.Catalogue;
+                profile.profileType = Profile.ProfileTypes.Catalogue;
 
                 // need to implement the lists of cross sections
                 profile.catalogueIndex = catalogueIndex;
@@ -300,7 +295,7 @@ namespace GhSA.Components
             #region geometric
             if (_mode == FoldMode.Geometric)
             {
-                profile.profileType = GsaProfile.ProfileTypes.Geometric;
+                profile.profileType = Profile.ProfileTypes.Geometric;
                 GH_Brep gh_Brep = new GH_Brep();
                 if (DA.GetData(0, ref gh_Brep))
                 {
@@ -322,7 +317,7 @@ namespace GhSA.Components
                         Plane.FitPlaneToPoints(ctrl_pts, out Plane plane);
                         Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.ChangeBasis(Plane.WorldXY, plane);
 
-                        profile.geoType = GsaProfile.GeoTypes.Perim;
+                        profile.geoType = Profile.GeoTypes.Perim;
 
                         List<Point2d> pts = new List<Point2d>();
                         foreach (Point3d pt3d in ctrl_pts)
@@ -371,7 +366,7 @@ namespace GhSA.Components
             #region standard section
             if (_mode != FoldMode.Geometric & _mode != FoldMode.Catalogue)
             {
-                profile.profileType = GsaProfile.ProfileTypes.Standard;
+                profile.profileType = Profile.ProfileTypes.Standard;
                 GH_Number gh_d = new GH_Number();
                 GH_Number gh_b1 = new GH_Number();
                 GH_Number gh_b2 = new GH_Number();
@@ -383,7 +378,7 @@ namespace GhSA.Components
                 {
 
                     case "Rectangle":
-                        profile.stdShape = GsaProfile.StdShapeOptions.Rectangle;
+                        profile.stdShape = Profile.StdShapeOptions.Rectangle;
 
                         // 0 d
                         DA.GetData(0, ref gh_d);
@@ -410,7 +405,7 @@ namespace GhSA.Components
                         break;
 
                     case "Circle":
-                        profile.stdShape = GsaProfile.StdShapeOptions.Circle;
+                        profile.stdShape = Profile.StdShapeOptions.Circle;
 
                         // 0 d
                         DA.GetData(0, ref gh_d);
@@ -442,7 +437,7 @@ namespace GhSA.Components
 
                         break;
                     case "I section":
-                        profile.stdShape = GsaProfile.StdShapeOptions.I_section;
+                        profile.stdShape = Profile.StdShapeOptions.I_section;
 
                         // 0 d
                         DA.GetData(0, ref gh_d);
@@ -480,7 +475,7 @@ namespace GhSA.Components
                         }
                         break;
                     case "Tee":
-                        profile.stdShape = GsaProfile.StdShapeOptions.Tee;
+                        profile.stdShape = Profile.StdShapeOptions.Tee;
                         // 0 d
                         DA.GetData(0, ref gh_d);
 
@@ -500,7 +495,7 @@ namespace GhSA.Components
                         }
                         break;
                     case "Channel":
-                        profile.stdShape = GsaProfile.StdShapeOptions.Channel;
+                        profile.stdShape = Profile.StdShapeOptions.Channel;
                         // 0 d
                         DA.GetData(0, ref gh_d);
 
@@ -514,7 +509,7 @@ namespace GhSA.Components
                         DA.GetData(3, ref gh_tw1);
                         break;
                     case "Angle":
-                        profile.stdShape = GsaProfile.StdShapeOptions.Angle;
+                        profile.stdShape = Profile.StdShapeOptions.Angle;
                         // 0 d
                         DA.GetData(0, ref gh_d);
 
@@ -572,22 +567,22 @@ namespace GhSA.Components
             }
             #endregion
             #region units
-            switch (Util.GsaUnit.LengthSection)
+            switch (Units.LengthSection)
             {
                 case "mm":
-                    profile.sectUnit = GsaProfile.SectUnitOptions.u_mm;
+                    profile.sectUnit = Profile.SectUnitOptions.u_mm;
                     break;
                 case "cm":
-                    profile.sectUnit = GsaProfile.SectUnitOptions.u_cm;
+                    profile.sectUnit = Profile.SectUnitOptions.u_cm;
                     break;
                 case "m":
-                    profile.sectUnit = GsaProfile.SectUnitOptions.u_m;
+                    profile.sectUnit = Profile.SectUnitOptions.u_m;
                     break;
                 case "in":
-                    profile.sectUnit = GsaProfile.SectUnitOptions.u_in;
+                    profile.sectUnit = Profile.SectUnitOptions.u_in;
                     break;
                 case "ft":
-                    profile.sectUnit = GsaProfile.SectUnitOptions.u_ft;
+                    profile.sectUnit = Profile.SectUnitOptions.u_ft;
                     break;
             }
             #endregion
@@ -960,13 +955,13 @@ namespace GhSA.Components
             {
                 int i = 0;
                 Params.Input[i].NickName = "d";
-                Params.Input[i].Name = "Depth (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Depth (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Depth";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "b";
-                Params.Input[i].Name = "Width (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Width (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Width";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
@@ -975,10 +970,10 @@ namespace GhSA.Components
                 {
                     i++;
                     Params.Input[i - 1].NickName = "b1";
-                    Params.Input[i - 1].Name = "Start Width (" + Util.GsaUnit.LengthSection + ")";
+                    Params.Input[i - 1].Name = "Start Width (" + Units.LengthSection + ")";
                     Params.Input[i - 1].Description = "Section Width at Start";
                     Params.Input[i].NickName = "b2";
-                    Params.Input[i].Name = "End Width (" + Util.GsaUnit.LengthSection + ")";
+                    Params.Input[i].Name = "End Width (" + Units.LengthSection + ")";
                     Params.Input[i].Description = "Section Width at End";
                     Params.Input[i].Access = GH_ParamAccess.item;
                     Params.Input[i].Optional = false;
@@ -989,13 +984,13 @@ namespace GhSA.Components
                     {
                         i++;
                         Params.Input[i].NickName = "tw";
-                        Params.Input[i].Name = "Web THK  (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Web THK  (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Section Web Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
                         i++;
                         Params.Input[i].NickName = "tf";
-                        Params.Input[i].Name = "Flange THK  (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Flange THK  (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Section Flange Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -1006,7 +1001,7 @@ namespace GhSA.Components
             {
                 int i = 0;
                 Params.Input[i].NickName = "d";
-                Params.Input[i].Name = "Depth (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Depth (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Depth";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
@@ -1016,13 +1011,13 @@ namespace GhSA.Components
                     {
                         i++;
                         Params.Input[i].NickName = "b";
-                        Params.Input[i].Name = "Width (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Width (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Section Width";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
                         i++;
                         Params.Input[i].NickName = "tw";
-                        Params.Input[i].Name = "Thickness (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Thickness (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Section Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -1031,7 +1026,7 @@ namespace GhSA.Components
                     {
                         i++;
                         Params.Input[i].NickName = "tw";
-                        Params.Input[i].Name = "Thickness (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Thickness (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Section Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -1043,7 +1038,7 @@ namespace GhSA.Components
                     {
                         i++;
                         Params.Input[i].NickName = "b";
-                        Params.Input[i].Name = "Width (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Width (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Section Width";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -1055,25 +1050,25 @@ namespace GhSA.Components
             {
                 int i = 0;
                 Params.Input[i].NickName = "d";
-                Params.Input[i].Name = "Depth (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Depth (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Depth";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "b";
-                Params.Input[i].Name = "Width (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Width (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Width";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tw";
-                Params.Input[i].Name = "Web THK (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Web THK (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Web Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tf";
-                Params.Input[i].Name = "Flange THK (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Flange THK (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Flange Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
@@ -1084,31 +1079,31 @@ namespace GhSA.Components
                     {
                         i = 1;
                         Params.Input[i].NickName = "bt";
-                        Params.Input[i].Name = "Top Width (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Top Width (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Top Flange Width";
                         i++;
                         Params.Input[i].NickName = "twt";
-                        Params.Input[i].Name = "Top Web THK (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Top Web THK (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Web Thickness at Top of Web";
                         i++;
                         Params.Input[i].NickName = "tft";
-                        Params.Input[i].Name = "Top Flange THK (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Top Flange THK (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Top Flange Thickness";
                         i++;
                         Params.Input[i].NickName = "bb";
-                        Params.Input[i].Name = "Bottom Width (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Bottom Width (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Bottom Flange Width";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
                         i++;
                         Params.Input[i].NickName = "twb";
-                        Params.Input[i].Name = "Bottom Web THK (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Bottom Web THK (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Web Thickness at Bottom of Web";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
                         i++;
                         Params.Input[i].NickName = "tfb";
-                        Params.Input[i].Name = "Bottom Flange THK (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Bottom Flange THK (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Bottom Flange Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -1117,25 +1112,25 @@ namespace GhSA.Components
                     {
                         i = 1;
                         Params.Input[i].NickName = "bt";
-                        Params.Input[i].Name = "Top Width (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Top Width (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Top Flange Width";
                         i++;
                         Params.Input[i].NickName = "tw";
-                        Params.Input[i].Name = "Web Thickness (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Web Thickness (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Web Thickness";
                         i++;
                         Params.Input[i].NickName = "tft";
-                        Params.Input[i].Name = "Top Flange THK (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Top Flange THK (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Top Flange Thickness";
                         i++;
                         Params.Input[i].NickName = "bb";
-                        Params.Input[i].Name = "Bottom Width (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Bottom Width (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Bottom Flange Width";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
                         i++;
                         Params.Input[i].NickName = "tfb";
-                        Params.Input[i].Name = "Bottom Flange THK (" + Util.GsaUnit.LengthSection + ")";
+                        Params.Input[i].Name = "Bottom Flange THK (" + Units.LengthSection + ")";
                         Params.Input[i].Description = "Bottom Flange Thickness";
                         Params.Input[i].Access = GH_ParamAccess.item;
                         Params.Input[i].Optional = false;
@@ -1147,25 +1142,25 @@ namespace GhSA.Components
             {
                 int i = 0;
                 Params.Input[i].NickName = "d";
-                Params.Input[i].Name = "Depth (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Depth (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Depth";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "b";
-                Params.Input[i].Name = "Width (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Width (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Width";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tf";
-                Params.Input[i].Name = "Flange Thickness (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Flange Thickness (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Web Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tw";
-                Params.Input[i].Name = "Web Thickness (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Web Thickness (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Flange Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
@@ -1174,11 +1169,11 @@ namespace GhSA.Components
                 {
                     i = 3;
                     Params.Input[i].NickName = "twt";
-                    Params.Input[i].Name = "Top Web THK (" + Util.GsaUnit.LengthSection + ")";
+                    Params.Input[i].Name = "Top Web THK (" + Units.LengthSection + ")";
                     Params.Input[i].Description = "Top Flange Thickness";
                     i++;
                     Params.Input[i].NickName = "twb";
-                    Params.Input[i].Name = "Bottom Web THK (" + Util.GsaUnit.LengthSection + ")";
+                    Params.Input[i].Name = "Bottom Web THK (" + Units.LengthSection + ")";
                     Params.Input[i].Description = "Bottom Web Thickness";
                     Params.Input[i].Access = GH_ParamAccess.item;
                     Params.Input[i].Optional = false;
@@ -1189,25 +1184,25 @@ namespace GhSA.Components
             {
                 int i = 0;
                 Params.Input[i].NickName = "d";
-                Params.Input[i].Name = "Depth (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Depth (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Depth";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "b";
-                Params.Input[i].Name = "Width (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Width (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Flange Width";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tf";
-                Params.Input[i].Name = "Flange Thickness (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Flange Thickness (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Web Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;
                 i++;
                 Params.Input[i].NickName = "tw";
-                Params.Input[i].Name = "Web Thickness (" + Util.GsaUnit.LengthSection + ")";
+                Params.Input[i].Name = "Web Thickness (" + Units.LengthSection + ")";
                 Params.Input[i].Description = "Section Flange Thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = false;

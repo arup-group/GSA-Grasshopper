@@ -30,7 +30,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.CreateOffset;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateOffset;
         #endregion
 
         #region Custom UI
@@ -42,10 +42,10 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Offset X1", "X1", "X1 - Start axial offset (" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item, 0);
-            pManager.AddNumberParameter("Offset X2", "X2", "X2 - End axial offset (" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item, 0);
-            pManager.AddNumberParameter("Offset Y", "Y", "Y Offset (" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item, 0);
-            pManager.AddNumberParameter("Offset Z", "Z", "Z Offset (" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Offset X1", "X1", "X1 - Start axial offset (" + Units.LengthLarge + ")", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Offset X2", "X2", "X2 - End axial offset (" + Units.LengthLarge + ")", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Offset Y", "Y", "Y Offset (" + Units.LengthLarge + ")", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Offset Z", "Z", "Z Offset (" + Units.LengthLarge + ")", GH_ParamAccess.item, 0);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -55,7 +55,7 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("GSA Offset", "Off", "GSA Offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset", "Of", "GSA Offset", GH_ParamAccess.item);
         }
         #endregion
 

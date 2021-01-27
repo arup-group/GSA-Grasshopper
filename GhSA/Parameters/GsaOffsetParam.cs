@@ -88,10 +88,6 @@ namespace GhSA.Parameters
                 Z = m_z,
                 X2 = m_x2
             };
-            //dup.m_offset.X1 = dup.X1;
-            //dup.m_offset.X2 = dup.X2;
-            //dup.m_offset.Y = dup.Y;
-            //dup.m_offset.Z = dup.Z;
 
             return dup;
         }
@@ -200,7 +196,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -254,7 +250,7 @@ namespace GhSA.Parameters
     public class GsaOffsetParameter : GH_PersistentParam<GsaOffsetGoo>
     {
         public GsaOffsetParameter()
-          : base(new GH_InstanceDescription("GSA Offset", "Offset", "GSA Offset (for use with 2D elements or members only Z-value used)", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Offset", "Of", "GSA Offset", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -262,7 +258,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaOffset;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaOffset;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

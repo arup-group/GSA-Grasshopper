@@ -19,7 +19,7 @@ using Grasshopper.Kernel.Data;
 namespace GhSA.Components
 {
     /// <summary>
-    /// Component to create a new Prop2d
+    /// Component to get Element2d results
     /// </summary>
     public class Elem2DResults : GH_Component, IGH_VariableParameterComponent
     {
@@ -36,7 +36,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.Elem2dResults;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Elem2dResults;
         #endregion
 
         #region Custom UI
@@ -223,7 +223,7 @@ namespace GhSA.Components
                 "Element list should take the form:" + System.Environment.NewLine +
                 " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            pManager.AddColourParameter("Colour", "Col", "Optional list of colours to override default colours" +
+            pManager.AddColourParameter("Colour", "Co", "Optional list of colours to override default colours" +
                 System.Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -231,11 +231,11 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddVectorParameter("Translation", "U", "X, Y, Z translation values (" + Util.GsaUnit.LengthSmall + ")", GH_ParamAccess.tree);
-            pManager.AddVectorParameter("Rotation", "R", "XX, YY, ZZ rotation values(" + Util.GsaUnit.Angle + ")", GH_ParamAccess.tree);
+            pManager.AddVectorParameter("Translation", "U\u0305", "X, Y, Z translation values (" + Units.LengthSmall + ")", GH_ParamAccess.tree);
+            pManager.AddVectorParameter("Rotation", "R\u0305", "XX, YY, ZZ rotation values(" + Units.Angle + ")", GH_ParamAccess.tree);
             pManager.AddGenericParameter("Mesh", "M", "Mesh with result values", GH_ParamAccess.list);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Util.GsaUnit.LengthSmall + ")", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthSmall + ")", GH_ParamAccess.list);
         }
 
         #region fields
@@ -900,18 +900,18 @@ namespace GhSA.Components
             {
                 Params.Output[0].NickName = "U";
                 Params.Output[0].Name = "Translation";
-                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Util.GsaUnit.LengthSmall + ")"
+                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Units.LengthSmall + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 Params.Output[1].NickName = "R";
                 Params.Output[1].Name = "Rotation";
-                Params.Output[1].Description = "Rotation Vector [Rxx, Ryy, Rzz] (" + Util.GsaUnit.Angle + ")"
+                Params.Output[1].Description = "Rotation Vector [Rxx, Ryy, Rzz] (" + Units.Angle + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 if ((int)_disp < 4)
-                    Params.Output[4].Description = "Legend Values (" + Util.GsaUnit.LengthSmall + ")";
+                    Params.Output[4].Description = "Legend Values (" + Units.LengthSmall + ")";
                 else
-                    Params.Output[4].Description = "Legend Values (" + Util.GsaUnit.Angle + ")";
+                    Params.Output[4].Description = "Legend Values (" + Units.Angle + ")";
 
             }
 
@@ -919,25 +919,25 @@ namespace GhSA.Components
             {
                 Params.Output[0].NickName = "F";
                 Params.Output[0].Name = "Force";
-                Params.Output[0].Description = "Force vector [Fx, Fy, Fxy] (" + Util.GsaUnit.Force + ")"
+                Params.Output[0].Description = "Force vector [Fx, Fy, Fxy] (" + Units.Force + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 Params.Output[1].NickName = "M";
                 Params.Output[1].Name = "Moment";
-                Params.Output[1].Description = "Moment vector [Mxx, Myy, Mxy] (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")"
+                Params.Output[1].Description = "Moment vector [Mxx, Myy, Mxy] (" + Units.Force + "/" + Units.LengthLarge + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 if ((int)_disp < 4)
-                    Params.Output[4].Description = "Legend Values (" + Util.GsaUnit.Force + ")";
+                    Params.Output[4].Description = "Legend Values (" + Units.Force + ")";
                 else
-                    Params.Output[4].Description = "Legend Values (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                    Params.Output[4].Description = "Legend Values (" + Units.Force + "/" + Units.LengthLarge + ")";
             }
 
             if ( _mode == FoldMode.Shear)
             {
                 Params.Output[0].NickName = "V";
                 Params.Output[0].Name = "Shear 2D-Vector";
-                Params.Output[0].Description = "Shear 2D-Vector [Vx, Vy, --] (" + Util.GsaUnit.Force + ")"
+                Params.Output[0].Description = "Shear 2D-Vector [Vx, Vy, --] (" + Units.Force + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 Params.Output[1].NickName = "-";
@@ -945,24 +945,24 @@ namespace GhSA.Components
                 Params.Output[1].Description = "No output for the selected result type";
 
                 if ((int)_disp < 4)
-                    Params.Output[4].Description = "Legend Values (" + Util.GsaUnit.Force + ")";
+                    Params.Output[4].Description = "Legend Values (" + Units.Force + ")";
                 else
-                    Params.Output[4].Description = "Legend Values (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                    Params.Output[4].Description = "Legend Values (" + Units.Force + "/" + Units.LengthLarge + ")";
             }
 
             if (_mode == FoldMode.Stress)
             {
                 Params.Output[0].NickName = "σ";
                 Params.Output[0].Name = "Projected Stress Vector";
-                Params.Output[0].Description = "Stress Vector [σxx, σyy, σzz] (" + Util.GsaUnit.Stress + ")"
+                Params.Output[0].Description = "Stress Vector [σxx, σyy, σzz] (" + Units.Stress + ")"
                     + System.Environment.NewLine + "Value order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 Params.Output[1].NickName = "τ";
                 Params.Output[1].Name = "Projected Shear Stress Vector";
-                Params.Output[1].Description = "Shear Stress Vector [τxy, τyz, τzx] (" + Util.GsaUnit.Stress + ")"
+                Params.Output[1].Description = "Shear Stress Vector [τxy, τyz, τzx] (" + Units.Stress + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
-                Params.Output[4].Description = "Legend Values (" + Util.GsaUnit.Stress + ")";
+                Params.Output[4].Description = "Legend Values (" + Units.Stress + ")";
             }
         }
         #endregion  

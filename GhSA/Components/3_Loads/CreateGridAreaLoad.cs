@@ -20,7 +20,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("9d775938-69fc-441f-b766-9cd1d8259e5a");
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GridAreaLoad;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridAreaLoad;
         #endregion
 
         #region Custom UI
@@ -43,7 +43,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "0 : Global" +
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
-            pManager.AddNumberParameter("Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)", "V", "Load Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + "\xB2)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)", "V", "Load Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -54,7 +54,7 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid Area Load", "Load", "GSA Grid Area Load", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid Area Load", "Ld", "GSA Grid Area Load", GH_ParamAccess.item);
         }
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -169,7 +169,7 @@ namespace GhSA.Components
                         desc += "(" + temppt.X + "," + temppt.Y + ")";
                     }
                     // add units to the end
-                    desc += "(" + Util.GsaUnit.LengthLarge + ")";
+                    desc += "(" + Units.LengthLarge + ")";
 
                     // set polyline in grid line load
                     gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;

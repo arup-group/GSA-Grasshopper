@@ -28,9 +28,9 @@ namespace GhSA.Components
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat1())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.primary; // | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.SectionProperties;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.SectionProperties;
         #endregion
 
         #region Custom UI
@@ -43,21 +43,20 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Section", "PB", "GSA Section to get a bit more info out of", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Section", "PB", "Profile or GSA Section to get a bit more info out of", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Area", "A", "GSA Section Area (" + Util.GsaUnit.LengthSection + "\xB2)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia y-y", "Iyy", "GSA Section Moment of Intertia around local y-y axis (" + Util.GsaUnit.LengthSection + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia z-z", "Izz", "GSA Section Moment of Intertia around local z-z axis (" + Util.GsaUnit.LengthSection + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia y-z", "Iyz", "GSA Section Moment of Intertia around local y-z axis (" + Util.GsaUnit.LengthSection + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Torsion constant", "J", "GSA Section Torsion constant J (" + Util.GsaUnit.LengthSection + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Area", "A", "GSA Section Area (" + Units.LengthSection + "\xB2)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Moment of Inertia y-y", "Iyy", "GSA Section Moment of Intertia around local y-y axis (" + Units.LengthSection + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Moment of Inertia z-z", "Izz", "GSA Section Moment of Intertia around local z-z axis (" + Units.LengthSection + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Moment of Inertia y-z", "Iyz", "GSA Section Moment of Intertia around local y-z axis (" + Units.LengthSection + "\x2074)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Torsion constant", "J", "GSA Section Torsion constant J (" + Units.LengthSection + "\x2074)", GH_ParamAccess.item);
             pManager.AddNumberParameter("Shear Area Factor in y", "Ky", "GSA Section Shear Area Factor in local y-direction (-)", GH_ParamAccess.item);
             pManager.AddNumberParameter("Shear Area Factor in z", "Kz", "GSA Section Shear Area Factor in local z-direction (-)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Surface A/Length", "S/L", "GSA Section Surface Area per Unit Length (" + Util.GsaUnit.LengthSection + "\xB2/"+ Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Volume/Length", "V/L", "GSA Section Volume per Unit Length (" + Util.GsaUnit.LengthSection + "\xB3/"+ Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item);
-
+            pManager.AddNumberParameter("Surface A/Length", "S/L", "GSA Section Surface Area per Unit Length (" + Units.LengthSection + "\xB2/"+ Units.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Volume/Length", "V/L", "GSA Section Volume per Unit Length (" + Units.LengthSection + "\xB3/"+ Units.LengthLarge + ")", GH_ParamAccess.item);
         }
         #endregion
 
@@ -79,9 +78,9 @@ namespace GhSA.Components
             if (gsaSection != null)
             {
                 double conversionfactor = 1;
-                if (Util.GsaUnit.LengthSection != "m")
+                if (Units.LengthSection != "m")
                 {
-                    switch (Util.GsaUnit.LengthSection)
+                    switch (Units.LengthSection)
                     {
                         case "mm":
                             conversionfactor = 1000;

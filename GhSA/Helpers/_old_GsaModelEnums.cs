@@ -18,7 +18,7 @@ namespace GhSA.Util.Gsa
     /// 1D Members (GsaAPI.MemberType)
     /// 2D Members (GsaAPI.MemberType)
     /// </summary>
-    public class GsaToModel
+    public class _oldGsaToModel
     {
         public static ElementType Element1dType(int type)
         {
@@ -67,24 +67,59 @@ namespace GhSA.Util.Gsa
             }
             return ElementType.BEAM;
         }
-        public static AnalysisOrder Element2dType(int type)
+        public static ElementType Element2dType(int type)
+        {
+            switch (type)
+            {
+                case 5:
+                    {
+                        return ElementType.QUAD4;
+                    }
+                case 6:
+                    {
+                        return ElementType.QUAD8;
+                    }
+                case 7:
+                    {
+                        return ElementType.TRI3;
+                    }
+                case 8:
+                    {
+                        return ElementType.TRI6;
+                    }
+                case 28:
+                    {
+                        return ElementType.TWO_D;
+                    }
+                case 31:
+                    {
+                        return ElementType.TWO_D_FE;
+                    }
+                case 32:
+                    {
+                        return ElementType.TWO_D_LOAD;
+                    }
+            }
+            return ElementType.TWO_D;
+        }
+        public static AnalysisOrder AnalysisOrder(int type)
         {
             switch (type)
             {
                 case 0:
                     {
-                        return AnalysisOrder.LINEAR;
+                        return GsaAPI.AnalysisOrder.LINEAR;
                     }
                 case 1:
                     {
-                        return AnalysisOrder.QUADRATIC;
+                        return GsaAPI.AnalysisOrder.QUADRATIC;
                     }
                 case 2:
                     {
-                        return AnalysisOrder.RIGID_DIAPHRAGM;
+                        return GsaAPI.AnalysisOrder.RIGID_DIAPHRAGM;
                     }
             }
-            return AnalysisOrder.LINEAR;
+            return GsaAPI.AnalysisOrder.LINEAR;
         }
 
 
@@ -142,6 +177,57 @@ namespace GhSA.Util.Gsa
                     }
             }
             return MemberType.GENERIC_2D;
+        }
+        public static Property2D_Type Prop2dType(int type)
+        {
+            switch (type)
+            {
+                case 3:
+                    {
+                        return Property2D_Type.AXISYMMETRIC;
+                    }
+                case 7:
+                    {
+                        return Property2D_Type.CURVED_SHELL;
+                    }
+                case 4:
+                    {
+                        return Property2D_Type.FABRIC;
+                    }
+                case 10:
+                    {
+                        return Property2D_Type.LOAD;
+                    }
+                case 11:
+                    {
+                        return Property2D_Type.NUM_TYPE;
+                    }
+                case 5:
+                    {
+                        return Property2D_Type.PLATE;
+                    }
+                case 2:
+                    {
+                        return Property2D_Type.PL_STRAIN;
+                    }
+                case 1:
+                    {
+                        return Property2D_Type.PL_STRESS;
+                    }
+                case 6:
+                    {
+                        return Property2D_Type.SHELL;
+                    }
+                case 8:
+                    {
+                        return Property2D_Type.TORSION;
+                    }
+                case 9:
+                    {
+                        return Property2D_Type.WALL;
+                    }
+            }
+            return Property2D_Type.UNDEF;
         }
     }
 }

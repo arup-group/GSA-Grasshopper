@@ -18,7 +18,7 @@ namespace GhSA.Parameters
     {
         #region fields
         public Node Node { get; set; } = new Node();
-        private Plane m_plane = Plane.Unset;
+        private Plane m_plane; // = Plane.WorldXY;
         private int m_id;
         private GsaSpring m_spring;
         #endregion
@@ -49,6 +49,17 @@ namespace GhSA.Parameters
             set { Node.Position.X = value.X; Node.Position.Y = value.Y; Node.Position.Z = value.Z; }
         }
 
+        public System.Drawing.Color Colour
+        {
+            get
+            {
+                if ((System.Drawing.Color)Node.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                    Node.Colour = UI.Colour.Node;
+                return (System.Drawing.Color)Node.Colour;
+            }
+            set { Node.Colour = value; }
+        }
+
         #region constructors
         public GsaNode()
         {
@@ -69,8 +80,6 @@ namespace GhSA.Parameters
             Node.Position.Z = position.Z;
             m_id = ID;
         }
-
-        
 
         public GsaNode(Point3d position, GsaBool6 bool6)
         {
@@ -149,28 +158,42 @@ namespace GhSA.Parameters
 
         public GsaNode Duplicate()
         {
+            if (this == null) { return null; }
             GsaNode dup = new GsaNode
             {
-                Node = new Node() //add clone or duplicate if available
+                Node = new Node
+                {
+                    AxisProperty = Node.AxisProperty,
+                    Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
+                    DamperProperty = Node.DamperProperty,
+                    MassProperty = Node.MassProperty,
+                    Name = Node.Name,
+                    Restraint = new NodalRestraint
+                    {
+                        X = Node.Restraint.X,
+                        Y = Node.Restraint.Y,
+                        Z = Node.Restraint.Z,
+                        XX = Node.Restraint.XX,
+                        YY = Node.Restraint.YY,
+                        ZZ = Node.Restraint.ZZ,
+                    },
+                    SpringProperty = Node.SpringProperty,
+                }
             };
-            dup.Node.AxisProperty = Node.AxisProperty;
-            dup.Node.Colour = Node.Colour;
-            dup.Node.DamperProperty = Node.DamperProperty;
-            dup.Node.MassProperty = Node.MassProperty;
-            dup.Node.Name = Node.Name;
-            dup.Node.Restraint = Node.Restraint;
-            dup.Node.SpringProperty = Node.SpringProperty;
-
-            Point3dList pt = new Point3dList(Point);
-            Point3dList duppt = pt.Duplicate();
-            dup.Point = duppt[0];
+            
+            dup.Point = new Point3d
+            {
+                X = Node.Position.X,
+                Y = Node.Position.Y,
+                Z = Node.Position.Z,
+            };
 
             if (m_id != 0)
                 dup.ID = m_id;
             if(m_spring != null)
                 dup.Spring = m_spring.Duplicate();
-            if (m_plane.IsValid)
-                dup.m_plane = LocalAxis.Clone();
+            if (m_plane != null)
+                dup.LocalAxis = LocalAxis.Clone();
             return dup;
         }
 
@@ -244,7 +267,7 @@ namespace GhSA.Parameters
                 if (node.Node == null)
                     node = null;
             }
-            this.Value = node;
+            this.Value = node.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -329,7 +352,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -396,14 +419,12 @@ namespace GhSA.Parameters
 
             //Cast from Point3d
             Point3d pt = new Point3d();
-
             if (GH_Convert.ToPoint3d(source, ref pt, GH_Conversion.Both))
             {
                 GsaNode node = new GsaNode(pt);
                 this.Value = node;
                 return true;
             }
-            
 
             return false;
         }
@@ -456,7 +477,7 @@ namespace GhSA.Parameters
             if (Value.Point.IsValid)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Node);
+                    args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, (System.Drawing.Color)Value.Colour);
                 else
                     args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.NodeSelected);
             }
@@ -470,15 +491,15 @@ namespace GhSA.Parameters
     public class GsaNodeParameter : GH_PersistentGeometryParam<GsaNodeGoo>, IGH_PreviewObject
     {
         public GsaNodeParameter()
-          : base(new GH_InstanceDescription("GSA Node", "Node", "Maintains a collection of GSA Node data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Node", "No", "Maintains a collection of GSA Node data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("8ebdc693-e882-494d-8177-b0bd9c3d84a3");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaNode;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaNode;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.
@@ -524,11 +545,7 @@ namespace GhSA.Parameters
         public void DrawViewportWires(IGH_PreviewArgs args)
         {
             //Use a standard method to draw gunk, you don't have to specifically implement this.
-            
-            
             Preview_DrawWires(args);
-            
-
         }
 
         private bool m_hidden = false;

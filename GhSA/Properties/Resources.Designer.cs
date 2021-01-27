@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GSA.Properties {
+namespace GhSA.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace GSA.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GSA.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GhSA.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -163,6 +163,16 @@ namespace GSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CreateMem3D {
+            get {
+                object obj = ResourceManager.GetObject("CreateMem3D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap CreateOffset {
             get {
                 object obj = ResourceManager.GetObject("CreateOffset", resourceCulture);
@@ -266,6 +276,16 @@ namespace GSA.Properties {
         public static System.Drawing.Bitmap EditMem2D {
             get {
                 object obj = ResourceManager.GetObject("EditMem2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap EditMem3D {
+            get {
+                object obj = ResourceManager.GetObject("EditMem3D", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -556,6 +576,16 @@ namespace GSA.Properties {
         public static System.Drawing.Bitmap GsaMem2D {
             get {
                 object obj = ResourceManager.GetObject("GsaMem2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GsaMem3D {
+            get {
+                object obj = ResourceManager.GetObject("GsaMem3D", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

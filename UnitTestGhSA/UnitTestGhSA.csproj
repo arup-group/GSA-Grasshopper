@@ -44,19 +44,17 @@
   <ItemGroup>
     <Reference Include="Eto, Version=2.5.0.0, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.10.18308.14011\lib\net45\Eto.dll</HintPath>
+    </Reference>
+    <Reference Include="GhSA, Version=0.0.1.19, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\GhSA.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="GH_IO, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
       <HintPath>..\packages\Grasshopper.6.10.18308.14011\lib\net45\GH_IO.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="Grasshopper, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=dda4f5ec2cd80803, processorArchitecture=MSIL">
       <HintPath>..\packages\Grasshopper.6.10.18308.14011\lib\net45\Grasshopper.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="GSA, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\GSA.dll</HintPath>
     </Reference>
     <Reference Include="GsaAPI">
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>
@@ -68,23 +66,35 @@
     </Reference>
     <Reference Include="Rhino.UI, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.10.18308.14011\lib\net45\Rhino.UI.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="RhinoCommon, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.10.18308.14011\lib\net45\RhinoCommon.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LoadAPI.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="ComponentsTest\0_Model\OpenTest.cs" />
+    <Compile Include="ComponentsTest\1_Properties\OffsetTests.cs" />
+    <Compile Include="ComponentsTest\ComponentTestHelper.cs" />
+    <Compile Include="ParamsIntegrationTests\1_Properties\Prop2dTests.cs" />
+    <Compile Include="ParamsIntegrationTests\1_Properties\SectionTests.cs" />
+    <Compile Include="ParamsIntegrationTests\1_Properties\OffsetTests.cs" />
+    <Compile Include="ParamsIntegrationTests\1_Properties\Bool6Tests.cs" />
+    <Compile Include="ParamsIntegrationTests\2_Geometry\Elem2dTests.cs" />
+    <Compile Include="ParamsIntegrationTests\2_Geometry\Elem1dTests.cs" />
+    <Compile Include="ParamsIntegrationTests\2_Geometry\Mem1dTests .cs" />
+    <Compile Include="ParamsIntegrationTests\2_Geometry\Mem2dTests.cs" />
+    <Compile Include="ParamsIntegrationTests\2_Geometry\NodeTests.cs" />
+    <Compile Include="UnitTestSetup.cs" />
+    <Compile Include="ParamsIntegrationTests\0_Model\ModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

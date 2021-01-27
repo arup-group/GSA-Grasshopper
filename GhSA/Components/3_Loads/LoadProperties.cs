@@ -20,7 +20,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("0df96bee-3440-4699-b08d-d805220d1f68");
         public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.LoadProp;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.LoadProp;
         #endregion
 
         #region Custom UI
@@ -30,20 +30,20 @@ namespace GhSA.Components
         #region input and output
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Load", "Load", "Load to get some info out of", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Load", "Ld", "Load to get some info out of", GH_ParamAccess.item);
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddIntegerParameter("Load case", "LC", "Load case number)", GH_ParamAccess.item);
             pManager.AddTextParameter("Name", "Na", "Load name", GH_ParamAccess.item);
-            pManager.AddTextParameter("Elements or Nodes", "El", "Element or Node list", GH_ParamAccess.item);
+            pManager.AddTextParameter("Elements or Nodes", "El", "Element or Node list that load is applied to", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Axis", "Ax", "Axis Property (0 : Global // -1 : Local", GH_ParamAccess.item);
             pManager.AddTextParameter("Direction", "Di", "Load direction", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor X (" + Util.GsaUnit.Force + " or " + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", "V1", "Value at Start, Point 1 or Factor X (" + Util.GsaUnit.Force + " or " + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor Y (" + Util.GsaUnit.Force + " or " + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", "V2", "Value at End, Point 2 or Factor Y (" + Util.GsaUnit.Force + " or " + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor Z (" + Util.GsaUnit.Force + " or " + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", "V3", "Value at Point 3 or Factor Z (" + Util.GsaUnit.Force + " or " + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value (" + Util.GsaUnit.Force + " or " + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", "V4", "Value at Point 4 (" + Util.GsaUnit.Force + " or " + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value or Factor X (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", "V1", "Value at Start, Point 1 or Factor X (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value or Factor Y (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", "V2", "Value at End, Point 2 or Factor Y (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value or Factor Z (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", "V3", "Value at Point 3 or Factor Z (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", "V4", "Value at Point 4 (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
             pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface", GH_ParamAccess.item);
         }
         #endregion

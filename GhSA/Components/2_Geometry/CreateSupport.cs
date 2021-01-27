@@ -32,7 +32,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.CreateSupport;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateSupport;
         #endregion
 
         #region Custom UI
@@ -95,7 +95,7 @@ namespace GhSA.Components
             pManager.AddPointParameter("Point", "Pt", "Point (x, y, z) location of support", GH_ParamAccess.item);
             pManager.AddPlaneParameter("Plane", "Pl", "(Optional) Plane for local axis", GH_ParamAccess.item, Plane.WorldXY);
             pManager.AddGenericParameter("Restraints", "B6", "(Optional) Restraint in Bool6 form", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Spring", "Spr", "(Optional) GSA Spring", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Spring", "PS", "(Optional) GSA Spring", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager.HideParameter(1);

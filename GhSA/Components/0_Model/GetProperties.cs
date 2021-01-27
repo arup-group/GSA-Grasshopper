@@ -17,20 +17,20 @@ namespace GhSA.Components
     /// <summary>
     /// Component to retrieve non-geometric objects from a GSA model
     /// </summary>
-    public class GetAnalysis : GH_Component
+    public class GetProperties : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("f5926fb3-06e5-4b18-b037-6234fff16586");
-        public GetAnalysis()
+        public GetProperties()
            : base("Get Model Properties", "GetProps", "Get Sections, 2D Properties and Springs from GSA model",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GetProperties;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GetProperties;
         #endregion
 
         #region Custom UI
@@ -59,8 +59,8 @@ namespace GhSA.Components
             {
                 Model model = gsaModel.Model;
 
-                List<GsaSectionGoo> sections = Util.Gsa.GsaImport.GsaGetSections(model);
-                List<GsaProp2dGoo> prop2Ds = Util.Gsa.GsaImport.GsaGetProp2ds(model);
+                List<GsaSectionGoo> sections = Util.Gsa.FromGSA.GetSections(model.Sections());
+                List<GsaProp2dGoo> prop2Ds = Util.Gsa.FromGSA.GetProp2ds(model.Prop2Ds());
                 // spring import missing in GsaAPI. To be implemented
 
                 DA.SetDataList(0, sections);

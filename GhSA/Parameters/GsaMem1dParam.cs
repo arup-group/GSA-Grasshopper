@@ -64,7 +64,16 @@ namespace GhSA.Parameters
             set { m_section = value; }
         }
 
-
+        public System.Drawing.Color Colour
+        {
+            get 
+            {
+                if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                    m_member.Colour = UI.Colour.Member1d;
+                return (System.Drawing.Color)m_member.Colour; 
+            }
+            set { m_member.Colour = value; }
+        }
 
         #region fields
         private Member m_member;
@@ -83,6 +92,7 @@ namespace GhSA.Parameters
         {
             m_member = new Member();
             m_crv = new PolyCurve();
+            m_section = new GsaSection();
         }
 
         public GsaMember1d(List<Point3d> topology, List<string> topo_type = null)
@@ -91,9 +101,11 @@ namespace GhSA.Parameters
             {
                 Type = MemberType.GENERIC_1D
             };
-            m_crv = Util.GH.Convert.BuildCurve(topology, topo_type);
+            m_crv = Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
             m_topo = topology;
             m_topoType = topo_type;
+
+            m_section = new GsaSection();
 
             Topology = m_topo;
             TopologyType = m_topoType;
@@ -116,35 +128,32 @@ namespace GhSA.Parameters
             Topology = m_topo;
             TopologyType = m_topoType;
         }
-        public GsaMember1d Clone()
-        {
-            GsaMember1d clone = this.Duplicate();
-            clone.Member = new Member();
-            clone.Member.Colour = m_member.Colour;
-            clone.Member.Group = m_member.Group;
-            clone.Member.IsDummy = m_member.IsDummy;
-            clone.Member.MeshSize = m_member.MeshSize;
-            clone.Member.Name = m_member.Name.ToString();
-            clone.Member.Offset.X1 = m_member.Offset.X1;
-            clone.Member.Offset.X2 = m_member.Offset.X2;
-            clone.Member.Offset.Y = m_member.Offset.Y;
-            clone.Member.Offset.Z = m_member.Offset.Z;
-            clone.Member.OrientationAngle = m_member.OrientationAngle;
-            clone.Member.OrientationNode = m_member.OrientationNode;
-            clone.Member.Property = m_member.Property;
-            clone.Member.Topology = m_member.Topology;
-            clone.Member.Type = m_member.Type;
-            clone.Member.Type1D = m_member.Type1D;
-
-            return clone;
-        }
-
+        
         public GsaMember1d Duplicate()
         {
+            if (this == null) { return null; }
             GsaMember1d dup = new GsaMember1d
             {
-                m_member = m_member //add clone or duplicate if available
+                Member = new Member
+                {
+                    Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
+                    Group = m_member.Group,
+                    IsDummy = m_member.IsDummy,
+                    MeshSize = m_member.MeshSize,
+                    Name = m_member.Name.ToString(),
+                    Offset = m_member.Offset,
+                    OrientationAngle = m_member.OrientationAngle,
+                    OrientationNode = m_member.OrientationNode,
+                    Property = m_member.Property,
+                    Topology = m_member.Topology.ToString(),
+                    Type = m_member.Type, //GsaToModel.Member1dType((int)Member.Type),
+                    Type1D = m_member.Type1D //GsaToModel.Element1dType((int)Member.Type1D)
+                }
             };
+            dup.Member.Offset.X1 = m_member.Offset.X1;
+            dup.Member.Offset.X2 = m_member.Offset.X2;
+            dup.Member.Offset.Y = m_member.Offset.Y;
+            dup.Member.Offset.Z = m_member.Offset.Z;
 
             if (m_crv != null)
                 dup.m_crv = m_crv.DuplicatePolyCurve();
@@ -187,7 +196,7 @@ namespace GhSA.Parameters
             if (ID == 0) { idd = ""; }
             string mes = m_member.Type.ToString();
             string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
-
+            typeTxt = typeTxt.Replace("1d", "1D");
             return typeTxt;
         }
 
@@ -208,7 +217,7 @@ namespace GhSA.Parameters
         {
             if (member == null)
                 member = new GsaMember1d();
-            this.Value = member;
+            this.Value = member.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -285,7 +294,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -362,7 +371,6 @@ namespace GhSA.Parameters
                 return true;
             }
 
-
             target = default;
             return false;
         }
@@ -412,11 +420,11 @@ namespace GhSA.Parameters
 
             GsaMember1d mem = Value.Duplicate();
 
-            List<Point3d> pts = Value.Topology;
+            List<Point3d> pts = Value.Topology.ToList();
             Point3dList xpts = new Point3dList(pts);
             xpts.Transform(xform);
             mem.Topology = xpts.ToList();
-            mem.TopologyType = Value.TopologyType;
+            mem.TopologyType = Value.TopologyType.ToList();
             
             if (Value.PolyCurve != null)
             {
@@ -472,30 +480,43 @@ namespace GhSA.Parameters
             if (Value.PolyCurve != null)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1d, 2);
+                {
+                    if (Value.Member.IsDummy)
+                        args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Dummy1D, false);
+                    else
+                        args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2); //UI.Colour.Member1d
+                }
                 else
-                    args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
+                {
+                    if (Value.Member.IsDummy)
+                        args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Member1dSelected, false);
+                    else
+                        args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
+                }
             }
 
             //Draw points.
             if (Value.Topology != null)
             {
-                List<Point3d> pts = Value.Topology;
-                for (int i = 0; i < pts.Count; i++)
+                if (!Value.Member.IsDummy)
                 {
-                    if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                    List<Point3d> pts = Value.Topology;
+                    for (int i = 0; i < pts.Count; i++)
                     {
-                        if (i == 0 | i == pts.Count - 1) // draw first point bigger
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Member1dNode);
+                        if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                        {
+                            if (i == 0 | i == pts.Count - 1) // draw first point bigger
+                                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Member1dNode);
+                            else
+                                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, UI.Colour.Member1dNode);
+                        }
                         else
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, UI.Colour.Member1dNode);
-                    }
-                    else
-                    {
-                        if (i == 0 | i == pts.Count - 1) // draw first point bigger
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Member1dNodeSelected);
-                        else
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 2, UI.Colour.Member1dNodeSelected);
+                        {
+                            if (i == 0 | i == pts.Count - 1) // draw first point bigger
+                                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Member1dNodeSelected);
+                            else
+                                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 2, UI.Colour.Member1dNodeSelected);
+                        }
                     }
                 }
             }
@@ -509,15 +530,15 @@ namespace GhSA.Parameters
     public class GsaMember1dParameter : GH_PersistentGeometryParam<GsaMember1dGoo>, IGH_PreviewObject
     {
         public GsaMember1dParameter()
-          : base(new GH_InstanceDescription("GSA 1D Member", "Member 1D", "Maintains a collection of GSA 1D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("1D Member", "M1D", "Maintains a collection of GSA 1D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("0392a5a0-7762-4214-8c30-fb395365056e");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaMem1D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaMem1D;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

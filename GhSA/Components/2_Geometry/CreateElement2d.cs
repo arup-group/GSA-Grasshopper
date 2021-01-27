@@ -32,7 +32,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.CreateElem2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateElem2D;
         #endregion
 
         #region Custom UI
@@ -54,7 +54,7 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("2D Element", "Elem2d", "GSA 2D Element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Element", "E2D", "GSA 2D Element", GH_ParamAccess.item);
         }
         #endregion
 

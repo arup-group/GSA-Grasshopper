@@ -23,7 +23,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("675fd47a-890d-45b8-bdde-fb2e8c1d9cca");
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GridPlane;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridPlane;
         #endregion
 
         #region Custom UI
@@ -67,7 +67,7 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Plane", "Pl", "Plane for Axis and Grid Plane definition. Note that an XY-plane will be created with an axis origin Z = 0 " +
+            pManager.AddGenericParameter("Plane", "P", "Plane for Axis and Grid Plane definition. Note that an XY-plane will be created with an axis origin Z = 0 " +
                 "and the height location will be controlled by Grid Plane elevation. For all none-XY plane inputs, the Grid Plane elevation will be 0", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Grid Plane ID", "ID", "GSA Grid Plane ID. Setting this will replace any existing Grid Planes in GSA model", GH_ParamAccess.item, 0);
             pManager.AddNumberParameter("Grid Elevation", "Ev", "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.", GH_ParamAccess.item, 0);
@@ -82,7 +82,7 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid Plane", "GridPlane", "GSA Grid Plane", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid Plane", "GP", "GSA Grid Plane", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -233,13 +233,13 @@ namespace GhSA.Components
             if (_mode == FoldMode.Storey)
             {
                 Params.Input[4].NickName = "tA";
-                Params.Input[4].Name = "Tolerance Above (" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[4].Name = "Tolerance Above (" + Units.LengthLarge + ")";
                 Params.Input[4].Description = "Tolerance Above Grid Plane";
                 Params.Input[4].Access = GH_ParamAccess.item;
                 Params.Input[4].Optional = true;
 
                 Params.Input[5].NickName = "tB";
-                Params.Input[5].Name = "Tolerance Below (" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[5].Name = "Tolerance Below (" + Units.LengthLarge + ")";
                 Params.Input[5].Description = "Tolerance Above Grid Plane";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;

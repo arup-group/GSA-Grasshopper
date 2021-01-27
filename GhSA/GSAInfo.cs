@@ -6,7 +6,6 @@ using GsaAPI;
 
 namespace GhSA
 {
-
     public class AddReferencePriority : GH_AssemblyPriority
     {
         /// <summary>
@@ -18,19 +17,41 @@ namespace GhSA
         public override GH_LoadingInstruction PriorityLoad()
         {
             // set folder to latest GSA version.
-            Assembly ass1 = Assembly.LoadFile(Util.Gsa.GsaPath.GetPath + "\\GsaAPI.dll");
-            Assembly ass2 = Assembly.LoadFile(Util.Gsa.GsaPath.GetPath + "\\System.Data.SQLite.dll");
+            Assembly ass1 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
+            Assembly ass2 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\System.Data.SQLite.dll");
 
             const string name = "PATH";
             string pathvar = System.Environment.GetEnvironmentVariable(name);
-            var value = pathvar + ";" + Util.Gsa.GsaPath.GetPath + "\\";
+            var value = pathvar + ";" + Util.Gsa.InstallationFolderPath.GetPath + "\\";
             var target = EnvironmentVariableTarget.Process;
             System.Environment.SetEnvironmentVariable(name, value, target);
+
+            InitiateGsaAPI.UseGsaAPI();
+
+            // test if this solves problems with libiomp5md.dll version (karamba using different version)
+            System.Environment.SetEnvironmentVariable("KMP_DUPLICATE_LIB_OK", "TRUE");
 
             // ### Create Category icon ###
             Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
 
             return GH_LoadingInstruction.Proceed;
+        }
+
+    }
+    public class InitiateGsaAPI
+    {
+        public static void UseGsaAPI()
+        {
+            // create new GH-GSA model 
+            Model m = new Model();
+
+            // get the GSA install path
+            string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath; 
+
+            // open existing GSA model (steel design sample)
+            // model containing CAT section profiles which I
+            // think loads the SectLib.db3 SQL lite database
+            m.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
         }
     }
     public class GSAInfo : GH_AssemblyInfo
@@ -42,7 +63,7 @@ namespace GhSA
                 return "GSA";
             }
         }
-        public override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaModel;
+        public override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaModel;
         public override string Description
         {
             get
@@ -79,7 +100,7 @@ namespace GhSA
         {
             get
             {
-                return "0.1.19-alpha";
+                return "0.1.20";
             }
         }
     }

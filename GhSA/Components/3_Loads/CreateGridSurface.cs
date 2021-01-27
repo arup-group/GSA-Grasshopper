@@ -23,7 +23,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("1052955c-cf97-4378-81d3-8491e0defad0");
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GridSurface;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridSurface;
         #endregion
 
         #region Custom UI
@@ -71,11 +71,14 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid Plane", "GPl", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model", GH_ParamAccess.item, 0);
-            pManager.AddTextParameter("Elements", "El", "Elements for which the load should be expanded to. Default all", GH_ParamAccess.item, "all");
+            pManager.AddTextParameter("Element list", "El", "List of Elements for which load should be expanded to (by default 'all')." + System.Environment.NewLine +
+               "Element list should take the form:" + System.Environment.NewLine +
+               " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+               "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
             pManager.AddTextParameter("Name", "Na", "Name of Grid Surface", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Tolerance (" + Util.GsaUnit.LengthSmall + ")", "Tol", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 10);
+            pManager.AddNumberParameter("Tolerance (" + Units.LengthSmall + ")", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 10);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -86,14 +89,14 @@ namespace GhSA.Components
             if (first)
             {
                 _mode = FoldMode.One_Dimensional_One_Way;
-                pManager.AddNumberParameter("Span Direction", "Dir", "Span Direction (" + Util.GsaUnit.Angle + ") between -180 and 180 degrees", GH_ParamAccess.item, 0);
+                pManager.AddNumberParameter("Span Direction", "Di", "Span Direction (" + Units.Angle + ") between -180 and 180 degrees", GH_ParamAccess.item, 0);
                 pManager[5].Optional = true;
                 first = false;
             }
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid Surface", "GridSurface", "GSA Grid Surface", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid Surface", "GPS", "GSA Grid Surface", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -128,6 +131,10 @@ namespace GhSA.Components
                 gps = new GsaGridPlaneSurface(pln);
             }
 
+            // record if changes has been made from default type
+            bool changeGS = false;
+            GridSurface gs = new GridSurface(); // new GridSurface to make changes to, set it back to GPS in the end
+
             // 1 ID
             GH_Integer ghint = new GH_Integer();
             if (DA.GetData(1, ref ghint))
@@ -143,7 +150,10 @@ namespace GhSA.Components
             {
                 string elem = "";
                 if (GH_Convert.ToString(ghelem, out elem, GH_Conversion.Both))
-                    gps.GridSurface.Elements = elem;
+                {
+                    gs.Elements = elem;
+                    changeGS = true;
+                }
             }
 
             // 3 Name
@@ -152,7 +162,10 @@ namespace GhSA.Components
             {
                 string name = "";
                 if (GH_Convert.ToString(ghtxt, out name, GH_Conversion.Both))
-                    gps.GridSurface.Name = name;
+                {
+                    gs.Name = name;
+                    changeGS = true;
+                }
             }
 
             // 4 Tolerance
@@ -161,7 +174,10 @@ namespace GhSA.Components
             {
                 double tol = 10;
                 if (GH_Convert.ToDouble(ghtol, out tol, GH_Conversion.Both))
-                    gps.GridSurface.Tolerance = tol;
+                {
+                    gs.Tolerance = tol;
+                    changeGS = true;
+                }
             }
 
             switch (_mode)
@@ -176,28 +192,32 @@ namespace GhSA.Components
                     {
                         double dir = 0;
                         if (GH_Convert.ToDouble(ghdir, out dir, GH_Conversion.Both))
+                        {
                             if (dir > 180 || dir < -180)
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
-                        gps.GridSurface.Direction = dir;
+                            gs.Direction = dir;
+                            if (dir != 0)
+                                changeGS = true;
+                        }
                     }
-                    
                     break;
 
                 case FoldMode.One_Dimensional_Two_Way:
-                    gps.GridSurface.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
+                    changeGS = true;
+                    gs.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
                     
                     // 5 expansion method
                     int exp = 0;
                     GH_Integer ghexp = new GH_Integer();
                     if (DA.GetData(5, ref ghexp))
                         GH_Convert.ToInt32_Primary(ghexp, ref exp);
-                    gps.GridSurface.ExpansionType = GridSurfaceExpansionType.PLANE_CORNER;
+                    gs.ExpansionType = GridSurfaceExpansionType.PLANE_CORNER;
                     if (exp == 1)
-                        gps.GridSurface.ExpansionType = GridSurfaceExpansionType.PLANE_SMOOTH;
+                        gs.ExpansionType = GridSurfaceExpansionType.PLANE_SMOOTH;
                     if (exp == 2)
-                        gps.GridSurface.ExpansionType = GridSurfaceExpansionType.PLANE_ASPECT;
+                        gs.ExpansionType = GridSurfaceExpansionType.PLANE_ASPECT;
                     if (exp == 3)
-                        gps.GridSurface.ExpansionType = GridSurfaceExpansionType.LEGACY;
+                        gs.ExpansionType = GridSurfaceExpansionType.LEGACY;
 
                     // 6 simplify tributary area
                     bool simple = true;
@@ -205,16 +225,18 @@ namespace GhSA.Components
                     if (DA.GetData(6, ref ghsim))
                         GH_Convert.ToBoolean(ghsim, out simple, GH_Conversion.Both);
                     if (simple)
-                        gps.GridSurface.SpanType = GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;
+                        gs.SpanType = GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;
                     else
-                        gps.GridSurface.SpanType = GridSurface.Span_Type.TWO_WAY;
-
+                        gs.SpanType = GridSurface.Span_Type.TWO_WAY;
                     break;
 
                 case FoldMode.Two_Dimensional:
-                    gps.GridSurface.ElementType = GridSurface.Element_Type.TWO_DIMENSIONAL;
+                    changeGS = true;
+                    gs.ElementType = GridSurface.Element_Type.TWO_DIMENSIONAL;
                     break;
             }
+            if (changeGS)
+                gps.GridSurface = gs;
 
             DA.SetData(0, new GsaGridPlaneSurfaceGoo(gps));
         }
@@ -311,7 +333,7 @@ namespace GhSA.Components
             {
                 Params.Input[5].NickName = "Dir";
                 Params.Input[5].Name = "Span Direction";
-                Params.Input[5].Description = "Span Direction (" + Util.GsaUnit.Angle + ") between -180 and 180 degrees";
+                Params.Input[5].Description = "Span Direction (" + Units.Angle + ") between -180 and 180 degrees";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
             }

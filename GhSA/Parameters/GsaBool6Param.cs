@@ -88,6 +88,7 @@ namespace GhSA.Parameters
         
         public GsaBool6 Duplicate()
         {
+            if (this == null) { return null; }
             GsaBool6 dup = new GsaBool6
             {
                 X = m_x,
@@ -206,7 +207,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -312,7 +313,7 @@ namespace GhSA.Parameters
     public class GsaBool6Parameter : GH_PersistentParam<GsaBool6Goo>
     {
         public GsaBool6Parameter()
-          : base(new GH_InstanceDescription("GSA Bool6", "Bool6", "Bool6 to set releases and restraints", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Bool6", "B6", "GSA Bool6 to set releases and restraints", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -320,7 +321,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaBool6;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaBool6;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaBool6Goo> values)
         {

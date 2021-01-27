@@ -20,7 +20,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("0e30f030-8fc0-4ffa-afd9-02b18c094006");
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.NodeLoad;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.NodeLoad;
         #endregion
 
         #region Custom UI
@@ -70,7 +70,10 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
-            pManager.AddTextParameter("Nodes", "No", "Node list", GH_ParamAccess.item);
+            pManager.AddTextParameter("Node list", "No", "List of Nodes to apply load to." + System.Environment.NewLine +
+                 "Node list should take the form:" + System.Environment.NewLine +
+                 " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
+                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
             pManager.AddTextParameter("Direction", "Di", "Load direction (default z)." +
                     System.Environment.NewLine + "Accepted inputs are:" +
                     System.Environment.NewLine + "x" +
@@ -79,14 +82,14 @@ namespace GhSA.Components
                     System.Environment.NewLine + "xx" +
                     System.Environment.NewLine + "yy" +
                     System.Environment.NewLine + "zz", GH_ParamAccess.item, "z");
-            pManager.AddNumberParameter("Value (" + Util.GsaUnit.Force + ")", "V", "Load Value (" + Util.GsaUnit.Force + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value (" + Units.Force + ")", "V", "Load Value (" + Units.Force + ")", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[2].Optional = true;
             
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Node Load", "Load", "GSA Node Load", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Node Load", "Ld", "GSA Node Load", GH_ParamAccess.item);
         }
         
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -108,28 +111,28 @@ namespace GhSA.Components
                     break;
             }
             
-            //Load case
+            // 0 Load case
             int lc = 1;
             GH_Integer gh_lc = new GH_Integer();
             if (DA.GetData(0, ref gh_lc))
                 GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
             nodeLoad.NodeLoad.Case = lc;
 
-            //element/beam list
+            // 1 element/beam list
             string nodeList = "all"; 
             GH_String gh_nl = new GH_String();
             if (DA.GetData(1, ref gh_nl))
                 GH_Convert.ToString(gh_nl, out nodeList, GH_Conversion.Both);
             nodeLoad.NodeLoad.Nodes = nodeList;
 
-            //direction
+            // 2 direction
             string dir = "Z";
             Direction direc = Direction.Z;
 
             GH_String gh_dir = new GH_String();
             if (DA.GetData(2, ref gh_dir))
                 GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
-            dir = dir.ToUpper();
+            dir = dir.ToUpper().Trim();
             if (dir == "X")
                 direc = Direction.X;
             if (dir == "Y")
@@ -145,7 +148,12 @@ namespace GhSA.Components
 
             double load = 0;
             if (DA.GetData(3, ref load))
-                load *= -1000; //convert to kN
+            {
+                if (direc == Direction.Z)
+                    load *= -1000; //convert to kN
+                else
+                    load *= 1000;
+            }
 
             nodeLoad.NodeLoad.Value = load;
 

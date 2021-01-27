@@ -32,7 +32,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.CreateElem1D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateElem1D;
         #endregion
 
         #region Custom UI
@@ -44,7 +44,7 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddCurveParameter("Line", "Ln", "Line to create GSA Element", GH_ParamAccess.item);
+            pManager.AddCurveParameter("Line", "L", "Line to create GSA Element", GH_ParamAccess.item);
             pManager.AddGenericParameter("Section", "PB", "GSA Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
@@ -53,7 +53,7 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("1D Element", "Elem1d", "GSA 1D Element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("1D Element", "E1D", "GSA 1D Element", GH_ParamAccess.item);
             
         }
         #endregion

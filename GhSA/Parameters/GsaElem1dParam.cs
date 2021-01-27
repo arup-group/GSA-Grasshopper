@@ -38,12 +38,14 @@ namespace GhSA.Parameters
         {
             get 
             {
-                //m_rel1.X = m_element.Release(0).X;
-                //m_rel1.Y = m_element.Release(0).Y;
-                //m_rel1.Z = m_element.Release(0).Z;
-                //m_rel1.XX = m_element.Release(0).XX;
-                //m_rel1.YY = m_element.Release(0).YY;
-                //m_rel1.ZZ = m_element.Release(0).ZZ;
+                Bool6 rel1 = m_element.Release(0);
+                m_rel1 = new GsaBool6();
+                m_rel1.X = rel1.X;
+                m_rel1.Y = rel1.Y;
+                m_rel1.Z = rel1.Z;
+                m_rel1.XX = rel1.XX;
+                m_rel1.YY = rel1.YY;
+                m_rel1.ZZ = rel1.ZZ;
                 return m_rel1; 
             } 
             set 
@@ -63,13 +65,15 @@ namespace GhSA.Parameters
         {
             get 
             {
-                //m_rel2.X = m_element.Release(1).X;
-                //m_rel2.Y = m_element.Release(1).Y;
-                //m_rel2.Z = m_element.Release(1).Z;
-                //m_rel2.XX = m_element.Release(1).XX;
-                //m_rel2.YY = m_element.Release(1).YY;
-                //m_rel2.ZZ = m_element.Release(1).ZZ;
-                return m_rel2; 
+                Bool6 rel2 = m_element.Release(1);
+                m_rel2 = new GsaBool6();
+                m_rel2.X = rel2.X;
+                m_rel2.Y = rel2.Y;
+                m_rel2.Z = rel2.Z;
+                m_rel2.XX = rel2.XX;
+                m_rel2.YY = rel2.YY;
+                m_rel2.ZZ = rel2.ZZ;
+                return m_rel2;
             }
             set 
             { 
@@ -88,6 +92,17 @@ namespace GhSA.Parameters
         {
             get { return m_section; }
             set { m_section = value; }
+        }
+
+        public System.Drawing.Color Colour
+        {
+            get
+            {
+                if ((System.Drawing.Color)m_element.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                    m_element.Colour = UI.Colour.Member1d;
+                return (System.Drawing.Color)m_element.Colour;
+            }
+            set { m_element.Colour = value; }
         }
 
         #region fields
@@ -123,32 +138,30 @@ namespace GhSA.Parameters
         //    m_element = element;
         //    m_line = line;
         //}
-        public GsaElement1d Clone()
-        {
-            GsaElement1d clone = this.Duplicate();
-            clone.Element = new Element();
-            clone.Element.Colour = m_element.Colour;
-            clone.Element.Group = m_element.Group;
-            clone.Element.IsDummy = m_element.IsDummy;
-            clone.Element.Name = m_element.Name.ToString();
-            clone.Element.Offset.X1 = m_element.Offset.X1;
-            clone.Element.Offset.X2 = m_element.Offset.X2;
-            clone.Element.Offset.Y = m_element.Offset.Y;
-            clone.Element.Offset.Z = m_element.Offset.Z;
-            clone.Element.OrientationAngle = m_element.OrientationAngle;
-            clone.Element.OrientationNode = m_element.OrientationNode;
-            clone.Element.ParentMember = m_element.ParentMember;
-            clone.Element.Property = m_element.Property;
-            clone.Element.Topology = m_element.Topology;
-            clone.Element.Type = m_element.Type;
-            return clone;
-        }
 
         public GsaElement1d Duplicate()
         {
+            if (this == null) { return null; }
             GsaElement1d dup = new GsaElement1d();
-            dup.m_element = m_element;
-            
+            dup.m_element = new Element()
+            {
+                Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
+                Group = m_element.Group,
+                IsDummy = m_element.IsDummy,
+                Name = m_element.Name.ToString(),
+                Offset = m_element.Offset,
+                OrientationAngle = m_element.OrientationAngle,
+                OrientationNode = m_element.OrientationNode,
+                ParentMember = m_element.ParentMember,
+                Property = m_element.Property,
+                Topology = m_element.Topology,
+                Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
+            };
+            dup.Element.Offset.X1 = m_element.Offset.X1;
+            dup.Element.Offset.X2 = m_element.Offset.X2;
+            dup.Element.Offset.Y = m_element.Offset.Y;
+            dup.Element.Offset.Z = m_element.Offset.Z;
+
             if (m_line != null)
                 dup.m_line = (LineCurve)m_line.Duplicate();
             dup.ID = m_id;
@@ -174,8 +187,6 @@ namespace GhSA.Parameters
                 return true;
             }
         }
-        
-
         #endregion
 
         #region methods
@@ -185,7 +196,6 @@ namespace GhSA.Parameters
             if (ID == 0) { idd = ""; }
             return "GSA 1D Element" + idd;
         }
-
         #endregion
     }
 
@@ -203,9 +213,8 @@ namespace GhSA.Parameters
         {
             if (element == null)
                 element = new GsaElement1d();
-            this.Value = element;
+            this.Value = element.Duplicate();
         }
-
 
         public override IGH_GeometricGoo DuplicateGeometry()
         {
@@ -281,7 +290,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -384,7 +393,7 @@ namespace GhSA.Parameters
             if (Value.Line == null) { return null; }
 
             GsaElement1d elem = Value.Duplicate();
-            LineCurve xLn = Value.Line;
+            LineCurve xLn = elem.Line;
             xLn.Transform(xform);
             elem.Line = xLn;
 
@@ -420,27 +429,32 @@ namespace GhSA.Parameters
         {
             if (Value == null) { return; }
 
-            
-
             //Draw lines
             if (Value.Line != null)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
-                    args.Pipeline.DrawCurve(Value.Line, UI.Colour.Element1d, 2);
-                    args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
-                    args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
+                    if (Value.Element.IsDummy)
+                        args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, UI.Colour.Dummy1D);
+                    else
+                    {
+                        args.Pipeline.DrawCurve(Value.Line, Value.Colour, 2);
+                        args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
+                        args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
+                    }
                 }
                 else
                 {
-                    args.Pipeline.DrawCurve(Value.Line, UI.Colour.Element1dSelected, 2);
-                    args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
-                    args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
+                    if (Value.Element.IsDummy)
+                        args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, UI.Colour.Element1dSelected);
+                    else
+                    {
+                        args.Pipeline.DrawCurve(Value.Line, UI.Colour.Element1dSelected, 2);
+                        args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
+                        args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
+                    }
                 }
-
-                
             }
-                    
         }
         #endregion
     }
@@ -451,15 +465,15 @@ namespace GhSA.Parameters
     public class GsaElement1dParameter : GH_PersistentGeometryParam<GsaElement1dGoo>, IGH_PreviewObject
     {
         public GsaElement1dParameter()
-          : base(new GH_InstanceDescription("GSA 1D Element", "Element 1D", "Maintains a collection of GSA 1D Element data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("1D Element", "E1D", "Maintains a collection of GSA 1D Element data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("9c045214-cab6-47d9-a158-ae1f4f494b66");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaElem1D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaElem1D;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

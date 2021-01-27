@@ -34,7 +34,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.EditElem2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditElem2D;
         #endregion
 
         #region Custom UI
@@ -48,14 +48,14 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             
-            pManager.AddGenericParameter("2D Element", "Elem2d", "GSA 2D Element to Modify", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Element", "E2D", "GSA 2D Element to Modify", GH_ParamAccess.item);
             pManager.AddGenericParameter("2D Property", "PA", "Change 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Offset", "Off", "Set Element Offset", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("2D Analysis Type", "Typ", "Set Element 2D Analysis Type", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Offset", "Of", "Set Element Offset", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Element2d Number", "ID", "Set Element Number. If ID is set it will replace any existing 2d Element in the model", GH_ParamAccess.list);
             pManager.AddTextParameter("Element2d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Element2d Group", "Grp", "Set Element Group", GH_ParamAccess.list);
-            pManager.AddColourParameter("Element2d Colour", "Col", "Set Element Colour", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Element2d Group", "Gr", "Set Element Group", GH_ParamAccess.list);
+            pManager.AddColourParameter("Element2d Colour", "Co", "Set Element Colour", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Dummy Element", "Dm", "Set Element to Dummy", GH_ParamAccess.list);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -68,16 +68,20 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("2D Element", "Elem2d", "Modified GSA 2d Element", GH_ParamAccess.item);
+            pManager.AddGenericParameter("2D Element", "E2D", "Modified GSA 2d Element", GH_ParamAccess.item);
             pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh", GH_ParamAccess.item);
+            //pManager.HideParameter(1);
             pManager.AddGenericParameter("2D Property", "PA", "Get 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Offset", "Off", "Get Element Offset", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("2D Analysis Type", "Typ", "Get Element 2D Analysis Type", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Offset", "Of", "Get Element Offset", GH_ParamAccess.list);
+            pManager.AddTextParameter("Element Type", "Ty", "Get Element 2D Type." + System.Environment.NewLine
+                + "Type can not be set; it is either Tri3 or Quad4" + System.Environment.NewLine
+                + "depending on Rhino/Grasshopper mesh face type" , GH_ParamAccess.list);
             pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
             pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Group", "Grp", "Get Element Group", GH_ParamAccess.list);
-            pManager.AddColourParameter("Colour", "Col", "Get Element Colour", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Parent Members", "ParM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
+            pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
         }
         #endregion
 
@@ -86,7 +90,7 @@ namespace GhSA.Components
             GsaElement2d gsaElement2d = new GsaElement2d();
             if (DA.GetData(0, ref gsaElement2d))
             {
-                GsaElement2d elem = gsaElement2d.Clone();
+                GsaElement2d elem = gsaElement2d;
 
                 // #### inputs ####
 
@@ -95,13 +99,16 @@ namespace GhSA.Components
 
                 // 1 section
                 List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
-                if (DA.GetDataList(2, gh_types))
+                List<GsaProp2d> in_prop2Ds = new List<GsaProp2d>();
+                if (DA.GetDataList(1, gh_types))
                 {
                     for (int i = 0; i< gh_types.Count; i++)
                     {
+                        if (i > elem.Elements.Count)
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "PA input List Length is longer than number of elements." + System.Environment.NewLine + "Excess PA's have been ignored");
                         GH_ObjectWrapper gh_typ = gh_types[i];
                         GsaProp2d prop2d = new GsaProp2d();
-                        if (gh_typ.Value is GsaProp2d)
+                        if (gh_typ.Value is GsaProp2dGoo)
                             gh_typ.CastTo(ref prop2d);
                         else
                         {
@@ -113,76 +120,186 @@ namespace GhSA.Components
                                 return;
                             }
                         }
-                        List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
-                        for (int j = 0; j < elem.Elements.Count; j++)
-                            prop2Ds.Add(prop2d);
-                        elem.Properties = prop2Ds;
+                        in_prop2Ds.Add(prop2d);
                     }
                 }
-                
 
                 // 2 offset
-                List<GsaOffset> offset = new List<GsaOffset>();
-                if (DA.GetDataList(2, offset))
+                gh_types = new List<GH_ObjectWrapper>();
+                List<GsaOffset> in_offsets = new List<GsaOffset>();
+                if (DA.GetDataList(2, gh_types))
                 {
-                    for (int i = 0; i < offset.Count; i++)
-                        elem.Elements[i].Offset.Z = offset[i].Z;
+                    for (int i = 0; i < gh_types.Count; i++)
+                    {
+                        if (i > elem.Elements.Count)
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Offset input List Length is longer than number of elements." + System.Environment.NewLine + "Excess Offsets have been ignored");
+                        GH_ObjectWrapper gh_typ = gh_types[i];
+                        GsaOffset offset = new GsaOffset();
+                        if (gh_typ.Value is GsaOffsetGoo)
+                            gh_typ.CastTo(ref offset);
+                        else
+                        {
+                            if (GH_Convert.ToDouble(gh_typ.Value, out double z, GH_Conversion.Both))
+                                offset.Z = z;
+                            else
+                            {
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Offset input to Offset or double");
+                                return;
+                            }
+                        }
+                        in_offsets.Add(offset);
+                    }
                 }
 
-                // 3 element type / analysis order
-                List<GH_Integer> ghinteg = new List<GH_Integer>();
-                if (DA.GetDataList(3, ghinteg))
+                // 3 ID
+                List<GH_Integer> ghID = new List<GH_Integer>();
+                List<int> in_ids = new List<int>();
+                if (DA.GetDataList(3, ghID))
                 {
-                    for (int i = 0; i < ghinteg.Count; i++)
+                    for (int i = 0; i < ghID.Count; i++)
                     {
-                        if (GH_Convert.ToInt32(ghinteg[i], out int type, GH_Conversion.Both))
+                        if (i > elem.Elements.Count)
                         {
-                            //elem.Elements[i].Type = Util.Gsa.GsaToModel.Element2dType(type); Note: Type on 2D element should be analysis order - GsaAPI bug?
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "ID input List Length is longer than number of elements." + System.Environment.NewLine + "Excess ID's have been ignored");
+                            continue;
+                        }
+                        if (GH_Convert.ToInt32(ghID[i], out int id, GH_Conversion.Both))
+                        {
+                            if (in_ids.Contains(id))
+                            {
+                                if (id > 0)
+                                {
+                                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "ID input(" + i + ") = " + id + " already exist in your input list." + System.Environment.NewLine + "You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
+                                    continue;
+                                }
+                            }
+                            in_ids.Add(id);
                         }
                     }
                 }
 
-                // 4 ID
-                List<GH_Integer> ghID = new List<GH_Integer>();
-                if (DA.GetDataList(4, ghID))
-                {
-                    for (int i = 0; i < ghID.Count; i++)
-                    {
-                        if (GH_Convert.ToInt32(ghID[i], out int id, GH_Conversion.Both))
-                            elem.ID[i] = id;
-                    }
-                }
-
-                // 5 name
+                // 4 name
                 List<GH_String> ghnm = new List<GH_String>();
-                if (DA.GetDataList(5, ghnm))
+                List<string> in_names = new List<string>();
+                if (DA.GetDataList(4, ghnm))
                 {
                     for (int i = 0; i < ghnm.Count; i++)
                     {
+                        if (i > elem.Elements.Count)
+                        {
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Name input List Length is longer than number of elements." + System.Environment.NewLine + "Excess Names have been ignored");
+                            continue;
+                        }
                         if (GH_Convert.ToString(ghnm[i], out string name, GH_Conversion.Both))
-                            elem.Elements[i].Name = name;
+                            in_names.Add(name);
                     }
                 }
 
-                // 6 Group
+                // 5 Group
                 List<GH_Integer> ghgrp = new List<GH_Integer>();
-                if (DA.GetDataList(6, ghgrp))
+                List<int> in_groups = new List<int>();
+                if (DA.GetDataList(5, ghgrp))
                 {
                     for (int i = 0; i < ghgrp.Count; i++)
                     {
+                        if (i > elem.Elements.Count)
+                        {
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Group input List Length is longer than number of elements." + System.Environment.NewLine + "Excess Group numbers have been ignored");
+                            continue;
+                        }
                         if (GH_Convert.ToInt32(ghgrp[i], out int grp, GH_Conversion.Both))
-                            elem.Elements[i].Group = grp;
+                            in_groups.Add(grp);
                     }
                 }
 
-                // 7 Colour
+                // 6 Colour
                 List<GH_Colour> ghcol = new List<GH_Colour>();
-                if (DA.GetDataList(7, ghcol))
+                List<System.Drawing.Color> in_colours = new List<System.Drawing.Color>();
+                if (DA.GetDataList(6, ghcol))
                 {
                     for (int i = 0; i < ghcol.Count; i++)
                     {
+                        if (i > elem.Elements.Count)
+                        {
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Colour input List Length is longer than number of elements." + System.Environment.NewLine + "Excess Colours have been ignored");
+                            continue;
+                        }
                         if (GH_Convert.ToColor(ghcol[i], out System.Drawing.Color col, GH_Conversion.Both))
-                            elem.Elements[i].Colour = col;
+                            in_colours.Add(col);
+                    }
+                }
+
+                // 7 Dummy
+                List<GH_Boolean> ghdum = new List<GH_Boolean>();
+                List<bool> in_dummies = new List<bool>();
+                if (DA.GetDataList(7, ghdum))
+                {
+                    for (int i = 0; i < ghdum.Count; i++)
+                    {
+                        if (i > elem.Elements.Count)
+                        {
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Dummy input List Length is longer than number of elements." + System.Environment.NewLine + "Excess Dummy booleans have been ignored");
+                            continue;
+                        }
+                        if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both))
+                            in_dummies.Add(dum);
+                    }
+                }
+                
+
+                // loop through all elements and set collected lists.
+                // handle too short or too long input lists here
+                // for short lists copy last item
+                for (int i = 0; i < elem.Elements.Count; i++)
+                {
+                    if (in_prop2Ds.Count > 0)
+                    {
+                        if (i < in_prop2Ds.Count)
+                            elem.Properties[i] = in_prop2Ds[i];
+                        else
+                            elem.Properties[i] = in_prop2Ds[in_prop2Ds.Count - 1];
+                    }
+                    if (in_offsets.Count > 0)
+                    {
+                        if (i < in_offsets.Count)
+                            elem.Elements[i].Offset.Z = in_offsets[i].Z;
+                        else
+                            elem.Elements[i].Offset.Z = in_offsets[in_offsets.Count - 1].Z;
+                    }
+                    if (in_ids.Count > 0)
+                    {
+                        if (i < in_ids.Count)
+                            elem.ID[i] = in_ids[i];
+                        else
+                            elem.ID[i] = 0; // do not set ID (element number) as it must be unique
+                    }
+                    if (in_names.Count > 0)
+                    {
+                        if (i < in_names.Count)
+                            elem.Elements[i].Name = in_names[i];
+                        else
+                            elem.Elements[i].Name = in_names[in_names.Count - 1];
+                    }
+                    if (in_groups.Count > 0)
+                    {
+                        if (i < in_groups.Count)
+                            elem.Elements[i].Group = in_groups[i];
+                        else
+                            elem.Elements[i].Group = in_groups[in_groups.Count - 1];
+                    }
+                    if (in_colours.Count > 0)
+                    {
+                        if (i < in_colours.Count)
+                            elem.Elements[i].Colour = in_colours[i];
+                        else
+                            elem.Elements[i].Colour = in_colours[in_colours.Count - 1];
+                    }
+                    if (in_dummies.Count > 0)
+                    {
+                        if (i < in_dummies.Count)
+                            elem.Elements[i].IsDummy = in_dummies[i];
+                        else
+                            elem.Elements[i].IsDummy = in_dummies[in_dummies.Count - 1];
                     }
                 }
 
@@ -192,34 +309,37 @@ namespace GhSA.Components
                 DA.SetData(0, new GsaElement2dGoo(elem));
                 DA.SetData(1, elem.Mesh);
 
-                List<GsaOffset> offsets = new List<GsaOffset>();
-                //List<int> anal = new List<int>();
-                List<string> names = new List<string>();
-                List<int> groups = new List<int>();
-                List<System.Drawing.Color> colours = new List<System.Drawing.Color>();
+                List<GsaOffset> out_offsets = new List<GsaOffset>();
+                List<string> type = new List<string>();
+                List<string> out_names = new List<string>();
+                List<int> out_groups = new List<int>();
+                List<System.Drawing.Color> out_colours = new List<System.Drawing.Color>();
                 List<int> pmems = new List<int>();
+                List<bool> out_dummies = new List<bool>();
                 for (int i = 0; i < elem.Elements.Count; i++)
                 {
                     GsaOffset offset1 = new GsaOffset
                     {
                         Z = elem.Elements[i].Offset.Z
                     };
-                    offsets.Add(offset1);
-                    //anal.Add(gsaElement2d.Elements[i].Type);
-                    names.Add(elem.Elements[i].Name);
-                    groups.Add(elem.Elements[i].Group);
-                    colours.Add((System.Drawing.Color)elem.Elements[i].Colour);
+                    out_offsets.Add(offset1);
+                    type.Add(gsaElement2d.Elements[i].TypeAsString());
+                    out_names.Add(elem.Elements[i].Name);
+                    out_groups.Add(elem.Elements[i].Group);
+                    out_colours.Add((System.Drawing.Color)elem.Elements[i].Colour);
+                    out_dummies.Add(elem.Elements[i].IsDummy);
                     try { pmems.Add(elem.Elements[i].ParentMember.Member); } catch (Exception) { pmems.Add(0); }
                     ;
                 }
                 DA.SetDataList(2, elem.Properties); 
-                DA.SetDataList(3, offsets);
-                //DA.SetDataList(4, anal);
+                DA.SetDataList(3, out_offsets);
+                DA.SetDataList(4, type);
                 DA.SetDataList(5, elem.ID);
-                DA.SetDataList(6, names);
-                DA.SetDataList(7, groups);
-                DA.SetDataList(8, colours);
-                DA.SetDataList(9, pmems);
+                DA.SetDataList(6, out_names);
+                DA.SetDataList(7, out_groups);
+                DA.SetDataList(8, out_colours);
+                DA.SetDataList(9, out_dummies);
+                DA.SetDataList(10, pmems);
             }
         }
     }

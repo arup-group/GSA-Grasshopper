@@ -17,20 +17,20 @@ namespace GhSA.Components
     /// <summary>
     /// Component to retrieve non-geometric objects from a GSA model
     /// </summary>
-    public class GetProperties : GH_Component
+    public class GetAnalysis : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("fa497db7-8bdd-438d-888f-83a85d6cd48a");
-        public GetProperties()
+        public GetAnalysis()
           : base("Get Model Analysis", "GetAnalysis", "Get Analysis Cases and Tasks from GSA model",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GetAnalysis;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GetAnalysis;
         #endregion
 
         #region Custom UI

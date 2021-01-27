@@ -32,7 +32,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GetGeometry;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GetGeometry;
         #endregion
 
         #region Custom UI
@@ -122,35 +122,38 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA model containing some geometry", GH_ParamAccess.item);
-            pManager.AddTextParameter("Node filter list", "No", "Filter import by list." + System.Environment.NewLine +
-                "Node list should take the form:" + System.Environment.NewLine +
-                " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
-                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            pManager.AddTextParameter("Element filter list", "El", "Filter import by list." + System.Environment.NewLine +
-                "Element list should take the form:" + System.Environment.NewLine +
-                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
-                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            pManager.AddTextParameter("Member filter list", "Me", "Filter import by list." + System.Environment.NewLine +
-                "Member list should take the form:" + System.Environment.NewLine +
-                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)" + System.Environment.NewLine +
-                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            pManager[1].Optional = true;
-            pManager[2].Optional = true;
-            pManager[3].Optional = true;
+            //pManager.AddTextParameter("Node filter list", "No", "Filter import by list." + System.Environment.NewLine +
+            //    "Node list should take the form:" + System.Environment.NewLine +
+            //    " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
+            //    "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+            //pManager.AddTextParameter("Element filter list", "El", "Filter import by list." + System.Environment.NewLine +
+            //    "Element list should take the form:" + System.Environment.NewLine +
+            //    " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+            //    "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+            //pManager.AddTextParameter("Member filter list", "Me", "Filter import by list." + System.Environment.NewLine +
+            //    "Member list should take the form:" + System.Environment.NewLine +
+            //    " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)" + System.Environment.NewLine +
+            //    "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+            //pManager[1].Optional = true;
+            //pManager[2].Optional = true;
+            //pManager[3].Optional = true;
 
-            _mode = FoldMode.Graft;
-            Message = "Graft by Property" + System.Environment.NewLine + "Right-click to change";
+            //_mode = FoldMode.Graft;
+            //Message = "Graft by Property" + System.Environment.NewLine + "Right-click to change";
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Nodes", "Nodes", "Nodes from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Nodes", "No", "Nodes from GSA Model", GH_ParamAccess.list);
             pManager.HideParameter(0);
-            pManager.AddGenericParameter("1D Elements", "Elem1D", "1D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("2D Elements", "Elem2D", "2D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("1D Elements", "E1D", "1D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("2D Elements", "E2D", "2D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("3D Elements", "E3D", "3D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.list);
             pManager.HideParameter(2);
-            pManager.AddGenericParameter("1D Members", "Mem1D", "1D Members (Design Layer) from GSA Model", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("2D Members", "Mem2D", "2D Members (Design Layer) from GSA Model", GH_ParamAccess.tree);
+            pManager.HideParameter(3);
+            pManager.AddGenericParameter("1D Members", "M1D", "1D Members (Design Layer) from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("2D Members", "M2D", "2D Members (Design Layer) from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("3D Members", "M3D", "3D Members (Design Layer) from GSA Model", GH_ParamAccess.list);
         }
         #endregion
 
@@ -167,36 +170,35 @@ namespace GhSA.Components
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
                     return;
                 }
-            
-                // import lists
-                string nodeList = "all";
-                if (DA.GetData(1, ref nodeList))
-                    nodeList = nodeList.ToString();
-                string elemList = "all";
-                if (DA.GetData(2, ref elemList))
-                    elemList = elemList.ToString();
-                string memList = "all";
-                if (DA.GetData(3, ref memList))
-                    memList = memList.ToString();
 
                 Model model = gsaModel.Model;
 
-                bool graft = false;
-                if (_mode == FoldMode.Graft)
-                    graft = true;
+                // get dictionaries from model
+                IReadOnlyDictionary<int, Node> nDict = model.Nodes();
+                IReadOnlyDictionary<int, Element> eDict = model.Elements();
+                IReadOnlyDictionary<int, Member> mDict = model.Members();
+                IReadOnlyDictionary<int, Section> sDict = model.Sections();
+                IReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
 
-                List<GsaNode> nodes = Util.Gsa.GsaImport.GsaGetPoint(model, nodeList);
-                Tuple<DataTree<GsaElement1dGoo>, DataTree<GsaElement2dGoo>> elementTuple = Util.Gsa.GsaImport.GsaGetElem(model, elemList, graft);
-                Tuple<DataTree<GsaMember1dGoo>, DataTree<GsaMember2dGoo>> memberTuple = Util.Gsa.GsaImport.GsaGetMemb(model, memList, graft);
+                // create nodes
+                List<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(nDict, model);
+                // create elements
+                Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>> elementTuple
+                    = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict);
+                // create members
+                Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>> memberTuple
+                    = Util.Gsa.FromGSA.GetMembers(mDict, nDict, sDict, pDict);
 
-                List<GsaNodeGoo> gsaNodes = nodes.ConvertAll(x => new GsaNodeGoo(x));
-                DA.SetDataList(0, gsaNodes);
-                DA.SetDataTree(1, elementTuple.Item1);
-                DA.SetDataTree(2, elementTuple.Item2);
-                DA.SetDataTree(3, memberTuple.Item1);
-                DA.SetDataTree(4, memberTuple.Item2);
+                DA.SetDataList(0, nodes);
 
-                element2ds = elementTuple.Item2.AllData();
+                DA.SetDataList(1, elementTuple.Item1);
+                DA.SetDataList(2, elementTuple.Item2);
+
+                DA.SetDataList(4, memberTuple.Item1);
+                DA.SetDataList(5, memberTuple.Item2);
+                DA.SetDataList(6, memberTuple.Item3);
+
+                element2ds = elementTuple.Item2;
             }
         }
 

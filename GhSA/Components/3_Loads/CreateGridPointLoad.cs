@@ -18,7 +18,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("844dbf7b-3750-445c-950d-b161b00a6757");
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GridPointLoad;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridPointLoad;
         #endregion
 
         #region Custom UI
@@ -40,7 +40,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "Accepted inputs are:" +
                     System.Environment.NewLine + "0 : Global" +
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
-            pManager.AddNumberParameter("Value (" + Util.GsaUnit.Force + ")", "V", "Load Value (" + Util.GsaUnit.Force + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value (" + Units.Force + ")", "V", "Load Value (" + Units.Force + ")", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[2].Optional = true;
@@ -49,7 +49,7 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Grid Point Load", "Load", "GSA Grid Point Load", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Grid Point Load", "Ld", "GSA Grid Point Load", GH_ParamAccess.item);
         }
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)

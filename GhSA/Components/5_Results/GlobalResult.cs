@@ -30,7 +30,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GlobalResults;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GlobalResults;
         #endregion
 
         #region Custom UI
@@ -48,11 +48,11 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddVectorParameter("Total Force Loads", "ΣF", "Sum of all Force Loads in GSA Model (" + Util.GsaUnit.Force + ")", GH_ParamAccess.item);
-            pManager.AddVectorParameter("Total Moment Loads", "ΣM", "Sum of all Moment Loads in GSA Model (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddVectorParameter("Total Force Reactions", "ΣRF", "Sum of all Rection Forces in GSA Model (" + Util.GsaUnit.Force + ")", GH_ParamAccess.item);
-            pManager.AddVectorParameter("Total Moment Reactions", "ΣRM", "Sum of all Reaction Moments in GSA Model (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddVectorParameter("Effective Mass", "Σkg", "Effective Mass in GSA Model (" + Util.GsaUnit.Mass + ")", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Total Force Loads", "ΣF", "Sum of all Force Loads in GSA Model (" + Units.Force + ")", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Total Moment Loads", "ΣM", "Sum of all Moment Loads in GSA Model (" + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Total Force Reactions", "ΣRf", "Sum of all Rection Forces in GSA Model (" + Units.Force + ")", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Total Moment Reactions", "ΣRm", "Sum of all Reaction Moments in GSA Model (" + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Effective Mass", "Σkg", "Effective Mass in GSA Model (" + Units.Mass + ")", GH_ParamAccess.item);
             pManager.AddVectorParameter("Effective Inertia", "ΣI", "Effective Inertia in GSA Model", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mode", "Mo", "Mode number if LC is a dynamic task", GH_ParamAccess.item);
             pManager.AddVectorParameter("Modal", "Md", "Modal results in vector form:" + System.Environment.NewLine + 

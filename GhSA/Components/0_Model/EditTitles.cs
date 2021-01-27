@@ -28,7 +28,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.EditTitle;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditTitle;
         #endregion
 
         #region Custom UI
@@ -64,7 +64,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.SetJobNumber(title);
+                    Titles.SetJobNumber(title);
                 }
             }
 
@@ -73,7 +73,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.SetInitials(title);
+                    Titles.SetInitials(title);
                 }
             }
             ghstr = new GH_String();
@@ -81,7 +81,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.SetTitle(title);
+                    Titles.SetTitle(title);
                 }
             }
             ghstr = new GH_String();
@@ -89,7 +89,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.SetSubTitle(title);
+                    Titles.SetSubTitle(title);
                 }
             }
             ghstr = new GH_String();
@@ -97,7 +97,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.SetCalculation(title);
+                    Titles.SetCalculation(title);
                 }
             }
             ghstr = new GH_String();
@@ -105,18 +105,18 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(ghstr, out string title, GH_Conversion.Both))
                 {
-                    Util.GsaTitles.SetNotes(title);
+                    Titles.SetNotes(title);
                 }
             }
             
             List<string> titles = new List<string>
             {
-                "Job Number: " + Util.GsaTitles.JobNumber,
-                "Initials: " + Util.GsaTitles.Initials,
-                "Title: " + Util.GsaTitles.Title,
-                "Sub Title: " + Util.GsaTitles.SubTitle,
-                "Calculation Header: " + Util.GsaTitles.Calculation,
-                "Notes: " + Util.GsaTitles.Notes
+                "Job Number: " + Titles.JobNumber,
+                "Initials: " + Titles.Initials,
+                "Title: " + Titles.Title,
+                "Sub Title: " + Titles.SubTitle,
+                "Calculation Header: " + Titles.Calculation,
+                "Notes: " + Titles.Notes
             };
             
             DA.SetDataList(0, titles);

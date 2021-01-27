@@ -19,7 +19,7 @@ using Grasshopper.Kernel.Data;
 namespace GhSA.Components
 {
     /// <summary>
-    /// Component to create a new Prop2d
+    /// Component to get Element1D results
     /// </summary>
     public class Elem1DResults : GH_Component, IGH_VariableParameterComponent
     {
@@ -36,7 +36,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.Elem1dResults;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Elem1dResults;
         #endregion
 
         #region Custom UI
@@ -160,10 +160,10 @@ namespace GhSA.Components
                 "Element list should take the form:" + System.Environment.NewLine +
                 " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            pManager.AddIntegerParameter("No. Positions", "Pos", "Number of results (positions) for each line", GH_ParamAccess.item, 10);
-            pManager.AddColourParameter("Colour", "Col", "Optional list of colours to override default colours" +
+            pManager.AddIntegerParameter("No. Positions", "nP", "Number of results (positions) for each line", GH_ParamAccess.item, 10);
+            pManager.AddColourParameter("Colour", "Co", "Optional list of colours to override default colours" +
                 System.Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Scalar", "Scal", "Scale the result display size", GH_ParamAccess.item, 10);
+            pManager.AddNumberParameter("Scale", ":", "Scale the result display size", GH_ParamAccess.item, 10);
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
@@ -172,12 +172,12 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddVectorParameter("Translation", "U", "X, Y, Z translation values (" + Util.GsaUnit.LengthSmall + ")", GH_ParamAccess.tree);
-            pManager.AddVectorParameter("Rotation", "R", "XX, YY, ZZ rotation values (" + Util.GsaUnit.Angle + ")", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Line", "Ln", "Line with result values", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Result Colour", "Col", "Colours representing the result value at each point", GH_ParamAccess.tree);
+            pManager.AddVectorParameter("Translation", "U\u0305", "X, Y, Z translation values (" + Units.LengthSmall + ")", GH_ParamAccess.tree);
+            pManager.AddVectorParameter("Rotation", "R\u0305", "XX, YY, ZZ rotation values (" + Units.Angle + ")", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Line", "L", "Line with result values", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Result Colour", "Co", "Colours representing the result value at each point", GH_ParamAccess.tree);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Util.GsaUnit.LengthSmall + ")", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthSmall + ")", GH_ParamAccess.list);
         }
 
         #region fields
@@ -725,16 +725,16 @@ namespace GhSA.Components
             {
                 Params.Output[0].NickName = "U";
                 Params.Output[0].Name = "Translation";
-                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Util.GsaUnit.LengthSmall + ")";
+                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Units.LengthSmall + ")";
 
                 Params.Output[1].NickName = "R";
                 Params.Output[1].Name = "Rotation";
-                Params.Output[1].Description = "Rotation Vector [Rxx, Ryy, Rzz] (" + Util.GsaUnit.Angle + ")";
+                Params.Output[1].Description = "Rotation Vector [Rxx, Ryy, Rzz] (" + Units.Angle + ")";
 
                 if ((int)_disp < 4)
-                    Params.Output[5].Description = "Legend Values (" + Util.GsaUnit.LengthSmall + ")";
+                    Params.Output[5].Description = "Legend Values (" + Units.LengthSmall + ")";
                 else
-                    Params.Output[5].Description = "Legend Values (" + Util.GsaUnit.Angle + ")";
+                    Params.Output[5].Description = "Legend Values (" + Units.Angle + ")";
 
             }
 
@@ -742,16 +742,16 @@ namespace GhSA.Components
             {
                 Params.Output[0].NickName = "F";
                 Params.Output[0].Name = "Force";
-                Params.Output[0].Description = "Force Vector [Nx, Vy, Vz] (" + Util.GsaUnit.Force + ")";
+                Params.Output[0].Description = "Force Vector [Nx, Vy, Vz] (" + Units.Force + ")";
 
                 Params.Output[1].NickName = "M";
                 Params.Output[1].Name = "Moment";
-                Params.Output[1].Description = "Moment Vector [Mxx, Myy, Mzz] (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Output[1].Description = "Moment Vector [Mxx, Myy, Mzz] (" + Units.Force + "/" + Units.LengthLarge + ")";
 
                 if ((int)_disp < 4)
-                    Params.Output[5].Description = "Legend Values (" + Util.GsaUnit.Force + ")";
+                    Params.Output[5].Description = "Legend Values (" + Units.Force + ")";
                 else
-                    Params.Output[5].Description = "Legend Values (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                    Params.Output[5].Description = "Legend Values (" + Units.Force + "/" + Units.LengthLarge + ")";
             }
         }
         #endregion  

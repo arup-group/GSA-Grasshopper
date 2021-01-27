@@ -49,6 +49,35 @@ namespace GhSA.Parameters
             get { return m_props; }
             set { m_props = value; }
         }
+        public List<System.Drawing.Color> Colours
+        {
+            get
+            {
+                List<System.Drawing.Color> cols = new List<System.Drawing.Color>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if ((System.Drawing.Color)m_elements[i].Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                    {
+                        m_elements[i].Colour = System.Drawing.Color.FromArgb(50, 150, 150, 150);
+                    }
+                    cols.Add((System.Drawing.Color)m_elements[i].Colour);
+
+                    Mesh.VertexColors.SetColor(i, (System.Drawing.Color)m_elements[i].Colour);
+                }
+                return cols;
+            }
+            set 
+            {
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (value[i] != null)
+                    {
+                        m_elements[i].Colour = value[i];
+                        Mesh.VertexColors.SetColor(i, (System.Drawing.Color)m_elements[i].Colour);
+                    }
+                }
+            }
+        }
         #region fields
         private List<Element> m_elements; 
         private Mesh m_mesh;
@@ -65,12 +94,11 @@ namespace GhSA.Parameters
             m_mesh = new Mesh();
         }
 
-
         public GsaElement2d(Mesh mesh, int prop = 1)
         {
             m_elements = new List<Element>();
             m_mesh = mesh;
-            Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMesh(mesh, prop);
+            Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(mesh, prop);
             m_elements = convertMesh.Item1;
             m_topo = convertMesh.Item2;
             m_topoInt = convertMesh.Item3;
@@ -81,59 +109,55 @@ namespace GhSA.Parameters
             for (int i = 0; i < m_mesh.Faces.Count(); i++)
                 m_props.Add(new GsaProp2d());
         }
-        public GsaElement2d Clone()
-        {
-            GsaElement2d clones = this.Duplicate();
-            for (int i = 0; i < clones.Elements.Count; i++)
-            {
-                Element clone = new Element();
-                Element original = clones.Elements[i];
-                clone.Colour = original.Colour;
-                clone.Group = original.Group;
-                clone.IsDummy = original.IsDummy;
-                clone.Name = original.Name.ToString();
-                clone.Offset.X1 = original.Offset.X1;
-                clone.Offset.X2 = original.Offset.X2;
-                clone.Offset.Y = original.Offset.Y;
-                clone.Offset.Z = original.Offset.Z;
-                clone.OrientationAngle = original.OrientationAngle;
-                clone.OrientationNode = original.OrientationNode;
-                clone.ParentMember = original.ParentMember;
-                clone.Property = original.Property;
-                clone.Topology = original.Topology;
-                clone.Type = original.Type;
-
-                clones.Elements[i] = clone;
-            }
-            
-            return clones;
-        }
 
         public GsaElement2d Duplicate()
         {
-            GsaElement2d dup = new GsaElement2d
+            if (this == null) { return null; }
+            if (m_mesh == null) { return null; }
+
+            GsaElement2d dup = new GsaElement2d();
+            dup.m_mesh = (Mesh)m_mesh.Duplicate();
+            dup.m_topo = m_topo.ToList();
+            dup.m_topoInt = m_topoInt.ToList();
+
+            dup.m_props = new List<GsaProp2d>();
+
+            for (int i = 0; i < m_elements.Count; i++)
             {
-                m_elements = m_elements //add clone or duplicate if available
-            };
-            if (m_mesh != null)
-            {
-                dup.m_mesh = (Mesh)m_mesh.Duplicate();
-                Point3dList point3Ds = new Point3dList(m_topo);
-                dup.Topology = new List<Point3d>(point3Ds.Duplicate());
-                dup.m_topoInt = m_topoInt.ToList();
+                dup.m_elements.Add(new Element()
+                {
+                    //don't copy object.colour, this will be default = black if not set
+                    Group = m_elements[i].Group,
+                    IsDummy = m_elements[i].IsDummy,
+                    Name = m_elements[i].Name.ToString(),
+                    OrientationNode = m_elements[i].OrientationNode,
+                    OrientationAngle = m_elements[i].OrientationAngle,
+                    Offset = m_elements[i].Offset,
+                    ParentMember = m_elements[i].ParentMember,
+                    Property = m_elements[i].Property,
+                    Topology = m_elements[i].Topology,
+                    Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
+                });
+                dup.m_elements[i].Offset.X1 = m_elements[i].Offset.X1;
+                dup.m_elements[i].Offset.X2 = m_elements[i].Offset.X2;
+                dup.m_elements[i].Offset.Y = m_elements[i].Offset.Y;
+                dup.m_elements[i].Offset.Z = m_elements[i].Offset.Z;
+
+                if (m_props[i] != null)
+                    dup.m_props.Add(m_props[i].Duplicate());
+                else
+                    dup.m_props.Add(new GsaProp2d());
             }
+
+            dup.Colours = new List<System.Drawing.Color>(Colours);
+
             if (m_id != null)
             {
                 int[] dupids = new int[m_id.Count];
                 m_id.CopyTo(dupids);
                 dup.ID = new List<int>(dupids);
             }
-            if (m_props != null)
-            {
-                GsaProp2d[] dupprop = new GsaProp2d[m_props.Count];
-                m_props.CopyTo(dupprop);
-                dup.Properties = new List<GsaProp2d>(dupprop);
-            }
+            
 
             return dup;
         }
@@ -176,7 +200,7 @@ namespace GhSA.Parameters
         {
             if (element == null)
                 element = new GsaElement2d();
-            this.Value = element;
+            this.Value = element.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -253,7 +277,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
             
@@ -342,7 +366,7 @@ namespace GhSA.Parameters
 
             GsaElement2d elem = Value.Duplicate();
             
-            Mesh xMs = Value.Mesh;
+            Mesh xMs = elem.Mesh;
             xMs.Transform(xform);
             elem.Mesh = xMs;
             Point3dList pts = new Point3dList(Value.Topology);
@@ -358,7 +382,7 @@ namespace GhSA.Parameters
             if (Value.Mesh == null) { return null; }
 
             GsaElement2d elem = Value.Duplicate();
-            Mesh xMs = Value.Mesh;
+            Mesh xMs = elem.Mesh;
             xmorph.Morph(xMs);
             elem.Mesh = xMs;
             elem.TopoInt = Value.TopoInt;
@@ -378,7 +402,15 @@ namespace GhSA.Parameters
         {
             //Draw shape.
             if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
+            {
+                // args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
+                for (int i = 0; i < Value.Mesh.Faces.Count; i++)
+                {
+                    int[] face = new int[] { i };
+                    args.Pipeline.DrawMeshShaded(Value.Mesh,
+                        UI.Colour.FaceCustom(Value.Colours[i]), face);
+                }
+            }
             else
                 args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFaceSelected);
         }
@@ -410,15 +442,15 @@ namespace GhSA.Parameters
     public class GsaElement2dParameter : GH_PersistentGeometryParam<GsaElement2dGoo>, IGH_PreviewObject
     {
         public GsaElement2dParameter()
-          : base(new GH_InstanceDescription("GSA 2D Element", "Element 2D", "Maintains a collection of GSA 2D Element data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("2D Element", "E2D", "Maintains a collection of GSA 2D Element data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("bfaa6912-77b0-40b1-aa78-54e2b28614d0");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaElement2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaElement2D;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

@@ -8,8 +8,8 @@
     <ProjectGuid>{362F5ED1-BA80-4F21-881D-6BD8784612E4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GSA</RootNamespace>
-    <AssemblyName>GSA</AssemblyName>
+    <RootNamespace>GhSA</RootNamespace>
+    <AssemblyName>GhSA</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -55,17 +55,23 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Eto, Version=2.5.0.0, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.10.18308.14011\lib\net45\Eto.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="GH_IO, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
       <HintPath>..\packages\Grasshopper.6.10.18308.14011\lib\net45\GH_IO.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="Grasshopper, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=dda4f5ec2cd80803, processorArchitecture=MSIL">
       <HintPath>..\packages\Grasshopper.6.10.18308.14011\lib\net45\Grasshopper.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="GsaAPI">
@@ -74,10 +80,12 @@
     </Reference>
     <Reference Include="Rhino.UI, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.10.18308.14011\lib\net45\Rhino.UI.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="RhinoCommon, Version=6.10.18308.14010, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.10.18308.14011\lib\net45\RhinoCommon.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -110,6 +118,8 @@
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
+    <Compile Include="Components\2_Geometry\CreateMember3d.cs" />
+    <Compile Include="Components\2_Geometry\EditMember3d.cs" />
     <Compile Include="Components\2_Geometry\ElemFromMem.cs" />
     <Compile Include="Components\3_Loads\LoadProperties.cs" />
     <Compile Include="Components\4_Analysis\GhAnalyse.cs" />
@@ -154,19 +164,25 @@
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
     <Compile Include="Components\4_Analysis\AsyncAnalyse.cs" />
-    <Compile Include="Helpers\_GsaMesher.cs" />
+    <Compile Include="Helpers\_GsaExportLoads.cs" />
+    <Compile Include="Helpers\_GsaExportProperties.cs" />
+    <Compile Include="Helpers\_GsaExportElements.cs" />
+    <Compile Include="Helpers\_GsaExportNodes.cs" />
+    <Compile Include="Helpers\_old_GsaImportConvert.cs" />
+    <Compile Include="Helpers\_GsaExport.cs" />
     <Compile Include="Helpers\_GsaPath.cs" />
-    <Compile Include="Helpers\_GsaCreateModelHelper.cs" />
-    <Compile Include="Helpers\_GsaModelEnums.cs" />
-    <Compile Include="Helpers\_GsaImportConvert.cs" />
+    <Compile Include="Helpers\_GsaExportMembers.cs" />
+    <Compile Include="Helpers\_old_GsaModelEnums.cs" />
+    <Compile Include="Helpers\_GsaImport.cs" />
     <Compile Include="Helpers\_GsaProfileConvert.cs" />
     <Compile Include="Helpers\_GsaResultsHelper.cs" />
-    <Compile Include="Helpers\_RibbonLayout.cs" />
+    <Compile Include="Helpers\_GhRibbonLayout.cs" />
     <Compile Include="Components\0_Model\OpenModel.cs" />
     <Compile Include="GSAInfo.cs" />
     <Compile Include="Helpers\_SqlReader.cs" />
     <Compile Include="Parameters\GsaLoadParam.cs" />
     <Compile Include="Parameters\GsaGridPlaneSurfaceParam.cs" />
+    <Compile Include="Parameters\GsaMem3dParam.cs" />
     <Compile Include="Parameters\_ResultMesh.cs" />
     <Compile Include="Parameters\_ResultLine.cs" />
     <Compile Include="Parameters\_ResultPoint.cs" />
@@ -195,6 +211,7 @@
     <Compile Include="Helpers\_Colour.cs" />
     <Compile Include="UI\Comp_Profile.cs" />
     <Compile Include="UI\Comp_MultiDropDowns.cs" />
+    <Compile Include="UI\WidthFix.cs" />
     <Compile Include="UI\GraphicButtons.cs" />
     <Compile Include="UI\Comp_Bool6.cs" />
     <Compile Include="UI\Comp_DropDown.cs" />
@@ -587,6 +604,15 @@
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\CreateElementsFromMembers.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\CreateMem3D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\EditMem3D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\GsaMem3D.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -596,9 +622,9 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)$(ProjectName).gha"
+    <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)GSA.gha"
 Copy "$(TargetPath)" "$(SolutionDir)\UnitTestGhSA\bin\$(ConfigurationName)\$(ProjectName).dll"
-Copy "$(TargetPath)" "$(SolutionDir)$(ProjectName).gha"
+Copy "$(TargetPath)" "$(SolutionDir)GSA.gha"
 Erase "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

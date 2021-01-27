@@ -37,7 +37,7 @@ namespace GhSA.Parameters
         public Brep Brep
         {
             get { return m_brep; }
-            set { m_brep = Util.GH.Convert.ConvertBrep(value); }
+            set { m_brep = Util.GH.Convert.ConvertBrepToArcLineEdges(value); }
         }
 
         public List<Point3d> Topology
@@ -92,6 +92,16 @@ namespace GhSA.Parameters
             get { return m_prop; }
             set { m_prop = value; }
         }
+        public System.Drawing.Color Colour
+        {
+            get
+            {
+                if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                    m_member.Colour = UI.Colour.Member2dEdge;
+                return (System.Drawing.Color)m_member.Colour;
+            }
+            set { m_member.Colour = value; }
+        }
 
         #region fields
         private Member m_member;
@@ -115,74 +125,17 @@ namespace GhSA.Parameters
         public GsaMember2d()
         {
             m_member = new Member();
-        }
-
-        //public GsaMember(List<Point3d> topology, MemberType memberType)
-        //{
-        //    m_member = new Member();
-        //    m_member.Type = memberType;
-        //    m_topo = topology;
-        //}
-
-
-        public GsaMember2d(Brep brep, int prop = 1)
-        {
-            m_member = new Member
-            {
-                Type = MemberType.GENERIC_2D,
-                Property = prop
-            };
-
-            Tuple<PolyCurve, List<Point3d>, List<string>, List<PolyCurve>, List<List<Point3d>>, List<List<string>>> convertBrep
-                = Util.GH.Convert.ConvertPolyBrep(brep);
-            m_crv = convertBrep.Item1;
-            m_topo = convertBrep.Item2;
-            m_topoType = convertBrep.Item3;
-            void_crvs = convertBrep.Item4;
-            void_topo = convertBrep.Item5;
-            void_topoType = convertBrep.Item6;
-
             m_prop = new GsaProp2d();
-
-            m_brep = Util.GH.Convert.BuildBrep(m_crv, void_crvs);
         }
 
-        public GsaMember2d(Brep brep, List<Point3d> includePoints, List<Curve> includeCurves = null, int prop = 1)
+        public GsaMember2d(Brep brep, List<Curve> includeCurves = null, List<Point3d> includePoints = null, int prop = 1)
         {
             m_member = new Member
             {
                 Type = MemberType.GENERIC_2D,
                 Property = prop
             };
-
-            Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
-                convertBrepInclusion = Util.GH.Convert.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
-
-            Tuple<PolyCurve, List<Point3d>, List<string>> edgeTuple = convertBrepInclusion.Item1;
-            Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>> voidTuple = convertBrepInclusion.Item2;
-            Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>> inclTuple = convertBrepInclusion.Item3;
-
-            m_crv = edgeTuple.Item1;
-            m_topo = edgeTuple.Item2;
-            m_topoType = edgeTuple.Item3;
-            void_crvs = voidTuple.Item1;
-            void_topo = voidTuple.Item2;
-            void_topoType = voidTuple.Item3;
-            incl_Lines = inclTuple.Item1;
-            incLines_topo = inclTuple.Item2;
-            inclLines_topoType = inclTuple.Item3;
-            incl_pts = inclTuple.Item4;
-
-            m_brep = Util.GH.Convert.BuildBrep(m_crv, void_crvs);
-        }
-
-        public GsaMember2d(Brep brep, List<Curve> includeCurves, List<Point3d> includePoints = null, int prop = 1)
-        {
-            m_member = new Member
-            {
-                Type = MemberType.GENERIC_2D,
-                Property = prop
-            };
+            m_prop = new GsaProp2d();
 
             Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
                 convertBrepInclusion = Util.GH.Convert.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
@@ -226,7 +179,7 @@ namespace GhSA.Parameters
                 topology_type.Add("");
             }
                 
-            m_crv = Util.GH.Convert.BuildCurve(topology, topology_type);
+            m_crv = Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(topology, topology_type);
             m_topo = topology;
             m_topoType = topology_type;
 
@@ -242,9 +195,9 @@ namespace GhSA.Parameters
                         void_topology_type[i].Add("");
                     }
                     if (void_topology_type != null)
-                        void_crvs.Add(Util.GH.Convert.BuildCurve(void_topology[i], void_topology_type[i]));
+                        void_crvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(void_topology[i], void_topology_type[i]));
                     else
-                        void_crvs.Add(Util.GH.Convert.BuildCurve(void_topology[i]));
+                        void_crvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(void_topology[i]));
                 }
             }
             void_topo = void_topology;
@@ -256,9 +209,9 @@ namespace GhSA.Parameters
                 for (int i = 0; i < inlcusion_lines_topology.Count; i++)
                 {
                     if (inclusion_topology_type != null)
-                        incl_Lines.Add(Util.GH.Convert.BuildCurve(inlcusion_lines_topology[i], inclusion_topology_type[i]));
+                        incl_Lines.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(inlcusion_lines_topology[i], inclusion_topology_type[i]));
                     else
-                        incl_Lines.Add(Util.GH.Convert.BuildCurve(inlcusion_lines_topology[i]));
+                        incl_Lines.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(inlcusion_lines_topology[i]));
                 }
             }
             incLines_topo = inlcusion_lines_topology;
@@ -268,41 +221,42 @@ namespace GhSA.Parameters
 
             m_brep = Util.GH.Convert.BuildBrep(m_crv, void_crvs);
         }
-
-        public GsaMember2d Clone()
-        {
-            GsaMember2d clone = this.Duplicate();
-            clone.Member = new Member();
-            clone.Member.Colour = m_member.Colour;
-            clone.Member.Group = m_member.Group;
-            clone.Member.IsDummy = m_member.IsDummy;
-            clone.Member.MeshSize = m_member.MeshSize;
-            clone.Member.Name = m_member.Name.ToString();
-            clone.Member.Offset.X1 = m_member.Offset.X1;
-            clone.Member.Offset.X2 = m_member.Offset.X2;
-            clone.Member.Offset.Y = m_member.Offset.Y;
-            clone.Member.Offset.Z = m_member.Offset.Z;
-            clone.Member.OrientationAngle = m_member.OrientationAngle;
-            clone.Member.OrientationNode = m_member.OrientationNode;
-            clone.Member.Property = m_member.Property;
-            clone.Member.Topology = m_member.Topology;
-            clone.Member.Type = m_member.Type;
-            clone.Member.Type2D = m_member.Type2D;
-
-            return clone;
-        }
+        
         public GsaMember2d Duplicate()
         {
-            GsaMember2d dup = new GsaMember2d();
-            dup.m_member = m_member;
-            if (m_brep != null)
-                dup.m_brep = m_brep.DuplicateBrep();
-            if (m_crv != null)
-                dup.m_crv = m_crv.DuplicatePolyCurve();
+            if (this == null) { return null; }
+            GsaMember2d dup = new GsaMember2d()
+            {
+                Member = new Member()
+                {
+                    Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
+                    Group = m_member.Group,
+                    IsDummy = m_member.IsDummy,
+                    MeshSize = m_member.MeshSize,
+                    Name = m_member.Name.ToString(),
+                    Offset = m_member.Offset,
+                    OrientationAngle = m_member.OrientationAngle,
+                    OrientationNode = m_member.OrientationNode,
+                    Property = m_member.Property,
+                    Topology = m_member.Topology.ToString(),
+                    Type = m_member.Type, // GsaToModel.Member2dType((int)Member.Type),
+                    Type2D = m_member.Type2D //GsaToModel.AnalysisOrder((int) Member.Type2D)
+                }
+            };
 
-            Point3dList point3Ds = new Point3dList(m_topo);
+            dup.Member.Offset.X1 = m_member.Offset.X1;
+            dup.Member.Offset.X2 = m_member.Offset.X2;
+            dup.Member.Offset.Y = m_member.Offset.Y;
+            dup.Member.Offset.Z = m_member.Offset.Z;
+
+            if (m_brep != null)
+                dup.m_brep = Brep.DuplicateBrep();
+            if (m_crv != null)
+                dup.m_crv = PolyCurve.DuplicatePolyCurve();
+
+            Point3dList point3Ds = new Point3dList(Topology);
             dup.Topology = new List<Point3d>(point3Ds.Duplicate());
-            dup.TopologyType = m_topoType.ToList();
+            dup.TopologyType = TopologyType.ToList();
 
             if (void_crvs != null)
             {
@@ -332,15 +286,12 @@ namespace GhSA.Parameters
                 }
             }
             if (m_prop != null)
-                dup.Property = m_prop.Duplicate();
+                dup.Property = Property.Duplicate();
 
             Point3dList inclpoint3Ds = new Point3dList(incl_pts);
             dup.incl_pts = new List<Point3d>(inclpoint3Ds.Duplicate());
 
-            dup.ID = m_id;
-
-            if (m_prop != null)
-                dup.Property = m_prop.Duplicate();
+            dup.ID = ID;
 
             return dup;
         }
@@ -369,7 +320,7 @@ namespace GhSA.Parameters
             if (ID == 0) { idd = ""; }
             string mes = m_member.Type.ToString();
             string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
-
+            typeTxt = typeTxt.Replace("2d", "2D");
             string incl = "";
             if (!(incl_Lines == null & incl_pts == null))
                 if (incl_Lines.Count > 0 | incl_pts.Count > 0)
@@ -414,7 +365,7 @@ namespace GhSA.Parameters
         {
             if (member == null)
                 member = new GsaMember2d();
-            this.Value = member;
+            this.Value = member.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -493,7 +444,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value;
+                    target = (Q)(object)Value.Duplicate();
                 return true;
             }
 
@@ -623,7 +574,6 @@ namespace GhSA.Parameters
             // This function is called when Grasshopper needs to convert other data 
             // into GsaMember.
 
-
             if (source == null) { return false; }
 
             //Cast from GsaMember
@@ -642,11 +592,15 @@ namespace GhSA.Parameters
 
             //Cast from Brep
             Brep brep = new Brep();
-
             if (GH_Convert.ToBrep(source, ref brep, GH_Conversion.Both))
             {
-                GsaMember2d member = new GsaMember2d(brep);
-                this.Value = member;
+                List<Point3d> pts = new List<Point3d>();
+                List<Curve> crvs = new List<Curve>();
+                GsaMember2d mem = new GsaMember2d(brep, crvs, pts);
+                GsaProp2d prop2d = new GsaProp2d();
+                prop2d.ID = 1;
+                mem.Property = prop2d;
+                this.Value = mem;
                 return true;
             }
 
@@ -662,11 +616,11 @@ namespace GhSA.Parameters
 
             GsaMember2d mem = Value.Duplicate();
 
-            List<Point3d> pts = Value.Topology;
+            List<Point3d> pts = mem.Topology.ToList();
             Point3dList xpts = new Point3dList(pts);
             xpts.Transform(xform);
             mem.Topology = xpts.ToList();
-            mem.TopologyType = Value.TopologyType;
+            mem.TopologyType = Value.TopologyType.ToList();
             
             if (Value.VoidTopology != null)
             {
@@ -806,7 +760,7 @@ namespace GhSA.Parameters
             if (Value.Brep != null)
             {
                 if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFace);
+                    args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFace); //UI.Colour.Member2dFace
                 else
                     args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFaceSelected);
             }
@@ -815,11 +769,14 @@ namespace GhSA.Parameters
         {
             if (Value == null) { return; }
 
-            //Draw shape
+            // Draw shape
             if (Value.Brep != null)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdge, -1);
+                {
+                    if (!Value.Member.IsDummy)
+                        args.Pipeline.DrawBrepWires(Value.Brep, (System.Drawing.Color)Value.Member.Colour, -1);
+                }
                 else
                     args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdgeSelected, -1);
             }
@@ -828,14 +785,30 @@ namespace GhSA.Parameters
             if (Value.PolyCurve != null & Value.Brep == null)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1d, 2);
+                {
+                    if (Value.Member.IsDummy)
+                        args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Dummy1D, false);
+                    else
+                        args.Pipeline.DrawCurve(Value.PolyCurve, (System.Drawing.Color)Value.Member.Colour, 2);
+                }
                 else
-                    args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
+                {
+                    if (Value.Member.IsDummy)
+                        args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Member1dSelected, false);
+                    else
+                        args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
+                }
             }
+
             if (Value.InclusionLines != null)
             {
                 for (int i = 0; i < Value.InclusionLines.Count; i++)
-                    args.Pipeline.DrawCurve(Value.InclusionLines[i], UI.Colour.Member2dInclLn, 2);
+                {
+                    if (Value.Member.IsDummy)
+                        args.Pipeline.DrawDottedPolyline(Value.IncLinesTopology[i], UI.Colour.Member1dSelected, false);
+                    else
+                        args.Pipeline.DrawCurve(Value.InclusionLines[i], UI.Colour.Member2dInclLn, 2);
+                }
             }
 
             //Draw points.
@@ -847,9 +820,9 @@ namespace GhSA.Parameters
                     if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                     {
                         if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) // draw first point bigger
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Member1dNode);
+                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 3, (Value.Member.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
                         else
-                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, UI.Colour.Member1dNode);
+                            args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.Member.IsDummy)? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
                     }
                     else
                     {
@@ -858,17 +831,13 @@ namespace GhSA.Parameters
                         else
                             args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 2, UI.Colour.Member1dNodeSelected);
                     }
-
                 }
-
             }
             if (Value.InclusionPoints != null)
             {
                 for (int i = 0; i < Value.InclusionPoints.Count; i++)
-                    args.Pipeline.DrawPoint(Value.InclusionPoints[i], Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Member2dInclPt);
+                    args.Pipeline.DrawPoint(Value.InclusionPoints[i], Rhino.Display.PointStyle.RoundSimple, 3, (Value.Member.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member2dInclPt);
             }
-
-
         }
         #endregion
     }
@@ -879,15 +848,15 @@ namespace GhSA.Parameters
     public class GsaMember2dParameter : GH_PersistentGeometryParam<GsaMember2dGoo>, IGH_PreviewObject
     {
         public GsaMember2dParameter()
-          : base(new GH_InstanceDescription("GSA 2D Member", "Member 2D", "Maintains a collection of GSA 2D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("2D Member", "M2D", "Maintains a collection of GSA 2D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("fa512c2d-4767-49f1-a574-32bf66a66568");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.GsaMem2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaMem2D;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

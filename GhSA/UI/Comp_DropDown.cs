@@ -47,11 +47,12 @@ namespace GhSA.UI
         {
             get
             {
-                float num = Math.Max(Math.Max(
-                    GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small) + 8,
-                    GH_FontServer.StringWidth(displayText, GH_FontServer.Standard)) + 8,
-                    90);
-
+                List<string> spacers = new List<string>();
+                spacers.Add(SpacerTxt);
+                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
+                List<string> buttons = new List<string>();
+                float bt = GhSA.UI.ComponentUI.MaxTextWidth(dropdownlist, new Font(GH_FontServer.FamilyStandard, 7));
+                float num = Math.Max(Math.Max(sp, bt), 90);
                 return num;
             }
             set { MinWidth = value; }
@@ -115,16 +116,21 @@ namespace GhSA.UI
                 if (displayText == initialTxt)
                     pen = new Pen(UI.Colour.BorderColour);
                 pen.Width = 0.5f;
+                Font sml = GH_FontServer.Small;
+                // adjust fontsize to high resolution displays
+                sml = new Font(sml.FontFamily, sml.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
                 //Draw divider line
                 if (SpacerTxt != "")
                 {
-                    graphics.DrawString(SpacerTxt, GH_FontServer.Small, UI.Colour.AnnotationTextDark, SpacerBounds, GH_TextRenderingConstants.CenterCenter);
-                    graphics.DrawLine(spacer, SpacerBounds.X, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small)) / 2 - 4, SpacerBounds.Y + SpacerBounds.Height / 2);
-                    graphics.DrawLine(spacer, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small)) / 2 + GH_FontServer.StringWidth(SpacerTxt, GH_FontServer.Small) + 4, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + SpacerBounds.Width, SpacerBounds.Y + SpacerBounds.Height / 2);
+                    graphics.DrawString(SpacerTxt, sml, UI.Colour.AnnotationTextDark, SpacerBounds, GH_TextRenderingConstants.CenterCenter);
+                    graphics.DrawLine(spacer, SpacerBounds.X, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 - 4, SpacerBounds.Y + SpacerBounds.Height / 2);
+                    graphics.DrawLine(spacer, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 + GH_FontServer.StringWidth(SpacerTxt, sml) + 4, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + SpacerBounds.Width, SpacerBounds.Y + SpacerBounds.Height / 2);
                 }
 
                 // Draw selected item
                 Font font = new Font(GH_FontServer.FamilyStandard, 7);
+                // adjust fontsize to high resolution displays
+                font = new Font(font.FontFamily, font.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
                 Brush fontColour = UI.Colour.AnnotationTextDark;
                 // background
                 Brush background = new SolidBrush(UI.Colour.GsaLightGrey);
@@ -132,7 +138,7 @@ namespace GhSA.UI
                 // border
                 graphics.DrawRectangle(pen, BorderBound.X, BorderBound.Y, BorderBound.Width, BorderBound.Height);
                 // text
-                graphics.DrawString(displayText, (displayText == initialTxt) ? GH_FontServer.Small : font, (displayText == initialTxt) ? Brushes.Gray : fontColour, TextBound, GH_TextRenderingConstants.NearCenter);
+                graphics.DrawString(displayText, (displayText == initialTxt) ? sml : font, (displayText == initialTxt) ? Brushes.Gray : fontColour, TextBound, GH_TextRenderingConstants.NearCenter);
                 // draw dropdown arrow
                 ButtonsUI.DropDownArrow.DrawDropDownButton(graphics, new PointF(ButtonBound.X + ButtonBound.Width / 2, ButtonBound.Y + ButtonBound.Height / 2), UI.Colour.GsaDarkBlue, 15);
 
@@ -219,27 +225,57 @@ namespace GhSA.UI
 
         protected void FixLayout()
         {
-            float width = this.Bounds.Width;
-            float num = Math.Max(width, MinWidth);
-            float num2 = 0f;
-            if (num > this.Bounds.Width)
+            float width = this.Bounds.Width; // initial component width before UI overrides
+            float num = Math.Max(width, MinWidth); // number for new width
+            float num2 = 0f; // value for increased width (if any)
+
+            // first check if original component must be widened
+            if (num > width)
             {
-                num2 = num - this.Bounds.Width;
-                this.Bounds = new RectangleF(this.Bounds.X - num2 / 2f, this.Bounds.Y, num, this.Bounds.Height);
+                num2 = num - width; // change in width
+                // update component bounds to new width
+                this.Bounds = new RectangleF(
+                    this.Bounds.X - num2 / 2f,
+                    this.Bounds.Y,
+                    num,
+                    this.Bounds.Height);
             }
+
+            // secondly update position of input and output parameter text
+            // first find the maximum text width of parameters
+
             foreach (IGH_Param item in base.Owner.Params.Output)
             {
-                PointF pivot = item.Attributes.Pivot;
-                RectangleF bounds = item.Attributes.Bounds;
-                item.Attributes.Pivot = new PointF(pivot.X, pivot.Y);
-                item.Attributes.Bounds = new RectangleF(bounds.Location.X, bounds.Location.Y, bounds.Width + num2 / 2f, bounds.Height);
+                PointF pivot = item.Attributes.Pivot; // original anchor location of output
+                RectangleF bounds = item.Attributes.Bounds; // text box itself
+                item.Attributes.Pivot = new PointF(
+                    pivot.X + num2 / 2f, // move anchor to the right
+                    pivot.Y);
+                item.Attributes.Bounds = new RectangleF(
+                    bounds.Location.X + num2 / 2f,  // move text box to the right
+                    bounds.Location.Y,
+                    bounds.Width,
+                    bounds.Height);
+            }
+            // for input params first find the widest input text box as these are right-aligned
+            float inputwidth = 0f;
+            foreach (IGH_Param item in base.Owner.Params.Input)
+            {
+                if (inputwidth < item.Attributes.Bounds.Width)
+                    inputwidth = item.Attributes.Bounds.Width;
             }
             foreach (IGH_Param item2 in base.Owner.Params.Input)
             {
-                PointF pivot2 = item2.Attributes.Pivot;
+                PointF pivot2 = item2.Attributes.Pivot; // original anchor location of input
                 RectangleF bounds2 = item2.Attributes.Bounds;
-                item2.Attributes.Pivot = new PointF(pivot2.X - num2 / 2f, pivot2.Y);
-                item2.Attributes.Bounds = new RectangleF(bounds2.Location.X - num2 / 2f, bounds2.Location.Y, bounds2.Width + num2 / 2f, bounds2.Height);
+                item2.Attributes.Pivot = new PointF(
+                    pivot2.X - num2 / 2f + inputwidth, // move to the left, move back by max input width
+                    pivot2.Y);
+                item2.Attributes.Bounds = new RectangleF(
+                     bounds2.Location.X - num2 / 2f,
+                     bounds2.Location.Y,
+                     bounds2.Width,
+                     bounds2.Height);
             }
         }
     }

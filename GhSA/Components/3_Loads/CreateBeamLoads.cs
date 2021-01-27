@@ -23,7 +23,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("a2bc3c66-eb22-43ec-9936-84d2944be414");
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GSA.Properties.Resources.BeamLoad;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.BeamLoad;
         #endregion
 
         #region Custom UI
@@ -80,7 +80,10 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
-            pManager.AddTextParameter("Elements", "El", "1D element list", GH_ParamAccess.item);
+            pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to." + System.Environment.NewLine +
+                "Element list should take the form:" + System.Environment.NewLine +
+                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Axis", "Ax", "Load axis (default Global). " +
                     System.Environment.NewLine + "Accepted inputs are:" +
                     System.Environment.NewLine + "0 : Global" +
@@ -95,7 +98,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "zz", GH_ParamAccess.item, "z");
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
 
-            pManager.AddNumberParameter("Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", "V", "Load Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value (" + Units.Force + "/" + Units.LengthLarge + ")", "V", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[2].Optional = true;
@@ -106,21 +109,21 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Beam Load", "Load", "GSA Beam Load", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Beam Load", "Ld", "GSA Beam Load", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaBeamLoad beamLoad = new GsaBeamLoad();
             
-            //Load case
+            // 0 Load case
             int lc = 1;
             GH_Integer gh_lc = new GH_Integer();
             if (DA.GetData(0, ref gh_lc))
                 GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
             beamLoad.BeamLoad.Case = lc;
 
-            //element/beam list
+            // 1 element/beam list
             string beamList = ""; //pick an initial name that is sure not to be used...
             GH_String gh_bl = new GH_String();
             if (DA.GetData(1, ref gh_bl))
@@ -130,7 +133,7 @@ namespace GhSA.Components
             //    beamList = "PB" + n;
             beamLoad.BeamLoad.Elements = beamList;
 
-            //axis
+            // 2 axis
             int axis = 0;
             beamLoad.BeamLoad.AxisProperty = 0; //Note there is currently a bug/undocumented in GsaAPI that cannot translate an integer into axis type (Global, Local or edformed local)
             GH_Integer gh_ax = new GH_Integer();
@@ -141,14 +144,14 @@ namespace GhSA.Components
                     beamLoad.BeamLoad.AxisProperty = axis;
             }
 
-            //direction
+            // 3 direction
             string dir = "Z";
             Direction direc = Direction.Z;
             
             GH_String gh_dir = new GH_String();
-            if (DA.GetData(5, ref gh_dir))
+            if (DA.GetData(3, ref gh_dir))
                 GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
-            dir = dir.ToUpper();
+            dir = dir.ToUpper().Trim();
             if (dir == "X")
                 direc = Direction.X;
             if (dir == "Y")
@@ -162,16 +165,23 @@ namespace GhSA.Components
 
             beamLoad.BeamLoad.Direction = direc;
 
-            //projection
+            // 4 projection
             bool prj = false;
             GH_Boolean gh_prj = new GH_Boolean();
             if (DA.GetData(4, ref gh_prj))
                 GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
             beamLoad.BeamLoad.IsProjected = prj;
 
+            // 5 value (1)
             double load1 = 0;
             if (DA.GetData(5, ref load1))
-                load1 *= -1000; //convert to kN
+            {
+                if (direc == Direction.Z)
+                    load1 *= -1000; //convert to kN
+                else
+                    load1 *= 1000;
+            }
+                
             
             switch (_mode)
             {
@@ -180,7 +190,7 @@ namespace GhSA.Components
                     {
                         beamLoad.BeamLoad.Type = BeamLoadType.POINT;
                         
-                        // get data
+                        // 6 pos (1)
                         double pos = 0;
                         if (DA.GetData(6, ref pos))
                             pos *= -1;
@@ -205,10 +215,15 @@ namespace GhSA.Components
                     {
                         beamLoad.BeamLoad.Type = BeamLoadType.LINEAR;
 
-                        // get data
+                        // 6 value (2)
                         double load2 = 0;
                         if (DA.GetData(6, ref load2))
-                            load2 *= -1000; //convert to kN
+                        {
+                            if (direc == Direction.Z)
+                                load2 *= -1000; //convert to kN
+                            else
+                                load2 *= 1000;
+                        }
 
                         // set value
                         beamLoad.BeamLoad.SetValue(0, load1);
@@ -221,18 +236,25 @@ namespace GhSA.Components
                     {
                         beamLoad.BeamLoad.Type = BeamLoadType.PATCH;
 
-                        // get data
+                        // 6 pos (1)
                         double pos1 = 0;
                         if (DA.GetData(6, ref pos1))
                             pos1 *= -1;
 
+                        // 8 pos (2)
                         double pos2 = 1;
                         if (DA.GetData(8, ref pos2))
                             pos2 *= -1;
 
+                        // 7 value (2)
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
-                            load2 *= -1000; //convert to kN
+                        {
+                            if (direc == Direction.Z)
+                                load2 *= -1000; //convert to kN
+                            else
+                                load2 *= 1000;
+                        }
 
                         // set value
                         beamLoad.BeamLoad.SetValue(0, load1);
@@ -247,18 +269,25 @@ namespace GhSA.Components
                     {
                         beamLoad.BeamLoad.Type = BeamLoadType.TRILINEAR;
 
-                        // get data
+                        // 6 pos (1)
                         double pos1 = 0;
                         if (DA.GetData(6, ref pos1))
                             pos1 *= -1;
 
+                        // 8 pos (2)
                         double pos2 = 1;
                         if (DA.GetData(8, ref pos2))
                             pos2 *= -1;
 
+                        // 7 value (2)
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
-                            load2 *= -1000; //convert to kN
+                        {
+                            if (direc == Direction.Z)
+                                load2 *= -1000; //convert to kN
+                            else
+                                load2 *= 1000;
+                        }
 
                         // set value
                         beamLoad.BeamLoad.SetValue(0, load1);
@@ -427,8 +456,8 @@ namespace GhSA.Components
             if (_mode == FoldMode.Point)
             {
                 Params.Input[5].NickName = "V";
-                Params.Input[5].Name = "Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[5].Description = "Load Value (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[5].Name = "Value (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[5].Description = "Load Value (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = false;
                 
@@ -451,14 +480,14 @@ namespace GhSA.Components
             if (_mode == FoldMode.Linear)
             {
                 Params.Input[5].NickName = "V1";
-                Params.Input[5].Name = "Value Start (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[5].Description = "Load Value at Beam Start (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[5].Name = "Value Start (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[5].Description = "Load Value at Beam Start (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
 
                 Params.Input[6].NickName = "V2";
-                Params.Input[6].Name = "Value End (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[6].Description = "Load Value at Beam End (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[6].Name = "Value End (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[6].Description = "Load Value at Beam End (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = true;
             }
@@ -466,8 +495,8 @@ namespace GhSA.Components
             if (_mode == FoldMode.Patch)
             {
                 Params.Input[5].NickName = "V1";
-                Params.Input[5].Name = "Load t1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[5].Description = "Load Value at Position 1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[5].Name = "Load t1 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[5].Description = "Load Value at Position 1 (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
 
@@ -478,8 +507,8 @@ namespace GhSA.Components
                 Params.Input[6].Optional = true;
 
                 Params.Input[7].NickName = "V2";
-                Params.Input[7].Name = "Load t2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[7].Description = "Load Value at Position 2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[7].Name = "Load t2 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[7].Description = "Load Value at Position 2 (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = true;
 
@@ -493,8 +522,8 @@ namespace GhSA.Components
             if (_mode == FoldMode.Trilinear)
             {
                 Params.Input[5].NickName = "V1";
-                Params.Input[5].Name = "Load t1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[5].Description = "Load Value at Position 1 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[5].Name = "Load t1 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[5].Description = "Load Value at Position 1 (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
 
@@ -505,8 +534,8 @@ namespace GhSA.Components
                 Params.Input[6].Optional = true;
 
                 Params.Input[7].NickName = "V2";
-                Params.Input[7].Name = "Load t2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
-                Params.Input[7].Description = "Load Value at Position 2 (" + Util.GsaUnit.Force + "/" + Util.GsaUnit.LengthLarge + ")";
+                Params.Input[7].Name = "Load t2 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[7].Description = "Load Value at Position 2 (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = true;
 

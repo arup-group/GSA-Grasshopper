@@ -1,13 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.Kernel;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Rhino.DocObjects;
-using Rhino.Display;
 using System.IO;
 
 namespace GhSA.Util.Gsa
@@ -17,7 +8,7 @@ namespace GhSA.Util.Gsa
     /// Will be modified to account for different GSA versions etc.
     /// 
     /// </summary>
-    public class GsaPath
+    public class InstallationFolderPath
     {
         // File path to GSA folder
         public static string GetPath
