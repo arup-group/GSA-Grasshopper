@@ -66,7 +66,7 @@ namespace GhSA.Components
             List<GsaSection> Sections { get; set; }
             List<GsaProp2d> Prop2Ds { get; set; }
             List<GsaGridPlaneSurface> GridPlaneSurfaces { get; set; }
-
+            bool hasInput = false;
             GsaModel OutModel { get; set; }
             #endregion
 
@@ -84,6 +84,7 @@ namespace GhSA.Components
                 Sections = null;
                 Prop2Ds = null;
                 GridPlaneSurfaces = null;
+                OutModel = null;
 
                 // Get Model input
                 List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
@@ -92,7 +93,7 @@ namespace GhSA.Components
                     List<GsaModel> in_models = new List<GsaModel>();
                     for (int i = 0; i < gh_types.Count; i++)
                     {
-                        GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+                        GH_ObjectWrapper gh_typ = gh_types[i];
                         if (gh_typ.Value is GsaModelGoo)
                         {
                             GsaModel in_model = new GsaModel();
@@ -101,10 +102,11 @@ namespace GhSA.Components
                         }
                         else
                         {
-                            this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input to Model");
+                            Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input to Model");
                             return;
                         }
                     }
+                    Models = in_models;
                 }
 
                 // Get Section Property input
@@ -130,7 +132,8 @@ namespace GhSA.Components
                         }
                         else
                         {
-                            this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Prop input to GsaSection or GsaProp2d");
+                            Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Prop input parameter of type " + 
+                                gh_typ.Value.GetType().ToString() + " to GsaSection or GsaProp2d");
                             return;
                         }
                     }
@@ -192,7 +195,8 @@ namespace GhSA.Components
                         }
                         else
                         {
-                            this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Nodes input");
+                            Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input parameter of type " +
+                                gh_typ.Value.GetType().ToString() + System.Environment.NewLine + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
                             return;
                         }
                     }
@@ -234,7 +238,8 @@ namespace GhSA.Components
                         }
                         else
                         {
-                            this.Parent.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Loads input");
+                            Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Load input parameter of type " +
+                                gh_typ.Value.GetType().ToString() + " to Load or GridPlaneSurface");
                             return;
                         }
                     }
@@ -244,65 +249,84 @@ namespace GhSA.Components
                         GridPlaneSurfaces = in_gps;
                 }
 
-                
+
                 #endregion
+
+                // manually add a warning if no input is set, as all inputs are optional
+                if (Models == null & Nodes == null & Elem1ds == null & Elem2ds == null &
+                    Mem1ds == null & Mem2ds == null & Mem3ds == null & Sections == null
+                    & Prop2Ds == null & Loads == null & GridPlaneSurfaces == null)
+                {
+                    hasInput = false;
+                    Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameters failed to collect data");
+                    return;
+                }
+                else
+                    hasInput = true;
             }
             public override void SetData(IGH_DataAccess DA)
             {
                 // 👉 Checking for cancellation!
                 if (CancellationToken.IsCancellationRequested) return;
 
-                DA.SetData(0, new GsaModelGoo(OutModel));
+                if (hasInput)
+                    DA.SetData(0, new GsaModelGoo(OutModel));
             }
 
             public override void DoWork(Action<string, double> ReportProgress, Action Done)
             {
                 #region DoWork
-                ReportProgress("Merge/Cloning model...", -2);
-                GsaModel analysisModel = Util.Gsa.ToGSA.Models.MergeModel(Models);
-                ReportProgress("Model cloned", -1);
-
-                // Assemble model
-                ReportProgress("Assembling model...", -2);
-                Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces, this, ReportProgress);
-                ReportProgress("Model assembled", -1);
-
-                #region meshing
-                // Create elements from members
-                ReportProgress("Meshing", 0);
-                //gsa.CreateElementsFromMembers();
-                ReportProgress("Model meshed", -1);
-                #endregion
-
-                #region analysis
-                //analysis
-                IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
-                if (gsaTasks.Count < 1)
+                if (hasInput)
                 {
-                    ReportProgress("Model contains no Analysis Tasks", -255);
+                    ReportProgress("Merge/Cloning model...", -2);
+                    GsaModel analysisModel = Util.Gsa.ToGSA.Models.MergeModel(Models);
+                    ReportProgress("Model cloned", -1);
+
+                    // Assemble model
+                    ReportProgress("Assembling model...", -2);
+                    Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces, this, ReportProgress);
                     ReportProgress("Model assembled", -1);
-                }
-                else
-                {
-                    foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
-                    {
-                        if (CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Analysing Task " + task.Key.ToString(), -2);
 
-                        if (!(gsa.Analyse(task.Key)))
-                        {
-                            ReportProgress("Warning Analysis Case " + task.Key + " could not be analysed", -10);
-                        }
+                    #region meshing
+                    // Create elements from members
+                    ReportProgress("Meshing", 0);
+                    //gsa.CreateElementsFromMembers();
+                    ReportProgress("Model meshed", -1);
+                    #endregion
+
+                    #region analysis
+                    //analysis
+                    IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
+                    if (gsaTasks.Count < 1)
+                    {
+                        ReportProgress("Model contains no Analysis Tasks", -255);
+                        ReportProgress("Model assembled", -1);
                     }
-                    ReportProgress("Model analysed", -1);
+                    else
+                    {
+                        foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
+                        {
+                            if (CancellationToken.IsCancellationRequested) return;
+                            ReportProgress("Analysing Task " + task.Key.ToString(), -2);
+
+                            if (!(gsa.Analyse(task.Key)))
+                            {
+                                ReportProgress("Warning Analysis Case " + task.Key + " could not be analysed", -10);
+                            }
+                        }
+                        ReportProgress("Model analysed", -1);
+                    }
+                    if (analysisModel != null)
+                        OutModel = analysisModel;
+                    #endregion
+                    if (OutModel != null)
+                        OutModel.Model = gsa;
+                    else
+                    {
+                        return;
+                    }
+                    Done();
                 }
-                if (analysisModel == null)
-                    analysisModel = new GsaModel();
-                #endregion
-                OutModel = analysisModel;
-                if (OutModel != null)
-                    OutModel.Model = gsa;
-                Done();
                 #endregion
             }
         }
