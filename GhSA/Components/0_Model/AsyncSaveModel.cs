@@ -117,7 +117,7 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA model to save", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Save?", "Save", "Input 'True' to save or use button", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Save?", "Save", "Input False boolean to stop automatic saving", GH_ParamAccess.item);
             pManager.AddTextParameter("File and Path", "File", "Filename and path", GH_ParamAccess.item);
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -164,14 +164,14 @@ namespace GhSA.Components
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
             //writer.SetInt32("Mode", (int)_mode);
-            writer.SetString("File", (string)fileName);
+            //writer.SetString("File", (string)fileName);
             //writer.SetBoolean("Advanced", (bool)advanced);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
             //_mode = (FoldMode)reader.GetInt32("Mode");
-            fileName = (string)reader.GetString("File");
+            //fileName = (string)reader.GetString("File");
             //advanced = (bool)reader.GetBoolean("Advanced");
             return base.Read(reader);
         }
@@ -210,6 +210,19 @@ namespace GhSA.Components
 
                 DA.GetData(1, ref save);
                 #endregion
+
+                // manually add a warning if no input is set, as all inputs are optional
+                if (model == null)
+                {
+                    Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "GSA input parameter failed to collect data");
+                    return;
+                }
+                if (fileName == null)
+                {
+                    Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No file name found in GSA input. Please input file name");
+                    return;
+                }
+
             }
 
             public override void SetData(IGH_DataAccess DA)
