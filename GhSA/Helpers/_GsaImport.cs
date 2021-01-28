@@ -593,7 +593,11 @@ namespace GhSA.Util.Gsa
                             // so it can be used by other components. We use
                             // the same point twice and create a 0-length line
                             if (topopts.Count < 2)
+                            {
                                 topopts.Add(topopts[0]);
+                                topoType.Add(topoType[0]);
+                            }
+                                
 
                             // create the element from list of points and type description
                             GsaMember1d mem1d = new GsaMember1d(topopts, topoType);
