@@ -295,6 +295,9 @@ namespace GhSA.Components
                     #endregion
 
                     #region analysis
+                    if (analysisModel != null)
+                        OutModel = analysisModel;
+
                     //analysis
                     IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
                     if (gsaTasks.Count < 1)
@@ -316,8 +319,7 @@ namespace GhSA.Components
                         }
                         ReportProgress("Model analysed", -1);
                     }
-                    if (analysisModel != null)
-                        OutModel = analysisModel;
+                    
                     #endregion
                     if (OutModel != null)
                         OutModel.Model = gsa;

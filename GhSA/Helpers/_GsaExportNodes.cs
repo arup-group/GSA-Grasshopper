@@ -52,8 +52,9 @@ namespace GhSA.Util.Gsa.ToGSA
                     ax.XYPlane.Z = pln.YAxis.Z;
 
                     // set Axis property in node
-                    
-                    apiNode.AxisProperty = existingAxes.Keys.Max() + 1;
+                    apiNode.AxisProperty = 1;
+                    if (existingAxes.Count > 0)
+                        apiNode.AxisProperty = existingAxes.Keys.Max() + 1;
                     existingAxes.Add(apiNode.AxisProperty, ax);
                 }
             }
@@ -112,26 +113,29 @@ namespace GhSA.Util.Gsa.ToGSA
             // Add/Set Nodes
             if (nodes != null)
             {
-                // update counter if new nodes have set ID higher than existing max
-                int existingNodeMaxID = nodes.Max(x => x.ID); // max ID in new nodes
-                if (existingNodeMaxID > nodeidcounter)
-                    nodeidcounter = existingNodeMaxID + 1;
-
-                for (int i = 0; i < nodes.Count; i++)
+                if (nodes.Count > 0)
                 {
-                    // if method is called by a Async component check for cancellation and report progress
-                    if (workerInstance != null)
-                    {
-                        if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Nodes ", (double)i / (nodes.Count - 1));
-                    }
+                    // update counter if new nodes have set ID higher than existing max
+                    int existingNodeMaxID = nodes.Max(x => x.ID); // max ID in new nodes
+                    if (existingNodeMaxID > nodeidcounter)
+                        nodeidcounter = existingNodeMaxID + 1;
 
-                    if (nodes[i] != null)
+                    for (int i = 0; i < nodes.Count; i++)
                     {
-                        GsaNode node = nodes[i];
+                        // if method is called by a Async component check for cancellation and report progress
+                        if (workerInstance != null)
+                        {
+                            if (workerInstance.CancellationToken.IsCancellationRequested) return;
+                            ReportProgress("Nodes ", (double)i / (nodes.Count - 1));
+                        }
 
-                        // Add / Set node in dictionary
-                        ConvertNode(node, ref existingNodes, ref existingAxes, ref nodeidcounter);
+                        if (nodes[i] != null)
+                        {
+                            GsaNode node = nodes[i];
+
+                            // Add / Set node in dictionary
+                            ConvertNode(node, ref existingNodes, ref existingAxes, ref nodeidcounter);
+                        }
                     }
                 }
             }

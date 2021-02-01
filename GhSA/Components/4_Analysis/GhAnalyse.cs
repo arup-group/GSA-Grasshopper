@@ -96,7 +96,7 @@ namespace GhSA.Components
                 List<GsaModel> in_models = new List<GsaModel>();
                 for (int i = 0; i < gh_types.Count; i++)
                 {
-                    GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+                    GH_ObjectWrapper gh_typ = gh_types[i];
                     if (gh_typ.Value is GsaModelGoo)
                     {
                         GsaModel in_model = new GsaModel();
@@ -109,6 +109,7 @@ namespace GhSA.Components
                         return;
                     }
                 }
+                Models = in_models;
             }
 
             // Get Section Property input
@@ -270,6 +271,9 @@ namespace GhSA.Components
             #endregion
 
             #region analysis
+            if (analysisModel == null)
+                analysisModel = new GsaModel();
+
             //analysis
             IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
             if (gsaTasks.Count < 1)
