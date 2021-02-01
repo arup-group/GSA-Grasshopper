@@ -21,7 +21,7 @@ namespace GhSA.Util.Gsa.ToGSA
                     models.Reverse();
                     for (int i = 0; i < models.Count - 1; i++)
                     {
-                        model = MergeModel(model, models[i]);
+                        model = MergeModel(model, models[i].Clone());
                     }
                     GsaModel clone = models[models.Count - 1].Clone();
                     clone = MergeModel(clone, model);
@@ -36,10 +36,10 @@ namespace GhSA.Util.Gsa.ToGSA
             return null;
         }
 
-        public static GsaModel MergeModel(GsaModel maintainIDs, GsaModel appendIDs)
+        public static GsaModel MergeModel(GsaModel mainModel, GsaModel appendModel)
         {
             // open the copyfrom model
-            Model model = maintainIDs.Model;
+            Model model = appendModel.Model;
 
             // get dictionaries from model
             IReadOnlyDictionary<int, Node> nDict = model.Nodes();
@@ -50,25 +50,48 @@ namespace GhSA.Util.Gsa.ToGSA
 
             // get nodes
             List<GsaNodeGoo> goonodes = Util.Gsa.FromGSA.GetNodes(nDict, model);
+            // convert from Goo-type
             List<GsaNode> nodes = goonodes.Select(n => n.Value).ToList();
+            // change all members in List's ID to 0;
+            nodes.Select(c => { c.ID = 0; return c; }).ToList();
 
             // get elements
             Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>> elementTuple
                 = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict);
+            // convert from Goo-type
             List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
+            // change all members in List's ID to 0;
+            elem1ds.Select(c => { c.ID = 0; return c; }).ToList();
+            // convert from Goo-type
             List<GsaElement2d> elem2ds = elementTuple.Item2.Select(n => n.Value).ToList();
+            // change all members in List's ID to 0;
+            foreach (var elem2d in elem2ds)
+                elem2d.ID.Select(c => { c = 0; return c; }).ToList();
+            
 
             // get members
             Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>> memberTuple
                 = Util.Gsa.FromGSA.GetMembers(mDict, nDict, sDict, pDict);
+            // convert from Goo-type
             List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
+            // change all members in List's ID to 0;
+            mem1ds.Select(c => { c.ID = 0; return c; }).ToList();
+            // convert from Goo-type
             List<GsaMember2d> mem2ds = memberTuple.Item2.Select(n => n.Value).ToList();
+            // change all members in List's ID to 0;
+            mem2ds.Select(c => { c.ID = 0; return c; }).ToList();
 
             // get properties
             List<GsaSectionGoo> goosections = FromGSA.GetSections(sDict);
+            // convert from Goo-type
             List<GsaSection> sections = goosections.Select(n => n.Value).ToList();
+            // change all members in List's ID to 0;
+            sections.Select(c => { c.ID = 0; return c; }).ToList();
             List<GsaProp2dGoo> gooprop2Ds = FromGSA.GetProp2ds(pDict);
+            // convert from Goo-type
             List<GsaProp2d> prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
+            // change all members in List's ID to 0;
+            prop2Ds.Select(c => { c.ID = 0; return c; }).ToList();
 
             // get loads
             List<GsaLoadGoo> gooloads = new List<GsaLoadGoo>();
@@ -90,11 +113,12 @@ namespace GhSA.Util.Gsa.ToGSA
             List<GsaGridPlaneSurfaceGoo> gpsgoo = new List<GsaGridPlaneSurfaceGoo>();
             foreach (int key in srfDict.Keys)
                 gpsgoo.Add(new GsaGridPlaneSurfaceGoo(Util.Gsa.FromGSA.GetGridPlaneSurface(srfDict, plnDict, axDict, key)));
+            // convert from Goo-type
             List<GsaGridPlaneSurface> gps = gpsgoo.Select(n => n.Value).ToList();
 
             // return new assembled model
-            maintainIDs.Model = Assemble.AssembleModel(appendIDs, nodes, elem1ds, elem2ds, mem1ds, mem2ds, null, sections, prop2Ds, loads, gps);
-            return maintainIDs;
+            mainModel.Model = Assemble.AssembleModel(mainModel, nodes, elem1ds, elem2ds, mem1ds, mem2ds, null, sections, prop2Ds, loads, gps);
+            return mainModel;
         }
     }
     public class Assemble
