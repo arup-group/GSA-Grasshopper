@@ -165,7 +165,15 @@ namespace GhSA.Parameters
         public override string ToString()
         {
             //Could add detailed description of model content here
-            return "GSA Model";
+            string s = "";
+            if (FileName != null)
+            {
+                s = Path.GetFileName(FileName);
+                s = s.Substring(0, s.Length - 4);
+                s = " (" + s + ")";
+            }
+                
+            return "GSA Model" + s;
         }
 
         #endregion
