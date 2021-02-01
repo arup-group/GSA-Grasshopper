@@ -168,11 +168,9 @@
     <Compile Include="Helpers\_GsaExportProperties.cs" />
     <Compile Include="Helpers\_GsaExportElements.cs" />
     <Compile Include="Helpers\_GsaExportNodes.cs" />
-    <Compile Include="Helpers\_old_GsaImportConvert.cs" />
     <Compile Include="Helpers\_GsaExport.cs" />
     <Compile Include="Helpers\_GsaPath.cs" />
     <Compile Include="Helpers\_GsaExportMembers.cs" />
-    <Compile Include="Helpers\_old_GsaModelEnums.cs" />
     <Compile Include="Helpers\_GsaImport.cs" />
     <Compile Include="Helpers\_GsaProfileConvert.cs" />
     <Compile Include="Helpers\_GsaResultsHelper.cs" />
