@@ -8,6 +8,7 @@ using GsaAPI;
 using Rhino;
 using Rhino.Geometry;
 using Rhino.Collections;
+using Rhino.Geometry.Collections;
 
 namespace GhSA.Util.GH
 {
@@ -48,31 +49,80 @@ namespace GhSA.Util.GH
         
         public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertPolyCrv(Curve crv, double tolerance = -1)
         {
-            if (tolerance < 0)
-                tolerance = Tolerance.RhinoDocTolerance();
-            
-            PolyCurve m_crv = crv.ToArcsAndLines(tolerance * 20, 5, 0, 0);
-            Curve[] segments;
-            if (m_crv != null)
-                segments = m_crv.DuplicateSegments();
-            else
-                segments = new Curve[] { crv };
-                
+            PolyCurve m_crv = null;
             List<string> crv_type = new List<string>();
             List<Point3d> m_topo = new List<Point3d>();
             
-            for (int i = 0; i < segments.Length; i++)
+            if (crv.Degree > 1)
             {
-                m_topo.Add(segments[i].PointAtStart);
-                crv_type.Add("");
-                if (segments[i].IsArc())
+                if (!crv.IsArc() | crv.IsClosed)
                 {
-                    m_topo.Add(segments[i].PointAtNormalizedLength(0.5));
+                    if (tolerance < 0)
+                        tolerance = Tolerance.RhinoDocTolerance();
+
+                    m_crv = crv.ToArcsAndLines(tolerance * 20, 5, 0, 0);
+                    Curve[] segments;
+                    if (m_crv != null)
+                        segments = m_crv.DuplicateSegments();
+                    else
+                        segments = new Curve[] { crv };
+
+                    for (int i = 0; i < segments.Length; i++)
+                    {
+                        m_topo.Add(segments[i].PointAtStart);
+                        crv_type.Add("");
+                        if (segments[i].IsArc())
+                        {
+                            m_topo.Add(segments[i].PointAtNormalizedLength(0.5));
+                            crv_type.Add("A");
+                        }
+                    }
+                    m_topo.Add(segments[segments.Length - 1].PointAtEnd);
+                    crv_type.Add("");
+                }
+                else
+                {
+                    crv_type.Add("");
                     crv_type.Add("A");
+                    crv_type.Add("");
+
+                    m_topo.Add(crv.PointAtStart);
+                    m_topo.Add(crv.PointAtNormalizedLength(0.5));
+                    m_topo.Add(crv.PointAtEnd);
+
+                    m_crv = new PolyCurve();
+                    m_crv.Append(crv);
                 }
             }
-            m_topo.Add(segments[segments.Length - 1].PointAtEnd);
-            crv_type.Add("");
+            else if (crv.Degree == 1)
+            {
+                if (crv.SpanCount > 1)
+                {
+                    m_crv = new PolyCurve();
+                    Curve[] segments = crv.DuplicateSegments();
+                    for (int i = 0; i < segments.Length; i++)
+                    {
+                        crv_type.Add("");
+                        m_topo.Add(segments[i].PointAtStart);
+
+                        m_crv.Append(segments[i]);
+                    }
+                    crv_type.Add("");
+                    m_topo.Add(segments[segments.Length - 1].PointAtEnd);
+                }
+                else
+                {
+                    crv_type.Add("");
+                    crv_type.Add("");
+
+                    m_topo.Add(crv.PointAtStart);
+                    m_topo.Add(crv.PointAtEnd);
+
+                    m_crv = new PolyCurve();
+                    m_crv.Append(crv);
+                }
+            }
+            
 
             return new Tuple<PolyCurve, List<Point3d>, List<string>>(m_crv, m_topo, crv_type);
         }

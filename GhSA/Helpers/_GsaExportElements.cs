@@ -46,7 +46,8 @@ namespace GhSA.Util.Gsa.ToGSA
             apiElement.Topology = new ReadOnlyCollection<int>(topo.ToList());
 
             // section
-            apiElement.Property = Sections.ConvertSection(element1d.Section, ref existingSections);
+            if (apiElement.Property == 0)
+                apiElement.Property = Sections.ConvertSection(element1d.Section, ref existingSections);
 
             // set apielement in dictionary
             if (element1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -132,7 +133,8 @@ namespace GhSA.Util.Gsa.ToGSA
                 apiMeshElement.Topology = new ReadOnlyCollection<int>(topo.ToList());
 
                 // section
-                apiMeshElement.Property = Prop2ds.ConvertProp2d(element2d.Properties[i], ref existingProp2Ds, ref prop2didcounter);
+                if (apiMeshElement.Property == 0)
+                    apiMeshElement.Property = Prop2ds.ConvertProp2d(element2d.Properties[i], ref existingProp2Ds, ref prop2didcounter);
                 
 
                 // set api element in dictionary

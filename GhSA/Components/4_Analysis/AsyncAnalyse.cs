@@ -278,9 +278,28 @@ namespace GhSA.Components
                 #region DoWork
                 if (hasInput)
                 {
-                    ReportProgress("Merge/Cloning model...", -2);
-                    GsaModel analysisModel = Util.Gsa.ToGSA.Models.MergeModel(Models);
-                    ReportProgress("Model cloned", -1);
+                    GsaModel analysisModel = null;
+                    if (Models != null)
+                    {
+                        if (Models.Count > 0)
+                        {
+                            if (Models.Count > 1)
+                            {
+                                ReportProgress("Merging models...", -2);
+                                analysisModel = Util.Gsa.ToGSA.Models.MergeModel(Models);
+                                ReportProgress("Models merged", -1);
+                            }
+                            else
+                            {
+                                analysisModel = Models[0].Clone();
+                                ReportProgress("Model cloned", -1);
+                            }
+                        }
+                    }
+                    if (analysisModel != null)
+                        OutModel = analysisModel;
+                    else
+                        OutModel = new GsaModel();
 
                     // Assemble model
                     ReportProgress("Assembling model...", -2);
@@ -295,8 +314,7 @@ namespace GhSA.Components
                     #endregion
 
                     #region analysis
-                    if (analysisModel != null)
-                        OutModel = analysisModel;
+                    
 
                     //analysis
                     IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
@@ -321,12 +339,7 @@ namespace GhSA.Components
                     }
                     
                     #endregion
-                    if (OutModel != null)
-                        OutModel.Model = gsa;
-                    else
-                    {
-                        return;
-                    }
+                    OutModel.Model = gsa;
                     Done();
                 }
                 #endregion

@@ -260,7 +260,25 @@ namespace GhSA.Components
             #endregion
 
             #region DoWork
-            GsaModel analysisModel = Util.Gsa.ToGSA.Models.MergeModel(Models);
+            GsaModel analysisModel = null;
+            if (Models != null)
+            {
+                if (Models.Count > 0)
+                {
+                    if (Models.Count > 1)
+                    {
+                        analysisModel = Util.Gsa.ToGSA.Models.MergeModel(Models);
+                    }
+                    else
+                    {
+                        analysisModel = Models[0].Clone();
+                    }
+                }
+            }
+            if (analysisModel != null)
+                OutModel = analysisModel;
+            else
+                OutModel = new GsaModel();
 
             // Assemble model
             Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces);
@@ -271,8 +289,6 @@ namespace GhSA.Components
             #endregion
 
             #region analysis
-            if (analysisModel == null)
-                analysisModel = new GsaModel();
 
             //analysis
             IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
@@ -286,15 +302,13 @@ namespace GhSA.Components
             }
 
             #endregion
-            if (analysisModel == null)
-                analysisModel = new GsaModel();
-            analysisModel.Model = gsa;
+            OutModel.Model = gsa;
 
             //gsa.SaveAs("C:\\Users\\Kristjan.Nielsen\\Desktop\\GsaGH_test.gwb");
             #endregion
 
             #region SetData
-            DA.SetData(0, new GsaModelGoo(analysisModel));
+            DA.SetData(0, new GsaModelGoo(OutModel));
             #endregion
         }
     }

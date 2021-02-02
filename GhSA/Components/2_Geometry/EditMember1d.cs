@@ -135,18 +135,20 @@ namespace GhSA.Components
                 {
                     GsaSection section = new GsaSection();
                     if (gh_typ.Value is GsaSection)
+                    {
                         gh_typ.CastTo(ref section);
+                        mem.Section = section;
+                    }
                     else
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                            section.ID = idd;
+                            mem.Member.Property = idd;
                         else
                         {
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
                             return;
                         }
                     }
-                    mem.Section = section;
                 }
                 
 

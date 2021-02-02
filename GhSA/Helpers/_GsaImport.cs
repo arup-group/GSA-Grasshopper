@@ -297,6 +297,9 @@ namespace GhSA.Util.Gsa
                     }
                     else
                         prop2Ds.Add(new GsaProp2d());
+                    
+                    // set elemeent prop to 0 to force export to lookup GsaProp2d
+                    elems[j].Property = 0;
                 }
                 // new mesh to merge existing into
                 Mesh m = new Mesh();
@@ -323,6 +326,9 @@ namespace GhSA.Util.Gsa
                         singleelement2D.Properties = new List<GsaProp2d>();
                         singleelement2D.Properties.Add(prop2Ds[j]);
 
+                        // add element
+                        singleelement2D.Elements.Add(elems[j]);
+
                         // add the element to list of goo 2d elements
                         elem2dGoos.Add(new GsaElement2dGoo(singleelement2D));
 
@@ -344,6 +350,8 @@ namespace GhSA.Util.Gsa
                         // add the element to list of goo 2d elements
 
                     }
+                    element2D.Elements = elems;
+                    
                     elem2dGoos.Add(new GsaElement2dGoo(element2D));
                 }
             }
@@ -416,7 +424,10 @@ namespace GhSA.Util.Gsa
                         Section = apisection,
                         ID = element.Property
                     };
+                    
                 }
+                // set elemeent prop to 0 to force export to lookup GsaSection
+                elem1d.Element.Property = 0;
                 return elem1d;
             }
             return null;
@@ -491,6 +502,10 @@ namespace GhSA.Util.Gsa
                         GsaMember3d mem3d = new GsaMember3d(m);
                         mem3d.ID = key;
                         mem3d.Member = mem;
+
+                        // 3d property to be added
+                        // set member prop to 0 to force export to lookup GsaProp3d
+                        mem3d.Member.Property = 0;
 
                         // add member to list
                         mem3ds.Add(new GsaMember3dGoo(mem3d));
@@ -604,6 +619,9 @@ namespace GhSA.Util.Gsa
                             mem1d.ID = key;
                             mem1d.Member = mem;
                             mem1d.Section = section;
+                            
+                            // set member prop to 0 to force export to lookup GsaSection
+                            mem1d.Member.Property = 0;
 
                             // releases to be implemented here - GsaAPI
 
@@ -633,6 +651,9 @@ namespace GhSA.Util.Gsa
                             mem2d.ID = key;
                             mem2d.Member = mem;
                             mem2d.Property = prop2d;
+                            
+                            // set member prop to 0 to force export to lookup GsaProp2d
+                            mem2d.Member.Property = 0;
 
                             // add member to output list
                             mem2ds.Add(new GsaMember2dGoo(mem2d));
@@ -845,6 +866,9 @@ namespace GhSA.Util.Gsa
                 if (topolos[i] == "A")
                 {
                     topoType.Add("A");
+                    int tptA = Int32.Parse(topolos[i + 1]);
+                    topoint.Add(tptA);
+                    i += 1;
                     continue;
                 }
                 topoType.Add(" ");

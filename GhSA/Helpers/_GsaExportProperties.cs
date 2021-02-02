@@ -13,6 +13,8 @@ namespace GhSA.Util.Gsa.ToGSA
         public static int ConvertSection(GsaSection section,
             ref Dictionary<int, Section> existingSections)
         {
+            if (section == null) { return 1; }
+
             int outID = section.ID;
 
             // section
@@ -25,7 +27,11 @@ namespace GhSA.Util.Gsa.ToGSA
             {
                 if (section.Section != null)
                 {
-                    outID = existingSections.Keys.Max() + 1;
+                    if (existingSections.Count > 0)
+                        outID = existingSections.Keys.Max() + 1;
+                    else
+                        outID = 1;
+                    
                     existingSections.Add(outID, section.Section);
                 }
             }
@@ -89,6 +95,8 @@ namespace GhSA.Util.Gsa.ToGSA
     {
         public static int ConvertProp2d(GsaProp2d prop2d, ref Dictionary<int, Prop2D> existingProp2Ds, ref int prop2didcounter)
         {
+            if (prop2d == null) { return 1; }
+
             int prop2dID = prop2d.ID;
             Prop2D apiProp2d = prop2d.Prop2d;
 
