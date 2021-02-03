@@ -91,6 +91,7 @@ namespace GhSA.Components
             GsaMember3d gsaMember3d = new GsaMember3d();
             if (DA.GetData(0, ref gsaMember3d))
             {
+                if (gsaMember3d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member3D input is null"); }
                 GsaMember3d mem = gsaMember3d.Duplicate();
 
                 // #### inputs ####

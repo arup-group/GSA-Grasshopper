@@ -105,7 +105,11 @@ namespace GhSA.Components
                     }
                     else
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input to Model");
+                        string type = gh_typ.Value.GetType().ToString();
+                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("Goo", "");
+                        Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input parameter of type " +
+                            type + " to GsaModel");
                         return;
                     }
                 }
@@ -135,7 +139,11 @@ namespace GhSA.Components
                     }
                     else
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Prop input to GsaSection or GsaProp2d");
+                        string type = gh_typ.Value.GetType().ToString();
+                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("Goo", "");
+                        Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Prop input parameter of type " +
+                            type + " to GsaSection or GsaProp2d");
                         return;
                     }
                 }
@@ -197,7 +205,11 @@ namespace GhSA.Components
                     }
                     else
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Nodes input");
+                        string type = gh_typ.Value.GetType().ToString();
+                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("Goo", "");
+                        Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input parameter of type " +
+                            type + System.Environment.NewLine + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
                         return;
                     }
                 }
@@ -239,7 +251,11 @@ namespace GhSA.Components
                     }
                     else
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Loads input");
+                        string type = gh_typ.Value.GetType().ToString();
+                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("Goo", "");
+                        Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Load input parameter of type " +
+                            type + " to Load or GridPlaneSurface");
                         return;
                     }
                 }
@@ -286,7 +302,7 @@ namespace GhSA.Components
             #region meshing
             // Create elements from members
             gsa.CreateElementsFromMembers();
-            #endregion
+            #endregion 
 
             #region analysis
 

@@ -27,7 +27,7 @@ namespace GhSA.Parameters
         public PolyCurve PolyCurve
         {
             get { return m_crv; }
-            set { m_crv = Util.GH.Convert.ConvertCurve(value); }
+            set { m_crv = Util.GH.Convert.ConvertCurveMem2d(value); }
         }
         public int ID
         {

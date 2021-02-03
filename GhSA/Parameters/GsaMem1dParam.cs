@@ -27,7 +27,7 @@ namespace GhSA.Parameters
         public PolyCurve PolyCurve
         {
             get { return m_crv; }
-            set { m_crv = Util.GH.Convert.ConvertCurve(value); }
+            set { m_crv = Util.GH.Convert.ConvertCurveMem1d(value); }
         }
         public int ID
         {
@@ -118,7 +118,7 @@ namespace GhSA.Parameters
                 Type = MemberType.GENERIC_1D,
                 Property = prop
             };
-            Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Util.GH.Convert.ConvertPolyCrv(crv);
+            Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Util.GH.Convert.ConvertMem1dCrv(crv);
             m_crv = convertCrv.Item1;
             m_topo = convertCrv.Item2;
             m_topoType = convertCrv.Item3;

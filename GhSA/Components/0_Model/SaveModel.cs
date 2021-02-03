@@ -200,6 +200,7 @@ namespace GhSA.Components
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(0, ref gh_typ))
             {
+                if (gh_typ == null) { return; }
                 if (gh_typ.Value is GsaModelGoo)
                 {
                     gh_typ.CastTo(ref gsaModel);

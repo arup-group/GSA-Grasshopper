@@ -90,6 +90,7 @@ namespace GhSA.Components
             GsaElement2d gsaElement2d = new GsaElement2d();
             if (DA.GetData(0, ref gsaElement2d))
             {
+                if (gsaElement2d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element2D input is null"); }
                 GsaElement2d elem = gsaElement2d;
 
                 // #### inputs ####

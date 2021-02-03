@@ -8,35 +8,61 @@ namespace GhSA.Util.Gsa
 {
     class ResultHelper
     {
-        public static List<double> SmartRounder(List<double> values)
+        public static List<double> SmartRounder(double max, double min)
         {
-            double max = values.Max();
-            double min = values.Min();
-
+            // find the biggest abs value of max and min
             double val = Math.Max(Math.Abs(max), Math.Abs(min));
 
-            double scale = Math.Pow(50, Math.Floor(Math.Log10(Math.Abs(val))) + 1);
+            // round that with 4 significant digits
+            double scale = RoundToSignificantDigits(val, 4);
 
+            // list to hold output values
             List<double> roundedvals = new List<double>();
-            foreach (double value in values)
+
+            // do max
+            if (max == 0)
+                roundedvals.Add(0);
+            else
             {
-                if (value == 0)
-                    roundedvals.Add(0);
+                double tempmax = scale * Math.Round(max / (scale), 4);
+                tempmax = Math.Ceiling(tempmax * 1000) / 1000;
+                roundedvals.Add(tempmax);
+            }
+
+            // do min
+            if (min == 0)
+                roundedvals.Add(0);
+            else
+            {
+                double tempmin = scale * Math.Round(min / (scale), 4);
+                tempmin = Math.Floor(tempmin * 1000) / 1000;
+                roundedvals.Add(tempmin);
+            }
+
+            return roundedvals;
+        }
+        static double RoundToSignificantDigits(double d, int digits)
+        {
+            if (d == 0.0)
+            {
+                return 0.0;
+            }
+            else
+            {
+                double leftSideNumbers = Math.Floor(Math.Log10(Math.Abs(d))) + 1;
+                double scale = Math.Pow(10, leftSideNumbers);
+                double result = scale * Math.Round(d / scale, digits, MidpointRounding.AwayFromZero);
+
+                // Clean possible precision error.
+                if ((int)leftSideNumbers >= digits)
+                {
+                    return Math.Round(result, 0, MidpointRounding.AwayFromZero);
+                }
                 else
                 {
-                    double tempval = scale* Math.Round(value / (scale), 4);
-                    if (value > 0)
-                    {
-                        tempval = Math.Ceiling(tempval * 1000) / 1000;
-                    }
-                    else
-                    {
-                        tempval = Math.Floor(tempval * 1000) / 1000;
-                    }
-                    roundedvals.Add(tempval);
+                    return Math.Round(result, digits - (int)leftSideNumbers, MidpointRounding.AwayFromZero);
                 }
             }
-            return roundedvals;
         }
     }
 }

@@ -107,6 +107,7 @@ namespace GhSA.Components
             GsaElement1d gsaElement1d = new GsaElement1d();
             if (DA.GetData(0, ref gsaElement1d))
             {
+                if (gsaElement1d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element1D input is null"); }
                 GsaElement1d elem = gsaElement1d;
 
                 // #### inputs ####

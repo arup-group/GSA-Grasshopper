@@ -114,6 +114,7 @@ namespace GhSA.Components
             GsaMember2d gsaMember2d = new GsaMember2d();
             if (DA.GetData(0, ref gsaMember2d))
             {
+                if (gsaMember2d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input is null"); }
                 GsaMember2d mem = gsaMember2d.Duplicate();
 
                 // #### inputs ####

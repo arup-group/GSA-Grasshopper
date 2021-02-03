@@ -586,7 +586,7 @@ namespace GhSA.Components
                         break;
                 }
 
-                List<double> rounded = Util.Gsa.ResultHelper.SmartRounder(new List<double>(new double[] { dmax, dmin }));
+                List<double> rounded = Util.Gsa.ResultHelper.SmartRounder(dmax, dmin);
                 dmax = rounded[0];
                 dmin = rounded[1];
 

@@ -88,7 +88,7 @@ namespace GrasshopperAsyncComponent
             if (Workers.Count == 1)
             {
                 //Message = ProgressReports.Values.Last().ToString("0.00%");
-
+                //RuntimeMessages(GH_RuntimeMessageLevel.Warning).
                 string msg = "";
                 foreach (string key in ProgressReports.Keys)
                 {
@@ -107,25 +107,25 @@ namespace GrasshopperAsyncComponent
                         if (val == -255)
                         {
                             msg = "";
-                            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, key);
+                            base.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, key);
                         }
                         if (val == -10)
                         {
                             Message = "";
-                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, key);
+                            base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, key);
                             return;
                         }
                         if (val == -20)
                         {
                             Message = "";
-                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, key);
+                            base.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, key);
                             return;
                         }
                     }
                     else
                         msg = key + " " + val.ToString("0%") + System.Environment.NewLine + msg;
                 }
-
+                
                 Message = msg;
             }
             else
