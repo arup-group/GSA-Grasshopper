@@ -168,9 +168,12 @@ namespace GhSA.Parameters
             string s = "";
             if (FileName != null)
             {
-                s = Path.GetFileName(FileName);
-                s = s.Substring(0, s.Length - 4);
-                s = " (" + s + ")";
+                if (FileName != "" && FileName.Length > 4)
+                {
+                    s = Path.GetFileName(FileName);
+                    s = s.Substring(0, s.Length - 4);
+                    s = " (" + s + ")";
+                }
             }
                 
             return "GSA Model" + s;

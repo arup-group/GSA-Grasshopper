@@ -90,6 +90,7 @@ namespace GhSA.Components
             GsaElement2d gsaElement2d = new GsaElement2d();
             if (DA.GetData(0, ref gsaElement2d))
             {
+                if (gsaElement2d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element2D input is null"); }
                 GsaElement2d elem = gsaElement2d;
 
                 // #### inputs ####
@@ -109,18 +110,20 @@ namespace GhSA.Components
                         GH_ObjectWrapper gh_typ = gh_types[i];
                         GsaProp2d prop2d = new GsaProp2d();
                         if (gh_typ.Value is GsaProp2dGoo)
+                        {
                             gh_typ.CastTo(ref prop2d);
+                            in_prop2Ds.Add(prop2d);
+                        }
                         else
                         {
                             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                                prop2d.ID = idd;
+                                elem.Elements[i].Property = idd;
                             else
                             {
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
                                 return;
                             }
                         }
-                        in_prop2Ds.Add(prop2d);
                     }
                 }
 

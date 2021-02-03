@@ -126,6 +126,7 @@ namespace GhSA.Components
             GsaMember1d gsaMember1d = new GsaMember1d();
             if (DA.GetData(0, ref gsaMember1d))
             {
+                if (gsaMember1d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input is null"); }
                 GsaMember1d mem = gsaMember1d;
 
                 // #### inputs ####
@@ -134,19 +135,21 @@ namespace GhSA.Components
                 if (DA.GetData(1, ref gh_typ))
                 {
                     GsaSection section = new GsaSection();
-                    if (gh_typ.Value is GsaSection)
+                    if (gh_typ.Value is GsaSectionGoo)
+                    {
                         gh_typ.CastTo(ref section);
+                        mem.Section = section;
+                    }
                     else
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                            section.ID = idd;
+                            mem.Member.Property = idd;
                         else
                         {
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
                             return;
                         }
                     }
-                    mem.Section = section;
                 }
                 
 

@@ -27,7 +27,7 @@ namespace GhSA.Parameters
         public PolyCurve PolyCurve
         {
             get { return m_crv; }
-            set { m_crv = Util.GH.Convert.ConvertCurve(value); }
+            set { m_crv = Util.GH.Convert.ConvertCurveMem2d(value); }
         }
         public int ID
         {
@@ -125,17 +125,17 @@ namespace GhSA.Parameters
         public GsaMember2d()
         {
             m_member = new Member();
-            m_prop = new GsaProp2d();
+            //m_prop = new GsaProp2d();
         }
 
-        public GsaMember2d(Brep brep, List<Curve> includeCurves = null, List<Point3d> includePoints = null, int prop = 1)
+        public GsaMember2d(Brep brep, List<Curve> includeCurves = null, List<Point3d> includePoints = null, int prop = 0)
         {
             m_member = new Member
             {
                 Type = MemberType.GENERIC_2D,
                 Property = prop
             };
-            m_prop = new GsaProp2d();
+            //m_prop = new GsaProp2d();
 
             Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
                 convertBrepInclusion = Util.GH.Convert.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
@@ -597,9 +597,9 @@ namespace GhSA.Parameters
                 List<Point3d> pts = new List<Point3d>();
                 List<Curve> crvs = new List<Curve>();
                 GsaMember2d mem = new GsaMember2d(brep, crvs, pts);
-                GsaProp2d prop2d = new GsaProp2d();
-                prop2d.ID = 1;
-                mem.Property = prop2d;
+                //GsaProp2d prop2d = new GsaProp2d();
+                //prop2d.ID = 1;
+                //mem.Property = prop2d;
                 this.Value = mem;
                 return true;
             }

@@ -63,6 +63,7 @@ namespace GhSA.Components
             GH_Mesh ghmesh = new GH_Mesh();
             if (DA.GetData(0, ref ghmesh))
             {
+                if (ghmesh == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Mesh input is null"); }
                 Mesh mesh = new Mesh();
                 if (GH_Convert.ToMesh(ghmesh, ref mesh, GH_Conversion.Both))
                 {

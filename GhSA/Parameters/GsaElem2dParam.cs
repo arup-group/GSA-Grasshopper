@@ -94,7 +94,7 @@ namespace GhSA.Parameters
             m_mesh = new Mesh();
         }
 
-        public GsaElement2d(Mesh mesh, int prop = 1)
+        public GsaElement2d(Mesh mesh, int prop = 0)
         {
             m_elements = new List<Element>();
             m_mesh = mesh;
@@ -106,8 +106,8 @@ namespace GhSA.Parameters
             m_id = new List<int>(new int[m_mesh.Faces.Count()]);
 
             m_props = new List<GsaProp2d>();
-            for (int i = 0; i < m_mesh.Faces.Count(); i++)
-                m_props.Add(new GsaProp2d());
+            //for (int i = 0; i < m_mesh.Faces.Count(); i++)
+                //m_props.Add(new GsaProp2d());
         }
 
         public GsaElement2d Duplicate()
@@ -146,7 +146,7 @@ namespace GhSA.Parameters
                 if (m_props[i] != null)
                     dup.m_props.Add(m_props[i].Duplicate());
                 else
-                    dup.m_props.Add(new GsaProp2d());
+                    dup.m_props.Add(null); //dup.m_props.Add(new GsaProp2d());
             }
 
             dup.Colours = new List<System.Drawing.Color>(Colours);

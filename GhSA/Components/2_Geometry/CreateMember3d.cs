@@ -64,6 +64,7 @@ namespace GhSA.Components
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(0, ref gh_typ))
             {
+                if (gh_typ == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Solid input is null"); }
                 GsaMember3d mem = new GsaMember3d();
                 Brep brep = new Brep();
                 Mesh mesh = new Mesh();

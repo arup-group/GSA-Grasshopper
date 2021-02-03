@@ -63,6 +63,7 @@ namespace GhSA.Components
             GH_Line ghln = new GH_Line();
             if (DA.GetData(0, ref ghln))
             {
+                if (ghln == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Line input is null"); }
                 Line ln = new Line();
                 if (GH_Convert.ToLine(ghln, ref ln, GH_Conversion.Both))
                 {
@@ -74,11 +75,15 @@ namespace GhSA.Components
                     if (DA.GetData(1, ref gh_typ))
                     {
                         if (gh_typ.Value is GsaSectionGoo)
+                        {
                             gh_typ.CastTo(ref section);
+                            elem.Section = section;
+                        }
+                            
                         else
                         {
                             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                                section.ID = idd;
+                                elem.Element.Property = idd;
                             else
                             {
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
@@ -86,9 +91,6 @@ namespace GhSA.Components
                             }
                         }
                     }
-                    else
-                        section.ID = 1;
-                    elem.Section = section;
 
                     DA.SetData(0, new GsaElement1dGoo(elem));
                 }

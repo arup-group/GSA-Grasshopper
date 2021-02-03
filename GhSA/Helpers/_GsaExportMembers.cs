@@ -93,7 +93,8 @@ namespace GhSA.Util.Gsa.ToGSA
             apiMember.Topology = string.Copy(topo);
 
             // Section
-            apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections);
+            if (apiMember.Property == 0)
+                apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections);
 
             // set apimember in dictionary
             if (member1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -450,7 +451,8 @@ namespace GhSA.Util.Gsa.ToGSA
             apiMember.Topology = string.Copy(topo);
 
             // section
-            apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref existingProp2Ds, ref prop2didcounter);
+            if (apiMember.Property == 0)
+                apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref existingProp2Ds, ref prop2didcounter);
 
             // set apimember in dictionary
             if (member2d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -636,7 +638,8 @@ namespace GhSA.Util.Gsa.ToGSA
             apiMember.Topology = string.Copy(topo);
 
             // Section
-            // to be done
+            if (apiMember.Property == 0)
+                // to be done
 
             // set apimember in dictionary
             if (member3d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list

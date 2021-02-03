@@ -114,6 +114,7 @@ namespace GhSA.Components
             GsaMember2d gsaMember2d = new GsaMember2d();
             if (DA.GetData(0, ref gsaMember2d))
             {
+                if (gsaMember2d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input is null"); }
                 GsaMember2d mem = gsaMember2d.Duplicate();
 
                 // #### inputs ####
@@ -133,18 +134,20 @@ namespace GhSA.Components
                 {
                     GsaProp2d prop2d = new GsaProp2d();
                     if (gh_typ.Value is GsaProp2dGoo)
+                    {
                         gh_typ.CastTo(ref prop2d);
+                        mem.Property = prop2d;
+                    }
                     else
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                            prop2d.ID = idd;
+                            mem.Member.Property = idd;
                         else
                         {
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
                             return;
                         }
                     }
-                    mem.Property = prop2d;
                 }
 
                 // 3 offset

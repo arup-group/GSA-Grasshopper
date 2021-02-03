@@ -122,14 +122,14 @@ namespace GhSA.Parameters
         }
 
 
-        public GsaElement1d(LineCurve line, int prop = 1)
+        public GsaElement1d(LineCurve line, int prop = 0)
         {
             m_element = new Element
             {
                 Type = ElementType.BEAM,
                 Property = prop,
             };
-            m_section = new GsaSection();
+            //m_section = new GsaSection();
             m_line = line;
         }
 

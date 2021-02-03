@@ -185,7 +185,7 @@ namespace GhSA.Components
                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
             pManager.AddColourParameter("Colour", "Co", "Optional list of colours to override default colours." +
                 System.Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Scalar", ":", "Scale the result display size", GH_ParamAccess.item, 10);
+            pManager.AddNumberParameter("Scalar", "x:X", "Scale the result display size", GH_ParamAccess.item, 10);
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
@@ -496,7 +496,7 @@ namespace GhSA.Components
                         break;
                 }
 
-                List<double> rounded = Util.Gsa.ResultHelper.SmartRounder(new List<double>(new double[] { dmax, dmin }));
+                List<double> rounded = Util.Gsa.ResultHelper.SmartRounder(dmax, dmin);
                 dmax = rounded[0];
                 dmin = rounded[1];
                 

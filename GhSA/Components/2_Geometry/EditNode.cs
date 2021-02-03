@@ -189,6 +189,7 @@ namespace GhSA.Components
 
                 DA.SetData(9, gsaNode.Colour);
             }
+            else { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Node input"); }
         }
     }
 }

@@ -117,7 +117,7 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddCurveParameter("Curve", "C", "Curve (will be converted to Arcs and Lines automatically if NURBS)", GH_ParamAccess.item);
+            pManager.AddCurveParameter("Curve", "C", "Curve (NURBS curve will be converted to a Polyline)", GH_ParamAccess.item);
             pManager.AddGenericParameter("Section", "PB", "GSA Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
@@ -136,6 +136,7 @@ namespace GhSA.Components
             GH_Curve ghcrv = new GH_Curve();
             if (DA.GetData(0, ref ghcrv))
             {
+                if (ghcrv == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Curve input is null"); }
                 Curve crv = null;
                 if (GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both))
                 {
@@ -170,11 +171,14 @@ namespace GhSA.Components
                     if (DA.GetData(1, ref gh_typ))
                     {
                         if (gh_typ.Value is GsaSectionGoo)
+                        {
                             gh_typ.CastTo(ref section);
+                            mem.Section = section;
+                        }
                         else
                         {
                             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                                section.ID = idd;
+                                mem.Member.Property = idd;
                             else
                             {
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
@@ -182,9 +186,6 @@ namespace GhSA.Components
                             }
                         }
                     }
-                    else
-                        section.ID = 1;
-                    mem.Section = section;
 
                     DA.SetData(0, new GsaMember1dGoo(mem));
                 }

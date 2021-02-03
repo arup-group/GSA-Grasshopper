@@ -91,6 +91,7 @@ namespace GhSA.Components
             GsaMember3d gsaMember3d = new GsaMember3d();
             if (DA.GetData(0, ref gsaMember3d))
             {
+                if (gsaMember3d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member3D input is null"); }
                 GsaMember3d mem = gsaMember3d.Duplicate();
 
                 // #### inputs ####
@@ -115,24 +116,26 @@ namespace GhSA.Components
                 }
 
                 // 2 prop3d -- to be implemented GsaAPI
-                //gh_typ = new GH_ObjectWrapper();
-                //if (DA.GetData(2, ref gh_typ))
-                //{
-                //    GsaProp3d prop3d = new GsaProp3d();
-                //    if (gh_typ.Value is GsaProp3dGoo)
-                //        gh_typ.CastTo(ref prop3d);
-                //    else
-                //    {
-                //        if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                //            prop3d.ID = idd;
-                //        else
-                //        {
-                //            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 3D Property of reference integer");
-                //            return;
-                //        }
-                //    }
-                //    mem.Property = prop3d;
-                //}
+                gh_typ = new GH_ObjectWrapper();
+                if (DA.GetData(2, ref gh_typ))
+                {
+                    if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+                        mem.Member.Property = idd;
+                    //GsaProp3d prop3d = new GsaProp3d();
+                    //if (gh_typ.Value is GsaProp3dGoo)
+                    //    gh_typ.CastTo(ref prop3d);
+                    //else
+                    //{
+                    //    if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+                    //        prop3d.ID = idd;
+                    //    else
+                    //    {
+                    //        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 3D Property of reference integer");
+                    //        return;
+                    //    }
+                    //}
+                    //mem.Property = prop3d;
+                }
 
                 // 3 mesh size
                 GH_Number ghmsz = new GH_Number();

@@ -105,7 +105,11 @@ namespace GhSA.Components
                     }
                     else
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input to Model");
+                        string type = gh_typ.Value.GetType().ToString();
+                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("Goo", "");
+                        Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input parameter of type " +
+                            type + " to GsaModel");
                         return;
                     }
                 }
@@ -135,7 +139,11 @@ namespace GhSA.Components
                     }
                     else
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Prop input to GsaSection or GsaProp2d");
+                        string type = gh_typ.Value.GetType().ToString();
+                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("Goo", "");
+                        Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Prop input parameter of type " +
+                            type + " to GsaSection or GsaProp2d");
                         return;
                     }
                 }
@@ -197,7 +205,11 @@ namespace GhSA.Components
                     }
                     else
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Nodes input");
+                        string type = gh_typ.Value.GetType().ToString();
+                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("Goo", "");
+                        Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input parameter of type " +
+                            type + System.Environment.NewLine + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
                         return;
                     }
                 }
@@ -239,7 +251,11 @@ namespace GhSA.Components
                     }
                     else
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Loads input");
+                        string type = gh_typ.Value.GetType().ToString();
+                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("Goo", "");
+                        Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Load input parameter of type " +
+                            type + " to Load or GridPlaneSurface");
                         return;
                     }
                 }
@@ -260,7 +276,25 @@ namespace GhSA.Components
             #endregion
 
             #region DoWork
-            GsaModel analysisModel = Util.Gsa.ToGSA.Models.MergeModel(Models);
+            GsaModel analysisModel = null;
+            if (Models != null)
+            {
+                if (Models.Count > 0)
+                {
+                    if (Models.Count > 1)
+                    {
+                        analysisModel = Util.Gsa.ToGSA.Models.MergeModel(Models);
+                    }
+                    else
+                    {
+                        analysisModel = Models[0].Clone();
+                    }
+                }
+            }
+            if (analysisModel != null)
+                OutModel = analysisModel;
+            else
+                OutModel = new GsaModel();
 
             // Assemble model
             Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces);
@@ -268,11 +302,9 @@ namespace GhSA.Components
             #region meshing
             // Create elements from members
             gsa.CreateElementsFromMembers();
-            #endregion
+            #endregion 
 
             #region analysis
-            if (analysisModel == null)
-                analysisModel = new GsaModel();
 
             //analysis
             IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
@@ -286,15 +318,13 @@ namespace GhSA.Components
             }
 
             #endregion
-            if (analysisModel == null)
-                analysisModel = new GsaModel();
-            analysisModel.Model = gsa;
+            OutModel.Model = gsa;
 
             //gsa.SaveAs("C:\\Users\\Kristjan.Nielsen\\Desktop\\GsaGH_test.gwb");
             #endregion
 
             #region SetData
-            DA.SetData(0, new GsaModelGoo(analysisModel));
+            DA.SetData(0, new GsaModelGoo(OutModel));
             #endregion
         }
     }

@@ -27,7 +27,7 @@ namespace GhSA.Parameters
         public PolyCurve PolyCurve
         {
             get { return m_crv; }
-            set { m_crv = Util.GH.Convert.ConvertCurve(value); }
+            set { m_crv = Util.GH.Convert.ConvertCurveMem1d(value); }
         }
         public int ID
         {
@@ -92,7 +92,7 @@ namespace GhSA.Parameters
         {
             m_member = new Member();
             m_crv = new PolyCurve();
-            m_section = new GsaSection();
+            //m_section = new GsaSection();
         }
 
         public GsaMember1d(List<Point3d> topology, List<string> topo_type = null)
@@ -105,25 +105,25 @@ namespace GhSA.Parameters
             m_topo = topology;
             m_topoType = topo_type;
 
-            m_section = new GsaSection();
+            //m_section = new GsaSection();
 
             Topology = m_topo;
             TopologyType = m_topoType;
         }
 
-        public GsaMember1d(Curve crv, int prop = 1)
+        public GsaMember1d(Curve crv, int prop = 0)
         {
             m_member = new Member
             {
                 Type = MemberType.GENERIC_1D,
                 Property = prop
             };
-            Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Util.GH.Convert.ConvertPolyCrv(crv);
+            Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Util.GH.Convert.ConvertMem1dCrv(crv);
             m_crv = convertCrv.Item1;
             m_topo = convertCrv.Item2;
             m_topoType = convertCrv.Item3;
 
-            m_section = new GsaSection();
+            //m_section = new GsaSection();
 
             Topology = m_topo;
             TopologyType = m_topoType;
