@@ -122,21 +122,21 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA model containing some geometry", GH_ParamAccess.item);
-            //pManager.AddTextParameter("Node filter list", "No", "Filter import by list." + System.Environment.NewLine +
-            //    "Node list should take the form:" + System.Environment.NewLine +
-            //    " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
-            //    "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            //pManager.AddTextParameter("Element filter list", "El", "Filter import by list." + System.Environment.NewLine +
-            //    "Element list should take the form:" + System.Environment.NewLine +
-            //    " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
-            //    "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            //pManager.AddTextParameter("Member filter list", "Me", "Filter import by list." + System.Environment.NewLine +
-            //    "Member list should take the form:" + System.Environment.NewLine +
-            //    " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)" + System.Environment.NewLine +
-            //    "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            //pManager[1].Optional = true;
-            //pManager[2].Optional = true;
-            //pManager[3].Optional = true;
+            pManager.AddTextParameter("Node filter list", "No", "Filter import by list." + System.Environment.NewLine +
+                "Node list should take the form:" + System.Environment.NewLine +
+                " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
+                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+            pManager.AddTextParameter("Element filter list", "El", "Filter import by list." + System.Environment.NewLine +
+                "Element list should take the form:" + System.Environment.NewLine +
+                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+            pManager.AddTextParameter("Member filter list", "Me", "Filter import by list." + System.Environment.NewLine +
+                "Member list should take the form:" + System.Environment.NewLine +
+                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)" + System.Environment.NewLine +
+                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+            pManager[1].Optional = true;
+            pManager[2].Optional = true;
+            pManager[3].Optional = true;
 
             //_mode = FoldMode.Graft;
             //Message = "Graft by Property" + System.Environment.NewLine + "Right-click to change";
@@ -173,15 +173,29 @@ namespace GhSA.Components
 
                 Model model = gsaModel.Model;
 
+                // import lists
+                string nodeList = "all";
+                if (DA.GetData(1, ref nodeList))
+                    nodeList = nodeList.ToString();
+                string elemList = "all";
+                if (DA.GetData(2, ref elemList))
+                    elemList = elemList.ToString();
+                string memList = "all";
+                if (DA.GetData(3, ref memList))
+                    memList = memList.ToString();
+
+
                 // get dictionaries from model
                 IReadOnlyDictionary<int, Node> nDict = model.Nodes();
-                IReadOnlyDictionary<int, Element> eDict = model.Elements();
-                IReadOnlyDictionary<int, Member> mDict = model.Members();
+                IReadOnlyDictionary<int, Element> eDict = model.Elements(elemList);
+                IReadOnlyDictionary<int, Member> mDict = model.Members(memList);
                 IReadOnlyDictionary<int, Section> sDict = model.Sections();
                 IReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
 
+                IReadOnlyDictionary<int, Node> out_nDict = (nodeList == "all") ? nDict : model.Nodes(nodeList);
+
                 // create nodes
-                List<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(nDict, model);
+                List<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(out_nDict, model);
                 // create elements
                 Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>> elementTuple
                     = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict);

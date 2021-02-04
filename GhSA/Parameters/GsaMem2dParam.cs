@@ -759,10 +759,17 @@ namespace GhSA.Parameters
             //Draw shape.
             if (Value.Brep != null)
             {
-                if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                    args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFace); //UI.Colour.Member2dFace
+                if (Value.Member.Type == MemberType.VOID_CUTTER_2D)
+                {
+                    
+                }
                 else
-                    args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFaceSelected);
+                {
+                    if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                        args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFace); //UI.Colour.Member2dFace
+                    else
+                        args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFaceSelected);
+                }
             }
         }
         public void DrawViewportWires(GH_PreviewWireArgs args)
