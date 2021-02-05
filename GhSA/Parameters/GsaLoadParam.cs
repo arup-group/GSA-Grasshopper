@@ -478,7 +478,38 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            return "GSA " + LoadType.ToString() + " Load";
+            if (this == null) { return "Null Load"; }
+            string name = "";
+            switch (LoadType)
+            {
+                case LoadTypes.Gravity:
+                    name = GravityLoad.GravityLoad.Name;
+                    break;
+                case LoadTypes.Node:
+                    name = NodeLoad.NodeLoad.Name;
+                    break;
+                case LoadTypes.Beam:
+                    name = BeamLoad.BeamLoad.Name;
+                    break;
+                case LoadTypes.Face:
+                    name = FaceLoad.FaceLoad.Name;
+                    break;
+                case LoadTypes.GridPoint:
+                    name = PointLoad.GridPointLoad.Name;
+                    break;
+                case LoadTypes.GridLine:
+                    name = LineLoad.GridLineLoad.Name;
+                    break;
+                case LoadTypes.GridArea:
+                    name = AreaLoad.GridAreaLoad.Name;
+                    break;
+            }
+            if (name == "")
+                name = " Load";
+            else
+                name = " " + name;
+
+            return "GSA " + LoadType.ToString() + name;
         }
 
         #endregion

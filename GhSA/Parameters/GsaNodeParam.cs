@@ -218,29 +218,42 @@ namespace GhSA.Parameters
             if (Node == null) { return "Null Node"; }
             string idd = " " + ID.ToString() + " ";
             if (ID == 0) { idd = " "; }
-            string nodeTxt = "Gsa Node" + idd + "(" + Point.ToString() + ") " + System.Environment.NewLine;
+            GH_Point gH_Point = new GH_Point(Point);
+            string nodeTxt = "Gsa Node" + idd + gH_Point.ToString();
+
             string localTxt = "";
-            if (LocalAxis != Plane.Unset)
+            Plane noPlane = new Plane() { Origin = new Point3d(0, 0, 0), XAxis = new Vector3d(0, 0, 0), YAxis = new Vector3d(0, 0, 0), ZAxis = new Vector3d(0, 0, 0) };
+            if (LocalAxis != noPlane)
             {
                 if (LocalAxis != Plane.WorldXY)
-                    localTxt = System.Environment.NewLine + "Local axis (" + LocalAxis.ToString() + ") ";
+                {
+                    GH_Plane gH_Plane = new GH_Plane(LocalAxis);
+                    localTxt = " Local axis: {" + gH_Plane.ToString() + "}";
+                }
             }
-
-            string sptTxt = "Restraint: " + "X: " + (Node.Restraint.X ? "Fix" : "Free") +
+            
+            string sptTxt;
+            if (Node.Restraint.X == false && Node.Restraint.Y == false && Node.Restraint.Z == false &&
+                Node.Restraint.XX == false && Node.Restraint.YY == false && Node.Restraint.ZZ == false)
+                sptTxt = "";
+            else
+            {
+                sptTxt = " Restraint: " + "X: " + (Node.Restraint.X ? "Fix" : "Free") +
                    ", Y: " + (Node.Restraint.Y ? "Fix" : "Free") +
                    ", Z: " + (Node.Restraint.Z ? "Fix" : "Free") +
                    ", XX: " + (Node.Restraint.XX ? "Fix" : "Free") +
                    ", YY: " + (Node.Restraint.YY ? "Fix" : "Free") +
                    ", ZZ: " + (Node.Restraint.ZZ ? "Fix" : "Free");
-            if (!Node.Restraint.X & !Node.Restraint.Y & !Node.Restraint.Z &
-                !Node.Restraint.XX & !Node.Restraint.YY & !Node.Restraint.ZZ)
-                sptTxt = "";
-            if (Node.Restraint.X & Node.Restraint.Y & Node.Restraint.Z &
-                !Node.Restraint.XX & !Node.Restraint.YY & !Node.Restraint.ZZ)
-                sptTxt = "Restraint: Pinned";
-            if (Node.Restraint.X & Node.Restraint.Y & Node.Restraint.Z &
-                Node.Restraint.XX & Node.Restraint.YY & Node.Restraint.ZZ)
-                sptTxt = "Restraint: Fixed";
+                if (!Node.Restraint.X & !Node.Restraint.Y & !Node.Restraint.Z &
+                    !Node.Restraint.XX & !Node.Restraint.YY & !Node.Restraint.ZZ)
+                    sptTxt = "";
+                if (Node.Restraint.X & Node.Restraint.Y & Node.Restraint.Z &
+                    !Node.Restraint.XX & !Node.Restraint.YY & !Node.Restraint.ZZ)
+                    sptTxt = " Restraint: Pinned";
+                if (Node.Restraint.X & Node.Restraint.Y & Node.Restraint.Z &
+                    Node.Restraint.XX & Node.Restraint.YY & Node.Restraint.ZZ)
+                    sptTxt = " Restraint: Fixed";
+            }
 
             return nodeTxt + sptTxt + localTxt;
         }

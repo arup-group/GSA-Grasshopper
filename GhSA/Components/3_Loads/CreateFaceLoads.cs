@@ -80,6 +80,7 @@ namespace GhSA.Components
                 "Element list should take the form:" + System.Environment.NewLine +
                 " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
+            pManager.AddTextParameter("Load Name", "Na", "Name of Load", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Axis", "Ax", "Load axis (default Local). " +
                     System.Environment.NewLine + "Accepted inputs are:" +
                     System.Environment.NewLine + "0 : Global" +
@@ -96,7 +97,8 @@ namespace GhSA.Components
             pManager[2].Optional = true;
             pManager[3].Optional = true;
             pManager[4].Optional = true;
-            
+            pManager[5].Optional = true;
+
             _mode = FoldMode.Uniform;
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -126,23 +128,32 @@ namespace GhSA.Components
 
             faceLoad.FaceLoad.Elements = elemList;
 
-            // 2 axis
+            // 2 Name
+            string name = "";
+            GH_String gh_name = new GH_String();
+            if (DA.GetData(2, ref gh_name))
+            {
+                if (GH_Convert.ToString(gh_name, out name, GH_Conversion.Both))
+                    faceLoad.FaceLoad.Name = name;
+            }
+
+            // 3 axis
             int axis = -1;
             faceLoad.FaceLoad.AxisProperty = 0; //Note there is currently a bug/undocumented in GsaAPI that cannot translate an integer into axis type (Global, Local or edformed local)
             GH_Integer gh_ax = new GH_Integer();
-            if (DA.GetData(2, ref gh_ax))
+            if (DA.GetData(3, ref gh_ax))
             {
                 GH_Convert.ToInt32(gh_ax, out axis, GH_Conversion.Both);
                 if (axis == 0 || axis ==-1)
                     faceLoad.FaceLoad.AxisProperty = axis;
             }
             
-            // 3 direction
+            // 4 direction
             string dir = "Z";
             Direction direc = Direction.Z;
             
             GH_String gh_dir = new GH_String();
-            if (DA.GetData(3, ref gh_dir))
+            if (DA.GetData(4, ref gh_dir))
                 GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
             dir = dir.ToUpper().Trim();
             if (dir == "X")
@@ -152,7 +163,6 @@ namespace GhSA.Components
 
             faceLoad.FaceLoad.Direction = direc;
 
-            
             switch (_mode)
             {
                 case FoldMode.Uniform:
@@ -163,13 +173,13 @@ namespace GhSA.Components
                         //projection
                         bool prj = false;
                         GH_Boolean gh_prj = new GH_Boolean();
-                        if (DA.GetData(4, ref gh_prj))
+                        if (DA.GetData(5, ref gh_prj))
                             GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
                         faceLoad.FaceLoad.IsProjected = prj;
 
 
                         double load1 = 0;
-                        if (DA.GetData(5, ref load1))
+                        if (DA.GetData(6, ref load1))
                         {
                             if (direc == Direction.Z)
                                 load1 *= -1000; //convert to kN
@@ -190,12 +200,12 @@ namespace GhSA.Components
                         //projection
                         bool prj = false;
                         GH_Boolean gh_prj = new GH_Boolean();
-                        if (DA.GetData(4, ref gh_prj))
+                        if (DA.GetData(5, ref gh_prj))
                             GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
                         faceLoad.FaceLoad.IsProjected = prj;
 
                         double load1 = 0;
-                        if (DA.GetData(5, ref load1))
+                        if (DA.GetData(6, ref load1))
                         {
                             if (direc == Direction.Z)
                                 load1 *= -1000; //convert to kN
@@ -203,7 +213,7 @@ namespace GhSA.Components
                                 load1 *= 1000;
                         }
                         double load2 = 0;
-                        if (DA.GetData(6, ref load2))
+                        if (DA.GetData(7, ref load2))
                         {
                             if (direc == Direction.Z)
                                 load2 *= -1000; //convert to kN
@@ -211,7 +221,7 @@ namespace GhSA.Components
                                 load2 *= 1000;
                         }
                         double load3 = 0;
-                        if (DA.GetData(7, ref load3))
+                        if (DA.GetData(8, ref load3))
                         {
                             if (direc == Direction.Z)
                                 load3 *= -1000; //convert to kN
@@ -219,7 +229,7 @@ namespace GhSA.Components
                                 load3 *= 1000;
                         }
                         double load4 = 0;
-                        if (DA.GetData(8, ref load4))
+                        if (DA.GetData(9, ref load4))
                         {
                             if (direc == Direction.Z)
                                 load4 *= -1000; //convert to kN
@@ -243,12 +253,12 @@ namespace GhSA.Components
                         //projection
                         bool prj = false;
                         GH_Boolean gh_prj = new GH_Boolean();
-                        if (DA.GetData(4, ref gh_prj))
+                        if (DA.GetData(5, ref gh_prj))
                             GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
                         faceLoad.FaceLoad.IsProjected = prj;
 
                         double load1 = 0;
-                        if (DA.GetData(5, ref load1))
+                        if (DA.GetData(6, ref load1))
                         {
                             if (direc == Direction.Z)
                                 load1 *= -1000; //convert to kN
@@ -256,10 +266,10 @@ namespace GhSA.Components
                                 load1 *= 1000;
                         }
                         double r = 0;
-                        DA.GetData(6, ref r);
+                        DA.GetData(7, ref r);
                             
                         double s = 0;
-                        DA.GetData(7, ref s);
+                        DA.GetData(8, ref s);
                         
                         // set position and value
                         faceLoad.FaceLoad.SetValue(0, load1);
@@ -276,10 +286,10 @@ namespace GhSA.Components
 
                         // get data
                         int edge = 1;
-                        DA.GetData(4, ref edge);
+                        DA.GetData(5, ref edge);
 
                         double load1 = 0;
-                        if (DA.GetData(5, ref load1))
+                        if (DA.GetData(6, ref load1))
                         {
                             if (direc == Direction.Z)
                                 load1 *= -1000; //convert to kN
@@ -288,7 +298,7 @@ namespace GhSA.Components
                         }
 
                         double load2 = 0;
-                        if (DA.GetData(6, ref load2))
+                        if (DA.GetData(7, ref load2))
                         {
                             if (direc == Direction.Z)
                                 load2 *= -1000; //convert to kN
@@ -333,16 +343,16 @@ namespace GhSA.Components
             //remove input parameters
             if (_mode == FoldMode.Edge)
             {
-                while (Params.Input.Count > 4)
-                    Params.UnregisterInputParameter(Params.Input[4], true);
+                while (Params.Input.Count > 5)
+                    Params.UnregisterInputParameter(Params.Input[5], true);
                 //add input parameters
                 Params.RegisterInputParam(new Param_Boolean());
                 Params.RegisterInputParam(new Param_Number());
             }
             else
             {
-                while (Params.Input.Count > 5)
-                    Params.UnregisterInputParameter(Params.Input[5], true);
+                while (Params.Input.Count > 6)
+                    Params.UnregisterInputParameter(Params.Input[6], true);
                 //add input parameters
                 Params.RegisterInputParam(new Param_Number());
             }
@@ -360,8 +370,8 @@ namespace GhSA.Components
             //remove input parameters
             if (_mode == FoldMode.Edge)
             {
-                while (Params.Input.Count > 4)
-                    Params.UnregisterInputParameter(Params.Input[4], true);
+                while (Params.Input.Count > 5)
+                    Params.UnregisterInputParameter(Params.Input[5], true);
                 //add input parameters
                 Params.RegisterInputParam(new Param_Boolean());
                 Params.RegisterInputParam(new Param_Number());
@@ -371,8 +381,8 @@ namespace GhSA.Components
             }
             else
             {
-                while (Params.Input.Count > 5)
-                    Params.UnregisterInputParameter(Params.Input[5], true);
+                while (Params.Input.Count > 6)
+                    Params.UnregisterInputParameter(Params.Input[6], true);
                 //add input parameters
                 Params.RegisterInputParam(new Param_Number());
                 Params.RegisterInputParam(new Param_Number());
@@ -394,8 +404,8 @@ namespace GhSA.Components
             //remove input parameters
             if (_mode == FoldMode.Edge)
             {
-                while (Params.Input.Count > 4)
-                    Params.UnregisterInputParameter(Params.Input[4], true);
+                while (Params.Input.Count > 5)
+                    Params.UnregisterInputParameter(Params.Input[5], true);
                 //add input parameters
                 Params.RegisterInputParam(new Param_Boolean());
                 Params.RegisterInputParam(new Param_Number());
@@ -404,8 +414,8 @@ namespace GhSA.Components
             }
             else
             {
-                while (Params.Input.Count > 5)
-                    Params.UnregisterInputParameter(Params.Input[5], true);
+                while (Params.Input.Count > 6)
+                    Params.UnregisterInputParameter(Params.Input[6], true);
                 //add input parameters
                 Params.RegisterInputParam(new Param_Number());
                 Params.RegisterInputParam(new Param_Number());
@@ -424,8 +434,8 @@ namespace GhSA.Components
             RecordUndoEvent("Edge Parameters");
 
             //remove input parameters
-            while (Params.Input.Count > 4)
-                Params.UnregisterInputParameter(Params.Input[4], true);
+            while (Params.Input.Count > 5)
+                Params.UnregisterInputParameter(Params.Input[5], true);
 
             //add input parameters
             Params.RegisterInputParam(new Param_Number());
@@ -478,104 +488,104 @@ namespace GhSA.Components
         {
             if (_mode == FoldMode.Uniform)
             {
-                Params.Input[4].NickName = "Pj";
-                Params.Input[4].Name = "Projected";
-                Params.Input[4].Description = "Projected (default not)";
-                Params.Input[4].Access = GH_ParamAccess.item;
-                Params.Input[4].Optional = true;
-                
-                Params.Input[5].NickName = "V";
-                Params.Input[5].Name = "Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
-                Params.Input[5].Description = "Load Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[5].NickName = "Pj";
+                Params.Input[5].Name = "Projected";
+                Params.Input[5].Description = "Projected (default not)";
                 Params.Input[5].Access = GH_ParamAccess.item;
-                Params.Input[5].Optional = false;
+                Params.Input[5].Optional = true;
+                
+                Params.Input[6].NickName = "V";
+                Params.Input[6].Name = "Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[6].Description = "Load Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[6].Access = GH_ParamAccess.item;
+                Params.Input[6].Optional = false;
             }
 
             if (_mode == FoldMode.Variable)
             {
-                Params.Input[4].NickName = "Pj";
-                Params.Input[4].Name = "Projected";
-                Params.Input[4].Description = "Projected (default not)";
-                Params.Input[4].Access = GH_ParamAccess.item;
-                Params.Input[4].Optional = true;
-
-                Params.Input[5].NickName = "V1";
-                Params.Input[5].Name = "Value 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
-                Params.Input[5].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[5].NickName = "Pj";
+                Params.Input[5].Name = "Projected";
+                Params.Input[5].Description = "Projected (default not)";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
 
-                Params.Input[6].NickName = "V2";
-                Params.Input[6].Name = "Value 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
-                Params.Input[6].Description = "Load Value Corner 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[6].NickName = "V1";
+                Params.Input[6].Name = "Value 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[6].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = true;
 
-                Params.Input[7].NickName = "V3";
-                Params.Input[7].Name = "Value 3 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
-                Params.Input[7].Description = "Load Value Corner 3 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[7].NickName = "V2";
+                Params.Input[7].Name = "Value 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[7].Description = "Load Value Corner 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = true;
 
-                Params.Input[8].NickName = "V4";
-                Params.Input[8].Name = "Value 4 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
-                Params.Input[8].Description = "Load Value Corner 4 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[8].NickName = "V3";
+                Params.Input[8].Name = "Value 3 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[8].Description = "Load Value Corner 3 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[8].Access = GH_ParamAccess.item;
                 Params.Input[8].Optional = true;
+
+                Params.Input[9].NickName = "V4";
+                Params.Input[9].Name = "Value 4 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[9].Description = "Load Value Corner 4 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[9].Access = GH_ParamAccess.item;
+                Params.Input[9].Optional = true;
             }
 
             if (_mode == FoldMode.Point)
             {
-                Params.Input[4].NickName = "Pj";
-                Params.Input[4].Name = "Projected";
-                Params.Input[4].Description = "Projected (default not)";
-                Params.Input[4].Access = GH_ParamAccess.item;
-                Params.Input[4].Optional = true;
-
-                Params.Input[5].NickName = "V";
-                Params.Input[5].Name = "Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
-                Params.Input[5].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[5].NickName = "Pj";
+                Params.Input[5].Name = "Projected";
+                Params.Input[5].Description = "Projected (default not)";
                 Params.Input[5].Access = GH_ParamAccess.item;
-                Params.Input[5].Optional = false;
+                Params.Input[5].Optional = true;
 
-                Params.Input[6].NickName = "r";
-                Params.Input[6].Name = "Position r";
-                Params.Input[6].Description = "The position r of the point load to be specified in ( r , s )" +
-                    System.Environment.NewLine + "coordinates based on two-dimensional shape function." +
-                    System.Environment.NewLine + " • Coordinates vary from −1 to 1 for Quad 4 and Quad 8." +
-                    System.Environment.NewLine + " • Coordinates vary from 0 to 1 for Triangle 3 and Triangle 6";
+                Params.Input[6].NickName = "V";
+                Params.Input[6].Name = "Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[6].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[6].Access = GH_ParamAccess.item;
-                Params.Input[6].Optional = true;
+                Params.Input[6].Optional = false;
 
-                Params.Input[7].NickName = "s";
-                Params.Input[7].Name = "Position s";
-                Params.Input[6].Description = "The position s of the point load to be specified in ( r , s )" +
+                Params.Input[7].NickName = "r";
+                Params.Input[7].Name = "Position r";
+                Params.Input[7].Description = "The position r of the point load to be specified in ( r , s )" +
                     System.Environment.NewLine + "coordinates based on two-dimensional shape function." +
                     System.Environment.NewLine + " • Coordinates vary from −1 to 1 for Quad 4 and Quad 8." +
                     System.Environment.NewLine + " • Coordinates vary from 0 to 1 for Triangle 3 and Triangle 6";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = true;
+
+                Params.Input[8].NickName = "s";
+                Params.Input[8].Name = "Position s";
+                Params.Input[8].Description = "The position s of the point load to be specified in ( r , s )" +
+                    System.Environment.NewLine + "coordinates based on two-dimensional shape function." +
+                    System.Environment.NewLine + " • Coordinates vary from −1 to 1 for Quad 4 and Quad 8." +
+                    System.Environment.NewLine + " • Coordinates vary from 0 to 1 for Triangle 3 and Triangle 6";
+                Params.Input[8].Access = GH_ParamAccess.item;
+                Params.Input[8].Optional = true;
             }
 
             if (_mode == FoldMode.Edge)
             {
-                Params.Input[4].NickName = "Ed";
-                Params.Input[4].Name = "Edge";
-                Params.Input[4].Description = "Edge (1, 2, 3 or 4)";
-                Params.Input[4].Access = GH_ParamAccess.item;
-                Params.Input[4].Optional = false;
-
-                Params.Input[5].NickName = "V1";
-                Params.Input[5].Name = "Value 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
-                Params.Input[5].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[5].NickName = "Ed";
+                Params.Input[5].Name = "Edge";
+                Params.Input[5].Description = "Edge (1, 2, 3 or 4)";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = false;
 
-                Params.Input[6].NickName = "V2";
-                Params.Input[6].Name = "Value 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
-                Params.Input[6].Description = "Load Value Corner 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[6].NickName = "V1";
+                Params.Input[6].Name = "Value 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[6].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = false;
+
+                Params.Input[7].NickName = "V2";
+                Params.Input[7].Name = "Value 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[7].Description = "Load Value Corner 2 (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
+                Params.Input[7].Access = GH_ParamAccess.item;
+                Params.Input[7].Optional = false;
             }
         }
         #endregion

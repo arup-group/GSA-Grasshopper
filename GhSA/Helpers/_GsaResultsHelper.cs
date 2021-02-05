@@ -41,7 +41,7 @@ namespace GhSA.Util.Gsa
 
             return roundedvals;
         }
-        static double RoundToSignificantDigits(double d, int digits)
+        public static double RoundToSignificantDigits(double d, int digits)
         {
             if (d == 0.0)
             {
