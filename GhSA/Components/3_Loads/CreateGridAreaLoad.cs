@@ -43,7 +43,9 @@ namespace GhSA.Components
                     System.Environment.NewLine + "0 : Global" +
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
+            pManager.AddTextParameter("Load Name", "Na", "Name of Load", GH_ParamAccess.item);
             pManager.AddNumberParameter("Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)", "V", "Load Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)", GH_ParamAccess.item);
+            
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -51,6 +53,7 @@ namespace GhSA.Components
             pManager[3].Optional = true;
             pManager[4].Optional = true;
             pManager[5].Optional = true;
+            pManager[6].Optional = true;
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -210,9 +213,27 @@ namespace GhSA.Components
                     gridareaload.GridAreaLoad.AxisProperty = axis;
             }
 
-            // 6 load value
+            // 5 Projected
+            bool proj = false;
+            GH_Boolean gh_proj = new GH_Boolean();
+            if (DA.GetData(5, ref gh_proj))
+            {
+                if (GH_Convert.ToBoolean(gh_proj, out proj, GH_Conversion.Both))
+                    gridareaload.GridAreaLoad.IsProjected = proj;
+            }
+
+            // 6 Name
+            string name = "";
+            GH_String gh_name = new GH_String();
+            if (DA.GetData(6, ref gh_name))
+            {
+                if (GH_Convert.ToString(gh_name, out name, GH_Conversion.Both))
+                    gridareaload.GridAreaLoad.Name = name;
+            }
+
+            // 7 load value
             double load1 = 0;
-            if (DA.GetData(6, ref load1))
+            if (DA.GetData(7, ref load1))
                 load1 *= -1000; //convert to kN
             gridareaload.GridAreaLoad.Value = load1;
                         

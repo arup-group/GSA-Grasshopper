@@ -43,6 +43,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "0 : Global" +
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
+            pManager.AddTextParameter("Load Name", "Na", "Name of Load", GH_ParamAccess.item);
             pManager.AddNumberParameter("Value Start (" + Units.Force + "/" + Units.LengthLarge + ")", "V1", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ") at Start of Line", GH_ParamAccess.item);
             pManager.AddNumberParameter("Value End (" + Units.Force + "/" + Units.LengthLarge + ")", "V2", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ") at End of Line (default : Start Value)", GH_ParamAccess.item);
 
@@ -51,7 +52,8 @@ namespace GhSA.Components
             pManager[3].Optional = true;
             pManager[4].Optional = true;
             pManager[5].Optional = true;
-            pManager[7].Optional = true;
+            pManager[6].Optional = true;
+            pManager[8].Optional = true;
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -206,15 +208,33 @@ namespace GhSA.Components
                     gridlineload.GridLineLoad.AxisProperty = axis;
             }
 
-            // 6 load value
+            // 5 Projected
+            bool proj = false;
+            GH_Boolean gh_proj = new GH_Boolean();
+            if (DA.GetData(5, ref gh_proj))
+            {
+                if (GH_Convert.ToBoolean(gh_proj, out proj, GH_Conversion.Both))
+                    gridlineload.GridLineLoad.IsProjected = proj;
+            }
+
+            // 6 Name
+            string name = "";
+            GH_String gh_name = new GH_String();
+            if (DA.GetData(6, ref gh_name))
+            {
+                if (GH_Convert.ToString(gh_name, out name, GH_Conversion.Both))
+                    gridlineload.GridLineLoad.Name = name;
+            }
+
+            // 7 load value
             double load1 = 0;
-            if (DA.GetData(6, ref load1))
+            if (DA.GetData(7, ref load1))
                 load1 *= -1000; //convert to kN
             gridlineload.GridLineLoad.ValueAtStart = load1;
 
-            // 7 load value
+            // 8 load value
             double load2 = load1;
-            if (DA.GetData(7, ref load2))
+            if (DA.GetData(8, ref load2))
                 load2 *= -1000; //convert to kN
             gridlineload.GridLineLoad.ValueAtEnd = load2;
 

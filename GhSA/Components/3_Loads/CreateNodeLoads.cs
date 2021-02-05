@@ -74,6 +74,7 @@ namespace GhSA.Components
                  "Node list should take the form:" + System.Environment.NewLine +
                  " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
                  "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
+            pManager.AddTextParameter("Load Name", "Na", "Name of Load", GH_ParamAccess.item);
             pManager.AddTextParameter("Direction", "Di", "Load direction (default z)." +
                     System.Environment.NewLine + "Accepted inputs are:" +
                     System.Environment.NewLine + "x" +
@@ -85,7 +86,8 @@ namespace GhSA.Components
             pManager.AddNumberParameter("Value (" + Units.Force + ")", "V", "Load Value (" + Units.Force + ")", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[2].Optional = true;
-            
+            pManager[3].Optional = true;
+
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -125,12 +127,21 @@ namespace GhSA.Components
                 GH_Convert.ToString(gh_nl, out nodeList, GH_Conversion.Both);
             nodeLoad.NodeLoad.Nodes = nodeList;
 
-            // 2 direction
+            // 3 Name
+            string name = "";
+            GH_String gh_name = new GH_String();
+            if (DA.GetData(3, ref gh_name))
+            {
+                if (GH_Convert.ToString(gh_name, out name, GH_Conversion.Both))
+                    nodeLoad.NodeLoad.Name = name;
+            }
+
+            // 3 direction
             string dir = "Z";
             Direction direc = Direction.Z;
 
             GH_String gh_dir = new GH_String();
-            if (DA.GetData(2, ref gh_dir))
+            if (DA.GetData(3, ref gh_dir))
                 GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
             dir = dir.ToUpper().Trim();
             if (dir == "X")
@@ -147,7 +158,7 @@ namespace GhSA.Components
             nodeLoad.NodeLoad.Direction = direc;
 
             double load = 0;
-            if (DA.GetData(3, ref load))
+            if (DA.GetData(4, ref load))
             {
                 if (direc == Direction.Z)
                     load *= -1000; //convert to kN

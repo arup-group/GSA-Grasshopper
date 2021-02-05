@@ -40,12 +40,14 @@ namespace GhSA.Components
                     System.Environment.NewLine + "Accepted inputs are:" +
                     System.Environment.NewLine + "0 : Global" +
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
+            pManager.AddTextParameter("Load Name", "Na", "Name of Load", GH_ParamAccess.item);
             pManager.AddNumberParameter("Value (" + Units.Force + ")", "V", "Load Value (" + Units.Force + ")", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
             pManager[4].Optional = true;
+            pManager[5].Optional = true;
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -139,9 +141,18 @@ namespace GhSA.Components
                     gridpointload.GridPointLoad.AxisProperty = axis;
             }
 
-            // 5 load value
+            // 5 Name
+            string name = "";
+            GH_String gh_name = new GH_String();
+            if (DA.GetData(5, ref gh_name))
+            {
+                if (GH_Convert.ToString(gh_name, out name, GH_Conversion.Both))
+                    gridpointload.GridPointLoad.Name = name;
+            }
+
+            // 6 load value
             double load = 0;
-            if (DA.GetData(5, ref load))
+            if (DA.GetData(6, ref load))
                 load *= -1000; //convert to kN
             gridpointload.GridPointLoad.Value = load;
 

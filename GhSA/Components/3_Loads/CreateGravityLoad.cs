@@ -33,10 +33,12 @@ namespace GhSA.Components
                "Element list should take the form:" + System.Environment.NewLine +
                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+            pManager.AddTextParameter("Load Name", "Na", "Name of Load", GH_ParamAccess.item);
             pManager.AddVectorParameter("Gravity factor", "G", "Gravity vector factor (default z = -1)", GH_ParamAccess.item, new Vector3d(0, 0, -1));
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
+            pManager[3].Optional = true;
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -62,11 +64,20 @@ namespace GhSA.Components
                 GH_Convert.ToString(gh_bl, out beamList, GH_Conversion.Both);
             gravityLoad.GravityLoad.Elements = beamList;
 
+            // 2 Name
+            string name = "";
+            GH_String gh_name = new GH_String();
+            if (DA.GetData(2, ref gh_name))
+            {
+                if (GH_Convert.ToString(gh_name, out name, GH_Conversion.Both))
+                    gravityLoad.GravityLoad.Name = name;
+            }
+
             //factor
             Vector3 factor = new Vector3();
             Vector3d vect = new Vector3d(0, 0, -1);
             GH_Vector gh_factor = new GH_Vector();
-            if (DA.GetData(2, ref gh_factor))
+            if (DA.GetData(3, ref gh_factor))
                 GH_Convert.ToVector3d(gh_factor, ref vect, GH_Conversion.Both);
             factor.X = vect.X; factor.Y = vect.Y; factor.Z = vect.Z;
             gravityLoad.GravityLoad.Factor = factor;
