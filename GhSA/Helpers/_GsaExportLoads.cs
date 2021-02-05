@@ -266,6 +266,7 @@ namespace GhSA.Util.Gsa.ToGSA
                     gs_ID = gridsurfaceidcounter;
                     // and add it to the our list of grid surfaces
                     gs_guid.Add(gridplnsrf.GridSurfaceGUID, gs_ID);
+                    gridsurfaceidcounter++;
                 }
             }
             return gs_ID;
