@@ -39,6 +39,62 @@ namespace GhSA.Util.GH
     /// </summary>
     public class Convert
     {
+        public static Plane CreateBestFitUnitisedPlaneFromPts(List<Point3d> ctrl_pts)
+        {
+            Plane pln = Plane.WorldXY;
+
+            // calculate best fit plane:
+            Plane.FitPlaneToPoints(ctrl_pts, out pln);
+
+            // change origin to closest point world xyz
+            // this will ensure that axes created in same plane will not be duplicated
+            pln.Origin = pln.ClosestPoint(new Point3d(0, 0, 0));
+
+            // find significant digits for rounding
+            int dig = Units.SignificantDigits;
+
+            // unitise the plane normal so we can evaluate if it is XY-type plane
+            pln.Normal.Unitize();
+            if (Math.Abs(Math.Round(pln.Normal.Z, dig)) == 1) // if normal's z direction is close to vertical
+            {
+                // set X and Y axis to unit vectors to ensure no funny rotations
+                pln.XAxis = Vector3d.XAxis;
+                pln.YAxis = Vector3d.YAxis;
+            }
+
+            // round origin coordinates
+            pln.OriginX = Util.Gsa.ResultHelper.RoundToSignificantDigits(pln.OriginX, dig);
+            pln.OriginY = Util.Gsa.ResultHelper.RoundToSignificantDigits(pln.OriginY, dig);
+            pln.OriginZ = Util.Gsa.ResultHelper.RoundToSignificantDigits(pln.OriginZ, dig);
+
+            // unitize and round x-axis
+            pln.XAxis.Unitize();
+            Vector3d xaxis = pln.XAxis;
+            xaxis.X = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.X), dig);
+            xaxis.Y = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Y), dig);
+            xaxis.Z = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Z), dig);
+            pln.XAxis = xaxis;
+
+            // unitize and round y-axis
+            pln.YAxis.Unitize();
+            Vector3d yaxis = pln.YAxis;
+            yaxis.X = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.X), dig);
+            yaxis.Y = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Y), dig);
+            yaxis.Z = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Z), dig);
+            pln.YAxis = yaxis;
+
+            // unitize and round z-axis
+            pln.ZAxis.Unitize();
+            Vector3d zaxis = pln.ZAxis;
+            zaxis.X = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.X), dig);
+            zaxis.Y = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Y), dig);
+            zaxis.Z = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Z), dig);
+            pln.ZAxis = zaxis;
+
+            return pln;
+        }
+        
+        
         /// <summary>
         /// Method to convert a NURBS curve into a PolyCurve made of lines and arcs.
         /// Automatically uses Rhino document tolerance if tolerance is not inputted

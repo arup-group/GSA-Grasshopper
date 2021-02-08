@@ -18,6 +18,11 @@ namespace GhSA
             set { m_tolerance = value; }
         }
 
+        public static int SignificantDigits
+        {
+            get { return BitConverter.GetBytes(decimal.GetBits((decimal)m_tolerance)[3])[2]; ; }
+        }
+
         private static bool setLength_Large = false;
         public static string LengthLarge
         {
@@ -163,6 +168,7 @@ namespace GhSA
         private static string m_RhinoUnitName = "";
         private static double m_ConversionToMeter;
         private static double m_tolerance = Util.GH.Tolerance.RhinoDocTolerance();
+        
 
         #endregion
 
