@@ -196,6 +196,8 @@ namespace GhSA.Util.Gsa.ToGSA
                     // else add the axis to the model and assign the new axis number to the grid plane
                     axis_id = axisidcounter;
                     gridplanesurface.GridPlane.AxisProperty = axisidcounter;
+                    if (axis.Name == "")
+                        axis.Name = "GsaGH Axis " + axisidcounter;
                     existingAxes.Add(gridplanesurface.GridPlane.AxisProperty, axis);
                     axisidcounter++;
                 }
@@ -228,6 +230,8 @@ namespace GhSA.Util.Gsa.ToGSA
                 else
                 {
                     // if it does not exist we add the grid plane to the model
+                    if (gridplanesurface.GridPlane.Name == "")
+                        gridplanesurface.GridPlane.Name = "GsaGH GridPlane " + gridplaneidcounter;
                     existingGridPlanes.Add(gridplaneidcounter, gridplanesurface.GridPlane);
                     // then set the id to grid surface
                     gp_ID = gridplaneidcounter;
@@ -262,6 +266,8 @@ namespace GhSA.Util.Gsa.ToGSA
                 else
                 {
                     // if it does not exist we add the grid surface to the model
+                    if (gridplnsrf.GridSurface.Name == "")
+                        gridplnsrf.GridSurface.Name = "GsaGH GridPlane " + gridsurfaceidcounter;
                     existingGridSurfaces.Add(gridsurfaceidcounter, gridplnsrf.GridSurface);
                     gs_ID = gridsurfaceidcounter;
                     // and add it to the our list of grid surfaces
