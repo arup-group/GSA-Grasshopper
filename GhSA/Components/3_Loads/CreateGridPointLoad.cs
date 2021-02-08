@@ -75,7 +75,7 @@ namespace GhSA.Components
 
             // 2 Plane
             GsaGridPlaneSurface grdplnsrf;
-            Plane pln = Plane.Unset;
+            Plane pln = Plane.WorldXY;
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(2, ref gh_typ))
             {

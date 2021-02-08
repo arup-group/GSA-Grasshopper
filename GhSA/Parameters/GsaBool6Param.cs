@@ -118,14 +118,20 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            string str = System.Environment.NewLine
-                + "X: " + X.ToString()
-                + ", Y: " + Y.ToString()
-                + ", Z: " + Z.ToString()
-                + ", XX: " + XX.ToString()
-                + ", YY: " + YY.ToString()
-                + ", ZZ: " + ZZ.ToString();
-            return "GSA Bool 6" + str;
+            string sx = (X) ? "\u2713" : "\u2610";
+            sx = "{X" + sx;
+            string sy = (Y) ? "\u2713" : "\u2610";
+            sy = ", Y" + sy;
+            string sz = (Z) ? "\u2713" : "\u2610";
+            sz = ", Z" + sz;
+            string sxx = (XX) ? "\u2713" : "\u2610";
+            sxx = ", XX" + sxx;
+            string syy = (YY) ? "\u2713" : "\u2610";
+            syy = ", YY" + syy;
+            string szz = (ZZ) ? "\u2713" : "\u2610";
+            szz = ", ZZ" + szz + "}";
+
+            return "GSA Bool 6" + sx + sy + sz + sxx + syy + szz;
         }
 
         #endregion

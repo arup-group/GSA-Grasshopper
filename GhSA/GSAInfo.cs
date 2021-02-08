@@ -19,6 +19,7 @@ namespace GhSA
             // set folder to latest GSA version.
             Assembly ass1 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
             Assembly ass2 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\System.Data.SQLite.dll");
+            //Assembly ass3 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\libiomp5md.dll");
 
             const string name = "PATH";
             string pathvar = System.Environment.GetEnvironmentVariable(name);
@@ -29,7 +30,8 @@ namespace GhSA
             InitiateGsaAPI.UseGsaAPI();
 
             // test if this solves problems with libiomp5md.dll version (karamba using different version)
-            System.Environment.SetEnvironmentVariable("KMP_DUPLICATE_LIB_OK", "TRUE");
+            //System.Environment.SetEnvironmentVariable("KMP_DUPLICATE_LIB_OK", "TRUE");
+            // Note: it did not, but pushed the error 
 
             // ### Create Category icon ###
             Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');

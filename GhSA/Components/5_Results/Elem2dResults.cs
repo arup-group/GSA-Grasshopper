@@ -898,12 +898,12 @@ namespace GhSA.Components
             
             if (_mode == FoldMode.Displacement)
             {
-                Params.Output[0].NickName = "U";
+                Params.Output[0].NickName = "U\u0305";
                 Params.Output[0].Name = "Translation";
                 Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Units.LengthSmall + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
-                Params.Output[1].NickName = "R";
+                Params.Output[1].NickName = "R\u0305";
                 Params.Output[1].Name = "Rotation";
                 Params.Output[1].Description = "Rotation Vector [Rxx, Ryy, Rzz] (" + Units.Angle + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
@@ -917,12 +917,12 @@ namespace GhSA.Components
 
             if (_mode == FoldMode.Force)
             {
-                Params.Output[0].NickName = "F";
+                Params.Output[0].NickName = "F\u0305";
                 Params.Output[0].Name = "Force";
                 Params.Output[0].Description = "Force vector [Fx, Fy, Fxy] (" + Units.Force + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
-                Params.Output[1].NickName = "M";
+                Params.Output[1].NickName = "M\u0305";
                 Params.Output[1].Name = "Moment";
                 Params.Output[1].Description = "Moment vector [Mxx, Myy, Mxy] (" + Units.Force + "/" + Units.LengthLarge + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";

@@ -238,12 +238,12 @@ namespace GhSA.Parameters
                 sptTxt = "";
             else
             {
-                sptTxt = " Restraint: " + "X: " + (Node.Restraint.X ? "Fix" : "Free") +
-                   ", Y: " + (Node.Restraint.Y ? "Fix" : "Free") +
-                   ", Z: " + (Node.Restraint.Z ? "Fix" : "Free") +
-                   ", XX: " + (Node.Restraint.XX ? "Fix" : "Free") +
-                   ", YY: " + (Node.Restraint.YY ? "Fix" : "Free") +
-                   ", ZZ: " + (Node.Restraint.ZZ ? "Fix" : "Free");
+                sptTxt = " Restraint: " + "X: " + (Node.Restraint.X ? "\u2713" : "\u2610") +
+                   ", Y: " + (Node.Restraint.Y ? "\u2713" : "\u2610") +
+                   ", Z: " + (Node.Restraint.Z ? "\u2713" : "\u2610") +
+                   ", XX: " + (Node.Restraint.XX ? "\u2713" : "\u2610") +
+                   ", YY: " + (Node.Restraint.YY ? "\u2713" : "\u2610") +
+                   ", ZZ: " + (Node.Restraint.ZZ ? "\u2713" : "\u2610");
                 if (!Node.Restraint.X & !Node.Restraint.Y & !Node.Restraint.Z &
                     !Node.Restraint.XX & !Node.Restraint.YY & !Node.Restraint.ZZ)
                     sptTxt = "";
