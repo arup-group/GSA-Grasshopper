@@ -128,11 +128,14 @@ namespace GhSA.Parameters
             m_axis = new Axis();
         }
 
-        public GsaGridPlaneSurface(Plane plane)
+        public GsaGridPlaneSurface(Plane plane, bool tryUseExisting = false)
         {
             m_plane = plane;
             m_gridplane = new GridPlane();
-            m_gp_guid = Guid.NewGuid();
+            if (tryUseExisting)
+                m_gp_guid = new Guid(); // will create 0000-00000-00000-00000
+            else
+                m_gp_guid = Guid.NewGuid(); // will create random guid
 
             m_gridsrf = new GridSurface
             {
@@ -142,7 +145,10 @@ namespace GhSA.Parameters
                 ExpansionType = GridSurfaceExpansionType.UNDEF,
                 SpanType = GridSurface.Span_Type.ONE_WAY
             };
-            m_gs_guid = Guid.NewGuid();
+            if (tryUseExisting)
+                m_gs_guid = new Guid(); // will create 0000-00000-00000-00000
+            else
+                m_gs_guid = Guid.NewGuid(); // will create random guid
 
             m_axis = new Axis();
             m_axis.Origin.X = plane.OriginX;

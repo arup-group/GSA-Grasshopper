@@ -60,6 +60,8 @@ namespace GhSA.Util.Gsa
                 }
                 else
                 {
+                    if (Math.Abs(digits - (int)leftSideNumbers) > 15)
+                        return 0.0;
                     return Math.Round(result, digits - (int)leftSideNumbers, MidpointRounding.AwayFromZero);
                 }
             }

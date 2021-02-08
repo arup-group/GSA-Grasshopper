@@ -128,11 +128,11 @@ namespace GhSA.Components
                     // plane
                     if (!planeSet)
                     {
-                        // calculate best fit plane:
-                        Plane.FitPlaneToPoints(ctrl_pts, out pln);
+                        // create best-fit plane from pts
+                        pln = Util.GH.Convert.CreateBestFitUnitisedPlaneFromPts(ctrl_pts);
 
                         // create grid plane surface from best fit plane
-                        grdplnsrf = new GsaGridPlaneSurface(pln);
+                        grdplnsrf = new GsaGridPlaneSurface(pln, true);
                     }
                     else
                     {
