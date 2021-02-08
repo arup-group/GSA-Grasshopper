@@ -109,12 +109,11 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            string str = System.Environment.NewLine
-                + "X1: " + X1.ToString()
-                + ", X2: " + X2.ToString()
-                + ", Y: " + Y.ToString()
-                + ", Z: " + Z.ToString();
-            return "GSA Offset" + str;
+            string str = "{X1:" + X1.ToString()
+                + ", X2:" + X2.ToString()
+                + ", Y:" + Y.ToString()
+                + ", Z:" + Z.ToString() + "}";
+            return "GSA Offset " + str;
         }
 
         #endregion

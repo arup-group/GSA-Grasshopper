@@ -73,7 +73,7 @@ namespace GhSA.Components
 
             // Do plane input first as to see if we need to project polyline onto grid plane
             // 2 Plane 
-            Plane pln = Plane.Unset;
+            Plane pln = Plane.WorldXY;
             bool planeSet = false;
             GsaGridPlaneSurface grdplnsrf = new GsaGridPlaneSurface();
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -130,9 +130,6 @@ namespace GhSA.Components
                     {
                         // calculate best fit plane:
                         Plane.FitPlaneToPoints(ctrl_pts, out pln);
-                        pln.XAxis = Vector3d.XAxis;
-                        pln.YAxis = Vector3d.YAxis;
-                        pln.ZAxis = Vector3d.ZAxis;
 
                         // create grid plane surface from best fit plane
                         grdplnsrf = new GsaGridPlaneSurface(pln);

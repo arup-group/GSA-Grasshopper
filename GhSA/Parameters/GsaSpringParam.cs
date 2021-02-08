@@ -114,14 +114,13 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            string str = System.Environment.NewLine
-                + "X: " + X.ToString()
-                + ", Y: " + Y.ToString()
-                + ", Z: " + Z.ToString()
-                + ", XX: " + XX.ToString()
-                + ", YY: " + YY.ToString()
-                + ", ZZ: " + ZZ.ToString();
-            return "GSA General Spring" + str;
+            string str = "{X:" + X.ToString()
+                + ", Y:" + Y.ToString()
+                + ", Z:" + Z.ToString()
+                + ", XX:" + XX.ToString()
+                + ", YY:" + YY.ToString()
+                + ", ZZ:" + ZZ.ToString() + "}";
+            return "GSA Spring " + str;
         }
 
         #endregion

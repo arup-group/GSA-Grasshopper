@@ -222,19 +222,19 @@ namespace GhSA.Util.Gsa.ToGSA
             {
                 if (existAxes.TryGetValue(key, out Axis gsaAxis))
                 {
-                    if (Math.Pow((testAxis.Origin.X - testAxis.Origin.X), 2)
-                        + Math.Pow((testAxis.Origin.Y - testAxis.Origin.Y), 2)
-                        + Math.Pow((testAxis.Origin.Z - testAxis.Origin.Z), 2)
+                    if (Math.Pow((testAxis.Origin.X - gsaAxis.Origin.X), 2)
+                        + Math.Pow((testAxis.Origin.Y - gsaAxis.Origin.Y), 2)
+                        + Math.Pow((testAxis.Origin.Z - gsaAxis.Origin.Z), 2)
                         < Math.Pow(tolerance, 2))
                     {
-                        if (Math.Pow((testAxis.XVector.X - testAxis.XVector.X), 2)
-                        + Math.Pow((testAxis.XVector.Y - testAxis.XVector.Y), 2)
-                        + Math.Pow((testAxis.XVector.Z - testAxis.XVector.Z), 2)
+                        if (Math.Pow((testAxis.XVector.X - gsaAxis.XVector.X), 2)
+                        + Math.Pow((testAxis.XVector.Y - gsaAxis.XVector.Y), 2)
+                        + Math.Pow((testAxis.XVector.Z - gsaAxis.XVector.Z), 2)
                         < Math.Pow(tolerance, 2))
                         {
-                            if (Math.Pow((testAxis.XYPlane.X - testAxis.XYPlane.X), 2)
-                            + Math.Pow((testAxis.XYPlane.Y - testAxis.XYPlane.Y), 2)
-                            + Math.Pow((testAxis.XYPlane.Z - testAxis.XYPlane.Z), 2)
+                            if (Math.Pow((testAxis.XYPlane.X - gsaAxis.XYPlane.X), 2)
+                            + Math.Pow((testAxis.XYPlane.Y - gsaAxis.XYPlane.Y), 2)
+                            + Math.Pow((testAxis.XYPlane.Z - gsaAxis.XYPlane.Z), 2)
                             < Math.Pow(tolerance, 2))
                             {
                                 return key;
