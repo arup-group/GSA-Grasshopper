@@ -327,6 +327,7 @@ namespace GhSA.Util.Gsa
                         singleelement2D.Properties.Add(prop2Ds[j]);
 
                         // add element
+                        singleelement2D.Elements = new List<Element>();
                         singleelement2D.Elements.Add(elems[j]);
 
                         // add the element to list of goo 2d elements
@@ -351,6 +352,14 @@ namespace GhSA.Util.Gsa
 
                     }
                     element2D.Elements = elems;
+
+                    while (element2D.Elements.Count != element2D.Properties.Count)
+                    {
+                        if (element2D.Elements.Count > element2D.Properties.Count)
+                            element2D.Properties.Add(element2D.Properties[element2D.Properties.Count - 1]);
+                        else
+                            element2D.Properties.RemoveAt(element2D.Properties.Count - 1);
+                    }
                     
                     elem2dGoos.Add(new GsaElement2dGoo(element2D));
                 }
