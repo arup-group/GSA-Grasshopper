@@ -173,6 +173,14 @@ namespace GhSA.Parameters
                 Property = prop
             };
 
+            if (topology.Count == 0)
+            {
+                m_brep = null;
+                m_crv = null;
+                incl_pts = null;
+                return;
+            }
+
             if (topology[0] != topology[topology.Count - 1])
             {
                 topology.Add(topology[0]);
@@ -248,6 +256,8 @@ namespace GhSA.Parameters
             dup.Member.Offset.X2 = m_member.Offset.X2;
             dup.Member.Offset.Y = m_member.Offset.Y;
             dup.Member.Offset.Z = m_member.Offset.Z;
+
+            if (m_brep == null) { return dup; }
 
             if (m_brep != null)
                 dup.m_brep = Brep.DuplicateBrep();

@@ -130,8 +130,12 @@ namespace GhSA.Components
 
             if (dropdownlistidd == 1) // if change is made to second list
             {
-                _disp = (DisplayValue)selectedidd;
                 selections[1] = dropdowncontents[1][selectedidd];
+                _disp = (DisplayValue)selectedidd;
+                if (dropdowncontents[1] != dropdowndisplacement)
+                    if (selectedidd > 2)
+                        _disp = (DisplayValue)selectedidd + 1;
+                
                 (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
                 Params.OnParametersChanged();
                 ExpireSolution(true);
@@ -935,7 +939,7 @@ namespace GhSA.Components
 
             if ( _mode == FoldMode.Shear)
             {
-                Params.Output[0].NickName = "V";
+                Params.Output[0].NickName = "V\u0305";
                 Params.Output[0].Name = "Shear 2D-Vector";
                 Params.Output[0].Description = "Shear 2D-Vector [Vx, Vy, --] (" + Units.Force + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
@@ -952,12 +956,12 @@ namespace GhSA.Components
 
             if (_mode == FoldMode.Stress)
             {
-                Params.Output[0].NickName = "σ";
+                Params.Output[0].NickName = "σ\u0305";
                 Params.Output[0].Name = "Projected Stress Vector";
                 Params.Output[0].Description = "Stress Vector [σxx, σyy, σzz] (" + Units.Stress + ")"
                     + System.Environment.NewLine + "Value order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
-                Params.Output[1].NickName = "τ";
+                Params.Output[1].NickName = "τ\u0305";
                 Params.Output[1].Name = "Projected Shear Stress Vector";
                 Params.Output[1].Description = "Shear Stress Vector [τxy, τyz, τzx] (" + Units.Stress + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
