@@ -102,7 +102,7 @@ namespace GhSA
         {
             get
             {
-                return "0.1.29";
+                return "0.1.30";
             }
         }
     }
