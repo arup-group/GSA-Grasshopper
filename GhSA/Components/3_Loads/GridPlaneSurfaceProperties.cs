@@ -64,19 +64,29 @@ namespace GhSA.Components
             GsaGridPlaneSurface gps = new GsaGridPlaneSurface();
             if(DA.GetData(0, ref gps))
             {
-                DA.SetData(0, gps.Plane);
-                DA.SetData(1, gps.GridPlaneID);
-                DA.SetData(2, gps.GridPlane.Name);
-                DA.SetData(3, gps.GridPlane.IsStoreyType);
-                Plane axis = new Plane(new Point3d(gps.Axis.Origin.X, gps.Axis.Origin.Y, gps.Axis.Origin.Z),
+                if (gps == null)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Null GridPlaneSurface");
+                    return;
+                }
+
+                DA.SetData(0, gps == null? Plane.Unset : gps.Plane);
+                DA.SetData(1, gps.GridPlane == null ? 0 : gps.GridPlaneID);
+                DA.SetData(2, gps.GridPlane == null ? null : gps.GridPlane.Name);
+                DA.SetData(3, gps.GridPlane == null ? false : gps.GridPlane.IsStoreyType);
+                Plane axis = new Plane();
+                if (gps.GridPlane != null)
+                {
+                    axis = new Plane(new Point3d(gps.Axis.Origin.X, gps.Axis.Origin.Y, gps.Axis.Origin.Z),
                     new Vector3d(gps.Axis.XVector.X, gps.Axis.XVector.Y, gps.Axis.XVector.Z),
                     new Vector3d(gps.Axis.XYPlane.X, gps.Axis.XYPlane.Y, gps.Axis.XYPlane.Z)
                     );
-                DA.SetData(4, axis);
+                }
+                DA.SetData(4, gps.GridPlane == null ? Plane.Unset : axis);
                 DA.SetData(5, gps.AxisID);
-                DA.SetData(6, gps.GridPlane.Elevation);
-                DA.SetData(7, gps.GridPlane.ToleranceAbove);
-                DA.SetData(8, gps.GridPlane.ToleranceBelow);
+                DA.SetData(6, gps.GridPlane == null ? 0 : gps.GridPlane.Elevation);
+                DA.SetData(7, gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceAbove);
+                DA.SetData(8, gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceBelow);
                 
                 DA.SetData(9, gps.GridSurface.Name);
                 DA.SetData(10, gps.GridSurfaceID);

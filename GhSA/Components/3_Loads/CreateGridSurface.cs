@@ -78,7 +78,7 @@ namespace GhSA.Components
                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
             pManager.AddTextParameter("Name", "Na", "Name of Grid Surface", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Tolerance (" + Units.LengthSmall + ")", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 10);
+            pManager.AddNumberParameter("Tolerance (" + Units.LengthLarge + ")", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 0.01);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -104,6 +104,7 @@ namespace GhSA.Components
             // 0 Plane
             Plane pln = Plane.Unset;
             GsaGridPlaneSurface gps;
+            bool idSet = false;
             
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(0, ref gh_typ))
@@ -120,8 +121,19 @@ namespace GhSA.Components
                         gps = new GsaGridPlaneSurface(pln);
                     else
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Cannot convert your input to GridPlaneSurface or Plane");
-                        return;
+                        int id = 0;
+                        if (GH_Convert.ToInt32(gh_typ.Value, out id, GH_Conversion.Both))
+                        {
+                            gps = new GsaGridPlaneSurface();
+                            gps.GridSurface.GridPlane = id;
+                            gps.GridPlane = null;
+                            idSet = true;
+                        }
+                        else
+                        {
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Cannot convert your input to GridPlaneSurface or Plane");
+                            return;
+                        }
                     }
                 }
             }
@@ -134,6 +146,8 @@ namespace GhSA.Components
             // record if changes has been made from default type
             bool changeGS = false;
             GridSurface gs = new GridSurface(); // new GridSurface to make changes to, set it back to GPS in the end
+            if (idSet)
+                gs.GridPlane = gps.GridSurface.GridPlane;
 
             // 1 ID
             GH_Integer ghint = new GH_Integer();

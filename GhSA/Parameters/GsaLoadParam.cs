@@ -214,18 +214,18 @@ namespace GhSA.Parameters
         }
         public GsaGridPlaneSurface GridPlaneSurface
         {
-            get { return m_gridplnsrf; }
-            set { m_gridplnsrf = value; }
+            get { return m_gridplanesrf; }
+            set { m_gridplanesrf = value; }
         }
         #region fields
         private GridPointLoad m_gridpointload;
-        private GsaGridPlaneSurface m_gridplnsrf;
+        private GsaGridPlaneSurface m_gridplanesrf;
         #endregion
         #region constructor
         public GsaGridPointLoad()
         {
             m_gridpointload = new GridPointLoad();
-            m_gridplnsrf = new GsaGridPlaneSurface();
+            m_gridplanesrf = new GsaGridPlaneSurface();
         }
         public GsaGridPointLoad Duplicate()
         {
@@ -239,7 +239,10 @@ namespace GhSA.Parameters
             dup.m_gridpointload.X = m_gridpointload.X;
             dup.m_gridpointload.Y = m_gridpointload.Y;
             dup.m_gridpointload.Value = m_gridpointload.Value;
-            dup.m_gridplnsrf = m_gridplnsrf.Duplicate();
+            if (m_gridplanesrf != null)
+                dup.m_gridplanesrf = m_gridplanesrf.Duplicate();
+            else
+                dup.m_gridplanesrf = null;
             return dup;
         }
         #endregion
@@ -284,7 +287,10 @@ namespace GhSA.Parameters
             dup.m_gridlineload.Type = m_gridlineload.Type;
             dup.m_gridlineload.ValueAtStart = m_gridlineload.ValueAtStart;
             dup.m_gridlineload.ValueAtEnd = m_gridlineload.ValueAtEnd;
-            dup.m_gridplanesrf = m_gridplanesrf.Duplicate();
+            if (m_gridplanesrf != null)
+                dup.m_gridplanesrf = m_gridplanesrf.Duplicate();
+            else
+                dup.m_gridplanesrf = null;
             return dup;
         }
         #endregion
@@ -326,7 +332,10 @@ namespace GhSA.Parameters
             dup.m_gridareaload.PolyLineReference = m_gridareaload.PolyLineReference;
             dup.m_gridareaload.Type = m_gridareaload.Type;
             dup.m_gridareaload.Value = m_gridareaload.Value;
-            dup.m_gridplanesrf = m_gridplanesrf.Duplicate();
+            if (m_gridplanesrf != null)
+                dup.m_gridplanesrf = m_gridplanesrf.Duplicate();
+            else
+                dup.m_gridplanesrf = null;
             return dup;
         }
         #endregion
@@ -450,15 +459,18 @@ namespace GhSA.Parameters
                     return dup;
                 case LoadTypes.GridPoint:
                     dup = new GsaLoad(m_gridpoint.Duplicate());
-                    dup.PointLoad.GridPlaneSurface = m_gridpoint.GridPlaneSurface.Duplicate();
+                    if (m_gridpoint.GridPlaneSurface != null)
+                        dup.PointLoad.GridPlaneSurface = m_gridpoint.GridPlaneSurface.Duplicate();
                     return dup;
                 case LoadTypes.GridLine:
                     dup = new GsaLoad(m_gridline.Duplicate());
-                    dup.LineLoad.GridPlaneSurface = m_gridline.GridPlaneSurface.Duplicate();
+                    if (m_gridline.GridPlaneSurface != null)
+                        dup.LineLoad.GridPlaneSurface = m_gridline.GridPlaneSurface.Duplicate();
                     return dup;
                 case LoadTypes.GridArea:
                     dup = new GsaLoad(m_gridarea.Duplicate());
-                    dup.AreaLoad.GridPlaneSurface = m_gridarea.GridPlaneSurface.Duplicate();
+                    if (m_gridarea.GridPlaneSurface != null)
+                        dup.AreaLoad.GridPlaneSurface = m_gridarea.GridPlaneSurface.Duplicate();
                     return dup;
             }
             return default;

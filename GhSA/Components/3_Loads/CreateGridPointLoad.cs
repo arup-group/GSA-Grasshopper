@@ -97,7 +97,8 @@ namespace GhSA.Components
                     int id = 0;
                     if (GH_Convert.ToInt32(gh_typ.Value, out id, GH_Conversion.Both))
                     {
-                        gridpointload.GridPlaneSurface.GridSurfaceID = id;
+                        gridpointload.GridPointLoad.GridSurface = id;
+                        gridpointload.GridPlaneSurface = null;
                     }
                     else
                     {

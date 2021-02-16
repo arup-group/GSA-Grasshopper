@@ -168,8 +168,8 @@ namespace GhSA.Parameters
             if (this == null) { return null; }
             GsaGridPlaneSurface dup = new GsaGridPlaneSurface
             {
-                Plane = m_plane.Clone(),
-                GridPlane = new GridPlane
+                Plane = m_gridplane == null ? Plane.Unset : m_plane.Clone(),
+                GridPlane = m_gridplane == null ? null : new GridPlane
                 {
                     AxisProperty = m_gridplane.AxisProperty,
                     Elevation = m_gridplane.Elevation,
@@ -189,7 +189,7 @@ namespace GhSA.Parameters
                     SpanType = m_gridsrf.SpanType,
                     Tolerance = m_gridsrf.Tolerance
                 },
-                Axis = new Axis
+                Axis = m_gridplane == null ? null : new Axis
                 { 
                     Name = m_axis.Name.ToString(),
                     Origin = new Vector3 { X = m_axis.Origin.X, Y = m_axis.Origin.Y, Z = m_axis.Origin.Z },
@@ -222,8 +222,11 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-
-            return "GridPlaneSurface " + GridPlane.Name + " " + GridSurface.Name;
+            if (this == null) { return "Null GridPlaneSurface"; }
+            if (GridPlane == null && GridSurface == null) { return "Null GridPlaneSurface"; }
+            string gp = GridPlane == null ? "" : GridPlane.Name + " ";
+            string gs = GridSurface == null ? "" : GridSurface.Name;
+            return "GridPlaneSurface " + gp + gs;
         }
 
         #endregion
@@ -242,13 +245,9 @@ namespace GhSA.Parameters
         public GsaGridPlaneSurfaceGoo(GsaGridPlaneSurface gridplane)
         {
             if (gridplane == null)
-                gridplane = null;
+                this.Value = null;
             else
-            {
-                if (gridplane.Plane == null)
-                    gridplane = null;
-            }
-            this.Value = gridplane.Duplicate();
+                this.Value = gridplane.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()

@@ -88,79 +88,107 @@ namespace GhSA.Util.Gsa.ToGSA
                     break;
 
                 case GsaLoad.LoadTypes.GridPoint:
+                    if (load.PointLoad.GridPlaneSurface == null) // if gridsurface id has been set
+                    {
+                        // add the load to our list of loads to be set later
+                        gridPointLoads.Add(load.PointLoad.GridPointLoad);
+                        break;
+                    }
+
                     // set grid point load and grid plane surface
                     GsaGridPointLoad gridptref = load.PointLoad;
                     GsaGridPlaneSurface gridplnsrf = gridptref.GridPlaneSurface;
 
-                    // - grid load references a grid surface number
-                    // -- grid surface references a grid plane number
-                    // --- grid plane references an Axis number
-                    // toggle through the members in reverse order, set/add to model in each step
+                    if (gridplnsrf.GridPlane != null)
+                    {
+                        // - grid load references a grid surface number
+                        // -- grid surface references a grid plane number
+                        // --- grid plane references an Axis number
+                        // toggle through the members in reverse order, set/add to model in each step
 
-                    // ### AXIS ###
-                    // set axis property in grid plane, add/set axis in model
-                    gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter);
+                        // ### AXIS ###
+                        // set axis property in grid plane, add/set axis in model
+                        gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter);
 
-                    // ### GRID PLANE ###
-                    // set grid plane number in grid surface, add/set grid plane in model
-                    gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes, ref gridplaneidcounter, ref gp_guid, existingAxes);
+                        // ### GRID PLANE ###
+                        // set grid plane number in grid surface, add/set grid plane in model
+                        gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes, ref gridplaneidcounter, ref gp_guid, existingAxes);
 
-                    // ### GRID SURFACE ###
-                    // set the surface number in the load, add/set the surface in the model
-                    gridptref.GridPointLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes);
+                        // ### GRID SURFACE ###
+                        // set the surface number in the load, add/set the surface in the model
+                        gridptref.GridPointLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes);
+                    }
 
                     // add the load to our list of loads to be set later
                     gridPointLoads.Add(gridptref.GridPointLoad);
                     break;
 
                 case GsaLoad.LoadTypes.GridLine:
+                    if (load.LineLoad.GridPlaneSurface == null) // if gridsurface id has been set
+                    {
+                        // add the load to our list of loads to be set later
+                        gridLineLoads.Add(load.LineLoad.GridLineLoad);
+                        break;
+                    }
+
                     // set grid line load and grid plane surface
                     GsaGridLineLoad gridlnref = load.LineLoad;
                     gridplnsrf = gridlnref.GridPlaneSurface;
 
-                    // - grid load references a grid surface number
-                    // -- grid surface references a grid plane number
-                    // --- grid plane references an Axis number
-                    // toggle through the members in reverse order, set/add to model in each step
+                    if (gridplnsrf.GridPlane != null)
+                    {
+                        // - grid load references a grid surface number
+                        // -- grid surface references a grid plane number
+                        // --- grid plane references an Axis number
+                        // toggle through the members in reverse order, set/add to model in each step
 
-                    // ### AXIS ###
-                    // set axis property in grid plane, add/set axis in model
-                    gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter);
+                        // ### AXIS ###
+                        // set axis property in grid plane, add/set axis in model
+                        gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter);
 
-                    // ### GRID PLANE ###
-                    // set grid plane number in grid surface, add/set grid plane in model
-                    gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes, ref gridplaneidcounter, ref gp_guid, existingAxes);
+                        // ### GRID PLANE ###
+                        // set grid plane number in grid surface, add/set grid plane in model
+                        gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes, ref gridplaneidcounter, ref gp_guid, existingAxes);
 
-                    // ### GRID SURFACE ###
-                    // set the surface number in the load, add/set the surface in the model
-                    gridlnref.GridLineLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes);
-
+                        // ### GRID SURFACE ###
+                        // set the surface number in the load, add/set the surface in the model
+                        gridlnref.GridLineLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes);
+                    }
                     // add the load to our list of loads to be set later
                     gridLineLoads.Add(gridlnref.GridLineLoad);
                     break;
 
                 case GsaLoad.LoadTypes.GridArea:
+                    if (load.AreaLoad.GridPlaneSurface == null) // if gridsurface id has been set
+                    {
+                        // add the load to our list of loads to be set later
+                        gridAreaLoads.Add(load.AreaLoad.GridAreaLoad);
+                        break;
+                    }
+
                     // set grid line load and grid plane surface
                     GsaGridAreaLoad gridarref = load.AreaLoad;
                     gridplnsrf = gridarref.GridPlaneSurface;
 
-                    // - grid load references a grid surface number
-                    // -- grid surface references a grid plane number
-                    // --- grid plane references an Axis number
-                    // toggle through the members in reverse order, set/add to model in each step
+                    if (gridplnsrf.GridPlane != null)
+                    {
+                        // - grid load references a grid surface number
+                        // -- grid surface references a grid plane number
+                        // --- grid plane references an Axis number
+                        // toggle through the members in reverse order, set/add to model in each step
 
-                    // ### AXIS ###
-                    // set axis property in grid plane, add/set axis in model
-                    gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter);
+                        // ### AXIS ###
+                        // set axis property in grid plane, add/set axis in model
+                        gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter);
 
-                    // ### GRID PLANE ###
-                    // set grid plane number in grid surface, add/set grid plane in model
-                    gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes, ref gridplaneidcounter, ref gp_guid, existingAxes);
+                        // ### GRID PLANE ###
+                        // set grid plane number in grid surface, add/set grid plane in model
+                        gridplnsrf.GridSurface.GridPlane = SetGridPlane(ref gridplnsrf, ref existingGridPlanes, ref gridplaneidcounter, ref gp_guid, existingAxes);
 
-                    // ### GRID SURFACE ###
-                    // set the surface number in the load, add/set the surface in the model
-                    gridarref.GridAreaLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes);
-
+                        // ### GRID SURFACE ###
+                        // set the surface number in the load, add/set the surface in the model
+                        gridarref.GridAreaLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes);
+                    }
                     // add the load to our list of loads to be set later
                     gridAreaLoads.Add(gridarref.GridAreaLoad);
                     break;
@@ -173,6 +201,9 @@ namespace GhSA.Util.Gsa.ToGSA
         {
             int axis_id = gridplanesurface.AxisID;
             Axis axis = gridplanesurface.Axis;
+
+            if (axis.Name == "")
+                axis.Name = "GsaGH Axis " + axisidcounter;
 
             // see if AXIS has been set
             if (gridplanesurface.AxisID > 0)
@@ -196,8 +227,7 @@ namespace GhSA.Util.Gsa.ToGSA
                     // else add the axis to the model and assign the new axis number to the grid plane
                     axis_id = axisidcounter;
                     gridplanesurface.GridPlane.AxisProperty = axisidcounter;
-                    if (axis.Name == "")
-                        axis.Name = "GsaGH Axis " + axisidcounter;
+                    
                     existingAxes.Add(gridplanesurface.GridPlane.AxisProperty, axis);
                     axisidcounter++;
                 }
@@ -208,6 +238,9 @@ namespace GhSA.Util.Gsa.ToGSA
         public static int SetGridPlane(ref GsaGridPlaneSurface gridplanesurface,
             ref Dictionary<int, GridPlane> existingGridPlanes, ref int gridplaneidcounter, ref Dictionary<Guid, int> gp_guid, Dictionary<int, Axis> existingAxes)
         {
+            if (gridplanesurface.GridPlane.Name == "")
+                gridplanesurface.GridPlane.Name = "GsaGH GridPlane " + gridplaneidcounter;
+
             int gp_ID = gridplanesurface.GridPlaneID;
             // see if grid plane ID has been set by user
             if (gridplanesurface.GridPlaneID > 0)
@@ -244,8 +277,7 @@ namespace GhSA.Util.Gsa.ToGSA
                 }
                 
                 // if it does not exist we add the grid plane to the model
-                if (gridplanesurface.GridPlane.Name == "")
-                    gridplanesurface.GridPlane.Name = "GsaGH GridPlane " + gridplaneidcounter;
+                
                 existingGridPlanes.Add(gridplaneidcounter, gridplanesurface.GridPlane);
                 // then set the id to grid surface
                 gp_ID = gridplaneidcounter;
@@ -262,6 +294,10 @@ namespace GhSA.Util.Gsa.ToGSA
             Dictionary<int, GridPlane> existingGridPlanes, Dictionary<int, Axis> existingAxes)
         {
             int gs_ID = gridplanesurface.GridSurfaceID;
+
+            if (gridplanesurface.GridSurface.Name == "")
+                gridplanesurface.GridSurface.Name = "GsaGH GridPlane " + gridsurfaceidcounter;
+
             // see if grid surface ID has been set by user
             if (gridplanesurface.GridSurfaceID > 0)
             {
@@ -305,8 +341,6 @@ namespace GhSA.Util.Gsa.ToGSA
                 }
 
                 // if it does not exist we add the grid surface to the model
-                if (gridplanesurface.GridSurface.Name == "")
-                    gridplanesurface.GridSurface.Name = "GsaGH GridPlane " + gridsurfaceidcounter;
                 existingGridSurfaces.Add(gridsurfaceidcounter, gridplanesurface.GridSurface);
                 gs_ID = gridsurfaceidcounter;
                 // and add it to the our list of grid surfaces
@@ -336,13 +370,15 @@ namespace GhSA.Util.Gsa.ToGSA
                     if (gridPlaneSurfaces[i] != null)
                     {
                         GsaGridPlaneSurface gps = gridPlaneSurfaces[i];
-                        
-                        // add / set Axis and set the id in the grid plane
-                        gps.GridPlane.AxisProperty = SetAxis(ref gps, ref existingAxes, ref axisidcounter);
 
-                        // add / set Grid Plane and set the id in the grid surface
-                        gps.GridSurface.GridPlane = SetGridPlane(ref gps, ref existingGridPlanes, ref gridplaneidcounter, ref gp_guid, existingAxes);
+                        if (gps.GridPlane != null)
+                        {
+                            // add / set Axis and set the id in the grid plane
+                            gps.GridPlane.AxisProperty = SetAxis(ref gps, ref existingAxes, ref axisidcounter);
 
+                            // add / set Grid Plane and set the id in the grid surface
+                            gps.GridSurface.GridPlane = SetGridPlane(ref gps, ref existingGridPlanes, ref gridplaneidcounter, ref gp_guid, existingAxes);
+                        }
                         // add / set Grid Surface
                         SetGridSurface(ref gps, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes);
                     }
