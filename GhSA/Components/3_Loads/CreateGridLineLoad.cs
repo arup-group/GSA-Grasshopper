@@ -98,7 +98,8 @@ namespace GhSA.Components
                     int id = 0;
                     if (GH_Convert.ToInt32(gh_typ.Value, out id, GH_Conversion.Both))
                     {
-                        gridlineload.GridPlaneSurface.GridSurfaceID = id;
+                        gridlineload.GridLineLoad.GridSurface = id;
+                        gridlineload.GridPlaneSurface = null;
                     }
                     else
                     {
@@ -175,9 +176,11 @@ namespace GhSA.Components
             }
 
             // now we can set the gridplanesurface:
-            if (gridlineload.GridPlaneSurface.GridSurfaceID == 0)
-                gridlineload.GridPlaneSurface = grdplnsrf;
-
+            if (gridlineload.GridPlaneSurface != null)
+            {
+                if (gridlineload.GridPlaneSurface.GridSurfaceID == 0)
+                    gridlineload.GridPlaneSurface = grdplnsrf;
+            }
 
             // 3 direction
             string dir = "Z";
