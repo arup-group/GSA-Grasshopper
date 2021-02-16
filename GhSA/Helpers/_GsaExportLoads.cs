@@ -203,7 +203,7 @@ namespace GhSA.Util.Gsa.ToGSA
             Axis axis = gridplanesurface.Axis;
 
             if (axis.Name == "")
-                axis.Name = "GsaGH Axis " + axisidcounter;
+                axis.Name = "Axis " + axisidcounter;
 
             // see if AXIS has been set
             if (gridplanesurface.AxisID > 0)
@@ -239,7 +239,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<int, GridPlane> existingGridPlanes, ref int gridplaneidcounter, ref Dictionary<Guid, int> gp_guid, Dictionary<int, Axis> existingAxes)
         {
             if (gridplanesurface.GridPlane.Name == "")
-                gridplanesurface.GridPlane.Name = "GsaGH GridPlane " + gridplaneidcounter;
+                gridplanesurface.GridPlane.Name = "Grid plane " + gridplaneidcounter;
 
             int gp_ID = gridplanesurface.GridPlaneID;
             // see if grid plane ID has been set by user
@@ -296,7 +296,7 @@ namespace GhSA.Util.Gsa.ToGSA
             int gs_ID = gridplanesurface.GridSurfaceID;
 
             if (gridplanesurface.GridSurface.Name == "")
-                gridplanesurface.GridSurface.Name = "GsaGH GridPlane " + gridsurfaceidcounter;
+                gridplanesurface.GridSurface.Name = "Grid surface " + gridsurfaceidcounter;
 
             // see if grid surface ID has been set by user
             if (gridplanesurface.GridSurfaceID > 0)
