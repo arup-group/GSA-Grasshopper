@@ -183,8 +183,8 @@ namespace GhSA.Components
             switch (_mode)
             {
                 case FoldMode.One_Dimensional_One_Way:
-                    gps.GridSurface.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
-                    gps.GridSurface.SpanType = GridSurface.Span_Type.ONE_WAY;
+                    gs.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
+                    gs.SpanType = GridSurface.Span_Type.ONE_WAY;
                     
                     // 5 span direction
                     GH_Number ghdir = new GH_Number();
