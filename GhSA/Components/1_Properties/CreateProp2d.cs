@@ -120,6 +120,7 @@ namespace GhSA.Components
         {
             GsaProp2d prop = new GsaProp2d();
             prop.Prop2d = new Prop2D();
+            prop.ID = 0;
 
             // element type (picked in dropdown)
             prop.Prop2d.Type = Property2D_Type.UNDEF;
@@ -138,24 +139,30 @@ namespace GhSA.Components
 
             //id
             GH_Integer gh_ID = new GH_Integer();
-            DA.GetData(0, ref gh_ID);
-            int idd = 0;
-            GH_Convert.ToInt32_Primary(gh_ID, ref idd);
-            prop.ID = idd;
+            if (DA.GetData(0, ref gh_ID))
+            {
+                int idd = 0;
+                GH_Convert.ToInt32_Primary(gh_ID, ref idd);
+                prop.ID = idd;
+            }
 
             //name
             GH_String gh_Name = new GH_String();
-            DA.GetData(1, ref gh_Name);
-            string name = "";
-            GH_Convert.ToString_Primary(gh_Name, ref name);
-            prop.Prop2d.Name = name;
+            if (DA.GetData(1, ref gh_Name))
+            {
+                string name = "";
+                GH_Convert.ToString_Primary(gh_Name, ref name);
+                prop.Prop2d.Name = name;
+            }
 
             //colour
             GH_Colour gh_Colour = new GH_Colour();
-            DA.GetData(2, ref gh_Colour);
-            System.Drawing.Color colour = new System.Drawing.Color();
-            GH_Convert.ToColor_Primary(gh_Colour, ref colour);
-            prop.Prop2d.Colour = (ValueType)colour;
+            if (DA.GetData(2, ref gh_Colour))
+            {
+                System.Drawing.Color colour = new System.Drawing.Color();
+                GH_Convert.ToColor_Primary(gh_Colour, ref colour);
+                prop.Prop2d.Colour = (ValueType)colour;
+            }
 
             if (_mode != FoldMode.LoadPanel)
             {

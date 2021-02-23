@@ -1059,7 +1059,7 @@ namespace GhSA.Util.Gsa
                     GsaNodeLoad.NodeLoadTypes ntyp = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
                     switch (typ)
                     {
-                        case NodeLoadType.APPLIED_DISP:
+                        case NodeLoadType.APPL_DISP:
                             ntyp = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;
                             break;
                         case NodeLoadType.GRAVITY:

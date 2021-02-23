@@ -359,7 +359,7 @@ namespace GhSA.Util.Gsa.ToGSA
             gsa.AddGravityLoads(setgrav);
             //node loads
             ReadOnlyCollection<NodeLoad> setnode_disp = new ReadOnlyCollection<NodeLoad>(nodeLoads_displ);
-            gsa.AddNodeLoads(NodeLoadType.APPLIED_DISP, setnode_disp);
+            gsa.AddNodeLoads(NodeLoadType.APPL_DISP, setnode_disp);
             ReadOnlyCollection<NodeLoad> setnode_node = new ReadOnlyCollection<NodeLoad>(nodeLoads_node);
             gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, setnode_node);
             ReadOnlyCollection<NodeLoad> setnode_setl = new ReadOnlyCollection<NodeLoad>(nodeLoads_settle);

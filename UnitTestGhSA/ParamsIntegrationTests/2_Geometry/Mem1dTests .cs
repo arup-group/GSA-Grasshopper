@@ -22,7 +22,8 @@ namespace ParamsIntegrationTests
             pts.Add(new Point3d(6, 7, 0));
 
             // create nurbscurve from pts
-            NurbsCurve crv = NurbsCurve.Create(false, 3, pts);
+            PolylineCurve crv = new PolylineCurve(pts);
+            //NurbsCurve crv = NurbsCurve.Create(false, 3, pts);
 
             // create 1d member from crv
             GsaMember1d mem = new GsaMember1d(crv);
@@ -78,6 +79,7 @@ namespace ParamsIntegrationTests
             orig.Member.IsDummy = false;
             orig.Member.Offset.X2 = 0.1;
             orig.Member.Property = 3;
+            orig.Section = new GsaSection();
             orig.Section.ID = 4;
             orig.Member.Group = 99;
             orig.Member.Type1D = ElementType.BAR;
