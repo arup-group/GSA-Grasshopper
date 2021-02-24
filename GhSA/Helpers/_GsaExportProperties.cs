@@ -8,6 +8,33 @@ using System.Collections.ObjectModel;
 
 namespace GhSA.Util.Gsa.ToGSA
 {
+    class Materials
+    {
+        public static MaterialType ConvertType(GsaMaterial material)
+        {
+            MaterialType matType = GsaAPI.MaterialType.NONE;
+            int typ = (int)material.Type;
+            if (typ == 1)
+                matType = MaterialType.STEEL;
+            if (typ == 2)
+                matType = MaterialType.CONCRETE;
+            if (typ == 5)
+                matType = MaterialType.FRP;
+            if (typ == 3)
+                matType = MaterialType.ALUMINIUM;
+            if (typ == 7)
+                matType = MaterialType.TIMBER;
+            if (typ == 4)
+                matType = MaterialType.GLASS;
+            if (typ == 8)
+                matType = MaterialType.FABRIC;
+            if (typ == 0)
+                matType = MaterialType.GENERIC;
+            
+            return matType;
+        }
+
+    }
     class Sections
     {
         public static int ConvertSection(GsaSection section,

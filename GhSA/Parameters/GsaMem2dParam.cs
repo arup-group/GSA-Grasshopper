@@ -96,8 +96,6 @@ namespace GhSA.Parameters
         {
             get
             {
-                if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
-                    m_member.Colour = UI.Colour.Member2dEdge;
                 return (System.Drawing.Color)m_member.Colour;
             }
             set { m_member.Colour = value; }
@@ -237,7 +235,6 @@ namespace GhSA.Parameters
             {
                 Member = new Member()
                 {
-                    Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
                     Group = m_member.Group,
                     IsDummy = m_member.IsDummy,
                     MeshSize = m_member.MeshSize,
@@ -251,6 +248,9 @@ namespace GhSA.Parameters
                     Type2D = m_member.Type2D //GsaToModel.AnalysisOrder((int) Member.Type2D)
                 }
             };
+
+            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                dup.m_member.Colour = m_member.Colour;
 
             dup.Member.Offset.X1 = m_member.Offset.X1;
             dup.Member.Offset.X2 = m_member.Offset.X2;
@@ -806,7 +806,15 @@ namespace GhSA.Parameters
                     if (Value.Member.IsDummy)
                         args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Dummy1D, false);
                     else
-                        args.Pipeline.DrawCurve(Value.PolyCurve, (System.Drawing.Color)Value.Member.Colour, 2);
+                    {
+                        if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
+                            args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2);
+                        else
+                        {
+                            System.Drawing.Color col = UI.Colour.Member2dEdge;
+                            args.Pipeline.DrawCurve(Value.PolyCurve, col, 2);
+                        }
+                    }
                 }
                 else
                 {

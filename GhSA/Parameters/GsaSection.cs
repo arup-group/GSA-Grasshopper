@@ -31,17 +31,22 @@ namespace GhSA.Parameters
             set { m_idd = value; }
         }
 
-        //public GsaMaterial Material
-        //{
-        //    get { return m_material; }
-        //    set { m_material = value; }
-        //}
+        public GsaMaterial Material
+        {
+            get { return m_material; }
+            set
+            {
+                m_material = value;
+                m_section.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
+                m_section.MaterialAnalysisProperty = m_material.AnalysisProperty;
+                m_section.MaterialGradeProperty = m_material.Grade;
+            }
+        }
 
         #region fields
         Section m_section;
         int m_idd = 0;
-
-        //GsaMaterial m_material; to be added when GsaAPI supports materials
+        GsaMaterial m_material; //to be added when GsaAPI supports materials
         #endregion
 
         #region constructors
@@ -76,12 +81,16 @@ namespace GhSA.Parameters
                     MaterialGradeProperty = m_section.MaterialGradeProperty,
                     MaterialType = m_section.MaterialType,
                     Name = m_section.Name,
-                    Colour = m_section.Colour,
                     Pool = m_section.Pool,
                     Profile = m_section.Profile
                 },
                 ID = m_idd
             };
+            if ((System.Drawing.Color)m_section.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                dup.m_section.Colour = m_section.Colour;
+            if (Material != null)
+                dup.Material = m_material.Duplicate();
+
             return dup;
         }
         #endregion

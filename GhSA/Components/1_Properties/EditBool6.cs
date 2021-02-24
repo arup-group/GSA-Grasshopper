@@ -49,12 +49,8 @@ namespace GhSA.Components
             pManager.AddBooleanParameter("XX", "XX", "XX", GH_ParamAccess.item);
             pManager.AddBooleanParameter("YY", "YY", "YY", GH_ParamAccess.item);
             pManager.AddBooleanParameter("ZZ", "ZZ", "ZZ", GH_ParamAccess.item);
-            pManager[1].Optional = true;
-            pManager[2].Optional = true;
-            pManager[3].Optional = true;
-            pManager[4].Optional = true;
-            pManager[5].Optional = true;
-            pManager[6].Optional = true;
+            for (int i = 0; i < pManager.ParamCount; i++)
+                pManager[i].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -72,39 +68,42 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaBool6 mybool = new GsaBool6();
-            if (DA.GetData(0, ref mybool))
+            GsaBool6 gsabool = new GsaBool6();
+            if (DA.GetData(0, ref gsabool))
             {
-                if (mybool != null)
-                {
-                    //inputs
-                    bool x = new bool();
-                    if (DA.GetData(1, ref x))
-                        mybool.X = x;
-                    bool y = new bool();
-                    if (DA.GetData(2, ref y))
-                        mybool.Y = y;
-                    bool z = new bool();
-                    if (DA.GetData(3, ref z))
-                        mybool.Z = z;
-                    bool xx = new bool();
-                    if (DA.GetData(4, ref xx))
-                        mybool.XX = xx;
-                    bool yy = new bool();
-                    if (DA.GetData(5, ref yy))
-                        mybool.YY = yy;
-                    bool zz = new bool();
-                    if (DA.GetData(6, ref zz))
-                        mybool.ZZ = zz;
+                mybool = gsabool.Duplicate();
+            }
+            if (mybool != null)
+            {
+                //inputs
+                bool x = new bool();
+                if (DA.GetData(1, ref x))
+                    mybool.X = x;
+                bool y = new bool();
+                if (DA.GetData(2, ref y))
+                    mybool.Y = y;
+                bool z = new bool();
+                if (DA.GetData(3, ref z))
+                    mybool.Z = z;
+                bool xx = new bool();
+                if (DA.GetData(4, ref xx))
+                    mybool.XX = xx;
+                bool yy = new bool();
+                if (DA.GetData(5, ref yy))
+                    mybool.YY = yy;
+                bool zz = new bool();
+                if (DA.GetData(6, ref zz))
+                    mybool.ZZ = zz;
 
-                    //outputs
-                    DA.SetData(0, new GsaBool6Goo(mybool));
-                    DA.SetData(1, mybool.X);
-                    DA.SetData(2, mybool.Y);
-                    DA.SetData(3, mybool.Z);
-                    DA.SetData(4, mybool.XX);
-                    DA.SetData(5, mybool.YY);
-                    DA.SetData(6, mybool.ZZ);
-                }
+                //outputs
+                DA.SetData(0, new GsaBool6Goo(mybool));
+                DA.SetData(1, mybool.X);
+                DA.SetData(2, mybool.Y);
+                DA.SetData(3, mybool.Z);
+                DA.SetData(4, mybool.XX);
+                DA.SetData(5, mybool.YY);
+                DA.SetData(6, mybool.ZZ);
+
             }
         }
     }

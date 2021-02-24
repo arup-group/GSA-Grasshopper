@@ -126,7 +126,6 @@ namespace GhSA.Parameters
             {
                 dup.m_elements.Add(new Element()
                 {
-                    //don't copy object.colour, this will be default = black if not set
                     Group = m_elements[i].Group,
                     IsDummy = m_elements[i].IsDummy,
                     Name = m_elements[i].Name.ToString(),
@@ -138,6 +137,10 @@ namespace GhSA.Parameters
                     Topology = m_elements[i].Topology,
                     Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
                 });
+
+                if ((System.Drawing.Color)m_elements[i].Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                    dup.m_elements[i].Colour = m_elements[i].Colour;
+
                 dup.m_elements[i].Offset.X1 = m_elements[i].Offset.X1;
                 dup.m_elements[i].Offset.X2 = m_elements[i].Offset.X2;
                 dup.m_elements[i].Offset.Y = m_elements[i].Offset.Y;

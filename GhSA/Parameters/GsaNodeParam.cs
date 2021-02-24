@@ -164,7 +164,6 @@ namespace GhSA.Parameters
                 Node = new Node
                 {
                     AxisProperty = Node.AxisProperty,
-                    Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
                     DamperProperty = Node.DamperProperty,
                     MassProperty = Node.MassProperty,
                     Name = Node.Name,
@@ -180,7 +179,10 @@ namespace GhSA.Parameters
                     SpringProperty = Node.SpringProperty,
                 }
             };
-            
+
+            if ((System.Drawing.Color)Node.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                dup.Node.Colour = Node.Colour;
+
             dup.Point = new Point3d
             {
                 X = Node.Position.X,

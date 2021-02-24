@@ -153,9 +153,10 @@ namespace GhSA.UI
 
         public static Color Element1d
         {
-            get { return GsaGreen; }
+            get { return Color.FromArgb(255, 95, 190, 180); }
         }
 
+       
         public static Color Member1dSelected
         {
             get { return GsaDarkPurple; }
@@ -298,6 +299,35 @@ namespace GhSA.UI
             }
 
             return gH_Gradient;
+        }
+
+        public static Color ElementType(GsaAPI.ElementType elementType)
+        {
+            switch ((int)elementType)
+            {
+                case 1:
+                    return Color.FromArgb(255, 72, 99, 254);
+                case 2:
+                    return Color.FromArgb(255, 95, 190, 180);
+                case 23:
+                    return Color.FromArgb(255, 39, 52, 147);
+                case 3:
+                    return Color.FromArgb(255, 73, 101, 101);
+                case 21:
+                    return Color.FromArgb(255, 200, 81, 45);
+                case 20:
+                    return Color.FromArgb(255, 192, 67, 255);
+                case 9:
+                    return Color.FromArgb(255, 178, 178, 178);
+                case 10:
+                    return Color.FromArgb(255, 32, 32, 32); ;
+                case 24:
+                    return Color.FromArgb(255, 51, 82, 82); 
+                case 19:
+                    return Color.FromArgb(255, 155, 18, 214);
+                default:
+                    return Color.FromArgb(255, 95, 190, 180);
+            }
         }
     }
 }
