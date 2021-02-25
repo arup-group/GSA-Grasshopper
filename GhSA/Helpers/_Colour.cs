@@ -125,6 +125,10 @@ namespace GhSA.UI
         {
             get { return Color.FromArgb(255, 0, 100, 0); }
         }
+        public static Color Release
+        {
+            get { return Color.FromArgb(255, 153, 32, 32); }
+        }
 
         public static Color Member1dNode
         {
