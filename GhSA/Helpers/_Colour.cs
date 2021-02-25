@@ -121,6 +121,10 @@ namespace GhSA.UI
         {
             get { return GsaDarkPurple; }
         }
+        public static Color Support
+        {
+            get { return Color.FromArgb(255, 0, 100, 0); }
+        }
 
         public static Color Member1dNode
         {
