@@ -462,9 +462,21 @@ namespace GhSA.Parameters
                     }
                 }
             }
+            //Draw releases
+            if (!Value.Element.IsDummy)
+            {
+                PolyCurve crv = new PolyCurve();
+                crv.Append(Value.Line);
+                double angle = Value.Element.OrientationAngle;
+                GsaBool6 start = Value.ReleaseStart;
+                GsaBool6 end = Value.ReleaseEnd;
+
+                UI.Display.DrawReleases(args, crv, angle, start, end);
+            }
         }
-        #endregion
-    }
+        
+    #endregion
+}
 
     /// <summary>
     /// This class provides a Parameter interface for the Data_GsaElement1d type.
