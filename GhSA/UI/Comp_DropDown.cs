@@ -37,6 +37,12 @@ namespace GhSA.UI
         RectangleF ButtonBound;// right side bit where we place the button to unfold the dropdown list
         List<RectangleF> dropdownBounds;// list of bounds for each item in dropdown list
         RectangleF dropdownBound;// surrounding bound for the entire dropdown list
+        RectangleF dropdownScroller;// surrounding bound for vertical scroll element
+        float scrollY; // location of scroll element at drag start
+        float dragMouseStartY; // location of mouse at drag start
+        float deltaY; // moved Y-location of scroll element
+        int maxNoRows = 10;
+        bool drag;
         bool unfolded;
         readonly Action<string> action;
         readonly string initialTxt;
@@ -89,19 +95,54 @@ namespace GhSA.UI
             // create list of bounds for dropdown if dropdown is unfolded
             if (unfolded)
             {
-                if (dropdownBounds == null)
+                dropdownBound = new RectangleF(BorderBound.X, BorderBound.Y + h1 + s, BorderBound.Width, Math.Min(dropdownlist.Count, maxNoRows) * BorderBound.Height);
+                
+                //update component size if dropdown is unfolded to be able to capture mouseclicks
+                Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + dropdownBound.Height + s);
+
+                // vertical scroll bar if no of items in dropdown list is bigger than max rows allowed
+                if (dropdownlist.Count > maxNoRows)
+                {
+                    if (dropdownScroller == null)
+                        dropdownScroller = new RectangleF();
+
+                    dropdownScroller.X = dropdownBound.X + dropdownBound.Width - 7;
+                    dropdownScroller.Height = (float)Math.Max(2 * h1, h1 * maxNoRows * ((double)maxNoRows / ((double)dropdownlist.Count + 1)) - s);
+                    dropdownScroller.Width = 8;
+
+                    if (deltaY + scrollY >= 0) // handle if user drags above starting point
+                    {
+                        if (dropdownBound.Height - dropdownScroller.Height >= deltaY + scrollY) // handles if user drags below bottom point
+                        {
+                            dropdownScroller.Y = dropdownBound.Y + s + deltaY + scrollY;
+                        }
+                        else
+                        {
+                            scrollY = dropdownBound.Height - dropdownScroller.Height;
+                            deltaY = 0;
+                        }
+                    }
+                    else
+                    {
+                        scrollY = 0;
+                        deltaY = 0;
+                    }
+                }
+
+                //if (dropdownBounds == null)
                 dropdownBounds = new List<RectangleF>();
                 for (int i = 0; i < dropdownlist.Count; i++)
-                    dropdownBounds.Add(new RectangleF(BorderBound.X, BorderBound.Y + (i + 1) * h1 + s, BorderBound.Width, BorderBound.Height));
-                dropdownBound = new RectangleF(BorderBound.X, BorderBound.Y + h1 + s, BorderBound.Width, dropdownBounds.Count * BorderBound.Height);
-                //update component size if dropdown is unfolded to be able to capture mouseclicks
-                Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + dropdownBound.Height + s); 
+                {
+                    dropdownBounds.Add(new RectangleF(BorderBound.X, BorderBound.Y + (i + 1) * h1 + s - deltaY - scrollY, BorderBound.Width, BorderBound.Height));
+                }
             }
             else
             {
                 if (dropdownBounds != null)
                     dropdownBounds.Clear();
                 dropdownBound = new RectangleF();
+                dropdownScroller = new RectangleF();
+                scrollY = 0;
             }
         }
 
@@ -148,28 +189,73 @@ namespace GhSA.UI
                     Pen penborder = new Pen(Brushes.Gray);
                     Brush dropdownbackground = new SolidBrush(UI.Colour.GsaLightGrey);
                     penborder.Width = 0.3f;
-                    for (int i = 0; i < dropdownlist.Count; i++)
+                    for (int i = 0; i < dropdownBounds.Count; i++)
                     {
+                        RectangleF listItem = dropdownBounds[i];
+                        if (listItem.Y < dropdownBound.Y)
+                        {
+                            if (listItem.Y + listItem.Height < dropdownBound.Y)
+                            {
+                                dropdownBounds[i] = new RectangleF();
+                                continue;
+                            }
+                            else
+                            {
+                                listItem.Height = listItem.Height - (dropdownBound.Y - listItem.Y);
+                                listItem.Y = dropdownBound.Y;
+                                dropdownBounds[i] = listItem;
+                            }
+                        }
+                        else if (listItem.Y + listItem.Height > dropdownBound.Y + dropdownBound.Height)
+                        {
+                            if (listItem.Y > dropdownBound.Y + dropdownBound.Height)
+                            {
+                                dropdownBounds[i] = new RectangleF();
+                                continue;
+                            }
+                            else
+                            {
+                                listItem.Height = dropdownBound.Y + dropdownBound.Height - listItem.Y;
+                                dropdownBounds[i] = listItem;
+                            }
+                        }
                         // background
                         graphics.FillRectangle(dropdownbackground, dropdownBounds[i]);
                         // border
                         graphics.DrawRectangle(penborder, dropdownBounds[i].X, dropdownBounds[i].Y, dropdownBounds[i].Width, dropdownBounds[i].Height);
                         // text
-                        graphics.DrawString(dropdownlist[i], font, fontColour, dropdownBounds[i], GH_TextRenderingConstants.NearCenter);
+                        if (dropdownBounds[i].Height > 2)
+                            graphics.DrawString(dropdownlist[i], font, fontColour, dropdownBounds[i], GH_TextRenderingConstants.NearCenter);
                     }
                    
                     // border
                     graphics.DrawRectangle(pen, dropdownBound.X, dropdownBound.Y, dropdownBound.Width, dropdownBound.Height);
+
+                    // draw vertical scroll bar
+                    Brush scrollbar = new SolidBrush(Color.FromArgb(drag? 220 : 160, Color.Black));
+                    RectangleF scrollbarrectangle = new RectangleF(dropdownScroller.X + 2, dropdownScroller.Y, dropdownScroller.Width - 4, dropdownScroller.Height - 4);
+                    graphics.FillRectangle(scrollbar, scrollbarrectangle);
+
                 }
             }
         }
-        public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
+        public override GH_ObjectResponse RespondToMouseUp(GH_Canvas sender, GH_CanvasMouseEvent e)
         {
 
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                System.Drawing.RectangleF rec = BorderBound;
                 GH_Component comp = Owner as GH_Component;
+                if (drag)
+                {
+                    // if drag was true then we release it here:
+                    scrollY += deltaY;
+                    deltaY = 0;
+                    drag = false;
+                    comp.ExpireSolution(true);
+                    return GH_ObjectResponse.Release;
+                }
+
+                System.Drawing.RectangleF rec = BorderBound;
                 if (rec.Contains(e.CanvasLocation))
                 {
                     unfolded = !unfolded;
@@ -179,13 +265,13 @@ namespace GhSA.UI
 
                 if (unfolded)
                 {
-                    System.Drawing.RectangleF rec2 = dropdownBound;
-                    if (rec2.Contains(e.CanvasLocation))
+                    System.Drawing.RectangleF rec3 = dropdownBound;
+                    if (rec3.Contains(e.CanvasLocation))
                     {
                         for (int i = 0; i < dropdownlist.Count; i++)
                         {
-                            System.Drawing.RectangleF rec3 = dropdownBounds[i];
-                            if (rec3.Contains(e.CanvasLocation))
+                            System.Drawing.RectangleF rec4 = dropdownBounds[i];
+                            if (rec4.Contains(e.CanvasLocation))
                             {
                                 comp.RecordUndoEvent("Selected " + dropdownlist[i]);
                                 displayText = dropdownlist[i]; //change what user sees to selected item
@@ -204,7 +290,42 @@ namespace GhSA.UI
                     }
                 }
             }
+            return base.RespondToMouseUp(sender, e);
+        }
+
+        public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            if (unfolded)
+            {
+                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                {
+                    System.Drawing.RectangleF rec = dropdownScroller;
+                    GH_Component comp = Owner as GH_Component;
+                    if (rec.Contains(e.CanvasLocation))
+                    {
+                        dragMouseStartY = e.CanvasLocation.Y;
+                        drag = true;
+                        comp.ExpireSolution(true);
+                        return GH_ObjectResponse.Capture;
+                    }
+                }
+            }
             return base.RespondToMouseDown(sender, e);
+        }
+
+        public override GH_ObjectResponse RespondToMouseMove(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            if (drag)
+            {
+                GH_Component comp = Owner as GH_Component;
+
+                deltaY = e.CanvasLocation.Y - dragMouseStartY;
+                
+                comp.ExpireSolution(true);
+                return GH_ObjectResponse.Ignore;
+            }
+
+            return base.RespondToMouseMove(sender, e);
         }
 
         // consider adding a new cursor type when mouse is on top of clickable dropdown?

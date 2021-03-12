@@ -174,6 +174,14 @@ namespace GhSA.Util.GH
             else
                 segments = new Curve[] { crv };
 
+            if (segments.Length == 1)
+            {
+                if (segments[0].IsClosed)
+                {
+                    segments = segments[0].Split(0.5);
+                }
+            }
+
             List<string> crv_type = new List<string>();
             List<Point3d> m_topo = new List<Point3d>();
 
@@ -191,6 +199,11 @@ namespace GhSA.Util.GH
             crv_type.Add("");
 
             return new Tuple<PolyCurve, List<Point3d>, List<string>>(m_crv, m_topo, crv_type);
+        }
+
+        public static Brep ConvertBrep(Brep brep)
+        {
+            return new Brep();
         }
         
         public static Tuple<PolyCurve, List<Point3d>, List<string>> _notUsedConvertMem2dCrv(Curve crv, double tolerance = -1)
@@ -296,11 +309,25 @@ namespace GhSA.Util.GH
             List<PolyCurve> void_crvs = new List<PolyCurve>();
             List<List<Point3d>> void_topo = new List<List<Point3d>>();
             List<List<string>> void_topoType = new List<List<string>>();
-            
-            Curve[] edgeSegments = brep.DuplicateEdgeCurves();
-            Curve[] edges = Curve.JoinCurves(edgeSegments);
 
-            for (int i = 0; i < edges.Length; i++)
+            Curve outer = null;
+            List<Curve> inner = new List<Curve>();
+            for (int i = 0; i < brep.Loops.Count; i++)
+            {
+                if (brep.Loops[i].LoopType == BrepLoopType.Outer)
+                {
+                    outer = brep.Loops[i].To3dCurve();
+                }
+                else
+                {
+                    inner.Add(brep.Loops[i].To3dCurve());
+                }
+            }
+            List<Curve> edges = new List<Curve>();
+            edges.Add(outer);
+            edges.AddRange(inner);
+
+            for (int i = 0; i < edges.Count; i++)
             {
                 if (!edges[i].IsPlanar())
                 {
@@ -313,7 +340,7 @@ namespace GhSA.Util.GH
                         ctrl_pts = convertBadSrf.Item2;
                     }
                     Plane.FitPlaneToPoints(ctrl_pts, out Plane plane);
-                    for (int j = 0; j < edges.Length; j++)
+                    for (int j = 0; j < edges.Count; j++)
                         edges[j] = Curve.ProjectToPlane(edges[j], plane);
                 }
             }
@@ -323,7 +350,7 @@ namespace GhSA.Util.GH
             List<Point3d>  m_topo = convert.Item2;
             List<string> m_topoType = convert.Item3;
 
-            for (int i = 1; i < edges.Length; i++)
+            for (int i = 1; i < edges.Count; i++)
             {
                 convert = GH.Convert.ConvertMem2dCrv(edges[i], tolerance);
                 void_crvs.Add(convert.Item1);
@@ -384,8 +411,22 @@ namespace GhSA.Util.GH
             List<List<Point3d>> incl_topo = new List<List<Point3d>>();
             List<List<string>> incl_topoType = new List<List<string>>();
 
-            Curve[] edgeSegments = brep.DuplicateEdgeCurves();
-            Curve[] edges = Curve.JoinCurves(edgeSegments);
+            Curve outer = null;
+            List<Curve> inner = new List<Curve>();
+            for (int i = 0; i < brep.Loops.Count; i++)
+            {
+                if (brep.Loops[i].LoopType == BrepLoopType.Outer)
+                {
+                    outer = brep.Loops[i].To3dCurve();
+                }
+                else
+                {
+                    inner.Add(brep.Loops[i].To3dCurve());
+                }
+            }
+            List<Curve> edges = new List<Curve>();
+            edges.Add(outer);
+            edges.AddRange(inner);
 
             List<Point3d> ctrl_pts;
             if (edges[0].TryGetPolyline(out Polyline temp_crv))
@@ -397,12 +438,11 @@ namespace GhSA.Util.GH
             }
             Plane.FitPlaneToPoints(ctrl_pts, out Plane plane);
 
-
-            for (int i = 0; i < edges.Length; i++)
+            for (int i = 0; i < edges.Count; i++)
             {
                 if (!edges[i].IsPlanar())
                 {
-                    for (int j = 0; j < edges.Length; j++)
+                    for (int j = 0; j < edges.Count; j++)
                         edges[j] = Curve.ProjectToPlane(edges[j], plane);
                 }
             }
@@ -411,7 +451,7 @@ namespace GhSA.Util.GH
             List<Point3d> m_topo = convert.Item2;
             List<string> m_topoType = convert.Item3;
 
-            for (int i = 1; i < edges.Length; i++)
+            for (int i = 1; i < edges.Count; i++)
             {
                 convert = GH.Convert.ConvertMem2dCrv(edges[i], tolerance);
                 void_crvs.Add(convert.Item1);
