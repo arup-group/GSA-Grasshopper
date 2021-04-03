@@ -110,6 +110,20 @@ namespace GhSA.Parameters
                 //m_props.Add(new GsaProp2d());
         }
 
+        public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, int prop = 0)
+        {
+            m_elements = new List<Element>();
+            m_mesh = Util.GH.Convert.ConvertBrepToMesh(brep, curves, points, meshSize);
+            Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(m_mesh, prop);
+            m_elements = convertMesh.Item1;
+            m_topo = convertMesh.Item2;
+            m_topoInt = convertMesh.Item3;
+            
+            m_id = new List<int>(new int[m_mesh.Faces.Count()]);
+
+            m_props = new List<GsaProp2d>();
+        }
+
         public GsaElement2d Duplicate()
         {
             if (this == null) { return null; }
@@ -406,13 +420,15 @@ namespace GhSA.Parameters
             //Draw shape.
             if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
             {
-                // args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
-                for (int i = 0; i < Value.Mesh.Faces.Count; i++)
-                {
-                    int[] face = new int[] { i };
-                    args.Pipeline.DrawMeshShaded(Value.Mesh,
-                        UI.Colour.FaceCustom(Value.Colours[i]), face);
-                }
+                args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
+                //Mesh mesh = Value.Mesh.DuplicateMesh();
+                //mesh.fac
+                //for (int i = 0; i < Value.Mesh.Faces.Count; i++)
+                //{
+                //    int[] face = new int[] { i };
+                //    args.Pipeline.DrawMeshShaded(Value.Mesh,
+                //        UI.Colour.FaceCustom(Value.Colours[i]), face);
+                //}
             }
             else
                 args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFaceSelected);
@@ -426,13 +442,17 @@ namespace GhSA.Parameters
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
+                    List<Line> lines = new List<Line>();
                     for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
-                        args.Pipeline.DrawLine(Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 1);
+                        lines.Add(Value.Mesh.TopologyEdges.EdgeLine(i));
+                    args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdge, 1);
                 }
                 else
                 {
+                    List<Line> lines = new List<Line>();
                     for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
-                        args.Pipeline.DrawLine(Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
+                        lines.Add(Value.Mesh.TopologyEdges.EdgeLine(i));
+                    args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdgeSelected, 2);
                 }
             }
         }

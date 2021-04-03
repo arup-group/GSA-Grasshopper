@@ -567,6 +567,57 @@ namespace GhSA.Util.GH
             }
             return new Tuple<List<Element>, List<Point3d>, List<List<int>>>(elems, topoPts, topoInts);
         }
+
+        public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize)
+        {
+            // set up unroller
+            Unroller unroller = new Unroller(brep);
+            unroller.AddFollowingGeometry(points);
+            unroller.AddFollowingGeometry(curves);
+            unroller.RelativeTolerance = 1;
+
+            // create list of flattened geometry
+            Point3d[] inclPts;
+            Curve[] inclCrvs;
+            TextDot[] unused;
+            // perform unroll
+            Brep[] flattened = unroller.PerformUnroll(out inclCrvs, out inclPts, out unused);
+
+            // create 2d member from flattened geometry
+            Parameters.GsaMember2d mem = new Parameters.GsaMember2d(flattened[0], inclCrvs.ToList(), inclPts.ToList());
+            mem.Member.MeshSize = meshSize;
+            // add to temp list for input in assemble function
+            List<Parameters.GsaMember2d> in_mem2ds = new List<Parameters.GsaMember2d>();
+            in_mem2ds.Add(mem);
+
+            // assemble temp model
+            Model model = Util.Gsa.ToGSA.Assemble.AssembleModel(null, in_mem2ds, null);
+
+            // call the meshing algorithm
+            model.CreateElementsFromMembers();
+
+            // extract elements from model
+            Tuple<List<Parameters.GsaElement1dGoo>, List<Parameters.GsaElement2dGoo>> elementTuple
+                = Util.Gsa.FromGSA.GetElements(model.Elements(), model.Nodes(), model.Sections(), model.Prop2Ds());
+
+            List<Parameters.GsaElement2dGoo> elem2dgoo = elementTuple.Item2;
+            Mesh mesh = elem2dgoo[0].Value.Mesh;
+
+            Surface flat = flattened[0].Surfaces[0];
+            Surface orig = brep.Surfaces[0];
+
+            MeshVertexList vertices = mesh.Vertices;
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                flat.ClosestPoint(vertices.Point3dAt(i), out double u, out double v);
+                Point3d mapVertex = orig.PointAt(u, v);
+                vertices.SetVertex(i, mapVertex);
+            }
+
+            mesh.Faces.ConvertNonPlanarQuadsToTriangles(GhSA.Units.Tolerance, Rhino.RhinoMath.DefaultAngleTolerance, 0);
+
+            return mesh;
+        }
         public static Mesh ConvertMeshToTriMeshSolid(Mesh mesh)
         {
             // duplicate incoming mesh

@@ -91,12 +91,7 @@ namespace GhSA.Components
             "Aluminium",
             "FRP",
             "Glass",
-            "Fabric",
-            "Pis",
-            "og",
-            "Papir",
-            "lugter",
-            "godt"
+            "Fabric"
         });
 
         string selecteditem;
