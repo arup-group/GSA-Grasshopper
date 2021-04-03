@@ -110,10 +110,10 @@ namespace GhSA.Parameters
                 //m_props.Add(new GsaProp2d());
         }
 
-        public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, int prop = 0)
+        public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, int prop = 0)
         {
             m_elements = new List<Element>();
-            m_mesh = Util.GH.Convert.ConvertBrepToMesh(brep, curves, points, meshSize);
+            m_mesh = Util.GH.Convert.ConvertBrepToMesh(brep, curves, points, meshSize, mem1ds, nodes);
             Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(m_mesh, prop);
             m_elements = convertMesh.Item1;
             m_topo = convertMesh.Item2;

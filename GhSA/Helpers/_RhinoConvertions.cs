@@ -568,10 +568,24 @@ namespace GhSA.Util.GH
             return new Tuple<List<Element>, List<Point3d>, List<List<int>>>(elems, topoPts, topoInts);
         }
 
-        public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize)
+        public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<Parameters.GsaMember1d> mem1ds = null, List<Parameters.GsaNode> nodes = null)
         {
             // set up unroller
             Unroller unroller = new Unroller(brep);
+
+            List<Curve> memcrvs = new List<Curve>();
+            if (mem1ds != null)
+            {
+                memcrvs = mem1ds.ConvertAll(x => (Curve)x.PolyCurve);
+                unroller.AddFollowingGeometry(memcrvs);
+            }
+            List<Point3d> nodepts = new List<Point3d>();
+            if (nodes != null)
+            {
+                nodepts = nodes.ConvertAll(x => x.Point);
+                unroller.AddFollowingGeometry(nodepts);
+            }
+
             unroller.AddFollowingGeometry(points);
             unroller.AddFollowingGeometry(curves);
             unroller.RelativeTolerance = 1;
@@ -587,11 +601,28 @@ namespace GhSA.Util.GH
             Parameters.GsaMember2d mem = new Parameters.GsaMember2d(flattened[0], inclCrvs.ToList(), inclPts.ToList());
             mem.Member.MeshSize = meshSize;
             // add to temp list for input in assemble function
-            List<Parameters.GsaMember2d> in_mem2ds = new List<Parameters.GsaMember2d>();
-            in_mem2ds.Add(mem);
+            List<Parameters.GsaMember2d> mem2ds = new List<Parameters.GsaMember2d>();
+            mem2ds.Add(mem);
+
+            if (mem1ds != null)
+            {
+                for (int i = 0; i < mem1ds.Count; i++)
+                {
+                    Parameters.GsaMember1d mem1d = new Parameters.GsaMember1d(inclCrvs[i]);
+                    mem1d.Member.MeshSize = mem1ds[i].Member.MeshSize;
+                    mem1ds[i] = mem1d;
+                }
+            }
+            if (nodes != null)
+            {
+                for (int i = 0; i < nodes.Count; i++)
+                {
+                    nodes[i].Point = inclPts[i];
+                }
+            }
 
             // assemble temp model
-            Model model = Util.Gsa.ToGSA.Assemble.AssembleModel(null, in_mem2ds, null);
+            Model model = Util.Gsa.ToGSA.Assemble.AssembleModel(null, mem2ds, mem1ds, nodes);
 
             // call the meshing algorithm
             model.CreateElementsFromMembers();

@@ -45,9 +45,9 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddBrepParameter("Brep", "B", "Planar Brep (non-planar geometry will be automatically converted to an average plane of exterior boundary control points))", GH_ParamAccess.item);
-            pManager.AddPointParameter("Incl. Points", "(P)", "Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
-            pManager.AddCurveParameter("Incl. Curves", "(C)", "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
+            pManager.AddBrepParameter("Brep", "B", "Non-planar Brep", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Incl. Points or Nodes", "(No)", "Inclusion points or Nodes", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Incl. Curves or 1D Members", "(M1D)", "Inclusion curves or 1D Members", GH_ParamAccess.list);
             pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Targe mesh size", GH_ParamAccess.item, 0);
 
@@ -76,28 +76,62 @@ namespace GhSA.Components
                 if (GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
                 {
                     // 1 Points
+                    List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
                     List<Point3d> pts = new List<Point3d>();
-                    List<GH_Point> ghpts = new List<GH_Point>();
-                    if (DA.GetDataList(1, ghpts))
+                    List<GsaNode> nodes = new List<GsaNode>();
+                    if (DA.GetDataList(1, gh_types))
                     {
-                        for (int i = 0; i < ghpts.Count; i++)
+                        for (int i = 0; i < gh_types.Count; i++)
                         {
                             Point3d pt = new Point3d();
-                            if (GH_Convert.ToPoint3d(ghpts[i], ref pt, GH_Conversion.Both))
+                            if (gh_types[i].Value is GsaNodeGoo)
+                            {
+                                GsaNode gsanode = new GsaNode();
+                                gh_types[i].CastTo(ref gsanode);
+                                nodes.Add(gsanode);
+                            }
+                            else if (GH_Convert.ToPoint3d(gh_types[i].Value, ref pt, GH_Conversion.Both))
+                            {
                                 pts.Add(pt);
+                            }
+                            else
+                            {
+                                string type = gh_types[i].Value.GetType().ToString();
+                                type = type.Replace("GhSA.Parameters.", "");
+                                type = type.Replace("Goo", "");
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert incl. Point/Node input parameter of type " + 
+                                    type + " to point or node");
+                            }
                         }
                     }
 
                     // 2 Curves
+                    gh_types = new List<GH_ObjectWrapper>();
                     List<Curve> crvs = new List<Curve>();
-                    List<GH_Curve> ghcrvs = new List<GH_Curve>();
-                    if (DA.GetDataList(2, ghcrvs))
+                    List<GsaMember1d> mem1ds = new List<GsaMember1d>();
+                    if (DA.GetDataList(2, gh_types))
                     {
-                        for (int i = 0; i < ghcrvs.Count; i++)
+                        for (int i = 0; i < gh_types.Count; i++)
                         {
                             Curve crv = null;
-                            if (GH_Convert.ToCurve(ghcrvs[i], ref crv, GH_Conversion.Both))
+                            if (gh_types[i].Value is GsaMember1dGoo)
+                            {
+                                GsaMember1d gsamem1d = new GsaMember1d();
+                                gh_types[i].CastTo(ref gsamem1d);
+                                mem1ds.Add(gsamem1d);
+                            }
+                            else if (GH_Convert.ToCurve(gh_types[i].Value, ref crv, GH_Conversion.Both))
+                            {
                                 crvs.Add(crv);
+                            }
+                            else
+                            {
+                                string type = gh_types[i].Value.GetType().ToString();
+                                type = type.Replace("GhSA.Parameters.", "");
+                                type = type.Replace("Goo", "");
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert incl. Curve/Mem1D input parameter of type " +
+                                    type + " to curve or 1D Member");
+                            }
                         }
                     }
                     
@@ -111,7 +145,7 @@ namespace GhSA.Components
                     }
                     
                     // build new element2d with brep, crv and pts
-                    GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize);
+                    GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize, mem1ds, nodes);
 
                     // 3 section
                     GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
