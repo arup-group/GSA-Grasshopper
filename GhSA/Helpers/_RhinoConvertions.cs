@@ -588,7 +588,8 @@ namespace GhSA.Util.GH
 
             unroller.AddFollowingGeometry(points);
             unroller.AddFollowingGeometry(curves);
-            unroller.RelativeTolerance = 1;
+            unroller.RelativeTolerance = 10000;
+            unroller.AbsoluteTolerance = 10000;
 
             // create list of flattened geometry
             Point3d[] inclPts;

@@ -63,6 +63,16 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap _2dElemsFromBrep {
+            get {
+                object obj = ResourceManager.GetObject("_2dElemsFromBrep", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Analyse {
             get {
                 object obj = ResourceManager.GetObject("Analyse", resourceCulture);
