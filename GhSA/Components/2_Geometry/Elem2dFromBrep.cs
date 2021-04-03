@@ -46,8 +46,8 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddBrepParameter("Brep", "B", "Non-planar Brep", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Incl. Points or Nodes", "(No)", "Inclusion points or Nodes", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Incl. Curves or 1D Members", "(M1D)", "Inclusion curves or 1D Members", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Incl. Points or Nodes", "(P)", "Inclusion points or Nodes", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Incl. Curves or 1D Members", "(C)", "Inclusion curves or 1D Members", GH_ParamAccess.list);
             pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Targe mesh size", GH_ParamAccess.item, 0);
 
