@@ -129,7 +129,6 @@ namespace GhSA.UI
                     }
                 }
 
-                //if (dropdownBounds == null)
                 dropdownBounds = new List<RectangleF>();
                 for (int i = 0; i < dropdownlist.Count; i++)
                 {
