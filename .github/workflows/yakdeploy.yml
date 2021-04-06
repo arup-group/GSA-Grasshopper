@@ -32,5 +32,9 @@ jobs:
           cd dist
           ..\yak spec
           ..\yak build
+          $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
+          $yakRh7Name =  $yakCurrentVersName -Replace "rh6_10", "rh7_0"
+          Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
+          ..\yak build
           cd ..
           ls dist\*.yak |% {.\yak push $_.FullName}
