@@ -32,5 +32,7 @@ jobs:
           cd dist
           ..\yak spec
           ..\yak build
+          ren *rh* *rh7-win.*
+          ..\yak build
           cd ..
           ls dist\*.yak |% {.\yak push $_.FullName}
