@@ -601,6 +601,10 @@ namespace GhSA.Util.GH
             // create 2d member from flattened geometry
             Parameters.GsaMember2d mem = new Parameters.GsaMember2d(flattened[0], inclCrvs.ToList(), inclPts.ToList());
             mem.Member.MeshSize = meshSize;
+            
+            // set mesh type to quadratic to create tri6 and quad8
+            //mem.Member.Type2D = AnalysisOrder.QUADRATIC;
+            
             // add to temp list for input in assemble function
             List<Parameters.GsaMember2d> mem2ds = new List<Parameters.GsaMember2d>();
             mem2ds.Add(mem);

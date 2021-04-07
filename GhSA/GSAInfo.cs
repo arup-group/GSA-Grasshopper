@@ -87,7 +87,7 @@ namespace GhSA
             get
             {
                 //Return a string identifying you or your company.
-                return "Oasys";
+                return "Oasys / Kristjan Nielsen";
             }
         }
         public override string AuthorContact
@@ -95,9 +95,17 @@ namespace GhSA
             get
             {
                 //Return a string representing your preferred contact details.
-                return "kristjan.nielsen@arup.com";
+                return "https://www.oasys-software.com/";
             }
         }
+        public string Icon_url
+        {
+            get
+            {
+                return "https://github.com/arup-group/GSA-Grasshopper/blob/master/GhSA/Properties/GsaGhLogo.png";
+            }
+        }
+
         public override string Version
         {
             get

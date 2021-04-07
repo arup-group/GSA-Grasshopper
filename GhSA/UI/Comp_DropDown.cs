@@ -37,8 +37,8 @@ namespace GhSA.UI
         RectangleF ButtonBound;// right side bit where we place the button to unfold the dropdown list
         List<RectangleF> dropdownBounds;// list of bounds for each item in dropdown list
         RectangleF dropdownBound;// surrounding bound for the entire dropdown list
-        RectangleF dropdownScroller;// surrounding bound for vertical scroll element
-        float scrollY; // location of scroll element at drag start
+        RectangleF scrollBar;// surrounding bound for vertical scroll element
+        float scrollStartY; // location of scroll element at drag start
         float dragMouseStartY; // location of mouse at drag start
         float deltaY; // moved Y-location of scroll element
         int maxNoRows = 10;
@@ -58,6 +58,8 @@ namespace GhSA.UI
                 float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
                 List<string> buttons = new List<string>();
                 float bt = GhSA.UI.ComponentUI.MaxTextWidth(dropdownlist, new Font(GH_FontServer.FamilyStandard, 7));
+                if (dropdownlist.Count > maxNoRows)
+                    bt += 15; // add room for vertical scroll bar
                 float num = Math.Max(Math.Max(sp, bt), 90);
                 return num;
             }
@@ -70,69 +72,87 @@ namespace GhSA.UI
             // first change the width to suit; using max to determine component visualisation style
             FixLayout();
 
-            int s = 2; //spacing to edges and internal between boxes
+            int s = 2; // spacing to edges and internal between boxes
 
-            int h0 = 0;
-            //spacer and title
+            // create bound for spacer and title
+            int h0 = 0; // height of spacer bound
             if (SpacerTxt != "")
             {
                 h0 = 10;
                 SpacerBounds = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
             }
 
-            int h1 = 15; // height border
-            int bw = h1; // button width
-            // create text box border
+            int h1 = 15; // height of bound for one line of text / text box
+            int bw = h1; // dropdown button/arrow width
+
+            // create top/selected border and text box
             BorderBound = new RectangleF(Bounds.X + 2 * s, Bounds.Bottom + h0 + 2 * s, Bounds.Width - 2 - 4 * s, h1);
             // text box inside border
-            TextBound = new RectangleF(BorderBound.X, BorderBound.Y, BorderBound.Width - bw, BorderBound.Height);
-            // button area inside border
+            float textWidth = (dropdownlist.Count > maxNoRows) ? BorderBound.Width - bw : BorderBound.Width;
+            TextBound = new RectangleF(BorderBound.X, BorderBound.Y, textWidth, BorderBound.Height); 
+            // dropdown button/arrow area inside border
             ButtonBound = new RectangleF(BorderBound.X + BorderBound.Width - bw, BorderBound.Y, bw, BorderBound.Height);
 
             //update component bounds
             Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + h0 + h1 + 4 * s);
 
-            // create list of bounds for dropdown if dropdown is unfolded
+            // create list of bounds for dropdownlist if dropdownmenu is unfolded
             if (unfolded)
             {
-                dropdownBound = new RectangleF(BorderBound.X, BorderBound.Y + h1 + s, BorderBound.Width, Math.Min(dropdownlist.Count, maxNoRows) * BorderBound.Height);
-                
+                dropdownBound = new RectangleF(BorderBound.X, BorderBound.Y + h1 + s, BorderBound.Width, Math.Min(dropdownlist.Count, maxNoRows) * h1);
+
                 //update component size if dropdown is unfolded to be able to capture mouseclicks
                 Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + dropdownBound.Height + s);
 
-                // vertical scroll bar if no of items in dropdown list is bigger than max rows allowed
+                // additional move for the content (moves more than the scroll bar)
+                float contentScroll = 0;
+
+                // vertical scroll bar if number of items in dropdown list is bigger than max rows allowed
                 if (dropdownlist.Count > maxNoRows)
                 {
-                    if (dropdownScroller == null)
-                        dropdownScroller = new RectangleF();
+                    if (scrollBar == null)
+                        scrollBar = new RectangleF();
 
-                    dropdownScroller.X = dropdownBound.X + dropdownBound.Width - 7;
-                    dropdownScroller.Height = (float)Math.Max(2 * h1, h1 * maxNoRows * ((double)maxNoRows / ((double)dropdownlist.Count + 1)) - s);
-                    dropdownScroller.Width = 8;
+                    // setup size of scroll bar
+                    scrollBar.X = dropdownBound.X + dropdownBound.Width - 8; // locate from right-side of dropdown area
+                    // compute height based on number of items in list, but with a minimum size of 2 rows
+                    scrollBar.Height = (float)Math.Max(2 * h1, dropdownBound.Height * ((double)maxNoRows / ((double)dropdownlist.Count)));
+                    scrollBar.Width = 8; // width of mouse-grab area (actual scroll bar drawn later)
 
-                    if (deltaY + scrollY >= 0) // handle if user drags above starting point
+                    // vertical position (.Y)
+                    if (deltaY + scrollStartY >= 0) // handle if user drags above starting point
                     {
-                        if (dropdownBound.Height - dropdownScroller.Height >= deltaY + scrollY) // handles if user drags below bottom point
+                        // dragging downwards:
+                        if (dropdownBound.Height - scrollBar.Height >= deltaY + scrollStartY) // handles if user drags below bottom point
                         {
-                            dropdownScroller.Y = dropdownBound.Y + s + deltaY + scrollY;
+                            // update scroll bar position for normal scroll event within bounds
+                            scrollBar.Y = dropdownBound.Y + deltaY + scrollStartY;
                         }
                         else
                         {
-                            scrollY = dropdownBound.Height - dropdownScroller.Height;
+                            // scroll reached bottom
+                            scrollStartY = dropdownBound.Height - scrollBar.Height;
                             deltaY = 0;
                         }
                     }
                     else
                     {
-                        scrollY = 0;
+                        // scroll reached top
+                        scrollStartY = 0;
                         deltaY = 0;
                     }
+
+                    // calculate moved position of content
+                    float scrollBarMovedPercentage = (dropdownBound.Y - scrollBar.Y) / (dropdownBound.Height - scrollBar.Height);
+                    float scrollContentHeight = dropdownlist.Count * h1 - dropdownBound.Height;
+                    contentScroll = scrollBarMovedPercentage * scrollContentHeight;
                 }
 
+                // create list of text boxes (we will only draw the visible ones later)
                 dropdownBounds = new List<RectangleF>();
                 for (int i = 0; i < dropdownlist.Count; i++)
                 {
-                    dropdownBounds.Add(new RectangleF(BorderBound.X, BorderBound.Y + (i + 1) * h1 + s - deltaY - scrollY, BorderBound.Width, BorderBound.Height));
+                    dropdownBounds.Add(new RectangleF(BorderBound.X, BorderBound.Y + (i + 1) * h1 + s + contentScroll, BorderBound.Width, h1));
                 }
             }
             else
@@ -140,8 +160,8 @@ namespace GhSA.UI
                 if (dropdownBounds != null)
                     dropdownBounds.Clear();
                 dropdownBound = new RectangleF();
-                dropdownScroller = new RectangleF();
-                scrollY = 0;
+                scrollBar = new RectangleF();
+                scrollStartY = 0;
             }
         }
 
@@ -231,9 +251,12 @@ namespace GhSA.UI
                     graphics.DrawRectangle(pen, dropdownBound.X, dropdownBound.Y, dropdownBound.Width, dropdownBound.Height);
 
                     // draw vertical scroll bar
-                    Brush scrollbar = new SolidBrush(Color.FromArgb(drag? 220 : 160, Color.Black));
-                    RectangleF scrollbarrectangle = new RectangleF(dropdownScroller.X + 2, dropdownScroller.Y, dropdownScroller.Width - 4, dropdownScroller.Height - 4);
-                    graphics.FillRectangle(scrollbar, scrollbarrectangle);
+                    Brush scrollbar = new SolidBrush(Color.FromArgb(drag? 160 : 120, Color.Black));
+                    Pen scrollPen = new Pen(scrollbar);
+                    scrollPen.Width = scrollBar.Width - 2;
+                    scrollPen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                    scrollPen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+                    graphics.DrawLine(scrollPen, scrollBar.X + 4, scrollBar.Y + 4, scrollBar.X + 4, scrollBar.Y + scrollBar.Height - 4);
 
                 }
             }
@@ -247,7 +270,7 @@ namespace GhSA.UI
                 if (drag)
                 {
                     // if drag was true then we release it here:
-                    scrollY += deltaY;
+                    scrollStartY += deltaY;
                     deltaY = 0;
                     drag = false;
                     comp.ExpireSolution(true);
@@ -298,7 +321,7 @@ namespace GhSA.UI
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    System.Drawing.RectangleF rec = dropdownScroller;
+                    System.Drawing.RectangleF rec = scrollBar;
                     GH_Component comp = Owner as GH_Component;
                     if (rec.Contains(e.CanvasLocation))
                     {

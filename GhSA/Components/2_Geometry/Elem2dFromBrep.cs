@@ -24,7 +24,7 @@ namespace GhSA.Components
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("4fa7ccd9-530e-4036-b2bf-203017b55611");
         public Elem2dFromBrep()
-          : base("Element2d from Brep", "Elem2dFromBrep", "Mesh non-planar Breps",
+          : base("Element2d from Brep", "Elem2dFromBrep", "Mesh a non-planar Brep",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat2())
         {
@@ -45,15 +45,11 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddBrepParameter("Brep", "B", "Non-planar Brep", GH_ParamAccess.item);
+            pManager.AddBrepParameter("Brep", "B", "Brep (can be non-planar)", GH_ParamAccess.item);
             pManager.AddGenericParameter("Incl. Points or Nodes", "(P)", "Inclusion points or Nodes", GH_ParamAccess.list);
             pManager.AddGenericParameter("Incl. Curves or 1D Members", "(C)", "Inclusion curves or 1D Members", GH_ParamAccess.list);
             pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Targe mesh size", GH_ParamAccess.item, 0);
-
-            pManager.HideParameter(0);
-            pManager.HideParameter(1);
-            pManager.HideParameter(2);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;

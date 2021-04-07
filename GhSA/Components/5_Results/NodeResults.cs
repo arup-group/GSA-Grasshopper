@@ -134,15 +134,6 @@ namespace GhSA.Components
         {
             "Displacement",
             "Reaction",
-            "Spring Force",
-            "Displacement",
-            "Reaction",
-            "Spring Force",
-            "Displacement",
-            "Reaction",
-            "Spring Force",
-            "Displacement",
-            "Reaction",
             "Spring Force"
         });
 
@@ -155,15 +146,7 @@ namespace GhSA.Components
             "Rotation Rxx",
             "Rotation Ryy",
             "Rotation Rzz",
-            "Resolved |R|",
-            "Translation Ux",
-            "Translation Uy",
-            "Translation Uz",
-            "Resolved |U|",
-            "Rotation Rxx",
-            "Rotation Ryy",
-            "Rotation Rzz",
-            "Resolved |R|",
+            "Resolved |R|"
         });
 
         readonly List<string> dropdownreaction = new List<string>(new string[]
