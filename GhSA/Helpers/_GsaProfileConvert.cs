@@ -56,12 +56,7 @@ namespace GhSA.Util.Gsa
         public GeoTypes geoType;
         public SectUnitOptions sectUnit = SectUnitOptions.u_mm;
 
-        public int catalogueIndex;
-        public int catalogueTypeIndex;
-        public int catalogueProfileIndex;
-
         public string catalogueProfileName = "";
-        public string catalogueTypeName = "";
 
         public bool isTapered;
         public bool isHollow;
@@ -313,21 +308,14 @@ namespace GhSA.Util.Gsa
             }
             else if (gsaProfile.profileType == Profile.ProfileTypes.Catalogue)
             {
-                string outputTypeABRString = "";
                 string outputSectionString = "";
-                
 
                 if(gsaProfile.catalogueProfileName !=null)
                 {
                     outputSectionString = gsaProfile.catalogueProfileName.ToString();
-                    outputTypeABRString = gsaProfile.catalogueTypeName.ToString();
                 }
                 
-                //let catalogueName = gsaProfile.catalogueNames[gsaProfile.catalogueIndex]
-                //let typeName = gsaProfile.catalogueTypes(catalogueName)[gsaProfile.catalogueTypeIndex]
-                //let typeAbbrev = gsaProfile.catalogueTypeAbbrev(catalogueName, typeName)
-                //return "CAT " + typeAbbrev + " " + gsaProfile.sectionNames(catalogueName, typeName)[gsaProfile.catalogueProfileIndex]
-                return $"CAT {outputTypeABRString} {outputSectionString}"; //to be implemented
+                return $"CAT {outputSectionString}"; 
             }
             else if (gsaProfile.profileType == Profile.ProfileTypes.Geometric)
             {
