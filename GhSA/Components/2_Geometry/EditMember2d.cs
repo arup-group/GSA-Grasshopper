@@ -61,9 +61,10 @@ namespace GhSA.Components
                 "5: Wall" + System.Environment.NewLine +
                 "7: Ribbed Slab" + System.Environment.NewLine +
                 "12: Void-cutter", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("2D Analysis Type", "aT", "Set Member 2d Analysis Type" + System.Environment.NewLine +
-                "Default is 0: Linear - Accepted inputs are:" + System.Environment.NewLine +
-                "1: Quadratic" + System.Environment.NewLine +
+            pManager.AddIntegerParameter("2D Element Type", "aT", "Set Member 2D Analysis Element Type" + System.Environment.NewLine +
+                "Accepted inputs are:" + System.Environment.NewLine +
+                "0: Linear - Tri3/Quad4 Elements (default)" + System.Environment.NewLine +
+                "1: Quadratic - Tri6/Quad8 Elements" + System.Environment.NewLine +
                 "2: Rigid Diaphragm", GH_ParamAccess.item);
 
             pManager.AddGenericParameter("Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
@@ -92,7 +93,8 @@ namespace GhSA.Components
             pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
 
             pManager.AddIntegerParameter("Member Type", "mT", "Get 2D Member Type", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("2D Analysis Type", "aT", "Get Member 2D Analysis Type", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("2D Element Type", "aT", "Get Member 2D Analysis Element Type" + System.Environment.NewLine + 
+                "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm", GH_ParamAccess.item);
 
             pManager.AddGenericParameter("Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Get Targe mesh size", GH_ParamAccess.item);
