@@ -245,7 +245,8 @@ namespace GhSA.Util.Gsa
                             }
                         }
                     }
-
+                    
+                    
                     // Create mesh face (Tri- or Quad):
                     if (topo.Count == 3)
                         tempMesh.Faces.AddFace(0, 1, 2);
@@ -257,32 +258,79 @@ namespace GhSA.Util.Gsa
                         ngon = true;
                         // so we introduce the average middle point and create more faces
 
-                        List<Point3f> tempPts = tempMesh.Vertices.ToList();
-                        double x = 0; double y = 0; double z = 0;
-                        for (int k = 0; k < tempPts.Count; k++)
-                        {
-                            x += tempPts[k].X; y += tempPts[k].Y; z += tempPts[k].Z;
-                        }
-                        x /= tempPts.Count; y /= tempPts.Count; z /= tempPts.Count;
-                        tempMesh.Vertices.Add(new Point3d(x, y, z));
-
                         if (topo.Count == 6)
                         {
-                            tempMesh.Faces.AddFace(0, 3, 6);
-                            tempMesh.Faces.AddFace(3, 1, 6);
-                            tempMesh.Faces.AddFace(1, 4, 6);
-                            tempMesh.Faces.AddFace(4, 2, 6);
-                            tempMesh.Faces.AddFace(2, 5, 6);
-                            tempMesh.Faces.AddFace(5, 0, 6);
+                            tempMesh.Faces.AddFace(0, 3, 5);
+                            tempMesh.Faces.AddFace(1, 4, 3);
+                            tempMesh.Faces.AddFace(2, 5, 4);
+                            tempMesh.Faces.AddFace(3, 4, 5);
+                            List<int> tri6Vert = new List<int>() { 0, 3, 1, 4, 2, 5 };
+                            List<int> tri6Face = new List<int>() { 0, 1, 2, 3 };
+                            MeshNgon meshGon = MeshNgon.Create(tri6Vert, tri6Face);
+
+                            tempMesh.Ngons.AddNgon(meshGon);
                         }
 
                         if (topo.Count == 8)
                         {
-                            tempMesh.Faces.AddFace(0, 4, 8, 7);
-                            tempMesh.Faces.AddFace(1, 5, 8, 4);
-                            tempMesh.Faces.AddFace(2, 6, 8, 5);
-                            tempMesh.Faces.AddFace(3, 7, 8, 6);
+                            Point3d ave = new Point3d();
+                            ave.X = 0;
+                            ave.Y = 0;
+                            ave.Z = 0;
+                            for (int k = 0; k < topo.Count; k++)
+                            {
+                                ave.X += tempMesh.Vertices[k].X;
+                                ave.Y += tempMesh.Vertices[k].Y;
+                                ave.Z += tempMesh.Vertices[k].Z;
+                            }
+                            ave.X = ave.X / topo.Count;
+                            ave.Y = ave.Y / topo.Count;
+                            ave.Z = ave.Z / topo.Count;
+
+                            tempMesh.Vertices.Add(ave);
+
+                            tempMesh.Faces.AddFace(0, 4, 8);
+                            tempMesh.Faces.AddFace(1, 8, 4);
+                            tempMesh.Faces.AddFace(1, 5, 8);
+                            tempMesh.Faces.AddFace(2, 8, 5);
+                            tempMesh.Faces.AddFace(2, 6, 8);
+                            tempMesh.Faces.AddFace(3, 8, 6);
+                            tempMesh.Faces.AddFace(3, 7, 8);
+                            tempMesh.Faces.AddFace(0, 8, 7);
+                            List<int> quad8vert = new List<int>() { 0, 4, 1, 5, 2, 6, 3, 7 };
+                            List<int> quad8Face = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
+
+                            MeshNgon meshGon = MeshNgon.Create(quad8vert, quad8vert);
+
+                            tempMesh.Ngons.AddNgon(meshGon);
                         }
+
+                        //List<Point3f> tempPts = tempMesh.Vertices.ToList();
+                        //double x = 0; double y = 0; double z = 0;
+                        //for (int k = 0; k < tempPts.Count; k++)
+                        //{
+                        //    x += tempPts[k].X; y += tempPts[k].Y; z += tempPts[k].Z;
+                        //}
+                        //x /= tempPts.Count; y /= tempPts.Count; z /= tempPts.Count;
+                        //tempMesh.Vertices.Add(new Point3d(x, y, z));
+
+                        //if (topo.Count == 6)
+                        //{
+                        //    tempMesh.Faces.AddFace(0, 3, 6);
+                        //    tempMesh.Faces.AddFace(3, 1, 6);
+                        //    tempMesh.Faces.AddFace(1, 4, 6);
+                        //    tempMesh.Faces.AddFace(4, 2, 6);
+                        //    tempMesh.Faces.AddFace(2, 5, 6);
+                        //    tempMesh.Faces.AddFace(5, 0, 6);
+                        //}
+
+                        //if (topo.Count == 8)
+                        //{
+                        //    tempMesh.Faces.AddFace(0, 4, 8, 7);
+                        //    tempMesh.Faces.AddFace(1, 5, 8, 4);
+                        //    tempMesh.Faces.AddFace(2, 6, 8, 5);
+                        //    tempMesh.Faces.AddFace(3, 7, 8, 6);
+                        //}
                     }
                     mList.Add(tempMesh);
 
@@ -341,8 +389,8 @@ namespace GhSA.Util.Gsa
                     GsaElement2d element2D = new GsaElement2d(m);
 
                     // set elements list of IDs
-                    if (!ngon) // we only set this if faces are tri or quad
-                    {
+                    //if (!ngon) // we only set this if faces are tri or quad
+                    //{
                         element2D.ID = IDs[i];
 
                         // set elements list of properties
@@ -350,7 +398,7 @@ namespace GhSA.Util.Gsa
 
                         // add the element to list of goo 2d elements
 
-                    }
+                    //}
                     element2D.Elements = elems;
 
                     while (element2D.Elements.Count != element2D.Properties.Count)

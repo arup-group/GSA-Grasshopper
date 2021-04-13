@@ -541,37 +541,157 @@ namespace GhSA.Util.GH
             return BuildBrep(convertBrep.Item1, convertBrep.Item4);
         }
 
-        public static Tuple<List<Element>, List<Point3d>, List<List<int>>> ConvertMeshToElem2d(Mesh mesh, int prop = 1)
+        public static Tuple<List<Element>, List<Point3d>, List<List<int>>> ConvertMeshToElem2d(Mesh mesh, int prop = 1, bool createQuadraticElements = false)
         {
+            // list of elements to output
             List<Element> elems = new List<Element>();
+            // list of points from mesh topology
             List<Point3d> topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+            // list of reference ids between elements and points
             List<List<int>> topoInts = new List<List<int>>();
 
-            for (int i = 0; i < mesh.Faces.Count; i++)
+            // get list of mesh ngons (faces in mesh with both tri/quads and ngons above 4 verticies)
+            List<MeshNgon> ngons = mesh.GetNgonAndFacesEnumerable().ToList();
+
+            for (int i = 0; i < ngons.Count; i++)
             {
                 Element elem = new Element();
-                List<int> topo = new List<int>();
-                topo.Add(mesh.Faces[i].A);
-                topo.Add(mesh.Faces[i].B);
-                topo.Add(mesh.Faces[i].C);
-                if (mesh.Faces[i].IsQuad)
+                List<int> topo = ngons[i].BoundaryVertexIndexList().Select(u => (int)u).ToList();
+
+                if (topo.Count == 3)
                 {
-                    topo.Add(mesh.Faces[i].D);
-                    elem.Type = ElementType.QUAD4;
+                    if (createQuadraticElements)
+                    {
+                        // to create a tri6 we add mid-points
+                        Point3d pt3 = new Point3d(
+                            (topoPts[topo[0]].X + topoPts[topo[1]].X) / 2, 
+                            (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2, 
+                            (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
+                        topo.Add(topoPts.Count);
+                        topoPts.Add(pt3);
+                        Point3d pt4 = new Point3d(
+                            (topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
+                            (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
+                            (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
+                        topo.Add(topoPts.Count);
+                        topoPts.Add(pt4);
+                        Point3d pt5 = new Point3d(
+                            (topoPts[topo[2]].X + topoPts[topo[0]].X) / 2,
+                            (topoPts[topo[2]].Y + topoPts[topo[0]].Y) / 2,
+                            (topoPts[topo[2]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 2 and 0
+                        topo.Add(topoPts.Count);
+                        topoPts.Add(pt5);
+
+                        elem.Type = ElementType.TRI6;
+                        topoInts.Add(topo);
+                    }
+                    else
+                    {
+                        elem.Type = ElementType.TRI3;
+                        topoInts.Add(topo);
+                    }
                 }
-                else
-                    elem.Type = ElementType.TRI3;
-                topoInts.Add(topo);
+                else if (topo.Count == 4)
+                {
+                    if (createQuadraticElements)
+                    {
+                        // to create a tri6 we add mid-points
+                        Point3d pt3 = new Point3d(
+                            (topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
+                            (topoPts[topo[0]].Y + topoPts[topo[1]].Y) / 2,
+                            (topoPts[topo[0]].Z + topoPts[topo[1]].Z) / 2); // average between verticy 0 and 1
+                        topo.Add(topoPts.Count);
+                        topoPts.Add(pt3);
+                        Point3d pt4 = new Point3d(
+                            (topoPts[topo[1]].X + topoPts[topo[2]].X) / 2,
+                            (topoPts[topo[1]].Y + topoPts[topo[2]].Y) / 2,
+                            (topoPts[topo[1]].Z + topoPts[topo[2]].Z) / 2); // average between verticy 1 and 2
+                        topo.Add(topoPts.Count);
+                        topoPts.Add(pt4);
+                        Point3d pt5 = new Point3d(
+                            (topoPts[topo[2]].X + topoPts[topo[3]].X) / 2,
+                            (topoPts[topo[2]].Y + topoPts[topo[3]].Y) / 2,
+                            (topoPts[topo[2]].Z + topoPts[topo[3]].Z) / 2); // average between verticy 2 and 3
+                        topo.Add(topoPts.Count);
+                        topoPts.Add(pt5);
+                        Point3d pt6 = new Point3d(
+                            (topoPts[topo[3]].X + topoPts[topo[0]].X) / 2,
+                            (topoPts[topo[3]].Y + topoPts[topo[0]].Y) / 2,
+                            (topoPts[topo[3]].Z + topoPts[topo[0]].Z) / 2); // average between verticy 3 and 0
+                        topo.Add(topoPts.Count);
+                        topoPts.Add(pt6);
+
+                        elem.Type = ElementType.QUAD8;
+                        topoInts.Add(topo);
+                    }
+                    else
+                    {
+                        elem.Type = ElementType.QUAD4;
+                        topoInts.Add(topo);
+                    }
+                    
+                }
+                else if (topo.Count == 6)
+                {
+                    elem.Type = ElementType.TRI6;
+                    List<int> topo6 = new List<int>();
+                    topo6.Add(topo[0]);
+                    topo6.Add(topo[2]);
+                    topo6.Add(topo[4]);
+                    topo6.Add(topo[1]);
+                    topo6.Add(topo[3]);
+                    topo6.Add(topo[5]);
+                    topoInts.Add(topo6);
+                }
+                else if (topo.Count == 8)
+                {
+                    elem.Type = ElementType.QUAD8;
+                    List<int> topo8 = new List<int>();
+                    topo8.Add(topo[0]);
+                    topo8.Add(topo[2]);
+                    topo8.Add(topo[4]);
+                    topo8.Add(topo[6]);
+                    topo8.Add(topo[1]);
+                    topo8.Add(topo[3]);
+                    topo8.Add(topo[5]);
+                    topo8.Add(topo[7]);
+                    topoInts.Add(topo8);
+                }
+                
                 elem.Property = prop;
                 elems.Add(elem);
             }
+            
+            // old:
+            //for (int i = 0; i < mesh.Faces.Count; i++)
+            //{
+            //    Element elem = new Element();
+            //    List<int> topo = new List<int>();
+            //    topo.Add(mesh.Faces[i].A);
+            //    topo.Add(mesh.Faces[i].B);
+            //    topo.Add(mesh.Faces[i].C);
+            //    if (mesh.Faces[i].IsQuad)
+            //    {
+            //        topo.Add(mesh.Faces[i].D);
+            //        elem.Type = ElementType.QUAD4;
+            //    }
+            //    else
+            //        elem.Type = ElementType.TRI3;
+            //    topoInts.Add(topo);
+            //    elem.Property = prop;
+            //    elems.Add(elem);
+            //}
+
             return new Tuple<List<Element>, List<Point3d>, List<List<int>>>(elems, topoPts, topoInts);
         }
 
         public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<Parameters.GsaMember1d> mem1ds = null, List<Parameters.GsaNode> nodes = null)
         {
+            Brep in_brep = brep.DuplicateBrep();
+            in_brep.Faces.ShrinkFaces();
+            
             // set up unroller
-            Unroller unroller = new Unroller(brep);
+            Unroller unroller = new Unroller(in_brep);
 
             List<Curve> memcrvs = new List<Curve>();
             if (mem1ds != null)
@@ -588,22 +708,19 @@ namespace GhSA.Util.GH
 
             unroller.AddFollowingGeometry(points);
             unroller.AddFollowingGeometry(curves);
-            unroller.RelativeTolerance = 10000;
-            unroller.AbsoluteTolerance = 10000;
-
+            unroller.RelativeTolerance = 10^32;
+            //unroller.AbsoluteTolerance = 1000;
+            
             // create list of flattened geometry
             Point3d[] inclPts;
             Curve[] inclCrvs;
             TextDot[] unused;
             // perform unroll
             Brep[] flattened = unroller.PerformUnroll(out inclCrvs, out inclPts, out unused);
-
+            
             // create 2d member from flattened geometry
             Parameters.GsaMember2d mem = new Parameters.GsaMember2d(flattened[0], inclCrvs.ToList(), inclPts.ToList());
             mem.Member.MeshSize = meshSize;
-            
-            // set mesh type to quadratic to create tri6 and quad8
-            //mem.Member.Type2D = AnalysisOrder.QUADRATIC;
             
             // add to temp list for input in assemble function
             List<Parameters.GsaMember2d> mem2ds = new List<Parameters.GsaMember2d>();
@@ -640,7 +757,7 @@ namespace GhSA.Util.GH
             Mesh mesh = elem2dgoo[0].Value.Mesh;
 
             Surface flat = flattened[0].Surfaces[0];
-            Surface orig = brep.Surfaces[0];
+            Surface orig = in_brep.Surfaces[0];
 
             MeshVertexList vertices = mesh.Vertices;
             for (int i = 0; i < vertices.Count; i++)

@@ -114,7 +114,7 @@ namespace GhSA.Parameters
         {
             m_elements = new List<Element>();
             m_mesh = Util.GH.Convert.ConvertBrepToMesh(brep, curves, points, meshSize, mem1ds, nodes);
-            Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(m_mesh, prop);
+            Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(m_mesh, prop, true);
             m_elements = convertMesh.Item1;
             m_topo = convertMesh.Item2;
             m_topoInt = convertMesh.Item3;
@@ -442,17 +442,27 @@ namespace GhSA.Parameters
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
-                    List<Line> lines = new List<Line>();
-                    for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
-                        lines.Add(Value.Mesh.TopologyEdges.EdgeLine(i));
-                    args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdge, 1);
+                    args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdge, 1);
+                    
+                    //List<Line> lines = new List<Line>();
+                    //for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
+                    //{
+                    //    if(!Value.Mesh.TopologyEdges.IsNgonInterior(i))
+                    //        lines.Add(Value.Mesh.TopologyEdges.EdgeLine(i));
+                    //}
+                    //args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdge, 1);
                 }
                 else
                 {
-                    List<Line> lines = new List<Line>();
-                    for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
-                        lines.Add(Value.Mesh.TopologyEdges.EdgeLine(i));
-                    args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdgeSelected, 2);
+                    args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdgeSelected, 2);
+
+                    //List<Line> lines = new List<Line>();
+                    //for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
+                    //{
+                    //    if (!Value.Mesh.TopologyEdges.IsNgonInterior(i))
+                    //        lines.Add(Value.Mesh.TopologyEdges.EdgeLine(i));
+                    //}
+                    //args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdgeSelected, 2);
                 }
             }
         }
