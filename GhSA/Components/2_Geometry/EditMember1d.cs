@@ -118,7 +118,7 @@ namespace GhSA.Components
             if (DA.GetData(0, ref gsaMember1d))
             {
                 if (gsaMember1d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input is null"); }
-                GsaMember1d mem = gsaMember1d;
+                GsaMember1d mem = gsaMember1d.Duplicate();
 
                 // #### inputs ####
                 // 1 ID

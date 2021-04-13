@@ -222,7 +222,7 @@ namespace GhSA.Parameters
         {
             if (member == null)
                 member = new GsaMember1d();
-            this.Value = member.Duplicate();
+            this.Value = member; //member.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -231,7 +231,7 @@ namespace GhSA.Parameters
         }
         public GsaMember1dGoo DuplicateGsaMember1d()
         {
-            return new GsaMember1dGoo(Value == null ? new GsaMember1d() : Value.Duplicate());
+            return new GsaMember1dGoo(Value == null ? new GsaMember1d() : Value); //Value.Duplicate());
         }
         #endregion
 

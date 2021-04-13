@@ -86,7 +86,7 @@ namespace GhSA.Components
             if (DA.GetData(0, ref gsaElement2d))
             {
                 if (gsaElement2d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element2D input is null"); }
-                GsaElement2d elem = gsaElement2d;
+                GsaElement2d elem = gsaElement2d.Duplicate();
 
                 // #### inputs ####
 
@@ -326,7 +326,7 @@ namespace GhSA.Components
                         Z = elem.Elements[i].Offset.Z
                     };
                     out_offsets.Add(offset1);
-                    type.Add(gsaElement2d.Elements[i].TypeAsString());
+                    type.Add(elem.Elements[i].TypeAsString());
                     out_names.Add(elem.Elements[i].Name);
                     out_groups.Add(elem.Elements[i].Group);
                     out_colours.Add((System.Drawing.Color)elem.Elements[i].Colour);

@@ -118,7 +118,7 @@ namespace GhSA.Parameters
         {
             if (prop == null)
                 prop = new GsaProp2d();
-            this.Value = prop.Duplicate();
+            this.Value = prop; //prop.Duplicate();
         }
 
         public override IGH_Goo Duplicate()
@@ -127,7 +127,7 @@ namespace GhSA.Parameters
         }
         public GsaProp2dGoo DuplicateGsaProp2d()
         {
-            return new GsaProp2dGoo(Value == null ? new GsaProp2d() : Value.Duplicate());
+            return new GsaProp2dGoo(Value == null ? new GsaProp2d() : Value); //Value.Duplicate());
         }
         #endregion
 

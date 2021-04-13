@@ -196,7 +196,7 @@ namespace GhSA.Parameters
         {
             if (model == null)
                 model = new GsaModel();
-            this.Value = model.Duplicate();
+            this.Value = model; //model.Duplicate();
         }
 
         public override IGH_Goo Duplicate()
@@ -205,7 +205,7 @@ namespace GhSA.Parameters
         }
         public GsaModelGoo DuplicateGsaModel()
         {
-            return new GsaModelGoo(Value == null ? new GsaModel() : Value.Duplicate());
+            return new GsaModelGoo(Value == null ? new GsaModel() : Value); //Value.Duplicate());
         }
         #endregion
 

@@ -105,7 +105,7 @@ namespace GhSA.Components
             if (DA.GetData(0, ref gsaElement1d))
             {
                 if (gsaElement1d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element1D input is null"); }
-                GsaElement1d elem = gsaElement1d;
+                GsaElement1d elem = gsaElement1d.Duplicate();
 
                 // #### inputs ####
                 // 1 ID
@@ -265,7 +265,6 @@ namespace GhSA.Components
                 DA.SetData(13, elem.Element.IsDummy);
 
                 try { DA.SetData(14, elem.Element.ParentMember.Member); } catch (Exception) { }
-                //DA.SetData(16, gsaElement1d.Element.IsDummy);
             }
         }
     }

@@ -214,7 +214,7 @@ namespace GhSA.Parameters
         {
             if (element == null)
                 element = new GsaElement1d();
-            this.Value = element.Duplicate();
+            this.Value = element; //element.Duplicat();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -223,7 +223,7 @@ namespace GhSA.Parameters
         }
         public GsaElement1dGoo DuplicateGsaElement1d()
         {
-            return new GsaElement1dGoo(Value == null ? new GsaElement1d() : Value.Duplicate());
+            return new GsaElement1dGoo(Value == null ? new GsaElement1d() : Value); //Value.Duplicate());
         }
         #endregion
 

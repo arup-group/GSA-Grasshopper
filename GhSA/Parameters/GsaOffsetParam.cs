@@ -133,7 +133,7 @@ namespace GhSA.Parameters
         {
             if (offset == null)
                 offset = new GsaOffset();
-            this.Value = offset.Duplicate();
+            this.Value = offset; //offset.Duplicate();
         }
 
         public override IGH_Goo Duplicate()
@@ -142,7 +142,7 @@ namespace GhSA.Parameters
         }
         public GsaOffsetGoo DuplicateGsaOffset()
         {
-            return new GsaOffsetGoo(Value == null ? new GsaOffset() : Value.Duplicate());
+            return new GsaOffsetGoo(Value == null ? new GsaOffset() : Value); //Value.Duplicate());
         }
         #endregion
 

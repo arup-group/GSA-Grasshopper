@@ -140,7 +140,7 @@ namespace GhSA.Parameters
         {
             if (spring == null)
                 spring = new GsaSpring();
-            this.Value = spring.Duplicate();
+            this.Value = spring; //spring.Duplicate();
         }
 
         public override IGH_Goo Duplicate()
@@ -149,7 +149,7 @@ namespace GhSA.Parameters
         }
         public GsaSpringGoo DuplicateGsaSpring()
         {
-            return new GsaSpringGoo(Value == null ? new GsaSpring() : Value.Duplicate());
+            return new GsaSpringGoo(Value == null ? new GsaSpring() : Value); //Value.Duplicate());
         }
         #endregion
 

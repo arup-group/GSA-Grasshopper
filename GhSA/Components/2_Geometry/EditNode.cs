@@ -85,108 +85,107 @@ namespace GhSA.Components
             GsaNode gsaNode = new GsaNode();
             DA.GetData(0, ref gsaNode);
 
-            if (gsaNode != null)
+            if (gsaNode == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
+            GsaNode node = gsaNode.Duplicate();
+
+            // #### inputs ####
+
+            // 1 ID
+            GH_Integer ghInt = new GH_Integer();
+            if (DA.GetData(1, ref ghInt))
             {
-                // #### inputs ####
-                
-                // 1 ID
-                GH_Integer ghInt = new GH_Integer();
-                if (DA.GetData(1, ref ghInt))
-                {
-                    if (GH_Convert.ToInt32(ghInt, out int id, GH_Conversion.Both))
-                        gsaNode.ID = id;
-                }
-
-                // 2 Point
-                GH_Point ghPt = new GH_Point();
-                if (DA.GetData(2, ref ghPt))
-                {
-                    Point3d pt = new Point3d();
-                    if (GH_Convert.ToPoint3d(ghPt, ref pt, GH_Conversion.Both))
-                    {
-                        gsaNode.Point = pt;
-                        gsaNode.Node.Position.X = pt.X;
-                        gsaNode.Node.Position.Y = pt.Y;
-                        gsaNode.Node.Position.Z = pt.Z;
-                    }
-                }
-
-                // 3 plane
-                GH_Plane ghPln = new GH_Plane();
-                if (DA.GetData(3, ref ghPln))
-                {
-                    Plane pln = new Plane();
-                    if (GH_Convert.ToPlane(ghPln, ref pln, GH_Conversion.Both))
-                    {
-                        pln.Origin = gsaNode.Point;
-                        gsaNode.LocalAxis = pln;
-                    }
-                }
-
-                // 4 Restraint
-                GsaBool6 restraint = new GsaBool6();
-                if (DA.GetData(4, ref restraint))
-                {
-                    gsaNode.Node.Restraint.X = restraint.X;
-                    gsaNode.Node.Restraint.Y = restraint.Y;
-                    gsaNode.Node.Restraint.Z = restraint.Z;
-                    gsaNode.Node.Restraint.XX = restraint.XX;
-                    gsaNode.Node.Restraint.YY = restraint.YY;
-                    gsaNode.Node.Restraint.ZZ = restraint.ZZ;
-                }
-
-                // 5 Spring
-                GsaSpring spring = new GsaSpring();
-                if (DA.GetData(5, ref spring))
-                {
-                    if (spring != null)
-                        gsaNode.Spring = spring;
-                }
-
-                // 6 Name
-                GH_String ghStr = new GH_String();
-                if (DA.GetData(6, ref ghStr))
-                {
-                    if (GH_Convert.ToString(ghStr, out string name, GH_Conversion.Both))
-                        gsaNode.Node.Name = name;
-                }
-
-                // 7 Colour
-                GH_Colour ghcol = new GH_Colour();
-                if (DA.GetData(7, ref ghcol))
-                {
-                    if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
-                        gsaNode.Colour = col;
-                }
-
-                // #### outputs ####
-                DA.SetData(0, new GsaNodeGoo(gsaNode));
-                DA.SetData(1, gsaNode.ID);
-                DA.SetData(2, gsaNode.Point);
-                DA.SetData(3, gsaNode.LocalAxis);
-                GsaBool6 restraint1 = new GsaBool6
-                {
-                    X = gsaNode.Node.Restraint.X,
-                    Y = gsaNode.Node.Restraint.Y,
-                    Z = gsaNode.Node.Restraint.Z,
-                    XX = gsaNode.Node.Restraint.XX,
-                    YY = gsaNode.Node.Restraint.YY,
-                    ZZ = gsaNode.Node.Restraint.ZZ
-                };
-                DA.SetData(4, restraint1);
-                GsaSpring spring1 = new GsaSpring();
-                if (gsaNode.Spring != null)
-                {
-                    spring1 = gsaNode.Spring.Duplicate();
-                }
-                DA.SetData(5, new GsaSpringGoo(spring1));
-                DA.SetData(6, gsaNode.Node.Name);
-                DA.SetData(7, gsaNode.Colour);
-                try { DA.SetDataList(8, gsaNode.Node.ConnectedElements); } catch (Exception) { }
-                try { DA.SetDataList(9, gsaNode.Node.ConnectedMembers); } catch (Exception) { }
-                
+                if (GH_Convert.ToInt32(ghInt, out int id, GH_Conversion.Both))
+                    node.ID = id;
             }
-            else { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Node input"); }
+
+            // 2 Point
+            GH_Point ghPt = new GH_Point();
+            if (DA.GetData(2, ref ghPt))
+            {
+                Point3d pt = new Point3d();
+                if (GH_Convert.ToPoint3d(ghPt, ref pt, GH_Conversion.Both))
+                {
+                    node.Point = pt;
+                    node.Node.Position.X = pt.X;
+                    node.Node.Position.Y = pt.Y;
+                    node.Node.Position.Z = pt.Z;
+                }
+            }
+
+            // 3 plane
+            GH_Plane ghPln = new GH_Plane();
+            if (DA.GetData(3, ref ghPln))
+            {
+                Plane pln = new Plane();
+                if (GH_Convert.ToPlane(ghPln, ref pln, GH_Conversion.Both))
+                {
+                    pln.Origin = node.Point;
+                    node.LocalAxis = pln;
+                }
+            }
+
+            // 4 Restraint
+            GsaBool6 restraint = new GsaBool6();
+            if (DA.GetData(4, ref restraint))
+            {
+                node.Node.Restraint.X = restraint.X;
+                node.Node.Restraint.Y = restraint.Y;
+                node.Node.Restraint.Z = restraint.Z;
+                node.Node.Restraint.XX = restraint.XX;
+                node.Node.Restraint.YY = restraint.YY;
+                node.Node.Restraint.ZZ = restraint.ZZ;
+            }
+
+            // 5 Spring
+            GsaSpring spring = new GsaSpring();
+            if (DA.GetData(5, ref spring))
+            {
+                if (spring != null)
+                    node.Spring = spring;
+            }
+
+            // 6 Name
+            GH_String ghStr = new GH_String();
+            if (DA.GetData(6, ref ghStr))
+            {
+                if (GH_Convert.ToString(ghStr, out string name, GH_Conversion.Both))
+                    node.Node.Name = name;
+            }
+
+            // 7 Colour
+            GH_Colour ghcol = new GH_Colour();
+            if (DA.GetData(7, ref ghcol))
+            {
+                if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
+                    node.Colour = col;
+            }
+
+            // #### outputs ####
+            DA.SetData(0, new GsaNodeGoo(node));
+            DA.SetData(1, node.ID);
+            DA.SetData(2, node.Point);
+            DA.SetData(3, node.LocalAxis);
+            GsaBool6 restraint1 = new GsaBool6
+            {
+                X = node.Node.Restraint.X,
+                Y = node.Node.Restraint.Y,
+                Z = node.Node.Restraint.Z,
+                XX = node.Node.Restraint.XX,
+                YY = node.Node.Restraint.YY,
+                ZZ = node.Node.Restraint.ZZ
+            };
+            DA.SetData(4, restraint1);
+            GsaSpring spring1 = new GsaSpring();
+            if (node.Spring != null)
+            {
+                spring1 = node.Spring.Duplicate();
+            }
+            DA.SetData(5, new GsaSpringGoo(spring1));
+            DA.SetData(6, node.Node.Name);
+            DA.SetData(7, node.Colour);
+            try { DA.SetDataList(8, node.Node.ConnectedElements); } catch (Exception) { }
+            try { DA.SetDataList(9, node.Node.ConnectedMembers); } catch (Exception) { }
+
         }
     }
 }

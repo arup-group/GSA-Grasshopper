@@ -129,7 +129,7 @@ namespace GhSA.Parameters
         {
             if (section == null)
                 section = new GsaSection();
-            this.Value = section.Duplicate();
+            this.Value = section; //section.Duplicate();
         }
 
         public override IGH_Goo Duplicate()
@@ -138,7 +138,7 @@ namespace GhSA.Parameters
         }
         public GsaSectionGoo DuplicateGsaSection()
         {
-            return new GsaSectionGoo(Value == null ? new GsaSection() : Value.Duplicate());
+            return new GsaSectionGoo(Value == null ? new GsaSection() : Value); //Value.Duplicate());
         }
         #endregion
 

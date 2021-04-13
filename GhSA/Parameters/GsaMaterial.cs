@@ -161,7 +161,7 @@ namespace GhSA.Parameters
         {
             if (material == null)
                 material = new GsaMaterial();
-            this.Value = material.Duplicate();
+            this.Value = material; //material.Duplicate();
         }
 
         public override IGH_Goo Duplicate()
@@ -170,7 +170,7 @@ namespace GhSA.Parameters
         }
         public GsaMaterialGoo DuplicateGsaSection()
         {
-            return new GsaMaterialGoo(Value == null ? new GsaMaterial() : Value.Duplicate());
+            return new GsaMaterialGoo(Value == null ? new GsaMaterial() : Value); //Value.Duplicate());
         }
         #endregion
 

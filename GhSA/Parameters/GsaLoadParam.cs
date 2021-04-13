@@ -539,7 +539,7 @@ namespace GhSA.Parameters
         }
         public GsaLoadGoo(GsaLoad load)
         {
-            this.Value = load.Duplicate();
+            this.Value = load; //load.Duplicate();
         }
 
         public override IGH_Goo Duplicate()
@@ -548,7 +548,7 @@ namespace GhSA.Parameters
         }
         public GsaLoadGoo DuplicateGsaLoad()
         {
-            return new GsaLoadGoo(Value == null ? null : Value.Duplicate());
+            return new GsaLoadGoo(Value == null ? null : Value);//Value.Duplicate());
         }
         #endregion
 

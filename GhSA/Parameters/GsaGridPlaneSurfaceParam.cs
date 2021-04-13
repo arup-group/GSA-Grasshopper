@@ -247,7 +247,7 @@ namespace GhSA.Parameters
             if (gridplane == null)
                 this.Value = null;
             else
-                this.Value = gridplane.Duplicate();
+                this.Value = gridplane; //gridplane.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -256,7 +256,7 @@ namespace GhSA.Parameters
         }
         public GsaGridPlaneSurfaceGoo DuplicateGsaNode()
         {
-            return new GsaGridPlaneSurfaceGoo(Value == null ? new GsaGridPlaneSurface() : Value.Duplicate());
+            return new GsaGridPlaneSurfaceGoo(Value == null ? new GsaGridPlaneSurface() : Value); //Value.Duplicate());
         }
         #endregion
 
