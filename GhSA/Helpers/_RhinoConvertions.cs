@@ -823,7 +823,7 @@ namespace GhSA.Util.GH
             // triangulate all faces
             m.Faces.ConvertQuadsToTriangles();
 
-            m.
+            m.CollapseFacesByEdgeLength(false, GhSA.Units.Tolerance);
 
             return m;
         }

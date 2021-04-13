@@ -102,8 +102,10 @@ namespace GhSA.Parameters
                     Topology = m_member.Topology.ToString(),
                     Type = m_member.Type, 
                 },
-                SolidMesh = m_mesh.DuplicateMesh(),
+                //SolidMesh = m_mesh.DuplicateMesh(),
             };
+
+            dup.SolidMesh = (Mesh)m_mesh.Duplicate();
 
             if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
                 dup.m_member.Colour = m_member.Colour;
