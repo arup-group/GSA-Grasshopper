@@ -123,13 +123,15 @@ namespace GhSA.Util.Gsa.ToGSA
     }
     public class Assemble
     {
-        public static Model AssembleModel(List<GsaMember3d> member3Ds = null, List<GsaMember2d> member2Ds = null, List<GsaMember1d> member1Ds = null)
+        public static Model AssembleModel(List<GsaMember3d> member3Ds = null, List<GsaMember2d> member2Ds = null, List<GsaMember1d> member1Ds = null, List<GsaNode> nodes = null)
         {
             // new model to set members in
             Model gsa = new Model();
 
             // list of topology nodes
-            List<Node> nodes = new List<Node>();
+            List<Node> gsanodes = new List<Node>();
+            if (nodes != null)
+                gsanodes = nodes.ConvertAll(x => x.Node);
 
             // counter for creating nodes
             int id = 1;
@@ -138,16 +140,16 @@ namespace GhSA.Util.Gsa.ToGSA
             List<Member> mems = new List<Member>();
             
             // add converted 1D members
-            mems.AddRange(Members.ConvertMember1D(member1Ds, ref nodes, ref id));
+            mems.AddRange(Members.ConvertMember1D(member1Ds, ref gsanodes, ref id));
 
             // add converted 2D members
-            mems.AddRange(Members.ConvertMember2D(member2Ds, ref nodes, ref id));
+            mems.AddRange(Members.ConvertMember2D(member2Ds, ref gsanodes, ref id));
 
             // add converted 3D members
-            mems.AddRange(Members.ConvertMember3D(member3Ds, ref nodes, ref id));
+            mems.AddRange(Members.ConvertMember3D(member3Ds, ref gsanodes, ref id));
 
             #region create model
-            Dictionary<int, Node> nodeDic = nodes
+            Dictionary<int, Node> nodeDic = gsanodes
                 .Select((s, index) => new { s, index })
                 .ToDictionary(x => x.index + 1, x => x.s);
             ReadOnlyDictionary<int, Node> setnodes = new ReadOnlyDictionary<int, Node>(nodeDic);
@@ -359,7 +361,7 @@ namespace GhSA.Util.Gsa.ToGSA
             gsa.AddGravityLoads(setgrav);
             //node loads
             ReadOnlyCollection<NodeLoad> setnode_disp = new ReadOnlyCollection<NodeLoad>(nodeLoads_displ);
-            gsa.AddNodeLoads(NodeLoadType.APPLIED_DISP, setnode_disp);
+            gsa.AddNodeLoads(NodeLoadType.APPL_DISP, setnode_disp);
             ReadOnlyCollection<NodeLoad> setnode_node = new ReadOnlyCollection<NodeLoad>(nodeLoads_node);
             gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, setnode_node);
             ReadOnlyCollection<NodeLoad> setnode_setl = new ReadOnlyCollection<NodeLoad>(nodeLoads_settle);

@@ -444,9 +444,9 @@ namespace GhSA.Components
                             }
                         }
                         // add the vector list to the out tree
-                        xyz_out.AddRange(xyz, new GH_Path(key));
-                        xxyyzz_out.AddRange(xxyyzz, new GH_Path(key));
-                        segmentlines.AddRange(segmentedlines, new GH_Path(key));
+                        xyz_out.AddRange(xyz, new GH_Path(key - 1));
+                        xxyyzz_out.AddRange(xxyyzz, new GH_Path(key - 1));
+                        segmentlines.AddRange(segmentedlines, new GH_Path(key - 1));
                     }
                     getresults = false;
                 }

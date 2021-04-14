@@ -8,6 +8,7 @@ using Grasshopper;
 using Rhino.Geometry;
 using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
+using System.Text.RegularExpressions;
 
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
@@ -46,18 +47,38 @@ namespace GhSA.Components
         {
             if (first)
             {
-                SetSelected(loadlistid, loadselectid, isTapered, isHollow, isElliptical, isGeneral, isB2B);
+                if (dropdowncontents == null)
+                {
+                    // build initial lists
+                    catalogueNames = cataloguedata.Item1;
+                    catalogueNumbers = cataloguedata.Item2;
+
+                    typeNames = typedata.Item1;
+                    typeNumbers = typedata.Item2;
+
+                    dropdowncontents = new List<List<string>>();
+                    dropdowncontents.Add(mainlist);
+                    dropdowncontents.Add(catalogueNames);
+                    dropdowncontents.Add(typeNames);
+                    dropdowncontents.Add(sectionList);
+
+                    profiles = sectionList;
+                }
+
+                SetSelected(loadlistid, loadselectid, isTapered, isHollow, isElliptical, isGeneral, isB2B, inclSS);
                 first = false;
             }
 
-            m_attributes = new UI.ProfileComponentUI(this, SetSelected, dropdowncontents, selections, dropdownspacer, null, isTapered, isHollow, isElliptical, isGeneral, isB2B);
+            m_attributes = new UI.ProfileComponentUI(this, SetSelected, dropdowncontents, selections, dropdownspacer, null, isTapered, isHollow, isElliptical, isGeneral, isB2B, inclSS);
         }
 
-        public void SetSelected(int dropdownlistidd, int selectedidd, bool taper, bool hollow, bool elliptical, bool general, bool b2b)
+        public void SetSelected(int dropdownlistidd, int selectedidd, bool taper, bool hollow, bool elliptical, bool general, bool b2b, bool inclSuperSeeded)
         {
             loadlistid = dropdownlistidd;
             loadselectid = selectedidd;
 
+            // if dropdownlistidd is bigger than 0 we are not changing component flavour (Catalogue/Standard/Geometric)
+            // but instead we update the display to the newly selected item - on first run this will be -1
             if (dropdownlistidd > 0)
             {
                 if (selections[dropdownlistidd] == null || selections.Count <= dropdownlistidd)
@@ -66,20 +87,18 @@ namespace GhSA.Components
                     selections[dropdownlistidd] = dropdowncontents[dropdownlistidd][selectedidd];
             }
 
-            isTapered = taper;
-            isHollow = hollow;
-            isElliptical = elliptical;
-            isGeneral = general;
-            isB2B = b2b;
-
             // update dropdown and spacer lists according to selection in first list
+            // create selections list if this has not yet been created
             if (selections == null || selections.Count == 0)
             {
                 if (selections == null)
                     selections = new List<string>();
                 selections.Add(mainlist[0]);
+                selections.Add(catalogueNames[0]);
+                selections.Add(typeNames[0]);
+                selections.Add(sectionList[0]);
             }
-
+            // set spacer list according to top level selections
             if (_mode == FoldMode.Catalogue)
                 dropdownspacer = new List<string>(cataloguespacer);
             else if (_mode == FoldMode.Geometric)
@@ -87,62 +106,136 @@ namespace GhSA.Components
             else
                 dropdownspacer = new List<string>(standardspacer);
 
+            // do something different based on top level selection (Catalogue/Standard/Geometric)
             switch (selections[0])
             {
+                #region Catalogue mode
                 case ("Catalogue"):
-                    // update inputs
-                    Mode1Clicked();
+
+                    // if include superseeded is toggled or FoldMode is not currently catalogue state, then we update all lists
+                    if (inclSS != inclSuperSeeded || _mode != FoldMode.Catalogue)
+                    {
+                        inclSS = inclSuperSeeded;
+
+                        // set catalogue selection to all
+                        catalogueIndex = -1;
+
+                        // set types to all
+                        typeIndex = -1;
+                        // update typelist with all catalogues
+                        typedata = SqlReader.GetTypesDataFromSQLite(catalogueIndex, Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"), inclSS);
+                        typeNames = typedata.Item1;
+                        typeNumbers = typedata.Item2;
+
+                        // update section list to all types
+                        sectionList = SqlReader.GetSectionsDataFromSQLite(typeNumbers, Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"), inclSS);
+                        profiles = sectionList;
+
+                        // update displayed selections to all
+                        selections[1] = catalogueNames[0];
+                        selections[2] = typeNames[0];
+                        selections[3] = sectionList[0];
+
+                        // update inputs and component graphics if we come from another mode
+                        if (_mode != FoldMode.Catalogue)
+                        {
+                            // call graphics update
+                            Mode1Clicked();
+                        }
+                    }
 
                     // update dropdown lists
                     if (dropdowncontents != null)
                         dropdowncontents.Clear();
-                    if (dropdowncontents == null || dropdowncontents.Count == 0)
+                    if (dropdowncontents == null)
+                        dropdowncontents = new List<List<string>>();
+                    // add first main list / top level (Catalogue/Standard/Geometric)
+                    dropdowncontents.Add(mainlist);
+
+                    // add catalogues (they will always be the same so no need to rerun sql call)
+                    dropdowncontents.Add(catalogueNames);
+
+                    // type list
+                    // if second list (i.e. catalogue list) is changed, update types list to account for that catalogue
+                    if (dropdownlistidd == 1)
                     {
-                        if (dropdowncontents == null)
-                            dropdowncontents = new List<List<string>>();
-                        dropdowncontents.Add(mainlist); //fixed
-                        dropdowncontents.Add(cataloguelist); //fixed
+                        // update catalogue index with the selected catalogue
+                        catalogueIndex = catalogueNumbers[selectedidd];
+                        selections[1] = catalogueNames[selectedidd];
 
-                        // if second list (i.e. catalogue list) is changed, update types list to account for that catalogue
-                        if (dropdownlistidd == 1)
-                        {
-                            typelist = SqlReader.GetTypesDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd], Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"));
-                        }
-                        dropdowncontents.Add(typelist);
-                        // if third list (i.e. types list) is changed, update sections list to account for these section types
-                        if (dropdownlistidd == 2)
-                        {
-                            sectionlist = SqlReader.GetSectionsDataFromSQLite(dropdowncontents[dropdownlistidd][selectedidd].Split(new string[] { " -- " }, StringSplitOptions.None)[0], Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"));
-                        }
-                        dropdowncontents.Add(sectionlist);
+                        // update typelist with selected input catalogue
+                        typedata = SqlReader.GetTypesDataFromSQLite(catalogueIndex, Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"), inclSS);
+                        typeNames = typedata.Item1;
+                        typeNumbers = typedata.Item2;
 
+                        // update section list from new types (all new types in catalogue)
+                        List<int> types = typeNumbers.ToList();
+                        types.RemoveAt(0); // remove -1 from beginning of list
+                        sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"), inclSS);
+                        profiles = sectionList;
+
+                        // update selections to display first item in new list
+                        selections[2] = typeNames[0];
+                        selections[3] = sectionList[0];
                     }
+                    dropdowncontents.Add(typeNames);
 
-                    if (selections.Count < 2)
+                    // section list
+                    // if third list (i.e. types list) is changed, update sections list to account for these section types
+                    if (dropdownlistidd == 2)
                     {
-                        selections.Add(cataloguelist[0]);
-                        selections.Add(typelist[0]);
-                        selections.Add(sectionlist[0]);
+                        // update catalogue index with the selected catalogue
+                        typeIndex = typeNumbers[selectedidd];
+                        selections[2] = typeNames[selectedidd];
+
+                        // create type list
+                        List<int> types = new List<int>();
+                        if (typeIndex == -1) // if all
+                        {
+                            types = typeNumbers.ToList(); // use current selected list of type numbers
+                            types.RemoveAt(0); // remove -1 from beginning of list
+                        }
+                        else
+                            types = new List<int> { typeIndex }; // create empty list and add the single selected type 
+
+
+                        // section list with selected types (only types in selected type)
+                        sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"), inclSS);
+                        profiles = sectionList;
+
+                        // update selected section to be all
+                        selections[3] = sectionList[0];
                     }
-                    if (dropdownlistidd > 0)
-                    {
-                        if (dropdownlistidd == 1)
-                            catalogueIndex = selectedidd; //to be updated
-                        if (dropdownlistidd == 2)
-                        {
-                            catalogueTypeIndex = selectedidd; //to be updated
-                            catalogueTypeName = dropdowncontents[dropdownlistidd][selectedidd].Split(new string[] { " -- " }, StringSplitOptions.None)[1];
-                        }
-                        if (dropdownlistidd == 3)
-                        {
-                            catalogueProfileIndex = selectedidd; //to be updated
-                            catalogueProfileName = dropdowncontents[dropdownlistidd][selectedidd];
-                        }
+                    dropdowncontents.Add(sectionList);
 
+                    // selected profile
+                    // if fourth list (i.e. section list) is changed, updated the sections list to only be that single profile
+                    if (dropdownlistidd == 3)
+                    {
+                        if (selectedidd == 0) // if "All" is selected add the entire list
+                        {
+                            profiles = sectionList;
+                        }
+                        else
+                        {
+                            profiles = new List<string>();
+                            profiles.Add(sectionList[selectedidd]); // if single item is selected only add that to a new list
+                        }
+                        // update displayed selected
+                        selections[3] = sectionList[selectedidd];
                     }
 
                     break;
+                #endregion
+                #region Standard mode
                 case ("Standard"):
+                    // update bools
+                    isTapered = taper;
+                    isHollow = hollow;
+                    isElliptical = elliptical;
+                    isGeneral = general;
+                    isB2B = b2b;
+
                     if (selections.Count == 1)
                         selections.Add(standardlist[0]);
 
@@ -151,24 +244,27 @@ namespace GhSA.Components
                     {
                         case "Rectangle":
                             Mode2Clicked();
-
                             break;
+
                         case "Circle":
                             Mode3Clicked();
                             break;
                         case "I section":
                             Mode4Clicked();
-
                             break;
+
                         case "Tee":
                             Mode5Clicked();
                             break;
+
                         case "Channel":
                             Mode6Clicked();
                             break;
+
                         case "Angle":
                             Mode7Clicked();
                             break;
+
                         default:
                             selections[1] = standardlist[0];
                             Mode2Clicked();
@@ -182,8 +278,9 @@ namespace GhSA.Components
                         dropdowncontents.Add(mainlist);
                         dropdowncontents.Add(standardlist);
                     }
-
                     break;
+                #endregion
+                #region Geometric mode
                 case ("Geometric"):
                     // update inputs
                     Mode8Clicked();
@@ -195,12 +292,13 @@ namespace GhSA.Components
                     {
                         dropdowncontents.Add(mainlist);
                     }
-
                     break;
+                    #endregion
             }
         }
 
         #endregion
+
 
         #region Input and output
         #region dropdown lists
@@ -223,14 +321,6 @@ namespace GhSA.Components
             "Rectangle", "Circle", "I section", "Tee", "Channel", "Angle"
         });
 
-        readonly List<string> cataloguelist = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"));
-
-        // second sublist for second dropdown list
-        List<string> typelist = SqlReader.GetTypesDataFromSQLite("british", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
-
-        List<string> sectionlist = SqlReader.GetSectionsDataFromSQLite("Universal Beams (BS4", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3");
-
-
         // list of spacers to inform user the content of dropdown
         readonly List<string> cataloguespacer = new List<string>(new string[]
         {
@@ -244,15 +334,34 @@ namespace GhSA.Components
         {
             "Profile type"
         });
+
+        // drop down content for Catalogue mode:
+        // Catalogues
+        readonly Tuple<List<string>, List<int>> cataloguedata = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(InstallationFolderPath.GetPath, "sectlib.db3"));
+        List<int> catalogueNumbers = new List<int>(); // internal db catalogue numbers
+        List<string> catalogueNames = new List<string>(); // list of displayed catalogues
+
+        // Types
+        Tuple<List<string>, List<int>> typedata = SqlReader.GetTypesDataFromSQLite(-1, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3", false);
+        List<int> typeNumbers = new List<int>(); //  internal db type numbers
+        List<string> typeNames = new List<string>(); // list of displayed types
+
+        // Sections
+        // list of displayed sections
+        List<string> sectionList = SqlReader.GetSectionsDataFromSQLite(new List<int> { -1 }, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Oasys\\GSA 10.1\\sectlib.db3", false);
         #endregion
 
         #region other user selection
-        int catalogueIndex = 0;
-        int catalogueTypeIndex = 0;
-        int catalogueProfileIndex = 0;
+        int catalogueIndex = -1; //-1 is all
+        int typeIndex = -1;
 
-        string catalogueProfileName = "";
-        string catalogueTypeName = "";
+        // displayed selections
+        string catalogueName = "All";
+        string typeName = "All";
+        string sectionName = "All";
+
+        // list of sections as outcome from selections
+        List<string> profiles = new List<string>();
 
         bool isTapered;
         bool isHollow;
@@ -260,36 +369,70 @@ namespace GhSA.Components
         bool isGeneral;
         bool isB2B;
 
+        bool inclSS;
+
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-
+            pManager.AddTextParameter("Search", "S", "Text to search from", GH_ParamAccess.item);
+            pManager[0].Optional = true;
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Profile", "Pf", "Profile for GSA Section", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Profile", "Pf", "Profile for GSA Section", GH_ParamAccess.list);
         }
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             Profile profile = new Profile();
 
-            // default to FoldMode catalogue
-            //_mode = FoldMode.Catalogue;
-
             #region catalogue
             if (_mode == FoldMode.Catalogue)
             {
+                // create list to write to
+                List<string> outCatProfiles = new List<string>();
                 profile.profileType = Profile.ProfileTypes.Catalogue;
 
-                // need to implement the lists of cross sections
-                profile.catalogueIndex = catalogueIndex;
-                profile.catalogueProfileIndex = catalogueProfileIndex;
-                profile.catalogueTypeIndex = catalogueTypeIndex;
-                profile.catalogueProfileName = catalogueProfileName;
-                profile.catalogueTypeName = catalogueTypeName;
+                // get user input filter search string
+                string search = "";
+                if (DA.GetData(0, ref search))
+                    search = search.ToLower();
 
+                for (int i = 0; i < profiles.Count; i++)
+                {
+                    if (profiles[i].ToLower() != "all")
+                    {
+                        if (search == "")
+                        {
+                            profile.catalogueProfileName = profiles[i];
+                            outCatProfiles.Add(ConvertSection.ProfileConversion(profile));
+                        }
+                        else
+                        {
+                            if(profiles[i].ToLower().Contains(search))
+                            {
+                                profile.catalogueProfileName = profiles[i];
+                                outCatProfiles.Add(ConvertSection.ProfileConversion(profile));
+                            }
+                            if (!search.Any(char.IsDigit))
+                            {
+                                string test = profiles[i].ToString();
+                                test = Regex.Replace(test, "[0-9]", string.Empty);
+                                test = test.Replace(".", string.Empty);
+                                test = test.Replace("-", string.Empty);
+                                test = test.ToLower();
+                                if (test.Contains(search))
+                                {
+                                    profile.catalogueProfileName = profiles[i];
+                                    outCatProfiles.Add(ConvertSection.ProfileConversion(profile));
+                                }
+                            }
+                        }
+                    }
+                }
+                DA.SetDataList(0, outCatProfiles);
+                return;
             }
             #endregion
             #region geometric
@@ -609,16 +752,12 @@ namespace GhSA.Components
 
             RecordUndoEvent(myMode.ToString() + " Parameter");
 
-            // set number of input parameters
-            int param = 0;
-
             //remove input parameters
-            while (Params.Input.Count > param)
-                Params.UnregisterInputParameter(Params.Input[param], true);
+            while (Params.Input.Count > 0)
+                Params.UnregisterInputParameter(Params.Input[0], true);
 
             //register input parameter
-            while (Params.Input.Count < param)
-                Params.RegisterInputParam(new Param_Number());
+            Params.RegisterInputParam(new Param_String());
 
             _mode = myMode;
 
@@ -629,8 +768,6 @@ namespace GhSA.Components
         private void Mode2Clicked()
         {
             FoldMode myMode = FoldMode.Rectangle;
-            //if (_mode == myMode)
-            //    return;
 
             RecordUndoEvent(myMode.ToString() + " Parameter");
 
@@ -645,10 +782,10 @@ namespace GhSA.Components
                 else
                     param = 2;
             }
-            //handle exception when we come from Geometric mode where 
+            //handle exception when we come from Geometric or Catalogue mode where 
             //first input paraemter is of curve type and must be deleted
             int par2;
-            if (_mode == FoldMode.Geometric)
+            if (_mode == FoldMode.Geometric || _mode == FoldMode.Catalogue)
                 par2 = 0;
             else
                 par2 = param;
@@ -818,7 +955,6 @@ namespace GhSA.Components
             Params.OnParametersChanged();
             ExpireSolution(true);
         }
-
         private void Mode8Clicked()
         {
             FoldMode myMode = FoldMode.Geometric;
@@ -850,15 +986,15 @@ namespace GhSA.Components
             writer.SetInt32("loadselectid", loadselectid);
             writer.SetInt32("loadlistid", loadlistid);
             writer.SetInt32("catalogueIndex", catalogueIndex);
-            writer.SetInt32("catalogueTypeIndex", catalogueTypeIndex);
-            writer.SetInt32("catalogueProfileIndex", catalogueProfileIndex);
-            writer.SetString("catalogueProfileName", catalogueProfileName);
-            writer.SetString("catalogueTypeName", catalogueTypeName);
+            writer.SetInt32("catalogueTypeIndex", typeIndex);
+            writer.SetString("catalogueProfileName", sectionName);
+            writer.SetString("catalogueTypeName", typeName);
             writer.SetBoolean("isTapered", isTapered);
             writer.SetBoolean("isHollow", isHollow);
             writer.SetBoolean("isElliptical", isElliptical);
             writer.SetBoolean("isGeneral", isGeneral);
             writer.SetBoolean("isB2B", isB2B);
+            writer.SetBoolean("inclSS", inclSS);
 
             // to save the dropdownlist content, spacer list and selection list 
             // loop through the lists and save number of lists as well
@@ -878,7 +1014,21 @@ namespace GhSA.Components
             for (int i = 0; i < selections.Count; i++)
                 writer.SetString("selectioncontents" + i, selections[i]);
 
-
+            // types
+            writer.SetInt32("typeNamesCount", typeNames.Count);
+            for (int i = 0; i < typeNames.Count; i++)
+                writer.SetString("typeNamesContents" + i, typeNames[i]);
+            writer.SetInt32("typeNumbersCount", typeNumbers.Count);
+            for (int i = 0; i < typeNumbers.Count; i++)
+                writer.SetInt32("typeNumbersContents" + i, typeNumbers[i]);
+            // sections
+            writer.SetInt32("sectionNamesCount", sectionList.Count);
+            for (int i = 0; i < sectionList.Count; i++)
+                writer.SetString("sectionNamesContents" + i, sectionList[i]);
+            // profiles
+            writer.SetInt32("profilesCount", profiles.Count);
+            for (int i = 0; i < profiles.Count; i++)
+                writer.SetString("profilesContents" + i, profiles[i]);
 
             return base.Write(writer);
         }
@@ -910,20 +1060,42 @@ namespace GhSA.Components
             for (int i = 0; i < selectionsCount; i++)
                 selections.Add(reader.GetString("selectioncontents" + i));
 
+            // types list
+            int typesCount = reader.GetInt32("typeNamesCount");
+            typeNames = new List<string>();
+            for (int i = 0; i < typesCount; i++)
+                typeNames.Add(reader.GetString("typeNamesContents" + i));
+
+            int typeNumbersCount = reader.GetInt32("typeNumbersCount");
+            typeNumbers = new List<int>();
+            for (int i = 0; i < typeNumbersCount; i++)
+                typeNumbers.Add(reader.GetInt32("typeNumbersContents" + i));
+            // sections
+            int sectionsCount = reader.GetInt32("sectionNamesCount");
+            sectionList = new List<string>();
+            for (int i = 0; i < sectionsCount; i++)
+                sectionList.Add(reader.GetString("sectionNamesContents" + i));
+            // profiles
+            int profilesCount = reader.GetInt32("profilesCount");
+            profiles = new List<string>();
+            for (int i = 0; i < profilesCount; i++)
+                profiles.Add(reader.GetString("profilesContents" + i));
+
             loadlistid = reader.GetInt32("loadlistid");
             loadselectid = reader.GetInt32("loadselectid");
 
             catalogueIndex = reader.GetInt32("catalogueIndex");
-            catalogueTypeIndex = reader.GetInt32("catalogueTypeIndex");
-            catalogueProfileIndex = reader.GetInt32("catalogueProfileIndex");
-            catalogueProfileName = reader.GetString("catalogueProfileName");
-            catalogueTypeName = reader.GetString("catalogueTypeName");
+            typeIndex = reader.GetInt32("catalogueTypeIndex");
+            sectionName = reader.GetString("catalogueProfileName");
+            typeName = reader.GetString("catalogueTypeName");
 
             isTapered = reader.GetBoolean("isTapered");
             isHollow = reader.GetBoolean("isHollow");
             isElliptical = reader.GetBoolean("isElliptical");
             isGeneral = reader.GetBoolean("isGeneral");
             isB2B = reader.GetBoolean("isB2B");
+
+            inclSS = reader.GetBoolean("inclSS");
 
             // we need to recreate the custom UI again as this is created before this read IO is called
             // otherwise the component will not display the selected items on the canvas
@@ -951,6 +1123,20 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
+            if (_mode == FoldMode.Catalogue)
+            {
+                int i = 0;
+                Params.Input[i].NickName = "S";
+                Params.Input[i].Name = "Search";
+                Params.Input[i].Description = "Text to search from";
+                Params.Input[i].Access = GH_ParamAccess.item;
+                Params.Input[i].Optional = true;
+                if (Params.Output.Count > 0)
+                    Params.Output[0].Access = GH_ParamAccess.list;
+            }
+            else
+                Params.Output[0].Access = GH_ParamAccess.item;
+
             if (_mode == FoldMode.Rectangle)
             {
                 int i = 0;

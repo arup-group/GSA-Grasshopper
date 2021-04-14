@@ -30,91 +30,171 @@ namespace GhSA.Util
         }
 
         /// <summary>
-        /// Method to extract a list of catalogues from SQLite db3 file.
-        /// Will output a list of strings.
+        /// Get catalogue data from SQLite file (.db3). The method returns a tuple with:
+        /// Item1 = list of catalogue name (string)
+        /// where first item will be "All"
+        /// Item2 = list of catalogue number (int)
+        /// where first item will be "-1" representing All
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">Path to SecLib.db3</param>
         /// <returns></returns>
-        public static List<string> GetCataloguesDataFromSQLite(string filePath)
+        public static Tuple<List<string>, List<int>> GetCataloguesDataFromSQLite(string filePath)
         {
-            // Create empty list to work on:
-            List<string> result = new List<string>();
+            // Create empty lists to work on:
+            List<string> catNames = new List<string>();
+            List<int> catNumber = new List<int>();
 
             using (var db = Connection(filePath))
             {
                 db.Open();
                 SQLiteCommand cmd = db.CreateCommand();
-                cmd.CommandText = @"Select CAT_NAME from Catalogues";
+                cmd.CommandText = @"Select CAT_NAME || ' -- ' || CAT_NUM as CAT_NAME from Catalogues";
+                
                 cmd.CommandType = CommandType.Text;
                 SQLiteDataReader r = cmd.ExecuteReader();
                 while (r.Read())
                 {
-                    result.Add(Convert.ToString(r["CAT_NAME"]));
+                    // get data
+                    string sqlData = Convert.ToString(r["CAT_NAME"]);
+
+                    // split text string
+                    // example: British -- 2
+                    catNames.Add(sqlData.Split(new string[] { " -- " }, StringSplitOptions.None)[0]);
+                    catNumber.Add(Int32.Parse(sqlData.Split(new string[] { " -- " }, StringSplitOptions.None)[1]));
                 }
                 db.Close();
             }
-            return result;
+            catNames.Insert(0, "All");
+            catNumber.Insert(0, -1);
+            return new Tuple<List<string>, List<int>>(catNames, catNumber);
         }
 
         /// <summary>
-        /// Method to extract a list of data from SQLite db3 file.
-        /// Will output a list of strings.
-        /// Choose type of list you want with type variable which specifies which table/data to extract;
+        /// Get section type data from SQLite file (.db3). The method returns a tuple with:
+        /// Item1 = list of type name (string)
+        /// where first item will be "All"
+        /// Item2 = list of type number (int)
+        /// where first item will be "-1" representing All
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="filePath"></param>
+        /// <param name="catalogue_number">Catalogue number to get section types from. Input -1 in first item of the input list to get all types</param>
+        /// <param name="filePath">Path to SecLib.db3</param>
+        /// <param name="inclSuperseeded">True if you want to include superseeded items</param>
         /// <returns></returns>
-        public static List<string> GetTypesDataFromSQLite(string catalogue, string filePath)
+        public static Tuple<List<string>, List<int>> GetTypesDataFromSQLite(int catalogue_number, string filePath, bool inclSuperseeded = false)
         {
-            // Create empty list to work on:
-            List<string> result = new List<string>();
+            // Create empty lists to work on:
+            List<string> typeNames = new List<string>();
+            List<int> typeNumber = new List<int>();
+
+            // get Catalogue numbers if input is -1 (All catalogues)
+            List<int> catNumbers = new List<int>();
+            if (catalogue_number == -1)
+            {
+                Tuple<List<string>, List<int>> catalogueData = GetCataloguesDataFromSQLite(filePath);
+                catNumbers = catalogueData.Item2;
+                catNumbers.RemoveAt(0); // remove -1 from beginning of list
+            }
+            else
+                catNumbers.Add(catalogue_number);
 
             using (var db = Connection(filePath))
             {
-                db.Open();
-                SQLiteCommand cmd = db.CreateCommand();
-                cmd.CommandText = $"Select TYPE_NAME || ' -- ' || TYPE_ABR as TYPE_NAME from Types where TYPE_CAT_NUM = (Select CAT_NUM from Catalogues where CAT_NAME LIKE '%{catalogue}%' )";
-                cmd.CommandType = CommandType.Text;
-                SQLiteDataReader r = cmd.ExecuteReader();
-                while (r.Read())
+                for (int i = 0; i < catNumbers.Count; i++)
                 {
-                    result.Add(Convert.ToString(r["TYPE_NAME"]));
-                }
+                    int cat = catNumbers[i];
+
+                    db.Open();
+                    SQLiteCommand cmd = db.CreateCommand();
+                    if (inclSuperseeded)
+                        cmd.CommandText = $"Select TYPE_NAME || ' -- ' || TYPE_NUM as TYPE_NAME from Types where TYPE_CAT_NUM = {cat}";
+                    else
+                        cmd.CommandText = $"Select TYPE_NAME || ' -- ' || TYPE_NUM as TYPE_NAME from Types where TYPE_CAT_NUM = {cat} and not (TYPE_SUPERSEDED = True or TYPE_SUPERSEDED = TRUE or TYPE_SUPERSEDED = 1)";
+                    cmd.CommandType = CommandType.Text;
+                    SQLiteDataReader r = cmd.ExecuteReader();
+                    while (r.Read())
+                    {
+                        // get data
+                        string sqlData = Convert.ToString(r["TYPE_NAME"]);
+
+                        // split text string
+                        // example: Universal Beams -- 51
+                        typeNames.Add(sqlData.Split(new string[] { " -- " }, StringSplitOptions.None)[0]);
+                        typeNumber.Add(Int32.Parse(sqlData.Split(new string[] { " -- " }, StringSplitOptions.None)[1]));
+                    }
                 db.Close();
+                }
             }
-            return result;
+            typeNames.Insert(0, "All");
+            typeNumber.Insert(0, -1);
+            return new Tuple<List<string>, List<int>>(typeNames, typeNumber);
         }
 
 
         /// <summary>
-        /// Method to extract a list of data from SQLite db3 file.
-        /// Will output a list of strings.
-        /// Choose type of list you want with type variable which specifies which table/data to extract;
+        /// Get a list of section profile strings from SQLite file (.db3). The method returns a string that includes type abbriviation as accepted by GSA. 
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="filePath"></param>
+        /// <param name="type_numbers">List of types to get sections from</param>
+        /// <param name="filePath">Path to SecLib.db3</param>
+        /// <param name="inclSuperseeded">True if you want to include superseeded items</param>
         /// <returns></returns>
-        public static List<string> GetSectionsDataFromSQLite(string type, string filePath)
+        public static List<string> GetSectionsDataFromSQLite(List<int> type_numbers, string filePath, bool inclSuperseeded = false)
         {
             // Create empty list to work on:
-            List<string> result = new List<string>();
+            List<string> section = new List<string>();
+
+            List<int> types = new List<int>();
+            if (type_numbers[0] == -1)
+            {
+                Tuple<List<string>, List<int>> typeData = GetTypesDataFromSQLite(-1, filePath, inclSuperseeded);
+                types = typeData.Item2;
+                types.RemoveAt(0); // remove -1 from beginning of list
+            }
+            else
+                types = type_numbers;
 
             using (var db = Connection(filePath))
             {
-                db.Open();
-                SQLiteCommand cmd = db.CreateCommand();
-                cmd.CommandText = $"Select SECT_NAME from Sect where SECT_TYPE_NUM = (Select TYPE_NUM from Types where Type_Name LIKE '%{type}%'  )";
-                cmd.CommandType = CommandType.Text;
-                SQLiteDataReader r = cmd.ExecuteReader();
-                while (r.Read())
+                // get section name
+                for (int i = 0; i < types.Count; i++)
                 {
-                    result.Add(Convert.ToString(r["SECT_NAME"]));
-                }
-                db.Close();
-            }
-            return result;
-        }
+                    int type = types[i];
+                    db.Open();
+                    SQLiteCommand cmd = db.CreateCommand();
 
+                    if (inclSuperseeded)
+                        cmd.CommandText = $"Select Types.TYPE_ABR || ' ' || SECT_NAME || ' -- ' || SECT_DATE_ADDED as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_TYPE_NUM = {type} ORDER BY SECT_AREA";
+                    else
+                        cmd.CommandText = $"Select Types.TYPE_ABR || ' ' || SECT_NAME as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_TYPE_NUM = {type} and not (SECT_SUPERSEDED = True or SECT_SUPERSEDED = TRUE or SECT_SUPERSEDED = 1) ORDER BY SECT_AREA";
+
+                    cmd.CommandType = CommandType.Text;
+                    SQLiteDataReader r = cmd.ExecuteReader();
+                    while (r.Read())
+                    {
+                        if (inclSuperseeded)
+                        {
+                            string full = Convert.ToString(r["SECT_NAME"]);
+                            // BSI-IPE IPEAA80 -- 2017-09-01 00:00:00.000
+                            string profile = full.Split(new string[] { " -- " }, StringSplitOptions.None)[0];
+                            string date = full.Split(new string[] { " -- " }, StringSplitOptions.None)[1];
+                            date = date.Replace("-", "");
+                            date = date.Substring(0, 8);
+                            section.Add(profile + " " + date);
+                        }
+                        else
+                        {
+                            string profile = Convert.ToString(r["SECT_NAME"]);
+                            // BSI-IPE IPEAA80                           
+                            section.Add(profile);
+                        }
+
+                    }
+                    db.Close();
+                }
+            }
+
+            section.Insert(0, "All");
+            
+            return section;
+        }
     }
 }

@@ -74,9 +74,9 @@ namespace GhSA.Parameters
                 gsa.SetGravityLoad(i + 1, setgrav[i]);
 
             //node loads
-            ReadOnlyCollection<NodeLoad> setnode_disp = m_model.NodeLoads(NodeLoadType.APPLIED_DISP);
+            ReadOnlyCollection<NodeLoad> setnode_disp = m_model.NodeLoads(NodeLoadType.APPL_DISP);
             for (int i = 0; i < setnode_disp.Count; i++)
-                gsa.SetNodeLoad(NodeLoadType.APPLIED_DISP, i + 1, setnode_disp[i]);
+                gsa.SetNodeLoad(NodeLoadType.APPL_DISP, i + 1, setnode_disp[i]);
 
             ReadOnlyCollection<NodeLoad> setnode_node = m_model.NodeLoads(NodeLoadType.NODE_LOAD);
             for (int i = 0; i < setnode_node.Count; i++)
@@ -196,7 +196,7 @@ namespace GhSA.Parameters
         {
             if (model == null)
                 model = new GsaModel();
-            this.Value = model.Duplicate();
+            this.Value = model; //model.Duplicate();
         }
 
         public override IGH_Goo Duplicate()
@@ -205,7 +205,7 @@ namespace GhSA.Parameters
         }
         public GsaModelGoo DuplicateGsaModel()
         {
-            return new GsaModelGoo(Value == null ? new GsaModel() : Value.Duplicate());
+            return new GsaModelGoo(Value == null ? new GsaModel() : Value); //Value.Duplicate());
         }
         #endregion
 

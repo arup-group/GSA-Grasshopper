@@ -22,6 +22,7 @@ namespace ParamsIntegrationTests
 
             // set some element class members
             elem.ID = 66;
+            elem.Section = new GsaSection();
             elem.Section.ID = 2;
             elem.Colour = System.Drawing.Color.Yellow;
             elem.Element.Group = 4;
@@ -64,6 +65,7 @@ namespace ParamsIntegrationTests
 
             // set some element class members
             orig.ID = 3;
+            orig.Section = new GsaSection();
             orig.Section.ID = 7;
             orig.Colour = System.Drawing.Color.Aqua;
             orig.Element.Group = 1;

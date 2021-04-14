@@ -49,36 +49,29 @@ namespace GhSA.Components
         {
             
             pManager.AddGenericParameter("3D Member", "M3D", "GSA 3D Member to Modify", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Member3d Number", "ID", "Set Member Number. If ID is set it will replace any existing 3d Member in the model", GH_ParamAccess.item);
             pManager.AddGeometryParameter("Solid", "S", "Reposition Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
             pManager.AddGenericParameter("3D Property", "P3", "Change 3D Property", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Set target mesh size", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item, true);
-            pManager.AddIntegerParameter("Member3d Number", "ID", "Set Member Number. If ID is set it will replace any existing 3d Member in the model", GH_ParamAccess.item);
             pManager.AddTextParameter("Member3d Name", "Na", "Set Name of Member3d", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member3d Group", "Gr", "Set Member 3d Group", GH_ParamAccess.item);
             pManager.AddColourParameter("Member3d Colour", "Co", "Set Member 3d Colour", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Dummy Member", "Dm", "Set Member to Dummy", GH_ParamAccess.item);
 
-            pManager[1].Optional = true;
-            pManager[2].Optional = true;
-            pManager[3].Optional = true;
-            pManager[4].Optional = true;
-            pManager[5].Optional = true;
-            pManager[6].Optional = true;
-            pManager[7].Optional = true;
-            pManager[8].Optional = true;
-            pManager[9].Optional = true;
+            for (int i = 1; i < pManager.ParamCount; i++)
+                pManager[i].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("3D Member", "M3D", "Modified GSA 3D Member", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
             pManager.AddMeshParameter("Solid Mesh", "M", "Member Solid Mesh", GH_ParamAccess.item);
-            pManager.HideParameter(1);
+            pManager.HideParameter(2);
             pManager.AddGenericParameter("3D Property", "P3", "Get 3D Property", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Get Targe mesh size", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
             pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
             pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
@@ -96,9 +89,17 @@ namespace GhSA.Components
 
                 // #### inputs ####
 
-                // 1 geometry
+                // 1 ID
+                GH_Integer ghID = new GH_Integer();
+                if (DA.GetData(1, ref ghID))
+                {
+                    if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
+                        mem.ID = id;
+                }
+
+                // 2 geometry
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-                if (DA.GetData(1, ref gh_typ))
+                if (DA.GetData(2, ref gh_typ))
                 {
                     GsaMember3d tempMem = new GsaMember3d();
                     Brep brep = new Brep();
@@ -115,9 +116,9 @@ namespace GhSA.Components
                     mem.SolidMesh = tempMem.SolidMesh;
                 }
 
-                // 2 prop3d -- to be implemented GsaAPI
+                // 3 prop3d -- to be implemented GsaAPI
                 gh_typ = new GH_ObjectWrapper();
-                if (DA.GetData(2, ref gh_typ))
+                if (DA.GetData(3, ref gh_typ))
                 {
                     if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
                         mem.Member.Property = idd;
@@ -137,30 +138,22 @@ namespace GhSA.Components
                     //mem.Property = prop3d;
                 }
 
-                // 3 mesh size
+                // 4 mesh size
                 GH_Number ghmsz = new GH_Number();
-                if (DA.GetData(3, ref ghmsz))
+                if (DA.GetData(4, ref ghmsz))
                 {
                     if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
                         mem.Member.MeshSize = msz;
                 }
 
-                // 4 mesh with others
+                // 5 mesh with others
                 GH_Boolean ghbool = new GH_Boolean();
-                if (DA.GetData(4, ref ghbool))
+                if (DA.GetData(5, ref ghbool))
                 {
                     if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
                     {
                         //mem.member.MeshWithOthers
                     }
-                }
-
-                // 5 ID
-                GH_Integer ghID = new GH_Integer();
-                if (DA.GetData(5, ref ghID))
-                {
-                    if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-                        mem.ID = id;
                 }
 
                 // 6 name
@@ -198,15 +191,14 @@ namespace GhSA.Components
                 // #### outputs ####
 
                 DA.SetData(0, new GsaMember3dGoo(mem));
+                DA.SetData(1, mem.ID);
+                DA.SetData(2, mem.SolidMesh);
 
-                DA.SetData(1, mem.SolidMesh);
+                //DA.SetData(3, mem.Property);
 
-                //DA.SetData(2, mem.Property);
+                DA.SetData(4, mem.Member.MeshSize);
+                //DA.SetData(5, mem.Member.MeshWithOthers);
 
-                DA.SetData(3, mem.Member.MeshSize);
-                //DA.SetData(4, mem.Member.MeshWithOthers);
-
-                DA.SetData(5, mem.ID);
                 DA.SetData(6, mem.Member.Name);
                 DA.SetData(7, mem.Member.Group);
                 DA.SetData(8, mem.Member.Colour);

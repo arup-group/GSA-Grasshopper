@@ -151,7 +151,7 @@ namespace GhSA.Parameters
         {
             if (bool6 == null)
                 bool6 = new GsaBool6();
-            this.Value = bool6.Duplicate();
+            this.Value = bool6; //bool6.Duplicate();
         }
 
         public override IGH_Goo Duplicate()
@@ -160,7 +160,7 @@ namespace GhSA.Parameters
         }
         public GsaBool6Goo DuplicateGsaBool6()
         {
-            return new GsaBool6Goo(Value == null ? new GsaBool6() : Value.Duplicate());
+            return new GsaBool6Goo(Value == null ? new GsaBool6() : Value); //Value.Duplicate());
         }
         #endregion
 

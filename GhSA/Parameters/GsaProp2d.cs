@@ -31,16 +31,22 @@ namespace GhSA.Parameters
             set { m_idd = value; }
         }
 
-        //public GsaMaterial Material
-        //{
-        //    get { return m_material; }
-        //    set { m_material = value; }
-        //}
+        public GsaMaterial Material
+        {
+            get { return m_material; }
+            set 
+            { 
+                m_material = value;
+                m_prop2d.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
+                m_prop2d.MaterialAnalysisProperty = m_material.AnalysisProperty;
+                m_prop2d.MaterialGradeProperty = m_material.Grade;
+            }
+        }
 
         #region fields
         Prop2D m_prop2d;
         int m_idd = 0;
-        //GsaMaterial m_material;
+        GsaMaterial m_material = null;
         #endregion
 
         #region constructors
@@ -60,13 +66,18 @@ namespace GhSA.Parameters
                     MaterialGradeProperty = m_prop2d.MaterialGradeProperty,
                     MaterialType = m_prop2d.MaterialType,
                     Name = m_prop2d.Name.ToString(),
-                    Colour = m_prop2d.Colour,
                     Description = m_prop2d.Description.ToString(),
                     Type = m_prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
                     AxisProperty = m_prop2d.AxisProperty
                 },
                 ID = m_idd
             };
+
+            if ((System.Drawing.Color)m_prop2d.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                dup.m_prop2d.Colour = m_prop2d.Colour;
+            
+            if (Material != null)
+                dup.Material = m_material.Duplicate();
             
             return dup;
         }
@@ -107,7 +118,7 @@ namespace GhSA.Parameters
         {
             if (prop == null)
                 prop = new GsaProp2d();
-            this.Value = prop.Duplicate();
+            this.Value = prop; //prop.Duplicate();
         }
 
         public override IGH_Goo Duplicate()
@@ -116,7 +127,7 @@ namespace GhSA.Parameters
         }
         public GsaProp2dGoo DuplicateGsaProp2d()
         {
-            return new GsaProp2dGoo(Value == null ? new GsaProp2d() : Value.Duplicate());
+            return new GsaProp2dGoo(Value == null ? new GsaProp2d() : Value); //Value.Duplicate());
         }
         #endregion
 

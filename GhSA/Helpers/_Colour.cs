@@ -121,6 +121,14 @@ namespace GhSA.UI
         {
             get { return GsaDarkPurple; }
         }
+        public static Color Support
+        {
+            get { return Color.FromArgb(255, 0, 100, 0); }
+        }
+        public static Color Release
+        {
+            get { return Color.FromArgb(255, 153, 32, 32); }
+        }
 
         public static Color Member1dNode
         {
@@ -153,9 +161,10 @@ namespace GhSA.UI
 
         public static Color Element1d
         {
-            get { return GsaGreen; }
+            get { return Color.FromArgb(255, 95, 190, 180); }
         }
 
+       
         public static Color Member1dSelected
         {
             get { return GsaDarkPurple; }
@@ -184,7 +193,7 @@ namespace GhSA.UI
                 DisplayMaterial material = new DisplayMaterial
                 {
                     Diffuse = Color.FromArgb(50, 150, 150, 150),
-                    Emission = Color.White, // Color.FromArgb(50, 190, 190, 190),
+                    Emission = Color.FromArgb(50, 190, 190, 190),
                     Transparency = 0.1
                 };
                 return material;
@@ -208,7 +217,7 @@ namespace GhSA.UI
                 DisplayMaterial material = new DisplayMaterial
                 {
                     Diffuse = Color.FromArgb(5, 150, 150, 150),
-                    Emission = Color.White, //Color.FromArgb(5, 150, 150, 150),
+                    Emission = Color.FromArgb(5, 150, 150, 150),
                     Transparency = 0.2
                 };
                 return material;
@@ -230,7 +239,7 @@ namespace GhSA.UI
                 DisplayMaterial material = new DisplayMaterial
                 {
                     Diffuse = Color.FromArgb(50, 150, 150, 150),
-                    Emission = Color.White, //Color.FromArgb(50, 45, 45, 45),
+                    Emission = Color.FromArgb(50, 45, 45, 45),
                     Transparency = 0.1
                 };
                 return material;
@@ -298,6 +307,35 @@ namespace GhSA.UI
             }
 
             return gH_Gradient;
+        }
+
+        public static Color ElementType(GsaAPI.ElementType elementType)
+        {
+            switch ((int)elementType)
+            {
+                case 1:
+                    return Color.FromArgb(255, 72, 99, 254);
+                case 2:
+                    return Color.FromArgb(255, 95, 190, 180);
+                case 23:
+                    return Color.FromArgb(255, 39, 52, 147);
+                case 3:
+                    return Color.FromArgb(255, 73, 101, 101);
+                case 21:
+                    return Color.FromArgb(255, 200, 81, 45);
+                case 20:
+                    return Color.FromArgb(255, 192, 67, 255);
+                case 9:
+                    return Color.FromArgb(255, 178, 178, 178);
+                case 10:
+                    return Color.FromArgb(255, 32, 32, 32); ;
+                case 24:
+                    return Color.FromArgb(255, 51, 82, 82); 
+                case 19:
+                    return Color.FromArgb(255, 155, 18, 214);
+                default:
+                    return Color.FromArgb(255, 95, 190, 180);
+            }
         }
     }
 }

@@ -63,6 +63,16 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap _2dElemsFromBrep {
+            get {
+                object obj = ResourceManager.GetObject("_2dElemsFromBrep", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Analyse {
             get {
                 object obj = ResourceManager.GetObject("Analyse", resourceCulture);
@@ -136,6 +146,16 @@ namespace GhSA.Properties {
         public static System.Drawing.Bitmap CreateElementsFromMembers {
             get {
                 object obj = ResourceManager.GetObject("CreateElementsFromMembers", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CreateMaterial {
+            get {
+                object obj = ResourceManager.GetObject("CreateMaterial", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -256,6 +276,16 @@ namespace GhSA.Properties {
         public static System.Drawing.Bitmap EditElem2D {
             get {
                 object obj = ResourceManager.GetObject("EditElem2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap EditMaterial {
+            get {
+                object obj = ResourceManager.GetObject("EditMaterial", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -556,6 +586,16 @@ namespace GhSA.Properties {
         public static System.Drawing.Bitmap GsaLoad {
             get {
                 object obj = ResourceManager.GetObject("GsaLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GsaMaterial {
+            get {
+                object obj = ResourceManager.GetObject("GsaMaterial", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

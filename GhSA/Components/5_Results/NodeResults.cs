@@ -146,7 +146,7 @@ namespace GhSA.Components
             "Rotation Rxx",
             "Rotation Ryy",
             "Rotation Rzz",
-            "Resolved |R|",
+            "Resolved |R|"
         });
 
         readonly List<string> dropdownreaction = new List<string>(new string[]

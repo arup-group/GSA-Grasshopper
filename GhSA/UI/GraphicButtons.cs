@@ -43,7 +43,6 @@ namespace GhSA.UI.ButtonsUI
                 };
                 graphics.DrawRectangle(pen, center.X - size / 2, center.Y - size / 2, size, size);
             }
-
         }
     }
 

@@ -35,6 +35,7 @@ namespace ParamsIntegrationTests
             for (int i = 0; i < elem.Elements.Count; i++)
             {
                 elem.ID[i] = elid++;
+                elem.Properties.Add(new GsaProp2d());
                 elem.Properties[i].ID = secid++;
                 elem.Elements[i].Group = 22;
                 elem.Elements[i].IsDummy = true;
@@ -125,6 +126,7 @@ namespace ParamsIntegrationTests
             for (int i = 0; i < origi.Elements.Count; i++)
             {
                 origi.ID[i] = elid++;
+                origi.Properties.Add(new GsaProp2d());
                 origi.Properties[i].ID = secid++;
                 origi.Elements[i].Group = 2;
                 origi.Elements[i].IsDummy = false;

@@ -48,8 +48,9 @@ namespace GhSA.Components
             pManager.AddNumberParameter("Grid Plane Tolerance Above", "tA", "Grid Plane Tolerance Above (for Storey Type)", GH_ParamAccess.item); //7
             pManager.AddNumberParameter("Grid Plane Tolerance Below", "tB", "Grid Plane Tolerance Below (for Storey Type)", GH_ParamAccess.item); //8
             
-            pManager.AddTextParameter("Grid Surface Name", "NaS", "Grid Surface Name", GH_ParamAccess.item); //9
-            pManager.AddIntegerParameter("Grid Surface ID", "IdS", "Grid Surface ID", GH_ParamAccess.item); //10
+            
+            pManager.AddIntegerParameter("Grid Surface ID", "IdS", "Grid Surface ID", GH_ParamAccess.item); //9
+            pManager.AddTextParameter("Grid Surface Name", "NaS", "Grid Surface Name", GH_ParamAccess.item); //10
             pManager.AddTextParameter("Elements", "El", "Elements that Grid Surface will try to expand load to", GH_ParamAccess.item); //11
             pManager.AddTextParameter("Element Type", "Ty", "Grid Surface Element Type", GH_ParamAccess.item); //12
             pManager.AddNumberParameter("Grid Surface Tolerance", "To", "Grid Surface Tolerance", GH_ParamAccess.item); //13
@@ -87,9 +88,9 @@ namespace GhSA.Components
                 DA.SetData(6, gps.GridPlane == null ? 0 : gps.GridPlane.Elevation);
                 DA.SetData(7, gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceAbove);
                 DA.SetData(8, gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceBelow);
-                
-                DA.SetData(9, gps.GridSurface.Name);
-                DA.SetData(10, gps.GridSurfaceID);
+
+                DA.SetData(9, gps.GridSurfaceID);
+                DA.SetData(10, gps.GridSurface.Name);
                 DA.SetData(11, gps.GridSurface.Elements);
                 string elemtype = gps.GridSurface.ElementType.ToString();
                 DA.SetData(12, Char.ToUpper(elemtype[0]) + elemtype.Substring(1).ToLower().Replace("_", " "));

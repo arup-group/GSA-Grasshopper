@@ -44,30 +44,24 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Section", "PB", "GSA Section to get or set information for", GH_ParamAccess.item);
-            pManager.AddTextParameter("Section Profile", "Pf", "Profile name following GSA naming convetion (eg 'STD I 1000 500 15 25')", GH_ParamAccess.item);
-
-            pManager.AddGenericParameter("Material", "Ma", "Set Material Property", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Section Pool", "Po", "Set Section pool", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Section Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
+            pManager.AddTextParameter("Section Profile", "Pf", "Profile name following GSA naming convetion (eg 'STD I 1000 500 15 25')", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Material", "Ma", "Set GSA Material or reference existing material by ID", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Section Pool", "Po", "Set Section pool", GH_ParamAccess.item);
             pManager.AddTextParameter("Section Name", "Na", "Set Section name", GH_ParamAccess.item);
             pManager.AddColourParameter("Section Colour", "Co", "Set Section colour", GH_ParamAccess.item);
 
-            pManager[1].Optional = true;
-            pManager[2].Optional = true;
-            pManager[3].Optional = true;
-            pManager[4].Optional = true;
-            pManager[5].Optional = true;
-            pManager[6].Optional = true;
+            for (int i = 0; i < pManager.ParamCount; i++)
+                pManager[i].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Section", "PB", "GSA Section with changes", GH_ParamAccess.item);
-            pManager.AddTextParameter("Section Profile", "Pf", "Profile describtion", GH_ParamAccess.item);
-
-            pManager.AddGenericParameter("Material", "Ma", "Section Material or Reference ID for Material Property in Existing GSA Model", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Section Pool", "Po", "Section pool", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Section Number", "ID", "Original Section number (ID) if Section ever belonged to a GSA Model", GH_ParamAccess.item);
+            pManager.AddTextParameter("Section Profile", "Pf", "Profile describtion", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Material", "Ma", "GSA Material", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Section Pool", "Po", "Section pool", GH_ParamAccess.item);
             pManager.AddTextParameter("Section Name", "Na", "Section name", GH_ParamAccess.item);
             pManager.AddColourParameter("Section Colour", "Co", "Section colour", GH_ParamAccess.item);
 
@@ -76,68 +70,84 @@ namespace GhSA.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            GsaSection sect = new GsaSection();
             GsaSection gsaSection = new GsaSection();
-            if (DA.GetData(0, ref gsaSection))
+            if (DA.GetData(0, ref sect))
             {
-                if (gsaSection != null)
+                gsaSection = sect.Duplicate();
+            }
+
+            if (gsaSection != null)
+            {
+                // #### input ####
+
+                // 1 ID
+                GH_Integer ghID = new GH_Integer();
+                if (DA.GetData(1, ref ghID))
                 {
-                    // #### input ####
-                    // 1 profile
-                    string profile = "";
-                    if (DA.GetData(1, ref profile))
-                        gsaSection.Section.Profile = profile;
-
-                    // 2 Material
-                    // to include GsaMaterial when this becomes available in GsaAPI
-                    GH_Integer gh_mat = new GH_Integer();
-                    if (DA.GetData(2, ref gh_mat))
-                    {
-                        if (GH_Convert.ToInt32(gh_mat, out int mat, GH_Conversion.Both))
-                            gsaSection.Section.MaterialAnalysisProperty = mat;
-                    }
-
-                    // 3 section pool
-                    int pool = 0; //prop.Prop2d.Thickness;
-                    if (DA.GetData(3, ref pool))
-                    {
-                        gsaSection.Section.Pool = pool;
-                    }
-
-                    // 4 ID
-                    GH_Integer ghID = new GH_Integer();
-                    if (DA.GetData(4, ref ghID))
-                    {
-                        if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-                            gsaSection.ID = id;
-                    }
-
-                    // 5 name
-                    GH_String ghnm = new GH_String();
-                    if (DA.GetData(5, ref ghnm))
-                    {
-                        if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
-                            gsaSection.Section.Name = name;
-                    }
-
-                    // 6 Colour
-                    GH_Colour ghcol = new GH_Colour();
-                    if (DA.GetData(6, ref ghcol))
-                    {
-                        if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
-                            gsaSection.Section.Colour = col;
-                    }
-
-                    // #### outputs ####
-                    DA.SetData(0, new GsaSectionGoo(gsaSection));
-
-                    DA.SetData(1, gsaSection.Section.Profile.Replace("%", " ")); 
-                    DA.SetData(2, gsaSection.Section.MaterialAnalysisProperty); // to implemented GsaMaterial
-                    DA.SetData(3, gsaSection.Section.Pool);
-                    DA.SetData(4, gsaSection.ID);
-                    DA.SetData(5, gsaSection.Section.Name);
-                    DA.SetData(6, gsaSection.Section.Colour);
-
+                    if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
+                        gsaSection.ID = id;
                 }
+
+                // 2 profile
+                string profile = "";
+                if (DA.GetData(2, ref profile))
+                    gsaSection.Section.Profile = profile;
+
+                // 3 Material
+                GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+                if (DA.GetData(3, ref gh_typ))
+                {
+                    GsaMaterial material = new GsaMaterial();
+                    if (gh_typ.Value is GsaMaterialGoo)
+                    {
+                        gh_typ.CastTo(ref material);
+                        gsaSection.Material = material;
+                    }
+                    else
+                    {
+                        if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+                            gsaSection.Section.MaterialAnalysisProperty = idd;
+                        else
+                        {
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+                            return;
+                        }
+                    }
+                }
+
+                // 4 section pool
+                int pool = 0; //prop.Prop2d.Thickness;
+                if (DA.GetData(4, ref pool))
+                {
+                    gsaSection.Section.Pool = pool;
+                }
+
+                // 5 name
+                GH_String ghnm = new GH_String();
+                if (DA.GetData(5, ref ghnm))
+                {
+                    if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
+                        gsaSection.Section.Name = name;
+                }
+
+                // 6 Colour
+                GH_Colour ghcol = new GH_Colour();
+                if (DA.GetData(6, ref ghcol))
+                {
+                    if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
+                        gsaSection.Section.Colour = col;
+                }
+
+                // #### outputs ####
+                DA.SetData(0, new GsaSectionGoo(gsaSection));
+                DA.SetData(1, gsaSection.ID);
+                DA.SetData(2, gsaSection.Section.Profile.Replace("%", " "));
+                DA.SetData(3, new GsaMaterialGoo(new GsaMaterial(gsaSection))); // to implemented GsaMaterial
+                DA.SetData(4, gsaSection.Section.Pool);
+                DA.SetData(5, gsaSection.Section.Name);
+                DA.SetData(6, gsaSection.Section.Colour);
+
             }
         }
     }

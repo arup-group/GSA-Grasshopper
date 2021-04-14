@@ -97,6 +97,7 @@ namespace ParamsIntegrationTests
             original.Member.IsDummy = false;
             original.Member.Offset.X1 = 0.33;
             original.Member.Property = 1;
+            original.Property = new GsaProp2d();
             original.Property.ID = 3;
             original.Member.Type2D = AnalysisOrder.RIGID_DIAPHRAGM;
             original.Member.Type = MemberType.GENERIC_2D;

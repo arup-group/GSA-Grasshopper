@@ -47,10 +47,8 @@ namespace GhSA.Components
             pManager.AddNumberParameter("Offset X2", "X2", "Set X2 - End axial offset (" + Units.LengthLarge + ")", GH_ParamAccess.item);
             pManager.AddNumberParameter("Offset Y", "Y", "Set Y Offset (" + Units.LengthLarge + ")", GH_ParamAccess.item);
             pManager.AddNumberParameter("Offset Z", "Z", "Set Z Offset (" + Units.LengthLarge + ")", GH_ParamAccess.item);
-            pManager[1].Optional = true;
-            pManager[2].Optional = true;
-            pManager[3].Optional = true;
-            pManager[4].Optional = true;
+            for (int i = 0; i < pManager.ParamCount; i++)
+                pManager[i].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -66,31 +64,33 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaOffset offset = new GsaOffset();
-            if (DA.GetData(0, ref offset))
+            GsaOffset gsaoffset = new GsaOffset();
+            if (DA.GetData(0, ref gsaoffset))
             {
-                if (offset != null)
-                {
-                    //inputs
-                    double x1 = 0;
-                    if (DA.GetData(1, ref x1))
-                        offset.X1 = x1;
-                    double x2 = 0;
-                    if (DA.GetData(2, ref x2))
-                        offset.X2 = x2;
-                    double y = 0;
-                    if (DA.GetData(3, ref y))
-                        offset.Y = y;
-                    double z = 0;
-                    if (DA.GetData(4, ref z))
-                        offset.Z = z;
+                offset = gsaoffset.Duplicate();
+            }
+            if (offset != null)
+            {
+                //inputs
+                double x1 = 0;
+                if (DA.GetData(1, ref x1))
+                    offset.X1 = x1;
+                double x2 = 0;
+                if (DA.GetData(2, ref x2))
+                    offset.X2 = x2;
+                double y = 0;
+                if (DA.GetData(3, ref y))
+                    offset.Y = y;
+                double z = 0;
+                if (DA.GetData(4, ref z))
+                    offset.Z = z;
 
-                    //outputs
-                    DA.SetData(0, new GsaOffsetGoo(offset));
-                    DA.SetData(1, offset.X1);
-                    DA.SetData(2, offset.X2);
-                    DA.SetData(3, offset.Y);
-                    DA.SetData(4, offset.Z);
-                }
+                //outputs
+                DA.SetData(0, new GsaOffsetGoo(offset));
+                DA.SetData(1, offset.X1);
+                DA.SetData(2, offset.X2);
+                DA.SetData(3, offset.Y);
+                DA.SetData(4, offset.Z);
             }
         }
     }

@@ -98,8 +98,6 @@ namespace GhSA.Parameters
         {
             get
             {
-                if ((System.Drawing.Color)m_element.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
-                    m_element.Colour = UI.Colour.Member1d;
                 return (System.Drawing.Color)m_element.Colour;
             }
             set { m_element.Colour = value; }
@@ -145,7 +143,6 @@ namespace GhSA.Parameters
             GsaElement1d dup = new GsaElement1d();
             dup.m_element = new Element()
             {
-                Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
                 Group = m_element.Group,
                 IsDummy = m_element.IsDummy,
                 Name = m_element.Name.ToString(),
@@ -157,6 +154,10 @@ namespace GhSA.Parameters
                 Topology = m_element.Topology,
                 Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
             };
+
+            if ((System.Drawing.Color)m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                dup.m_element.Colour = m_element.Colour;
+
             dup.Element.Offset.X1 = m_element.Offset.X1;
             dup.Element.Offset.X2 = m_element.Offset.X2;
             dup.Element.Offset.Y = m_element.Offset.Y;
@@ -213,7 +214,7 @@ namespace GhSA.Parameters
         {
             if (element == null)
                 element = new GsaElement1d();
-            this.Value = element.Duplicate();
+            this.Value = element; //element.Duplicat();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -222,7 +223,7 @@ namespace GhSA.Parameters
         }
         public GsaElement1dGoo DuplicateGsaElement1d()
         {
-            return new GsaElement1dGoo(Value == null ? new GsaElement1d() : Value.Duplicate());
+            return new GsaElement1dGoo(Value == null ? new GsaElement1d() : Value); //Value.Duplicate());
         }
         #endregion
 
@@ -438,7 +439,13 @@ namespace GhSA.Parameters
                         args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, UI.Colour.Dummy1D);
                     else
                     {
-                        args.Pipeline.DrawCurve(Value.Line, Value.Colour, 2);
+                        if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
+                            args.Pipeline.DrawCurve(Value.Line, Value.Colour, 2);
+                        else
+                        {
+                            System.Drawing.Color col = UI.Colour.ElementType(Value.Element.Type);
+                            args.Pipeline.DrawCurve(Value.Line, col, 2);
+                        }
                         args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
                         args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
                     }
@@ -455,9 +462,21 @@ namespace GhSA.Parameters
                     }
                 }
             }
+            //Draw releases
+            if (!Value.Element.IsDummy)
+            {
+                PolyCurve crv = new PolyCurve();
+                crv.Append(Value.Line);
+                double angle = Value.Element.OrientationAngle;
+                GsaBool6 start = Value.ReleaseStart;
+                GsaBool6 end = Value.ReleaseEnd;
+
+                UI.Display.DrawReleases(args, crv, angle, start, end);
+            }
         }
-        #endregion
-    }
+        
+    #endregion
+}
 
     /// <summary>
     /// This class provides a Parameter interface for the Data_GsaElement1d type.

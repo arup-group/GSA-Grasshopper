@@ -23,9 +23,9 @@ namespace GhSA.UI
     public class ProfileComponentUI : GH_ComponentAttributes
     {
         public ProfileComponentUI(GH_Component owner, 
-            Action<int, int, bool, bool, bool, bool, bool> clickHandle, 
+            Action<int, int, bool, bool, bool, bool, bool, bool> clickHandle, 
             List<List<string>> dropdownContents, List<string> selections, List<string> spacerTexts = null, List<string> initialdescriptions = null,
-            bool tapered = false, bool hollow = false, bool elliptical = false, bool general = false, bool b2B = false) : base(owner)
+            bool tapered = false, bool hollow = false, bool elliptical = false, bool general = false, bool b2B = false, bool inclsuperseeded = false) : base(owner)
         {
             dropdownlists = dropdownContents;
             spacerTxts = spacerTexts;
@@ -45,6 +45,7 @@ namespace GhSA.UI
             isElliptical = elliptical;
             isGeneral = general;
             isB2B = b2B;
+            inclSS = inclsuperseeded;
         }
 
         readonly List<string> spacerTxts; // list of descriptive texts above each dropdown
@@ -62,9 +63,16 @@ namespace GhSA.UI
         List<List<RectangleF>> dropdownBounds;// list of bounds for each item in dropdown list
         List<RectangleF> dropdownBound;// surrounding bound for the entire dropdown list
 
-        readonly Action<int, int, bool, bool, bool, bool, bool> action; //function sending back the selection to component (i = dropdowncontentlist, j = selected item in that list)
+        readonly Action<int, int, bool, bool, bool, bool, bool, bool> action; //function sending back the selection to component (i = dropdowncontentlist, j = selected item in that list)
         
         List<bool> unfolded; // list of bools for unfolded or closed dropdown
+
+        RectangleF scrollBar;// surrounding bound for vertical scroll element
+        float scrollStartY; // location of scroll element at drag start
+        float dragMouseStartY; // location of mouse at drag start
+        float deltaY; // moved Y-location of scroll element
+        int maxNoRows = 10;
+        bool drag;
 
         // annotation text bounds
         RectangleF taperTxtBounds;
@@ -72,6 +80,7 @@ namespace GhSA.UI
         RectangleF ellipTxtBounds;
         RectangleF genTxtBounds;
         RectangleF b2bTxtBounds;
+        RectangleF inclSsTxtBounds;
 
         // bounds for check boxes
         RectangleF taperBounds;
@@ -80,27 +89,31 @@ namespace GhSA.UI
         RectangleF genBounds;
         RectangleF b2bBounds;
         RectangleF addispacer;
+        RectangleF inclSsBounds;
 
         bool isTapered;
         bool isHollow;
         bool isElliptical;
         bool isGeneral;
         bool isB2B;
+        bool inclSS;
 
         float MinWidth
         {
             get
             {
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacerTxts, GH_FontServer.Small);
-                float dd1 = GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[0], GH_FontServer.Small);
+                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacerTxts, new Font(GH_FontServer.FamilyStandard, 7));
+                float dd1 = GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[0], new Font(GH_FontServer.FamilyStandard, 7));
                 float dd2 = 0;
                 if (dropdownlists.Count > 1)
-                    dd2 = (displayTexts[0] == "Geometric") ? 0 : GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[1], GH_FontServer.Small);
+                    dd2 = (displayTexts[0] == "Geometric") ? 0 : GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[1], new Font(GH_FontServer.FamilyStandard, 7));
                 float dd3 = 0; 
                 if (dropdownlists.Count > 2)
-                    dd3 = (displayTexts[0] == "Catalogue") ? GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[2], GH_FontServer.Small) : 0;
-                float num = Math.Max(Math.Max(Math.Max(Math.Max(sp, dd1), dd2), dd3), 90); // (displayTexts[0] == "Catalogue") ? 90 : 90);
-                num = Math.Min(num, 180);
+                    dd3 = (displayTexts[0] == "Catalogue") ? GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[2], new Font(GH_FontServer.FamilyStandard, 7)) : 0;
+                float num = Math.Max(Math.Max(Math.Max(Math.Max(sp, dd1), dd2 + 15), dd3 + 15), 90); // (displayTexts[0] == "Catalogue") ? 90 : 90);
+                //num = Math.Min(num, 130);
+                //if (displayTexts[0] == "Catalogue")
+                //    return 110;
                 return num;
             }
             set { MinWidth = value; }
@@ -130,6 +143,10 @@ namespace GhSA.UI
             int s = 2; //spacing to edges and internal between boxes
 
             int h0 = 0;
+
+            bool removeScroll = true;
+
+            //create dropdown lists
             for (int i = 0; i < dropdownlists.Count; i++) 
             {
                 //spacer and title
@@ -179,6 +196,8 @@ namespace GhSA.UI
 
                 if (unfolded[i]) // if unfolded checked create dropdown list
                 {
+                    removeScroll = false;
+
                     if (dropdownBounds[i] == null)
                         dropdownBounds[i] = new List<RectangleF>(); // if first time clicked create new list
                     else
@@ -187,9 +206,62 @@ namespace GhSA.UI
                     {
                         dropdownBounds[i].Add(new RectangleF(BorderBound[i].X, BorderBound[i].Y + (j + 1) * h1 + s, BorderBound[i].Width, BorderBound[i].Height));
                     }
-                    dropdownBound[i] = new RectangleF(BorderBound[i].X, BorderBound[i].Y + h1 + s, BorderBound[i].Width, dropdownBounds[i].Count * BorderBound[i].Height);
+                    dropdownBound[i] = new RectangleF(BorderBound[i].X, BorderBound[i].Y + h1 + s, BorderBound[i].Width, Math.Min(dropdownlists[i].Count, maxNoRows) * BorderBound[i].Height);
+
                     //update component size if dropdown is unfolded to be able to capture mouseclicks
                     Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + dropdownBound[i].Height + s);
+
+                    // additional move for the content (moves more than the scroll bar)
+                    float contentScroll = 0;
+
+                    // vertical scroll bar if number of items in dropdown list is bigger than max rows allowed
+                    if (dropdownlists[i].Count > maxNoRows)
+                    {
+                        if (scrollBar == null)
+                            scrollBar = new RectangleF();
+
+                        // setup size of scroll bar
+                        scrollBar.X = dropdownBound[i].X + dropdownBound[i].Width - 8; // locate from right-side of dropdown area
+                        // compute height based on number of items in list, but with a minimum size of 2 rows
+                        scrollBar.Height = (float)Math.Max(2 * h1, dropdownBound[i].Height * ((double)maxNoRows / ((double)dropdownlists[i].Count)));
+                        scrollBar.Width = 8; // width of mouse-grab area (actual scroll bar drawn later)
+
+                        // vertical position (.Y)
+                        if (deltaY + scrollStartY >= 0) // handle if user drags above starting point
+                        {
+                            // dragging downwards:
+                            if (dropdownBound[i].Height - scrollBar.Height >= deltaY + scrollStartY) // handles if user drags below bottom point
+                            {
+                                // update scroll bar position for normal scroll event within bounds
+                                scrollBar.Y = dropdownBound[i].Y + deltaY + scrollStartY;
+                            }
+                            else
+                            {
+                                // scroll reached bottom
+                                scrollStartY = dropdownBound[i].Height - scrollBar.Height;
+                                deltaY = 0;
+                            }
+                        }
+                        else
+                        {
+                            // scroll reached top
+                            scrollStartY = 0;
+                            deltaY = 0;
+                        }
+
+                        // calculate moved position of content
+                        float scrollBarMovedPercentage = (dropdownBound[i].Y - scrollBar.Y) / (dropdownBound[i].Height - scrollBar.Height);
+                        float scrollContentHeight = dropdownlists[i].Count * h1 - dropdownBound[i].Height;
+                        contentScroll = scrollBarMovedPercentage * scrollContentHeight;
+                    }
+
+                    // create list of text boxes (we will only draw the visible ones later)
+                    dropdownBounds[i] = new List<RectangleF>();
+                    for (int j = 0; j < dropdownlists[i].Count; j++)
+                    {
+                        dropdownBounds[i].Add(new RectangleF(BorderBound[i].X, BorderBound[i].Y + (j + 1) * h1 + s + contentScroll, BorderBound[i].Width, h1));
+                    }
+
                 }
                 else
                 {
@@ -206,6 +278,30 @@ namespace GhSA.UI
                     }
                 }
             }
+            if (removeScroll)
+            {
+                scrollBar = new RectangleF();
+                scrollStartY = 0;
+            }
+
+            if (displayTexts[0] == "Catalogue")
+            {
+                // add check box for incl. superseeded
+                int h1 = 15; // height border
+                int bw = h1; // button width
+                // create text box and tick box
+                inclSsTxtBounds = new RectangleF(Bounds.X + 2 * s + bw, Bounds.Bottom + 2 * s, Bounds.Width - 4 * s - bw, h1);
+                inclSsBounds = new RectangleF(Bounds.X + s, Bounds.Bottom + 2 * s, bw, h1);
+                // update component bounds
+                Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + h1 + 4 * s);
+            }
+            else
+            {
+                // unset if not used
+                inclSsTxtBounds = new RectangleF();
+                inclSsBounds = new RectangleF();
+            }
+
             if (displayTexts[0] == "Standard")
             {
                 // first add another spacer to the list
@@ -245,8 +341,8 @@ namespace GhSA.UI
                         ellipBounds = new RectangleF();
                         genBounds = new RectangleF();
                         b2bBounds = new RectangleF();
-
                         break;
+
                     case "Circle":
                         hollowTxtBounds = new RectangleF(Bounds.X + 2 * s + bw, Bounds.Bottom + h0 + 2 * s, Bounds.Width - 4 * s - bw, h1);
                         hollowBounds = new RectangleF(Bounds.X + s, Bounds.Bottom + h0 + 2 * s, bw, h1);
@@ -263,8 +359,8 @@ namespace GhSA.UI
                         taperBounds = new RectangleF();
                         genBounds = new RectangleF();
                         b2bBounds = new RectangleF();
-                                                
                         break;
+
                     case "I section":
                         genTxtBounds = new RectangleF(Bounds.X + 2 * s + bw, Bounds.Bottom + h0 + 2 * s, Bounds.Width - 4 * s - bw, h1);
                         genBounds = new RectangleF(Bounds.X + s, Bounds.Bottom + h0 + 2 * s, bw, h1);
@@ -292,8 +388,8 @@ namespace GhSA.UI
                         ellipBounds = new RectangleF();
                         b2bTxtBounds = new RectangleF();
                         b2bBounds = new RectangleF();
-                                                
                         break;
+
                     case "Tee":
                         taperTxtBounds = new RectangleF(Bounds.X + 2 * s + bw, Bounds.Bottom + h0 + 2 * s, Bounds.Width - 4 * s - bw, h1);
                         taperBounds = new RectangleF(Bounds.X + s, Bounds.Bottom + h0 + 2 * s, bw, h1);
@@ -310,8 +406,8 @@ namespace GhSA.UI
                         b2bTxtBounds = new RectangleF();
                         genBounds = new RectangleF();
                         b2bBounds = new RectangleF();
-                        
                         break;
+
                     case "Channel":
                         b2bTxtBounds = new RectangleF(Bounds.X + 2 * s + bw, Bounds.Bottom + h0 + 2 * s, Bounds.Width - 4 * s - bw, h1);
                         b2bBounds = new RectangleF(Bounds.X + s, Bounds.Bottom + h0 + 2 * s, bw, h1);
@@ -328,8 +424,8 @@ namespace GhSA.UI
                         genTxtBounds = new RectangleF();
                         taperBounds = new RectangleF();
                         genBounds = new RectangleF();
-
                         break;
+
                     case "Angle":
                         b2bTxtBounds = new RectangleF(Bounds.X + 2 * s + bw, Bounds.Bottom + h0 + 2 * s, Bounds.Width - 4 * s - bw, h1);
                         b2bBounds = new RectangleF(Bounds.X + s, Bounds.Bottom + h0 + 2 * s, bw, h1);
@@ -346,7 +442,6 @@ namespace GhSA.UI
                         genTxtBounds = new RectangleF();
                         taperBounds = new RectangleF();
                         genBounds = new RectangleF();
-
                         break;
                 }
             }
@@ -426,20 +521,70 @@ namespace GhSA.UI
                         penborder.Width = 0.3f;
                         for (int j = 0; j < dropdownBounds[i].Count; j++)
                         {
+                            RectangleF listItem = dropdownBounds[i][j];
+                            if (listItem.Y < dropdownBound[i].Y)
+                            {
+                                if (listItem.Y + listItem.Height < dropdownBound[i].Y)
+                                {
+                                    dropdownBounds[i][j] = new RectangleF();
+                                    continue;
+                                }
+                                else
+                                {
+                                    listItem.Height = listItem.Height - (dropdownBound[i].Y - listItem.Y);
+                                    listItem.Y = dropdownBound[i].Y;
+                                    dropdownBounds[i][j] = listItem;
+                                }
+                            }
+                            else if (listItem.Y + listItem.Height > dropdownBound[i].Y + dropdownBound[i].Height)
+                            {
+                                if (listItem.Y > dropdownBound[i].Y + dropdownBound[i].Height)
+                                {
+                                    dropdownBounds[i][j] = new RectangleF();
+                                    continue;
+                                }
+                                else
+                                {
+                                    listItem.Height = dropdownBound[i].Y + dropdownBound[i].Height - listItem.Y;
+                                    dropdownBounds[i][j] = listItem;
+                                }
+                            }
+
                             // background
                             graphics.FillRectangle(dropdownbackground, dropdownBounds[i][j]);
                             // border
                             graphics.DrawRectangle(penborder, dropdownBounds[i][j].X, dropdownBounds[i][j].Y, dropdownBounds[i][j].Width, dropdownBounds[i][j].Height);
                             // text
-                            graphics.DrawString(dropdownlists[i][j], font, fontColour, dropdownBounds[i][j], GH_TextRenderingConstants.NearCenter);
+                            if (dropdownBounds[i][j].Height > 2)
+                                graphics.DrawString(dropdownlists[i][j], font, fontColour, dropdownBounds[i][j], GH_TextRenderingConstants.NearCenter);
                         }
                         // border
                         graphics.DrawRectangle(pen, dropdownBound[i].X, dropdownBound[i].Y, dropdownBound[i].Width, dropdownBound[i].Height);
+
+                        // draw vertical scroll bar
+                        Brush scrollbar = new SolidBrush(Color.FromArgb(drag ? 160 : 120, Color.Black));
+                        Pen scrollPen = new Pen(scrollbar);
+                        scrollPen.Width = scrollBar.Width - 2;
+                        scrollPen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                        scrollPen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+                        graphics.DrawLine(scrollPen, scrollBar.X + 4, scrollBar.Y + 4, scrollBar.X + 4, scrollBar.Y + scrollBar.Height - 4);
                     }
                 }
 
                 // #### check boxes ####
                 // add additional check boxes if first dropdown is selected to be standard
+                if (displayTexts[0] == "Catalogue")
+                {
+                    Color myColour = UI.Colour.GsaDarkBlue;
+                    Brush myBrush = new SolidBrush(myColour);
+                    Brush activeFillBrush = myBrush;
+                    Brush passiveFillBrush = Brushes.LightGray;
+                    Color borderColour = myColour;
+                    Color passiveBorder = Color.DarkGray;
+                    int s = 8;
+                    graphics.DrawString("Incl. superseeded", font, fontColour, inclSsTxtBounds, GH_TextRenderingConstants.NearCenter);
+                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(inclSsBounds.X + inclSsBounds.Width / 2, inclSsBounds.Y + inclSsBounds.Height / 2), inclSS, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                }
 
                 if (displayTexts[0] == "Standard")
                 {
@@ -511,17 +656,34 @@ namespace GhSA.UI
                 }
             }
         }
-        public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
+        public override GH_ObjectResponse RespondToMouseUp(GH_Canvas sender, GH_CanvasMouseEvent e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
+                GH_Component comp = Owner as GH_Component;
+                if (drag)
+                {
+                    // if drag was true then we release it here:
+                    scrollStartY += deltaY;
+                    deltaY = 0;
+                    drag = false;
+                    comp.ExpireSolution(true);
+                    return GH_ObjectResponse.Release;
+                }
+
                 for (int i = 0; i < dropdownlists.Count; i++)
                 {
                     System.Drawing.RectangleF rec = BorderBound[i];
-                    GH_Component comp = Owner as GH_Component;
                     if (rec.Contains(e.CanvasLocation))
                     {
                         unfolded[i] = !unfolded[i];
+                        // close any other dropdowns that may be unfolded
+                        for (int j = 0; j < unfolded.Count; j++)
+                        {
+                            if (j == i)
+                                continue;
+                            unfolded[j] = false;
+                        }
                         comp.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
@@ -552,7 +714,7 @@ namespace GhSA.UI
                                         }
 
                                         // send the selected item back to component (i = dropdownlist index, j = selected item in that list)
-                                        action(i, j, isTapered, isHollow, isElliptical, isGeneral, isB2B);
+                                        action(i, j, isTapered, isHollow, isElliptical, isGeneral, isB2B, inclSS);
 
                                         // close the dropdown
                                         unfolded[i] = !unfolded[i];
@@ -577,16 +739,25 @@ namespace GhSA.UI
                         }
                     }
                 }
+                if (displayTexts[0] == "Catalogue")
+                {
+                    if (inclSsBounds.Contains(e.CanvasLocation) || inclSsTxtBounds.Contains(e.CanvasLocation))
+                    {
+                        comp.RecordUndoEvent("Toggle Incl. superseeded");
+                        inclSS = !inclSS;
+                        action(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B, inclSS);
+                        comp.ExpireSolution(true);
+                        return GH_ObjectResponse.Handled;
+                    }
+                }
 
                 if (displayTexts[0] == "Standard")
                 {
-                    GH_Component comp = Owner as GH_Component;
-
                     if (taperBounds.Contains(e.CanvasLocation) || taperTxtBounds.Contains(e.CanvasLocation))
                     {
                         comp.RecordUndoEvent("Toggle Taper");
                         isTapered = !isTapered;
-                        action(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B);
+                        action(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B, inclSS);
                         return GH_ObjectResponse.Handled;
                     }
 
@@ -594,7 +765,7 @@ namespace GhSA.UI
                     {
                         comp.RecordUndoEvent("Toggle Hollow");
                         isHollow = !isHollow;
-                        action(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B);
+                        action(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B, inclSS);
                         return GH_ObjectResponse.Handled;
                     }
 
@@ -602,7 +773,7 @@ namespace GhSA.UI
                     {
                         comp.RecordUndoEvent("Toggle Elliptical");
                         isElliptical = !isElliptical;
-                        action(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B);
+                        action(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B, inclSS);
                         return GH_ObjectResponse.Handled;
                     }
 
@@ -610,7 +781,7 @@ namespace GhSA.UI
                     {
                         comp.RecordUndoEvent("Toggle General");
                         isGeneral = !isGeneral;
-                        action(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B);
+                        action(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B, inclSS);
                         return GH_ObjectResponse.Handled;
                     }
 
@@ -618,13 +789,50 @@ namespace GhSA.UI
                     {
                         comp.RecordUndoEvent("Toggle BackToBack");
                         isB2B = !isB2B;
-                        action(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B);
+                        action(-1, -1, isTapered, isHollow, isElliptical, isGeneral, isB2B, inclSS);
                         return GH_ObjectResponse.Handled;
+                    }
+                }
+            }
+            return base.RespondToMouseUp(sender, e);
+        }
+        public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            for (int i = 0; i < dropdownlists.Count; i++)
+            {
+                if (unfolded[i])
+                {
+                    if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                    {
+                        System.Drawing.RectangleF rec = scrollBar;
+                        GH_Component comp = Owner as GH_Component;
+                        if (rec.Contains(e.CanvasLocation))
+                        {
+                            dragMouseStartY = e.CanvasLocation.Y;
+                            drag = true;
+                            comp.ExpireSolution(true);
+                            return GH_ObjectResponse.Capture;
+                        }
                     }
                 }
             }
             return base.RespondToMouseDown(sender, e);
         }
+        public override GH_ObjectResponse RespondToMouseMove(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            if (drag)
+            {
+                GH_Component comp = Owner as GH_Component;
+
+                deltaY = e.CanvasLocation.Y - dragMouseStartY;
+
+                comp.ExpireSolution(true);
+                return GH_ObjectResponse.Ignore;
+            }
+
+            return base.RespondToMouseMove(sender, e);
+        }
+
         protected void FixLayout()
         {
             float width = this.Bounds.Width; // initial component width before UI overrides

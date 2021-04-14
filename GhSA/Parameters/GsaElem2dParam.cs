@@ -110,6 +110,20 @@ namespace GhSA.Parameters
                 //m_props.Add(new GsaProp2d());
         }
 
+        public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, int prop = 0)
+        {
+            m_elements = new List<Element>();
+            m_mesh = Util.GH.Convert.ConvertBrepToMesh(brep, curves, points, meshSize, mem1ds, nodes);
+            Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(m_mesh, prop, true);
+            m_elements = convertMesh.Item1;
+            m_topo = convertMesh.Item2;
+            m_topoInt = convertMesh.Item3;
+            
+            m_id = new List<int>(new int[m_mesh.Faces.Count()]);
+
+            m_props = new List<GsaProp2d>();
+        }
+
         public GsaElement2d Duplicate()
         {
             if (this == null) { return null; }
@@ -126,7 +140,6 @@ namespace GhSA.Parameters
             {
                 dup.m_elements.Add(new Element()
                 {
-                    //don't copy object.colour, this will be default = black if not set
                     Group = m_elements[i].Group,
                     IsDummy = m_elements[i].IsDummy,
                     Name = m_elements[i].Name.ToString(),
@@ -138,6 +151,10 @@ namespace GhSA.Parameters
                     Topology = m_elements[i].Topology,
                     Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
                 });
+
+                if ((System.Drawing.Color)m_elements[i].Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                    dup.m_elements[i].Colour = m_elements[i].Colour;
+
                 dup.m_elements[i].Offset.X1 = m_elements[i].Offset.X1;
                 dup.m_elements[i].Offset.X2 = m_elements[i].Offset.X2;
                 dup.m_elements[i].Offset.Y = m_elements[i].Offset.Y;
@@ -200,7 +217,7 @@ namespace GhSA.Parameters
         {
             if (element == null)
                 element = new GsaElement2d();
-            this.Value = element.Duplicate();
+            this.Value = element; //element.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -209,7 +226,7 @@ namespace GhSA.Parameters
         }
         public GsaElement2dGoo DuplicateGsaElement2d()
         {
-            return new GsaElement2dGoo(Value == null ? new GsaElement2d() : Value.Duplicate());
+            return new GsaElement2dGoo(Value == null ? new GsaElement2d() : Value); //Value.Duplicate());
         }
         #endregion
 
@@ -403,13 +420,15 @@ namespace GhSA.Parameters
             //Draw shape.
             if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
             {
-                // args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
-                for (int i = 0; i < Value.Mesh.Faces.Count; i++)
-                {
-                    int[] face = new int[] { i };
-                    args.Pipeline.DrawMeshShaded(Value.Mesh,
-                        UI.Colour.FaceCustom(Value.Colours[i]), face);
-                }
+                args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
+                //Mesh mesh = Value.Mesh.DuplicateMesh();
+                //mesh.fac
+                //for (int i = 0; i < Value.Mesh.Faces.Count; i++)
+                //{
+                //    int[] face = new int[] { i };
+                //    args.Pipeline.DrawMeshShaded(Value.Mesh,
+                //        UI.Colour.FaceCustom(Value.Colours[i]), face);
+                //}
             }
             else
                 args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFaceSelected);
@@ -423,13 +442,27 @@ namespace GhSA.Parameters
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
-                    for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
-                        args.Pipeline.DrawLine(Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 1);
+                    args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdge, 1);
+                    
+                    //List<Line> lines = new List<Line>();
+                    //for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
+                    //{
+                    //    if(!Value.Mesh.TopologyEdges.IsNgonInterior(i))
+                    //        lines.Add(Value.Mesh.TopologyEdges.EdgeLine(i));
+                    //}
+                    //args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdge, 1);
                 }
                 else
                 {
-                    for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
-                        args.Pipeline.DrawLine(Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
+                    args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdgeSelected, 2);
+
+                    //List<Line> lines = new List<Line>();
+                    //for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
+                    //{
+                    //    if (!Value.Mesh.TopologyEdges.IsNgonInterior(i))
+                    //        lines.Add(Value.Mesh.TopologyEdges.EdgeLine(i));
+                    //}
+                    //args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdgeSelected, 2);
                 }
             }
         }

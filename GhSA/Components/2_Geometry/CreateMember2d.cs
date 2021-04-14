@@ -46,14 +46,14 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddBrepParameter("Brep", "B", "Planar Brep (non-planar geometry will be automatically converted to an average plane of exterior boundary control points))", GH_ParamAccess.item);
+            pManager.AddPointParameter("Incl. Points", "(P)", "Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
+            pManager.AddCurveParameter("Incl. Curves", "(C)", "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
             pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
-            pManager.AddPointParameter("Incl. Point", "(P)", "Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
-            pManager.AddCurveParameter("Incl. Curve", "(C)", "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Targe mesh size", GH_ParamAccess.item, 0);
 
             pManager.HideParameter(0);
+            pManager.HideParameter(1);
             pManager.HideParameter(2);
-            pManager.HideParameter(3);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -75,12 +75,10 @@ namespace GhSA.Components
                 Brep brep = new Brep();
                 if (GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
                 {
-                    // first import points and curves for inclusion before building member
-                    
-                    // 2 Points
+                    // 1 Points
                     List<Point3d> pts = new List<Point3d>();
                     List<GH_Point> ghpts = new List<GH_Point>();
-                    if (DA.GetDataList(2, ghpts))
+                    if (DA.GetDataList(1, ghpts))
                     {
                         for (int i = 0; i < ghpts.Count; i++)
                         {
@@ -90,10 +88,10 @@ namespace GhSA.Components
                         }
                     }
 
-                    // 3 Curves
+                    // 2 Curves
                     List<Curve> crvs = new List<Curve>();
                     List<GH_Curve> ghcrvs = new List<GH_Curve>();
-                    if (DA.GetDataList(3, ghcrvs))
+                    if (DA.GetDataList(2, ghcrvs))
                     {
                         for (int i = 0; i < ghcrvs.Count; i++)
                         {
@@ -103,14 +101,13 @@ namespace GhSA.Components
                         }
                     }
 
-                    // now build new member with brep, crv and pts
+                    // build new member with brep, crv and pts
                     GsaMember2d mem = new GsaMember2d(brep, crvs, pts);
 
-                    // add the rest
-                    // 1 section
+                    // 3 section
                     GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
                     GsaProp2d prop2d = new GsaProp2d();
-                    if (DA.GetData(1, ref gh_typ))
+                    if (DA.GetData(3, ref gh_typ))
                     {
                         if (gh_typ.Value is GsaProp2dGoo)
                         {

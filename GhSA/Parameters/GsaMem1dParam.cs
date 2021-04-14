@@ -68,8 +68,8 @@ namespace GhSA.Parameters
         {
             get 
             {
-                if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
-                    m_member.Colour = UI.Colour.Member1d;
+                //if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                //    m_member.Colour = UI.Colour.Member1d;
                 return (System.Drawing.Color)m_member.Colour; 
             }
             set { m_member.Colour = value; }
@@ -92,6 +92,7 @@ namespace GhSA.Parameters
         {
             m_member = new Member();
             m_crv = new PolyCurve();
+
             //m_section = new GsaSection();
         }
 
@@ -132,11 +133,11 @@ namespace GhSA.Parameters
         public GsaMember1d Duplicate()
         {
             if (this == null) { return null; }
+            
             GsaMember1d dup = new GsaMember1d
             {
                 Member = new Member
                 {
-                    Colour = System.Drawing.Color.FromArgb(Colour.A, Colour.R, Colour.G, Colour.B), //don't copy object.colour, this will be default = black if not set
                     Group = m_member.Group,
                     IsDummy = m_member.IsDummy,
                     MeshSize = m_member.MeshSize,
@@ -150,6 +151,10 @@ namespace GhSA.Parameters
                     Type1D = m_member.Type1D //GsaToModel.Element1dType((int)Member.Type1D)
                 }
             };
+
+            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                dup.m_member.Colour = m_member.Colour;
+
             dup.Member.Offset.X1 = m_member.Offset.X1;
             dup.Member.Offset.X2 = m_member.Offset.X2;
             dup.Member.Offset.Y = m_member.Offset.Y;
@@ -217,7 +222,7 @@ namespace GhSA.Parameters
         {
             if (member == null)
                 member = new GsaMember1d();
-            this.Value = member.Duplicate();
+            this.Value = member; //member.Duplicate();
         }
 
         public override IGH_GeometricGoo DuplicateGeometry()
@@ -226,7 +231,7 @@ namespace GhSA.Parameters
         }
         public GsaMember1dGoo DuplicateGsaMember1d()
         {
-            return new GsaMember1dGoo(Value == null ? new GsaMember1d() : Value.Duplicate());
+            return new GsaMember1dGoo(Value == null ? new GsaMember1d() : Value); //Value.Duplicate());
         }
         #endregion
 
@@ -484,7 +489,15 @@ namespace GhSA.Parameters
                     if (Value.Member.IsDummy)
                         args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Dummy1D, false);
                     else
-                        args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2); //UI.Colour.Member1d
+                    {
+                        if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
+                            args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2);
+                        else
+                        {
+                            System.Drawing.Color col = UI.Colour.ElementType(Value.Member.Type1D);
+                            args.Pipeline.DrawCurve(Value.PolyCurve, col, 2);
+                        }
+                    }
                 }
                 else
                 {
@@ -520,10 +533,24 @@ namespace GhSA.Parameters
                     }
                 }
             }
+
+            //Draw releases
+            if (!Value.Member.IsDummy)
+            {
+                PolyCurve crv = Value.PolyCurve;
+                double angle = Value.Member.OrientationAngle;
+                GsaBool6 start = Value.ReleaseStart;
+                GsaBool6 end = Value.ReleaseEnd;
+
+                UI.Display.DrawReleases(args, crv, angle, start, end);
+            }
         }
+
+        
         #endregion
     }
 
+    
     /// <summary>
     /// This class provides a Parameter interface for the Data_GsaMember1d type.
     /// </summary>

@@ -56,7 +56,13 @@ namespace GhSA.UI
         readonly Action<int, int> action; //function sending back the selection to component (i = dropdowncontentlist, j = selected item in that list)
         
         List<bool> unfolded; // list of bools for unfolded or closed dropdown
-        
+
+        RectangleF scrollBar;// surrounding bound for vertical scroll element
+        float scrollStartY; // location of scroll element at drag start
+        float dragMouseStartY; // location of mouse at drag start
+        float deltaY; // moved Y-location of scroll element
+        int maxNoRows = 10;
+        bool drag;
 
         float MinWidth
         {
@@ -100,6 +106,9 @@ namespace GhSA.UI
             int s = 2; //spacing to edges and internal between boxes
 
             int h0 = 0;
+            
+            bool removeScroll = true;
+            
             for (int i = 0; i < dropdownlists.Count; i++) 
             {
                 //spacer and title
@@ -144,8 +153,11 @@ namespace GhSA.UI
                 if (unfolded.Count == i)
                     unfolded.Add(new bool()); //ensure we have a bool for every list
 
+                
                 if (unfolded[i]) // if unfolded checked create dropdown list
                 {
+                    removeScroll = false;
+
                     if (dropdownBounds[i] == null)
                         dropdownBounds[i] = new List<RectangleF>(); // if first time clicked create new list
                     else
@@ -154,9 +166,62 @@ namespace GhSA.UI
                     {
                         dropdownBounds[i].Add(new RectangleF(BorderBound[i].X, BorderBound[i].Y + (j + 1) * h1 + s, BorderBound[i].Width, BorderBound[i].Height));
                     }
-                    dropdownBound[i] = new RectangleF(BorderBound[i].X, BorderBound[i].Y + h1 + s, BorderBound[i].Width, dropdownBounds[i].Count * BorderBound[i].Height);
+                    dropdownBound[i] = new RectangleF(BorderBound[i].X, BorderBound[i].Y + h1 + s, BorderBound[i].Width, Math.Min(dropdownlists[i].Count, maxNoRows) * BorderBound[i].Height);
+                                       
                     //update component size if dropdown is unfolded to be able to capture mouseclicks
                     Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + dropdownBound[i].Height + s);
+
+                    // additional move for the content (moves more than the scroll bar)
+                    float contentScroll = 0;
+
+                    // vertical scroll bar if number of items in dropdown list is bigger than max rows allowed
+                    if (dropdownlists[i].Count > maxNoRows)
+                    {
+                        if (scrollBar == null)
+                            scrollBar = new RectangleF();
+
+                        // setup size of scroll bar
+                        scrollBar.X = dropdownBound[i].X + dropdownBound[i].Width - 8; // locate from right-side of dropdown area
+                        // compute height based on number of items in list, but with a minimum size of 2 rows
+                        scrollBar.Height = (float)Math.Max(2 * h1, dropdownBound[i].Height * ((double)maxNoRows / ((double)dropdownlists[i].Count)));
+                        scrollBar.Width = 8; // width of mouse-grab area (actual scroll bar drawn later)
+
+                        // vertical position (.Y)
+                        if (deltaY + scrollStartY >= 0) // handle if user drags above starting point
+                        {
+                            // dragging downwards:
+                            if (dropdownBound[i].Height - scrollBar.Height >= deltaY + scrollStartY) // handles if user drags below bottom point
+                            {
+                                // update scroll bar position for normal scroll event within bounds
+                                scrollBar.Y = dropdownBound[i].Y + deltaY + scrollStartY;
+                            }
+                            else
+                            {
+                                // scroll reached bottom
+                                scrollStartY = dropdownBound[i].Height - scrollBar.Height;
+                                deltaY = 0;
+                            }
+                        }
+                        else
+                        {
+                            // scroll reached top
+                            scrollStartY = 0;
+                            deltaY = 0;
+                        }
+
+                        // calculate moved position of content
+                        float scrollBarMovedPercentage = (dropdownBound[i].Y - scrollBar.Y) / (dropdownBound[i].Height - scrollBar.Height);
+                        float scrollContentHeight = dropdownlists[i].Count * h1 - dropdownBound[i].Height;
+                        contentScroll = scrollBarMovedPercentage * scrollContentHeight;
+                    }
+
+                    // create list of text boxes (we will only draw the visible ones later)
+                    dropdownBounds[i] = new List<RectangleF>();
+                    for (int j = 0; j < dropdownlists[i].Count; j++)
+                    {
+                        dropdownBounds[i].Add(new RectangleF(BorderBound[i].X, BorderBound[i].Y + (j + 1) * h1 + s + contentScroll, BorderBound[i].Width, h1));
+                    }
+
                 }
                 else
                 {
@@ -172,6 +237,12 @@ namespace GhSA.UI
                             dropdownBound[i] = new RectangleF();
                     }
                 }
+            }
+
+            if (removeScroll)
+            {
+                scrollBar = new RectangleF();
+                scrollStartY = 0;
             }
         }
         
@@ -194,7 +265,6 @@ namespace GhSA.UI
 
                 for (int i = 0; i < dropdownlists.Count; i++)
                 {
-                    
                     //Draw divider line
                     if (spacerTxts[i] != "")
                     {
@@ -221,12 +291,13 @@ namespace GhSA.UI
                     
                     // background
                     Brush background = new SolidBrush(UI.Colour.GsaLightGrey);
-                    graphics.FillRectangle(background, BorderBound[i]); // background
-                                                                     // border
+                    // background
+                    graphics.FillRectangle(background, BorderBound[i]); 
+                    // border
                     graphics.DrawRectangle(pen, BorderBound[i].X, BorderBound[i].Y, BorderBound[i].Width, BorderBound[i].Height);
                     // text
                     graphics.DrawString(displayTexts[i], font, fontColour, TextBound[i], GH_TextRenderingConstants.NearCenter);
-                    // draw dropdown arrow460a2412-ce15-49a6-b8da-e512ba92eeec
+                    // draw dropdown arrow
                     ButtonsUI.DropDownArrow.DrawDropDownButton(graphics, new PointF(ButtonBound[i].X + ButtonBound[i].Width / 2, ButtonBound[i].Y + ButtonBound[i].Height / 2), UI.Colour.GsaDarkBlue, 15);
 
                     // draw dropdown list
@@ -241,30 +312,85 @@ namespace GhSA.UI
                         penborder.Width = 0.3f;
                         for (int j = 0; j < dropdownBounds[i].Count; j++)
                         {
+                            RectangleF listItem = dropdownBounds[i][j];
+                            if (listItem.Y < dropdownBound[i].Y)
+                            {
+                                if (listItem.Y + listItem.Height < dropdownBound[i].Y)
+                                {
+                                    dropdownBounds[i][j] = new RectangleF();
+                                    continue;
+                                }
+                                else
+                                {
+                                    listItem.Height = listItem.Height - (dropdownBound[i].Y - listItem.Y);
+                                    listItem.Y = dropdownBound[i].Y;
+                                    dropdownBounds[i][j] = listItem;
+                                }
+                            }
+                            else if (listItem.Y + listItem.Height > dropdownBound[i].Y + dropdownBound[i].Height)
+                            {
+                                if (listItem.Y > dropdownBound[i].Y + dropdownBound[i].Height)
+                                {
+                                    dropdownBounds[i][j] = new RectangleF();
+                                    continue;
+                                }
+                                else
+                                {
+                                    listItem.Height = dropdownBound[i].Y + dropdownBound[i].Height - listItem.Y;
+                                    dropdownBounds[i][j] = listItem;
+                                }
+                            }
+
                             // background
                             graphics.FillRectangle(dropdownbackground, dropdownBounds[i][j]);
                             // border
                             graphics.DrawRectangle(penborder, dropdownBounds[i][j].X, dropdownBounds[i][j].Y, dropdownBounds[i][j].Width, dropdownBounds[i][j].Height);
                             // text
-                            graphics.DrawString(dropdownlists[i][j], font, fontColour, dropdownBounds[i][j], GH_TextRenderingConstants.NearCenter);
+                            if (dropdownBounds[i][j].Height > 2)
+                                graphics.DrawString(dropdownlists[i][j], font, fontColour, dropdownBounds[i][j], GH_TextRenderingConstants.NearCenter);
                         }
                         // border
                         graphics.DrawRectangle(pen, dropdownBound[i].X, dropdownBound[i].Y, dropdownBound[i].Width, dropdownBound[i].Height);
+
+                        // draw vertical scroll bar
+                        Brush scrollbar = new SolidBrush(Color.FromArgb(drag ? 160 : 120, Color.Black));
+                        Pen scrollPen = new Pen(scrollbar);
+                        scrollPen.Width = scrollBar.Width - 2;
+                        scrollPen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                        scrollPen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+                        graphics.DrawLine(scrollPen, scrollBar.X + 4, scrollBar.Y + 4, scrollBar.X + 4, scrollBar.Y + scrollBar.Height - 4);
                     }
                 }
             }
         }
-        public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
+        public override GH_ObjectResponse RespondToMouseUp(GH_Canvas sender, GH_CanvasMouseEvent e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
+                GH_Component comp = Owner as GH_Component;
+                if (drag)
+                {
+                    // if drag was true then we release it here:
+                    scrollStartY += deltaY;
+                    deltaY = 0;
+                    drag = false;
+                    comp.ExpireSolution(true);
+                    return GH_ObjectResponse.Release;
+                }
+
                 for (int i = 0; i < dropdownlists.Count; i++)
                 {
                     System.Drawing.RectangleF rec = BorderBound[i];
-                    GH_Component comp = Owner as GH_Component;
                     if (rec.Contains(e.CanvasLocation))
                     {
                         unfolded[i] = !unfolded[i];
+                        // close any other dropdowns that may be unfolded
+                        for (int j = 0; j < unfolded.Count; j++)
+                        {
+                            if (j == i)
+                                continue;
+                            unfolded[j] = false;
+                        }
                         comp.ExpireSolution(true);
                         return GH_ObjectResponse.Handled;
                     }
@@ -321,7 +447,43 @@ namespace GhSA.UI
                     }
                 }
             }
+            return base.RespondToMouseUp(sender, e);
+        }
+        public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            for (int i = 0; i < dropdownlists.Count; i++)
+            {
+                if (unfolded[i])
+                {
+                    if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                    {
+                        System.Drawing.RectangleF rec = scrollBar;
+                        GH_Component comp = Owner as GH_Component;
+                        if (rec.Contains(e.CanvasLocation))
+                        {
+                            dragMouseStartY = e.CanvasLocation.Y;
+                            drag = true;
+                            comp.ExpireSolution(true);
+                            return GH_ObjectResponse.Capture;
+                        }
+                    }
+                }
+            }
             return base.RespondToMouseDown(sender, e);
+        }
+        public override GH_ObjectResponse RespondToMouseMove(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            if (drag)
+            {
+                GH_Component comp = Owner as GH_Component;
+
+                deltaY = e.CanvasLocation.Y - dragMouseStartY;
+
+                comp.ExpireSolution(true);
+                return GH_ObjectResponse.Ignore;
+            }
+
+            return base.RespondToMouseMove(sender, e);
         }
         protected void FixLayout()
         {

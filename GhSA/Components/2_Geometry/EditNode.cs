@@ -48,13 +48,12 @@ namespace GhSA.Components
             
             pManager.AddGenericParameter("Node", "No", "GSA Node to Edit. If no input a new node will be created.", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Node number", "ID", "Set Node number (ID) - if Node ID is set it will replace any existing nodes in the model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Node Name", "Na", "Set Name of Node", GH_ParamAccess.item);
             pManager.AddPointParameter("Node Position", "Pt", "Set new Position (x, y, z) of Node", GH_ParamAccess.item);
             pManager.AddPlaneParameter("Node local axis", "Pl", "Set Local axis (Plane) of Node", GH_ParamAccess.item);
             pManager.AddGenericParameter("Node Restraints", "B6", "Set Restraints (Bool6) of Node", GH_ParamAccess.item);
             pManager.AddGenericParameter("Node Spring", "PS", "Set Spring (Type: General)", GH_ParamAccess.item);
+            pManager.AddTextParameter("Node Name", "Na", "Set Name of Node", GH_ParamAccess.item);
             pManager.AddColourParameter("Node Colour", "Co", "Set colour of node", GH_ParamAccess.item);
-            pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
@@ -68,128 +67,141 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("Node", "No", "Modified GSA Node", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Node number", "ID", "Original Node number (ID) if Node ever belonged to a GSA Model", GH_ParamAccess.item);
-            pManager.AddTextParameter("Node Name", "Na", "Name of Node", GH_ParamAccess.item);
             pManager.AddPointParameter("Node Position", "Pt", "Position (x, y, z) of Node", GH_ParamAccess.item);
-            pManager.HideParameter(3);
+            pManager.HideParameter(2);
             pManager.AddPlaneParameter("Node local axis", "Pl", "Local axis (Plane) of Node", GH_ParamAccess.item);
-            pManager.HideParameter(4);
+            pManager.HideParameter(3);
             pManager.AddGenericParameter("Node Restraints", "B6", "Restraints (Bool6) of Node", GH_ParamAccess.item);
             pManager.AddGenericParameter("Node Spring", "PS", "Spring attached to Node", GH_ParamAccess.item);
+            pManager.AddTextParameter("Node Name", "Na", "Name of Node", GH_ParamAccess.item);
+            pManager.AddColourParameter("Node Colour", "Co", "Get colour of node", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Connected Elements", "El", "Connected Element IDs in Model that Node once belonged to", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Connected Members", "Me", "Connected Member IDs in Model that Node once belonged to", GH_ParamAccess.list);
-            pManager.AddColourParameter("Node Colour", "Co", "Get colour of node", GH_ParamAccess.item);
         }
         #endregion
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            GsaNode gsaNode = new GsaNode();
-            if (!DA.GetData(0, ref gsaNode))
-                gsaNode = new GsaNode(new Point3d(0, 0, 0));
-
-            if (gsaNode != null)
+            GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+            if (DA.GetData(0, ref gh_typ))
             {
+                GsaNode gsaNode = new GsaNode();
+                Point3d tempPt = new Point3d();
+                if (gh_typ.Value is GsaNodeGoo)
+                {
+                    gh_typ.CastTo(ref gsaNode);
+                    if (gsaNode == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
+                    if (gsaNode.Node == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
+                }
+                else if (GH_Convert.ToPoint3d(gh_typ.Value, ref tempPt, GH_Conversion.Both))
+                {
+                    gsaNode = new GsaNode(tempPt);
+                }
+                else
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert input to Node");
+                    return;
+                }
+                GsaNode node = gsaNode.Duplicate();
+
                 // #### inputs ####
-                
+
+                // 1 ID
                 GH_Integer ghInt = new GH_Integer();
                 if (DA.GetData(1, ref ghInt))
                 {
                     if (GH_Convert.ToInt32(ghInt, out int id, GH_Conversion.Both))
-                        gsaNode.ID = id;
+                        node.ID = id;
                 }
 
-                GH_String ghStr = new GH_String();
-                if (DA.GetData(2, ref ghStr))
-                {
-                    if (GH_Convert.ToString(ghStr, out string name, GH_Conversion.Both))
-                        gsaNode.Node.Name = name;
-                }
-
+                // 2 Point
                 GH_Point ghPt = new GH_Point();
-                if (DA.GetData(3, ref ghPt))
+                if (DA.GetData(2, ref ghPt))
                 {
                     Point3d pt = new Point3d();
                     if (GH_Convert.ToPoint3d(ghPt, ref pt, GH_Conversion.Both))
                     {
-                        gsaNode.Point = pt;
-                        gsaNode.Node.Position.X = pt.X;
-                        gsaNode.Node.Position.Y = pt.Y;
-                        gsaNode.Node.Position.Z = pt.Z;
+                        node.Point = pt;
+                        node.Node.Position.X = pt.X;
+                        node.Node.Position.Y = pt.Y;
+                        node.Node.Position.Z = pt.Z;
                     }
                 }
 
+                // 3 plane
                 GH_Plane ghPln = new GH_Plane();
-                if (DA.GetData(4, ref ghPln))
+                if (DA.GetData(3, ref ghPln))
                 {
                     Plane pln = new Plane();
                     if (GH_Convert.ToPlane(ghPln, ref pln, GH_Conversion.Both))
                     {
-                        pln.Origin = gsaNode.Point;
-                        gsaNode.LocalAxis = pln;
+                        pln.Origin = node.Point;
+                        node.LocalAxis = pln;
                     }
                 }
 
+                // 4 Restraint
                 GsaBool6 restraint = new GsaBool6();
-                if (DA.GetData(5, ref restraint))
+                if (DA.GetData(4, ref restraint))
                 {
-                    gsaNode.Node.Restraint.X = restraint.X;
-                    gsaNode.Node.Restraint.Y = restraint.Y;
-                    gsaNode.Node.Restraint.Z = restraint.Z;
-                    gsaNode.Node.Restraint.XX = restraint.XX;
-                    gsaNode.Node.Restraint.YY = restraint.YY;
-                    gsaNode.Node.Restraint.ZZ = restraint.ZZ;
+                    node.Node.Restraint.X = restraint.X;
+                    node.Node.Restraint.Y = restraint.Y;
+                    node.Node.Restraint.Z = restraint.Z;
+                    node.Node.Restraint.XX = restraint.XX;
+                    node.Node.Restraint.YY = restraint.YY;
+                    node.Node.Restraint.ZZ = restraint.ZZ;
                 }
 
+                // 5 Spring
                 GsaSpring spring = new GsaSpring();
-                if (DA.GetData(6, ref spring))
+                if (DA.GetData(5, ref spring))
                 {
                     if (spring != null)
-                        gsaNode.Spring = spring;
+                        node.Spring = spring;
                 }
-                
+
+                // 6 Name
+                GH_String ghStr = new GH_String();
+                if (DA.GetData(6, ref ghStr))
+                {
+                    if (GH_Convert.ToString(ghStr, out string name, GH_Conversion.Both))
+                        node.Node.Name = name;
+                }
+
                 // 7 Colour
                 GH_Colour ghcol = new GH_Colour();
                 if (DA.GetData(7, ref ghcol))
                 {
                     if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
-                        gsaNode.Colour = col;
+                        node.Colour = col;
                 }
 
                 // #### outputs ####
-                DA.SetData(0, new GsaNodeGoo(gsaNode));
-
-                DA.SetData(1, gsaNode.ID);
-                DA.SetData(2, gsaNode.Node.Name);
-
-                DA.SetData(3, gsaNode.Point);
-
-                DA.SetData(4, gsaNode.LocalAxis);
-
+                DA.SetData(0, new GsaNodeGoo(node));
+                DA.SetData(1, node.ID);
+                DA.SetData(2, node.Point);
+                DA.SetData(3, node.LocalAxis);
                 GsaBool6 restraint1 = new GsaBool6
                 {
-                    X = gsaNode.Node.Restraint.X,
-                    Y = gsaNode.Node.Restraint.Y,
-                    Z = gsaNode.Node.Restraint.Z,
-                    XX = gsaNode.Node.Restraint.XX,
-                    YY = gsaNode.Node.Restraint.YY,
-                    ZZ = gsaNode.Node.Restraint.ZZ
+                    X = node.Node.Restraint.X,
+                    Y = node.Node.Restraint.Y,
+                    Z = node.Node.Restraint.Z,
+                    XX = node.Node.Restraint.XX,
+                    YY = node.Node.Restraint.YY,
+                    ZZ = node.Node.Restraint.ZZ
                 };
-                DA.SetData(5, restraint1);
-
+                DA.SetData(4, restraint1);
                 GsaSpring spring1 = new GsaSpring();
-                if (gsaNode.Spring != null)
+                if (node.Spring != null)
                 {
-                    spring1 = gsaNode.Spring.Duplicate();
+                    spring1 = node.Spring.Duplicate();
                 }
-                DA.SetData(6, new GsaSpringGoo(spring1));
-
-                try { DA.SetDataList(7, gsaNode.Node.ConnectedElements); } catch (Exception) { }
-
-                try { DA.SetDataList(8, gsaNode.Node.ConnectedMembers); } catch (Exception) { }
-
-                DA.SetData(9, gsaNode.Colour);
+                DA.SetData(5, new GsaSpringGoo(spring1));
+                DA.SetData(6, node.Node.Name);
+                DA.SetData(7, node.Colour);
+                try { DA.SetDataList(8, node.Node.ConnectedElements); } catch (Exception) { }
+                try { DA.SetDataList(9, node.Node.ConnectedMembers); } catch (Exception) { }
             }
-            else { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Node input"); }
         }
     }
 }
