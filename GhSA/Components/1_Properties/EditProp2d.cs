@@ -109,7 +109,7 @@ namespace GhSA.Components
                 }
             }
 
-            // 3 thickness
+            // 3 Thickness
             string thk = ""; //prop.Prop2d.Thickness;
             if (DA.GetData(3, ref thk))
             {

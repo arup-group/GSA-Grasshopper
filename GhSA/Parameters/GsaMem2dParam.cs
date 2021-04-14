@@ -792,7 +792,7 @@ namespace GhSA.Parameters
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
                     if (!Value.Member.IsDummy)
-                        args.Pipeline.DrawBrepWires(Value.Brep, (System.Drawing.Color)Value.Member.Colour, -1);
+                        args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdge, -1);
                 }
                 else
                     args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdgeSelected, -1);

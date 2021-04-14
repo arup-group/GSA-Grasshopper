@@ -97,6 +97,7 @@ namespace GhSA.Components
                 for (int i = 0; i < gh_types.Count; i++)
                 {
                     GH_ObjectWrapper gh_typ = gh_types[i];
+                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is null"); return; }
                     if (gh_typ.Value is GsaModelGoo)
                     {
                         GsaModel in_model = new GsaModel();

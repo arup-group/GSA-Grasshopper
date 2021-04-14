@@ -239,7 +239,7 @@ namespace GhSA.UI
                 DisplayMaterial material = new DisplayMaterial
                 {
                     Diffuse = Color.FromArgb(50, 150, 150, 150),
-                    Emission = Color.White, //Color.FromArgb(50, 45, 45, 45),
+                    Emission = Color.FromArgb(50, 45, 45, 45),
                     Transparency = 0.1
                 };
                 return material;

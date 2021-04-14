@@ -34,7 +34,7 @@ namespace GhSA.Components
                 Ribbon.SubCategoryName.Cat0())
         { BaseWorker = new OpenWorker(); this.Hidden = true; }
 
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.OpenModel;
         #endregion

@@ -74,7 +74,7 @@ namespace GhSA.Parameters
         
         public GsaNode Duplicate()
         {
-            if (this == null) { return null; }
+            if (this.Node == null) { return null; }
             GsaNode dup = new GsaNode
             {
                 Node = new Node

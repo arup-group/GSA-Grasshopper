@@ -539,8 +539,8 @@ namespace GhSA.Components
                             dmin_zz = Math.Min(xxyyzz.Min(val => val.Z), dmin_zz);
 
                             // add vector lists to main lists
-                            xyz_out.AddRange(xyz, new GH_Path(key));
-                            xxyyzz_out.AddRange(xxyyzz, new GH_Path(key));
+                            xyz_out.AddRange(xyz, new GH_Path(key - 1));
+                            xxyyzz_out.AddRange(xxyyzz, new GH_Path(key - 1));
                         }
                     }
 
@@ -664,7 +664,7 @@ namespace GhSA.Components
                     // add mesh colour
                     List<double> vals = new List<double>();
 
-                    GH_Path path = new GH_Path(key);
+                    GH_Path path = new GH_Path(key - 1);
 
                     List<Vector3d> tempXYZ = xyz_out.Branch(path);
                     List<Vector3d> tempXXYYZZ = xxyyzz_out.Branch(path);
