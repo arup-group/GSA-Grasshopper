@@ -171,6 +171,7 @@ namespace GhSA.Components
                     return;
                 }
 
+                //GsaModel in_Model = gsaModel.Clone();
                 Model model = gsaModel.Model;
 
                 // import lists

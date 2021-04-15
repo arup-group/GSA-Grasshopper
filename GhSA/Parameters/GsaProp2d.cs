@@ -58,9 +58,10 @@ namespace GhSA.Parameters
         public GsaProp2d Duplicate()
         {
             if (this == null) { return null; }
-            GsaProp2d dup = new GsaProp2d
+            GsaProp2d dup = new GsaProp2d();
+            if (m_prop2d != null)
             {
-                Prop2d = new Prop2D
+                dup.Prop2d = new Prop2D
                 {
                     MaterialAnalysisProperty = m_prop2d.MaterialAnalysisProperty,
                     MaterialGradeProperty = m_prop2d.MaterialGradeProperty,
@@ -69,12 +70,14 @@ namespace GhSA.Parameters
                     Description = m_prop2d.Description.ToString(),
                     Type = m_prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
                     AxisProperty = m_prop2d.AxisProperty
-                },
-                ID = m_idd
-            };
+                };
+                if ((System.Drawing.Color)m_prop2d.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                    dup.m_prop2d.Colour = m_prop2d.Colour;
+            }
+            else
+                dup.Prop2d = null;
 
-            if ((System.Drawing.Color)m_prop2d.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                dup.m_prop2d.Colour = m_prop2d.Colour;
+            dup.ID = m_idd;
             
             if (Material != null)
                 dup.Material = m_material.Duplicate();
@@ -96,9 +99,14 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            string str = m_prop2d.Type.ToString();
-            str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
-            return "GSA 2D Property " + str;
+            string str = "";
+            if (m_prop2d != null)
+            {
+                str = m_prop2d.Type.ToString();
+                str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
+            }
+            string pa = (ID > 0) ? "PA" + ID + " " : ""; 
+            return "GSA 2D Property " + ((ID > 0) ? pa : "") + ((m_prop2d == null) ? "" : str);
         }
 
         #endregion

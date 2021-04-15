@@ -73,9 +73,10 @@ namespace GhSA.Parameters
         public GsaSection Duplicate()
         {
             if (this == null) { return null; }
-            GsaSection dup = new GsaSection
+            GsaSection dup = new GsaSection();
+            if (m_section != null)
             {
-                Section = new Section
+                dup.Section = new Section()
                 {
                     MaterialAnalysisProperty = m_section.MaterialAnalysisProperty,
                     MaterialGradeProperty = m_section.MaterialGradeProperty,
@@ -83,11 +84,17 @@ namespace GhSA.Parameters
                     Name = m_section.Name,
                     Pool = m_section.Pool,
                     Profile = m_section.Profile
-                },
-                ID = m_idd
-            };
-            if ((System.Drawing.Color)m_section.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                dup.m_section.Colour = m_section.Colour;
+                };
+
+                if ((System.Drawing.Color)m_section.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                    dup.m_section.Colour = m_section.Colour;
+            }
+            else
+                dup.Section = null;
+            
+            dup.ID = m_idd;
+
+            
             if (Material != null)
                 dup.Material = m_material.Duplicate();
 
@@ -108,8 +115,11 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            string str = m_section.Profile;
-            return "GSA Section " + str.Replace("%", " ");
+            string prof = "";
+            if (m_section != null)
+                prof = m_section.Profile;
+            string pb = "PB" + ID + " ";
+            return "GSA Section " + ((ID > 0) ? pb : "") + ((m_section == null) ? "" : prof.Replace("%", " "));
         }
 
         #endregion

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Collections.ObjectModel;
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -92,6 +92,7 @@ namespace GhSA.Parameters
         {
             m_elements = new List<Element>();
             m_mesh = new Mesh();
+            m_props = new List<GsaProp2d>();
         }
 
         public GsaElement2d(Mesh mesh, int prop = 0)
@@ -106,8 +107,12 @@ namespace GhSA.Parameters
             m_id = new List<int>(new int[m_mesh.Faces.Count()]);
 
             m_props = new List<GsaProp2d>();
-            //for (int i = 0; i < m_mesh.Faces.Count(); i++)
-                //m_props.Add(new GsaProp2d());
+            for (int i = 0; i < m_mesh.Faces.Count(); i++)
+            {
+                GsaProp2d property = new GsaProp2d();
+                property.Prop2d = null;
+                m_props.Add(property);
+            }
         }
 
         public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, int prop = 0)
@@ -148,7 +153,7 @@ namespace GhSA.Parameters
                     Offset = m_elements[i].Offset,
                     ParentMember = m_elements[i].ParentMember,
                     Property = m_elements[i].Property,
-                    Topology = m_elements[i].Topology,
+                    Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
                     Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
                 });
 

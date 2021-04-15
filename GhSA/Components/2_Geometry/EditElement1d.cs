@@ -71,6 +71,8 @@ namespace GhSA.Components
 
             for (int i = 1; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
+            pManager.HideParameter(0);
+            pManager.HideParameter(2);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -144,11 +146,15 @@ namespace GhSA.Components
                     {
                         gh_typ.CastTo(ref section);
                         elem.Section = section;
+                        elem.Element.Property = 0;
                     }
                     else
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+                        {
                             elem.Element.Property = idd;
+                            elem.Section = null;
+                        }
                         else
                         {
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");

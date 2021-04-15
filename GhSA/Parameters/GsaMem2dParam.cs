@@ -123,7 +123,8 @@ namespace GhSA.Parameters
         public GsaMember2d()
         {
             m_member = new Member();
-            //m_prop = new GsaProp2d();
+            m_prop = new GsaProp2d();
+            m_prop.Prop2d = null;
         }
 
         public GsaMember2d(Brep brep, List<Curve> includeCurves = null, List<Point3d> includePoints = null, int prop = 0)
@@ -133,7 +134,8 @@ namespace GhSA.Parameters
                 Type = MemberType.GENERIC_2D,
                 Property = prop
             };
-            //m_prop = new GsaProp2d();
+            m_prop = new GsaProp2d();
+            m_prop.Prop2d = null;
 
             Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>>
                 convertBrepInclusion = Util.GH.Convert.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
@@ -226,6 +228,9 @@ namespace GhSA.Parameters
             incl_pts = includePoints;
 
             m_brep = Util.GH.Convert.BuildBrep(m_crv, void_crvs);
+
+            m_prop = new GsaProp2d();
+            m_prop.Prop2d = null;
         }
         
         public GsaMember2d Duplicate()
