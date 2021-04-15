@@ -77,6 +77,11 @@ namespace GhSA.Components
 
             for (int i = 1; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
+
+            pManager.HideParameter(0);
+            pManager.HideParameter(2);
+            pManager.HideParameter(3);
+            pManager.HideParameter(4);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
