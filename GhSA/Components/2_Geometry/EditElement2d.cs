@@ -137,11 +137,15 @@ namespace GhSA.Components
                         {
                             gh_typ.CastTo(ref prop2d);
                             in_prop2Ds.Add(prop2d);
+                            elem.Elements[i].Property = 0;
                         }
                         else
                         {
                             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+                            {
                                 elem.Elements[i].Property = idd;
+                                elem.Properties[i] = null;
+                            }
                             else
                             {
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");

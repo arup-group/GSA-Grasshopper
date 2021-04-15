@@ -119,12 +119,16 @@ namespace GhSA.Parameters
             gsaModel.Model = gsa;
             return gsaModel;
         }
+        /// <summary>
+        /// This method will save gwb as a temp file and reopen it,  
+        /// </summary>
+        /// <returns>Return opened model with new GUID</returns>
         public GsaModel Clone()
         {
             GsaModel clone = new GsaModel();
 
             // workaround duplicate model
-            string tempfilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Oasys") + "GSA-Grasshopper_temp.gwb";
+            string tempfilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Oasys") + "GSA-Grasshopper_temp_.gwb";
             m_model.SaveAs(tempfilename);
             clone.Model.Open(tempfilename);
 

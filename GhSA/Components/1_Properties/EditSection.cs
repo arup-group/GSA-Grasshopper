@@ -140,13 +140,18 @@ namespace GhSA.Components
                 }
 
                 // #### outputs ####
+                string prof = (gsaSection.Section == null) ? "--" : gsaSection.Section.Profile.Replace("%", " ");
+                int poo = (gsaSection.Section == null) ? 0 : gsaSection.Section.Pool;
+                string nm = (gsaSection.Section == null) ? "--" : gsaSection.Section.Name;
+                ValueType colour = (gsaSection.Section == null) ? null : gsaSection.Section.Colour;
+
                 DA.SetData(0, new GsaSectionGoo(gsaSection));
                 DA.SetData(1, gsaSection.ID);
-                DA.SetData(2, gsaSection.Section.Profile.Replace("%", " "));
+                DA.SetData(2, prof);
                 DA.SetData(3, new GsaMaterialGoo(new GsaMaterial(gsaSection))); // to implemented GsaMaterial
-                DA.SetData(4, gsaSection.Section.Pool);
-                DA.SetData(5, gsaSection.Section.Name);
-                DA.SetData(6, gsaSection.Section.Colour);
+                DA.SetData(4, poo);
+                DA.SetData(5, nm);
+                DA.SetData(6, colour);
 
             }
         }

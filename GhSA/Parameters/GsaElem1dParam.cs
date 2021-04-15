@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 using GsaAPI;
 using Grasshopper.Kernel;
@@ -117,6 +118,9 @@ namespace GhSA.Parameters
         {
             m_element = new Element();
             m_line = new LineCurve();
+            
+            m_section = new GsaSection();
+            m_section.Section = null;
         }
 
 
@@ -127,8 +131,11 @@ namespace GhSA.Parameters
                 Type = ElementType.BEAM,
                 Property = prop,
             };
-            //m_section = new GsaSection();
+            
             m_line = line;
+
+            m_section = new GsaSection();
+            m_section.Section = null;
         }
 
         //public GsaElement1d(Element element, LineCurve line)
@@ -151,9 +158,10 @@ namespace GhSA.Parameters
                 OrientationNode = m_element.OrientationNode,
                 ParentMember = m_element.ParentMember,
                 Property = m_element.Property,
-                Topology = m_element.Topology,
+                Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
                 Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
             };
+
 
             if ((System.Drawing.Color)m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
                 dup.m_element.Colour = m_element.Colour;

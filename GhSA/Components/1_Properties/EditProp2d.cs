@@ -145,15 +145,22 @@ namespace GhSA.Components
             }
 
             //#### outputs ####
+            string desc = (prop.Prop2d == null) ? "--" : prop.Prop2d.Description;
+            int ax = (prop.Prop2d == null) ? 0 : prop.Prop2d.AxisProperty;
+            string nm = (prop.Prop2d == null) ? "--" : prop.Prop2d.Name;
+            ValueType colour = (prop.Prop2d == null) ? null : prop.Prop2d.Colour;
+
             DA.SetData(0, new GsaProp2dGoo(prop));
             DA.SetData(1, prop.ID);
             DA.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
-            DA.SetData(3, prop.Prop2d.Description); // GsaAPI to be updated
-            DA.SetData(4, prop.Prop2d.AxisProperty);
-            DA.SetData(5, prop.Prop2d.Name);
-            DA.SetData(6, prop.Prop2d.Colour);
-            string str = prop.Prop2d.Type.ToString();
-            str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
+            DA.SetData(3, desc); 
+            DA.SetData(4, ax);
+            DA.SetData(5, nm);
+            DA.SetData(6, colour);
+
+            string str = (prop.Prop2d == null) ? "--" : prop.Prop2d.Type.ToString();
+            if (prop.Prop2d == null)
+                str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
             DA.SetData(7, str);
         }
     }

@@ -101,12 +101,17 @@ namespace GhSA.Parameters
         }
         public GsaMaterial(GsaSection section)
         {
+            if (section == null) { return; }
+            if (section.Section == null) { return; }
+
             Type = getType(section.Section.MaterialType);
             AnalysisProperty = section.Section.MaterialAnalysisProperty;
             Grade = section.Section.MaterialGradeProperty;
         }
         public GsaMaterial(GsaProp2d prop)
         {
+            if (prop.Material == null) { return;  }
+
             Type = getType(prop.Prop2d.MaterialType);
             AnalysisProperty = prop.Prop2d.MaterialAnalysisProperty;
             Grade = prop.Prop2d.MaterialGradeProperty;

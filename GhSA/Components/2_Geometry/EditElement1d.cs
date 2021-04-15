@@ -146,11 +146,15 @@ namespace GhSA.Components
                     {
                         gh_typ.CastTo(ref section);
                         elem.Section = section;
+                        elem.Element.Property = 0;
                     }
                     else
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+                        {
                             elem.Element.Property = idd;
+                            elem.Section = null;
+                        }
                         else
                         {
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
