@@ -99,15 +99,17 @@ namespace GhSA.Util.Gsa
         /// <param name="sDict">Dictionary of Sections (for 1D elements)</param>
         /// <param name="pDict">Dictionary of 2D Properties (for 2D elements)</param>
         /// <returns></returns>
-        public static Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>> 
+        public static Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> 
             GetElements(IReadOnlyDictionary<int, Element> eDict, IReadOnlyDictionary<int, Node> nDict,
             IReadOnlyDictionary<int, Section> sDict, IReadOnlyDictionary<int, Prop2D> pDict)
         {
             // Create lists for Rhino lines and meshes
             List<GsaElement1dGoo> elem1ds = new List<GsaElement1dGoo>();
             List<GsaElement2dGoo> elem2ds = new List<GsaElement2dGoo>();
+            List<GsaElement3dGoo> elem3ds = new List<GsaElement3dGoo>();
 
             Dictionary<int, Element> elem2dDict = new Dictionary<int, Element>();
+            Dictionary<int, Element> elem3dDict = new Dictionary<int, Element>();
 
             foreach (KeyValuePair<int, Element> item in eDict)
             {
@@ -146,7 +148,9 @@ namespace GhSA.Util.Gsa
                         break;
 
                     case 3:
-                        // routine for 3D elements to be created
+                        // add 3D element to dictionary to bulk create and combine
+                        // meshes in one go
+                        elem3dDict.Add(item.Key, item.Value);
                         break;
                 }
             }
@@ -156,8 +160,11 @@ namespace GhSA.Util.Gsa
             // to display a combined mesh: each 2D element is a mesh face
             if (elem2dDict.Count > 0)
                 elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict);
-            
-            return new Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>>(elem1ds, elem2ds);
+
+            if (elem3dDict.Count > 0)
+                elem3ds = ConvertToElement3Ds(elem3dDict, nDict);
+
+            return new Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>>(elem1ds, elem2ds, elem3ds);
         }
         
         /// <summary>
@@ -301,7 +308,7 @@ namespace GhSA.Util.Gsa
                             List<int> quad8vert = new List<int>() { 0, 4, 1, 5, 2, 6, 3, 7 };
                             List<int> quad8Face = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
 
-                            MeshNgon meshGon = MeshNgon.Create(quad8vert, quad8vert);
+                            MeshNgon meshGon = MeshNgon.Create(quad8vert, quad8Face);
 
                             tempMesh.Ngons.AddNgon(meshGon);
                         }
@@ -388,6 +395,225 @@ namespace GhSA.Util.Gsa
             return elem2dGoos;
         }
 
+        public static List<GsaElement3dGoo> ConvertToElement3Ds(Dictionary<int, Element> elements, IReadOnlyDictionary<int, Node> nodes)
+        {
+            List<List<Element>> apielements = new List<List<Element>>();
+            List<List<int>> IDs = new List<List<int>>();
+            List<int> hosts = new List<int>();
+
+            // loop through incoming elements and write them to lists with ID and ParentMember number
+            // to sort elements in lists containing elements with same parent
+            foreach (KeyValuePair<int, Element> elem in elements)
+            {
+                Element item = DuplicateElement(elem.Value);
+
+                // get parent member
+                int host = item.ParentMember.Member;
+
+                // place in list to add elements
+                int i;
+
+                // check if the host list is not empty and already contains the host id
+                if (hosts.Count > 0 && hosts.Contains(host))
+                {
+                    // if we already have an element with the same parent then add to list
+                    i = hosts.IndexOf(host);
+                }
+                else
+                {
+                    // if we dont have any elements with this parent add the list and add element to list    
+                    hosts.Add(host);
+                    apielements.Add(new List<Element>());
+                    IDs.Add(new List<int>());
+                    i = hosts.Count - 1;
+                }
+                apielements[i].Add(item);
+                IDs[i].Add(elem.Key);
+            }
+
+            // loop through list of elements and create Meshes and Element2Ds 
+            List<GsaElement3dGoo> elem3dGoos = new List<GsaElement3dGoo>();
+            for (int i = 0; i < apielements.Count; i++)
+            {
+                // list of elements with same parent
+                List<Element> elems = apielements[i];
+
+                // create list of Prop3Ds
+                //List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
+
+                // create list of meshes
+                List<Mesh> mList = new List<Mesh>();
+
+                // loop through elements in list
+                for (int j = 0; j < elems.Count; j++)
+                {
+                    // get element's topology
+                    ReadOnlyCollection<int> topo = elems[j].Topology;
+
+                    // check if element is 3D
+                    List<bool> check3d = new List<bool>
+                    {
+                        elems[j].Type == ElementType.THREE_D,
+                        elems[j].Type == ElementType.BRICK8,
+                        elems[j].Type == ElementType.WEDGE6,
+                        elems[j].Type == ElementType.PYRAMID5,
+                        elems[j].Type == ElementType.TETRA4
+                    };
+                    if (!check3d.Contains(true))
+                        continue;
+
+                    Mesh tempMesh = new Mesh();
+                    // Get verticies:
+                    for (int k = 0; k < topo.Count; k++)
+                    {
+                        if (nodes.TryGetValue(topo[k], out Node node))
+                        {
+                            {
+                                var p = node.Position;
+                                tempMesh.Vertices.Add(new Point3d(p.X, p.Y, p.Z));
+                            }
+                        }
+                    }
+
+                    // Create 3D element
+                    switch (topo.Count)
+                    {
+                        case 4:
+                            // tetrahedron element
+                            tempMesh.Faces.AddFace(0, 2, 1); //bottom
+                            tempMesh.Faces.AddFace(0, 1, 3); //side 1
+                            tempMesh.Faces.AddFace(1, 2, 3); //side 2
+                            tempMesh.Faces.AddFace(2, 0, 3); //side 3
+                            List<int> verts4 = new List<int>() { 0, 1, 2, 3 };
+                            List<int> faces4 = new List<int>() { 0, 1, 2, 3 };
+                            MeshNgon meshGon4 = MeshNgon.Create(verts4, faces4);
+                            tempMesh.Ngons.AddNgon(meshGon4);
+                            break;
+
+                        case 5:
+                            // pyramid element
+                            tempMesh.Faces.AddFace(0, 3, 2, 1); //bottom
+                            tempMesh.Faces.AddFace(0, 1, 4); //side 1
+                            tempMesh.Faces.AddFace(1, 2, 4); //side 2
+                            tempMesh.Faces.AddFace(2, 3, 4); //side 3
+                            tempMesh.Faces.AddFace(3, 0, 4); //side 4
+                            List<int> verts5 = new List<int>() { 0, 1, 2, 3, 4 };
+                            List<int> faces5 = new List<int>() { 0, 1, 2, 3, 4 };
+                            MeshNgon meshGon5 = MeshNgon.Create(verts5, faces5);
+                            tempMesh.Ngons.AddNgon(meshGon5);
+                            break;
+
+                        case 6:
+                            // wedge element
+                            tempMesh.Faces.AddFace(0, 2, 1); //end1
+                            tempMesh.Faces.AddFace(0, 3, 5, 2); //side 1
+                            tempMesh.Faces.AddFace(1, 2, 5, 4); //side 2
+                            tempMesh.Faces.AddFace(0, 1, 4, 3); //side 3
+                            tempMesh.Faces.AddFace(3, 4, 5); //end 2
+                            List<int> verts6 = new List<int>() { 0, 1, 2, 3, 4, 5 };
+                            List<int> faces6 = new List<int>() { 0, 1, 2, 3, 4 };
+                            MeshNgon meshGon6 = MeshNgon.Create(verts6, faces6);
+                            tempMesh.Ngons.AddNgon(meshGon6);
+                            break;
+
+                        case 8:
+                            // brick element
+                            tempMesh.Faces.AddFace(0, 3, 2, 1); //bottom
+                            tempMesh.Faces.AddFace(0, 1, 5, 4); //side 1
+                            tempMesh.Faces.AddFace(1, 2, 6, 5); //side 2
+                            tempMesh.Faces.AddFace(2, 3, 7, 6); //side 2
+                            tempMesh.Faces.AddFace(3, 0, 4, 7); //side 3
+                            tempMesh.Faces.AddFace(4, 5, 6, 7); //top
+                            List<int> verts8 = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
+                            List<int> faces8 = new List<int>() { 0, 1, 2, 3, 4, 5 };
+                            MeshNgon meshGon8 = MeshNgon.Create(verts8, faces8);
+                            tempMesh.Ngons.AddNgon(meshGon8);
+                            break;
+                        
+                        default:
+                            continue;
+                    }
+
+                    mList.Add(tempMesh);
+
+                    // get prop3d (if it exist)
+                    //GsaProp2d prop = new GsaProp2d();
+                    //prop.ID = elems[j].Property;
+                    //if (properties.TryGetValue(elems[j].Property, out Prop2D apiprop))
+                    //    prop.Prop2d = apiprop;
+                    //else
+                    //    prop.Prop2d = null;
+
+                    //prop2Ds.Add(prop);
+
+                    // set elemeent prop to 0 to force export to lookup GsaProp2d
+                    //elems[j].Property = 0;
+                }
+                // new mesh to merge existing into
+                Mesh m = new Mesh();
+                // create one large mesh from single mesh face using
+                // append list of meshes (faster than appending each mesh one by one)
+                m.Append(mList);
+
+                // if parent member value is 0 then no parent member exist for element
+                // we can therefore not be sure all elements with parent member = 0 are
+                // connected in one mesh.
+                if (hosts[i] == 0 && m.DisjointMeshCount > 1)
+                {
+                    // revert back to list of meshes instead of the joined one
+                    for (int j = 0; j < mList.Count; j++)
+                    {
+                        // create new element from mesh (takes care of topology lists etc)
+                        GsaElement3d singleelement3D = new GsaElement3d(mList[j]);
+
+                        // set elements list of IDs
+                        singleelement3D.ID = new List<int>();
+                        singleelement3D.ID.Add(IDs[i][j]);
+
+                        // set elements list of properties
+                        //singleelement3D.Properties = new List<GsaProp2d>();
+                        //singleelement3D.Properties.Add(prop2Ds[j]);
+
+                        // add element
+                        singleelement3D.Elements = new List<Element>();
+                        singleelement3D.Elements.Add(elems[j]);
+
+                        // add the element to list of goo 2d elements
+                        elem3dGoos.Add(new GsaElement3dGoo(singleelement3D));
+
+                    }
+                }
+                else
+                {
+                    // create new element from mesh (takes care of topology lists etc)
+                    GsaElement3d element3D = new GsaElement3d(m);
+
+                    // set elements list of IDs
+                    //if (!ngon) // we only set this if faces are tri or quad
+                    //{
+                    element3D.ID = IDs[i];
+
+                    // set elements list of properties
+                    //element3D.Properties = prop3Ds;
+
+                    // add the element to list of goo 2d elements
+
+                    //}
+                    element3D.Elements = elems;
+
+                    //while (element3D.Elements.Count != element3D.Properties.Count)
+                    //{
+                    //    if (element3D.Elements.Count > element3D.Properties.Count)
+                    //        element3D.Properties.Add(element3D.Properties[element3D.Properties.Count - 1]);
+                    //    else
+                    //        element3D.Properties.RemoveAt(element3D.Properties.Count - 1);
+                    //}
+
+                    elem3dGoos.Add(new GsaElement3dGoo(element3D));
+                }
+            }
+            return elem3dGoos;
+        }
         public static Element DuplicateElement(Element elem)
         {
             Element dup = new Element()

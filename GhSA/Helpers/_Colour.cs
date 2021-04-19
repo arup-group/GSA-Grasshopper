@@ -199,6 +199,19 @@ namespace GhSA.UI
                 return material;
             } 
         }
+        public static DisplayMaterial Element3dFace
+        {
+            get
+            {
+                DisplayMaterial material = new DisplayMaterial
+                {
+                    Diffuse = Color.FromArgb(50, 150, 150, 150),
+                    Emission = Color.FromArgb(50, 190, 190, 190),
+                    Transparency = 0.3
+                };
+                return material;
+            }
+        }
         public static DisplayMaterial FaceCustom(Color colour)
         {
             DisplayMaterial material = new DisplayMaterial()

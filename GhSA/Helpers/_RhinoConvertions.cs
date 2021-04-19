@@ -685,6 +685,60 @@ namespace GhSA.Util.GH
             return new Tuple<List<Element>, List<Point3d>, List<List<int>>>(elems, topoPts, topoInts);
         }
 
+        public static Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> ConvertMeshToElem3d(Mesh mesh, int prop = 1)
+        {
+            // list of elements to output
+            List<Element> elems = new List<Element>();
+            // list of points from mesh topology
+            List<Point3d> topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+            // list of reference ids between elements and points
+            List<List<int>> topoInts = new List<List<int>>();
+            // list of reference ids between elements and faces
+            List<List<int>> faceInts = new List<List<int>>();
+
+            // get list of mesh ngons (faces in mesh with both tri/quads and ngons above 4 verticies)
+            List<MeshNgon> ngons = mesh.GetNgonAndFacesEnumerable().ToList();
+
+            for (int i = 0; i < ngons.Count; i++)
+            {
+                // create new element
+                Element elem = new Element();
+                // copy topology list
+                List<int> topo = ngons[i].BoundaryVertexIndexList().Select(u => (int)u).ToList();
+                topoInts.Add(topo);
+                // switch between number of points and set element type
+                if (topo.Count == 4)
+                {
+                        elem.Type = ElementType.TETRA4;
+                        
+                }
+                else if (topo.Count == 5)
+                {
+                    elem.Type = ElementType.PYRAMID5;
+                }
+                else if (topo.Count == 6)
+                {
+                    elem.Type = ElementType.WEDGE6;
+                }
+                else if (topo.Count == 8)
+                {
+                    elem.Type = ElementType.BRICK8;
+                }
+
+                // add the facelist to list of facelists
+                List<int> faces = ngons[i].FaceIndexList().Select(u => (int)u).ToList();
+                faceInts.Add(faces);
+
+                // set the element property
+                elem.Property = prop;
+
+                // add element to list of elements
+                elems.Add(elem);
+            }
+
+            return new Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>>(elems, topoPts, topoInts, faceInts);
+        }
+
         public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<Parameters.GsaMember1d> mem1ds = null, List<Parameters.GsaNode> nodes = null)
         {
             Brep in_brep = brep.DuplicateBrep();
@@ -750,7 +804,7 @@ namespace GhSA.Util.GH
             model.CreateElementsFromMembers();
 
             // extract elements from model
-            Tuple<List<Parameters.GsaElement1dGoo>, List<Parameters.GsaElement2dGoo>> elementTuple
+            Tuple<List<Parameters.GsaElement1dGoo>, List<Parameters.GsaElement2dGoo>, List<Parameters.GsaElement3dGoo>> elementTuple
                 = Util.Gsa.FromGSA.GetElements(model.Elements(), model.Nodes(), model.Sections(), model.Prop2Ds());
 
             List<Parameters.GsaElement2dGoo> elem2dgoo = elementTuple.Item2;

@@ -56,7 +56,7 @@ namespace GhSA.Util.Gsa.ToGSA
             nodes.Select(c => { c.ID = 0; return c; }).ToList();
 
             // get elements
-            Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>> elementTuple
+            Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> elementTuple
                 = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict);
             // convert from Goo-type
             List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
@@ -67,7 +67,11 @@ namespace GhSA.Util.Gsa.ToGSA
             // change all members in List's ID to 0;
             foreach (var elem2d in elem2ds)
                 elem2d.ID.Select(c => { c = 0; return c; }).ToList();
-            
+            // convert from Goo-type
+            List<GsaElement3d> elem3ds = elementTuple.Item3.Select(n => n.Value).ToList();
+            // change all members in List's ID to 0;
+            foreach (var elem3d in elem3ds)
+                elem3d.ID.Select(c => { c = 0; return c; }).ToList();
 
             // get members
             Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>> memberTuple
@@ -117,7 +121,7 @@ namespace GhSA.Util.Gsa.ToGSA
             List<GsaGridPlaneSurface> gps = gpsgoo.Select(n => n.Value).ToList();
 
             // return new assembled model
-            mainModel.Model = Assemble.AssembleModel(mainModel, nodes, elem1ds, elem2ds, mem1ds, mem2ds, null, sections, prop2Ds, loads, gps);
+            mainModel.Model = Assemble.AssembleModel(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, loads, gps);
             return mainModel;
         }
     }
@@ -166,7 +170,7 @@ namespace GhSA.Util.Gsa.ToGSA
         }
 
         public static Model AssembleModel(GsaModel model, List<GsaNode> nodes, 
-            List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
+            List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,
             List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
             List<GsaSection> sections, List<GsaProp2d> prop2Ds, 
             List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
@@ -241,6 +245,9 @@ namespace GhSA.Util.Gsa.ToGSA
 
             // Set / add 2D elements to dictionary
             Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, ref apiprop2ds, workerInstance, ReportProgress);
+
+            // Set / add 3D elements to dictionary
+            Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, workerInstance, ReportProgress);
             #endregion
 
             #region Members

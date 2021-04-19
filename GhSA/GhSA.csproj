@@ -121,6 +121,7 @@
     <Compile Include="Components\1_Properties\CreateMaterial.cs" />
     <Compile Include="Components\1_Properties\EditMaterial.cs" />
     <Compile Include="Components\2_Geometry\CreateMember3d.cs" />
+    <Compile Include="Components\2_Geometry\EditElement3d.cs" />
     <Compile Include="Components\2_Geometry\EditMember3d.cs" />
     <Compile Include="Components\2_Geometry\Elem2dFromBrep.cs" />
     <Compile Include="Components\2_Geometry\ElemFromMem.cs" />
@@ -182,6 +183,7 @@
     <Compile Include="Components\0_Model\OpenModel.cs" />
     <Compile Include="GSAInfo.cs" />
     <Compile Include="Helpers\_SqlReader.cs" />
+    <Compile Include="Parameters\GsaElem3dParam.cs" />
     <Compile Include="Parameters\GsaLoadParam.cs" />
     <Compile Include="Parameters\GsaGridPlaneSurfaceParam.cs" />
     <Compile Include="Parameters\GsaMem3dParam.cs" />
@@ -627,6 +629,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\2dElemsFromBrep.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\EditElem3D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\GsaElement3D.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -198,7 +198,7 @@ namespace GhSA.Components
                 // create nodes
                 List<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(out_nDict, model);
                 // create elements
-                Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>> elementTuple
+                Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> elementTuple
                     = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict);
                 // create members
                 Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>> memberTuple
@@ -208,6 +208,7 @@ namespace GhSA.Components
 
                 DA.SetDataList(1, elementTuple.Item1);
                 DA.SetDataList(2, elementTuple.Item2);
+                DA.SetDataList(3, elementTuple.Item3);
 
                 DA.SetDataList(4, memberTuple.Item1);
                 DA.SetDataList(5, memberTuple.Item2);

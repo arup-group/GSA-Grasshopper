@@ -190,5 +190,95 @@ namespace GhSA.Util.Gsa.ToGSA
             }
         }
         #endregion
+
+        #region element3d
+
+        public static void ConvertElement3D(GsaElement3d element3d,
+            ref Dictionary<int, Element> existingElements, ref int elementidcounter,
+            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter
+            )
+        {
+            List<Point3d> meshVerticies = element3d.Topology;
+
+            //Loop through all faces in mesh to update topology list to fit model nodes
+            for (int i = 0; i < element3d.Elements.Count; i++)
+            {
+                Element apiMeshElement = element3d.Elements[i];
+                List<int> meshVertexIndex = element3d.TopoInt[i];
+
+                List<int> topo = new List<int>(); // temp topologylist
+
+                //Loop through topology
+                for (int j = 0; j < meshVertexIndex.Count; j++)
+                {
+                    int id = Nodes.GetExistingNodeID(existingNodes, meshVerticies[meshVertexIndex[j]]);
+                    if (id > 0)
+                        topo.Add(id);
+                    else
+                    {
+                        existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(meshVerticies[meshVertexIndex[j]]));
+                        topo.Add(nodeidcounter);
+                        nodeidcounter++;
+                    }
+                }
+                //update topology in Element
+                apiMeshElement.Topology = new ReadOnlyCollection<int>(topo.ToList());
+
+                // section
+                //if (apiMeshElement.Property == 0)
+                //    apiMeshElement.Property = Prop2ds.ConvertProp2d(element2d.Properties[i], ref existingProp2Ds, ref prop2didcounter);
+
+
+                // set api element in dictionary
+                if (element3d.ID[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+                {
+                    existingElements[element3d.ID[i]] = apiMeshElement;
+                }
+                else
+                {
+                    existingElements.Add(elementidcounter, apiMeshElement);
+                    elementidcounter++;
+                }
+            }
+        }
+        public static void ConvertElement3D(List<GsaElement3d> element3ds,
+            ref Dictionary<int, Element> existingElements, ref int elementidcounter,
+            ref Dictionary<int, Node> existingNodes,
+            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
+            Action<string, double> ReportProgress = null)
+        {
+            // create a counter for creating new elements, nodes and properties
+            int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
+            //int prop2didcounter = (existingProp2Ds.Count > 0) ? existingProp2Ds.Keys.Max() + 1 : 1; //checking the existing model
+
+            // Elem3ds
+            if (element3ds != null)
+            {
+                for (int i = 0; i < element3ds.Count; i++)
+                {
+                    if (workerInstance != null)
+                    {
+                        if (workerInstance.CancellationToken.IsCancellationRequested) return;
+                        ReportProgress("Elem3D ", (double)i / (element3ds.Count - 1));
+                    }
+
+
+                    if (element3ds[i] != null)
+                    {
+                        GsaElement3d element3d = element3ds[i];
+
+                        ConvertElement3D(element3d,
+                            ref existingElements, ref elementidcounter,
+                            ref existingNodes, ref nodeidcounter);
+
+                    }
+                }
+            }
+            if (workerInstance != null)
+            {
+                ReportProgress("Elem3D assembled", -2);
+            }
+        }
+        #endregion
     }
 }
