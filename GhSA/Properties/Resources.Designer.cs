@@ -283,6 +283,16 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap EditElem3D {
+            get {
+                object obj = ResourceManager.GetObject("EditElem3D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap EditMaterial {
             get {
                 object obj = ResourceManager.GetObject("EditMaterial", resourceCulture);
@@ -566,6 +576,16 @@ namespace GhSA.Properties {
         public static System.Drawing.Bitmap GsaElement2D {
             get {
                 object obj = ResourceManager.GetObject("GsaElement2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GsaElement3D {
+            get {
+                object obj = ResourceManager.GetObject("GsaElement3D", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

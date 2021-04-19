@@ -45,24 +45,30 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("1D Members", "M1D", "GSA 1D Member to create 1D Elements from", GH_ParamAccess.list);
-            pManager.AddGenericParameter("2D Members", "M2D", "GSA 2D Member to create 2D Elements from", GH_ParamAccess.list);
-            pManager.AddGenericParameter("3D Members", "M3D", "GSA 3D Member to create 3D Elements from", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Nodes", "No", "Nodes to be included in meshing", GH_ParamAccess.list);
+            pManager.AddGenericParameter("1D Members", "M1D", "1D Members to create 1D Elements from", GH_ParamAccess.list);
+            pManager.AddGenericParameter("2D Members", "M2D", "2D Members to create 2D Elements from", GH_ParamAccess.list);
+            pManager.AddGenericParameter("3D Members", "M3D", "3D Members to create 3D Elements from", GH_ParamAccess.list);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
             pManager[2].Optional = true;
+            pManager[3].Optional = true;
 
             pManager.HideParameter(0);
             pManager.HideParameter(1);
             pManager.HideParameter(2);
+            pManager.HideParameter(3);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+            pManager.AddGenericParameter("Nodes", "No", "GSA Nodes", GH_ParamAccess.list);
+            pManager.HideParameter(0);
             pManager.AddGenericParameter("1D Elements", "E1D", "GSA 1D Elements", GH_ParamAccess.list);
             pManager.AddGenericParameter("2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
             pManager.AddGenericParameter("3D Elements", "E3D", "GSA 3D Elements", GH_ParamAccess.item);
+            pManager.AddGenericParameter("GSA Model", "GSA", "GSA Model with Elements and Members", GH_ParamAccess.item);
         }
         #endregion
 
@@ -72,8 +78,29 @@ namespace GhSA.Components
             // Get Member1d input
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
-            List<GsaMember1d> in_mem1ds = new List<GsaMember1d>();
+
+            List<GsaNode> in_nodes = new List<GsaNode>();
             if (DA.GetDataList(0, gh_types))
+            {
+                for (int i = 0; i < gh_types.Count; i++)
+                {
+                    gh_typ = gh_types[i];
+                    if (gh_typ.Value is GsaNodeGoo)
+                    {
+                        GsaNode gsanode = new GsaNode();
+                        gh_typ.CastTo(ref gsanode);
+                        in_nodes.Add(gsanode);
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Node input");
+                        return;
+                    }
+                }
+            }
+
+            List<GsaMember1d> in_mem1ds = new List<GsaMember1d>();
+            if (DA.GetDataList(1, gh_types))
             {
                 for (int i = 0; i < gh_types.Count; i++)
                 {
@@ -95,7 +122,7 @@ namespace GhSA.Components
             // Get Member2d input
             gh_types = new List<GH_ObjectWrapper>();
             List<GsaMember2d> in_mem2ds = new List<GsaMember2d>();
-            if (DA.GetDataList(1, gh_types))
+            if (DA.GetDataList(2, gh_types))
             {
                 for (int i = 0; i < gh_types.Count; i++)
                 {
@@ -117,7 +144,7 @@ namespace GhSA.Components
             // Get Member3d input
             gh_types = new List<GH_ObjectWrapper>();
             List<GsaMember3d> in_mem3ds = new List<GsaMember3d>();
-            if (DA.GetDataList(2, gh_types))
+            if (DA.GetDataList(3, gh_types))
             {
                 for (int i = 0; i < gh_types.Count; i++)
                 {
@@ -141,25 +168,30 @@ namespace GhSA.Components
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameters failed to collect data");
             #endregion
 
-            // assemble temp model
-            Model model = GhSA.Util.Gsa.ToGSA.Assemble.AssembleModel(in_mem3ds, in_mem2ds, in_mem1ds);
+            // Assemble model
+            Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null);
 
-            // call the meshing algorithm
-            model.CreateElementsFromMembers();
+            #region meshing
+            // Create elements from members
+            gsa.CreateElementsFromMembers();
+            #endregion
+
+            // extract nodes from model
+            List<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(gsa.Nodes(), gsa);
 
             // extract elements from model
-            Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>> elementTuple
-                = Util.Gsa.FromGSA.GetElements(model.Elements(), model.Nodes(), model.Sections(), model.Prop2Ds());
+            Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> elementTuple
+                = Util.Gsa.FromGSA.GetElements(gsa.Elements(), gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds());
 
-            // temporarily set third output to GsaModel to test if it is working
-            // replace with Elem3d when this is done
+            // expose internal model if anyone wants to use it
             GsaModel outModel = new GsaModel();
-            outModel.Model = model;
+            outModel.Model = gsa;
 
-            // set output
-            DA.SetDataList(0, elementTuple.Item1);
-            DA.SetDataList(1, elementTuple.Item2);
-            DA.SetData(2, new GsaModelGoo(outModel));
+            DA.SetDataList(0, nodes);
+            DA.SetDataList(1, elementTuple.Item1);
+            DA.SetDataList(2, elementTuple.Item2);
+            DA.SetDataList(3, elementTuple.Item3);
+            DA.SetData(4, new GsaModelGoo(outModel));
             
             // custom display settings for element2d mesh
             element2ds = elementTuple.Item2;

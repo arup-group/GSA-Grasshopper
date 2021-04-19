@@ -59,6 +59,7 @@ namespace GhSA.Components
             List<GsaNode> Nodes { get; set; }
             List<GsaElement1d> Elem1ds { get; set; }
             List<GsaElement2d> Elem2ds { get; set; }
+            List<GsaElement3d> Elem3ds { get; set; }
             List<GsaMember1d> Mem1ds { get; set; }
             List<GsaMember2d> Mem2ds { get; set; }
             List<GsaMember3d> Mem3ds { get; set; }
@@ -78,6 +79,7 @@ namespace GhSA.Components
                 Nodes = null;
                 Elem1ds = null;
                 Elem2ds = null;
+                Elem3ds = null;
                 Mem1ds = null;
                 Mem2ds = null;
                 Mem3ds = null;
@@ -159,6 +161,7 @@ namespace GhSA.Components
                 List<GsaNode> in_nodes = new List<GsaNode>();
                 List<GsaElement1d> in_elem1ds = new List<GsaElement1d>();
                 List<GsaElement2d> in_elem2ds = new List<GsaElement2d>();
+                List<GsaElement3d> in_elem3ds = new List<GsaElement3d>();
                 List<GsaMember1d> in_mem1ds = new List<GsaMember1d>();
                 List<GsaMember2d> in_mem2ds = new List<GsaMember2d>();
                 List<GsaMember3d> in_mem3ds = new List<GsaMember3d>();
@@ -185,6 +188,12 @@ namespace GhSA.Components
                             GsaElement2d gsaelem2 = new GsaElement2d();
                             gh_typ.CastTo(ref gsaelem2);
                             in_elem2ds.Add(gsaelem2);
+                        }
+                        else if (gh_typ.Value is GsaElement3dGoo)
+                        {
+                            GsaElement3d gsaelem3 = new GsaElement3d();
+                            gh_typ.CastTo(ref gsaelem3);
+                            in_elem3ds.Add(gsaelem3);
                         }
                         else if (gh_typ.Value is GsaMember1dGoo)
                         {
@@ -220,6 +229,8 @@ namespace GhSA.Components
                         Elem1ds = in_elem1ds;
                     if (in_elem2ds.Count > 0)
                         Elem2ds = in_elem2ds;
+                    if (in_elem3ds.Count > 0)
+                        Elem3ds = in_elem3ds;
                     if (in_mem1ds.Count > 0)
                         Mem1ds = in_mem1ds;
                     if (in_mem2ds.Count > 0)
@@ -321,7 +332,7 @@ namespace GhSA.Components
 
                     // Assemble model
                     ReportProgress("Assembling model...", -2);
-                    Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces, this, ReportProgress);
+                    Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces, this, ReportProgress);
                     if (gsa == null) { return; }
                     ReportProgress("Model assembled", -1);
 
