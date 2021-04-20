@@ -310,7 +310,7 @@ namespace GhSA.Components
 
             // Assemble model
             Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces);
-
+            //gsa.SaveAs(@"C:\Users\Kristjan.Nielsen\Desktop\test3.gwb");
             #region meshing
             // Create elements from members
             gsa.CreateElementsFromMembers();
