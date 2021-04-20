@@ -100,7 +100,7 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Analysis Property", "ID", "Analysis Property Number (default = 0 which is 'from Grade')", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Analysis Property", "An", "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
             pManager.AddIntegerParameter("Grade", "Gr", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -161,7 +161,7 @@ namespace GhSA.Components
             Fabric
         }
         private bool first = true;
-        private FoldMode _mode = FoldMode.Concrete;
+        private FoldMode _mode = FoldMode.Timber;
 
 
         private void Mode1Clicked()

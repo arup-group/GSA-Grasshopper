@@ -130,7 +130,7 @@ namespace GhSA.Util.GH
                     m_crv = new PolyCurve();
 
                     if (tolerance < 0)
-                        tolerance = Tolerance.RhinoDocTolerance();
+                        tolerance = GhSA.Units.Tolerance;
 
                     crv = crv.ToPolyline(tolerance * 20, 5, 0, 0);
 

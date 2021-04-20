@@ -156,18 +156,20 @@ namespace GhSA.Components
                         else
                         {
                             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                                prop.Prop2d.MaterialAnalysisProperty = idd;
+                            {
+                                prop.Material = new GsaMaterial(idd);
+
+                            }
                             else
                             {
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
                                 return;
                             }
                         }
-
                     }
                     else
-                        prop.Prop2d.MaterialAnalysisProperty = 1;
-                    
+                        prop.Material = new GsaMaterial(2);
+
                     // 1 thickness
                     GH_String gh_THK = new GH_String();
                     string thickness = "0.2";
@@ -370,7 +372,17 @@ namespace GhSA.Components
                 int i = 0;
                 Params.Input[i].NickName = "Mat";
                 Params.Input[i].Name = "Material";
-                Params.Input[i].Description = "GsaMaterial or Reference ID for Material Property in Existing GSA Model";
+                Params.Input[i].Description = "GsaMaterial or Number for referring to a Material already in Existing GSA Model." + System.Environment.NewLine
+                    + "Accepted inputs are: " + System.Environment.NewLine
+                    + "0 : Generic" + System.Environment.NewLine
+                    + "1 : Steel" + System.Environment.NewLine
+                    + "2 : Concrete (default)" + System.Environment.NewLine
+                    + "3 : Aluminium" + System.Environment.NewLine
+                    + "4 : Glass" + System.Environment.NewLine
+                    + "5 : FRP" + System.Environment.NewLine
+                    + "7 : Timber" + System.Environment.NewLine
+                    + "8 : Fabric";
+
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = true;
 
