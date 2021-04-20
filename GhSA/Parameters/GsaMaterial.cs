@@ -25,7 +25,6 @@ namespace GhSA.Parameters
             NONE = -1,
             GENERIC = 0,
             STEEL = 1,
-            FIRST = 1,
             CONCRETE = 2,
             ALUMINIUM = 3,
             GLASS = 4,
@@ -66,8 +65,8 @@ namespace GhSA.Parameters
 
         #region fields
         //int m_idd = 0;
-        int m_grade;
-        int m_analProp;
+        int m_grade = 1;
+        int m_analProp = 0;
         
         #endregion
 
@@ -75,8 +74,6 @@ namespace GhSA.Parameters
         public GsaMaterial()
         {
             Type = MatType.GENERIC;
-            //ID = 0;
-            m_analProp = 1;
         }
         private MatType getType(MaterialType materialType)
         {
@@ -90,7 +87,7 @@ namespace GhSA.Parameters
             if (materialType == MaterialType.TIMBER)
                 m_type = MatType.TIMBER;
             if (materialType == MaterialType.ALUMINIUM)
-                Type = MatType.ALUMINIUM;
+                m_type = MatType.ALUMINIUM;
             if (materialType == MaterialType.FRP)
                 m_type = MatType.FRP;
             if (materialType == MaterialType.GLASS)
@@ -98,6 +95,21 @@ namespace GhSA.Parameters
             if (materialType == MaterialType.FABRIC)
                 m_type = MatType.FABRIC;
             return m_type;
+        }
+        /// <summary>
+        /// 0 : Generic
+        /// 1 : Steel
+        /// 2 : Concrete
+        /// 3 : Aluminium
+        /// 4 : Glass
+        /// 5 : FRP
+        /// 7 : Timber
+        /// 8 : Fabric
+        /// </summary>
+        /// <param name="material_id"></param>
+        public GsaMaterial (int material_id)
+        {
+            Type = (MatType)material_id;
         }
         public GsaMaterial(GsaSection section)
         {

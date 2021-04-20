@@ -43,7 +43,16 @@ namespace GhSA.Components
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Profile", "Pf", "Cross-Section Profile", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Material", "Ma", "Section Material or Reference ID for Material Property in Existing GSA Model", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Material", "Ma", "GsaMaterial or Number for referring to a Material already in Existing GSA Model." + System.Environment.NewLine
+                    + "Accepted inputs are: " + System.Environment.NewLine
+                    + "0 : Generic" + System.Environment.NewLine
+                    + "1 : Steel" + System.Environment.NewLine
+                    + "2 : Concrete" + System.Environment.NewLine
+                    + "3 : Aluminium" + System.Environment.NewLine
+                    + "4 : Glass" + System.Environment.NewLine
+                    + "5 : FRP" + System.Environment.NewLine
+                    + "7 : Timber (default - because your Carbon Emissions matter!)" + System.Environment.NewLine
+                    + "8 : Fabric", GH_ParamAccess.item);
 
             for (int i = 1; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
@@ -82,7 +91,7 @@ namespace GhSA.Components
                         else
                         {
                             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                                gsaSection.Section.MaterialAnalysisProperty = idd;
+                                gsaSection.Material = new GsaMaterial(idd);
                             else
                             {
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
@@ -91,7 +100,7 @@ namespace GhSA.Components
                         }
                     }
                     else
-                        gsaSection.Section.MaterialAnalysisProperty = 1;
+                        gsaSection.Material = new GsaMaterial(7);
 
                 }
                 DA.SetData(0, new GsaSectionGoo(gsaSection));

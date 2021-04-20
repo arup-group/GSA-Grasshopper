@@ -132,13 +132,13 @@ namespace GhSA.Components
                     {
                         GsaSection gsasection = new GsaSection();
                         gh_typ.CastTo(ref gsasection);
-                        in_sect.Add(gsasection);
+                        in_sect.Add(gsasection.Duplicate());
                     }
                     else if (gh_typ.Value is GsaProp2dGoo)
                     {
                         GsaProp2d gsaprop = new GsaProp2d();
                         gh_typ.CastTo(ref gsaprop);
-                        in_prop.Add(gsaprop);
+                        in_prop.Add(gsaprop.Duplicate());
                     }
                     else
                     {
@@ -175,43 +175,43 @@ namespace GhSA.Components
                     {
                         GsaNode gsanode = new GsaNode();
                         gh_typ.CastTo(ref gsanode);
-                        in_nodes.Add(gsanode);
+                        in_nodes.Add(gsanode.Duplicate());
                     }
                     else if (gh_typ.Value is GsaElement1dGoo)
                     {
                         GsaElement1d gsaelem1 = new GsaElement1d();
                         gh_typ.CastTo(ref gsaelem1);
-                        in_elem1ds.Add(gsaelem1);
+                        in_elem1ds.Add(gsaelem1.Duplicate());
                     }
                     else if (gh_typ.Value is GsaElement2dGoo)
                     {
                         GsaElement2d gsaelem2 = new GsaElement2d();
                         gh_typ.CastTo(ref gsaelem2);
-                        in_elem2ds.Add(gsaelem2);
+                        in_elem2ds.Add(gsaelem2.Duplicate());
                     }
                     else if (gh_typ.Value is GsaElement3dGoo)
                     {
                         GsaElement3d gsaelem3 = new GsaElement3d();
                         gh_typ.CastTo(ref gsaelem3);
-                        in_elem3ds.Add(gsaelem3);
+                        in_elem3ds.Add(gsaelem3.Duplicate());
                     }
                     else if (gh_typ.Value is GsaMember1dGoo)
                     {
                         GsaMember1d gsamem1 = new GsaMember1d();
                         gh_typ.CastTo(ref gsamem1);
-                        in_mem1ds.Add(gsamem1);
+                        in_mem1ds.Add(gsamem1.Duplicate());
                     }
                     else if (gh_typ.Value is GsaMember2dGoo)
                     {
                         GsaMember2d gsamem2 = new GsaMember2d();
                         gh_typ.CastTo(ref gsamem2);
-                        in_mem2ds.Add(gsamem2);
+                        in_mem2ds.Add(gsamem2.Duplicate());
                     }
                     else if (gh_typ.Value is GsaMember3dGoo)
                     {
                         GsaMember3d gsamem3 = new GsaMember3d();
                         gh_typ.CastTo(ref gsamem3);
-                        in_mem3ds.Add(gsamem3);
+                        in_mem3ds.Add(gsamem3.Duplicate());
                     }
                     else
                     {
@@ -253,13 +253,13 @@ namespace GhSA.Components
                     {
                         GsaLoad gsaload = null;
                         gh_typ.CastTo(ref gsaload);
-                        in_loads.Add(gsaload);
+                        in_loads.Add(gsaload.Duplicate());
                     }
                     else if (gh_typ.Value is GsaGridPlaneSurfaceGoo)
                     {
                         GsaGridPlaneSurface gsaGPS = new GsaGridPlaneSurface();
                         gh_typ.CastTo(ref gsaGPS);
-                        in_gps.Add(gsaGPS);
+                        in_gps.Add(gsaGPS.Duplicate());
                     }
                     else
                     {
