@@ -356,7 +356,6 @@ namespace GhSA.Components
         int typeIndex = -1;
 
         // displayed selections
-        string catalogueName = "All";
         string typeName = "All";
         string sectionName = "All";
 

@@ -168,6 +168,99 @@ namespace GhSA.Util.Gsa
         }
         
         /// <summary>
+        /// Method to get convert an Element to a Mesh with one face (tri, quad or ngon)
+        /// </summary>
+        /// <param name="element">Element to get mesh face from</param>
+        /// <param name="nodes">Dictionary of nodes that includes nodes for the topology which the element.Topology refers to. Typically use all nodes from a GSA model</param>
+        /// <returns></returns>
+        public static Mesh ConvertElement2D(Element element, IReadOnlyDictionary<int, Node> nodes)
+        {
+            // get element's topology
+            ReadOnlyCollection<int> topo = element.Topology;
+
+            // check if element is 2D
+            if (topo.Count < 3 ||
+                element.Type == ElementType.THREE_D ||
+                element.Type == ElementType.BRICK8 ||
+                element.Type == ElementType.WEDGE6 ||
+                element.Type == ElementType.PYRAMID5 ||
+                element.Type == ElementType.TETRA4)
+                return null;
+
+            Mesh outMesh = new Mesh();
+
+            // Get verticies:
+            for (int k = 0; k < topo.Count; k++)
+            {
+                if (nodes.TryGetValue(topo[k], out Node node))
+                {
+                    {
+                        var p = node.Position;
+                        outMesh.Vertices.Add(new Point3d(p.X, p.Y, p.Z));
+                    }
+                }
+            }
+
+            // Create mesh face (Tri- or Quad):
+            if (topo.Count == 3)
+                outMesh.Faces.AddFace(0, 1, 2);
+            else if (topo.Count == 4)
+                outMesh.Faces.AddFace(0, 1, 2, 3);
+            else if (topo.Count > 4)
+            {
+                // so we introduce the average middle point and create more faces
+
+                if (topo.Count == 6)
+                {
+                    outMesh.Faces.AddFace(0, 3, 5);
+                    outMesh.Faces.AddFace(1, 4, 3);
+                    outMesh.Faces.AddFace(2, 5, 4);
+                    outMesh.Faces.AddFace(3, 4, 5);
+                    List<int> tri6Vert = new List<int>() { 0, 3, 1, 4, 2, 5 };
+                    List<int> tri6Face = new List<int>() { 0, 1, 2, 3 };
+                    MeshNgon meshGon = MeshNgon.Create(tri6Vert, tri6Face);
+
+                    outMesh.Ngons.AddNgon(meshGon);
+                }
+
+                if (topo.Count == 8)
+                {
+                    Point3d ave = new Point3d();
+                    ave.X = 0;
+                    ave.Y = 0;
+                    ave.Z = 0;
+                    for (int k = 0; k < topo.Count; k++)
+                    {
+                        ave.X += outMesh.Vertices[k].X;
+                        ave.Y += outMesh.Vertices[k].Y;
+                        ave.Z += outMesh.Vertices[k].Z;
+                    }
+                    ave.X = ave.X / topo.Count;
+                    ave.Y = ave.Y / topo.Count;
+                    ave.Z = ave.Z / topo.Count;
+
+                    outMesh.Vertices.Add(ave);
+
+                    outMesh.Faces.AddFace(0, 4, 8);
+                    outMesh.Faces.AddFace(1, 8, 4);
+                    outMesh.Faces.AddFace(1, 5, 8);
+                    outMesh.Faces.AddFace(2, 8, 5);
+                    outMesh.Faces.AddFace(2, 6, 8);
+                    outMesh.Faces.AddFace(3, 8, 6);
+                    outMesh.Faces.AddFace(3, 7, 8);
+                    outMesh.Faces.AddFace(0, 8, 7);
+                    List<int> quad8vert = new List<int>() { 0, 4, 1, 5, 2, 6, 3, 7 };
+                    List<int> quad8Face = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
+
+                    MeshNgon meshGon = MeshNgon.Create(quad8vert, quad8Face);
+
+                    outMesh.Ngons.AddNgon(meshGon);
+                }
+            }
+            return outMesh;
+        }
+
+        /// <summary>
         /// Method to bulk convert 2D Elements to GhSA Element 2Ds
         /// Will output a list of GsaElement2dGoos
         /// </summary>
@@ -224,97 +317,12 @@ namespace GhSA.Util.Gsa
                 // create list of meshes
                 List<Mesh> mList = new List<Mesh>();
 
-                // bool to handle tri6 or quad8 elements not supported in Rhino
-                bool ngon = false;
-
                 // loop through elements in list
                 for (int j = 0; j < elems.Count; j++)
                 {
-                    // get element's topology
-                    ReadOnlyCollection<int> topo = elems[j].Topology;
-
-                    // check if element is 2D
-                    if (topo.Count < 3 || 
-                        elems[j].Type == ElementType.THREE_D ||
-                        elems[j].Type == ElementType.BRICK8 ||
-                        elems[j].Type == ElementType.WEDGE6 ||
-                        elems[j].Type == ElementType.PYRAMID5 ||
-                        elems[j].Type == ElementType.TETRA4)
-                        continue;
-
-                    Mesh tempMesh = new Mesh();
-                    // Get verticies:
-                    for (int k = 0; k < topo.Count; k++)
-                    {
-                        if (nodes.TryGetValue(topo[k], out Node node))
-                        {
-                            {
-                                var p = node.Position;
-                                tempMesh.Vertices.Add(new Point3d(p.X, p.Y, p.Z));
-                            }
-                        }
-                    }
-                    
-                    // Create mesh face (Tri- or Quad):
-                    if (topo.Count == 3)
-                        tempMesh.Faces.AddFace(0, 1, 2);
-                    else if (topo.Count == 4)
-                        tempMesh.Faces.AddFace(0, 1, 2, 3);
-                    else if (topo.Count > 4)
-                    {
-                        //it must be a TRI6 or a QUAD8 and Rhino doesnt handle these
-                        ngon = true;
-                        // so we introduce the average middle point and create more faces
-
-                        if (topo.Count == 6)
-                        {
-                            tempMesh.Faces.AddFace(0, 3, 5);
-                            tempMesh.Faces.AddFace(1, 4, 3);
-                            tempMesh.Faces.AddFace(2, 5, 4);
-                            tempMesh.Faces.AddFace(3, 4, 5);
-                            List<int> tri6Vert = new List<int>() { 0, 3, 1, 4, 2, 5 };
-                            List<int> tri6Face = new List<int>() { 0, 1, 2, 3 };
-                            MeshNgon meshGon = MeshNgon.Create(tri6Vert, tri6Face);
-
-                            tempMesh.Ngons.AddNgon(meshGon);
-                        }
-
-                        if (topo.Count == 8)
-                        {
-                            Point3d ave = new Point3d();
-                            ave.X = 0;
-                            ave.Y = 0;
-                            ave.Z = 0;
-                            for (int k = 0; k < topo.Count; k++)
-                            {
-                                ave.X += tempMesh.Vertices[k].X;
-                                ave.Y += tempMesh.Vertices[k].Y;
-                                ave.Z += tempMesh.Vertices[k].Z;
-                            }
-                            ave.X = ave.X / topo.Count;
-                            ave.Y = ave.Y / topo.Count;
-                            ave.Z = ave.Z / topo.Count;
-
-                            tempMesh.Vertices.Add(ave);
-
-                            tempMesh.Faces.AddFace(0, 4, 8);
-                            tempMesh.Faces.AddFace(1, 8, 4);
-                            tempMesh.Faces.AddFace(1, 5, 8);
-                            tempMesh.Faces.AddFace(2, 8, 5);
-                            tempMesh.Faces.AddFace(2, 6, 8);
-                            tempMesh.Faces.AddFace(3, 8, 6);
-                            tempMesh.Faces.AddFace(3, 7, 8);
-                            tempMesh.Faces.AddFace(0, 8, 7);
-                            List<int> quad8vert = new List<int>() { 0, 4, 1, 5, 2, 6, 3, 7 };
-                            List<int> quad8Face = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
-
-                            MeshNgon meshGon = MeshNgon.Create(quad8vert, quad8Face);
-
-                            tempMesh.Ngons.AddNgon(meshGon);
-                        }
-
-                    }
-                    mList.Add(tempMesh);
+                    Mesh faceMesh = ConvertElement2D(elems[j], nodes);
+                    if (faceMesh == null) { continue; }
+                    mList.Add(faceMesh);
 
                     // get prop2d (if it exist)
                     GsaProp2d prop = new GsaProp2d();
@@ -395,6 +403,98 @@ namespace GhSA.Util.Gsa
             return elem2dGoos;
         }
 
+        public static Mesh ConvertElement3D(Element element, IReadOnlyDictionary<int, Node> nodes)
+        {
+            // get element's topology
+            ReadOnlyCollection<int> topo = element.Topology;
+
+            // check if element is 3D
+            List<bool> check3d = new List<bool>
+                    {
+                        element.Type == ElementType.THREE_D,
+                        element.Type == ElementType.BRICK8,
+                        element.Type == ElementType.WEDGE6,
+                        element.Type == ElementType.PYRAMID5,
+                        element.Type == ElementType.TETRA4
+                    };
+            if (!check3d.Contains(true))
+                return null;
+
+            Mesh outMesh = new Mesh();
+
+            // Get verticies:
+            for (int k = 0; k < topo.Count; k++)
+            {
+                if (nodes.TryGetValue(topo[k], out Node node))
+                {
+                    {
+                        var p = node.Position;
+                        outMesh.Vertices.Add(new Point3d(p.X, p.Y, p.Z));
+                    }
+                }
+            }
+
+            // Create 3D element
+            switch (topo.Count)
+            {
+                case 4:
+                    // tetrahedron element
+                    outMesh.Faces.AddFace(0, 2, 1); //bottom
+                    outMesh.Faces.AddFace(0, 1, 3); //side 1
+                    outMesh.Faces.AddFace(1, 2, 3); //side 2
+                    outMesh.Faces.AddFace(2, 0, 3); //side 3
+                    List<int> verts4 = new List<int>() { 0, 1, 2, 3 };
+                    List<int> faces4 = new List<int>() { 0, 1, 2, 3 };
+                    MeshNgon meshGon4 = MeshNgon.Create(verts4, faces4);
+                    outMesh.Ngons.AddNgon(meshGon4);
+                    break;
+
+                case 5:
+                    // pyramid element
+                    outMesh.Faces.AddFace(0, 3, 2, 1); //bottom
+                    outMesh.Faces.AddFace(0, 1, 4); //side 1
+                    outMesh.Faces.AddFace(1, 2, 4); //side 2
+                    outMesh.Faces.AddFace(2, 3, 4); //side 3
+                    outMesh.Faces.AddFace(3, 0, 4); //side 4
+                    List<int> verts5 = new List<int>() { 0, 1, 2, 3, 4 };
+                    List<int> faces5 = new List<int>() { 0, 1, 2, 3, 4 };
+                    MeshNgon meshGon5 = MeshNgon.Create(verts5, faces5);
+                    outMesh.Ngons.AddNgon(meshGon5);
+                    break;
+
+                case 6:
+                    // wedge element
+                    outMesh.Faces.AddFace(0, 2, 1); //end1
+                    outMesh.Faces.AddFace(0, 3, 5, 2); //side 1
+                    outMesh.Faces.AddFace(1, 2, 5, 4); //side 2
+                    outMesh.Faces.AddFace(0, 1, 4, 3); //side 3
+                    outMesh.Faces.AddFace(3, 4, 5); //end 2
+                    List<int> verts6 = new List<int>() { 0, 1, 2, 3, 4, 5 };
+                    List<int> faces6 = new List<int>() { 0, 1, 2, 3, 4 };
+                    MeshNgon meshGon6 = MeshNgon.Create(verts6, faces6);
+                    outMesh.Ngons.AddNgon(meshGon6);
+                    break;
+
+                case 8:
+                    // brick element
+                    outMesh.Faces.AddFace(0, 3, 2, 1); //bottom
+                    outMesh.Faces.AddFace(0, 1, 5, 4); //side 1
+                    outMesh.Faces.AddFace(1, 2, 6, 5); //side 2
+                    outMesh.Faces.AddFace(2, 3, 7, 6); //side 2
+                    outMesh.Faces.AddFace(3, 0, 4, 7); //side 3
+                    outMesh.Faces.AddFace(4, 5, 6, 7); //top
+                    List<int> verts8 = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
+                    List<int> faces8 = new List<int>() { 0, 1, 2, 3, 4, 5 };
+                    MeshNgon meshGon8 = MeshNgon.Create(verts8, faces8);
+                    outMesh.Ngons.AddNgon(meshGon8);
+                    break;
+
+                default:
+                    return null;
+            }
+            return outMesh;
+        }
+
         public static List<GsaElement3dGoo> ConvertToElement3Ds(Dictionary<int, Element> elements, IReadOnlyDictionary<int, Node> nodes)
         {
             List<List<Element>> apielements = new List<List<Element>>();
@@ -447,94 +547,9 @@ namespace GhSA.Util.Gsa
                 // loop through elements in list
                 for (int j = 0; j < elems.Count; j++)
                 {
-                    // get element's topology
-                    ReadOnlyCollection<int> topo = elems[j].Topology;
-
-                    // check if element is 3D
-                    List<bool> check3d = new List<bool>
-                    {
-                        elems[j].Type == ElementType.THREE_D,
-                        elems[j].Type == ElementType.BRICK8,
-                        elems[j].Type == ElementType.WEDGE6,
-                        elems[j].Type == ElementType.PYRAMID5,
-                        elems[j].Type == ElementType.TETRA4
-                    };
-                    if (!check3d.Contains(true))
-                        continue;
-
-                    Mesh tempMesh = new Mesh();
-                    // Get verticies:
-                    for (int k = 0; k < topo.Count; k++)
-                    {
-                        if (nodes.TryGetValue(topo[k], out Node node))
-                        {
-                            {
-                                var p = node.Position;
-                                tempMesh.Vertices.Add(new Point3d(p.X, p.Y, p.Z));
-                            }
-                        }
-                    }
-
-                    // Create 3D element
-                    switch (topo.Count)
-                    {
-                        case 4:
-                            // tetrahedron element
-                            tempMesh.Faces.AddFace(0, 2, 1); //bottom
-                            tempMesh.Faces.AddFace(0, 1, 3); //side 1
-                            tempMesh.Faces.AddFace(1, 2, 3); //side 2
-                            tempMesh.Faces.AddFace(2, 0, 3); //side 3
-                            List<int> verts4 = new List<int>() { 0, 1, 2, 3 };
-                            List<int> faces4 = new List<int>() { 0, 1, 2, 3 };
-                            MeshNgon meshGon4 = MeshNgon.Create(verts4, faces4);
-                            tempMesh.Ngons.AddNgon(meshGon4);
-                            break;
-
-                        case 5:
-                            // pyramid element
-                            tempMesh.Faces.AddFace(0, 3, 2, 1); //bottom
-                            tempMesh.Faces.AddFace(0, 1, 4); //side 1
-                            tempMesh.Faces.AddFace(1, 2, 4); //side 2
-                            tempMesh.Faces.AddFace(2, 3, 4); //side 3
-                            tempMesh.Faces.AddFace(3, 0, 4); //side 4
-                            List<int> verts5 = new List<int>() { 0, 1, 2, 3, 4 };
-                            List<int> faces5 = new List<int>() { 0, 1, 2, 3, 4 };
-                            MeshNgon meshGon5 = MeshNgon.Create(verts5, faces5);
-                            tempMesh.Ngons.AddNgon(meshGon5);
-                            break;
-
-                        case 6:
-                            // wedge element
-                            tempMesh.Faces.AddFace(0, 2, 1); //end1
-                            tempMesh.Faces.AddFace(0, 3, 5, 2); //side 1
-                            tempMesh.Faces.AddFace(1, 2, 5, 4); //side 2
-                            tempMesh.Faces.AddFace(0, 1, 4, 3); //side 3
-                            tempMesh.Faces.AddFace(3, 4, 5); //end 2
-                            List<int> verts6 = new List<int>() { 0, 1, 2, 3, 4, 5 };
-                            List<int> faces6 = new List<int>() { 0, 1, 2, 3, 4 };
-                            MeshNgon meshGon6 = MeshNgon.Create(verts6, faces6);
-                            tempMesh.Ngons.AddNgon(meshGon6);
-                            break;
-
-                        case 8:
-                            // brick element
-                            tempMesh.Faces.AddFace(0, 3, 2, 1); //bottom
-                            tempMesh.Faces.AddFace(0, 1, 5, 4); //side 1
-                            tempMesh.Faces.AddFace(1, 2, 6, 5); //side 2
-                            tempMesh.Faces.AddFace(2, 3, 7, 6); //side 2
-                            tempMesh.Faces.AddFace(3, 0, 4, 7); //side 3
-                            tempMesh.Faces.AddFace(4, 5, 6, 7); //top
-                            List<int> verts8 = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7 };
-                            List<int> faces8 = new List<int>() { 0, 1, 2, 3, 4, 5 };
-                            MeshNgon meshGon8 = MeshNgon.Create(verts8, faces8);
-                            tempMesh.Ngons.AddNgon(meshGon8);
-                            break;
-                        
-                        default:
-                            continue;
-                    }
-
-                    mList.Add(tempMesh);
+                    Mesh ngonClosedMesh = ConvertElement3D(elems[j], nodes);
+                    if (ngonClosedMesh == null) { continue; }
+                    mList.Add(ngonClosedMesh);
 
                     // get prop3d (if it exist)
                     //GsaProp2d prop = new GsaProp2d();
@@ -580,7 +595,6 @@ namespace GhSA.Util.Gsa
 
                         // add the element to list of goo 2d elements
                         elem3dGoos.Add(new GsaElement3dGoo(singleelement3D));
-
                     }
                 }
                 else

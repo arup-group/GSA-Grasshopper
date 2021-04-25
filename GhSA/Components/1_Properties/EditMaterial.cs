@@ -45,7 +45,7 @@ namespace GhSA.Components
         {
             
             pManager.AddGenericParameter("Material", "Ma", "GSA Material to get or set information for", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Analysis Property", "ID", "Set Material Analysis Property Number", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Analysis Property", "An", "Set Material Analysis Property Number (0 -> 'from Grade'", GH_ParamAccess.item);
             pManager.AddTextParameter("Material Type", "mT", "Set Material Type" + System.Environment.NewLine +
                 "Input either text string or integer:"
                 + System.Environment.NewLine + "Generic : 0"
@@ -65,7 +65,7 @@ namespace GhSA.Components
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Material", "Ma", "GSA Material with changes", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Analysis Property", "ID", "Get Material Analysis Property (0 is 'from Grade')", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Analysis Property", "An", "Get Material Analysis Property (0 -> 'from Grade')", GH_ParamAccess.item);
             pManager.AddTextParameter("Material Type", "mT", "Get Material Type", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Material Grade", "Gr", "Get Material Grade", GH_ParamAccess.item);
         }

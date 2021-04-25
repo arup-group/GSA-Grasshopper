@@ -423,6 +423,16 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Elem3dResults {
+            get {
+                object obj = ResourceManager.GetObject("Elem3dResults", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap FaceLoad {
             get {
                 object obj = ResourceManager.GetObject("FaceLoad", resourceCulture);

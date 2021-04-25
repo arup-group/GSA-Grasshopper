@@ -29,20 +29,16 @@ namespace GhSA.Components
                 Ribbon.SubCategoryName.Cat2())
         {
         }
-
-        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources._2dElemsFromBrep;
         #endregion
 
         #region Custom UI
         //This region overrides the typical component layout
-
-
         #endregion
 
         #region Input and output
-
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddBrepParameter("Brep", "B", "Brep (can be non-planar)", GH_ParamAccess.item);
@@ -173,69 +169,6 @@ namespace GhSA.Components
                     elem2d.Properties = prop2Ds;
 
                     DA.SetData(0, new GsaElement2dGoo(elem2d));
-                }
-            }
-        }
-        List<GsaElement2dGoo> element2ds;
-        public override void DrawViewportMeshes(IGH_PreviewArgs args)
-        {
-
-            base.DrawViewportMeshes(args);
-
-            if (element2ds != null)
-            {
-                foreach (GsaElement2dGoo element in element2ds)
-                {
-                    if (element == null) { continue; }
-                    //Draw shape.
-                    if (element.Value.Mesh != null)
-                    {
-                        if (!(element.Value.Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
-                        {
-                            if (this.Attributes.Selected)
-                                args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFaceSelected);
-                            else
-                                args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFace);
-                        }
-                    }
-                }
-            }
-        }
-
-        public override void DrawViewportWires(IGH_PreviewArgs args)
-        {
-            base.DrawViewportWires(args);
-
-            if (element2ds != null)
-            {
-                foreach (GsaElement2dGoo element in element2ds)
-                {
-                    if (element == null) { continue; }
-                    //Draw lines
-                    if (element.Value.Mesh != null)
-                    {
-                        if (element.Value.Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
-                        {
-                            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-                            {
-                                if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i).Length > 1)
-                                    args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
-                            }
-                        }
-                        else
-                        {
-                            if (this.Attributes.Selected)
-                            {
-                                for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-                                    args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
-                            }
-                            else
-                            {
-                                for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-                                    args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 1);
-                            }
-                        }
-                    }
                 }
             }
         }
