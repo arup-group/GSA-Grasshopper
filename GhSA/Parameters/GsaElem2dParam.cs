@@ -441,6 +441,7 @@ namespace GhSA.Parameters
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
             if (Value == null) { return; }
+            if (Grasshopper.CentralSettings.PreviewMeshEdges == false) { return; }
 
             //Draw lines
             if (Value.Mesh != null)

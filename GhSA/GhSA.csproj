@@ -127,6 +127,7 @@
     <Compile Include="Components\2_Geometry\ElemFromMem.cs" />
     <Compile Include="Components\3_Loads\LoadProperties.cs" />
     <Compile Include="Components\4_Analysis\GhAnalyse.cs" />
+    <Compile Include="Components\5_Results\Elem3dResults.cs" />
     <Compile Include="Components\5_Results\Elem2dResults.cs" />
     <Compile Include="Components\5_Results\GlobalResult.cs" />
     <Compile Include="Components\5_Results\Elem1dResults.cs" />
@@ -635,6 +636,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\GsaElement3D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\Elem3dResults.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

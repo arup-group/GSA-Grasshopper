@@ -30,7 +30,7 @@ namespace GhSA.Components
         {
         }
 
-        public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditMem1D;
         #endregion

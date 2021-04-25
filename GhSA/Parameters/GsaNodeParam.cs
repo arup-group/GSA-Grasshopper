@@ -465,6 +465,7 @@ namespace GhSA.Parameters
                 node.Node.Restraint.XX == false & node.Node.Restraint.YY == false & node.Node.Restraint.ZZ == false)
             {
                 Plane plane = node.LocalAxis.Clone();
+                if (!plane.IsValid) { plane = Plane.WorldXY; }
                 plane.Origin = node.Point;
                 Cone pin = new Cone(plane, -0.4, 0.4);
                 DisplayMaterial material = new DisplayMaterial()

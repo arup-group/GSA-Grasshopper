@@ -36,6 +36,31 @@ namespace GhSA.Parameters
             m_results = results;
         }
 
+        public Mesh ValidMesh
+        {
+            get
+            {
+                Mesh m = new Mesh();
+                Mesh x = Value;
+
+                m.Vertices.AddVertices(x.Vertices.ToList());
+                m.VertexColors.SetColors(Value.VertexColors.ToArray());
+
+                List<MeshNgon> ngons = x.GetNgonAndFacesEnumerable().ToList();
+
+                for (int i = 0; i < ngons.Count; i++)
+                {
+                    List<int> faceindex = ngons[i].FaceIndexList().Select(u => (int)u).ToList();
+                    for (int j = 0; j < faceindex.Count; j++)
+                    {
+                        m.Faces.AddFace(x.Faces[faceindex[j]]);
+                    }
+                }
+                m.RebuildNormals();
+                return m;
+            }
+        }
+
         private List<double> m_results;
 
         public override string ToString()
@@ -89,13 +114,19 @@ namespace GhSA.Parameters
         {
             if (typeof(TQ).IsAssignableFrom(typeof(Mesh)))
             {
-                target = (TQ)(object)Value;
+                if (Value.IsValid)
+                    target = (TQ)(object)Value;
+                else
+                    target = (TQ)(object)ValidMesh;
                 return true;
             }
 
             if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh)))
             {
-                target = (TQ)(object)new GH_Mesh(Value);
+                if (Value.IsValid)
+                    target = (TQ)(object)new GH_Mesh(Value);
+                else
+                    target = (TQ)(object)new GH_Mesh(ValidMesh);
                 return true;
             }
 
@@ -134,17 +165,44 @@ namespace GhSA.Parameters
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
             if (Value == null) { return; }
-
-            //Draw mesh edges
-            if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+            if (Grasshopper.CentralSettings.PreviewMeshEdges == false) { return; }
+            
+            if (Value.IsValid)
             {
-                for (int i = 0; i < Value.TopologyEdges.Count; i++)
-                    args.Pipeline.DrawLine(Value.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 1);
+                //Draw mesh edges
+                if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                {
+                    args.Pipeline.DrawMeshWires(Value, UI.Colour.Element2dEdge, 1);
+                    //for (int i = 0; i < Value.TopologyEdges.Count; i++)
+                    //    args.Pipeline.DrawLine(Value.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 1);
+                }
+                else
+                {
+                    args.Pipeline.DrawMeshWires(Value, UI.Colour.Element2dEdgeSelected, 1);
+                    //for (int i = 0; i < Value.TopologyEdges.Count; i++)
+                    //    args.Pipeline.DrawLine(Value.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
+                }
             }
             else
             {
-                for (int i = 0; i < Value.TopologyEdges.Count; i++)
-                    args.Pipeline.DrawLine(Value.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
+                if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                {
+                    List<Line> lines = new List<Line>();
+                    for (int i = 0; i < Value.TopologyEdges.Count; i++)
+                    {
+                        lines.Add(Value.TopologyEdges.EdgeLine(i));
+                    }
+                    args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdge, 1);
+                }
+                else
+                {
+                    List<Line> lines = new List<Line>();
+                    for (int i = 0; i < Value.TopologyEdges.Count; i++)
+                    {
+                        lines.Add(Value.TopologyEdges.EdgeLine(i));
+                    }
+                    args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdgeSelected, 1);
+                }
             }
         }
 
