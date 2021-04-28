@@ -490,7 +490,7 @@ namespace GhSA.Util.GH
         public static Brep BuildBrep(PolyCurve externalEdge, List<PolyCurve> voidCurves = null, double tolerance = -1)
         {
             if (tolerance < 0)
-                tolerance = Tolerance.RhinoDocTolerance();
+                tolerance = 0.1; //Tolerance.RhinoDocTolerance();
 
             Rhino.Collections.CurveList curves = new Rhino.Collections.CurveList
             {
@@ -501,7 +501,13 @@ namespace GhSA.Util.GH
 
             Brep[] brep = Brep.CreatePlanarBreps(curves, tolerance);
             if (brep == null)
-                return null;
+            {
+                Brep brep2 = Brep.CreateEdgeSurface(curves);
+                if (brep == null)
+                    return null;
+                else
+                    return brep2;
+            }
             else
                 return brep[0];
         }
