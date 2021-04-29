@@ -359,7 +359,19 @@ namespace GhSA.Components
                             if (CancellationToken.IsCancellationRequested) return;
                             ReportProgress("Analysing Task " + task.Key.ToString(), -2);
 
-                            if (!(gsa.Analyse(task.Key)))
+                            bool analysis;
+                            try
+                            {
+                                analysis = gsa.Analyse(task.Key);
+                            }
+                            catch (Exception)
+                            {
+
+                                throw;
+                            }
+                            
+                            
+                            if (!analysis)
                             {
                                 component.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
                                 ReportProgress("Warning Analysis Case " + task.Key + " could not be analysed", -10);
