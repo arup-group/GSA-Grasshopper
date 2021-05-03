@@ -54,15 +54,23 @@ namespace GhSA.UI
         }
 
         //Set colours for Component UI
-        public static Brush ButtonColor
+        public static Brush ButtonColour
         {
             get { return new SolidBrush(GsaDarkBlue); }
         }
-        public static Brush ClickedButtonColor
+        public static Brush ClickedButtonColour
         {
-            get { return new SolidBrush(GsaLightBlue); }
+            get { return new SolidBrush(UI.Colour.WhiteOverlay(GsaDarkBlue, 0.32)); }
         }
-        public static Brush InactiveButtonColor
+        public static Brush HoverButtonColour
+        {
+            get { return new SolidBrush(UI.Colour.WhiteOverlay(GsaDarkBlue, 0.16)); }
+        }
+        public static Brush InactiveButtonColour
+        {
+            get { return new SolidBrush(GsaLightGrey); }
+        }
+        public static Brush HoverInactiveButtonColour
         {
             get { return new SolidBrush(Color.FromArgb(255, 216, 216, 216)); }
         }
@@ -71,15 +79,22 @@ namespace GhSA.UI
         {
             get {  return GsaLightGrey; }
         }
-
+        public static Color ButtonBorderColour
+        {
+            get { return GsaLightGrey; }
+        }
         public static Color ClickedBorderColour
         {
-            get { return Color.Black; }
+            get { return Color.White; }
+        }
+        public static Color HoverBorderColour
+        {
+            get { return Color.White; }
         }
 
         public static Brush InactiveBorderColor
         {
-            get { return new SolidBrush(Color.FromArgb(0, 216, 216, 216)); }
+            get { return new SolidBrush(Color.FromArgb(255, 216, 216, 216)); }
         }
 
         public static Color SpacerColour
@@ -109,6 +124,22 @@ namespace GhSA.UI
         public static Brush ActiveBrush
         {
             get { return new SolidBrush(ActiveColour); }
+        }
+
+        public static Color WhiteOverlay(Color original, double ratio)
+        {
+            Color white = Color.White;
+            return Color.FromArgb(255,
+                (int)(ratio * white.R + (1 - ratio) * original.R),
+                (int)(ratio * white.G + (1 - ratio) * original.G),
+                (int)(ratio * white.B + (1 - ratio) * original.B));
+        }
+        public static Color Overlay(Color original, Color overlay, double ratio)
+        {
+            return Color.FromArgb(255,
+                (int)(ratio * overlay.R + (1 - ratio) * original.R),
+                (int)(ratio * overlay.G + (1 - ratio) * original.G),
+                (int)(ratio * overlay.B + (1 - ratio) * original.B));
         }
 
 

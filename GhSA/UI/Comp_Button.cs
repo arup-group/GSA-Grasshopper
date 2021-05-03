@@ -61,7 +61,7 @@ namespace GhSA.UI
 
             int h1 = 20; // height of button
             // create text box placeholders
-            ButtonBounds = new RectangleF(Bounds.X + 2*s, Bounds.Bottom + h0 + 2*s, Bounds.Width - 2 - 4*s, h1);
+            ButtonBounds = new RectangleF(Bounds.X + 2*s, Bounds.Bottom + h0 + 2*s, Bounds.Width - 4*s, h1);
 
             //update component bounds
             Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + h0 + h1 + 4 * s);
@@ -74,10 +74,7 @@ namespace GhSA.UI
             if (channel == GH_CanvasChannel.Objects)
             {
                 Pen spacer = new Pen(UI.Colour.SpacerColour);
-                Pen pen = new Pen(mouseDown ? UI.Colour.ClickedBorderColour : UI.Colour.BorderColour)
-                {
-                    Width = 0.5f
-                };
+                
                 Font font = GH_FontServer.Standard;
                 // adjust fontsize to high resolution displays
                 font = new Font(font.FontFamily, font.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
@@ -95,9 +92,28 @@ namespace GhSA.UI
                 }
 
                 // Draw button box
-                graphics.FillRectangle(mouseDown ? UI.Colour.ClickedButtonColor : UI.Colour.ButtonColor, ButtonBounds);
-                graphics.DrawRectangle(pen, ButtonBounds.X, ButtonBounds.Y, ButtonBounds.Width, ButtonBounds.Height);
-                graphics.DrawString(buttonText, font, mouseDown? UI.Colour.AnnotationTextDark : UI.Colour.AnnotationTextBright, ButtonBounds, GH_TextRenderingConstants.CenterCenter);
+                System.Drawing.Drawing2D.GraphicsPath button = UI.ButtonsUI.Button.RoundedRect(ButtonBounds, 2);
+
+                Brush normal_colour = UI.Colour.ButtonColour;
+                Brush hover_colour = UI.Colour.HoverButtonColour; 
+                Brush clicked_colour = UI.Colour.ClickedButtonColour; 
+                
+                Brush butCol = (mouseOver) ? hover_colour : normal_colour;
+                graphics.FillPath(mouseDown ? clicked_colour : butCol, button);
+
+                // draw button edge
+                Color edgeColor = UI.Colour.ButtonBorderColour;
+                Color edgeHover = UI.Colour.HoverBorderColour;
+                Color edgeClick = UI.Colour.ClickedBorderColour;
+                Color edgeCol = (mouseOver) ? edgeHover : edgeColor;
+                Pen pen = new Pen(mouseDown ? edgeClick : edgeCol)
+                {
+                    Width = (mouseDown) ? 0.8f : 0.5f
+                };
+                graphics.DrawPath(pen, button);
+                
+                // draw button text
+                graphics.DrawString(buttonText, font, UI.Colour.AnnotationTextBright, ButtonBounds, GH_TextRenderingConstants.CenterCenter);
             }
         }
         public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
@@ -108,7 +124,7 @@ namespace GhSA.UI
                 if (rec.Contains(e.CanvasLocation))
                 {
                     mouseDown = true;
-                    Owner.ExpireSolution(true);
+                    Owner.OnDisplayExpired(false);
                     return GH_ObjectResponse.Capture;
                 }
             }
@@ -125,13 +141,36 @@ namespace GhSA.UI
                     if (mouseDown)
                     {
                         mouseDown = false;
+                        mouseOver = false;
+                        Owner.OnDisplayExpired(false);
                         action();
-                        Owner.ExpireSolution(true);
+//                        Owner.ExpireSolution(true);
                         return GH_ObjectResponse.Release;
                     }
                 }
             }
             return base.RespondToMouseUp(sender, e);
+        }
+        bool mouseOver;
+        public override GH_ObjectResponse RespondToMouseMove(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            if (ButtonBounds.Contains(e.CanvasLocation))
+            {
+                mouseOver = true;
+                Owner.OnDisplayExpired(false);
+                sender.Cursor = System.Windows.Forms.Cursors.Hand;
+                return GH_ObjectResponse.Capture;
+            }
+
+            if (mouseOver)
+            {
+                mouseOver = false;
+                Owner.OnDisplayExpired(false);
+                Grasshopper.Instances.CursorServer.ResetCursor(sender);
+                return GH_ObjectResponse.Release;
+            }
+
+            return base.RespondToMouseMove(sender, e);
         }
 
 

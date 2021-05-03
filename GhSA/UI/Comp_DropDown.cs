@@ -347,24 +347,25 @@ namespace GhSA.UI
                 return GH_ObjectResponse.Ignore;
             }
 
+            if (ButtonBound.Contains(e.CanvasLocation))
+            {
+                mouseOver = true;
+                sender.Cursor = System.Windows.Forms.Cursors.Hand;
+                return GH_ObjectResponse.Capture;
+            }
+
+            if (mouseOver)
+            {
+                mouseOver = false;
+                Grasshopper.Instances.CursorServer.ResetCursor(sender);
+                return GH_ObjectResponse.Release;
+            }
+
             return base.RespondToMouseMove(sender, e);
         }
 
-        // consider adding a new cursor type when mouse is on top of clickable dropdown?
-
-        //public override GH_ObjectResponse RespondToMouseMove(GH_Canvas sender, GH_CanvasMouseEvent e)
-        //{
-        //    if (BorderBound.Contains(e.ControlLocation))
-        //    {
-        //        Rectangle rect = GH_Convert.ToRectangle(BorderBound);
-        //        Control ctrl = new Control(displayText, rect.X, rect.Y, rect.Width, rect.Height);
-        //        GH_Component comp = Owner as GH_Component;
-        //        Grasshopper.Instances.CursorServer.AttachCursor(ctrl, "GH_AddObject");
-        //        ctrl.Refresh();
-        //        return GH_ObjectResponse.Handled;
-        //    }
-        //    return GH_ObjectResponse.Ignore;
-        //}
+        bool mouseOver;
+        
 
         protected void FixLayout()
         {

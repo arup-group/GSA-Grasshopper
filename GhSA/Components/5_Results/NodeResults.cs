@@ -52,7 +52,23 @@ namespace GhSA.Components
                 selections.Add(dropdowncontents[1][3]);
                 first = false;
             }
-            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdowncontents, selections, spacertext);
+            m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, Value, MaxValue, MinValue, noDigits, spacertext);
+        }
+
+        double MinValue = 0;
+        double MaxValue = 100;
+        double Value = 50;
+        int noDigits = 0;
+        bool slider = true;
+
+        public void SetVal(double value)
+        {
+            Value = value;
+        }
+        public void SetMaxMin(double max, double min)
+        {
+            MaxValue = max;
+            MinValue = min;
         }
 
         public void SetSelected(int dropdownlistidd, int selectedidd)
@@ -129,6 +145,7 @@ namespace GhSA.Components
         {
             "Result Type",
             "Display Result",
+            "Deform Shape"
         });
         readonly List<string> dropdownitems = new List<string>(new string[]
         {
@@ -511,20 +528,27 @@ namespace GhSA.Components
                         if (!(dmin == 0 & dmax == 0))
                         {
                             double t = 0;
+                            Vector3d translation = new Vector3d(0, 0, 0);
                             // pick the right value to display
                             switch (_disp)
                             {
                                 case (DisplayValue.X):
                                     t = xyz[i].X;
+                                    translation.X = t * Value / 1000;
                                     break;
                                 case (DisplayValue.Y):
                                     t = xyz[i].Y;
+                                    translation.Y = t * Value / 1000 ;
                                     break;
                                 case (DisplayValue.Z):
                                     t = xyz[i].Z;
+                                    translation.Z = t * Value / 1000;
                                     break;
                                 case (DisplayValue.resXYZ):
                                     t = Math.Sqrt(Math.Pow(xyz[i].X, 2) + Math.Pow(xyz[i].Y, 2) + Math.Pow(xyz[i].Z, 2));
+                                    translation.X = xyz[i].X * Value / 1000;
+                                    translation.Y = xyz[i].Y * Value / 1000;
+                                    translation.Z = xyz[i].Z * Value / 1000;
                                     break;
                                 case (DisplayValue.XX):
                                     t = xxyyzz[i].X;
@@ -551,8 +575,12 @@ namespace GhSA.Components
                                 Math.Max(2, (float)(t / dmax * scale)) : 
                                 Math.Max(2, (float)(Math.Abs(t) / Math.Abs(dmin) * scale));
 
+                            // create deflection point
+                            Point3d def = new Point3d(gsanodes[i].Value.Point);
+                            def.Transform(Transform.Translation(translation));
+
                             // add our special resultpoint to the list of points
-                            pts.Add(new ResultPoint(gsanodes[i].Value.Point, t, valcol, size));
+                            pts.Add(new ResultPoint(def, t, valcol, size));
 
                             // add the colour to the colours list
                             col.Add(valcol);
@@ -610,6 +638,14 @@ namespace GhSA.Components
         }
         private DisplayValue _disp = DisplayValue.resXYZ;
 
+        private void ReDrawComponent()
+        {
+            System.Drawing.PointF pivot = new System.Drawing.PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);
+            this.CreateAttributes();
+            this.Attributes.Pivot = pivot;
+            this.Attributes.ExpireLayout();
+            this.Attributes.PerformLayout();
+        }
         private void Mode1Clicked()
         {
             if (_mode == FoldMode.Displacement)
@@ -617,6 +653,11 @@ namespace GhSA.Components
 
             RecordUndoEvent(_mode.ToString() + " Parameters");
             _mode = FoldMode.Displacement;
+
+            slider = true;
+            Value = 50;
+
+            ReDrawComponent();
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -629,6 +670,10 @@ namespace GhSA.Components
 
             RecordUndoEvent(_mode.ToString() + " Parameters");
             _mode = FoldMode.Reaction;
+            slider = false;
+            Value = 0;
+
+            ReDrawComponent();
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -641,6 +686,10 @@ namespace GhSA.Components
 
             RecordUndoEvent(_mode.ToString() + " Parameters");
             _mode = FoldMode.SpringForce;
+            slider = false;
+            Value = 0;
+
+            ReDrawComponent();
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -654,6 +703,10 @@ namespace GhSA.Components
 
             RecordUndoEvent(_mode.ToString() + " Parameters");
             _mode = FoldMode.Constraint;
+            slider = false;
+            Value = 0;
+
+            ReDrawComponent();
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -666,12 +719,23 @@ namespace GhSA.Components
         {
             writer.SetInt32("Mode", (int)_mode);
             writer.SetInt32("Display", (int)_disp);
+            writer.SetBoolean("slider", slider);
+            writer.SetInt32("noDec", noDigits);
+            writer.SetDouble("valMax", MaxValue);
+            writer.SetDouble("valMin", MinValue);
+            writer.SetDouble("val", Value);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
             _mode = (FoldMode)reader.GetInt32("Mode");
             _disp = (DisplayValue)reader.GetInt32("Display");
+
+            slider = reader.GetBoolean("slider");
+            noDigits = reader.GetInt32("noDec");
+            MaxValue = reader.GetDouble("valMax");
+            MinValue = reader.GetDouble("valMin");
+            Value = reader.GetDouble("val");
 
             dropdowncontents = new List<List<string>>();
             dropdowncontents.Add(dropdownitems);

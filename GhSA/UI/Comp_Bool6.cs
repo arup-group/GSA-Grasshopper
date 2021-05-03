@@ -236,6 +236,30 @@ namespace GhSA.UI
             }
             return base.RespondToMouseDown(sender, e);
         }
+        bool mouseOver;
+        public override GH_ObjectResponse RespondToMouseMove(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            if (xBounds.Contains(e.CanvasLocation) |
+                yBounds.Contains(e.CanvasLocation) |
+                zBounds.Contains(e.CanvasLocation) |
+                xxBounds.Contains(e.CanvasLocation) | 
+                yyBounds.Contains(e.CanvasLocation) | 
+                zzBounds.Contains(e.CanvasLocation))
+            {
+                mouseOver = true;
+                sender.Cursor = System.Windows.Forms.Cursors.Hand;
+                return GH_ObjectResponse.Capture;
+            }
+
+            if (mouseOver)
+            {
+                mouseOver = false;
+                Grasshopper.Instances.CursorServer.ResetCursor(sender);
+                return GH_ObjectResponse.Release;
+            }
+
+            return base.RespondToMouseMove(sender, e);
+        }
         #endregion
 
         #region Custom Render logic

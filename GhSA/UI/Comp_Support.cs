@@ -291,6 +291,82 @@ namespace GhSA.UI
             }
             return base.RespondToMouseDown(sender, e);
         }
+        bool mouseOver;
+        bool mouseOverFree;
+        bool mouseOverPin;
+        bool mouseOverFix;
+        public override GH_ObjectResponse RespondToMouseMove(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            if (xBounds.Contains(e.CanvasLocation) | 
+                yBounds.Contains(e.CanvasLocation) | 
+                zBounds.Contains(e.CanvasLocation) | 
+                xxBounds.Contains(e.CanvasLocation) | 
+                yyBounds.Contains(e.CanvasLocation) | 
+                zzBounds.Contains(e.CanvasLocation))
+                
+            {
+                mouseOver = true;
+                sender.Cursor = System.Windows.Forms.Cursors.Hand; 
+                return GH_ObjectResponse.Capture;
+            }
+
+            if (TxtFreeBounds.Contains(e.CanvasLocation))
+            {
+                if (x == false & y == false & z == false & xx == false & yy == false & zz == false)
+                {
+                    Grasshopper.Instances.CursorServer.ResetCursor(sender);
+                    return GH_ObjectResponse.Release;
+                }
+                mouseOverFree = true;
+                mouseOverPin = false;
+                mouseOverFix = false;
+                Owner.OnDisplayExpired(false);
+                sender.Cursor = System.Windows.Forms.Cursors.Hand;
+                return GH_ObjectResponse.Capture;
+            }
+            if (TxtPinBounds.Contains(e.CanvasLocation))
+            {
+                if (x == true & y == true & z == true & xx == false & yy == false & zz == false)
+                {
+                    Grasshopper.Instances.CursorServer.ResetCursor(sender);
+                    return GH_ObjectResponse.Release;
+                }
+                mouseOverPin = true;
+                mouseOverFree = false;
+                mouseOverFix = false;
+                sender.Cursor = System.Windows.Forms.Cursors.Hand;
+                Owner.OnDisplayExpired(false);
+                return GH_ObjectResponse.Capture;
+            }
+            if (TxtFixBounds.Contains(e.CanvasLocation))
+            {
+                if (x == true & y == true & z == true & xx == true & yy == true & zz == true)
+                {
+                    Grasshopper.Instances.CursorServer.ResetCursor(sender);
+                    return GH_ObjectResponse.Release;
+                }
+
+                mouseOverFix = true;
+                mouseOverFree = false;
+                mouseOverPin = false;
+                Owner.OnDisplayExpired(false);
+                sender.Cursor = System.Windows.Forms.Cursors.Hand;
+                return GH_ObjectResponse.Capture;
+            }
+
+            if (mouseOver | mouseOverFree | mouseOverPin | mouseOverFix)
+            {
+                mouseOver = false;
+                mouseOverFree = false;
+                mouseOverPin = false;
+                mouseOverFix = false;
+                Grasshopper.Instances.CursorServer.ResetCursor(sender);
+                Owner.OnDisplayExpired(false);
+                return GH_ObjectResponse.Release;
+            }
+
+            return base.RespondToMouseMove(sender, e);
+        }
         #endregion
 
         #region Custom Render logic
@@ -299,16 +375,12 @@ namespace GhSA.UI
             switch (channel)
             {
                 case GH_CanvasChannel.Objects:
-                    //We need to draw everything outselves.
-                    Color myColour = UI.Colour.GsaDarkBlue;
-                    Brush myBrush = new SolidBrush(myColour);
-
                     //Text boxes
                     Brush activeTextBrush = Brushes.White;
-                    Brush passiveTextBrush = myBrush;
-                    Brush activeFillBrush = myBrush;
-                    Brush passiveFillBrush = Brushes.LightGray;
-                    Color borderColour = myColour;
+                    Brush passiveTextBrush = new SolidBrush(UI.Colour.GsaDarkBlue);
+                    Brush activeFillBrush = UI.Colour.ButtonColour;
+                    Brush passiveFillBrush = new SolidBrush(UI.Colour.GsaLightGrey);
+                    Color borderColour = UI.Colour.GsaDarkBlue;
                     Color passiveBorder = Color.DarkGray;
                     Brush annoText = Brushes.Black;
 
@@ -340,13 +412,16 @@ namespace GhSA.UI
                     graphics.DrawRectangle(pen, TxtPinBounds.X, TxtPinBounds.Y, TxtPinBounds.Width, TxtPinBounds.Height);
                     graphics.DrawRectangle(pen, TxtFixBounds.X, TxtFixBounds.Y, TxtFixBounds.Width, TxtFixBounds.Height);
 
-                    graphics.FillRectangle((x == false & y == false & z == false & xx == false & yy == false & zz == false) ? activeFillBrush : passiveFillBrush, TxtFreeBounds);
+                    Brush freeBrushPassive = (mouseOverFree) ? UI.Colour.HoverInactiveButtonColour : passiveFillBrush;
+                    graphics.FillRectangle((x == false & y == false & z == false & xx == false & yy == false & zz == false) ? activeFillBrush : freeBrushPassive, TxtFreeBounds);
                     graphics.DrawString("Free", font, (x == false & y == false & z == false & xx == false & yy == false & zz == false) ? activeTextBrush : passiveTextBrush, TxtFreeBounds, GH_TextRenderingConstants.CenterCenter);
 
-                    graphics.FillRectangle((x == true & y == true & z == true & xx == false & yy == false & zz == false) ? activeFillBrush : passiveFillBrush, TxtPinBounds);
+                    Brush pinBrushPassive = (mouseOverPin) ? UI.Colour.HoverInactiveButtonColour : passiveFillBrush;
+                    graphics.FillRectangle((x == true & y == true & z == true & xx == false & yy == false & zz == false) ? activeFillBrush : pinBrushPassive, TxtPinBounds);
                     graphics.DrawString("Pin", font, (x == true & y == true & z == true & xx == false & yy == false & zz == false) ? activeTextBrush : passiveTextBrush, TxtPinBounds, GH_TextRenderingConstants.CenterCenter);
 
-                    graphics.FillRectangle((x == true & y == true & z == true & xx == true & yy == true & zz == true) ? activeFillBrush : passiveFillBrush, TxtFixBounds);
+                    Brush fixBrushPassive = (mouseOverFix) ? UI.Colour.HoverInactiveButtonColour : passiveFillBrush;
+                    graphics.FillRectangle((x == true & y == true & z == true & xx == true & yy == true & zz == true) ? activeFillBrush : fixBrushPassive, TxtFixBounds);
                     graphics.DrawString("Fix", font, (x == true & y == true & z == true & xx == true & yy == true & zz == true) ? activeTextBrush : passiveTextBrush, TxtFixBounds, GH_TextRenderingConstants.CenterCenter);
 
                     graphics.DrawString("x", font, annoText, xTxtBounds, GH_TextRenderingConstants.CenterCenter);

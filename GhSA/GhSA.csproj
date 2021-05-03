@@ -212,6 +212,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="UI\Comp_MultiDropDownsSlider.cs" />
+    <Compile Include="UI\Comp_Slider.cs" />
     <Compile Include="UI\Comp_TripleButton.cs" />
     <Compile Include="UI\Comp_Button.cs" />
     <Compile Include="Helpers\_Colour.cs" />
@@ -639,6 +641,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\Elem3dResults.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\GsaGhLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\GsaGhLogo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

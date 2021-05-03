@@ -97,25 +97,10 @@ namespace GhSA.UI
             if (channel == GH_CanvasChannel.Objects)
             {
                 Pen spacer = new Pen(UI.Colour.SpacerColour);
-                Pen pen1 = new Pen(mouseDown1 ? UI.Colour.ClickedBorderColour : UI.Colour.BorderColour)
-                {
-                    Width = 0.5f
-                };
-                Pen pen2 = new Pen(mouseDown2 ? UI.Colour.ClickedBorderColour : UI.Colour.BorderColour)
-                {
-                    Width = 0.5f
-                };
-                Pen pen3 = new Pen(mouseDown3 ? UI.Colour.ClickedBorderColour : UI.Colour.BorderColour)
-                {
-                    Width = 0.5f
-                };
-                Font reg = GH_FontServer.Standard;
+                
+                Font font = GH_FontServer.Standard;
                 // adjust fontsize to high resolution displays
-                reg = new Font(reg.FontFamily, reg.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
-
-                Font ita = GH_FontServer.StandardItalic;
-                // adjust fontsize to high resolution displays
-                ita = new Font(ita.FontFamily, ita.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
+                font = new Font(font.FontFamily, font.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
 
                 Font sml = GH_FontServer.Small;
                 // adjust fontsize to high resolution displays
@@ -129,25 +114,82 @@ namespace GhSA.UI
                     graphics.DrawLine(spacer, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 + GH_FontServer.StringWidth(SpacerTxt, sml) + 4, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + SpacerBounds.Width, SpacerBounds.Y + SpacerBounds.Height / 2);
                 }
 
-                // Draw button 1 box
-                graphics.FillRectangle(mouseDown1 ? UI.Colour.ClickedButtonColor : UI.Colour.ButtonColor, Button1Bounds);
-                graphics.DrawRectangle(pen1, Button1Bounds.X, Button1Bounds.Y, Button1Bounds.Width, Button1Bounds.Height);
-                graphics.DrawString(button1Text, reg, mouseDown1 ? UI.Colour.AnnotationTextDark : UI.Colour.AnnotationTextBright, Button1Bounds, GH_TextRenderingConstants.CenterCenter);
+                // ### button 1 ###
+                // Draw button box
+                System.Drawing.Drawing2D.GraphicsPath button1 = UI.ButtonsUI.Button.RoundedRect(Button1Bounds, 2);
 
-                // Draw button 2 box
-                graphics.FillRectangle(mouseDown2 ? UI.Colour.ClickedButtonColor : UI.Colour.ButtonColor, Button2Bounds);
-                graphics.DrawRectangle(pen2, Button2Bounds.X, Button2Bounds.Y, Button2Bounds.Width, Button2Bounds.Height);
-                graphics.DrawString(button2Text, reg, mouseDown2 ? UI.Colour.AnnotationTextDark : UI.Colour.AnnotationTextBright, Button2Bounds, GH_TextRenderingConstants.CenterCenter);
+                Brush normal_colour1 = UI.Colour.ButtonColour;
+                Brush hover_colour1 = UI.Colour.HoverButtonColour;
+                Brush clicked_colour1 = UI.Colour.ClickedButtonColour;
 
-                // Draw button 3 box
-                Brush button3color = (greyoutButton3) ? UI.Colour.InactiveButtonColor : mouseDown3 ? UI.Colour.ClickedButtonColor : UI.Colour.ButtonColor;
-                graphics.FillRectangle(button3color, Button3Bounds);
-                graphics.DrawRectangle(pen3, Button3Bounds.X, Button3Bounds.Y, Button3Bounds.Width, Button3Bounds.Height);
-                graphics.DrawString(button3Text, 
-                    (greyoutButton3) ? ita : reg,
-                    (greyoutButton3) ? UI.Colour.AnnotationTextDarkGrey : mouseDown3 ? UI.Colour.AnnotationTextDark : UI.Colour.AnnotationTextBright, 
-                    Button3Bounds, 
-                    GH_TextRenderingConstants.CenterCenter);
+                Brush butCol1 = (mouseOver1) ? hover_colour1 : normal_colour1;
+                graphics.FillPath(mouseDown1 ? clicked_colour1 : butCol1, button1);
+
+                // draw button edge
+                Color edgeColor1 = UI.Colour.ButtonBorderColour;
+                Color edgeHover1 = UI.Colour.HoverBorderColour;
+                Color edgeClick1 = UI.Colour.ClickedBorderColour;
+                Color edgeCol1 = (mouseOver1) ? edgeHover1 : edgeColor1;
+                Pen pen1 = new Pen(mouseDown1 ? edgeClick1 : edgeCol1)
+                {
+                    Width = (mouseDown1) ? 0.8f : 0.5f
+                };
+                graphics.DrawPath(pen1, button1);
+
+                // draw button text
+                graphics.DrawString(button1Text, font, UI.Colour.AnnotationTextBright, Button1Bounds, GH_TextRenderingConstants.CenterCenter);
+
+
+                // ### button 2 ###
+                // Draw button box
+                System.Drawing.Drawing2D.GraphicsPath button2 = UI.ButtonsUI.Button.RoundedRect(Button2Bounds, 2);
+
+                Brush normal_colour2 = UI.Colour.ButtonColour;
+                Brush hover_colour2 = UI.Colour.HoverButtonColour;
+                Brush clicked_colour2 = UI.Colour.ClickedButtonColour;
+
+                Brush butCol2 = (mouseOver2) ? hover_colour2 : normal_colour2;
+                graphics.FillPath(mouseDown2 ? clicked_colour2 : butCol2, button2);
+
+                // draw button edge
+                Color edgeColor2 = UI.Colour.ButtonBorderColour;
+                Color edgeHover2 = UI.Colour.HoverBorderColour;
+                Color edgeClick2 = UI.Colour.ClickedBorderColour;
+                Color edgeCol2 = (mouseOver2) ? edgeHover2 : edgeColor2;
+                Pen pen2 = new Pen(mouseDown2 ? edgeClick2 : edgeCol2)
+                {
+                    Width = (mouseDown2) ? 0.8f : 0.5f
+                };
+                graphics.DrawPath(pen2, button2);
+
+                // draw button text
+                graphics.DrawString(button2Text, font, UI.Colour.AnnotationTextBright, Button2Bounds, GH_TextRenderingConstants.CenterCenter);
+
+                // ### button 3 ###
+                // Draw button box
+                System.Drawing.Drawing2D.GraphicsPath button3 = UI.ButtonsUI.Button.RoundedRect(Button3Bounds, 2);
+
+                Brush normal_colour3 = UI.Colour.ButtonColour;
+                Brush hover_colour3 = UI.Colour.HoverButtonColour;
+                Brush clicked_colour3 = UI.Colour.ClickedButtonColour;
+
+                Brush butCol3 = (mouseOver3) ? hover_colour3 : normal_colour3;
+                graphics.FillPath(mouseDown3 ? clicked_colour3 : butCol3, button3);
+
+                // draw button edge
+                Color edgeColor3 = UI.Colour.ButtonBorderColour;
+                Color edgeHover3 = UI.Colour.HoverBorderColour;
+                Color edgeClick3 = UI.Colour.ClickedBorderColour;
+                Color edgeCol3 = (mouseOver3) ? edgeHover3 : edgeColor3;
+                Pen pen3 = new Pen(mouseDown3 ? edgeClick3 : edgeCol3)
+                {
+                    Width = (mouseDown3) ? 0.8f : 0.5f
+                };
+                graphics.DrawPath(pen3, button3);
+
+                // draw button text
+                graphics.DrawString(button3Text, font, UI.Colour.AnnotationTextBright, Button3Bounds, GH_TextRenderingConstants.CenterCenter);
+
             }
         }
         public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
@@ -230,6 +272,51 @@ namespace GhSA.UI
                 }
             }
             return base.RespondToMouseUp(sender, e);
+        }
+        bool mouseOver1;
+        bool mouseOver2;
+        bool mouseOver3;
+        public override GH_ObjectResponse RespondToMouseMove(GH_Canvas sender, GH_CanvasMouseEvent e)
+        {
+            if (Button1Bounds.Contains(e.CanvasLocation))
+            {
+                mouseOver1 = true;
+                mouseOver2 = false;
+                mouseOver3 = false;
+                Owner.OnDisplayExpired(false);
+                sender.Cursor = System.Windows.Forms.Cursors.Hand;
+                return GH_ObjectResponse.Capture;
+            }
+            if (Button2Bounds.Contains(e.CanvasLocation))
+            {
+                mouseOver2 = true;
+                mouseOver1 = false;
+                mouseOver3 = false;
+                Owner.OnDisplayExpired(false);
+                sender.Cursor = System.Windows.Forms.Cursors.Hand;
+                return GH_ObjectResponse.Capture;
+            }
+            if (Button3Bounds.Contains(e.CanvasLocation))
+            {
+                mouseOver3 = true;
+                mouseOver1 = false;
+                mouseOver2 = false;
+                Owner.OnDisplayExpired(false);
+                sender.Cursor = System.Windows.Forms.Cursors.Hand;
+                return GH_ObjectResponse.Capture;
+            }
+
+            if (mouseOver1 | mouseOver2 | mouseOver3)
+            {
+                mouseOver1 = false;
+                mouseOver2 = false;
+                mouseOver3 = false;
+                Owner.OnDisplayExpired(false);
+                Grasshopper.Instances.CursorServer.ResetCursor(sender);
+                return GH_ObjectResponse.Release;
+            }
+
+            return base.RespondToMouseMove(sender, e);
         }
 
         protected void FixLayout()
