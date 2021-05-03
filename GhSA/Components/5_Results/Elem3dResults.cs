@@ -53,9 +53,23 @@ namespace GhSA.Components
                 selections.Add(dropdowncontents[1][3]);
                 first = false;
             }
-            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdowncontents, selections, spacertext);
+            m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, Value, MaxValue, MinValue, noDigits, spacertext);
         }
 
+        double MinValue = 0;
+        double MaxValue = 100;
+        double Value = 50;
+        int noDigits = 0;
+        bool slider = true;
+        public void SetVal(double value)
+        {
+            Value = value;
+        }
+        public void SetMaxMin(double max, double min)
+        {
+            MaxValue = max;
+            MinValue = min;
+        }
         public void SetSelected(int dropdownlistidd, int selectedidd)
         {
             if (dropdownlistidd == 0) // if change is made to first list
@@ -90,11 +104,30 @@ namespace GhSA.Components
 
             if (dropdownlistidd == 1) // if change is made to second list
             {
+                bool redraw = false;
                 selections[1] = dropdowncontents[1][selectedidd];
+                if (_mode == FoldMode.Displacement)
+                {
+                    if ((int)_disp > 3 & selectedidd < 4)
+                    {
+                        redraw = true;
+                        slider = true;
+                    }
+                    if ((int)_disp < 4 & selectedidd > 3)
+                    {
+                        redraw = true;
+                        slider = false;
+
+                    }
+                }
+
                 _disp = (DisplayValue)selectedidd;
                 if (dropdowncontents[1] != dropdowndisplacement)
                     if (selectedidd > 2)
                         _disp = (DisplayValue)selectedidd + 1;
+
+                if (redraw)
+                    ReDrawComponent();
 
                 (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
                 Params.OnParametersChanged();
@@ -111,6 +144,7 @@ namespace GhSA.Components
         {
             "Result Type",
             "Display Result",
+            "Deform Shape"
         });
         readonly List<string> dropdownitems = new List<string>(new string[]
         {
@@ -464,6 +498,7 @@ namespace GhSA.Components
                     Mesh tempmesh = GhSA.Util.Gsa.FromGSA.ConvertElement3D(element, nodes);
                     if (tempmesh == null) { continue; }
 
+                    List<Vector3d> transformation = null;
                     // add mesh colour
                     List<double> vals = new List<double>();
 
@@ -475,12 +510,27 @@ namespace GhSA.Components
                     {
                         case (DisplayValue.X):
                             vals = tempXYZ.ConvertAll(val => val.X);
+                            transformation = new List<Vector3d>();
+                            for (int i = 0; i < vals.Count; i++)
+                            {
+                                transformation.Add(new Vector3d(vals[i] * Value / 1000, 0, 0));
+                            }
                             break;
                         case (DisplayValue.Y):
                             vals = tempXYZ.ConvertAll(val => val.Y);
+                            transformation = new List<Vector3d>();
+                            for (int i = 0; i < vals.Count; i++)
+                            {
+                                transformation.Add(new Vector3d(0, vals[i] * Value / 1000, 0));
+                            }
                             break;
                         case (DisplayValue.Z):
                             vals = tempXYZ.ConvertAll(val => val.Z);
+                            transformation = new List<Vector3d>();
+                            for (int i = 0; i < vals.Count; i++)
+                            {
+                                transformation.Add(new Vector3d(0, 0, vals[i] * Value / 1000));
+                            }
                             break;
                         case (DisplayValue.resXYZ):
                             vals = tempXYZ.ConvertAll(val => (
@@ -488,6 +538,7 @@ namespace GhSA.Components
                                     Math.Pow(val.X, 2) +
                                     Math.Pow(val.Y, 2) +
                                     Math.Pow(val.Z, 2))));
+                            transformation = tempXYZ.ConvertAll(vec => Vector3d.Multiply(Value / 1000, vec));
                             break;
                         case (DisplayValue.XX):
                             vals = tempXXYYZZ.ConvertAll(val => val.X);
@@ -513,6 +564,12 @@ namespace GhSA.Components
                         double tnorm = 2 * (vals[i] - dmin) / (dmax - dmin) - 1;
                         System.Drawing.Color col = (double.IsNaN(tnorm)) ? System.Drawing.Color.Transparent : gH_Gradient.ColourAt(tnorm);
                         tempmesh.VertexColors.Add(col);
+                        if (transformation != null)
+                        {
+                            Point3f def = tempmesh.Vertices[i - 1];
+                            def.Transform(Transform.Translation(transformation[i]));
+                            tempmesh.Vertices[i - 1] = def;
+                        }
                     }
 
                     ResultMesh resultMesh = new ResultMesh(tempmesh, vals);
@@ -579,7 +636,14 @@ namespace GhSA.Components
             resXXYYZZ
         }
         private DisplayValue _disp = DisplayValue.resXYZ;
-
+        private void ReDrawComponent()
+        {
+            System.Drawing.PointF pivot = new System.Drawing.PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);
+            this.CreateAttributes();
+            this.Attributes.Pivot = pivot;
+            this.Attributes.ExpireLayout();
+            this.Attributes.PerformLayout();
+        }
         private void Mode1Clicked()
         {
             if (_mode == FoldMode.Displacement)
@@ -589,6 +653,11 @@ namespace GhSA.Components
             _mode = FoldMode.Displacement;
 
             Params.UnregisterOutputParameter(Params.Output[1], true);
+
+            slider = true;
+            Value = 50;
+
+            ReDrawComponent();
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -604,6 +673,11 @@ namespace GhSA.Components
 
             Params.RegisterOutputParam(new Param_Vector(), 1);
 
+            slider = false;
+            Value = 0;
+
+            ReDrawComponent();
+
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
             ExpireSolution(true);
@@ -614,12 +688,23 @@ namespace GhSA.Components
         {
             writer.SetInt32("Mode", (int)_mode);
             writer.SetInt32("Display", (int)_disp);
+            writer.SetBoolean("slider", slider);
+            writer.SetInt32("noDec", noDigits);
+            writer.SetDouble("valMax", MaxValue);
+            writer.SetDouble("valMin", MinValue);
+            writer.SetDouble("val", Value);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
             _mode = (FoldMode)reader.GetInt32("Mode");
             _disp = (DisplayValue)reader.GetInt32("Display");
+            
+            slider = reader.GetBoolean("slider");
+            noDigits = reader.GetInt32("noDec");
+            MaxValue = reader.GetDouble("valMax");
+            MinValue = reader.GetDouble("valMin");
+            Value = reader.GetDouble("val");
 
             dropdowncontents = new List<List<string>>();
             dropdowncontents.Add(dropdownitems);

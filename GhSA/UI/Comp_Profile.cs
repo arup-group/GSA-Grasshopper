@@ -291,6 +291,7 @@ namespace GhSA.UI
                 int bw = h1; // button width
                 // create text box and tick box
                 inclSsTxtBounds = new RectangleF(Bounds.X + 2 * s + bw, Bounds.Bottom + 2 * s, Bounds.Width - 4 * s - bw, h1);
+                
                 inclSsBounds = new RectangleF(Bounds.X + s, Bounds.Bottom + 2 * s, bw, h1);
                 // update component bounds
                 Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + h1 + 4 * s);
@@ -584,6 +585,11 @@ namespace GhSA.UI
                     int s = 8;
                     graphics.DrawString("Incl. superseeded", font, fontColour, inclSsTxtBounds, GH_TextRenderingConstants.NearCenter);
                     ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(inclSsBounds.X + inclSsBounds.Width / 2, inclSsBounds.Y + inclSsBounds.Height / 2), inclSS, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+
+                    List<string> incl = new List<string>();
+                    incl.Add("Incl. superseeded");
+                    inclSsTxtBounds.Width = GhSA.UI.ComponentUI.MaxTextWidth(incl, font);
+
                 }
 
                 if (displayTexts[0] == "Standard")
@@ -829,9 +835,39 @@ namespace GhSA.UI
                 comp.ExpireSolution(true);
                 return GH_ObjectResponse.Ignore;
             }
+           
+            if (taperBounds.Contains(e.CanvasLocation) | 
+                hollowBounds.Contains(e.CanvasLocation) | 
+                ellipBounds.Contains(e.CanvasLocation) | 
+                genBounds.Contains(e.CanvasLocation) | 
+                b2bBounds.Contains(e.CanvasLocation) | 
+                inclSsBounds.Contains(e.CanvasLocation))
+            {
+                mouseOver = true;
+                sender.Cursor = System.Windows.Forms.Cursors.Hand;
+                return GH_ObjectResponse.Capture;
+            }
+            for (int i = 0; i < ButtonBound.Count; i++)
+            {
+                if (ButtonBound[i].Contains(e.CanvasLocation))
+                {
+                    mouseOver = true;
+                    sender.Cursor = System.Windows.Forms.Cursors.Hand;
+                    return GH_ObjectResponse.Capture;
+                }
+            }
+
+            if (mouseOver)
+            {
+                mouseOver = false;
+                Grasshopper.Instances.CursorServer.ResetCursor(sender);
+                return GH_ObjectResponse.Release;
+            }
+
 
             return base.RespondToMouseMove(sender, e);
         }
+        bool mouseOver;
 
         protected void FixLayout()
         {

@@ -53,7 +53,23 @@ namespace GhSA.Components
                 selections.Add(dropdowncontents[1][3]);
                 first = false;
             }
-            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdowncontents, selections, spacertext);
+            m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, Value, MaxValue, MinValue, noDigits, spacertext);
+        }
+
+        double MinValue = 0;
+        double MaxValue = 100;
+        double Value = 50;
+        int noDigits = 0;
+        bool slider = true;
+
+        public void SetVal(double value)
+        {
+            Value = value;
+        }
+        public void SetMaxMin(double max, double min)
+        {
+            MaxValue = max;
+            MinValue = min;
         }
 
         public void SetSelected(int dropdownlistidd, int selectedidd)
@@ -88,23 +104,98 @@ namespace GhSA.Components
             }
             else
             {
+                bool redraw = false;
                 if (selectedidd == 0)
+                {
+                    if (_mode == FoldMode.Displacement)
+                        if ((int)_disp > 3)
+                        {
+                            redraw = true;
+                            slider = true;
+                        }
                     _disp = DisplayValue.X;
+
+                }
                 if (selectedidd == 1)
+                {
+                    if (_mode == FoldMode.Displacement)
+                        if ((int)_disp > 3)
+                        {
+                            redraw = true;
+                            slider = true;
+                        }
                     _disp = DisplayValue.Y;
+
+                }
                 if (selectedidd == 2)
+                {
+                    if (_mode == FoldMode.Displacement)
+                        if ((int)_disp > 3)
+                        {
+                            redraw = true;
+                            slider = true;
+                        }
                     _disp = DisplayValue.Z;
+
+                }
                 if (selectedidd == 3)
+                {
+                    if (_mode == FoldMode.Displacement)
+                        if ((int)_disp > 3)
+                        {
+                            redraw = true;
+                            slider = true;
+                        }
                     _disp = DisplayValue.resXYZ;
+
+                }
                 if (selectedidd == 4)
+                {
+                    if (_mode == FoldMode.Displacement)
+                        if ((int)_disp < 4)
+                        {
+                            redraw = true;
+                            slider = false;
+                        }
                     _disp = DisplayValue.XX;
+                }
                 if (selectedidd == 5)
+                {
+                    if (_mode == FoldMode.Displacement)
+                        if ((int)_disp < 4)
+                        {
+                            redraw = true;
+                            slider = false;
+                        }
                     _disp = DisplayValue.YY;
+                }
                 if (selectedidd == 6)
+                {
+                    if (_mode == FoldMode.Displacement)
+                        if ((int)_disp < 4)
+                        {
+                            redraw = true;
+                            slider = false;
+                        }
                     _disp = DisplayValue.ZZ;
+
+                }
                 if (selectedidd == 7)
+                {
+                    if (_mode == FoldMode.Displacement)
+                        if ((int)_disp < 4)
+                        {
+                            redraw = true;
+                            slider = false;
+                        }
                     _disp = DisplayValue.resXXYYZZ;
+                }
+                
                 selections[1] = dropdowncontents[1][selectedidd];
+                
+                if (redraw)
+                    ReDrawComponent();
+                
                 (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
                 Params.OnParametersChanged();
                 ExpireSolution(true);
@@ -120,6 +211,7 @@ namespace GhSA.Components
         {
             "Result Type",
             "Display Result",
+            "Deform Shape"
         });
         readonly List<string> dropdownitems = new List<string>(new string[]
         {
@@ -514,8 +606,8 @@ namespace GhSA.Components
                     {
                         if (!(dmin == 0 & dmax == 0))
                         {
-                            Line segmentline = segmentedlines[j];
-                            int nextj = j + 1;
+                            Vector3d startTranslation = new Vector3d(0, 0, 0);
+                            Vector3d endTranslation = new Vector3d(0, 0, 0);
 
                             double t1 = 0;
                             double t2 = 0;
@@ -526,36 +618,53 @@ namespace GhSA.Components
                                 case (DisplayValue.X):
                                     t1 = xyz_out[path, j].X;
                                     t2 = xyz_out[path, j + 1].X;
+                                    startTranslation.X = t1 * Value / 1000;
+                                    endTranslation.X = t2 * Value / 1000;
                                     break;
                                 case (DisplayValue.Y):
                                     t1 = xyz_out[path, j].Y;
                                     t2 = xyz_out[path, j + 1].Y;
+                                    startTranslation.Y = t1 * Value / 1000;
+                                    endTranslation.Y = t2 * Value / 1000;
                                     break;
                                 case (DisplayValue.Z):
                                     t1 = xyz_out[path, j].Z;
                                     t2 = xyz_out[path, j + 1].Z;
+                                    startTranslation.Z = t1 * Value / 1000;
+                                    endTranslation.Z = t2 * Value / 1000;
                                     break;
                                 case (DisplayValue.resXYZ):
                                     t1 = Math.Sqrt(Math.Pow(xyz_out[path, j].X, 2) + Math.Pow(xyz_out[path, j].Y, 2) + Math.Pow(xyz_out[path, j].Z, 2));
                                     t2 = Math.Sqrt(Math.Pow(xyz_out[path, j + 1].X, 2) + Math.Pow(xyz_out[path, j + 1].Y, 2) + Math.Pow(xyz_out[path, j + 1].Z, 2));
+                                    startTranslation.X = xyz_out[path, j].X * Value / 1000;
+                                    endTranslation.X = xyz_out[path, j + 1].X * Value / 1000;
+                                    startTranslation.Y = xyz_out[path, j].Y * Value / 1000;
+                                    endTranslation.Y = xyz_out[path, j + 1].Y * Value / 1000;
+                                    startTranslation.Z = xyz_out[path, j].Z * Value / 1000;
+                                    endTranslation.Z = xyz_out[path, j + 1].Z * Value / 1000;
                                     break;
                                 case (DisplayValue.XX):
                                     t1 = xxyyzz_out[path, j].X;
-                                    t2 = xxyyzz_out[path, nextj].X;
+                                    t2 = xxyyzz_out[path, j + 1].X;
                                     break;
                                 case (DisplayValue.YY):
                                     t1 = xxyyzz_out[path, j].Y;
-                                    t2 = xxyyzz_out[path, nextj].Y;
+                                    t2 = xxyyzz_out[path, j + 1].Y;
                                     break;
                                 case (DisplayValue.ZZ):
                                     t1 = xxyyzz_out[path, j].Z;
-                                    t2 = xxyyzz_out[path, nextj].Z;
+                                    t2 = xxyyzz_out[path, j + 1].Z;
                                     break;
                                 case (DisplayValue.resXXYYZZ):
                                     t1 = Math.Sqrt(Math.Pow(xxyyzz_out[path, j].X, 2) + Math.Pow(xxyyzz_out[path, j].Y, 2) + Math.Pow(xxyyzz_out[path, j].Z, 2));
-                                    t2 = Math.Sqrt(Math.Pow(xxyyzz_out[path, nextj].X, 2) + Math.Pow(xxyyzz_out[path, nextj].Y, 2) + Math.Pow(xxyyzz_out[path, nextj].Z, 2));
+                                    t2 = Math.Sqrt(Math.Pow(xxyyzz_out[path, j + 1].X, 2) + Math.Pow(xxyyzz_out[path, j + 1].Y, 2) + Math.Pow(xxyyzz_out[path, j + 1].Z, 2));
                                     break;
                             }
+                            Point3d start = new Point3d(segmentedlines[j].PointAt(0));
+                            start.Transform(Transform.Translation(startTranslation));
+                            Point3d end = new Point3d(segmentedlines[j].PointAt(1));
+                            end.Transform(Transform.Translation(endTranslation));
+                            Line segmentline = new Line(start, end);
 
                             //normalised value between -1 and 1
                             double tnorm1 = 2 * (t1 - dmin) / (dmax - dmin) - 1;
@@ -645,7 +754,14 @@ namespace GhSA.Components
             resXXYYZZ
         }
         private DisplayValue _disp = DisplayValue.resXYZ;
-
+        private void ReDrawComponent()
+        {
+            System.Drawing.PointF pivot = new System.Drawing.PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);
+            this.CreateAttributes();
+            this.Attributes.Pivot = pivot;
+            this.Attributes.ExpireLayout();
+            this.Attributes.PerformLayout();
+        }
         private void Mode1Clicked()
         {
             if (_mode == FoldMode.Displacement)
@@ -653,6 +769,11 @@ namespace GhSA.Components
 
             RecordUndoEvent(_mode.ToString() + " Parameters");
             _mode = FoldMode.Displacement;
+
+            slider = true;
+            Value = 50;
+
+            ReDrawComponent();
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -666,6 +787,11 @@ namespace GhSA.Components
             RecordUndoEvent(_mode.ToString() + " Parameters");
             _mode = FoldMode.Force;
 
+            slider = false;
+            Value = 0;
+
+            ReDrawComponent();
+
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
             ExpireSolution(true);
@@ -677,12 +803,23 @@ namespace GhSA.Components
         {
             writer.SetInt32("Mode", (int)_mode);
             writer.SetInt32("Display", (int)_disp);
+            writer.SetBoolean("slider", slider);
+            writer.SetInt32("noDec", noDigits);
+            writer.SetDouble("valMax", MaxValue);
+            writer.SetDouble("valMin", MinValue);
+            writer.SetDouble("val", Value);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
             _mode = (FoldMode)reader.GetInt32("Mode");
             _disp = (DisplayValue)reader.GetInt32("Display");
+
+            slider = reader.GetBoolean("slider");
+            noDigits = reader.GetInt32("noDec");
+            MaxValue = reader.GetDouble("valMax");
+            MinValue = reader.GetDouble("valMin");
+            Value = reader.GetDouble("val");
 
             dropdowncontents = new List<List<string>>();
             dropdowncontents.Add(dropdownitems);
