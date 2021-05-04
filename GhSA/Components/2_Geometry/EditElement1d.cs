@@ -248,7 +248,7 @@ namespace GhSA.Components
                 DA.SetData(0, new GsaElement1dGoo(elem));
                 DA.SetData(1, elem.ID);
                 DA.SetData(2, elem.Line);
-                DA.SetData(3, elem.Section);
+                DA.SetData(3, new GsaSectionGoo(elem.Section));
                 DA.SetData(4, elem.Element.Group);
                 DA.SetData(5, elem.Element.Type);
                 GsaOffset offset1 = new GsaOffset
