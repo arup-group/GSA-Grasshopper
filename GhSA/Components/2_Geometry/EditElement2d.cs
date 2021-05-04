@@ -340,7 +340,8 @@ namespace GhSA.Components
                     try { pmems.Add(elem.Elements[i].ParentMember.Member); } catch (Exception) { pmems.Add(0); }
                     ;
                 }
-                DA.SetDataList(3, elem.Properties);
+
+                DA.SetDataList(3, new List<GsaProp2dGoo>(elem.Properties.ConvertAll(prop2d => new GsaProp2dGoo(prop2d))));
                 DA.SetDataList(4, out_groups);
                 DA.SetDataList(5, type);
                 DA.SetDataList(6, out_offsets);

@@ -282,7 +282,7 @@ namespace GhSA.Components
                 DA.SetData(0, new GsaMember1dGoo(mem));
                 DA.SetData(1, mem.ID);
                 DA.SetData(2, mem.PolyCurve);
-                DA.SetData(3, mem.Section);
+                DA.SetData(3, new GsaSectionGoo(mem.Section));
                 DA.SetData(4, mem.Member.Group);
                 DA.SetData(5, mem.Member.Type);
                 DA.SetData(6, mem.Member.Type1D);

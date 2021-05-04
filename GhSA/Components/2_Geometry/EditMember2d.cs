@@ -98,7 +98,7 @@ namespace GhSA.Components
             pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
 
             pManager.AddIntegerParameter("Member Type", "mT", "Get 2D Member Type", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("2D Element Type", "aT", "Get Member 2D Analysis Element Type" + System.Environment.NewLine + 
+            pManager.AddIntegerParameter("2D Element Type", "eT", "Get Member 2D Analysis Element Type" + System.Environment.NewLine + 
                 "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm", GH_ParamAccess.item);
 
             pManager.AddGenericParameter("Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
@@ -291,7 +291,7 @@ namespace GhSA.Components
                 DA.SetDataList(3, mem.InclusionPoints);
                 DA.SetDataList(4, mem.InclusionLines);
                 
-                DA.SetData(5, mem.Property);
+                DA.SetData(5, new GsaProp2dGoo(mem.Property));
                 DA.SetData(6, mem.Member.Group);
                 
                 DA.SetData(7, mem.Member.Type);

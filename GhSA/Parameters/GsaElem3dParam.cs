@@ -350,6 +350,24 @@ namespace GhSA.Parameters
                 return true;
             }
 
+            if (typeof(Q).IsAssignableFrom(typeof(List<GH_Integer>)))
+            {
+                if (Value == null)
+                    target = default;
+                else
+                {
+                    List<GH_Integer> ints = new List<GH_Integer>();
+
+                    for (int i = 0; i < Value.ID.Count; i++)
+                    {
+                        GH_Integer ghint = new GH_Integer();
+                        if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
+                            ints.Add(ghint);
+                    }
+                    target = (Q)(object)ints;
+                }
+                return true;
+            }
 
             target = default;
             return false;

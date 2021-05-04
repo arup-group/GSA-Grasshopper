@@ -354,6 +354,21 @@ namespace GhSA.Parameters
                 return true;
             }
 
+            if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
+            {
+                if (Value == null)
+                    target = default;
+                else
+                {
+                    GH_Integer ghint = new GH_Integer();
+                    if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
+                        target = (Q)(object)ghint;
+                    else
+                        target = default;
+                }
+                return true;
+            }
+
 
             target = default;
             return false;
