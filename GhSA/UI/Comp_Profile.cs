@@ -452,7 +452,6 @@ namespace GhSA.UI
         protected override void Render(GH_Canvas canvas, System.Drawing.Graphics graphics, GH_CanvasChannel channel)
         {
             base.Render(canvas, graphics, channel);
-            //base.RenderComponentCapsule(canvas, graphics, true, true, false, true, true, false);
 
             if (channel == GH_CanvasChannel.Objects)
             {

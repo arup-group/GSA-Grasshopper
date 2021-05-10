@@ -33,7 +33,7 @@ namespace GhSA.Components
                "Element list should take the form:" + System.Environment.NewLine +
                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            pManager.AddTextParameter("Load Name", "Na", "Name of Load", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
             pManager.AddVectorParameter("Gravity factor", "G", "Gravity vector factor (default z = -1)", GH_ParamAccess.item, new Vector3d(0, 0, -1));
             pManager[0].Optional = true;
             pManager[1].Optional = true;

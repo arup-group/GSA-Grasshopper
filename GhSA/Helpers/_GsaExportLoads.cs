@@ -238,6 +238,9 @@ namespace GhSA.Util.Gsa.ToGSA
         public static int SetGridPlane(ref GsaGridPlaneSurface gridplanesurface,
             ref Dictionary<int, GridPlane> existingGridPlanes, ref int gridplaneidcounter, ref Dictionary<Guid, int> gp_guid, Dictionary<int, Axis> existingAxes)
         {
+            if (existingGridPlanes.Count > 0)
+                gridplaneidcounter = Math.Max(existingGridPlanes.Keys.Max() + 1, gridplaneidcounter);
+
             if (gridplanesurface.GridPlane.Name == "")
                 gridplanesurface.GridPlane.Name = "Grid plane " + gridplaneidcounter;
 
@@ -277,13 +280,14 @@ namespace GhSA.Util.Gsa.ToGSA
                 }
                 
                 // if it does not exist we add the grid plane to the model
-                
                 existingGridPlanes.Add(gridplaneidcounter, gridplanesurface.GridPlane);
                 // then set the id to grid surface
                 gp_ID = gridplaneidcounter;
                 // and add it to the our list of grid planes
                 if (gridplanesurface.GridPlaneGUID != new Guid())
+                {
                     gp_guid.Add(gridplanesurface.GridPlaneGUID, gridplaneidcounter);
+                }
                 gridplaneidcounter++;
             }
             return gp_ID;
@@ -293,6 +297,9 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<int, GridSurface> existingGridSurfaces, ref int gridsurfaceidcounter, ref Dictionary<Guid, int> gs_guid, 
             Dictionary<int, GridPlane> existingGridPlanes, Dictionary<int, Axis> existingAxes)
         {
+            if (existingGridSurfaces.Count > 0)
+                gridsurfaceidcounter = Math.Max(existingGridSurfaces.Keys.Max() + 1, gridsurfaceidcounter);
+
             int gs_ID = gridplanesurface.GridSurfaceID;
 
             if (gridplanesurface.GridSurface.Name == "")
@@ -337,7 +344,8 @@ namespace GhSA.Util.Gsa.ToGSA
                     gs_guid.TryGetValue(gridplanesurface.GridSurfaceGUID, out int gsID);
                     // if guid exist in our dictionary it has been added to the model 
                     // and we just assign the value to the load
-                    gs_ID = gsID;
+                    //gs_ID = gsID;
+                    return gsID;
                 }
 
                 // if it does not exist we add the grid surface to the model
@@ -345,7 +353,9 @@ namespace GhSA.Util.Gsa.ToGSA
                 gs_ID = gridsurfaceidcounter;
                 // and add it to the our list of grid surfaces
                 if (gridplanesurface.GridSurfaceGUID != new Guid())
+                {
                     gs_guid.Add(gridplanesurface.GridSurfaceGUID, gs_ID);
+                }
                 gridsurfaceidcounter++;
             }
             return gs_ID;

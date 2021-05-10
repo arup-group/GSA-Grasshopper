@@ -44,7 +44,7 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
+            pManager.AddGenericParameter("GSA Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
                 "If you input more than one model they will be merged" + System.Environment.NewLine + "with first model in list taking priority for IDs", GH_ParamAccess.list);
             pManager.AddGenericParameter("GSA Properties", "Prob", "Sections and Prop2Ds to add/set in model" + System.Environment.NewLine +
                 "Properties already added to Elements or Members" + System.Environment.NewLine + "will automatically be added with Geometry input", GH_ParamAccess.list);

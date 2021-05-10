@@ -43,7 +43,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "0 : Global" +
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
-            pManager.AddTextParameter("Load Name", "Na", "Name of Load", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
             pManager.AddNumberParameter("Value Start (" + Units.Force + "/" + Units.LengthLarge + ")", "V1", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ") at Start of Line", GH_ParamAccess.item);
             pManager.AddNumberParameter("Value End (" + Units.Force + "/" + Units.LengthLarge + ")", "V2", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ") at End of Line (default : Start Value)", GH_ParamAccess.item);
 
