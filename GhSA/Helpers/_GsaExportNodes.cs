@@ -222,25 +222,37 @@ namespace GhSA.Util.Gsa.ToGSA
             {
                 if (existAxes.TryGetValue(key, out Axis gsaAxis))
                 {
-                    if (Math.Pow((testAxis.Origin.X - gsaAxis.Origin.X), 2)
-                        + Math.Pow((testAxis.Origin.Y - gsaAxis.Origin.Y), 2)
-                        + Math.Pow((testAxis.Origin.Z - gsaAxis.Origin.Z), 2)
-                        < Math.Pow(tolerance, 2))
-                    {
-                        if (Math.Pow((testAxis.XVector.X - gsaAxis.XVector.X), 2)
-                        + Math.Pow((testAxis.XVector.Y - gsaAxis.XVector.Y), 2)
-                        + Math.Pow((testAxis.XVector.Z - gsaAxis.XVector.Z), 2)
-                        < Math.Pow(tolerance, 2))
-                        {
-                            if (Math.Pow((testAxis.XYPlane.X - gsaAxis.XYPlane.X), 2)
-                            + Math.Pow((testAxis.XYPlane.Y - gsaAxis.XYPlane.Y), 2)
-                            + Math.Pow((testAxis.XYPlane.Z - gsaAxis.XYPlane.Z), 2)
-                            < Math.Pow(tolerance, 2))
-                            {
-                                return key;
-                            }
-                        }
-                    }
+                    if (Math.Abs(testAxis.Origin.X - gsaAxis.Origin.X) <= tolerance &
+                        Math.Abs(testAxis.Origin.Y - gsaAxis.Origin.Y) <= tolerance &
+                        Math.Abs(testAxis.Origin.Z - gsaAxis.Origin.Z) <= tolerance &
+                        Math.Abs(testAxis.XVector.X - gsaAxis.XVector.X) <= tolerance &
+                        Math.Abs(testAxis.XVector.Y - gsaAxis.XVector.Y) <= tolerance &
+                        Math.Abs(testAxis.XVector.Z - gsaAxis.XVector.Z) <= tolerance &
+                        Math.Abs(testAxis.XYPlane.X - gsaAxis.XYPlane.X) <= tolerance &
+                        Math.Abs(testAxis.XYPlane.Y - gsaAxis.XYPlane.Y) <= tolerance &
+                        Math.Abs(testAxis.XYPlane.Z - gsaAxis.XYPlane.Z) <= tolerance
+                        )
+                        return key;
+                    
+                    //if (Math.Pow((testAxis.Origin.X - gsaAxis.Origin.X), 2)
+                    //    + Math.Pow((testAxis.Origin.Y - gsaAxis.Origin.Y), 2)
+                    //    + Math.Pow((testAxis.Origin.Z - gsaAxis.Origin.Z), 2)
+                    //    < Math.Pow(tolerance, 2))
+                    //{
+                    //    if (Math.Pow((testAxis.XVector.X - gsaAxis.XVector.X), 2)
+                    //    + Math.Pow((testAxis.XVector.Y - gsaAxis.XVector.Y), 2)
+                    //    + Math.Pow((testAxis.XVector.Z - gsaAxis.XVector.Z), 2)
+                    //    < Math.Pow(tolerance, 2))
+                    //    {
+                    //        if (Math.Pow((testAxis.XYPlane.X - gsaAxis.XYPlane.X), 2)
+                    //        + Math.Pow((testAxis.XYPlane.Y - gsaAxis.XYPlane.Y), 2)
+                    //        + Math.Pow((testAxis.XYPlane.Z - gsaAxis.XYPlane.Z), 2)
+                    //        < Math.Pow(tolerance, 2))
+                    //        {
+                    //            return key;
+                    //        }
+                    //    }
+                    //}
                 }
             }
             return 0;

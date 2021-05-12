@@ -127,6 +127,14 @@ namespace GhSA.Util.Gsa.ToGSA
     }
     public class Assemble
     {
+        /// <summary>
+        /// Method for assembling GSA model from Members only to create geometry
+        /// </summary>
+        /// <param name="member3Ds">3D Members</param>
+        /// <param name="member2Ds">2D Members</param>
+        /// <param name="member1Ds">1D Members</param>
+        /// <param name="nodes">Nodes</param>
+        /// <returns></returns>
         public static Model AssembleModel(List<GsaMember3d> member3Ds = null, List<GsaMember2d> member2Ds = null, List<GsaMember1d> member1Ds = null, List<GsaNode> nodes = null)
         {
             // new model to set members in
@@ -169,6 +177,24 @@ namespace GhSA.Util.Gsa.ToGSA
             return gsa;
         }
 
+        /// <summary>
+        /// Method to assemble full GSA model 
+        /// </summary>
+        /// <param name="model">Existing models to be merged</param>
+        /// <param name="nodes">List of nodes with properties like support conditions</param>
+        /// <param name="elem1ds">List of 1D elements. Nodes at end-points will automatically be added to the model, using existing nodes in model within tolerance. Section will automatically be added to model</param>
+        /// <param name="elem2ds">List of 2D elements. Nodes at mesh-verticies will automatically be added to the model, using existing nodes in model within tolerance. Prop2d will automatically be added to model</param>
+        /// <param name="elem3ds">List of 3D elements. Nodes at mesh-verticies will automatically be added to the model, using existing nodes in model within tolerance</param>
+        /// <param name="mem1ds">List of 1D members. Topology nodes will automatically be added to the model, using existing nodes in model within tolerance. Section will automatically be added to model</param>
+        /// <param name="mem2ds">List of 2D members. Topology nodes will automatically be added to the model, using existing nodes in model within tolerance. Prop2d will automatically be added to model</param>
+        /// <param name="mem3ds">List of 3D members. Topology nodes will automatically be added to the model, using existing nodes in model within tolerance</param>
+        /// <param name="sections">List of Sections</param>
+        /// <param name="prop2Ds">List of 2D Properties</param>
+        /// <param name="loads">List of Loads. For Grid loads the Axis, GridPlane and GridSurface will automatically be added to the model using existing objects where possible within tolerance.</param>
+        /// <param name="gridPlaneSurfaces">List of GridPlaneSurfaces</param>
+        /// <param name="workerInstance">Optional input for AsyncComponents</param>
+        /// <param name="ReportProgress">Optional input for AsyncComponents</param>
+        /// <returns></returns>
         public static Model AssembleModel(GsaModel model, List<GsaNode> nodes, 
             List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,
             List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
@@ -328,15 +354,17 @@ namespace GhSA.Util.Gsa.ToGSA
             Dictionary<Guid, int> gp_guid = new Dictionary<Guid, int>();
             Dictionary<Guid, int> gs_guid = new Dictionary<Guid, int>();
 
+            // Set / add Grid plane surfaces - do this first to set GridPlane and GridSurfaces with IDs.
+            Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
+                ref gp_guid, ref gs_guid, workerInstance, ReportProgress);
+
             // Set / add loads to lists
             Loads.ConvertLoad(loads, ref gravityLoads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle,
                 ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads,
                 ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, 
                 workerInstance, ReportProgress);
 
-            // Set / add Grid plane surfaces
-            Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
-                ref gp_guid, ref gs_guid, workerInstance, ReportProgress);
+            
             #endregion
 
             #region Properties

@@ -11,6 +11,66 @@ namespace GhSA.Util.Gsa.ToGSA
 {
     class Loads
     {
+        /// <summary>
+        /// Method to loop through a list of Loads with GridPlaneSurfaces and return the highest set ID + 1 for gridplan and gridsurface
+        /// </summary>
+        /// <param name="loads"></param>
+        /// <param name="gridplaneidcounter"></param>
+        /// <param name="gridsurfaceidcounter"></param>
+        public static void GetGridPlaneSurfaceCounters(List<GsaLoad> loads, ref int gridplaneidcounter, ref int gridsurfaceidcounter)
+        {
+            for (int i = 0; i < loads.Count; i++)
+            {
+                if (loads[i] != null)
+                {
+                    GsaLoad load = loads[i];
+
+                    if (load.LoadType == GsaLoad.LoadTypes.GridArea)
+                    {
+                        if (load.AreaLoad.GridPlaneSurface.GridPlaneID > 0)
+                            gridplaneidcounter = Math.Max(gridplaneidcounter, load.AreaLoad.GridPlaneSurface.GridPlaneID + 1);
+                        if (load.AreaLoad.GridPlaneSurface.GridSurfaceID > 0)
+                            gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.AreaLoad.GridPlaneSurface.GridSurfaceID + 1);
+                    }
+
+                    if (load.LoadType == GsaLoad.LoadTypes.GridLine)
+                    {
+                        if (load.PointLoad.GridPlaneSurface.GridPlaneID > 0)
+                            gridplaneidcounter = Math.Max(gridplaneidcounter, load.PointLoad.GridPlaneSurface.GridPlaneID + 1);
+                        if (load.PointLoad.GridPlaneSurface.GridSurfaceID > 0)
+                            gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.PointLoad.GridPlaneSurface.GridSurfaceID + 1);
+                    }
+
+                    if (load.LoadType == GsaLoad.LoadTypes.GridLine)
+                    {
+                        if (load.LineLoad.GridPlaneSurface.GridPlaneID > 0)
+                            gridplaneidcounter = Math.Max(gridplaneidcounter, load.LineLoad.GridPlaneSurface.GridPlaneID + 1);
+                        if (load.LineLoad.GridPlaneSurface.GridSurfaceID > 0)
+                            gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.LineLoad.GridPlaneSurface.GridSurfaceID + 1);
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Method to convert a list of loads into dictionaries containing GsaAPI objects
+        /// </summary>
+        /// <param name="loads"></param>
+        /// <param name="gravityLoads"></param>
+        /// <param name="nodeLoads_node"></param>
+        /// <param name="nodeLoads_displ"></param>
+        /// <param name="nodeLoads_settle"></param>
+        /// <param name="beamLoads"></param>
+        /// <param name="faceLoads"></param>
+        /// <param name="gridPointLoads"></param>
+        /// <param name="gridLineLoads"></param>
+        /// <param name="gridAreaLoads"></param>
+        /// <param name="existingAxes"></param>
+        /// <param name="existingGridPlanes"></param>
+        /// <param name="existingGridSurfaces"></param>
+        /// <param name="gp_guid"></param>
+        /// <param name="gs_guid"></param>
+        /// <param name="workerInstance"></param>
+        /// <param name="ReportProgress"></param>
         public static void ConvertLoad(List<GsaLoad> loads,
             ref List<GravityLoad> gravityLoads,
             ref List<NodeLoad> nodeLoads_node, ref List<NodeLoad> nodeLoads_displ, ref List<NodeLoad> nodeLoads_settle,
@@ -23,19 +83,27 @@ namespace GhSA.Util.Gsa.ToGSA
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
-            // create a counter for creating new axes, gridplanes and gridsurfaces
-            int axisidcounter = (existingAxes.Count > 0) ? existingAxes.Keys.Max() + 1 : 1;
-            int gridplaneidcounter = (existingGridPlanes.Count > 0) ? existingGridPlanes.Keys.Max() + 1 : 1;
-            int gridsurfaceidcounter = (existingGridSurfaces.Count > 0) ? existingGridSurfaces.Keys.Max() + 1 : 1;
-
             if (loads != null)
             {
+                if (workerInstance != null)
+                {
+                    ReportProgress("Initiating Loads assembly", -2);
+                }
+
+                // create a counter for creating new axes, gridplanes and gridsurfaces
+                int axisidcounter = (existingAxes.Count > 0) ? existingAxes.Keys.Max() + 1 : 1;
+                int gridplaneidcounter = (existingGridPlanes.Count > 0) ? existingGridPlanes.Keys.Max() + 1 : 1;
+                int gridsurfaceidcounter = (existingGridSurfaces.Count > 0) ? existingGridSurfaces.Keys.Max() + 1 : 1;
+
+                // get the highest gridplaneID+1 and gridsurfaceID+1
+                GetGridPlaneSurfaceCounters(loads, ref gridplaneidcounter, ref gridsurfaceidcounter);
+
                 for (int i = 0; i < loads.Count; i++)
                 {
                     if (workerInstance != null)
                     {
                         if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Loads ", (double)i / (loads.Count - 1));
+                        ReportProgress("Assembling Loads ", (double)i / (loads.Count - 1));
                     }
 
                     if (loads[i] != null)
@@ -53,6 +121,27 @@ namespace GhSA.Util.Gsa.ToGSA
                 ReportProgress("Loads assembled", -2);
             }
         }
+        /// <summary>
+        /// Method to convert a single of loads into dictionaries containing GsaAPI objects. Maintains the referenced dictionaries and counters.
+        /// </summary>
+        /// <param name="load"></param>
+        /// <param name="gravityLoads"></param>
+        /// <param name="nodeLoads_node"></param>
+        /// <param name="nodeLoads_displ"></param>
+        /// <param name="nodeLoads_settle"></param>
+        /// <param name="beamLoads"></param>
+        /// <param name="faceLoads"></param>
+        /// <param name="gridPointLoads"></param>
+        /// <param name="gridLineLoads"></param>
+        /// <param name="gridAreaLoads"></param>
+        /// <param name="existingAxes"></param>
+        /// <param name="axisidcounter"></param>
+        /// <param name="existingGridPlanes"></param>
+        /// <param name="gridplaneidcounter"></param>
+        /// <param name="existingGridSurfaces"></param>
+        /// <param name="gridsurfaceidcounter"></param>
+        /// <param name="gp_guid"></param>
+        /// <param name="gs_guid"></param>
         public static void ConvertLoad(GsaLoad load,
             ref List<GravityLoad> gravityLoads,
         ref List<NodeLoad> nodeLoads_node, ref List<NodeLoad> nodeLoads_displ, ref List<NodeLoad> nodeLoads_settle,
@@ -195,7 +284,13 @@ namespace GhSA.Util.Gsa.ToGSA
             }
 
         }
-
+        /// <summary>
+        /// Method to set a single axis in ref dictionary, looking up existing axes to reference. Returns axis ID set in dictionary or existing axis ID if similar already exist.
+        /// </summary>
+        /// <param name="gridplanesurface"></param>
+        /// <param name="existingAxes"></param>
+        /// <param name="axisidcounter"></param>
+        /// <returns></returns>
         public static int SetAxis(ref GsaGridPlaneSurface gridplanesurface,
             ref Dictionary<int, Axis> existingAxes, ref int axisidcounter)
         {
@@ -234,7 +329,15 @@ namespace GhSA.Util.Gsa.ToGSA
             }
             return axis_id;
         }
-
+        /// <summary>
+        /// Method to set a single gridplane in ref dictionary, looking up existing axes to reference. Returns the GridPlane ID set in dictionary or existing ID if similar already exist. Maintains the axis dictionary
+        /// </summary>
+        /// <param name="gridplanesurface"></param>
+        /// <param name="existingGridPlanes"></param>
+        /// <param name="gridplaneidcounter"></param>
+        /// <param name="gp_guid"></param>
+        /// <param name="existingAxes"></param>
+        /// <returns></returns>
         public static int SetGridPlane(ref GsaGridPlaneSurface gridplanesurface,
             ref Dictionary<int, GridPlane> existingGridPlanes, ref int gridplaneidcounter, ref Dictionary<Guid, int> gp_guid, Dictionary<int, Axis> existingAxes)
         {
@@ -267,7 +370,12 @@ namespace GhSA.Util.Gsa.ToGSA
                         foreach (int key in existingGridPlanes.Keys)
                         {
                             if (existingGridPlanes[key].AxisProperty == axis_id)
+                            {
+                                if (existingGridPlanes[key].Elevation == gridplanesurface.GridPlane.Elevation &
+                                    existingGridPlanes[key].ToleranceAbove == gridplanesurface.GridPlane.ToleranceAbove &
+                                    existingGridPlanes[key].ToleranceBelow == gridplanesurface.GridPlane.ToleranceBelow)   
                                 return key;
+                            }
                         }
                     }
                 }
@@ -292,7 +400,16 @@ namespace GhSA.Util.Gsa.ToGSA
             }
             return gp_ID;
         }
-
+        /// <summary>
+        /// Method to set a single gridsurface in ref dictionary, looking up existing axes and gridplanes to reference. Returns the GridSurface ID set in dictionary or existing ID if similar already exist. Maintains the gridplane and axis dictionary
+        /// </summary>
+        /// <param name="gridplanesurface"></param>
+        /// <param name="existingGridSurfaces"></param>
+        /// <param name="gridsurfaceidcounter"></param>
+        /// <param name="gs_guid"></param>
+        /// <param name="existingGridPlanes"></param>
+        /// <param name="existingAxes"></param>
+        /// <returns></returns>
         public static int SetGridSurface(ref GsaGridPlaneSurface gridplanesurface,
             ref Dictionary<int, GridSurface> existingGridSurfaces, ref int gridsurfaceidcounter, ref Dictionary<Guid, int> gs_guid, 
             Dictionary<int, GridPlane> existingGridPlanes, Dictionary<int, Axis> existingAxes)
@@ -332,6 +449,12 @@ namespace GhSA.Util.Gsa.ToGSA
                                 {
                                     if (existingGridSurfaces[keySrf].GridPlane == keyPln)
                                     {
+                                        if (existingGridSurfaces[keySrf].Direction == gridplanesurface.GridSurface.Direction &
+                                            existingGridSurfaces[keySrf].Elements == gridplanesurface.GridSurface.Elements &
+                                            existingGridSurfaces[keySrf].ElementType == gridplanesurface.GridSurface.ElementType &
+                                            existingGridSurfaces[keySrf].ExpansionType == gridplanesurface.GridSurface.ExpansionType &
+                                            existingGridSurfaces[keySrf].SpanType == gridplanesurface.GridSurface.SpanType &
+                                            existingGridSurfaces[keySrf].Tolerance == gridplanesurface.GridSurface.Tolerance)
                                         return keySrf;
                                     }
                                 }
@@ -360,7 +483,38 @@ namespace GhSA.Util.Gsa.ToGSA
             }
             return gs_ID;
         }
+        /// <summary>
+        /// Method to loop through a list of GridPlaneSurfaces and return the highest set ID + 1 for gridplan and gridsurface
+        /// </summary>
+        /// <param name="gridPlaneSurfaces"></param>
+        /// <param name="gridplaneidcounter"></param>
+        /// <param name="gridsurfaceidcounter"></param>
+        public static void GetGridPlaneSurfaceCounters(List<GsaGridPlaneSurface> gridPlaneSurfaces, ref int gridplaneidcounter, ref int gridsurfaceidcounter)
+        {
+            for (int i = 0; i < gridPlaneSurfaces.Count; i++)
+            {
+                if (gridPlaneSurfaces[i] != null)
+                {
+                    GsaGridPlaneSurface gps = gridPlaneSurfaces[i];
 
+                    if (gps.GridPlaneID > 0)
+                        gridplaneidcounter = Math.Max(gridplaneidcounter, gps.GridPlaneID + 1);
+                    if (gps.GridSurfaceID > 0)
+                        gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, gps.GridSurfaceID + 1);
+                }
+            }
+        }
+        /// <summary>
+        /// Method to convert a list of GridPlaneSurfaces and set Axes, GridPlanes and GridSurfaces in ref Dictionaries
+        /// </summary>
+        /// <param name="gridPlaneSurfaces"></param>
+        /// <param name="existingAxes"></param>
+        /// <param name="existingGridPlanes"></param>
+        /// <param name="existingGridSurfaces"></param>
+        /// <param name="gp_guid"></param>
+        /// <param name="gs_guid"></param>
+        /// <param name="workerInstance"></param>
+        /// <param name="ReportProgress"></param>
         public static void ConvertGridPlaneSurface(List<GsaGridPlaneSurface> gridPlaneSurfaces,
             ref Dictionary<int, Axis> existingAxes, ref Dictionary<int, GridPlane> existingGridPlanes,
             ref Dictionary<int, GridSurface> existingGridSurfaces, 
@@ -368,13 +522,21 @@ namespace GhSA.Util.Gsa.ToGSA
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
-            // create a counter for creating new axes, gridplanes and gridsurfaces
-            int axisidcounter = (existingAxes.Count > 0) ? existingAxes.Keys.Max() + 1 : 1;
-            int gridplaneidcounter = (existingGridPlanes.Count > 0) ? existingGridPlanes.Keys.Max() + 1 : 1;
-            int gridsurfaceidcounter = (existingGridSurfaces.Count > 0) ? existingGridSurfaces.Keys.Max() + 1 : 1;
-
             if (gridPlaneSurfaces != null)
             {
+                if (workerInstance != null)
+                {
+                    ReportProgress("Initiating GridPlaneSurfaces assembly", -2);
+                }
+
+                // create a counter for creating new axes, gridplanes and gridsurfaces
+                int axisidcounter = (existingAxes.Count > 0) ? existingAxes.Keys.Max() + 1 : 1;
+                int gridplaneidcounter = (existingGridPlanes.Count > 0) ? existingGridPlanes.Keys.Max() + 1 : 1;
+                int gridsurfaceidcounter = (existingGridSurfaces.Count > 0) ? existingGridSurfaces.Keys.Max() + 1 : 1;
+
+                // get the highest gridplaneID+1 and gridsurfaceID+1
+                GetGridPlaneSurfaceCounters(gridPlaneSurfaces, ref gridplaneidcounter, ref gridsurfaceidcounter);
+
                 for (int i = 0; i < gridPlaneSurfaces.Count; i++)
                 {
                     if (gridPlaneSurfaces[i] != null)
