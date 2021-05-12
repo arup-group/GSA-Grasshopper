@@ -92,12 +92,6 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            //pManager.AddNumberParameter("Number", "ID", "Property number PA# (default appended to model = 0). Will overwrite any existing property with same number", GH_ParamAccess.item, 0);
-            //pManager.AddTextParameter("Name", "Na", "GSA 2D Property Name", GH_ParamAccess.item);
-            //pManager.AddColourParameter("Colour", "Co", "GSA 2D Property Colour)", GH_ParamAccess.item);
-            //pManager[0].Optional = true;
-            //pManager[1].Optional = true;
-            //pManager[2].Optional = true;
             if (first)
             {
                 first = false;
@@ -171,11 +165,17 @@ namespace GhSA.Components
                         prop.Material = new GsaMaterial(2);
 
                     // 1 thickness
-                    GH_String gh_THK = new GH_String();
-                    string thickness = "0.2";
+                    //GH_String gh_THK = new GH_String();
+                    //string thickness = "0.2";
+                    //if (DA.GetData(1, ref gh_THK))
+                    //    GH_Convert.ToString(gh_THK, out thickness, GH_Conversion.Both);
+                    //prop.Prop2d.Description = thickness;
+
+                    GH_Number gh_THK = new GH_Number();
+                    double thickness = 200;
                     if (DA.GetData(1, ref gh_THK))
-                        GH_Convert.ToString(gh_THK, out thickness, GH_Conversion.Both);
-                    prop.Prop2d.Description = thickness;
+                        GH_Convert.ToDouble(gh_THK, out thickness, GH_Conversion.Both);
+                    prop.Thickness = thickness;
                 }
                 else
                     prop.Prop2d.MaterialType = MaterialType.FABRIC;
@@ -213,7 +213,7 @@ namespace GhSA.Components
                 //register input parameter
                 //Params.RegisterInputParam(new Param_Integer());
                 Params.RegisterInputParam(new Param_GenericObject());
-                Params.RegisterInputParam(new Param_String());
+                Params.RegisterInputParam(new Param_Number());
             }
             _mode = FoldMode.PlaneStress;
 
@@ -258,7 +258,7 @@ namespace GhSA.Components
                 //register input parameter
                 //Params.RegisterInputParam(new Param_Integer());
                 Params.RegisterInputParam(new Param_GenericObject());
-                Params.RegisterInputParam(new Param_String());
+                Params.RegisterInputParam(new Param_Number());
             }
             _mode = FoldMode.FlatPlate;
 
@@ -282,7 +282,7 @@ namespace GhSA.Components
                 //register input parameter
                 //Params.RegisterInputParam(new Param_Integer());
                 Params.RegisterInputParam(new Param_GenericObject());
-                Params.RegisterInputParam(new Param_String());
+                Params.RegisterInputParam(new Param_Number());
             }
             _mode = FoldMode.Shell;
 
@@ -306,7 +306,7 @@ namespace GhSA.Components
                 //register input parameter
                 //Params.RegisterInputParam(new Param_Integer());
                 Params.RegisterInputParam(new Param_GenericObject());
-                Params.RegisterInputParam(new Param_String());
+                Params.RegisterInputParam(new Param_Number());
             }
             _mode = FoldMode.CurvedShell;
 
@@ -388,8 +388,8 @@ namespace GhSA.Components
 
                 i++;
                 Params.Input[i].NickName = "Thk";
-                Params.Input[i].Name = "Thickness [m]";
-                Params.Input[i].Description = "Section thickness (default 0.2m)";
+                Params.Input[i].Name = "Thickness (" + Units.LengthSection + ")"; // "Thickness [m]";
+                Params.Input[i].Description = "Section thickness (default 200mm)";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = true;
             }

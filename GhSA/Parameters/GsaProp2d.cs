@@ -38,7 +38,14 @@ namespace GhSA.Parameters
                 m_idd = value; 
             }
         }
-
+        public double Thickness
+        {
+            set
+            {
+                m_guid = Guid.NewGuid();
+                m_prop2d.Description = value.ToString() + "(" + Units.LengthSection + ")";
+            }
+        }
         public GsaMaterial Material
         {
             get { return m_material; }
