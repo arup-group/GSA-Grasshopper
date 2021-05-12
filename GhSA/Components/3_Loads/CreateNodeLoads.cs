@@ -74,7 +74,7 @@ namespace GhSA.Components
                  "Node list should take the form:" + System.Environment.NewLine +
                  " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
                  "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
-            pManager.AddTextParameter("Load Name", "Na", "Name of Load", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
             pManager.AddTextParameter("Direction", "Di", "Load direction (default z)." +
                     System.Environment.NewLine + "Accepted inputs are:" +
                     System.Environment.NewLine + "x" +

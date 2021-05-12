@@ -71,7 +71,7 @@ namespace GhSA.Components
                 "and the height location will be controlled by Grid Plane elevation. For all none-XY plane inputs, the Grid Plane elevation will be 0", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Grid Plane ID", "ID", "GSA Grid Plane ID. Setting this will replace any existing Grid Planes in GSA model", GH_ParamAccess.item, 0);
             pManager.AddNumberParameter("Grid Elevation", "Ev", "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.", GH_ParamAccess.item, 0);
-            pManager.AddTextParameter("Name", "Na", "Name of Grid Plane", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "Na", "Grid Plane Name", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;

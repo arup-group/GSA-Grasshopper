@@ -127,6 +127,14 @@ namespace GhSA.Util.Gsa.ToGSA
     }
     public class Assemble
     {
+        /// <summary>
+        /// Method for assembling GSA model from Members only to create geometry
+        /// </summary>
+        /// <param name="member3Ds">3D Members</param>
+        /// <param name="member2Ds">2D Members</param>
+        /// <param name="member1Ds">1D Members</param>
+        /// <param name="nodes">Nodes</param>
+        /// <returns></returns>
         public static Model AssembleModel(List<GsaMember3d> member3Ds = null, List<GsaMember2d> member2Ds = null, List<GsaMember1d> member1Ds = null, List<GsaNode> nodes = null)
         {
             // new model to set members in
@@ -169,6 +177,24 @@ namespace GhSA.Util.Gsa.ToGSA
             return gsa;
         }
 
+        /// <summary>
+        /// Method to assemble full GSA model 
+        /// </summary>
+        /// <param name="model">Existing models to be merged</param>
+        /// <param name="nodes">List of nodes with properties like support conditions</param>
+        /// <param name="elem1ds">List of 1D elements. Nodes at end-points will automatically be added to the model, using existing nodes in model within tolerance. Section will automatically be added to model</param>
+        /// <param name="elem2ds">List of 2D elements. Nodes at mesh-verticies will automatically be added to the model, using existing nodes in model within tolerance. Prop2d will automatically be added to model</param>
+        /// <param name="elem3ds">List of 3D elements. Nodes at mesh-verticies will automatically be added to the model, using existing nodes in model within tolerance</param>
+        /// <param name="mem1ds">List of 1D members. Topology nodes will automatically be added to the model, using existing nodes in model within tolerance. Section will automatically be added to model</param>
+        /// <param name="mem2ds">List of 2D members. Topology nodes will automatically be added to the model, using existing nodes in model within tolerance. Prop2d will automatically be added to model</param>
+        /// <param name="mem3ds">List of 3D members. Topology nodes will automatically be added to the model, using existing nodes in model within tolerance</param>
+        /// <param name="sections">List of Sections</param>
+        /// <param name="prop2Ds">List of 2D Properties</param>
+        /// <param name="loads">List of Loads. For Grid loads the Axis, GridPlane and GridSurface will automatically be added to the model using existing objects where possible within tolerance.</param>
+        /// <param name="gridPlaneSurfaces">List of GridPlaneSurfaces</param>
+        /// <param name="workerInstance">Optional input for AsyncComponents</param>
+        /// <param name="ReportProgress">Optional input for AsyncComponents</param>
+        /// <returns></returns>
         public static Model AssembleModel(GsaModel model, List<GsaNode> nodes, 
             List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,
             List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
@@ -199,6 +225,26 @@ namespace GhSA.Util.Gsa.ToGSA
             Nodes.ConvertNode(nodes, ref apinodes, ref apiaxes, workerInstance, ReportProgress);
             #endregion
 
+            #region Properties
+            // ### Sections ###
+            // list to keep track of duplicated sextions
+            Dictionary<Guid, int> sections_guid = new Dictionary<Guid, int>();
+            
+            // Get existing sections
+            IReadOnlyDictionary<int, Section> gsaSections = gsa.Sections();
+            Dictionary<int, Section> apisections = gsaSections.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            // add / set sections
+            Sections.ConvertSection(sections, ref apisections, ref sections_guid, workerInstance, ReportProgress);
+
+            // ### Prop2ds ###
+            // list to keep track of duplicated sextions
+            Dictionary<Guid, int> prop2d_guid = new Dictionary<Guid, int>();
+            // Get existing prop2ds
+            IReadOnlyDictionary<int, Prop2D> gsaProp2ds = gsa.Prop2Ds();
+            Dictionary<int, Prop2D> apiprop2ds = gsaProp2ds.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            // add / set prop2ds
+            Prop2ds.ConvertProp2d(prop2Ds, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
+            #endregion
 
             #region Elements
             // ### Elements ###
@@ -207,10 +253,6 @@ namespace GhSA.Util.Gsa.ToGSA
             // Get existing elements
             IReadOnlyDictionary<int, Element> gsaElems = gsa.Elements();
             Dictionary<int, Element> elems = gsaElems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-            // Get existing sections
-            IReadOnlyDictionary<int, Section> gsaSections = gsa.Sections();
-            Dictionary<int, Section> apisections = gsaSections.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             // create a counter for creating new elements
             int newElementID = (elems.Count > 0) ? elems.Keys.Max() + 1 : 1; //checking the existing model
@@ -237,14 +279,10 @@ namespace GhSA.Util.Gsa.ToGSA
             }
             
             // Set / add 1D elements to dictionary
-            Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, ref apisections, workerInstance, ReportProgress);
-
-            // Get existing prop2ds
-            IReadOnlyDictionary<int, Prop2D> gsaProp2ds = gsa.Prop2Ds();
-            Dictionary<int, Prop2D> apiprop2ds = gsaProp2ds.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, ref apisections, ref sections_guid, workerInstance, ReportProgress);
 
             // Set / add 2D elements to dictionary
-            Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, ref apiprop2ds, workerInstance, ReportProgress);
+            Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
 
             // Set / add 3D elements to dictionary
             Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, workerInstance, ReportProgress);
@@ -294,10 +332,10 @@ namespace GhSA.Util.Gsa.ToGSA
             }
 
             // Set / add 1D members to dictionary
-            Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, ref apisections, workerInstance, ReportProgress);
+            Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, ref apisections, ref sections_guid, workerInstance, ReportProgress);
 
             // Set / add 2D members to dictionary
-            Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, ref apiprop2ds, workerInstance, ReportProgress);
+            Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
 
             // Set / add 3D members to dictionary
             Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, workerInstance, ReportProgress);
@@ -328,26 +366,18 @@ namespace GhSA.Util.Gsa.ToGSA
             Dictionary<Guid, int> gp_guid = new Dictionary<Guid, int>();
             Dictionary<Guid, int> gs_guid = new Dictionary<Guid, int>();
 
+            // Set / add Grid plane surfaces - do this first to set any GridPlane and GridSurfaces with IDs.
+            Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
+                ref gp_guid, ref gs_guid, workerInstance, ReportProgress);
+
             // Set / add loads to lists
             Loads.ConvertLoad(loads, ref gravityLoads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle,
                 ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads,
                 ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, 
                 workerInstance, ReportProgress);
-
-            // Set / add Grid plane surfaces
-            Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
-                ref gp_guid, ref gs_guid, workerInstance, ReportProgress);
             #endregion
 
-            #region Properties
-            // ### Sections ###
-            // add / set sections
-            Sections.ConvertSection(sections, ref apisections, workerInstance, ReportProgress);
-
-            // ### Prop2ds ###
-            // add / set prop2ds
-            Prop2ds.ConvertProp2d(prop2Ds, ref apiprop2ds, workerInstance, ReportProgress);
-            #endregion
+            
 
             #region set stuff in model
             if (workerInstance != null)

@@ -56,7 +56,7 @@ namespace GhSA.Util.Gsa.ToGSA
         public static void ConvertMember1D(GsaMember1d member1d,
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter,
-            ref Dictionary<int, Section> existingSections)
+            ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid)
         {
             Member apiMember = member1d.Member;
 
@@ -94,7 +94,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
             // Section
             if (apiMember.Property == 0)
-                apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections);
+                apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections, ref sections_guid);
 
             // set apimember in dictionary
             if (member1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -139,7 +139,7 @@ namespace GhSA.Util.Gsa.ToGSA
         public static void ConvertMember1D(List<GsaMember1d> member1ds,
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes,
-            ref Dictionary<int, Section> existingSections,
+            ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
@@ -161,7 +161,7 @@ namespace GhSA.Util.Gsa.ToGSA
                     {
                         GsaMember1d member1d = member1ds[i];
 
-                        ConvertMember1D(member1d, ref existingMembers, ref memberidcounter, ref existingNodes, ref nodeidcounter, ref existingSections);
+                        ConvertMember1D(member1d, ref existingMembers, ref memberidcounter, ref existingNodes, ref nodeidcounter, ref existingSections, ref sections_guid);
                     }
                 }
             }
@@ -315,7 +315,7 @@ namespace GhSA.Util.Gsa.ToGSA
         public static void ConvertMember2D(GsaMember2d member2d,
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter,
-            ref Dictionary<int, Prop2D> existingProp2Ds, ref int prop2didcounter)
+            ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid)
         {
             Member apiMember = member2d.Member;
 
@@ -452,7 +452,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
             // section
             if (apiMember.Property == 0)
-                apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref existingProp2Ds, ref prop2didcounter);
+                apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref existingProp2Ds, ref prop2d_guid);
 
             // set apimember in dictionary
             if (member2d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -501,13 +501,12 @@ namespace GhSA.Util.Gsa.ToGSA
         public static void ConvertMember2D(List<GsaMember2d> member2ds,
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes,
-            ref Dictionary<int, Prop2D> existingProp2Ds,
+            ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
             // create a counter for creating new elements, nodes and properties
             int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
-            int prop2didcounter = (existingProp2Ds.Count > 0) ? existingProp2Ds.Keys.Max() + 1 : 1; //checking the existing model Mem2ds
 
             if (member2ds != null)
             {
@@ -528,7 +527,7 @@ namespace GhSA.Util.Gsa.ToGSA
                         ConvertMember2D(member2d,
                            ref existingMembers, ref memberidcounter,
                            ref existingNodes, ref nodeidcounter,
-                           ref existingProp2Ds, ref prop2didcounter);
+                           ref existingProp2Ds, ref prop2d_guid);
                     }
                 }
             }

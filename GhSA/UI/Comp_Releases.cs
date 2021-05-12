@@ -378,85 +378,82 @@ namespace GhSA.UI
         #region Custom Render logic
         protected override void Render(GH_Canvas canvas, System.Drawing.Graphics graphics, GH_CanvasChannel channel)
         {
-            switch (channel)
+            base.Render(canvas, graphics, channel);
+
+            if (channel == GH_CanvasChannel.Objects)
             {
-                case GH_CanvasChannel.Objects:
-                    //We need to draw everything outselves.
+                //We need to draw everything outselves.
 
-                    Color myColour = UI.Colour.GsaDarkBlue;
-                    Brush myBrush = new SolidBrush(myColour);
+                Color myColour = UI.Colour.GsaDarkBlue;
+                Brush myBrush = new SolidBrush(myColour);
 
-                    //Text boxes
-                    Brush activeFillBrush = myBrush;
-                    Brush passiveFillBrush = Brushes.LightGray;
-                    Color borderColour = myColour;
-                    Color passiveBorder = Color.DarkGray;
-                    Brush annoText = Brushes.Black;
+                //Text boxes
+                Brush activeFillBrush = myBrush;
+                Brush passiveFillBrush = Brushes.LightGray;
+                Color borderColour = myColour;
+                Color passiveBorder = Color.DarkGray;
+                Brush annoText = Brushes.Black;
 
-                    Font font = GH_FontServer.Standard;
-                    int s = 8;
-                    if (Grasshopper.CentralSettings.CanvasFullNames)
-                    {
-                        s = 10;
-                        font = GH_FontServer.Standard;
-                    }
+                Font font = GH_FontServer.Standard;
+                int s = 8;
+                if (Grasshopper.CentralSettings.CanvasFullNames)
+                {
+                    s = 10;
+                    font = GH_FontServer.Standard;
+                }
 
-                    // adjust fontsize to high resolution displays
-                    font = new Font(font.FontFamily, font.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
+                // adjust fontsize to high resolution displays
+                font = new Font(font.FontFamily, font.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
 
-                    //draw the component
-                    base.RenderComponentCapsule(canvas, graphics, true, true, true, true, true, true);
+                //draw the component
+                base.RenderComponentCapsule(canvas, graphics, true, true, true, true, true, true);
 
-                    Pen pen = new Pen(borderColour);
+                Pen pen = new Pen(borderColour);
 
-                    graphics.DrawString(SpacerTxt1, GH_FontServer.Small, annoText, SpacerBounds1, GH_TextRenderingConstants.CenterCenter);
-                    graphics.DrawLine(pen, SpacerBounds1.X, SpacerBounds1.Y + SpacerBounds1.Height / 2, SpacerBounds1.X + (SpacerBounds1.Width - GH_FontServer.StringWidth(SpacerTxt1, GH_FontServer.Small)) / 2 - 4, SpacerBounds1.Y + SpacerBounds1.Height / 2);
-                    graphics.DrawLine(pen, SpacerBounds1.X + (SpacerBounds1.Width - GH_FontServer.StringWidth(SpacerTxt1, GH_FontServer.Small)) / 2 + GH_FontServer.StringWidth(SpacerTxt1, GH_FontServer.Small) + 4, SpacerBounds1.Y + SpacerBounds1.Height / 2, SpacerBounds1.X + SpacerBounds1.Width, SpacerBounds1.Y + SpacerBounds1.Height / 2);
+                graphics.DrawString(SpacerTxt1, GH_FontServer.Small, annoText, SpacerBounds1, GH_TextRenderingConstants.CenterCenter);
+                graphics.DrawLine(pen, SpacerBounds1.X, SpacerBounds1.Y + SpacerBounds1.Height / 2, SpacerBounds1.X + (SpacerBounds1.Width - GH_FontServer.StringWidth(SpacerTxt1, GH_FontServer.Small)) / 2 - 4, SpacerBounds1.Y + SpacerBounds1.Height / 2);
+                graphics.DrawLine(pen, SpacerBounds1.X + (SpacerBounds1.Width - GH_FontServer.StringWidth(SpacerTxt1, GH_FontServer.Small)) / 2 + GH_FontServer.StringWidth(SpacerTxt1, GH_FontServer.Small) + 4, SpacerBounds1.Y + SpacerBounds1.Height / 2, SpacerBounds1.X + SpacerBounds1.Width, SpacerBounds1.Y + SpacerBounds1.Height / 2);
 
-                    graphics.DrawString("x", font, annoText, xTxtBounds1, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xBounds1.X + xBounds1.Width / 2, xBounds1.Y + xBounds1.Height / 2), x1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("x", font, annoText, xTxtBounds1, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xBounds1.X + xBounds1.Width / 2, xBounds1.Y + xBounds1.Height / 2), x1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("y", font, annoText, yTxtBounds1, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yBounds1.X + yBounds1.Width / 2, yBounds1.Y + yBounds1.Height / 2), y1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("y", font, annoText, yTxtBounds1, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yBounds1.X + yBounds1.Width / 2, yBounds1.Y + yBounds1.Height / 2), y1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("z", font, annoText, zTxtBounds1, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zBounds1.X + zBounds1.Width / 2, zBounds1.Y + zBounds1.Height / 2), z1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("z", font, annoText, zTxtBounds1, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zBounds1.X + zBounds1.Width / 2, zBounds1.Y + zBounds1.Height / 2), z1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("xx", font, annoText, xxTxtBounds1, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xxBounds1.X + xxBounds1.Width / 2, xxBounds1.Y + xxBounds1.Height / 2), xx1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("xx", font, annoText, xxTxtBounds1, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xxBounds1.X + xxBounds1.Width / 2, xxBounds1.Y + xxBounds1.Height / 2), xx1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("yy", font, annoText, yyTxtBounds1, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yyBounds1.X + yyBounds1.Width / 2, yyBounds1.Y + yyBounds1.Height / 2), yy1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("yy", font, annoText, yyTxtBounds1, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yyBounds1.X + yyBounds1.Width / 2, yyBounds1.Y + yyBounds1.Height / 2), yy1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("zz", font, annoText, zzTxtBounds1, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zzBounds1.X + zzBounds1.Width / 2, zzBounds1.Y + zzBounds1.Height / 2), zz1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("zz", font, annoText, zzTxtBounds1, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zzBounds1.X + zzBounds1.Width / 2, zzBounds1.Y + zzBounds1.Height / 2), zz1, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString(SpacerTxt2, GH_FontServer.Small, annoText, SpacerBounds2, GH_TextRenderingConstants.CenterCenter);
-                    graphics.DrawLine(pen, SpacerBounds2.X, SpacerBounds2.Y + SpacerBounds2.Height / 2, SpacerBounds2.X + (SpacerBounds2.Width - GH_FontServer.StringWidth(SpacerTxt2, GH_FontServer.Small)) / 2 - 4, SpacerBounds2.Y + SpacerBounds2.Height / 2);
-                    graphics.DrawLine(pen, SpacerBounds2.X + (SpacerBounds2.Width - GH_FontServer.StringWidth(SpacerTxt2, GH_FontServer.Small)) / 2 + GH_FontServer.StringWidth(SpacerTxt2, GH_FontServer.Small) + 4, SpacerBounds2.Y + SpacerBounds2.Height / 2, SpacerBounds2.X + SpacerBounds2.Width, SpacerBounds2.Y + SpacerBounds2.Height / 2);
+                graphics.DrawString(SpacerTxt2, GH_FontServer.Small, annoText, SpacerBounds2, GH_TextRenderingConstants.CenterCenter);
+                graphics.DrawLine(pen, SpacerBounds2.X, SpacerBounds2.Y + SpacerBounds2.Height / 2, SpacerBounds2.X + (SpacerBounds2.Width - GH_FontServer.StringWidth(SpacerTxt2, GH_FontServer.Small)) / 2 - 4, SpacerBounds2.Y + SpacerBounds2.Height / 2);
+                graphics.DrawLine(pen, SpacerBounds2.X + (SpacerBounds2.Width - GH_FontServer.StringWidth(SpacerTxt2, GH_FontServer.Small)) / 2 + GH_FontServer.StringWidth(SpacerTxt2, GH_FontServer.Small) + 4, SpacerBounds2.Y + SpacerBounds2.Height / 2, SpacerBounds2.X + SpacerBounds2.Width, SpacerBounds2.Y + SpacerBounds2.Height / 2);
 
-                    graphics.DrawString("x", font, annoText, xTxtBounds2, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xBounds2.X + xBounds2.Width / 2, xBounds2.Y + xBounds2.Height / 2), x2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("x", font, annoText, xTxtBounds2, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xBounds2.X + xBounds2.Width / 2, xBounds2.Y + xBounds2.Height / 2), x2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("y", font, annoText, yTxtBounds2, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yBounds2.X + yBounds2.Width / 2, yBounds2.Y + yBounds2.Height / 2), y2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("y", font, annoText, yTxtBounds2, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yBounds2.X + yBounds2.Width / 2, yBounds2.Y + yBounds2.Height / 2), y2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("z", font, annoText, zTxtBounds2, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zBounds2.X + zBounds2.Width / 2, zBounds2.Y + zBounds2.Height / 2), z2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("z", font, annoText, zTxtBounds2, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zBounds2.X + zBounds2.Width / 2, zBounds2.Y + zBounds2.Height / 2), z2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("xx", font, annoText, xxTxtBounds2, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xxBounds2.X + xxBounds2.Width / 2, xxBounds2.Y + xxBounds2.Height / 2), xx2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("xx", font, annoText, xxTxtBounds2, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xxBounds2.X + xxBounds2.Width / 2, xxBounds2.Y + xxBounds2.Height / 2), xx2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("yy", font, annoText, yyTxtBounds2, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yyBounds2.X + yyBounds2.Width / 2, yyBounds2.Y + yyBounds2.Height / 2), yy2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("yy", font, annoText, yyTxtBounds2, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yyBounds2.X + yyBounds2.Width / 2, yyBounds2.Y + yyBounds2.Height / 2), yy2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("zz", font, annoText, zzTxtBounds2, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zzBounds2.X + zzBounds2.Width / 2, zzBounds2.Y + zzBounds2.Height / 2), zz2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
-                    
-                    break;
-                default:
-                    base.Render(canvas, graphics, channel);
-                    break;
+                graphics.DrawString("zz", font, annoText, zzTxtBounds2, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zzBounds2.X + zzBounds2.Width / 2, zzBounds2.Y + zzBounds2.Height / 2), zz2, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+
             }
         }
         #endregion

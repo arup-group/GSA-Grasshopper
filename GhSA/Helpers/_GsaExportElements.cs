@@ -14,7 +14,7 @@ namespace GhSA.Util.Gsa.ToGSA
         public static void ConvertElement1D(GsaElement1d element1d,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter,
-            ref Dictionary<int, Section> existingSections)
+            ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid)
         {
             LineCurve line = element1d.Line;
             Element apiElement = element1d.Element;
@@ -47,7 +47,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
             // section
             if (apiElement.Property == 0)
-                apiElement.Property = Sections.ConvertSection(element1d.Section, ref existingSections);
+                apiElement.Property = Sections.ConvertSection(element1d.Section, ref existingSections, ref sections_guid);
 
             // set apielement in dictionary
             if (element1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -64,7 +64,7 @@ namespace GhSA.Util.Gsa.ToGSA
         public static void ConvertElement1D(List<GsaElement1d> element1ds,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
             ref Dictionary<int, Node> existingNodes,
-            ref Dictionary<int, Section> existingSections,
+            ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
@@ -88,7 +88,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
                         // Add/set element
                         ConvertElement1D(element1d, ref existingElements, ref elementidcounter,
-                            ref existingNodes, ref nodeidcounter, ref existingSections);
+                            ref existingNodes, ref nodeidcounter, ref existingSections, ref sections_guid);
                     }
                 }
             }
@@ -104,7 +104,7 @@ namespace GhSA.Util.Gsa.ToGSA
         public static void ConvertElement2D(GsaElement2d element2d,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter,
-            ref Dictionary<int, Prop2D> existingProp2Ds, ref int prop2didcounter)
+            ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid)
         {
             List<Point3d> meshVerticies = element2d.Topology;
 
@@ -134,7 +134,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
                 // section
                 if (apiMeshElement.Property == 0)
-                    apiMeshElement.Property = Prop2ds.ConvertProp2d(element2d.Properties[i], ref existingProp2Ds, ref prop2didcounter);
+                    apiMeshElement.Property = Prop2ds.ConvertProp2d(element2d.Properties[i], ref existingProp2Ds, ref prop2d_guid);
                 
 
                 // set api element in dictionary
@@ -152,7 +152,7 @@ namespace GhSA.Util.Gsa.ToGSA
         public static void ConvertElement2D(List<GsaElement2d> element2ds,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
             ref Dictionary<int, Node> existingNodes,
-            ref Dictionary<int, Prop2D> existingProp2Ds,
+            ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
@@ -179,7 +179,7 @@ namespace GhSA.Util.Gsa.ToGSA
                         ConvertElement2D(element2d, 
                             ref existingElements, ref elementidcounter, 
                             ref existingNodes, ref nodeidcounter, 
-                            ref existingProp2Ds, ref prop2didcounter);
+                            ref existingProp2Ds, ref prop2d_guid);
 
                     }
                 }

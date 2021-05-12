@@ -372,80 +372,77 @@ namespace GhSA.UI
         #region Custom Render logic
         protected override void Render(GH_Canvas canvas, System.Drawing.Graphics graphics, GH_CanvasChannel channel)
         {
-            switch (channel)
+            base.Render(canvas, graphics, channel);
+
+            if (channel == GH_CanvasChannel.Objects)
             {
-                case GH_CanvasChannel.Objects:
-                    //Text boxes
-                    Brush activeTextBrush = Brushes.White;
-                    Brush passiveTextBrush = new SolidBrush(UI.Colour.GsaDarkBlue);
-                    Brush activeFillBrush = UI.Colour.ButtonColour;
-                    Brush passiveFillBrush = new SolidBrush(UI.Colour.GsaLightGrey);
-                    Color borderColour = UI.Colour.GsaDarkBlue;
-                    Color passiveBorder = Color.DarkGray;
-                    Brush annoText = Brushes.Black;
+                //Text boxes
+                Brush activeTextBrush = Brushes.White;
+                Brush passiveTextBrush = new SolidBrush(UI.Colour.GsaDarkBlue);
+                Brush activeFillBrush = UI.Colour.ButtonColour;
+                Brush passiveFillBrush = new SolidBrush(UI.Colour.GsaLightGrey);
+                Color borderColour = UI.Colour.GsaDarkBlue;
+                Color passiveBorder = Color.DarkGray;
+                Brush annoText = Brushes.Black;
 
-                    Font font = GH_FontServer.Standard;
-                    int s = 8;
-                    if (Grasshopper.CentralSettings.CanvasFullNames)
-                    {
-                        s = 10;
-                        font = GH_FontServer.Standard;
-                    }
-                    
-                    // adjust fontsize to high resolution displays
-                    font = new Font(font.FontFamily, font.Size/GH_GraphicsUtil.UiScale, FontStyle.Regular);
+                Font font = GH_FontServer.Standard;
+                int s = 8;
+                if (Grasshopper.CentralSettings.CanvasFullNames)
+                {
+                    s = 10;
+                    font = GH_FontServer.Standard;
+                }
 
-                    Font sml = GH_FontServer.Small;
-                    // adjust fontsize to high resolution displays
-                    sml = new Font(sml.FontFamily, sml.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
+                // adjust fontsize to high resolution displays
+                font = new Font(font.FontFamily, font.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
 
-                    //draw the component
-                    base.RenderComponentCapsule(canvas, graphics, true, true, true, true, true, true);
+                Font sml = GH_FontServer.Small;
+                // adjust fontsize to high resolution displays
+                sml = new Font(sml.FontFamily, sml.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
 
-                    Pen pen = new Pen(borderColour);
+                //draw the component
+                base.RenderComponentCapsule(canvas, graphics, true, true, true, true, true, true);
 
-                    graphics.DrawString(SpacerTxt, sml, annoText, SpacerBounds, GH_TextRenderingConstants.CenterCenter);
-                    graphics.DrawLine(pen, SpacerBounds.X, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 - 4, SpacerBounds.Y + SpacerBounds.Height / 2);
-                    graphics.DrawLine(pen, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 + GH_FontServer.StringWidth(SpacerTxt, sml) + 4, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + SpacerBounds.Width, SpacerBounds.Y + SpacerBounds.Height / 2);
+                Pen pen = new Pen(borderColour);
 
-                    graphics.DrawRectangle(pen, TxtFreeBounds.X, TxtFreeBounds.Y, TxtFreeBounds.Width, TxtFreeBounds.Height);
-                    graphics.DrawRectangle(pen, TxtPinBounds.X, TxtPinBounds.Y, TxtPinBounds.Width, TxtPinBounds.Height);
-                    graphics.DrawRectangle(pen, TxtFixBounds.X, TxtFixBounds.Y, TxtFixBounds.Width, TxtFixBounds.Height);
+                graphics.DrawString(SpacerTxt, sml, annoText, SpacerBounds, GH_TextRenderingConstants.CenterCenter);
+                graphics.DrawLine(pen, SpacerBounds.X, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 - 4, SpacerBounds.Y + SpacerBounds.Height / 2);
+                graphics.DrawLine(pen, SpacerBounds.X + (SpacerBounds.Width - GH_FontServer.StringWidth(SpacerTxt, sml)) / 2 + GH_FontServer.StringWidth(SpacerTxt, sml) + 4, SpacerBounds.Y + SpacerBounds.Height / 2, SpacerBounds.X + SpacerBounds.Width, SpacerBounds.Y + SpacerBounds.Height / 2);
 
-                    Brush freeBrushPassive = (mouseOverFree) ? UI.Colour.HoverInactiveButtonColour : passiveFillBrush;
-                    graphics.FillRectangle((x == false & y == false & z == false & xx == false & yy == false & zz == false) ? activeFillBrush : freeBrushPassive, TxtFreeBounds);
-                    graphics.DrawString("Free", font, (x == false & y == false & z == false & xx == false & yy == false & zz == false) ? activeTextBrush : passiveTextBrush, TxtFreeBounds, GH_TextRenderingConstants.CenterCenter);
+                graphics.DrawRectangle(pen, TxtFreeBounds.X, TxtFreeBounds.Y, TxtFreeBounds.Width, TxtFreeBounds.Height);
+                graphics.DrawRectangle(pen, TxtPinBounds.X, TxtPinBounds.Y, TxtPinBounds.Width, TxtPinBounds.Height);
+                graphics.DrawRectangle(pen, TxtFixBounds.X, TxtFixBounds.Y, TxtFixBounds.Width, TxtFixBounds.Height);
 
-                    Brush pinBrushPassive = (mouseOverPin) ? UI.Colour.HoverInactiveButtonColour : passiveFillBrush;
-                    graphics.FillRectangle((x == true & y == true & z == true & xx == false & yy == false & zz == false) ? activeFillBrush : pinBrushPassive, TxtPinBounds);
-                    graphics.DrawString("Pin", font, (x == true & y == true & z == true & xx == false & yy == false & zz == false) ? activeTextBrush : passiveTextBrush, TxtPinBounds, GH_TextRenderingConstants.CenterCenter);
+                Brush freeBrushPassive = (mouseOverFree) ? UI.Colour.HoverInactiveButtonColour : passiveFillBrush;
+                graphics.FillRectangle((x == false & y == false & z == false & xx == false & yy == false & zz == false) ? activeFillBrush : freeBrushPassive, TxtFreeBounds);
+                graphics.DrawString("Free", font, (x == false & y == false & z == false & xx == false & yy == false & zz == false) ? activeTextBrush : passiveTextBrush, TxtFreeBounds, GH_TextRenderingConstants.CenterCenter);
 
-                    Brush fixBrushPassive = (mouseOverFix) ? UI.Colour.HoverInactiveButtonColour : passiveFillBrush;
-                    graphics.FillRectangle((x == true & y == true & z == true & xx == true & yy == true & zz == true) ? activeFillBrush : fixBrushPassive, TxtFixBounds);
-                    graphics.DrawString("Fix", font, (x == true & y == true & z == true & xx == true & yy == true & zz == true) ? activeTextBrush : passiveTextBrush, TxtFixBounds, GH_TextRenderingConstants.CenterCenter);
+                Brush pinBrushPassive = (mouseOverPin) ? UI.Colour.HoverInactiveButtonColour : passiveFillBrush;
+                graphics.FillRectangle((x == true & y == true & z == true & xx == false & yy == false & zz == false) ? activeFillBrush : pinBrushPassive, TxtPinBounds);
+                graphics.DrawString("Pin", font, (x == true & y == true & z == true & xx == false & yy == false & zz == false) ? activeTextBrush : passiveTextBrush, TxtPinBounds, GH_TextRenderingConstants.CenterCenter);
 
-                    graphics.DrawString("x", font, annoText, xTxtBounds, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xBounds.X + xBounds.Width / 2, xBounds.Y + xBounds.Height / 2), x, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                Brush fixBrushPassive = (mouseOverFix) ? UI.Colour.HoverInactiveButtonColour : passiveFillBrush;
+                graphics.FillRectangle((x == true & y == true & z == true & xx == true & yy == true & zz == true) ? activeFillBrush : fixBrushPassive, TxtFixBounds);
+                graphics.DrawString("Fix", font, (x == true & y == true & z == true & xx == true & yy == true & zz == true) ? activeTextBrush : passiveTextBrush, TxtFixBounds, GH_TextRenderingConstants.CenterCenter);
 
-                    graphics.DrawString("y", font, annoText, yTxtBounds, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yBounds.X + yBounds.Width / 2, yBounds.Y + yBounds.Height / 2), y, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("x", font, annoText, xTxtBounds, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xBounds.X + xBounds.Width / 2, xBounds.Y + xBounds.Height / 2), x, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("z", font, annoText, zTxtBounds, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zBounds.X + zBounds.Width / 2, zBounds.Y + zBounds.Height / 2), z, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("y", font, annoText, yTxtBounds, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yBounds.X + yBounds.Width / 2, yBounds.Y + yBounds.Height / 2), y, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("xx", font, annoText, xxTxtBounds, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xxBounds.X + xxBounds.Width / 2, xxBounds.Y + xxBounds.Height / 2), xx, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("z", font, annoText, zTxtBounds, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zBounds.X + zBounds.Width / 2, zBounds.Y + zBounds.Height / 2), z, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("yy", font, annoText, yyTxtBounds, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yyBounds.X + yyBounds.Width / 2, yyBounds.Y + yyBounds.Height / 2), yy, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("xx", font, annoText, xxTxtBounds, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(xxBounds.X + xxBounds.Width / 2, xxBounds.Y + xxBounds.Height / 2), xx, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    graphics.DrawString("zz", font, annoText, zzTxtBounds, GH_TextRenderingConstants.CenterCenter);
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zzBounds.X + zzBounds.Width / 2, zzBounds.Y + zzBounds.Height / 2), zz, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                graphics.DrawString("yy", font, annoText, yyTxtBounds, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(yyBounds.X + yyBounds.Width / 2, yyBounds.Y + yyBounds.Height / 2), yy, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
 
-                    break;
-                default:
-                    base.Render(canvas, graphics, channel);
-                    break;
+                graphics.DrawString("zz", font, annoText, zzTxtBounds, GH_TextRenderingConstants.CenterCenter);
+                ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(zzBounds.X + zzBounds.Width / 2, zzBounds.Y + zzBounds.Height / 2), zz, activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+
             }
         }
         #endregion

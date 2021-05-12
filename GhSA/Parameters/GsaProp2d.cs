@@ -22,37 +22,59 @@ namespace GhSA.Parameters
         public Prop2D Prop2d
         {
             get { return m_prop2d; }
-            set { m_prop2d = value; }
+            set 
+            {
+                m_guid = Guid.NewGuid(); 
+                m_prop2d = value; 
+            }
         }
 
         public int ID
         {
             get { return m_idd; }
-            set { m_idd = value; }
+            set 
+            {
+                m_guid = Guid.NewGuid(); 
+                m_idd = value; 
+            }
         }
-
+        public double Thickness
+        {
+            set
+            {
+                m_guid = Guid.NewGuid();
+                m_prop2d.Description = value.ToString() + "(" + Units.LengthSection + ")";
+            }
+        }
         public GsaMaterial Material
         {
             get { return m_material; }
             set 
-            { 
+            {
+                m_guid = Guid.NewGuid();
                 m_material = value;
                 m_prop2d.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
                 m_prop2d.MaterialAnalysisProperty = m_material.AnalysisProperty;
                 m_prop2d.MaterialGradeProperty = m_material.Grade;
             }
         }
+        public Guid GUID
+        {
+            get { return m_guid; }
+        }
 
         #region fields
         Prop2D m_prop2d;
         int m_idd = 0;
         GsaMaterial m_material = null;
+        private Guid m_guid;
         #endregion
 
         #region constructors
         public GsaProp2d()
         {
             m_prop2d = new Prop2D();
+            m_guid = Guid.NewGuid();
         }
         
         public GsaProp2d Duplicate()
@@ -78,11 +100,18 @@ namespace GhSA.Parameters
                 dup.Prop2d = null;
 
             dup.ID = m_idd;
-            
+
             if (Material != null)
                 dup.Material = m_material.Duplicate();
-            
+
+            dup.m_guid = new Guid(m_guid.ToString());
             return dup;
+        }
+        public GsaProp2d Clone()
+        {
+            GsaProp2d clone = this.Duplicate();
+            clone.m_guid = Guid.NewGuid();
+            return clone;
         }
         #endregion
 
