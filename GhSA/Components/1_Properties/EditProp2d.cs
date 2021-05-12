@@ -75,7 +75,7 @@ namespace GhSA.Components
             GsaProp2d prop = new GsaProp2d();
             if (DA.GetData(0, ref gsaProp2d))
             {
-                prop = gsaProp2d.Duplicate();
+                prop = gsaProp2d.Clone();
             }
 
             // #### inputs ####

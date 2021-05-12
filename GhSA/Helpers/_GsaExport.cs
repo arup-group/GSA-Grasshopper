@@ -225,6 +225,26 @@ namespace GhSA.Util.Gsa.ToGSA
             Nodes.ConvertNode(nodes, ref apinodes, ref apiaxes, workerInstance, ReportProgress);
             #endregion
 
+            #region Properties
+            // ### Sections ###
+            // list to keep track of duplicated sextions
+            Dictionary<Guid, int> sections_guid = new Dictionary<Guid, int>();
+            
+            // Get existing sections
+            IReadOnlyDictionary<int, Section> gsaSections = gsa.Sections();
+            Dictionary<int, Section> apisections = gsaSections.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            // add / set sections
+            Sections.ConvertSection(sections, ref apisections, ref sections_guid, workerInstance, ReportProgress);
+
+            // ### Prop2ds ###
+            // list to keep track of duplicated sextions
+            Dictionary<Guid, int> prop2d_guid = new Dictionary<Guid, int>();
+            // Get existing prop2ds
+            IReadOnlyDictionary<int, Prop2D> gsaProp2ds = gsa.Prop2Ds();
+            Dictionary<int, Prop2D> apiprop2ds = gsaProp2ds.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            // add / set prop2ds
+            Prop2ds.ConvertProp2d(prop2Ds, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
+            #endregion
 
             #region Elements
             // ### Elements ###
@@ -233,10 +253,6 @@ namespace GhSA.Util.Gsa.ToGSA
             // Get existing elements
             IReadOnlyDictionary<int, Element> gsaElems = gsa.Elements();
             Dictionary<int, Element> elems = gsaElems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-            // Get existing sections
-            IReadOnlyDictionary<int, Section> gsaSections = gsa.Sections();
-            Dictionary<int, Section> apisections = gsaSections.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             // create a counter for creating new elements
             int newElementID = (elems.Count > 0) ? elems.Keys.Max() + 1 : 1; //checking the existing model
@@ -263,14 +279,10 @@ namespace GhSA.Util.Gsa.ToGSA
             }
             
             // Set / add 1D elements to dictionary
-            Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, ref apisections, workerInstance, ReportProgress);
-
-            // Get existing prop2ds
-            IReadOnlyDictionary<int, Prop2D> gsaProp2ds = gsa.Prop2Ds();
-            Dictionary<int, Prop2D> apiprop2ds = gsaProp2ds.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, ref apisections, ref sections_guid, workerInstance, ReportProgress);
 
             // Set / add 2D elements to dictionary
-            Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, ref apiprop2ds, workerInstance, ReportProgress);
+            Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
 
             // Set / add 3D elements to dictionary
             Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, workerInstance, ReportProgress);
@@ -320,10 +332,10 @@ namespace GhSA.Util.Gsa.ToGSA
             }
 
             // Set / add 1D members to dictionary
-            Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, ref apisections, workerInstance, ReportProgress);
+            Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, ref apisections, ref sections_guid, workerInstance, ReportProgress);
 
             // Set / add 2D members to dictionary
-            Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, ref apiprop2ds, workerInstance, ReportProgress);
+            Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
 
             // Set / add 3D members to dictionary
             Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, workerInstance, ReportProgress);
@@ -354,7 +366,7 @@ namespace GhSA.Util.Gsa.ToGSA
             Dictionary<Guid, int> gp_guid = new Dictionary<Guid, int>();
             Dictionary<Guid, int> gs_guid = new Dictionary<Guid, int>();
 
-            // Set / add Grid plane surfaces - do this first to set GridPlane and GridSurfaces with IDs.
+            // Set / add Grid plane surfaces - do this first to set any GridPlane and GridSurfaces with IDs.
             Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
                 ref gp_guid, ref gs_guid, workerInstance, ReportProgress);
 
@@ -363,19 +375,9 @@ namespace GhSA.Util.Gsa.ToGSA
                 ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads,
                 ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, 
                 workerInstance, ReportProgress);
+            #endregion
 
             
-            #endregion
-
-            #region Properties
-            // ### Sections ###
-            // add / set sections
-            Sections.ConvertSection(sections, ref apisections, workerInstance, ReportProgress);
-
-            // ### Prop2ds ###
-            // add / set prop2ds
-            Prop2ds.ConvertProp2d(prop2Ds, ref apiprop2ds, workerInstance, ReportProgress);
-            #endregion
 
             #region set stuff in model
             if (workerInstance != null)

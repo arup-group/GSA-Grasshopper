@@ -22,37 +22,50 @@ namespace GhSA.Parameters
         public Section Section
         {
             get { return m_section; }
-            set { m_section = value; }
+            set 
+            {
+                m_guid = Guid.NewGuid();
+                m_section = value; 
+            }
         }
-
         public int ID
         {
             get { return m_idd; }
-            set { m_idd = value; }
+            set 
+            {
+                m_guid = Guid.NewGuid();
+                m_idd = value; 
+            }
         }
-
         public GsaMaterial Material
         {
             get { return m_material; }
             set
             {
+                m_guid = Guid.NewGuid();
                 m_material = value;
                 m_section.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
                 m_section.MaterialAnalysisProperty = m_material.AnalysisProperty;
                 m_section.MaterialGradeProperty = m_material.Grade;
             }
         }
+        public Guid GUID
+        {
+            get { return m_guid; }
+        }
 
         #region fields
         Section m_section;
         int m_idd = 0;
         GsaMaterial m_material; //to be added when GsaAPI supports materials
+        private Guid m_guid;
         #endregion
 
         #region constructors
         public GsaSection()
         {
             m_section = new Section();
+            m_guid = Guid.NewGuid();
         }
         public GsaSection(string profile)
         {
@@ -60,6 +73,7 @@ namespace GhSA.Parameters
             {
                 Profile = profile
             };
+            m_guid = Guid.NewGuid();
         }
         public GsaSection(string profile, int ID)
         {
@@ -68,6 +82,7 @@ namespace GhSA.Parameters
                 Profile = profile
             };
             m_idd = ID;
+            m_guid = Guid.NewGuid();
         }
 
         public GsaSection Duplicate()
@@ -94,11 +109,18 @@ namespace GhSA.Parameters
             
             dup.ID = m_idd;
 
-            
             if (Material != null)
                 dup.Material = m_material.Duplicate();
 
+            dup.m_guid = new Guid(m_guid.ToString());
             return dup;
+        }
+
+        public GsaSection Clone()
+        {
+            GsaSection clone = this.Duplicate();
+            clone.m_guid = Guid.NewGuid();
+            return clone;
         }
         #endregion
 

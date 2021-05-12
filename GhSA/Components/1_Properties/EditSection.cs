@@ -74,7 +74,7 @@ namespace GhSA.Components
             GsaSection gsaSection = new GsaSection();
             if (DA.GetData(0, ref sect))
             {
-                gsaSection = sect.Duplicate();
+                gsaSection = sect.Clone();
             }
 
             if (gsaSection != null)
