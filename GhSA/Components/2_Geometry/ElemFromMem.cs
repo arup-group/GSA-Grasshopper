@@ -85,6 +85,8 @@ namespace GhSA.Components
                 for (int i = 0; i < gh_types.Count; i++)
                 {
                     gh_typ = gh_types[i];
+                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Node input (index: "+ i +") is null and has been ignored"); continue; }
+
                     if (gh_typ.Value is GsaNodeGoo)
                     {
                         GsaNode gsanode = new GsaNode();
@@ -105,6 +107,8 @@ namespace GhSA.Components
                 for (int i = 0; i < gh_types.Count; i++)
                 {
                     gh_typ = gh_types[i];
+                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input (index: " + i + ") is null and has been ignored"); continue; }
+
                     if (gh_typ.Value is GsaMember1dGoo)
                     {
                         GsaMember1d gsamem1 = new GsaMember1d();
@@ -127,6 +131,8 @@ namespace GhSA.Components
                 for (int i = 0; i < gh_types.Count; i++)
                 {
                     gh_typ = gh_types[i];
+                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input (index: " + i + ") is null and has been ignored"); continue; }
+
                     if (gh_typ.Value is GsaMember2dGoo)
                     {
                         GsaMember2d gsamem2 = new GsaMember2d();
@@ -149,6 +155,8 @@ namespace GhSA.Components
                 for (int i = 0; i < gh_types.Count; i++)
                 {
                     gh_typ = gh_types[i];
+                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member3D input (index: " + i + ") is null and has been ignored"); continue; }
+
                     if (gh_typ.Value is GsaMember3dGoo)
                     {
                         GsaMember3d gsamem3 = new GsaMember3d();

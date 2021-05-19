@@ -111,7 +111,11 @@ namespace GhSA.UI
                     Width = (mouseDown) ? 0.8f : 0.5f
                 };
                 graphics.DrawPath(pen, button);
-                
+
+                // draw button glow
+                System.Drawing.Drawing2D.GraphicsPath overlay = UI.ButtonsUI.Button.RoundedRect(ButtonBounds, 2, true);
+                graphics.FillPath(new SolidBrush(Color.FromArgb(mouseDown ? 0 : mouseOver ? 40 : 60, 255, 255, 255)), overlay);
+
                 // draw button text
                 graphics.DrawString(buttonText, font, UI.Colour.AnnotationTextBright, ButtonBounds, GH_TextRenderingConstants.CenterCenter);
             }

@@ -68,11 +68,11 @@ namespace GhSA.UI
         {
             get
             {
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacerTxts, GH_FontServer.Small);
+                float sp = ComponentUI.MaxTextWidth(spacerTxts, GH_FontServer.Small);
                 float bt = 0;
                 for (int i = 0; i < dropdownlists.Count; i++)
                 {
-                    float tbt = GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[i], new Font(GH_FontServer.FamilyStandard, 7));
+                    float tbt = ComponentUI.MaxTextWidth(dropdownlists[i], new Font(GH_FontServer.FamilyStandard, 7));
                     if (tbt > bt)
                         bt = tbt;
                 }

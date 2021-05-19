@@ -99,7 +99,7 @@ namespace GhSA.Components
                 for (int i = 0; i < gh_types.Count; i++)
                 {
                     GH_ObjectWrapper gh_typ = gh_types[i];
-                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null"); continue; }
+                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Model input (index: " + i + ") is null and has been ignored"); continue; }
                     if (gh_typ.Value is GsaModelGoo)
                     {
                         GsaModel in_model = new GsaModel();
@@ -128,7 +128,7 @@ namespace GhSA.Components
                 for (int i = 0; i < gh_types.Count; i++)
                 {
                     GH_ObjectWrapper gh_typ = gh_types[i];
-                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null"); continue; }
+                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Property input (index: " + i + ") is null and has been ignored"); continue; }
 
                     if (gh_typ.Value is GsaSectionGoo)
                     {
@@ -173,7 +173,7 @@ namespace GhSA.Components
                 {
                     GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
                     gh_typ = gh_types[i];
-                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null"); continue; }
+                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Geometry input (index: " + i + ") is null and has been ignored"); continue; }
 
                     if (gh_typ.Value is GsaNodeGoo)
                     {
@@ -253,7 +253,7 @@ namespace GhSA.Components
                 for (int i = 0; i < gh_types.Count; i++)
                 {
                     GH_ObjectWrapper gh_typ = gh_types[i];
-                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null"); continue; }
+                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Load input (index: " + i + ") is null and has been ignored"); continue; }
 
                     if (gh_typ.Value is GsaLoadGoo)
                     {
