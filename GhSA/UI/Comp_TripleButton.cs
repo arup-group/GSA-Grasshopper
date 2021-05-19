@@ -136,6 +136,10 @@ namespace GhSA.UI
                 };
                 graphics.DrawPath(pen1, button1);
 
+                // draw button glow
+                System.Drawing.Drawing2D.GraphicsPath overlay1 = UI.ButtonsUI.Button.RoundedRect(Button1Bounds, 2, true);
+                graphics.FillPath(new SolidBrush(Color.FromArgb(mouseDown1 ? 0 : mouseOver1 ? 40 : 60, 255, 255, 255)), overlay1);
+
                 // draw button text
                 graphics.DrawString(button1Text, font, UI.Colour.AnnotationTextBright, Button1Bounds, GH_TextRenderingConstants.CenterCenter);
 
@@ -162,6 +166,10 @@ namespace GhSA.UI
                 };
                 graphics.DrawPath(pen2, button2);
 
+                // draw button glow
+                System.Drawing.Drawing2D.GraphicsPath overlay2 = UI.ButtonsUI.Button.RoundedRect(Button2Bounds, 2, true);
+                graphics.FillPath(new SolidBrush(Color.FromArgb(mouseDown2 ? 0 : mouseOver2 ? 40 : 60, 255, 255, 255)), overlay2);
+
                 // draw button text
                 graphics.DrawString(button2Text, font, UI.Colour.AnnotationTextBright, Button2Bounds, GH_TextRenderingConstants.CenterCenter);
 
@@ -186,6 +194,10 @@ namespace GhSA.UI
                     Width = (mouseDown3) ? 0.8f : 0.5f
                 };
                 graphics.DrawPath(pen3, button3);
+
+                // draw button glow
+                System.Drawing.Drawing2D.GraphicsPath overlay3 = UI.ButtonsUI.Button.RoundedRect(Button3Bounds, 2, true);
+                graphics.FillPath(new SolidBrush(Color.FromArgb(mouseDown3 ? 0 : mouseOver3 ? 40 : 60, 255, 255, 255)), overlay3);
 
                 // draw button text
                 graphics.DrawString(button3Text, font, UI.Colour.AnnotationTextBright, Button3Bounds, GH_TextRenderingConstants.CenterCenter);

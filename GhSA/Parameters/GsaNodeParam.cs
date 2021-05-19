@@ -137,7 +137,7 @@ namespace GhSA.Parameters
             string idd = " " + ID.ToString() + " ";
             if (ID == 0) { idd = " "; }
             GH_Point gH_Point = new GH_Point(Point);
-            string nodeTxt = "Gsa Node" + idd + gH_Point.ToString();
+            string nodeTxt = "GSA Node" + idd + gH_Point.ToString();
 
             string localTxt = "";
             Plane noPlane = new Plane() { Origin = new Point3d(0, 0, 0), XAxis = new Vector3d(0, 0, 0), YAxis = new Vector3d(0, 0, 0), ZAxis = new Vector3d(0, 0, 0) };

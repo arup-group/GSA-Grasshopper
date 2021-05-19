@@ -97,8 +97,8 @@ namespace GhSA.Components
                     List<GsaModel> in_models = new List<GsaModel>();
                     for (int i = 0; i < gh_types.Count; i++)
                     {
-                        if (gh_types[i] == null) { return; }
                         GH_ObjectWrapper gh_typ = gh_types[i];
+                        if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Model input (index: " + i + ") is null and has been ignored"); continue; }
                         if (gh_typ.Value is GsaModelGoo)
                         {
                             GsaModel in_model = new GsaModel();
@@ -126,8 +126,8 @@ namespace GhSA.Components
                     List<GsaProp2d> in_prop = new List<GsaProp2d>();
                     for (int i = 0; i < gh_types.Count; i++)
                     {
-                        if (gh_types[i] == null) { return; }
                         GH_ObjectWrapper gh_typ = gh_types[i];
+                        if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Property input (index: " + i + ") is null and has been ignored"); continue; }
                         if (gh_typ.Value is GsaSectionGoo)
                         {
                             GsaSection gsasection = new GsaSection();
@@ -169,8 +169,9 @@ namespace GhSA.Components
                 {
                     for (int i = 0; i < gh_types.Count; i++)
                     {
-                        if (gh_types[i] == null) { return; }
                         GH_ObjectWrapper gh_typ = gh_types[i];
+                        if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Geometry input (index: " + i + ") is null and has been ignored"); continue; }
+
                         if (gh_typ.Value is GsaNodeGoo)
                         {
                             GsaNode gsanode = new GsaNode();
@@ -248,8 +249,9 @@ namespace GhSA.Components
                     List<GsaGridPlaneSurface> in_gps = new List<GsaGridPlaneSurface>();
                     for (int i = 0; i < gh_types.Count; i++)
                     {
-                        if (gh_types[i] == null) { return; }
                         GH_ObjectWrapper gh_typ = gh_types[i];
+                        if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Load input (index: " + i + ") is null and has been ignored"); continue; }
+
                         if (gh_typ.Value is GsaLoadGoo)
                         {
                             GsaLoad gsaload = null;

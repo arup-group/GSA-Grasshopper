@@ -159,6 +159,21 @@ namespace GhSA.Components
             }
 
             // 2 Elements
+            // check that user has not inputted Gsa geometry elements here
+            gh_typ = new GH_ObjectWrapper();
+            if (DA.GetData(2, ref gh_typ))
+            {
+                string type = gh_typ.Value.ToString().ToUpper();
+                if (type.StartsWith("GSA "))
+                {
+                    Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                        "You cannot input a Node/Element/Member in ElementList input!" + System.Environment.NewLine +
+                        "Element list should take the form:" + System.Environment.NewLine +
+                        "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + System.Environment.NewLine +
+                        "Refer to GSA help file for definition of lists and full vocabulary.");
+                    return;
+                }
+            }
             GH_String ghelem = new GH_String();
             if (DA.GetData(2, ref ghelem))
             {

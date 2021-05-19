@@ -52,16 +52,20 @@ namespace GhSA.UI.ButtonsUI
     /// </summary>
     public class Button
     {
-        public static GraphicsPath RoundedRect(RectangleF bounds, int radius)
+        public static GraphicsPath RoundedRect(RectangleF bounds, int radius, bool overlay = false)
         {
+            RectangleF b = new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height);
             int diameter = radius * 2;
             Size size = new Size(diameter, diameter);
-            RectangleF arc = new RectangleF(bounds.Location, size);
+            RectangleF arc = new RectangleF(b.Location, size);
             GraphicsPath path = new GraphicsPath();
+
+            if (overlay)
+                b.Height = diameter;
 
             if (radius == 0)
             {
-                path.AddRectangle(bounds);
+                path.AddRectangle(b);
                 return path;
             }
 
@@ -69,16 +73,23 @@ namespace GhSA.UI.ButtonsUI
             path.AddArc(arc, 180, 90);
 
             // top right arc  
-            arc.X = bounds.Right - diameter;
+            arc.X = b.Right - diameter;
             path.AddArc(arc, 270, 90);
 
-            // bottom right arc  
-            arc.Y = bounds.Bottom - diameter;
-            path.AddArc(arc, 0, 90);
+            if (!overlay)
+            {
+                // bottom right arc  
+                arc.Y = b.Bottom - diameter;
+                path.AddArc(arc, 0, 90);
 
-            // bottom left arc 
-            arc.X = bounds.Left;
-            path.AddArc(arc, 90, 90);
+                // bottom left arc 
+                arc.X = b.Left;
+                path.AddArc(arc, 90, 90);
+            }
+            else
+            {
+                path.AddLine(new PointF(b.X + b.Width, b.Y + b.Height), new PointF(b.X, b.Y + b.Height));
+            }
 
             path.CloseFigure();
             return path;
