@@ -219,30 +219,6 @@ namespace GhSA.Components
         }
 
         List<GsaElement2dGoo> element2ds;
-        //public override void DrawViewportMeshes(IGH_PreviewArgs args)
-        //{
-            
-        //    base.DrawViewportMeshes(args);
-
-        //    if (element2ds != null)
-        //    {
-        //        foreach (GsaElement2dGoo element in element2ds)
-        //        {
-        //            if (element == null) { continue; }
-        //            //Draw shape.
-        //            if (element.Value.Mesh != null)
-        //            {
-        //                if (!(element.Value.Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
-        //                {
-        //                    if (this.Attributes.Selected)
-        //                        args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFaceSelected);
-        //                    else
-        //                        args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFace);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
 
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {

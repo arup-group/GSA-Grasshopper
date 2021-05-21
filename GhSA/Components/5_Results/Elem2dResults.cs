@@ -109,7 +109,7 @@ namespace GhSA.Components
                     if (dropdowncontents[1] != dropdownshear)
                     {
                         dropdowncontents[1] = dropdownshear;
-                        selections[0] = dropdowncontents[0][1];
+                        selections[0] = dropdowncontents[0][2];
                         selections[1] = dropdowncontents[1][0];
                         if (dropdowncontents.Count > 2)
                             dropdowncontents.RemoveAt(2);
@@ -124,7 +124,7 @@ namespace GhSA.Components
                     if (dropdowncontents[1] != dropdownstress)
                     {
                         dropdowncontents[1] = dropdownstress;
-                        selections[0] = dropdowncontents[0][1];
+                        selections[0] = dropdowncontents[0][3];
                         selections[1] = dropdowncontents[1][0];
                         
                         if (dropdowncontents.Count < 3)
@@ -270,7 +270,7 @@ namespace GhSA.Components
         {
             pManager.AddVectorParameter("Translation", "U\u0305", "X, Y, Z translation values (" + Units.LengthSmall + ")", GH_ParamAccess.tree);
             pManager.AddVectorParameter("Rotation", "R\u0305", "XX, YY, ZZ rotation values(" + Units.Angle + ")", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Mesh", "M", "Mesh with result values", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Mesh", "M", "Mesh with result values", GH_ParamAccess.item);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
             pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthSmall + ")", GH_ParamAccess.list);
         }
@@ -629,6 +629,7 @@ namespace GhSA.Components
 
                 #region create mesh
                 // create mesh
+                //displayMesh = new Mesh(); //clear existing mesh
 
                 // get elements and nodes from model
                 elemList = string.Join(" ", keys.ToList());
@@ -637,7 +638,7 @@ namespace GhSA.Components
 
                 List<int> elemID = new List<int>();
                 List<int> parentMember = new List<int>();
-                List<ResultMesh> resultMeshes = new List<ResultMesh>();
+                ResultMesh resultMeshes = new ResultMesh(new Mesh(), new List<List<double>>());
                 List<Mesh> meshes = new List<Mesh>();
 
                 // loop through elements
@@ -733,16 +734,24 @@ namespace GhSA.Components
                             tempmesh.Vertices[8] = def;
                         }
                     }
+                    if (vals.Count == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
+                    {
+                        //normalised value between -1 and 1
+                        double tnorm = 2 * (vals[0] - dmin) / (dmax - dmin) - 1;
+                        System.Drawing.Color col = (double.IsNaN(tnorm)) ? System.Drawing.Color.Transparent : gH_Gradient.ColourAt(tnorm);
+                        for (int i = 0; i < tempmesh.Vertices.Count; i++)
+                            tempmesh.VertexColors.Add(col);
+                    }
 
-                    ResultMesh resultMesh = new ResultMesh(tempmesh, vals);
-                    meshes.Add(tempmesh);
-                    resultMeshes.Add(resultMesh);
+                    resultMeshes.Add(tempmesh, vals);
+                    //meshes.Add(tempmesh);
+                    //resultMeshes.Add(resultMesh);
                     #endregion
                     elemID.Add(key);
                     parentMember.Add(element.ParentMember.Member);
                 }
-
                 #endregion 
+                resultMeshes.Finalise();
 
                 #region Legend
                 // ### Legend ###
@@ -768,13 +777,12 @@ namespace GhSA.Components
                 // set outputs
                 DA.SetDataTree(0, xyz_out);
                 DA.SetDataTree(1, xxyyzz_out);
-                DA.SetDataList(2, resultMeshes);
+                DA.SetData(2, resultMeshes);
                 DA.SetDataList(3, cs);
                 DA.SetDataList(4, ts);
+                
             }
         }
-
-
 
         #region menu override
         private enum FoldMode
