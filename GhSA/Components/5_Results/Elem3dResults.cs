@@ -190,7 +190,7 @@ namespace GhSA.Components
         {
             pManager.AddVectorParameter("Translation", "U\u0305", "X, Y, Z translation values (" + Units.LengthSmall + ")", GH_ParamAccess.tree);
             //pManager.AddVectorParameter("Stress", "σ\u0305", "XX, YY, ZZ stress values(" + Units.Stress + ")", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Mesh", "M", "Mesh with result values", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Mesh", "M", "Mesh with result values", GH_ParamAccess.item);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
             pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthSmall + ")", GH_ParamAccess.list);
         }
@@ -487,7 +487,7 @@ namespace GhSA.Components
 
                 List<int> elemID = new List<int>();
                 List<int> parentMember = new List<int>();
-                List<ResultMesh> resultMeshes = new List<ResultMesh>();
+                ResultMesh resultMeshes = new ResultMesh(new Mesh(), new List<List<double>>());
                 List<Mesh> meshes = new List<Mesh>();
 
                 // loop through elements
@@ -571,15 +571,23 @@ namespace GhSA.Components
                             tempmesh.Vertices[i - 1] = def;
                         }
                     }
+                    if (vals.Count == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
+                    {
+                        //normalised value between -1 and 1
+                        double tnorm = 2 * (vals[0] - dmin) / (dmax - dmin) - 1;
+                        System.Drawing.Color col = (double.IsNaN(tnorm)) ? System.Drawing.Color.Transparent : gH_Gradient.ColourAt(tnorm);
+                        for (int i = 0; i < tempmesh.Vertices.Count; i++)
+                            tempmesh.VertexColors.Add(col);
+                    }
 
-                    ResultMesh resultMesh = new ResultMesh(tempmesh, vals);
-                    meshes.Add(tempmesh);
-                    resultMeshes.Add(resultMesh);
+                    resultMeshes.Add(tempmesh, vals);
+                    //meshes.Add(tempmesh);
+                    //resultMeshes.Add(resultMesh);
                     #endregion
                     elemID.Add(key);
                     parentMember.Add(element.ParentMember.Member);
                 }
-
+                resultMeshes.Finalise();
                 #endregion 
 
                 #region Legend
@@ -608,7 +616,7 @@ namespace GhSA.Components
                 DA.SetDataTree(outind++, xyz_out);
                 if (_mode == FoldMode.Stress)
                     DA.SetDataTree(outind++, xxyyzz_out);
-                DA.SetDataList(outind++, resultMeshes);
+                DA.SetData(outind++, resultMeshes);
                 DA.SetDataList(outind++, cs);
                 DA.SetDataList(outind++, ts);
             }

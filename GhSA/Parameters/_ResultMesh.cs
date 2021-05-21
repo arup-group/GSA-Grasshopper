@@ -30,7 +30,7 @@ namespace GhSA.Parameters
 {
     public class ResultMesh : GH_GeometricGoo<Mesh>, IGH_PreviewData
     {
-        public ResultMesh(Mesh mesh, List<double> results)
+        public ResultMesh(Mesh mesh, List<List<double>> results)
         : base(mesh) 
         { 
             m_results = results;
@@ -40,6 +40,9 @@ namespace GhSA.Parameters
         {
             get
             {
+                if (!finalised)
+                    Finalise();
+                
                 Mesh m = new Mesh();
                 Mesh x = Value;
 
@@ -61,7 +64,26 @@ namespace GhSA.Parameters
             }
         }
 
-        private List<double> m_results;
+        private List<List<double>> m_results = new List<List<double>>();
+        private List<Mesh> temp_meshes = new List<Mesh>();
+        private bool finalised = false;
+
+        public void Add(Mesh temp_mesh, List<double> results)
+        {
+            temp_meshes.Add(temp_mesh);
+            m_results.Add(results);
+            finalised = false;
+        }
+
+        public void Finalise()
+        {
+            this.Value = new Mesh();
+            this.Value.Append(temp_meshes);
+            this.Value.RebuildNormals();
+            this.Value.Compact();
+            temp_meshes = new List<Mesh>();
+            finalised = true;
+        }
 
         public override string ToString()
         {
