@@ -19,15 +19,17 @@ GSA-Grasshopper is a plugin for Grasshopper wrapping Oasys GSA's .NET API. The p
 <br/>
 
 ## Installation
+To install [GSA-Grasshopper, click in this link](rhino://package/search?name=gsa)
 
-Use the Rhino package manager [yak](https://developer.rhino3d.com/guides/yak/what-is-yak/) to install GSA-Grasshopper. 
-![R7_Package-Manager](https://user-images.githubusercontent.com/25223248/118797502-f208bd00-b89c-11eb-9d5d-d1f934ab92d0.PNG)
+<br/>
 
+Use the Rhino package manager [yak](rhino://package/search?name=hops) to install GSA-Grasshopper. 
 ### Rhino 6
 Use the command "TestPackageManager" and search for GSA.
 
 ### Rhino 7
 Use the command “_-PackageManager _Search GSA”
+![R7_Package-Manager](https://user-images.githubusercontent.com/25223248/118797502-f208bd00-b89c-11eb-9d5d-d1f934ab92d0.PNG)
 
 ## List of components by category
 
