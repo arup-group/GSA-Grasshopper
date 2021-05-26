@@ -30,6 +30,7 @@ GSA-Grasshopper is a plugin for Grasshopper wrapping Oasys GSA's .NET API. The p
 <img src="https://user-images.githubusercontent.com/25223248/118797502-f208bd00-b89c-11eb-9d5d-d1f934ab92d0.PNG" alt="Rhino7 Package Manager" width="600"/>
 
 <br/>
+
 ### Rhino 6
 Use the command "TestPackageManager" and search for GSA.
 
