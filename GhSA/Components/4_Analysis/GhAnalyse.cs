@@ -18,7 +18,7 @@ using Grasshopper.Kernel.Data;
 namespace GhSA.Components
 {
     /// <summary>
-    /// Component to create a new Offset
+    /// Component to assemble and analyse a GSA model
     /// </summary>
     public class GH_Analyse : GH_Component
     {
@@ -38,6 +38,21 @@ namespace GhSA.Components
 
         #region Custom UI
         //This region overrides the typical component layout
+        public override void CreateAttributes()
+        {
+            m_attributes = new UI.CheckBoxComponentUI(this, SetAnalysis, checkboxText, initialCheckState, "Settings");
+        }
+
+        List<string> checkboxText = new List<string>() { "Analyse task(s)", "ElemsFromMems" };
+        List<bool> initialCheckState = new List<bool>() { true, true };
+        bool Analysis;
+        bool ReMesh;
+
+        public void SetAnalysis(List<bool> value)
+        {
+            Analysis = value[0];
+            ReMesh = value[1];
+        }
         #endregion
 
         #region input and output
@@ -316,35 +331,63 @@ namespace GhSA.Components
 
             // Assemble model
             Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces);
-            //gsa.SaveAs(@"C:\Users\Kristjan.Nielsen\Desktop\test3.gwb");
+            
             #region meshing
             // Create elements from members
-            gsa.CreateElementsFromMembers();
+            if (ReMesh)
+                gsa.CreateElementsFromMembers();
             #endregion 
 
             #region analysis
 
             //analysis
-            IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
-            if (gsaTasks.Count < 1)
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contains no Analysis Tasks");
-
-            foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
+            if (Analysis)
             {
-                if (!(gsa.Analyse(task.Key)))
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
+                IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
+                if (gsaTasks.Count < 1)
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contains no Analysis Tasks");
+
+                foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
+                {
+                    if (!(gsa.Analyse(task.Key)))
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
+                }
             }
 
             #endregion
             OutModel.Model = gsa;
-
-            //gsa.SaveAs("C:\\Users\\Kristjan.Nielsen\\Desktop\\GsaGH_test.gwb");
             #endregion
 
             #region SetData
             DA.SetData(0, new GsaModelGoo(OutModel));
             #endregion
         }
+        #region (de)serialization
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            writer.SetBoolean("Analyse", Analysis);
+            writer.SetBoolean("ReMesh", ReMesh);
+            return base.Write(writer);
+        }
+        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        {
+            try
+            {
+                Analysis = reader.GetBoolean("Analyse");
+                ReMesh = reader.GetBoolean("ReMesh");
+            }
+            catch (Exception)
+            {
+                Analysis = true;
+                ReMesh = true;
+            }
+
+            initialCheckState = new List<bool>();
+            initialCheckState.Add(Analysis);
+            this.CreateAttributes();
+            return base.Read(reader);
+        }
+        #endregion
     }
 }
 

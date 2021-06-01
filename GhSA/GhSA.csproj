@@ -213,6 +213,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="UI\Comp_MultiDropDownsSlider.cs" />
+    <Compile Include="UI\Comp_CheckBox.cs" />
     <Compile Include="UI\Comp_Slider.cs" />
     <Compile Include="UI\Comp_TripleButton.cs" />
     <Compile Include="UI\Comp_Button.cs" />
