@@ -43,13 +43,15 @@ namespace GhSA.Components
             m_attributes = new UI.CheckBoxComponentUI(this, SetAnalysis, checkboxText, initialCheckState, "Settings");
         }
 
-        List<string> checkboxText = new List<string>() { "Analyse tasks" };
-        List<bool> initialCheckState = new List<bool>() { true };
-        bool Analyse;
+        List<string> checkboxText = new List<string>() { "Analyse task(s)", "ElemsFromMems" };
+        List<bool> initialCheckState = new List<bool>() { true, true };
+        bool Analysis;
+        bool ReMesh;
 
         public void SetAnalysis(List<bool> value)
         {
-            Analyse = value[0];
+            Analysis = value[0];
+            ReMesh = value[1];
         }
         #endregion
 
@@ -329,16 +331,17 @@ namespace GhSA.Components
 
             // Assemble model
             Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces);
-            //gsa.SaveAs(@"C:\Users\Kristjan.Nielsen\Desktop\test3.gwb");
+            
             #region meshing
             // Create elements from members
-            gsa.CreateElementsFromMembers();
+            if (ReMesh)
+                gsa.CreateElementsFromMembers();
             #endregion 
 
             #region analysis
 
             //analysis
-            if (Analyse)
+            if (Analysis)
             {
                 IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
                 if (gsaTasks.Count < 1)
@@ -353,8 +356,6 @@ namespace GhSA.Components
 
             #endregion
             OutModel.Model = gsa;
-
-            //gsa.SaveAs("C:\\Users\\Kristjan.Nielsen\\Desktop\\GsaGH_test.gwb");
             #endregion
 
             #region SetData
@@ -364,22 +365,25 @@ namespace GhSA.Components
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            writer.SetBoolean("Analyse", Analyse);
+            writer.SetBoolean("Analyse", Analysis);
+            writer.SetBoolean("ReMesh", ReMesh);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
             try
             {
-                Analyse = reader.GetBoolean("Analyse");
+                Analysis = reader.GetBoolean("Analyse");
+                ReMesh = reader.GetBoolean("ReMesh");
             }
             catch (Exception)
             {
-                Analyse = true;
+                Analysis = true;
+                ReMesh = true;
             }
 
             initialCheckState = new List<bool>();
-            initialCheckState.Add(Analyse);
+            initialCheckState.Add(Analysis);
             this.CreateAttributes();
             return base.Read(reader);
         }

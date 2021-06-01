@@ -34,13 +34,15 @@ namespace GhSA.Components
             m_attributes = new UI.CheckBoxComponentUI(this, SetAnalysis, checkboxText, initialCheckState, "Settings");
         }
 
-        List<string> checkboxText = new List<string>() { "Analyse tasks" };
-        List<bool> initialCheckState = new List<bool>() { true };
+        List<string> checkboxText = new List<string>() { "Analyse task(s)", "ElemsFromMems" };
+        List<bool> initialCheckState = new List<bool>() { true, true };
         public static bool Analysis;
+        public static bool ReMesh;
 
         public void SetAnalysis(List<bool> value)
         {
             Analysis = value[0];
+            ReMesh = value[1];
         }
         #endregion
 
@@ -352,9 +354,12 @@ namespace GhSA.Components
 
                     #region meshing
                     // Create elements from members
-                    ReportProgress("Meshing", 0);
-                    gsa.CreateElementsFromMembers();
-                    ReportProgress("Model meshed", -1);
+                    if (ReMesh)
+                    {
+                        ReportProgress("Meshing", 0);
+                        gsa.CreateElementsFromMembers();
+                        ReportProgress("Model meshed", -1);
+                    }
                     #endregion
 
                     #region analysis
@@ -409,6 +414,7 @@ namespace GhSA.Components
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
             writer.SetBoolean("Analyse", Analysis);
+            writer.SetBoolean("ReMesh", ReMesh);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
@@ -416,10 +422,12 @@ namespace GhSA.Components
             try
             {
                 Analysis = reader.GetBoolean("Analyse");
+                ReMesh = reader.GetBoolean("ReMesh");
             }
             catch (Exception)
             {
                 Analysis = true;
+                ReMesh = true;
             }
 
             initialCheckState = new List<bool>();

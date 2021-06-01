@@ -45,7 +45,7 @@ namespace GhSA.UI
                 List<string> texts = new List<string>(){ spacerTxt };
                 float sp = GhSA.UI.ComponentUI.MaxTextWidth(texts, new Font(GH_FontServer.FamilyStandard, 7));
                 float dd1 = GhSA.UI.ComponentUI.MaxTextWidth(displayTexts, new Font(GH_FontServer.FamilyStandard, 7));
-                float num = Math.Max(Math.Max(sp, dd1 + 5), 90); 
+                float num = Math.Max(Math.Max(sp, dd1 + 15), 90); 
                 return num;
             }
             set { MinWidth = value; }
