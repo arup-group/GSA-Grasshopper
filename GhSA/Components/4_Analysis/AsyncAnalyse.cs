@@ -432,6 +432,7 @@ namespace GhSA.Components
 
             initialCheckState = new List<bool>();
             initialCheckState.Add(Analysis);
+            initialCheckState.Add(ReMesh);
             this.CreateAttributes();
             return base.Read(reader);
         }
