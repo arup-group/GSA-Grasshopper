@@ -400,9 +400,6 @@ namespace GhSA.UI
                 // adjust fontsize to high resolution displays
                 sml = new Font(sml.FontFamily, sml.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
 
-                //draw the component
-                base.RenderComponentCapsule(canvas, graphics, true, true, true, true, true, true);
-
                 Pen pen = new Pen(borderColour);
 
                 graphics.DrawString(SpacerTxt, sml, annoText, SpacerBounds, GH_TextRenderingConstants.CenterCenter);

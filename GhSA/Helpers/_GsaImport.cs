@@ -930,7 +930,7 @@ namespace GhSA.Util.Gsa
                             }
 
                             // create the element from list of points and type description
-                            GsaMember1d mem1d = new GsaMember1d(topopts, topoType);
+                            GsaMember1d mem1d = new GsaMember1d(topopts.ToList(), topoType.ToList());
                             mem1d.ID = key;
                             mem1d.Member = mem;
 
@@ -955,13 +955,13 @@ namespace GhSA.Util.Gsa
                             
                             // create member from topology lists
                             GsaMember2d mem2d = new GsaMember2d(
-                                topopts,
-                                topoType,
-                                void_topo,
-                                void_topoType,
-                                incLines_topo,
-                                inclLines_topoType,
-                                incl_pts);
+                                topopts.ToList(),
+                                topoType.ToList(),
+                                void_topo.ToList(),
+                                void_topoType.ToList(),
+                                incLines_topo.ToList(),
+                                inclLines_topoType.ToList(),
+                                incl_pts.ToList());
                             mem2d.ID = key;
                             mem2d.Member = mem;
 

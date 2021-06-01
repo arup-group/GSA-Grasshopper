@@ -29,6 +29,19 @@ namespace GhSA.Components
 
         #region Custom UI
         //This region overrides the typical component layout
+        public override void CreateAttributes()
+        {
+            m_attributes = new UI.CheckBoxComponentUI(this, SetAnalysis, checkboxText, initialCheckState, "Settings");
+        }
+
+        List<string> checkboxText = new List<string>() { "Analyse tasks" };
+        List<bool> initialCheckState = new List<bool>() { true };
+        public static bool Analysis;
+
+        public void SetAnalysis(List<bool> value)
+        {
+            Analysis = value[0];
+        }
         #endregion
 
         #region input and output
@@ -345,42 +358,45 @@ namespace GhSA.Components
                     #endregion
 
                     #region analysis
-                    
-
                     //analysis
-                    IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
-                    if (gsaTasks.Count < 1)
+                    if (Analysis)
                     {
-                        ReportProgress("Model contains no Analysis Tasks", -255);
-                        ReportProgress("Model assembled", -1);
-                    }
-                    else
-                    {
-                        foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
+                        
+                        IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
+                        if (gsaTasks.Count < 1)
                         {
-                            if (CancellationToken.IsCancellationRequested) return;
-                            ReportProgress("Analysing Task " + task.Key.ToString(), -2);
-
-                            bool analysis;
-                            try
-                            {
-                                analysis = gsa.Analyse(task.Key);
-                            }
-                            catch (Exception)
-                            {
-
-                                throw;
-                            }
-                            
-                            
-                            if (!analysis)
-                            {
-                                component.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
-                                ReportProgress("Warning Analysis Case " + task.Key + " could not be analysed", -10);
-                            }
+                            ReportProgress("Model contains no Analysis Tasks", -255);
+                            ReportProgress("Model assembled", -1);
                         }
-                        ReportProgress("Model analysed", -1);
+                        else
+                        {
+                            foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
+                            {
+                                if (CancellationToken.IsCancellationRequested) return;
+                                ReportProgress("Analysing Task " + task.Key.ToString(), -2);
+
+                                bool anal;
+                                try
+                                {
+                                    anal = gsa.Analyse(task.Key);
+                                }
+                                catch (Exception)
+                                {
+
+                                    throw;
+                                }
+
+
+                                if (!anal)
+                                {
+                                    component.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
+                                    ReportProgress("Warning Analysis Case " + task.Key + " could not be analysed", -10);
+                                }
+                            }
+                            ReportProgress("Model analysed", -1);
+                        }
                     }
+                    
                     
                     #endregion
                     OutModel.Model = gsa;
@@ -389,5 +405,28 @@ namespace GhSA.Components
                 #endregion
             }
         }
+        #region (de)serialization
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            writer.SetBoolean("Analyse", Analysis);
+            return base.Write(writer);
+        }
+        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        {
+            try
+            {
+                Analysis = reader.GetBoolean("Analyse");
+            }
+            catch (Exception)
+            {
+                Analysis = true;
+            }
+
+            initialCheckState = new List<bool>();
+            initialCheckState.Add(Analysis);
+            this.CreateAttributes();
+            return base.Read(reader);
+        }
+        #endregion
     }
 }
