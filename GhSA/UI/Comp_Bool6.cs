@@ -93,6 +93,7 @@ namespace GhSA.UI
             int h0 = 0;
             if (SpacerTxt != "")
             {
+                Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height - 5);
                 h0 = 10;
                 SpacerBounds = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
             }
