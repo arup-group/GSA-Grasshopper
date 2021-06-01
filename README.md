@@ -124,11 +124,11 @@ Use the command "TestPackageManager" and search for GSA.
 
 |Component |Name |Description|
 | ----------- | ----------- | ------------- |
-|![NodeResults@4x](https://user-images.githubusercontent.com/25223248/118821615-b3343080-b8b7-11eb-9495-17c55a419520.png)| **Node results:** | View and get typical node results as displacement or reaction forces
-|![Elem1dResults@4x](https://user-images.githubusercontent.com/25223248/118821633-b7f8e480-b8b7-11eb-8d40-28046b6f9784.png)| **Element1D Results:** | View and get 1D Element results for displacement and internal forces
-|![Elem2dResults@4x](https://user-images.githubusercontent.com/25223248/118821641-baf3d500-b8b7-11eb-973c-045f97b7a0c0.png)| **Element2D Results:** | View and get 2D Element surface plot results for displacement, forces and moments and stress
-|![Elem3dResults@4x](https://user-images.githubusercontent.com/25223248/118821655-bdeec580-b8b7-11eb-89ad-ca7aa7f5a055.png)| **Element3D Results:** | View and get 3D Element surface plot results for displacement and stress
-|![GlobalResults@4x](https://user-images.githubusercontent.com/25223248/118821675-c2b37980-b8b7-11eb-966b-848655fb2c52.png)| **Global Results:** | Get global model results as sum of forces, mass and inertia as well as dynamic factors for dynamic analysis tasks
+|![NodeResults@4x](https://user-images.githubusercontent.com/25223248/118821615-b3343080-b8b7-11eb-9495-17c55a419520.png)| **Node results** | View and get typical node results as displacement or reaction forces
+|![Elem1dResults@4x](https://user-images.githubusercontent.com/25223248/118821633-b7f8e480-b8b7-11eb-8d40-28046b6f9784.png)| **Element1D Results** | View and get 1D Element results for displacement and internal forces
+|![Elem2dResults@4x](https://user-images.githubusercontent.com/25223248/118821641-baf3d500-b8b7-11eb-973c-045f97b7a0c0.png)| **Element2D Results** | View and get 2D Element surface plot results for displacement, forces and moments and stress
+|![Elem3dResults@4x](https://user-images.githubusercontent.com/25223248/118821655-bdeec580-b8b7-11eb-89ad-ca7aa7f5a055.png)| **Element3D Results** | View and get 3D Element surface plot results for displacement and stress
+|![GlobalResults@4x](https://user-images.githubusercontent.com/25223248/118821675-c2b37980-b8b7-11eb-966b-848655fb2c52.png)| **Global Results** | Get global model results as sum of forces, mass and inertia as well as dynamic factors for dynamic analysis tasks
 
 <br/>
 
