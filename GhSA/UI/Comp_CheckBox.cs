@@ -71,6 +71,7 @@ namespace GhSA.UI
             // spacer
             if (spacerTxt != "")
             {
+                Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height - 5);
                 h0 = 10;
                 SpacerBound = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
             }

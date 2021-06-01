@@ -154,6 +154,9 @@ namespace GhSA.UI
                 {
                     if (spacerTxts[i] != "")
                     {
+                        if (i < 1)
+                            Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height - 5);
+
                         h0 = 10;
                         RectangleF tempSpacer = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
                         if (SpacerBounds.Count == i || SpacerBounds[i] == null)
