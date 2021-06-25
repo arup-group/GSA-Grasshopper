@@ -796,7 +796,7 @@ namespace GhSA.Util.Gsa
                         
                         // create list of meshes
                         List<Mesh> mList = new List<Mesh>();
-
+                        bool invalid_node = false;
                         // loop through elements in list
                         for (int i = 0; i < topints.Count; i++)
                         {
@@ -809,6 +809,8 @@ namespace GhSA.Util.Gsa
                                     var p = node.Position;
                                     tempMesh.Vertices.Add(new Point3d(p.X, p.Y, p.Z));
                                 }
+                                else
+                                    invalid_node = true; // if node cannot be found continue with next key
                             }
 
                             // Create mesh face (Tri- or Quad):
@@ -816,6 +818,9 @@ namespace GhSA.Util.Gsa
                             
                             mList.Add(tempMesh);
                         }
+                        if (invalid_node)
+                            continue;
+
                         // new mesh to merge existing into
                         Mesh m = new Mesh();
                         
@@ -863,6 +868,7 @@ namespace GhSA.Util.Gsa
 
                         // replace topology integers with actual points
                         List<Point3d> topopts = new List<Point3d>(); // list of topology points for visualisation /member1d/member2d
+                        bool invalid_node = false;
                         for (int i = 0; i < topo_int.Count; i++)
                         {
                             if (nDict.TryGetValue(topo_int[i], out Node node))
@@ -870,10 +876,14 @@ namespace GhSA.Util.Gsa
                                 var p = node.Position;
                                 topopts.Add(new Point3d(p.X, p.Y, p.Z));
                             }
+                            else
+                                invalid_node = true; // if node cannot be found continue with next key
                         }
+                        if (invalid_node)
+                            continue;
 
                         //list of lists of void points /member2d
-                        List<List<Point3d>> void_topo = new List<List<Point3d>>();
+                            List<List<Point3d>> void_topo = new List<List<Point3d>>();
                         for (int i = 0; i < void_topo_int.Count; i++)
                         {
                             void_topo.Add(new List<Point3d>());
