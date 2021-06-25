@@ -100,7 +100,7 @@ namespace GhSA.Components
                         }
                     }
                     else
-                        gsaSection.Material = new GsaMaterial(7);
+                        gsaSection.Material = new GsaMaterial(7); // because Timber
 
                 }
                 DA.SetData(0, new GsaSectionGoo(gsaSection));
