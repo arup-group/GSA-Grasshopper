@@ -322,8 +322,22 @@ namespace GhSA.Util.Gsa
                 if (gsaProfile.geoType == Profile.GeoTypes.Perim)
                 {
                     string unit = "";
-                    if (gsaProfile.sectUnit != Profile.SectUnitOptions.u_mm)
-                        unit = "(" + gsaProfile.sectUnit.ToString() + ") ";
+
+                    switch (gsaProfile.sectUnit)
+                    {
+                        case Profile.SectUnitOptions.u_cm:
+                            unit = "(cm)";
+                            break;
+                        case Profile.SectUnitOptions.u_m:
+                            unit = "(m)";
+                            break;
+                        case Profile.SectUnitOptions.u_in:
+                            unit = "(in)";
+                            break;
+                        case Profile.SectUnitOptions.u_ft:
+                            unit = "(ft)";
+                            break;
+                    }
 
                     var profile = "GEO P" + unit;
                     var iPoint = 0;

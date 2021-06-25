@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Drawing;
+using System.IO;
 using Grasshopper.Kernel;
 using System.Reflection;
 using GsaAPI;
@@ -33,10 +33,6 @@ namespace GhSA
             // ### Use GsaAPI to load referenced dlls ###
             InitiateGsaAPI.UseGsaAPI();
 
-            // test if this solves problems with libiomp5md.dll version (karamba using different version)
-            //System.Environment.SetEnvironmentVariable("KMP_DUPLICATE_LIB_OK", "TRUE");
-            // Note: it did not, but pushed the error 
-
             // ### Create Ribbon Category name and icon ###
             Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
             Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", GhSA.Properties.Resources.GsaGhLogo);
@@ -53,26 +49,30 @@ namespace GhSA
             Model m = new Model();
 
             // get the GSA install path
-            string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath; 
+            string tempPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            System.IO.Directory.CreateDirectory(tempPath + "\\Oasys\\");
+            tempPath = Path.Combine(tempPath, "Oasys");
+            System.IO.Directory.CreateDirectory(tempPath + "\\GsaGrasshopper\\");
+            tempPath = Path.Combine(tempPath, "GsaGrasshopper");
 
             // open existing GSA model (steel design sample)
             // model containing CAT section profiles which I
             // think loads the SectLib.db3 SQL lite database
-            
+
             // try open stair sample file
-            ReturnValue open = m.Open(installPath + "\\Samples\\Env.gwb");
+            ReturnValue open = m.Open(tempPath + "\\Samples\\Env.gwb");
             
             // check if success
             if (open == ReturnValue.GS_FILE_OPEN_ERROR)
             {
                 // if not create new directory
-                System.IO.Directory.CreateDirectory(installPath + "\\Samples\\");
+                System.IO.Directory.CreateDirectory(tempPath + "\\Samples\\");
                 // create webclient and download example file:
                 WebClient webClient = new WebClient();
-                webClient.DownloadFile("https://samples.oasys-software.com/gsa/10.1/General/Env.gwb", installPath + "\\Samples\\Env.gwb");
+                webClient.DownloadFile("https://samples.oasys-software.com/gsa/10.1/General/Env.gwb", tempPath + "\\Samples\\Env.gwb");
 
                 // try open the file again:
-                open = m.Open(installPath + "\\Samples\\Env.gwb");
+                open = m.Open(tempPath + "\\Samples\\Env.gwb");
                 
                 // if model is opened run it
                 if (open == ReturnValue.GS_OK)
@@ -136,7 +136,7 @@ namespace GhSA
         {
             get
             {
-                return "0.2.14";
+                return "0.2.15";
             }
         }
     }
