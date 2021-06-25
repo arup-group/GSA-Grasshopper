@@ -242,183 +242,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\Icons\EditTitles.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditUnits.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GetGeometry.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GetLoads.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GetProperties.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\OpenModel.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\SaveModel.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateElem1D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateElem2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateMem1D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateMem2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditElem1D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditElem2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditMem1D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditMem2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateSupport.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditNode.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateBool6.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateOffset.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateProfile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateProp2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateSection.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateSpring.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditBool6.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditOffset.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditProp2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditSection.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditSpring.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\SectionProperties.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Analyse.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\AnalysisTask.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\BeamLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\FaceLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GravityLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GridAreaLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GridLineLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GridPlane.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GridPlaneProperties.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GridPointLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GridSurface.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\NodeLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Elem1dResults.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Elem2dResults.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GlobalResults.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\NodeResults.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GSA.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaBool6.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaElem1D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaElem2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaGridPlane.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaMem1D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaMem2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaModel.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaNode.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaOffset.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaProp2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaSection.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GsaSpring.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Properties\Icons\icons\1x\Analyse.png" />
   </ItemGroup>
   <ItemGroup>
@@ -435,9 +258,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\CreateElem2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\icons\1x\CreateElem2D_1.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\CreateMem1D.png" />
@@ -468,9 +288,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\EditMem1D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\icons\1x\EditMem1D_1.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\EditMem2D.png" />
@@ -642,9 +459,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\Elem3dResults.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\GsaGhLogo.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\GsaGhLogo.png" />
