@@ -25,28 +25,28 @@ namespace GhSA.Util.Gsa.ToGSA
                 {
                     GsaLoad load = loads[i];
 
-                    if (load.LoadType == GsaLoad.LoadTypes.GridArea)
+                    switch (load.LoadType)
                     {
-                        if (load.AreaLoad.GridPlaneSurface.GridPlaneID > 0)
-                            gridplaneidcounter = Math.Max(gridplaneidcounter, load.AreaLoad.GridPlaneSurface.GridPlaneID + 1);
-                        if (load.AreaLoad.GridPlaneSurface.GridSurfaceID > 0)
-                            gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.AreaLoad.GridPlaneSurface.GridSurfaceID + 1);
-                    }
+                        case GsaLoad.LoadTypes.GridArea:
+                            if (load.AreaLoad.GridPlaneSurface.GridPlaneID > 0)
+                                gridplaneidcounter = Math.Max(gridplaneidcounter, load.AreaLoad.GridPlaneSurface.GridPlaneID + 1);
+                            if (load.AreaLoad.GridPlaneSurface.GridSurfaceID > 0)
+                                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.AreaLoad.GridPlaneSurface.GridSurfaceID + 1);
+                            break;
 
-                    if (load.LoadType == GsaLoad.LoadTypes.GridLine)
-                    {
-                        if (load.PointLoad.GridPlaneSurface.GridPlaneID > 0)
-                            gridplaneidcounter = Math.Max(gridplaneidcounter, load.PointLoad.GridPlaneSurface.GridPlaneID + 1);
-                        if (load.PointLoad.GridPlaneSurface.GridSurfaceID > 0)
-                            gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.PointLoad.GridPlaneSurface.GridSurfaceID + 1);
-                    }
+                        case GsaLoad.LoadTypes.GridLine:
+                            if (load.LineLoad.GridPlaneSurface.GridPlaneID > 0)
+                                gridplaneidcounter = Math.Max(gridplaneidcounter, load.LineLoad.GridPlaneSurface.GridPlaneID + 1);
+                            if (load.LineLoad.GridPlaneSurface.GridSurfaceID > 0)
+                                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.LineLoad.GridPlaneSurface.GridSurfaceID + 1);
+                            break;
 
-                    if (load.LoadType == GsaLoad.LoadTypes.GridLine)
-                    {
-                        if (load.LineLoad.GridPlaneSurface.GridPlaneID > 0)
-                            gridplaneidcounter = Math.Max(gridplaneidcounter, load.LineLoad.GridPlaneSurface.GridPlaneID + 1);
-                        if (load.LineLoad.GridPlaneSurface.GridSurfaceID > 0)
-                            gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.LineLoad.GridPlaneSurface.GridSurfaceID + 1);
+                        case GsaLoad.LoadTypes.GridPoint:
+                            if (load.PointLoad.GridPlaneSurface.GridPlaneID > 0)
+                                gridplaneidcounter = Math.Max(gridplaneidcounter, load.PointLoad.GridPlaneSurface.GridPlaneID + 1);
+                            if (load.PointLoad.GridPlaneSurface.GridSurfaceID > 0)
+                                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.PointLoad.GridPlaneSurface.GridSurfaceID + 1);
+                            break;
                     }
                 }
             }
