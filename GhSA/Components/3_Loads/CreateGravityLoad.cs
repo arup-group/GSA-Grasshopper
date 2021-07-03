@@ -95,9 +95,9 @@ namespace GhSA.Components
             if (DA.GetData(3, ref gh_factor))
                 GH_Convert.ToVector3d(gh_factor, ref vect, GH_Conversion.Both);
             factor.X = vect.X; factor.Y = vect.Y; factor.Z = vect.Z;
-            
+
             if (vect.Z > 0)
-                Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Just a friendly note that your gravity vector is pointing upwards."
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Just a friendly note that your gravity vector is pointing upwards.");
 
             gravityLoad.GravityLoad.Factor = factor; 
 
