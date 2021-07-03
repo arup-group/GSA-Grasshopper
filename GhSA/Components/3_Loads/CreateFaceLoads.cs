@@ -196,10 +196,11 @@ namespace GhSA.Components
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            if (direc == Direction.Z)
-                                load1 *= -1000; //convert to kN
-                            else
-                                load1 *= 1000;
+                            load1 *= 1000; // convert to kN
+                            //if (direc == Direction.Z)
+                            //    load1 *= -1000; //convert to kN
+                            //else
+                            //    load1 *= 1000;
                         }
 
                         // set position and value
@@ -222,34 +223,38 @@ namespace GhSA.Components
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            if (direc == Direction.Z)
-                                load1 *= -1000; //convert to kN
-                            else
-                                load1 *= 1000;
+                            load1 *= 1000; // convert to kN
+                            //if (direc == Direction.Z)
+                            //    load1 *= -1000; //convert to kN
+                            //else
+                            //    load1 *= 1000;
                         }
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
                         {
-                            if (direc == Direction.Z)
-                                load2 *= -1000; //convert to kN
-                            else
-                                load2 *= 1000;
+                            load2 *= 1000; // convert to kN
+                            //if (direc == Direction.Z)
+                            //    load2 *= -1000; //convert to kN
+                            //else
+                            //    load2 *= 1000;
                         }
                         double load3 = 0;
                         if (DA.GetData(8, ref load3))
                         {
-                            if (direc == Direction.Z)
-                                load3 *= -1000; //convert to kN
-                            else
-                                load3 *= 1000;
+                            load3 *= 1000; // convert to kN
+                            //if (direc == Direction.Z)
+                            //    load3 *= -1000; //convert to kN
+                            //else
+                            //    load3 *= 1000;
                         }
                         double load4 = 0;
                         if (DA.GetData(9, ref load4))
                         {
-                            if (direc == Direction.Z)
-                                load4 *= -1000; //convert to kN
-                            else
-                                load4 *= 1000;
+                            load4 *= 1000; // convert to kN
+                            //if (direc == Direction.Z)
+                            //   load4 *= -1000; //convert to kN
+                            //else
+                            //    load4 *= 1000;
                         }
 
                         // set value
@@ -275,10 +280,11 @@ namespace GhSA.Components
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            if (direc == Direction.Z)
-                                load1 *= -1000; //convert to kN
-                            else
-                                load1 *= 1000;
+                            load1 *= 1000; // convert to kN
+                            //if (direc == Direction.Z)
+                            //    load1 *= -1000; //convert to kN
+                            //else
+                            //    load1 *= 1000;
                         }
                         double r = 0;
                         DA.GetData(7, ref r);
@@ -290,7 +296,7 @@ namespace GhSA.Components
                         faceLoad.FaceLoad.SetValue(0, load1);
                         //faceLoad.Position.X = r; //note Vector2 currently only get in GsaAPI
                         //faceLoad.Position.Y = s;
-
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "note position cannot be set in GsaAPI at the moment");
                     }
                     break;
 
@@ -306,19 +312,21 @@ namespace GhSA.Components
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            if (direc == Direction.Z)
-                                load1 *= -1000; //convert to kN
-                            else
-                                load1 *= 1000;
+                            load1 *= 1000; // convert to kN
+                            //if (direc == Direction.Z)
+                            //    load1 *= -1000; //convert to kN
+                            //else
+                            //    load1 *= 1000;
                         }
 
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
                         {
-                            if (direc == Direction.Z)
-                                load2 *= -1000; //convert to kN
-                            else
-                                load2 *= 1000;
+                            load2 *= 1000; // convert to kN
+                            //if (direc == Direction.Z)
+                            //    load2 *= -1000; //convert to kN
+                            //else
+                            //    load2 *= 1000;
                         }
 
                         // set value
@@ -326,7 +334,7 @@ namespace GhSA.Components
                         faceLoad.FaceLoad.SetValue(1, load2);
                         //faceLoad.Edge = edge; //note implementation of edge-load is not yet supported in GsaAPI
 
-                        faceLoad = null;
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "edge-load is not yet supported in GsaAPI");
                     }
                     break;
 
