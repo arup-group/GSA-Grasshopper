@@ -235,7 +235,7 @@ namespace GhSA.Components
             // 7 load value
             double load1 = 0;
             if (DA.GetData(7, ref load1))
-                load1 *= -1000; //convert to kN
+                load1 *= 1000; //convert to kN
             gridareaload.GridAreaLoad.Value = load1;
                         
             // convert to goo
