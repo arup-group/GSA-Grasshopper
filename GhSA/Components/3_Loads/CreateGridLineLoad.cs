@@ -229,13 +229,13 @@ namespace GhSA.Components
             // 7 load value
             double load1 = 0;
             if (DA.GetData(7, ref load1))
-                load1 *= -1000; //convert to kN
+                load1 *= 1000; //convert to kN
             gridlineload.GridLineLoad.ValueAtStart = load1;
 
             // 8 load value
             double load2 = load1;
             if (DA.GetData(8, ref load2))
-                load2 *= -1000; //convert to kN
+                load2 *= 1000; //convert to kN
             gridlineload.GridLineLoad.ValueAtEnd = load2;
 
             // convert to goo
