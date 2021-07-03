@@ -203,10 +203,11 @@ namespace GhSA.Components
             double load1 = 0;
             if (DA.GetData(6, ref load1))
             {
-                if (direc == Direction.Z)
-                    load1 *= -1000; //convert to kN
-                else
-                    load1 *= 1000;
+                load1 *= 1000; //convert to kN
+                //if (direc == Direction.Z)
+                //    load1 *= -1000; //convert to kN
+                //else
+                //    load1 *= 1000;
             }
                 
             
@@ -246,10 +247,11 @@ namespace GhSA.Components
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
                         {
-                            if (direc == Direction.Z)
-                                load2 *= -1000; //convert to kN
-                            else
-                                load2 *= 1000;
+                            load2 *= 1000; // convert to kN
+                            //if (direc == Direction.Z)
+                            //    load2 *= -1000; //convert to kN
+                            //else
+                            //    load2 *= 1000;
                         }
 
                         // set value
@@ -277,10 +279,11 @@ namespace GhSA.Components
                         double load2 = 0;
                         if (DA.GetData(8, ref load2))
                         {
-                            if (direc == Direction.Z)
-                                load2 *= -1000; //convert to kN
-                            else
-                                load2 *= 1000;
+                            load2 *= 1000; // convert to kN
+                            //if (direc == Direction.Z)
+                            //    load2 *= -1000; //convert to kN
+                            //else
+                            //    load2 *= 1000;
                         }
 
                         // set value
@@ -310,10 +313,11 @@ namespace GhSA.Components
                         double load2 = 0;
                         if (DA.GetData(8, ref load2))
                         {
-                            if (direc == Direction.Z)
-                                load2 *= -1000; //convert to kN
-                            else
-                                load2 *= 1000;
+                            load2 *= 1000; // convert to kN
+                            //if (direc == Direction.Z)
+                            //    load2 *= -1000; //convert to kN
+                            //else
+                            //    load2 *= 1000;
                         }
 
                         // set value
