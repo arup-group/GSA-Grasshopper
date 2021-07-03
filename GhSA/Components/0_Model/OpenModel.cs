@@ -92,8 +92,6 @@ namespace GhSA.Components
                 Params.OnParametersChanged();
                 
                 ExpireSolution(true);
-                
-                
             }
         }
         #endregion
@@ -196,6 +194,7 @@ namespace GhSA.Components
                         mes = mes.Substring(0, mes.Length - 4);
                         Message = mes;
                         DA.SetData(0, new GsaModelGoo(gsaModel));
+                        return;
                     }
                     else
                     {
@@ -212,6 +211,7 @@ namespace GhSA.Components
                     };
 
                     DA.SetData(0, new GsaModelGoo(gsaModel));
+                    return;
                 }
                 else
                 {
@@ -237,6 +237,7 @@ namespace GhSA.Components
                     mes = mes.Substring(0, mes.Length - 4);
                     Message = mes;
                     DA.SetData(0, new GsaModelGoo(gsaModel));
+                    return;
                 }
                 else
                 {

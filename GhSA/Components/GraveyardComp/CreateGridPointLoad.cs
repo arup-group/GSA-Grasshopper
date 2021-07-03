@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -7,16 +7,16 @@ using GhSA.Parameters;
 
 namespace GhSA.Components
 {
-    public class CreateGridPointLoad : GH_Component
+    public class CreateGridPointLoad_OBSOLETE : GH_Component
     {
         #region Name and Ribbon Layout
-        public CreateGridPointLoad()
+        public CreateGridPointLoad_OBSOLETE()
             : base("Create Grid Point Load", "PointLoad", "Create GSA Grid Point Load",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat3())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override Guid ComponentGuid => new Guid("076f03c6-67ba-49d3-9462-cd4a4b5aff92");
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("844dbf7b-3750-445c-950d-b161b00a6757");
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridPointLoad;
         #endregion
@@ -133,7 +133,7 @@ namespace GhSA.Components
 
             // 4 Axis
             int axis = 0;
-            gridpointload.GridPointLoad.AxisProperty = 0; 
+            gridpointload.GridPointLoad.AxisProperty = 0;
             GH_Integer gh_ax = new GH_Integer();
             if (DA.GetData(4, ref gh_ax))
             {
@@ -154,7 +154,7 @@ namespace GhSA.Components
             // 6 load value
             double load = 0;
             if (DA.GetData(6, ref load))
-                load *= 1000; //convert to kN
+                load *= -1000; //convert to kN
             gridpointload.GridPointLoad.Value = load;
 
             // convert to goo

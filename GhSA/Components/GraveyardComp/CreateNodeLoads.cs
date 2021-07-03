@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -9,16 +9,16 @@ using Grasshopper.Kernel.Parameters;
 
 namespace GhSA.Components
 {
-    public class CreateNodeLoad : GH_Component, IGH_VariableParameterComponent
+    public class CreateNodeLoad_OBSOLETE : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
-        public CreateNodeLoad()
+        public CreateNodeLoad_OBSOLETE()
             : base("Create Node Load", "NodeLoad", "Create GSA Node Load",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat3())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("0e30f030-8fc0-4ffa-afd9-02b18c094006");
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.NodeLoad;
         #endregion
@@ -93,10 +93,10 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("Node Load", "Ld", "GSA Node Load", GH_ParamAccess.item);
         }
-        
+
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            
+
             GsaNodeLoad nodeLoad = new GsaNodeLoad();
 
             // Node load type
@@ -112,7 +112,7 @@ namespace GhSA.Components
                     nodeLoad.NodeLoadType = GsaNodeLoad.NodeLoadTypes.SETTLEMENT;
                     break;
             }
-            
+
             // 0 Load case
             int lc = 1;
             GH_Integer gh_lc = new GH_Integer();
@@ -136,7 +136,7 @@ namespace GhSA.Components
                     return;
                 }
             }
-            string nodeList = "all"; 
+            string nodeList = "all";
             GH_String gh_nl = new GH_String();
             if (DA.GetData(1, ref gh_nl))
                 GH_Convert.ToString(gh_nl, out nodeList, GH_Conversion.Both);
@@ -175,11 +175,10 @@ namespace GhSA.Components
             double load = 0;
             if (DA.GetData(4, ref load))
             {
-                load *= 1000; // convert to kN
-                //if (direc == Direction.Z)
-                //    load *= -1000; //convert to kN
-                //else
-                //    load *= 1000;
+                if (direc == Direction.Z)
+                    load *= -1000; //convert to kN
+                else
+                    load *= 1000;
             }
 
             nodeLoad.NodeLoad.Value = load;
@@ -234,7 +233,7 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            
+
         }
         #endregion
     }

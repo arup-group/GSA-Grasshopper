@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Grasshopper;
@@ -12,16 +12,16 @@ using GhSA.Parameters;
 
 namespace GhSA.Components
 {
-    public class CreateBeamLoads : GH_Component, IGH_VariableParameterComponent
+    public class CreateBeamLoads_OBSOLETE : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
-        public CreateBeamLoads()
+        public CreateBeamLoads_OBSOLETE()
             : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat3())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("a2bc3c66-eb22-43ec-9936-84d2944be414");
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.BeamLoad;
         #endregion
@@ -116,7 +116,7 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaBeamLoad beamLoad = new GsaBeamLoad();
-            
+
             // 0 Load case
             int lc = 1;
             GH_Integer gh_lc = new GH_Integer();
@@ -132,17 +132,17 @@ namespace GhSA.Components
                 string type = gh_typ.Value.ToString().ToUpper();
                 if (type.StartsWith("GSA "))
                 {
-                    Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, 
-                        "You cannot input a Node/Element/Member in ElementList input!" +System.Environment.NewLine +
+                    Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                        "You cannot input a Node/Element/Member in ElementList input!" + System.Environment.NewLine +
                         "Element list should take the form:" + System.Environment.NewLine +
                         "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + System.Environment.NewLine +
-                        "Refer to GSA help file for definition of lists and full vocabulary."); 
+                        "Refer to GSA help file for definition of lists and full vocabulary.");
                     return;
                 }
             }
 
             // Get Geometry input
-            string beamList = ""; 
+            string beamList = "";
             GH_String gh_bl = new GH_String();
             if (DA.GetData(1, ref gh_bl))
                 GH_Convert.ToString(gh_bl, out beamList, GH_Conversion.Both);
@@ -174,7 +174,7 @@ namespace GhSA.Components
             // 4 direction
             string dir = "Z";
             Direction direc = Direction.Z;
-            
+
             GH_String gh_dir = new GH_String();
             if (DA.GetData(4, ref gh_dir))
                 GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
@@ -203,21 +203,20 @@ namespace GhSA.Components
             double load1 = 0;
             if (DA.GetData(6, ref load1))
             {
-                load1 *= 1000; //convert to kN
-                //if (direc == Direction.Z)
-                //    load1 *= -1000; //convert to kN
-                //else
-                //    load1 *= 1000;
+                if (direc == Direction.Z)
+                    load1 *= -1000; //convert to kN
+                else
+                    load1 *= 1000;
             }
-                
-            
+
+
             switch (_mode)
             {
                 case FoldMode.Point:
                     if (_mode == FoldMode.Point)
                     {
                         beamLoad.BeamLoad.Type = BeamLoadType.POINT;
-                        
+
                         // 7 pos (1)
                         double pos = 0;
                         if (DA.GetData(7, ref pos))
@@ -247,11 +246,10 @@ namespace GhSA.Components
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
                         {
-                            load2 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load2 *= -1000; //convert to kN
-                            //else
-                            //    load2 *= 1000;
+                            if (direc == Direction.Z)
+                                load2 *= -1000; //convert to kN
+                            else
+                                load2 *= 1000;
                         }
 
                         // set value
@@ -279,11 +277,10 @@ namespace GhSA.Components
                         double load2 = 0;
                         if (DA.GetData(8, ref load2))
                         {
-                            load2 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load2 *= -1000; //convert to kN
-                            //else
-                            //    load2 *= 1000;
+                            if (direc == Direction.Z)
+                                load2 *= -1000; //convert to kN
+                            else
+                                load2 *= 1000;
                         }
 
                         // set value
@@ -313,11 +310,10 @@ namespace GhSA.Components
                         double load2 = 0;
                         if (DA.GetData(8, ref load2))
                         {
-                            load2 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load2 *= -1000; //convert to kN
-                            //else
-                            //    load2 *= 1000;
+                            if (direc == Direction.Z)
+                                load2 *= -1000; //convert to kN
+                            else
+                                load2 *= 1000;
                         }
 
                         // set value
@@ -360,7 +356,7 @@ namespace GhSA.Components
             while (Params.Input.Count > 7)
                 Params.UnregisterInputParameter(Params.Input[7], true);
             Params.RegisterInputParam(new Param_Number());
-            
+
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
             ExpireSolution(true);
@@ -418,7 +414,7 @@ namespace GhSA.Components
                 Params.RegisterInputParam(new Param_Number());
                 Params.RegisterInputParam(new Param_Number());
             }
-                
+
             _mode = FoldMode.Patch;
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -431,7 +427,7 @@ namespace GhSA.Components
                 return;
 
             RecordUndoEvent("Trilinear Parameters");
-            if(_mode != FoldMode.Patch)
+            if (_mode != FoldMode.Patch)
             {
                 //remove input parameters
                 while (Params.Input.Count > 7)
@@ -463,7 +459,7 @@ namespace GhSA.Components
             this.CreateAttributes();
             return base.Read(reader);
         }
-        
+
         bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
         {
             return false;
@@ -491,7 +487,7 @@ namespace GhSA.Components
                 Params.Input[6].Description = "Load Value (" + Units.Force + "/" + Units.LengthLarge + ")";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = false;
-                
+
                 Params.Input[7].NickName = "t";
                 Params.Input[7].Name = "Position (%)";
                 Params.Input[7].Description = "Line parameter where point load act (between 0.0 and 1.0)";

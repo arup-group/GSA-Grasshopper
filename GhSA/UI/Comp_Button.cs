@@ -1,8 +1,8 @@
-﻿using Grasshopper.Kernel.Attributes;
+﻿using Grasshopper;
+using Grasshopper.Kernel.Attributes;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using System.Windows.Forms;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
@@ -55,7 +55,7 @@ namespace GhSA.UI
             //spacer and title
             if (SpacerTxt != "")
             {
-                Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height - 5);
+                Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height - (CentralSettings.CanvasObjectIcons ? 5 : 0));
                 h0 = 10;
                 SpacerBounds = new RectangleF(Bounds.X, Bounds.Bottom + s/2, Bounds.Width, h0);
             }

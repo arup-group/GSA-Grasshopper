@@ -2,7 +2,7 @@
 using Grasshopper.GUI.Canvas;
 using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using System.Windows.Forms;
+using Grasshopper;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
@@ -155,7 +155,7 @@ namespace GhSA.UI
                     if (spacerTxts[i] != "")
                     {
                         if (i < 1)
-                            Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height - 5);
+                            Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height - (CentralSettings.CanvasObjectIcons ? 5 : 0));
 
                         h0 = 10;
                         RectangleF tempSpacer = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
