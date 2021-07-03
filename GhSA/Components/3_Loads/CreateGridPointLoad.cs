@@ -154,7 +154,7 @@ namespace GhSA.Components
             // 6 load value
             double load = 0;
             if (DA.GetData(6, ref load))
-                load *= -1000; //convert to kN
+                load *= 1000; //convert to kN
             gridpointload.GridPointLoad.Value = load;
 
             // convert to goo
