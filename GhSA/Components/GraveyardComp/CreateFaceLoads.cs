@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Grasshopper;
@@ -12,16 +12,16 @@ using GhSA.Parameters;
 
 namespace GhSA.Components
 {
-    public class CreateFaceLoads : GH_Component, IGH_VariableParameterComponent
+    public class CreateFaceLoads_OBSOLETE : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
-        public CreateFaceLoads()
+        public CreateFaceLoads_OBSOLETE()
             : base("Create Face Load", "FaceLoad", "Create GSA Face Load",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat3())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override Guid ComponentGuid => new Guid("55aeaf97-ef0c-4061-a391-a6419448a0b5");
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.FaceLoad;
         #endregion
@@ -109,7 +109,7 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaFaceLoad faceLoad = new GsaFaceLoad();
-            
+
             // 0 Load case
             int lc = 1;
             GH_Integer gh_lc = new GH_Integer();
@@ -133,7 +133,7 @@ namespace GhSA.Components
                     return;
                 }
             }
-            string elemList = ""; 
+            string elemList = "";
             GH_String gh_el = new GH_String();
             if (DA.GetData(1, ref gh_el))
                 GH_Convert.ToString(gh_el, out elemList, GH_Conversion.Both);
@@ -159,14 +159,14 @@ namespace GhSA.Components
             if (DA.GetData(3, ref gh_ax))
             {
                 GH_Convert.ToInt32(gh_ax, out axis, GH_Conversion.Both);
-                if (axis == 0 || axis ==-1)
+                if (axis == 0 || axis == -1)
                     faceLoad.FaceLoad.AxisProperty = axis;
             }
-            
+
             // 4 direction
             string dir = "Z";
             Direction direc = Direction.Z;
-            
+
             GH_String gh_dir = new GH_String();
             if (DA.GetData(4, ref gh_dir))
                 GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
@@ -196,11 +196,10 @@ namespace GhSA.Components
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            load1 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load1 *= -1000; //convert to kN
-                            //else
-                            //    load1 *= 1000;
+                            if (direc == Direction.Z)
+                                load1 *= -1000; //convert to kN
+                            else
+                                load1 *= 1000;
                         }
 
                         // set position and value
@@ -223,38 +222,34 @@ namespace GhSA.Components
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            load1 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load1 *= -1000; //convert to kN
-                            //else
-                            //    load1 *= 1000;
+                            if (direc == Direction.Z)
+                                load1 *= -1000; //convert to kN
+                            else
+                                load1 *= 1000;
                         }
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
                         {
-                            load2 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load2 *= -1000; //convert to kN
-                            //else
-                            //    load2 *= 1000;
+                            if (direc == Direction.Z)
+                                load2 *= -1000; //convert to kN
+                            else
+                                load2 *= 1000;
                         }
                         double load3 = 0;
                         if (DA.GetData(8, ref load3))
                         {
-                            load3 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load3 *= -1000; //convert to kN
-                            //else
-                            //    load3 *= 1000;
+                            if (direc == Direction.Z)
+                                load3 *= -1000; //convert to kN
+                            else
+                                load3 *= 1000;
                         }
                         double load4 = 0;
                         if (DA.GetData(9, ref load4))
                         {
-                            load4 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //   load4 *= -1000; //convert to kN
-                            //else
-                            //    load4 *= 1000;
+                            if (direc == Direction.Z)
+                                load4 *= -1000; //convert to kN
+                            else
+                                load4 *= 1000;
                         }
 
                         // set value
@@ -280,23 +275,22 @@ namespace GhSA.Components
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            load1 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load1 *= -1000; //convert to kN
-                            //else
-                            //    load1 *= 1000;
+                            if (direc == Direction.Z)
+                                load1 *= -1000; //convert to kN
+                            else
+                                load1 *= 1000;
                         }
                         double r = 0;
                         DA.GetData(7, ref r);
-                            
+
                         double s = 0;
                         DA.GetData(8, ref s);
-                        
+
                         // set position and value
                         faceLoad.FaceLoad.SetValue(0, load1);
                         //faceLoad.Position.X = r; //note Vector2 currently only get in GsaAPI
                         //faceLoad.Position.Y = s;
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "note position cannot be set in GsaAPI at the moment");
+
                     }
                     break;
 
@@ -312,21 +306,19 @@ namespace GhSA.Components
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            load1 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load1 *= -1000; //convert to kN
-                            //else
-                            //    load1 *= 1000;
+                            if (direc == Direction.Z)
+                                load1 *= -1000; //convert to kN
+                            else
+                                load1 *= 1000;
                         }
 
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
                         {
-                            load2 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load2 *= -1000; //convert to kN
-                            //else
-                            //    load2 *= 1000;
+                            if (direc == Direction.Z)
+                                load2 *= -1000; //convert to kN
+                            else
+                                load2 *= 1000;
                         }
 
                         // set value
@@ -334,7 +326,7 @@ namespace GhSA.Components
                         faceLoad.FaceLoad.SetValue(1, load2);
                         //faceLoad.Edge = edge; //note implementation of edge-load is not yet supported in GsaAPI
 
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "edge-load is not yet supported in GsaAPI");
+                        faceLoad = null;
                     }
                     break;
 
@@ -354,7 +346,7 @@ namespace GhSA.Components
             Point,
             Edge
         }
-        
+
         private FoldMode _mode = FoldMode.Uniform;
         private bool first = true;
         private void Mode1Clicked()
@@ -464,14 +456,14 @@ namespace GhSA.Components
             Params.RegisterInputParam(new Param_Number());
             Params.RegisterInputParam(new Param_Number());
             Params.RegisterInputParam(new Param_Number());
-            
-                
+
+
             _mode = FoldMode.Edge;
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
             ExpireSolution(true);
         }
-        
+
         #endregion
 
         #region (de)serialization
@@ -488,7 +480,7 @@ namespace GhSA.Components
             this.CreateAttributes();
             return base.Read(reader);
         }
-        
+
         bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
         {
             return false;
@@ -516,7 +508,7 @@ namespace GhSA.Components
                 Params.Input[5].Description = "Projected (default not)";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
-                
+
                 Params.Input[6].NickName = "V";
                 Params.Input[6].Name = "Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";
                 Params.Input[6].Description = "Load Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)";

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
@@ -9,16 +9,16 @@ using GhSA.Parameters;
 
 namespace GhSA.Components
 {
-    public class CreateGridAreaLoad : GH_Component
+    public class CreateGridAreaLoad_OBSOLETE : GH_Component
     {
         #region Name and Ribbon Layout
-        public CreateGridAreaLoad()
+        public CreateGridAreaLoad_OBSOLETE()
             : base("Create Grid Area Load", "AreaLoad", "Create GSA Grid Area Load",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat3())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override Guid ComponentGuid => new Guid("146f1bf8-8d2b-468f-bdb8-0237bee75262");
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override Guid ComponentGuid => new Guid("9d775938-69fc-441f-b766-9cd1d8259e5a");
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridAreaLoad;
         #endregion
@@ -45,7 +45,7 @@ namespace GhSA.Components
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
             pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
             pManager.AddNumberParameter("Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)", "V", "Load Value (" + Units.Force + "/" + Units.LengthLarge + "\xB2)", GH_ParamAccess.item);
-            
+
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -87,7 +87,7 @@ namespace GhSA.Components
                     pln = grdplnsrf.Plane;
                     planeSet = true;
                 }
-                else if(gh_typ.Value is Plane)
+                else if (gh_typ.Value is Plane)
                 {
                     gh_typ.CastTo(ref pln);
                     grdplnsrf = new GsaGridPlaneSurface(pln);
@@ -109,31 +109,31 @@ namespace GhSA.Components
                     }
                 }
             }
-            
+
             // we wait setting the gridplanesurface until we have run the polyline input
 
             // 1 Polyline
             Brep brep = new Brep();
-            
-            
+
+
             GH_Brep gh_brep = new GH_Brep();
             if (DA.GetData(1, ref gh_brep))
             {
-                
+
                 GH_Convert.ToBrep(gh_brep, ref brep, GH_Conversion.Both);
-                
+
                 // get edge curves
                 Curve[] edgeSegments = brep.DuplicateEdgeCurves();
                 Curve[] edges = Curve.JoinCurves(edgeSegments);
                 Curve crv = edges[0];
-                
+
                 //convert to polyline
                 Polyline ln = new Polyline();
                 if (crv.TryGetPolyline(out ln))
                 {
                     // get control points
                     List<Point3d> ctrl_pts = ln.ToList();
-                    
+
                     // plane
                     if (!planeSet)
                     {
@@ -161,7 +161,7 @@ namespace GhSA.Components
                     {
                         if (i > 0)
                             desc += " ";
-                        
+
                         // get control points in local plane coordinates
                         Point3d temppt = new Point3d();
                         pln.RemapToPlaneSpace(ctrl_pts[i], out temppt);
@@ -205,7 +205,7 @@ namespace GhSA.Components
 
             // 4 Axis
             int axis = 0;
-            gridareaload.GridAreaLoad.AxisProperty = 0; 
+            gridareaload.GridAreaLoad.AxisProperty = 0;
             GH_Integer gh_ax = new GH_Integer();
             if (DA.GetData(4, ref gh_ax))
             {
@@ -235,9 +235,9 @@ namespace GhSA.Components
             // 7 load value
             double load1 = 0;
             if (DA.GetData(7, ref load1))
-                load1 *= 1000; //convert to kN
+                load1 *= -1000; //convert to kN
             gridareaload.GridAreaLoad.Value = load1;
-                        
+
             // convert to goo
             GsaLoad gsaLoad = new GsaLoad(gridareaload);
             DA.SetData(0, new GsaLoadGoo(gsaLoad));

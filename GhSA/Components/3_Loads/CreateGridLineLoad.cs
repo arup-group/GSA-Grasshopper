@@ -17,7 +17,7 @@ namespace GhSA.Components
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat3())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override Guid ComponentGuid => new Guid("fdd95021-9193-4565-b56b-130f22ab13de");
+        public override Guid ComponentGuid => new Guid("e1f22e6f-8550-4078-8613-ea5ed2ede2b9");
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridLineLoad;
