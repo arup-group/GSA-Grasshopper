@@ -175,10 +175,11 @@ namespace GhSA.Components
             double load = 0;
             if (DA.GetData(4, ref load))
             {
-                if (direc == Direction.Z)
-                    load *= -1000; //convert to kN
-                else
-                    load *= 1000;
+                load *= 1000; // convert to kN
+                //if (direc == Direction.Z)
+                //    load *= -1000; //convert to kN
+                //else
+                //    load *= 1000;
             }
 
             nodeLoad.NodeLoad.Value = load;
