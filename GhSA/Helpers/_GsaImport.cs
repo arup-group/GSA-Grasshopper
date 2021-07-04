@@ -64,6 +64,8 @@ namespace GhSA.Util.Gsa
         /// <returns></returns>
         public static Plane AxisToPlane(GsaAPI.Axis axis)
         {
+            if (axis == null) { return Plane.Unset; }
+
             Plane pln = new Plane
             {
                 OriginX = axis.Origin.X,
