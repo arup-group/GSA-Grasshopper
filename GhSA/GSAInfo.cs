@@ -124,7 +124,7 @@ namespace GhSA
                 return "https://www.oasys-software.com/";
             }
         }
-        public string Icon_url
+        public string icon
         {
             get
             {
@@ -136,7 +136,7 @@ namespace GhSA
         {
             get
             {
-                return "0.2.17";
+                return "0.2.18";
             }
         }
     }
