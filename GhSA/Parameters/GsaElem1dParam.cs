@@ -23,7 +23,7 @@ namespace GhSA.Parameters
         public Element Element
         {
             get { return m_element; }
-            set { m_element = value; } //update release etc when setting?
+            set { m_element = value; } 
         }
         public LineCurve Line
         {
@@ -92,17 +92,130 @@ namespace GhSA.Parameters
         public GsaSection Section
         {
             get { return m_section; }
-            set { m_section = value; }
+            set 
+            {
+                if (m_section == null)
+                    PropertyID = 0;
+                m_section = value;
+            }
         }
 
+        #region GsaAPI members
         public System.Drawing.Color Colour
         {
             get
             {
                 return (System.Drawing.Color)m_element.Colour;
             }
-            set { m_element.Colour = value; }
+            set 
+            {
+                CloneElement();
+                m_element.Colour = value; 
+            }
         }
+        public int Group
+        {
+            get { return m_element.Group; }
+            set 
+            {
+                CloneElement();
+                m_element.Group = value; 
+            }
+        }
+        public bool IsDummy
+        {
+            get { return m_element.IsDummy; }
+            set
+            {
+                CloneElement();
+                m_element.IsDummy = value;
+            }
+        }
+        public string Name
+        {
+            get { return m_element.Name; }
+            set
+            {
+                CloneElement();
+                m_element.Name = value;
+            }
+        }
+        public GsaOffset Offset
+        {
+            get 
+            {
+                return new GsaOffset(
+                    m_element.Offset.X1,
+                    m_element.Offset.X2,
+                    m_element.Offset.Y,
+                    m_element.Offset.Z); 
+            }
+            set
+            {
+                CloneElement();
+                m_element.Offset.X1 = value.X1;
+                m_element.Offset.X2 = value.X2;
+                m_element.Offset.Y = value.Y;
+                m_element.Offset.Z = value.Z;
+            }
+        }
+        public double OrientationAngle
+        {
+            get { return m_element.OrientationAngle; }
+            set
+            {
+                CloneElement();
+                m_element.OrientationAngle = value;
+            }
+        }
+        public int OrientationNode
+        {
+            get { return m_element.OrientationNode; }
+            set
+            {
+                CloneElement();
+                m_element.OrientationNode = value;
+            }
+        }
+        public int PropertyID
+        {
+            get { return m_element.Property; }
+            set
+            {
+                CloneElement();
+                m_element.Property = value;
+                m_section = null;
+            }
+        }
+        public ElementType Type
+        {
+            get { return m_element.Type; }
+            set
+            {
+                CloneElement();
+                m_element.Type = value;
+            }
+        }
+        private void CloneElement()
+        {
+            Element elem = new Element()
+            {
+                Group = m_element.Group,
+                IsDummy = m_element.IsDummy,
+                Name = m_element.Name.ToString(),
+                Offset = m_element.Offset,
+                OrientationAngle = m_element.OrientationAngle,
+                OrientationNode = m_element.OrientationNode,
+                ParentMember = m_element.ParentMember,
+                Property = m_element.Property,
+                Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
+                Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
+            };
+            if ((System.Drawing.Color)m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                elem.Colour = m_element.Colour;
+            m_element = elem;
+        }
+        #endregion
 
         #region fields
         private Element m_element; 
@@ -122,8 +235,6 @@ namespace GhSA.Parameters
             m_section = new GsaSection();
             m_section.Section = null;
         }
-
-
         public GsaElement1d(LineCurve line, int prop = 0)
         {
             m_element = new Element
@@ -138,52 +249,58 @@ namespace GhSA.Parameters
             m_section.Section = null;
         }
 
-        //public GsaElement1d(Element element, LineCurve line)
-        //{
-        //    m_element = element;
-        //    m_line = line;
-        //}
-
         public GsaElement1d Duplicate()
         {
             if (this == null) { return null; }
             GsaElement1d dup = new GsaElement1d();
-            dup.m_element = new Element()
-            {
-                Group = m_element.Group,
-                IsDummy = m_element.IsDummy,
-                Name = m_element.Name.ToString(),
-                Offset = m_element.Offset,
-                OrientationAngle = m_element.OrientationAngle,
-                OrientationNode = m_element.OrientationNode,
-                ParentMember = m_element.ParentMember,
-                Property = m_element.Property,
-                Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
-                Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
-            };
-
-
-            if ((System.Drawing.Color)m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                dup.m_element.Colour = m_element.Colour;
-
-            dup.Element.Offset.X1 = m_element.Offset.X1;
-            dup.Element.Offset.X2 = m_element.Offset.X2;
-            dup.Element.Offset.Y = m_element.Offset.Y;
-            dup.Element.Offset.Z = m_element.Offset.Z;
-
-            if (m_line != null)
-                dup.m_line = (LineCurve)m_line.Duplicate();
-            dup.ID = m_id;
-
-            if (m_rel1 != null)
-                dup.ReleaseStart = m_rel1.Duplicate();
-            if (m_rel2 != null)
-                dup.ReleaseEnd = m_rel2.Duplicate();
-            if (m_section != null)
-                dup.Section = m_section.Duplicate();
-
+            dup.m_id = m_id;
+            dup.m_element = m_element;
+            dup.m_line = (LineCurve)m_line.Duplicate();
+            dup.m_rel1 = m_rel1;
+            dup.m_rel2 = m_rel2;
+            dup.m_section = m_section;
             return dup;
         }
+        //public GsaElement1d Clone()
+        //{
+        //    if (this == null) { return null; }
+        //    GsaElement1d dup = new GsaElement1d();
+        //    dup.m_element = new Element()
+        //    {
+        //        Group = m_element.Group,
+        //        IsDummy = m_element.IsDummy,
+        //        Name = m_element.Name.ToString(),
+        //        Offset = m_element.Offset,
+        //        OrientationAngle = m_element.OrientationAngle,
+        //        OrientationNode = m_element.OrientationNode,
+        //        ParentMember = m_element.ParentMember,
+        //        Property = m_element.Property,
+        //        Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
+        //        Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
+        //    };
+
+        //    if ((System.Drawing.Color)m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        //        dup.m_element.Colour = m_element.Colour;
+
+        //    dup.Element.Offset.X1 = m_element.Offset.X1;
+        //    dup.Element.Offset.X2 = m_element.Offset.X2;
+        //    dup.Element.Offset.Y = m_element.Offset.Y;
+        //    dup.Element.Offset.Z = m_element.Offset.Z;
+
+        //    if (m_line != null)
+        //        dup.m_line = (LineCurve)m_line.Duplicate();
+        //    dup.ID = m_id;
+
+        //    if (m_rel1 != null)
+        //        dup.ReleaseStart = m_rel1.Duplicate();
+        //    if (m_rel2 != null)
+        //        dup.ReleaseEnd = m_rel2.Duplicate();
+        //    //if (m_section != null)
+        //    //    dup.Section = m_section.Duplicate();
+        //    dup.Section = m_section;
+
+        //    return dup;
+        //}
         #endregion
 
         #region properties

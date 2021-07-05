@@ -124,9 +124,12 @@ namespace GhSA.Components
 
                 // 2 section
                 List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
-                List<GsaProp2d> in_prop2Ds = new List<GsaProp2d>();
+                
                 if (DA.GetDataList(2, gh_types))
                 {
+                    List<GsaProp2d> in_prop2Ds = new List<GsaProp2d>();
+                    List<int> in_prop2Dids = new List<int>();
+                    bool gsaProps = false;
                     for (int i = 0; i< gh_types.Count; i++)
                     {
                         if (i > elem.Elements.Count)
@@ -137,14 +140,16 @@ namespace GhSA.Components
                         {
                             gh_typ.CastTo(ref prop2d);
                             in_prop2Ds.Add(prop2d);
-                            elem.Elements[i].Property = 0;
+                            gsaProps = true;
+                            //elem.Elements[i].Property = 0;
                         }
                         else
                         {
                             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
                             {
-                                elem.Elements[i].Property = idd;
-                                elem.Properties[i] = null;
+                                in_prop2Dids.Add(idd);
+                                //elem.Elements[i].Property = idd;
+                                //elem.Properties[i] = null;
                             }
                             else
                             {
@@ -153,13 +158,21 @@ namespace GhSA.Components
                             }
                         }
                     }
+                    if (gsaProps)
+                    {
+                        elem.Properties = in_prop2Ds;
+                    }
+                    else
+                    {
+                        elem.PropertyIDs = in_prop2Dids;
+                    }
                 }
 
                 // 3 Group
                 List<GH_Integer> ghgrp = new List<GH_Integer>();
-                List<int> in_groups = new List<int>();
                 if (DA.GetDataList(3, ghgrp))
                 {
+                    List<int> in_groups = new List<int>();
                     for (int i = 0; i < ghgrp.Count; i++)
                     {
                         if (i > elem.Elements.Count)
@@ -170,14 +183,16 @@ namespace GhSA.Components
                         if (GH_Convert.ToInt32(ghgrp[i], out int grp, GH_Conversion.Both))
                             in_groups.Add(grp);
                     }
+                    elem.Groups = in_groups;
                 }
 
 
                 // 4 offset
                 gh_types = new List<GH_ObjectWrapper>();
-                List<GsaOffset> in_offsets = new List<GsaOffset>();
+                
                 if (DA.GetDataList(4, gh_types))
                 {
+                    List<GsaOffset> in_offsets = new List<GsaOffset>();
                     for (int i = 0; i < gh_types.Count; i++)
                     {
                         if (i > elem.Elements.Count)
@@ -198,15 +213,15 @@ namespace GhSA.Components
                         }
                         in_offsets.Add(offset);
                     }
+                    elem.Offsets = in_offsets;
                 }
-
-                
 
                 // 5 name
                 List<GH_String> ghnm = new List<GH_String>();
-                List<string> in_names = new List<string>();
+                
                 if (DA.GetDataList(5, ghnm))
                 {
+                    List<string> in_names = new List<string>();
                     for (int i = 0; i < ghnm.Count; i++)
                     {
                         if (i > elem.Elements.Count)
@@ -217,14 +232,14 @@ namespace GhSA.Components
                         if (GH_Convert.ToString(ghnm[i], out string name, GH_Conversion.Both))
                             in_names.Add(name);
                     }
+                    elem.Names = in_names;
                 }
-
                 
                 // 6 Colour
                 List<GH_Colour> ghcol = new List<GH_Colour>();
-                List<System.Drawing.Color> in_colours = new List<System.Drawing.Color>();
                 if (DA.GetDataList(6, ghcol))
                 {
+                    List<System.Drawing.Color> in_colours = new List<System.Drawing.Color>();
                     for (int i = 0; i < ghcol.Count; i++)
                     {
                         if (i > elem.Elements.Count)
@@ -235,13 +250,15 @@ namespace GhSA.Components
                         if (GH_Convert.ToColor(ghcol[i], out System.Drawing.Color col, GH_Conversion.Both))
                             in_colours.Add(col);
                     }
+                    elem.Colours = in_colours;
                 }
 
                 // 7 Dummy
                 List<GH_Boolean> ghdum = new List<GH_Boolean>();
-                List<bool> in_dummies = new List<bool>();
+                
                 if (DA.GetDataList(7, ghdum))
                 {
+                    List<bool> in_dummies = new List<bool>();
                     for (int i = 0; i < ghdum.Count; i++)
                     {
                         if (i > elem.Elements.Count)
@@ -252,64 +269,65 @@ namespace GhSA.Components
                         if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both))
                             in_dummies.Add(dum);
                     }
+                    elem.isDummies = in_dummies;
                 }
                 
 
                 // loop through all elements and set collected lists.
                 // handle too short or too long input lists here
                 // for short lists copy last item
-                for (int i = 0; i < elem.Elements.Count; i++)
-                {
-                    if (in_prop2Ds.Count > 0)
-                    {
-                        if (i < in_prop2Ds.Count)
-                            elem.Properties[i] = in_prop2Ds[i];
-                        else
-                            elem.Properties[i] = in_prop2Ds[in_prop2Ds.Count - 1];
-                    }
-                    if (in_offsets.Count > 0)
-                    {
-                        if (i < in_offsets.Count)
-                            elem.Elements[i].Offset.Z = in_offsets[i].Z;
-                        else
-                            elem.Elements[i].Offset.Z = in_offsets[in_offsets.Count - 1].Z;
-                    }
-                    if (in_ids.Count > 0)
-                    {
-                        if (i < in_ids.Count)
-                            elem.ID[i] = in_ids[i];
-                        else
-                            elem.ID[i] = 0; // do not set ID (element number) as it must be unique
-                    }
-                    if (in_names.Count > 0)
-                    {
-                        if (i < in_names.Count)
-                            elem.Elements[i].Name = in_names[i];
-                        else
-                            elem.Elements[i].Name = in_names[in_names.Count - 1];
-                    }
-                    if (in_groups.Count > 0)
-                    {
-                        if (i < in_groups.Count)
-                            elem.Elements[i].Group = in_groups[i];
-                        else
-                            elem.Elements[i].Group = in_groups[in_groups.Count - 1];
-                    }
-                    if (in_colours.Count > 0)
-                    {
-                        if (i < in_colours.Count)
-                            elem.Elements[i].Colour = in_colours[i];
-                        else
-                            elem.Elements[i].Colour = in_colours[in_colours.Count - 1];
-                    }
-                    if (in_dummies.Count > 0)
-                    {
-                        if (i < in_dummies.Count)
-                            elem.Elements[i].IsDummy = in_dummies[i];
-                        else
-                            elem.Elements[i].IsDummy = in_dummies[in_dummies.Count - 1];
-                    }
-                }
+                //for (int i = 0; i < elem.Elements.Count; i++)
+                //{
+                //    if (in_prop2Ds.Count > 0)
+                //    {
+                //        if (i < in_prop2Ds.Count)
+                //            elem.Properties[i] = in_prop2Ds[i];
+                //        else
+                //            elem.Properties[i] = in_prop2Ds[in_prop2Ds.Count - 1];
+                //    }
+                //    if (in_offsets.Count > 0)
+                //    {
+                //        if (i < in_offsets.Count)
+                //            elem.Elements[i].Offset.Z = in_offsets[i].Z;
+                //        else
+                //            elem.Elements[i].Offset.Z = in_offsets[in_offsets.Count - 1].Z;
+                //    }
+                //    if (in_ids.Count > 0)
+                //    {
+                //        if (i < in_ids.Count)
+                //            elem.ID[i] = in_ids[i];
+                //        else
+                //            elem.ID[i] = 0; // do not set ID (element number) as it must be unique
+                //    }
+                //    if (in_names.Count > 0)
+                //    {
+                //        if (i < in_names.Count)
+                //            elem.Elements[i].Name = in_names[i];
+                //        else
+                //            elem.Elements[i].Name = in_names[in_names.Count - 1];
+                //    }
+                //    if (in_groups.Count > 0)
+                //    {
+                //        if (i < in_groups.Count)
+                //            elem.Elements[i].Group = in_groups[i];
+                //        else
+                //            elem.Elements[i].Group = in_groups[in_groups.Count - 1];
+                //    }
+                //    if (in_colours.Count > 0)
+                //    {
+                //        if (i < in_colours.Count)
+                //            elem.Elements[i].Colour = in_colours[i];
+                //        else
+                //            elem.Elements[i].Colour = in_colours[in_colours.Count - 1];
+                //    }
+                //    if (in_dummies.Count > 0)
+                //    {
+                //        if (i < in_dummies.Count)
+                //            elem.Elements[i].IsDummy = in_dummies[i];
+                //        else
+                //            elem.Elements[i].IsDummy = in_dummies[in_dummies.Count - 1];
+                //    }
+                //}
 
 
                 // #### outputs ####
@@ -318,37 +336,45 @@ namespace GhSA.Components
                 DA.SetDataList(1, elem.ID);
                 DA.SetData(2, elem.Mesh);
 
-                List<GsaOffset> out_offsets = new List<GsaOffset>();
-                List<string> type = new List<string>();
-                List<string> out_names = new List<string>();
-                List<int> out_groups = new List<int>();
-                List<System.Drawing.Color> out_colours = new List<System.Drawing.Color>();
-                List<int> pmems = new List<int>();
-                List<bool> out_dummies = new List<bool>();
-                for (int i = 0; i < elem.Elements.Count; i++)
-                {
-                    GsaOffset offset1 = new GsaOffset
-                    {
-                        Z = elem.Elements[i].Offset.Z
-                    };
-                    out_offsets.Add(offset1);
-                    type.Add(elem.Elements[i].TypeAsString());
-                    out_names.Add(elem.Elements[i].Name);
-                    out_groups.Add(elem.Elements[i].Group);
-                    out_colours.Add((System.Drawing.Color)elem.Elements[i].Colour);
-                    out_dummies.Add(elem.Elements[i].IsDummy);
-                    try { pmems.Add(elem.Elements[i].ParentMember.Member); } catch (Exception) { pmems.Add(0); }
-                    ;
-                }
+                //List<GsaOffset> out_offsets = new List<GsaOffset>();
+                //List<string> type = new List<string>();
+                //List<string> out_names = new List<string>();
+                //List<int> out_groups = new List<int>();
+                //List<System.Drawing.Color> out_colours = new List<System.Drawing.Color>();
+                //List<int> pmems = new List<int>();
+                //List<bool> out_dummies = new List<bool>();
+                //for (int i = 0; i < elem.Elements.Count; i++)
+                //{
+                //    GsaOffset offset1 = new GsaOffset
+                //    {
+                //        Z = elem.Elements[i].Offset.Z
+                //    };
+                //    out_offsets.Add(offset1);
+                //    type.Add(elem.Elements[i].TypeAsString());
+                //    out_names.Add(elem.Elements[i].Name);
+                //    out_groups.Add(elem.Elements[i].Group);
+                //    out_colours.Add((System.Drawing.Color)elem.Elements[i].Colour);
+                //    out_dummies.Add(elem.Elements[i].IsDummy);
+                //    try { pmems.Add(elem.Elements[i].ParentMember.Member); } catch (Exception) { pmems.Add(0); }
+                //    ;
+                //}
 
                 DA.SetDataList(3, new List<GsaProp2dGoo>(elem.Properties.ConvertAll(prop2d => new GsaProp2dGoo(prop2d))));
-                DA.SetDataList(4, out_groups);
-                DA.SetDataList(5, type);
-                DA.SetDataList(6, out_offsets);
-                DA.SetDataList(7, out_names);
-                DA.SetDataList(8, out_colours);
-                DA.SetDataList(9, out_dummies);
-                DA.SetDataList(10, pmems);
+                //DA.SetDataList(4, out_groups);
+                //DA.SetDataList(5, type);
+                //DA.SetDataList(6, out_offsets);
+                //DA.SetDataList(7, out_names);
+                //DA.SetDataList(8, out_colours);
+                //DA.SetDataList(9, out_dummies);
+                //DA.SetDataList(10, pmems);
+                DA.SetDataList(4, elem.Groups);
+                DA.SetDataList(5, elem.Types);
+                DA.SetDataList(6, new List<GsaOffsetGoo>(elem.Offsets.ConvertAll(offset => new GsaOffsetGoo(offset))));
+                DA.SetDataList(7, elem.Names);
+                DA.SetDataList(8, elem.Colours);
+                DA.SetDataList(9, elem.isDummies);
+
+                DA.SetDataList(10, elem.ParentMembers);
             }
         }
     }

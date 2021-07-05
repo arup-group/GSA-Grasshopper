@@ -152,8 +152,7 @@ namespace GhSA.Components
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
                         {
-                            elem.Element.Property = idd;
-                            elem.Section = null;
+                            elem.PropertyID = idd;
                         }
                         else
                         {
@@ -169,7 +168,7 @@ namespace GhSA.Components
                 if (DA.GetData(4, ref ghgrp))
                 {
                     if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
-                        elem.Element.Group = grp;
+                        elem.Group = grp; //elem.Element.Group = grp;
                 }
 
                 // 5 type
@@ -177,17 +176,18 @@ namespace GhSA.Components
                 if (DA.GetData(5, ref ghinteg))
                 {
                     if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both))
-                        elem.Element.Type = (ElementType)type; // Util.Gsa.GsaToModel.Element1dType(type);
+                        elem.Type = (ElementType)type; //elem.Element.Type = (ElementType)type; // Util.Gsa.GsaToModel.Element1dType(type);
                 }
 
                 // 6 offset
                 GsaOffset offset = new GsaOffset();
                 if (DA.GetData(6, ref offset))
                 {
-                    elem.Element.Offset.X1 = offset.X1;
-                    elem.Element.Offset.X2 = offset.X2;
-                    elem.Element.Offset.Y = offset.Y;
-                    elem.Element.Offset.Z = offset.Z;
+                    elem.Offset = offset;
+                    //elem.Element.Offset.X1 = offset.X1;
+                    //elem.Element.Offset.X2 = offset.X2;
+                    //elem.Element.Offset.Y = offset.Y;
+                    //elem.Element.Offset.Z = offset.Z;
                 }
 
                 // 7 start release
@@ -209,7 +209,7 @@ namespace GhSA.Components
                 if (DA.GetData(9, ref ghangle))
                 {
                     if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
-                        elem.Element.OrientationAngle = angle;
+                        elem.OrientationAngle = angle; //elem.Element.OrientationAngle = angle;
                 }
 
                 // 10 orientation node
@@ -217,7 +217,7 @@ namespace GhSA.Components
                 if (DA.GetData(10, ref ghori))
                 {
                     if (GH_Convert.ToInt32(ghori, out int orient, GH_Conversion.Both))
-                        elem.Element.OrientationNode = orient;
+                        elem.OrientationAngle = orient; //elem.Element.OrientationNode = orient;
                 }
 
                 // 11 name
@@ -225,7 +225,7 @@ namespace GhSA.Components
                 if (DA.GetData(11, ref ghnm))
                 {
                     if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
-                        elem.Element.Name = name;
+                        elem.Name = name; //elem.Element.Name = name;
                 }
 
                 // 12 Colour
@@ -233,7 +233,7 @@ namespace GhSA.Components
                 if (DA.GetData(12, ref ghcol))
                 {
                     if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
-                        elem.Element.Colour = col;
+                        elem.Colour = col; // elem.Element.Colour = col;
                 }
 
                 // 13 Dummy
@@ -241,7 +241,7 @@ namespace GhSA.Components
                 if (DA.GetData(13, ref ghdum))
                 {
                     if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
-                        elem.Element.IsDummy = dum;
+                        elem.IsDummy = dum; // elem.Element.IsDummy = dum;
                 }
 
                 // #### outputs ####
@@ -251,24 +251,25 @@ namespace GhSA.Components
                 DA.SetData(3, new GsaSectionGoo(elem.Section));
                 DA.SetData(4, elem.Element.Group);
                 DA.SetData(5, elem.Element.Type);
-                GsaOffset offset1 = new GsaOffset
-                {
-                    X1 = elem.Element.Offset.X1,
-                    X2 = elem.Element.Offset.X2,
-                    Y = elem.Element.Offset.Y,
-                    Z = elem.Element.Offset.Z
-                };
-                DA.SetData(6, offset1);
+                //GsaOffset offset1 = new GsaOffset
+                //{
+                //    X1 = elem.Element.Offset.X1,
+                //    X2 = elem.Element.Offset.X2,
+                //    Y = elem.Element.Offset.Y,
+                //    Z = elem.Element.Offset.Z
+                //};
+                //DA.SetData(6, offset1);
+                DA.SetData(6, new GsaOffsetGoo(elem.Offset));
 
-                DA.SetData(7, elem.ReleaseStart);
-                DA.SetData(8, elem.ReleaseEnd);
+                DA.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
+                DA.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
 
-                DA.SetData(9, elem.Element.OrientationAngle);
-                DA.SetData(10, elem.Element.OrientationNode);
+                DA.SetData(9, elem.OrientationAngle);
+                DA.SetData(10, elem.OrientationNode);
                 
-                DA.SetData(11, elem.Element.Name);
-                DA.SetData(12, elem.Element.Colour);
-                DA.SetData(13, elem.Element.IsDummy);
+                DA.SetData(11, elem.Name);
+                DA.SetData(12, elem.Colour);
+                DA.SetData(13, elem.IsDummy);
 
                 try { DA.SetData(14, elem.Element.ParentMember.Member); } catch (Exception) { }
             }

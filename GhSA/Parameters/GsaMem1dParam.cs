@@ -176,8 +176,9 @@ namespace GhSA.Parameters
                 dup.ReleaseStart = m_rel1.Duplicate();
             if (m_rel2 != null)
                 dup.ReleaseEnd = m_rel2.Duplicate();
-            if (m_section != null)
-                dup.Section = m_section.Duplicate();
+            //if (m_section != null)
+            //    dup.Section = m_section.Duplicate();
+            dup.Section = m_section;
 
             return dup;
         }

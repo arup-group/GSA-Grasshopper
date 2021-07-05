@@ -17,7 +17,6 @@ namespace GhSA.Parameters
     /// Section class, this class defines the basic properties and methods for any Gsa Section
     /// </summary>
     public class GsaSection
-
     {
         public Section Section
         {
