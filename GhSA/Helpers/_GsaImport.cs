@@ -66,24 +66,52 @@ namespace GhSA.Util.Gsa
         {
             if (axis == null) { return Plane.Unset; }
 
+            // origin point from GSA Axis
+            Point3d origin = new Point3d(axis.Origin.X, axis.Origin.Y, axis.Origin.Z);
+
+            // X-axis from GSA Axis
+            Vector3d xAxis = new Vector3d
+            {
+                X = axis.XVector.X,
+                Y = axis.XVector.Y,
+                Z = axis.XVector.Z
+            };
+            // check if vector is zero-length
+            if (xAxis.IsZero) { return Plane.Unset; }
+            // create unitised vector
+            Vector3d xUnit = new Vector3d(xAxis);
+            xUnit.Unitize();
+
+            // Y-axis from GSA Axis
+            Vector3d yAxis = new Vector3d
+            {
+                X = axis.XYPlane.X,
+                Y = axis.XYPlane.Y,
+                Z = axis.XYPlane.Z
+            };
+            // check if vector is zero-length
+            if (yAxis.IsZero) { return Plane.Unset; }
+            // create unitised vector
+            Vector3d yUnit = new Vector3d(yAxis);
+            yUnit.Unitize();
+
+            // check if x and y unitised are not the same
+            if (xUnit.Equals(yUnit)) { return Plane.Unset; }
+
+            // create Z-axis as the cross product of original x and y
+            Vector3d zAxis = Vector3d.CrossProduct(xAxis, yAxis);
+
             Plane pln = new Plane
             {
-                OriginX = axis.Origin.X,
-                OriginY = axis.Origin.Y,
-                OriginZ = axis.Origin.Z,
-                XAxis = new Vector3d
-                {
-                    X = axis.XVector.X,
-                    Y = axis.XVector.Y,
-                    Z = axis.XVector.Z
-                },
-                YAxis = new Vector3d
-                {
-                    X = axis.XYPlane.X,
-                    Y = axis.XYPlane.Y,
-                    Z = axis.XYPlane.Z
-                }
+                Origin = origin,
+                XAxis = xAxis,
+                YAxis = yAxis,
+                ZAxis = zAxis
             };
+            
+            // check that plane equation is valid for inputs
+            if (!pln.UpdateEquation()) { return Plane.Unset; }
+
             return pln;
         }
         #endregion
