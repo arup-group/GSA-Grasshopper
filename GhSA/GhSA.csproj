@@ -123,6 +123,7 @@
     <Compile Include="Components\2_Geometry\CreateMember3d.cs" />
     <Compile Include="Components\2_Geometry\EditElement3d.cs" />
     <Compile Include="Components\2_Geometry\EditMember3d.cs" />
+    <Compile Include="Components\2_Geometry\EditNode.cs" />
     <Compile Include="Components\2_Geometry\Elem2dFromBrep.cs" />
     <Compile Include="Components\2_Geometry\ElemFromMem.cs" />
     <Compile Include="Components\3_Loads\LoadProperties.cs" />
@@ -155,7 +156,7 @@
     <Compile Include="Components\2_Geometry\EditElement2d.cs" />
     <Compile Include="Components\2_Geometry\EditMember2d.cs" />
     <Compile Include="Components\2_Geometry\EditMember1d.cs" />
-    <Compile Include="Components\2_Geometry\EditNode.cs" />
+    <Compile Include="Components\GraveyardComp\EditNode_OBSOLETE.cs" />
     <Compile Include="Components\2_Geometry\CreateSupport.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
     <Compile Include="Components\3_Loads\CreateGridAreaLoad.cs" />
@@ -169,12 +170,12 @@
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
     <Compile Include="Components\4_Analysis\AsyncAnalyse.cs" />
-    <Compile Include="Components\GraveyardComp\CreateBeamLoads.cs" />
-    <Compile Include="Components\GraveyardComp\CreateFaceLoads.cs" />
-    <Compile Include="Components\GraveyardComp\CreateGridAreaLoad.cs" />
-    <Compile Include="Components\GraveyardComp\CreateGridLineLoad.cs" />
-    <Compile Include="Components\GraveyardComp\CreateGridPointLoad.cs" />
-    <Compile Include="Components\GraveyardComp\CreateNodeLoads.cs" />
+    <Compile Include="Components\GraveyardComp\CreateBeamLoads_OBSOLETE.cs" />
+    <Compile Include="Components\GraveyardComp\CreateFaceLoads_OBSOLETE.cs" />
+    <Compile Include="Components\GraveyardComp\CreateGridAreaLoad_OBSOLETE.cs" />
+    <Compile Include="Components\GraveyardComp\CreateGridLineLoad_OBSOLETE.cs" />
+    <Compile Include="Components\GraveyardComp\CreateGridPointLoad_OBSOLETE.cs" />
+    <Compile Include="Components\GraveyardComp\CreateNodeLoads_OBSOLETE.cs" />
     <Compile Include="Helpers\_Display.cs" />
     <Compile Include="Helpers\_GsaExportLoads.cs" />
     <Compile Include="Helpers\_GsaExportProperties.cs" />

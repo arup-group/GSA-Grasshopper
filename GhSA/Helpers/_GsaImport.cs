@@ -52,6 +52,31 @@ namespace GhSA.Util.Gsa
                     axDict.TryGetValue(item.Value.AxisProperty, out GsaAPI.Axis axis);
                     gsaNode.LocalAxis = AxisToPlane(axis);
                 }
+                else
+                {
+                    switch (item.Value.AxisProperty)
+                    {
+                        case 0:
+                            // local axis = Global
+                            break;
+                        case -11:
+                            // local axis = X-elevation
+                            gsaNode.LocalAxis = Plane.WorldYZ;
+                            break;
+                        case -12:
+                            // local axis = X-elevation
+                            gsaNode.LocalAxis = Plane.WorldZX;
+                            break;
+                        case -13:
+                            // local axis = vertical
+                            gsaNode.LocalAxis = Plane.WorldXY;
+                            break;
+                        case -14:
+                            // local axis = global cylindric
+                            gsaNode.LocalAxis = Plane.Unset;
+                            break;
+                    }
+                }
                 nodes.Add(new GsaNodeGoo(gsaNode.Duplicate()));
             }
             return nodes;
@@ -98,19 +123,8 @@ namespace GhSA.Util.Gsa
             // check if x and y unitised are not the same
             if (xUnit.Equals(yUnit)) { return Plane.Unset; }
 
-            // create Z-axis as the cross product of original x and y
-            Vector3d zAxis = Vector3d.CrossProduct(xAxis, yAxis);
 
-            Plane pln = new Plane
-            {
-                Origin = origin,
-                XAxis = xAxis,
-                YAxis = yAxis,
-                ZAxis = zAxis
-            };
-            
-            // check that plane equation is valid for inputs
-            if (!pln.UpdateEquation()) { return Plane.Unset; }
+            Plane pln = new Plane(origin, xAxis, yAxis);
 
             return pln;
         }
