@@ -28,7 +28,6 @@ namespace GhSA.Parameters
                 m_prop2d = value; 
             }
         }
-
         public int ID
         {
             get { return m_idd; }
@@ -38,26 +37,102 @@ namespace GhSA.Parameters
                 m_idd = value; 
             }
         }
-        public double Thickness
-        {
-            set
-            {
-                m_guid = Guid.NewGuid();
-                m_prop2d.Description = value.ToString() + "(" + Units.LengthSection + ")";
-            }
-        }
         public GsaMaterial Material
         {
             get { return m_material; }
             set 
             {
-                m_guid = Guid.NewGuid();
                 m_material = value;
+                CloneProperty();
                 m_prop2d.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
                 m_prop2d.MaterialAnalysisProperty = m_material.AnalysisProperty;
                 m_prop2d.MaterialGradeProperty = m_material.Grade;
             }
         }
+        #region GsaAPI members
+        public string Name
+        {
+            get { return m_prop2d.Name; }
+            set
+            {
+                CloneProperty();
+                m_prop2d.Name = value;
+            }
+        }
+        public int MaterialID
+        {
+            get { return m_prop2d.MaterialAnalysisProperty; }
+            set
+            {
+                CloneProperty();
+                m_prop2d.MaterialAnalysisProperty = value;
+            }
+        }
+        public double Thickness
+        {
+            set
+            {
+                CloneProperty();
+                m_prop2d.Description = value.ToString() + "(" + Units.LengthSection + ")";
+            }
+        }
+        public string Description
+        {
+            get { return m_prop2d.Description.Replace("%", " "); }
+            set
+            {
+                CloneProperty();
+                m_prop2d.Description = value;
+            }
+        }
+        public int AxisProperty
+        {
+            get { return m_prop2d.AxisProperty; }
+            set
+            {
+                CloneProperty();
+                value = Math.Min(1, value);
+                value = Math.Max(0, value);
+                m_prop2d.AxisProperty = value * -1;
+            }
+        }
+        public Property2D_Type Type
+        {
+            get { return m_prop2d.Type; }
+            set
+            {
+                CloneProperty();
+                m_prop2d.Type = value;
+            }
+        }
+        public System.Drawing.Color Colour
+        {
+            get { return (System.Drawing.Color)m_prop2d.Colour; }
+            set
+            {
+                CloneProperty();
+                m_prop2d.Colour = value;
+            }
+        }
+        private void CloneProperty()
+        {
+            Prop2D prop = new Prop2D
+            {
+                MaterialAnalysisProperty = m_prop2d.MaterialAnalysisProperty,
+                MaterialGradeProperty = m_prop2d.MaterialGradeProperty,
+                MaterialType = m_prop2d.MaterialType,
+                Name = m_prop2d.Name.ToString(),
+                Description = m_prop2d.Description.ToString(),
+                Type = m_prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
+                AxisProperty = m_prop2d.AxisProperty
+            };
+            if ((System.Drawing.Color)m_prop2d.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                prop.Colour = m_prop2d.Colour;
+
+            m_prop2d = prop;
+            m_guid = Guid.NewGuid();
+        }
+        #endregion
         public Guid GUID
         {
             get { return m_guid; }
@@ -76,43 +151,53 @@ namespace GhSA.Parameters
             m_prop2d = new Prop2D();
             m_guid = Guid.NewGuid();
         }
-        
         public GsaProp2d Duplicate()
         {
             if (this == null) { return null; }
             GsaProp2d dup = new GsaProp2d();
             if (m_prop2d != null)
-            {
-                dup.Prop2d = new Prop2D
-                {
-                    MaterialAnalysisProperty = m_prop2d.MaterialAnalysisProperty,
-                    MaterialGradeProperty = m_prop2d.MaterialGradeProperty,
-                    MaterialType = m_prop2d.MaterialType,
-                    Name = m_prop2d.Name.ToString(),
-                    Description = m_prop2d.Description.ToString(),
-                    Type = m_prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
-                    AxisProperty = m_prop2d.AxisProperty
-                };
-                if ((System.Drawing.Color)m_prop2d.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                    dup.m_prop2d.Colour = m_prop2d.Colour;
-            }
-            else
-                dup.Prop2d = null;
-
-            dup.ID = m_idd;
-
-            if (Material != null)
-                dup.Material = m_material.Duplicate();
-
+                dup.m_prop2d = m_prop2d;
+            dup.m_idd = m_idd;
+            dup.m_material = m_material;
             dup.m_guid = new Guid(m_guid.ToString());
             return dup;
         }
-        public GsaProp2d Clone()
-        {
-            GsaProp2d clone = this.Duplicate();
-            clone.m_guid = Guid.NewGuid();
-            return clone;
-        }
+        //public GsaProp2d Duplicate_OBSOLETE()
+        //{
+        //    if (this == null) { return null; }
+        //    GsaProp2d dup = new GsaProp2d();
+        //    if (m_prop2d != null)
+        //    {
+        //        dup.Prop2d = new Prop2D
+        //        {
+        //            MaterialAnalysisProperty = m_prop2d.MaterialAnalysisProperty,
+        //            MaterialGradeProperty = m_prop2d.MaterialGradeProperty,
+        //            MaterialType = m_prop2d.MaterialType,
+        //            Name = m_prop2d.Name.ToString(),
+        //            Description = m_prop2d.Description.ToString(),
+        //            Type = m_prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
+        //            AxisProperty = m_prop2d.AxisProperty
+        //        };
+        //        if ((System.Drawing.Color)m_prop2d.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        //            dup.m_prop2d.Colour = m_prop2d.Colour;
+        //    }
+        //    else
+        //        dup.Prop2d = null;
+
+        //    dup.ID = m_idd;
+
+        //    if (Material != null)
+        //        dup.Material = m_material.Duplicate();
+
+        //    dup.m_guid = new Guid(m_guid.ToString());
+        //    return dup;
+        //}
+        //public GsaProp2d Clone()
+        //{
+        //    GsaProp2d clone = this.Duplicate();
+        //    clone.m_guid = Guid.NewGuid();
+        //    return clone;
+        //}
         #endregion
 
         #region properties
@@ -211,7 +296,6 @@ namespace GhSA.Parameters
             // This function is called when Grasshopper needs to convert this 
             // instance of GsaProp2d into some other type Q.            
 
-
             if (typeof(Q).IsAssignableFrom(typeof(GsaProp2d)))
             {
                 if (Value == null)
@@ -253,7 +337,6 @@ namespace GhSA.Parameters
             // This function is called when Grasshopper needs to convert other data 
             // into GsaProp2d.
 
-
             if (source == null) { return false; }
 
             //Cast from GsaProp2d
@@ -271,8 +354,6 @@ namespace GhSA.Parameters
             return false;
         }
         #endregion
-
-
     }
 
     /// <summary>

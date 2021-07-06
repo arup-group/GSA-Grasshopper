@@ -16,13 +16,6 @@ namespace GhSA.Parameters
     public class GsaNode
 
     {
-        #region fields
-        public Node Node { get; set; } = new Node();
-        private Plane m_plane; // = Plane.WorldXY;
-        private int m_id;
-        private GsaSpring m_spring;
-        #endregion
-
         public GsaSpring Spring
         {
             get { return m_spring; }
@@ -44,35 +37,123 @@ namespace GhSA.Parameters
             get
             {
                 if (Node == null) { return new Point3d(); }
-                return new Point3d(Node.Position.X, Node.Position.Y, Node.Position.Z);
+                return new Point3d(m_node.Position.X, m_node.Position.Y, m_node.Position.Z);
             }
-            set { Node.Position.X = value.X; Node.Position.Y = value.Y; Node.Position.Z = value.Z; }
+            set 
+            {
+                CloneNode();
+                m_node.Position.X = value.X; 
+                m_node.Position.Y = value.Y; 
+                m_node.Position.Z = value.Z; 
+            }
         }
-
+        #region GsaAPI members
+        public Node Node
+        {
+            get { return m_node; }
+            set
+            {
+                m_node = value;
+            }
+        }
         public System.Drawing.Color Colour
         {
             get
             {
-                return (System.Drawing.Color)Node.Colour;
+                return (System.Drawing.Color)m_node.Colour;
             }
-            set { Node.Colour = value; }
+            set 
+            {
+                CloneNode();
+                m_node.Colour = value; 
+            }
         }
+        public GsaBool6 Restraint
+        {
+            get
+            {
+                return new GsaBool6(m_node.Restraint.X, m_node.Restraint.Y, m_node.Restraint.Z,
+                    m_node.Restraint.XX, m_node.Restraint.YY, m_node.Restraint.ZZ);
+            }
+            set
+            {
+                CloneNode();
+                m_node.Restraint = new NodalRestraint
+                {
+                    X = value.X,
+                    Y = value.Y,
+                    Z = value.Z,
+                    XX = value.XX,
+                    YY = value.YY,
+                    ZZ = value.ZZ,
+                };
+            }
+        }
+        public string Name
+        {
+            get { return m_node.Name; }
+            set
+            {
+                CloneNode();
+                m_node.Name = value;
+            }
+        }
+        private void CloneNode()
+        {
+            Node node = new Node
+            {
+                AxisProperty = m_node.AxisProperty,
+                DamperProperty = m_node.DamperProperty,
+                MassProperty = m_node.MassProperty,
+                Name = m_node.Name,
+                Restraint = new NodalRestraint
+                {
+                    X = m_node.Restraint.X,
+                    Y = m_node.Restraint.Y,
+                    Z = m_node.Restraint.Z,
+                    XX = m_node.Restraint.XX,
+                    YY = m_node.Restraint.YY,
+                    ZZ = m_node.Restraint.ZZ,
+                },
+                SpringProperty = m_node.SpringProperty,
+            };
 
+            if ((System.Drawing.Color)m_node.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                node.Colour = m_node.Colour;
+
+            m_node = node;
+        }
+        #endregion
+        #region fields
+        private Plane m_plane; // = Plane.WorldXY;
+        private int m_id;
+        private GsaSpring m_spring;
+        private Node m_node;
+        #endregion
+        
         #region constructors
         public GsaNode()
         {
-            Node = null;
+            Node = new Node();
         }
 
         public GsaNode(Point3d position)
         {
-            Node.Position.X = position.X;
-            Node.Position.Y = position.Y;
-            Node.Position.Z = position.Z;
+            Node = new Node();
+            Point = position;
         }
 
-        
         public GsaNode Duplicate()
+        {
+            if (this.Node == null) { return null; }
+            GsaNode dup = new GsaNode();
+            dup.m_node = m_node;
+            dup.m_plane = m_plane;
+            dup.m_spring = m_spring;
+            return dup;
+        }
+
+        public GsaNode Duplicate_OBSOLETE()
         {
             if (this.Node == null) { return null; }
             GsaNode dup = new GsaNode
@@ -264,7 +345,7 @@ namespace GhSA.Parameters
         {
             if (Value == null) { return BoundingBox.Empty; }
             if (Value.Point == null) { return BoundingBox.Empty; }
-            Point3d pt = Value.Point;
+            Point3d pt = new Point3d(Value.Point);
             pt.Z += 0.001;
             Line ln = new Line(Value.Point, pt);
             LineCurve crv = new LineCurve(ln);
@@ -302,7 +383,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.Point;
+                    target = (Q)(object)new Point3d(Value.Point);
                 return true;
             }
             if (typeof(Q).IsAssignableFrom(typeof(GH_Point)))
@@ -368,7 +449,7 @@ namespace GhSA.Parameters
             if (Value.Point == null) { return null; }
 
             GsaNode node = Value.Duplicate();
-            Point3d pt = node.Point;
+            Point3d pt = new Point3d(node.Point);
             pt.Transform(xform);
             
             node.Point = pt;
@@ -382,7 +463,7 @@ namespace GhSA.Parameters
 
             GsaNode node = Value.Duplicate();
 
-            Point3d pt = node.Point;
+            Point3d pt = new Point3d(node.Point);
             pt = xmorph.MorphPoint(pt);
 
             node.Point = pt;

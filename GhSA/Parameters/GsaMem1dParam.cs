@@ -61,9 +61,14 @@ namespace GhSA.Parameters
         public GsaSection Section
         {
             get { return m_section; }
-            set { m_section = value; }
+            set 
+            {
+                if (m_section == null)
+                    PropertyID = 0;
+                m_section = value; 
+            }
         }
-
+        #region GsaAPI members
         public System.Drawing.Color Colour
         {
             get 
@@ -72,9 +77,136 @@ namespace GhSA.Parameters
                 //    m_member.Colour = UI.Colour.Member1d;
                 return (System.Drawing.Color)m_member.Colour; 
             }
-            set { m_member.Colour = value; }
+            set 
+            {
+                CloneMember();
+                m_member.Colour = value; 
+            }
         }
+        public int Group
+        {
+            get { return m_member.Group; }
+            set 
+            {
+                CloneMember();
+                m_member.Group = value; 
+            }
+        }
+        public bool IsDummy
+        {
+            get { return m_member.IsDummy; }
+            set
+            {
+                CloneMember();
+                m_member.IsDummy = value;
+            }
+        }
+        public string Name
+        {
+            get { return m_member.Name; }
+            set
+            {
+                CloneMember();
+                m_member.Name = value;
+            }
+        }
+        public double MeshSize
+        {
+            get { return m_member.MeshSize; }
+            set
+            {
+                CloneMember();
+                m_member.MeshSize = value;
+            }
+        }
+        public GsaOffset Offset
+        {
+            get
+            {
+                return new GsaOffset(
+                    m_member.Offset.X1,
+                    m_member.Offset.X2,
+                    m_member.Offset.Y,
+                    m_member.Offset.Z);
+            }
+            set
+            {
+                CloneMember();
+                m_member.Offset.X1 = value.X1;
+                m_member.Offset.X2 = value.X2;
+                m_member.Offset.Y = value.Y;
+                m_member.Offset.Z = value.Z;
+            }
+        }
+        public double OrientationAngle
+        {
+            get { return m_member.OrientationAngle; }
+            set
+            {
+                CloneMember();
+                m_member.OrientationAngle = value;
+            }
+        }
+        public int OrientationNode
+        {
+            get { return m_member.OrientationNode; }
+            set
+            {
+                CloneMember();
+                m_member.OrientationNode = value;
+            }
+        }
+        public int PropertyID
+        {
+            get { return m_member.Property; }
+            set
+            {
+                CloneMember();
+                m_member.Property = value;
+                m_section = null;
+            }
+        }
+        public MemberType Type
+        {
+            get { return m_member.Type; }
+            set
+            {
+                CloneMember();
+                m_member.Type = value;
+            }
+        }
+        public ElementType Type1D
+        {
+            get { return m_member.Type1D; }
+            set
+            {
+                CloneMember();
+                m_member.Type1D = value;
+            }
+        }
+        private void CloneMember()
+        {
+            Member mem = new Member
+            {
+                Group = m_member.Group,
+                IsDummy = m_member.IsDummy,
+                MeshSize = m_member.MeshSize,
+                Name = m_member.Name.ToString(),
+                Offset = m_member.Offset,
+                OrientationAngle = m_member.OrientationAngle,
+                OrientationNode = m_member.OrientationNode,
+                Property = m_member.Property,
+                Topology = m_member.Topology.ToString(),
+                Type = m_member.Type,
+                Type1D = m_member.Type1D
+            };
 
+            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                mem.Colour = m_member.Colour;
+            
+            m_member = mem;
+        }
+        #endregion
         #region fields
         private Member m_member;
         private int m_id = 0;
@@ -132,56 +264,71 @@ namespace GhSA.Parameters
             Topology = m_topo;
             TopologyType = m_topoType;
         }
-        
         public GsaMember1d Duplicate()
         {
             if (this == null) { return null; }
             
-            GsaMember1d dup = new GsaMember1d
-            {
-                Member = new Member
-                {
-                    Group = m_member.Group,
-                    IsDummy = m_member.IsDummy,
-                    MeshSize = m_member.MeshSize,
-                    Name = m_member.Name.ToString(),
-                    Offset = m_member.Offset,
-                    OrientationAngle = m_member.OrientationAngle,
-                    OrientationNode = m_member.OrientationNode,
-                    Property = m_member.Property,
-                    Topology = m_member.Topology.ToString(),
-                    Type = m_member.Type, //GsaToModel.Member1dType((int)Member.Type),
-                    Type1D = m_member.Type1D //GsaToModel.Element1dType((int)Member.Type1D)
-                }
-            };
-
-            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                dup.m_member.Colour = m_member.Colour;
-
-            dup.Member.Offset.X1 = m_member.Offset.X1;
-            dup.Member.Offset.X2 = m_member.Offset.X2;
-            dup.Member.Offset.Y = m_member.Offset.Y;
-            dup.Member.Offset.Z = m_member.Offset.Z;
-
-            if (m_crv != null)
-                dup.m_crv = m_crv.DuplicatePolyCurve();
-
-            Point3dList point3Ds = new Point3dList(m_topo);
-            dup.Topology = new List<Point3d>(point3Ds.Duplicate());
-            dup.TopologyType = m_topoType.ToList();
-
-            dup.ID = m_id;
-
-            if (m_rel1 != null)
-                dup.ReleaseStart = m_rel1.Duplicate();
-            if (m_rel2 != null)
-                dup.ReleaseEnd = m_rel2.Duplicate();
-            //if (m_section != null)
-            //    dup.Section = m_section.Duplicate();
-            dup.Section = m_section;
+            GsaMember1d dup = new GsaMember1d();
+            dup.m_id = m_id;
+            dup.m_member = m_member;
+            dup.m_crv = m_crv.DuplicatePolyCurve();
+            dup.m_rel1 = m_rel1;
+            dup.m_rel2 = m_rel2;
+            dup.m_section = m_section;
+            dup.m_topo = m_topo;
+            dup.m_topoType = m_topoType;
 
             return dup;
         }
+        //public GsaMember1d Duplicate_OBSOLETE()
+        //{
+        //    if (this == null) { return null; }
+            
+        //    GsaMember1d dup = new GsaMember1d
+        //    {
+        //        Member = new Member
+        //        {
+        //            Group = m_member.Group,
+        //            IsDummy = m_member.IsDummy,
+        //            MeshSize = m_member.MeshSize,
+        //            Name = m_member.Name.ToString(),
+        //            Offset = m_member.Offset,
+        //            OrientationAngle = m_member.OrientationAngle,
+        //            OrientationNode = m_member.OrientationNode,
+        //            Property = m_member.Property,
+        //            Topology = m_member.Topology.ToString(),
+        //            Type = m_member.Type, //GsaToModel.Member1dType((int)Member.Type),
+        //            Type1D = m_member.Type1D //GsaToModel.Element1dType((int)Member.Type1D)
+        //        }
+        //    };
+
+        //    if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        //        dup.m_member.Colour = m_member.Colour;
+
+        //    dup.Member.Offset.X1 = m_member.Offset.X1;
+        //    dup.Member.Offset.X2 = m_member.Offset.X2;
+        //    dup.Member.Offset.Y = m_member.Offset.Y;
+        //    dup.Member.Offset.Z = m_member.Offset.Z;
+
+        //    if (m_crv != null)
+        //        dup.m_crv = m_crv.DuplicatePolyCurve();
+
+        //    Point3dList point3Ds = new Point3dList(m_topo);
+        //    dup.Topology = new List<Point3d>(point3Ds.Duplicate());
+        //    dup.TopologyType = m_topoType.ToList();
+
+        //    dup.ID = m_id;
+
+        //    if (m_rel1 != null)
+        //        dup.ReleaseStart = m_rel1.Duplicate();
+        //    if (m_rel2 != null)
+        //        dup.ReleaseEnd = m_rel2.Duplicate();
+        //    //if (m_section != null)
+        //    //    dup.Section = m_section.Duplicate();
+        //    dup.Section = m_section;
+
+        //    return dup;
+        //}
         #endregion
 
         #region properties
@@ -194,8 +341,6 @@ namespace GhSA.Parameters
                 return true;
             }
         }
-        
-
         #endregion
 
         #region methods
@@ -322,7 +467,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.PolyCurve;
+                    target = (Q)(object)Value.PolyCurve.DuplicatePolyCurve();
                 return true;
             }
             if (typeof(Q).IsAssignableFrom(typeof(GH_Curve)))
@@ -331,7 +476,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)new GH_Curve(Value.PolyCurve);
+                    target = (Q)(object)new GH_Curve(Value.PolyCurve.DuplicatePolyCurve());
                     if (Value.PolyCurve == null)
                         return false;
                 }
@@ -345,7 +490,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)Value.PolyCurve;
+                    target = (Q)(object)Value.PolyCurve.DuplicatePolyCurve();
                     if (Value.PolyCurve == null)
                         return false;
                 }
@@ -359,7 +504,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)Value.PolyCurve;
+                    target = (Q)(object)Value.PolyCurve.DuplicatePolyCurve();
                     if (Value.PolyCurve == null)
                         return false;
                 }
@@ -465,12 +610,9 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.PolyCurve == null) { return null; }
 
-            GsaMember1d mem = new GsaMember1d
-            {
-                Member = Value.Member
-            };
+            GsaMember1d mem = Value.Duplicate();
 
-            List<Point3d> pts = Value.Topology;
+            List<Point3d> pts = Value.Topology.ToList();
             for (int i = 0; i < pts.Count; i++)
                 pts[i] = xmorph.MorphPoint(pts[i]);
             mem.Topology = pts;

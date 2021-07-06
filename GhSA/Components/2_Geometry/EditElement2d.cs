@@ -124,7 +124,6 @@ namespace GhSA.Components
 
                 // 2 section
                 List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
-                
                 if (DA.GetDataList(2, gh_types))
                 {
                     List<GsaProp2d> in_prop2Ds = new List<GsaProp2d>();
@@ -189,7 +188,6 @@ namespace GhSA.Components
 
                 // 4 offset
                 gh_types = new List<GH_ObjectWrapper>();
-                
                 if (DA.GetDataList(4, gh_types))
                 {
                     List<GsaOffset> in_offsets = new List<GsaOffset>();
@@ -218,7 +216,6 @@ namespace GhSA.Components
 
                 // 5 name
                 List<GH_String> ghnm = new List<GH_String>();
-                
                 if (DA.GetDataList(5, ghnm))
                 {
                     List<string> in_names = new List<string>();

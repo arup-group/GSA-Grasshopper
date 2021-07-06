@@ -124,7 +124,7 @@ namespace GhSA.Components
                 if (DA.GetData(3, ref gh_typ))
                 {
                     if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                        mem.Member.Property = idd;
+                        mem.PropertyID = idd;
                     //GsaProp3d prop3d = new GsaProp3d();
                     //if (gh_typ.Value is GsaProp3dGoo)
                     //    gh_typ.CastTo(ref prop3d);
@@ -146,7 +146,7 @@ namespace GhSA.Components
                 if (DA.GetData(4, ref ghmsz))
                 {
                     if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
-                        mem.Member.MeshSize = msz;
+                        mem.MeshSize = msz;
                 }
 
                 // 5 mesh with others
@@ -164,7 +164,7 @@ namespace GhSA.Components
                 if (DA.GetData(6, ref ghnm))
                 {
                     if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
-                        mem.Member.Name = name;
+                        mem.Name = name;
                 }
 
                 // 7 Group
@@ -172,7 +172,7 @@ namespace GhSA.Components
                 if (DA.GetData(7, ref ghgrp))
                 {
                     if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
-                        mem.Member.Group = grp;
+                        mem.Group = grp;
                 }
 
                 // 8 Colour
@@ -180,7 +180,7 @@ namespace GhSA.Components
                 if (DA.GetData(8, ref ghcol))
                 {
                     if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
-                        mem.Member.Colour = col;
+                        mem.Colour = col;
                 }
 
                 // 9 Dummy
@@ -188,7 +188,7 @@ namespace GhSA.Components
                 if (DA.GetData(9, ref ghdum))
                 {
                     if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
-                        mem.Member.IsDummy = dum;
+                        mem.IsDummy = dum;
                 }
 
                 // #### outputs ####
@@ -197,7 +197,7 @@ namespace GhSA.Components
                 DA.SetData(1, mem.ID);
                 DA.SetData(2, mem.SolidMesh);
 
-                //DA.SetData(3, mem.Property);
+                DA.SetData(3, mem.PropertyID);
 
                 DA.SetData(4, mem.Member.MeshSize);
                 //DA.SetData(5, mem.Member.MeshWithOthers);

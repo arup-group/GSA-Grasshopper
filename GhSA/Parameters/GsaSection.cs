@@ -41,13 +41,82 @@ namespace GhSA.Parameters
             get { return m_material; }
             set
             {
-                m_guid = Guid.NewGuid();
                 m_material = value;
+                CloneSection();
                 m_section.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
                 m_section.MaterialAnalysisProperty = m_material.AnalysisProperty;
                 m_section.MaterialGradeProperty = m_material.Grade;
             }
         }
+        #region GsaAPI members
+        public string Name
+        {
+            get { return m_section.Name; }
+            set
+            {
+                m_guid = Guid.NewGuid();
+                CloneSection();
+                m_section.Name = value;
+            }
+        }
+        public int Pool
+        {
+            get { return m_section.Pool; }
+            set
+            {
+                m_guid = Guid.NewGuid();
+                CloneSection();
+                m_section.Pool = value;
+            }
+        }
+        public int MaterialID
+        {
+            get { return m_section.MaterialAnalysisProperty; }
+            set
+            {
+                m_guid = Guid.NewGuid();
+                CloneSection();
+                m_section.MaterialAnalysisProperty = value;
+            }
+        }
+        public string Profile
+        {
+            get { return m_section.Profile.Replace("%", " "); }
+            set
+            {
+                m_guid = Guid.NewGuid();
+                CloneSection();
+                m_section.Profile = value;
+            }
+        }
+        public System.Drawing.Color Colour
+        {
+            get { return (System.Drawing.Color)m_section.Colour; }
+            set
+            {
+                m_guid = Guid.NewGuid();
+                CloneSection();
+                m_section.Colour = value;
+            }
+        }
+        private void CloneSection()
+        {
+            Section sec = new Section()
+            {
+                MaterialAnalysisProperty = m_section.MaterialAnalysisProperty,
+                MaterialGradeProperty = m_section.MaterialGradeProperty,
+                MaterialType = m_section.MaterialType,
+                Name = m_section.Name.ToString(),
+                Pool = m_section.Pool,
+                Profile = m_section.Profile.ToString()
+            };
+            if ((System.Drawing.Color)m_section.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                sec.Colour = m_section.Colour;
+            
+            m_section = sec;
+            m_guid = Guid.NewGuid();
+        }
+        #endregion
         public Guid GUID
         {
             get { return m_guid; }
@@ -89,38 +158,49 @@ namespace GhSA.Parameters
             if (this == null) { return null; }
             GsaSection dup = new GsaSection();
             if (m_section != null)
-            {
-                dup.Section = new Section()
-                {
-                    MaterialAnalysisProperty = m_section.MaterialAnalysisProperty,
-                    MaterialGradeProperty = m_section.MaterialGradeProperty,
-                    MaterialType = m_section.MaterialType,
-                    Name = m_section.Name,
-                    Pool = m_section.Pool,
-                    Profile = m_section.Profile
-                };
-
-                if ((System.Drawing.Color)m_section.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                    dup.m_section.Colour = m_section.Colour;
-            }
-            else
-                dup.Section = null;
-            
-            dup.ID = m_idd;
-
-            if (Material != null)
-                dup.Material = m_material.Duplicate();
-
+                dup.m_section = m_section;
+            dup.m_idd = m_idd;
+            dup.m_material = m_material;
             dup.m_guid = new Guid(m_guid.ToString());
             return dup;
         }
+        //public GsaSection Duplicate_OBSOLETE()
+        //{
+        //    if (this == null) { return null; }
+        //    GsaSection dup = new GsaSection();
+        //    if (m_section != null)
+        //    {
+        //        dup.Section = new Section()
+        //        {
+        //            MaterialAnalysisProperty = m_section.MaterialAnalysisProperty,
+        //            MaterialGradeProperty = m_section.MaterialGradeProperty,
+        //            MaterialType = m_section.MaterialType,
+        //            Name = m_section.Name,
+        //            Pool = m_section.Pool,
+        //            Profile = m_section.Profile
+        //        };
 
-        public GsaSection Clone()
-        {
-            GsaSection clone = this.Duplicate();
-            clone.m_guid = Guid.NewGuid();
-            return clone;
-        }
+        //        if ((System.Drawing.Color)m_section.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        //            dup.m_section.Colour = m_section.Colour;
+        //    }
+        //    else
+        //        dup.Section = null;
+            
+        //    dup.ID = m_idd;
+
+        //    if (Material != null)
+        //        dup.Material = m_material.Duplicate();
+
+        //    dup.m_guid = new Guid(m_guid.ToString());
+        //    return dup;
+        //}
+
+        //public GsaSection Clone()
+        //{
+        //    GsaSection clone = this.Duplicate();
+        //    clone.m_guid = Guid.NewGuid();
+        //    return clone;
+        //}
         #endregion
 
         #region properties

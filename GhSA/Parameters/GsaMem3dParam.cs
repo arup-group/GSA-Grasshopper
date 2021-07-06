@@ -38,18 +38,98 @@ namespace GhSA.Parameters
         public GsaSection Section
         {
             get { return m_section; }
-            set { m_section = value; }
+            set 
+            {
+                if (m_section == null)
+                    PropertyID = 0;
+                m_section = value; 
+            }
         }
-
+        
+        #region GsaAPI members
         public System.Drawing.Color Colour
         {
-            get 
+            get
             {
-                return (System.Drawing.Color)m_member.Colour; 
+                //if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                //    m_member.Colour = UI.Colour.Member1d;
+                return (System.Drawing.Color)m_member.Colour;
             }
-            set { m_member.Colour = value; }
+            set
+            {
+                CloneMember();
+                m_member.Colour = value;
+            }
         }
+        public int Group
+        {
+            get { return m_member.Group; }
+            set
+            {
+                CloneMember();
+                m_member.Group = value;
+            }
+        }
+        public bool IsDummy
+        {
+            get { return m_member.IsDummy; }
+            set
+            {
+                CloneMember();
+                m_member.IsDummy = value;
+            }
+        }
+        public string Name
+        {
+            get { return m_member.Name; }
+            set
+            {
+                CloneMember();
+                m_member.Name = value;
+            }
+        }
+        public double MeshSize
+        {
+            get { return m_member.MeshSize; }
+            set
+            {
+                CloneMember();
+                m_member.MeshSize = value;
+            }
+        }
+        public int PropertyID
+        {
+            get { return m_member.Property; }
+            set
+            {
+                CloneMember();
+                m_member.Property = value;
+                m_section = null;
+            }
+        }
+        
+        private void CloneMember()
+        {
+            Member mem = new Member
+            {
+                Group = m_member.Group,
+                IsDummy = m_member.IsDummy,
+                MeshSize = m_member.MeshSize,
+                Name = m_member.Name.ToString(),
+                Offset = m_member.Offset,
+                OrientationAngle = m_member.OrientationAngle,
+                OrientationNode = m_member.OrientationNode,
+                Property = m_member.Property,
+                Topology = m_member.Topology.ToString(),
+                Type = m_member.Type,
+            };
 
+            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                mem.Colour = m_member.Colour;
+
+            m_member = mem;
+        }
+        #endregion
         #region fields
         private Member m_member;
         private int m_id = 0;
@@ -85,6 +165,17 @@ namespace GhSA.Parameters
             m_mesh = GhSA.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
         }
         public GsaMember3d Duplicate()
+        {
+            if (this == null) { return null; }
+            GsaMember3d dup = new GsaMember3d();
+            dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
+            dup.m_member = m_member;
+            dup.m_section = m_section;
+            dup.m_id = m_id;
+
+            return dup;
+        }
+        public GsaMember3d Duplicate_OBSOLETE()
         {
             if (this == null) { return null; }
             GsaMember3d dup = new GsaMember3d

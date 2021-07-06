@@ -382,7 +382,7 @@ namespace GhSA.Parameters
             GsaElement2d dup = new GsaElement2d();
             dup.m_elements = m_elements;
             dup.m_id = m_id;
-            dup.m_mesh = (Mesh)m_mesh.Duplicate();
+            dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
             dup.m_props = m_props;
             dup.m_topo = m_topo;
             dup.m_topoInt = m_topoInt;

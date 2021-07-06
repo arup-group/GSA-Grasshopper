@@ -84,8 +84,16 @@ namespace GhSA.Parameters
         //    m_yy = bool6.YY;
         //    m_zz = bool6.ZZ;
         //}
+        public GsaBool6(bool X, bool Y, bool Z, bool XX, bool YY, bool ZZ)
+        {
+            m_x = X;
+            m_y = Y;
+            m_z = Z;
+            m_xx = XX;
+            m_yy = YY;
+            m_zz = ZZ;
+        }
 
-        
         public GsaBool6 Duplicate()
         {
             if (this == null) { return null; }

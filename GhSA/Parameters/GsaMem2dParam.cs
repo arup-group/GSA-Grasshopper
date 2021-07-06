@@ -54,64 +54,200 @@ namespace GhSA.Parameters
 
         public List<List<Point3d>> VoidTopology
         {
-            get { return void_topo; }
-            set { void_topo = value; }
+            get { return m_void_topo; }
+            set { m_void_topo = value; }
         }
 
         public List<List<string>> VoidTopologyType
         {
-            get { return void_topoType; }
-            set { void_topoType = value; }
+            get { return m_void_topoType; }
+            set { m_void_topoType = value; }
         }
 
         public List<PolyCurve> InclusionLines
         {
-            get { return incl_Lines; }
-            set { incl_Lines = value; }
+            get { return m_incl_Lines; }
+            set { m_incl_Lines = value; }
         }
 
         public List<List<Point3d>> IncLinesTopology
         {
-            get { return incLines_topo; }
-            set { incLines_topo = value; }
+            get { return m_incLines_topo; }
+            set { m_incLines_topo = value; }
         }
 
         public List<List<string>> IncLinesTopologyType
         {
-            get { return inclLines_topoType; }
-            set { inclLines_topoType = value; }
+            get { return m_inclLines_topoType; }
+            set { m_inclLines_topoType = value; }
         }
 
         public List<Point3d> InclusionPoints
         {
-            get { return incl_pts; }
-            set { incl_pts = value; }
+            get { return m_incl_pts; }
+            set { m_incl_pts = value; }
         }
         public GsaProp2d Property
         {
             get { return m_prop; }
-            set { m_prop = value; }
+            set 
+            {
+                if (m_prop == null)
+                    PropertyID = 0;
+                m_prop = value; 
+            }
         }
+        #region GsaAPI members
         public System.Drawing.Color Colour
         {
             get
             {
+                //if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                //    m_member.Colour = UI.Colour.Member1d;
                 return (System.Drawing.Color)m_member.Colour;
             }
-            set { m_member.Colour = value; }
+            set
+            {
+                CloneMember();
+                m_member.Colour = value;
+            }
         }
+        public int Group
+        {
+            get { return m_member.Group; }
+            set
+            {
+                CloneMember();
+                m_member.Group = value;
+            }
+        }
+        public bool IsDummy
+        {
+            get { return m_member.IsDummy; }
+            set
+            {
+                CloneMember();
+                m_member.IsDummy = value;
+            }
+        }
+        public string Name
+        {
+            get { return m_member.Name; }
+            set
+            {
+                CloneMember();
+                m_member.Name = value;
+            }
+        }
+        public double MeshSize
+        {
+            get { return m_member.MeshSize; }
+            set
+            {
+                CloneMember();
+                m_member.MeshSize = value;
+            }
+        }
+        public GsaOffset Offset
+        {
+            get
+            {
+                return new GsaOffset(
+                    m_member.Offset.X1,
+                    m_member.Offset.X2,
+                    m_member.Offset.Y,
+                    m_member.Offset.Z);
+            }
+            set
+            {
+                CloneMember();
+                m_member.Offset.X1 = value.X1;
+                m_member.Offset.X2 = value.X2;
+                m_member.Offset.Y = value.Y;
+                m_member.Offset.Z = value.Z;
+            }
+        }
+        public double OrientationAngle
+        {
+            get { return m_member.OrientationAngle; }
+            set
+            {
+                CloneMember();
+                m_member.OrientationAngle = value;
+            }
+        }
+        public int OrientationNode
+        {
+            get { return m_member.OrientationNode; }
+            set
+            {
+                CloneMember();
+                m_member.OrientationNode = value;
+            }
+        }
+        public int PropertyID
+        {
+            get { return m_member.Property; }
+            set
+            {
+                CloneMember();
+                m_member.Property = value;
+                m_prop = null;
+            }
+        }
+        public MemberType Type
+        {
+            get { return m_member.Type; }
+            set
+            {
+                CloneMember();
+                m_member.Type = value;
+            }
+        }
+        public AnalysisOrder Type2D
+        {
+            get { return m_member.Type2D; }
+            set
+            {
+                CloneMember();
+                m_member.Type2D = value;
+            }
+        }
+        private void CloneMember()
+        {
+            Member mem = new Member
+            {
+                Group = m_member.Group,
+                IsDummy = m_member.IsDummy,
+                MeshSize = m_member.MeshSize,
+                Name = m_member.Name.ToString(),
+                Offset = m_member.Offset,
+                OrientationAngle = m_member.OrientationAngle,
+                OrientationNode = m_member.OrientationNode,
+                Property = m_member.Property,
+                Topology = m_member.Topology.ToString(),
+                Type = m_member.Type,
+                Type2D = m_member.Type2D
+            };
+
+            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                mem.Colour = m_member.Colour;
+
+            m_member = mem;
+        }
+        #endregion
 
         #region fields
         private Member m_member;
         private int m_id = 0;
         private Brep m_brep; //brep for visualisation /member2d
-        private List<PolyCurve> void_crvs; //converted edgecurve /member2d
-        private List<List<Point3d>> void_topo; //list of lists of void points /member2d
-        private List<List<string>> void_topoType; ////list of polyline curve type (arch or line) for void /member2d
-        private List<PolyCurve> incl_Lines; //converted inclusion lines /member2d
-        private List<List<Point3d>> incLines_topo; //list of lists of line inclusion topology points /member2d
-        private List<List<string>> inclLines_topoType; ////list of polyline curve type (arch or line) for inclusion /member2d
-        private List<Point3d> incl_pts; //list of points for inclusion /member2d
+        private List<PolyCurve> m_void_crvs; //converted edgecurve /member2d
+        private List<List<Point3d>> m_void_topo; //list of lists of void points /member2d
+        private List<List<string>> m_void_topoType; ////list of polyline curve type (arch or line) for void /member2d
+        private List<PolyCurve> m_incl_Lines; //converted inclusion lines /member2d
+        private List<List<Point3d>> m_incLines_topo; //list of lists of line inclusion topology points /member2d
+        private List<List<string>> m_inclLines_topoType; ////list of polyline curve type (arch or line) for inclusion /member2d
+        private List<Point3d> m_incl_pts; //list of points for inclusion /member2d
 
         private PolyCurve m_crv; //Polyline for visualisation /member1d/member2d
         private List<Point3d> m_topo; // list of topology points for visualisation /member1d/member2d
@@ -147,15 +283,15 @@ namespace GhSA.Parameters
             m_crv = edgeTuple.Item1;
             m_topo = edgeTuple.Item2;
             m_topoType = edgeTuple.Item3;
-            void_crvs = voidTuple.Item1;
-            void_topo = voidTuple.Item2;
-            void_topoType = voidTuple.Item3;
-            incl_Lines = inclTuple.Item1;
-            incLines_topo = inclTuple.Item2;
-            inclLines_topoType = inclTuple.Item3;
-            incl_pts = inclTuple.Item4;
+            m_void_crvs = voidTuple.Item1;
+            m_void_topo = voidTuple.Item2;
+            m_void_topoType = voidTuple.Item3;
+            m_incl_Lines = inclTuple.Item1;
+            m_incLines_topo = inclTuple.Item2;
+            m_inclLines_topoType = inclTuple.Item3;
+            m_incl_pts = inclTuple.Item4;
 
-            m_brep = Util.GH.Convert.BuildBrep(m_crv, void_crvs);
+            m_brep = Util.GH.Convert.BuildBrep(m_crv, m_void_crvs);
         }
 
         public GsaMember2d(List<Point3d> topology, 
@@ -177,7 +313,7 @@ namespace GhSA.Parameters
             {
                 m_brep = null;
                 m_crv = null;
-                incl_pts = null;
+                m_incl_pts = null;
                 return;
             }
 
@@ -193,7 +329,7 @@ namespace GhSA.Parameters
 
             if (void_topology != null)
             {
-                if (void_crvs == null) { void_crvs = new List<PolyCurve>(); }
+                if (m_void_crvs == null) { m_void_crvs = new List<PolyCurve>(); }
                 for (int i = 0; i < void_topology.Count; i++)
                 {
                     // void curves must be closed, check that topogylist is ending with start point
@@ -203,113 +339,133 @@ namespace GhSA.Parameters
                         void_topology_type[i].Add("");
                     }
                     if (void_topology_type != null)
-                        void_crvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(void_topology[i], void_topology_type[i]));
+                        m_void_crvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(void_topology[i], void_topology_type[i]));
                     else
-                        void_crvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(void_topology[i]));
+                        m_void_crvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(void_topology[i]));
                 }
             }
-            void_topo = void_topology;
-            void_topoType = void_topology_type;
+            m_void_topo = void_topology;
+            m_void_topoType = void_topology_type;
 
             if (inlcusion_lines_topology != null)
             {
-                if (incl_Lines == null) { incl_Lines = new List<PolyCurve>(); }
+                if (m_incl_Lines == null) { m_incl_Lines = new List<PolyCurve>(); }
                 for (int i = 0; i < inlcusion_lines_topology.Count; i++)
                 {
                     if (inclusion_topology_type != null)
-                        incl_Lines.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(inlcusion_lines_topology[i], inclusion_topology_type[i]));
+                        m_incl_Lines.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(inlcusion_lines_topology[i], inclusion_topology_type[i]));
                     else
-                        incl_Lines.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(inlcusion_lines_topology[i]));
+                        m_incl_Lines.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(inlcusion_lines_topology[i]));
                 }
             }
-            incLines_topo = inlcusion_lines_topology;
-            inclLines_topoType = inclusion_topology_type;
+            m_incLines_topo = inlcusion_lines_topology;
+            m_inclLines_topoType = inclusion_topology_type;
 
-            incl_pts = includePoints;
+            m_incl_pts = includePoints;
 
-            m_brep = Util.GH.Convert.BuildBrep(m_crv, void_crvs);
+            m_brep = Util.GH.Convert.BuildBrep(m_crv, m_void_crvs);
 
             m_prop = new GsaProp2d();
             m_prop.Prop2d = null;
         }
-        
         public GsaMember2d Duplicate()
         {
             if (this == null) { return null; }
-            GsaMember2d dup = new GsaMember2d()
-            {
-                Member = new Member()
-                {
-                    Group = m_member.Group,
-                    IsDummy = m_member.IsDummy,
-                    MeshSize = m_member.MeshSize,
-                    Name = m_member.Name.ToString(),
-                    Offset = m_member.Offset,
-                    OrientationAngle = m_member.OrientationAngle,
-                    OrientationNode = m_member.OrientationNode,
-                    Property = m_member.Property,
-                    Topology = m_member.Topology.ToString(),
-                    Type = m_member.Type, // GsaToModel.Member2dType((int)Member.Type),
-                    Type2D = m_member.Type2D //GsaToModel.AnalysisOrder((int) Member.Type2D)
-                }
-            };
-
-            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                dup.m_member.Colour = m_member.Colour;
-
-            dup.Member.Offset.X1 = m_member.Offset.X1;
-            dup.Member.Offset.X2 = m_member.Offset.X2;
-            dup.Member.Offset.Y = m_member.Offset.Y;
-            dup.Member.Offset.Z = m_member.Offset.Z;
-
-            if (m_brep == null) { return dup; }
-
-            if (m_brep != null)
-                dup.m_brep = Brep.DuplicateBrep();
-            if (m_crv != null)
-                dup.m_crv = PolyCurve.DuplicatePolyCurve();
-
-            Point3dList point3Ds = new Point3dList(Topology);
-            dup.Topology = new List<Point3d>(point3Ds.Duplicate());
-            dup.TopologyType = TopologyType.ToList();
-
-            if (void_crvs != null)
-            {
-                dup.void_crvs = new List<PolyCurve>();
-                dup.void_topo = new List<List<Point3d>>();
-                dup.void_topoType = new List<List<string>>();
-                for (int i = 0; i < void_crvs.Count; i++)
-                {
-                    dup.void_crvs.Add(void_crvs[i].DuplicatePolyCurve());
-                    Point3dList voidpoint3Ds = new Point3dList(void_topo[i]);
-                    dup.void_topo.Add(new List<Point3d>(voidpoint3Ds.Duplicate()));
-                    dup.void_topoType.Add(void_topoType[i].ToList());
-                }
-            }
-
-            if (incl_Lines != null)
-            {
-                dup.incl_Lines = new List<PolyCurve>();
-                dup.incLines_topo = new List<List<Point3d>>();
-                dup.inclLines_topoType = new List<List<string>>();
-                for (int i = 0; i < incl_Lines.Count; i++)
-                {
-                    dup.incl_Lines.Add(incl_Lines[i].DuplicatePolyCurve());
-                    Point3dList inclLinepoint3Ds = new Point3dList(incLines_topo[i]);
-                    dup.incLines_topo.Add(new List<Point3d>(inclLinepoint3Ds.Duplicate()));
-                    dup.inclLines_topoType.Add(inclLines_topoType[i].ToList());
-                }
-            }
-            if (m_prop != null)
-                dup.Property = Property.Duplicate();
-
-            Point3dList inclpoint3Ds = new Point3dList(incl_pts);
-            dup.incl_pts = new List<Point3d>(inclpoint3Ds.Duplicate());
-
-            dup.ID = ID;
+            GsaMember2d dup = new GsaMember2d();
+            dup.m_brep = m_brep.DuplicateBrep();
+            dup.m_crv = m_crv.DuplicatePolyCurve();
+            dup.m_id = m_id;
+            dup.m_member = m_member;
+            dup.m_prop = m_prop;
+            dup.m_topo = m_topo;
+            dup.m_topoType = m_topoType;
+            dup.m_void_crvs = m_void_crvs;
+            dup.m_void_topo = m_void_topo;
+            dup.m_void_topoType = m_void_topoType;
+            dup.m_incl_Lines = m_incl_Lines;
+            dup.m_incLines_topo = m_incLines_topo;
+            dup.m_inclLines_topoType = m_inclLines_topoType;
+            dup.m_incl_pts = m_incl_pts;
 
             return dup;
         }
+        //public GsaMember2d Duplicate_OBSOLETE()
+        //{
+        //    if (this == null) { return null; }
+        //    GsaMember2d dup = new GsaMember2d()
+        //    {
+        //        Member = new Member()
+        //        {
+        //            Group = m_member.Group,
+        //            IsDummy = m_member.IsDummy,
+        //            MeshSize = m_member.MeshSize,
+        //            Name = m_member.Name.ToString(),
+        //            Offset = m_member.Offset,
+        //            OrientationAngle = m_member.OrientationAngle,
+        //            OrientationNode = m_member.OrientationNode,
+        //            Property = m_member.Property,
+        //            Topology = m_member.Topology.ToString(),
+        //            Type = m_member.Type, // GsaToModel.Member2dType((int)Member.Type),
+        //            Type2D = m_member.Type2D //GsaToModel.AnalysisOrder((int) Member.Type2D)
+        //        }
+        //    };
+
+        //    if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        //        dup.m_member.Colour = m_member.Colour;
+
+        //    dup.Member.Offset.X1 = m_member.Offset.X1;
+        //    dup.Member.Offset.X2 = m_member.Offset.X2;
+        //    dup.Member.Offset.Y = m_member.Offset.Y;
+        //    dup.Member.Offset.Z = m_member.Offset.Z;
+
+        //    if (m_brep == null) { return dup; }
+
+        //    if (m_brep != null)
+        //        dup.m_brep = Brep.DuplicateBrep();
+        //    if (m_crv != null)
+        //        dup.m_crv = PolyCurve.DuplicatePolyCurve();
+
+        //    Point3dList point3Ds = new Point3dList(Topology);
+        //    dup.Topology = new List<Point3d>(point3Ds.Duplicate());
+        //    dup.TopologyType = TopologyType.ToList();
+
+        //    if (m_void_crvs != null)
+        //    {
+        //        dup.m_void_crvs = new List<PolyCurve>();
+        //        dup.m_void_topo = new List<List<Point3d>>();
+        //        dup.m_void_topoType = new List<List<string>>();
+        //        for (int i = 0; i < m_void_crvs.Count; i++)
+        //        {
+        //            dup.m_void_crvs.Add(m_void_crvs[i].DuplicatePolyCurve());
+        //            Point3dList voidpoint3Ds = new Point3dList(m_void_topo[i]);
+        //            dup.m_void_topo.Add(new List<Point3d>(voidpoint3Ds.Duplicate()));
+        //            dup.m_void_topoType.Add(m_void_topoType[i].ToList());
+        //        }
+        //    }
+
+        //    if (m_incl_Lines != null)
+        //    {
+        //        dup.m_incl_Lines = new List<PolyCurve>();
+        //        dup.m_incLines_topo = new List<List<Point3d>>();
+        //        dup.m_inclLines_topoType = new List<List<string>>();
+        //        for (int i = 0; i < m_incl_Lines.Count; i++)
+        //        {
+        //            dup.m_incl_Lines.Add(m_incl_Lines[i].DuplicatePolyCurve());
+        //            Point3dList inclLinepoint3Ds = new Point3dList(m_incLines_topo[i]);
+        //            dup.m_incLines_topo.Add(new List<Point3d>(inclLinepoint3Ds.Duplicate()));
+        //            dup.m_inclLines_topoType.Add(m_inclLines_topoType[i].ToList());
+        //        }
+        //    }
+        //    if (m_prop != null)
+        //        dup.Property = Property.Duplicate();
+
+        //    Point3dList inclpoint3Ds = new Point3dList(m_incl_pts);
+        //    dup.m_incl_pts = new List<Point3d>(inclpoint3Ds.Duplicate());
+
+        //    dup.ID = ID;
+
+        //    return dup;
+        //}
 
 
         #endregion
@@ -337,26 +493,26 @@ namespace GhSA.Parameters
             string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
             typeTxt = typeTxt.Replace("2d", "2D");
             string incl = "";
-            if (!(incl_Lines == null & incl_pts == null))
-                if (incl_Lines.Count > 0 | incl_pts.Count > 0)
+            if (!(m_incl_Lines == null & m_incl_pts == null))
+                if (m_incl_Lines.Count > 0 | m_incl_pts.Count > 0)
                     incl = System.Environment.NewLine + "Contains ";
-            if (incl_Lines != null)
+            if (m_incl_Lines != null)
             {
-                if (incl_Lines.Count > 0)
-                    incl = incl + incl_Lines.Count + " inclusion line";
-                if (incl_Lines.Count > 1)
+                if (m_incl_Lines.Count > 0)
+                    incl = incl + m_incl_Lines.Count + " inclusion line";
+                if (m_incl_Lines.Count > 1)
                     incl += "s";
             }
             
-            if (incl_Lines != null & incl_pts != null)
-                if (incl_Lines.Count > 0 & incl_pts.Count > 0)
+            if (m_incl_Lines != null & m_incl_pts != null)
+                if (m_incl_Lines.Count > 0 & m_incl_pts.Count > 0)
                     incl += " and ";
             
-            if (incl_pts != null)
+            if (m_incl_pts != null)
             {
-                if (incl_pts.Count > 0)
-                    incl = incl + incl_pts.Count + " inclusion point";
-                if (incl_pts.Count > 1)
+                if (m_incl_pts.Count > 0)
+                    incl = incl + m_incl_pts.Count + " inclusion point";
+                if (m_incl_pts.Count > 1)
                     incl += "s";
             }
 
@@ -478,7 +634,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.PolyCurve;
+                    target = (Q)(object)Value.PolyCurve.DuplicatePolyCurve();
                 return true;
             }
             if (typeof(Q).IsAssignableFrom(typeof(GH_Curve)))
@@ -487,7 +643,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)new GH_Curve(Value.PolyCurve);
+                    target = (Q)(object)new GH_Curve(Value.PolyCurve.DuplicatePolyCurve());
                     if (Value.PolyCurve == null)
                         return false;
                 }
@@ -501,7 +657,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)Value.PolyCurve;
+                    target = (Q)(object)Value.PolyCurve.DuplicatePolyCurve();
                     if (Value.PolyCurve == null)
                         return false;
                 }
@@ -515,7 +671,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)Value.PolyCurve;
+                    target = (Q)(object)Value.PolyCurve.DuplicatePolyCurve();
                     if (Value.PolyCurve == null)
                         return false;
                 }
@@ -543,7 +699,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)Value.Brep;
+                    target = (Q)(object)Value.Brep.DuplicateBrep();
                     if (Value.Brep == null)
                         return false;
                 }
@@ -556,7 +712,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)new GH_Brep(Value.Brep);
+                    target = (Q)(object)new GH_Brep(Value.Brep.DuplicateBrep());
                     if (Value.Brep == null)
                         return false;
                 }
@@ -569,7 +725,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.Topology;
+                    target = (Q)(object)Value.Topology.ToList();
                 return true;
             }
             if (typeof(Q).IsAssignableFrom(typeof(List<GH_Point>)))
@@ -577,7 +733,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.Topology;
+                    target = (Q)(object)Value.Topology.ToList();
                 return true;
             }
 
@@ -657,7 +813,7 @@ namespace GhSA.Parameters
                 mem.VoidTopology = new List<List<Point3d>>();
                 for (int i = 0; i < Value.VoidTopology.Count; i++)
                 {
-                    xpts = new Point3dList(Value.VoidTopology[i]);
+                    xpts = new Point3dList(Value.VoidTopology[i].ToList());
                     xpts.Transform(xform);
                     mem.VoidTopology.Add(xpts.ToList());
                 }
@@ -669,14 +825,14 @@ namespace GhSA.Parameters
                 mem.InclusionLines = new List<PolyCurve>();
                 for (int i = 0; i < Value.InclusionLines.Count; i++)
                 {
-                    PolyCurve xLn = Value.InclusionLines[i];
+                    PolyCurve xLn = Value.InclusionLines[i].DuplicatePolyCurve();
                     xLn.Transform(xform);
                     mem.InclusionLines.Add(xLn);
                 }
                 mem.IncLinesTopology = new List<List<Point3d>>();
                 for (int i = 0; i < Value.IncLinesTopology.Count; i++)
                 {
-                    xpts = new Point3dList(Value.IncLinesTopology[i]);
+                    xpts = new Point3dList(Value.IncLinesTopology[i].ToList());
                     xpts.Transform(xform);
                     mem.IncLinesTopology.Add(xpts.ToList());
                 }
@@ -684,7 +840,7 @@ namespace GhSA.Parameters
             }
             if (Value.InclusionPoints != null)
             {
-                xpts = new Point3dList(Value.InclusionPoints);
+                xpts = new Point3dList(Value.InclusionPoints.ToList());
                 xpts.Transform(xform);
                 mem.InclusionPoints = xpts.ToList();
             }
@@ -710,12 +866,9 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Brep == null & Value.PolyCurve == null) { return null; }
 
-            GsaMember2d mem = new GsaMember2d
-            {
-                Member = Value.Member
-            };
+            GsaMember2d mem = Value.Duplicate();
 
-            List<Point3d> pts = Value.Topology;
+            List<Point3d> pts = Value.Topology.ToList();
             for (int i = 0; i < pts.Count; i++)
                 pts[i] = xmorph.MorphPoint(pts[i]);
             mem.Topology = pts;
@@ -725,7 +878,7 @@ namespace GhSA.Parameters
                 mem.VoidTopology = new List<List<Point3d>>();
                 for (int i = 0; i < Value.VoidTopology.Count; i++)
                 {
-                    pts = Value.VoidTopology[i];
+                    pts = Value.VoidTopology[i].ToList();
                     for (int j = 0; j < pts.Count; j++)
                         pts[j] = xmorph.MorphPoint(pts[j]);
                     mem.VoidTopology.Add(pts);
@@ -738,14 +891,14 @@ namespace GhSA.Parameters
                 mem.InclusionLines = new List<PolyCurve>();
                 for (int i = 0; i < Value.InclusionLines.Count; i++)
                 {
-                    PolyCurve xLn = Value.InclusionLines[i];
+                    PolyCurve xLn = Value.InclusionLines[i].DuplicatePolyCurve();
                     xmorph.Morph(xLn);
                     mem.InclusionLines.Add(xLn);
                 }
                 mem.IncLinesTopology = new List<List<Point3d>>();
                 for (int i = 0; i < Value.IncLinesTopology.Count; i++)
                 {
-                    pts = Value.IncLinesTopology[i];
+                    pts = Value.IncLinesTopology[i].ToList();
                     for (int j = 0; j < pts.Count; j++)
                         pts[j] = xmorph.MorphPoint(pts[j]);
                     mem.IncLinesTopology.Add(pts);
@@ -754,7 +907,7 @@ namespace GhSA.Parameters
             }
             if (Value.InclusionPoints != null)
             {
-                pts = Value.InclusionPoints;
+                pts = Value.InclusionPoints.ToList();
                 for (int i = 0; i < pts.Count; i++)
                     pts[i] = xmorph.MorphPoint(pts[i]);
                 mem.InclusionPoints = pts;

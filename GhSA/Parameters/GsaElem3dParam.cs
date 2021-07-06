@@ -77,6 +77,7 @@ namespace GhSA.Parameters
         //    get { return m_props; }
         //    set { m_props = value; }
         //}
+        #region GsaAPI members
         public List<System.Drawing.Color> Colours
         {
             get
@@ -94,18 +95,257 @@ namespace GhSA.Parameters
                 }
                 return cols;
             }
-            set 
+            set
             {
-                for (int i = 0; i < m_elements.Count; i++)
-                {
-                    if (value[i] != null)
-                    {
-                        m_elements[i].Colour = value[i];
-                        NgonMesh.VertexColors.SetColor(i, (System.Drawing.Color)m_elements[i].Colour);
-                    }
-                }
+                CloneElements(apiObjectMember.colour, null, null, null, null, null, null, null, value);
+                //for (int i = 0; i < m_elements.Count; i++)
+                //{
+                //    if (value[i] != null)
+                //    {
+                //        m_elements[i].Colour = value[i];
+                //        Mesh.VertexColors.SetColor(i, (System.Drawing.Color)m_elements[i].Colour);
+                //    }
+                //}
             }
         }
+        public List<int> Groups
+        {
+            get
+            {
+                List<int> groups = new List<int>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (m_elements[i] != null)
+                        groups.Add(m_elements[i].Group);
+                }
+                return groups;
+            }
+            set
+            {
+                CloneElements(apiObjectMember.group, value);
+            }
+        }
+        public List<bool> isDummies
+        {
+            get
+            {
+                List<bool> dums = new List<bool>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (m_elements[i] != null)
+                        dums.Add(m_elements[i].IsDummy);
+                }
+                return dums;
+            }
+            set
+            {
+                CloneElements(apiObjectMember.dummy, null, value);
+            }
+        }
+        public List<string> Names
+        {
+            get
+            {
+                List<string> names = new List<string>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (m_elements[i] != null)
+                        names.Add(m_elements[i].Name);
+                }
+                return names;
+            }
+            set
+            {
+                CloneElements(apiObjectMember.dummy, null, null, value);
+            }
+        }
+        public List<double> OrientationAngles
+        {
+            get
+            {
+                List<double> angles = new List<double>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (m_elements[i] != null)
+                        angles.Add(m_elements[i].OrientationAngle);
+                }
+                return angles;
+            }
+            set
+            {
+                CloneElements(apiObjectMember.dummy, null, null, null, value);
+            }
+        }
+        public List<GsaOffset> Offsets
+        {
+            get
+            {
+                List<GsaOffset> offs = new List<GsaOffset>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (m_elements[i] != null)
+                    {
+                        GsaOffset off = new GsaOffset(
+                            m_elements[i].Offset.X1,
+                            m_elements[i].Offset.X2,
+                            m_elements[i].Offset.Y,
+                            m_elements[i].Offset.Z);
+                        offs.Add(off);
+                    }
+                }
+                return offs;
+            }
+            set
+            {
+                CloneElements(apiObjectMember.dummy, null, null, null, null, value);
+            }
+        }
+        public List<int> PropertyIDs
+        {
+            get
+            {
+                List<int> propids = new List<int>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (m_elements[i] != null)
+                        propids.Add(m_elements[i].Property);
+                }
+                return propids;
+            }
+            set
+            {
+                CloneElements(apiObjectMember.dummy, null, null, null, null, null, value);
+            }
+        }
+        public List<ElementType> Types
+        {
+            get
+            {
+                List<ElementType> typs = new List<ElementType>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (m_elements[i] != null)
+                        typs.Add(m_elements[i].Type);
+                }
+                return typs;
+            }
+            set
+            {
+                CloneElements(apiObjectMember.dummy, null, null, null, null, null, null, value);
+            }
+        }
+        public List<int> ParentMembers
+        {
+            get
+            {
+                List<int> pMems = new List<int>();
+                for (int i = 0; i < m_elements.Count; i++)
+                    try { pMems.Add(m_elements[i].ParentMember.Member); } catch (Exception) { pMems.Add(0); }
+                return pMems;
+            }
+        }
+        private void CloneElements(apiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null,
+            List<double> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<System.Drawing.Color> col = null)
+        {
+            List<Element> elems = new List<Element>();
+            for (int i = 0; i < m_elements.Count; i++)
+            {
+                elems.Add(new Element()
+                {
+                    Group = m_elements[i].Group,
+                    IsDummy = m_elements[i].IsDummy,
+                    Name = m_elements[i].Name.ToString(),
+                    OrientationNode = m_elements[i].OrientationNode,
+                    OrientationAngle = m_elements[i].OrientationAngle,
+                    Offset = m_elements[i].Offset,
+                    ParentMember = m_elements[i].ParentMember,
+                    Property = m_elements[i].Property,
+                    Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
+                    Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
+                });
+
+                //if ((System.Drawing.Color)m_elements[i].Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                //    elems[i].Colour = m_elements[i].Colour;
+
+                switch (memType)
+                {
+                    case apiObjectMember.group:
+                        if (grp.Count > i)
+                            elems[i].Group = grp[i];
+                        else
+                            elems[i].Group = grp.Last();
+                        break;
+                    case apiObjectMember.dummy:
+                        if (dum.Count > i)
+                            elems[i].IsDummy = dum[i];
+                        else
+                            elems[i].IsDummy = dum.Last();
+                        break;
+                    case apiObjectMember.name:
+                        if (nm.Count > i)
+                            elems[i].Name = nm[i];
+                        else
+                            elems[i].Name = nm.Last();
+                        break;
+                    case apiObjectMember.orientationAngle:
+                        if (oriA.Count > i)
+                            elems[i].OrientationAngle = oriA[i];
+                        else
+                            elems[i].OrientationAngle = oriA.Last();
+                        break;
+                    case apiObjectMember.offset:
+                        if (off.Count > i)
+                        {
+                            elems[i].Offset.X1 = off[i].X1;
+                            elems[i].Offset.X2 = off[i].X2;
+                            elems[i].Offset.Y = off[i].Y;
+                            elems[i].Offset.Z = off[i].Z;
+                        }
+                        else
+                        {
+                            elems[i].Offset.X1 = off.Last().X1;
+                            elems[i].Offset.X2 = off.Last().X2;
+                            elems[i].Offset.Y = off.Last().Y;
+                            elems[i].Offset.Z = off.Last().Z;
+                        }
+                        break;
+                    case apiObjectMember.property:
+                        if (prop.Count > i)
+                            elems[i].Property = prop[i];
+                        else
+                            elems[i].Property = prop.Last();
+                        break;
+                    case apiObjectMember.type:
+                        if (typ.Count > i)
+                            elems[i].Type = typ[i];
+                        else
+                            elems[i].Type = typ.Last();
+                        break;
+                    case apiObjectMember.colour:
+                        if (col.Count > i)
+                            elems[i].Colour = col[i];
+                        else
+                            elems[i].Colour = col.Last();
+
+                        m_mesh.VertexColors.SetColor(i, (System.Drawing.Color)elems[i].Colour);
+                        break;
+                }
+            }
+            m_elements = elems;
+        }
+        private enum apiObjectMember
+        {
+            group,
+            dummy,
+            name,
+            orientationAngle,
+            offset,
+            property,
+            type,
+            colour
+        }
+        #endregion
+
         #region fields
         private List<Element> m_elements; 
         private Mesh m_mesh;
@@ -123,7 +363,6 @@ namespace GhSA.Parameters
             m_mesh = new Mesh();
             //m_props = new List<GsaProp2d>();
         }
-
         public GsaElement3d(Mesh mesh, int prop = 0)
         {
             m_elements = new List<Element>();
@@ -144,61 +383,75 @@ namespace GhSA.Parameters
             //    m_props.Add(property);
             //}
         }
-
         public GsaElement3d Duplicate()
         {
             if (this == null) { return null; }
             if (m_mesh == null) { return null; }
 
             GsaElement3d dup = new GsaElement3d();
-            dup.m_mesh = (Mesh)m_mesh.Duplicate();
-            dup.m_topo = m_topo.ToList();
-            dup.m_topoInt = m_topoInt.ToList();
-
-            //dup.m_props = new List<GsaProp2d>();
-
-            for (int i = 0; i < m_elements.Count; i++)
-            {
-                dup.m_elements.Add(new Element()
-                {
-                    Group = m_elements[i].Group,
-                    IsDummy = m_elements[i].IsDummy,
-                    Name = m_elements[i].Name.ToString(),
-                    OrientationNode = m_elements[i].OrientationNode,
-                    OrientationAngle = m_elements[i].OrientationAngle,
-                    Offset = m_elements[i].Offset,
-                    ParentMember = m_elements[i].ParentMember,
-                    Property = m_elements[i].Property,
-                    Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
-                    Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
-                });
-
-                if ((System.Drawing.Color)m_elements[i].Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                    dup.m_elements[i].Colour = m_elements[i].Colour;
-
-                dup.m_elements[i].Offset.X1 = m_elements[i].Offset.X1;
-                dup.m_elements[i].Offset.X2 = m_elements[i].Offset.X2;
-                dup.m_elements[i].Offset.Y = m_elements[i].Offset.Y;
-                dup.m_elements[i].Offset.Z = m_elements[i].Offset.Z;
-
-                //if (m_props[i] != null)
-                //    dup.m_props.Add(m_props[i].Duplicate());
-                //else
-                //    dup.m_props.Add(null); //dup.m_props.Add(new GsaProp2d());
-            }
-
-            dup.Colours = new List<System.Drawing.Color>(Colours);
-
-            if (m_id != null)
-            {
-                int[] dupids = new int[m_id.Count];
-                m_id.CopyTo(dupids);
-                dup.ID = new List<int>(dupids);
-            }
-            
+            dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
+            dup.m_topo = m_topo;
+            dup.m_topoInt = m_topoInt;
+            dup.m_faceInt = m_faceInt;
+            dup.m_elements = m_elements;
+            dup.m_id = m_id;
 
             return dup;
         }
+        //public GsaElement3d Duplicate_OBSOLETE()
+        //{
+        //    if (this == null) { return null; }
+        //    if (m_mesh == null) { return null; }
+
+        //    GsaElement3d dup = new GsaElement3d();
+        //    dup.m_mesh = (Mesh)m_mesh.Duplicate();
+        //    dup.m_topo = m_topo.ToList();
+        //    dup.m_topoInt = m_topoInt.ToList();
+
+        //    //dup.m_props = new List<GsaProp2d>();
+
+        //    for (int i = 0; i < m_elements.Count; i++)
+        //    {
+        //        dup.m_elements.Add(new Element()
+        //        {
+        //            Group = m_elements[i].Group,
+        //            IsDummy = m_elements[i].IsDummy,
+        //            Name = m_elements[i].Name.ToString(),
+        //            OrientationNode = m_elements[i].OrientationNode,
+        //            OrientationAngle = m_elements[i].OrientationAngle,
+        //            Offset = m_elements[i].Offset,
+        //            ParentMember = m_elements[i].ParentMember,
+        //            Property = m_elements[i].Property,
+        //            Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
+        //            Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
+        //        });
+
+        //        if ((System.Drawing.Color)m_elements[i].Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        //            dup.m_elements[i].Colour = m_elements[i].Colour;
+
+        //        dup.m_elements[i].Offset.X1 = m_elements[i].Offset.X1;
+        //        dup.m_elements[i].Offset.X2 = m_elements[i].Offset.X2;
+        //        dup.m_elements[i].Offset.Y = m_elements[i].Offset.Y;
+        //        dup.m_elements[i].Offset.Z = m_elements[i].Offset.Z;
+
+        //        //if (m_props[i] != null)
+        //        //    dup.m_props.Add(m_props[i].Duplicate());
+        //        //else
+        //        //    dup.m_props.Add(null); //dup.m_props.Add(new GsaProp2d());
+        //    }
+
+        //    dup.Colours = new List<System.Drawing.Color>(Colours);
+
+        //    if (m_id != null)
+        //    {
+        //        int[] dupids = new int[m_id.Count];
+        //        m_id.CopyTo(dupids);
+        //        dup.ID = new List<int>(dupids);
+        //    }
+            
+
+        //    return dup;
+        //}
         #endregion
 
         #region properties
@@ -425,7 +678,7 @@ namespace GhSA.Parameters
             Mesh xMs = elem.NgonMesh;
             xMs.Transform(xform);
             elem.NgonMesh = xMs;
-            Point3dList pts = new Point3dList(Value.Topology);
+            Point3dList pts = new Point3dList(Value.Topology.ToList());
             pts.Transform(xform);
             elem.Topology = pts.ToList();
 
@@ -441,8 +694,10 @@ namespace GhSA.Parameters
             Mesh xMs = elem.NgonMesh;
             xmorph.Morph(xMs);
             elem.NgonMesh = xMs;
-            elem.TopoInt = Value.TopoInt;
-            elem.Topology = Value.Topology;
+            List<Point3d> pts = Value.Topology.ToList();
+            for (int i = 0; i < pts.Count; i++)
+                pts[i] = xmorph.MorphPoint(pts[i]);
+            elem.Topology = pts;
 
             return new GsaElement3dGoo(elem);
         }

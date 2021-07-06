@@ -160,7 +160,6 @@ namespace GhSA.Components
                             return;
                         }
                     }
-                    
                 }
 
                 // 4 Group

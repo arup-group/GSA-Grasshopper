@@ -74,7 +74,7 @@ namespace GhSA.Components
             GsaSection gsaSection = new GsaSection();
             if (DA.GetData(0, ref sect))
             {
-                gsaSection = sect.Clone();
+                gsaSection = sect.Duplicate();
             }
 
             if (gsaSection != null)
@@ -92,7 +92,7 @@ namespace GhSA.Components
                 // 2 profile
                 string profile = "";
                 if (DA.GetData(2, ref profile))
-                    gsaSection.Section.Profile = profile;
+                    gsaSection.Profile = profile;
 
                 // 3 Material
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -107,7 +107,7 @@ namespace GhSA.Components
                     else
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                            gsaSection.Section.MaterialAnalysisProperty = idd;
+                            gsaSection.MaterialID = idd;
                         else
                         {
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
@@ -120,7 +120,7 @@ namespace GhSA.Components
                 int pool = 0; //prop.Prop2d.Thickness;
                 if (DA.GetData(4, ref pool))
                 {
-                    gsaSection.Section.Pool = pool;
+                    gsaSection.Pool = pool;
                 }
 
                 // 5 name
@@ -128,7 +128,7 @@ namespace GhSA.Components
                 if (DA.GetData(5, ref ghnm))
                 {
                     if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
-                        gsaSection.Section.Name = name;
+                        gsaSection.Name = name;
                 }
 
                 // 6 Colour
@@ -136,13 +136,13 @@ namespace GhSA.Components
                 if (DA.GetData(6, ref ghcol))
                 {
                     if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
-                        gsaSection.Section.Colour = col;
+                        gsaSection.Colour = col;
                 }
 
                 // #### outputs ####
-                string prof = (gsaSection.Section == null) ? "--" : gsaSection.Section.Profile.Replace("%", " ");
-                int poo = (gsaSection.Section == null) ? 0 : gsaSection.Section.Pool;
-                string nm = (gsaSection.Section == null) ? "--" : gsaSection.Section.Name;
+                string prof = (gsaSection.Section == null) ? "--" : gsaSection.Profile;
+                int poo = (gsaSection.Section == null) ? 0 : gsaSection.Pool;
+                string nm = (gsaSection.Section == null) ? "--" : gsaSection.Name;
                 ValueType colour = (gsaSection.Section == null) ? null : gsaSection.Section.Colour;
 
                 DA.SetData(0, new GsaSectionGoo(gsaSection));

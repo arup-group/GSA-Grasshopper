@@ -155,14 +155,14 @@ namespace GhSA.Components
                     {
                         gh_typ.CastTo(ref section);
                         mem.Section = section;
-                        mem.Member.Property = 0;
+                        //mem.Member.Property = 0;
                     }
                     else
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
                         {
-                            mem.Member.Property = idd;
-                            mem.Section = null;
+                            mem.PropertyID = idd;
+                            //mem.Section = null;
                         }
                         else
                         {
@@ -177,7 +177,7 @@ namespace GhSA.Components
                 if (DA.GetData(4, ref ghgrp))
                 {
                     if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
-                        mem.Member.Group = grp;
+                        mem.Group = grp;
                 }
 
                 // 5 type
@@ -185,7 +185,7 @@ namespace GhSA.Components
                 if (DA.GetData(5, ref ghint))
                 {
                     if (GH_Convert.ToInt32(ghint, out int type, GH_Conversion.Both))
-                        mem.Member.Type = (MemberType)type;
+                        mem.Type = (MemberType)type;
                 }
                 
                 // 6 element type
@@ -193,17 +193,18 @@ namespace GhSA.Components
                 if (DA.GetData(6, ref ghinteg))
                 {
                     if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both))
-                        mem.Member.Type1D = (ElementType)type; 
+                        mem.Type1D = (ElementType)type; 
                 }
 
                 // 7 offset
                 GsaOffset offset = new GsaOffset();
                 if (DA.GetData(7, ref offset))
                 {
-                    mem.Member.Offset.X1 = offset.X1;
-                    mem.Member.Offset.X2 = offset.X2;
-                    mem.Member.Offset.Y = offset.Y;
-                    mem.Member.Offset.Z = offset.Z;
+                    mem.Offset = offset;
+                    //mem.Member.Offset.X1 = offset.X1;
+                    //mem.Member.Offset.X2 = offset.X2;
+                    //mem.Member.Offset.Y = offset.Y;
+                    //mem.Member.Offset.Z = offset.Z;
                 }
 
                 // 8 start release
@@ -225,7 +226,7 @@ namespace GhSA.Components
                 if (DA.GetData(10, ref ghangle))
                 {
                     if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
-                        mem.Member.OrientationAngle = angle;
+                        mem.OrientationAngle = angle;
                 }
 
                 // 11 orientation node
@@ -233,7 +234,7 @@ namespace GhSA.Components
                 if (DA.GetData(11, ref ghori))
                 {
                     if (GH_Convert.ToInt32(ghori, out int orient, GH_Conversion.Both))
-                        mem.Member.OrientationNode = orient;
+                        mem.OrientationNode = orient;
                 }
 
                 // 12 mesh size
@@ -241,7 +242,7 @@ namespace GhSA.Components
                 if (DA.GetData(12, ref ghmsz))
                 {
                     if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
-                        mem.Member.MeshSize = msz;
+                        mem.MeshSize = msz;
                 }
 
                 // 13 mesh with others
@@ -250,7 +251,7 @@ namespace GhSA.Components
                 {
                     if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
                     {
-                        //mem.member.MeshWithOthers
+                        //mem.MeshWithOthers
                     }
                 }
 
@@ -259,7 +260,7 @@ namespace GhSA.Components
                 if (DA.GetData(14, ref ghnm))
                 {
                     if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
-                        mem.Member.Name = name;
+                        mem.Name = name;
                 }
 
                 // 15 Colour
@@ -267,7 +268,7 @@ namespace GhSA.Components
                 if (DA.GetData(15, ref ghcol))
                 {
                     if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
-                        mem.Member.Colour = col;
+                        mem.Colour = col;
                 }
 
                 // 16 Dummy
@@ -275,7 +276,7 @@ namespace GhSA.Components
                 if (DA.GetData(16, ref ghdum))
                 {
                     if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
-                        mem.Member.IsDummy = dum;
+                        mem.IsDummy = dum;
                 }
 
                 // #### outputs ####
@@ -283,9 +284,9 @@ namespace GhSA.Components
                 DA.SetData(1, mem.ID);
                 DA.SetData(2, mem.PolyCurve);
                 DA.SetData(3, new GsaSectionGoo(mem.Section));
-                DA.SetData(4, mem.Member.Group);
-                DA.SetData(5, mem.Member.Type);
-                DA.SetData(6, mem.Member.Type1D);
+                DA.SetData(4, mem.Group);
+                DA.SetData(5, mem.Type);
+                DA.SetData(6, mem.Type1D);
 
                 GsaOffset gsaOffset = new GsaOffset
                 {
@@ -299,16 +300,16 @@ namespace GhSA.Components
                 DA.SetData(8, mem.ReleaseStart);
                 DA.SetData(9, mem.ReleaseEnd);
 
-                DA.SetData(10, mem.Member.OrientationAngle);
-                DA.SetData(11, mem.Member.OrientationNode);
+                DA.SetData(10, mem.OrientationAngle);
+                DA.SetData(11, mem.OrientationNode);
 
-                DA.SetData(12, mem.Member.MeshSize);
+                DA.SetData(12, mem.MeshSize);
                 //DA.SetData(13, mem.member.MeshSize); //mesh with others bool
                 
-                DA.SetData(14, mem.Member.Name);
+                DA.SetData(14, mem.Name);
                 
-                DA.SetData(15, mem.Member.Colour);
-                DA.SetData(16, mem.Member.IsDummy);
+                DA.SetData(15, mem.Colour);
+                DA.SetData(16, mem.IsDummy);
             }
         }
     }
