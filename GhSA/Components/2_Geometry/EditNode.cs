@@ -72,7 +72,7 @@ namespace GhSA.Components
         {
             pManager.AddGenericParameter("Node", "No", "Modified GSA Node", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Node number", "ID", "Original Node number (ID) if Node ever belonged to a GSA Model", GH_ParamAccess.item);
-            pManager.AddPointParameter("Node Position", "Pt", "Position (x, y, z) of Node", GH_ParamAccess.item);
+            pManager.AddPointParameter("Node Position", "Pt", "Position (x, y, z) of Node. Setting a new position will clear any existing ID", GH_ParamAccess.item);
             pManager.HideParameter(2);
             pManager.AddPlaneParameter("Node local axis", "Pl", "Local axis (Plane) of Node", GH_ParamAccess.item);
             pManager.HideParameter(3);
@@ -110,18 +110,8 @@ namespace GhSA.Components
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert input to Node");
                     return;
                 }
-                
 
                 // #### inputs ####
-
-                // 1 ID
-                GH_Integer ghInt = new GH_Integer();
-                if (DA.GetData(1, ref ghInt))
-                {
-                    if (GH_Convert.ToInt32(ghInt, out int id, GH_Conversion.Both))
-                        node.ID = id;
-                }
-
                 // 2 Point
                 GH_Point ghPt = new GH_Point();
                 if (DA.GetData(2, ref ghPt))
@@ -134,6 +124,14 @@ namespace GhSA.Components
                         //node.Node.Position.Y = pt.Y;
                         //node.Node.Position.Z = pt.Z;
                     }
+                }
+
+                // 1 ID (do ID after point, as setting point will clear the Node.ID value
+                GH_Integer ghInt = new GH_Integer();
+                if (DA.GetData(1, ref ghInt))
+                {
+                    if (GH_Convert.ToInt32(ghInt, out int id, GH_Conversion.Both))
+                        node.ID = id;
                 }
 
                 // 3 plane

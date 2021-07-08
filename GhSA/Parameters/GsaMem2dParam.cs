@@ -372,8 +372,8 @@ namespace GhSA.Parameters
         {
             if (this == null) { return null; }
             GsaMember2d dup = new GsaMember2d();
-            dup.m_brep = m_brep.DuplicateBrep();
-            dup.m_crv = m_crv.DuplicatePolyCurve();
+            dup.m_brep = (Brep)m_brep.DuplicateShallow();
+            dup.m_crv = (PolyCurve)m_crv.DuplicateShallow();
             dup.m_id = m_id;
             dup.m_member = m_member;
             dup.m_prop = m_prop;

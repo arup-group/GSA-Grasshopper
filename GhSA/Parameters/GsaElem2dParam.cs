@@ -388,62 +388,62 @@ namespace GhSA.Parameters
             dup.m_topoInt = m_topoInt;
             return dup;
         }
-        public GsaElement2d Clone()
-        {
-            if (this == null) { return null; }
-            if (m_mesh == null) { return null; }
+        //public GsaElement2d Clone()
+        //{
+        //    if (this == null) { return null; }
+        //    if (m_mesh == null) { return null; }
 
-            GsaElement2d dup = new GsaElement2d();
-            dup.m_mesh = (Mesh)m_mesh.Duplicate();
-            dup.m_topo = m_topo.ToList();
-            dup.m_topoInt = m_topoInt.ToList();
+        //    GsaElement2d dup = new GsaElement2d();
+        //    dup.m_mesh = (Mesh)m_mesh.Duplicate();
+        //    dup.m_topo = m_topo.ToList();
+        //    dup.m_topoInt = m_topoInt.ToList();
 
-            dup.m_props = new List<GsaProp2d>();
-            dup.m_props = m_props;
+        //    dup.m_props = new List<GsaProp2d>();
+        //    dup.m_props = m_props;
 
-            for (int i = 0; i < m_elements.Count; i++)
-            {
-                dup.m_elements.Add(new Element()
-                {
-                    Group = m_elements[i].Group,
-                    IsDummy = m_elements[i].IsDummy,
-                    Name = m_elements[i].Name.ToString(),
-                    OrientationNode = m_elements[i].OrientationNode,
-                    OrientationAngle = m_elements[i].OrientationAngle,
-                    Offset = m_elements[i].Offset,
-                    ParentMember = m_elements[i].ParentMember,
-                    Property = m_elements[i].Property,
-                    Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
-                    Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
-                });
+        //    for (int i = 0; i < m_elements.Count; i++)
+        //    {
+        //        dup.m_elements.Add(new Element()
+        //        {
+        //            Group = m_elements[i].Group,
+        //            IsDummy = m_elements[i].IsDummy,
+        //            Name = m_elements[i].Name.ToString(),
+        //            OrientationNode = m_elements[i].OrientationNode,
+        //            OrientationAngle = m_elements[i].OrientationAngle,
+        //            Offset = m_elements[i].Offset,
+        //            ParentMember = m_elements[i].ParentMember,
+        //            Property = m_elements[i].Property,
+        //            Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
+        //            Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
+        //        });
 
-                if ((System.Drawing.Color)m_elements[i].Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                    dup.m_elements[i].Colour = m_elements[i].Colour;
+        //        if ((System.Drawing.Color)m_elements[i].Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        //            dup.m_elements[i].Colour = m_elements[i].Colour;
 
-                dup.m_elements[i].Offset.X1 = m_elements[i].Offset.X1;
-                dup.m_elements[i].Offset.X2 = m_elements[i].Offset.X2;
-                dup.m_elements[i].Offset.Y = m_elements[i].Offset.Y;
-                dup.m_elements[i].Offset.Z = m_elements[i].Offset.Z;
+        //        dup.m_elements[i].Offset.X1 = m_elements[i].Offset.X1;
+        //        dup.m_elements[i].Offset.X2 = m_elements[i].Offset.X2;
+        //        dup.m_elements[i].Offset.Y = m_elements[i].Offset.Y;
+        //        dup.m_elements[i].Offset.Z = m_elements[i].Offset.Z;
 
-                //if (m_props[i] != null)
-                //    dup.m_props.Add(m_props[i].Duplicate());
-                //else
-                //    dup.m_props.Add(null); //dup.m_props.Add(new GsaProp2d());
+        //        //if (m_props[i] != null)
+        //        //    dup.m_props.Add(m_props[i].Duplicate());
+        //        //else
+        //        //    dup.m_props.Add(null); //dup.m_props.Add(new GsaProp2d());
                 
-            }
+        //    }
 
-            dup.Colours = new List<System.Drawing.Color>(Colours);
+        //    dup.Colours = new List<System.Drawing.Color>(Colours);
 
-            if (m_id != null)
-            {
-                int[] dupids = new int[m_id.Count];
-                m_id.CopyTo(dupids);
-                dup.ID = new List<int>(dupids);
-            }
+        //    if (m_id != null)
+        //    {
+        //        int[] dupids = new int[m_id.Count];
+        //        m_id.CopyTo(dupids);
+        //        dup.ID = new List<int>(dupids);
+        //    }
             
 
-            return dup;
-        }
+        //    return dup;
+        //}
         #endregion
 
         #region properties

@@ -42,6 +42,7 @@ namespace GhSA.Parameters
             set 
             {
                 CloneNode();
+                m_id = 0;
                 m_node.Position.X = value.X; 
                 m_node.Position.Y = value.Y; 
                 m_node.Position.Z = value.Z; 
@@ -147,6 +148,7 @@ namespace GhSA.Parameters
         {
             if (this.Node == null) { return null; }
             GsaNode dup = new GsaNode();
+            dup.m_id = m_id;
             dup.m_node = m_node;
             dup.m_plane = m_plane;
             dup.m_spring = m_spring;
@@ -562,6 +564,7 @@ namespace GhSA.Parameters
                     node.Node.Restraint.XX == true & node.Node.Restraint.YY == true & node.Node.Restraint.ZZ == true)
             {
                 Plane plane = node.LocalAxis.Clone();
+                if (!plane.IsValid) { plane = Plane.WorldXY; }
                 plane.Origin = node.Point;
                 Box fix = new Box(plane, new Interval(-0.3, 0.3), new Interval(-0.3, 0.3), new Interval(-0.2, 0));
                 DisplayMaterial material = new DisplayMaterial()
@@ -576,6 +579,7 @@ namespace GhSA.Parameters
             else
             {
                 Plane plane = node.LocalAxis.Clone();
+                if (!plane.IsValid) { plane = Plane.WorldXY; }
                 plane.Origin = node.Point;
                 string rest = "";
                 if (node.Node.Restraint.X == true)

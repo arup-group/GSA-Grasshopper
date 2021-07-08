@@ -255,7 +255,7 @@ namespace GhSA.Parameters
             GsaElement1d dup = new GsaElement1d();
             dup.m_id = m_id;
             dup.m_element = m_element;
-            dup.m_line = (LineCurve)m_line.Duplicate();
+            dup.m_line = (LineCurve)m_line.DuplicateShallow();
             dup.m_rel1 = m_rel1;
             dup.m_rel2 = m_rel2;
             dup.m_section = m_section;

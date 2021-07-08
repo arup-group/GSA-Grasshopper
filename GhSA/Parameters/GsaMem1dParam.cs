@@ -271,7 +271,7 @@ namespace GhSA.Parameters
             GsaMember1d dup = new GsaMember1d();
             dup.m_id = m_id;
             dup.m_member = m_member;
-            dup.m_crv = m_crv.DuplicatePolyCurve();
+            dup.m_crv = (PolyCurve)m_crv.DuplicateShallow();
             dup.m_rel1 = m_rel1;
             dup.m_rel2 = m_rel2;
             dup.m_section = m_section;
