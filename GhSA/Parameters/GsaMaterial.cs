@@ -122,19 +122,12 @@ namespace GhSA.Parameters
         }
         public GsaMaterial(GsaProp2d prop)
         {
-            if (prop.Material == null) { return;  }
+            if (prop == null) { return;  }
+            if (prop.API_Prop2d == null) { return; }
 
             MaterialType = getType(prop.API_Prop2d.MaterialType);
             AnalysisProperty = prop.API_Prop2d.MaterialAnalysisProperty;
             GradeProperty = prop.API_Prop2d.MaterialGradeProperty;
-        }
-        public GsaMaterial(Prop2D prop)
-        {
-            if (prop == null) { return; }
-
-            MaterialType = getType(prop.MaterialType);
-            AnalysisProperty = prop.MaterialAnalysisProperty;
-            GradeProperty = prop.MaterialGradeProperty;
         }
 
         public GsaMaterial Duplicate()

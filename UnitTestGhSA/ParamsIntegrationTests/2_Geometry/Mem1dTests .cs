@@ -48,7 +48,7 @@ namespace ParamsIntegrationTests
             for (int i = 0; i < mem.PolyCurve.SegmentCount; i++)
                 Assert.IsTrue(mem.PolyCurve.SegmentCurve(i).IsLinear() || mem.PolyCurve.SegmentCurve(i).IsArc());
             
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 0, 0), mem.API_Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 0, 0), mem.Colour);
             Assert.AreEqual(3, mem.ID);
             Assert.AreEqual("gemma", mem.Name);
             Assert.IsTrue(mem.IsDummy);
@@ -88,7 +88,7 @@ namespace ParamsIntegrationTests
             GsaMember1d dup = orig.Duplicate();
 
             // check that member is duplicated
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 128, 0), dup.API_Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 128, 0), dup.Colour);
             Assert.AreEqual(2, dup.ID);
             Assert.AreEqual("Sally", dup.Name);
             Assert.IsFalse(dup.IsDummy);
@@ -110,7 +110,7 @@ namespace ParamsIntegrationTests
             orig.Type = MemberType.BEAM;
 
             // check that duplicate keeps its values
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 128, 0), dup.API_Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 128, 0), dup.Colour);
             Assert.AreEqual(2, dup.ID);
             Assert.AreEqual("Sally", dup.Name);
             Assert.IsFalse(dup.IsDummy);
@@ -121,7 +121,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(MemberType.COLUMN, dup.Type);
 
             // check that original is changed
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 255, 255), orig.API_Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 255, 255), orig.Colour);
             Assert.AreEqual(1, orig.ID);
             Assert.AreEqual("Peter Peterson", orig.Name);
             Assert.IsTrue(orig.IsDummy);

@@ -18,9 +18,15 @@ namespace GhSA.Parameters
     /// </summary>
     public class GsaProp2d
     {
-        public Prop2D API_Prop2d
+        internal Prop2D API_Prop2d
         {
             get { return m_prop2d; }
+            set
+            {
+                m_guid = Guid.NewGuid();
+                m_prop2d = value;
+                m_material = new GsaMaterial(this);
+            }
         }
         public int ID
         {
@@ -158,7 +164,7 @@ namespace GhSA.Parameters
         }
         public GsaProp2d(int id)
         {
-            m_prop2d = null;
+            m_prop2d = null; 
             m_guid = Guid.Empty;
             m_idd = id;
         }
@@ -167,13 +173,6 @@ namespace GhSA.Parameters
             m_prop2d = new Prop2D();
             m_material = new GsaMaterial();
             Thickness = thickness;
-            m_idd = ID;
-            m_guid = Guid.NewGuid();
-        }
-        public GsaProp2d(Prop2D prop2d, int ID = 0)
-        {
-            m_prop2d = prop2d;
-            m_material = new GsaMaterial(m_prop2d);
             m_idd = ID;
             m_guid = Guid.NewGuid();
         }
@@ -340,7 +339,8 @@ namespace GhSA.Parameters
             //Cast from GsaAPI Prop2d
             if (typeof(Prop2D).IsAssignableFrom(source.GetType()))
             {
-                Value = new GsaProp2d((Prop2D)source);
+                Value = new GsaProp2d();
+                Value.API_Prop2d = (Prop2D)source;
                 return true;
             }
 

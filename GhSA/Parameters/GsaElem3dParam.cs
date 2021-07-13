@@ -17,11 +17,15 @@ namespace GhSA.Parameters
     /// Element3d class, this class defines the basic properties and methods for any Gsa Element 3d
     /// </summary>
     public class GsaElement3d
-
     {
-        public List<Element> API_Elements
+        internal List<Element> API_Elements
         {
             get { return m_elements; }
+            set { m_elements = value; }
+        }
+        public int Count
+        {
+            get { return m_elements.Count; }
         }
         public Mesh NgonMesh
         {
@@ -29,25 +33,7 @@ namespace GhSA.Parameters
         }
         public Mesh DisplayMesh
         {
-            get
-            {
-                Mesh m = new Mesh();
-                Mesh x = NgonMesh;
-
-                m.Vertices.AddVertices(x.Vertices.ToList());
-                List<MeshNgon> ngons = x.GetNgonAndFacesEnumerable().ToList();
-
-                for (int i = 0; i < ngons.Count; i++)
-                {
-                    List<int> faceindex = ngons[i].FaceIndexList().Select(u => (int)u).ToList();
-                    for (int j = 0; j < faceindex.Count; j++)
-                    {
-                        m.Faces.AddFace(x.Faces[faceindex[j]]);
-                    }
-                }
-                m.RebuildNormals();
-                return m;
-            }
+            get { return m_displayMesh; }
         }
 
         public List<Point3d> Topology
@@ -332,7 +318,27 @@ namespace GhSA.Parameters
             colour
         }
         #endregion
+        #region preview
+        private Mesh m_displayMesh;
+        internal void UpdatePreview()
+        {
+            Mesh m_displayMesh = new Mesh();
+            Mesh x = NgonMesh;
 
+            m_displayMesh.Vertices.AddVertices(x.Vertices.ToList());
+            List<MeshNgon> ngons = x.GetNgonAndFacesEnumerable().ToList();
+
+            for (int i = 0; i < ngons.Count; i++)
+            {
+                List<int> faceindex = ngons[i].FaceIndexList().Select(u => (int)u).ToList();
+                for (int j = 0; j < faceindex.Count; j++)
+                {
+                    m_displayMesh.Faces.AddFace(x.Faces[faceindex[j]]);
+                }
+            }
+            m_displayMesh.RebuildNormals();
+        }
+        #endregion
         #region fields
         private List<Element> m_elements; 
         private Mesh m_mesh;
@@ -369,21 +375,7 @@ namespace GhSA.Parameters
             //    property.Prop2d = null;
             //    m_props.Add(property);
             //}
-        }
-
-        public GsaElement3d(List<Element> apiElements, List<int> ids, Mesh mesh)
-        {
-            m_elements = apiElements;
-            m_mesh = mesh;
-            Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(mesh, 0);
-            m_elements = convertMesh.Item1;
-            m_topo = convertMesh.Item2;
-            m_topoInt = convertMesh.Item3;
-            m_faceInt = convertMesh.Item4;
-
-            m_id = ids;
-
-            //m_props = new List<GsaProp2d>();
+            UpdatePreview();
         }
         public GsaElement3d Duplicate()
         {
@@ -397,7 +389,7 @@ namespace GhSA.Parameters
             dup.m_faceInt = m_faceInt;
             dup.m_elements = m_elements;
             dup.m_id = m_id.ToList();
-
+            dup.UpdatePreview();
             return dup;
         }
         /// <summary>

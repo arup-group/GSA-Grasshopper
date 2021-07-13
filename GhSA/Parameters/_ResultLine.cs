@@ -39,6 +39,21 @@ namespace GhSA.Parameters
             m_size2 = size2;
             m_colour1 = colour1;
             m_colour2 = colour2;
+
+            int numDiv = 40;
+
+            Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = new Grasshopper.GUI.Gradient.GH_Gradient();
+            gH_Gradient.AddGrip(0, m_colour1);
+            gH_Gradient.AddGrip(1, m_colour2);
+
+            for (int i = 0; i < numDiv + 1; i++)
+            {
+                double t = (double)i / numDiv;
+                previewResultColours.Add(gH_Gradient.ColourAt(t));
+                previewResultThk.Add((int)Math.Abs(((m_size2 - m_size1) * t + m_size1)));
+                previewResultSegments.Add(new Line(Value.PointAt((double)i / (numDiv - 1)), Value.PointAt((double)(i + 1) / (numDiv - 1))));
+                
+            }
         }
 
         private double m_result1;
@@ -47,6 +62,9 @@ namespace GhSA.Parameters
         private float m_size2;
         private Color m_colour1;
         private Color m_colour2;
+        internal List<Line> previewResultSegments;
+        internal List<Color> previewResultColours;
+        internal List<int> previewResultThk;
 
         public override string ToString()
         {
@@ -144,21 +162,11 @@ namespace GhSA.Parameters
         }
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
-            int numDiv = 40;
-
-            Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = new Grasshopper.GUI.Gradient.GH_Gradient();
-            gH_Gradient.AddGrip(0, m_colour1);
-            gH_Gradient.AddGrip(1, m_colour2);
-
-            for (int i = 0; i < numDiv + 1; i++)
-            {
-                double t = (double)i / numDiv;
-                Color col = gH_Gradient.ColourAt(t);
-                int thk = (int)Math.Abs(((m_size2 - m_size1) * t + m_size1));
-                Line ln = new Line(Value.PointAt((double)i / (numDiv - 1)), Value.PointAt((double)(i + 1) / (numDiv - 1)));
-                args.Pipeline.DrawLine(ln, col, thk);
-            }
-            
+            for (int i = 0; i < previewResultSegments.Count; i++)
+                args.Pipeline.DrawLine(
+                    previewResultSegments[i], 
+                    previewResultColours[i], 
+                    previewResultThk[i]);
         }
         public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
     }

@@ -17,11 +17,11 @@ namespace GhSA.Parameters
     /// Member3d class, this class defines the basic properties and methods for any Gsa Member 3d
     /// </summary>
     public class GsaMember3d
-
     {
-        public Member API_Member
+        internal Member API_Member
         {
             get { return m_member; }
+            set { m_member = value; }
         }
         public Mesh SolidMesh
         {
@@ -143,7 +143,6 @@ namespace GhSA.Parameters
             m_member.Type = MemberType.GENERIC_3D;
             m_mesh = new Mesh();
         }
-
         public GsaMember3d(Mesh mesh)
         {
             m_member = new Member
@@ -152,12 +151,6 @@ namespace GhSA.Parameters
             };
 
             m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
-        }
-        public GsaMember3d(Member apiMember, int id, Mesh mesh)
-        {
-            m_member = apiMember;
-            m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
-            m_id = id;
         }
         public GsaMember3d(Brep brep)
         {

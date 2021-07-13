@@ -54,7 +54,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(mem.Brep.Vertices[0].Location.X, mem.Topology[4].X);
             Assert.AreEqual(mem.Brep.Vertices[0].Location.Y, mem.Topology[4].Y);
 
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 255, 255), mem.API_Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 255, 255), mem.Colour);
             Assert.AreEqual(4, mem.ID);
             Assert.AreEqual(0.56, mem.MeshSize);
             Assert.AreEqual("meminem", mem.Name);
@@ -120,7 +120,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(1, dup.InclusionPoints[0].X);
             Assert.AreEqual(1, dup.InclusionPoints[0].Y);
 
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 0, 255), dup.API_Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 0, 255), dup.Colour);
             Assert.AreEqual(13, dup.ID);
             Assert.AreEqual(1.56, dup.MeshSize);
             Assert.AreEqual("ehbaba", dup.Name);
@@ -168,7 +168,7 @@ namespace ParamsIntegrationTests
             Assert.AreNotEqual(original.Brep.Vertices[0].Location.Y, dup.Topology[4].Y);
 
             // check that duplicate keeps it's member values
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 0, 255), dup.API_Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 0, 255), dup.Colour);
             Assert.AreEqual(13, dup.ID);
             Assert.AreEqual(1.56, dup.MeshSize);
             Assert.AreEqual("ehbaba", dup.Name);
@@ -179,7 +179,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(MemberType.GENERIC_2D, dup.Type);
 
             // check that changes are made to original
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 0, 0), original.API_Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 0, 0), original.Colour);
             Assert.AreEqual(7, original.ID);
             Assert.AreEqual(0, original.MeshSize);
             Assert.AreEqual("Persepolis", original.Name);

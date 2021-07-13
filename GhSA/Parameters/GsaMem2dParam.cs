@@ -18,11 +18,11 @@ namespace GhSA.Parameters
     /// Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
     /// </summary>
     public class GsaMember2d
-
     {
-        public Member API_Member
+        internal Member API_Member
         {
             get { return m_member; }
+            set { m_member = value; }
         }
         public PolyCurve PolyCurve
         {
@@ -38,49 +38,41 @@ namespace GhSA.Parameters
         {
             get { return m_brep; }
         }
-
         public List<Point3d> Topology
         {
             get { return m_edgeCrv_topo; }
             //set { m_topo = value; }
         }
-
         public List<string> TopologyType
         {
             get { return m_edgeCrv_topoType; }
             //set { m_topoType = value; }
         }
-
         public List<List<Point3d>> VoidTopology
         {
             get { return m_voidCrvs_topo; }
             //set { m_void_topo = value; }
         }
-
         public List<List<string>> VoidTopologyType
         {
             get { return m_voidCrvs_topoType; }
             //set { m_void_topoType = value; }
         }
-
         public List<PolyCurve> InclusionLines
         {
             get { return m_inclCrvs; }
             //set { m_incl_Lines = value; }
         }
-
         public List<List<Point3d>> IncLinesTopology
         {
             get { return m_inclCrvs_topo; }
             //set { m_incLines_topo = value; }
         }
-
         public List<List<string>> IncLinesTopologyType
         {
             get { return m_inclCrvs_topoType; }
             //set { m_inclLines_topoType = value; }
         }
-
         public List<Point3d> InclusionPoints
         {
             get { return m_inclPts; }
@@ -282,7 +274,7 @@ namespace GhSA.Parameters
             m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs);
         }
 
-        public GsaMember2d(Member member, int id, List<Point3d> topology, 
+        public GsaMember2d(List<Point3d> topology, 
             List<string> topology_type, 
             List<List<Point3d>> void_topology = null,
             List<List<string>> void_topology_type = null,
@@ -291,8 +283,7 @@ namespace GhSA.Parameters
             List<Point3d> includePoints = null,
             int prop = 1)
         {
-            m_member = member;
-            m_id = id;
+            m_member = new Member();
 
             if (topology.Count == 0)
             {

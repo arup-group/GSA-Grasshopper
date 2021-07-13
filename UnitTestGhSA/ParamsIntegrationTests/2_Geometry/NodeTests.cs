@@ -19,9 +19,9 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(7.8, node.Point.Z);
 
             // node should maintain syncronisation of Point and API_Node.Position:
-            Assert.AreEqual(10, node.API_Node.Position.X);
-            Assert.AreEqual(15, node.API_Node.Position.Y);
-            Assert.AreEqual(7.8, node.API_Node.Position.Z);
+            Assert.AreEqual(10, node.Point.X);
+            Assert.AreEqual(15, node.Point.Y);
+            Assert.AreEqual(7.8, node.Point.Z);
         }
         [TestCase]
         public void TestCreateGsaNodeRestrained()

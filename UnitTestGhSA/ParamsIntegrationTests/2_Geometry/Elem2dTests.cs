@@ -36,7 +36,7 @@ namespace ParamsIntegrationTests
             List<bool> dum = new List<bool>();
             List<string> nms = new List<string>();
             List<GsaOffset> off = new List<GsaOffset>();
-            for (int i = 0; i < elem.API_Elements.Count; i++)
+            for (int i = 0; i < elem.Count; i++)
             {
                 elem.ID[i] = elid++;
                 elem.Properties[i].ID = secid++;
@@ -61,7 +61,7 @@ namespace ParamsIntegrationTests
             // loop through all elements and make checks
             int chelid = 14;
             int chsecid = 3;
-            for (int i = 0; i < elem.API_Elements.Count; i++)
+            for (int i = 0; i < elem.Count; i++)
             {
                 // check that element is tri or quad corrosponding to mesh face
                 if (mesh.Faces[i].IsTriangle)
@@ -132,7 +132,7 @@ namespace ParamsIntegrationTests
             List<bool> dum = new List<bool>();
             List<string> nms = new List<string>();
             List<GsaOffset> off = new List<GsaOffset>();
-            for (int i = 0; i < origi.API_Elements.Count; i++)
+            for (int i = 0; i < origi.Count; i++)
             {
                 origi.ID[i] = elid++;
                 origi.Properties.Add(new GsaProp2d());
@@ -160,7 +160,7 @@ namespace ParamsIntegrationTests
             }
 
             // loop through all elements and make on duplicated geometry
-            for (int i = 0; i < dup.API_Elements.Count; i++)
+            for (int i = 0; i < dup.Count; i++)
             {
                 // check that element is tri or quad corrosponding to mesh face
                 if (mesh.Faces[i].IsTriangle)
@@ -204,7 +204,7 @@ namespace ParamsIntegrationTests
             List<bool> dum2 = new List<bool>();
             List<string> nms2 = new List<string>();
             List<GsaOffset> off2 = new List<GsaOffset>();
-            for (int i = 0; i < origi.API_Elements.Count; i++)
+            for (int i = 0; i < origi.Count; i++)
             {
                 origi.ID[i] = elid++;
                 origi.Properties[i].ID = secid++;
@@ -225,7 +225,7 @@ namespace ParamsIntegrationTests
             // check that duplicate maintains values
             int chelid = 3;
             int chsecid = 4;
-            for (int i = 0; i < dup.API_Elements.Count; i++)
+            for (int i = 0; i < dup.Count; i++)
             {
                 // check other members are valid
                 Assert.AreEqual(chelid++, dup.ID[i]);
@@ -239,7 +239,7 @@ namespace ParamsIntegrationTests
             // check that values in original are changed
             chelid = 15;
             chsecid = 16;
-            for (int i = 0; i < origi.API_Elements.Count; i++)
+            for (int i = 0; i < origi.Count; i++)
             {
                 // check other members are valid
                 Assert.AreEqual(chelid++, origi.ID[i]);

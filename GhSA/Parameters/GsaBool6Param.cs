@@ -17,38 +17,32 @@ namespace GhSA.Parameters
     /// Bool6 class, this class defines the basic properties and methods for any Gsa Bool6
     /// </summary>
     public class GsaBool6
-
     {
         public bool X
         {
             get { return m_x; }
             set { m_x = value; }
         }
-
         public bool Y
         {
             get { return m_y; }
             set { m_y = value; }
         }
-
         public bool Z
         {
             get { return m_z; }
             set { m_z = value; }
         }
-
         public bool XX
         {
             get { return m_xx; }
             set { m_xx = value; }
         }
-
         public bool YY
         {
             get { return m_yy; }
             set { m_yy = value; }
         }
-
         public bool ZZ
         {
             get { return m_zz; }
@@ -75,15 +69,15 @@ namespace GhSA.Parameters
             m_zz = false;
         }
 
-        public GsaBool6(NodalRestraint restraint)
-        {
-            m_x = restraint.X;
-            m_y = restraint.Y;
-            m_z = restraint.Z;
-            m_xx = restraint.XX;
-            m_yy = restraint.YY;
-            m_zz = restraint.ZZ;
-        }
+        //public GsaBool6(NodalRestraint restraint)
+        //{
+        //    m_x = restraint.X;
+        //    m_y = restraint.Y;
+        //    m_z = restraint.Z;
+        //    m_xx = restraint.XX;
+        //    m_yy = restraint.YY;
+        //    m_zz = restraint.ZZ;
+        //}
         //public GsaBool6(Bool6 bool6)
         //{
         //   m_x = bool6.X;

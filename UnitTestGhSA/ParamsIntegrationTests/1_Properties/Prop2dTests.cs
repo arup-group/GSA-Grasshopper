@@ -23,11 +23,23 @@ namespace ParamsIntegrationTests
                 Description = "awesome property",
                 Type = Property2D_Type.LOAD
             };
-            
-            // create new 2D property
-            GsaProp2d prop = new GsaProp2d(apiProp);
 
-            Assert.AreEqual(1, prop.AxisProperty);
+            // create new 2D property
+            GsaProp2d prop = new GsaProp2d
+            {
+                AxisProperty = apiProp.AxisProperty,
+                Name = apiProp.Name,
+                Description = apiProp.Description,
+                Type = apiProp.Type
+            };
+            GsaMaterial mat = new GsaMaterial((int)apiProp.MaterialType)
+            {
+                AnalysisProperty = apiProp.MaterialAnalysisProperty,
+                GradeProperty = apiProp.MaterialGradeProperty,
+            };
+            prop.Material = mat;
+
+            Assert.AreEqual(-1, prop.AxisProperty);
             Assert.AreEqual(4, prop.Material.GradeProperty);
             Assert.AreEqual(42, prop.Material.AnalysisProperty);
             Assert.AreEqual(MaterialType.GENERIC.ToString(),
@@ -54,7 +66,20 @@ namespace ParamsIntegrationTests
             };
 
             // create new 2D property
-            GsaProp2d orig = new GsaProp2d(apiPropOriginal, 14);
+            GsaProp2d orig = new GsaProp2d(14)
+            {
+                AxisProperty = apiPropOriginal.AxisProperty,
+                Name = apiPropOriginal.Name,
+                Description = apiPropOriginal.Description,
+                Type = apiPropOriginal.Type
+            };
+            GsaMaterial mat = new GsaMaterial((int)apiPropOriginal.MaterialType)
+            {
+                AnalysisProperty = apiPropOriginal.MaterialAnalysisProperty,
+                GradeProperty = apiPropOriginal.MaterialGradeProperty,
+            };
+            orig.Material = mat;
+
 
             // duplicate prop
             GsaProp2d dup = orig.Duplicate();
@@ -73,7 +98,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(0, dup.AxisProperty);
             Assert.AreEqual(2, dup.Material.GradeProperty);
             Assert.AreEqual(13, dup.Material.AnalysisProperty);
-            Assert.AreEqual(MaterialType.NONE.ToString(),
+            Assert.AreEqual(MaterialType.UNDEF.ToString(),
                 dup.Material.MaterialType.ToString());
             Assert.AreEqual("mariam", dup.Name);
             Assert.AreEqual("awesome property", dup.Description);

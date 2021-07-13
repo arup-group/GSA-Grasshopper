@@ -18,10 +18,54 @@ namespace GhSA.Parameters
     /// </summary>
     public class GsaSection
     {
-        public Section API_Section
+        internal Section API_Section
         {
             get { return m_section; }
+            set
+            {
+                m_guid = Guid.NewGuid();
+                m_section = value;
+                m_material = new GsaMaterial(this);
+            }
         }
+        #region section properties
+        public double Area
+        {
+            get { return m_section.Area; }
+        }
+        public double Iyy
+        {
+            get { return m_section.Iyy; }
+        }
+        public double Iyz
+        {
+            get { return m_section.Iyz; }
+        }
+        public double Izz
+        {
+            get { return m_section.Izz; }
+        }
+        public double J
+        {
+            get { return m_section.J; }
+        }
+        public double Ky
+        {
+            get { return m_section.Ky; }
+        }
+        public double Kz
+        {
+            get { return m_section.Kz; }
+        }
+        public double SurfaceAreaPerLength
+        {
+            get { return m_section.SurfaceAreaPerLength; }
+        }
+        public double VolumePerLength
+        {
+            get { return m_section.VolumePerLength; }
+        }
+        #endregion
         public int ID
         {
             get { return m_idd; }
@@ -167,13 +211,6 @@ namespace GhSA.Parameters
             m_material = new GsaMaterial();
             m_guid = Guid.NewGuid();
         }
-        public GsaSection(Section Section, int ID = 0)
-        {
-            m_section = Section;
-            m_material = new GsaMaterial();
-            m_idd = ID;
-            m_guid = Guid.NewGuid();
-        }
         public GsaSection Duplicate()
         {
             if (this == null) { return null; }
@@ -227,7 +264,6 @@ namespace GhSA.Parameters
                 section = new GsaSection();
             this.Value = section; //section.Duplicate();
         }
-
         public override IGH_Goo Duplicate()
         {
             return DuplicateGsaSection();
@@ -336,7 +372,8 @@ namespace GhSA.Parameters
             //Cast from GsaAPI Prop2d
             if (typeof(Section).IsAssignableFrom(source.GetType()))
             {
-                Value = new GsaSection((Section)source);
+                Value = new GsaSection();
+                Value.API_Section = (Section)source;
                 return true;
             }
 

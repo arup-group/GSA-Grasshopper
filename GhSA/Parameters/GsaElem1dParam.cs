@@ -18,16 +18,15 @@ namespace GhSA.Parameters
     /// Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
     /// </summary>
     public class GsaElement1d
-
     {
-        public Element API_Element
-        {
-            get { return m_element; }
-        }
         public LineCurve Line
         {
             get { return m_line; }
-            set { m_line = value; }
+            set 
+            { 
+                m_line = value;
+                UpdatePreview();
+            }
         }
         public int ID
         {
@@ -51,6 +50,8 @@ namespace GhSA.Parameters
             set 
             { 
                 m_rel1 = value;
+                if (m_rel2 == null) { m_rel2 = new GsaBool6(); }
+                UpdatePreview();
                 //Bool6 bool6 = new Bool6();
                 //bool6.X = m_rel1.X;
                 //bool6.Y = m_rel1.Y;
@@ -78,6 +79,8 @@ namespace GhSA.Parameters
             set 
             { 
                 m_rel2 = value;
+                if (m_rel1 == null) { m_rel1 = new GsaBool6(); }
+                UpdatePreview();
                 //Bool6 bool6 = new Bool6();
                 //bool6.X = m_rel2.X;
                 //bool6.Y = m_rel2.Y;
@@ -95,6 +98,11 @@ namespace GhSA.Parameters
         }
 
         #region GsaAPI members
+        internal Element API_Element
+        {
+            get { return m_element; }
+            set { m_element = value; }
+        }
         public System.Drawing.Color Colour
         {
             get
@@ -175,16 +183,6 @@ namespace GhSA.Parameters
         {
             get { return m_element.ParentMember.Member; }
         }
-        //public int PropertyID
-        //{
-        //    get { return m_element.Property; }
-        //    set
-        //    {
-        //        CloneElement();
-        //        m_element.Property = value;
-        //        m_section = null;
-        //    }
-        //}
         public ElementType Type
         {
             get { return m_element.Type; }
@@ -214,7 +212,98 @@ namespace GhSA.Parameters
             m_element = elem;
         }
         #endregion
+        #region preview
+        internal Point3d previewPointStart;
+        internal Point3d previewPointEnd;
+        #region preview lines
+        private Line previewSX1;
+        private Line previewSX2;
+        private Line previewSY1;
+        private Line previewSY2;
+        private Line previewSY3;
+        private Line previewSY4;
+        private Line previewSZ1;
+        private Line previewSZ2;
+        private Line previewSZ3;
+        private Line previewSZ4;
+        private Line previewEX1;
+        private Line previewEX2;
+        private Line previewEY1;
+        private Line previewEY2;
+        private Line previewEY3;
+        private Line previewEY4;
+        private Line previewEZ1;
+        private Line previewEZ2;
+        private Line previewEZ3;
+        private Line previewEZ4;
+        private Line previewSXX;
+        private Line previewSYY1;
+        private Line previewSYY2;
+        private Line previewSZZ1;
+        private Line previewSZZ2;
+        private Line previewEXX;
+        private Line previewEYY1;
+        private Line previewEYY2;
+        private Line previewEZZ1;
+        private Line previewEZZ2;
 
+        internal List<Line> previewGreenLines;
+        internal List<Line> previewRedLines;
+        #endregion
+        internal void UpdatePreview()
+        {
+            if (m_rel1 != null & m_rel2 != null)
+            {
+                if (m_rel1.X || m_rel1.Y || m_rel1.Z || m_rel1.XX || m_rel1.YY || m_rel1.ZZ ||
+                m_rel2.X || m_rel2.Y || m_rel2.Z || m_rel2.XX || m_rel2.YY || m_rel2.ZZ)
+                {
+                    #region add lines
+                    previewGreenLines = new List<Line>();
+                    previewGreenLines.Add(previewSX1);
+                    previewGreenLines.Add(previewSX2);
+                    previewGreenLines.Add(previewSY1);
+                    previewGreenLines.Add(previewSY2);
+                    previewGreenLines.Add(previewSY3);
+                    previewGreenLines.Add(previewSY4);
+                    previewGreenLines.Add(previewSZ1);
+                    previewGreenLines.Add(previewSZ2);
+                    previewGreenLines.Add(previewSZ3);
+                    previewGreenLines.Add(previewSZ4);
+                    previewGreenLines.Add(previewEX1);
+                    previewGreenLines.Add(previewEX2);
+                    previewGreenLines.Add(previewEY1);
+                    previewGreenLines.Add(previewEY2);
+                    previewGreenLines.Add(previewEY3);
+                    previewGreenLines.Add(previewEY4);
+                    previewGreenLines.Add(previewEZ1);
+                    previewGreenLines.Add(previewEZ2);
+                    previewGreenLines.Add(previewEZ3);
+                    previewGreenLines.Add(previewEZ4);
+                    previewRedLines = new List<Line>();
+                    previewRedLines.Add(previewSXX);
+                    previewRedLines.Add(previewSYY1);
+                    previewRedLines.Add(previewSYY2);
+                    previewRedLines.Add(previewSZZ1);
+                    previewRedLines.Add(previewSZZ2);
+                    previewRedLines.Add(previewEXX);
+                    previewRedLines.Add(previewEYY1);
+                    previewRedLines.Add(previewEYY2);
+                    previewRedLines.Add(previewEZZ1);
+                    previewRedLines.Add(previewEZZ2);
+                    #endregion
+                    PolyCurve crv = new PolyCurve();
+                    crv.Append(m_line);
+                    GhSA.UI.Display.Preview1D(crv, m_element.OrientationAngle, m_rel1, m_rel2,
+                        ref previewGreenLines, ref previewRedLines);
+                }
+                else
+                    previewGreenLines = null;
+            }
+            
+            previewPointStart = m_line.PointAtStart;
+            previewPointEnd = m_line.PointAtEnd;
+        }
+        #endregion
         #region fields
         private Element m_element; 
         private LineCurve m_line;
@@ -224,7 +313,6 @@ namespace GhSA.Parameters
         private GsaSection m_section;
         private GsaNode m_orientationNode;
         #endregion
-
         #region constructors
         public GsaElement1d()
         {
@@ -232,7 +320,7 @@ namespace GhSA.Parameters
             m_line = new LineCurve();
             m_section = new GsaSection();
         }
-        public GsaElement1d(LineCurve line, int prop = 0)
+        public GsaElement1d(LineCurve line, int prop = 0, int ID = 0, GsaNode orientationNode = null)
         {
             m_element = new Element
             {
@@ -241,18 +329,12 @@ namespace GhSA.Parameters
             
             m_line = line;
             m_section = new GsaSection();
+            m_id = ID;
             m_section.ID = prop;
-        }
-        public GsaElement1d(Element apiElement, int id, LineCurve line, GsaNode orientationNode)
-        {
-            m_element = apiElement;
-            m_id = id;
-            m_line = line;
-            m_section = new GsaSection();
             if (orientationNode != null)
                 m_orientationNode = orientationNode;
+            UpdatePreview();
         }
-
         public GsaElement1d Duplicate()
         {
             if (this == null) { return null; }
@@ -267,6 +349,7 @@ namespace GhSA.Parameters
             dup.m_section = m_section.Duplicate();
             if (m_orientationNode != null)
                 dup.m_orientationNode = m_orientationNode.Duplicate();
+            UpdatePreview();
             return dup;
         }
         #endregion
@@ -544,7 +627,7 @@ namespace GhSA.Parameters
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
                     if (Value.IsDummy)
-                        args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, UI.Colour.Dummy1D);
+                        args.Pipeline.DrawDottedLine(Value.previewPointStart, Value.previewPointEnd, UI.Colour.Dummy1D);
                     else
                     {
                         if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
@@ -554,35 +637,34 @@ namespace GhSA.Parameters
                             System.Drawing.Color col = UI.Colour.ElementType(Value.Type);
                             args.Pipeline.DrawCurve(Value.Line, col, 2);
                         }
-                        args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
-                        args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
+                        //args.Pipeline.DrawPoint(Value.previewPointStart, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
+                        //args.Pipeline.DrawPoint(Value.previewPointEnd, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
                     }
                 }
                 else
                 {
                     if (Value.IsDummy)
-                        args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, UI.Colour.Element1dSelected);
+                        args.Pipeline.DrawDottedLine(Value.previewPointStart, Value.previewPointEnd, UI.Colour.Element1dSelected);
                     else
                     {
                         args.Pipeline.DrawCurve(Value.Line, UI.Colour.Element1dSelected, 2);
-                        args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
-                        args.Pipeline.DrawPoint(Value.Line.PointAtEnd, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
+                        //args.Pipeline.DrawPoint(Value.previewPointStart, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
+                        //args.Pipeline.DrawPoint(Value.previewPointEnd, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
                     }
                 }
             }
             //Draw releases
             if (!Value.IsDummy)
             {
-                PolyCurve crv = new PolyCurve();
-                crv.Append(Value.Line);
-                double angle = Value.OrientationAngle;
-                GsaBool6 start = Value.ReleaseStart;
-                GsaBool6 end = Value.ReleaseEnd;
-
-                UI.Display.DrawReleases(args, crv, angle, start, end);
+                if (Value.previewGreenLines != null)
+                {
+                    foreach (Line ln1 in Value.previewGreenLines)
+                        args.Pipeline.DrawLine(ln1, UI.Colour.Support);
+                    foreach (Line ln2 in Value.previewRedLines)
+                        args.Pipeline.DrawLine(ln2, UI.Colour.Release);
+                }
             }
         }
-        
     #endregion
 }
 

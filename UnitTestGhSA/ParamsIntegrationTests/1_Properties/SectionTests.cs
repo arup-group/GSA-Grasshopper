@@ -23,7 +23,7 @@ namespace ParamsIntegrationTests
             GsaSection sect = new GsaSection(profile);
 
             double area = Math.Round(
-                sect.API_Section.Area * Math.Pow(10, 6), // unit conversion
+                sect.Area * Math.Pow(10, 6), // unit conversion
                 10);
             Assert.AreEqual(myarea, area);
 
@@ -52,7 +52,7 @@ namespace ParamsIntegrationTests
             // create new section with profile and ID
             GsaSection sect = new GsaSection(profile, 15);
 
-            double area = sect.API_Section.Area * Math.Pow(10, 6); // unit conversion
+            double area = sect.Area * Math.Pow(10, 6); // unit conversion
             Assert.AreEqual(myarea, area);
             Assert.AreEqual(15, sect.ID);
         }
@@ -63,7 +63,7 @@ namespace ParamsIntegrationTests
             string profile = "CAT HE HE200.B";
             GsaSection section = new GsaSection(profile);
 
-            double area = section.API_Section.Area * Math.Pow(10, 6);
+            double area = section.Area * Math.Pow(10, 6);
             Assert.AreEqual(7808.121, area);
         }
 
@@ -94,11 +94,11 @@ namespace ParamsIntegrationTests
             orig.Name = "kris";
             orig.Pool = 99;
 
-            double area2 = orig.API_Section.Area * Math.Pow(10, 6);
+            double area2 = orig.Area * Math.Pow(10, 6);
             Assert.AreEqual("STD R 15 20", orig.Profile);
             Assert.AreEqual(myarea2, area2);
 
-            double area1 = dup.API_Section.Area * Math.Pow(10, 6);
+            double area1 = dup.Area * Math.Pow(10, 6);
             Assert.AreEqual(profile, dup.Profile);
             Assert.AreEqual(myarea1, area1);
 

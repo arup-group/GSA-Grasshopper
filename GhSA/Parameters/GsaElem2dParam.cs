@@ -18,9 +18,14 @@ namespace GhSA.Parameters
     /// </summary>
     public class GsaElement2d
     {
-        public List<Element> API_Elements
+        internal List<Element> API_Elements
         {
             get { return m_elements; }
+            set { m_elements = value; }
+        }
+        public int Count
+        {
+            get { return m_elements.Count; }
         }
         public Mesh Mesh
         {
@@ -332,20 +337,6 @@ namespace GhSA.Parameters
                 m_props.Add(new GsaProp2d());
             }
         }
-        public GsaElement2d(List<Element> apiElements, List<int> ids, Mesh mesh, List<GsaProp2d> properties)
-        {
-            m_elements = apiElements;
-            m_mesh = mesh;
-            Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(m_mesh, 0);
-            m_elements = convertMesh.Item1;
-            m_topo = convertMesh.Item2;
-            m_topoInt = convertMesh.Item3;
-
-            m_id = ids;
-
-            m_props = properties;
-        }
-
         public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, int prop = 0)
         {
             m_elements = new List<Element>();
@@ -359,7 +350,6 @@ namespace GhSA.Parameters
 
             m_props = new List<GsaProp2d>();
         }
-
         public GsaElement2d Duplicate()
         {
             if (this == null) { return null; }
@@ -402,8 +392,6 @@ namespace GhSA.Parameters
                 return true;
             }
         }
-        
-
         #endregion
 
         #region methods
@@ -642,14 +630,6 @@ namespace GhSA.Parameters
             if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
             {
                 args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
-                //Mesh mesh = Value.Mesh.DuplicateMesh();
-                //mesh.fac
-                //for (int i = 0; i < Value.Mesh.Faces.Count; i++)
-                //{
-                //    int[] face = new int[] { i };
-                //    args.Pipeline.DrawMeshShaded(Value.Mesh,
-                //        UI.Colour.FaceCustom(Value.Colours[i]), face);
-                //}
             }
             else
                 args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFaceSelected);
@@ -665,26 +645,10 @@ namespace GhSA.Parameters
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
                     args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdge, 1);
-                    
-                    //List<Line> lines = new List<Line>();
-                    //for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
-                    //{
-                    //    if(!Value.Mesh.TopologyEdges.IsNgonInterior(i))
-                    //        lines.Add(Value.Mesh.TopologyEdges.EdgeLine(i));
-                    //}
-                    //args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdge, 1);
                 }
                 else
                 {
                     args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdgeSelected, 2);
-
-                    //List<Line> lines = new List<Line>();
-                    //for (int i = 0; i < Value.Mesh.TopologyEdges.Count; i++)
-                    //{
-                    //    if (!Value.Mesh.TopologyEdges.IsNgonInterior(i))
-                    //        lines.Add(Value.Mesh.TopologyEdges.EdgeLine(i));
-                    //}
-                    //args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdgeSelected, 2);
                 }
             }
         }

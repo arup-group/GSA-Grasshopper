@@ -44,7 +44,7 @@ namespace ParamsIntegrationTests
             // check other members are valid
             Assert.AreEqual(66, elem.ID);
             Assert.AreEqual(3, elem.Section.ID);
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 255, 0), elem.API_Element.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 255, 0), elem.Colour);
             Assert.AreEqual(4, elem.Group);
             Assert.IsTrue(elem.IsDummy);
             Assert.AreEqual("EltonJohn", elem.Name);
@@ -98,7 +98,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(4, dup.Line.PointAtEnd.Z, 1E-9);
             Assert.AreEqual(3, dup.ID);
             Assert.AreEqual(7, dup.Section.ID);
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 255, 255), dup.API_Element.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 255, 255), dup.Colour);
             Assert.AreEqual(1, dup.Group);
             Assert.IsFalse(dup.IsDummy);
             Assert.AreEqual("Tilman", dup.Name);
@@ -114,7 +114,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(0, orig.Line.PointAtEnd.Z, 1E-9);
             Assert.AreEqual(5, orig.ID);
             Assert.AreEqual(9, orig.Section.ID);
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 0, 0), orig.API_Element.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 0, 0), orig.Colour);
             Assert.AreEqual(2, orig.Group);
             Assert.IsTrue(orig.IsDummy);
             Assert.AreEqual("Hugh", orig.Name);

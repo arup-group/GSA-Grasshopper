@@ -215,7 +215,32 @@ namespace GhSA.UI
         {
             get { return GsaDarkPurple; }
         }
-        
+        public static DisplayMaterial SupportSymbol
+        {
+            get
+            {
+                DisplayMaterial material = new DisplayMaterial()
+                {
+                    Diffuse = System.Drawing.Color.FromArgb(255, Support.R, Support.G, Support.B),
+                    Emission = System.Drawing.Color.FromArgb(255, 50, 50, 50),
+                    Transparency = 0.2
+                };
+                return material;
+            }
+        }
+        public static DisplayMaterial SupportSymbolSelected
+        {
+            get
+            {
+                DisplayMaterial material = new DisplayMaterial()
+                {
+                    Diffuse = System.Drawing.Color.FromArgb(255, NodeSelected.R, NodeSelected.G, NodeSelected.B),
+                    Emission = System.Drawing.Color.FromArgb(255, 50, 50, 50),
+                    Transparency = 0.2
+                };
+                return material;
+            }
+        }
 
         public static DisplayMaterial Element2dFace
         {
