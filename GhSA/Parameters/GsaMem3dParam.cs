@@ -19,10 +19,9 @@ namespace GhSA.Parameters
     public class GsaMember3d
 
     {
-        public Member Member
+        public Member API_Member
         {
             get { return m_member; }
-            set { m_member = value; }
         }
         public Mesh SolidMesh
         {
@@ -35,16 +34,16 @@ namespace GhSA.Parameters
             set { m_id = value; }
         }
 
-        public GsaSection Section
-        {
-            get { return m_section; }
-            set 
-            {
-                if (m_section == null)
-                    PropertyID = 0;
-                m_section = value; 
-            }
-        }
+        //public GsaSection Section
+        //{
+        //    get { return m_section; }
+        //    set 
+        //    {
+        //        if (m_section == null)
+        //            PropertyID = 0;
+        //        m_section = value; 
+        //    }
+        //}
         
         #region GsaAPI members
         public System.Drawing.Color Colour
@@ -104,10 +103,9 @@ namespace GhSA.Parameters
             {
                 CloneMember();
                 m_member.Property = value;
-                m_section = null;
+                //m_section = null;
             }
         }
-        
         private void CloneMember()
         {
             Member mem = new Member
@@ -135,7 +133,7 @@ namespace GhSA.Parameters
         private int m_id = 0;
 
         private Mesh m_mesh; 
-        private GsaSection m_section;
+        //private GsaSection m_section;
         #endregion
 
         #region constructors
@@ -155,6 +153,12 @@ namespace GhSA.Parameters
 
             m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
         }
+        public GsaMember3d(Member apiMember, int id, Mesh mesh)
+        {
+            m_member = apiMember;
+            m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            m_id = id;
+        }
         public GsaMember3d(Brep brep)
         {
             m_member = new Member
@@ -170,41 +174,24 @@ namespace GhSA.Parameters
             GsaMember3d dup = new GsaMember3d();
             dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
             dup.m_member = m_member;
-            dup.m_section = m_section;
+            //dup.m_section = m_section;
             dup.m_id = m_id;
 
             return dup;
         }
-        public GsaMember3d Duplicate_OBSOLETE()
+        public GsaMember3d UpdateGeometry(Brep brep)
         {
             if (this == null) { return null; }
-            GsaMember3d dup = new GsaMember3d
-            {
-                Member = new Member
-                {
-                    Group = m_member.Group,
-                    IsDummy = m_member.IsDummy,
-                    MeshSize = m_member.MeshSize,
-                    Name = m_member.Name.ToString(),
-                    Offset = m_member.Offset,
-                    OrientationAngle = m_member.OrientationAngle,
-                    OrientationNode = m_member.OrientationNode,
-                    Property = m_member.Property,
-                    Topology = m_member.Topology.ToString(),
-                    Type = m_member.Type, 
-                },
-                //SolidMesh = m_mesh.DuplicateMesh(),
-            };
+            GsaMember3d dup = this.Duplicate();
+            dup.m_mesh = GhSA.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
 
-            dup.SolidMesh = (Mesh)m_mesh.Duplicate();
-
-            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                dup.m_member.Colour = m_member.Colour;
-
-            dup.ID = m_id;
-
-            if (m_section != null)
-                dup.Section = m_section.Duplicate();
+            return dup;
+        }
+        public GsaMember3d UpdateGeometry(Mesh mesh)
+        {
+            if (this == null) { return null; }
+            GsaMember3d dup = this.Duplicate();
+            dup.m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
 
             return dup;
         }
@@ -336,7 +323,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.Member;
+                    target = (Q)(object)Value.API_Member;
                 return true;
             }
 
@@ -396,12 +383,12 @@ namespace GhSA.Parameters
                 return true;
             }
 
-            //Cast from GsaAPI Member
-            if (typeof(Member).IsAssignableFrom(source.GetType()))
-            {
-                Value.Member = (Member)source;
-                return true;
-            }
+            ////Cast from GsaAPI Member
+            //if (typeof(Member).IsAssignableFrom(source.GetType()))
+            //{
+            //    Value.Member = (Member)source;
+            //    return true;
+            //}
 
             //Cast from Brep
             Brep brep = new Brep();
@@ -433,10 +420,7 @@ namespace GhSA.Parameters
             if (Value.SolidMesh == null) { return null; }
 
             GsaMember3d elem = Value.Duplicate();
-
-            Mesh xMs = elem.SolidMesh;
-            xMs.Transform(xform);
-            elem.SolidMesh = xMs;
+            elem.SolidMesh.Transform(xform);
 
             return new GsaMember3dGoo(elem);
         }
@@ -447,9 +431,7 @@ namespace GhSA.Parameters
             if (Value.SolidMesh == null) { return null; }
 
             GsaMember3d elem = Value.Duplicate();
-            Mesh xMs = elem.SolidMesh;
-            xmorph.Morph(xMs);
-            elem.SolidMesh = xMs;
+            xmorph.Morph(elem.SolidMesh.Duplicate());
 
             return new GsaMember3dGoo(elem);
         }
@@ -466,7 +448,7 @@ namespace GhSA.Parameters
             //Draw shape.
             if (Value.SolidMesh != null)
             {
-                if (!Value.Member.IsDummy)
+                if (!Value.IsDummy)
                 {
                     if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                         args.Pipeline.DrawMeshShaded(Value.SolidMesh, UI.Colour.Element2dFace); //UI.Colour.Member2dFace
@@ -488,7 +470,7 @@ namespace GhSA.Parameters
                 Rhino.Geometry.Collections.MeshTopologyEdgeList edges = Value.SolidMesh.TopologyEdges;
                 if (Value.SolidMesh.FaceNormals.Count < Value.SolidMesh.Faces.Count)
                     Value.SolidMesh.FaceNormals.ComputeFaceNormals();
-                if (Value.Member.IsDummy)
+                if (Value.IsDummy)
                 {
                     for (int i = 0; i < edges.Count; i++)
                     {
@@ -532,7 +514,7 @@ namespace GhSA.Parameters
                             if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                             {
                                 if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
-                                    args.Pipeline.DrawLine(edges.EdgeLine(i), (System.Drawing.Color)Value.Member.Colour, 2);
+                                    args.Pipeline.DrawLine(edges.EdgeLine(i), (System.Drawing.Color)Value.Colour, 2);
                                 else
                                 {
                                     System.Drawing.Color col = UI.Colour.Member2dEdge;
@@ -556,7 +538,7 @@ namespace GhSA.Parameters
                 for (int i = 0; i < pts.Count; i++)
                 {
                     if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                        args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.Member.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
+                        args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
                     else
                         args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Member1dNodeSelected);
                 }

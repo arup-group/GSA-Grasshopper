@@ -149,10 +149,10 @@ namespace GhSA.Components
             }
 
             //#### outputs ####
-            string desc = (prop.Prop2d == null) ? "--" : prop.Description;
-            int ax = (prop.Prop2d == null) ? 0 : prop.AxisProperty;
-            string nm = (prop.Prop2d == null) ? "--" : prop.Name;
-            ValueType colour = (prop.Prop2d == null) ? null : prop.Prop2d.Colour;
+            string desc = (prop.API_Prop2d == null) ? "--" : prop.Description;
+            int ax = (prop.API_Prop2d == null) ? 0 : prop.AxisProperty;
+            string nm = (prop.API_Prop2d == null) ? "--" : prop.Name;
+            ValueType colour = (prop.API_Prop2d == null) ? null : prop.API_Prop2d.Colour;
 
             DA.SetData(0, new GsaProp2dGoo(prop));
             DA.SetData(1, prop.ID);
@@ -162,8 +162,8 @@ namespace GhSA.Components
             DA.SetData(5, nm);
             DA.SetData(6, colour);
 
-            string str = (prop.Prop2d == null) ? "--" : prop.Type.ToString();
-            if (prop.Prop2d == null)
+            string str = (prop.API_Prop2d == null) ? "--" : prop.Type.ToString();
+            if (prop.API_Prop2d == null)
                 str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
             DA.SetData(7, str);
         }

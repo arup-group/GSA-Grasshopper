@@ -125,26 +125,26 @@ namespace GhSA.Components
             {
                 int grade = 1;
                 GH_Convert.ToInt32(gh_grade, out grade, GH_Conversion.Both);
-                material.Grade = grade;
+                material.GradeProperty = grade;
             }
 
             // element type (picked in dropdown)
             if (_mode == FoldMode.Generic)
-                material.Type = GsaMaterial.MatType.GENERIC;
+                material.MaterialType = GsaMaterial.MatType.GENERIC;
             if (_mode == FoldMode.Steel)
-                material.Type = GsaMaterial.MatType.STEEL;
+                material.MaterialType = GsaMaterial.MatType.STEEL;
             if (_mode == FoldMode.Concrete)
-                material.Type = GsaMaterial.MatType.CONCRETE;
+                material.MaterialType = GsaMaterial.MatType.CONCRETE;
             if (_mode == FoldMode.Timber)
-                material.Type = GsaMaterial.MatType.TIMBER;
+                material.MaterialType = GsaMaterial.MatType.TIMBER;
             if (_mode == FoldMode.Aluminium)
-                material.Type = GsaMaterial.MatType.ALUMINIUM;
+                material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
             if (_mode == FoldMode.FRP)
-                material.Type = GsaMaterial.MatType.FRP;
+                material.MaterialType = GsaMaterial.MatType.FRP;
             if (_mode == FoldMode.Glass)
-                material.Type = GsaMaterial.MatType.GLASS;
+                material.MaterialType = GsaMaterial.MatType.GLASS;
             if (_mode == FoldMode.Fabric)
-                material.Type = GsaMaterial.MatType.FABRIC;
+                material.MaterialType = GsaMaterial.MatType.FABRIC;
 
             DA.SetData(0, new GsaMaterialGoo(material));
         }

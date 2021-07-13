@@ -31,12 +31,12 @@ namespace ParamsIntegrationTests
             // set some members
             mem.Colour = System.Drawing.Color.Red;
             mem.ID = 3;
-            mem.Member.Name = "gemma";
-            mem.Member.IsDummy = true;
-            mem.Member.Offset.Z = -0.45;
-            mem.Member.Property = 2;
-            mem.Member.Type1D = ElementType.BEAM;
-            mem.Member.Type = MemberType.BEAM;
+            mem.Name = "gemma";
+            mem.IsDummy = true;
+            mem.Offset = new GsaOffset(0, 0, 0, -0.45);
+            mem.Section.ID = 2;
+            mem.Type1D = ElementType.BEAM;
+            mem.Type = MemberType.BEAM;
 
             // check that end-points are similar between converted curve and topology list
             Assert.AreEqual(mem.PolyCurve.PointAtStart.X, mem.Topology[0].X);
@@ -48,14 +48,14 @@ namespace ParamsIntegrationTests
             for (int i = 0; i < mem.PolyCurve.SegmentCount; i++)
                 Assert.IsTrue(mem.PolyCurve.SegmentCurve(i).IsLinear() || mem.PolyCurve.SegmentCurve(i).IsArc());
             
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 0, 0), mem.Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 0, 0), mem.API_Member.Colour);
             Assert.AreEqual(3, mem.ID);
-            Assert.AreEqual("gemma", mem.Member.Name);
-            Assert.IsTrue(mem.Member.IsDummy);
-            Assert.AreEqual(-0.45, mem.Member.Offset.Z);
-            Assert.AreEqual(2, mem.Member.Property);
-            Assert.AreEqual(ElementType.BEAM, mem.Member.Type1D);
-            Assert.AreEqual(MemberType.BEAM, mem.Member.Type);
+            Assert.AreEqual("gemma", mem.Name);
+            Assert.IsTrue(mem.IsDummy);
+            Assert.AreEqual(-0.45, mem.Offset.Z);
+            Assert.AreEqual(2, mem.Section.ID);
+            Assert.AreEqual(ElementType.BEAM, mem.Type1D);
+            Assert.AreEqual(MemberType.BEAM, mem.Type);
         }
         
         [TestCase]
@@ -75,66 +75,61 @@ namespace ParamsIntegrationTests
             // set some members
             orig.Colour = System.Drawing.Color.Green;
             orig.ID = 2;
-            orig.Member.Name = "Sally";
-            orig.Member.IsDummy = false;
-            orig.Member.Offset.X2 = 0.1;
-            orig.Member.Property = 3;
+            orig.Name = "Sally";
+            orig.IsDummy = false;
+            orig.Offset = new GsaOffset(0, 0.1, 0, 0);
             orig.Section = new GsaSection();
             orig.Section.ID = 4;
-            orig.Member.Group = 99;
-            orig.Member.Type1D = ElementType.BAR;
-            orig.Member.Type = MemberType.COLUMN;
+            orig.Group = 99;
+            orig.Type1D = ElementType.BAR;
+            orig.Type = MemberType.COLUMN;
 
             // duplicate member
             GsaMember1d dup = orig.Duplicate();
 
             // check that member is duplicated
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 128, 0), dup.Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 128, 0), dup.API_Member.Colour);
             Assert.AreEqual(2, dup.ID);
-            Assert.AreEqual("Sally", dup.Member.Name);
-            Assert.IsFalse(dup.Member.IsDummy);
-            Assert.AreEqual(0.1, dup.Member.Offset.X2);
-            Assert.AreEqual(3, dup.Member.Property);
+            Assert.AreEqual("Sally", dup.Name);
+            Assert.IsFalse(dup.IsDummy);
+            Assert.AreEqual(0.1, dup.Offset.X2);
             Assert.AreEqual(4, dup.Section.ID);
-            Assert.AreEqual(99, dup.Member.Group);
-            Assert.AreEqual(ElementType.BAR, dup.Member.Type1D);
-            Assert.AreEqual(MemberType.COLUMN, dup.Member.Type);
+            Assert.AreEqual(99, dup.Group);
+            Assert.AreEqual(ElementType.BAR, dup.Type1D);
+            Assert.AreEqual(MemberType.COLUMN, dup.Type);
 
             // make changes to original
             orig.Colour = System.Drawing.Color.White;
             orig.ID = 1;
-            orig.Member.Name = "Peter Peterson";
-            orig.Member.IsDummy = true;
-            orig.Member.Offset.X2 = 0.4;
-            orig.Member.Property = 2;
+            orig.Name = "Peter Peterson";
+            orig.IsDummy = true;
+            orig.Offset = new GsaOffset(0, 0.4, 0, 0);
             orig.Section.ID = 1;
-            orig.Member.Group = 4;
-            orig.Member.Type1D = ElementType.BEAM;
-            orig.Member.Type = MemberType.BEAM;
+            orig.Group = 4;
+            orig.Type1D = ElementType.BEAM;
+            orig.Type = MemberType.BEAM;
 
             // check that duplicate keeps its values
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 128, 0), dup.Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 128, 0), dup.API_Member.Colour);
             Assert.AreEqual(2, dup.ID);
-            Assert.AreEqual("Sally", dup.Member.Name);
-            Assert.IsFalse(dup.Member.IsDummy);
-            Assert.AreEqual(0.1, dup.Member.Offset.X2);
-            Assert.AreEqual(3, dup.Member.Property);
+            Assert.AreEqual("Sally", dup.Name);
+            Assert.IsFalse(dup.IsDummy);
+            Assert.AreEqual(0.1, dup.Offset.X2);
             Assert.AreEqual(4, dup.Section.ID);
-            Assert.AreEqual(99, dup.Member.Group);
-            Assert.AreEqual(ElementType.BAR, dup.Member.Type1D);
-            Assert.AreEqual(MemberType.COLUMN, dup.Member.Type);
+            Assert.AreEqual(99, dup.Group);
+            Assert.AreEqual(ElementType.BAR, dup.Type1D);
+            Assert.AreEqual(MemberType.COLUMN, dup.Type);
 
             // check that original is changed
-            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 255, 255), orig.Member.Colour);
+            Assert.AreEqual(System.Drawing.Color.FromArgb(255, 255, 255, 255), orig.API_Member.Colour);
             Assert.AreEqual(1, orig.ID);
-            Assert.AreEqual("Peter Peterson", orig.Member.Name);
-            Assert.IsTrue(orig.Member.IsDummy);
-            Assert.AreEqual(0.4, orig.Member.Offset.X2);
-            Assert.AreEqual(2, orig.Member.Property);
+            Assert.AreEqual("Peter Peterson", orig.Name);
+            Assert.IsTrue(orig.IsDummy);
+            Assert.AreEqual(0.4, orig.Offset.X2);
             Assert.AreEqual(1, orig.Section.ID);
-            Assert.AreEqual(4, orig.Member.Group);
-            Assert.AreEqual(ElementType.BEAM, orig.Member.Type1D);
-            Assert.AreEqual(MemberType.BEAM, orig.Member.Type);
+            Assert.AreEqual(4, orig.Group);
+            Assert.AreEqual(ElementType.BEAM, orig.Type1D);
+            Assert.AreEqual(MemberType.BEAM, orig.Type);
         }
     }
 }

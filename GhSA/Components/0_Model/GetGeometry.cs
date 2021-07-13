@@ -232,7 +232,7 @@ namespace GhSA.Components
                     //Draw lines
                     if (element.Value.Mesh != null)
                     {
-                        if (element.Value.Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
+                        if (element.Value.API_Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
                         {
                             args.Display.DrawMeshWires(element.Value.Mesh, System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
 

@@ -18,14 +18,9 @@ namespace GhSA.Parameters
     /// </summary>
     public class GsaSection
     {
-        public Section Section
+        public Section API_Section
         {
             get { return m_section; }
-            set 
-            {
-                m_guid = Guid.NewGuid();
-                m_section = value; 
-            }
         }
         public int ID
         {
@@ -42,10 +37,13 @@ namespace GhSA.Parameters
             set
             {
                 m_material = value;
-                CloneSection();
+                if (m_section == null)
+                    m_section = new Section();
+                else
+                    CloneSection();
                 m_section.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
                 m_section.MaterialAnalysisProperty = m_material.AnalysisProperty;
-                m_section.MaterialGradeProperty = m_material.Grade;
+                m_section.MaterialGradeProperty = m_material.GradeProperty;
             }
         }
         #region GsaAPI members
@@ -77,6 +75,7 @@ namespace GhSA.Parameters
                 m_guid = Guid.NewGuid();
                 CloneSection();
                 m_section.MaterialAnalysisProperty = value;
+                m_material.AnalysisProperty = m_section.MaterialAnalysisProperty;
             }
         }
         public string Profile
@@ -101,6 +100,13 @@ namespace GhSA.Parameters
         }
         private void CloneSection()
         {
+            if (m_section == null)
+            {
+                m_section = new Section();
+                m_guid = Guid.NewGuid();
+                return;
+            }
+
             Section sec = new Section()
             {
                 MaterialAnalysisProperty = m_section.MaterialAnalysisProperty,
@@ -130,10 +136,17 @@ namespace GhSA.Parameters
         #endregion
 
         #region constructors
-        public GsaSection()
+        public GsaSection() 
         {
-            m_section = new Section();
-            m_guid = Guid.NewGuid();
+            m_section = null;
+            m_guid = Guid.Empty;
+            m_idd = 0;
+        }
+        public GsaSection(int id)
+        {
+            m_section = null;
+            m_guid = Guid.Empty;
+            m_idd = id;
         }
         public GsaSection(string profile)
         {
@@ -141,18 +154,26 @@ namespace GhSA.Parameters
             {
                 Profile = profile
             };
+            m_material = new GsaMaterial();
             m_guid = Guid.NewGuid();
         }
-        public GsaSection(string profile, int ID)
+        public GsaSection(string profile, int ID = 0)
         {
             m_section = new Section
             {
                 Profile = profile
             };
             m_idd = ID;
+            m_material = new GsaMaterial();
             m_guid = Guid.NewGuid();
         }
-
+        public GsaSection(Section Section, int ID = 0)
+        {
+            m_section = Section;
+            m_material = new GsaMaterial();
+            m_idd = ID;
+            m_guid = Guid.NewGuid();
+        }
         public GsaSection Duplicate()
         {
             if (this == null) { return null; }
@@ -160,47 +181,11 @@ namespace GhSA.Parameters
             if (m_section != null)
                 dup.m_section = m_section;
             dup.m_idd = m_idd;
-            dup.m_material = m_material;
+            if (m_material != null)
+                dup.m_material = m_material.Duplicate();
             dup.m_guid = new Guid(m_guid.ToString());
             return dup;
         }
-        //public GsaSection Duplicate_OBSOLETE()
-        //{
-        //    if (this == null) { return null; }
-        //    GsaSection dup = new GsaSection();
-        //    if (m_section != null)
-        //    {
-        //        dup.Section = new Section()
-        //        {
-        //            MaterialAnalysisProperty = m_section.MaterialAnalysisProperty,
-        //            MaterialGradeProperty = m_section.MaterialGradeProperty,
-        //            MaterialType = m_section.MaterialType,
-        //            Name = m_section.Name,
-        //            Pool = m_section.Pool,
-        //            Profile = m_section.Profile
-        //        };
-
-        //        if ((System.Drawing.Color)m_section.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        //            dup.m_section.Colour = m_section.Colour;
-        //    }
-        //    else
-        //        dup.Section = null;
-            
-        //    dup.ID = m_idd;
-
-        //    if (Material != null)
-        //        dup.Material = m_material.Duplicate();
-
-        //    dup.m_guid = new Guid(m_guid.ToString());
-        //    return dup;
-        //}
-
-        //public GsaSection Clone()
-        //{
-        //    GsaSection clone = this.Duplicate();
-        //    clone.m_guid = Guid.NewGuid();
-        //    return clone;
-        //}
         #endregion
 
         #region properties
@@ -348,11 +333,17 @@ namespace GhSA.Parameters
                 return true;
             }
 
+            //Cast from GsaAPI Prop2d
+            if (typeof(Section).IsAssignableFrom(source.GetType()))
+            {
+                Value = new GsaSection((Section)source);
+                return true;
+            }
 
             //Cast from string
             if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
             {
-                Value.Section.Profile = name;
+                Value = new GsaSection(name);
                 return true;
             }
 

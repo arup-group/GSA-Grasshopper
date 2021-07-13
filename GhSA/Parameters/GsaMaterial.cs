@@ -50,7 +50,7 @@ namespace GhSA.Parameters
         //    get { return m_idd; }
         //    set { m_idd = value; }
         //}
-        public int Grade
+        public int GradeProperty
         {
             get { return m_grade; }
             set { m_grade = value; }
@@ -61,7 +61,7 @@ namespace GhSA.Parameters
             set { m_analProp = value; }
         }
 
-        public MatType Type;
+        public MatType MaterialType;
 
         #region fields
         //int m_idd = 0;
@@ -73,26 +73,26 @@ namespace GhSA.Parameters
         #region constructors
         public GsaMaterial()
         {
-            Type = MatType.GENERIC;
+            MaterialType = MatType.GENERIC;
         }
         private MatType getType(MaterialType materialType)
         {
             MatType m_type = MatType.NONE;
-            if (materialType == MaterialType.GENERIC)
+            if (materialType == GsaAPI.MaterialType.GENERIC)
                 m_type = MatType.GENERIC;
-            if (materialType == MaterialType.STEEL)
+            if (materialType == GsaAPI.MaterialType.STEEL)
                 m_type = MatType.STEEL;
-            if (materialType == MaterialType.CONCRETE)
+            if (materialType == GsaAPI.MaterialType.CONCRETE)
                 m_type = MatType.CONCRETE;
-            if (materialType == MaterialType.TIMBER)
+            if (materialType == GsaAPI.MaterialType.TIMBER)
                 m_type = MatType.TIMBER;
-            if (materialType == MaterialType.ALUMINIUM)
+            if (materialType == GsaAPI.MaterialType.ALUMINIUM)
                 m_type = MatType.ALUMINIUM;
-            if (materialType == MaterialType.FRP)
+            if (materialType == GsaAPI.MaterialType.FRP)
                 m_type = MatType.FRP;
-            if (materialType == MaterialType.GLASS)
+            if (materialType == GsaAPI.MaterialType.GLASS)
                 m_type = MatType.GLASS;
-            if (materialType == MaterialType.FABRIC)
+            if (materialType == GsaAPI.MaterialType.FABRIC)
                 m_type = MatType.FABRIC;
             return m_type;
         }
@@ -109,33 +109,41 @@ namespace GhSA.Parameters
         /// <param name="material_id"></param>
         public GsaMaterial (int material_id)
         {
-            Type = (MatType)material_id;
+            MaterialType = (MatType)material_id;
         }
         public GsaMaterial(GsaSection section)
         {
             if (section == null) { return; }
-            if (section.Section == null) { return; }
+            if (section.API_Section == null) { return; }
 
-            Type = getType(section.Section.MaterialType);
-            AnalysisProperty = section.Section.MaterialAnalysisProperty;
-            Grade = section.Section.MaterialGradeProperty;
+            MaterialType = getType(section.API_Section.MaterialType);
+            AnalysisProperty = section.API_Section.MaterialAnalysisProperty;
+            GradeProperty = section.API_Section.MaterialGradeProperty;
         }
         public GsaMaterial(GsaProp2d prop)
         {
             if (prop.Material == null) { return;  }
 
-            Type = getType(prop.Prop2d.MaterialType);
-            AnalysisProperty = prop.Prop2d.MaterialAnalysisProperty;
-            Grade = prop.Prop2d.MaterialGradeProperty;
+            MaterialType = getType(prop.API_Prop2d.MaterialType);
+            AnalysisProperty = prop.API_Prop2d.MaterialAnalysisProperty;
+            GradeProperty = prop.API_Prop2d.MaterialGradeProperty;
+        }
+        public GsaMaterial(Prop2D prop)
+        {
+            if (prop == null) { return; }
+
+            MaterialType = getType(prop.MaterialType);
+            AnalysisProperty = prop.MaterialAnalysisProperty;
+            GradeProperty = prop.MaterialGradeProperty;
         }
 
         public GsaMaterial Duplicate()
         {
             if (this == null) { return null; }
             GsaMaterial dup = new GsaMaterial();
-            dup.Type = Type;
+            dup.MaterialType = MaterialType;
             //dup.ID = m_idd;
-            dup.Grade = m_grade;
+            dup.GradeProperty = m_grade;
             dup.AnalysisProperty = m_analProp;
             
             return dup;
@@ -155,7 +163,7 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            string mate = Type.ToString();
+            string mate = MaterialType.ToString();
             mate = Char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
             
             return "GSA Material " + mate;
@@ -266,49 +274,49 @@ namespace GhSA.Parameters
             {
                 if (mat.ToUpper() == "STEEL")
                 {
-                    Value.Type = GsaMaterial.MatType.STEEL;
+                    Value.MaterialType = GsaMaterial.MatType.STEEL;
                     return true;
                 }
                     
                 if (mat.ToUpper() == "CONCRETE")
                 {
-                    Value.Type = GsaMaterial.MatType.CONCRETE;
+                    Value.MaterialType = GsaMaterial.MatType.CONCRETE;
                     return true;
                 }
                     
                 if (mat.ToUpper() == "FRP")
                 {
-                    Value.Type = GsaMaterial.MatType.FRP;
+                    Value.MaterialType = GsaMaterial.MatType.FRP;
                     return true;
                 }
                     
                 if (mat.ToUpper() == "ALUMINIUM")
                 {
-                    Value.Type = GsaMaterial.MatType.ALUMINIUM;
+                    Value.MaterialType = GsaMaterial.MatType.ALUMINIUM;
                     return true;
                 }
                     
                 if (mat.ToUpper() == "TIMBER")
                 {
-                    Value.Type = GsaMaterial.MatType.TIMBER;
+                    Value.MaterialType = GsaMaterial.MatType.TIMBER;
                     return true;
                 }
                     
                 if (mat.ToUpper() == "GLASS")
                 {
-                    Value.Type = GsaMaterial.MatType.GLASS;
+                    Value.MaterialType = GsaMaterial.MatType.GLASS;
                     return true;
                 }
                     
                 if (mat.ToUpper() == "FABRIC")
                 {
-                    Value.Type = GsaMaterial.MatType.FABRIC;
+                    Value.MaterialType = GsaMaterial.MatType.FABRIC;
                     return true;
                 }
                     
                 if (mat.ToUpper() == "GENERIC")
                 {
-                    Value.Type = GsaMaterial.MatType.GENERIC;
+                    Value.MaterialType = GsaMaterial.MatType.GENERIC;
                     return true;
                 }
                     

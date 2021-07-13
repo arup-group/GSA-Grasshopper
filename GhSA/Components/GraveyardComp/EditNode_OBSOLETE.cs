@@ -95,7 +95,7 @@ namespace GhSA.Components
                 {
                     gh_typ.CastTo(ref gsaNode);
                     if (gsaNode == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
-                    if (gsaNode.Node == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
+                    if (gsaNode.API_Node == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
                 }
                 else if (GH_Convert.ToPoint3d(gh_typ.Value, ref tempPt, GH_Conversion.Both))
                 {
@@ -126,9 +126,9 @@ namespace GhSA.Components
                     if (GH_Convert.ToPoint3d(ghPt, ref pt, GH_Conversion.Both))
                     {
                         node.Point = pt;
-                        node.Node.Position.X = pt.X;
-                        node.Node.Position.Y = pt.Y;
-                        node.Node.Position.Z = pt.Z;
+                        node.API_Node.Position.X = pt.X;
+                        node.API_Node.Position.Y = pt.Y;
+                        node.API_Node.Position.Z = pt.Z;
                     }
                 }
 
@@ -148,12 +148,12 @@ namespace GhSA.Components
                 GsaBool6 restraint = new GsaBool6();
                 if (DA.GetData(4, ref restraint))
                 {
-                    node.Node.Restraint.X = restraint.X;
-                    node.Node.Restraint.Y = restraint.Y;
-                    node.Node.Restraint.Z = restraint.Z;
-                    node.Node.Restraint.XX = restraint.XX;
-                    node.Node.Restraint.YY = restraint.YY;
-                    node.Node.Restraint.ZZ = restraint.ZZ;
+                    node.API_Node.Restraint.X = restraint.X;
+                    node.API_Node.Restraint.Y = restraint.Y;
+                    node.API_Node.Restraint.Z = restraint.Z;
+                    node.API_Node.Restraint.XX = restraint.XX;
+                    node.API_Node.Restraint.YY = restraint.YY;
+                    node.API_Node.Restraint.ZZ = restraint.ZZ;
                 }
 
                 // 5 Spring
@@ -169,7 +169,7 @@ namespace GhSA.Components
                 if (DA.GetData(6, ref ghStr))
                 {
                     if (GH_Convert.ToString(ghStr, out string name, GH_Conversion.Both))
-                        node.Node.Name = name;
+                        node.API_Node.Name = name;
                 }
 
                 // 7 Colour
@@ -187,12 +187,12 @@ namespace GhSA.Components
                 DA.SetData(3, node.LocalAxis);
                 GsaBool6 restraint1 = new GsaBool6
                 {
-                    X = node.Node.Restraint.X,
-                    Y = node.Node.Restraint.Y,
-                    Z = node.Node.Restraint.Z,
-                    XX = node.Node.Restraint.XX,
-                    YY = node.Node.Restraint.YY,
-                    ZZ = node.Node.Restraint.ZZ
+                    X = node.API_Node.Restraint.X,
+                    Y = node.API_Node.Restraint.Y,
+                    Z = node.API_Node.Restraint.Z,
+                    XX = node.API_Node.Restraint.XX,
+                    YY = node.API_Node.Restraint.YY,
+                    ZZ = node.API_Node.Restraint.ZZ
                 };
                 DA.SetData(4, new GsaBool6Goo(restraint1));
                 GsaSpring spring1 = new GsaSpring();
@@ -201,10 +201,10 @@ namespace GhSA.Components
                     spring1 = node.Spring.Duplicate();
                 }
                 DA.SetData(5, new GsaSpringGoo(spring1));
-                DA.SetData(6, node.Node.Name);
+                DA.SetData(6, node.API_Node.Name);
                 DA.SetData(7, node.Colour);
-                try { DA.SetDataList(8, node.Node.ConnectedElements); } catch (Exception) { }
-                try { DA.SetDataList(9, node.Node.ConnectedMembers); } catch (Exception) { }
+                try { DA.SetDataList(8, node.API_Node.ConnectedElements); } catch (Exception) { }
+                try { DA.SetDataList(9, node.API_Node.ConnectedMembers); } catch (Exception) { }
             }
         }
     }

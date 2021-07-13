@@ -75,6 +75,15 @@ namespace GhSA.Parameters
             m_zz = false;
         }
 
+        public GsaBool6(NodalRestraint restraint)
+        {
+            m_x = restraint.X;
+            m_y = restraint.Y;
+            m_z = restraint.Z;
+            m_xx = restraint.XX;
+            m_yy = restraint.YY;
+            m_zz = restraint.ZZ;
+        }
         //public GsaBool6(Bool6 bool6)
         //{
         //   m_x = bool6.X;

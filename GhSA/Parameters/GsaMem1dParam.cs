@@ -17,17 +17,21 @@ namespace GhSA.Parameters
     /// Member1d class, this class defines the basic properties and methods for any Gsa Member 1d
     /// </summary>
     public class GsaMember1d
-
     {
-        public Member Member
+        public Member API_Member
         {
             get { return m_member; }
-            set { m_member = value; }
         }
         public PolyCurve PolyCurve
         {
             get { return m_crv; }
-            set { m_crv = Util.GH.Convert.ConvertCurveMem1d(value); }
+            set 
+            {
+                Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Util.GH.Convert.ConvertMem1dCrv(value);
+                m_crv = convertCrv.Item1;
+                m_topo = convertCrv.Item2;
+                m_topoType = convertCrv.Item3;
+            }
         }
         public int ID
         {
@@ -38,13 +42,11 @@ namespace GhSA.Parameters
         public List<Point3d> Topology
         {
             get { return m_topo; }
-            set { m_topo = value; }
         }
 
         public List<string> TopologyType
         {
             get { return m_topoType; }
-            set { m_topoType = value; }
         }
 
         public GsaBool6 ReleaseStart
@@ -61,12 +63,7 @@ namespace GhSA.Parameters
         public GsaSection Section
         {
             get { return m_section; }
-            set 
-            {
-                if (m_section == null)
-                    PropertyID = 0;
-                m_section = value; 
-            }
+            set { m_section = value; }
         }
         #region GsaAPI members
         public System.Drawing.Color Colour
@@ -147,23 +144,13 @@ namespace GhSA.Parameters
                 m_member.OrientationAngle = value;
             }
         }
-        public int OrientationNode
+        public GsaNode OrientationNode
         {
-            get { return m_member.OrientationNode; }
+            get { return m_orientationNode; }
             set
             {
                 CloneMember();
-                m_member.OrientationNode = value;
-            }
-        }
-        public int PropertyID
-        {
-            get { return m_member.Property; }
-            set
-            {
-                CloneMember();
-                m_member.Property = value;
-                m_section = null;
+                m_orientationNode = value;
             }
         }
         public MemberType Type
@@ -217,6 +204,7 @@ namespace GhSA.Parameters
         private GsaBool6 m_rel1;
         private GsaBool6 m_rel2;
         private GsaSection m_section;
+        private GsaNode m_orientationNode;
         #endregion
 
         #region constructors
@@ -224,26 +212,19 @@ namespace GhSA.Parameters
         {
             m_member = new Member();
             m_crv = new PolyCurve();
-
             m_section = new GsaSection();
-            m_section.Section = null;
         }
 
-        public GsaMember1d(List<Point3d> topology, List<string> topo_type = null)
+        public GsaMember1d(Member apiMember, int id, List<Point3d> topology, List<string> topo_type = null, GsaNode orientationNode = null)
         {
-            m_member = new Member
-            {
-                Type = MemberType.GENERIC_1D
-            };
+            m_member = apiMember;
             m_crv = Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
             m_topo = topology;
             m_topoType = topo_type;
-
+            m_id = id;
             m_section = new GsaSection();
-            m_section.Section = null;
-
-            Topology = m_topo;
-            TopologyType = m_topoType;
+            if (orientationNode != null)
+                m_orientationNode = orientationNode;
         }
 
         public GsaMember1d(Curve crv, int prop = 0)
@@ -259,10 +240,6 @@ namespace GhSA.Parameters
             m_topoType = convertCrv.Item3;
 
             m_section = new GsaSection();
-            m_section.Section = null;
-
-            Topology = m_topo;
-            TopologyType = m_topoType;
         }
         public GsaMember1d Duplicate()
         {
@@ -272,63 +249,57 @@ namespace GhSA.Parameters
             dup.m_id = m_id;
             dup.m_member = m_member;
             dup.m_crv = (PolyCurve)m_crv.DuplicateShallow();
-            dup.m_rel1 = m_rel1;
-            dup.m_rel2 = m_rel2;
-            dup.m_section = m_section;
+            if (m_rel1 != null)
+                dup.m_rel1 = m_rel1.Duplicate();
+            if (m_rel2 != null)
+                dup.m_rel2 = m_rel2.Duplicate();
+            dup.m_section = m_section.Duplicate();
             dup.m_topo = m_topo;
             dup.m_topoType = m_topoType;
+            if (m_orientationNode != null)
+                dup.m_orientationNode = m_orientationNode.Duplicate();
+            return dup;
+        }
+        public GsaMember1d Transform(Transform xform)
+        {
+            if (this == null) { return null; }
+
+            GsaMember1d dup = this.Duplicate();
+
+            List<Point3d> pts = m_topo.ToList();
+            Point3dList xpts = new Point3dList(pts);
+            xpts.Transform(xform);
+            dup.m_topo = xpts.ToList();
+
+            if (m_crv != null)
+            {
+                PolyCurve crv = m_crv.DuplicatePolyCurve();
+                crv.Transform(xform);
+                dup.m_crv = crv;
+            }
 
             return dup;
         }
-        //public GsaMember1d Duplicate_OBSOLETE()
-        //{
-        //    if (this == null) { return null; }
-            
-        //    GsaMember1d dup = new GsaMember1d
-        //    {
-        //        Member = new Member
-        //        {
-        //            Group = m_member.Group,
-        //            IsDummy = m_member.IsDummy,
-        //            MeshSize = m_member.MeshSize,
-        //            Name = m_member.Name.ToString(),
-        //            Offset = m_member.Offset,
-        //            OrientationAngle = m_member.OrientationAngle,
-        //            OrientationNode = m_member.OrientationNode,
-        //            Property = m_member.Property,
-        //            Topology = m_member.Topology.ToString(),
-        //            Type = m_member.Type, //GsaToModel.Member1dType((int)Member.Type),
-        //            Type1D = m_member.Type1D //GsaToModel.Element1dType((int)Member.Type1D)
-        //        }
-        //    };
+        public GsaMember1d Morph(SpaceMorph xmorph)
+        {
+            if (this == null) { return null; }
 
-        //    if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        //        dup.m_member.Colour = m_member.Colour;
+            GsaMember1d dup = this.Duplicate();
 
-        //    dup.Member.Offset.X1 = m_member.Offset.X1;
-        //    dup.Member.Offset.X2 = m_member.Offset.X2;
-        //    dup.Member.Offset.Y = m_member.Offset.Y;
-        //    dup.Member.Offset.Z = m_member.Offset.Z;
+            List<Point3d> pts = m_topo.ToList();
+            for (int i = 0; i < pts.Count; i++)
+                pts[i] = xmorph.MorphPoint(pts[i]);
+            dup.m_topo = pts;
 
-        //    if (m_crv != null)
-        //        dup.m_crv = m_crv.DuplicatePolyCurve();
+            if (m_crv != null)
+            {
+                PolyCurve crv = m_crv.DuplicatePolyCurve();
+                xmorph.Morph(crv);
+                dup.m_crv = crv;
+            }
 
-        //    Point3dList point3Ds = new Point3dList(m_topo);
-        //    dup.Topology = new List<Point3d>(point3Ds.Duplicate());
-        //    dup.TopologyType = m_topoType.ToList();
-
-        //    dup.ID = m_id;
-
-        //    if (m_rel1 != null)
-        //        dup.ReleaseStart = m_rel1.Duplicate();
-        //    if (m_rel2 != null)
-        //        dup.ReleaseEnd = m_rel2.Duplicate();
-        //    //if (m_section != null)
-        //    //    dup.Section = m_section.Duplicate();
-        //    dup.Section = m_section;
-
-        //    return dup;
-        //}
+            return dup;
+        }
         #endregion
 
         #region properties
@@ -457,7 +428,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.Member;
+                    target = (Q)(object)Value.API_Member;
                 return true;
             }
 
@@ -559,12 +530,11 @@ namespace GhSA.Parameters
             }
 
             //Cast from GsaAPI Member
-            if (typeof(Member).IsAssignableFrom(source.GetType()))
-            {
-                Value.Member = (Member)source;
-                return true;
-            }
-
+            //if (typeof(Member).IsAssignableFrom(source.GetType()))
+            //{
+            //    Value.API_Member = (Member)source;
+            //    return true;
+            //}
             
             //Cast from Curve
             Curve crv = null;
@@ -584,47 +554,12 @@ namespace GhSA.Parameters
         #region transformation methods
         public override IGH_GeometricGoo Transform(Transform xform)
         {
-            if (Value == null) { return null; }
-            if (Value.PolyCurve == null) { return null; }
-
-            GsaMember1d mem = Value.Duplicate();
-
-            List<Point3d> pts = Value.Topology.ToList();
-            Point3dList xpts = new Point3dList(pts);
-            xpts.Transform(xform);
-            mem.Topology = xpts.ToList();
-            mem.TopologyType = Value.TopologyType.ToList();
-            
-            if (Value.PolyCurve != null)
-            {
-                PolyCurve crv = Value.PolyCurve.DuplicatePolyCurve();
-                crv.Transform(xform);
-                mem.PolyCurve = crv;
-            }
-            
-            return new GsaMember1dGoo(mem);
+            return new GsaMember1dGoo(Value.Transform(xform));
         }
 
         public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
         {
-            if (Value == null) { return null; }
-            if (Value.PolyCurve == null) { return null; }
-
-            GsaMember1d mem = Value.Duplicate();
-
-            List<Point3d> pts = Value.Topology.ToList();
-            for (int i = 0; i < pts.Count; i++)
-                pts[i] = xmorph.MorphPoint(pts[i]);
-            mem.Topology = pts;
-
-            if (Value.PolyCurve != null)
-            {
-                PolyCurve crv = Value.PolyCurve.DuplicatePolyCurve();
-                xmorph.Morph(crv);
-                mem.PolyCurve = crv;
-            }
-
-            return new GsaMember1dGoo(mem);
+            return new GsaMember1dGoo(Value.Morph(xmorph));
         }
 
         #endregion
@@ -647,7 +582,7 @@ namespace GhSA.Parameters
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
-                    if (Value.Member.IsDummy)
+                    if (Value.IsDummy)
                         args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Dummy1D, false);
                     else
                     {
@@ -655,14 +590,14 @@ namespace GhSA.Parameters
                             args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2);
                         else
                         {
-                            System.Drawing.Color col = UI.Colour.ElementType(Value.Member.Type1D);
+                            System.Drawing.Color col = UI.Colour.ElementType(Value.Type1D);
                             args.Pipeline.DrawCurve(Value.PolyCurve, col, 2);
                         }
                     }
                 }
                 else
                 {
-                    if (Value.Member.IsDummy)
+                    if (Value.IsDummy)
                         args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Member1dSelected, false);
                     else
                         args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
@@ -672,7 +607,7 @@ namespace GhSA.Parameters
             //Draw points.
             if (Value.Topology != null)
             {
-                if (!Value.Member.IsDummy)
+                if (!Value.IsDummy)
                 {
                     List<Point3d> pts = Value.Topology;
                     for (int i = 0; i < pts.Count; i++)
@@ -696,10 +631,10 @@ namespace GhSA.Parameters
             }
 
             //Draw releases
-            if (!Value.Member.IsDummy)
+            if (!Value.IsDummy)
             {
                 PolyCurve crv = Value.PolyCurve;
-                double angle = Value.Member.OrientationAngle;
+                double angle = Value.OrientationAngle;
                 GsaBool6 start = Value.ReleaseStart;
                 GsaBool6 end = Value.ReleaseEnd;
 

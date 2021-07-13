@@ -20,10 +20,9 @@ namespace GhSA.Parameters
     public class GsaElement1d
 
     {
-        public Element Element
+        public Element API_Element
         {
             get { return m_element; }
-            set { m_element = value; } 
         }
         public LineCurve Line
         {
@@ -92,12 +91,7 @@ namespace GhSA.Parameters
         public GsaSection Section
         {
             get { return m_section; }
-            set 
-            {
-                if (m_section == null)
-                    PropertyID = 0;
-                m_section = value;
-            }
+            set { m_section = value; }
         }
 
         #region GsaAPI members
@@ -168,25 +162,29 @@ namespace GhSA.Parameters
                 m_element.OrientationAngle = value;
             }
         }
-        public int OrientationNode
+        public GsaNode OrientationNode
         {
-            get { return m_element.OrientationNode; }
+            get { return m_orientationNode; }
             set
             {
                 CloneElement();
-                m_element.OrientationNode = value;
+                m_orientationNode = value;
             }
         }
-        public int PropertyID
+        public int ParentMember
         {
-            get { return m_element.Property; }
-            set
-            {
-                CloneElement();
-                m_element.Property = value;
-                m_section = null;
-            }
+            get { return m_element.ParentMember.Member; }
         }
+        //public int PropertyID
+        //{
+        //    get { return m_element.Property; }
+        //    set
+        //    {
+        //        CloneElement();
+        //        m_element.Property = value;
+        //        m_section = null;
+        //    }
+        //}
         public ElementType Type
         {
             get { return m_element.Type; }
@@ -224,6 +222,7 @@ namespace GhSA.Parameters
         private GsaBool6 m_rel1;
         private GsaBool6 m_rel2;
         private GsaSection m_section;
+        private GsaNode m_orientationNode;
         #endregion
 
         #region constructors
@@ -231,22 +230,27 @@ namespace GhSA.Parameters
         {
             m_element = new Element();
             m_line = new LineCurve();
-            
             m_section = new GsaSection();
-            m_section.Section = null;
         }
         public GsaElement1d(LineCurve line, int prop = 0)
         {
             m_element = new Element
             {
                 Type = ElementType.BEAM,
-                Property = prop,
             };
             
             m_line = line;
-
             m_section = new GsaSection();
-            m_section.Section = null;
+            m_section.ID = prop;
+        }
+        public GsaElement1d(Element apiElement, int id, LineCurve line, GsaNode orientationNode)
+        {
+            m_element = apiElement;
+            m_id = id;
+            m_line = line;
+            m_section = new GsaSection();
+            if (orientationNode != null)
+                m_orientationNode = orientationNode;
         }
 
         public GsaElement1d Duplicate()
@@ -256,51 +260,15 @@ namespace GhSA.Parameters
             dup.m_id = m_id;
             dup.m_element = m_element;
             dup.m_line = (LineCurve)m_line.DuplicateShallow();
-            dup.m_rel1 = m_rel1;
-            dup.m_rel2 = m_rel2;
-            dup.m_section = m_section;
+            if (m_rel1 != null)
+                dup.m_rel1 = m_rel1.Duplicate();
+            if (m_rel2 != null)
+                dup.m_rel2 = m_rel2.Duplicate();
+            dup.m_section = m_section.Duplicate();
+            if (m_orientationNode != null)
+                dup.m_orientationNode = m_orientationNode.Duplicate();
             return dup;
         }
-        //public GsaElement1d Clone()
-        //{
-        //    if (this == null) { return null; }
-        //    GsaElement1d dup = new GsaElement1d();
-        //    dup.m_element = new Element()
-        //    {
-        //        Group = m_element.Group,
-        //        IsDummy = m_element.IsDummy,
-        //        Name = m_element.Name.ToString(),
-        //        Offset = m_element.Offset,
-        //        OrientationAngle = m_element.OrientationAngle,
-        //        OrientationNode = m_element.OrientationNode,
-        //        ParentMember = m_element.ParentMember,
-        //        Property = m_element.Property,
-        //        Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
-        //        Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
-        //    };
-
-        //    if ((System.Drawing.Color)m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        //        dup.m_element.Colour = m_element.Colour;
-
-        //    dup.Element.Offset.X1 = m_element.Offset.X1;
-        //    dup.Element.Offset.X2 = m_element.Offset.X2;
-        //    dup.Element.Offset.Y = m_element.Offset.Y;
-        //    dup.Element.Offset.Z = m_element.Offset.Z;
-
-        //    if (m_line != null)
-        //        dup.m_line = (LineCurve)m_line.Duplicate();
-        //    dup.ID = m_id;
-
-        //    if (m_rel1 != null)
-        //        dup.ReleaseStart = m_rel1.Duplicate();
-        //    if (m_rel2 != null)
-        //        dup.ReleaseEnd = m_rel2.Duplicate();
-        //    //if (m_section != null)
-        //    //    dup.Section = m_section.Duplicate();
-        //    dup.Section = m_section;
-
-        //    return dup;
-        //}
         #endregion
 
         #region properties
@@ -419,13 +387,13 @@ namespace GhSA.Parameters
                     target = (Q)(object)Value.Duplicate();
                 return true;
             }
-
+            
             if (typeof(Q).IsAssignableFrom(typeof(Element)))
             {
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.Element;
+                    target = (Q)(object)Value.API_Element;
                 return true;
             }
 
@@ -467,7 +435,6 @@ namespace GhSA.Parameters
                 {
                     target = (Q)(object)new GH_Curve(Value.Line);
                 }
-                    
                 return true;
             }
 
@@ -485,7 +452,6 @@ namespace GhSA.Parameters
                 }
                 return true;
             }
-
 
             target = default;
             return false;
@@ -506,11 +472,13 @@ namespace GhSA.Parameters
             }
 
             //Cast from GsaAPI Member
-            if (typeof(Element).IsAssignableFrom(source.GetType()))
-            {
-                Value.Element = (Element)source;
-                return true;
-            }
+            // we shouldnt provide auto-convertion from GsaAPI.Element
+            // as this cannot alone be used to create a line....
+            //if (typeof(Element).IsAssignableFrom(source.GetType()))
+            //{
+            //    Value.Element = (Element)source;
+            //    return true;
+            //}
 
             //Cast from Curve
             Line ln = new Line();
@@ -575,7 +543,7 @@ namespace GhSA.Parameters
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
-                    if (Value.Element.IsDummy)
+                    if (Value.IsDummy)
                         args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, UI.Colour.Dummy1D);
                     else
                     {
@@ -583,7 +551,7 @@ namespace GhSA.Parameters
                             args.Pipeline.DrawCurve(Value.Line, Value.Colour, 2);
                         else
                         {
-                            System.Drawing.Color col = UI.Colour.ElementType(Value.Element.Type);
+                            System.Drawing.Color col = UI.Colour.ElementType(Value.Type);
                             args.Pipeline.DrawCurve(Value.Line, col, 2);
                         }
                         args.Pipeline.DrawPoint(Value.Line.PointAtStart, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
@@ -592,7 +560,7 @@ namespace GhSA.Parameters
                 }
                 else
                 {
-                    if (Value.Element.IsDummy)
+                    if (Value.IsDummy)
                         args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, UI.Colour.Element1dSelected);
                     else
                     {
@@ -603,11 +571,11 @@ namespace GhSA.Parameters
                 }
             }
             //Draw releases
-            if (!Value.Element.IsDummy)
+            if (!Value.IsDummy)
             {
                 PolyCurve crv = new PolyCurve();
                 crv.Append(Value.Line);
-                double angle = Value.Element.OrientationAngle;
+                double angle = Value.OrientationAngle;
                 GsaBool6 start = Value.ReleaseStart;
                 GsaBool6 end = Value.ReleaseEnd;
 

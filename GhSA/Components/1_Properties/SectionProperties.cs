@@ -96,15 +96,15 @@ namespace GhSA.Components
                             break;
                     }
                 }
-                DA.SetData(0, gsaSection.Section.Area * Math.Pow(conversionfactor, 2));
-                DA.SetData(1, gsaSection.Section.Iyy * Math.Pow(conversionfactor, 4));
-                DA.SetData(2, gsaSection.Section.Izz * Math.Pow(conversionfactor, 4));
-                DA.SetData(3, gsaSection.Section.Iyz * Math.Pow(conversionfactor, 4));
-                DA.SetData(4, gsaSection.Section.J * Math.Pow(conversionfactor, 4));
-                DA.SetData(5, gsaSection.Section.Ky);
-                DA.SetData(6, gsaSection.Section.Kz);
-                DA.SetData(7, gsaSection.Section.SurfaceAreaPerLength * Math.Pow(conversionfactor, 2));
-                DA.SetData(8, gsaSection.Section.VolumePerLength * Math.Pow(conversionfactor, 3));
+                DA.SetData(0, gsaSection.API_Section.Area * Math.Pow(conversionfactor, 2));
+                DA.SetData(1, gsaSection.API_Section.Iyy * Math.Pow(conversionfactor, 4));
+                DA.SetData(2, gsaSection.API_Section.Izz * Math.Pow(conversionfactor, 4));
+                DA.SetData(3, gsaSection.API_Section.Iyz * Math.Pow(conversionfactor, 4));
+                DA.SetData(4, gsaSection.API_Section.J * Math.Pow(conversionfactor, 4));
+                DA.SetData(5, gsaSection.API_Section.Ky);
+                DA.SetData(6, gsaSection.API_Section.Kz);
+                DA.SetData(7, gsaSection.API_Section.SurfaceAreaPerLength * Math.Pow(conversionfactor, 2));
+                DA.SetData(8, gsaSection.API_Section.VolumePerLength * Math.Pow(conversionfactor, 3));
             }
         }
     }

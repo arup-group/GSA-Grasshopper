@@ -63,7 +63,7 @@ namespace GhSA.Components
             pManager.AddGenericParameter("End release", "⭲", "Set Release (Bool6) at End of Element", GH_ParamAccess.item);
             
             pManager.AddNumberParameter("Orientation Angle", "⭮A", "Set Element Orientation Angle in degrees", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Orientation Node", "⭮N", "Set Element Orientation Node (ID referring to node number in model)", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Element Orientation Node", GH_ParamAccess.item);
             
             pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.item);
             pManager.AddColourParameter("Colour", "Co", "Set Element Colour", GH_ParamAccess.item);
@@ -91,7 +91,7 @@ namespace GhSA.Components
             pManager.AddGenericParameter("End release", "⭲", "Get Release (Bool6) at End of Element", GH_ParamAccess.item);
             
             pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Element Orientation Angle in degrees", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Orientation Node", "⭮N", "Get Element Orientation Node (ID referring to node number in model)", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Orientation Node", "⭮N", "Get Element Orientation Node", GH_ParamAccess.item);
             
             pManager.AddTextParameter("Name", "Na", "Get Element Name", GH_ParamAccess.item);
             pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.item);
@@ -126,14 +126,7 @@ namespace GhSA.Components
                     if (GH_Convert.ToLine(ghcrv, ref crv, GH_Conversion.Both))
                     {
                         LineCurve ln = new LineCurve(crv);
-                        GsaElement1d tmpelem = new GsaElement1d(ln)
-                        {
-                            ID = elem.ID,
-                            Element = elem.Element,
-                            ReleaseEnd = elem.ReleaseEnd,
-                            ReleaseStart = elem.ReleaseStart
-                        };
-                        elem = tmpelem;
+                        elem.Line = ln;
                     }
                 }
 
@@ -145,14 +138,12 @@ namespace GhSA.Components
                     if (gh_typ.Value is GsaSectionGoo)
                     {
                         gh_typ.CastTo(ref section);
-                        elem.Section = section;
-                        elem.Element.Property = 0;
                     }
                     else
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
                         {
-                            elem.PropertyID = idd;
+                            section = new GsaSection(idd);
                         }
                         else
                         {
@@ -160,6 +151,7 @@ namespace GhSA.Components
                             return;
                         }
                     }
+                    elem.Section = section;
                 }
 
                 // 4 Group
@@ -183,10 +175,6 @@ namespace GhSA.Components
                 if (DA.GetData(6, ref offset))
                 {
                     elem.Offset = offset;
-                    //elem.Element.Offset.X1 = offset.X1;
-                    //elem.Element.Offset.X2 = offset.X2;
-                    //elem.Element.Offset.Y = offset.Y;
-                    //elem.Element.Offset.Z = offset.Z;
                 }
 
                 // 7 start release
@@ -212,11 +200,19 @@ namespace GhSA.Components
                 }
 
                 // 10 orientation node
-                GH_Integer ghori = new GH_Integer();
-                if (DA.GetData(10, ref ghori))
+                gh_typ = new GH_ObjectWrapper();
+                if (DA.GetData(10, ref gh_typ))
                 {
-                    if (GH_Convert.ToInt32(ghori, out int orient, GH_Conversion.Both))
-                        elem.OrientationAngle = orient; //elem.Element.OrientationNode = orient;
+                    GsaNode node = new GsaNode();
+                    if (gh_typ.Value is GsaNodeGoo)
+                    {
+                        gh_typ.CastTo(ref node);
+                        elem.OrientationNode = node;
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert Orientation Node input to GsaNode");
+                    }
                 }
 
                 // 11 name
@@ -248,29 +244,18 @@ namespace GhSA.Components
                 DA.SetData(1, elem.ID);
                 DA.SetData(2, elem.Line);
                 DA.SetData(3, new GsaSectionGoo(elem.Section));
-                DA.SetData(4, elem.Element.Group);
-                DA.SetData(5, elem.Element.Type);
-                //GsaOffset offset1 = new GsaOffset
-                //{
-                //    X1 = elem.Element.Offset.X1,
-                //    X2 = elem.Element.Offset.X2,
-                //    Y = elem.Element.Offset.Y,
-                //    Z = elem.Element.Offset.Z
-                //};
-                //DA.SetData(6, offset1);
+                DA.SetData(4, elem.Group);
+                DA.SetData(5, elem.Type);
                 DA.SetData(6, new GsaOffsetGoo(elem.Offset));
-
                 DA.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
                 DA.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
-
                 DA.SetData(9, elem.OrientationAngle);
-                DA.SetData(10, elem.OrientationNode);
-                
+                DA.SetData(10, new GsaNodeGoo(elem.OrientationNode));
                 DA.SetData(11, elem.Name);
                 DA.SetData(12, elem.Colour);
                 DA.SetData(13, elem.IsDummy);
 
-                try { DA.SetData(14, elem.Element.ParentMember.Member); } catch (Exception) { }
+                try { DA.SetData(14, elem.ParentMember); } catch (Exception) { }
             }
         }
     }

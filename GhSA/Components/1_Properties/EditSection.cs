@@ -140,10 +140,10 @@ namespace GhSA.Components
                 }
 
                 // #### outputs ####
-                string prof = (gsaSection.Section == null) ? "--" : gsaSection.Profile;
-                int poo = (gsaSection.Section == null) ? 0 : gsaSection.Pool;
-                string nm = (gsaSection.Section == null) ? "--" : gsaSection.Name;
-                ValueType colour = (gsaSection.Section == null) ? null : gsaSection.Section.Colour;
+                string prof = (gsaSection.API_Section == null) ? "--" : gsaSection.Profile;
+                int poo = (gsaSection.API_Section == null) ? 0 : gsaSection.Pool;
+                string nm = (gsaSection.API_Section == null) ? "--" : gsaSection.Name;
+                ValueType colour = (gsaSection.API_Section == null) ? null : gsaSection.API_Section.Colour;
 
                 DA.SetData(0, new GsaSectionGoo(gsaSection));
                 DA.SetData(1, gsaSection.ID);

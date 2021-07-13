@@ -79,13 +79,33 @@ namespace GhSA.Components
                 }
 
                 // 1 prop3d to be implemented GsaAPI
+                gh_typ = new GH_ObjectWrapper();
+                //GsaProp2d prop2d = new GsaProp2d();
+                if (DA.GetData(1, ref gh_typ))
+                {
+                    //if (gh_typ.Value is GsaProp2dGoo)
+                    //{
+                    //    gh_typ.CastTo(ref prop2d);
+                    //    mem.Property = prop2d;
+                    //}
+                    //else
+                    //{
+                    if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+                        mem.PropertyID = idd; //new GsaProp3d(idd);
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
+                        return;
+                    }
+                    //}
+                }
 
                 // 2 mesh size
                 GH_Number ghmsz = new GH_Number();
                 if (DA.GetData(2, ref ghmsz))
                 {
                     GH_Convert.ToDouble(ghmsz, out double m_size, GH_Conversion.Both);
-                    mem.Member.MeshSize = m_size;
+                    mem.MeshSize = m_size;
                 }
 
                 DA.SetData(0, new GsaMember3dGoo(mem));

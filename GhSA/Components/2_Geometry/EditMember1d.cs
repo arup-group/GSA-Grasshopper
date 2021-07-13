@@ -75,7 +75,7 @@ namespace GhSA.Components
             pManager.AddGenericParameter("Start release", "⭰", "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
             pManager.AddGenericParameter("End release", "⭲", "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
             pManager.AddNumberParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle in degrees", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Orientation Node", "⭮N", "Set Member Orientation Node (ID referring to node number in model)", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Member Orientation Node", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item, true);
             
@@ -104,7 +104,7 @@ namespace GhSA.Components
             pManager.AddGenericParameter("Start release", "⭰", "Get Release (Bool6) at Start of Member", GH_ParamAccess.item);
             pManager.AddGenericParameter("End release", "⭲", "Get Release (Bool6) at End of Member", GH_ParamAccess.item);
             pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Member Orientation Angle in degrees", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Orientation Node", "⭮N", "Get Member Orientation Node (ID referring to node number in model)", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Orientation Node", "⭮N", "Get Member Orientation Node", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mesh Size", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
             
@@ -139,10 +139,7 @@ namespace GhSA.Components
                     Curve crv = null;
                     if (GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both))
                     {
-                        GsaMember1d tempmem = new GsaMember1d(crv);
-                        mem.PolyCurve = tempmem.PolyCurve;
-                        mem.Topology = tempmem.Topology;
-                        mem.TopologyType = tempmem.TopologyType;
+                        mem.PolyCurve = (PolyCurve)crv;
                     }
                 }
 
@@ -154,15 +151,12 @@ namespace GhSA.Components
                     if (gh_typ.Value is GsaSectionGoo)
                     {
                         gh_typ.CastTo(ref section);
-                        mem.Section = section;
-                        //mem.Member.Property = 0;
                     }
                     else
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
                         {
-                            mem.PropertyID = idd;
-                            //mem.Section = null;
+                            section = new GsaSection(idd);
                         }
                         else
                         {
@@ -170,6 +164,7 @@ namespace GhSA.Components
                             return;
                         }
                     }
+                    mem.Section = section;
                 }
 
                 // 4 Group
@@ -201,10 +196,6 @@ namespace GhSA.Components
                 if (DA.GetData(7, ref offset))
                 {
                     mem.Offset = offset;
-                    //mem.Member.Offset.X1 = offset.X1;
-                    //mem.Member.Offset.X2 = offset.X2;
-                    //mem.Member.Offset.Y = offset.Y;
-                    //mem.Member.Offset.Z = offset.Z;
                 }
 
                 // 8 start release
@@ -230,11 +221,19 @@ namespace GhSA.Components
                 }
 
                 // 11 orientation node
-                GH_Integer ghori = new GH_Integer();
-                if (DA.GetData(11, ref ghori))
+                gh_typ = new GH_ObjectWrapper();
+                if (DA.GetData(11, ref gh_typ))
                 {
-                    if (GH_Convert.ToInt32(ghori, out int orient, GH_Conversion.Both))
-                        mem.OrientationNode = orient;
+                    GsaNode node = new GsaNode();
+                    if (gh_typ.Value is GsaNodeGoo)
+                    {
+                        gh_typ.CastTo(ref node);
+                        mem.OrientationNode = node;
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert Orientation Node input to GsaNode");
+                    }
                 }
 
                 // 12 mesh size
@@ -288,20 +287,13 @@ namespace GhSA.Components
                 DA.SetData(5, mem.Type);
                 DA.SetData(6, mem.Type1D);
 
-                GsaOffset gsaOffset = new GsaOffset
-                {
-                    X1 = mem.Member.Offset.X1,
-                    X2 = mem.Member.Offset.X2,
-                    Y = mem.Member.Offset.Y,
-                    Z = mem.Member.Offset.Z
-                };
-                DA.SetData(7, new GsaOffsetGoo(gsaOffset));
+                DA.SetData(7, new GsaOffsetGoo(mem.Offset));
 
                 DA.SetData(8, mem.ReleaseStart);
                 DA.SetData(9, mem.ReleaseEnd);
 
                 DA.SetData(10, mem.OrientationAngle);
-                DA.SetData(11, mem.OrientationNode);
+                DA.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
                 DA.SetData(12, mem.MeshSize);
                 //DA.SetData(13, mem.member.MeshSize); //mesh with others bool

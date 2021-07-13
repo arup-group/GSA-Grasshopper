@@ -17,16 +17,10 @@ namespace GhSA.Parameters
     /// Prop2d class, this class defines the basic properties and methods for any Gsa Prop2d
     /// </summary>
     public class GsaProp2d
-
     {
-        public Prop2D Prop2d
+        public Prop2D API_Prop2d
         {
             get { return m_prop2d; }
-            set 
-            {
-                m_guid = Guid.NewGuid(); 
-                m_prop2d = value; 
-            }
         }
         public int ID
         {
@@ -43,10 +37,13 @@ namespace GhSA.Parameters
             set 
             {
                 m_material = value;
-                CloneProperty();
+                if (m_prop2d == null)
+                    m_prop2d = new Prop2D();
+                else
+                    CloneProperty();
                 m_prop2d.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
                 m_prop2d.MaterialAnalysisProperty = m_material.AnalysisProperty;
-                m_prop2d.MaterialGradeProperty = m_material.Grade;
+                m_prop2d.MaterialGradeProperty = m_material.GradeProperty;
             }
         }
         #region GsaAPI members
@@ -66,6 +63,7 @@ namespace GhSA.Parameters
             {
                 CloneProperty();
                 m_prop2d.MaterialAnalysisProperty = value;
+                m_material.AnalysisProperty = m_prop2d.MaterialAnalysisProperty;
             }
         }
         public double Thickness
@@ -116,6 +114,12 @@ namespace GhSA.Parameters
         }
         private void CloneProperty()
         {
+            if (m_prop2d == null) 
+            { 
+                m_prop2d = new Prop2D();
+                m_guid = Guid.NewGuid(); 
+                return; 
+            }
             Prop2D prop = new Prop2D
             {
                 MaterialAnalysisProperty = m_prop2d.MaterialAnalysisProperty,
@@ -140,7 +144,7 @@ namespace GhSA.Parameters
 
         #region fields
         Prop2D m_prop2d;
-        int m_idd = 0;
+        int m_idd;
         GsaMaterial m_material = null;
         private Guid m_guid;
         #endregion
@@ -148,7 +152,29 @@ namespace GhSA.Parameters
         #region constructors
         public GsaProp2d()
         {
+            m_prop2d = null;
+            m_guid = Guid.Empty;
+            m_idd = 0;
+        }
+        public GsaProp2d(int id)
+        {
+            m_prop2d = null;
+            m_guid = Guid.Empty;
+            m_idd = id;
+        }
+        public GsaProp2d(double thickness, int ID = 0)
+        {
             m_prop2d = new Prop2D();
+            m_material = new GsaMaterial();
+            Thickness = thickness;
+            m_idd = ID;
+            m_guid = Guid.NewGuid();
+        }
+        public GsaProp2d(Prop2D prop2d, int ID = 0)
+        {
+            m_prop2d = prop2d;
+            m_material = new GsaMaterial(m_prop2d);
+            m_idd = ID;
             m_guid = Guid.NewGuid();
         }
         public GsaProp2d Duplicate()
@@ -158,46 +184,11 @@ namespace GhSA.Parameters
             if (m_prop2d != null)
                 dup.m_prop2d = m_prop2d;
             dup.m_idd = m_idd;
-            dup.m_material = m_material;
+            if (m_material != null)
+                dup.m_material = m_material.Duplicate();
             dup.m_guid = new Guid(m_guid.ToString());
             return dup;
         }
-        //public GsaProp2d Duplicate_OBSOLETE()
-        //{
-        //    if (this == null) { return null; }
-        //    GsaProp2d dup = new GsaProp2d();
-        //    if (m_prop2d != null)
-        //    {
-        //        dup.Prop2d = new Prop2D
-        //        {
-        //            MaterialAnalysisProperty = m_prop2d.MaterialAnalysisProperty,
-        //            MaterialGradeProperty = m_prop2d.MaterialGradeProperty,
-        //            MaterialType = m_prop2d.MaterialType,
-        //            Name = m_prop2d.Name.ToString(),
-        //            Description = m_prop2d.Description.ToString(),
-        //            Type = m_prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
-        //            AxisProperty = m_prop2d.AxisProperty
-        //        };
-        //        if ((System.Drawing.Color)m_prop2d.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        //            dup.m_prop2d.Colour = m_prop2d.Colour;
-        //    }
-        //    else
-        //        dup.Prop2d = null;
-
-        //    dup.ID = m_idd;
-
-        //    if (Material != null)
-        //        dup.Material = m_material.Duplicate();
-
-        //    dup.m_guid = new Guid(m_guid.ToString());
-        //    return dup;
-        //}
-        //public GsaProp2d Clone()
-        //{
-        //    GsaProp2d clone = this.Duplicate();
-        //    clone.m_guid = Guid.NewGuid();
-        //    return clone;
-        //}
         #endregion
 
         #region properties
@@ -346,10 +337,17 @@ namespace GhSA.Parameters
                 return true;
             }
 
+            //Cast from GsaAPI Prop2d
+            if (typeof(Prop2D).IsAssignableFrom(source.GetType()))
+            {
+                Value = new GsaProp2d((Prop2D)source);
+                return true;
+            }
+
             //Cast from double
             if (GH_Convert.ToDouble(source, out double thk, GH_Conversion.Both))
             {
-                //Value.Prop2d.Thickness = thk; // To be added; GsaAPI bug
+                Value = new GsaProp2d(thk);
             }
             return false;
         }

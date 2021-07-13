@@ -143,12 +143,7 @@ namespace GhSA.Components
                     // 2 brep
                     if (DA.GetData(2, ref ghbrep))
                     {
-                        if (GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
-                        {
-                            mem.Brep = brep;
-                            crvs = new List<Curve>();
-                            pts = new List<Point3d>();
-                        }
+                        GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both);
                     }
 
                     // 3 inclusion points
@@ -178,37 +173,24 @@ namespace GhSA.Components
                             }
                         }
                     }
-
-                    GsaMember2d tmpmem = new GsaMember2d(brep, crvs, pts);
-                    mem.PolyCurve = tmpmem.PolyCurve;
-                    mem.Topology = tmpmem.Topology;
-                    mem.TopologyType = tmpmem.TopologyType;
-                    mem.VoidTopology = tmpmem.VoidTopology;
-                    mem.VoidTopologyType = tmpmem.VoidTopologyType;
-                    mem.InclusionLines = tmpmem.InclusionLines;
-                    mem.IncLinesTopology = tmpmem.IncLinesTopology;
-                    mem.IncLinesTopologyType = tmpmem.IncLinesTopologyType;
-                    mem.InclusionPoints = tmpmem.InclusionPoints;
+                    // rebuild 
+                    mem = mem.UpdateGeometry(brep, crvs, pts);
                 }
 
                 // 5 section
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-                
                 if (DA.GetData(5, ref gh_typ))
                 {
                     GsaProp2d prop2d = new GsaProp2d();
                     if (gh_typ.Value is GsaProp2dGoo)
                     {
                         gh_typ.CastTo(ref prop2d);
-                        mem.Property = prop2d;
-                        //mem.Member.Property = 0;
                     }
                     else
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
                         {
-                            mem.PropertyID = idd;
-                            //mem.Property = null;
+                            prop2d = new GsaProp2d(idd);
                         }
                         else
                         {
@@ -216,6 +198,7 @@ namespace GhSA.Components
                             return;
                         }
                     }
+                    mem.Property = prop2d;
                 }
 
                 // 6 Group
@@ -247,7 +230,6 @@ namespace GhSA.Components
                 if (DA.GetData(9, ref offset))
                 {
                     mem.Offset = offset;
-                    //mem.Member.Offset.Z = offset.Z;
                 }
 
                 // 10 mesh size
@@ -306,10 +288,6 @@ namespace GhSA.Components
                 DA.SetData(7, mem.Type);
                 DA.SetData(8, mem.Type2D);
                 
-                //GsaOffset gsaOffset = new GsaOffset
-                //{
-                //    Z = mem.Offset.Z
-                //};
                 DA.SetData(9, new GsaOffsetGoo(mem.Offset));
 
                 DA.SetData(10, mem.MeshSize);

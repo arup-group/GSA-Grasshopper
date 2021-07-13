@@ -164,7 +164,7 @@ namespace GhSA.Components
                     else
                         prop2d.ID = 1;
                     List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
-                    for (int i = 0; i < elem2d.Elements.Count; i++)
+                    for (int i = 0; i < elem2d.API_Elements.Count; i++)
                         prop2Ds.Add(prop2d);
                     elem2d.Properties = prop2Ds;
 

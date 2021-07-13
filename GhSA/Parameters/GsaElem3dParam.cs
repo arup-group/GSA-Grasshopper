@@ -19,15 +19,13 @@ namespace GhSA.Parameters
     public class GsaElement3d
 
     {
-        public List<Element> Elements
+        public List<Element> API_Elements
         {
             get { return m_elements; }
-            set { m_elements = value; }
         }
         public Mesh NgonMesh
         {
             get { return m_mesh; }
-            set { m_mesh = value; }
         }
         public Mesh DisplayMesh
         {
@@ -72,7 +70,7 @@ namespace GhSA.Parameters
             get { return m_faceInt; }
             set { m_faceInt = value; }
         }
-        //public List<GsaProp2d> Properties
+        //public List<GsaProp3d> Properties
         //{
         //    get { return m_props; }
         //    set { m_props = value; }
@@ -98,14 +96,6 @@ namespace GhSA.Parameters
             set
             {
                 CloneElements(apiObjectMember.colour, null, null, null, null, null, null, null, value);
-                //for (int i = 0; i < m_elements.Count; i++)
-                //{
-                //    if (value[i] != null)
-                //    {
-                //        m_elements[i].Colour = value[i];
-                //        Mesh.VertexColors.SetColor(i, (System.Drawing.Color)m_elements[i].Colour);
-                //    }
-                //}
             }
         }
         public List<int> Groups
@@ -264,9 +254,6 @@ namespace GhSA.Parameters
                     Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
                 });
 
-                //if ((System.Drawing.Color)m_elements[i].Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                //    elems[i].Colour = m_elements[i].Colour;
-
                 switch (memType)
                 {
                     case apiObjectMember.group:
@@ -367,7 +354,7 @@ namespace GhSA.Parameters
         {
             m_elements = new List<Element>();
             m_mesh = mesh;
-            Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(mesh, prop);
+            Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(mesh, 0);
             m_elements = convertMesh.Item1;
             m_topo = convertMesh.Item2;
             m_topoInt = convertMesh.Item3;
@@ -383,6 +370,21 @@ namespace GhSA.Parameters
             //    m_props.Add(property);
             //}
         }
+
+        public GsaElement3d(List<Element> apiElements, List<int> ids, Mesh mesh)
+        {
+            m_elements = apiElements;
+            m_mesh = mesh;
+            Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(mesh, 0);
+            m_elements = convertMesh.Item1;
+            m_topo = convertMesh.Item2;
+            m_topoInt = convertMesh.Item3;
+            m_faceInt = convertMesh.Item4;
+
+            m_id = ids;
+
+            //m_props = new List<GsaProp2d>();
+        }
         public GsaElement3d Duplicate()
         {
             if (this == null) { return null; }
@@ -394,64 +396,33 @@ namespace GhSA.Parameters
             dup.m_topoInt = m_topoInt;
             dup.m_faceInt = m_faceInt;
             dup.m_elements = m_elements;
-            dup.m_id = m_id;
+            dup.m_id = m_id.ToList();
 
             return dup;
         }
-        //public GsaElement3d Duplicate_OBSOLETE()
-        //{
-        //    if (this == null) { return null; }
-        //    if (m_mesh == null) { return null; }
+        /// <summary>
+        /// This method will return a copy of the existing element3d with an updated mesh
+        /// </summary>
+        /// <param name="updated_mesh"></param>
+        /// <returns></returns>
+        public GsaElement3d UpdateGeometry(Mesh updated_mesh)
+        {
+            if (this == null) { return null; }
+            if (m_mesh == null) { return null; }
+            //if (m_mesh.Faces.Count != m_elements.Count) { return null; } // the logic below assumes the number of elements is equal to number of faces
 
-        //    GsaElement3d dup = new GsaElement3d();
-        //    dup.m_mesh = (Mesh)m_mesh.Duplicate();
-        //    dup.m_topo = m_topo.ToList();
-        //    dup.m_topoInt = m_topoInt.ToList();
-
-        //    //dup.m_props = new List<GsaProp2d>();
-
-        //    for (int i = 0; i < m_elements.Count; i++)
-        //    {
-        //        dup.m_elements.Add(new Element()
-        //        {
-        //            Group = m_elements[i].Group,
-        //            IsDummy = m_elements[i].IsDummy,
-        //            Name = m_elements[i].Name.ToString(),
-        //            OrientationNode = m_elements[i].OrientationNode,
-        //            OrientationAngle = m_elements[i].OrientationAngle,
-        //            Offset = m_elements[i].Offset,
-        //            ParentMember = m_elements[i].ParentMember,
-        //            Property = m_elements[i].Property,
-        //            Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
-        //            Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
-        //        });
-
-        //        if ((System.Drawing.Color)m_elements[i].Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        //            dup.m_elements[i].Colour = m_elements[i].Colour;
-
-        //        dup.m_elements[i].Offset.X1 = m_elements[i].Offset.X1;
-        //        dup.m_elements[i].Offset.X2 = m_elements[i].Offset.X2;
-        //        dup.m_elements[i].Offset.Y = m_elements[i].Offset.Y;
-        //        dup.m_elements[i].Offset.Z = m_elements[i].Offset.Z;
-
-        //        //if (m_props[i] != null)
-        //        //    dup.m_props.Add(m_props[i].Duplicate());
-        //        //else
-        //        //    dup.m_props.Add(null); //dup.m_props.Add(new GsaProp2d());
-        //    }
-
-        //    dup.Colours = new List<System.Drawing.Color>(Colours);
-
-        //    if (m_id != null)
-        //    {
-        //        int[] dupids = new int[m_id.Count];
-        //        m_id.CopyTo(dupids);
-        //        dup.ID = new List<int>(dupids);
-        //    }
-            
-
-        //    return dup;
-        //}
+            GsaElement3d dup = new GsaElement3d();
+            dup.m_elements = m_elements;
+            dup.m_id = m_id;
+            //dup.m_props = m_props;
+            m_mesh = updated_mesh;
+            Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(m_mesh, 0);
+            m_elements = convertMesh.Item1;
+            m_topo = convertMesh.Item2;
+            m_topoInt = convertMesh.Item3;
+            m_faceInt = convertMesh.Item4;
+            return dup;
+        }
         #endregion
 
         #region properties
@@ -464,8 +435,6 @@ namespace GhSA.Parameters
                 return true;
             }
         }
-        
-
         #endregion
 
         #region methods
@@ -473,7 +442,6 @@ namespace GhSA.Parameters
         {
             return "GSA 3D Element(s)";
         }
-
         #endregion
     }
 
@@ -572,12 +540,12 @@ namespace GhSA.Parameters
                 return true;
             }
             
-            if (typeof(Q).IsAssignableFrom(typeof(Element)))
+            if (typeof(Q).IsAssignableFrom(typeof(List<Element>)))
             {
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.Elements[0];
+                    target = (Q)(object)Value.API_Elements;
                 return true;
             }
 
@@ -640,18 +608,18 @@ namespace GhSA.Parameters
                 return true;
             }
 
-            //Cast from GsaAPI Member
-            if (typeof(List<Element>).IsAssignableFrom(source.GetType()))
-            {
-                Value.Elements = (List<Element>)source;
-                return true;
-            }
+            ////Cast from GsaAPI Member
+            //if (typeof(List<Element>).IsAssignableFrom(source.GetType()))
+            //{
+            //    Value.API_Elements = (List<Element>)source;
+            //    return true;
+            //}
 
-            if (typeof(Element).IsAssignableFrom(source.GetType()))
-            {
-                Value.Elements[0] = (Element)source; //If someone should want to just test if they can convert a Mesh face
-                return true;
-            }
+            //if (typeof(Element).IsAssignableFrom(source.GetType()))
+            //{
+            //    Value.Elements[0] = (Element)source; //If someone should want to just test if they can convert a Mesh face
+            //    return true;
+            //}
 
             //Cast from Mesh
             //Mesh mesh = new Mesh();
@@ -674,15 +642,10 @@ namespace GhSA.Parameters
             if (Value.NgonMesh == null) { return null; }
 
             GsaElement3d elem = Value.Duplicate();
-            
-            Mesh xMs = elem.NgonMesh;
-            xMs.Transform(xform);
-            elem.NgonMesh = xMs;
-            Point3dList pts = new Point3dList(Value.Topology.ToList());
-            pts.Transform(xform);
-            elem.Topology = pts.ToList();
 
-            return new GsaElement3dGoo(elem);
+            Mesh xMs = Value.NgonMesh.DuplicateMesh();
+            xMs.Transform(xform);
+            return new GsaElement3dGoo(Value.UpdateGeometry(xMs));
         }
 
         public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
@@ -690,16 +653,9 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.NgonMesh == null) { return null; }
 
-            GsaElement3d elem = Value.Duplicate();
-            Mesh xMs = elem.NgonMesh;
+            Mesh xMs = Value.NgonMesh.DuplicateMesh();
             xmorph.Morph(xMs);
-            elem.NgonMesh = xMs;
-            List<Point3d> pts = Value.Topology.ToList();
-            for (int i = 0; i < pts.Count; i++)
-                pts[i] = xmorph.MorphPoint(pts[i]);
-            elem.Topology = pts;
-
-            return new GsaElement3dGoo(elem);
+            return new GsaElement3dGoo(Value.UpdateGeometry(xMs));
         }
 
         #endregion

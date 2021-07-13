@@ -17,7 +17,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid)
         {
             LineCurve line = element1d.Line;
-            Element apiElement = element1d.Element;
+            Element apiElement = element1d.API_Element;
 
             // update topology list to fit model nodes
             List<int> topo = new List<int>();
@@ -42,12 +42,26 @@ namespace GhSA.Util.Gsa.ToGSA
                 topo.Add(nodeidcounter);
                 nodeidcounter++;
             }
+
+            //Orientation node
+            if (element1d.OrientationNode != null)
+            {
+                id = Nodes.GetExistingNodeID(existingNodes, element1d.OrientationNode.Point);
+                if (id > 0)
+                    apiElement.OrientationNode = id;
+                else
+                {
+                    existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(element1d.OrientationNode.Point));
+                    apiElement.OrientationNode = nodeidcounter;
+                    nodeidcounter++;
+                }
+            }
+
             // update topology in Element
             apiElement.Topology = new ReadOnlyCollection<int>(topo.ToList());
 
             // section
-            if (apiElement.Property == 0)
-                apiElement.Property = Sections.ConvertSection(element1d.Section, ref existingSections, ref sections_guid);
+            apiElement.Property = Sections.ConvertSection(element1d.Section, ref existingSections, ref sections_guid);
 
             // set apielement in dictionary
             if (element1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -109,9 +123,9 @@ namespace GhSA.Util.Gsa.ToGSA
             List<Point3d> meshVerticies = element2d.Topology;
 
             //Loop through all faces in mesh to update topology list to fit model nodes
-            for (int i = 0; i < element2d.Elements.Count; i++)
+            for (int i = 0; i < element2d.API_Elements.Count; i++)
             {
-                Element apiMeshElement = element2d.Elements[i];
+                Element apiMeshElement = element2d.API_Elements[i];
                 List<int> meshVertexIndex = element2d.TopoInt[i];
 
                 List<int> topo = new List<int>(); // temp topologylist
@@ -132,10 +146,9 @@ namespace GhSA.Util.Gsa.ToGSA
                 //update topology in Element
                 apiMeshElement.Topology = new ReadOnlyCollection<int>(topo.ToList());
 
-                // section
-                if (apiMeshElement.Property == 0)
-                    apiMeshElement.Property = Prop2ds.ConvertProp2d(element2d.Properties[i], ref existingProp2Ds, ref prop2d_guid);
-                
+                // Prop2d
+                GsaProp2d prop = (i > element2d.Properties.Count - 1) ? element2d.Properties.Last() : element2d.Properties[i];
+                apiMeshElement.Property = Prop2ds.ConvertProp2d(prop, ref existingProp2Ds, ref prop2d_guid);
 
                 // set api element in dictionary
                 if (element2d.ID[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -171,7 +184,6 @@ namespace GhSA.Util.Gsa.ToGSA
                         ReportProgress("Elem2D ", (double)i / (element2ds.Count - 1));
                     }
 
-
                     if (element2ds[i] != null)
                     {
                         GsaElement2d element2d = element2ds[i];
@@ -180,7 +192,6 @@ namespace GhSA.Util.Gsa.ToGSA
                             ref existingElements, ref elementidcounter, 
                             ref existingNodes, ref nodeidcounter, 
                             ref existingProp2Ds, ref prop2d_guid);
-
                     }
                 }
             }
@@ -201,9 +212,9 @@ namespace GhSA.Util.Gsa.ToGSA
             List<Point3d> meshVerticies = element3d.Topology;
 
             //Loop through all faces in mesh to update topology list to fit model nodes
-            for (int i = 0; i < element3d.Elements.Count; i++)
+            for (int i = 0; i < element3d.API_Elements.Count; i++)
             {
-                Element apiMeshElement = element3d.Elements[i];
+                Element apiMeshElement = element3d.API_Elements[i];
                 List<int> meshVertexIndex = element3d.TopoInt[i];
 
                 List<int> topo = new List<int>(); // temp topologylist
@@ -262,7 +273,6 @@ namespace GhSA.Util.Gsa.ToGSA
                         ReportProgress("Elem3D ", (double)i / (element3ds.Count - 1));
                     }
 
-
                     if (element3ds[i] != null)
                     {
                         GsaElement3d element3d = element3ds[i];
@@ -270,7 +280,6 @@ namespace GhSA.Util.Gsa.ToGSA
                         ConvertElement3D(element3d,
                             ref existingElements, ref elementidcounter,
                             ref existingNodes, ref nodeidcounter);
-
                     }
                 }
             }

@@ -780,7 +780,7 @@ namespace GhSA.Util.GH
             
             // create 2d member from flattened geometry
             Parameters.GsaMember2d mem = new Parameters.GsaMember2d(flattened[0], inclCrvs.ToList(), inclPts.ToList());
-            mem.Member.MeshSize = meshSize;
+            mem.MeshSize = meshSize;
             
             // add to temp list for input in assemble function
             List<Parameters.GsaMember2d> mem2ds = new List<Parameters.GsaMember2d>();
@@ -791,7 +791,7 @@ namespace GhSA.Util.GH
                 for (int i = 0; i < mem1ds.Count; i++)
                 {
                     Parameters.GsaMember1d mem1d = new Parameters.GsaMember1d(inclCrvs[i]);
-                    mem1d.Member.MeshSize = mem1ds[i].Member.MeshSize;
+                    mem1d.MeshSize = mem1ds[i].MeshSize;
                     mem1ds[i] = mem1d;
                 }
             }

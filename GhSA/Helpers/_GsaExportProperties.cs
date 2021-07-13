@@ -13,7 +13,7 @@ namespace GhSA.Util.Gsa.ToGSA
         public static MaterialType ConvertType(GsaMaterial material)
         {
             MaterialType matType = GsaAPI.MaterialType.NONE;
-            int typ = (int)material.Type;
+            int typ = (int)material.MaterialType;
             if (typ == 1)
                 matType = MaterialType.STEEL;
             if (typ == 2)
@@ -42,6 +42,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<Guid, int> sections_guid)
         {
             if (section == null) { return 0; }
+            if (section.API_Section == null) { return section.ID; }
             if (sections_guid.ContainsKey(section.GUID))
             {
                 sections_guid.TryGetValue(section.GUID, out int sID);
@@ -54,19 +55,19 @@ namespace GhSA.Util.Gsa.ToGSA
             // section
             if (section.ID > 0)
             {
-                if (section.Section != null) // section can refer to an ID only, meaning that the section must already exist in the model. Else we set it in the model:
-                    existingSections[section.ID] = section.Section;
+                if (section.API_Section != null) // section can refer to an ID only, meaning that the section must already exist in the model. Else we set it in the model:
+                    existingSections[section.ID] = section.API_Section;
             }
             else
             {
-                if (section.Section != null)
+                if (section.API_Section != null)
                 {
                     if (existingSections.Count > 0)
                         outID = existingSections.Keys.Max() + 1;
                     else
                         outID = 1;
                     
-                    existingSections.Add(outID, section.Section);
+                    existingSections.Add(outID, section.API_Section);
                 }
             }
 
@@ -106,7 +107,7 @@ namespace GhSA.Util.Gsa.ToGSA
                         if (sections[i] != null)
                         {
                             GsaSection section = sections[i];
-                            Section apiSection = section.Section;
+                            Section apiSection = section.API_Section;
 
                             if (sections_guid.ContainsKey(section.GUID))
                             {
@@ -169,6 +170,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<Guid, int> prop2d_guid)
         {
             if (prop2d == null) { return 0; }
+            if (prop2d.API_Prop2d == null) { return prop2d.ID; }
             if (prop2d_guid.ContainsKey(prop2d.GUID))
             {
                 prop2d_guid.TryGetValue(prop2d.GUID, out int sID);
@@ -181,19 +183,19 @@ namespace GhSA.Util.Gsa.ToGSA
             // section
             if (prop2d.ID > 0)
             {
-                if (prop2d.Prop2d != null) // section can refer to an ID only, meaning that the section must already exist in the model. Else we set it in the model:
-                    existingProp2Ds[prop2d.ID] = prop2d.Prop2d;
+                if (prop2d.API_Prop2d != null) // section can refer to an ID only, meaning that the section must already exist in the model. Else we set it in the model:
+                    existingProp2Ds[prop2d.ID] = prop2d.API_Prop2d;
             }
             else
             {
-                if (prop2d.Prop2d != null)
+                if (prop2d.API_Prop2d != null)
                 {
                     if (existingProp2Ds.Count > 0)
                         outID = existingProp2Ds.Keys.Max() + 1;
                     else
                         outID = 1;
 
-                    existingProp2Ds.Add(outID, prop2d.Prop2d);
+                    existingProp2Ds.Add(outID, prop2d.API_Prop2d);
                 }
             }
 
@@ -232,7 +234,7 @@ namespace GhSA.Util.Gsa.ToGSA
                         if (prop2Ds[i] != null)
                         {
                             GsaProp2d prop2d = prop2Ds[i];
-                            Prop2D apiProp2d = prop2d.Prop2d;
+                            Prop2D apiProp2d = prop2d.API_Prop2d;
 
                             if (prop2d_guid.ContainsKey(prop2d.GUID))
                             {

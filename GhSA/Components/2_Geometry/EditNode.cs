@@ -99,7 +99,7 @@ namespace GhSA.Components
                 {
                     gh_typ.CastTo(ref node);
                     if (node == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
-                    if (node.Node == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
+                    if (node.API_Node == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
                 }
                 else if (GH_Convert.ToPoint3d(gh_typ.Value, ref tempPt, GH_Conversion.Both))
                 {
@@ -120,9 +120,6 @@ namespace GhSA.Components
                     if (GH_Convert.ToPoint3d(ghPt, ref pt, GH_Conversion.Both))
                     {
                         node.Point = pt;
-                        //node.Node.Position.X = pt.X;
-                        //node.Node.Position.Y = pt.Y;
-                        //node.Node.Position.Z = pt.Z;
                     }
                 }
 
@@ -151,12 +148,6 @@ namespace GhSA.Components
                 if (DA.GetData(4, ref restraint))
                 {
                     node.Restraint = restraint;
-                    //node.Node.Restraint.X = restraint.X;
-                    //node.Node.Restraint.Y = restraint.Y;
-                    //node.Node.Restraint.Z = restraint.Z;
-                    //node.Node.Restraint.XX = restraint.XX;
-                    //node.Node.Restraint.YY = restraint.YY;
-                    //node.Node.Restraint.ZZ = restraint.ZZ;
                 }
 
                 // 5 Spring
@@ -188,30 +179,16 @@ namespace GhSA.Components
                 DA.SetData(1, node.ID);
                 DA.SetData(2, node.Point);
                 DA.SetData(3, new GH_Plane(node.LocalAxis));
-                //GsaBool6 restraint1 = new GsaBool6
-                //{
-                //    X = node.Node.Restraint.X,
-                //    Y = node.Node.Restraint.Y,
-                //    Z = node.Node.Restraint.Z,
-                //    XX = node.Node.Restraint.XX,
-                //    YY = node.Node.Restraint.YY,
-                //    ZZ = node.Node.Restraint.ZZ
-                //};
                 DA.SetData(4, node.Restraint);
-                //GsaSpring spring1 = new GsaSpring();
-                //if (node.Spring != null)
-                //{
-                //    spring1 = node.Spring.Duplicate();
-                //}
                 DA.SetData(5, new GsaSpringGoo(node.Spring));
-                DA.SetData(6, node.Node.Name);
+                DA.SetData(6, node.API_Node.Name);
                 DA.SetData(7, node.Colour);
 
                 // only get connected elements/members if enabled (computationally heavy)
                 if (_mode == FoldMode.GetConnected)
                 {
-                    try { DA.SetDataList(8, node.Node.ConnectedElements); } catch (Exception) { }
-                    try { DA.SetDataList(9, node.Node.ConnectedMembers); } catch (Exception) { }
+                    try { DA.SetDataList(8, node.API_Node.ConnectedElements); } catch (Exception) { }
+                    try { DA.SetDataList(9, node.API_Node.ConnectedMembers); } catch (Exception) { }
                 }
             }
         }

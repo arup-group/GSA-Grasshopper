@@ -218,7 +218,7 @@ namespace GhSA.Components
                     //Draw shape.
                     if (element.Value.Mesh != null)
                     {
-                        if (!(element.Value.Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
+                        if (!(element.Value.API_Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
                         {
                             if (this.Attributes.Selected)
                                 args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFaceSelected);
@@ -242,7 +242,7 @@ namespace GhSA.Components
                     //Draw lines
                     if (element.Value.Mesh != null)
                     {
-                        if (element.Value.Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
+                        if (element.Value.API_Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
                         {
                             for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
                             {

@@ -104,19 +104,17 @@ namespace GhSA.Components
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
                 if (DA.GetData(2, ref gh_typ))
                 {
-                    GsaMember3d tempMem = new GsaMember3d();
                     Brep brep = new Brep();
                     Mesh mesh = new Mesh();
                     if (GH_Convert.ToBrep(gh_typ.Value, ref brep, GH_Conversion.Both))
-                        tempMem = new GsaMember3d(brep);
+                        mem = mem.UpdateGeometry(brep);
                     else if (GH_Convert.ToMesh(gh_typ.Value, ref mesh, GH_Conversion.Both))
-                        tempMem = new GsaMember3d(mesh);
+                        mem = mem.UpdateGeometry(mesh);
                     else
                     {
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input to a 3D Member");
                         return;
                     }
-                    mem.SolidMesh = tempMem.SolidMesh;
                 }
 
                 // 3 prop3d -- to be implemented GsaAPI
@@ -199,13 +197,13 @@ namespace GhSA.Components
 
                 DA.SetData(3, mem.PropertyID);
 
-                DA.SetData(4, mem.Member.MeshSize);
+                DA.SetData(4, mem.MeshSize);
                 //DA.SetData(5, mem.Member.MeshWithOthers);
 
-                DA.SetData(6, mem.Member.Name);
-                DA.SetData(7, mem.Member.Group);
-                DA.SetData(8, mem.Member.Colour);
-                DA.SetData(9, mem.Member.IsDummy);
+                DA.SetData(6, mem.Name);
+                DA.SetData(7, mem.Group);
+                DA.SetData(8, mem.Colour);
+                DA.SetData(9, mem.IsDummy);
             }
         }
     }

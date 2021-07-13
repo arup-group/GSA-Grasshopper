@@ -143,7 +143,7 @@ namespace GhSA.Util.Gsa.ToGSA
             // list of topology nodes
             List<Node> gsanodes = new List<Node>();
             if (nodes != null)
-                gsanodes = nodes.ConvertAll(x => x.Node);
+                gsanodes = nodes.ConvertAll(x => x.API_Node);
 
             // counter for creating nodes
             int id = 1;

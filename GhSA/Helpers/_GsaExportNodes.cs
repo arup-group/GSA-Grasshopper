@@ -24,7 +24,7 @@ namespace GhSA.Util.Gsa.ToGSA
         public static void ConvertNode(GsaNode node, ref Dictionary<int, Node> existingNodes, 
             ref Dictionary<int, Axis> existingAxes, ref int nodeidcounter)
         {
-            Node apiNode = node.Node;
+            Node apiNode = node.API_Node;
 
             // Add spring to model
             if (node.Spring != null)
