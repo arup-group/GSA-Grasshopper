@@ -640,5 +640,35 @@ namespace GhSA.UI
                 text.VerticalAlignment = Rhino.DocObjects.TextVerticalAlignment.Top;
             }
         }
+        public static void PreviewMem3d(ref Mesh solidMesh, ref List<Polyline> hiddenLines, ref List<Line> edgeLines, ref List<Point3d> pts)
+        {
+            Rhino.Geometry.Collections.MeshTopologyEdgeList alledges = solidMesh.TopologyEdges;
+            if (solidMesh.FaceNormals.Count < solidMesh.Faces.Count)
+                solidMesh.FaceNormals.ComputeFaceNormals();
+
+            // curves
+            for (int i = 0; i < alledges.Count; i++)
+            {
+                int[] faceID = alledges.GetConnectedFaces(i);
+                Vector3d vec1 = solidMesh.FaceNormals[faceID[0]];
+                Vector3d vec2 = solidMesh.FaceNormals[faceID[1]];
+                vec1.Unitize(); vec2.Unitize();
+                if (!vec1.Equals(vec2) || faceID.Length > 2)
+                {
+                    edgeLines.Add(alledges.EdgeLine(i));
+                }
+                else
+                {
+                    Polyline hidden = new Polyline();
+                    hidden.Add(alledges.EdgeLine(i).PointAt(0));
+                    hidden.Add(alledges.EdgeLine(i).PointAt(1));
+                    hiddenLines.Add(hidden);
+                }
+            }
+
+            //  points
+            pts = new List<Point3d>(solidMesh.Vertices.ToPoint3dArray());
+            
+        }
     }
 }

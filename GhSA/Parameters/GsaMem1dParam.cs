@@ -244,51 +244,53 @@ namespace GhSA.Parameters
         internal List<Line> previewGreenLines;
         internal List<Line> previewRedLines;
         #endregion
-        internal void UpdatePreview()
+        private void UpdatePreview()
         {
-            
-            if (m_rel1.X || m_rel1.Y || m_rel1.Z || m_rel1.XX || m_rel1.YY || m_rel1.ZZ ||
-                m_rel2.X || m_rel2.Y || m_rel2.Z || m_rel2.XX || m_rel2.YY || m_rel2.ZZ)
+            if (m_rel1 != null & m_rel2 != null)
             {
-                #region add lines
-                previewGreenLines = new List<Line>();
-                previewGreenLines.Add(previewSX1);
-                previewGreenLines.Add(previewSX2);
-                previewGreenLines.Add(previewSY1);
-                previewGreenLines.Add(previewSY2);
-                previewGreenLines.Add(previewSY3);
-                previewGreenLines.Add(previewSY4);
-                previewGreenLines.Add(previewSZ1);
-                previewGreenLines.Add(previewSZ2);
-                previewGreenLines.Add(previewSZ3);
-                previewGreenLines.Add(previewSZ4);
-                previewGreenLines.Add(previewEX1);
-                previewGreenLines.Add(previewEX2);
-                previewGreenLines.Add(previewEY1);
-                previewGreenLines.Add(previewEY2);
-                previewGreenLines.Add(previewEY3);
-                previewGreenLines.Add(previewEY4);
-                previewGreenLines.Add(previewEZ1);
-                previewGreenLines.Add(previewEZ2);
-                previewGreenLines.Add(previewEZ3);
-                previewGreenLines.Add(previewEZ4);
-                previewRedLines = new List<Line>();
-                previewRedLines.Add(previewSXX);
-                previewRedLines.Add(previewSYY1);
-                previewRedLines.Add(previewSYY2);
-                previewRedLines.Add(previewSZZ1);
-                previewRedLines.Add(previewSZZ2);
-                previewRedLines.Add(previewEXX);
-                previewRedLines.Add(previewEYY1);
-                previewRedLines.Add(previewEYY2);
-                previewRedLines.Add(previewEZZ1);
-                previewRedLines.Add(previewEZZ2);
-                #endregion
-                GhSA.UI.Display.Preview1D(m_crv, m_member.OrientationAngle, m_rel1, m_rel2,
-                ref previewGreenLines, ref previewRedLines);
+                if (m_rel1.X || m_rel1.Y || m_rel1.Z || m_rel1.XX || m_rel1.YY || m_rel1.ZZ ||
+                m_rel2.X || m_rel2.Y || m_rel2.Z || m_rel2.XX || m_rel2.YY || m_rel2.ZZ)
+                {
+                    #region add lines
+                    previewGreenLines = new List<Line>();
+                    previewGreenLines.Add(previewSX1);
+                    previewGreenLines.Add(previewSX2);
+                    previewGreenLines.Add(previewSY1);
+                    previewGreenLines.Add(previewSY2);
+                    previewGreenLines.Add(previewSY3);
+                    previewGreenLines.Add(previewSY4);
+                    previewGreenLines.Add(previewSZ1);
+                    previewGreenLines.Add(previewSZ2);
+                    previewGreenLines.Add(previewSZ3);
+                    previewGreenLines.Add(previewSZ4);
+                    previewGreenLines.Add(previewEX1);
+                    previewGreenLines.Add(previewEX2);
+                    previewGreenLines.Add(previewEY1);
+                    previewGreenLines.Add(previewEY2);
+                    previewGreenLines.Add(previewEY3);
+                    previewGreenLines.Add(previewEY4);
+                    previewGreenLines.Add(previewEZ1);
+                    previewGreenLines.Add(previewEZ2);
+                    previewGreenLines.Add(previewEZ3);
+                    previewGreenLines.Add(previewEZ4);
+                    previewRedLines = new List<Line>();
+                    previewRedLines.Add(previewSXX);
+                    previewRedLines.Add(previewSYY1);
+                    previewRedLines.Add(previewSYY2);
+                    previewRedLines.Add(previewSZZ1);
+                    previewRedLines.Add(previewSZZ2);
+                    previewRedLines.Add(previewEXX);
+                    previewRedLines.Add(previewEYY1);
+                    previewRedLines.Add(previewEYY2);
+                    previewRedLines.Add(previewEZZ1);
+                    previewRedLines.Add(previewEZZ2);
+                    #endregion
+                    GhSA.UI.Display.Preview1D(m_crv, m_member.OrientationAngle, m_rel1, m_rel2,
+                    ref previewGreenLines, ref previewRedLines);
+                }
+                else
+                    previewGreenLines = null;
             }
-            else
-                previewGreenLines = null;
         }
         #endregion
         #region fields
@@ -312,13 +314,14 @@ namespace GhSA.Parameters
             m_section = new GsaSection();
         }
 
-        public GsaMember1d(List<Point3d> topology, List<string> topo_type = null, GsaNode orientationNode = null)
+        internal GsaMember1d(Member member, int id, List<Point3d> topology, List<string> topo_type, GsaSection section, GsaNode orientationNode)
         {
-            m_member = new Member();
+            m_member = member;
+            m_id = id;
             m_crv = Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
             m_topo = topology;
             m_topoType = topo_type;
-            m_section = new GsaSection();
+            m_section = section;
             if (orientationNode != null)
                 m_orientationNode = orientationNode;
             UpdatePreview();

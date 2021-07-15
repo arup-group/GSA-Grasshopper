@@ -1,10 +1,12 @@
 ﻿using GsaAPI;
 using Rhino.Geometry;
+using Rhino.Collections;
 using System;
 using System.Collections.Generic;
 using GhSA.Parameters;
 using System.Linq;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace GhSA.Util.Gsa.ToGSA
 {
@@ -145,7 +147,6 @@ namespace GhSA.Util.Gsa.ToGSA
             }
         }
 
-
         /// <summary>
         /// This method checks if the testNode is within tolerance of an existing node and returns the 
         /// node ID if found. Will return 0 if no existing node is found within the tolerance.
@@ -155,8 +156,43 @@ namespace GhSA.Util.Gsa.ToGSA
         /// <returns></returns>
         public static int GetExistingNodeID(IReadOnlyDictionary<int, Node> existNodes, Node testNode)
         {
+            // ## the method below is slightly faster (46.5s vs 49.2s) but does not include tolerance
+            //List<Node> pts = existNodes.Values.ToList();
+            //List<int> keys = existNodes.Keys.ToList();
+            //Point3dList existingPts = new Point3dList(pts.ConvertAll(n => new Point3d(n.Position.X, n.Position.Y, n.Position.Z)));
+
+            //Point3d testPoint = new Point3d(testNode.Position.X, testNode.Position.Y, testNode.Position.Z);
+
+            //if (existingPts.Contains(testPoint))
+            //    return 0;
+            //else
+            //{
+            //    return keys[existingPts.ClosestIndex(testPoint)];
+            //}
+
+
+            //double tolerance = Units.Tolerance;
+
+            //foreach (int key in existNodes.Keys)
+            //{
+            //    if (existNodes.TryGetValue(key, out Node gsaNode))
+            //    {
+            //        if (Math.Pow((testNode.Position.X - gsaNode.Position.X), 2)
+            //            + Math.Pow((testNode.Position.Y - gsaNode.Position.Y), 2)
+            //            + Math.Pow((testNode.Position.Z - gsaNode.Position.Z), 2)
+            //            < Math.Pow(tolerance, 2))
+            //        {
+            //            return key;
+            //        }
+            //    }
+            //}
+            //return 0;
+
+
             double tolerance = Units.Tolerance;
-            foreach (int key in existNodes.Keys)
+            int existingNodeID = 0;
+            
+            Parallel.ForEach(existNodes.Keys, (key, state) =>
             {
                 if (existNodes.TryGetValue(key, out Node gsaNode))
                 {
@@ -165,12 +201,15 @@ namespace GhSA.Util.Gsa.ToGSA
                         + Math.Pow((testNode.Position.Z - gsaNode.Position.Z), 2)
                         < Math.Pow(tolerance, 2))
                     {
-                        return key;
+                        existingNodeID = key;
+                        state.Break();
                     }
                 }
-            }
-            return 0;
+            });
+                
+            return existingNodeID;
         }
+
         /// <summary>
         /// This method checks if the testNode is within tolerance of an existing node and returns the 
         /// node ID if found. Will return 0 if no existing node is found within the tolerance.
@@ -180,6 +219,18 @@ namespace GhSA.Util.Gsa.ToGSA
         /// <returns></returns>
         public static int GetExistingNodeID(Dictionary<int, Node> existNodes, Point3d testPoint)
         {
+            // ## the method below is slightly faster (46.5s vs 49.2s) but does not include tolerance
+            //List<Node> pts = existNodes.Values.ToList();
+            //List<int> keys = existNodes.Keys.ToList();
+            //Point3dList existingPts = new Point3dList(pts.ConvertAll(n => new Point3d(n.Position.X, n.Position.Y, n.Position.Z)));
+
+            //if (existingPts.Contains(testPoint))
+            //    return 0;
+            //else
+            //{
+            //    return keys[existingPts.ClosestIndex(testPoint)];
+            //}
+            
             double tolerance = Units.Tolerance;
             foreach (int key in existNodes.Keys)
             {
@@ -233,26 +284,6 @@ namespace GhSA.Util.Gsa.ToGSA
                         Math.Abs(testAxis.XYPlane.Z - gsaAxis.XYPlane.Z) <= tolerance
                         )
                         return key;
-                    
-                    //if (Math.Pow((testAxis.Origin.X - gsaAxis.Origin.X), 2)
-                    //    + Math.Pow((testAxis.Origin.Y - gsaAxis.Origin.Y), 2)
-                    //    + Math.Pow((testAxis.Origin.Z - gsaAxis.Origin.Z), 2)
-                    //    < Math.Pow(tolerance, 2))
-                    //{
-                    //    if (Math.Pow((testAxis.XVector.X - gsaAxis.XVector.X), 2)
-                    //    + Math.Pow((testAxis.XVector.Y - gsaAxis.XVector.Y), 2)
-                    //    + Math.Pow((testAxis.XVector.Z - gsaAxis.XVector.Z), 2)
-                    //    < Math.Pow(tolerance, 2))
-                    //    {
-                    //        if (Math.Pow((testAxis.XYPlane.X - gsaAxis.XYPlane.X), 2)
-                    //        + Math.Pow((testAxis.XYPlane.Y - gsaAxis.XYPlane.Y), 2)
-                    //        + Math.Pow((testAxis.XYPlane.Z - gsaAxis.XYPlane.Z), 2)
-                    //        < Math.Pow(tolerance, 2))
-                    //        {
-                    //            return key;
-                    //        }
-                    //    }
-                    //}
                 }
             }
             return 0;

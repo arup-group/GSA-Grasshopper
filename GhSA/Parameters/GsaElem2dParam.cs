@@ -337,6 +337,15 @@ namespace GhSA.Parameters
                 m_props.Add(new GsaProp2d());
             }
         }
+        internal GsaElement2d(List<Element> elements, List<int> IDs, Mesh mesh, List<GsaProp2d> prop2ds)
+        {
+            m_mesh = mesh;
+            m_topo = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+            m_topoInt = Util.GH.Convert.ConvertMeshToElem2d(m_mesh);
+            m_elements = elements;
+            m_id = IDs;
+            m_props = prop2ds;
+        }
         public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, int prop = 0)
         {
             m_elements = new List<Element>();

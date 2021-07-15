@@ -9,6 +9,7 @@ using Rhino;
 using Rhino.Geometry;
 using Rhino.Collections;
 using Rhino.Geometry.Collections;
+using System.Collections.Concurrent;
 
 namespace GhSA.Util.GH
 {
@@ -546,7 +547,54 @@ namespace GhSA.Util.GH
                 = GH.Convert.ConvertPolyBrep(brep, tolerance);
             return BuildBrep(convertBrep.Item1, convertBrep.Item4);
         }
+        public static List<List<int>> ConvertMeshToElem2d(Mesh mesh)
+        {
+            List<List<int>> topoInts = new List<List<int>>();
 
+            // get list of mesh ngons (faces in mesh with both tri/quads and ngons above 4 verticies)
+            List<MeshNgon> ngons = mesh.GetNgonAndFacesEnumerable().ToList();
+
+            for (int i = 0; i < ngons.Count; i++)
+            {
+                Element elem = new Element();
+                List<int> topo = ngons[i].BoundaryVertexIndexList().Select(u => (int)u).ToList();
+
+                if (topo.Count == 3)
+                {
+                    topoInts.Add(topo);
+                }
+                else if (topo.Count == 4)
+                {
+                    topoInts.Add(topo);
+                }
+                else if (topo.Count == 6)
+                {
+                    List<int> topo6 = new List<int>();
+                    topo6.Add(topo[0]);
+                    topo6.Add(topo[2]);
+                    topo6.Add(topo[4]);
+                    topo6.Add(topo[1]);
+                    topo6.Add(topo[3]);
+                    topo6.Add(topo[5]);
+                    topoInts.Add(topo6);
+                }
+                else if (topo.Count == 8)
+                {
+                    List<int> topo8 = new List<int>();
+                    topo8.Add(topo[0]);
+                    topo8.Add(topo[2]);
+                    topo8.Add(topo[4]);
+                    topo8.Add(topo[6]);
+                    topo8.Add(topo[1]);
+                    topo8.Add(topo[3]);
+                    topo8.Add(topo[5]);
+                    topo8.Add(topo[7]);
+                    topoInts.Add(topo8);
+                }
+            }
+
+            return topoInts;
+        }
         public static Tuple<List<Element>, List<Point3d>, List<List<int>>> ConvertMeshToElem2d(Mesh mesh, int prop = 1, bool createQuadraticElements = false)
         {
             // list of elements to output
@@ -667,26 +715,6 @@ namespace GhSA.Util.GH
                 elem.Property = prop;
                 elems.Add(elem);
             }
-            
-            // old:
-            //for (int i = 0; i < mesh.Faces.Count; i++)
-            //{
-            //    Element elem = new Element();
-            //    List<int> topo = new List<int>();
-            //    topo.Add(mesh.Faces[i].A);
-            //    topo.Add(mesh.Faces[i].B);
-            //    topo.Add(mesh.Faces[i].C);
-            //    if (mesh.Faces[i].IsQuad)
-            //    {
-            //        topo.Add(mesh.Faces[i].D);
-            //        elem.Type = ElementType.QUAD4;
-            //    }
-            //    else
-            //        elem.Type = ElementType.TRI3;
-            //    topoInts.Add(topo);
-            //    elem.Property = prop;
-            //    elems.Add(elem);
-            //}
 
             return new Tuple<List<Element>, List<Point3d>, List<List<int>>>(elems, topoPts, topoInts);
         }
@@ -811,7 +839,11 @@ namespace GhSA.Util.GH
 
             // extract elements from model
             Tuple<List<Parameters.GsaElement1dGoo>, List<Parameters.GsaElement2dGoo>, List<Parameters.GsaElement3dGoo>> elementTuple
-                = Util.Gsa.FromGSA.GetElements(model.Elements(), model.Nodes(), model.Sections(), model.Prop2Ds());
+                = Util.Gsa.FromGSA.GetElements(
+                    new ConcurrentDictionary<int, Element>(model.Elements()),
+                    new ConcurrentDictionary<int, Node>(model.Nodes()),
+                    new ConcurrentDictionary<int, Section>(model.Sections()),
+                    new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds()));
 
             List<Parameters.GsaElement2dGoo> elem2dgoo = elementTuple.Item2;
             Mesh mesh = elem2dgoo[0].Value.Mesh;

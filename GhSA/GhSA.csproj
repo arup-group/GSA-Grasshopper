@@ -114,6 +114,7 @@
     <Compile Include="AsyncComponentBase\WorkerInstance.cs" />
     <Compile Include="Components\0_Model\AsyncOpenModel.cs" />
     <Compile Include="Components\0_Model\AsyncSaveModel.cs" />
+    <Compile Include="Components\0_Model\GetGeometry.cs" />
     <Compile Include="Components\0_Model\Version.cs" />
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
@@ -127,7 +128,8 @@
     <Compile Include="Components\2_Geometry\Elem2dFromBrep.cs" />
     <Compile Include="Components\2_Geometry\ElemFromMem.cs" />
     <Compile Include="Components\3_Loads\LoadProperties.cs" />
-    <Compile Include="Components\4_Analysis\GhAnalyse.cs" />
+    <Compile Include="Components\0_Model\CreateModel.cs" />
+    <Compile Include="Components\4_Analysis\Analyse.cs" />
     <Compile Include="Components\5_Results\Elem3dResults.cs" />
     <Compile Include="Components\5_Results\Elem2dResults.cs" />
     <Compile Include="Components\5_Results\GlobalResult.cs" />
@@ -158,7 +160,7 @@
     <Compile Include="Components\2_Geometry\EditMember1d.cs" />
     <Compile Include="Components\GraveyardComp\EditNode_OBSOLETE.cs" />
     <Compile Include="Components\2_Geometry\CreateSupport.cs" />
-    <Compile Include="Components\0_Model\GetGeometry.cs" />
+    <Compile Include="Components\GraveyardComp\GetGeometry_OBSOLETE.cs" />
     <Compile Include="Components\3_Loads\CreateGridAreaLoad.cs" />
     <Compile Include="Components\3_Loads\CreateGridLineLoad.cs" />
     <Compile Include="Components\3_Loads\GridPlaneSurfaceProperties.cs" />
@@ -169,7 +171,7 @@
     <Compile Include="Components\3_Loads\CreateGridPointLoad.cs" />
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
-    <Compile Include="Components\4_Analysis\AsyncAnalyse.cs" />
+    <Compile Include="Components\GraveyardComp\AsyncAnalyse_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateBeamLoads_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateFaceLoads_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateGridAreaLoad_OBSOLETE.cs" />
@@ -469,6 +471,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\GsaGhLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\icons\1x\CreateModel.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

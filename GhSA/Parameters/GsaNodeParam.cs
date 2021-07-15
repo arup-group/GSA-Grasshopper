@@ -183,6 +183,13 @@ namespace GhSA.Parameters
             m_node = new Node();
         }
 
+        internal GsaNode(Node node, int ID, Plane localAxis = new Plane())
+        {
+            m_node = node;
+            m_id = ID;
+            m_plane = localAxis;
+            UpdatePreview();
+        }
         public GsaNode(Point3d position, int ID = 0)
         {
             m_node = new Node();

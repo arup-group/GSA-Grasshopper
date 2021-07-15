@@ -8,7 +8,8 @@ using Grasshopper;
 using Rhino.Geometry;
 using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GhSA.Parameters;
@@ -219,8 +220,8 @@ namespace GhSA.Components
         }
 
         #region fields
-        List<Vector3d> xyz = new List<Vector3d>();
-        List<Vector3d> xxyyzz = new List<Vector3d>();
+        ConcurrentDictionary<int, Vector3d> xyz = new ConcurrentDictionary<int, Vector3d>();
+        ConcurrentDictionary<int, Vector3d> xxyyzz = new ConcurrentDictionary<int, Vector3d>();
 
         double dmax_x;
         double dmax_y;
@@ -320,6 +321,7 @@ namespace GhSA.Components
                     getresults = true;
                 }
                 #endregion
+                ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(gsaModel.Model.Nodes(nodeList));
 
                 if (getresults)
                 {
@@ -333,15 +335,15 @@ namespace GhSA.Components
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No results exist for Analysis Case " + analCase + " in file");
                         return;
                     }
-                    IReadOnlyDictionary<int, NodeResult> results = analysisCaseResult.NodeResults(nodeList);
-                    IReadOnlyDictionary<int, Node> nodes = gsaModel.Model.Nodes(nodeList);
+                    ConcurrentDictionary<int, NodeResult> results = new ConcurrentDictionary<int, NodeResult>(analysisCaseResult.NodeResults(nodeList));
+                    
                     #endregion
 
                     #region Create results output
                     // ### Loop through results ###
                     // clear any existing lists of vectors to output results in:
-                    xyz = new List<Vector3d>();
-                    xxyyzz = new List<Vector3d>();
+                    xyz = new ConcurrentDictionary<int, Vector3d>();
+                    xxyyzz = new ConcurrentDictionary<int, Vector3d>();
 
                     // maximum and minimum result values for colouring later
                     dmax_x = 0;
@@ -368,7 +370,8 @@ namespace GhSA.Components
                     if (_mode == FoldMode.Reaction)
                         nodeList = "";
 
-                    foreach (var key in results.Keys)
+
+                    Parallel.ForEach(results.Keys, nodeID =>
                     {
                         NodeResult result;
                         Double6 values = null;
@@ -377,22 +380,22 @@ namespace GhSA.Components
                         {
                             bool isSupport = false;
                             Node node = new Node();
-                            nodes.TryGetValue(key, out node);
+                            nodes.TryGetValue(nodeID, out node);
                             NodalRestraint rest = node.Restraint;
                             if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ)
                                 isSupport = true;
                             if (!isSupport)
-                                continue;
+                                return;
                             else
                             {
                                 if (nodeList == "")
-                                    nodeList = key.ToString();
+                                    nodeList = nodeID.ToString();
                                 else
-                                    nodeList += " " + key;
+                                    nodeList += " " + nodeID;
                             }
                         }
 
-                        results.TryGetValue(key, out result);
+                        results.TryGetValue(nodeID, out result);
                         switch (_mode)
                         {
                             case (FoldMode.Displacement):
@@ -414,7 +417,6 @@ namespace GhSA.Components
                                 values = result.Constraint;
                                 break;
                         }
-                        
 
                         // update max and min values
                         if (values.X / unitfactorxyz > dmax_x)
@@ -454,9 +456,9 @@ namespace GhSA.Components
                             dmin_xxyyzz = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz;
 
                         // add the values to the vector lists
-                        xyz.Add(new Vector3d(values.X / unitfactorxyz, values.Y / unitfactorxyz, values.Z / unitfactorxyz));
-                        xxyyzz.Add(new Vector3d(values.XX / unitfactorxxyyzz, values.YY / unitfactorxxyyzz, values.ZZ / unitfactorxxyyzz));
-                    }
+                        xyz[nodeID] = new Vector3d(values.X / unitfactorxyz, values.Y / unitfactorxyz, values.Z / unitfactorxyz);
+                        xxyyzz[nodeID] = new Vector3d(values.XX / unitfactorxxyyzz, values.YY / unitfactorxxyyzz, values.ZZ / unitfactorxxyyzz);
+                    });
                     #endregion
                     getresults = false;
                 }
@@ -466,8 +468,7 @@ namespace GhSA.Components
                 // ### Coloured Result Points ###
 
                 // Get nodes for point location and restraint check in case of reaction force
-                IReadOnlyDictionary<int, Node> nDict = gsaModel.Model.Nodes(nodeList);
-                List<GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodes(nDict, gsaModel.Model);
+                List<GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodes(nodes);
 
                 //Find Colour and Values for legend output
                 
@@ -518,75 +519,79 @@ namespace GhSA.Components
                 dmin = rounded[1];
                 
                 // Loop through nodes and set result colour into ResultPoint format
-                List<ResultPoint> pts = new List<ResultPoint>();
-                List<System.Drawing.Color> col = new List<System.Drawing.Color>();
-                
-                for (int i = 0; i < gsanodes.Count; i++)
+                ConcurrentDictionary<int, ResultPoint> pts = new ConcurrentDictionary<int, ResultPoint>();
+                ConcurrentDictionary<int, System.Drawing.Color> col = new ConcurrentDictionary<int, System.Drawing.Color>();
+
+                Parallel.For(0, gsanodes.Count, i =>
                 {
                     if (gsanodes[i].Value != null)
                     {
-                        if (!(dmin == 0 & dmax == 0))
+                        int nodeID = gsanodes[i].Value.ID;
+                        if (xyz.ContainsKey(nodeID))
                         {
-                            double t = 0;
-                            Vector3d translation = new Vector3d(0, 0, 0);
-                            // pick the right value to display
-                            switch (_disp)
+                            if (!(dmin == 0 & dmax == 0))
                             {
-                                case (DisplayValue.X):
-                                    t = xyz[i].X;
-                                    translation.X = t * Value / 1000;
-                                    break;
-                                case (DisplayValue.Y):
-                                    t = xyz[i].Y;
-                                    translation.Y = t * Value / 1000 ;
-                                    break;
-                                case (DisplayValue.Z):
-                                    t = xyz[i].Z;
-                                    translation.Z = t * Value / 1000;
-                                    break;
-                                case (DisplayValue.resXYZ):
-                                    t = Math.Sqrt(Math.Pow(xyz[i].X, 2) + Math.Pow(xyz[i].Y, 2) + Math.Pow(xyz[i].Z, 2));
-                                    translation.X = xyz[i].X * Value / 1000;
-                                    translation.Y = xyz[i].Y * Value / 1000;
-                                    translation.Z = xyz[i].Z * Value / 1000;
-                                    break;
-                                case (DisplayValue.XX):
-                                    t = xxyyzz[i].X;
-                                    break;
-                                case (DisplayValue.YY):
-                                    t = xxyyzz[i].Y;
-                                    break;
-                                case (DisplayValue.ZZ):
-                                    t = xxyyzz[i].Z;
-                                    break;
-                                case (DisplayValue.resXXYYZZ):
-                                    t = Math.Sqrt(Math.Pow(xxyyzz[i].X, 2) + Math.Pow(xxyyzz[i].Y, 2) + Math.Pow(xxyyzz[i].Z, 2));
-                                    break;
+                                double t = 0;
+                                Vector3d translation = new Vector3d(0, 0, 0);
+                                // pick the right value to display
+                                switch (_disp)
+                                {
+                                    case (DisplayValue.X):
+                                        t = xyz[nodeID].X;
+                                        translation.X = t * Value / 1000;
+                                        break;
+                                    case (DisplayValue.Y):
+                                        t = xyz[nodeID].Y;
+                                        translation.Y = t * Value / 1000;
+                                        break;
+                                    case (DisplayValue.Z):
+                                        t = xyz[nodeID].Z;
+                                        translation.Z = t * Value / 1000;
+                                        break;
+                                    case (DisplayValue.resXYZ):
+                                        t = Math.Sqrt(Math.Pow(xyz[nodeID].X, 2) + Math.Pow(xyz[nodeID].Y, 2) + Math.Pow(xyz[nodeID].Z, 2));
+                                        translation.X = xyz[nodeID].X * Value / 1000;
+                                        translation.Y = xyz[nodeID].Y * Value / 1000;
+                                        translation.Z = xyz[nodeID].Z * Value / 1000;
+                                        break;
+                                    case (DisplayValue.XX):
+                                        t = xxyyzz[nodeID].X;
+                                        break;
+                                    case (DisplayValue.YY):
+                                        t = xxyyzz[nodeID].Y;
+                                        break;
+                                    case (DisplayValue.ZZ):
+                                        t = xxyyzz[nodeID].Z;
+                                        break;
+                                    case (DisplayValue.resXXYYZZ):
+                                        t = Math.Sqrt(Math.Pow(xxyyzz[nodeID].X, 2) + Math.Pow(xxyyzz[nodeID].Y, 2) + Math.Pow(xxyyzz[nodeID].Z, 2));
+                                        break;
+                                }
+
+                                //normalised value between -1 and 1
+                                double tnorm = 2 * (t - dmin) / (dmax - dmin) - 1;
+
+                                // get colour for that normalised value
+                                System.Drawing.Color valcol = gH_Gradient.ColourAt(tnorm);
+
+                                // set the size of the point for ResultPoint class. Size is calculated from 0-base, so not a normalised value between extremes
+                                float size = (t >= 0 && dmax != 0) ?
+                                    Math.Max(2, (float)(t / dmax * scale)) :
+                                    Math.Max(2, (float)(Math.Abs(t) / Math.Abs(dmin) * scale));
+
+                                // create deflection point
+                                Point3d def = new Point3d(gsanodes[i].Value.Point);
+                                def.Transform(Transform.Translation(translation));
+
+                                // add our special resultpoint to the list of points
+                                pts[nodeID] = new ResultPoint(def, t, valcol, size);
+
+                                // add the colour to the colours list
+                                col[nodeID] = valcol;
                             }
-
-                            //normalised value between -1 and 1
-                            double tnorm = 2 * (t - dmin) / (dmax - dmin) - 1;
-
-                            // get colour for that normalised value
-                            System.Drawing.Color valcol = gH_Gradient.ColourAt(tnorm);
-
-                            // set the size of the point for ResultPoint class. Size is calculated from 0-base, so not a normalised value between extremes
-                            float size = (t >= 0 && dmax != 0) ? 
-                                Math.Max(2, (float)(t / dmax * scale)) : 
-                                Math.Max(2, (float)(Math.Abs(t) / Math.Abs(dmin) * scale));
-
-                            // create deflection point
-                            Point3d def = new Point3d(gsanodes[i].Value.Point);
-                            def.Transform(Transform.Translation(translation));
-
-                            // add our special resultpoint to the list of points
-                            pts.Add(new ResultPoint(def, t, valcol, size));
-
-                            // add the colour to the colours list
-                            col.Add(valcol);
                         }
                     }
-                }
+                });
                 #endregion 
 
                 #region Legend
@@ -605,11 +610,12 @@ namespace GhSA.Components
                 }
                 #endregion
 
+
                 // set outputs
-                DA.SetDataList(0, xyz);
-                DA.SetDataList(1, xxyyzz);
-                DA.SetDataList(2, pts);
-                DA.SetDataList(3, col);
+                DA.SetDataList(0, xyz.OrderBy(x => x.Key).Select(y => y.Value).ToList());
+                DA.SetDataList(1, xxyyzz.OrderBy(x => x.Key).Select(y => y.Value).ToList());
+                DA.SetDataList(2, pts.OrderBy(x => x.Key).Select(y => y.Value).ToList());
+                DA.SetDataList(3, col.OrderBy(x => x.Key).Select(y => y.Value).ToList());
                 DA.SetDataList(4, cs);
                 DA.SetDataList(5, ts);
             }

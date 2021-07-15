@@ -744,8 +744,6 @@ namespace GhSA.Components
                     }
 
                     resultMeshes.Add(tempmesh, vals);
-                    //meshes.Add(tempmesh);
-                    //resultMeshes.Add(resultMesh);
                     #endregion
                     elemID.Add(key);
                     parentMember.Add(element.ParentMember.Member);

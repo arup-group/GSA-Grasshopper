@@ -12,17 +12,17 @@ using Grasshopper.Kernel.Data;
 
 namespace GhSA.Components
 {
-    public class Analyse : GH_AsyncComponent
+    public class Analyse_OBSOLETE : GH_AsyncComponent
     {
         #region Name and Ribbon Layout
-        public Analyse()
+        public Analyse_OBSOLETE()
             : base("Async Analyse Model", "AsyncAnalyse", "Assemble and Analyse a GSA Model using Multi-threading",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat4())
         { BaseWorker = new AnalysisWorker(); this.Hidden = true; }
 
         public override Guid ComponentGuid => new Guid("b9ca86f7-fda1-4c5e-ae75-5e570d4885e9");
-        public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.AnalyseAsync;
         #endregion

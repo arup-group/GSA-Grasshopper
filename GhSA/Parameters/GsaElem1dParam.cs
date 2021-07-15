@@ -335,6 +335,39 @@ namespace GhSA.Parameters
                 m_orientationNode = orientationNode;
             UpdatePreview();
         }
+        internal GsaElement1d(Element elem, LineCurve line, int ID, GsaSection section, GsaNode orientationNode)
+        {
+            m_element = elem;
+            m_line = line;
+
+            m_rel1 = new GsaBool6()
+            {
+                X = elem.Release(0).X,
+                Y = elem.Release(0).Y,
+                Z = elem.Release(0).Z,
+                XX = elem.Release(0).XX,
+                YY = elem.Release(0).YY,
+                ZZ = elem.Release(0).ZZ
+            };
+            m_rel2 = new GsaBool6()
+            {
+                X = elem.Release(1).X,
+                Y = elem.Release(1).Y,
+                Z = elem.Release(1).Z,
+                XX = elem.Release(1).XX,
+                YY = elem.Release(1).YY,
+                ZZ = elem.Release(1).ZZ
+            };
+            
+            m_id = ID;
+
+            m_section = section;
+            
+            if (orientationNode != null)
+                m_orientationNode = orientationNode;
+
+            UpdatePreview();
+        }
         public GsaElement1d Duplicate()
         {
             if (this == null) { return null; }

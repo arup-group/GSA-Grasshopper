@@ -184,6 +184,10 @@ namespace GhSA.UI
         {
             get { return Color.FromArgb(255, 143, 143, 143); }
         }
+        public static Color VoidCutter
+        {
+            get { return Color.FromArgb(255, 200, 0, 0); }
+        }
 
         public static Color Member1d
         {
@@ -310,6 +314,19 @@ namespace GhSA.UI
                     Diffuse = Color.FromArgb(50, 150, 150, 150),
                     Emission = Color.FromArgb(50, 45, 45, 45),
                     Transparency = 0.1
+                };
+                return material;
+            }
+        }
+        public static DisplayMaterial Member2dVoidCutterFace
+        {
+            get
+            {
+                DisplayMaterial material = new DisplayMaterial
+                {
+                    Diffuse = Color.FromArgb(50, 200, 0, 0),
+                    Emission = Color.FromArgb(50, 45, 45, 45),
+                    Transparency = 0.6
                 };
                 return material;
             }

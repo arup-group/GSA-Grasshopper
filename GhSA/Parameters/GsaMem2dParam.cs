@@ -274,16 +274,17 @@ namespace GhSA.Parameters
             m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs);
         }
 
-        public GsaMember2d(List<Point3d> topology, 
+        internal GsaMember2d(Member member, int id, List<Point3d> topology, 
             List<string> topology_type, 
-            List<List<Point3d>> void_topology = null,
-            List<List<string>> void_topology_type = null,
-            List<List<Point3d>> inlcusion_lines_topology = null,
-            List<List<string>> inclusion_topology_type = null,
-            List<Point3d> includePoints = null,
-            int prop = 1)
+            List<List<Point3d>> void_topology,
+            List<List<string>> void_topology_type ,
+            List<List<Point3d>> inlcusion_lines_topology,
+            List<List<string>> inclusion_topology_type,
+            List<Point3d> includePoints,
+            GsaProp2d prop)
         {
-            m_member = new Member();
+            m_member = member;
+            m_id = id;
 
             if (topology.Count == 0)
             {
@@ -341,7 +342,7 @@ namespace GhSA.Parameters
 
             m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs);
 
-            m_prop = new GsaProp2d();
+            m_prop = prop;
         }
         public GsaMember2d Duplicate()
         {
@@ -818,7 +819,8 @@ namespace GhSA.Parameters
             {
                 if (Value.Type == MemberType.VOID_CUTTER_2D)
                 {
-                    
+                    if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
+                        args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dVoidCutterFace); //UI.Colour.Member2dFace
                 }
                 else
                 {
@@ -833,12 +835,16 @@ namespace GhSA.Parameters
         {
             if (Value == null) { return; }
 
-            // Draw shape
+            // Draw shape edge
             if (Value.Brep != null)
             {
                 if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                 {
-                    if (!Value.IsDummy)
+                    if (Value.Type == MemberType.VOID_CUTTER_2D)
+                    {
+                        args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.VoidCutter, -1);
+                    }
+                    else if (!Value.IsDummy)
                         args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdge, -1);
                 }
                 else

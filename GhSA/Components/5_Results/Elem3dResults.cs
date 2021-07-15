@@ -8,7 +8,8 @@ using Grasshopper;
 using Rhino.Geometry;
 using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GhSA.Parameters;
@@ -483,7 +484,7 @@ namespace GhSA.Components
                 // get elements and nodes from model
                 elemList = string.Join(" ", keys.ToList());
                 IReadOnlyDictionary<int, Element> elems = gsaModel.Model.Elements(elemList);
-                IReadOnlyDictionary<int, Node> nodes = gsaModel.Model.Nodes();
+                ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(gsaModel.Model.Nodes());
 
                 List<int> elemID = new List<int>();
                 List<int> parentMember = new List<int>();

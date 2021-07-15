@@ -377,6 +377,26 @@ namespace GhSA.Parameters
             //}
             UpdatePreview();
         }
+        internal GsaElement3d(List<Element> elements, List<int> ids, Mesh mesh)
+        {
+            m_elements = elements;
+            m_mesh = mesh;
+            Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(mesh, 0);
+            m_topo = convertMesh.Item2;
+            m_topoInt = convertMesh.Item3;
+            m_faceInt = convertMesh.Item4;
+
+            m_id = ids;
+
+            //m_props = new List<GsaProp2d>();
+            //for (int i = 0; i < m_mesh.Faces.Count(); i++)
+            //{
+            //    GsaProp2d property = new GsaProp2d();
+            //    property.Prop2d = null;
+            //    m_props.Add(property);
+            //}
+            UpdatePreview();
+        }
         public GsaElement3d Duplicate()
         {
             if (this == null) { return null; }
