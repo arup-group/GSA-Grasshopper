@@ -145,7 +145,7 @@ namespace GhSA.Parameters
                 GsaModel dup = new GsaModel();
                 dup.Model = m_model;
                 dup.FileName = m_filename.ToString();
-                dup.m_guid = Guid.NewGuid();
+                dup.m_guid = new Guid(m_guid.ToString());
                 return dup;
             }
             return null;

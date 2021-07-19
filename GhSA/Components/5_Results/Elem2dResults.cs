@@ -8,7 +8,8 @@ using Grasshopper;
 using Rhino.Geometry;
 using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GhSA.Parameters;
@@ -53,17 +54,17 @@ namespace GhSA.Components
                 selections.Add(dropdowncontents[1][3]);
                 first = false;
             }
-            m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, Value, MaxValue, MinValue, noDigits, spacertext);
+            m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, DefScale, MaxValue, MinValue, noDigits, spacertext);
         }
 
         double MinValue = 0;
-        double MaxValue = 100;
-        double Value = 50;
+        double MaxValue = 1000;
+        double DefScale = 100;
         int noDigits = 0;
         bool slider = true;
         public void SetVal(double value)
         {
-            Value = value;
+            DefScale = value;
         }
         public void SetMaxMin(double max, double min)
         {
@@ -277,8 +278,8 @@ namespace GhSA.Components
 
         #region fields
         // new lists of vectors to output results in:
-        DataTree<Vector3d> xyz_out = new DataTree<Vector3d>();
-        DataTree<Vector3d> xxyyzz_out = new DataTree<Vector3d>();
+        ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>> xyzResults = new ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>>();
+        ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>> xxyyzzResults = new ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>>();
         List<ResultMesh> resultMeshes = new List<ResultMesh>();
         double dmax_x;
         double dmax_y;
@@ -297,7 +298,6 @@ namespace GhSA.Components
         double dmin_xyz;
         double dmin_xxyyzz;
         bool getresults = true;
-        List<int> keys;
 
         int analCase = 0;
         string elemList = "";
@@ -320,7 +320,7 @@ namespace GhSA.Components
                     gh_typ.CastTo(ref in_Model);
                     if (gsaModel != null)
                     {
-                        if (in_Model.GUID != gsaModel.GUID)
+                        if (in_Model.GUID != gsaModel.GUID) // only get results if GUID is not similar
                         {
                             gsaModel = in_Model;
                             getresults = true;
@@ -391,15 +391,20 @@ namespace GhSA.Components
                         return;
                     }
                     IReadOnlyDictionary<int, Element2DResult> globalResults = analysisCaseResult.Element2DResults(elemList, flayer);
-                    
+                    if (globalResults.Count == 0)
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No results exist for element list: " + elemList + " and layer " + flayer);
+                        return;
+                    }
                     #endregion
 
 
                     // ### Loop through results ###
                     // clear existing result lists
-                    xyz_out = new DataTree<Vector3d>();
-                    xxyyzz_out = new DataTree<Vector3d>();
-                    
+                    xyzResults = new ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>>();
+                    xyzResults.AsParallel().AsOrdered();
+                    xxyyzzResults = new ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>>();
+                    xxyyzzResults.AsParallel().AsOrdered();
 
                     // maximum and minimum result values for colouring later
                     dmax_x = 0;
@@ -418,21 +423,21 @@ namespace GhSA.Components
                     dmin_zz = 0;
                     dmin_xyz = 0;
                     dmin_xxyyzz = 0;
-                    keys = new List<int>();
 
                     double unitfactorxyz = 1;
                     double unitfactorxxyyzz = 1;
 
-                    foreach (int key in globalResults.Keys)
+                    Parallel.ForEach(globalResults.Keys, key =>
                     {
-                        keys.Add(key);
-                        
                         // lists for results
                         Element2DResult elementResults;
                         if (globalResults.TryGetValue(key, out elementResults))
                         {
-                            List<Vector3d> xyz = new List<Vector3d>();
-                            List<Vector3d> xxyyzz = new List<Vector3d>();
+                            ConcurrentDictionary<int, Vector3d> xyzRes = new ConcurrentDictionary<int, Vector3d>();
+                            xyzRes.AsParallel().AsOrdered();
+                            ConcurrentDictionary<int, Vector3d> xxyyzzRes = new ConcurrentDictionary<int, Vector3d>();
+                            xxyyzzRes.AsParallel().AsOrdered();
+                            ConcurrentDictionary<int, Line> lineRes = new ConcurrentDictionary<int, Line>();
 
                             // set the result type dependent on user selection in dropdown
                             switch (_mode)
@@ -441,64 +446,76 @@ namespace GhSA.Components
                                     unitfactorxyz = 0.001;
                                     unitfactorxxyyzz = 1;
 
-                                    List<Double6> values = elementResults.Displacement.ToList();
-                                    foreach (Double6 val in values)
+                                    List<Double6> disp = elementResults.Displacement.ToList();
+                                    Parallel.For(0, disp.Count * 2, i => // (Double6 val in values)
                                     {
-                                        Vector3d valxyz = new Vector3d
+                                        // split computation into two parts by doubling the i-counter
+                                        if (i < disp.Count)
                                         {
-                                            X = val.X / unitfactorxyz,
-                                            Y = val.Y / unitfactorxyz,
-                                            Z = val.Z / unitfactorxyz
-                                        };
-
-                                        Vector3d valxxyyzz = new Vector3d
+                                            Double6 val = disp[i];
+                                            Vector3d valxyz = new Vector3d
+                                            {
+                                                X = val.X / unitfactorxyz,
+                                                Y = val.Y / unitfactorxyz,
+                                                Z = val.Z / unitfactorxyz
+                                            };
+                                            xyzRes[i] = valxyz;
+                                        }
+                                        else
                                         {
-                                            X = val.XX / unitfactorxxyyzz,
-                                            Y = val.YY / unitfactorxxyyzz,
-                                            Z = val.ZZ / unitfactorxxyyzz
-                                        };
-
-                                        xyz.Add(valxyz);
-                                        xxyyzz.Add(valxxyyzz);
-                                    }
+                                            Double6 val = disp[i - disp.Count];
+                                            Vector3d valxxyyzz = new Vector3d
+                                            {
+                                                X = val.XX / unitfactorxxyyzz,
+                                                Y = val.YY / unitfactorxxyyzz,
+                                                Z = val.ZZ / unitfactorxxyyzz
+                                            };
+                                            xxyyzzRes[i - disp.Count] = valxxyyzz;
+                                        }
+                                    });
                                     break;
+
                                 case (FoldMode.Force):
                                     unitfactorxyz = 1000;
-
                                     List<Tensor2> forces = elementResults.Force.ToList();
-
-                                    foreach (Tensor2 force in forces)
-                                    {
-                                        Vector3d valxyz = new Vector3d
-                                        {
-                                            X = force.XX / unitfactorxyz,
-                                            Y = force.YY / unitfactorxyz,
-                                            Z = force.XY / unitfactorxyz
-                                        };
-
-                                        xyz.Add(valxyz);
-                                    }
-
                                     unitfactorxxyyzz = 1000;
                                     List<Tensor2> moments = elementResults.Moment.ToList();
-                                    foreach (Tensor2 moment in moments)
+                                    Parallel.For(0, forces.Count + moments.Count, i => // (Tensor2 force in forces)
                                     {
-                                        Vector3d valxxyyzz = new Vector3d
+                                        // combine forces and momemts (list lengths must be the same) to run
+                                        // calculations in parallel by doubling the i-counter
+                                        if (i < forces.Count)
                                         {
-                                            X = moment.XX / unitfactorxxyyzz,
-                                            Y = moment.YY / unitfactorxxyyzz,
-                                            Z = moment.XY / unitfactorxxyyzz
-                                        };
-
-                                        xxyyzz.Add(valxxyyzz);
-                                    }
+                                            Tensor2 force = forces[i];
+                                            Vector3d valxyz = new Vector3d
+                                            {
+                                                X = force.XX / unitfactorxyz,
+                                                Y = force.YY / unitfactorxyz,
+                                                Z = force.XY / unitfactorxyz
+                                            };
+                                            xyzRes[i] = valxyz;
+                                        }
+                                        else
+                                        {
+                                            Tensor2 moment = moments[i - forces.Count];
+                                            Vector3d valxxyyzz = new Vector3d
+                                            {
+                                                X = moment.XX / unitfactorxxyyzz,
+                                                Y = moment.YY / unitfactorxxyyzz,
+                                                Z = moment.XY / unitfactorxxyyzz
+                                            };
+                                            xxyyzzRes[i - forces.Count] = valxxyyzz;
+                                        }
+                                    });
                                     break;
+
                                 case (FoldMode.Shear):
                                     unitfactorxyz = 1000;
                                     unitfactorxxyyzz = 1000;
                                     List<Vector2> shears = elementResults.Shear.ToList();
-                                    foreach (Vector2 shear in shears)
+                                    Parallel.For(0, shears.Count, i => // (Vector2 shear in shears)
                                     {
+                                        Vector2 shear = shears[i];
                                         Vector3d valxyz = new Vector3d
                                         {
                                             X = shear.X / unitfactorxyz,
@@ -506,77 +523,115 @@ namespace GhSA.Components
                                             Z = 0,
                                         };
 
-                                        xyz.Add(valxyz);
-                                    }
+                                        xyzRes[i] = valxyz;
+                                    });
                                     break;
+
                                 case (FoldMode.Stress):
                                     unitfactorxyz = 1000000;
                                     unitfactorxxyyzz = 1000000;
 
                                     List<Tensor3> stresses = elementResults.Stress.ToList();
-                                    foreach (Tensor3 stress in stresses)
+                                    Parallel.For(0, stresses.Count * 2, i => // (Tensor3 stress in stresses)
                                     {
-                                        Vector3d valxyz = new Vector3d
+                                        // split computation into two parts by doubling the i-counter
+                                        if (i < stresses.Count)
                                         {
-                                            X = stress.XX / unitfactorxyz,
-                                            Y = stress.YY / unitfactorxyz,
-                                            Z = stress.ZZ / unitfactorxyz
-                                        };
-
-                                        Vector3d valxxyyzz = new Vector3d
+                                            Tensor3 stress = stresses[i];
+                                            Vector3d valxyz = new Vector3d
+                                            {
+                                                X = stress.XX / unitfactorxyz,
+                                                Y = stress.YY / unitfactorxyz,
+                                                Z = stress.ZZ / unitfactorxyz
+                                            };
+                                            xyzRes[i] = valxyz;
+                                        }
+                                        else
                                         {
-                                            X = stress.XY / unitfactorxxyyzz,
-                                            Y = stress.YZ / unitfactorxxyyzz,
-                                            Z = stress.ZX / unitfactorxxyyzz
-                                        };
-
-                                        xyz.Add(valxyz);
-                                        xxyyzz.Add(valxxyyzz);
-                                    }
+                                            Tensor3 stress = stresses[i - stresses.Count];
+                                            Vector3d valxxyyzz = new Vector3d
+                                            {
+                                                X = stress.XY / unitfactorxxyyzz,
+                                                Y = stress.YZ / unitfactorxxyyzz,
+                                                Z = stress.ZX / unitfactorxxyyzz
+                                            };
+                                            xxyyzzRes[i - stresses.Count] = valxxyyzz;
+                                        }
+                                    });
                                     break;
                             }
-                            // update max and min values
-                            dmax_x = Math.Max(xyz.Max(val => val.X), dmax_x);
-                            dmax_y = Math.Max(xyz.Max(val => val.Y), dmax_y);
-                            dmax_z = Math.Max(xyz.Max(val => val.Z), dmax_z);
+                            //// update max and min values
+                            //dmax_x = Math.Max(xyz.Max(val => val.X), dmax_x);
+                            //dmax_y = Math.Max(xyz.Max(val => val.Y), dmax_y);
+                            //dmax_z = Math.Max(xyz.Max(val => val.Z), dmax_z);
 
-                            dmax_xyz = Math.Max(
-                                xyz.Max(val =>
-                                Math.Sqrt(
-                                    Math.Pow(val.X, 2) +
-                                    Math.Pow(val.Y, 2) +
-                                    Math.Pow(val.Z, 2))),
-                                dmax_xyz);
+                            //dmax_xyz = Math.Max(
+                            //    xyz.Max(val =>
+                            //    Math.Sqrt(
+                            //        Math.Pow(val.X, 2) +
+                            //        Math.Pow(val.Y, 2) +
+                            //        Math.Pow(val.Z, 2))),
+                            //    dmax_xyz);
 
-                            if (_mode != FoldMode.Shear)
-                            {
-                                dmax_xx = Math.Max(xxyyzz.Max(val => val.X), dmax_xx);
-                                dmax_yy = Math.Max(xxyyzz.Max(val => val.Y), dmax_yy);
-                                dmax_zz = Math.Max(xxyyzz.Max(val => val.Z), dmax_zz);
+                            //if (_mode != FoldMode.Shear)
+                            //{
+                            //    dmax_xx = Math.Max(xxyyzz.Max(val => val.X), dmax_xx);
+                            //    dmax_yy = Math.Max(xxyyzz.Max(val => val.Y), dmax_yy);
+                            //    dmax_zz = Math.Max(xxyyzz.Max(val => val.Z), dmax_zz);
 
-                                dmax_xxyyzz = Math.Max(
-                                    xxyyzz.Max(val =>
-                                    Math.Sqrt(
-                                        Math.Pow(val.X, 2) +
-                                        Math.Pow(val.Y, 2) +
-                                        Math.Pow(val.Z, 2))),
-                                    dmax_xxyyzz);
-                            }
+                            //    dmax_xxyyzz = Math.Max(
+                            //        xxyyzz.Max(val =>
+                            //        Math.Sqrt(
+                            //            Math.Pow(val.X, 2) +
+                            //            Math.Pow(val.Y, 2) +
+                            //            Math.Pow(val.Z, 2))),
+                            //        dmax_xxyyzz);
+                            //}
 
-                            dmin_x = Math.Min(xyz.Min(val => val.X), dmin_x);
-                            dmin_y = Math.Min(xyz.Min(val => val.Y), dmin_y);
-                            dmin_z = Math.Min(xyz.Min(val => val.Z), dmin_z);
+                            //dmin_x = Math.Min(xyz.Min(val => val.X), dmin_x);
+                            //dmin_y = Math.Min(xyz.Min(val => val.Y), dmin_y);
+                            //dmin_z = Math.Min(xyz.Min(val => val.Z), dmin_z);
 
-                            dmin_xx = Math.Min(xxyyzz.Min(val => val.X), dmin_xx);
-                            dmin_yy = Math.Min(xxyyzz.Min(val => val.Y), dmin_yy);
-                            dmin_zz = Math.Min(xxyyzz.Min(val => val.Z), dmin_zz);
+                            //dmin_xx = Math.Min(xxyyzz.Min(val => val.X), dmin_xx);
+                            //dmin_yy = Math.Min(xxyyzz.Min(val => val.Y), dmin_yy);
+                            //dmin_zz = Math.Min(xxyyzz.Min(val => val.Z), dmin_zz);
 
                             // add vector lists to main lists
-                            xyz_out.AddRange(xyz, new GH_Path(key));
-                            xxyyzz_out.AddRange(xxyyzz, new GH_Path(key));
+                            xyzResults[key] = xyzRes;
+                            xxyyzzResults[key] = xxyyzzRes;
+                            //xyz_out.AddRange(xyz, new GH_Path(key));
+                            //xxyyzz_out.AddRange(xxyyzz, new GH_Path(key));
                         }
-                    }
+                    });
 
+                    // update max and min values
+                    dmax_x = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
+                    dmax_y = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
+                    dmax_z = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
+                    dmax_xyz = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
+                        Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))
+                        ).Max()).Max();
+                    dmin_x = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
+                    dmin_y = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
+                    dmin_z = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
+                    dmin_xyz = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
+                        Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))).Min()).Min();
+                    
+                    if (_mode != FoldMode.Shear)
+                    {
+                        dmax_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
+                        dmax_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
+                        dmax_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
+                        dmax_xxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
+                            Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))).Max()).Max();
+                    
+                        dmin_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
+                        dmin_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
+                        dmin_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
+                        dmin_xxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
+                            Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))).Min()).Min();
+                    }
+                    
                     getresults = false;
                 }
                 #endregion
@@ -628,35 +683,35 @@ namespace GhSA.Components
                 dmin = rounded[1];
 
                 #region create mesh
-                // create mesh
-                //displayMesh = new Mesh(); //clear existing mesh
-
                 // get elements and nodes from model
-                elemList = string.Join(" ", keys.ToList());
+                elemList = string.Join(" ", xyzResults.Keys.ToList());
+                //ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(gsaModel.Model.Elements(elemList));
                 IReadOnlyDictionary<int, Element> elems = gsaModel.Model.Elements(elemList);
                 IReadOnlyDictionary<int, Node> nodes = gsaModel.Model.Nodes();
 
-                List<int> elemID = new List<int>();
-                List<int> parentMember = new List<int>();
                 ResultMesh resultMeshes = new ResultMesh(new Mesh(), new List<List<double>>());
-                List<Mesh> meshes = new List<Mesh>();
+                //List<Mesh> meshes = new List<Mesh>();
+                ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
+                meshes.AsParallel().AsOrdered();
+                ConcurrentDictionary<int, List<double>> values = new ConcurrentDictionary<int, List<double>>();
+                values.AsParallel().AsOrdered();
 
                 // loop through elements
-                foreach (int key in elems.Keys)
+                Parallel.ForEach(elems.Keys, key => //foreach (int key in elems.Keys)
                 {
                     elems.TryGetValue(key, out Element element);
 
                     Mesh tempmesh = Util.Gsa.FromGSA.ConvertElement2D(element, nodes);
-                    if (tempmesh == null) { continue; }
+                    if (tempmesh == null) { return; }
 
-                    List<Vector3d> transformation = null; 
+                    List<Vector3d> transformation = null;
                     // add mesh colour
                     List<double> vals = new List<double>();
 
                     GH_Path path = new GH_Path(key);
 
-                    List<Vector3d> tempXYZ = xyz_out.Branch(path);
-                    List<Vector3d> tempXXYYZZ = xxyyzz_out.Branch(path);
+                    List<Vector3d> tempXYZ = xyzResults[key].Values.ToList();
+                    List<Vector3d> tempXXYYZZ = xxyyzzResults[key].Values.ToList();
                     switch (_disp)
                     {
                         case (DisplayValue.X):
@@ -664,7 +719,7 @@ namespace GhSA.Components
                             transformation = new List<Vector3d>();
                             for (int i = 0; i < vals.Count; i++)
                             {
-                                transformation.Add(new Vector3d(vals[i] * Value / 1000, 0, 0));
+                                transformation.Add(new Vector3d(vals[i] * DefScale / 1000, 0, 0));
                             }
                             break;
                         case (DisplayValue.Y):
@@ -672,7 +727,7 @@ namespace GhSA.Components
                             transformation = new List<Vector3d>();
                             for (int i = 0; i < vals.Count; i++)
                             {
-                                transformation.Add(new Vector3d(0, vals[i] * Value / 1000, 0));
+                                transformation.Add(new Vector3d(0, vals[i] * DefScale / 1000, 0));
                             }
                             break;
                         case (DisplayValue.Z):
@@ -680,7 +735,7 @@ namespace GhSA.Components
                             transformation = new List<Vector3d>();
                             for (int i = 0; i < vals.Count; i++)
                             {
-                                transformation.Add(new Vector3d(0, 0, vals[i] * Value / 1000));
+                                transformation.Add(new Vector3d(0, 0, vals[i] * DefScale / 1000));
                             }
                             break;
                         case (DisplayValue.resXYZ):
@@ -689,7 +744,7 @@ namespace GhSA.Components
                                     Math.Pow(val.X, 2) +
                                     Math.Pow(val.Y, 2) +
                                     Math.Pow(val.Z, 2))));
-                            transformation = tempXYZ.ConvertAll(vec => Vector3d.Multiply(Value / 1000, vec));
+                            transformation = tempXYZ.ConvertAll(vec => Vector3d.Multiply(DefScale / 1000, vec));
                             break;
                         case (DisplayValue.XX):
                             vals = tempXXYYZZ.ConvertAll(val => val.X);
@@ -742,14 +797,16 @@ namespace GhSA.Components
                         for (int i = 0; i < tempmesh.Vertices.Count; i++)
                             tempmesh.VertexColors.Add(col);
                     }
-
-                    resultMeshes.Add(tempmesh, vals);
+                    meshes[key] = tempmesh;
+                    values[key] = vals;
+                    //resultMeshes.Add(tempmesh, vals, key);
                     #endregion
-                    elemID.Add(key);
-                    parentMember.Add(element.ParentMember.Member);
-                }
+                    //elemID.Add(key);
+                    //parentMember.Add(element.ParentMember.Member);
+                });
                 #endregion 
-                resultMeshes.Finalise();
+                resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList());
+                //resultMeshes.Finalise();
 
                 #region Legend
                 // ### Legend ###
@@ -771,6 +828,23 @@ namespace GhSA.Components
                     cs.Add(gradientcolour);
                 }
                 #endregion
+
+                // convert result libraries to datatrees
+                DataTree<Vector3d> xyz_out = new DataTree<Vector3d>();
+                DataTree<Vector3d> xxyyzz_out = new DataTree<Vector3d>();
+                Parallel.ForEach(xyzResults.Keys, path =>
+                {
+                    xyzResults.TryGetValue(path, out ConcurrentDictionary<int, Vector3d> xyzRes);
+                    lock (xyz_out)
+                    {
+                        xyz_out.AddRange(xyzRes.Values.ToList(), new GH_Path(path));
+                    }
+                    xxyyzzResults.TryGetValue(path, out ConcurrentDictionary<int, Vector3d> xxyyzzRes);
+                    lock (xxyyzz_out)
+                    {
+                        xxyyzz_out.AddRange(xxyyzzRes.Values.ToList(), new GH_Path(path));
+                    }
+                });
 
                 // set outputs
                 DA.SetDataTree(0, xyz_out);
@@ -822,7 +896,7 @@ namespace GhSA.Components
             _mode = FoldMode.Displacement;
 
             slider = true;
-            Value = 50;
+            DefScale = 100;
 
             ReDrawComponent();
 
@@ -839,7 +913,7 @@ namespace GhSA.Components
             _mode = FoldMode.Force;
 
             slider = false;
-            Value = 0;
+            DefScale = 0;
             spacertext[2] = "Deform Shape";
 
             ReDrawComponent();
@@ -857,7 +931,7 @@ namespace GhSA.Components
             _mode = FoldMode.Shear;
 
             slider = false;
-            Value = 0;
+            DefScale = 0;
 
             ReDrawComponent();
 
@@ -874,7 +948,7 @@ namespace GhSA.Components
             _mode = FoldMode.Stress;
 
             slider = false;
-            Value = 0;
+            DefScale = 0;
             spacertext[2] = "Layer";
 
             ReDrawComponent();
@@ -894,7 +968,7 @@ namespace GhSA.Components
             writer.SetInt32("noDec", noDigits);
             writer.SetDouble("valMax", MaxValue);
             writer.SetDouble("valMin", MinValue);
-            writer.SetDouble("val", Value);
+            writer.SetDouble("val", DefScale);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
@@ -907,7 +981,7 @@ namespace GhSA.Components
             noDigits = reader.GetInt32("noDec");
             MaxValue = reader.GetDouble("valMax");
             MinValue = reader.GetDouble("valMin");
-            Value = reader.GetDouble("val");
+            DefScale = reader.GetDouble("val");
 
             dropdowncontents = new List<List<string>>();
             dropdowncontents.Add(dropdownitems);

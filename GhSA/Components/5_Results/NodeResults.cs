@@ -53,18 +53,18 @@ namespace GhSA.Components
                 selections.Add(dropdowncontents[1][3]);
                 first = false;
             }
-            m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, Value, MaxValue, MinValue, noDigits, spacertext);
+            m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, DefScale, MaxValue, MinValue, noDigits, spacertext);
         }
 
         double MinValue = 0;
-        double MaxValue = 100;
-        double Value = 50;
+        double MaxValue = 1000;
+        double DefScale = 100;
         int noDigits = 0;
         bool slider = true;
 
         public void SetVal(double value)
         {
-            Value = value;
+            DefScale = value;
         }
         public void SetMaxMin(double max, double min)
         {
@@ -261,7 +261,7 @@ namespace GhSA.Components
                     gh_typ.CastTo(ref in_Model);
                     if (gsaModel != null)
                     {
-                        if (in_Model.GUID != gsaModel.GUID)
+                        if (in_Model.GUID != gsaModel.GUID) // only get results if GUID is not similar
                         {
                             gsaModel = in_Model;
                             getresults = true;
@@ -419,47 +419,74 @@ namespace GhSA.Components
                         }
 
                         // update max and min values
-                        if (values.X / unitfactorxyz > dmax_x)
-                            dmax_x = values.X / unitfactorxyz;
-                        if (values.Y / unitfactorxyz > dmax_y)
-                            dmax_y = values.Y / unitfactorxyz;
-                        if (values.Z / unitfactorxyz > dmax_z)
-                            dmax_z = values.Z / unitfactorxyz;
-                        if (Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz > dmax_xyz)
-                            dmax_xyz = Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz;
+                        //if (values.X / unitfactorxyz > dmax_x)
+                        //    dmax_x = values.X / unitfactorxyz;
+                        //if (values.Y / unitfactorxyz > dmax_y)
+                        //    dmax_y = values.Y / unitfactorxyz;
+                        //if (values.Z / unitfactorxyz > dmax_z)
+                        //    dmax_z = values.Z / unitfactorxyz;
+                        //if (Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz > dmax_xyz)
+                        //    dmax_xyz = Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz;
 
-                        if (values.XX / unitfactorxxyyzz > dmax_xx)
-                            dmax_xx = values.XX / unitfactorxxyyzz;
-                        if (values.YY / unitfactorxxyyzz > dmax_yy)
-                            dmax_yy = values.YY / unitfactorxxyyzz;
-                        if (values.ZZ / unitfactorxxyyzz > dmax_zz)
-                            dmax_zz = values.ZZ / unitfactorxxyyzz;
-                        if (Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz > dmax_xxyyzz)
-                            dmax_xxyyzz = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz;
+                        //if (values.XX / unitfactorxxyyzz > dmax_xx)
+                        //    dmax_xx = values.XX / unitfactorxxyyzz;
+                        //if (values.YY / unitfactorxxyyzz > dmax_yy)
+                        //    dmax_yy = values.YY / unitfactorxxyyzz;
+                        //if (values.ZZ / unitfactorxxyyzz > dmax_zz)
+                        //    dmax_zz = values.ZZ / unitfactorxxyyzz;
+                        //if (Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz > dmax_xxyyzz)
+                        //    dmax_xxyyzz = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz;
 
-                        if (values.X / unitfactorxyz < dmin_x)
-                            dmin_x = values.X / unitfactorxyz;
-                        if (values.Y / unitfactorxyz < dmin_y)
-                            dmin_y = values.Y / unitfactorxyz;
-                        if (values.Z / unitfactorxyz < dmin_z)
-                            dmin_z = values.Z / unitfactorxyz;
-                        if (Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz < dmin_xyz)
-                            dmin_xyz = Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz;
+                        //if (values.X / unitfactorxyz < dmin_x)
+                        //    dmin_x = values.X / unitfactorxyz;
+                        //if (values.Y / unitfactorxyz < dmin_y)
+                        //    dmin_y = values.Y / unitfactorxyz;
+                        //if (values.Z / unitfactorxyz < dmin_z)
+                        //    dmin_z = values.Z / unitfactorxyz;
+                        //if (Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz < dmin_xyz)
+                        //    dmin_xyz = Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz;
 
-                        if (values.XX / unitfactorxxyyzz < dmin_xx)
-                            dmin_xx = values.XX / unitfactorxxyyzz;
-                        if (values.YY / unitfactorxxyyzz < dmin_yy)
-                            dmin_yy = values.YY / unitfactorxxyyzz;
-                        if (values.ZZ / unitfactorxxyyzz < dmin_zz)
-                            dmin_zz = values.ZZ / unitfactorxxyyzz;
-                        if (Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz < dmin_xxyyzz)
-                            dmin_xxyyzz = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz;
+                        //if (values.XX / unitfactorxxyyzz < dmin_xx)
+                        //    dmin_xx = values.XX / unitfactorxxyyzz;
+                        //if (values.YY / unitfactorxxyyzz < dmin_yy)
+                        //    dmin_yy = values.YY / unitfactorxxyyzz;
+                        //if (values.ZZ / unitfactorxxyyzz < dmin_zz)
+                        //    dmin_zz = values.ZZ / unitfactorxxyyzz;
+                        //if (Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz < dmin_xxyyzz)
+                        //    dmin_xxyyzz = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz;
 
                         // add the values to the vector lists
                         xyz[nodeID] = new Vector3d(values.X / unitfactorxyz, values.Y / unitfactorxyz, values.Z / unitfactorxyz);
                         xxyyzz[nodeID] = new Vector3d(values.XX / unitfactorxxyyzz, values.YY / unitfactorxxyyzz, values.ZZ / unitfactorxxyyzz);
                     });
                     #endregion
+
+                    // update max and min values
+                    dmax_x = xyz.AsParallel().Select(res => res.Value.X).Max();
+                    dmax_y = xyz.AsParallel().Select(res => res.Value.Y).Max();
+                    dmax_z = xyz.AsParallel().Select(res => res.Value.Z).Max();
+                    dmax_xyz = xyz.AsParallel().Select(res => 
+                        Math.Sqrt(Math.Pow(res.Value.X, 2) + Math.Pow(res.Value.Y, 2) + Math.Pow(res.Value.Z, 2))
+                        ).Max();
+                    dmin_x = xyz.AsParallel().Select(res => res.Value.X).Min();
+                    dmin_y = xyz.AsParallel().Select(res => res.Value.Y).Min();
+                    dmin_z = xyz.AsParallel().Select(res => res.Value.Z).Min();
+                    dmin_xyz = xyz.AsParallel().Select(res =>
+                        Math.Sqrt(Math.Pow(res.Value.X, 2) + Math.Pow(res.Value.Y, 2) + Math.Pow(res.Value.Z, 2))
+                        ).Min();
+                    dmax_xx = xxyyzz.AsParallel().Select(res => res.Value.X).Max();
+                    dmax_yy = xxyyzz.AsParallel().Select(res => res.Value.Y).Max();
+                    dmax_zz = xxyyzz.AsParallel().Select(res => res.Value.Z).Max();
+                    dmax_xxyyzz = xxyyzz.AsParallel().Select(res =>
+                        Math.Sqrt(Math.Pow(res.Value.X, 2) + Math.Pow(res.Value.Y, 2) + Math.Pow(res.Value.Z, 2))
+                        ).Max();
+                    dmin_xx = xxyyzz.AsParallel().Select(res => res.Value.X).Min();
+                    dmin_yy = xxyyzz.AsParallel().Select(res => res.Value.Y).Min();
+                    dmin_zz = xxyyzz.AsParallel().Select(res => res.Value.Z).Min();
+                    dmin_xxyyzz = xyz.AsParallel().Select(res =>
+                        Math.Sqrt(Math.Pow(res.Value.X, 2) + Math.Pow(res.Value.Y, 2) + Math.Pow(res.Value.Z, 2))
+                        ).Min();
+
                     getresults = false;
                 }
 
@@ -538,21 +565,21 @@ namespace GhSA.Components
                                 {
                                     case (DisplayValue.X):
                                         t = xyz[nodeID].X;
-                                        translation.X = t * Value / 1000;
+                                        translation.X = t * DefScale / 1000;
                                         break;
                                     case (DisplayValue.Y):
                                         t = xyz[nodeID].Y;
-                                        translation.Y = t * Value / 1000;
+                                        translation.Y = t * DefScale / 1000;
                                         break;
                                     case (DisplayValue.Z):
                                         t = xyz[nodeID].Z;
-                                        translation.Z = t * Value / 1000;
+                                        translation.Z = t * DefScale / 1000;
                                         break;
                                     case (DisplayValue.resXYZ):
                                         t = Math.Sqrt(Math.Pow(xyz[nodeID].X, 2) + Math.Pow(xyz[nodeID].Y, 2) + Math.Pow(xyz[nodeID].Z, 2));
-                                        translation.X = xyz[nodeID].X * Value / 1000;
-                                        translation.Y = xyz[nodeID].Y * Value / 1000;
-                                        translation.Z = xyz[nodeID].Z * Value / 1000;
+                                        translation.X = xyz[nodeID].X * DefScale / 1000;
+                                        translation.Y = xyz[nodeID].Y * DefScale / 1000;
+                                        translation.Z = xyz[nodeID].Z * DefScale / 1000;
                                         break;
                                     case (DisplayValue.XX):
                                         t = xxyyzz[nodeID].X;
@@ -661,7 +688,7 @@ namespace GhSA.Components
             _mode = FoldMode.Displacement;
 
             slider = true;
-            Value = 50;
+            DefScale = 100;
 
             ReDrawComponent();
 
@@ -677,7 +704,7 @@ namespace GhSA.Components
             RecordUndoEvent(_mode.ToString() + " Parameters");
             _mode = FoldMode.Reaction;
             slider = false;
-            Value = 0;
+            DefScale = 0;
 
             ReDrawComponent();
 
@@ -693,7 +720,7 @@ namespace GhSA.Components
             RecordUndoEvent(_mode.ToString() + " Parameters");
             _mode = FoldMode.SpringForce;
             slider = false;
-            Value = 0;
+            DefScale = 0;
 
             ReDrawComponent();
 
@@ -710,7 +737,7 @@ namespace GhSA.Components
             RecordUndoEvent(_mode.ToString() + " Parameters");
             _mode = FoldMode.Constraint;
             slider = false;
-            Value = 0;
+            DefScale = 0;
 
             ReDrawComponent();
 
@@ -729,7 +756,7 @@ namespace GhSA.Components
             writer.SetInt32("noDec", noDigits);
             writer.SetDouble("valMax", MaxValue);
             writer.SetDouble("valMin", MinValue);
-            writer.SetDouble("val", Value);
+            writer.SetDouble("val", DefScale);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
@@ -741,7 +768,7 @@ namespace GhSA.Components
             noDigits = reader.GetInt32("noDec");
             MaxValue = reader.GetDouble("valMax");
             MinValue = reader.GetDouble("valMin");
-            Value = reader.GetDouble("val");
+            DefScale = reader.GetDouble("val");
 
             dropdowncontents = new List<List<string>>();
             dropdowncontents.Add(dropdownitems);

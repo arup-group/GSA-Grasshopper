@@ -34,6 +34,11 @@ namespace GhSA.Parameters
                 UpdatePreview();
             }
         }
+        public bool isSupport
+        {
+            get { return m_node.Restraint.X || m_node.Restraint.Y || m_node.Restraint.Z ||
+                    m_node.Restraint.XX || m_node.Restraint.YY || m_node.Restraint.ZZ; }
+        }
         public Point3d Point
         {
             get

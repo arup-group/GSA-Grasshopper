@@ -74,9 +74,15 @@ namespace GhSA.Parameters
             m_results.Add(results);
             finalised = false;
         }
-
+        public void Add(List<Mesh> temp_mesh, List<List<double>> results)
+        {
+            temp_meshes.AddRange(temp_mesh);
+            m_results.AddRange(results);
+            Finalise();
+        }
         public void Finalise()
         {
+            if (finalised == true) { return; }
             this.Value = new Mesh();
             this.Value.Append(temp_meshes);
             this.Value.RebuildNormals();

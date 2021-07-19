@@ -40,20 +40,30 @@ namespace GhSA.Parameters
             m_colour1 = colour1;
             m_colour2 = colour2;
 
-            int numDiv = 40;
+            //int numDiv = 5; // Math.Max(2, Math.Min((int)Math.Round(line.Length / GhSA.Units.Tolerance), 40));
 
             Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = new Grasshopper.GUI.Gradient.GH_Gradient();
             gH_Gradient.AddGrip(0, m_colour1);
             gH_Gradient.AddGrip(1, m_colour2);
+            previewResultSegments = new List<Line>();
+            previewResultColours = new List<Color>();
+            previewResultThk = new List<int>();
+            
+            //for (int i = 0; i < numDiv + 1; i++)
+            //{
+            //    double t = (double)i / numDiv;
+            //    previewResultColours.Add(gH_Gradient.ColourAt(t));
+            //    previewResultThk.Add((int)Math.Abs(((m_size2 - m_size1) * t + m_size1)));
+            //    previewResultSegments.Add(new Line(Value.PointAt((double)i / (numDiv - 1)), Value.PointAt((double)(i + 1) / (numDiv - 1))));
+            //}
 
-            for (int i = 0; i < numDiv + 1; i++)
-            {
-                double t = (double)i / numDiv;
-                previewResultColours.Add(gH_Gradient.ColourAt(t));
-                previewResultThk.Add((int)Math.Abs(((m_size2 - m_size1) * t + m_size1)));
-                previewResultSegments.Add(new Line(Value.PointAt((double)i / (numDiv - 1)), Value.PointAt((double)(i + 1) / (numDiv - 1))));
-                
-            }
+            previewResultColours.Add(gH_Gradient.ColourAt(0));
+            previewResultThk.Add((int)Math.Abs(((m_size2 - m_size1) * 0 + m_size1)));
+            previewResultSegments.Add(new Line(Value.PointAt(0), Value.PointAt(0.5)));
+
+            previewResultColours.Add(gH_Gradient.ColourAt(1));
+            previewResultThk.Add((int)Math.Abs(((m_size2 - m_size1) * 1 + m_size1)));
+            previewResultSegments.Add(new Line(Value.PointAt(0.5), Value.PointAt(1)));
         }
 
         private double m_result1;

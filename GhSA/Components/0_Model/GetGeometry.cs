@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Grasshopper.Kernel.Attributes;
 using Grasshopper.GUI.Canvas;
@@ -19,14 +20,14 @@ namespace GhSA.Components
     /// <summary>
     /// Component to retrieve geometric objects from a GSA model
     /// </summary>
-    public class GetGeometryTask : GH_TaskCapableComponent<GetGeometryTask.SolveResults>, IGH_PreviewObject, IGH_VariableParameterComponent
+    public class GetGeometry : GH_TaskCapableComponent<GetGeometry.SolveResults>, IGH_PreviewObject, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
-        public GetGeometryTask()
-          : base("Get Model Geometry", "GetGeoWrooom", "Get nodes, elements and members from GSA model",
+        public GetGeometry()
+          : base("Get Model Geometry", "GetGeo", "Get nodes, elements and members from GSA model",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         {
@@ -162,6 +163,7 @@ namespace GhSA.Components
         public class SolveResults
         {
             public List<GsaNodeGoo> Nodes { get; set; }
+            internal List<GsaNodeGoo> displaySupports { get; set; }
             public List<GsaElement1dGoo> Elem1ds { get; set; }
             public List<GsaElement2dGoo> Elem2ds { get; set; }
             public List<GsaElement3dGoo> Elem3ds { get; set; }
@@ -195,6 +197,7 @@ namespace GhSA.Components
 
                         // create nodes
                         results.Nodes = Util.Gsa.FromGSA.GetNodes(out_nDict, axDict);
+                        results.displaySupports = results.Nodes.AsParallel().Where(n => n.Value.isSupport).ToList();
                     }
 
                     if (i == 1)
@@ -260,8 +263,6 @@ namespace GhSA.Components
                     if (data.GetData(3, ref memList))
                         memList = memList.ToString();
 
-                    
-
                     tsk = Task.Run(() => Compute(gsaModel, nodeList, elemList, memList), CancelToken);
                 }
                 // Add a null task even if data collection fails. This keeps the
@@ -309,6 +310,7 @@ namespace GhSA.Components
                 if (results.Nodes != null)
                 {
                     data.SetDataList(0, results.Nodes);
+                    supportNodes = results.displaySupports;
                 }
                 if (results.Elem1ds != null)
                 {
@@ -319,13 +321,13 @@ namespace GhSA.Components
                     data.SetDataList(2, results.Elem2ds);
                     element2dsShaded = new List<GsaElement2dGoo>();
                     element2dsNotShaded = new List<GsaElement2dGoo>();
-                    foreach (GsaElement2dGoo elem in results.Elem2ds)
-                    {
-                        if (elem.Value.API_Elements[0].ParentMember.Member > 0)
-                            element2dsShaded.Add(elem);
-                        else
-                            element2dsNotShaded.Add(elem);
-                    }
+                    Parallel.ForEach(results.Elem2ds, elem =>
+                   {
+                       if (elem.Value.API_Elements[0].ParentMember.Member > 0)
+                           element2dsShaded.Add(elem);
+                       else
+                           element2dsNotShaded.Add(elem);
+                   });
                 }
                 if (results.Elem3ds != null)
                 {
@@ -348,6 +350,7 @@ namespace GhSA.Components
 
         List<GsaElement2dGoo> element2dsShaded;
         List<GsaElement2dGoo> element2dsNotShaded;
+        List<GsaNodeGoo> supportNodes;
 
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {
@@ -381,6 +384,47 @@ namespace GhSA.Components
                         {
                             args.Display.DrawMeshWires(element.Value.Mesh, UI.Colour.Element2dEdge, 1);
                         }
+                    }
+                }
+            }
+
+            if (supportNodes != null)
+            {
+                foreach (GsaNodeGoo node in supportNodes)
+                if (node.Value.Point.IsValid)
+                {
+                        // draw the point
+                    if (!this.Attributes.Selected)
+                        {
+                        if ((System.Drawing.Color)node.Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
+                        {
+                            args.Display.DrawPoint(node.Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, (System.Drawing.Color)node.Value.Colour);
+                        }
+                        else
+                        {
+                            System.Drawing.Color col = UI.Colour.Node;
+                            args.Display.DrawPoint(node.Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, col);
+                        }
+                        if (node.Value.previewSupportSymbol != null)
+                            args.Display.DrawBrepShaded(node.Value.previewSupportSymbol, UI.Colour.SupportSymbol);
+                        if (node.Value.previewText != null)
+                            args.Display.Draw3dText(node.Value.previewText, UI.Colour.Support);
+                    }
+                    else
+                    {
+                        args.Display.DrawPoint(node.Value.Point, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.NodeSelected);
+                        if (node.Value.previewSupportSymbol != null)
+                            args.Display.DrawBrepShaded(node.Value.previewSupportSymbol, UI.Colour.SupportSymbolSelected);
+                        if (node.Value.previewText != null)
+                            args.Display.Draw3dText(node.Value.previewText, UI.Colour.NodeSelected);
+                    }
+
+                    // local axis
+                    if (node.Value.LocalAxis != Plane.WorldXY & node.Value.LocalAxis != new Plane() & node.Value.LocalAxis != Plane.Unset)
+                    {
+                        args.Display.DrawLine(node.Value.previewXaxis, System.Drawing.Color.FromArgb(255, 244, 96, 96), 1);
+                        args.Display.DrawLine(node.Value.previewYaxis, System.Drawing.Color.FromArgb(255, 96, 244, 96), 1);
+                        args.Display.DrawLine(node.Value.previewZaxis, System.Drawing.Color.FromArgb(255, 96, 96, 234), 1);
                     }
                 }
             }
