@@ -18,10 +18,10 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(15, node.Point.Y);
             Assert.AreEqual(7.8, node.Point.Z);
 
-            // node should maintain syncronisation of Point and Node.Position:
-            Assert.AreEqual(10, node.Node.Position.X);
-            Assert.AreEqual(15, node.Node.Position.Y);
-            Assert.AreEqual(7.8, node.Node.Position.Z);
+            // node should maintain syncronisation of Point and API_Node.Position:
+            Assert.AreEqual(10, node.Point.X);
+            Assert.AreEqual(15, node.Point.Y);
+            Assert.AreEqual(7.8, node.Point.Z);
         }
         [TestCase]
         public void TestCreateGsaNodeRestrained()
@@ -38,17 +38,18 @@ namespace ParamsIntegrationTests
             };
 
             // create new node from point with bool6 restraint
-            GsaNode node = new GsaNode(new Point3d(5.3, 9.9, 2017), bool6);
+            GsaNode node = new GsaNode(new Point3d(5.3, 9.9, 2017));
+            node.Restraint = bool6;
 
             Assert.AreEqual(5.3, node.Point.X);
             Assert.AreEqual(9.9, node.Point.Y);
             Assert.AreEqual(2017, node.Point.Z);
-            Assert.IsTrue(node.Node.Restraint.X);
-            Assert.IsFalse(node.Node.Restraint.Y);
-            Assert.IsTrue(node.Node.Restraint.Z);
-            Assert.IsFalse(node.Node.Restraint.XX);
-            Assert.IsTrue(node.Node.Restraint.YY);
-            Assert.IsFalse(node.Node.Restraint.ZZ);
+            Assert.IsTrue(node.Restraint.X);
+            Assert.IsFalse(node.Restraint.Y);
+            Assert.IsTrue(node.Restraint.Z);
+            Assert.IsFalse(node.Restraint.XX);
+            Assert.IsTrue(node.Restraint.YY);
+            Assert.IsFalse(node.Restraint.ZZ);
         }
         [TestCase]
         public void TestCreateGsaNodeIdRestrainLocAxis()
@@ -70,7 +71,11 @@ namespace ParamsIntegrationTests
             int id = 44;
 
             // create new node from point with id, bool6 restraint and plane local axis:
-            GsaNode node = new GsaNode(new Point3d(-40, -3.654, -99), id, bool6, pln);
+            GsaNode node = new GsaNode(new Point3d(-40, -3.654, -99));
+            node.Restraint = bool6;
+            pln.Origin = node.Point;
+            node.LocalAxis = pln;
+            node.ID = id;
 
             Assert.AreEqual(-40, node.Point.X);
             Assert.AreEqual(-3.654, node.Point.Y);
@@ -78,12 +83,12 @@ namespace ParamsIntegrationTests
 
             Assert.AreEqual(44, node.ID);
 
-            Assert.IsFalse(node.Node.Restraint.X);
-            Assert.IsTrue(node.Node.Restraint.Y);
-            Assert.IsFalse(node.Node.Restraint.Z);
-            Assert.IsTrue(node.Node.Restraint.XX);
-            Assert.IsFalse(node.Node.Restraint.YY);
-            Assert.IsTrue(node.Node.Restraint.ZZ);
+            Assert.IsFalse(node.Restraint.X);
+            Assert.IsTrue(node.Restraint.Y);
+            Assert.IsFalse(node.Restraint.Z);
+            Assert.IsTrue(node.Restraint.XX);
+            Assert.IsFalse(node.Restraint.YY);
+            Assert.IsTrue(node.Restraint.ZZ);
 
             // the local plane origin point should be moved to the node position
             Assert.AreEqual(-40, node.LocalAxis.OriginX);
@@ -101,15 +106,15 @@ namespace ParamsIntegrationTests
             node.Colour = System.Drawing.Color.Red;
             node.LocalAxis = Plane.WorldYZ;
             node.ID = 3;
-            node.Node.Name = "Mariam";
+            node.Name = "Mariam";
 
             // duplicate node
             GsaNode duplicate = node.Duplicate();
 
             // check that original and duplicate are the same
-            Assert.AreEqual(node.Node.Position.X, duplicate.Node.Position.X);
-            Assert.AreEqual(node.Node.Position.Y, duplicate.Node.Position.Y);
-            Assert.AreEqual(node.Node.Position.Z, duplicate.Node.Position.Z);
+            Assert.AreEqual(node.Point.X, duplicate.Point.X);
+            Assert.AreEqual(node.Point.Y, duplicate.Point.Y);
+            Assert.AreEqual(node.Point.Z, duplicate.Point.Z);
 
             Assert.AreEqual(duplicate.LocalAxis.OriginX, node.LocalAxis.OriginX);
             Assert.AreEqual(duplicate.LocalAxis.OriginY, node.LocalAxis.OriginY);
@@ -120,7 +125,7 @@ namespace ParamsIntegrationTests
 
             Assert.AreEqual(node.ID, duplicate.ID);
             Assert.AreEqual(node.Colour, duplicate.Colour);
-            Assert.AreEqual(node.Node.Name, duplicate.Node.Name);
+            Assert.AreEqual(node.Name, duplicate.Name);
 
 
             // make changes to original node
@@ -128,12 +133,12 @@ namespace ParamsIntegrationTests
             node.LocalAxis = Plane.Unset;
             node.Colour = System.Drawing.Color.Blue;
             node.ID = 2;
-            node.Node.Name = "Kristjan";
+            node.Name = "Kristjan";
 
             // check that original and duplicate are not the same
-            Assert.AreNotEqual(node.Node.Position.X, duplicate.Node.Position.X);
-            Assert.AreNotEqual(node.Node.Position.Y, duplicate.Node.Position.Y);
-            Assert.AreNotEqual(node.Node.Position.Z, duplicate.Node.Position.Z);
+            Assert.AreNotEqual(node.Point.X, duplicate.Point.X);
+            Assert.AreNotEqual(node.Point.Y, duplicate.Point.Y);
+            Assert.AreNotEqual(node.Point.Z, duplicate.Point.Z);
 
             Assert.AreNotEqual(duplicate.LocalAxis.OriginX, node.LocalAxis.OriginX);
             Assert.AreNotEqual(duplicate.LocalAxis.OriginY, node.LocalAxis.OriginY);
@@ -144,7 +149,7 @@ namespace ParamsIntegrationTests
 
             Assert.AreNotEqual(node.ID, duplicate.ID);
             Assert.AreNotEqual(node.Colour, duplicate.Colour);
-            Assert.AreNotEqual(node.Node.Name, duplicate.Node.Name);
+            Assert.AreNotEqual(node.Name, duplicate.Name);
         }
     }
 }

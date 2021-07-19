@@ -6,6 +6,8 @@ using GsaAPI;
 using Rhino.Geometry;
 using GhSA.Parameters;
 using System.Threading;
+using System.Collections.Concurrent;
+using Grasshopper.Kernel.Parameters;
 
 namespace GhSA.Util.Gsa.ToGSA
 {
@@ -42,14 +44,19 @@ namespace GhSA.Util.Gsa.ToGSA
             Model model = appendModel.Model;
 
             // get dictionaries from model
-            IReadOnlyDictionary<int, Node> nDict = model.Nodes();
-            IReadOnlyDictionary<int, Element> eDict = model.Elements();
-            IReadOnlyDictionary<int, Member> mDict = model.Members();
-            IReadOnlyDictionary<int, Section> sDict = model.Sections();
-            IReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
+            //IReadOnlyDictionary<int, Node> nDict = model.Nodes();
+            //IReadOnlyDictionary<int, Element> eDict = model.Elements();
+            //IReadOnlyDictionary<int, Member> mDict = model.Members();
+            //IReadOnlyDictionary<int, Section> sDict = model.Sections();
+            //IReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
+            ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
+            ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(model.Elements());
+            ConcurrentDictionary<int, Member> mDict = new ConcurrentDictionary<int, Member>(model.Members());
+            ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
+            ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
 
             // get nodes
-            List<GsaNodeGoo> goonodes = Util.Gsa.FromGSA.GetNodes(nDict, model);
+            List<GsaNodeGoo> goonodes = Util.Gsa.FromGSA.GetNodes(nDict);
             // convert from Goo-type
             List<GsaNode> nodes = goonodes.Select(n => n.Value).ToList();
             // change all members in List's ID to 0;
@@ -143,7 +150,7 @@ namespace GhSA.Util.Gsa.ToGSA
             // list of topology nodes
             List<Node> gsanodes = new List<Node>();
             if (nodes != null)
-                gsanodes = nodes.ConvertAll(x => x.Node);
+                gsanodes = nodes.ConvertAll(x => x.API_Node);
 
             // counter for creating nodes
             int id = 1;

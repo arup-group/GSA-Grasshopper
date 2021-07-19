@@ -14,15 +14,7 @@ namespace GhSA.Parameters
     /// Node class, this class defines the basic properties and methods for any Gsa Node
     /// </summary>
     public class GsaNode
-
     {
-        #region fields
-        public Node Node { get; set; } = new Node();
-        private Plane m_plane; // = Plane.WorldXY;
-        private int m_id;
-        private GsaSpring m_spring;
-        #endregion
-
         public GsaSpring Spring
         {
             get { return m_spring; }
@@ -36,86 +28,191 @@ namespace GhSA.Parameters
         public Plane LocalAxis
         {
             get { return m_plane; }
-            set { m_plane = value; }
+            set 
+            { 
+                m_plane = value;
+                UpdatePreview();
+            }
         }
-
+        public bool isSupport
+        {
+            get { return m_node.Restraint.X || m_node.Restraint.Y || m_node.Restraint.Z ||
+                    m_node.Restraint.XX || m_node.Restraint.YY || m_node.Restraint.ZZ; }
+        }
         public Point3d Point
         {
             get
             {
-                if (Node == null) { return new Point3d(); }
-                return new Point3d(Node.Position.X, Node.Position.Y, Node.Position.Z);
+                if (m_node == null) { return Point3d.Unset; }
+                return new Point3d(m_node.Position.X, m_node.Position.Y, m_node.Position.Z);
             }
-            set { Node.Position.X = value.X; Node.Position.Y = value.Y; Node.Position.Z = value.Z; }
+            set 
+            {
+                CloneNode();
+                m_id = 0;
+                m_node.Position.X = value.X; 
+                m_node.Position.Y = value.Y; 
+                m_node.Position.Z = value.Z;
+                UpdatePreview();
+            }
         }
-
+        #region GsaAPI members
+        internal Node API_Node
+        {
+            get { return m_node; }
+            set 
+            { 
+                m_node = value; 
+                UpdatePreview(); 
+            }
+        }
         public System.Drawing.Color Colour
         {
             get
             {
-                return (System.Drawing.Color)Node.Colour;
+                return (System.Drawing.Color)m_node.Colour;
             }
-            set { Node.Colour = value; }
-        }
-
-        #region constructors
-        public GsaNode()
-        {
-            Node = null;
-        }
-
-        public GsaNode(Point3d position)
-        {
-            Node.Position.X = position.X;
-            Node.Position.Y = position.Y;
-            Node.Position.Z = position.Z;
-        }
-
-        
-        public GsaNode Duplicate()
-        {
-            if (this.Node == null) { return null; }
-            GsaNode dup = new GsaNode
+            set 
             {
-                Node = new Node
+                CloneNode();
+                m_node.Colour = value; 
+            }
+        }
+        public GsaBool6 Restraint
+        {
+            get
+            {
+                return new GsaBool6(m_node.Restraint.X, m_node.Restraint.Y, m_node.Restraint.Z,
+                    m_node.Restraint.XX, m_node.Restraint.YY, m_node.Restraint.ZZ);
+            }
+            set
+            {
+                CloneNode();
+                m_node.Restraint = new NodalRestraint
                 {
-                    AxisProperty = Node.AxisProperty,
-                    DamperProperty = Node.DamperProperty,
-                    MassProperty = Node.MassProperty,
-                    Name = Node.Name,
-                    Restraint = new NodalRestraint
-                    {
-                        X = Node.Restraint.X,
-                        Y = Node.Restraint.Y,
-                        Z = Node.Restraint.Z,
-                        XX = Node.Restraint.XX,
-                        YY = Node.Restraint.YY,
-                        ZZ = Node.Restraint.ZZ,
-                    },
-                    SpringProperty = Node.SpringProperty,
+                    X = value.X,
+                    Y = value.Y,
+                    Z = value.Z,
+                    XX = value.XX,
+                    YY = value.YY,
+                    ZZ = value.ZZ,
+                };
+                UpdatePreview();
+            }
+        }
+        public string Name
+        {
+            get { return m_node.Name; }
+            set
+            {
+                CloneNode();
+                m_node.Name = value;
+            }
+        }
+        private void CloneNode()
+        {
+            Node node = new Node
+            {
+                AxisProperty = m_node.AxisProperty,
+                DamperProperty = m_node.DamperProperty,
+                MassProperty = m_node.MassProperty,
+                Name = m_node.Name.ToString(),
+                Restraint = new NodalRestraint
+                {
+                    X = m_node.Restraint.X,
+                    Y = m_node.Restraint.Y,
+                    Z = m_node.Restraint.Z,
+                    XX = m_node.Restraint.XX,
+                    YY = m_node.Restraint.YY,
+                    ZZ = m_node.Restraint.ZZ,
+                },
+                SpringProperty = m_node.SpringProperty,
+                Position = new Vector3
+                {
+                    X = m_node.Position.X,
+                    Y = m_node.Position.Y,
+                    Z = m_node.Position.Z,
                 }
             };
 
-            if ((System.Drawing.Color)Node.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                dup.Node.Colour = Node.Colour;
+            if ((System.Drawing.Color)m_node.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                node.Colour = m_node.Colour;
 
-            dup.Point = new Point3d
+            m_node = node;
+        }
+        #endregion
+        #region preview
+        internal Line previewXaxis;
+        internal Line previewYaxis;
+        internal Line previewZaxis;
+        internal Brep previewSupportSymbol;
+        internal Rhino.Display.Text3d previewText;
+        internal void UpdatePreview()
+        {
+            if (m_node.Restraint.X || m_node.Restraint.Y || m_node.Restraint.Z ||
+                m_node.Restraint.XX || m_node.Restraint.YY || m_node.Restraint.ZZ)
             {
-                X = Node.Position.X,
-                Y = Node.Position.Y,
-                Z = Node.Position.Z,
-            };
+                GhSA.UI.Display.PreviewRestraint(Restraint, m_plane, Point, 
+                    ref previewSupportSymbol, ref previewText);
+            }
+            else
+            {
+                previewSupportSymbol = null;
+                previewText = null;
+            }
 
-            if (m_id != 0)
-                dup.ID = m_id;
-            if(m_spring != null)
-                dup.Spring = m_spring.Duplicate();
             if (m_plane != null)
-                dup.LocalAxis = LocalAxis.Clone();
-            return dup;
+            {
+                if (m_plane != Plane.WorldXY & m_plane != new Plane())
+                {
+                    Plane local = m_plane.Clone();
+                    local.Origin = Point;
+                    
+                    previewXaxis = new Line(Point, local.XAxis, 0.5);
+                    previewYaxis = new Line(Point, local.YAxis, 0.5);
+                    previewZaxis = new Line(Point, local.ZAxis, 0.5);
+                }
+            }
+        }
+        #endregion
+        #region fields
+        private Plane m_plane; 
+        private int m_id;
+        private GsaSpring m_spring;
+        private Node m_node; 
+        #endregion
+        
+        #region constructors
+        public GsaNode()
+        {
+            m_node = new Node();
         }
 
-
+        internal GsaNode(Node node, int ID, Plane localAxis = new Plane())
+        {
+            m_node = node;
+            m_id = ID;
+            m_plane = localAxis;
+            UpdatePreview();
+        }
+        public GsaNode(Point3d position, int ID = 0)
+        {
+            m_node = new Node();
+            Point = position;
+            m_id = ID;
+            UpdatePreview();
+        }
+        public GsaNode Duplicate()
+        {
+            if (m_node == null) { return null; }
+            GsaNode dup = new GsaNode();
+            dup.m_id = m_id;
+            dup.m_node = m_node;
+            dup.m_plane = m_plane;
+            dup.m_spring = m_spring;
+            dup.UpdatePreview();
+            return dup;
+        }
         #endregion
 
         #region properties
@@ -123,7 +220,7 @@ namespace GhSA.Parameters
         {
             get
             {
-                if (Node == null) { return false; }
+                if (API_Node == null) { return false; }
                 return true;
             }
         }
@@ -133,7 +230,7 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            if (Node == null) { return "Null Node"; }
+            if (API_Node == null) { return "Null Node"; }
             string idd = " " + ID.ToString() + " ";
             if (ID == 0) { idd = " "; }
             GH_Point gH_Point = new GH_Point(Point);
@@ -151,31 +248,30 @@ namespace GhSA.Parameters
             }
             
             string sptTxt;
-            if (Node.Restraint.X == false && Node.Restraint.Y == false && Node.Restraint.Z == false &&
-                Node.Restraint.XX == false && Node.Restraint.YY == false && Node.Restraint.ZZ == false)
+            if (API_Node.Restraint.X == false && API_Node.Restraint.Y == false && API_Node.Restraint.Z == false &&
+                API_Node.Restraint.XX == false && API_Node.Restraint.YY == false && API_Node.Restraint.ZZ == false)
                 sptTxt = "";
             else
             {
-                sptTxt = " Restraint: " + "X: " + (Node.Restraint.X ? "\u2713" : "\u2610") +
-                   ", Y: " + (Node.Restraint.Y ? "\u2713" : "\u2610") +
-                   ", Z: " + (Node.Restraint.Z ? "\u2713" : "\u2610") +
-                   ", XX: " + (Node.Restraint.XX ? "\u2713" : "\u2610") +
-                   ", YY: " + (Node.Restraint.YY ? "\u2713" : "\u2610") +
-                   ", ZZ: " + (Node.Restraint.ZZ ? "\u2713" : "\u2610");
-                if (!Node.Restraint.X & !Node.Restraint.Y & !Node.Restraint.Z &
-                    !Node.Restraint.XX & !Node.Restraint.YY & !Node.Restraint.ZZ)
+                sptTxt = " Restraint: " + "X: " + (API_Node.Restraint.X ? "\u2713" : "\u2610") +
+                   ", Y: " + (API_Node.Restraint.Y ? "\u2713" : "\u2610") +
+                   ", Z: " + (API_Node.Restraint.Z ? "\u2713" : "\u2610") +
+                   ", XX: " + (API_Node.Restraint.XX ? "\u2713" : "\u2610") +
+                   ", YY: " + (API_Node.Restraint.YY ? "\u2713" : "\u2610") +
+                   ", ZZ: " + (API_Node.Restraint.ZZ ? "\u2713" : "\u2610");
+                if (!API_Node.Restraint.X & !API_Node.Restraint.Y & !API_Node.Restraint.Z &
+                    !API_Node.Restraint.XX & !API_Node.Restraint.YY & !API_Node.Restraint.ZZ)
                     sptTxt = "";
-                if (Node.Restraint.X & Node.Restraint.Y & Node.Restraint.Z &
-                    !Node.Restraint.XX & !Node.Restraint.YY & !Node.Restraint.ZZ)
+                if (API_Node.Restraint.X & API_Node.Restraint.Y & API_Node.Restraint.Z &
+                    !API_Node.Restraint.XX & !API_Node.Restraint.YY & !API_Node.Restraint.ZZ)
                     sptTxt = " Restraint: Pinned";
-                if (Node.Restraint.X & Node.Restraint.Y & Node.Restraint.Z &
-                    Node.Restraint.XX & Node.Restraint.YY & Node.Restraint.ZZ)
+                if (API_Node.Restraint.X & API_Node.Restraint.Y & API_Node.Restraint.Z &
+                    API_Node.Restraint.XX & API_Node.Restraint.YY & API_Node.Restraint.ZZ)
                     sptTxt = " Restraint: Fixed";
             }
 
             return nodeTxt + sptTxt + localTxt;
         }
-
         #endregion
     }
 
@@ -195,7 +291,7 @@ namespace GhSA.Parameters
                 node = null;
             else
             {
-                if (node.Node == null)
+                if (node.API_Node == null)
                     node = null;
             }
             this.Value = node; //node.Duplicate();
@@ -264,7 +360,7 @@ namespace GhSA.Parameters
         {
             if (Value == null) { return BoundingBox.Empty; }
             if (Value.Point == null) { return BoundingBox.Empty; }
-            Point3d pt = Value.Point;
+            Point3d pt = new Point3d(Value.Point);
             pt.Z += 0.001;
             Line ln = new Line(Value.Point, pt);
             LineCurve crv = new LineCurve(ln);
@@ -292,7 +388,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.Node;
+                    target = (Q)(object)Value.API_Node;
                 return true;
             }
 
@@ -302,7 +398,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.Point;
+                    target = (Q)(object)new Point3d(Value.Point);
                 return true;
             }
             if (typeof(Q).IsAssignableFrom(typeof(GH_Point)))
@@ -320,6 +416,21 @@ namespace GhSA.Parameters
                     target = default;
                 else
                     target = (Q)(object)new Point(Value.Point);
+                return true;
+            }
+
+            if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
+            {
+                if (Value == null)
+                    target = default;
+                else
+                {
+                    GH_Integer ghint = new GH_Integer();
+                    if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
+                        target = (Q)(object)ghint;
+                    else
+                        target = default;
+                }
                 return true;
             }
 
@@ -344,7 +455,8 @@ namespace GhSA.Parameters
             //Cast from GsaAPI Node
             if (typeof(Node).IsAssignableFrom(source.GetType()))
             {
-                Value.Node = (Node)source;
+                Value = new GsaNode();
+                Value.API_Node = (Node)source;
                 return true;
             }
 
@@ -352,8 +464,7 @@ namespace GhSA.Parameters
             Point3d pt = new Point3d();
             if (GH_Convert.ToPoint3d(source, ref pt, GH_Conversion.Both))
             {
-                GsaNode node = new GsaNode(pt);
-                this.Value = node;
+                Value = new GsaNode(pt);
                 return true;
             }
 
@@ -368,7 +479,7 @@ namespace GhSA.Parameters
             if (Value.Point == null) { return null; }
 
             GsaNode node = Value.Duplicate();
-            Point3d pt = node.Point;
+            Point3d pt = new Point3d(node.Point);
             pt.Transform(xform);
             
             node.Point = pt;
@@ -382,7 +493,7 @@ namespace GhSA.Parameters
 
             GsaNode node = Value.Duplicate();
 
-            Point3d pt = node.Point;
+            Point3d pt = new Point3d(node.Point);
             pt = xmorph.MorphPoint(pt);
 
             node.Point = pt;
@@ -413,109 +524,36 @@ namespace GhSA.Parameters
                     if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
                     {
                         args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, (System.Drawing.Color)Value.Colour);
-
                     }
                     else
                     {
                         System.Drawing.Color col = UI.Colour.Node;
                         args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, col);
                     }
-                    DrawRestraint(args, Value);
+                    if (Value.previewSupportSymbol != null)
+                        args.Pipeline.DrawBrepShaded(Value.previewSupportSymbol, UI.Colour.SupportSymbol);
+                    if (Value.previewText != null)
+                        args.Pipeline.Draw3dText(Value.previewText, UI.Colour.Support);
                 }
                 else
                 {
                     args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.NodeSelected);
-                    DrawRestraint(args, Value, true);
+                    if (Value.previewSupportSymbol != null)
+                        args.Pipeline.DrawBrepShaded(Value.previewSupportSymbol, UI.Colour.SupportSymbolSelected);
+                    if (Value.previewText != null)
+                        args.Pipeline.Draw3dText(Value.previewText, UI.Colour.NodeSelected);
                 }
 
                 // local axis
-                if (Value.LocalAxis != Plane.WorldXY)
+                if (Value.LocalAxis != Plane.WorldXY & Value.LocalAxis != new Plane() & Value.LocalAxis != Plane.Unset)
                 {
-                    Plane plane = Value.LocalAxis.Clone();
-                    plane.Origin = Value.Point;
-                    args.Pipeline.DrawLine(new Line(Value.Point, plane.XAxis), System.Drawing.Color.FromArgb(255, 244, 96, 96), 1);
-                    args.Pipeline.DrawLine(new Line(Value.Point, plane.YAxis), System.Drawing.Color.FromArgb(255, 96, 244, 96), 1);
-                    args.Pipeline.DrawLine(new Line(Value.Point, plane.ZAxis), System.Drawing.Color.FromArgb(255, 96, 96, 234), 1);
+                    args.Pipeline.DrawLine(Value.previewXaxis, System.Drawing.Color.FromArgb(255, 244, 96, 96), 1);
+                    args.Pipeline.DrawLine(Value.previewYaxis, System.Drawing.Color.FromArgb(255, 96, 244, 96), 1);
+                    args.Pipeline.DrawLine(Value.previewZaxis, System.Drawing.Color.FromArgb(255, 96, 96, 234), 1);
                 }
             }
         }
 
-        private void DrawRestraint(GH_PreviewWireArgs args, GsaNode node, bool selected = false)
-        {
-            if (node.Node.Restraint.X == false & node.Node.Restraint.Y == false & node.Node.Restraint.Z == false &
-                node.Node.Restraint.XX == false & node.Node.Restraint.YY == false & node.Node.Restraint.ZZ == false)
-                return;
-
-            // colour
-            System.Drawing.Color col;
-            if (selected)
-                col = UI.Colour.NodeSelected;
-            else
-            {
-                if ((System.Drawing.Color)node.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
-                {
-                    col = node.Colour;
-                }
-                else
-                    col = UI.Colour.Support;
-            }
-
-            // pin
-            if (node.Node.Restraint.X == true & node.Node.Restraint.Y == true & node.Node.Restraint.Z == true &
-                node.Node.Restraint.XX == false & node.Node.Restraint.YY == false & node.Node.Restraint.ZZ == false)
-            {
-                Plane plane = node.LocalAxis.Clone();
-                if (!plane.IsValid) { plane = Plane.WorldXY; }
-                plane.Origin = node.Point;
-                Cone pin = new Cone(plane, -0.4, 0.4);
-                DisplayMaterial material = new DisplayMaterial()
-                {
-                    Diffuse = System.Drawing.Color.FromArgb(255, col.R, col.G, col.B),
-                    Emission = System.Drawing.Color.FromArgb(255, 50, 50, 50),
-                    Transparency = 0.2
-                };
-                args.Pipeline.DrawBrepShaded(pin.ToBrep(true), material);
-                args.Pipeline.DrawCone(pin, col);
-            }
-            else if (node.Node.Restraint.X == true & node.Node.Restraint.Y == true & node.Node.Restraint.Z == true &
-                    node.Node.Restraint.XX == true & node.Node.Restraint.YY == true & node.Node.Restraint.ZZ == true)
-            {
-                Plane plane = node.LocalAxis.Clone();
-                plane.Origin = node.Point;
-                Box fix = new Box(plane, new Interval(-0.3, 0.3), new Interval(-0.3, 0.3), new Interval(-0.2, 0));
-                DisplayMaterial material = new DisplayMaterial()
-                {
-                    Diffuse = System.Drawing.Color.FromArgb(255, col.R, col.G, col.B),
-                    Emission = System.Drawing.Color.FromArgb(255, 50, 50, 50),
-                    Transparency = 0.2
-                };
-                args.Pipeline.DrawBrepShaded(fix.ToBrep(), material);
-                args.Pipeline.DrawBox(fix, col);
-            }
-            else
-            {
-                Plane plane = node.LocalAxis.Clone();
-                plane.Origin = node.Point;
-                string rest = "";
-                if (node.Node.Restraint.X == true)
-                    rest += "X";
-                if (node.Node.Restraint.Y == true)
-                    rest += "Y";
-                if (node.Node.Restraint.Z == true)
-                    rest += "Z";
-                if (node.Node.Restraint.XX == true)
-                    rest += "XX";
-                if (node.Node.Restraint.YY == true)
-                    rest += "YY";
-                if (node.Node.Restraint.ZZ == true)
-                    rest += "ZZ";
-                Rhino.Display.Text3d text = new Text3d(rest, plane, 0.3);
-                text.HorizontalAlignment = Rhino.DocObjects.TextHorizontalAlignment.Left;
-                text.VerticalAlignment = Rhino.DocObjects.TextVerticalAlignment.Top;
-                args.Pipeline.Draw3dText(text, col);
-            }
-
-        }
         #endregion
     }
 

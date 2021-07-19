@@ -11,6 +11,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GhSA.Parameters;
 using System.Resources;
+using System.Collections.Concurrent;
 
 namespace GhSA.Components
 {
@@ -185,11 +186,15 @@ namespace GhSA.Components
             #endregion
 
             // extract nodes from model
-            List<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(gsa.Nodes(), gsa);
+            List<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()));
 
             // extract elements from model
             Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> elementTuple
-                = Util.Gsa.FromGSA.GetElements(gsa.Elements(), gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds());
+                = Util.Gsa.FromGSA.GetElements(
+                    new ConcurrentDictionary<int, Element>(gsa.Elements()), 
+                    new ConcurrentDictionary<int, Node>(gsa.Nodes()),
+                    new ConcurrentDictionary<int, Section>(gsa.Sections()),
+                    new ConcurrentDictionary<int, Prop2D>(gsa.Prop2Ds()));
 
             // expose internal model if anyone wants to use it
             GsaModel outModel = new GsaModel();
@@ -218,7 +223,7 @@ namespace GhSA.Components
                     //Draw shape.
                     if (element.Value.Mesh != null)
                     {
-                        if (!(element.Value.Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
+                        if (!(element.Value.API_Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
                         {
                             if (this.Attributes.Selected)
                                 args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFaceSelected);
@@ -242,7 +247,7 @@ namespace GhSA.Components
                     //Draw lines
                     if (element.Value.Mesh != null)
                     {
-                        if (element.Value.Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
+                        if (element.Value.API_Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
                         {
                             for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
                             {

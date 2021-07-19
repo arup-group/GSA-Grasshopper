@@ -17,9 +17,8 @@ namespace GhSA.Parameters
     /// Member3d class, this class defines the basic properties and methods for any Gsa Member 3d
     /// </summary>
     public class GsaMember3d
-
     {
-        public Member Member
+        internal Member API_Member
         {
             get { return m_member; }
             set { m_member = value; }
@@ -27,7 +26,11 @@ namespace GhSA.Parameters
         public Mesh SolidMesh
         {
             get { return m_mesh; }
-            set { m_mesh = Util.GH.Convert.ConvertMeshToTriMeshSolid(value); }
+            set 
+            { 
+                m_mesh = Util.GH.Convert.ConvertMeshToTriMeshSolid(value);
+                UpdatePreview();
+            }
         }
         public int ID
         {
@@ -35,27 +38,115 @@ namespace GhSA.Parameters
             set { m_id = value; }
         }
 
-        public GsaSection Section
-        {
-            get { return m_section; }
-            set { m_section = value; }
-        }
-
+        //public GsaSection Section
+        //{
+        //    get { return m_section; }
+        //    set 
+        //    {
+        //        if (m_section == null)
+        //            PropertyID = 0;
+        //        m_section = value; 
+        //    }
+        //}
+        
+        #region GsaAPI members
         public System.Drawing.Color Colour
         {
-            get 
+            get
             {
-                return (System.Drawing.Color)m_member.Colour; 
+                //if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+                //    m_member.Colour = UI.Colour.Member1d;
+                return (System.Drawing.Color)m_member.Colour;
             }
-            set { m_member.Colour = value; }
+            set
+            {
+                CloneMember();
+                m_member.Colour = value;
+            }
         }
+        public int Group
+        {
+            get { return m_member.Group; }
+            set
+            {
+                CloneMember();
+                m_member.Group = value;
+            }
+        }
+        public bool IsDummy
+        {
+            get { return m_member.IsDummy; }
+            set
+            {
+                CloneMember();
+                m_member.IsDummy = value;
+            }
+        }
+        public string Name
+        {
+            get { return m_member.Name; }
+            set
+            {
+                CloneMember();
+                m_member.Name = value;
+            }
+        }
+        public double MeshSize
+        {
+            get { return m_member.MeshSize; }
+            set
+            {
+                CloneMember();
+                m_member.MeshSize = value;
+            }
+        }
+        public int PropertyID
+        {
+            get { return m_member.Property; }
+            set
+            {
+                CloneMember();
+                m_member.Property = value;
+                //m_section = null;
+            }
+        }
+        private void CloneMember()
+        {
+            Member mem = new Member
+            {
+                Group = m_member.Group,
+                IsDummy = m_member.IsDummy,
+                MeshSize = m_member.MeshSize,
+                Name = m_member.Name.ToString(),
+                Offset = m_member.Offset,
+                OrientationAngle = m_member.OrientationAngle,
+                OrientationNode = m_member.OrientationNode,
+                Property = m_member.Property,
+                Topology = m_member.Topology.ToString(),
+                Type = m_member.Type,
+            };
 
+            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                mem.Colour = m_member.Colour;
+
+            m_member = mem;
+        }
+        #endregion
+        #region preview
+        internal List<Polyline> previewHiddenLines;
+        internal List<Line> previewEdgeLines;
+        internal List<Point3d> previewPts;
+        private void UpdatePreview()
+        {
+            GhSA.UI.Display.PreviewMem3d(ref m_mesh, ref previewHiddenLines, ref previewEdgeLines, ref previewPts);
+        }
+        #endregion
         #region fields
         private Member m_member;
         private int m_id = 0;
 
         private Mesh m_mesh; 
-        private GsaSection m_section;
+        //private GsaSection m_section;
         #endregion
 
         #region constructors
@@ -65,7 +156,13 @@ namespace GhSA.Parameters
             m_member.Type = MemberType.GENERIC_3D;
             m_mesh = new Mesh();
         }
-
+        internal GsaMember3d(Member member, int id, Mesh mesh)
+        {
+            m_member = member;
+            m_id = id;
+            m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            UpdatePreview();
+        }
         public GsaMember3d(Mesh mesh)
         {
             m_member = new Member
@@ -74,6 +171,7 @@ namespace GhSA.Parameters
             };
 
             m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            UpdatePreview();
         }
         public GsaMember3d(Brep brep)
         {
@@ -83,38 +181,33 @@ namespace GhSA.Parameters
             };
 
             m_mesh = GhSA.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
+            UpdatePreview();
         }
         public GsaMember3d Duplicate()
         {
             if (this == null) { return null; }
-            GsaMember3d dup = new GsaMember3d
-            {
-                Member = new Member
-                {
-                    Group = m_member.Group,
-                    IsDummy = m_member.IsDummy,
-                    MeshSize = m_member.MeshSize,
-                    Name = m_member.Name.ToString(),
-                    Offset = m_member.Offset,
-                    OrientationAngle = m_member.OrientationAngle,
-                    OrientationNode = m_member.OrientationNode,
-                    Property = m_member.Property,
-                    Topology = m_member.Topology.ToString(),
-                    Type = m_member.Type, 
-                },
-                //SolidMesh = m_mesh.DuplicateMesh(),
-            };
+            GsaMember3d dup = new GsaMember3d();
+            dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
+            dup.m_member = m_member;
+            //dup.m_section = m_section;
+            dup.m_id = m_id;
 
-            dup.SolidMesh = (Mesh)m_mesh.Duplicate();
-
-            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                dup.m_member.Colour = m_member.Colour;
-
-            dup.ID = m_id;
-
-            if (m_section != null)
-                dup.Section = m_section.Duplicate();
-
+            return dup;
+        }
+        public GsaMember3d UpdateGeometry(Brep brep)
+        {
+            if (this == null) { return null; }
+            GsaMember3d dup = this.Duplicate();
+            dup.m_mesh = GhSA.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
+            dup.UpdatePreview();
+            return dup;
+        }
+        public GsaMember3d UpdateGeometry(Mesh mesh)
+        {
+            if (this == null) { return null; }
+            GsaMember3d dup = this.Duplicate();
+            dup.m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            dup.UpdatePreview();
             return dup;
         }
         #endregion
@@ -245,7 +338,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.Member;
+                    target = (Q)(object)Value.API_Member;
                 return true;
             }
 
@@ -305,12 +398,12 @@ namespace GhSA.Parameters
                 return true;
             }
 
-            //Cast from GsaAPI Member
-            if (typeof(Member).IsAssignableFrom(source.GetType()))
-            {
-                Value.Member = (Member)source;
-                return true;
-            }
+            ////Cast from GsaAPI Member
+            //if (typeof(Member).IsAssignableFrom(source.GetType()))
+            //{
+            //    Value.Member = (Member)source;
+            //    return true;
+            //}
 
             //Cast from Brep
             Brep brep = new Brep();
@@ -342,10 +435,7 @@ namespace GhSA.Parameters
             if (Value.SolidMesh == null) { return null; }
 
             GsaMember3d elem = Value.Duplicate();
-
-            Mesh xMs = elem.SolidMesh;
-            xMs.Transform(xform);
-            elem.SolidMesh = xMs;
+            elem.SolidMesh.Transform(xform);
 
             return new GsaMember3dGoo(elem);
         }
@@ -356,9 +446,7 @@ namespace GhSA.Parameters
             if (Value.SolidMesh == null) { return null; }
 
             GsaMember3d elem = Value.Duplicate();
-            Mesh xMs = elem.SolidMesh;
-            xmorph.Morph(xMs);
-            elem.SolidMesh = xMs;
+            xmorph.Morph(elem.SolidMesh.Duplicate());
 
             return new GsaMember3dGoo(elem);
         }
@@ -375,7 +463,7 @@ namespace GhSA.Parameters
             //Draw shape.
             if (Value.SolidMesh != null)
             {
-                if (!Value.Member.IsDummy)
+                if (!Value.IsDummy)
                 {
                     if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                         args.Pipeline.DrawMeshShaded(Value.SolidMesh, UI.Colour.Element2dFace); //UI.Colour.Member2dFace
@@ -394,80 +482,50 @@ namespace GhSA.Parameters
             if (Value.SolidMesh != null)
             {
                 // Draw edges
-                Rhino.Geometry.Collections.MeshTopologyEdgeList edges = Value.SolidMesh.TopologyEdges;
-                if (Value.SolidMesh.FaceNormals.Count < Value.SolidMesh.Faces.Count)
-                    Value.SolidMesh.FaceNormals.ComputeFaceNormals();
-                if (Value.Member.IsDummy)
+                if (Value.IsDummy)
                 {
-                    for (int i = 0; i < edges.Count; i++)
+                    for (int i = 0; i < Value.previewEdgeLines.Count; i++)
                     {
-                        int[] faceID = edges.GetConnectedFaces(i);
-                        Vector3d vec1 = Value.SolidMesh.FaceNormals[faceID[0]];
-                        Vector3d vec2 = Value.SolidMesh.FaceNormals[faceID[1]];
-                        vec1.Unitize(); vec2.Unitize();
-                        if (!vec1.Equals(vec2) || faceID.Length > 2)
+                        if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                         {
-                            if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                            {
-                                Polyline hidden = new Polyline();
-                                hidden.Add(edges.EdgeLine(i).PointAt(0));
-                                hidden.Add(edges.EdgeLine(i).PointAt(1));
-                                args.Pipeline.DrawDottedPolyline(hidden, UI.Colour.Dummy1D, false);
-                            }
-                            else
-                            {
-                                Polyline hidden = new Polyline();
-                                hidden.Add(edges.EdgeLine(i).PointAt(0));
-                                hidden.Add(edges.EdgeLine(i).PointAt(1));
-                                args.Pipeline.DrawDottedPolyline(hidden, UI.Colour.Member2dEdgeSelected, false);
-                            }
+                            args.Pipeline.DrawDottedLine(Value.previewEdgeLines[i], UI.Colour.Dummy1D);
                         }
                         else
                         {
-                            
+                            args.Pipeline.DrawDottedLine(Value.previewEdgeLines[i], UI.Colour.Member2dEdgeSelected);
                         }
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < edges.Count; i++)
+                    for (int i = 0; i < Value.previewEdgeLines.Count; i++)
                     {
-                        int[] faceID = edges.GetConnectedFaces(i);
-                        Vector3d vec1 = Value.SolidMesh.FaceNormals[faceID[0]];
-                        Vector3d vec2 = Value.SolidMesh.FaceNormals[faceID[1]];
-                        vec1.Unitize(); vec2.Unitize();
-                        if (!vec1.Equals(vec2) || faceID.Length > 2)
+                        if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
                         {
-                            if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                            {
-                                if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
-                                    args.Pipeline.DrawLine(edges.EdgeLine(i), (System.Drawing.Color)Value.Member.Colour, 2);
-                                else
-                                {
-                                    System.Drawing.Color col = UI.Colour.Member2dEdge;
-                                    args.Pipeline.DrawLine(edges.EdgeLine(i), col, 2);
-                                }
-                            }
+                            if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
+                                args.Pipeline.DrawLine(Value.previewEdgeLines[i], (System.Drawing.Color)Value.Colour, 2);
                             else
-                                args.Pipeline.DrawLine(edges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
+                            {
+                                System.Drawing.Color col = UI.Colour.Member2dEdge;
+                                args.Pipeline.DrawLine(Value.previewEdgeLines[i], col, 2);
+                            }
                         }
                         else
-                        {
-                            Polyline hidden = new Polyline();
-                            hidden.Add(edges.EdgeLine(i).PointAt(0));
-                            hidden.Add(edges.EdgeLine(i).PointAt(1));
-                            args.Pipeline.DrawDottedPolyline(hidden, UI.Colour.Dummy1D, false);
-                        }
+                            args.Pipeline.DrawLine(Value.previewEdgeLines[i], UI.Colour.Element2dEdgeSelected, 2);
                     }
-                }
+                    
+                    for (int i = 0; i < Value.previewHiddenLines.Count; i++)
+                    {
+                        args.Pipeline.DrawDottedPolyline(Value.previewHiddenLines[i], UI.Colour.Dummy1D, false);
+                    }
+                }  
                 // draw points
-                List<Point3d> pts = new List<Point3d>(Value.SolidMesh.Vertices.ToPoint3dArray());
-                for (int i = 0; i < pts.Count; i++)
+                for (int i = 0; i < Value.previewPts.Count; i++)
                 {
                     if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-                        args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.Member.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
+                        args.Pipeline.DrawPoint(Value.previewPts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
                     else
-                        args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Member1dNodeSelected);
+                        args.Pipeline.DrawPoint(Value.previewPts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Member1dNodeSelected);
                 }
             }
         }

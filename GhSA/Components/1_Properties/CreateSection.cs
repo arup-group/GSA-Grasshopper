@@ -74,9 +74,7 @@ namespace GhSA.Components
             {
                 if (GH_Convert.ToString(gh_profile, out string profile, GH_Conversion.Both))
                 {
-                    gsaSection.Section = new Section();
-                    gsaSection.Section.Profile = profile;
-
+                    gsaSection = new GsaSection(profile);
 
                     // 3 Material
                     GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();

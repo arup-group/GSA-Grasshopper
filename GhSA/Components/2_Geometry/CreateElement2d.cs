@@ -80,11 +80,7 @@ namespace GhSA.Components
                         {
                             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
                             {
-                                for (int i = 0; i < elem.Elements.Count; i++)
-                                {
-                                    elem.Elements[i].Property = idd;
-                                }
-                                prop2d = null;
+                                prop2d.ID = idd;
                             }
                             else
                             {
@@ -93,13 +89,9 @@ namespace GhSA.Components
                             }
                         }
                     }
-                    else
-                    {
-                        prop2d = null;
-                    }
                         
                     List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
-                    for (int i = 0; i < elem.Elements.Count; i++)
+                    for (int i = 0; i < elem.API_Elements.Count; i++)
                         prop2Ds.Add(prop2d);
                     elem.Properties = prop2Ds;
 

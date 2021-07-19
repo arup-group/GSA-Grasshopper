@@ -14,8 +14,11 @@ namespace GhSA.UI
     /// </summary>
     public class Display
     {
-        public static void DrawReleases(GH_PreviewWireArgs args, PolyCurve crv, double angle, GsaBool6 start, GsaBool6 end)
+        public static void Preview1D(PolyCurve crv, double angle, GsaBool6 start, GsaBool6 end,
+            ref List<Line> greenLines20, ref List<Line> redLines10)
         {
+            int i = 0;
+
             if (start == null | end == null) { return; }
             #region translation start
             if (start.X == true)
@@ -47,10 +50,15 @@ namespace GhSA.UI
                 Vector3d vec = new Vector3d(pln.Normal);
                 vec.Unitize();
                 vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
-                Line ln1 = new Line(pt1, vec);
-                args.Pipeline.DrawLine(ln1, UI.Colour.Support);
-                Line ln2 = new Line(pt2, vec);
-                args.Pipeline.DrawLine(ln2, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt1, vec);
+                //args.Pipeline.DrawLine(ln1, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt2, vec);
+                //args.Pipeline.DrawLine(ln2, UI.Colour.Support);
+            }
+            else
+            {
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
             }
             if (start.Y == true)
             {
@@ -99,14 +107,21 @@ namespace GhSA.UI
                 vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
                 Vector3d vecRev = new Vector3d(vec);
                 vecRev.Reverse();
-                Line ln1A = new Line(pt3A, vec);
-                args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
-                Line ln1B = new Line(pt3B, vecRev);
-                args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
-                Line ln2A = new Line(pt4A, vec);
-                args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
-                Line ln2B = new Line(pt4B, vecRev);
-                args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt3A, vec);
+                //args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt3B, vecRev);
+                //args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt4A, vec);
+                //args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt4B, vecRev);
+                //args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+            }
+            else
+            {
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
             }
             if (start.Z == true)
             {
@@ -155,14 +170,21 @@ namespace GhSA.UI
                 vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
                 Vector3d vecRev = new Vector3d(vec);
                 vecRev.Reverse();
-                Line ln1A = new Line(pt3A, vec);
-                args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
-                Line ln1B = new Line(pt3B, vecRev);
-                args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
-                Line ln2A = new Line(pt4A, vec);
-                args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
-                Line ln2B = new Line(pt4B, vecRev);
-                args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt3A, vec);
+                //args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt3B, vecRev);
+                //args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt4A, vec);
+                //args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt4B, vecRev);
+                //args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+            }
+            else
+            {
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
             }
             #endregion
             #region translation end
@@ -199,10 +221,15 @@ namespace GhSA.UI
                 vec.Unitize();
                 vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
                 vec.Reverse();
-                Line ln1 = new Line(pt1, vec);
-                args.Pipeline.DrawLine(ln1, UI.Colour.Support);
-                Line ln2 = new Line(pt2, vec);
-                args.Pipeline.DrawLine(ln2, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt1, vec);
+                //args.Pipeline.DrawLine(ln1, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt2, vec);
+                //args.Pipeline.DrawLine(ln2, UI.Colour.Support);
+            }
+            else
+            {
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
             }
             if (end.Y == true)
             {
@@ -254,14 +281,21 @@ namespace GhSA.UI
                 vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
                 Vector3d vecRev = new Vector3d(vec);
                 vecRev.Reverse();
-                Line ln1A = new Line(pt3A, vec);
-                args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
-                Line ln1B = new Line(pt3B, vecRev);
-                args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
-                Line ln2A = new Line(pt4A, vec);
-                args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
-                Line ln2B = new Line(pt4B, vecRev);
-                args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt3A, vec);
+                //args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt3B, vecRev);
+                //args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt4A, vec);
+                //args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt4B, vecRev);
+                //args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+            }
+            else
+            {
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
             }
             if (end.Z == true)
             {
@@ -313,17 +347,25 @@ namespace GhSA.UI
                 vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
                 Vector3d vecRev = new Vector3d(vec);
                 vecRev.Reverse();
-                Line ln1A = new Line(pt3A, vec);
-                args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
-                Line ln1B = new Line(pt3B, vecRev);
-                args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
-                Line ln2A = new Line(pt4A, vec);
-                args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
-                Line ln2B = new Line(pt4B, vecRev);
-                args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt3A, vec);
+                //args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt3B, vecRev);
+                //args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt4A, vec);
+                //args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
+                greenLines20[i++] = new Line(pt4B, vecRev);
+                //args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+            }
+            else
+            {
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
+                greenLines20[i++] = Line.Unset;
             }
             #endregion
             #region rotation start
+            i = 0;
             if (start.XX == true)
             {
                 Point3d pt;
@@ -341,8 +383,12 @@ namespace GhSA.UI
                 Vector3d vec = new Vector3d(pln.Normal);
                 vec.Unitize();
                 vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
-                Line ln1 = new Line(pt, vec);
-                args.Pipeline.DrawLine(ln1, UI.Colour.Release, 3);
+                redLines10[i++] = new Line(pt, vec);
+                //args.Pipeline.DrawLine(ln1, UI.Colour.Release, 3);
+            }
+            else
+            {
+                redLines10[i++] = Line.Unset;
             }
             if (start.YY == true)
             {
@@ -376,10 +422,15 @@ namespace GhSA.UI
                 vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
                 Vector3d vecRev = new Vector3d(vec);
                 vecRev.Reverse();
-                Line ln1A = new Line(pt1, vec);
-                args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
-                Line ln1B = new Line(pt2, vecRev);
-                args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+                redLines10[i++] = new Line(pt1, vec);
+                //args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
+                redLines10[i++] = new Line(pt2, vecRev);
+                //args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+            }
+            else
+            {
+                redLines10[i++] = Line.Unset;
+                redLines10[i++] = Line.Unset;
             }
             if (start.ZZ == true)
             {
@@ -413,10 +464,15 @@ namespace GhSA.UI
                 vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
                 Vector3d vecRev = new Vector3d(vec);
                 vecRev.Reverse();
-                Line ln1A = new Line(pt1, vec);
-                args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
-                Line ln1B = new Line(pt2, vecRev);
-                args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+                redLines10[i++] = new Line(pt1, vec);
+                //args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
+                redLines10[i++] = new Line(pt2, vecRev);
+                //args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+            }
+            else
+            {
+                redLines10[i++] = Line.Unset;
+                redLines10[i++] = Line.Unset;
             }
             #endregion
             #region rotation end
@@ -441,8 +497,12 @@ namespace GhSA.UI
                 vec.Unitize();
                 vec.Reverse();
                 vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
-                Line ln1 = new Line(pt, vec);
-                args.Pipeline.DrawLine(ln1, UI.Colour.Release, 3);
+                redLines10[i++] = new Line(pt, vec);
+                //args.Pipeline.DrawLine(ln1, UI.Colour.Release, 3);
+            }
+            else
+            {
+                redLines10[i++] = Line.Unset;
             }
             if (end.YY == true)
             {
@@ -479,10 +539,15 @@ namespace GhSA.UI
                 vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
                 Vector3d vecRev = new Vector3d(vec);
                 vecRev.Reverse();
-                Line ln1A = new Line(pt1, vec);
-                args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
-                Line ln1B = new Line(pt2, vecRev);
-                args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+                redLines10[i++] = new Line(pt1, vec);
+                //args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
+                redLines10[i++] = new Line(pt2, vecRev);
+                //args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+            }
+            else
+            {
+                redLines10[i++] = Line.Unset;
+                redLines10[i++] = Line.Unset;
             }
             if (end.ZZ == true)
             {
@@ -519,12 +584,91 @@ namespace GhSA.UI
                 vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
                 Vector3d vecRev = new Vector3d(vec);
                 vecRev.Reverse();
-                Line ln1A = new Line(pt1, vec);
-                args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
-                Line ln1B = new Line(pt2, vecRev);
-                args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+                redLines10[i++] = new Line(pt1, vec);
+                //args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
+                redLines10[i++] = new Line(pt2, vecRev);
+                //args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+            }
+            else
+            {
+                redLines10[i++] = Line.Unset;
+                redLines10[i++] = Line.Unset;
             }
             #endregion
+        }
+        public static void PreviewRestraint(GsaBool6 restraint, Plane localAxis, Point3d pt, ref Brep support, ref Rhino.Display.Text3d text)
+        {
+            // pin
+            if (restraint.X == true & restraint.Y == true & restraint.Z == true &
+                restraint.XX == false & restraint.YY == false & restraint.ZZ == false)
+            {
+                Plane plane = localAxis.Clone();
+                if (!plane.IsValid) { plane = Plane.WorldXY; }
+                plane.Origin = pt;
+                Cone pin = new Cone(plane, -0.4, 0.4);
+                support = pin.ToBrep(true);
+            }
+            else if (restraint.X == true & restraint.Y == true & restraint.Z == true &
+                    restraint.XX == true & restraint.YY == true & restraint.ZZ == true)
+            {
+                Plane plane = localAxis.Clone();
+                if (!plane.IsValid) { plane = Plane.WorldXY; }
+                plane.Origin = pt;
+                Box fix = new Box(plane, new Interval(-0.3, 0.3), new Interval(-0.3, 0.3), new Interval(-0.2, 0));
+                support = fix.ToBrep();
+            }
+            else
+            {
+                Plane plane = localAxis.Clone();
+                if (!plane.IsValid) { plane = Plane.WorldXY; }
+                plane.Origin = pt;
+                string rest = "";
+                if (restraint.X == true)
+                    rest += "X";
+                if (restraint.Y == true)
+                    rest += "Y";
+                if (restraint.Z == true)
+                    rest += "Z";
+                if (restraint.XX == true)
+                    rest += "XX";
+                if (restraint.YY == true)
+                    rest += "YY";
+                if (restraint.ZZ == true)
+                    rest += "ZZ";
+                text = new Text3d(rest, plane, 0.3);
+                text.HorizontalAlignment = Rhino.DocObjects.TextHorizontalAlignment.Left;
+                text.VerticalAlignment = Rhino.DocObjects.TextVerticalAlignment.Top;
+            }
+        }
+        public static void PreviewMem3d(ref Mesh solidMesh, ref List<Polyline> hiddenLines, ref List<Line> edgeLines, ref List<Point3d> pts)
+        {
+            Rhino.Geometry.Collections.MeshTopologyEdgeList alledges = solidMesh.TopologyEdges;
+            if (solidMesh.FaceNormals.Count < solidMesh.Faces.Count)
+                solidMesh.FaceNormals.ComputeFaceNormals();
+
+            // curves
+            for (int i = 0; i < alledges.Count; i++)
+            {
+                int[] faceID = alledges.GetConnectedFaces(i);
+                Vector3d vec1 = solidMesh.FaceNormals[faceID[0]];
+                Vector3d vec2 = solidMesh.FaceNormals[faceID[1]];
+                vec1.Unitize(); vec2.Unitize();
+                if (!vec1.Equals(vec2) || faceID.Length > 2)
+                {
+                    edgeLines.Add(alledges.EdgeLine(i));
+                }
+                else
+                {
+                    Polyline hidden = new Polyline();
+                    hidden.Add(alledges.EdgeLine(i).PointAt(0));
+                    hidden.Add(alledges.EdgeLine(i).PointAt(1));
+                    hiddenLines.Add(hidden);
+                }
+            }
+
+            //  points
+            pts = new List<Point3d>(solidMesh.Vertices.ToPoint3dArray());
+            
         }
     }
 }

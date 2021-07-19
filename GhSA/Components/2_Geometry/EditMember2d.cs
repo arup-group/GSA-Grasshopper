@@ -142,23 +142,28 @@ namespace GhSA.Components
                 {
                     // 2 brep
                     if (DA.GetData(2, ref ghbrep))
-                        if (GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
-                            mem.Brep = brep;
+                    {
+                        GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both);
+                    }
 
                     // 3 inclusion points
                     if (DA.GetDataList(3, ghpts))
                     {
+                        pts = new List<Point3d>();
                         for (int i = 0; i < ghpts.Count; i++)
                         {
                             Point3d pt = new Point3d();
                             if (GH_Convert.ToPoint3d(ghpts[i], ref pt, GH_Conversion.Both))
+                            {
                                 pts.Add(pt);
+                            }
                         }
                     }
 
                     // 4 inclusion lines
                     if (DA.GetDataList(4, ghcrvs))
                     {
+                        crvs = new List<Curve>();
                         for (int i = 0; i < ghcrvs.Count; i++)
                         {
                             Curve crv = null;
@@ -168,39 +173,24 @@ namespace GhSA.Components
                             }
                         }
                     }
-
-                    GsaMember2d tmpmem = new GsaMember2d(brep, crvs, pts);
-                    mem.PolyCurve = tmpmem.PolyCurve;
-                    mem.Topology = tmpmem.Topology;
-                    mem.TopologyType = tmpmem.TopologyType;
-                    mem.VoidTopology = tmpmem.VoidTopology;
-                    mem.VoidTopologyType = tmpmem.VoidTopologyType;
-                    mem.InclusionLines = tmpmem.InclusionLines;
-                    mem.IncLinesTopology = tmpmem.IncLinesTopology;
-                    mem.IncLinesTopologyType = tmpmem.IncLinesTopologyType;
-                    mem.InclusionPoints = tmpmem.InclusionPoints;
-
-                    mem = tmpmem;
+                    // rebuild 
+                    mem = mem.UpdateGeometry(brep, crvs, pts);
                 }
 
                 // 5 section
                 GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-                
                 if (DA.GetData(5, ref gh_typ))
                 {
                     GsaProp2d prop2d = new GsaProp2d();
                     if (gh_typ.Value is GsaProp2dGoo)
                     {
                         gh_typ.CastTo(ref prop2d);
-                        mem.Property = prop2d;
-                        mem.Member.Property = 0;
                     }
                     else
                     {
                         if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
                         {
-                            mem.Member.Property = idd;
-                            mem.Property = null;
+                            prop2d = new GsaProp2d(idd);
                         }
                         else
                         {
@@ -208,6 +198,7 @@ namespace GhSA.Components
                             return;
                         }
                     }
+                    mem.Property = prop2d;
                 }
 
                 // 6 Group
@@ -215,7 +206,7 @@ namespace GhSA.Components
                 if (DA.GetData(6, ref ghgrp))
                 {
                     if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
-                        mem.Member.Group = grp;
+                        mem.Group = grp;
                 }
 
                 // 7 type
@@ -223,7 +214,7 @@ namespace GhSA.Components
                 if (DA.GetData(7, ref ghint))
                 {
                     if (GH_Convert.ToInt32(ghint, out int type, GH_Conversion.Both))
-                        mem.Member.Type = (MemberType)type;//Util.Gsa.GsaToModel.Member2dType(type);
+                        mem.Type = (MemberType)type;//Util.Gsa.GsaToModel.Member2dType(type);
                 }
 
                 // 8 element type / analysis order
@@ -231,14 +222,14 @@ namespace GhSA.Components
                 if (DA.GetData(8, ref ghinteg))
                 {
                     if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both))
-                        mem.Member.Type2D = (AnalysisOrder)type; //Util.Gsa.GsaToModel.AnalysisOrder(type);
+                        mem.Type2D = (AnalysisOrder)type; //Util.Gsa.GsaToModel.AnalysisOrder(type);
                 }
 
                 // 9 offset
                 GsaOffset offset = new GsaOffset();
                 if (DA.GetData(9, ref offset))
                 {
-                    mem.Member.Offset.Z = offset.Z;
+                    mem.Offset = offset;
                 }
 
                 // 10 mesh size
@@ -246,7 +237,7 @@ namespace GhSA.Components
                 if (DA.GetData(10, ref ghmsz))
                 {
                     if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
-                        mem.Member.MeshSize = msz;
+                        mem.MeshSize = msz;
                 }
 
                 // 11 mesh with others
@@ -264,7 +255,7 @@ namespace GhSA.Components
                 if (DA.GetData(12, ref ghnm))
                 {
                     if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
-                        mem.Member.Name = name;
+                        mem.Name = name;
                 }
 
                 // 13 Colour
@@ -272,7 +263,7 @@ namespace GhSA.Components
                 if (DA.GetData(13, ref ghcol))
                 {
                     if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
-                        mem.Member.Colour = col;
+                        mem.Colour = col;
                 }
 
                 // 14 Dummy
@@ -280,7 +271,7 @@ namespace GhSA.Components
                 if (DA.GetData(14, ref ghdum))
                 {
                     if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
-                        mem.Member.IsDummy = dum;
+                        mem.IsDummy = dum;
                 }
 
                 // #### outputs ####
@@ -292,23 +283,19 @@ namespace GhSA.Components
                 DA.SetDataList(4, mem.InclusionLines);
                 
                 DA.SetData(5, new GsaProp2dGoo(mem.Property));
-                DA.SetData(6, mem.Member.Group);
+                DA.SetData(6, mem.Group);
                 
-                DA.SetData(7, mem.Member.Type);
-                DA.SetData(8, mem.Member.Type2D);
+                DA.SetData(7, mem.Type);
+                DA.SetData(8, mem.Type2D);
                 
-                GsaOffset gsaOffset = new GsaOffset
-                {
-                    Z = mem.Member.Offset.Z
-                };
-                DA.SetData(9, new GsaOffsetGoo(gsaOffset));
+                DA.SetData(9, new GsaOffsetGoo(mem.Offset));
 
-                DA.SetData(10, mem.Member.MeshSize);
+                DA.SetData(10, mem.MeshSize);
                 //DA.SetData(11, mem.Member.MeshWithOthers);
                 
-                DA.SetData(12, mem.Member.Name);
-                DA.SetData(13, mem.Member.Colour);
-                DA.SetData(14, mem.Member.IsDummy);
+                DA.SetData(12, mem.Name);
+                DA.SetData(13, mem.Colour);
+                DA.SetData(14, mem.IsDummy);
             }
         }
     }

@@ -193,6 +193,16 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CreateModel {
+            get {
+                object obj = ResourceManager.GetObject("CreateModel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap CreateOffset {
             get {
                 object obj = ResourceManager.GetObject("CreateOffset", resourceCulture);

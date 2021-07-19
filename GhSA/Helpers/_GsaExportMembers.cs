@@ -18,16 +18,16 @@ namespace GhSA.Util.Gsa.ToGSA
                 nodeidcounter = 1;
 
             // take out api member
-            Member apimember = member1d.Member;
+            Member apimember = member1d.API_Member;
 
             // create topology string to build
             string topo = "";
 
             // Loop through the topology list
-            for (int j = 0; j < member1d.Topology.Count; j++)
+            for (int i = 0; i < member1d.Topology.Count; i++)
             {
-                string topologyType = member1d.TopologyType[j];
-                if (j > 0)
+                string topologyType = member1d.TopologyType[i];
+                if (i > 0)
                 {
                     if (topologyType == "" | topologyType == " ")
                         topo += " ";
@@ -35,7 +35,7 @@ namespace GhSA.Util.Gsa.ToGSA
                         topo += topologyType.ToLower() + " "; // add topology type (nothing or "a") in front of node id
                 }
 
-                Point3d pt = member1d.Topology[j];
+                Point3d pt = member1d.Topology[i];
                 Node node = new Node();
                 node.Position.X = pt.X;
                 node.Position.Y = pt.Y;
@@ -44,7 +44,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
                 topo += nodeidcounter++;
 
-                if (j != member1d.Topology.Count - 1)
+                if (i != member1d.Topology.Count - 1)
                     topo += " ";
             }
             // set topology in api member
@@ -58,7 +58,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter,
             ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid)
         {
-            Member apiMember = member1d.Member;
+            Member apiMember = member1d.API_Member;
 
             // update topology list to fit model nodes
             string topo = "";
@@ -92,9 +92,22 @@ namespace GhSA.Util.Gsa.ToGSA
             // set topology in api member
             apiMember.Topology = string.Copy(topo);
 
+            //Orientation node
+            if (member1d.OrientationNode != null)
+            {
+                int id = Nodes.GetExistingNodeID(existingNodes, member1d.OrientationNode.Point);
+                if (id > 0)
+                    apiMember.OrientationNode = id;
+                else
+                {
+                    existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(member1d.OrientationNode.Point));
+                    apiMember.OrientationNode = nodeidcounter;
+                    nodeidcounter++;
+                }
+            }
+
             // Section
-            if (apiMember.Property == 0)
-                apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections, ref sections_guid);
+            apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections, ref sections_guid);
 
             // set apimember in dictionary
             if (member1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -156,7 +169,6 @@ namespace GhSA.Util.Gsa.ToGSA
                         ReportProgress("Mem1D ", (double)i / (member1ds.Count - 1));
                     }
 
-
                     if (member1ds[i] != null)
                     {
                         GsaMember1d member1d = member1ds[i];
@@ -177,7 +189,7 @@ namespace GhSA.Util.Gsa.ToGSA
         public static Member ConvertMember2D(GsaMember2d member2d, ref List<Node> nodes, ref int nodeidcounter)
         {
             // take out api member
-            Member apimember = member2d.Member;
+            Member apimember = member2d.API_Member;
 
             // create string to build topology
             string topo = "";
@@ -317,7 +329,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter,
             ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid)
         {
-            Member apiMember = member2d.Member;
+            Member apiMember = member2d.API_Member;
 
             // update topology list to fit model nodes
             string topo = "";
@@ -349,7 +361,6 @@ namespace GhSA.Util.Gsa.ToGSA
                 if (i != member2d.Topology.Count - 1)
                     topo += " ";
             }
-
 
             // Loop through the voidtopology list
             if (member2d.VoidTopology != null)
@@ -450,9 +461,8 @@ namespace GhSA.Util.Gsa.ToGSA
             // update topology for api member
             apiMember.Topology = string.Copy(topo);
 
-            // section
-            if (apiMember.Property == 0)
-                apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref existingProp2Ds, ref prop2d_guid);
+            // Prop2d
+            apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref existingProp2Ds, ref prop2d_guid);
 
             // set apimember in dictionary
             if (member2d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -466,7 +476,7 @@ namespace GhSA.Util.Gsa.ToGSA
             }
         }
 
-            public static List<Member> ConvertMember2D(List<GsaMember2d> member2ds, ref List<Node> nodes, ref int nodeidcounter)
+        public static List<Member> ConvertMember2D(List<GsaMember2d> member2ds, ref List<Node> nodes, ref int nodeidcounter)
         {
             // ensure node id is at least 1
             if (nodeidcounter < 1)
@@ -547,7 +557,7 @@ namespace GhSA.Util.Gsa.ToGSA
                 nodeidcounter = 1;
 
             // take out api member
-            Member apimember = member3d.Member;
+            Member apimember = member3d.API_Member;
 
             // create string to build topology list
             string topo = "";
@@ -593,7 +603,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter)
         {
-            Member apiMember = member3d.Member;
+            Member apiMember = member3d.API_Member;
 
             // update topology list to fit model nodes
             string topo = "";

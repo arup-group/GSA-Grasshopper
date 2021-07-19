@@ -113,27 +113,25 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GsaProp2d prop = new GsaProp2d();
-            prop.Prop2d = new Prop2D();
-            prop.ID = 0;
 
             // element type (picked in dropdown)
-            prop.Prop2d.Type = Property2D_Type.UNDEF;
+            prop.Type = Property2D_Type.UNDEF;
             if (_mode == FoldMode.PlaneStress)
-                prop.Prop2d.Type = Property2D_Type.PL_STRESS;
+                prop.Type = Property2D_Type.PL_STRESS;
             if (_mode == FoldMode.Fabric)
-                prop.Prop2d.Type = Property2D_Type.FABRIC;
+                prop.Type = Property2D_Type.FABRIC;
             if (_mode == FoldMode.FlatPlate)
-                prop.Prop2d.Type = Property2D_Type.PLATE;
+                prop.Type = Property2D_Type.PLATE;
             if (_mode == FoldMode.Shell)
-                prop.Prop2d.Type = Property2D_Type.SHELL;
+                prop.Type = Property2D_Type.SHELL;
             if (_mode == FoldMode.CurvedShell)
-                prop.Prop2d.Type = Property2D_Type.CURVED_SHELL;
+                prop.Type = Property2D_Type.CURVED_SHELL;
             if (_mode == FoldMode.LoadPanel)
-                prop.Prop2d.Type = Property2D_Type.LOAD;
+                prop.Type = Property2D_Type.LOAD;
 
             if (_mode != FoldMode.LoadPanel)
             {
-                prop.Prop2d.AxisProperty = 0;
+                prop.AxisProperty = 0;
 
                 if (_mode != FoldMode.Fabric)
                 {
@@ -152,7 +150,6 @@ namespace GhSA.Components
                             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
                             {
                                 prop.Material = new GsaMaterial(idd);
-
                             }
                             else
                             {
@@ -164,13 +161,6 @@ namespace GhSA.Components
                     else
                         prop.Material = new GsaMaterial(2);
 
-                    // 1 thickness
-                    //GH_String gh_THK = new GH_String();
-                    //string thickness = "0.2";
-                    //if (DA.GetData(1, ref gh_THK))
-                    //    GH_Convert.ToString(gh_THK, out thickness, GH_Conversion.Both);
-                    //prop.Prop2d.Description = thickness;
-
                     GH_Number gh_THK = new GH_Number();
                     double thickness = 200;
                     if (DA.GetData(1, ref gh_THK))
@@ -178,7 +168,7 @@ namespace GhSA.Components
                     prop.Thickness = thickness;
                 }
                 else
-                    prop.Prop2d.MaterialType = MaterialType.FABRIC;
+                    prop.Material = new GsaMaterial(8);
             }
 
             DA.SetData(0, new GsaProp2dGoo(prop));

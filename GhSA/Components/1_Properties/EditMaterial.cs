@@ -101,42 +101,42 @@ namespace GhSA.Components
                     int typ = 2;
                     GH_Convert.ToInt32(gh_typ, out typ, GH_Conversion.Both);
                     if (typ == 1)
-                        material.Type = GsaMaterial.MatType.STEEL;
+                        material.MaterialType = GsaMaterial.MatType.STEEL;
                     if (typ == 2)
-                        material.Type = GsaMaterial.MatType.CONCRETE;
+                        material.MaterialType = GsaMaterial.MatType.CONCRETE;
                     if (typ == 5)
-                        material.Type = GsaMaterial.MatType.FRP;
+                        material.MaterialType = GsaMaterial.MatType.FRP;
                     if (typ == 3)
-                        material.Type = GsaMaterial.MatType.ALUMINIUM;
+                        material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
                     if (typ == 7)
-                        material.Type = GsaMaterial.MatType.TIMBER;
+                        material.MaterialType = GsaMaterial.MatType.TIMBER;
                     if (typ == 4)
-                        material.Type = GsaMaterial.MatType.GLASS;
+                        material.MaterialType = GsaMaterial.MatType.GLASS;
                     if (typ == 8)
-                        material.Type = GsaMaterial.MatType.FABRIC;
+                        material.MaterialType = GsaMaterial.MatType.FABRIC;
                     if (typ == 0)
-                        material.Type = GsaMaterial.MatType.GENERIC;
+                        material.MaterialType = GsaMaterial.MatType.GENERIC;
                 }
                 else if (gh_typ.Value is GH_String)
                 {
                     string typ = "CONCRETE";
                     GH_Convert.ToString(gh_typ, out typ, GH_Conversion.Both);
                     if (typ.ToUpper() == "STEEL")
-                        material.Type = GsaMaterial.MatType.STEEL;
+                        material.MaterialType = GsaMaterial.MatType.STEEL;
                     if (typ.ToUpper() == "CONCRETE")
-                        material.Type = GsaMaterial.MatType.CONCRETE;
+                        material.MaterialType = GsaMaterial.MatType.CONCRETE;
                     if (typ.ToUpper() == "FRP")
-                        material.Type = GsaMaterial.MatType.FRP;
+                        material.MaterialType = GsaMaterial.MatType.FRP;
                     if (typ.ToUpper() == "ALUMINIUM")
-                        material.Type = GsaMaterial.MatType.ALUMINIUM;
+                        material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
                     if (typ.ToUpper() == "TIMBER")
-                        material.Type = GsaMaterial.MatType.TIMBER;
+                        material.MaterialType = GsaMaterial.MatType.TIMBER;
                     if (typ.ToUpper() == "GLASS")
-                        material.Type = GsaMaterial.MatType.GLASS;
+                        material.MaterialType = GsaMaterial.MatType.GLASS;
                     if (typ.ToUpper() == "FABRIC")
-                        material.Type = GsaMaterial.MatType.FABRIC;
+                        material.MaterialType = GsaMaterial.MatType.FABRIC;
                     if (typ.ToUpper() == "GENERIC")
-                        material.Type = GsaMaterial.MatType.GENERIC;
+                        material.MaterialType = GsaMaterial.MatType.GENERIC;
                 }
                 else
                 {
@@ -149,16 +149,16 @@ namespace GhSA.Components
             int grd = 0;
             if (DA.GetData(3, ref grd))
             {
-                material.Grade = grd;
+                material.GradeProperty = grd;
             }
 
             //#### outputs ####
             DA.SetData(0, new GsaMaterialGoo(material));
             DA.SetData(1, material.AnalysisProperty);
-            string mate = material.Type.ToString();
+            string mate = material.MaterialType.ToString();
             mate = Char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
             DA.SetData(2, mate);
-            DA.SetData(3, material.Grade);
+            DA.SetData(3, material.GradeProperty);
         }
     }
 }

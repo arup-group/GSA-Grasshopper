@@ -15,11 +15,12 @@ namespace ParamsIntegrationTests
             // create new GH-GSA model 
             GsaModel m = new GsaModel();
 
-            // get the GSA install path
-            string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath;
+            string tempPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            tempPath = System.IO.Path.Combine(tempPath, "Oasys", "GsaGrasshopper");
+            string file = tempPath + "\\Samples\\Env.gwb";
 
             // open existing GSA model (steel design sample)
-            ReturnValue returnValue = m.Model.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
+            ReturnValue returnValue = m.Model.Open(file);
 
             Assert.AreSame(ReturnValue.GS_OK.ToString(), returnValue.ToString());
         }
@@ -34,7 +35,7 @@ namespace ParamsIntegrationTests
             string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath;
 
             // open existing GSA model (steel design sample)
-            m.Model.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
+            m.Model.Open(installPath + "\\UnitTests\\Steel_Design_Simple.gwb");
 
             // save file to temp location
             string tempfilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Oasys") + "GSA-Grasshopper_temp.gwb";

@@ -117,7 +117,7 @@ namespace GhSA.Components
                         else
                         {
                             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                                mem.Member.Property = idd;
+                                mem.Property = new GsaProp2d(idd);
                             else
                             {
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
@@ -131,7 +131,7 @@ namespace GhSA.Components
                     if (DA.GetData(4, ref ghmsz))
                     {
                         GH_Convert.ToDouble(ghmsz, out double m_size, GH_Conversion.Both);
-                        mem.Member.MeshSize = m_size;
+                        mem.MeshSize = m_size;
                     }
 
                     DA.SetData(0, new GsaMember2dGoo(mem));

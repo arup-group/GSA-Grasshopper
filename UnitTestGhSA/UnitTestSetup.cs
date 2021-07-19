@@ -83,13 +83,14 @@ namespace UnitTestGhSA
             // create new GH-GSA model 
             Model m = new Model();
 
-            // get the GSA install path
-            string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath;
+            string tempPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            tempPath = System.IO.Path.Combine(tempPath, "Oasys", "GsaGrasshopper");
+            string file = tempPath + "\\Samples\\Env.gwb";
 
             // open existing GSA model (steel design sample)
             // model containing CAT section profiles which I
             // think loads the SectLib.db3 SQL lite database
-            m.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");
+            m.Open(file);
         }
 
         public static void SetUnits()

@@ -140,9 +140,7 @@ namespace GhSA.Parameters
         }
         public void DrawViewportWires(GH_PreviewWireArgs args)
         {
-            
             args.Pipeline.DrawPoint(Value, PointStyle.RoundSimple, m_size, m_colour);
-            
         }
         public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
     }

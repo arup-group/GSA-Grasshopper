@@ -115,7 +115,6 @@ namespace GhSA.Components
             GH_Point ghpt = new GH_Point();
             if (DA.GetData(0, ref ghpt))
             {
-                
                 Point3d pt = new Point3d();
                 if (GH_Convert.ToPoint3d(ghpt, ref pt, GH_Conversion.Both))
                 {
@@ -142,13 +141,16 @@ namespace GhSA.Components
                         node.Spring = spring;
 
                     node.LocalAxis = localAxis;
-                    
-                    node.Node.Restraint.X = x;
-                    node.Node.Restraint.Y = y;
-                    node.Node.Restraint.Z = z;
-                    node.Node.Restraint.XX = xx;
-                    node.Node.Restraint.YY = yy;
-                    node.Node.Restraint.ZZ = zz;
+
+                    node.Restraint = new GsaBool6
+                    {
+                        X = x,
+                        Y = y,
+                        Z = z,
+                        XX = xx,
+                        YY = yy,
+                        ZZ = zz
+                    };
 
                     DA.SetData(0, new GsaNodeGoo(node));
                 }
