@@ -45,8 +45,8 @@ namespace GhSA.Components
 
         List<string> checkboxText = new List<string>() { "Analyse task(s)", "ElemsFromMems" };
         List<bool> initialCheckState = new List<bool>() { true, true };
-        bool Analysis;
-        bool ReMesh;
+        bool Analysis = true;
+        bool ReMesh = true;
 
         public void SetAnalysis(List<bool> value)
         {

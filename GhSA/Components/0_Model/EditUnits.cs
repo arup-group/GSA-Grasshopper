@@ -114,6 +114,10 @@ namespace GhSA.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "It is currently not possible to set units back into a GSA model." 
+                + System.Environment.NewLine + "Any chances made here will not be reflected in a your model."
+                + System.Environment.NewLine + "Please use [kN] for loads and [m] for model geometry, however you"
+                + System.Environment.NewLine + "can use custom units for section profiles and prop2d thickness");
             bool update = false;
 
             GH_String ghstr = new GH_String();
@@ -263,6 +267,7 @@ namespace GhSA.Components
             }
             List<string> units = new List<string>
             {
+                "This output is for information purpose only -- This component will set the units used in this Grasshopper file",
                 "Force: " + Units.Force,
                 "Length Large: " + Units.LengthLarge
                 + ((Units.LengthLarge == Units.RhinoDocUnit) ? "" : System.Environment.NewLine + "NB: Not similar to Rhino Document units!"),
