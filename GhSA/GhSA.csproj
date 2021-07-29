@@ -112,8 +112,8 @@
   <ItemGroup>
     <Compile Include="AsyncComponentBase\GH_AsyncComponent.cs" />
     <Compile Include="AsyncComponentBase\WorkerInstance.cs" />
-    <Compile Include="Components\0_Model\AsyncOpenModel.cs" />
-    <Compile Include="Components\0_Model\AsyncSaveModel.cs" />
+    <Compile Include="Components\GraveyardComp\AsyncOpenModel_OBSOLETE.cs" />
+    <Compile Include="Components\GraveyardComp\AsyncSaveModel_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
     <Compile Include="Components\0_Model\Version.cs" />
     <Compile Include="Components\0_Model\GetAnalysis.cs" />

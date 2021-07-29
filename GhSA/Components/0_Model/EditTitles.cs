@@ -59,6 +59,12 @@ namespace GhSA.Components
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "It is currently not possible to set titles back into a GSA model."
+                + System.Environment.NewLine + "Any chances made here will not be reflected in a your model."
+                + System.Environment.NewLine + "You can currently use this to get information from an existing GSA model;"
+                + System.Environment.NewLine + "when opening a model the values in this component will be set automatically");
+
+
             GH_String ghstr = new GH_String();
             if (DA.GetData(0, ref ghstr))
             {
