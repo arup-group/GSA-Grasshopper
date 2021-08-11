@@ -48,7 +48,7 @@ namespace GhSA.Parameters
             }
             set 
             {
-                CloneNode();
+                CloneApiNode();
                 m_id = 0;
                 m_node.Position.X = value.X; 
                 m_node.Position.Y = value.Y; 
@@ -56,7 +56,7 @@ namespace GhSA.Parameters
                 UpdatePreview();
             }
         }
-        #region GsaAPI members
+        #region GsaAPI.Node members
         internal Node API_Node
         {
             get { return m_node; }
@@ -74,7 +74,7 @@ namespace GhSA.Parameters
             }
             set 
             {
-                CloneNode();
+                CloneApiNode();
                 m_node.Colour = value; 
             }
         }
@@ -87,7 +87,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneNode();
+                CloneApiNode();
                 m_node.Restraint = new NodalRestraint
                 {
                     X = value.X,
@@ -105,11 +105,11 @@ namespace GhSA.Parameters
             get { return m_node.Name; }
             set
             {
-                CloneNode();
+                CloneApiNode();
                 m_node.Name = value;
             }
         }
-        private void CloneNode()
+        internal void CloneApiNode()
         {
             Node node = new Node
             {
@@ -202,12 +202,14 @@ namespace GhSA.Parameters
             m_id = ID;
             UpdatePreview();
         }
-        public GsaNode Duplicate()
+        public GsaNode Duplicate(bool cloneApiNode = false)
         {
             if (m_node == null) { return null; }
             GsaNode dup = new GsaNode();
             dup.m_id = m_id;
             dup.m_node = m_node;
+            if (cloneApiNode)
+                dup.CloneApiNode();
             dup.m_plane = m_plane;
             dup.m_spring = m_spring;
             dup.UpdatePreview();
@@ -478,7 +480,7 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Point == null) { return null; }
 
-            GsaNode node = Value.Duplicate();
+            GsaNode node = Value.Duplicate(true);
             Point3d pt = new Point3d(node.Point);
             pt.Transform(xform);
             

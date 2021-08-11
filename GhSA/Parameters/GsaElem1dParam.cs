@@ -97,7 +97,7 @@ namespace GhSA.Parameters
             set { m_section = value; }
         }
 
-        #region GsaAPI members
+        #region GsaAPI.Element members
         internal Element API_Element
         {
             get { return m_element; }
@@ -111,7 +111,7 @@ namespace GhSA.Parameters
             }
             set 
             {
-                CloneElement();
+                CloneApiElement();
                 m_element.Colour = value; 
             }
         }
@@ -120,7 +120,7 @@ namespace GhSA.Parameters
             get { return m_element.Group; }
             set 
             {
-                CloneElement();
+                CloneApiElement();
                 m_element.Group = value; 
             }
         }
@@ -129,7 +129,7 @@ namespace GhSA.Parameters
             get { return m_element.IsDummy; }
             set
             {
-                CloneElement();
+                CloneApiElement();
                 m_element.IsDummy = value;
             }
         }
@@ -138,7 +138,7 @@ namespace GhSA.Parameters
             get { return m_element.Name; }
             set
             {
-                CloneElement();
+                CloneApiElement();
                 m_element.Name = value;
             }
         }
@@ -154,7 +154,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneElement();
+                CloneApiElement();
                 m_element.Offset.X1 = value.X1;
                 m_element.Offset.X2 = value.X2;
                 m_element.Offset.Y = value.Y;
@@ -166,7 +166,7 @@ namespace GhSA.Parameters
             get { return m_element.OrientationAngle; }
             set
             {
-                CloneElement();
+                CloneApiElement();
                 m_element.OrientationAngle = value;
             }
         }
@@ -175,7 +175,7 @@ namespace GhSA.Parameters
             get { return m_orientationNode; }
             set
             {
-                CloneElement();
+                CloneApiElement();
                 m_orientationNode = value;
             }
         }
@@ -188,11 +188,11 @@ namespace GhSA.Parameters
             get { return m_element.Type; }
             set
             {
-                CloneElement();
+                CloneApiElement();
                 m_element.Type = value;
             }
         }
-        private void CloneElement()
+        internal void CloneApiElement()
         {
             Element elem = new Element()
             {
@@ -368,12 +368,14 @@ namespace GhSA.Parameters
 
             UpdatePreview();
         }
-        public GsaElement1d Duplicate()
+        public GsaElement1d Duplicate(bool cloneApiElement = false)
         {
             if (this == null) { return null; }
             GsaElement1d dup = new GsaElement1d();
             dup.m_id = m_id;
             dup.m_element = m_element;
+            if (cloneApiElement)
+                dup.CloneApiElement();
             dup.m_line = (LineCurve)m_line.DuplicateShallow();
             if (m_rel1 != null)
                 dup.m_rel1 = m_rel1.Duplicate();
@@ -617,7 +619,7 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Line == null) { return null; }
 
-            GsaElement1d elem = Value.Duplicate();
+            GsaElement1d elem = Value.Duplicate(true);
             LineCurve xLn = elem.Line;
             xLn.Transform(xform);
             elem.Line = xLn;
@@ -630,7 +632,7 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.Line == null) { return null; }
 
-            GsaElement1d elem = Value.Duplicate();
+            GsaElement1d elem = Value.Duplicate(true);
             LineCurve xLn = Value.Line;
             xmorph.Morph(xLn);
             elem.Line = xLn;

@@ -48,8 +48,8 @@ namespace GhSA.Parameters
         //        m_section = value; 
         //    }
         //}
-        
-        #region GsaAPI members
+
+        #region GsaAPI.Member members
         public System.Drawing.Color Colour
         {
             get
@@ -60,7 +60,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Colour = value;
             }
         }
@@ -69,7 +69,7 @@ namespace GhSA.Parameters
             get { return m_member.Group; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Group = value;
             }
         }
@@ -78,7 +78,7 @@ namespace GhSA.Parameters
             get { return m_member.IsDummy; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.IsDummy = value;
             }
         }
@@ -87,7 +87,7 @@ namespace GhSA.Parameters
             get { return m_member.Name; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Name = value;
             }
         }
@@ -96,7 +96,7 @@ namespace GhSA.Parameters
             get { return m_member.MeshSize; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.MeshSize = value;
             }
         }
@@ -105,12 +105,12 @@ namespace GhSA.Parameters
             get { return m_member.Property; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Property = value;
                 //m_section = null;
             }
         }
-        private void CloneMember()
+        internal void CloneApiMember()
         {
             Member mem = new Member
             {
@@ -183,12 +183,14 @@ namespace GhSA.Parameters
             m_mesh = GhSA.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
             UpdatePreview();
         }
-        public GsaMember3d Duplicate()
+        public GsaMember3d Duplicate(bool cloneApiMember = false)
         {
             if (this == null) { return null; }
             GsaMember3d dup = new GsaMember3d();
             dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
             dup.m_member = m_member;
+            if (cloneApiMember)
+                dup.CloneApiMember();
             //dup.m_section = m_section;
             dup.m_id = m_id;
 
@@ -434,7 +436,7 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.SolidMesh == null) { return null; }
 
-            GsaMember3d elem = Value.Duplicate();
+            GsaMember3d elem = Value.Duplicate(true);
             elem.SolidMesh.Transform(xform);
 
             return new GsaMember3dGoo(elem);
@@ -445,7 +447,7 @@ namespace GhSA.Parameters
             if (Value == null) { return null; }
             if (Value.SolidMesh == null) { return null; }
 
-            GsaMember3d elem = Value.Duplicate();
+            GsaMember3d elem = Value.Duplicate(true);
             xmorph.Morph(elem.SolidMesh.Duplicate());
 
             return new GsaMember3dGoo(elem);
