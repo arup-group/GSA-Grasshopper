@@ -59,12 +59,19 @@ namespace ParamsIntegrationTests
             // get original GUID
             Guid originalGUID = m.GUID;
 
+            // clone model
+            GsaModel clone = m.Clone();
+
+            // get clone GUID
+            Guid cloneGUID = clone.GUID;
+            Assert.AreNotEqual(cloneGUID, originalGUID);
+
             // duplicate model
             GsaModel dup = m.Duplicate();
 
-            // get duplicated GUID
+            // get duplicate GUID
             Guid dupGUID = dup.GUID;
-            Assert.AreNotEqual(dupGUID, originalGUID);
+            Assert.AreEqual(dupGUID, originalGUID);
         }
     }
 }

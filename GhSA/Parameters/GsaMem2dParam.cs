@@ -83,7 +83,7 @@ namespace GhSA.Parameters
             get { return m_prop; }
             set { m_prop = value; }
         }
-        #region GsaAPI members
+        #region GsaAPI.Member members
         public System.Drawing.Color Colour
         {
             get
@@ -94,7 +94,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Colour = value;
             }
         }
@@ -103,7 +103,7 @@ namespace GhSA.Parameters
             get { return m_member.Group; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Group = value;
             }
         }
@@ -112,7 +112,7 @@ namespace GhSA.Parameters
             get { return m_member.IsDummy; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.IsDummy = value;
             }
         }
@@ -121,7 +121,7 @@ namespace GhSA.Parameters
             get { return m_member.Name; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Name = value;
             }
         }
@@ -130,7 +130,7 @@ namespace GhSA.Parameters
             get { return m_member.MeshSize; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.MeshSize = value;
             }
         }
@@ -146,7 +146,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Offset.X1 = value.X1;
                 m_member.Offset.X2 = value.X2;
                 m_member.Offset.Y = value.Y;
@@ -158,7 +158,7 @@ namespace GhSA.Parameters
             get { return m_member.OrientationAngle; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.OrientationAngle = value;
             }
         }
@@ -167,7 +167,7 @@ namespace GhSA.Parameters
             get { return m_member.OrientationNode; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.OrientationNode = value;
             }
         }
@@ -177,7 +177,7 @@ namespace GhSA.Parameters
             get { return m_member.Type; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Type = value;
             }
         }
@@ -186,11 +186,11 @@ namespace GhSA.Parameters
             get { return m_member.Type2D; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Type2D = value;
             }
         }
-        private void CloneMember()
+        private void CloneApiMember()
         {
             Member mem = new Member
             {
@@ -344,12 +344,14 @@ namespace GhSA.Parameters
 
             m_prop = prop;
         }
-        public GsaMember2d Duplicate()
+        public GsaMember2d Duplicate(bool cloneApiMember = false)
         {
             if (this == null) { return null; }
             GsaMember2d dup = new GsaMember2d();
             dup.m_id = m_id;
             dup.m_member = m_member;
+            if (cloneApiMember)
+                dup.CloneApiMember();
             dup.m_prop = m_prop.Duplicate();
 
             dup.m_brep = (Brep)m_brep.DuplicateShallow();
@@ -397,7 +399,7 @@ namespace GhSA.Parameters
         public GsaMember2d Transform(Transform xform)
         {
             if (this == null) { return null; }
-            GsaMember2d dup = this.Duplicate();
+            GsaMember2d dup = this.Duplicate(true);
 
             // Brep
             if (dup.m_brep != null)
@@ -432,7 +434,7 @@ namespace GhSA.Parameters
         public GsaMember2d Morph(SpaceMorph xmorph)
         {
             if (this == null) { return null; }
-            GsaMember2d dup = this.Duplicate();
+            GsaMember2d dup = this.Duplicate(true);
 
             // Brep
             if (dup.m_brep != null)

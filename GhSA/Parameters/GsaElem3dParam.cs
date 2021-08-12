@@ -61,7 +61,7 @@ namespace GhSA.Parameters
         //    get { return m_props; }
         //    set { m_props = value; }
         //}
-        #region GsaAPI members
+        #region GsaAPI.Element members
         public List<System.Drawing.Color> Colours
         {
             get
@@ -81,7 +81,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneElements(apiObjectMember.colour, null, null, null, null, null, null, null, value);
+                CloneApiElements(apiObjectMember.colour, null, null, null, null, null, null, null, value);
             }
         }
         public List<int> Groups
@@ -98,7 +98,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneElements(apiObjectMember.group, value);
+                CloneApiElements(apiObjectMember.group, value);
             }
         }
         public List<bool> isDummies
@@ -115,7 +115,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneElements(apiObjectMember.dummy, null, value);
+                CloneApiElements(apiObjectMember.dummy, null, value);
             }
         }
         public List<string> Names
@@ -132,7 +132,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneElements(apiObjectMember.dummy, null, null, value);
+                CloneApiElements(apiObjectMember.dummy, null, null, value);
             }
         }
         public List<double> OrientationAngles
@@ -149,7 +149,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneElements(apiObjectMember.dummy, null, null, null, value);
+                CloneApiElements(apiObjectMember.dummy, null, null, null, value);
             }
         }
         public List<GsaOffset> Offsets
@@ -173,7 +173,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneElements(apiObjectMember.dummy, null, null, null, null, value);
+                CloneApiElements(apiObjectMember.dummy, null, null, null, null, value);
             }
         }
         public List<int> PropertyIDs
@@ -190,7 +190,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneElements(apiObjectMember.dummy, null, null, null, null, null, value);
+                CloneApiElements(apiObjectMember.dummy, null, null, null, null, null, value);
             }
         }
         public List<ElementType> Types
@@ -207,7 +207,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneElements(apiObjectMember.dummy, null, null, null, null, null, null, value);
+                CloneApiElements(apiObjectMember.dummy, null, null, null, null, null, null, value);
             }
         }
         public List<int> ParentMembers
@@ -220,7 +220,7 @@ namespace GhSA.Parameters
                 return pMems;
             }
         }
-        private void CloneElements(apiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null,
+        private void CloneApiElements(apiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null,
             List<double> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<System.Drawing.Color> col = null)
         {
             List<Element> elems = new List<Element>();
@@ -239,6 +239,9 @@ namespace GhSA.Parameters
                     Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
                     Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
                 });
+
+                if (memType == apiObjectMember.all)
+                    continue;
 
                 switch (memType)
                 {
@@ -306,8 +309,13 @@ namespace GhSA.Parameters
             }
             m_elements = elems;
         }
+        internal void CloneApiElements()
+        {
+            CloneApiElements(apiObjectMember.all);
+        }
         private enum apiObjectMember
         {
+            all,
             group,
             dummy,
             name,
@@ -397,7 +405,7 @@ namespace GhSA.Parameters
             //}
             UpdatePreview();
         }
-        public GsaElement3d Duplicate()
+        public GsaElement3d Duplicate(bool cloneApiElements = false)
         {
             if (this == null) { return null; }
             if (m_mesh == null) { return null; }
@@ -408,6 +416,8 @@ namespace GhSA.Parameters
             dup.m_topoInt = m_topoInt;
             dup.m_faceInt = m_faceInt;
             dup.m_elements = m_elements;
+            if (cloneApiElements)
+                dup.CloneApiElements();
             dup.m_id = m_id.ToList();
             dup.UpdatePreview();
             return dup;
@@ -423,10 +433,7 @@ namespace GhSA.Parameters
             if (m_mesh == null) { return null; }
             //if (m_mesh.Faces.Count != m_elements.Count) { return null; } // the logic below assumes the number of elements is equal to number of faces
 
-            GsaElement3d dup = new GsaElement3d();
-            dup.m_elements = m_elements;
-            dup.m_id = m_id;
-            //dup.m_props = m_props;
+            GsaElement3d dup = this.Duplicate(true);
             m_mesh = updated_mesh;
             Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(m_mesh, 0);
             m_elements = convertMesh.Item1;

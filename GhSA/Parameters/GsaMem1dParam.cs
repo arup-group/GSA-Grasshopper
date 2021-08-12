@@ -74,7 +74,7 @@ namespace GhSA.Parameters
             get { return m_section; }
             set { m_section = value; }
         }
-        #region GsaAPI members
+        #region GsaAPI.Member members
         internal Member API_Member
         {
             get { return m_member; }
@@ -90,7 +90,7 @@ namespace GhSA.Parameters
             }
             set 
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Colour = value; 
             }
         }
@@ -99,7 +99,7 @@ namespace GhSA.Parameters
             get { return m_member.Group; }
             set 
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Group = value; 
             }
         }
@@ -108,7 +108,7 @@ namespace GhSA.Parameters
             get { return m_member.IsDummy; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.IsDummy = value;
             }
         }
@@ -117,7 +117,7 @@ namespace GhSA.Parameters
             get { return m_member.Name; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Name = value;
             }
         }
@@ -126,7 +126,7 @@ namespace GhSA.Parameters
             get { return m_member.MeshSize; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.MeshSize = value;
             }
         }
@@ -142,7 +142,7 @@ namespace GhSA.Parameters
             }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Offset.X1 = value.X1;
                 m_member.Offset.X2 = value.X2;
                 m_member.Offset.Y = value.Y;
@@ -154,7 +154,7 @@ namespace GhSA.Parameters
             get { return m_member.OrientationAngle; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.OrientationAngle = value;
             }
         }
@@ -163,7 +163,7 @@ namespace GhSA.Parameters
             get { return m_orientationNode; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_orientationNode = value;
             }
         }
@@ -172,7 +172,7 @@ namespace GhSA.Parameters
             get { return m_member.Type; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Type = value;
             }
         }
@@ -181,11 +181,11 @@ namespace GhSA.Parameters
             get { return m_member.Type1D; }
             set
             {
-                CloneMember();
+                CloneApiMember();
                 m_member.Type1D = value;
             }
         }
-        private void CloneMember()
+        internal void CloneApiMember()
         {
             Member mem = new Member
             {
@@ -342,13 +342,15 @@ namespace GhSA.Parameters
             m_section = new GsaSection();
             UpdatePreview();
         }
-        public GsaMember1d Duplicate()
+        public GsaMember1d Duplicate(bool cloneApiMember = false)
         {
             if (this == null) { return null; }
             
             GsaMember1d dup = new GsaMember1d();
             dup.m_id = m_id;
             dup.m_member = m_member;
+            if (cloneApiMember)
+                dup.CloneApiMember();
             dup.m_crv = (PolyCurve)m_crv.DuplicateShallow();
             if (m_rel1 != null)
                 dup.m_rel1 = m_rel1.Duplicate();
@@ -358,7 +360,7 @@ namespace GhSA.Parameters
             dup.m_topo = m_topo;
             dup.m_topoType = m_topoType;
             if (m_orientationNode != null)
-                dup.m_orientationNode = m_orientationNode.Duplicate();
+                dup.m_orientationNode = m_orientationNode.Duplicate(cloneApiMember);
             dup.UpdatePreview();
             return dup;
         }
@@ -366,7 +368,7 @@ namespace GhSA.Parameters
         {
             if (this == null) { return null; }
 
-            GsaMember1d dup = this.Duplicate();
+            GsaMember1d dup = this.Duplicate(true);
 
             List<Point3d> pts = m_topo.ToList();
             Point3dList xpts = new Point3dList(pts);
@@ -386,7 +388,7 @@ namespace GhSA.Parameters
         {
             if (this == null) { return null; }
 
-            GsaMember1d dup = this.Duplicate();
+            GsaMember1d dup = this.Duplicate(true);
 
             List<Point3d> pts = m_topo.ToList();
             for (int i = 0; i < pts.Count; i++)

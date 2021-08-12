@@ -1,5 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Grasshopper.Kernel;
 using System.Reflection;
 using GsaAPI;
@@ -19,7 +22,34 @@ namespace GhSA
         {
             // ### Reference GSA API and SQLite dlls ###
             // set folder to latest GSA version.
-            Assembly ass1 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
+            try
+            {
+                Assembly ass1 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
+            }
+            catch (Exception e)
+            {
+                // check other plugins?
+                string loadedPlugins = "";
+                ReadOnlyCollection<GH_AssemblyInfo> plugins = Grasshopper.Instances.ComponentServer.Libraries;
+                foreach (GH_AssemblyInfo plugin in plugins)
+                {
+                    if (!plugin.IsCoreLibrary)
+                    {
+                        if (!plugin.Name.StartsWith("Kangaroo"))
+                        {
+                            loadedPlugins = loadedPlugins + "-" + plugin.Name + System.Environment.NewLine;
+                        }
+                    }
+                }
+
+                System.Windows.Forms.MessageBox.Show(e.Message
+                    + System.Environment.NewLine + System.Environment.NewLine +
+                    "This may be due to clash with other referenced dll files by one of these plugins that's already been loaded: "
+                    + System.Environment.NewLine + loadedPlugins
+                    + System.Environment.NewLine + "The plugin cannot be loaded.", "GSA plugin failed to load", System.Windows.Forms.MessageBoxButtons.OK);
+                return GH_LoadingInstruction.Abort;
+            }
+            
             Assembly ass2 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\System.Data.SQLite.dll");
             //Assembly ass3 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\libiomp5md.dll");
 
@@ -31,19 +61,23 @@ namespace GhSA
             System.Environment.SetEnvironmentVariable(name, value, target);
 
             // ### Use GsaAPI to load referenced dlls ###
-            InitiateGsaAPI.UseGsaAPI();
+            if (!InitiateGsaAPI.UseGsaAPI())
+            {
+                System.Windows.Forms.MessageBox.Show("Unable to run a test analysis using the GsaAPI."
+                    + System.Environment.NewLine + "The plugin cannot be loaded.", "GSA plugin failed to load", System.Windows.Forms.MessageBoxButtons.OK);
+                return GH_LoadingInstruction.Abort;
+            }
 
             // ### Create Ribbon Category name and icon ###
             Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
             Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", GhSA.Properties.Resources.GsaGhLogo);
-
+            
             return GH_LoadingInstruction.Proceed;
         }
-
     }
     public class InitiateGsaAPI
     {
-        public static void UseGsaAPI()
+        public static bool UseGsaAPI()
         {
             // create new GH-GSA model 
             Model m = new Model();
@@ -76,10 +110,31 @@ namespace GhSA
                 
                 // if model is opened run it
                 if (open == ReturnValue.GS_OK)
-                    m.Analyse(1);
+                {
+                    try
+                    {
+                        return m.Analyse(1);
+                    }
+                    catch (Exception e)
+                    {
+                        return false;
+                    }
+                }
+                
             }
             else
-                m.Analyse(1);
+            {
+                try
+                {
+                    return m.Analyse(1);
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+            }
+
+            return false;
         }
     }
     public class GSAInfo : GH_AssemblyInfo
@@ -136,7 +191,7 @@ namespace GhSA
         {
             get
             {
-                return "0.3.1";
+                return "0.3.2";
             }
         }
     }

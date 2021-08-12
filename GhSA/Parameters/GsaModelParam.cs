@@ -137,7 +137,7 @@ namespace GhSA.Parameters
             return clone;
         }
 
-        public GsaModel Duplicate() // I think duplicate is called by Grasshopper every time the Goo-parameter is created. Avoid copying the potential heavy data here
+        public GsaModel Duplicate() 
         {
             //duplicate the incoming model ### 
             if (m_model != null)
