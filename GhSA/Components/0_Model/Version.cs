@@ -58,7 +58,7 @@ namespace GhSA.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GH_AssemblyInfo gsaplugin = Grasshopper.Instances.ComponentServer.FindAssembly(new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f"));
-
+            
             DA.SetData(0, gsaplugin.Version);
             DA.SetData(1, gsaplugin.Location);
             DA.SetData(2, Util.Gsa.InstallationFolderPath.GetPath);
