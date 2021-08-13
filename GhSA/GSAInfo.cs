@@ -179,7 +179,15 @@ namespace GhSA
                 {
                     try
                     {
-                        m.Analyse(1);
+                        //m.Analyse(1);
+                        ReadOnlyDictionary<int, Section> sDict = m.Sections();
+                        sDict.TryGetValue(1, out Section apisection);
+                        double area1 = apisection.Area;
+                        string profile1 = apisection.Profile;
+                        string profile = "CAT HE HE200.B";
+                        Section section = new Section();
+                        section.Profile = profile;
+                        double area = section.Area * Math.Pow(10, 6);
                     }
                     catch (Exception e)
                     {
@@ -193,7 +201,15 @@ namespace GhSA
             {
                 try
                 {
-                    m.Analyse(1);
+                    //m.Analyse(1);
+                    ReadOnlyDictionary<int, Section> sDict = m.Sections();
+                    sDict.TryGetValue(1, out Section apisection);
+                    double area1 = apisection.Area;
+                    string profile1 = apisection.Profile;
+                    string profile = "CAT HE HE200.B";
+                    Section section = new Section();
+                    section.Profile = profile;
+                    double area = section.Area * Math.Pow(10, 6);
                 }
                 catch (Exception e)
                 {
