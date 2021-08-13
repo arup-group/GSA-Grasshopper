@@ -274,7 +274,7 @@ namespace GhSA
         {
             get
             {
-                return "0.3.2";
+                return "0.3.3";
             }
         }
     }
