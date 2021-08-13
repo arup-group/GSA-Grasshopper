@@ -170,7 +170,6 @@ namespace GhSA
                     Grasshopper.Kernel.GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: ExampleFile missing", exception);
                     Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
                 }
-                
 
                 // try open the file again:
                 open = m.Open(tempPath + "\\Samples\\Env.gwb");
@@ -189,7 +188,6 @@ namespace GhSA
                         Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
                     }
                 }
-                
             }
             else
             {
