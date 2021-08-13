@@ -194,8 +194,8 @@ namespace GhSA.Util.Gsa
                 }
             });
 
-            // if import found any 2D elements add the in one go.
-            // GhSA GsaElement2d consist of a list of 2D elements in order
+            // if import found any 1D elements add these in one go.
+            // GhSA GsaElement2d and 3d consist of a list of 2D elements in order
             // to display a combined mesh: each 2D element is a mesh face
             if (elem1dDict.Count > 0)
                 elem1ds = elem1dDict.AsParallel().
@@ -207,51 +207,6 @@ namespace GhSA.Util.Gsa
 
             if (elem3dDict.Count > 0)
                 elem3ds = ConvertToElement3Ds(elem3dDict, nDict);
-
-            //foreach (KeyValuePair<int, Element> item in eDict)
-            //{
-            //    // find type of element, 1D, 2D or 3D:
-            //    int elemDimension = 1; // default assume 1D element
-
-            //    // get element type
-            //    ElementType type = item.Value.Type;
-
-            //    // change to 2D if type is one of these
-            //    if (type == ElementType.TRI3 || type == ElementType.TRI6 ||
-            //        type == ElementType.QUAD4 || type == ElementType.QUAD8 ||
-            //        type == ElementType.TWO_D || type == ElementType.TWO_D_FE ||
-            //        type == ElementType.TWO_D_LOAD)
-            //        elemDimension = 2;
-            //    // change to 3D if type is one of these
-            //    if (type == ElementType.BRICK8 || type == ElementType.WEDGE6 ||
-            //        type == ElementType.PYRAMID5 || type == ElementType.TETRA4 ||
-            //        type == ElementType.THREE_D)
-            //        elemDimension = 3;
-
-            //    switch (elemDimension)
-            //    {
-            //        case 1:
-            //            // create new GhSA element from api element;
-            //            elem1dDict.Add(item.Key, item.Value);
-            //                new GsaElement1dGoo(
-            //                    ConvertToElement1D(
-            //                        item.Value, item.Key, nDict, sDict));
-            //            break;
-
-            //        case 2:
-            //            // add 2D element to dictionary to bulk create and combine
-            //            // meshes in one go
-            //            elem2dDict.Add(item.Key, item.Value);
-            //            break;
-
-            //        case 3:
-            //            // add 3D element to dictionary to bulk create and combine
-            //            // meshes in one go
-            //            elem3dDict.Add(item.Key, item.Value);
-            //            break;
-            //    }
-            //}
-
 
 
             return new Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>>(elem1ds, elem2ds, elem3ds);
@@ -437,7 +392,6 @@ namespace GhSA.Util.Gsa
                 // add elements to parent member
                 sortedElements[parent][elem.Key] = elem.Value;
             });
-
 
             // bag to drop all elements to
             ConcurrentBag<GsaElement2dGoo> elem2dGoos = new ConcurrentBag<GsaElement2dGoo>();

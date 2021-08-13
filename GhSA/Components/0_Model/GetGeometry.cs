@@ -153,7 +153,7 @@ namespace GhSA.Components
             pManager.AddGenericParameter("2D Elements", "E2D", "2D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("3D Elements", "E3D", "3D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.list);
             pManager.HideParameter(2);
-            pManager.HideParameter(3);
+            //pManager.HideParameter(3);
             pManager.AddGenericParameter("1D Members", "M1D", "1D Members (Design Layer) from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("2D Members", "M2D", "2D Members (Design Layer) from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("3D Members", "M3D", "3D Members (Design Layer) from GSA Model", GH_ParamAccess.list);
@@ -250,7 +250,6 @@ namespace GhSA.Components
                     }
 
                     //GsaModel in_Model = gsaModel.Clone();
-                    
 
                     // import lists
                     string nodeList = "all";
@@ -319,15 +318,7 @@ namespace GhSA.Components
                 if (results.Elem2ds != null)
                 {
                     data.SetDataList(2, results.Elem2ds);
-                    element2dsShaded = new List<GsaElement2dGoo>();
-                    element2dsNotShaded = new List<GsaElement2dGoo>();
-                    Parallel.ForEach(results.Elem2ds, elem =>
-                   {
-                       if (elem.Value.API_Elements[0].ParentMember.Member > 0)
-                           element2dsShaded.Add(elem);
-                       else
-                           element2dsNotShaded.Add(elem);
-                   });
+                    element2ds = results.Elem2ds;
                 }
                 if (results.Elem3ds != null)
                 {
@@ -345,16 +336,33 @@ namespace GhSA.Components
                 {
                     data.SetDataList(6, results.Mem3ds);
                 }
+                update = true;
             }
         }
 
-        List<GsaElement2dGoo> element2dsShaded;
-        List<GsaElement2dGoo> element2dsNotShaded;
+        bool update;
+        List<GsaElement2dGoo> element2ds;
+        ConcurrentBag<GsaElement2dGoo> element2dsShaded;
+        ConcurrentBag<GsaElement2dGoo> element2dsNotShaded;
         List<GsaNodeGoo> supportNodes;
 
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {
             base.DrawViewportWires(args);
+
+            if (update & element2ds != null)
+            {
+                element2dsShaded = new ConcurrentBag<GsaElement2dGoo>();
+                element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
+                Parallel.ForEach(element2ds, elem =>
+                {
+                    if (elem.Value.API_Elements[0].ParentMember.Member > 0)
+                        element2dsShaded.Add(elem);
+                    else
+                        element2dsNotShaded.Add(elem);
+                });
+                update = false;
+            }
 
             if (element2dsShaded != null)
             {
