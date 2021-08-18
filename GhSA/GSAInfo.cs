@@ -262,11 +262,11 @@ namespace GhSA
                 return "https://www.oasys-software.com/";
             }
         }
-        public string icon
+        public string icon_url
         {
             get
             {
-                return "https://github.com/arup-group/GSA-Grasshopper/blob/master/GhSA/Properties/GsaGhLogo.png";
+                return "https://raw.githubusercontent.com/arup-group/GSA-Grasshopper/master/GhSA/Properties/Icons/icons/4x/GsaGhLogo%404x.png";
             }
         }
 

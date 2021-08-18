@@ -40,7 +40,7 @@ namespace GhSA.Util.GH
     /// </summary>
     public class Convert
     {
-        public static Plane CreateBestFitUnitisedPlaneFromPts(List<Point3d> ctrl_pts)
+        public static Plane CreateBestFitUnitisedPlaneFromPts(List<Point3d> ctrl_pts, bool round = false)
         {
             Plane pln = Plane.WorldXY;
 
@@ -63,34 +63,68 @@ namespace GhSA.Util.GH
                 pln.YAxis = Vector3d.YAxis;
             }
 
-            // round origin coordinates
-            pln.OriginX = Util.Gsa.ResultHelper.RoundToSignificantDigits(pln.OriginX, dig);
-            pln.OriginY = Util.Gsa.ResultHelper.RoundToSignificantDigits(pln.OriginY, dig);
-            pln.OriginZ = Util.Gsa.ResultHelper.RoundToSignificantDigits(pln.OriginZ, dig);
+            if (round)
+            {
+                // round origin coordinates
+                pln.OriginX = Util.Gsa.ResultHelper.RoundToSignificantDigits(pln.OriginX, dig);
+                pln.OriginY = Util.Gsa.ResultHelper.RoundToSignificantDigits(pln.OriginY, dig);
+                pln.OriginZ = Util.Gsa.ResultHelper.RoundToSignificantDigits(pln.OriginZ, dig);
 
-            // unitize and round x-axis
-            pln.XAxis.Unitize();
-            Vector3d xaxis = pln.XAxis;
-            xaxis.X = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.X), dig);
-            xaxis.Y = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Y), dig);
-            xaxis.Z = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Z), dig);
-            pln.XAxis = xaxis;
+                // unitize and round x-axis
+                pln.XAxis.Unitize();
+                Vector3d xaxis = pln.XAxis;
+                xaxis.X = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.X), dig);
+                xaxis.Y = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Y), dig);
+                xaxis.Z = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Z), dig);
+                pln.XAxis = xaxis;
 
-            // unitize and round y-axis
-            pln.YAxis.Unitize();
-            Vector3d yaxis = pln.YAxis;
-            yaxis.X = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.X), dig);
-            yaxis.Y = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Y), dig);
-            yaxis.Z = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Z), dig);
-            pln.YAxis = yaxis;
+                // unitize and round y-axis
+                pln.YAxis.Unitize();
+                Vector3d yaxis = pln.YAxis;
+                yaxis.X = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.X), dig);
+                yaxis.Y = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Y), dig);
+                yaxis.Z = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Z), dig);
+                pln.YAxis = yaxis;
 
-            // unitize and round z-axis
-            pln.ZAxis.Unitize();
-            Vector3d zaxis = pln.ZAxis;
-            zaxis.X = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.X), dig);
-            zaxis.Y = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Y), dig);
-            zaxis.Z = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Z), dig);
-            pln.ZAxis = zaxis;
+                // unitize and round z-axis
+                pln.ZAxis.Unitize();
+                Vector3d zaxis = pln.ZAxis;
+                zaxis.X = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.X), dig);
+                zaxis.Y = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Y), dig);
+                zaxis.Z = Util.Gsa.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Z), dig);
+                pln.ZAxis = zaxis;
+            }
+            else
+            {
+                // round origin coordinates
+                pln.OriginX = Math.Round(pln.OriginX, dig);
+                pln.OriginY = Math.Round(pln.OriginX, dig);
+                pln.OriginZ = Math.Round(pln.OriginX, dig);
+
+                // unitize and round x-axis
+                pln.XAxis.Unitize();
+                Vector3d xaxis = pln.XAxis;
+                xaxis.X = Math.Round(Math.Abs(xaxis.X), dig);
+                xaxis.Y = Math.Round(Math.Abs(xaxis.Y), dig);
+                xaxis.Z = Math.Round(Math.Abs(xaxis.Z), dig);
+                pln.XAxis = xaxis;
+
+                // unitize and round y-axis
+                pln.YAxis.Unitize();
+                Vector3d yaxis = pln.YAxis;
+                yaxis.X = Math.Round(Math.Abs(yaxis.X), dig);
+                yaxis.Y = Math.Round(Math.Abs(yaxis.Y), dig);
+                yaxis.Z = Math.Round(Math.Abs(yaxis.Z), dig);
+                pln.YAxis = yaxis;
+
+                // unitize and round z-axis
+                pln.ZAxis.Unitize();
+                Vector3d zaxis = pln.ZAxis;
+                zaxis.X = Math.Round(Math.Abs(zaxis.X), dig);
+                zaxis.Y = Math.Round(Math.Abs(zaxis.Y), dig);
+                zaxis.Z = Math.Round(Math.Abs(zaxis.Z), dig);
+                pln.ZAxis = zaxis;
+            }
 
             return pln;
         }
