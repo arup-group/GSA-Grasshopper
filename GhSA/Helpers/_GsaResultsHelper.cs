@@ -43,6 +43,7 @@ namespace GhSA.Util.Gsa
         }
         public static double RoundToSignificantDigits(double d, int digits)
         {
+            
             if (d == 0.0)
             {
                 return 0.0;
