@@ -69,7 +69,15 @@ namespace GhSA.Components
                 Brep brep = new Brep();
                 Mesh mesh = new Mesh();
                 if (GH_Convert.ToBrep(gh_typ.Value, ref brep, GH_Conversion.Both))
-                    mem = new GsaMember3d(brep);
+                {
+                    if (brep.IsValid)
+                        mem = new GsaMember3d(brep);
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "S input is not a valid Brep geometry");
+                        return;
+                    }
+                }
                 else if (GH_Convert.ToMesh(gh_typ.Value, ref mesh, GH_Conversion.Both))
                     mem = new GsaMember3d(mesh);
                 else

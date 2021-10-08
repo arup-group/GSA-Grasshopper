@@ -385,6 +385,9 @@ namespace GhSA.Components
                     //Get analysis case from model
                     AnalysisCaseResult analysisCaseResult = null;
                     gsaModel.Model.Results().TryGetValue(analCase, out analysisCaseResult);
+                    
+
+
                     if (analysisCaseResult == null)
                     {
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No results exist for Analysis Case " + analCase + " in file");

@@ -171,7 +171,14 @@ namespace GhSA.Parameters
             };
 
             m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
-            UpdatePreview();
+            if (m_mesh == null)
+            {
+                throw new Exception("Unable to convert Mesh to solid mesh");
+            }
+            else
+            {
+                UpdatePreview();
+            }
         }
         public GsaMember3d(Brep brep)
         {
@@ -181,7 +188,14 @@ namespace GhSA.Parameters
             };
 
             m_mesh = GhSA.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
-            UpdatePreview();
+            if (m_mesh == null)
+            {
+                throw new Exception("Unable to convert Brep to solid mesh");
+            }
+            else
+            {
+                UpdatePreview();
+            }
         }
         public GsaMember3d Duplicate(bool cloneApiMember = false)
         {

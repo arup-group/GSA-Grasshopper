@@ -349,8 +349,17 @@ namespace GhSA.Components
 
                 foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
                 {
-                    if (!(gsa.Analyse(task.Key)))
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
+                    try
+                    {
+                        if (!(gsa.Analyse(task.Key)))
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
+                        System.Collections.ObjectModel.ReadOnlyDictionary<int, GsaAPI.AnalysisCaseResult> results = gsa.Results();
+                    }
+                    catch (Exception e)
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+                    }
+                    
                 }
             }
 

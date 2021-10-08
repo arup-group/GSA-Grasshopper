@@ -33,7 +33,14 @@ namespace GhSA.Parameters
         }
         public Mesh DisplayMesh
         {
-            get { return m_displayMesh; }
+            get 
+            { 
+                if (m_displayMesh == null)
+                {
+                    UpdatePreview();
+                }
+                return m_displayMesh; 
+            }
         }
 
         public List<Point3d> Topology
@@ -330,7 +337,7 @@ namespace GhSA.Parameters
         private Mesh m_displayMesh;
         internal void UpdatePreview()
         {
-            Mesh m_displayMesh = new Mesh();
+            m_displayMesh = new Mesh();
             Mesh x = NgonMesh;
 
             m_displayMesh.Vertices.AddVertices(x.Vertices.ToList());

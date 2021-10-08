@@ -646,6 +646,8 @@ namespace GhSA.UI
             if (solidMesh.FaceNormals.Count < solidMesh.Faces.Count)
                 solidMesh.FaceNormals.ComputeFaceNormals();
 
+            hiddenLines = new List<Polyline>();
+            edgeLines = new List<Line>();
             // curves
             for (int i = 0; i < alledges.Count; i++)
             {
