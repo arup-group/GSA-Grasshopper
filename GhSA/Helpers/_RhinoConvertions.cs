@@ -919,7 +919,7 @@ namespace GhSA.Util.GH
             // triangulate all faces
             m.Faces.ConvertQuadsToTriangles();
 
-            return mesh;   
+            return m;   
         }
         public static Mesh ConvertBrepToTriMeshSolid(Brep brep)
         {

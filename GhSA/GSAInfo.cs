@@ -201,7 +201,7 @@ namespace GhSA
             {
                 try
                 {
-                    //m.Analyse(1);
+                    // m.Analyse(1);
                     ReadOnlyDictionary<int, Section> sDict = m.Sections();
                     sDict.TryGetValue(1, out Section apisection);
                     double area1 = apisection.Area;
@@ -274,7 +274,7 @@ namespace GhSA
         {
             get
             {
-                return "0.3.4";
+                return "0.3.5-beta";
             }
         }
     }
