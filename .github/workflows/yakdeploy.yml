@@ -36,5 +36,6 @@ jobs:
           $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
           Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
           ..\yak build
+          ..\yak owner add gsa kristjan.nielsen@arup.com
           cd ..
           ls dist\*.yak |% {.\yak push $_.FullName}
