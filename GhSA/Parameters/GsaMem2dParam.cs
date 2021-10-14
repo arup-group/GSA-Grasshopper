@@ -272,6 +272,9 @@ namespace GhSA.Parameters
             m_inclPts = inclTuple.Item4;
 
             m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs);
+            if (m_brep == null)
+                throw new Exception(" Error with Mem2D: Unable to build Brep, please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
+
         }
 
         internal GsaMember2d(Member member, int id, List<Point3d> topology, 
@@ -688,7 +691,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)Value.PolyCurve.ToPolyline(0.05, 5, 0, 0);
+                    target = (Q)(object)Value.PolyCurve.ToPolyline(GhSA.Units.Tolerance, 2, 0, 0);
                     if (Value.PolyCurve == null)
                         return false;
                 }

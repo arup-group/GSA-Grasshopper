@@ -592,7 +592,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)Value.PolyCurve.ToPolyline(0.05, 5, 0, 0);
+                    target = (Q)(object)Value.PolyCurve.ToPolyline(GhSA.Units.Tolerance, 2, 0, 0);
                     if (Value.PolyCurve == null)
                         return false;
                 }
