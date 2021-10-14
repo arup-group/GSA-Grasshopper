@@ -167,7 +167,9 @@ namespace GhSA.Util.GH
                     if (tolerance < 0)
                         tolerance = GhSA.Units.Tolerance;
 
-                    crv = crv.ToPolyline(tolerance * 20, 5, 0, 0);
+                    crv = crv.ToPolyline(tolerance, 2, 0, 0);
+                    if (!crv.IsValid)
+                        throw new Exception(" Error converting edge or curve to polyline: please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
 
                     Curve[] segments = crv.DuplicateSegments();
 
@@ -200,9 +202,9 @@ namespace GhSA.Util.GH
         public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertMem2dCrv(Curve crv, double tolerance = -1)
         {
             if (tolerance < 0)
-                tolerance = Tolerance.RhinoDocTolerance();
+                tolerance = GhSA.Units.Tolerance;
 
-            PolyCurve m_crv = crv.ToArcsAndLines(tolerance * 20, 5, 0, 0);
+            PolyCurve m_crv = crv.ToArcsAndLines(tolerance, 2, 0, 0);
             Curve[] segments;
             if (m_crv != null)
                 segments = m_crv.DuplicateSegments();
@@ -252,9 +254,9 @@ namespace GhSA.Util.GH
                 if (!crv.IsArc() | crv.IsClosed)
                 {
                     if (tolerance < 0)
-                        tolerance = Tolerance.RhinoDocTolerance();
+                        tolerance = GhSA.Units.Tolerance;
 
-                    m_crv = crv.ToArcsAndLines(tolerance * 20, 5, 0, 0);
+                    m_crv = crv.ToArcsAndLines(tolerance, 2, 0, 0);
                     Curve[] segments;
                     if (m_crv != null)
                         segments = m_crv.DuplicateSegments();
@@ -525,7 +527,7 @@ namespace GhSA.Util.GH
         public static Brep BuildBrep(PolyCurve externalEdge, List<PolyCurve> voidCurves = null, double tolerance = -1)
         {
             if (tolerance < 0)
-                tolerance = GhSA.Units.Tolerance * 0.1;
+                tolerance = GhSA.Units.Tolerance * 0.5;
 
             Rhino.Collections.CurveList curves = new Rhino.Collections.CurveList
             {
@@ -830,8 +832,9 @@ namespace GhSA.Util.GH
 
             unroller.AddFollowingGeometry(points);
             unroller.AddFollowingGeometry(curves);
-            unroller.RelativeTolerance = 10^32;
-            //unroller.AbsoluteTolerance = 1000;
+            //unroller.RelativeTolerance = double.PositiveInfinity;
+            //unroller.AbsoluteTolerance = double.PositiveInfinity;
+            //unroller.ExplodeOutput = false;
             
             // create list of flattened geometry
             Point3d[] inclPts;
@@ -839,7 +842,11 @@ namespace GhSA.Util.GH
             TextDot[] unused;
             // perform unroll
             Brep[] flattened = unroller.PerformUnroll(out inclCrvs, out inclPts, out unused);
-            
+            if (flattened.Length == 0)
+            {
+                throw new Exception(" Unable to unroll surface for re-meshing, the curvature is likely too high!");
+            }
+
             // create 2d member from flattened geometry
             Parameters.GsaMember2d mem = new Parameters.GsaMember2d(flattened[0], inclCrvs.ToList(), inclPts.ToList());
             mem.MeshSize = meshSize;

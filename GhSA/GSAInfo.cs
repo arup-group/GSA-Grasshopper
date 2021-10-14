@@ -277,7 +277,7 @@ namespace GhSA
         {
             get
             {
-                return "0.3.6-beta";
+                return "0.3.7-beta";
             }
         }
     }
