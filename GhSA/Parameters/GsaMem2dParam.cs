@@ -341,6 +341,8 @@ namespace GhSA.Parameters
             m_inclPts = includePoints;
 
             m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs);
+            if (m_brep == null)
+                throw new Exception(" Error with Mem2D: Unable to build Brep, please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
 
             m_prop = prop;
         }

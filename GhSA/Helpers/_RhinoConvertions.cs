@@ -525,7 +525,7 @@ namespace GhSA.Util.GH
         public static Brep BuildBrep(PolyCurve externalEdge, List<PolyCurve> voidCurves = null, double tolerance = -1)
         {
             if (tolerance < 0)
-                tolerance = GhSA.Units.Tolerance;
+                tolerance = GhSA.Units.Tolerance * 0.1;
 
             Rhino.Collections.CurveList curves = new Rhino.Collections.CurveList
             {

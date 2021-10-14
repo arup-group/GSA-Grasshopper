@@ -187,7 +187,10 @@ namespace GhSA.Components
             ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
             ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
             ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
+            try
+            {
 
+            
             Parallel.ForEach(steps, i =>
                 {
                     if (i == 0)
@@ -227,7 +230,11 @@ namespace GhSA.Components
                     }
 
                 });
-
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.InnerException.Message);
+            }
             return results;
         }
 
@@ -269,8 +276,11 @@ namespace GhSA.Components
                 TaskList.Add(tsk);
                 return;
             }
-
-            if (!GetSolveResults(data, out var results))
+            SolveResults results;
+            try
+            {
+            
+            if (!GetSolveResults(data, out results))
             {
                 // Compute right here, right now.
                 // 1. Collect
@@ -301,6 +311,11 @@ namespace GhSA.Components
                     results = Compute(gsaModel, nodeList, elemList, memList);
                 }
                 else return;
+            }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.InnerException.Message);
             }
 
             // 3. Set

@@ -970,6 +970,8 @@ namespace GhSA.Util.Gsa
             ConcurrentBag<GsaMember3dGoo> mem3ds = new ConcurrentBag<GsaMember3dGoo>();
 
             // Loop through all members in Member dictionary 
+            try
+            {
             Parallel.ForEach(mDict.Keys, key =>
             {
                 if (mDict.TryGetValue(key, out Member member))
@@ -1189,6 +1191,11 @@ namespace GhSA.Util.Gsa
                     }
                 }
             });
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.InnerException.Message);
+            }
             return new Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>>(
                 mem1ds.AsParallel().OrderBy(e => e.Value.ID).ToList(), 
                 mem2ds.AsParallel().OrderBy(e => e.Value.ID).ToList(), 
