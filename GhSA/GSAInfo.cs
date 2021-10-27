@@ -201,7 +201,7 @@ namespace GhSA
             {
                 try
                 {
-                    // m.Analyse(1);
+                    //m.Analyse(1);
                     ReadOnlyDictionary<int, Section> sDict = m.Sections();
                     sDict.TryGetValue(1, out Section apisection);
                     double area1 = apisection.Area;
@@ -236,7 +236,11 @@ namespace GhSA
             get
             {
                 //Return a short string describing the purpose of this GHA library.
-                return "Official Oasys GSA Grasshopper Plugin" + System.Environment.NewLine + @"A licensed version of GSA 10.1 installed in C:\Program Files\Oasys\GSA 10.1\ is required to use this plugin."
+                return "Official Oasys GSA Grasshopper Plugin" + System.Environment.NewLine
+                + System.Environment.NewLine + "A licensed version of GSA 10.1 installed in"
+                + System.Environment.NewLine + @"C:\Program Files\Oasys\GSA 10.1\ "
+                + System.Environment.NewLine + "is required to use this plugin."
+                + System.Environment.NewLine 
                 + System.Environment.NewLine + "Contact oasys@arup.com to request a free trial version."
                 + System.Environment.NewLine + System.Environment.NewLine + "Copyright © Oasys 1985 - 2021";
             }
@@ -277,7 +281,7 @@ namespace GhSA
         {
             get
             {
-                return "0.3.7-beta";
+                return "0.3.8-beta";
             }
         }
     }

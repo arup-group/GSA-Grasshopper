@@ -98,8 +98,8 @@ namespace GhSA.Util.GH
             {
                 // round origin coordinates
                 pln.OriginX = Math.Round(pln.OriginX, dig);
-                pln.OriginY = Math.Round(pln.OriginX, dig);
-                pln.OriginZ = Math.Round(pln.OriginX, dig);
+                pln.OriginY = Math.Round(pln.OriginY, dig);
+                pln.OriginZ = Math.Round(pln.OriginZ, dig);
 
                 // unitize and round x-axis
                 pln.XAxis.Unitize();
