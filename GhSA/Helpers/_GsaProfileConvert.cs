@@ -89,10 +89,10 @@ namespace GhSA.Util.Gsa
         /// <returns></returns>
         public static Profile UpdateSectUnit(Profile gsaProfile, bool factorValues)
         {
-            if (gsaProfile.sectUnit.ToString() != Units.LengthSection)
+            if (gsaProfile.sectUnit.ToString() != Units.LengthUnitSection)
             {
-                if (Units.LengthSection == "mm" || Units.LengthSection == "cm" || Units.LengthSection == "m" ||
-                Units.LengthSection == "ft" || Units.LengthSection == "in")
+                if (Units.LengthUnitSection == "mm" || Units.LengthUnitSection == "cm" || Units.LengthUnitSection == "m" ||
+                Units.LengthUnitSection == "ft" || Units.LengthUnitSection == "in")
                 {
                     
                     if (factorValues)
@@ -100,7 +100,7 @@ namespace GhSA.Util.Gsa
                         double conversionFactor = 1;
                         // convert current unit back to meters, I know that one
                         double toMeters = 1;
-                        switch (Units.LengthSection)
+                        switch (Units.LengthUnitSection)
                         {
                             case "mm":
                                 toMeters = 1/1000;
@@ -146,7 +146,7 @@ namespace GhSA.Util.Gsa
                         gsaProfile.tw2 *= conversionFactor;
                     }
                         
-                    switch (Units.LengthSection)
+                    switch (Units.LengthUnitSection)
                     {
                         case "mm":
                             gsaProfile.sectUnit = Profile.SectUnitOptions.u_mm;
@@ -325,6 +325,9 @@ namespace GhSA.Util.Gsa
 
                     switch (gsaProfile.sectUnit)
                     {
+                        case Profile.SectUnitOptions.u_mm:
+                            unit = "(mm)";
+                            break;
                         case Profile.SectUnitOptions.u_cm:
                             unit = "(cm)";
                             break;

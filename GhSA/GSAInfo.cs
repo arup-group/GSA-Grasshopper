@@ -21,10 +21,14 @@ namespace GhSA
         /// <returns></returns>
         public override GH_LoadingInstruction PriorityLoad()
         {
+            // ## Get plugin assembly file location
+            PluginPath = Assembly.GetExecutingAssembly().Location; // full path+name
+            PluginPath = PluginPath.Replace("AdSec.gha", "");
+
             // ### Set system environment variables to allow user rights to read below dlls ###
             const string name = "PATH";
             string pathvar = System.Environment.GetEnvironmentVariable(name);
-            var value = pathvar + ";" + Util.Gsa.InstallationFolderPath.GetPath + "\\";
+            var value = pathvar + ";" + PluginPath;
             var target = EnvironmentVariableTarget.Process;
             System.Environment.SetEnvironmentVariable(name, value, target);
 
@@ -32,7 +36,7 @@ namespace GhSA
             // set folder to latest GSA version.
             try
             {
-                Assembly ass1 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
+                Assembly GsaAPI = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
             }
             catch (Exception e)
             {
@@ -96,12 +100,16 @@ namespace GhSA
             // ### Use GsaAPI to load referenced dlls ###
             try
             {
-                InitiateGsaAPI.UseGsaAPI();
+                //InitiateGsaAPI.UseGsaAPI();
             }
             catch (Exception)
             {
                 return GH_LoadingInstruction.Abort;
             }
+
+            // create main menu dropdown
+            GhSA.UI.Menu.Loader menuLoad = new UI.Menu.Loader();
+            menuLoad.CreateMainMenuItem();
 
             // ### Create Ribbon Category name and icon ###
             Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
@@ -109,6 +117,8 @@ namespace GhSA
             
             return GH_LoadingInstruction.Proceed;
         }
+        public static Assembly GsaAPI;
+        public static string PluginPath;
     }
     public class InitiateGsaAPI
     {

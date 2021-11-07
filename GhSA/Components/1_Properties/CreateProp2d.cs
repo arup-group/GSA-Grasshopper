@@ -378,7 +378,7 @@ namespace GhSA.Components
 
                 i++;
                 Params.Input[i].NickName = "Thk";
-                Params.Input[i].Name = "Thickness (" + Units.LengthSection + ")"; // "Thickness [m]";
+                Params.Input[i].Name = "Thickness (" + Units.LengthUnitSection + ")"; // "Thickness [m]";
                 Params.Input[i].Description = "Section thickness (default 200mm)";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = true;

@@ -17,19 +17,19 @@ using System.IO;
 
 namespace GhSA.Components
 {
-    public class GsaVersion : GH_Component
+    public class GsaVersion_OBSOLETE : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("0d64cc30-f24b-4940-97e8-2fb1eb9fef95");
-        public GsaVersion()
+        public GsaVersion_OBSOLETE()
           : base("GSA Plugin Version", "Version", "Get the version of this plugin.",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         { this.Hidden = true; } // sets the initial state of the component to hidden
 
-        public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaVersion;
         #endregion

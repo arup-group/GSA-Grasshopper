@@ -44,8 +44,8 @@ namespace GhSA.Components
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
             pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Value Start (" + Units.Force + "/" + Units.LengthLarge + ")", "V1", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ") at Start of Line", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Value End (" + Units.Force + "/" + Units.LengthLarge + ")", "V2", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ") at End of Line (default : Start Value)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value Start (" + Units.Force + "/" + Units.LengthUnitGeometry + ")", "V1", "Load Value (" + Units.Force + "/" + Units.LengthUnitGeometry + ") at Start of Line", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value End (" + Units.Force + "/" + Units.LengthUnitGeometry + ")", "V2", "Load Value (" + Units.Force + "/" + Units.LengthUnitGeometry + ") at End of Line (default : Start Value)", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[2].Optional = true;
@@ -165,7 +165,7 @@ namespace GhSA.Components
                         desc += "(" + temppt.X + "," + temppt.Y + ")";
                     }
                     // add units to the end
-                    desc += "(" + Units.LengthLarge + ")";
+                    desc += "(" + Units.LengthUnitGeometry + ")";
 
                     // set polyline in grid line load
                     gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;

@@ -40,10 +40,10 @@ namespace GhSA.Components
             pManager.AddIntegerParameter("Axis", "Ax", "Axis Property (0 : Global // -1 : Local", GH_ParamAccess.item);
             pManager.AddTextParameter("Direction", "Di", "Load direction", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor X (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", "V1", "Value at Start, Point 1 or Factor X (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor Y (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", "V2", "Value at End, Point 2 or Factor Y (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor Z (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", "V3", "Value at Point 3 or Factor Z (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", "V4", "Value at Point 4 (" + Units.Force + " or " + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value or Factor X (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", "V1", "Value at Start, Point 1 or Factor X (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value or Factor Y (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", "V2", "Value at End, Point 2 or Factor Y (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value or Factor Z (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", "V3", "Value at Point 3 or Factor Z (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", "V4", "Value at Point 4 (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", GH_ParamAccess.item);
             pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface", GH_ParamAccess.item);
         }
         #endregion

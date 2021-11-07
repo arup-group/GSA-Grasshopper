@@ -78,7 +78,7 @@ namespace GhSA.Components
                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
             pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Tolerance (" + Units.LengthLarge + ")", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 0.01);
+            pManager.AddNumberParameter("Tolerance (" + Units.LengthUnitGeometry + ")", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 0.01);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;

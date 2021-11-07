@@ -233,13 +233,13 @@ namespace GhSA.Components
             if (_mode == FoldMode.Storey)
             {
                 Params.Input[4].NickName = "tA";
-                Params.Input[4].Name = "Tolerance Above (" + Units.LengthLarge + ")";
+                Params.Input[4].Name = "Tolerance Above (" + Units.LengthUnitGeometry + ")";
                 Params.Input[4].Description = "Tolerance Above Grid Plane";
                 Params.Input[4].Access = GH_ParamAccess.item;
                 Params.Input[4].Optional = true;
 
                 Params.Input[5].NickName = "tB";
-                Params.Input[5].Name = "Tolerance Below (" + Units.LengthLarge + ")";
+                Params.Input[5].Name = "Tolerance Below (" + Units.LengthUnitGeometry + ")";
                 Params.Input[5].Description = "Tolerance Above Grid Plane";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;

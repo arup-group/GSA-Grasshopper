@@ -10,6 +10,7 @@ using Rhino;
 using GhSA.Util.Gsa;
 using Grasshopper.Documentation;
 using Rhino.Collections;
+using UnitsNet;
 
 namespace GhSA.Parameters
 {
@@ -109,11 +110,22 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            string str = "{X1:" + X1.ToString()
-                + ", X2:" + X2.ToString()
-                + ", Y:" + Y.ToString()
-                + ", Z:" + Z.ToString() + "}";
-            return "GSA Offset " + str;
+            IQuantity quantity = new UnitsNet.Length(0, Units.LengthUnitGeometry);
+            string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+            Length _x1 = Length.From(X1, UnitsNet.Units.LengthUnit.Meter);
+            Length _x2 = Length.From(X2, UnitsNet.Units.LengthUnit.Meter);
+            Length _y = Length.From(Y, UnitsNet.Units.LengthUnit.Meter);
+            Length _z = Length.From(Z, UnitsNet.Units.LengthUnit.Meter);
+            return "Offset" + " {X1: "
+                + Math.Round(_x1.As(Units.LengthUnitGeometry), 4) + unitAbbreviation + ", X2: "
+                + Math.Round(_x2.As(Units.LengthUnitGeometry), 4) + unitAbbreviation + ", Y: "
+                + Math.Round(_y.As(Units.LengthUnitGeometry), 4) + unitAbbreviation + ", Z: "
+                + Math.Round(_z.As(Units.LengthUnitGeometry), 4) + unitAbbreviation + "}";
+            //string str = "{X1:" + X1.ToString()
+            //    + ", X2:" + X2.ToString()
+            //    + ", Y:" + Y.ToString()
+            //    + ", Z:" + Z.ToString() + "}";
+            //return "GSA Offset " + str;
         }
 
         #endregion

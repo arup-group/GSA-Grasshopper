@@ -11,6 +11,9 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GhSA.Parameters;
 using System.Resources;
+using UnitsNet;
+using System.Linq;
+using UnitsNet.GH;
 
 namespace GhSA.Components
 {
@@ -42,22 +45,28 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+            IQuantity quantity = new UnitsNet.Length(0, Units.LengthUnitGeometry);
+            string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
             pManager.AddGenericParameter("Offset", "Of", "GSA Offset", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Offset X1", "X1", "Set X1 - Start axial offset (" + Units.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Offset X2", "X2", "Set X2 - End axial offset (" + Units.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Offset Y", "Y", "Set Y Offset (" + Units.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Offset Z", "Z", "Set Z Offset (" + Units.LengthLarge + ")", GH_ParamAccess.item);
-            for (int i = 0; i < pManager.ParamCount; i++)
+            pManager.AddGenericParameter("Offset X1 [" + unitAbbreviation + "]", "X1", "X1 - Start axial offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset X2 [" + unitAbbreviation + "]", "X2", "X2 - End axial offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset Y [" + unitAbbreviation + "]", "Y", "Y Offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset Z [" + unitAbbreviation + "]", "Z", "Z Offset", GH_ParamAccess.item);
+            for (int i = 1; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+            IQuantity quantity = new UnitsNet.Length(0, Units.LengthUnitGeometry);
+            string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
             pManager.AddGenericParameter("Offset", "Of", "GSA Offset", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Offset X1", "X1", "X1 - Start axial offset (" + Units.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Offset X2", "X2", "X2 - End axial offset (" + Units.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Offset Y", "Y", "Y Offset (" + Units.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Offset Z", "Z", "Z Offset (" + Units.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset X1 [" + unitAbbreviation + "]", "X1", "X1 - Start axial offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset X2 [" + unitAbbreviation + "]", "X2", "X2 - End axial offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset Y [" + unitAbbreviation + "]", "Y", "Y Offset", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Offset Z [" + unitAbbreviation + "]", "Z", "Z Offset", GH_ParamAccess.item);
         }
         #endregion
 
@@ -71,26 +80,33 @@ namespace GhSA.Components
             }
             if (offset != null)
             {
-                //inputs
-                double x1 = 0;
-                if (DA.GetData(1, ref x1))
-                    offset.X1 = x1;
-                double x2 = 0;
-                if (DA.GetData(2, ref x2))
-                    offset.X2 = x2;
-                double y = 0;
-                if (DA.GetData(3, ref y))
-                    offset.Y = y;
-                double z = 0;
-                if (DA.GetData(4, ref z))
-                    offset.Z = z;
+                int inp = 0;
+                if (this.Params.Input[inp].SourceCount != 0)
+                    offset.X1 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true).As(UnitsNet.Units.LengthUnit.Meter);
+
+                if (this.Params.Input[inp].SourceCount != 0)
+                    offset.X2 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true).As(UnitsNet.Units.LengthUnit.Meter);
+                
+                if (this.Params.Input[inp].SourceCount != 0)
+                    offset.Y = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true).As(UnitsNet.Units.LengthUnit.Meter);
+                
+                if (this.Params.Input[inp].SourceCount != 0)
+                    offset.Z = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true).As(UnitsNet.Units.LengthUnit.Meter);
 
                 //outputs
-                DA.SetData(0, new GsaOffsetGoo(offset));
-                DA.SetData(1, offset.X1);
-                DA.SetData(2, offset.X2);
-                DA.SetData(3, offset.Y);
-                DA.SetData(4, offset.Z);
+                int outp = 0;
+                DA.SetData(outp++, new GsaOffsetGoo(offset));
+                // create temp unit number from API SI unit value:
+                GH_UnitNumber x1 = new GH_UnitNumber(new UnitsNet.Length(offset.X1, UnitsNet.Units.LengthUnit.Meter));
+                // create output unit number in default length unit
+                DA.SetData(outp++, new GH_UnitNumber(x1.Value.ToUnit(Units.LengthUnitGeometry)));
+                // repeat for rest
+                GH_UnitNumber x2 = new GH_UnitNumber(new UnitsNet.Length(offset.X1, UnitsNet.Units.LengthUnit.Meter));
+                DA.SetData(outp++, new GH_UnitNumber(x2.Value.ToUnit(Units.LengthUnitGeometry)));
+                GH_UnitNumber y = new GH_UnitNumber(new UnitsNet.Length(offset.X1, UnitsNet.Units.LengthUnit.Meter));
+                DA.SetData(outp++, new GH_UnitNumber(y.Value.ToUnit(Units.LengthUnitGeometry)));
+                GH_UnitNumber z = new GH_UnitNumber(new UnitsNet.Length(offset.X1, UnitsNet.Units.LengthUnit.Meter));
+                DA.SetData(outp++, new GH_UnitNumber(z.Value.ToUnit(Units.LengthUnitGeometry)));
             }
         }
     }

@@ -189,11 +189,11 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddVectorParameter("Translation", "U\u0305", "X, Y, Z translation values (" + Units.LengthSmall + ")", GH_ParamAccess.tree);
+            pManager.AddVectorParameter("Translation", "U\u0305", "X, Y, Z translation values (" + Units.LengthUnitResult + ")", GH_ParamAccess.tree);
             //pManager.AddVectorParameter("Stress", "σ\u0305", "XX, YY, ZZ stress values(" + Units.Stress + ")", GH_ParamAccess.tree);
             pManager.AddGenericParameter("Mesh", "M", "Mesh with result values", GH_ParamAccess.item);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthSmall + ")", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthUnitResult + ")", GH_ParamAccess.list);
         }
 
         #region fields
@@ -818,10 +818,10 @@ namespace GhSA.Components
             {
                 Params.Output[0].NickName = "U\u0305";
                 Params.Output[0].Name = "Translation";
-                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Units.LengthSmall + ")"
+                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Units.LengthUnitResult + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
-                Params.Output[3].Description = "Legend Values (" + Units.LengthSmall + ")";
+                Params.Output[3].Description = "Legend Values (" + Units.LengthUnitResult + ")";
             }
 
             if (_mode == FoldMode.Stress)

@@ -269,11 +269,11 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddVectorParameter("Translation", "U\u0305", "X, Y, Z translation values (" + Units.LengthSmall + ")", GH_ParamAccess.tree);
+            pManager.AddVectorParameter("Translation", "U\u0305", "X, Y, Z translation values (" + Units.LengthUnitResult + ")", GH_ParamAccess.tree);
             pManager.AddVectorParameter("Rotation", "R\u0305", "XX, YY, ZZ rotation values(" + Units.Angle + ")", GH_ParamAccess.tree);
             pManager.AddGenericParameter("Mesh", "M", "Mesh with result values", GH_ParamAccess.item);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthSmall + ")", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthUnitResult + ")", GH_ParamAccess.list);
         }
 
         #region fields
@@ -1044,7 +1044,7 @@ namespace GhSA.Components
             {
                 Params.Output[0].NickName = "U\u0305";
                 Params.Output[0].Name = "Translation";
-                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Units.LengthSmall + ")"
+                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Units.LengthUnitResult + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 Params.Output[1].NickName = "R\u0305";
@@ -1053,7 +1053,7 @@ namespace GhSA.Components
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 if ((int)_disp < 4)
-                    Params.Output[4].Description = "Legend Values (" + Units.LengthSmall + ")";
+                    Params.Output[4].Description = "Legend Values (" + Units.LengthUnitResult + ")";
                 else
                     Params.Output[4].Description = "Legend Values (" + Units.Angle + ")";
 
@@ -1068,13 +1068,13 @@ namespace GhSA.Components
 
                 Params.Output[1].NickName = "M\u0305";
                 Params.Output[1].Name = "Moment";
-                Params.Output[1].Description = "Moment vector [Mxx, Myy, Mxy] (" + Units.Force + "/" + Units.LengthLarge + ")"
+                Params.Output[1].Description = "Moment vector [Mxx, Myy, Mxy] (" + Units.Force + "/" + Units.LengthUnitGeometry + ")"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 if ((int)_disp < 4)
                     Params.Output[4].Description = "Legend Values (" + Units.Force + ")";
                 else
-                    Params.Output[4].Description = "Legend Values (" + Units.Force + "/" + Units.LengthLarge + ")";
+                    Params.Output[4].Description = "Legend Values (" + Units.Force + "/" + Units.LengthUnitGeometry + ")";
             }
 
             if ( _mode == FoldMode.Shear)
@@ -1091,7 +1091,7 @@ namespace GhSA.Components
                 if ((int)_disp < 4)
                     Params.Output[4].Description = "Legend Values (" + Units.Force + ")";
                 else
-                    Params.Output[4].Description = "Legend Values (" + Units.Force + "/" + Units.LengthLarge + ")";
+                    Params.Output[4].Description = "Legend Values (" + Units.Force + "/" + Units.LengthUnitGeometry + ")";
             }
 
             if (_mode == FoldMode.Stress)

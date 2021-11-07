@@ -77,7 +77,7 @@ namespace GhSA.Parameters
             set
             {
                 CloneProperty();
-                m_prop2d.Description = value.ToString() + "(" + Units.LengthSection + ")";
+                m_prop2d.Description = value.ToString() + "(" + Units.LengthUnitSection + ")";
             }
         }
         public string Description
