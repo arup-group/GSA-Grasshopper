@@ -20,96 +20,58 @@ namespace GhSA.Parameters
     {
         public bool X
         {
-            get { return m_x; }
-            set { m_x = value; }
+            get { return API_Bool6.X; }
+            set { API_Bool6 = new GsaAPI.Bool6(value, Y, Z, XX, YY, ZZ); }
         }
         public bool Y
         {
-            get { return m_y; }
-            set { m_y = value; }
+            get { return API_Bool6.Y; }
+            set { API_Bool6 = new GsaAPI.Bool6(X, value, Z, XX, YY, ZZ); }
         }
         public bool Z
         {
-            get { return m_z; }
-            set { m_z = value; }
+            get { return API_Bool6.Z; }
+            set { API_Bool6 = new GsaAPI.Bool6(X, Y, value, XX, YY, ZZ); }
         }
         public bool XX
         {
-            get { return m_xx; }
-            set { m_xx = value; }
+            get { return API_Bool6.XX; }
+            set { API_Bool6 = new GsaAPI.Bool6(X, Y, Z, value, YY, ZZ); }
         }
         public bool YY
         {
-            get { return m_yy; }
-            set { m_yy = value; }
+            get { return API_Bool6.YY; }
+            set { API_Bool6 = new GsaAPI.Bool6(X, Y, Z, XX, value, ZZ); }
         }
         public bool ZZ
         {
-            get { return m_zz; }
-            set { m_zz = value; }
+            get { return API_Bool6.ZZ; }
+            set { API_Bool6 = new GsaAPI.Bool6(X, Y, Z, XX, YY, value); }
         }
 
         #region fields
-        private bool m_x;
-        private bool m_y;
-        private bool m_z;
-        private bool m_xx;
-        private bool m_yy;
-        private bool m_zz;
+        internal GsaAPI.Bool6 API_Bool6;
         #endregion
 
         #region constructors
         public GsaBool6()
         {
-            m_x = false;
-            m_y = false;
-            m_z = false;
-            m_xx = false;
-            m_yy = false;
-            m_zz = false;
+            API_Bool6 = new Bool6(false, false, false, false, false, false);
         }
 
-        //public GsaBool6(NodalRestraint restraint)
-        //{
-        //    m_x = restraint.X;
-        //    m_y = restraint.Y;
-        //    m_z = restraint.Z;
-        //    m_xx = restraint.XX;
-        //    m_yy = restraint.YY;
-        //    m_zz = restraint.ZZ;
-        //}
-        //public GsaBool6(Bool6 bool6)
-        //{
-        //   m_x = bool6.X;
-        //    m_y = bool6.Y;
-        //    m_z = bool6.Z;
-        //    m_xx = bool6.XX;
-        //    m_yy = bool6.YY;
-        //    m_zz = bool6.ZZ;
-        //}
         public GsaBool6(bool X, bool Y, bool Z, bool XX, bool YY, bool ZZ)
         {
-            m_x = X;
-            m_y = Y;
-            m_z = Z;
-            m_xx = XX;
-            m_yy = YY;
-            m_zz = ZZ;
+            API_Bool6 = new Bool6(X, Y, Z, XX, YY, ZZ);
         }
 
         public GsaBool6 Duplicate()
         {
             if (this == null) { return null; }
+            // create shallow copy
             GsaBool6 dup = new GsaBool6
             {
-                X = m_x,
-                Y = m_y,
-                Z = m_z,
-                XX = m_xx,
-                YY = m_yy,
-                ZZ = m_zz
+                API_Bool6 = this.API_Bool6
             };
-
             return dup;
         }
         #endregion
