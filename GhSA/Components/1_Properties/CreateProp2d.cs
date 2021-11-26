@@ -161,11 +161,13 @@ namespace GhSA.Components
                     else
                         prop.Material = new GsaMaterial(2);
 
-                    GH_Number gh_THK = new GH_Number();
-                    double thickness = 200;
-                    if (DA.GetData(1, ref gh_THK))
-                        GH_Convert.ToDouble(gh_THK, out thickness, GH_Conversion.Both);
-                    prop.Thickness = thickness;
+                    //GH_Number gh_THK = new GH_Number();
+                    //double thickness = 200;
+                    //if (DA.GetData(1, ref gh_THK))
+                    //    GH_Convert.ToDouble(gh_THK, out thickness, GH_Conversion.Both);
+                    //prop.Thickness = thickness;
+
+                    GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString()
                 }
                 else
                     prop.Material = new GsaMaterial(8);
