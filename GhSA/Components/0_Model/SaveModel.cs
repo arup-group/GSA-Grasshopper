@@ -24,7 +24,7 @@ namespace GhSA.Components
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
         public SaveModel()
-          : base("Save Model", "Save", "Saves your GSA model from this parametric nightmare",
+          : base("Save GSA Model", "Save", "Saves your GSA model from this parametric nightmare",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         { this.Hidden = true; } // sets the initial state of the component to hidden
@@ -65,7 +65,7 @@ namespace GhSA.Components
 
         public void SaveAsFile()
         {
-            var fdi = new Rhino.UI.SaveFileDialog { Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*" };
+            var fdi = new Rhino.UI.SaveFileDialog { Filter = "GSA File (*.gwb)|*.gwb|All files (*.*)|*.*" };
             var res = fdi.ShowSaveDialog();
             if (res) // == DialogResult.OK)
             {

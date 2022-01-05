@@ -139,7 +139,13 @@ namespace GhSA.Components
                     Curve crv = null;
                     if (GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both))
                     {
-                        mem.PolyCurve = (PolyCurve)crv;
+                        if (crv is PolyCurve)
+                            mem.PolyCurve = (PolyCurve)crv;
+                        else
+                        {
+                            GsaMember1d tempMem = new GsaMember1d(crv);
+                            mem.PolyCurve = tempMem.PolyCurve;
+                        }
                     }
                 }
 

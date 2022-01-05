@@ -236,6 +236,37 @@ namespace GhSA
         };
         #endregion
 
+        #region density
+        public static DensityUnit DensityUnit
+        {
+            get 
+            {
+                Mass mass = Mass.From(1, MassUnit);
+                Length len = Length.From(1, LengthUnitGeometry);
+                Volume vol = len * len * len;
+
+                Density density = mass / vol;
+                return density.Unit;
+            }
+        }
+        internal static List<string> FilteredDensityUnits = new List<string>()
+        {
+            DensityUnit.GramPerCubicMillimeter.ToString(),
+            DensityUnit.GramPerCubicCentimeter.ToString(),
+            DensityUnit.GramPerCubicMeter.ToString(),
+            DensityUnit.KilogramPerCubicMillimeter.ToString(),
+            DensityUnit.KilogramPerCubicCentimeter.ToString(),
+            DensityUnit.KilogramPerCubicMeter.ToString(),
+            DensityUnit.TonnePerCubicMillimeter.ToString(),
+            DensityUnit.TonnePerCubicCentimeter.ToString(),
+            DensityUnit.TonnePerCubicMeter.ToString(),
+            DensityUnit.PoundPerCubicFoot.ToString(),
+            DensityUnit.PoundPerCubicInch.ToString(),
+            DensityUnit.KilopoundPerCubicFoot.ToString(),
+            DensityUnit.KilopoundPerCubicInch.ToString(),
+        };
+        #endregion
+
         #region temperature
         public static TemperatureUnit TemperatureUnit
         {

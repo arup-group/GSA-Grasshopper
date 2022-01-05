@@ -19,13 +19,13 @@ namespace GhSA.Components
     /// <summary>
     /// Component to create a new Material
     /// </summary>
-    public class CreateMaterial : GH_Component, IGH_VariableParameterComponent
+    public class CreateMaterial_OBSOLETE : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("72bfce91-9204-4fe4-b81d-0036babf0c6d");
-        public CreateMaterial()
+        public CreateMaterial_OBSOLETE()
           : base("Create Material", "Material", "Create GSA Material",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat1())

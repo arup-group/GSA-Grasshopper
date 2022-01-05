@@ -29,7 +29,7 @@ namespace GhSA.Components
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("ea9741e5-905e-4ecb-8270-a584e3f99aa3");
+        public override Guid ComponentGuid => new Guid("04e69999-8e87-4753-8ae1-7e5f216e4935");
         public CreateProfile_OBSOLETE()
           : base("Create Profile", "Profile", "Create Profile text-string for GSA Section",
                 Ribbon.CategoryName.Name(),

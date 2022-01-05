@@ -19,18 +19,18 @@ namespace GhSA.Components
     /// <summary>
     /// Component to create a new Prop2d
     /// </summary>
-    public class CreateProp2d : GH_Component, IGH_VariableParameterComponent
+    public class CreateProp2d_OBSOLETE : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("04e69999-8e87-4753-8ae1-7e5f216e4935");
-        public CreateProp2d()
+        public override Guid ComponentGuid => new Guid("3fd61492-b5ff-47ea-8c7c-89cf639b32dc");
+        public CreateProp2d_OBSOLETE()
           : base("Create 2D Property", "Prop2d", "Create GSA 2D Property",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat1())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateProp2D;
         #endregion
@@ -44,7 +44,7 @@ namespace GhSA.Components
                 selecteditem = _mode.ToString();
                 //first = false;
             }
-                
+
             m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Element Type");
         }
 
@@ -161,13 +161,11 @@ namespace GhSA.Components
                     else
                         prop.Material = new GsaMaterial(2);
 
-                    //GH_Number gh_THK = new GH_Number();
-                    //double thickness = 200;
-                    //if (DA.GetData(1, ref gh_THK))
-                    //    GH_Convert.ToDouble(gh_THK, out thickness, GH_Conversion.Both);
-                    //prop.Thickness = thickness;
-
-                    GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString()
+                    GH_Number gh_THK = new GH_Number();
+                    double thickness = 200;
+                    if (DA.GetData(1, ref gh_THK))
+                        GH_Convert.ToDouble(gh_THK, out thickness, GH_Conversion.Both);
+                    prop.Thickness = thickness;
                 }
                 else
                     prop.Material = new GsaMaterial(8);
@@ -228,7 +226,7 @@ namespace GhSA.Components
             //register input parameter
             //Params.RegisterInputParam(new Param_Integer());
             Params.RegisterInputParam(new Param_GenericObject());
-            
+
 
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -380,7 +378,7 @@ namespace GhSA.Components
 
                 i++;
                 Params.Input[i].NickName = "Thk";
-                Params.Input[i].Name = "Thickness (" + Units.LengthUnitSection + ")"; // "Thickness [m]";
+                Params.Input[i].Name = "Thickness (" + Units.LengthUnitGeometry.ToString() + ")"; // "Thickness [m]";
                 Params.Input[i].Description = "Section thickness (default 200mm)";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = true;

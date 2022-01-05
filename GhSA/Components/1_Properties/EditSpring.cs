@@ -28,7 +28,7 @@ namespace GhSA.Components
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat1())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.hidden;// | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditSpring;
         #endregion
