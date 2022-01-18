@@ -1715,7 +1715,7 @@ namespace GhSA.Util.Gsa
         /// </summary>
         /// <param name="sDict">Dictionary of pre-filtered sections to import</param>
         /// <returns></returns>
-        public static List<GsaSectionGoo> GetSections(IReadOnlyDictionary<int, Section> sDict)
+        public static List<GsaSectionGoo> GetSections(IReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials)
         {
             List<GsaSectionGoo> sections = new List<GsaSectionGoo>();
 
@@ -1726,6 +1726,8 @@ namespace GhSA.Util.Gsa
                 {
                     GsaSection sect = new GsaSection(key);
                     sect.API_Section = apisection;
+                    if (apisection.MaterialType == MaterialType.UNDEF)
+                        sect.Material.ElasticIsotropicMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
                     sections.Add(new GsaSectionGoo(sect));
                 }
             }
@@ -1737,7 +1739,7 @@ namespace GhSA.Util.Gsa
         /// </summary>
         /// <param name="pDict">Dictionary of pre-filtered 2D Properties to import</param>
         /// <returns></returns>
-        public static List<GsaProp2dGoo> GetProp2ds(IReadOnlyDictionary<int, Prop2D> pDict)
+        public static List<GsaProp2dGoo> GetProp2ds(IReadOnlyDictionary<int, Prop2D> pDict, ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials)
         {
             List<GsaProp2dGoo> prop2ds = new List<GsaProp2dGoo>();
 
@@ -1748,6 +1750,8 @@ namespace GhSA.Util.Gsa
                 {
                     GsaProp2d prop = new GsaProp2d(key);
                     prop.API_Prop2d = apisection;
+                    if (apisection.MaterialType == MaterialType.UNDEF)
+                        prop.Material.ElasticIsotropicMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
                     prop2ds.Add(new GsaProp2dGoo(prop));
                 }
             }

@@ -93,12 +93,12 @@ namespace GhSA.Util.Gsa.ToGSA
             mem2ds.Select(c => { c.ID = 0; return c; }).ToList();
 
             // get properties
-            List<GsaSectionGoo> goosections = FromGSA.GetSections(sDict);
+            List<GsaSectionGoo> goosections = FromGSA.GetSections(sDict, model.AnalysisMaterials());
             // convert from Goo-type
             List<GsaSection> sections = goosections.Select(n => n.Value).ToList();
             // change all members in List's ID to 0;
             sections.Select(c => { c.ID = 0; return c; }).ToList();
-            List<GsaProp2dGoo> gooprop2Ds = FromGSA.GetProp2ds(pDict);
+            List<GsaProp2dGoo> gooprop2Ds = FromGSA.GetProp2ds(pDict, model.AnalysisMaterials());
             // convert from Goo-type
             List<GsaProp2d> prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
             // change all members in List's ID to 0;

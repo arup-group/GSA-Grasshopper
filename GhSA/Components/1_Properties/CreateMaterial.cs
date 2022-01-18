@@ -166,8 +166,19 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            IQuantity stress = new Pressure(0, stressUnit);
+            stressUnitAbbreviation = string.Concat(stress.ToString().Where(char.IsLetter));
+            IQuantity density = new Density(0, densityUnit);
+            densityUnitAbbreviation = string.Concat(density.ToString().Where(char.IsLetter));
+            IQuantity temperature = new Temperature(0, temperatureUnit);
+            temperatureUnitAbbreviation = string.Concat(temperature.ToString().Where(char.IsLetter));
+            
             pManager.AddIntegerParameter("Analysis Property", "An", "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
-            pManager.AddIntegerParameter("Grade", "Gr", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
+            pManager.AddGenericParameter("Elastic Modulus [" + stressUnitAbbreviation + "]", "E", "Elastic Modulus of the elastic isotropic material", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Poisson's Ratio", "ν", "Poisson's Ratio of the elastic isotropic material", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Density [" + densityUnitAbbreviation + "]", "ρ", "Density of the elastic isotropic material", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Thermal Expansion [/" + temperatureUnitAbbreviation + "]", "α", "Thermal Expansion Coefficient of the elastic isotropic material", GH_ParamAccess.item);
+            pManager[4].Optional = true;
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -186,33 +197,57 @@ namespace GhSA.Components
                 material.AnalysisProperty = anal;
             }
 
-            GH_Integer gh_grade = new GH_Integer();
-            if (DA.GetData(1, ref gh_grade))
+            if (_mode == FoldMode.ElasticIsotropic)
             {
-                int grade = 1;
-                GH_Convert.ToInt32(gh_grade, out grade, GH_Conversion.Both);
-                material.GradeProperty = grade;
+                material.GradeProperty = 1;
+                
+                double poisson = 0.3;
+                DA.GetData(2, ref poisson);
+
+                double tempCoefficient = 0;
+                DA.GetData(4, ref tempCoefficient);
+                if (temperatureUnit == UnitsNet.Units.TemperatureUnit.DegreeFahrenheit)
+                    tempCoefficient = tempCoefficient * 0.555555556;
+
+                material.ElasticIsotropicMaterial = new AnalysisMaterial()
+                {
+                    ElasticModulus = GetInput.Stress(this, DA, 1, stressUnit).As(UnitsNet.Units.PressureUnit.Pascal),
+                    PoissonsRatio = poisson,
+                    Density = GetInput.Density(this, DA, 3, densityUnit).As(UnitsNet.Units.DensityUnit.KilogramPerCubicMeter),
+                    CoefficientOfThermalExpansion = tempCoefficient
+                };
             }
             else
-                material.GradeProperty = 1;
+            {
+                GH_Integer gh_grade = new GH_Integer();
+                if (DA.GetData(1, ref gh_grade))
+                {
+                    int grade = 1;
+                    GH_Convert.ToInt32(gh_grade, out grade, GH_Conversion.Both);
+                    material.GradeProperty = grade;
+                }
+                else
+                    material.GradeProperty = 1;
 
-            // element type (picked in dropdown)
-            if (_mode == FoldMode.Generic)
-                material.MaterialType = GsaMaterial.MatType.GENERIC;
-            if (_mode == FoldMode.Steel)
-                material.MaterialType = GsaMaterial.MatType.STEEL;
-            if (_mode == FoldMode.Concrete)
-                material.MaterialType = GsaMaterial.MatType.CONCRETE;
-            if (_mode == FoldMode.Timber)
-                material.MaterialType = GsaMaterial.MatType.TIMBER;
-            if (_mode == FoldMode.Aluminium)
-                material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
-            if (_mode == FoldMode.FRP)
-                material.MaterialType = GsaMaterial.MatType.FRP;
-            if (_mode == FoldMode.Glass)
-                material.MaterialType = GsaMaterial.MatType.GLASS;
-            if (_mode == FoldMode.Fabric)
-                material.MaterialType = GsaMaterial.MatType.FABRIC;
+                // element type (picked in dropdown)
+                if (_mode == FoldMode.Generic)
+                    material.MaterialType = GsaMaterial.MatType.GENERIC;
+                if (_mode == FoldMode.Steel)
+                    material.MaterialType = GsaMaterial.MatType.STEEL;
+                if (_mode == FoldMode.Concrete)
+                    material.MaterialType = GsaMaterial.MatType.CONCRETE;
+                if (_mode == FoldMode.Timber)
+                    material.MaterialType = GsaMaterial.MatType.TIMBER;
+                if (_mode == FoldMode.Aluminium)
+                    material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
+                if (_mode == FoldMode.FRP)
+                    material.MaterialType = GsaMaterial.MatType.FRP;
+                if (_mode == FoldMode.Glass)
+                    material.MaterialType = GsaMaterial.MatType.GLASS;
+                if (_mode == FoldMode.Fabric)
+                    material.MaterialType = GsaMaterial.MatType.FABRIC;
+            }
+            
 
             DA.SetData(0, new GsaMaterialGoo(material));
         }
@@ -452,7 +487,7 @@ namespace GhSA.Components
                 Params.Input[i].NickName = "α";
                 Params.Input[i].Description = "Thermal Expansion Coefficient of the elastic isotropic material";
                 Params.Input[i].Access = GH_ParamAccess.item;
-                Params.Input[i].Optional = false;
+                Params.Input[i].Optional = true;
             }
             else
             {
