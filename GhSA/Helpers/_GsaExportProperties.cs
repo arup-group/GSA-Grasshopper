@@ -30,7 +30,9 @@ namespace GhSA.Util.Gsa.ToGSA
                 matType = MaterialType.FABRIC;
             if (typ == 0)
                 matType = MaterialType.GENERIC;
-            
+            if (typ == -2)
+                matType = MaterialType.UNDEF;
+
             return matType;
         }
 

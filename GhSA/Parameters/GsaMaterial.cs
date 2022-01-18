@@ -17,7 +17,6 @@ namespace GhSA.Parameters
     /// Section class, this class defines the basic properties and methods for any Gsa Section
     /// </summary>
     public class GsaMaterial
-
     {
         public enum MatType
         {
@@ -62,6 +61,7 @@ namespace GhSA.Parameters
         }
 
         public MatType MaterialType;
+        internal AnalysisMaterial ElasticIsotropicMaterial;
 
         #region fields
         //int m_idd = 0;
@@ -73,11 +73,12 @@ namespace GhSA.Parameters
         #region constructors
         public GsaMaterial()
         {
-            MaterialType = MatType.GENERIC;
+            MaterialType = MatType.UNDEF;
         }
         private MatType getType(MaterialType materialType)
         {
-            MatType m_type = MatType.NONE;
+            MatType m_type = MatType.UNDEF; // custom material
+
             if (materialType == GsaAPI.MaterialType.GENERIC)
                 m_type = MatType.GENERIC;
             if (materialType == GsaAPI.MaterialType.STEEL)
@@ -119,6 +120,8 @@ namespace GhSA.Parameters
             MaterialType = getType(section.API_Section.MaterialType);
             AnalysisProperty = section.API_Section.MaterialAnalysisProperty;
             GradeProperty = section.API_Section.MaterialGradeProperty;
+            if (MaterialType == MatType.UNDEF)
+                ElasticIsotropicMaterial = section.Material.ElasticIsotropicMaterial;
         }
         public GsaMaterial(GsaProp2d prop)
         {
@@ -128,6 +131,8 @@ namespace GhSA.Parameters
             MaterialType = getType(prop.API_Prop2d.MaterialType);
             AnalysisProperty = prop.API_Prop2d.MaterialAnalysisProperty;
             GradeProperty = prop.API_Prop2d.MaterialGradeProperty;
+            if (MaterialType == MatType.UNDEF)
+                ElasticIsotropicMaterial = prop.Material.ElasticIsotropicMaterial;
         }
 
         public GsaMaterial Duplicate()
@@ -138,7 +143,17 @@ namespace GhSA.Parameters
             //dup.ID = m_idd;
             dup.GradeProperty = m_grade;
             dup.AnalysisProperty = m_analProp;
-            
+
+            if (MaterialType == MatType.UNDEF)
+            {
+                dup.ElasticIsotropicMaterial = new AnalysisMaterial()
+                {
+                    CoefficientOfThermalExpansion = ElasticIsotropicMaterial.CoefficientOfThermalExpansion,
+                    Density = ElasticIsotropicMaterial.Density,
+                    ElasticModulus = ElasticIsotropicMaterial.ElasticModulus,
+                    PoissonsRatio = ElasticIsotropicMaterial.PoissonsRatio
+                };
+            }
             return dup;
         }
         #endregion
@@ -156,10 +171,12 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
+            if (MaterialType == MatType.UNDEF)
+            {
+                return "Custom Elastic Isotropic";
+            }
             string mate = MaterialType.ToString();
-            mate = Char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
-            
-            return "GSA Material " + mate;
+            return Char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
         }
 
         #endregion
@@ -213,18 +230,12 @@ namespace GhSA.Parameters
         public override string ToString()
         {
             if (Value == null)
-                return "Null GSA Material";
+                return "Null";
             else
-                return Value.ToString();
+                return "GSA " + TypeName + " {" + Value.ToString() + "}";
         }
-        public override string TypeName
-        {
-            get { return ("GSA Material"); }
-        }
-        public override string TypeDescription
-        {
-            get { return ("GSA Material"); }
-        }
+        public override string TypeName => "Material";
+        public override string TypeDescription => "GSA " + this.TypeName + " Parameter";
 
 
         #endregion

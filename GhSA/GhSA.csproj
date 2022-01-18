@@ -111,7 +111,7 @@
     <Compile Include="Components\GraveyardComp\AsyncOpenModel_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\AsyncSaveModel_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
-    <Compile Include="Components\GraveyardComp\CreateMaterial_OBSOLETE.cs" />
+    <Compile Include="Components\1_Properties\CreateMaterial.cs" />
     <Compile Include="Components\GraveyardComp\CreateOffset_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProp2d_OBSOLETE.cs" />
@@ -119,7 +119,6 @@
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
-    <Compile Include="Components\1_Properties\CreateCustomMaterial.cs" />
     <Compile Include="Components\1_Properties\EditMaterial.cs" />
     <Compile Include="Components\2_Geometry\CreateMember3d.cs" />
     <Compile Include="Components\2_Geometry\EditElement3d.cs" />

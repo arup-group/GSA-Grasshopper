@@ -16,7 +16,7 @@ namespace GhSA.Components
 {
     class GetInput
     {
-        internal static Length Length(GH_Component owner, IGH_DataAccess DA, int inputid, UnitsNet.Units.LengthUnit docLengthUnit, bool isOptional = false)
+        internal static Length Length(GH_Component owner, IGH_DataAccess DA, int inputid, UnitsNet.Units.LengthUnit lengthUnit, bool isOptional = false)
         {
             GH_UnitNumber unitNumber = null;
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -38,7 +38,7 @@ namespace GhSA.Components
                 else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
                 {
                     // create new quantity from default units
-                    unitNumber = new GH_UnitNumber(new UnitsNet.Length(val, docLengthUnit));
+                    unitNumber = new GH_UnitNumber(new UnitsNet.Length(val, lengthUnit));
                 }
                 else
                 {
