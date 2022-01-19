@@ -230,6 +230,7 @@
     <Compile Include="UI\AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Comp_MultiDropDownsCheckBoxes.cs" />
     <Compile Include="UI\Comp_MultiDropDownsSlider.cs" />
     <Compile Include="UI\Comp_CheckBox.cs" />
     <Compile Include="UI\Comp_Slider.cs" />

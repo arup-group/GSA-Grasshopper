@@ -23,17 +23,17 @@ namespace GhSA.UI
         {
             spacerTxt = (spacerText == null) ? "" : spacerText;
             action = clickHandle;
-            displayTexts = texts;
+            toggleTexts = texts;
             toggles = initialBools;
         }
 
         readonly string spacerTxt; // list of descriptive texts above each dropdown
         RectangleF SpacerBound;
 
-        List<RectangleF> TextBound;// righternmost part of the 
-        List<RectangleF> ButtonBound;// left side bit where we place the button to unfold the dropdown list
+        List<RectangleF> ToggleTextBound;// righternmost part of the 
+        List<RectangleF> ToggleBoxBound;// left side bit where we place the button to unfold the dropdown list
 
-        readonly List<string> displayTexts; // the displayed texts for each check box
+        readonly List<string> toggleTexts; // the displayed texts for each check box
         readonly List<bool> toggles; // booleans for each check box
 
         readonly Action<List<bool>> action; //function sending back toggles
@@ -44,7 +44,7 @@ namespace GhSA.UI
             {
                 List<string> texts = new List<string>(){ spacerTxt };
                 float sp = GhSA.UI.ComponentUI.MaxTextWidth(texts, new Font(GH_FontServer.FamilyStandard, 7));
-                float dd1 = GhSA.UI.ComponentUI.MaxTextWidth(displayTexts, new Font(GH_FontServer.FamilyStandard, 7));
+                float dd1 = GhSA.UI.ComponentUI.MaxTextWidth(toggleTexts, new Font(GH_FontServer.FamilyStandard, 7));
                 float num = Math.Max(Math.Max(sp, dd1 + 15), 90); 
                 return num;
             }
@@ -59,10 +59,10 @@ namespace GhSA.UI
 
             if (SpacerBound == null)
                 SpacerBound = new RectangleF();
-            if (TextBound == null)
-                TextBound = new List<RectangleF>();
-            if (ButtonBound == null)
-                ButtonBound = new List<RectangleF>();
+            if (ToggleTextBound == null)
+                ToggleTextBound = new List<RectangleF>();
+            if (ToggleBoxBound == null)
+                ToggleBoxBound = new List<RectangleF>();
 
             int s = 2; //spacing to edges and internal between boxes
 
@@ -80,19 +80,19 @@ namespace GhSA.UI
             int bw = h1; // button width
 
             // check boxes
-            TextBound = new List<RectangleF>();
-            ButtonBound = new List<RectangleF>();
+            ToggleTextBound = new List<RectangleF>();
+            ToggleBoxBound = new List<RectangleF>();
 
-            for (int i = 0; i < displayTexts.Count; i++)
+            for (int i = 0; i < toggleTexts.Count; i++)
             {
                 // add text box 
-                TextBound.Add(new RectangleF(Bounds.X + 2 * s + bw, Bounds.Bottom + s + h0 + i * h1, Bounds.Width - 4 * s - bw, h1));
+                ToggleTextBound.Add(new RectangleF(Bounds.X + 2 * s + bw, Bounds.Bottom + s + h0 + i * h1, Bounds.Width - 4 * s - bw, h1));
                 // add check box
-                ButtonBound.Add(new RectangleF(Bounds.X + s, Bounds.Bottom + s + h0 + i * h1, bw, h1));
+                ToggleBoxBound.Add(new RectangleF(Bounds.X + s, Bounds.Bottom + s + h0 + i * h1, bw, h1));
 
                 // update component bounds
             }
-            Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + h0 + displayTexts.Count * h1 + 2 * s);
+            Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + h0 + toggleTexts.Count * h1 + 2 * s);
         }
         
 
@@ -127,7 +127,7 @@ namespace GhSA.UI
                 }
 
                 // #### check boxes ####
-                for (int i = 0; i < displayTexts.Count; i++)
+                for (int i = 0; i < toggleTexts.Count; i++)
                 {
                     Color myColour = UI.Colour.GsaDarkBlue;
                     Brush myBrush = new SolidBrush(myColour);
@@ -137,16 +137,16 @@ namespace GhSA.UI
                     Color passiveBorder = Color.DarkGray;
                     int s = 8;
                     // draw text
-                    graphics.DrawString(displayTexts[i], font, fontColour, TextBound[i], GH_TextRenderingConstants.NearCenter);
+                    graphics.DrawString(toggleTexts[i], font, fontColour, ToggleTextBound[i], GH_TextRenderingConstants.NearCenter);
                     // draw check box
-                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(ButtonBound[i].X + ButtonBound[i].Width / 2, ButtonBound[i].Y + ButtonBound[i].Height / 2), toggles[i], activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
+                    ButtonsUI.CheckBox.DrawCheckButton(graphics, new PointF(ToggleBoxBound[i].X + ToggleBoxBound[i].Width / 2, ToggleBoxBound[i].Y + ToggleBoxBound[i].Height / 2), toggles[i], activeFillBrush, borderColour, passiveFillBrush, passiveBorder, s);
                     
                     // update width of text box for mouse-over event handling
                     List<string> incl = new List<string>();
-                    incl.Add(displayTexts[i]);
-                    RectangleF txtBound = TextBound[i];
+                    incl.Add(toggleTexts[i]);
+                    RectangleF txtBound = ToggleTextBound[i];
                     txtBound.Width = GhSA.UI.ComponentUI.MaxTextWidth(incl, font);
-                    TextBound[i] = txtBound;
+                    ToggleTextBound[i] = txtBound;
                 }
             }
         }
@@ -156,9 +156,9 @@ namespace GhSA.UI
             {
                 GH_Component comp = Owner as GH_Component;
 
-                for (int i = 0; i < displayTexts.Count; i++)
+                for (int i = 0; i < toggleTexts.Count; i++)
                 {
-                    if (ButtonBound[i].Contains(e.CanvasLocation) || TextBound[i].Contains(e.CanvasLocation))
+                    if (ToggleBoxBound[i].Contains(e.CanvasLocation) || ToggleTextBound[i].Contains(e.CanvasLocation))
                     {
                         comp.RecordUndoEvent("Toggle Incl. superseeded");
                         toggles[i] = !toggles[i];
@@ -174,9 +174,9 @@ namespace GhSA.UI
         public override GH_ObjectResponse RespondToMouseMove(GH_Canvas sender, GH_CanvasMouseEvent e)
         {
             
-            for (int i = 0; i < ButtonBound.Count; i++)
+            for (int i = 0; i < ToggleBoxBound.Count; i++)
             {
-                if (ButtonBound[i].Contains(e.CanvasLocation))
+                if (ToggleBoxBound[i].Contains(e.CanvasLocation))
                 {
                     mouseOver = true;
                     sender.Cursor = System.Windows.Forms.Cursors.Hand;

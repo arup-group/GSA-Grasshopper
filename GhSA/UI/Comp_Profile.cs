@@ -806,11 +806,11 @@ namespace GhSA.UI
         }
         public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
         {
-            for (int i = 0; i < dropdownlists.Count; i++)
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                if (unfolded[i])
+                for (int i = 0; i < dropdownlists.Count; i++)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                    if (unfolded[i])
                     {
                         System.Drawing.RectangleF rec = scrollBar;
                         GH_Component comp = Owner as GH_Component;
