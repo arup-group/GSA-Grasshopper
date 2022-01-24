@@ -14,6 +14,7 @@ using System.Resources;
 using System.Linq;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel.Data;
+using UnitsNet;
 
 namespace GhSA.Components
 {
@@ -40,17 +41,68 @@ namespace GhSA.Components
         //This region overrides the typical component layout
         public override void CreateAttributes()
         {
-            m_attributes = new UI.CheckBoxComponentUI(this, SetAnalysis, checkboxText, initialCheckState, "Settings");
+            if (first)
+            {
+                dropdownitems = new List<List<string>>();
+                selecteditems = new List<string>();
+
+                // length
+                //dropdownitems.Add(Enum.GetNames(typeof(UnitsNet.Units.LengthUnit)).ToList());
+                dropdownitems.Add(Units.FilteredLengthUnits);
+                selecteditems.Add(lengthUnit.ToString());
+
+                IQuantity quantity = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                first = false;
+            }
+            m_attributes = new UI.MultiDropDownCheckBoxesComponentUI(this, SetSelected, dropdownitems, selecteditems, SetAnalysis, initialCheckState, checkboxText, new List<string>() { "Measure", "Settings" });
         }
+        public void SetSelected(int i, int j)
+        {
+            // change selected item
+            selecteditems[i] = dropdownitems[i][j];
 
-        List<string> checkboxText = new List<string>() { "ElemsFromMems" };
-        List<bool> initialCheckState = new List<bool>() { true };
-        bool ReMesh;
+            lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[i]);
 
+            // update name of inputs (to display unit on sliders)
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
         public void SetAnalysis(List<bool> value)
         {
             ReMesh = value[0];
         }
+        List<string> checkboxText = new List<string>() { "ElemsFromMems" };
+        List<bool> initialCheckState = new List<bool>() { true };
+        bool ReMesh;
+        private void UpdateUIFromSelectedItems()
+        {
+            lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[0]);
+
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+        // list of lists with all dropdown lists conctent
+        List<List<string>> dropdownitems;
+        // list of selected items
+        List<string> selecteditems;
+        // list of descriptions 
+        List<string> spacerDescriptions = new List<string>(new string[]
+        {
+            "Model Geometry Unit"
+        });
+        private bool first = true;
+        private UnitsNet.Units.LengthUnit lengthUnit = Units.LengthUnitGeometry;
+        string unitAbbreviation;
+
+
+        
         #endregion
 
         #region input and output
@@ -350,23 +402,63 @@ namespace GhSA.Components
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
+            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
             writer.SetBoolean("ReMesh", ReMesh);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            try
+            try // if users has an old old version of this component then ReMesh won't be there to read
             {
                 ReMesh = reader.GetBoolean("ReMesh");
+                
+                try // if users has an old versopm of this component then dropdown menu wont read
+                {
+                    Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+                }
+                catch (Exception) // we create the dropdown menu with our chosen default
+                {
+                    dropdownitems = new List<List<string>>();
+                    selecteditems = new List<string>();
+
+                    // set length to meters as this was the only option for old components
+                    lengthUnit = UnitsNet.Units.LengthUnit.Meter;
+
+                    dropdownitems.Add(Units.FilteredLengthUnits);
+                    selecteditems.Add(lengthUnit.ToString());
+
+                    IQuantity quantity = new Length(0, lengthUnit);
+                    unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                    first = false;
+                }
             }
-            catch (Exception)
+            catch (Exception) // we set it to our chosen defaults
             {
                 ReMesh = true;
+
+                dropdownitems = new List<List<string>>();
+                selecteditems = new List<string>();
+
+                // set length to meters as this was the only option for old components
+                lengthUnit = UnitsNet.Units.LengthUnit.Meter;
+
+                dropdownitems.Add(Units.FilteredLengthUnits);
+                selecteditems.Add(lengthUnit.ToString());
+
+                IQuantity quantity = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                first = false;
             }
 
             initialCheckState = new List<bool>();
             initialCheckState.Add(ReMesh);
-            this.CreateAttributes();
+            
+            UpdateUIFromSelectedItems();
+
+            first = false;
+
             return base.Read(reader);
         }
         #endregion

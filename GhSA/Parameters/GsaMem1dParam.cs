@@ -285,7 +285,7 @@ namespace GhSA.Parameters
                     previewRedLines.Add(previewEZZ1);
                     previewRedLines.Add(previewEZZ2);
                     #endregion
-                    GhSA.UI.Display.Preview1D(m_crv, m_member.OrientationAngle, m_rel1, m_rel2,
+                    GhSA.UI.Display.Preview1D(m_crv, m_member.OrientationAngle * Math.PI / 180.0, m_rel1, m_rel2,
                     ref previewGreenLines, ref previewRedLines);
                 }
                 else

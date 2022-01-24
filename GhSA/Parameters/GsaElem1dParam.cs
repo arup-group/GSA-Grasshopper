@@ -293,7 +293,7 @@ namespace GhSA.Parameters
                     #endregion
                     PolyCurve crv = new PolyCurve();
                     crv.Append(m_line);
-                    GhSA.UI.Display.Preview1D(crv, m_element.OrientationAngle, m_rel1, m_rel2,
+                    GhSA.UI.Display.Preview1D(crv, m_element.OrientationAngle * Math.PI / 180.0, m_rel1, m_rel2,
                         ref previewGreenLines, ref previewRedLines);
                 }
                 else
