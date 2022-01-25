@@ -46,11 +46,6 @@ namespace GhSA.Util.Gsa.ToGSA
             Model model = appendModel.Model;
 
             // get dictionaries from model
-            //IReadOnlyDictionary<int, Node> nDict = model.Nodes();
-            //IReadOnlyDictionary<int, Element> eDict = model.Elements();
-            //IReadOnlyDictionary<int, Member> mDict = model.Members();
-            //IReadOnlyDictionary<int, Section> sDict = model.Sections();
-            //IReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
             ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
             ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(model.Elements());
             ConcurrentDictionary<int, Member> mDict = new ConcurrentDictionary<int, Member>(model.Members());
@@ -58,7 +53,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
 
             // get nodes
-            List<GsaNodeGoo> goonodes = Util.Gsa.FromGSA.GetNodes(nDict);
+            List<GsaNodeGoo> goonodes = Util.Gsa.FromGSA.GetNodes(nDict, LengthUnit.Meter);
             // convert from Goo-type
             List<GsaNode> nodes = goonodes.Select(n => n.Value).ToList();
             // change all members in List's ID to 0;
@@ -66,7 +61,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
             // get elements
             Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> elementTuple
-                = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict);
+                = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, LengthUnit.Meter);
             // convert from Goo-type
             List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
             // change all members in List's ID to 0;
@@ -84,7 +79,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
             // get members
             Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>> memberTuple
-                = Util.Gsa.FromGSA.GetMembers(mDict, nDict, sDict, pDict);
+                = Util.Gsa.FromGSA.GetMembers(mDict, nDict, LengthUnit.Meter, sDict, pDict);
             // convert from Goo-type
             List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
             // change all members in List's ID to 0;
@@ -130,7 +125,7 @@ namespace GhSA.Util.Gsa.ToGSA
             List<GsaGridPlaneSurface> gps = gpsgoo.Select(n => n.Value).ToList();
 
             // return new assembled model
-            mainModel.Model = Assemble.AssembleModel(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, loads, gps);
+            mainModel.Model = Assemble.AssembleModel(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, loads, gps, LengthUnit.Meter);
             return mainModel;
         }
     }
@@ -144,8 +139,8 @@ namespace GhSA.Util.Gsa.ToGSA
         /// <param name="member1Ds">1D Members</param>
         /// <param name="nodes">Nodes</param>
         /// <returns></returns>
-        public static Model AssembleModel(List<GsaMember3d> member3Ds = null, List<GsaMember2d> member2Ds = null, List<GsaMember1d> member1Ds = null, 
-            List<GsaNode> nodes = null, LengthUnit lengthUnit = LengthUnit.Meter)
+        public static Model AssembleModel(LengthUnit lengthUnit, List<GsaMember3d> member3Ds = null, List<GsaMember2d> member2Ds = null, List<GsaMember1d> member1Ds = null, 
+            List<GsaNode> nodes = null)
         {
             // new model to set members in
             Model gsa = new Model();
@@ -164,13 +159,13 @@ namespace GhSA.Util.Gsa.ToGSA
             List<Member> mems = new List<Member>();
             
             // add converted 1D members
-            mems.AddRange(Members.ConvertMember1D(member1Ds, ref gsanodes, ref id));
+            mems.AddRange(Members.ConvertMember1D(member1Ds, ref gsanodes, ref id, lengthUnit));
 
             // add converted 2D members
-            mems.AddRange(Members.ConvertMember2D(member2Ds, ref gsanodes, ref id));
+            mems.AddRange(Members.ConvertMember2D(member2Ds, ref gsanodes, ref id, lengthUnit));
 
             // add converted 3D members
-            mems.AddRange(Members.ConvertMember3D(member3Ds, ref gsanodes, ref id));
+            mems.AddRange(Members.ConvertMember3D(member3Ds, ref gsanodes, ref id, lengthUnit));
 
             #region create model
             Dictionary<int, Node> nodeDic = gsanodes
@@ -212,7 +207,7 @@ namespace GhSA.Util.Gsa.ToGSA
             List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
             List<GsaSection> sections, List<GsaProp2d> prop2Ds, 
             List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
-            LengthUnit lengthUnit = LengthUnit.Meter,
+            LengthUnit lengthUnit,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null
             )
@@ -292,13 +287,13 @@ namespace GhSA.Util.Gsa.ToGSA
             }
             
             // Set / add 1D elements to dictionary
-            Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, ref apisections, ref sections_guid, workerInstance, ReportProgress);
+            Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, workerInstance, ReportProgress);
 
             // Set / add 2D elements to dictionary
-            Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
+            Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
 
             // Set / add 3D elements to dictionary
-            Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, workerInstance, ReportProgress);
+            Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, lengthUnit, workerInstance, ReportProgress);
             #endregion
 
             #region Members
@@ -345,13 +340,13 @@ namespace GhSA.Util.Gsa.ToGSA
             }
 
             // Set / add 1D members to dictionary
-            Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, ref apisections, ref sections_guid, workerInstance, ReportProgress);
+            Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, workerInstance, ReportProgress);
 
             // Set / add 2D members to dictionary
-            Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
+            Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
 
             // Set / add 3D members to dictionary
-            Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, workerInstance, ReportProgress);
+            Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, workerInstance, ReportProgress);
             #endregion
 
             #region Loads

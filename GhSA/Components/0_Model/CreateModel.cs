@@ -56,7 +56,7 @@ namespace GhSA.Components
 
                 first = false;
             }
-            m_attributes = new UI.MultiDropDownCheckBoxesComponentUI(this, SetSelected, dropdownitems, selecteditems, SetAnalysis, initialCheckState, checkboxText, new List<string>() { "Measure", "Settings" });
+            m_attributes = new UI.MultiDropDownCheckBoxesComponentUI(this, SetSelected, dropdownitems, selecteditems, SetAnalysis, initialCheckState, checkboxText, spacerDescriptions);
         }
         public void SetSelected(int i, int j)
         {
@@ -95,7 +95,8 @@ namespace GhSA.Components
         // list of descriptions 
         List<string> spacerDescriptions = new List<string>(new string[]
         {
-            "Model Geometry Unit"
+            "Unit",
+            "Settings"
         });
         private bool first = true;
         private UnitsNet.Units.LengthUnit lengthUnit = Units.LengthUnitGeometry;

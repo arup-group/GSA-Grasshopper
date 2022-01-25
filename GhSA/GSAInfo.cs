@@ -252,7 +252,7 @@ namespace GhSA
                 + System.Environment.NewLine + "is required to use this plugin."
                 + System.Environment.NewLine 
                 + System.Environment.NewLine + "Contact oasys@arup.com to request a free trial version."
-                + System.Environment.NewLine + System.Environment.NewLine + "Copyright © Oasys 1985 - 2021";
+                + System.Environment.NewLine + System.Environment.NewLine + "Copyright © Oasys 1985 - 2022";
             }
         }
         public override Guid Id

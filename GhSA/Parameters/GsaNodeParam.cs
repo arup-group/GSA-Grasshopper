@@ -67,11 +67,7 @@ namespace GhSA.Parameters
                 UpdatePreview();
             }
         }
-        internal LengthUnit LengthUnit
-        {
-            get { return m_unit; }
-            set { m_unit = value; }
-        }
+        
         #endregion
 
         #region GsaAPI.Node members
