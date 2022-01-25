@@ -7,6 +7,8 @@ using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 using Rhino.Display;
 using Rhino.Collections;
+using UnitsNet.Units;
+using UnitsNet;
 
 namespace GhSA.Parameters
 {
@@ -15,6 +17,15 @@ namespace GhSA.Parameters
     /// </summary>
     public class GsaNode
     {
+        #region properties
+        public bool IsValid
+        {
+            get
+            {
+                if (API_Node == null) { return false; }
+                return true;
+            }
+        }
         public GsaSpring Spring
         {
             get { return m_spring; }
@@ -56,6 +67,13 @@ namespace GhSA.Parameters
                 UpdatePreview();
             }
         }
+        internal LengthUnit LengthUnit
+        {
+            get { return m_unit; }
+            set { m_unit = value; }
+        }
+        #endregion
+
         #region GsaAPI.Node members
         internal Node API_Node
         {
@@ -131,7 +149,7 @@ namespace GhSA.Parameters
                 {
                     X = m_node.Position.X,
                     Y = m_node.Position.Y,
-                    Z = m_node.Position.Z,
+                    Z = m_node.Position.Z
                 }
             };
 
@@ -140,13 +158,50 @@ namespace GhSA.Parameters
 
             m_node = node;
         }
+        internal Node GetApiNodeToUnit(LengthUnit unit = LengthUnit.Meter)
+        {
+            if (unit == LengthUnit.Meter) { return m_node; }
+            else
+            {
+                Node node = new Node
+                {
+                    AxisProperty = m_node.AxisProperty,
+                    DamperProperty = m_node.DamperProperty,
+                    MassProperty = m_node.MassProperty,
+                    Name = m_node.Name.ToString(),
+                    Restraint = new NodalRestraint
+                    {
+                        X = m_node.Restraint.X,
+                        Y = m_node.Restraint.Y,
+                        Z = m_node.Restraint.Z,
+                        XX = m_node.Restraint.XX,
+                        YY = m_node.Restraint.YY,
+                        ZZ = m_node.Restraint.ZZ,
+                    },
+                    SpringProperty = m_node.SpringProperty,
+                    Position = new Vector3
+                    {
+                        X = (unit == LengthUnit.Meter) ? m_node.Position.X : new Length(m_node.Position.X, unit).Meters,
+                        Y = (unit == LengthUnit.Meter) ? m_node.Position.Y : new Length(m_node.Position.Y, unit).Meters,
+                        Z = (unit == LengthUnit.Meter) ? m_node.Position.Z : new Length(m_node.Position.Z, unit).Meters
+                    }
+                };
+
+                if ((System.Drawing.Color)m_node.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                    node.Colour = m_node.Colour;
+                
+                return node;
+            }
+        }
         #endregion
+
         #region preview
         internal Line previewXaxis;
         internal Line previewYaxis;
         internal Line previewZaxis;
         internal Brep previewSupportSymbol;
         internal Rhino.Display.Text3d previewText;
+        
         internal void UpdatePreview()
         {
             if (m_node.Restraint.X || m_node.Restraint.Y || m_node.Restraint.Z ||
@@ -179,9 +234,9 @@ namespace GhSA.Parameters
         private Plane m_plane; 
         private int m_id;
         private GsaSpring m_spring;
-        private Node m_node; 
+        private Node m_node;
         #endregion
-        
+
         #region constructors
         public GsaNode()
         {
@@ -217,17 +272,7 @@ namespace GhSA.Parameters
         }
         #endregion
 
-        #region properties
-        public bool IsValid
-        {
-            get
-            {
-                if (API_Node == null) { return false; }
-                return true;
-            }
-        }
-
-        #endregion
+        
 
         #region methods
         public override string ToString()

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using GhSA.Parameters;
 using System.Linq;
 using System.Collections.ObjectModel;
+using UnitsNet.Units;
+using UnitsNet;
 
 namespace GhSA.Util.Gsa.ToGSA
 {
@@ -13,7 +15,7 @@ namespace GhSA.Util.Gsa.ToGSA
         #region element1d
         public static void ConvertElement1D(GsaElement1d element1d,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter,
+            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
             ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid)
         {
             LineCurve line = element1d.Line;
@@ -22,23 +24,23 @@ namespace GhSA.Util.Gsa.ToGSA
             // update topology list to fit model nodes
             List<int> topo = new List<int>();
             //Start node
-            int id = Nodes.GetExistingNodeID(existingNodes, line.PointAtStart);
+            int id = Nodes.GetExistingNodeID(existingNodes, line.PointAtStart, unit);
             if (id > 0)
                 topo.Add(id);
             else
             {
-                existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(line.PointAtStart));
+                existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(line.PointAtStart, unit));
                 topo.Add(nodeidcounter);
                 nodeidcounter++;
             }
 
             //End node
-            id = Nodes.GetExistingNodeID(existingNodes, line.PointAtEnd);
+            id = Nodes.GetExistingNodeID(existingNodes, line.PointAtEnd, unit);
             if (id > 0)
                 topo.Add(id);
             else
             {
-                existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(line.PointAtEnd));
+                existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(line.PointAtEnd, unit));
                 topo.Add(nodeidcounter);
                 nodeidcounter++;
             }
@@ -46,12 +48,12 @@ namespace GhSA.Util.Gsa.ToGSA
             //Orientation node
             if (element1d.OrientationNode != null)
             {
-                id = Nodes.GetExistingNodeID(existingNodes, element1d.OrientationNode.Point);
+                id = Nodes.GetExistingNodeID(existingNodes, element1d.OrientationNode.Point, unit);
                 if (id > 0)
                     apiElement.OrientationNode = id;
                 else
                 {
-                    existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(element1d.OrientationNode.Point));
+                    existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(element1d.OrientationNode.Point, unit));
                     apiElement.OrientationNode = nodeidcounter;
                     nodeidcounter++;
                 }
@@ -77,7 +79,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
         public static void ConvertElement1D(List<GsaElement1d> element1ds,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-            ref Dictionary<int, Node> existingNodes,
+            ref Dictionary<int, Node> existingNodes, LengthUnit unit,
             ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
@@ -102,7 +104,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
                         // Add/set element
                         ConvertElement1D(element1d, ref existingElements, ref elementidcounter,
-                            ref existingNodes, ref nodeidcounter, ref existingSections, ref sections_guid);
+                            ref existingNodes, ref nodeidcounter, unit, ref existingSections, ref sections_guid);
                     }
                 }
             }
@@ -117,7 +119,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
         public static void ConvertElement2D(GsaElement2d element2d,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter,
+            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
             ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid)
         {
             List<Point3d> meshVerticies = element2d.Topology;
@@ -133,12 +135,12 @@ namespace GhSA.Util.Gsa.ToGSA
                 //Loop through topology
                 for (int j = 0; j < meshVertexIndex.Count; j++)
                 {
-                    int id = Nodes.GetExistingNodeID(existingNodes, meshVerticies[meshVertexIndex[j]]);
+                    int id = Nodes.GetExistingNodeID(existingNodes, meshVerticies[meshVertexIndex[j]], unit);
                     if (id > 0)
                         topo.Add(id);
                     else
                     {
-                        existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(meshVerticies[meshVertexIndex[j]]));
+                        existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(meshVerticies[meshVertexIndex[j]], unit));
                         topo.Add(nodeidcounter);
                         nodeidcounter++;
                     }
@@ -164,7 +166,7 @@ namespace GhSA.Util.Gsa.ToGSA
         }
         public static void ConvertElement2D(List<GsaElement2d> element2ds,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-            ref Dictionary<int, Node> existingNodes,
+            ref Dictionary<int, Node> existingNodes, LengthUnit unit,
             ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
@@ -190,7 +192,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
                         ConvertElement2D(element2d, 
                             ref existingElements, ref elementidcounter, 
-                            ref existingNodes, ref nodeidcounter, 
+                            ref existingNodes, ref nodeidcounter, unit,
                             ref existingProp2Ds, ref prop2d_guid);
                     }
                 }
@@ -206,7 +208,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
         public static void ConvertElement3D(GsaElement3d element3d,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter
+            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit
             )
         {
             List<Point3d> meshVerticies = element3d.Topology;
@@ -222,12 +224,12 @@ namespace GhSA.Util.Gsa.ToGSA
                 //Loop through topology
                 for (int j = 0; j < meshVertexIndex.Count; j++)
                 {
-                    int id = Nodes.GetExistingNodeID(existingNodes, meshVerticies[meshVertexIndex[j]]);
+                    int id = Nodes.GetExistingNodeID(existingNodes, meshVerticies[meshVertexIndex[j]], unit);
                     if (id > 0)
                         topo.Add(id);
                     else
                     {
-                        existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(meshVerticies[meshVertexIndex[j]]));
+                        existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(meshVerticies[meshVertexIndex[j]], unit));
                         topo.Add(nodeidcounter);
                         nodeidcounter++;
                     }
@@ -254,7 +256,7 @@ namespace GhSA.Util.Gsa.ToGSA
         }
         public static void ConvertElement3D(List<GsaElement3d> element3ds,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-            ref Dictionary<int, Node> existingNodes,
+            ref Dictionary<int, Node> existingNodes, LengthUnit unit,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
@@ -279,7 +281,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
                         ConvertElement3D(element3d,
                             ref existingElements, ref elementidcounter,
-                            ref existingNodes, ref nodeidcounter);
+                            ref existingNodes, ref nodeidcounter, unit);
                     }
                 }
             }

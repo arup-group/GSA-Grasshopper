@@ -6,6 +6,7 @@ using GsaAPI;
 using Rhino.Geometry;
 using GhSA.Parameters;
 using System.Threading;
+using UnitsNet.Units;
 
 namespace GhSA.Util.Gsa.ToGSA
 {
@@ -292,7 +293,7 @@ namespace GhSA.Util.Gsa.ToGSA
         /// <param name="axisidcounter"></param>
         /// <returns></returns>
         public static int SetAxis(ref GsaGridPlaneSurface gridplanesurface,
-            ref Dictionary<int, Axis> existingAxes, ref int axisidcounter)
+            ref Dictionary<int, Axis> existingAxes, ref int axisidcounter, LengthUnit unit)
         {
             int axis_id = gridplanesurface.AxisID;
             Axis axis = gridplanesurface.Axis;

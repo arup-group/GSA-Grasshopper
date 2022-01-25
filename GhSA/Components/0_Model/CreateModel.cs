@@ -100,8 +100,6 @@ namespace GhSA.Components
         private bool first = true;
         private UnitsNet.Units.LengthUnit lengthUnit = Units.LengthUnitGeometry;
         string unitAbbreviation;
-
-
         
         #endregion
 
@@ -109,11 +107,14 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            IQuantity length = new Length(0, lengthUnit);
+            unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
             pManager.AddGenericParameter("GSA Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
                 "If you input more than one model they will be merged" + System.Environment.NewLine + "with first model in list taking priority for IDs", GH_ParamAccess.list);
             pManager.AddGenericParameter("GSA Properties", "Prob", "Sections and Prop2Ds to add/set in model" + System.Environment.NewLine +
                 "Properties already added to Elements or Members" + System.Environment.NewLine + "will automatically be added with Geometry input", GH_ParamAccess.list);
-            pManager.AddGenericParameter("GSA Geometry", "Geo", "Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("GSA Geometry in [" + unitAbbreviation + "]", "Geo", "Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
             pManager.AddGenericParameter("GSA Load", "Load", "Loads to add to the model" + System.Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
             for (int i = 0; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
@@ -380,7 +381,7 @@ namespace GhSA.Components
                 OutModel = new GsaModel();
 
             // Assemble model
-            Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces);
+            Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces, lengthUnit);
             
             #region meshing
             // Create elements from members

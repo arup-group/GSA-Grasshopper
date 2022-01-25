@@ -8,6 +8,8 @@ using GhSA.Parameters;
 using System.Threading;
 using System.Collections.Concurrent;
 using Grasshopper.Kernel.Parameters;
+using UnitsNet;
+using UnitsNet.Units;
 
 namespace GhSA.Util.Gsa.ToGSA
 {
@@ -142,7 +144,8 @@ namespace GhSA.Util.Gsa.ToGSA
         /// <param name="member1Ds">1D Members</param>
         /// <param name="nodes">Nodes</param>
         /// <returns></returns>
-        public static Model AssembleModel(List<GsaMember3d> member3Ds = null, List<GsaMember2d> member2Ds = null, List<GsaMember1d> member1Ds = null, List<GsaNode> nodes = null)
+        public static Model AssembleModel(List<GsaMember3d> member3Ds = null, List<GsaMember2d> member2Ds = null, List<GsaMember1d> member1Ds = null, 
+            List<GsaNode> nodes = null, LengthUnit lengthUnit = LengthUnit.Meter)
         {
             // new model to set members in
             Model gsa = new Model();
@@ -150,7 +153,9 @@ namespace GhSA.Util.Gsa.ToGSA
             // list of topology nodes
             List<Node> gsanodes = new List<Node>();
             if (nodes != null)
-                gsanodes = nodes.ConvertAll(x => x.API_Node);
+            {
+                gsanodes = nodes.ConvertAll(x => x.GetApiNodeToUnit(lengthUnit));
+            }
 
             // counter for creating nodes
             int id = 1;
@@ -207,6 +212,7 @@ namespace GhSA.Util.Gsa.ToGSA
             List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
             List<GsaSection> sections, List<GsaProp2d> prop2Ds, 
             List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
+            LengthUnit lengthUnit = LengthUnit.Meter,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null
             )
@@ -229,7 +235,7 @@ namespace GhSA.Util.Gsa.ToGSA
             Dictionary<int, Axis> apiaxes = gsaAxes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             // Set / add nodes to dictionary
-            Nodes.ConvertNode(nodes, ref apinodes, ref apiaxes, workerInstance, ReportProgress);
+            Nodes.ConvertNode(nodes, ref apinodes, ref apiaxes, lengthUnit, workerInstance, ReportProgress);
             #endregion
 
             #region Properties
