@@ -435,6 +435,8 @@ namespace GhSA.Components
             return base.Read(reader);
         }
 
+        #endregion
+        #region IGH_VariableParameterComponent null implementation
         bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
         {
             return false;
@@ -451,8 +453,6 @@ namespace GhSA.Components
         {
             return false;
         }
-        #endregion
-        #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
             if (_mode == FoldMode.ElasticIsotropic)

@@ -14,13 +14,14 @@ using System.Resources;
 using System.Linq;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel.Data;
+using UnitsNet;
 
 namespace GhSA.Components
 {
     /// <summary>
     /// Component to assemble and analyse a GSA model
     /// </summary>
-    public class GH_Analyse : GH_Component
+    public class GH_Analyse : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
@@ -40,9 +41,36 @@ namespace GhSA.Components
         //This region overrides the typical component layout
         public override void CreateAttributes()
         {
-            m_attributes = new UI.CheckBoxComponentUI(this, SetAnalysis, checkboxText, initialCheckState, "Settings");
-        }
+            if (first)
+            {
+                dropdownitems = new List<List<string>>();
+                selecteditems = new List<string>();
 
+                // length
+                //dropdownitems.Add(Enum.GetNames(typeof(UnitsNet.Units.LengthUnit)).ToList());
+                dropdownitems.Add(Units.FilteredLengthUnits);
+                selecteditems.Add(lengthUnit.ToString());
+
+                IQuantity quantity = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                first = false;
+            }
+            m_attributes = new UI.MultiDropDownCheckBoxesComponentUI(this, SetSelected, dropdownitems, selecteditems, SetAnalysis, initialCheckState, checkboxText, spacerDescriptions);
+        }
+        public void SetSelected(int i, int j)
+        {
+            // change selected item
+            selecteditems[i] = dropdownitems[i][j];
+
+            lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[i]);
+
+            // update name of inputs (to display unit on sliders)
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
         List<string> checkboxText = new List<string>() { "Analyse task(s)", "ElemsFromMems" };
         List<bool> initialCheckState = new List<bool>() { true, true };
         bool Analysis = true;
@@ -53,17 +81,43 @@ namespace GhSA.Components
             Analysis = value[0];
             ReMesh = value[1];
         }
+        private void UpdateUIFromSelectedItems()
+        {
+            lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[0]);
+
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+        // list of lists with all dropdown lists conctent
+        List<List<string>> dropdownitems;
+        // list of selected items
+        List<string> selecteditems;
+        // list of descriptions 
+        List<string> spacerDescriptions = new List<string>(new string[]
+        {
+            "Unit",
+            "Settings"
+        });
+        private bool first = true;
+        private UnitsNet.Units.LengthUnit lengthUnit = Units.LengthUnitGeometry;
+        string unitAbbreviation;
         #endregion
 
         #region input and output
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            IQuantity length = new Length(0, lengthUnit);
+            unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
             pManager.AddGenericParameter("GSA Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
                 "If you input more than one model they will be merged" + System.Environment.NewLine + "with first model in list taking priority for IDs", GH_ParamAccess.list);
             pManager.AddGenericParameter("GSA Properties", "Prob", "Sections and Prop2Ds to add/set in model" + System.Environment.NewLine +
                 "Properties already added to Elements or Members" + System.Environment.NewLine + "will automatically be added with Geometry input", GH_ParamAccess.list);
-            pManager.AddGenericParameter("GSA Geometry", "Geo", "Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("GSA Geometry in [" + unitAbbreviation + "]", "Geo", "Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
             pManager.AddGenericParameter("GSA Load", "Load", "Loads to add to the model" + System.Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
             for (int i = 0; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
@@ -330,7 +384,7 @@ namespace GhSA.Components
                 OutModel = new GsaModel();
 
             // Assemble model
-            Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces);
+            Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces, lengthUnit);
             
             #region meshing
             // Create elements from members
@@ -374,6 +428,8 @@ namespace GhSA.Components
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
+            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
+
             writer.SetBoolean("Analyse", Analysis);
             writer.SetBoolean("ReMesh", ReMesh);
             return base.Write(writer);
@@ -384,20 +440,84 @@ namespace GhSA.Components
             {
                 Analysis = reader.GetBoolean("Analyse");
                 ReMesh = reader.GetBoolean("ReMesh");
+                try // if users has an old versopm of this component then dropdown menu wont read
+                {
+                    Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+                }
+                catch (Exception) // we create the dropdown menu with our chosen default
+                {
+                    dropdownitems = new List<List<string>>();
+                    selecteditems = new List<string>();
+
+                    // set length to meters as this was the only option for old components
+                    lengthUnit = UnitsNet.Units.LengthUnit.Meter;
+
+                    dropdownitems.Add(Units.FilteredLengthUnits);
+                    selecteditems.Add(lengthUnit.ToString());
+
+                    IQuantity quantity = new Length(0, lengthUnit);
+                    unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                    first = false;
+                }
             }
             catch (Exception)
             {
                 Analysis = true;
                 ReMesh = true;
+
+                dropdownitems = new List<List<string>>();
+                selecteditems = new List<string>();
+
+                // set length to meters as this was the only option for old components
+                lengthUnit = UnitsNet.Units.LengthUnit.Meter;
+
+                dropdownitems.Add(Units.FilteredLengthUnits);
+                selecteditems.Add(lengthUnit.ToString());
+
+                IQuantity quantity = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                first = false;
             }
 
             initialCheckState = new List<bool>();
             initialCheckState.Add(Analysis);
             initialCheckState.Add(ReMesh);
-            this.CreateAttributes();
+
+            UpdateUIFromSelectedItems();
+
+            first = false;
+
             return base.Read(reader);
         }
         #endregion
+
+        #region IGH_VariableParameterComponent null implementation
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+            return null;
+        }
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            IQuantity length = new Length(0, lengthUnit);
+            unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
+            Params.Input[2].Name = "GSA Geometry in [" + unitAbbreviation + "]";
+        }
+        #endregion 
     }
 }
 

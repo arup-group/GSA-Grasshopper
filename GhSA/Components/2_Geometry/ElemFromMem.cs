@@ -20,7 +20,7 @@ namespace GhSA.Components
     /// <summary>
     /// Component to edit a Node
     /// </summary>
-    public class ElemFromMem : GH_Component, IGH_PreviewObject
+    public class ElemFromMem : GH_Component, IGH_PreviewObject, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
@@ -366,6 +366,37 @@ namespace GhSA.Components
             return base.Read(reader);
         }
         #endregion
+
+        #region IGH_VariableParameterComponent null implementation
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+            return null;
+        }
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            IQuantity length = new Length(0, lengthUnit);
+            unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
+            int i = 0;
+            Params.Input[i++].Name = "Nodes [" + unitAbbreviation + "]";
+            Params.Input[i++].Name = "1D Members [" + unitAbbreviation + "]";
+            Params.Input[i++].Name = "2D Members [" + unitAbbreviation + "]";
+            Params.Input[i++].Name = "3D Members [" + unitAbbreviation + "]";
+
+        }
+        #endregion  
     }
 }
 

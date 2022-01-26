@@ -184,7 +184,7 @@ namespace GhSA.Util.Gsa.ToGSA
         /// This method checks if the testNode is within tolerance of an existing node and returns the 
         /// node ID if found. Will return 0 if no existing node is found within the tolerance.
         /// </summary>
-        /// <param name="existNodes">Dictionary of existing nodes to check against</param>
+        /// <param name="existNodes">Dictionary of existing nodes to check against [in meters]</param>
         /// <param name="testPoint">Point to test for</param>
         /// /// <param name="unit">UnitsNet Length unit of testPoint</param>
         /// <returns></returns>
@@ -197,7 +197,7 @@ namespace GhSA.Util.Gsa.ToGSA
                     new Length(testPoint.Z, unit).Meters
                     );
 
-            double tolerance = Units.Tolerance.Meters;
+            double tolerance = Units.Tolerance.Meters; // this method assumes everything is in meters
             foreach (int key in existNodes.Keys)
             {
                 if (existNodes.TryGetValue(key, out Node gsaNode))

@@ -165,7 +165,7 @@ namespace GhSA.Util.GH
                     m_crv = new PolyCurve();
 
                     if (tolerance < 0)
-                        tolerance = GhSA.Units.Tolerance;
+                        tolerance = Units.Tolerance.As(Units.LengthUnitGeometry); // use the user set unit
 
                     crv = crv.ToPolyline(tolerance, 2, 0, 0);
                     if (!crv.IsValid)
@@ -202,7 +202,7 @@ namespace GhSA.Util.GH
         public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertMem2dCrv(Curve crv, double tolerance = -1)
         {
             if (tolerance < 0)
-                tolerance = GhSA.Units.Tolerance;
+                tolerance = Units.Tolerance.As(Units.LengthUnitGeometry); // use the user set unit
 
             PolyCurve m_crv = crv.ToArcsAndLines(tolerance, 2, 0, 0);
             Curve[] segments;
@@ -241,85 +241,6 @@ namespace GhSA.Util.GH
         public static Brep ConvertBrep(Brep brep)
         {
             return new Brep();
-        }
-        
-        public static Tuple<PolyCurve, List<Point3d>, List<string>> _notUsedConvertMem2dCrv(Curve crv, double tolerance = -1)
-        {
-            PolyCurve m_crv = null;
-            List<string> crv_type = new List<string>();
-            List<Point3d> m_topo = new List<Point3d>();
-
-            if (crv.Degree > 1)
-            {
-                if (!crv.IsArc() | crv.IsClosed)
-                {
-                    if (tolerance < 0)
-                        tolerance = GhSA.Units.Tolerance;
-
-                    m_crv = crv.ToArcsAndLines(tolerance, 2, 0, 0);
-                    Curve[] segments;
-                    if (m_crv != null)
-                        segments = m_crv.DuplicateSegments();
-                    else
-                        segments = new Curve[] { crv };
-
-                    for (int i = 0; i < segments.Length; i++)
-                    {
-                        m_topo.Add(segments[i].PointAtStart);
-                        crv_type.Add("");
-                        if (segments[i].IsArc())
-                        {
-                            m_topo.Add(segments[i].PointAtNormalizedLength(0.5));
-                            crv_type.Add("A");
-                        }
-                    }
-                    m_topo.Add(segments[segments.Length - 1].PointAtEnd);
-                    crv_type.Add("");
-                }
-                else
-                {
-                    crv_type.Add("");
-                    crv_type.Add("A");
-                    crv_type.Add("");
-
-                    m_topo.Add(crv.PointAtStart);
-                    m_topo.Add(crv.PointAtNormalizedLength(0.5));
-                    m_topo.Add(crv.PointAtEnd);
-
-                    m_crv = new PolyCurve();
-                    m_crv.Append(crv);
-                }
-            }
-            else if (crv.Degree == 1)
-            {
-                if (crv.SpanCount > 1)
-                {
-                    m_crv = new PolyCurve();
-                    Curve[] segments = crv.DuplicateSegments();
-                    for (int i = 0; i < segments.Length; i++)
-                    {
-                        crv_type.Add("");
-                        m_topo.Add(segments[i].PointAtStart);
-
-                        m_crv.Append(segments[i]);
-                    }
-                    crv_type.Add("");
-                    m_topo.Add(segments[segments.Length - 1].PointAtEnd);
-                }
-                else
-                {
-                    crv_type.Add("");
-                    crv_type.Add("");
-
-                    m_topo.Add(crv.PointAtStart);
-                    m_topo.Add(crv.PointAtEnd);
-
-                    m_crv = new PolyCurve();
-                    m_crv.Append(crv);
-                }
-            }
-
-            return new Tuple<PolyCurve, List<Point3d>, List<string>>(m_crv, m_topo, crv_type);
         }
 
         /// <summary>
@@ -527,7 +448,7 @@ namespace GhSA.Util.GH
         public static Brep BuildBrep(PolyCurve externalEdge, List<PolyCurve> voidCurves = null, double tolerance = -1)
         {
             if (tolerance < 0)
-                tolerance = GhSA.Units.Tolerance * 0.5;
+                tolerance = Units.Tolerance.As(Units.LengthUnitGeometry) * 0.5; // use the user set units
 
             Rhino.Collections.CurveList curves = new Rhino.Collections.CurveList
             {
@@ -873,7 +794,7 @@ namespace GhSA.Util.GH
             }
 
             // assemble temp model
-            Model model = Util.Gsa.ToGSA.Assemble.AssembleModel(null, mem2ds, mem1ds, nodes);
+            Model model = Util.Gsa.ToGSA.Assemble.AssembleModel(Units.LengthUnitGeometry, null, mem2ds, mem1ds, nodes);
 
             // call the meshing algorithm
             model.CreateElementsFromMembers();
@@ -884,7 +805,8 @@ namespace GhSA.Util.GH
                     new ConcurrentDictionary<int, Element>(model.Elements()),
                     new ConcurrentDictionary<int, Node>(model.Nodes()),
                     new ConcurrentDictionary<int, Section>(model.Sections()),
-                    new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds()));
+                    new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds()),
+                    Units.LengthUnitGeometry);
 
             List<Parameters.GsaElement2dGoo> elem2dgoo = elementTuple.Item2;
             Mesh mesh = elem2dgoo[0].Value.Mesh;
@@ -900,7 +822,8 @@ namespace GhSA.Util.GH
                 vertices.SetVertex(i, mapVertex);
             }
 
-            mesh.Faces.ConvertNonPlanarQuadsToTriangles(GhSA.Units.Tolerance, Rhino.RhinoMath.DefaultAngleTolerance, 0);
+            mesh.Faces.ConvertNonPlanarQuadsToTriangles(
+                Units.Tolerance.As(Units.LengthUnitGeometry), Rhino.RhinoMath.DefaultAngleTolerance, 0);
 
             return mesh;
         }
@@ -956,7 +879,7 @@ namespace GhSA.Util.GH
             // triangulate all faces
             m.Faces.ConvertQuadsToTriangles();
 
-            m.CollapseFacesByEdgeLength(false, GhSA.Units.Tolerance);
+            m.CollapseFacesByEdgeLength(false, Units.Tolerance.As(Units.LengthUnitGeometry));
 
             return m;
         }
