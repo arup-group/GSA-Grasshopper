@@ -15,20 +15,20 @@ using Grasshopper.Documentation;
 
 namespace GhSA.Components
 {
-    public class EditGsaTitles : GH_Component
+    public class EditGsaTitles_OBSOLETE : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("72a2666a-aa89-47a5-a922-5e63fc9cd966");
-        public EditGsaTitles()
+        public EditGsaTitles_OBSOLETE()
           : base("Edit GSA Titles", "Title", "Set GSA Titles for this document",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditTitle;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Titles;
         #endregion
 
         #region Custom UI

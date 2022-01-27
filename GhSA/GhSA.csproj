@@ -134,7 +134,7 @@
     <Compile Include="Components\5_Results\GlobalResult.cs" />
     <Compile Include="Components\5_Results\Elem1dResults.cs" />
     <Compile Include="Components\5_Results\NodeResults.cs" />
-    <Compile Include="Components\0_Model\EditTitles.cs" />
+    <Compile Include="Components\GraveyardComp\EditTitles_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\GetLoads.cs" />
     <Compile Include="Components\0_Model\GetProperties.cs" />
     <Compile Include="Components\1_Properties\CreateOffset.cs" />

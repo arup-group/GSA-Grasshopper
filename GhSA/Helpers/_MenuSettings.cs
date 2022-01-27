@@ -65,13 +65,13 @@ namespace GhSA.UI.Menu
             ToolStripMenuItem oasysMenu = new ToolStripMenuItem("Oasys");
 
             // add units
-            oasysMenu.DropDown.Items.Add("GSA Units", Properties.Resources.EditUnits, (s, a) =>
+            oasysMenu.DropDown.Items.Add("GSA Units", Properties.Resources.Units, (s, a) =>
             {
                 //GhSA.UI.UnitSettingsBox unitBox = new UI.UnitSettingsBox();
                 //unitBox.Show();
             });
             // add info
-            oasysMenu.DropDown.Items.Add("GSA Info", Properties.Resources.GsaVersion, (s, a) =>
+            oasysMenu.DropDown.Items.Add("GSA Info", Properties.Resources.GSAInfo, (s, a) =>
             {
                 GhSA.UI.AboutGsaBox aboutBox = new UI.AboutGsaBox();
                 aboutBox.Show();
