@@ -14,6 +14,7 @@ using GhSA.Parameters;
 using Grasshopper.Kernel.Data;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using UnitsNet;
 
 namespace GhSA.Components
 {
@@ -40,6 +41,60 @@ namespace GhSA.Components
 
         #region Custom UI
         //This region overrides the typical component layout
+        public override void CreateAttributes()
+        {
+            if (first)
+            {
+                dropdownitems = new List<List<string>>();
+                selecteditems = new List<string>();
+
+                // length
+                //dropdownitems.Add(Enum.GetNames(typeof(UnitsNet.Units.LengthUnit)).ToList());
+                dropdownitems.Add(Units.FilteredLengthUnits);
+                selecteditems.Add(lengthUnit.ToString());
+
+                IQuantity quantity = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                first = false;
+            }
+            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
+        }
+        public void SetSelected(int i, int j)
+        {
+            // change selected item
+            selecteditems[i] = dropdownitems[i][j];
+
+            lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[i]);
+
+            // update name of inputs (to display unit on sliders)
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+        private void UpdateUIFromSelectedItems()
+        {
+            lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[0]);
+
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+        // list of lists with all dropdown lists conctent
+        List<List<string>> dropdownitems;
+        // list of selected items
+        List<string> selecteditems;
+        // list of descriptions 
+        List<string> spacerDescriptions = new List<string>(new string[]
+        {
+            "Unit"
+        });
+        private bool first = true;
+        private UnitsNet.Units.LengthUnit lengthUnit = Units.LengthUnitGeometry;
+        string unitAbbreviation;
         #region menu override
         private enum FoldMode
         {
@@ -84,41 +139,7 @@ namespace GhSA.Components
         }
 
         #endregion
-        #region (de)serialization
-        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-        {
-            writer.SetInt32("Mode", (int)_mode);
-            return base.Write(writer);
-        }
-        public override bool Read(GH_IO.Serialization.GH_IReader reader)
-        {
-            _mode = (FoldMode)reader.GetInt32("Mode");
-            return base.Read(reader);
-        }
-
-        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-        {
-            return false;
-        }
-        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-        {
-            return false;
-        }
-        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-        {
-            return null;
-        }
-        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-        {
-            return false;
-        }
-
-        void IGH_VariableParameterComponent.VariableParameterMaintenance()
-        {
-
-        }
-
-        #endregion
+        
         #endregion
 
         #region Input and output
@@ -148,16 +169,19 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Nodes", "No", "Nodes from GSA Model", GH_ParamAccess.list);
+            IQuantity length = new Length(0, lengthUnit);
+            unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
+            pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]", "No", "Nodes from GSA Model", GH_ParamAccess.list);
             pManager.HideParameter(0);
-            pManager.AddGenericParameter("1D Elements", "E1D", "1D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("2D Elements", "E2D", "2D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("3D Elements", "E3D", "3D Elements (Analysis Layer) from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("1D Elements [" + unitAbbreviation + "]", "E1D", "1D Elements (Analysis Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
+            pManager.AddGenericParameter("2D Elements [" + unitAbbreviation + "]", "E2D", "2D Elements (Analysis Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
+            pManager.AddGenericParameter("3D Elements [" + unitAbbreviation + "]", "E3D", "3D Elements (Analysis Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
             pManager.HideParameter(2);
             //pManager.HideParameter(3);
-            pManager.AddGenericParameter("1D Members", "M1D", "1D Members (Design Layer) from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("2D Members", "M2D", "2D Members (Design Layer) from GSA Model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("3D Members", "M3D", "3D Members (Design Layer) from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]", "M1D", "1D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
+            pManager.AddGenericParameter("2D Members [" + unitAbbreviation + "]", "M2D", "2D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
+            pManager.AddGenericParameter("3D Members [" + unitAbbreviation + "]", "M3D", "3D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
         }
         #endregion
 
@@ -200,7 +224,7 @@ namespace GhSA.Components
                         out_nDict = (nodeList.ToLower() == "all") ? nDict : new ConcurrentDictionary<int, Node>(model.Nodes(nodeList));
 
                         // create nodes
-                        results.Nodes = Util.Gsa.FromGSA.GetNodes(out_nDict, axDict);
+                        results.Nodes = Util.Gsa.FromGSA.GetNodes(out_nDict, lengthUnit, axDict);
                         results.displaySupports = results.Nodes.AsParallel().Where(n => n.Value.isSupport).ToList();
                     }
 
@@ -210,7 +234,7 @@ namespace GhSA.Components
 
                         // create elements
                         Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> elementTuple
-                            = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict);
+                            = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, lengthUnit);
 
                         results.Elem1ds = elementTuple.Item1;
                         results.Elem2ds = elementTuple.Item2;
@@ -223,7 +247,7 @@ namespace GhSA.Components
 
                         // create members
                         Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>> memberTuple
-                            = Util.Gsa.FromGSA.GetMembers(mDict, nDict, sDict, pDict);
+                            = Util.Gsa.FromGSA.GetMembers(mDict, nDict, lengthUnit, sDict, pDict);
 
                         results.Mem1ds = memberTuple.Item1;
                         results.Mem2ds = memberTuple.Item2;
@@ -453,6 +477,78 @@ namespace GhSA.Components
                 }
             }
         }
+        #region (de)serialization
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            writer.SetInt32("Mode", (int)_mode);
+            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
+            return base.Write(writer);
+        }
+        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        {
+            _mode = (FoldMode)reader.GetInt32("Mode");
+
+            try // if users has an old versopm of this component then dropdown menu wont read
+            {
+                Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+            }
+            catch (Exception) // we create the dropdown menu with our chosen default
+            {
+                dropdownitems = new List<List<string>>();
+                selecteditems = new List<string>();
+
+                // set length to meters as this was the only option for old components
+                lengthUnit = UnitsNet.Units.LengthUnit.Meter;
+
+                dropdownitems.Add(Units.FilteredLengthUnits);
+                selecteditems.Add(lengthUnit.ToString());
+
+                IQuantity quantity = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                first = false;
+            }
+
+            UpdateUIFromSelectedItems();
+
+            first = false;
+
+            return base.Read(reader);
+        }
+
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+            return null;
+        }
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            IQuantity length = new Length(0, lengthUnit);
+            unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
+            int i = 0;
+            Params.Output[i++].Name = "Nodes [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "1D Elements [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "2D Elements [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "3D Elements [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "1D Members [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "2D Members [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "3D Members [" + unitAbbreviation + "]";
+        }
+
+        #endregion
     }
 }
 
