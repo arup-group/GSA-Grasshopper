@@ -63,16 +63,6 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap _2dElemsFromBrep {
-            get {
-                object obj = ResourceManager.GetObject("_2dElemsFromBrep", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap Analyse {
             get {
                 object obj = ResourceManager.GetObject("Analyse", resourceCulture);
@@ -83,9 +73,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap AnalyseAsync {
+        public static System.Drawing.Bitmap AnalysisTaskInfo {
             get {
-                object obj = ResourceManager.GetObject("AnalyseAsync", resourceCulture);
+                object obj = ResourceManager.GetObject("AnalysisTaskInfo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +83,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap AnalysisTask {
+        public static System.Drawing.Bitmap AreaLoad {
             get {
-                object obj = ResourceManager.GetObject("AnalysisTask", resourceCulture);
+                object obj = ResourceManager.GetObject("AreaLoad", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,6 +103,26 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Bool6Param {
+            get {
+                object obj = ResourceManager.GetObject("Bool6Param", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CreateAnalysisTask {
+            get {
+                object obj = ResourceManager.GetObject("CreateAnalysisTask", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap CreateBool6 {
             get {
                 object obj = ResourceManager.GetObject("CreateBool6", resourceCulture);
@@ -123,9 +133,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CreateElem1D {
+        public static System.Drawing.Bitmap CreateElem1d {
             get {
-                object obj = ResourceManager.GetObject("CreateElem1D", resourceCulture);
+                object obj = ResourceManager.GetObject("CreateElem1d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -133,9 +143,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CreateElem2D {
+        public static System.Drawing.Bitmap CreateElem2d {
             get {
-                object obj = ResourceManager.GetObject("CreateElem2D", resourceCulture);
+                object obj = ResourceManager.GetObject("CreateElem2d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,9 +153,29 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CreateElementsFromMembers {
+        public static System.Drawing.Bitmap CreateElem3d {
             get {
-                object obj = ResourceManager.GetObject("CreateElementsFromMembers", resourceCulture);
+                object obj = ResourceManager.GetObject("CreateElem3d", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CreateElemsFromBreps {
+            get {
+                object obj = ResourceManager.GetObject("CreateElemsFromBreps", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CreateElemsFromMems {
+            get {
+                object obj = ResourceManager.GetObject("CreateElemsFromMems", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -163,9 +193,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CreateMem1D {
+        public static System.Drawing.Bitmap CreateMem1d {
             get {
-                object obj = ResourceManager.GetObject("CreateMem1D", resourceCulture);
+                object obj = ResourceManager.GetObject("CreateMem1d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -173,9 +203,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CreateMem2D {
+        public static System.Drawing.Bitmap CreateMem2d {
             get {
-                object obj = ResourceManager.GetObject("CreateMem2D", resourceCulture);
+                object obj = ResourceManager.GetObject("CreateMem2d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -183,9 +213,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CreateMem3D {
+        public static System.Drawing.Bitmap CreateMem3d {
             get {
-                object obj = ResourceManager.GetObject("CreateMem3D", resourceCulture);
+                object obj = ResourceManager.GetObject("CreateMem3d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -223,9 +253,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CreateProp2D {
+        public static System.Drawing.Bitmap CreateProp2d {
             get {
-                object obj = ResourceManager.GetObject("CreateProp2D", resourceCulture);
+                object obj = ResourceManager.GetObject("CreateProp2d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -273,9 +303,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap EditElem1D {
+        public static System.Drawing.Bitmap EditElem1d {
             get {
-                object obj = ResourceManager.GetObject("EditElem1D", resourceCulture);
+                object obj = ResourceManager.GetObject("EditElem1d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -283,9 +313,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap EditElem2D {
+        public static System.Drawing.Bitmap EditElem2d {
             get {
-                object obj = ResourceManager.GetObject("EditElem2D", resourceCulture);
+                object obj = ResourceManager.GetObject("EditElem2d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -293,9 +323,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap EditElem3D {
+        public static System.Drawing.Bitmap EditElem3d {
             get {
-                object obj = ResourceManager.GetObject("EditElem3D", resourceCulture);
+                object obj = ResourceManager.GetObject("EditElem3d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -313,9 +343,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap EditMem1D {
+        public static System.Drawing.Bitmap EditMem1d {
             get {
-                object obj = ResourceManager.GetObject("EditMem1D", resourceCulture);
+                object obj = ResourceManager.GetObject("EditMem1d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -323,9 +353,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap EditMem2D {
+        public static System.Drawing.Bitmap EditMem2d {
             get {
-                object obj = ResourceManager.GetObject("EditMem2D", resourceCulture);
+                object obj = ResourceManager.GetObject("EditMem2d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -333,9 +363,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap EditMem3D {
+        public static System.Drawing.Bitmap EditMem3d {
             get {
-                object obj = ResourceManager.GetObject("EditMem3D", resourceCulture);
+                object obj = ResourceManager.GetObject("EditMem3d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -363,9 +393,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap EditProp2D {
+        public static System.Drawing.Bitmap EditProp2d {
             get {
-                object obj = ResourceManager.GetObject("EditProp2D", resourceCulture);
+                object obj = ResourceManager.GetObject("EditProp2d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -393,9 +423,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap EditTitle {
+        public static System.Drawing.Bitmap Elem1dParam {
             get {
-                object obj = ResourceManager.GetObject("EditTitle", resourceCulture);
+                object obj = ResourceManager.GetObject("Elem1dParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -403,9 +433,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap EditUnits {
+        public static System.Drawing.Bitmap Elem2dParam {
             get {
-                object obj = ResourceManager.GetObject("EditUnits", resourceCulture);
+                object obj = ResourceManager.GetObject("Elem2dParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -413,29 +443,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Elem1dResults {
+        public static System.Drawing.Bitmap Elem3dParam {
             get {
-                object obj = ResourceManager.GetObject("Elem1dResults", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Elem2dResults {
-            get {
-                object obj = ResourceManager.GetObject("Elem2dResults", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Elem3dResults {
-            get {
-                object obj = ResourceManager.GetObject("Elem3dResults", resourceCulture);
+                object obj = ResourceManager.GetObject("Elem3dParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -453,9 +463,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GetAnalysis {
+        public static System.Drawing.Bitmap GetAnalysisTask {
             get {
-                object obj = ResourceManager.GetObject("GetAnalysis", resourceCulture);
+                object obj = ResourceManager.GetObject("GetAnalysisTask", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -473,29 +483,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GetLoads {
+        public static System.Drawing.Bitmap GetSection {
             get {
-                object obj = ResourceManager.GetObject("GetLoads", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap GetProperties {
-            get {
-                object obj = ResourceManager.GetObject("GetProperties", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap GlobalResults {
-            get {
-                object obj = ResourceManager.GetObject("GlobalResults", resourceCulture);
+                object obj = ResourceManager.GetObject("GetSection", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -513,29 +503,19 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GridAreaLoad {
-            get {
-                object obj = ResourceManager.GetObject("GridAreaLoad", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap GridLineLoad {
-            get {
-                object obj = ResourceManager.GetObject("GridLineLoad", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap GridPlane {
             get {
                 object obj = ResourceManager.GetObject("GridPlane", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GridPlaneParam {
+            get {
+                object obj = ResourceManager.GetObject("GridPlaneParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -553,16 +533,6 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GridPointLoad {
-            get {
-                object obj = ResourceManager.GetObject("GridPointLoad", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap GridSurface {
             get {
                 object obj = ResourceManager.GetObject("GridSurface", resourceCulture);
@@ -573,9 +543,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaBool6 {
+        public static System.Drawing.Bitmap GSAInfo {
             get {
-                object obj = ResourceManager.GetObject("GsaBool6", resourceCulture);
+                object obj = ResourceManager.GetObject("GSAInfo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -583,9 +553,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaElem1D {
+        public static System.Drawing.Bitmap GSALogo {
             get {
-                object obj = ResourceManager.GetObject("GsaElem1D", resourceCulture);
+                object obj = ResourceManager.GetObject("GSALogo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -593,9 +563,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaElement2D {
+        public static System.Drawing.Bitmap GSALogo128 {
             get {
-                object obj = ResourceManager.GetObject("GsaElement2D", resourceCulture);
+                object obj = ResourceManager.GetObject("GSALogo128", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -603,9 +573,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaElement3D {
+        public static System.Drawing.Bitmap LineLoad {
             get {
-                object obj = ResourceManager.GetObject("GsaElement3D", resourceCulture);
+                object obj = ResourceManager.GetObject("LineLoad", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -613,9 +583,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaGhLogo {
+        public static System.Drawing.Bitmap LoadInfo {
             get {
-                object obj = ResourceManager.GetObject("GsaGhLogo", resourceCulture);
+                object obj = ResourceManager.GetObject("LoadInfo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -623,9 +593,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaGridPlane {
+        public static System.Drawing.Bitmap LoadParam {
             get {
-                object obj = ResourceManager.GetObject("GsaGridPlane", resourceCulture);
+                object obj = ResourceManager.GetObject("LoadParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -633,9 +603,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaLoad {
+        public static System.Drawing.Bitmap MaterialParam {
             get {
-                object obj = ResourceManager.GetObject("GsaLoad", resourceCulture);
+                object obj = ResourceManager.GetObject("MaterialParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -643,9 +613,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaMaterial {
+        public static System.Drawing.Bitmap Mem1dParam {
             get {
-                object obj = ResourceManager.GetObject("GsaMaterial", resourceCulture);
+                object obj = ResourceManager.GetObject("Mem1dParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -653,9 +623,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaMem1D {
+        public static System.Drawing.Bitmap Mem2dParam {
             get {
-                object obj = ResourceManager.GetObject("GsaMem1D", resourceCulture);
+                object obj = ResourceManager.GetObject("Mem2dParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -663,9 +633,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaMem2D {
+        public static System.Drawing.Bitmap Mem3dParam {
             get {
-                object obj = ResourceManager.GetObject("GsaMem2D", resourceCulture);
+                object obj = ResourceManager.GetObject("Mem3dParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -673,89 +643,9 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap GsaMem3D {
+        public static System.Drawing.Bitmap ModelParam {
             get {
-                object obj = ResourceManager.GetObject("GsaMem3D", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap GsaModel {
-            get {
-                object obj = ResourceManager.GetObject("GsaModel", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap GsaNode {
-            get {
-                object obj = ResourceManager.GetObject("GsaNode", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap GsaOffset {
-            get {
-                object obj = ResourceManager.GetObject("GsaOffset", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap GsaProp2D {
-            get {
-                object obj = ResourceManager.GetObject("GsaProp2D", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap GsaSection {
-            get {
-                object obj = ResourceManager.GetObject("GsaSection", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap GsaSpring {
-            get {
-                object obj = ResourceManager.GetObject("GsaSpring", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap GsaVersion {
-            get {
-                object obj = ResourceManager.GetObject("GsaVersion", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap LoadProp {
-            get {
-                object obj = ResourceManager.GetObject("LoadProp", resourceCulture);
+                object obj = ResourceManager.GetObject("ModelParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -773,9 +663,19 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap NodeResults {
+        public static System.Drawing.Bitmap NodeParam {
             get {
-                object obj = ResourceManager.GetObject("NodeResults", resourceCulture);
+                object obj = ResourceManager.GetObject("NodeParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap OffsetParam {
+            get {
+                object obj = ResourceManager.GetObject("OffsetParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -793,6 +693,76 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap path1220 {
+            get {
+                object obj = ResourceManager.GetObject("path1220", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap PointLoad {
+            get {
+                object obj = ResourceManager.GetObject("PointLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Prop2dParam {
+            get {
+                object obj = ResourceManager.GetObject("Prop2dParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Result0D {
+            get {
+                object obj = ResourceManager.GetObject("Result0D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Result1D {
+            get {
+                object obj = ResourceManager.GetObject("Result1D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Result2D {
+            get {
+                object obj = ResourceManager.GetObject("Result2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Result3D {
+            get {
+                object obj = ResourceManager.GetObject("Result3D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap SaveModel {
             get {
                 object obj = ResourceManager.GetObject("SaveModel", resourceCulture);
@@ -803,9 +773,49 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap SectionParam {
+            get {
+                object obj = ResourceManager.GetObject("SectionParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap SectionProperties {
             get {
                 object obj = ResourceManager.GetObject("SectionProperties", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap SpringParam {
+            get {
+                object obj = ResourceManager.GetObject("SpringParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Titles {
+            get {
+                object obj = ResourceManager.GetObject("Titles", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Units {
+            get {
+                object obj = ResourceManager.GetObject("Units", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

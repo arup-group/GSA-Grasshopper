@@ -29,6 +29,7 @@ namespace GhSA.UI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutGsaBox));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.logoPictureBox = new System.Windows.Forms.PictureBox();
             this.labelProductName = new System.Windows.Forms.Label();
@@ -77,7 +78,7 @@ namespace GhSA.UI
             // logoPictureBox
             // 
             this.logoPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.logoPictureBox.Image = global::GhSA.Properties.Resources.GsaGhLogo;
+            this.logoPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("logoPictureBox.Image")));
             this.logoPictureBox.Location = new System.Drawing.Point(3, 3);
             this.logoPictureBox.Name = "logoPictureBox";
             this.tableLayoutPanel.SetRowSpan(this.logoPictureBox, 5);
@@ -95,7 +96,7 @@ namespace GhSA.UI
             this.labelProductName.Name = "labelProductName";
             this.labelProductName.Size = new System.Drawing.Size(272, 17);
             this.labelProductName.TabIndex = 19;
-            this.labelProductName.Text = "AdSec Grasshopper Plugin";
+            this.labelProductName.Text = "GSA Grasshopper Plugin";
             this.labelProductName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.labelProductName.Click += new System.EventHandler(this.labelProductName_Click);
             // 
@@ -211,7 +212,7 @@ namespace GhSA.UI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(435, 181);
             this.Controls.Add(this.tableLayoutPanel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutGsaBox";
@@ -219,7 +220,7 @@ namespace GhSA.UI
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "AboutBox1";
+            this.Text = "About GSA";
             this.Load += new System.EventHandler(this.AboutBox_Load);
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();

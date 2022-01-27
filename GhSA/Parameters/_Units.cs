@@ -73,42 +73,83 @@ namespace GhSA
         {
             get
             {
-                if (m_units == null || useRhinoLengthUnit)
+                if (m_units == null || useRhinoLengthGeometryUnit)
                 {
-                    m_length = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
+                    m_length_geometry = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
                 }
                 else
                 {
-                    m_length = m_units.BaseUnits.Length;
+                    m_length_geometry = m_units.BaseUnits.Length;
                 }
-                return m_length;
+                return m_length_geometry;
             }
             set
             {
-                m_length = value;
+                useRhinoLengthGeometryUnit = false;
+                m_length_geometry = value;
                 // update unit system
                 UnitsNet.BaseUnits units = new UnitsNet.BaseUnits(
-                    m_length,
+                    m_length_geometry,
                     m_units.BaseUnits.Mass, m_units.BaseUnits.Time, m_units.BaseUnits.Current, m_units.BaseUnits.Temperature, m_units.BaseUnits.Amount, m_units.BaseUnits.LuminousIntensity);
                 m_units = new UnitsNet.UnitSystem(units);
             }
         }
-        private static LengthUnit m_length;
-        internal static bool useRhinoLengthUnit;
+        public static void UseRhinoLengthUnitGeometry()
+        {
+            useRhinoLengthGeometryUnit = false;
+            m_length_geometry = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
+        }
+        private static LengthUnit m_length_geometry;
+        internal static bool useRhinoLengthGeometryUnit;
 
         public static LengthUnit LengthUnitSection
         {
-            get { return m_length_section; }
-            set { m_length_section = value; }
+            get 
+            {
+                if (useRhinoLengthSectionUnit)
+                {
+                    m_length_section = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
+                }
+                return m_length_section;
+            }
+            set
+            {
+                useRhinoLengthSectionUnit = false;
+                m_length_section = value;
+            }
+        }
+        public static void UseRhinoLengthUnitSection()
+        {
+            useRhinoLengthSectionUnit = false;
+            m_length_section = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
         }
         private static LengthUnit m_length_section;
+        internal static bool useRhinoLengthSectionUnit;
 
         public static LengthUnit LengthUnitResult
         {
-            get { return m_length_result; }
-            set { m_length_result = value; }
+            get
+            {
+                if (useRhinoLengthResultUnit)
+                {
+                    m_length_result = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
+                }
+                return m_length_result;
+            }
+            set 
+            {
+                useRhinoLengthResultUnit = false;
+                m_length_result = value; 
+            }
+        }
+        public static void UseRhinoLengthUnitResult()
+        {
+            useRhinoLengthResultUnit = false;
+            m_length_result = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
         }
         private static LengthUnit m_length_result;
+        internal static bool useRhinoLengthResultUnit;
+
         #endregion
 
         #region force
@@ -370,6 +411,10 @@ namespace GhSA
 
         #endregion
 
+        #region angle
+
+        #endregion
+
         #region unit system
         public static UnitsNet.UnitSystem UnitSystem
         {
@@ -385,19 +430,19 @@ namespace GhSA
             LengthUnit length;
             if (settingsExist)
             {
-                length = m_length;
+                length = m_length_geometry;
             }
             else
             {
                 // get rhino document length unit
-                m_length = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
+                m_length_geometry = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
                 SaveSettings();
             }
             // get SI units
             UnitsNet.UnitSystem si = UnitsNet.UnitSystem.SI;
 
             UnitsNet.BaseUnits units = new UnitsNet.BaseUnits(
-                m_length,
+                m_length_geometry,
                 si.BaseUnits.Mass, si.BaseUnits.Time, si.BaseUnits.Current, si.BaseUnits.Temperature, si.BaseUnits.Amount, si.BaseUnits.LuminousIntensity);
             m_units = new UnitsNet.UnitSystem(units);
 
@@ -405,27 +450,32 @@ namespace GhSA
         internal static void SaveSettings()
         {
             Grasshopper.Instances.Settings.SetValue("GsaLengthUnitGeometry", LengthUnitGeometry.ToString());
-            Grasshopper.Instances.Settings.SetValue("GsaUseRhinoLengthUnit", useRhinoLengthUnit);
+            Grasshopper.Instances.Settings.SetValue("GsaUseRhinoLengthGeometryUnit", useRhinoLengthGeometryUnit);
+
             Grasshopper.Instances.Settings.SetValue("GsaLengthUnitSection", LengthUnitSection.ToString());
+            Grasshopper.Instances.Settings.SetValue("GsaUseRhinoLengthSectionUnit", useRhinoLengthSectionUnit);
+
             Grasshopper.Instances.Settings.SetValue("GsaLengthUnitResult", LengthUnitResult.ToString());
+            Grasshopper.Instances.Settings.SetValue("GsaUseRhinoLengthResultUnit", useRhinoLengthResultUnit);
+
             Grasshopper.Instances.Settings.SetValue("GsaTolerance", Tolerance.As(LengthUnitGeometry));
 
             Grasshopper.Instances.Settings.SetValue("GsaForceUnit", ForceUnit.ToString());
             Grasshopper.Instances.Settings.SetValue("GsaMomentUnit", MomentUnit.ToString());
             Grasshopper.Instances.Settings.SetValue("GsaStressUnit", StressUnit.ToString());
             Grasshopper.Instances.Settings.SetValue("GsaStrainUnit", StrainUnit.ToString());
-            Grasshopper.Instances.Settings.SetValue("GsaAxialStiffnessUnit", AxialStiffnessUnit.ToString());
-            Grasshopper.Instances.Settings.SetValue("GsaCurvatureUnit", CurvatureUnit.ToString());
-            Grasshopper.Instances.Settings.SetValue("GsaBendingStiffnessUnit", BendingStiffnessUnit.ToString());
+            //Grasshopper.Instances.Settings.SetValue("GsaAxialStiffnessUnit", AxialStiffnessUnit.ToString());
+            //Grasshopper.Instances.Settings.SetValue("GsaCurvatureUnit", CurvatureUnit.ToString());
+            //Grasshopper.Instances.Settings.SetValue("GsaBendingStiffnessUnit", BendingStiffnessUnit.ToString());
 
             Grasshopper.Instances.Settings.SetValue("GsaMassUnit", MassUnit.ToString());
             Grasshopper.Instances.Settings.SetValue("GsaTemperatureUnit", TemperatureUnit.ToString());
-            Grasshopper.Instances.Settings.SetValue("GsaVelocityUnit", VelocityUnit.ToString());
-            Grasshopper.Instances.Settings.SetValue("GsaAccelerationUnit", AccelerationUnit.ToString());
-            Grasshopper.Instances.Settings.SetValue("GsaEnergyUnit", EnergyUnit.ToString());
-            Grasshopper.Instances.Settings.SetValue("GsaTimeShortUnit", TimeShortUnit.ToString());
-            Grasshopper.Instances.Settings.SetValue("GsaTimeMediumUnit", TimeMediumUnit.ToString());
-            Grasshopper.Instances.Settings.SetValue("GsaTimeLongUnit", TimeLongUnit.ToString());
+            //Grasshopper.Instances.Settings.SetValue("GsaVelocityUnit", VelocityUnit.ToString());
+            //Grasshopper.Instances.Settings.SetValue("GsaAccelerationUnit", AccelerationUnit.ToString());
+            //Grasshopper.Instances.Settings.SetValue("GsaEnergyUnit", EnergyUnit.ToString());
+            //Grasshopper.Instances.Settings.SetValue("GsaTimeShortUnit", TimeShortUnit.ToString());
+            //Grasshopper.Instances.Settings.SetValue("GsaTimeMediumUnit", TimeMediumUnit.ToString());
+            //Grasshopper.Instances.Settings.SetValue("GsaTimeLongUnit", TimeLongUnit.ToString());
 
 
             Grasshopper.Instances.Settings.WritePersistentSettings();
@@ -435,58 +485,80 @@ namespace GhSA
             if (!Grasshopper.Instances.Settings.ConstainsEntry("GsaLengthUnit"))
                 return false;
 
-            string length = Grasshopper.Instances.Settings.GetValue("GsaLengthUnitGeometry", string.Empty);
-            useRhinoLengthUnit = Grasshopper.Instances.Settings.GetValue("GsaUseRhinoLengthUnit", false);
+            string lengthGeometry = Grasshopper.Instances.Settings.GetValue("GsaLengthUnitGeometry", string.Empty);
+            useRhinoLengthGeometryUnit = Grasshopper.Instances.Settings.GetValue("GsaUseRhinoLengthGeometryUnit", false);
+
             string lengthSection = Grasshopper.Instances.Settings.GetValue("GsaLengthUnitSection", string.Empty);
+            useRhinoLengthSectionUnit = Grasshopper.Instances.Settings.GetValue("GsaUseRhinoLengthSectionUnit", false);
+
             string lengthResult = Grasshopper.Instances.Settings.GetValue("GsaLengthUnitResult", string.Empty);
+            useRhinoLengthResultUnit = Grasshopper.Instances.Settings.GetValue("GsaUseRhinoLengthResultUnit", false);
+
             double tolerance = Grasshopper.Instances.Settings.GetValue("GsaTolerance", double.NaN);
 
             string force = Grasshopper.Instances.Settings.GetValue("GsaForceUnit", string.Empty);
             string moment = Grasshopper.Instances.Settings.GetValue("GsaMomentUnit", string.Empty);
             string stress = Grasshopper.Instances.Settings.GetValue("GsaStressUnit", string.Empty);
             string strain = Grasshopper.Instances.Settings.GetValue("GsaStrainUnit", string.Empty);
-            string axialstiffness = Grasshopper.Instances.Settings.GetValue("GsaAxialStiffnessUnit", string.Empty);
-            string curvature = Grasshopper.Instances.Settings.GetValue("GsaCurvatureUnit", string.Empty);
-            string bendingstiffness = Grasshopper.Instances.Settings.GetValue("GsaBendingStiffnessUnit", string.Empty);
+            //string axialstiffness = Grasshopper.Instances.Settings.GetValue("GsaAxialStiffnessUnit", string.Empty);
+            //string curvature = Grasshopper.Instances.Settings.GetValue("GsaCurvatureUnit", string.Empty);
+            //string bendingstiffness = Grasshopper.Instances.Settings.GetValue("GsaBendingStiffnessUnit", string.Empty);
 
             string mass = Grasshopper.Instances.Settings.GetValue("GsaMassUnit", string.Empty);
             string temperature = Grasshopper.Instances.Settings.GetValue("GsaTemperatureUnit", string.Empty);
-            string velocity = Grasshopper.Instances.Settings.GetValue("GsaVelocityUnit", string.Empty);
-            string acceleration = Grasshopper.Instances.Settings.GetValue("GsaAccelerationUnit", string.Empty);
-            string energy = Grasshopper.Instances.Settings.GetValue("GsaEnergyUnit", string.Empty);
-            string timeShort = Grasshopper.Instances.Settings.GetValue("GsaTimeShortUnit", string.Empty);
-            string timeMedium = Grasshopper.Instances.Settings.GetValue("GsaTimeMediumUnit", string.Empty);
-            string timeLong = Grasshopper.Instances.Settings.GetValue("GsaTimeLongUnit", string.Empty);
+            //string velocity = Grasshopper.Instances.Settings.GetValue("GsaVelocityUnit", string.Empty);
+            //string acceleration = Grasshopper.Instances.Settings.GetValue("GsaAccelerationUnit", string.Empty);
+            //string energy = Grasshopper.Instances.Settings.GetValue("GsaEnergyUnit", string.Empty);
+            //string timeShort = Grasshopper.Instances.Settings.GetValue("GsaTimeShortUnit", string.Empty);
+            //string timeMedium = Grasshopper.Instances.Settings.GetValue("GsaTimeMediumUnit", string.Empty);
+            //string timeLong = Grasshopper.Instances.Settings.GetValue("GsaTimeLongUnit", string.Empty);
 
 
-            if (useRhinoLengthUnit)
+            if (useRhinoLengthGeometryUnit)
             {
-                m_length = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
+                m_length_geometry = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
             }
             else
             {
-                m_length = (LengthUnit)Enum.Parse(typeof(LengthUnit), length);
+                m_length_geometry = (LengthUnit)Enum.Parse(typeof(LengthUnit), lengthGeometry);
             }
-            m_length_section = (LengthUnit)Enum.Parse(typeof(LengthUnit), lengthSection);
-            m_length_result = (LengthUnit)Enum.Parse(typeof(LengthUnit), lengthResult);
-            m_tolerance = Length.From(tolerance, m_length);
+
+            if (useRhinoLengthSectionUnit)
+            {
+                m_length_section = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
+            }
+            else
+            {
+                m_length_section = (LengthUnit)Enum.Parse(typeof(LengthUnit), lengthSection);
+            }
+
+            if (useRhinoLengthResultUnit)
+            {
+                m_length_result = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
+            }
+            else
+            {
+                m_length_result = (LengthUnit)Enum.Parse(typeof(LengthUnit), lengthResult);
+            }
+
+            m_tolerance = Length.From(tolerance, m_length_geometry);
 
             m_force = (ForceUnit)Enum.Parse(typeof(ForceUnit), force);
             m_moment = (MomentUnit)Enum.Parse(typeof(MomentUnit), moment);
             m_stress = (PressureUnit)Enum.Parse(typeof(PressureUnit), stress);
             m_strain = (StrainUnit)Enum.Parse(typeof(StrainUnit), strain);
-            m_axialstiffness = (AxialStiffnessUnit)Enum.Parse(typeof(AxialStiffnessUnit), axialstiffness);
-            m_curvature = (CurvatureUnit)Enum.Parse(typeof(CurvatureUnit), curvature);
-            m_bendingstiffness = (BendingStiffnessUnit)Enum.Parse(typeof(BendingStiffnessUnit), bendingstiffness);
+            //m_axialstiffness = (AxialStiffnessUnit)Enum.Parse(typeof(AxialStiffnessUnit), axialstiffness);
+            //m_curvature = (CurvatureUnit)Enum.Parse(typeof(CurvatureUnit), curvature);
+            //m_bendingstiffness = (BendingStiffnessUnit)Enum.Parse(typeof(BendingStiffnessUnit), bendingstiffness);
 
             m_mass = (MassUnit)Enum.Parse(typeof(MassUnit), mass);
             m_temperature = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), temperature);
-            m_velocity = (SpeedUnit)Enum.Parse(typeof(SpeedUnit), velocity);
-            m_acceleration = (AccelerationUnit)Enum.Parse(typeof(AccelerationUnit), acceleration);
-            m_energy = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), energy);
-            m_time_short = (DurationUnit)Enum.Parse(typeof(DurationUnit), timeShort);
-            m_time_medium = (DurationUnit)Enum.Parse(typeof(DurationUnit), timeMedium);
-            m_time_long = (DurationUnit)Enum.Parse(typeof(DurationUnit), timeLong);
+            //m_velocity = (SpeedUnit)Enum.Parse(typeof(SpeedUnit), velocity);
+            //m_acceleration = (AccelerationUnit)Enum.Parse(typeof(AccelerationUnit), acceleration);
+            //m_energy = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), energy);
+            //m_time_short = (DurationUnit)Enum.Parse(typeof(DurationUnit), timeShort);
+            //m_time_medium = (DurationUnit)Enum.Parse(typeof(DurationUnit), timeMedium);
+            //m_time_long = (DurationUnit)Enum.Parse(typeof(DurationUnit), timeLong);
 
             return true;
         }

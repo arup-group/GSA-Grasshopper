@@ -64,7 +64,7 @@ namespace GhSA.UI
         {
             get
             {
-                return "Copyright © Oasys 1985 - 2021";
+                return "Copyright © Oasys 1985 - 2022";
             }
         }
         #endregion

@@ -205,7 +205,7 @@
     <Compile Include="Parameters\_ResultLine.cs" />
     <Compile Include="Parameters\_ResultPoint.cs" />
     <Compile Include="Parameters\_Titles.cs" />
-    <Compile Include="Parameters\_DocUnits.cs" />
+    <Compile Include="Parameters\_Units.cs" />
     <Compile Include="Parameters\GsaProp2d.cs" />
     <Compile Include="Parameters\GsaSection.cs" />
     <Compile Include="Parameters\GsaOffsetParam.cs" />
@@ -239,7 +239,9 @@
     <Compile Include="Helpers\_Colour.cs" />
     <Compile Include="UI\Comp_Profile.cs" />
     <Compile Include="UI\Comp_MultiDropDowns.cs" />
-    <Compile Include="UI\UnitSettingsBox.cs" />
+    <Compile Include="UI\UnitSettingsBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\UnitSettingsBox.Designer.cs">
       <DependentUpon>UnitSettingsBox.cs</DependentUpon>
     </Compile>
@@ -494,6 +496,234 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\icons\1x\CreateModel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Analyse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\AnalysisTaskInfo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\AreaLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\BeamLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Bool6Param.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateAnalysisTask.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateBool6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateElem1d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateElem2d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateElem3d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateElemsFromBreps.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateElemsFromMems.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateMaterial.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateMem1d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateMem2d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateMem3d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateModel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateOffset.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateProfile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateProp2d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateSection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateSpring.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateSupport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditBool6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditElem1d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditElem2d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditElem3d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditMaterial.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditMem1d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditMem2d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditMem3d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditNode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditOffset.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditProp2d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditSection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditSpring.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Elem1dParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Elem2dParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Elem3dParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\FaceLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GetAnalysisTask.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GetGeometry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GetSection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GravityLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GridPlane.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GridPlaneParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GridPlaneProperties.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GridSurface.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GSAInfo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GSALogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\LineLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\LoadInfo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\LoadParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\MaterialParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Mem1dParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Mem2dParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Mem3dParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\ModelParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\NodeLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\NodeParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\OffsetParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\OpenModel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\path1220.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\PointLoad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Prop2dParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Result0D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Result1D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Result2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Result3D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\SaveModel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\SectionParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\SectionProperties.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\SpringParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Titles.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Units.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GSALogo128.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
