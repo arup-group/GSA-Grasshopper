@@ -10,6 +10,8 @@ using Rhino;
 using GhSA.Util.Gsa;
 using Grasshopper.Documentation;
 using Rhino.Collections;
+using UnitsNet;
+using UnitsNet.Units;
 
 namespace GhSA.Parameters
 {
@@ -72,12 +74,33 @@ namespace GhSA.Parameters
                 m_material.AnalysisProperty = m_prop2d.MaterialAnalysisProperty;
             }
         }
-        public double Thickness
+        public Length Thickness
         {
             set
             {
                 CloneProperty();
-                m_prop2d.Description = value.ToString() + "(" + Units.LengthUnitSection + ")";
+                IQuantity length = new Length(0, value.Unit);
+                string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+                m_prop2d.Description = value.ToString() + "(" + unitAbbreviation + ")";
+            }
+            get 
+            {
+                if (m_prop2d.Description.Last() == ')')
+                {
+                    // thickness could be written as "30.33(in)"
+
+                    string unitAbbreviation = m_prop2d.Description.Split('(', ')')[1];
+                    LengthUnit unit = UnitParser.Default.Parse<LengthUnit>(unitAbbreviation);
+                    
+                    double val = double.Parse(m_prop2d.Description.Split('(')[0], System.Globalization.CultureInfo.InvariantCulture);
+                    
+                    return new Length(val, unit);
+                }
+                else
+                    return new Length(
+                        double.Parse(m_prop2d.Description, System.Globalization.CultureInfo.InvariantCulture),
+                        LengthUnit.Meter);
+                    
             }
         }
         public string Description
@@ -168,7 +191,7 @@ namespace GhSA.Parameters
             m_guid = Guid.Empty;
             m_idd = id;
         }
-        public GsaProp2d(double thickness, int ID = 0)
+        public GsaProp2d(Length thickness, int ID = 0)
         {
             m_prop2d = new Prop2D();
             m_material = new GsaMaterial();
@@ -347,7 +370,7 @@ namespace GhSA.Parameters
             //Cast from double
             if (GH_Convert.ToDouble(source, out double thk, GH_Conversion.Both))
             {
-                Value = new GsaProp2d(thk);
+                Value = new GsaProp2d(new Length(thk, Units.LengthUnitSection));
             }
             return false;
         }
@@ -368,7 +391,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaProp2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Prop2dParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaProp2dGoo> values)
         {

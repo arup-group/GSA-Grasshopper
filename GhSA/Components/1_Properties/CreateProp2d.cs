@@ -13,6 +13,8 @@ using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GhSA.Parameters;
 using System.Resources;
+using UnitsNet;
+using System.Linq;
 
 namespace GhSA.Components
 {
@@ -32,7 +34,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateProp2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateProp2d;
         #endregion
 
         #region Custom UI
@@ -41,42 +43,78 @@ namespace GhSA.Components
         {
             if (first)
             {
+                dropdownitems = new List<List<string>>();
+                selecteditems = new List<string>();
+
+                // length
+                dropdownitems.Add(dropdownTopList);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
                 selecteditem = _mode.ToString();
-                //first = false;
+                selecteditems.Add(lengthUnit.ToString());
+
+                IQuantity quantity = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                first = false;
+                
             }
                 
-            m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Element Type");
+            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, new List<string>() { "Element Type", "Unit" });
         }
 
-        public void SetSelected(string selected)
+        public void SetSelected(int i, int j)
         {
-            selecteditem = selected;
-            switch (selected)
+            // change selected item
+            selecteditems[i] = dropdownitems[i][j];
+
+            if (i == 0) // if change is made to the first list
             {
-                case "Plane Stress":
-                    Mode1Clicked();
-                    break;
-                case "Fabric":
-                    Mode2Clicked();
-                    break;
-                case "Flat Plate":
-                    Mode3Clicked();
-                    break;
-                case "Shell":
-                    Mode4Clicked();
-                    break;
-                case "Curved Shell":
-                    Mode5Clicked();
-                    break;
-                case "Load Panel":
-                    Mode6Clicked();
-                    break;
+                switch (selecteditems[i])
+                {
+                    case "Plane Stress":
+                        Mode1Clicked();
+                        break;
+                    case "Fabric":
+                        Mode2Clicked();
+                        break;
+                    case "Flat Plate":
+                        Mode3Clicked();
+                        break;
+                    case "Shell":
+                        Mode4Clicked();
+                        break;
+                    case "Curved Shell":
+                        Mode5Clicked();
+                        break;
+                    case "Load Panel":
+                        Mode6Clicked();
+                        break;
+                }
             }
+            else
+            {
+                lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[i]);
+            }
+
+            // update name of inputs (to display unit on sliders)
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+        private void UpdateUIFromSelectedItems()
+        {
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
         }
         #endregion
 
         #region Input and output
-        readonly List<string> dropdownitems = new List<string>(new string[]
+        readonly List<string> dropdownTopList = new List<string>(new string[]
         {
             "Plane Stress",
             "Fabric",
@@ -87,7 +125,18 @@ namespace GhSA.Components
         });
 
         string selecteditem;
-
+        // list of lists with all dropdown lists conctent
+        List<List<string>> dropdownitems;
+        // list of selected items
+        List<string> selecteditems;
+        // list of descriptions 
+        List<string> spacerDescriptions = new List<string>(new string[]
+        {
+            "Unit"
+        });
+        private bool first = true;
+        private UnitsNet.Units.LengthUnit lengthUnit = Units.LengthUnitGeometry;
+        string unitAbbreviation;
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -115,19 +164,37 @@ namespace GhSA.Components
             GsaProp2d prop = new GsaProp2d();
 
             // element type (picked in dropdown)
-            prop.Type = Property2D_Type.UNDEF;
-            if (_mode == FoldMode.PlaneStress)
-                prop.Type = Property2D_Type.PL_STRESS;
-            if (_mode == FoldMode.Fabric)
-                prop.Type = Property2D_Type.FABRIC;
-            if (_mode == FoldMode.FlatPlate)
-                prop.Type = Property2D_Type.PLATE;
-            if (_mode == FoldMode.Shell)
-                prop.Type = Property2D_Type.SHELL;
-            if (_mode == FoldMode.CurvedShell)
-                prop.Type = Property2D_Type.CURVED_SHELL;
-            if (_mode == FoldMode.LoadPanel)
-                prop.Type = Property2D_Type.LOAD;
+            
+            switch (_mode)
+            {
+                case FoldMode.PlaneStress:
+                    prop.Type = Property2D_Type.PL_STRESS;
+                    break;
+
+                case FoldMode.Fabric:
+                    prop.Type = Property2D_Type.FABRIC;
+                    break;
+
+                case FoldMode.FlatPlate:
+                    prop.Type = Property2D_Type.PLATE;
+                    break;
+
+                case FoldMode.Shell:
+                    prop.Type = Property2D_Type.SHELL;
+                    break;
+
+                case FoldMode.CurvedShell:
+                    prop.Type = Property2D_Type.CURVED_SHELL;
+                    break;
+
+                case FoldMode.LoadPanel:
+                    prop.Type = Property2D_Type.LOAD;
+                    break;
+
+                default:
+                    prop.Type = Property2D_Type.UNDEF;
+                    break;
+            }
 
             if (_mode != FoldMode.LoadPanel)
             {
@@ -161,13 +228,7 @@ namespace GhSA.Components
                     else
                         prop.Material = new GsaMaterial(2);
 
-                    //GH_Number gh_THK = new GH_Number();
-                    //double thickness = 200;
-                    //if (DA.GetData(1, ref gh_THK))
-                    //    GH_Convert.ToDouble(gh_THK, out thickness, GH_Conversion.Both);
-                    //prop.Thickness = thickness;
-
-                    GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString()
+                    prop.Thickness = GetInput.Length(this, DA, 1, lengthUnit);
                 }
                 else
                     prop.Material = new GsaMaterial(8);
@@ -186,7 +247,6 @@ namespace GhSA.Components
             CurvedShell,
             LoadPanel
         }
-        private bool first = true;
         private FoldMode _mode = FoldMode.Shell;
 
 
@@ -205,7 +265,7 @@ namespace GhSA.Components
                 //register input parameter
                 //Params.RegisterInputParam(new Param_Integer());
                 Params.RegisterInputParam(new Param_GenericObject());
-                Params.RegisterInputParam(new Param_Number());
+                Params.RegisterInputParam(new Param_GenericObject());
             }
             _mode = FoldMode.PlaneStress;
 
@@ -250,7 +310,7 @@ namespace GhSA.Components
                 //register input parameter
                 //Params.RegisterInputParam(new Param_Integer());
                 Params.RegisterInputParam(new Param_GenericObject());
-                Params.RegisterInputParam(new Param_Number());
+                Params.RegisterInputParam(new Param_GenericObject());
             }
             _mode = FoldMode.FlatPlate;
 
@@ -274,7 +334,7 @@ namespace GhSA.Components
                 //register input parameter
                 //Params.RegisterInputParam(new Param_Integer());
                 Params.RegisterInputParam(new Param_GenericObject());
-                Params.RegisterInputParam(new Param_Number());
+                Params.RegisterInputParam(new Param_GenericObject());
             }
             _mode = FoldMode.Shell;
 
@@ -298,7 +358,7 @@ namespace GhSA.Components
                 //register input parameter
                 //Params.RegisterInputParam(new Param_Integer());
                 Params.RegisterInputParam(new Param_GenericObject());
-                Params.RegisterInputParam(new Param_Number());
+                Params.RegisterInputParam(new Param_GenericObject());
             }
             _mode = FoldMode.CurvedShell;
 
@@ -327,15 +387,46 @@ namespace GhSA.Components
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            writer.SetInt32("Mode", (int)_mode);
-            writer.SetString("select", selecteditem);
+            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            _mode = (FoldMode)reader.GetInt32("Mode");
-            selecteditem = reader.GetString("select");
-            this.CreateAttributes();
+            try// if users has an old version of this component then dropdown menu wont read
+            {
+                Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+                _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
+                selecteditem = selecteditems[0];
+                lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[1]);
+            }
+            catch (Exception)
+            {
+                _mode = (FoldMode)reader.GetInt32("Mode"); //old version would have this set
+                selecteditem = reader.GetString("select"); // same
+
+                // set length to meters as this was the only option for old components
+                lengthUnit = UnitsNet.Units.LengthUnit.Meter;
+
+                dropdownitems = new List<List<string>>();
+                selecteditems = new List<string>();
+
+                // length
+                dropdownitems.Add(dropdownTopList);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
+                selecteditem = _mode.ToString();
+                selecteditems.Add(lengthUnit.ToString());
+
+                IQuantity quantity = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                first = false;
+            }
+
+            UpdateUIFromSelectedItems();
+
+            first = false;
+
             return base.Read(reader);
         }
 
@@ -361,6 +452,9 @@ namespace GhSA.Components
         {
             if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric)
             {
+                IQuantity length = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
                 int i = 0;
                 Params.Input[i].NickName = "Mat";
                 Params.Input[i].Name = "Material";
@@ -380,8 +474,8 @@ namespace GhSA.Components
 
                 i++;
                 Params.Input[i].NickName = "Thk";
-                Params.Input[i].Name = "Thickness (" + Units.LengthUnitSection + ")"; // "Thickness [m]";
-                Params.Input[i].Description = "Section thickness (default 200mm)";
+                Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]"; // "Thickness [m]";
+                Params.Input[i].Description = "Section thickness";
                 Params.Input[i].Access = GH_ParamAccess.item;
                 Params.Input[i].Optional = true;
             }

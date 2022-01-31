@@ -10,6 +10,9 @@ using Rhino;
 using GhSA.Util.Gsa;
 using Grasshopper.Documentation;
 using Rhino.Collections;
+using UnitsNet;
+using UnitsNet.Units;
+using Oasys.Units;
 
 namespace GhSA.Parameters
 {
@@ -29,25 +32,25 @@ namespace GhSA.Parameters
             }
         }
         #region section properties
-        public double Area
+        public Area Area
         {
-            get { return m_section.Area; }
+            get { return new Area(m_section.Area, AreaUnit.SquareMeter); }
         }
-        public double Iyy
+        public AreaMomentOfInertia Iyy
         {
-            get { return m_section.Iyy; }
+            get { return new AreaMomentOfInertia(m_section.Iyy, AreaMomentOfInertiaUnit.MeterToTheFourth); }
         }
-        public double Iyz
+        public AreaMomentOfInertia Iyz
         {
-            get { return m_section.Iyz; }
+            get { return new AreaMomentOfInertia(m_section.Iyz, AreaMomentOfInertiaUnit.MeterToTheFourth); }
         }
-        public double Izz
+        public AreaMomentOfInertia Izz
         {
-            get { return m_section.Izz; }
+            get { return new AreaMomentOfInertia(m_section.Izz, AreaMomentOfInertiaUnit.MeterToTheFourth); }
         }
-        public double J
+        public AreaMomentOfInertia J
         {
-            get { return m_section.J; }
+            get { return new AreaMomentOfInertia(m_section.J, AreaMomentOfInertiaUnit.MeterToTheFourth); }
         }
         public double Ky
         {
@@ -57,13 +60,13 @@ namespace GhSA.Parameters
         {
             get { return m_section.Kz; }
         }
-        public double SurfaceAreaPerLength
+        public Object SurfaceAreaPerLength
         {
-            get { return m_section.SurfaceAreaPerLength; }
+            get { return new Area(m_section.SurfaceAreaPerLength, AreaUnit.SquareMeter) / new Length(1, LengthUnit.Meter); }
         }
-        public double VolumePerLength
+        public VolumePerLength VolumePerLength
         {
-            get { return m_section.VolumePerLength; }
+            get { return new VolumePerLength(m_section.VolumePerLength, VolumePerLengthUnit.CubicMeterPerMeter); }
         }
         #endregion
         public int ID
@@ -410,7 +413,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaSection;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.SectionParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaSectionGoo> values)
         {

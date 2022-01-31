@@ -179,17 +179,22 @@ namespace GhSA.Components
         // component states will be remembered when reopening GH script
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            //writer.SetInt32("Mode", (int)_mode);
             writer.SetString("File", (string)fileName);
-            //writer.SetBoolean("Advanced", (bool)advanced);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            //_mode = (FoldMode)reader.GetInt32("Mode");
             fileName = (string)reader.GetString("File");
-            //advanced = (bool)reader.GetBoolean("Advanced");
+            UpdateUIFromSelectedItems();
             return base.Read(reader);
+        }
+        private void UpdateUIFromSelectedItems()
+        {
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
         }
         #endregion
 

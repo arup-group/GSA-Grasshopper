@@ -83,7 +83,11 @@ namespace GhSA.Components
             zz = (bool)reader.GetBoolean("zz");
             // we need to recreate the custom UI again as this is created before this read IO is called
             // otherwise the component will not display the selected items on the canvas
-            this.CreateAttributes();
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
             return base.Read(reader);
         }
         #endregion
