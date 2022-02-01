@@ -34,23 +34,43 @@ namespace GhSA.Parameters
         #region section properties
         public Area Area
         {
-            get { return new Area(m_section.Area, AreaUnit.SquareMeter); }
+            get 
+            {
+                Area area = new Area(m_section.Area, UnitsNet.UnitSystem.SI);
+                return new Area(area.As(Units.SectionAreaUnit), Units.SectionAreaUnit); 
+            }
         }
         public AreaMomentOfInertia Iyy
         {
-            get { return new AreaMomentOfInertia(m_section.Iyy, AreaMomentOfInertiaUnit.MeterToTheFourth); }
+            get 
+            {
+                AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Iyy, UnitsNet.UnitSystem.SI);
+                return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
+            }
         }
         public AreaMomentOfInertia Iyz
         {
-            get { return new AreaMomentOfInertia(m_section.Iyz, AreaMomentOfInertiaUnit.MeterToTheFourth); }
+            get
+            {
+                AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Iyz, UnitsNet.UnitSystem.SI);
+                return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
+            }
         }
         public AreaMomentOfInertia Izz
         {
-            get { return new AreaMomentOfInertia(m_section.Izz, AreaMomentOfInertiaUnit.MeterToTheFourth); }
+            get
+            {
+                AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Izz, UnitsNet.UnitSystem.SI);
+                return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
+            }
         }
         public AreaMomentOfInertia J
         {
-            get { return new AreaMomentOfInertia(m_section.J, AreaMomentOfInertiaUnit.MeterToTheFourth); }
+            get
+            {
+                AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.J, UnitsNet.UnitSystem.SI);
+                return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
+            }
         }
         public double Ky
         {
@@ -60,13 +80,20 @@ namespace GhSA.Parameters
         {
             get { return m_section.Kz; }
         }
-        public Object SurfaceAreaPerLength
+        public IQuantity SurfaceAreaPerLength
         {
-            get { return new Area(m_section.SurfaceAreaPerLength, AreaUnit.SquareMeter) / new Length(1, LengthUnit.Meter); }
+            get 
+            {
+                Area area = new Area(m_section.SurfaceAreaPerLength, UnitsNet.UnitSystem.SI);
+                Length len = new Length(1, Units.LengthUnitSection);
+                Area unitArea = len * len;
+                Area areaOut = new Area(area.As(unitArea.Unit), unitArea.Unit);
+                return areaOut / len; 
+            }
         }
         public VolumePerLength VolumePerLength
         {
-            get { return new VolumePerLength(m_section.VolumePerLength, VolumePerLengthUnit.CubicMeterPerMeter); }
+            get { return new VolumePerLength(m_section.VolumePerLength, UnitsNet.UnitSystem.SI); }
         }
         #endregion
         public int ID

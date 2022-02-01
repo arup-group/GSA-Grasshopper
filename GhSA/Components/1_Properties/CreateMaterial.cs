@@ -208,7 +208,6 @@ namespace GhSA.Components
                 DA.GetData(4, ref tempCoefficient);
                 if (temperatureUnit == UnitsNet.Units.TemperatureUnit.DegreeFahrenheit)
                     tempCoefficient = tempCoefficient * 0.555555556;
-
                 material.ElasticIsotropicMaterial = new AnalysisMaterial()
                 {
                     ElasticModulus = GetInput.Stress(this, DA, 1, stressUnit).As(UnitsNet.Units.PressureUnit.Pascal),

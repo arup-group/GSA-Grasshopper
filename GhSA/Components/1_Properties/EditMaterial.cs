@@ -17,7 +17,7 @@ namespace GhSA.Components
     /// <summary>
     /// Component to edit a Material and ouput the information
     /// </summary>
-    public class EditMaterial : GH_Component, IGH_PreviewObject
+    public class EditMaterial : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon

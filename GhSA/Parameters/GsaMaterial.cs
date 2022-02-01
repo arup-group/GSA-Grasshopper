@@ -351,7 +351,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaMaterial;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.MaterialParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaMaterialGoo> values)
         {

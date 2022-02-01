@@ -125,6 +125,36 @@ namespace GhSA
         }
         private static LengthUnit m_length_section;
         internal static bool useRhinoLengthSectionUnit;
+        internal static AreaMomentOfInertiaUnit SectionAreaMomentOfInertiaUnit
+        {
+            get
+            {
+                switch (LengthUnitSection)
+                {
+                    case LengthUnit.Millimeter:
+                        return AreaMomentOfInertiaUnit.MillimeterToTheFourth;
+                    case LengthUnit.Centimeter:
+                        return AreaMomentOfInertiaUnit.CentimeterToTheFourth;
+                    case LengthUnit.Meter:
+                        return AreaMomentOfInertiaUnit.MeterToTheFourth;
+                    case LengthUnit.Foot:
+                        return AreaMomentOfInertiaUnit.FootToTheFourth;
+                    case LengthUnit.Inch:
+                        return AreaMomentOfInertiaUnit.InchToTheFourth;
+                    default:
+                        return AreaMomentOfInertiaUnit.Undefined;
+                }
+            }
+        }
+        internal static AreaUnit SectionAreaUnit
+        {
+            get
+            {
+                Length len = new Length(1, Units.LengthUnitSection);
+                Area unitArea = len * len;
+                return unitArea.Unit;
+            }
+        }
 
         public static LengthUnit LengthUnitResult
         {
@@ -321,6 +351,23 @@ namespace GhSA
             TemperatureUnit.Kelvin.ToString(),
             TemperatureUnit.DegreeFahrenheit.ToString(),
         };
+        internal static CoefficientOfThermalExpansionUnit CoefficientOfThermalExpansionUnit
+        {
+            get 
+            {
+                switch (TemperatureUnit)
+                {
+                    case TemperatureUnit.DegreeCelsius:
+                        return UnitsNet.Units.CoefficientOfThermalExpansionUnit.InverseDegreeCelsius;
+                    case TemperatureUnit.Kelvin:
+                        return UnitsNet.Units.CoefficientOfThermalExpansionUnit.InverseKelvin;
+                    case TemperatureUnit.DegreeFahrenheit:
+                        return UnitsNet.Units.CoefficientOfThermalExpansionUnit.InverseDegreeFahrenheit;
+                    default:
+                        return UnitsNet.Units.CoefficientOfThermalExpansionUnit.Undefined;
+                }
+            }
+        }
         #endregion
 
         #region velocity

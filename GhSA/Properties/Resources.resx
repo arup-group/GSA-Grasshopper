@@ -133,6 +133,9 @@
   <data name="Bool6Param" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Bool6Param.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ConvertUnitNumber" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ConvertUnitNumber.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="CreateAnalysisTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateAnalysisTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -186,6 +189,9 @@
   </data>
   <data name="CreateSupport" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateSupport.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateUnitNumber" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateUnitNumber.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditBool6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditBool6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -286,6 +292,9 @@
   <data name="MaterialParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\MaterialParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="MaterialProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\MaterialProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Mem1dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Mem1dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -345,6 +354,9 @@
   </data>
   <data name="Titles" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Titles.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UnitParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\UnitParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Units" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Units.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

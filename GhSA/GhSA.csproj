@@ -108,6 +108,7 @@
   <ItemGroup>
     <Compile Include="AsyncComponentBase\GH_AsyncComponent.cs" />
     <Compile Include="AsyncComponentBase\WorkerInstance.cs" />
+    <Compile Include="Components\1_Properties\MaterialProperties.cs" />
     <Compile Include="Components\GraveyardComp\AsyncOpenModel_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\AsyncSaveModel_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
@@ -177,6 +178,8 @@
     <Compile Include="Components\GraveyardComp\CreateGridLineLoad_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateGridPointLoad_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateNodeLoads_OBSOLETE.cs" />
+    <Compile Include="Components\Other\ConvertUnitNumber.cs" />
+    <Compile Include="Components\Other\CreateUnitNumber.cs" />
     <Compile Include="Helpers\_DeSerialization.cs" />
     <Compile Include="Helpers\_Display.cs" />
     <Compile Include="Helpers\_GetInput.cs" />
@@ -727,6 +730,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\GetLoads.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\UnitParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\ConvertUnitNumber.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateUnitNumber.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\MaterialProperties.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

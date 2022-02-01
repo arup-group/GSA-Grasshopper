@@ -99,7 +99,23 @@ namespace UnitsNet.GH
                 return "Null";
             else
             {
-                return Value.ToString();
+                string type = Value.GetType().ToString();
+                if (type.StartsWith("Oasys"))
+                {
+                    string abbr = string.Concat(Value.ToString().Where(char.IsLetter));
+                    if (abbr == "")
+                    {
+                        abbr = Value.ToString();
+                        abbr = abbr[abbr.Length - 1].ToString();
+                    }
+                    if (Value.Value == 0)
+                        return 0 + abbr;
+
+                    double scale = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(Value.Value))) + 1);
+                    return scale * Math.Round(Value.Value / scale, 5) + " " + abbr;
+                }
+                else
+                    return Value.ToString();
             }
         }
         public override string TypeName
@@ -141,15 +157,15 @@ namespace UnitsNet.GH
             // This function is called when Grasshopper needs to convert other data 
             // into this parameter.
 
+            if (source == null) { return false; }
 
-            //if (source == null) { return false; }
-
-            ////Cast from own type
-            //if (typeof(GhUnitNumber).IsAssignableFrom(source.GetType()))
-            //{
-            //    Value = (GhUnitNumber)source;
-            //    return true;
-            //}
+            //Cast from own type
+            if (typeof(GH_UnitNumber).IsAssignableFrom(source.GetType()))
+            {
+                GH_UnitNumber num = (GH_UnitNumber)source;
+                Value = num.m_value;
+                return true;
+            }
 
             return false;
         }
@@ -166,12 +182,12 @@ namespace UnitsNet.GH
         {
         }
 
-        public override Guid ComponentGuid => new Guid("7368cb74-1c8d-411f-9455-1134a6d9df44");
+        public override Guid ComponentGuid => new Guid("6368cb74-1c8d-411f-9455-1134a6d9df44");
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
 
-        //protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.UnitParam;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.UnitParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GH_UnitNumber> values)
         {

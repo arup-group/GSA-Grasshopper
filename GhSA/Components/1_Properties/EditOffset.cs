@@ -82,33 +82,26 @@ namespace GhSA.Components
             {
                 int inp = 0;
                 if (this.Params.Input[inp].SourceCount != 0)
-                    offset.X1 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true).As(UnitsNet.Units.LengthUnit.Meter);
+                    offset.X1 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
 
                 if (this.Params.Input[inp].SourceCount != 0)
-                    offset.X2 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true).As(UnitsNet.Units.LengthUnit.Meter);
+                    offset.X2 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
                 
                 if (this.Params.Input[inp].SourceCount != 0)
-                    offset.Y = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true).As(UnitsNet.Units.LengthUnit.Meter);
+                    offset.Y = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
                 
                 if (this.Params.Input[inp].SourceCount != 0)
-                    offset.Z = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true).As(UnitsNet.Units.LengthUnit.Meter);
+                    offset.Z = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
 
                 //outputs
                 int outp = 0;
                 DA.SetData(outp++, new GsaOffsetGoo(offset));
-                // create temp unit number from API SI unit value:
-                GH_UnitNumber x1 = new GH_UnitNumber(new Length(offset.X1, UnitsNet.Units.LengthUnit.Meter));
-                // create output unit number in default length unit
-                DA.SetData(outp++, new GH_UnitNumber(x1.Value.ToUnit(Units.LengthUnitGeometry)));
-                // repeat for rest
-                GH_UnitNumber x2 = new GH_UnitNumber(new Length(offset.X1, UnitsNet.Units.LengthUnit.Meter));
-                DA.SetData(outp++, new GH_UnitNumber(x2.Value.ToUnit(Units.LengthUnitGeometry)));
-                GH_UnitNumber y = new GH_UnitNumber(new Length(offset.X1, UnitsNet.Units.LengthUnit.Meter));
-                DA.SetData(outp++, new GH_UnitNumber(y.Value.ToUnit(Units.LengthUnitGeometry)));
-                GH_UnitNumber z = new GH_UnitNumber(new Length(offset.X1, UnitsNet.Units.LengthUnit.Meter));
-                DA.SetData(outp++, new GH_UnitNumber(z.Value.ToUnit(Units.LengthUnitGeometry)));
+                
+                DA.SetData(outp++, new GH_UnitNumber(offset.X1));
+                DA.SetData(outp++, new GH_UnitNumber(offset.X2));
+                DA.SetData(outp++, new GH_UnitNumber(offset.Y));
+                DA.SetData(outp++, new GH_UnitNumber(offset.Z));
             }
         }
     }
 }
-

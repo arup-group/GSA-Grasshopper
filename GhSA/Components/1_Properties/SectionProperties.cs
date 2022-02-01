@@ -11,13 +11,18 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GhSA.Parameters;
 using System.Resources;
+using UnitsNet;
+using UnitsNet.Units;
+using UnitsNet.GH;
+using Oasys.Units;
+using System.Linq;
 
 namespace GhSA.Components
 {
     /// <summary>
     /// Component to get geometric properties of a section
     /// </summary>
-    public class GetSectionProperties : GH_Component, IGH_PreviewObject
+    public class GetSectionProperties : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
@@ -35,60 +40,6 @@ namespace GhSA.Components
 
         #region Custom UI
         //This region overrides the typical component layout
-        public override void CreateAttributes()
-        {
-            if (first)
-            {
-                dropdownitems = new List<List<string>>();
-                selecteditems = new List<string>();
-
-                // length
-                //dropdownitems.Add(Enum.GetNames(typeof(UnitsNet.Units.LengthUnit)).ToList());
-                dropdownitems.Add(Units.FilteredLengthUnits);
-                selecteditems.Add(lengthUnit.ToString());
-
-                IQuantity quantity = new Length(0, lengthUnit);
-                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-                first = false;
-            }
-            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-        }
-        public void SetSelected(int i, int j)
-        {
-            // change selected item
-            selecteditems[i] = dropdownitems[i][j];
-
-            lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[i]);
-
-            // update name of inputs (to display unit on sliders)
-            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-            ExpireSolution(true);
-            Params.OnParametersChanged();
-            this.OnDisplayExpired(true);
-        }
-        private void UpdateUIFromSelectedItems()
-        {
-            lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[0]);
-
-            CreateAttributes();
-            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-            ExpireSolution(true);
-            Params.OnParametersChanged();
-            this.OnDisplayExpired(true);
-        }
-        // list of lists with all dropdown lists conctent
-        List<List<string>> dropdownitems;
-        // list of selected items
-        List<string> selecteditems;
-        // list of descriptions 
-        List<string> spacerDescriptions = new List<string>(new string[]
-        {
-            "Unit"
-        });
-        private bool first = true;
-        private UnitsNet.Units.LengthUnit lengthUnit = Units.LengthUnitGeometry;
-        string unitAbbreviation;
 
         #endregion
 
@@ -101,15 +52,15 @@ namespace GhSA.Components
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Area", "A", "GSA Section Area (" + Units.LengthUnitSection + "\xB2)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia y-y", "Iyy", "GSA Section Moment of Intertia around local y-y axis (" + Units.LengthUnitSection + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia z-z", "Izz", "GSA Section Moment of Intertia around local z-z axis (" + Units.LengthUnitSection + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia y-z", "Iyz", "GSA Section Moment of Intertia around local y-z axis (" + Units.LengthUnitSection + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Torsion constant", "J", "GSA Section Torsion constant J (" + Units.LengthUnitSection + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Shear Area Factor in y", "Ky", "GSA Section Shear Area Factor in local y-direction (-)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Shear Area Factor in z", "Kz", "GSA Section Shear Area Factor in local z-direction (-)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Surface A/Length", "S/L", "GSA Section Surface Area per Unit Length (" + Units.LengthUnitSection + "\xB2/"+ Units.LengthUnitGeometry + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Volume/Length", "V/L", "GSA Section Volume per Unit Length (" + Units.LengthUnitSection + "\xB3/"+ Units.LengthUnitGeometry + ")", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Area", "A", "Section Area", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Moment of Inertia y-y", "Iyy", "Section Moment of Intertia around local y-y axis", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Moment of Inertia z-z", "Izz", "Section Moment of Intertia around local z-z axis", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Moment of Inertia y-z", "Iyz", "Section Moment of Intertia around local y-z axis", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Torsion constant", "J", "Section Torsion constant J", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Shear Area Factor in y", "Ky", "Section Shear Area Factor in local y-direction", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Shear Area Factor in z", "Kz", "Section Shear Area Factor in local z-direction", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Surface A/Length", "S/L", "Section Surface Area per Unit Length", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Volume/Length", "V/L", "Section Volume per Unit Length", GH_ParamAccess.item);
         }
         #endregion
 
@@ -130,103 +81,18 @@ namespace GhSA.Components
             }
             if (gsaSection != null)
             {
-                double conversionfactor = 1;
-                if (Units.LengthUnitSection != "m")
-                {
-                    switch (Units.LengthUnitSection)
-                    {
-                        case "mm":
-                            conversionfactor = 1000;
-                            break;
-                        case "cm":
-                            conversionfactor = 100;
-                            break;
-                        case "in":
-                            conversionfactor = 1000 / 25.4;
-                            break;
-                        case "ft":
-                            conversionfactor = 1000 / (12 * 25.4);
-                            break;
-                    }
-                }
-                DA.SetData(0, gsaSection.Area * Math.Pow(conversionfactor, 2));
-                DA.SetData(1, gsaSection.Iyy * Math.Pow(conversionfactor, 4));
-                DA.SetData(2, gsaSection.Izz * Math.Pow(conversionfactor, 4));
-                DA.SetData(3, gsaSection.Iyz * Math.Pow(conversionfactor, 4));
-                DA.SetData(4, gsaSection.J * Math.Pow(conversionfactor, 4));
+
+                DA.SetData(0, new GH_UnitNumber(gsaSection.Area));
+                DA.SetData(1, new GH_UnitNumber(gsaSection.Iyy));
+                DA.SetData(2, new GH_UnitNumber(gsaSection.Izz));
+                DA.SetData(3, new GH_UnitNumber(gsaSection.Iyz));
+                DA.SetData(4, new GH_UnitNumber(gsaSection.J));
                 DA.SetData(5, gsaSection.Ky);
                 DA.SetData(6, gsaSection.Kz);
-                DA.SetData(7, gsaSection.SurfaceAreaPerLength * Math.Pow(conversionfactor, 2));
-                DA.SetData(8, gsaSection.VolumePerLength * Math.Pow(conversionfactor, 3));
+                DA.SetData(7, new GH_UnitNumber(gsaSection.SurfaceAreaPerLength));
+                DA.SetData(8, new GH_UnitNumber(gsaSection.VolumePerLength));
             }
         }
     }
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-        Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-        return base.Write(writer);
-    }
-    
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-        try // if users has an old versopm of this component then dropdown menu wont read
-        {
-            Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-        }
-        catch (Exception) // we create the dropdown menu with our chosen default
-        {
-            dropdownitems = new List<List<string>>();
-            selecteditems = new List<string>();
-
-            // set length to meters as this was the only option for old components
-            lengthUnit = UnitsNet.Units.LengthUnit.Meter;
-
-            dropdownitems.Add(Units.FilteredLengthUnits);
-            selecteditems.Add(lengthUnit.ToString());
-
-            IQuantity quantity = new Length(0, lengthUnit);
-            unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-            first = false;
-        }
-
-        UpdateUIFromSelectedItems();
-
-        first = false;
-
-        return base.Read(reader);
-    }
-    #endregion
-    #region IGH_VariableParameterComponent null implementation
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-    {
-        return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-        return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-        return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-        return false;
-    }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-        IQuantity length = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-
-        int i = 0;
-        Params.Input[i++].Name = "Nodes [" + unitAbbreviation + "]";
-        Params.Input[i++].Name = "1D Members [" + unitAbbreviation + "]";
-        Params.Input[i++].Name = "2D Members [" + unitAbbreviation + "]";
-        Params.Input[i++].Name = "3D Members [" + unitAbbreviation + "]";
-
-    }
-    #endregion
 }
 
