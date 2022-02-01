@@ -112,15 +112,15 @@ namespace GhSA.Util.Gsa.ToGSA
             IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
             IReadOnlyDictionary<int, Axis> axDict = model.Axes();
 
-            gooloads.AddRange(FromGSA.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict));
-            gooloads.AddRange(FromGSA.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict));
-            gooloads.AddRange(FromGSA.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict, axDict));
+            gooloads.AddRange(FromGSA.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict, LengthUnit.Meter));
+            gooloads.AddRange(FromGSA.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict, LengthUnit.Meter));
+            gooloads.AddRange(FromGSA.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict, axDict, LengthUnit.Meter));
             List<GsaLoad> loads = gooloads.Select(n => n.Value).ToList();
 
             // get grid plane surfaces
             List<GsaGridPlaneSurfaceGoo> gpsgoo = new List<GsaGridPlaneSurfaceGoo>();
             foreach (int key in srfDict.Keys)
-                gpsgoo.Add(new GsaGridPlaneSurfaceGoo(Util.Gsa.FromGSA.GetGridPlaneSurface(srfDict, plnDict, axDict, key)));
+                gpsgoo.Add(new GsaGridPlaneSurfaceGoo(Util.Gsa.FromGSA.GetGridPlaneSurface(srfDict, plnDict, axDict, key, LengthUnit.Meter)));
             // convert from Goo-type
             List<GsaGridPlaneSurface> gps = gpsgoo.Select(n => n.Value).ToList();
 
@@ -376,12 +376,12 @@ namespace GhSA.Util.Gsa.ToGSA
 
             // Set / add Grid plane surfaces - do this first to set any GridPlane and GridSurfaces with IDs.
             Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
-                ref gp_guid, ref gs_guid, workerInstance, ReportProgress);
+                ref gp_guid, ref gs_guid, lengthUnit, workerInstance, ReportProgress);
 
             // Set / add loads to lists
             Loads.ConvertLoad(loads, ref gravityLoads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle,
                 ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads,
-                ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, 
+                ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, lengthUnit,
                 workerInstance, ReportProgress);
             #endregion
 
