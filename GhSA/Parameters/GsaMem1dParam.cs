@@ -148,10 +148,10 @@ namespace GhSA.Parameters
             set
             {
                 CloneApiMember();
-                m_member.Offset.X1 = value.X1;
-                m_member.Offset.X2 = value.X2;
-                m_member.Offset.Y = value.Y;
-                m_member.Offset.Z = value.Z;
+                m_member.Offset.X1 = value.X1.Meters;
+                m_member.Offset.X2 = value.X2.Meters;
+                m_member.Offset.Y = value.Y.Meters;
+                m_member.Offset.Z = value.Z.Meters;
             }
         }
         public double OrientationAngle
