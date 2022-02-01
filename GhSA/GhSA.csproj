@@ -145,8 +145,8 @@
     <Compile Include="Components\1_Properties\EditProp2d.cs" />
     <Compile Include="Components\1_Properties\EditOffset.cs" />
     <Compile Include="Components\1_Properties\EditBool6.cs" />
-    <Compile Include="Components\1_Properties\EditSpring.cs" />
-    <Compile Include="Components\1_Properties\CreateSpring.cs" />
+    <Compile Include="Components\GraveyardComp\EditSpring.cs" />
+    <Compile Include="Components\GraveyardComp\CreateSpring.cs" />
     <Compile Include="Components\1_Properties\CreateBool6.cs" />
     <Compile Include="Components\2_Geometry\CreateElement2d.cs" />
     <Compile Include="Components\2_Geometry\CreateMember2d.cs" />

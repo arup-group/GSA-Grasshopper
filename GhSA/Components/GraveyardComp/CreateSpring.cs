@@ -17,13 +17,13 @@ namespace GhSA.Components
     /// <summary>
     /// Component to create a new spring
     /// </summary>
-    public class CreateSpring : GH_Component
+    public class CreateSpring_OBSOLETE : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("e4b7c688-147b-4d91-b754-1a45c715b8db");
-        public CreateSpring()
+        public CreateSpring_OBSOLETE()
           : base("Create Spring", "Spring", "Create GSA Spring (Type: General)",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat1())
@@ -99,6 +99,8 @@ namespace GhSA.Components
                 ZZ = zz
             };
             DA.SetData(0, new GsaSpringGoo(Spring.Duplicate()));
+
+            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Please note that springs are not yet supported in GsaGH");
         }
     }
 }
