@@ -115,7 +115,7 @@ namespace GhSA.Components
         }
         #endregion
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Curve", "C", "Curve (NURBS curve will be converted to a Polyline)", GH_ParamAccess.item);
             pManager.AddGenericParameter("Section", "PB", "GSA Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
@@ -124,7 +124,7 @@ namespace GhSA.Components
             pManager.HideParameter(0);
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("1D Member", "M1D", "GSA 1D Member", GH_ParamAccess.item);
             

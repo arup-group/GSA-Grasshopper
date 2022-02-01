@@ -110,7 +110,7 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            IQuantity quantity = new UnitsNet.Length(0, Units.LengthUnitGeometry);
+            IQuantity quantity = new Length(0, Units.LengthUnitGeometry);
             string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
             Length _x1 = Length.From(X1, UnitsNet.Units.LengthUnit.Meter);
             Length _x2 = Length.From(X2, UnitsNet.Units.LengthUnit.Meter);

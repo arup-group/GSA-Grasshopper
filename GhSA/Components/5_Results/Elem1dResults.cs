@@ -355,7 +355,7 @@ namespace GhSA.Components
                 }
 
                 // Get colours
-                List<Grasshopper.Kernel.Types.GH_Colour> gh_Colours = new List<Grasshopper.Kernel.Types.GH_Colour>();
+                List<GH_Colour> gh_Colours = new List<GH_Colour>();
                 List<System.Drawing.Color> colors = new List<System.Drawing.Color>();
                 if (DA.GetDataList(4, gh_Colours))
                 {

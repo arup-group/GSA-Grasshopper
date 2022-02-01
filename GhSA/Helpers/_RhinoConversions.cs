@@ -29,7 +29,7 @@ namespace GhSA.Util.GH
                 double tolerance = RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
                 return tolerance;
             }
-            catch (global::System.Exception)
+            catch (Exception)
             {
                 return 0.001;
             }
@@ -450,7 +450,7 @@ namespace GhSA.Util.GH
             if (tolerance < 0)
                 tolerance = Units.Tolerance.As(Units.LengthUnitGeometry) * 0.5; // use the user set units
 
-            Rhino.Collections.CurveList curves = new Rhino.Collections.CurveList
+            CurveList curves = new CurveList
             {
                 externalEdge
             };

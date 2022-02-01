@@ -30,7 +30,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.SaveModel;
+        protected override Bitmap Icon => GhSA.Properties.Resources.SaveModel;
         #endregion
 
         #region Custom UI
@@ -130,7 +130,7 @@ namespace GhSA.Components
         bool usersetFileName = false;
         Model gsaSaveModel;
         bool canOpen = false;
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA model to save", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Save?", "Save", "Input 'True' to save or use button", GH_ParamAccess.item, false);
@@ -138,7 +138,7 @@ namespace GhSA.Components
             pManager[1].Optional = true;
             pManager[2].Optional = true;
         }
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA Model", GH_ParamAccess.item);
         }

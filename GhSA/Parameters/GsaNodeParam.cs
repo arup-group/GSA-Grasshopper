@@ -196,7 +196,7 @@ namespace GhSA.Parameters
         internal Line previewYaxis;
         internal Line previewZaxis;
         internal Brep previewSupportSymbol;
-        internal Rhino.Display.Text3d previewText;
+        internal Text3d previewText;
         
         internal void UpdatePreview()
         {

@@ -36,7 +36,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.hidden;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.OpenModel;
+        protected override Bitmap Icon => GhSA.Properties.Resources.OpenModel;
         #endregion
 
         #region Custom UI
@@ -106,7 +106,7 @@ namespace GhSA.Components
         // This region handles input and output parameters
         private static Guid panelGUID = Guid.NewGuid();
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Filename and path", "File", "GSA model to open and work with." + 
                     System.Environment.NewLine + "Input either path component, a text string with path and " +
@@ -116,7 +116,7 @@ namespace GhSA.Components
             //        System.Environment.NewLine + "However, sometimes this component outputs an empty model." +
             //        System.Environment.NewLine + "Disable and Enable the component should solve this (Ctrl+E)");
         }
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA Model", GH_ParamAccess.item);
         }
@@ -187,9 +187,9 @@ namespace GhSA.Components
                             GsaModel.FileName = tempfile;
                         }
                     }
-                    else if (gh_typ.Value is GsaAPI.Model)
+                    else if (gh_typ.Value is Model)
                     {
-                        GsaAPI.Model model = new Model();
+                        Model model = new Model();
                         gh_typ.CastTo(ref model);
                         GsaModel.Model = model;
                     }

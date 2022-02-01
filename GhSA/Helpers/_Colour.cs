@@ -368,7 +368,7 @@ namespace GhSA.UI
             get { return GsaGold; }
         }
 
-        public static Grasshopper.GUI.Gradient.GH_Gradient Stress_Gradient(List<System.Drawing.Color> colours = null)
+        public static Grasshopper.GUI.Gradient.GH_Gradient Stress_Gradient(List<Color> colours = null)
         {
 
             Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = new Grasshopper.GUI.Gradient.GH_Gradient();

@@ -40,7 +40,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Profile", "Pf", "Cross-Section Profile", GH_ParamAccess.item);
             pManager.AddGenericParameter("Material", "Ma", "GsaMaterial or Number for referring to a Material already in Existing GSA Model." + System.Environment.NewLine
@@ -58,7 +58,7 @@ namespace GhSA.Components
                 pManager[i].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Section", "PB", "GSA Section", GH_ParamAccess.item);
         }

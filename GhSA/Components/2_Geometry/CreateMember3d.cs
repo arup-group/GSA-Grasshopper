@@ -43,7 +43,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGeometryParameter("Solid", "S", "Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
             pManager.AddGenericParameter("3D Prop", "P3", "3D Property", GH_ParamAccess.item);
@@ -53,7 +53,7 @@ namespace GhSA.Components
             pManager[2].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("3D Member", "M3D", "GSA 3D Member", GH_ParamAccess.item);
         }

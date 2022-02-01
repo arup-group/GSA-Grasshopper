@@ -16,7 +16,7 @@ namespace GhSA.Components
 {
     class GetInput
     {
-        internal static Length Length(GH_Component owner, IGH_DataAccess DA, int inputid, UnitsNet.Units.LengthUnit lengthUnit, bool isOptional = false)
+        internal static Length Length(GH_Component owner, IGH_DataAccess DA, int inputid, LengthUnit lengthUnit, bool isOptional = false)
         {
             GH_UnitNumber unitNumber = null;
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -27,7 +27,7 @@ namespace GhSA.Components
                 {
                     unitNumber = (GH_UnitNumber)gh_typ.Value;
                     // check that unit is of right type
-                    if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(UnitsNet.Units.LengthUnit)))
+                    if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(LengthUnit)))
                     {
                         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
                             + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Length");
@@ -38,7 +38,7 @@ namespace GhSA.Components
                 else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
                 {
                     // create new quantity from default units
-                    unitNumber = new GH_UnitNumber(new UnitsNet.Length(val, lengthUnit));
+                    unitNumber = new GH_UnitNumber(new Length(val, lengthUnit));
                 }
                 else
                 {
@@ -54,9 +54,9 @@ namespace GhSA.Components
                     return UnitsNet.Length.Zero;
             }
 
-            return (UnitsNet.Length)unitNumber.Value;
+            return (Length)unitNumber.Value;
         }
-        internal static Density Density(GH_Component owner, IGH_DataAccess DA, int inputid, UnitsNet.Units.DensityUnit densityUnit, bool isOptional = false)
+        internal static Density Density(GH_Component owner, IGH_DataAccess DA, int inputid, DensityUnit densityUnit, bool isOptional = false)
         {
             GH_UnitNumber unitNumber = null;
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -67,7 +67,7 @@ namespace GhSA.Components
                 {
                     unitNumber = (GH_UnitNumber)gh_typ.Value;
                     // check that unit is of right type
-                    if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(UnitsNet.Units.DensityUnit)))
+                    if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(DensityUnit)))
                     {
                         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
                             + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Density");
@@ -78,7 +78,7 @@ namespace GhSA.Components
                 else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
                 {
                     // create new quantity from default units
-                    unitNumber = new GH_UnitNumber(new UnitsNet.Density(val, densityUnit));
+                    unitNumber = new GH_UnitNumber(new Density(val, densityUnit));
                 }
                 else
                 {
@@ -94,11 +94,11 @@ namespace GhSA.Components
                     return UnitsNet.Density.Zero;
             }
 
-            return (UnitsNet.Density)unitNumber.Value;
+            return (Density)unitNumber.Value;
         }
-        internal static Pressure Stress(GH_Component owner, IGH_DataAccess DA, int inputid, UnitsNet.Units.PressureUnit stressUnit, bool isOptional = false)
+        internal static Pressure Stress(GH_Component owner, IGH_DataAccess DA, int inputid, PressureUnit stressUnit, bool isOptional = false)
         {
-            UnitsNet.Pressure stressFib = new UnitsNet.Pressure();
+            Pressure stressFib = new Pressure();
 
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(inputid, ref gh_typ))
@@ -109,20 +109,20 @@ namespace GhSA.Components
                 if (gh_typ.Value is GH_UnitNumber)
                 {
                     inStress = (GH_UnitNumber)gh_typ.Value;
-                    if (!inStress.Value.QuantityInfo.UnitType.Equals(typeof(UnitsNet.Units.PressureUnit)))
+                    if (!inStress.Value.QuantityInfo.UnitType.Equals(typeof(PressureUnit)))
                     {
                         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
                             + System.Environment.NewLine + "Unit type is " + inStress.Value.QuantityInfo.Name + " but must be Stress (Pressure)");
                         return Pressure.Zero;
                     }
-                    stressFib = (UnitsNet.Pressure)inStress.Value.ToUnit(stressUnit);
+                    stressFib = (Pressure)inStress.Value.ToUnit(stressUnit);
                 }
                 // try cast to double
                 else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
                 {
                     // create new quantity from default units
-                    inStress = new GH_UnitNumber(new UnitsNet.Pressure(val, stressUnit));
-                    stressFib = (UnitsNet.Pressure)inStress.Value;
+                    inStress = new GH_UnitNumber(new Pressure(val, stressUnit));
+                    stressFib = (Pressure)inStress.Value;
                 }
                 else
                 {
@@ -139,7 +139,7 @@ namespace GhSA.Components
         }
         internal static Strain Strain(GH_Component owner, IGH_DataAccess DA, int inputid, StrainUnit strainUnit, bool isOptional = false)
         {
-            Oasys.Units.Strain strainFib = new Oasys.Units.Strain();
+            Strain strainFib = new Strain();
 
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(inputid, ref gh_typ))
@@ -150,20 +150,20 @@ namespace GhSA.Components
                 if (gh_typ.Value is GH_UnitNumber)
                 {
                     inStrain = (GH_UnitNumber)gh_typ.Value;
-                    if (!inStrain.Value.QuantityInfo.UnitType.Equals(typeof(Oasys.Units.StrainUnit)))
+                    if (!inStrain.Value.QuantityInfo.UnitType.Equals(typeof(StrainUnit)))
                     {
                         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
                             + System.Environment.NewLine + "Unit type is " + inStrain.Value.QuantityInfo.Name + " but must be Strain");
                         return Oasys.Units.Strain.Zero;
                     }
-                    strainFib = (Oasys.Units.Strain)inStrain.Value.ToUnit(strainUnit);
+                    strainFib = (Strain)inStrain.Value.ToUnit(strainUnit);
                 }
                 // try cast to double
                 else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
                 {
                     // create new quantity from default units
-                    inStrain = new GH_UnitNumber(new Oasys.Units.Strain(val, strainUnit));
-                    strainFib = (Oasys.Units.Strain)inStrain.Value;
+                    inStrain = new GH_UnitNumber(new Strain(val, strainUnit));
+                    strainFib = (Strain)inStrain.Value;
                 }
                 else
                 {
@@ -180,7 +180,7 @@ namespace GhSA.Components
         }
         internal static Curvature Curvature(GH_Component owner, IGH_DataAccess DA, int inputid, CurvatureUnit curvatureUnit, bool isOptional = false)
         {
-            Oasys.Units.Curvature crvature = new Oasys.Units.Curvature();
+            Curvature crvature = new Curvature();
 
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(inputid, ref gh_typ))
@@ -191,20 +191,20 @@ namespace GhSA.Components
                 if (gh_typ.Value is GH_UnitNumber)
                 {
                     inStrain = (GH_UnitNumber)gh_typ.Value;
-                    if (!inStrain.Value.QuantityInfo.UnitType.Equals(typeof(Oasys.Units.CurvatureUnit)))
+                    if (!inStrain.Value.QuantityInfo.UnitType.Equals(typeof(CurvatureUnit)))
                     {
                         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
                             + System.Environment.NewLine + "Unit type is " + inStrain.Value.QuantityInfo.Name + " but must be Curvature");
                         return Oasys.Units.Curvature.Zero;
                     }
-                    crvature = (Oasys.Units.Curvature)inStrain.Value.ToUnit(curvatureUnit);
+                    crvature = (Curvature)inStrain.Value.ToUnit(curvatureUnit);
                 }
                 // try cast to double
                 else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
                 {
                     // create new quantity from default units
-                    inStrain = new GH_UnitNumber(new Oasys.Units.Curvature(val, curvatureUnit));
-                    crvature = (Oasys.Units.Curvature)inStrain.Value;
+                    inStrain = new GH_UnitNumber(new Curvature(val, curvatureUnit));
+                    crvature = (Curvature)inStrain.Value;
                 }
                 else
                 {
@@ -219,9 +219,9 @@ namespace GhSA.Components
             }
             return Oasys.Units.Curvature.Zero;
         }
-        internal static Force Force(GH_Component owner, IGH_DataAccess DA, int inputid, UnitsNet.Units.ForceUnit forceUnit, bool isOptional = false)
+        internal static Force Force(GH_Component owner, IGH_DataAccess DA, int inputid, ForceUnit forceUnit, bool isOptional = false)
         {
-            UnitsNet.Force force = new UnitsNet.Force();
+            Force force = new Force();
 
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(inputid, ref gh_typ))
@@ -232,20 +232,20 @@ namespace GhSA.Components
                 if (gh_typ.Value is GH_UnitNumber)
                 {
                     inForce = (GH_UnitNumber)gh_typ.Value;
-                    if (!inForce.Value.QuantityInfo.UnitType.Equals(typeof(UnitsNet.Units.ForceUnit)))
+                    if (!inForce.Value.QuantityInfo.UnitType.Equals(typeof(ForceUnit)))
                     {
                         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
                             + System.Environment.NewLine + "Unit type is " + inForce.Value.QuantityInfo.Name + " but must be Force");
                         return UnitsNet.Force.Zero;
                     }
-                    force = (UnitsNet.Force)inForce.Value.ToUnit(forceUnit);
+                    force = (Force)inForce.Value.ToUnit(forceUnit);
                 }
                 // try cast to double
                 else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
                 {
                     // create new quantity from default units
-                    inForce = new GH_UnitNumber(new UnitsNet.Force(val, forceUnit));
-                    force = (UnitsNet.Force)inForce.Value;
+                    inForce = new GH_UnitNumber(new Force(val, forceUnit));
+                    force = (Force)inForce.Value;
                 }
                 else
                 {
@@ -262,7 +262,7 @@ namespace GhSA.Components
         }
         internal static Moment Moment(GH_Component owner, IGH_DataAccess DA, int inputid, MomentUnit momentUnit, bool isOptional = false)
         {
-            Oasys.Units.Moment moment = new Oasys.Units.Moment();
+            Moment moment = new Moment();
 
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(inputid, ref gh_typ))
@@ -273,20 +273,20 @@ namespace GhSA.Components
                 if (gh_typ.Value is GH_UnitNumber)
                 {
                     inMoment = (GH_UnitNumber)gh_typ.Value;
-                    if (!inMoment.Value.QuantityInfo.UnitType.Equals(typeof(Oasys.Units.MomentUnit)))
+                    if (!inMoment.Value.QuantityInfo.UnitType.Equals(typeof(MomentUnit)))
                     {
                         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
                             + System.Environment.NewLine + "Unit type is " + inMoment.Value.QuantityInfo.Name + " but must be Moment");
                         return Oasys.Units.Moment.Zero;
                     }
-                    moment = (Oasys.Units.Moment)inMoment.Value.ToUnit(momentUnit);
+                    moment = (Moment)inMoment.Value.ToUnit(momentUnit);
                 }
                 // try cast to double
                 else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
                 {
                     // create new quantity from default units
-                    inMoment = new GH_UnitNumber(new Oasys.Units.Moment(val, momentUnit));
-                    moment = (Oasys.Units.Moment)inMoment.Value;
+                    inMoment = new GH_UnitNumber(new Moment(val, momentUnit));
+                    moment = (Moment)inMoment.Value;
                 }
                 else
                 {
@@ -302,9 +302,9 @@ namespace GhSA.Components
             return Oasys.Units.Moment.Zero;
         }
 
-        internal static Angle Angle(GH_Component owner, IGH_DataAccess DA, int inputid, UnitsNet.Units.AngleUnit angleUnit, bool isOptional = false)
+        internal static Angle Angle(GH_Component owner, IGH_DataAccess DA, int inputid, AngleUnit angleUnit, bool isOptional = false)
         {
-            GH_UnitNumber a1 = new GH_UnitNumber(new UnitsNet.Angle(0, angleUnit));
+            GH_UnitNumber a1 = new GH_UnitNumber(new Angle(0, angleUnit));
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(inputid, ref gh_typ))
             {
@@ -313,7 +313,7 @@ namespace GhSA.Components
                 {
                     a1 = (GH_UnitNumber)gh_typ.Value;
                     // check that unit is of right type
-                    if (!a1.Value.QuantityInfo.UnitType.Equals(typeof(UnitsNet.Units.AngleUnit)))
+                    if (!a1.Value.QuantityInfo.UnitType.Equals(typeof(AngleUnit)))
                     {
                         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
                             + System.Environment.NewLine + "Unit type is " + a1.Value.QuantityInfo.Name + " but must be Angle");
@@ -324,14 +324,14 @@ namespace GhSA.Components
                 else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
                 {
                     // create new quantity from default units
-                    a1 = new GH_UnitNumber(new UnitsNet.Angle(val, angleUnit));
+                    a1 = new GH_UnitNumber(new Angle(val, angleUnit));
                 }
                 else
                 {
                     owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to Angle");
                     return UnitsNet.Angle.Zero;
                 }
-                return (UnitsNet.Angle)a1.Value;
+                return (Angle)a1.Value;
             }
             else if (!isOptional)
             {

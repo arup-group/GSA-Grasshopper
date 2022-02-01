@@ -151,7 +151,7 @@ namespace GhSA.UI
             
         }
 
-        protected override void Render(GH_Canvas canvas, System.Drawing.Graphics graphics, GH_CanvasChannel channel)
+        protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
         {
             base.Render(canvas, graphics, channel);
 
@@ -218,7 +218,7 @@ namespace GhSA.UI
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                System.Drawing.RectangleF rec = GrabBound;
+                RectangleF rec = GrabBound;
                 GH_Component comp = Owner as GH_Component;
                 if (rec.Contains(e.CanvasLocation))
                 {
@@ -274,7 +274,7 @@ namespace GhSA.UI
                 hiddenSlider.Slider.Type = noDigits == 0 ? Grasshopper.GUI.Base.GH_SliderAccuracy.Integer : Grasshopper.GUI.Base.GH_SliderAccuracy.Float;
                 hiddenSlider.Name = Owner.Name + " Slider";
                 hiddenSlider.Slider.Value = (decimal)CurrentValue;
-                Grasshopper.GUI.GH_NumberSliderPopup gH_MenuSliderForm = new Grasshopper.GUI.GH_NumberSliderPopup();
+                GH_NumberSliderPopup gH_MenuSliderForm = new GH_NumberSliderPopup();
                 GH_WindowsFormUtil.CenterFormOnCursor(gH_MenuSliderForm, true);
                 gH_MenuSliderForm.Setup(hiddenSlider);
                 //hiddenSlider.PopupEditor();

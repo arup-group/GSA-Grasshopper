@@ -103,7 +103,7 @@ namespace GhSA.Components
                 dropdownitems.Add(Units.FilteredLengthUnits);
                 selecteditems.Add(lengthUnit.ToString());
 
-                IQuantity quantity = new UnitsNet.Length(0, lengthUnit);
+                IQuantity quantity = new Length(0, lengthUnit);
                 unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
             }
 
@@ -872,7 +872,7 @@ namespace GhSA.Components
                                 return;
                             }
                             Plane.FitPlaneToPoints(ctrl_pts, out Plane plane);
-                            Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.ChangeBasis(Plane.WorldXY, plane);
+                            Transform xform = Rhino.Geometry.Transform.ChangeBasis(Plane.WorldXY, plane);
 
                             perimeter.geoType = Profile.GeoTypes.Perim;
 

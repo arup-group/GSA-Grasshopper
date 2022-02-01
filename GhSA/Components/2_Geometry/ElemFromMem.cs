@@ -98,7 +98,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             IQuantity length = new Length(0, lengthUnit);
             unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
@@ -119,7 +119,7 @@ namespace GhSA.Components
             pManager.HideParameter(3);
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Nodes", "No", "GSA Nodes", GH_ParamAccess.list);
             pManager.HideParameter(0);

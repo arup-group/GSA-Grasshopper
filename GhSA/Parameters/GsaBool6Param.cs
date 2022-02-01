@@ -21,36 +21,36 @@ namespace GhSA.Parameters
         public bool X
         {
             get { return API_Bool6.X; }
-            set { API_Bool6 = new GsaAPI.Bool6(value, Y, Z, XX, YY, ZZ); }
+            set { API_Bool6 = new Bool6(value, Y, Z, XX, YY, ZZ); }
         }
         public bool Y
         {
             get { return API_Bool6.Y; }
-            set { API_Bool6 = new GsaAPI.Bool6(X, value, Z, XX, YY, ZZ); }
+            set { API_Bool6 = new Bool6(X, value, Z, XX, YY, ZZ); }
         }
         public bool Z
         {
             get { return API_Bool6.Z; }
-            set { API_Bool6 = new GsaAPI.Bool6(X, Y, value, XX, YY, ZZ); }
+            set { API_Bool6 = new Bool6(X, Y, value, XX, YY, ZZ); }
         }
         public bool XX
         {
             get { return API_Bool6.XX; }
-            set { API_Bool6 = new GsaAPI.Bool6(X, Y, Z, value, YY, ZZ); }
+            set { API_Bool6 = new Bool6(X, Y, Z, value, YY, ZZ); }
         }
         public bool YY
         {
             get { return API_Bool6.YY; }
-            set { API_Bool6 = new GsaAPI.Bool6(X, Y, Z, XX, value, ZZ); }
+            set { API_Bool6 = new Bool6(X, Y, Z, XX, value, ZZ); }
         }
         public bool ZZ
         {
             get { return API_Bool6.ZZ; }
-            set { API_Bool6 = new GsaAPI.Bool6(X, Y, Z, XX, YY, value); }
+            set { API_Bool6 = new Bool6(X, Y, Z, XX, YY, value); }
         }
 
         #region fields
-        internal GsaAPI.Bool6 API_Bool6;
+        internal Bool6 API_Bool6;
         #endregion
 
         #region constructors

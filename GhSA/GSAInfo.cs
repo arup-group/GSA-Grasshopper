@@ -60,7 +60,7 @@ namespace GhSA
                     + System.Environment.NewLine + "You may try disable the above plugins to solve the issue."
                     + System.Environment.NewLine + "The plugin cannot be loaded.";
                 Exception exception = new Exception(message);
-                Grasshopper.Kernel.GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI.dll loading", exception);
+                GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI.dll loading", exception);
                 Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
                 return GH_LoadingInstruction.Abort;
             }
@@ -90,7 +90,7 @@ namespace GhSA
                     + System.Environment.NewLine + "You may try disable the above plugins to solve the issue."
                     + System.Environment.NewLine + "The plugin cannot be loaded.";
                 Exception exception = new Exception(message);
-                Grasshopper.Kernel.GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: System.Data.SQLite.dll loading", exception);
+                GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: System.Data.SQLite.dll loading", exception);
                 Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
                 return GH_LoadingInstruction.Abort;
             }
@@ -108,7 +108,7 @@ namespace GhSA
             }
 
             // create main menu dropdown
-            GhSA.UI.Menu.Loader menuLoad = new UI.Menu.Loader();
+            UI.Menu.Loader menuLoad = new UI.Menu.Loader();
             menuLoad.CreateMainMenuItem();
 
             // ### Create Ribbon Category name and icon ###
@@ -132,7 +132,7 @@ namespace GhSA
             catch (Exception e)
             {
                 Exception exception = new Exception("Error when creating new empty model using GsaAPI.dll" + System.Environment.NewLine + e.ToString());
-                Grasshopper.Kernel.GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Model error", exception);
+                GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Model error", exception);
                 Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
             }
             Model m = new Model();
@@ -157,7 +157,7 @@ namespace GhSA
             catch (Exception e)
             {
                 Exception exception = new Exception("Error when trying to open example file using GsaAPI.dll" + System.Environment.NewLine + e.ToString());
-                Grasshopper.Kernel.GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Open error", exception);
+                GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Open error", exception);
                 Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
             }
             ReturnValue open = m.Open(tempPath + "\\Samples\\Env.gwb");
@@ -177,7 +177,7 @@ namespace GhSA
                 {
                     Exception exception = new Exception("Error when trying to download example file from https://samples.oasys-software.com/gsa/10.1/General/" + System.Environment.NewLine + e.ToString()
                         + System.Environment.NewLine + "You may manually place the file 'Env.gwb' in this folder to solve the issue: " + System.Environment.NewLine + tempPath + "\\Samples\\");
-                    Grasshopper.Kernel.GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: ExampleFile missing", exception);
+                    GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: ExampleFile missing", exception);
                     Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
                 }
 
@@ -202,7 +202,7 @@ namespace GhSA
                     catch (Exception e)
                     {
                         Exception exception = new Exception("Error when running analysis task on example file." + System.Environment.NewLine + e.ToString());
-                        Grasshopper.Kernel.GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Analysis error", exception);
+                        GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Analysis error", exception);
                         Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
                     }
                 }
@@ -224,7 +224,7 @@ namespace GhSA
                 catch (Exception e)
                 {
                     Exception exception = new Exception("Error when running analysis task on example file." + System.Environment.NewLine + e.ToString());
-                    Grasshopper.Kernel.GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Analysis error", exception);
+                    GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Analysis error", exception);
                     Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
                 }
             }

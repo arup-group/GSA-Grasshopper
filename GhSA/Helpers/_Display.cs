@@ -596,7 +596,7 @@ namespace GhSA.UI
             }
             #endregion
         }
-        public static void PreviewRestraint(GsaBool6 restraint, Plane localAxis, Point3d pt, ref Brep support, ref Rhino.Display.Text3d text)
+        public static void PreviewRestraint(GsaBool6 restraint, Plane localAxis, Point3d pt, ref Brep support, ref Text3d text)
         {
             // pin
             if (restraint.X == true & restraint.Y == true & restraint.Z == true &

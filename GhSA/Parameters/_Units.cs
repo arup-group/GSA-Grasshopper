@@ -88,7 +88,7 @@ namespace GhSA
                 useRhinoLengthGeometryUnit = false;
                 m_length_geometry = value;
                 // update unit system
-                UnitsNet.BaseUnits units = new UnitsNet.BaseUnits(
+                BaseUnits units = new BaseUnits(
                     m_length_geometry,
                     m_units.BaseUnits.Mass, m_units.BaseUnits.Time, m_units.BaseUnits.Current, m_units.BaseUnits.Temperature, m_units.BaseUnits.Amount, m_units.BaseUnits.LuminousIntensity);
                 m_units = new UnitsNet.UnitSystem(units);
@@ -171,13 +171,13 @@ namespace GhSA
         #endregion
 
         #region moment
-        public static Oasys.Units.MomentUnit MomentUnit
+        public static MomentUnit MomentUnit
         {
             get { return m_moment; }
             set { m_moment = value; }
         }
-        private static Oasys.Units.MomentUnit m_moment = Oasys.Units.MomentUnit.KilonewtonMeter;
-        internal static List<string> FilteredMomentUnits = Enum.GetNames(typeof(Oasys.Units.MomentUnit)).ToList();
+        private static MomentUnit m_moment = Oasys.Units.MomentUnit.KilonewtonMeter;
+        internal static List<string> FilteredMomentUnits = Enum.GetNames(typeof(MomentUnit)).ToList();
         #endregion
 
         #region stress
@@ -205,12 +205,12 @@ namespace GhSA
         #endregion
 
         #region strain
-        public static Oasys.Units.StrainUnit StrainUnit
+        public static StrainUnit StrainUnit
         {
             get { return m_strain; }
             set { m_strain = value; }
         }
-        private static Oasys.Units.StrainUnit m_strain = Oasys.Units.StrainUnit.MilliStrain;
+        private static StrainUnit m_strain = Oasys.Units.StrainUnit.MilliStrain;
         internal static List<string> FilteredStrainUnits = new List<string>()
         {
             Oasys.Units.StrainUnit.Ratio.ToString(),
@@ -221,32 +221,32 @@ namespace GhSA
         #endregion
 
         #region axial stiffness
-        public static Oasys.Units.AxialStiffnessUnit AxialStiffnessUnit
+        public static AxialStiffnessUnit AxialStiffnessUnit
         {
             get { return m_axialstiffness; }
             set { m_axialstiffness = value; }
         }
-        private static Oasys.Units.AxialStiffnessUnit m_axialstiffness = Oasys.Units.AxialStiffnessUnit.Kilonewton;
-        internal static List<string> FilteredAxialStiffnessUnits = Enum.GetNames(typeof(Oasys.Units.AxialStiffnessUnit)).ToList();
+        private static AxialStiffnessUnit m_axialstiffness = Oasys.Units.AxialStiffnessUnit.Kilonewton;
+        internal static List<string> FilteredAxialStiffnessUnits = Enum.GetNames(typeof(AxialStiffnessUnit)).ToList();
         #endregion
 
         #region bending stiffness
-        public static Oasys.Units.BendingStiffnessUnit BendingStiffnessUnit
+        public static BendingStiffnessUnit BendingStiffnessUnit
         {
             get { return m_bendingstiffness; }
             set { m_bendingstiffness = value; }
         }
-        private static Oasys.Units.BendingStiffnessUnit m_bendingstiffness = Oasys.Units.BendingStiffnessUnit.KilonewtonSquareMeter;
-        internal static List<string> FilteredBendingStiffnessUnits = Enum.GetNames(typeof(Oasys.Units.BendingStiffnessUnit)).ToList();
+        private static BendingStiffnessUnit m_bendingstiffness = Oasys.Units.BendingStiffnessUnit.KilonewtonSquareMeter;
+        internal static List<string> FilteredBendingStiffnessUnits = Enum.GetNames(typeof(BendingStiffnessUnit)).ToList();
         #endregion
 
         #region curvature
-        public static Oasys.Units.CurvatureUnit CurvatureUnit
+        public static CurvatureUnit CurvatureUnit
         {
             get { return m_curvature; }
             set { m_curvature = value; }
         }
-        private static Oasys.Units.CurvatureUnit m_curvature = (Oasys.Units.CurvatureUnit)Enum.Parse(typeof(Oasys.Units.CurvatureUnit), "Per" + LengthUnitGeometry.ToString());
+        private static CurvatureUnit m_curvature = (CurvatureUnit)Enum.Parse(typeof(CurvatureUnit), "Per" + LengthUnitGeometry.ToString());
         internal static List<string> FilteredCurvatureUnits = new List<string>()
         {
             Oasys.Units.CurvatureUnit.PerMillimeter.ToString(),
@@ -441,7 +441,7 @@ namespace GhSA
             // get SI units
             UnitsNet.UnitSystem si = UnitsNet.UnitSystem.SI;
 
-            UnitsNet.BaseUnits units = new UnitsNet.BaseUnits(
+            BaseUnits units = new BaseUnits(
                 m_length_geometry,
                 si.BaseUnits.Mass, si.BaseUnits.Time, si.BaseUnits.Current, si.BaseUnits.Temperature, si.BaseUnits.Amount, si.BaseUnits.LuminousIntensity);
             m_units = new UnitsNet.UnitSystem(units);

@@ -40,7 +40,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddNumberParameter("Offset X1", "X1", "X1 - Start axial offset (" + Units.LengthUnitGeometry.ToString() + ")", GH_ParamAccess.item, 0);
             pManager.AddNumberParameter("Offset X2", "X2", "X2 - End axial offset (" + Units.LengthUnitGeometry.ToString() + ")", GH_ParamAccess.item, 0);
@@ -53,7 +53,7 @@ namespace GhSA.Components
             pManager[3].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Offset", "Of", "GSA Offset", GH_ParamAccess.item);
         }

@@ -91,7 +91,7 @@ namespace GhSA.Components
             return base.Read(reader);
         }
         #endregion
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
@@ -108,7 +108,7 @@ namespace GhSA.Components
             pManager[5].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Bool6", "B6", "GSA Bool6 to set releases or restraints", GH_ParamAccess.item);
             

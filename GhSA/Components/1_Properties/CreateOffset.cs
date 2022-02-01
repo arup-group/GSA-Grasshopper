@@ -49,7 +49,7 @@ namespace GhSA.Components
                 dropdownitems.Add(Units.FilteredLengthUnits);
                 selecteditems.Add(lengthUnit.ToString());
 
-                IQuantity quantity = new UnitsNet.Length(0, lengthUnit);
+                IQuantity quantity = new Length(0, lengthUnit);
                 unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
                 first = false;
@@ -96,9 +96,9 @@ namespace GhSA.Components
         private bool first = true;
         private UnitsNet.Units.LengthUnit lengthUnit = GhSA.Units.LengthUnitGeometry;
         string unitAbbreviation;
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            IQuantity quantity = new UnitsNet.Length(0, lengthUnit);
+            IQuantity quantity = new Length(0, lengthUnit);
             unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
             pManager.AddGenericParameter("Offset X1 [" + unitAbbreviation + "]", "X1", "X1 - Start axial offset", GH_ParamAccess.item);
@@ -110,7 +110,7 @@ namespace GhSA.Components
                 pManager[i].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Offset", "Of", "GSA Offset", GH_ParamAccess.item);
         }
@@ -163,7 +163,7 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            IQuantity quantity = new UnitsNet.Length(0, lengthUnit);
+            IQuantity quantity = new Length(0, lengthUnit);
             unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
             Params.Input[0].Name = "Offset X1 [" + unitAbbreviation + "]";
             Params.Input[1].Name = "Offset X2 [" + unitAbbreviation + "]";

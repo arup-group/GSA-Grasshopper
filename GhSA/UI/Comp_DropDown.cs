@@ -166,7 +166,7 @@ namespace GhSA.UI
             }
         }
 
-        protected override void Render(GH_Canvas canvas, System.Drawing.Graphics graphics, GH_CanvasChannel channel)
+        protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
         {
             base.Render(canvas, graphics, channel);
 
@@ -278,7 +278,7 @@ namespace GhSA.UI
                     return GH_ObjectResponse.Release;
                 }
 
-                System.Drawing.RectangleF rec = BorderBound;
+                RectangleF rec = BorderBound;
                 if (rec.Contains(e.CanvasLocation))
                 {
                     unfolded = !unfolded;
@@ -288,12 +288,12 @@ namespace GhSA.UI
 
                 if (unfolded)
                 {
-                    System.Drawing.RectangleF rec3 = dropdownBound;
+                    RectangleF rec3 = dropdownBound;
                     if (rec3.Contains(e.CanvasLocation))
                     {
                         for (int i = 0; i < dropdownlist.Count; i++)
                         {
-                            System.Drawing.RectangleF rec4 = dropdownBounds[i];
+                            RectangleF rec4 = dropdownBounds[i];
                             if (rec4.Contains(e.CanvasLocation))
                             {
                                 comp.RecordUndoEvent("Selected " + dropdownlist[i]);
@@ -322,7 +322,7 @@ namespace GhSA.UI
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    System.Drawing.RectangleF rec = scrollBar;
+                    RectangleF rec = scrollBar;
                     GH_Component comp = Owner as GH_Component;
                     if (rec.Contains(e.CanvasLocation))
                     {

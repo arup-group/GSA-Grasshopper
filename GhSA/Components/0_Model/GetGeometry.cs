@@ -104,7 +104,7 @@ namespace GhSA.Components
 
         private FoldMode _mode = FoldMode.Graft;
 
-        protected override void AppendAdditionalComponentMenuItems(System.Windows.Forms.ToolStripDropDown menu)
+        protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
         {
             Menu_AppendItem(menu, "Graft by Property", GraftModeClicked, true, _mode == FoldMode.Graft);
             Menu_AppendItem(menu, "List", ListModeClicked, true, _mode == FoldMode.List);
@@ -144,7 +144,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA model containing some geometry", GH_ParamAccess.item);
             pManager.AddTextParameter("Node filter list", "No", "Filter import by list." + System.Environment.NewLine +
@@ -167,7 +167,7 @@ namespace GhSA.Components
             //Message = "Graft by Property" + System.Environment.NewLine + "Right-click to change";
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             IQuantity length = new Length(0, lengthUnit);
             unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));

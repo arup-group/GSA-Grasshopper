@@ -671,7 +671,7 @@ namespace GhSA.Util.Gsa
             
             dup.Topology = new ReadOnlyCollection<int>(elem.Topology.ToList());
 
-            if ((System.Drawing.Color)elem.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+            if ((Color)elem.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
                 dup.Colour = elem.Colour;
 
             dup.Offset.X1 = elem.Offset.X1;
@@ -700,7 +700,7 @@ namespace GhSA.Util.Gsa
             dup.Type1D = mem.Type1D;
             dup.Type2D = mem.Type2D;
 
-            if ((System.Drawing.Color)mem.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+            if ((Color)mem.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
                 dup.Colour = mem.Colour;
 
             dup.Offset.X1 = mem.Offset.X1;
@@ -1453,7 +1453,7 @@ namespace GhSA.Util.Gsa
         /// <param name="axDict">Axes Dictionary</param>
         /// <returns></returns>
         public static List<GsaLoadGoo> GetGridPointLoads(ReadOnlyCollection<GridPointLoad> pointLoads,
-            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, GsaAPI.Axis> axDict, LengthUnit unit)
+            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit)
         {
             List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
 
@@ -1485,7 +1485,7 @@ namespace GhSA.Util.Gsa
         /// <param name="axDict">Axes Dictionary</param>
         /// <returns></returns>
         public static List<GsaLoadGoo> GetGridLineLoads(ReadOnlyCollection<GridLineLoad> lineLoads,
-            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, GsaAPI.Axis> axDict, LengthUnit unit)
+            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit)
         {
             List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
 
@@ -1517,7 +1517,7 @@ namespace GhSA.Util.Gsa
         /// <param name="axDict">Axes Dictionary</param>
         /// <returns></returns>
         public static List<GsaLoadGoo> GetGridAreaLoads(ReadOnlyCollection<GridAreaLoad> areaLoads, 
-            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, GsaAPI.Axis> axDict, LengthUnit unit)
+            IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, LengthUnit unit)
         {
             List<GsaLoadGoo> loads = new List<GsaLoadGoo>();
 
@@ -1556,7 +1556,7 @@ namespace GhSA.Util.Gsa
         /// <param name="gridsrf_ID">ID/Key/number of Grid Surface in GSA model to convert</param>
         /// <returns></returns>
         public static GsaGridPlaneSurface GetGridPlaneSurface(IReadOnlyDictionary<int, GridSurface> srfDict, 
-            IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, GsaAPI.Axis> axDict, int gridsrf_ID, LengthUnit unit)
+            IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, int gridsrf_ID, LengthUnit unit)
         {
             // GridPlaneSurface
             GsaGridPlaneSurface gps = new GsaGridPlaneSurface();
@@ -1574,10 +1574,10 @@ namespace GhSA.Util.Gsa
                 gps.GridPlaneID = gs.GridPlane;
 
                 // Get Axis
-                axDict.TryGetValue(gp.AxisProperty, out GsaAPI.Axis ax);
+                axDict.TryGetValue(gp.AxisProperty, out Axis ax);
                 if (ax == null)
                 {
-                    ax = new GsaAPI.Axis();
+                    ax = new Axis();
                     ax.Origin.X = 0;
                     ax.Origin.Y = 0;
                     ax.Origin.Z = 0;

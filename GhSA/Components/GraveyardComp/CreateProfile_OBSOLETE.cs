@@ -457,7 +457,7 @@ namespace GhSA.Components
                             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Cannot convert edge to Polyline");
                         }
                         Plane.FitPlaneToPoints(ctrl_pts, out Plane plane);
-                        Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.ChangeBasis(Plane.WorldXY, plane);
+                        Transform xform = Rhino.Geometry.Transform.ChangeBasis(Plane.WorldXY, plane);
 
                         profile.geoType = Profile.GeoTypes.Perim;
 

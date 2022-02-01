@@ -39,7 +39,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Job Number", "JN", "Set Job Number for this GSA Model", GH_ParamAccess.item);
             pManager.AddTextParameter("Initials", "Ini", "Set Initials for this GSA Model", GH_ParamAccess.item);
@@ -51,7 +51,7 @@ namespace GhSA.Components
                 pManager[i].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddTextParameter("Titles", "Titles", "List of all Titles in document", GH_ParamAccess.list);
         }

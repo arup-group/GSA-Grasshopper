@@ -73,7 +73,7 @@ namespace GhSA.UI.Menu
             // add info
             oasysMenu.DropDown.Items.Add("GSA Info", Properties.Resources.GSAInfo, (s, a) =>
             {
-                GhSA.UI.AboutGsaBox aboutBox = new UI.AboutGsaBox();
+                AboutGsaBox aboutBox = new AboutGsaBox();
                 aboutBox.Show();
             });
             

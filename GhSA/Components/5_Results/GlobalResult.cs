@@ -39,14 +39,14 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA model containing some results", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Load Case", "LC", "Load Case (default 1)", GH_ParamAccess.item, 1);
             pManager[1].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddVectorParameter("Total Force Loads", "ΣF", "Sum of all Force Loads in GSA Model (" + Units.Force + ")", GH_ParamAccess.item);
             pManager.AddVectorParameter("Total Moment Loads", "ΣM", "Sum of all Moment Loads in GSA Model (" + Units.Force + "/" + Units.LengthUnitGeometry + ")", GH_ParamAccess.item);

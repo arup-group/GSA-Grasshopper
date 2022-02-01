@@ -40,7 +40,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddNumberParameter("X", "X", "X", GH_ParamAccess.item, 0);
             pManager.AddNumberParameter("Y", "Y", "Y", GH_ParamAccess.item, 0);
@@ -57,7 +57,7 @@ namespace GhSA.Components
             pManager[5].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Spring", "PS", "GSA Spring (Type: General)", GH_ParamAccess.item);
         }
