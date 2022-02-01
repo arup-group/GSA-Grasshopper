@@ -11,6 +11,7 @@ using GhSA.Util.Gsa;
 using Grasshopper.Documentation;
 using Rhino.Collections;
 using UnitsNet;
+using UnitsNet.Units;
 
 namespace GhSA.Parameters
 {
@@ -82,12 +83,12 @@ namespace GhSA.Parameters
             //m_offset.Z = m_z;
         }
 
-        public GsaOffset(double x1, double x2, double y, double z)
+        public GsaOffset(double x1, double x2, double y, double z, LengthUnit unit = LengthUnit.Meter)
         {
-            m_x1 = x1;
-            m_x2 = x2;
-            m_y = y;
-            m_z = z;
+            m_x1 = new Length(x1, unit).Meters;
+            m_x2 = new Length(x2, unit).Meters;
+            m_y = new Length(y, unit).Meters;
+            m_z = new Length(z, unit).Meters;
             //m_offset.X1 = m_x1;
             //m_offset.X2 = m_x2;
             //m_offset.Y = m_y;

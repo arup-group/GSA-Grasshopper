@@ -10,6 +10,7 @@ using Rhino;
 using GhSA.Util.Gsa;
 using Grasshopper.Documentation;
 using Rhino.Collections;
+using UnitsNet;
 
 namespace GhSA.Parameters
 {
@@ -91,13 +92,17 @@ namespace GhSA.Parameters
                 m_member.Name = value;
             }
         }
-        public double MeshSize
+        public Length MeshSize
         {
-            get { return m_member.MeshSize; }
+            get 
+            {
+                Length l = new Length(m_member.MeshSize, UnitsNet.Units.LengthUnit.Meter);
+                return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
+            }
             set
             {
                 CloneApiMember();
-                m_member.MeshSize = value;
+                m_member.MeshSize = value.Meters;
             }
         }
         public int PropertyID
@@ -562,7 +567,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaMem3D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Mem3dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

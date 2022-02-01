@@ -11,6 +11,7 @@ using Rhino;
 using GhSA.Util.Gsa;
 using Grasshopper.Documentation;
 using Rhino.Collections;
+using UnitsNet;
 
 namespace GhSA.Parameters
 {
@@ -125,13 +126,17 @@ namespace GhSA.Parameters
                 m_member.Name = value;
             }
         }
-        public double MeshSize
+        public Length MeshSize
         {
-            get { return m_member.MeshSize; }
+            get 
+            {
+                Length l = new Length(m_member.MeshSize, UnitsNet.Units.LengthUnit.Meter);
+                return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry); 
+            }
             set
             {
                 CloneApiMember();
-                m_member.MeshSize = value;
+                m_member.MeshSize = value.Meters;
             }
         }
         public GsaOffset Offset
@@ -147,10 +152,10 @@ namespace GhSA.Parameters
             set
             {
                 CloneApiMember();
-                m_member.Offset.X1 = value.X1;
-                m_member.Offset.X2 = value.X2;
-                m_member.Offset.Y = value.Y;
-                m_member.Offset.Z = value.Z;
+                m_member.Offset.X1 = value.X1.Meters;
+                m_member.Offset.X2 = value.X2.Meters;
+                m_member.Offset.Y = value.Y.Meters;
+                m_member.Offset.Z = value.Z.Meters;
             }
         }
         public double OrientationAngle
