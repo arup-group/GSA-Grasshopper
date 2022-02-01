@@ -120,10 +120,10 @@ namespace GhSA.Components
         {
             GsaOffset offset = new GsaOffset
             {
-                X1 = GetInput.Length(this, DA, 0, lengthUnit, true).As(UnitsNet.Units.LengthUnit.Meter),
-                X2 = GetInput.Length(this, DA, 1, lengthUnit, true).As(UnitsNet.Units.LengthUnit.Meter),
-                Y = GetInput.Length(this, DA, 2, lengthUnit, true).As(UnitsNet.Units.LengthUnit.Meter),
-                Z = GetInput.Length(this, DA, 3, lengthUnit, true).As(UnitsNet.Units.LengthUnit.Meter)
+                X1 = GetInput.Length(this, DA, 0, lengthUnit, true),
+                X2 = GetInput.Length(this, DA, 1, lengthUnit, true),
+                Y = GetInput.Length(this, DA, 2, lengthUnit, true),
+                Z = GetInput.Length(this, DA, 3, lengthUnit, true)
             };
 
             DA.SetData(0, new GsaOffsetGoo(offset));

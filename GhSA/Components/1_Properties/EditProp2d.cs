@@ -11,6 +11,8 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GhSA.Parameters;
 using System.Resources;
+using UnitsNet;
+using System.Linq;
 
 namespace GhSA.Components
 {
@@ -30,7 +32,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditProp2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditProp2d;
         #endregion
 
         #region Custom UI
@@ -43,11 +45,13 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            
+            IQuantity quantity = new Length(0, Units.LengthUnitSection);
+            string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
             pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property to get or set information for", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Prop2d Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
             pManager.AddGenericParameter("Material", "Ma", "Set GSA Material or reference existing material by ID", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Thickness (" + Units.LengthUnitSection + ")", "Th", "Set Property Thickness", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Thickness [" + unitAbbreviation + "]", "Th", "Set Property Thickness", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Axis", "Ax", "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
             pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
             pManager.AddColourParameter("Prop2d Colour", "Co", "Set 2D Property Colour", GH_ParamAccess.item);
@@ -110,17 +114,7 @@ namespace GhSA.Components
             }
 
             // 3 Thickness
-            //string thk = ""; //prop.Prop2d.Thickness;
-            //if (DA.GetData(3, ref thk))
-            //{
-            //    prop.Prop2d.Description = thk;
-            //}
-
-            double thk = 0; //prop.Prop2d.Thickness;
-            if (DA.GetData(3, ref thk))
-            {
-                prop.Thickness = thk;
-            }
+            prop.Thickness = GetInput.Length(this, DA, 3, Units.LengthUnitSection, true);
 
             // 4 Axis
             GH_Integer ghax = new GH_Integer();
