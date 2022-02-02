@@ -17,7 +17,7 @@ namespace GhSA.Components
     /// <summary>
     /// Component to create new Node with restraints (support)
     /// </summary>
-    public class CreateSupport : GH_Component, IGH_PreviewObject
+    public class CreateSupport : GH_Component, IGH_PreviewObject, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
@@ -50,6 +50,12 @@ namespace GhSA.Components
             xx = resxx;
             yy = resyy;
             zz = reszz;
+
+            // update name of inputs (to display unit on sliders)
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
         }
 
         #endregion
@@ -83,9 +89,15 @@ namespace GhSA.Components
             xx = (bool)reader.GetBoolean("xx");
             yy = (bool)reader.GetBoolean("yy");
             zz = (bool)reader.GetBoolean("zz");
+            
             // we need to recreate the custom UI again as this is created before this read IO is called
             // otherwise the component will not display the selected item on the canvas
-            this.CreateAttributes();
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+
             return base.Read(reader);
         }
         #endregion
@@ -156,6 +168,28 @@ namespace GhSA.Components
                 }
             }
         }
+        #region IGH_VariableParameterComponent null implementation
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+            return null;
+        }
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            
+        }
+        #endregion  
     }
 }
 
