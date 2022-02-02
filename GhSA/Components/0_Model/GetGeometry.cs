@@ -359,6 +359,20 @@ namespace GhSA.Components
                 {
                     data.SetDataList(2, results.Elem2ds);
                     element2ds = results.Elem2ds;
+
+                    ConcurrentBag<GsaElement2dGoo> element2dsShaded = new ConcurrentBag<GsaElement2dGoo>();
+                    ConcurrentBag<GsaElement2dGoo> element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
+                    Parallel.ForEach(element2ds, elem =>
+                    {
+                        if (elem.Value.API_Elements[0].ParentMember.Member > 0)
+                            element2dsShaded.Add(elem);
+                        else
+                            element2dsNotShaded.Add(elem);
+                    });
+                    cachedDisplayMeshShaded = new Mesh();
+                    cachedDisplayMeshShaded.Append(element2dsShaded.Select(e => e.Value.Mesh));
+                    cachedDisplayMeshNotShaded = new Mesh();
+                    cachedDisplayMeshNotShaded.Append(element2dsNotShaded.Select(e => e.Value.Mesh));
                 }
                 if (results.Elem3ds != null)
                 {
@@ -376,65 +390,89 @@ namespace GhSA.Components
                 {
                     data.SetDataList(6, results.Mem3ds);
                 }
+
                 update = true;
             }
         }
 
         bool update;
         List<GsaElement2dGoo> element2ds;
-        ConcurrentBag<GsaElement2dGoo> element2dsShaded;
-        ConcurrentBag<GsaElement2dGoo> element2dsNotShaded;
+        Mesh cachedDisplayMeshShaded;
+        Mesh cachedDisplayMeshNotShaded;
+        //ConcurrentBag<GsaElement2dGoo> element2dsShaded;
+        //ConcurrentBag<GsaElement2dGoo> element2dsNotShaded;
         List<GsaNodeGoo> supportNodes;
 
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {
             base.DrawViewportWires(args);
 
-            if (update & element2ds != null)
-            {
-                element2dsShaded = new ConcurrentBag<GsaElement2dGoo>();
-                element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
-                Parallel.ForEach(element2ds, elem =>
-                {
-                    if (elem.Value.API_Elements[0].ParentMember.Member > 0)
-                        element2dsShaded.Add(elem);
-                    else
-                        element2dsNotShaded.Add(elem);
-                });
-                update = false;
-            }
+            //if (update & element2ds != null)
+            //{
+            //    element2dsShaded = new ConcurrentBag<GsaElement2dGoo>();
+            //    element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
+            //    Parallel.ForEach(element2ds, elem =>
+            //    {
+            //        if (elem.Value.API_Elements[0].ParentMember.Member > 0)
+            //            element2dsShaded.Add(elem);
+            //        else
+            //            element2dsNotShaded.Add(elem);
+            //    });
+            //    cachedDisplayMeshShaded = new Mesh();
+            //    cachedDisplayMeshShaded.Append(element2dsShaded.Select(e => e.Value.Mesh));
+            //    cachedDisplayMeshNotShaded = new Mesh();
+            //    cachedDisplayMeshNotShaded.Append(element2dsNotShaded.Select(e => e.Value.Mesh));
+            //    update = false;
+            //}
 
-            if (element2dsShaded != null)
+            if (cachedDisplayMeshShaded != null)
             {
-                foreach (GsaElement2dGoo element in element2dsShaded)
+                args.Display.DrawMeshWires(cachedDisplayMeshShaded, System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
+            }
+            //if (element2dsShaded != null)
+            //{
+
+            //    //foreach (GsaElement2dGoo element in element2dsShaded)
+            //    //{
+            //    //    if (element == null) { continue; }
+            //    //    //Draw lines
+            //    //    if (element.Value.Mesh != null)
+            //    //    {
+            //    //        args.Display.DrawMeshWires(element.Value.Mesh, System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
+            //    //    }
+            //    //}
+            //}
+            if (cachedDisplayMeshNotShaded != null)
+            {
+                if (this.Attributes.Selected)
                 {
-                    if (element == null) { continue; }
-                    //Draw lines
-                    if (element.Value.Mesh != null)
-                    {
-                        args.Display.DrawMeshWires(element.Value.Mesh, System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
-                    }
+                    args.Display.DrawMeshWires(cachedDisplayMeshNotShaded, UI.Colour.Element2dEdgeSelected, 2);
+                }
+                else
+                {
+                    args.Display.DrawMeshWires(cachedDisplayMeshNotShaded, UI.Colour.Element2dEdge, 1);
                 }
             }
-            if (element2dsNotShaded != null)
-            {
-                foreach (GsaElement2dGoo element in element2dsNotShaded)
-                {
-                    if (element == null) { continue; }
-                    //Draw lines
-                    if (element.Value.Mesh != null)
-                    {
-                        if (this.Attributes.Selected)
-                        {
-                            args.Display.DrawMeshWires(element.Value.Mesh, UI.Colour.Element2dEdgeSelected, 2);
-                        }
-                        else
-                        {
-                            args.Display.DrawMeshWires(element.Value.Mesh, UI.Colour.Element2dEdge, 1);
-                        }
-                    }
-                }
-            }
+            //if (element2dsNotShaded != null)
+            //{
+                
+            //    //foreach (GsaElement2dGoo element in element2dsNotShaded)
+            //    //{
+            //    //    if (element == null) { continue; }
+            //    //    //Draw lines
+            //    //    if (element.Value.Mesh != null)
+            //    //    {
+            //    //        if (this.Attributes.Selected)
+            //    //        {
+            //    //            args.Display.DrawMeshWires(element.Value.Mesh, UI.Colour.Element2dEdgeSelected, 2);
+            //    //        }
+            //    //        else
+            //    //        {
+            //    //            args.Display.DrawMeshWires(element.Value.Mesh, UI.Colour.Element2dEdge, 1);
+            //    //        }
+            //    //    }
+            //    //}
+            //}
 
             if (supportNodes != null)
             {
