@@ -25,7 +25,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditElem1D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditElem1d;
         #endregion
 
         #region Custom UI

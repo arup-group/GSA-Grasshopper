@@ -49,6 +49,7 @@ namespace GhSA.Components
                 dropdownitems.Add(Units.FilteredDensityUnits);
                 dropdownitems.Add(Units.FilteredTemperatureUnits);
 
+                selecteditems = new List<string>();
                 selecteditems.Add(_mode.ToString());
                 selecteditems.Add(Units.StressUnit.ToString());
                 selecteditems.Add(Units.DensityUnit.ToString());
@@ -421,13 +422,30 @@ namespace GhSA.Components
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-            
-            _mode = (FoldMode)reader.GetInt32(selecteditems[0]);
-            
-            stressUnit = (UnitsNet.Units.PressureUnit)Enum.Parse(typeof(UnitsNet.Units.PressureUnit), selecteditems[1]);
-            densityUnit = (UnitsNet.Units.DensityUnit)Enum.Parse(typeof(UnitsNet.Units.DensityUnit), selecteditems[2]);
-            temperatureUnit = (UnitsNet.Units.TemperatureUnit)Enum.Parse(typeof(UnitsNet.Units.TemperatureUnit), selecteditems[3]);
+            try // this will fail if user got an old version of the component
+            {
+                Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+
+                _mode = (FoldMode)reader.GetInt32(selecteditems[0]);
+
+                stressUnit = (UnitsNet.Units.PressureUnit)Enum.Parse(typeof(UnitsNet.Units.PressureUnit), selecteditems[1]);
+                densityUnit = (UnitsNet.Units.DensityUnit)Enum.Parse(typeof(UnitsNet.Units.DensityUnit), selecteditems[2]);
+                temperatureUnit = (UnitsNet.Units.TemperatureUnit)Enum.Parse(typeof(UnitsNet.Units.TemperatureUnit), selecteditems[3]);
+            }
+            catch (Exception) // if old version, we set the dropdowns as it was first time
+            {
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(topLevelDropdownItems);
+                dropdownitems.Add(Units.FilteredStressUnits);
+                dropdownitems.Add(Units.FilteredDensityUnits);
+                dropdownitems.Add(Units.FilteredTemperatureUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(_mode.ToString());
+                selecteditems.Add(Units.StressUnit.ToString());
+                selecteditems.Add(Units.DensityUnit.ToString());
+                selecteditems.Add(Units.TemperatureUnit.ToString());
+            }
             
             UpdateUIFromSelectedItems();
             first = false;

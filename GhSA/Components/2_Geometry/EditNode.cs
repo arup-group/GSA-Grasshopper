@@ -184,7 +184,7 @@ namespace GhSA.Components
                 DA.SetData(6, node.API_Node.Name);
                 DA.SetData(7, node.Colour);
 
-                // only get connected elements/members if enabled (computationally heavy)
+                // only get connected elements/members if enabled (computationally expensive)
                 if (_mode == FoldMode.GetConnected)
                 {
                     try { DA.SetDataList(8, node.API_Node.ConnectedElements); } catch (Exception) { }

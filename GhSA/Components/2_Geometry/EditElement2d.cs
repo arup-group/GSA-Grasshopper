@@ -13,6 +13,7 @@ using GhSA.Parameters;
 using System.Resources;
 using System.Linq;
 using Rhino.Collections;
+using UnitsNet;
 
 namespace GhSA.Components
 {
@@ -34,7 +35,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditElem2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditElem2d;
         #endregion
 
         #region Custom UI
@@ -189,7 +190,12 @@ namespace GhSA.Components
                         else
                         {
                             if (GH_Convert.ToDouble(gh_typ.Value, out double z, GH_Conversion.Both))
-                                offset.Z = z;
+                            {
+                                offset.Z = new Length(z, Units.LengthUnitGeometry);
+                                string unitAbbreviation = string.Concat(offset.Z.ToString().Where(char.IsLetter));
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Offset input converted to Z-offset in [" + unitAbbreviation + "]"
+                                    + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
+                            }
                             else
                             {
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Offset input to Offset or double");

@@ -9,6 +9,8 @@ using Grasshopper.Kernel.Parameters;
 using Rhino.Geometry;
 using GsaAPI;
 using GhSA.Parameters;
+using UnitsNet.Units;
+using UnitsNet;
 
 namespace GhSA.Components
 {
@@ -32,36 +34,82 @@ namespace GhSA.Components
         {
             if (first)
             {
-                selecteditem = _mode.ToString();
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(loadTypeOptions);
+                dropdownitems.Add(Units.FilteredForceUnits);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(_mode.ToString());
+                selecteditems.Add(Units.ForceUnit.ToString());
+                selecteditems.Add(Units.LengthUnitGeometry.ToString());
+
                 first = false;
             }
 
-            m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Load Type");
+            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
         }
-
-        public void SetSelected(string selected)
+        public void SetSelected(int i, int j)
         {
-            selecteditem = selected;
-            switch (selected)
+            // change selected item
+            selecteditems[i] = dropdownitems[i][j];
+
+            if (i == 0) // change is made to the first dropdown list
             {
-                case "Uniform":
-                    Mode1Clicked();
-                    break;
-                case "Variable":
-                    Mode2Clicked();
-                    break;
-                case "Point":
-                    Mode3Clicked();
-                    break;
-                case "Edge":
-                    Mode4Clicked();
-                    break;
+                switch (selecteditems[0])
+                {
+                    case "Uniform":
+                        Mode1Clicked();
+                        break;
+                    case "Variable":
+                        Mode2Clicked();
+                        break;
+                    case "Point":
+                        Mode3Clicked();
+                        break;
+                    case "Edge":
+                        Mode4Clicked();
+                        break;
+                }
             }
+            else
+            {
+                switch (i)
+                {
+                    case 1:
+                        forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
+                        break;
+                    case 2:
+                        LengthUnit length = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
+                        areaUnit = (Length.From(1, length) * Length.From(1, length)).Unit;
+                        break;
+                }
+
+                (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            }
+
+            // update input params
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+        
+        private void UpdateUIFromSelectedItems()
+        {
+            _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
+            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
+            LengthUnit length = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
+            areaUnit = (Length.From(1, length) * Length.From(1, length)).Unit;
+
+            CreateAttributes();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
         }
         #endregion
 
         #region Input and output
-        readonly List<string> dropdownitems = new List<string>(new string[]
+        readonly List<string> loadTypeOptions = new List<string>(new string[]
         {
             "Uniform",
             "Variable",
@@ -69,12 +117,32 @@ namespace GhSA.Components
             "Edge"
         });
 
-        string selecteditem;
+        // list of lists with all dropdown lists conctent
+        List<List<string>> dropdownitems;
+        // list of selected items
+        List<string> selecteditems;
+        // list of descriptions 
+        List<string> spacerDescriptions = new List<string>(new string[]
+        {
+            "Load Type",
+            "Unit",
+        });
+
+        private ForceUnit forceUnit = Units.ForceUnit;
+        private AreaUnit areaUnit = 
+            (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry)).Unit;
+
 
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            IQuantity force = new Force(0, forceUnit);
+            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            IQuantity area = new Area(0, areaUnit);
+            string areaUnitAbbreviation = string.Concat(area.ToString().Where(char.IsLetter));
+            string unitAbbreviation = forceUnitAbbreviation + "/" + areaUnitAbbreviation;
+
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
             pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to." + System.Environment.NewLine +
                 "Element list should take the form:" + System.Environment.NewLine +
@@ -91,7 +159,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "y" +
                     System.Environment.NewLine + "z", GH_ParamAccess.item, "z");
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
-            pManager.AddNumberParameter("Value (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)", "V", "Load Value (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value [" + unitAbbreviation + "]", "V", "Load Value", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[2].Optional = true;
@@ -471,24 +539,41 @@ namespace GhSA.Components
             Params.OnParametersChanged();
             ExpireSolution(true);
         }
-        
+
         #endregion
 
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            writer.SetInt32("Mode", (int)_mode);
-            writer.SetString("select", selecteditem);
+            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            _mode = (FoldMode)reader.GetInt32("Mode");
-            selecteditem = reader.GetString("select");
-            this.CreateAttributes();
+            try // this will fail if user has an old version of the component
+            {
+                Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+            }
+            catch (Exception) // we set the stored values like first initation of component
+            {
+                _mode = (FoldMode)reader.GetInt32("Mode");
+
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(loadTypeOptions);
+                dropdownitems.Add(Units.FilteredForceUnits);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(reader.GetString("select"));
+                selecteditems.Add(Units.ForceUnit.ToString());
+                selecteditems.Add(Units.LengthUnitGeometry.ToString());
+                first = false;
+            }
+
+            UpdateUIFromSelectedItems();
             return base.Read(reader);
         }
-        
+
         bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
         {
             return false;

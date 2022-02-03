@@ -198,6 +198,41 @@ namespace GhSA
             ForceUnit.KilopoundForce.ToString(),
             ForceUnit.TonneForce.ToString()
         };
+
+        public static ForcePerLengthUnit ForcePerLengthUnit
+        {
+            get
+            {
+                Force force = Force.From(1, ForceUnit);
+                Length length = Length.From(1, LengthUnitGeometry);
+                ForcePerLength kNperM = force / length;
+                return kNperM.Unit;
+            }
+        }
+        internal static List<string> FilteredForcePerLengthUnits = new List<string>()
+        {
+            ForcePerLengthUnit.NewtonPerMillimeter.ToString(),
+            ForcePerLengthUnit.NewtonPerCentimeter.ToString(),
+            ForcePerLengthUnit.NewtonPerMeter.ToString(),
+
+            ForcePerLengthUnit.KilonewtonPerMillimeter.ToString(),
+            ForcePerLengthUnit.KilonewtonPerCentimeter.ToString(),
+            ForcePerLengthUnit.KilonewtonPerMeter.ToString(),
+
+            ForcePerLengthUnit.TonneForcePerCentimeter.ToString(),
+            ForcePerLengthUnit.TonneForcePerMeter.ToString(),
+            ForcePerLengthUnit.TonneForcePerMillimeter.ToString(),
+
+            ForcePerLengthUnit.MeganewtonPerMeter.ToString(),
+
+            ForcePerLengthUnit.PoundForcePerInch.ToString(),
+            ForcePerLengthUnit.PoundForcePerFoot.ToString(),
+            ForcePerLengthUnit.PoundForcePerYard.ToString(),
+
+            ForcePerLengthUnit.KilopoundForcePerInch.ToString(),
+            ForcePerLengthUnit.KilopoundForcePerFoot.ToString()
+        };
+        
         #endregion
 
         #region moment

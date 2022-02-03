@@ -11,6 +11,8 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GhSA.Parameters;
 using System.Resources;
+using UnitsNet;
+using System.Linq;
 
 namespace GhSA.Components
 {
@@ -32,7 +34,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditMem1D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditMem1d;
         #endregion
 
         #region Custom UI
@@ -247,13 +249,19 @@ namespace GhSA.Components
                 if (DA.GetData(12, ref ghmsz))
                 {
                     if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
-                        mem.MeshSize = msz;
+                    {
+                        mem.MeshSize = new Length(msz, Units.LengthUnitGeometry);
+                        string unitAbbreviation = string.Concat(mem.MeshSize.ToString().Where(char.IsLetter));
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + unitAbbreviation + "]"
+                            + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
+                    }
                 }
 
                 // 13 mesh with others
                 GH_Boolean ghbool = new GH_Boolean();
                 if (DA.GetData(13, ref ghbool))
                 {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "'Mesh with others' not currently implemented");
                     if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
                     {
                         //mem.MeshWithOthers
