@@ -6,10 +6,12 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using Rhino.Geometry;
 using GhSA.Parameters;
+using UnitsNet.Units;
+using UnitsNet;
 
 namespace GhSA.Components
 {
-    public class CreateGridAreaLoad : GH_Component
+    public class CreateGridAreaLoad : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         public CreateGridAreaLoad()
@@ -20,16 +22,89 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("146f1bf8-8d2b-468f-bdb8-0237bee75262");
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridAreaLoad;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.AreaLoad;
         #endregion
 
         #region Custom UI
         //This region overrides the typical component layout
+        //This region overrides the typical component layout
+        public override void CreateAttributes()
+        {
+            if (first)
+            {
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(Units.FilteredForceUnits);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(Units.ForceUnit.ToString());
+                selecteditems.Add(Units.LengthUnitGeometry.ToString());
+
+                first = false;
+            }
+
+            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
+        }
+        public void SetSelected(int i, int j)
+        {
+            // change selected item
+            selecteditems[i] = dropdownitems[i][j];
+
+            switch (i)
+            {
+                case 0:
+                    forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
+                    break;
+                case 1:
+                    LengthUnit length = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
+                    areaUnit = (Length.From(1, length) * Length.From(1, length)).Unit;
+                    break;
+            }
+
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+
+            // update input params
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+
+        private void UpdateUIFromSelectedItems()
+        {
+            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[0]);
+            LengthUnit length = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
+            areaUnit = (Length.From(1, length) * Length.From(1, length)).Unit;
+
+            CreateAttributes();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
         #endregion
 
         #region input and output
+        // list of lists with all dropdown lists conctent
+        List<List<string>> dropdownitems;
+        // list of selected items
+        List<string> selecteditems;
+        // list of descriptions 
+        List<string> spacerDescriptions = new List<string>(new string[]
+        {
+            "Unit",
+        });
+        bool first = true;
+        private ForceUnit forceUnit = Units.ForceUnit;
+        private AreaUnit areaUnit =
+            (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry)).Unit;
+
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            IQuantity force = new Force(0, forceUnit);
+            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            IQuantity area = new Area(0, areaUnit);
+            string areaUnitAbbreviation = string.Concat(area.ToString().Where(char.IsLetter));
+            string unitAbbreviation = forceUnitAbbreviation + "/" + areaUnitAbbreviation;
+
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
             pManager.AddBrepParameter("Brep", "B", "(Optional) Brep. If no input the whole plane method will be used. If both Grid Plane Surface and Brep are inputted, this Brep will be projected onto the Grid Plane.", GH_ParamAccess.item);
             pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface or Plane (optional). If no input here then the brep's best-fit plane will be used", GH_ParamAccess.item);
@@ -44,7 +119,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
             pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Value (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)", "V", "Load Value (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value [" + unitAbbreviation + "]", "V", "Load Value", GH_ParamAccess.item);
             
 
             pManager[0].Optional = true;
@@ -235,12 +310,69 @@ namespace GhSA.Components
             // 7 load value
             double load1 = 0;
             if (DA.GetData(7, ref load1))
-                load1 *= 1000; //convert to kN
+                load1 = new Force(load1, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
             gridareaload.GridAreaLoad.Value = load1;
                         
             // convert to goo
             GsaLoad gsaLoad = new GsaLoad(gridareaload);
             DA.SetData(0, new GsaLoadGoo(gsaLoad));
         }
+        #region (de)serialization
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
+            return base.Write(writer);
+        }
+        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        {
+            try // this will fail if user has an old version of the component
+            {
+                Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+            }
+            catch (Exception) // we set the stored values like first initation of component
+            {
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(Units.FilteredForceUnits);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(ForceUnit.Kilonewton.ToString());
+                selecteditems.Add(LengthUnit.Meter.ToString());
+            }
+            first = false;
+
+            UpdateUIFromSelectedItems();
+            return base.Read(reader);
+        }
+
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+            return null;
+        }
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        #endregion
+        #region IGH_VariableParameterComponent null implementation
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            IQuantity force = new Force(0, forceUnit);
+            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            IQuantity area = new Area(0, areaUnit);
+            string areaUnitAbbreviation = string.Concat(area.ToString().Where(char.IsLetter));
+            string unitAbbreviation = forceUnitAbbreviation + "/" + areaUnitAbbreviation;
+
+            Params.Input[7].Name = "Value [" + unitAbbreviation + "]";
+        }
+        #endregion
     }
 }

@@ -6,6 +6,9 @@ using GsaAPI;
 using Rhino.Geometry;
 using GhSA.Parameters;
 using Grasshopper.Kernel.Parameters;
+using UnitsNet.Units;
+using UnitsNet;
+using System.Linq;
 
 namespace GhSA.Components
 {
@@ -29,46 +32,106 @@ namespace GhSA.Components
         {
             if (first)
             {
-                selecteditem = _mode.ToString();
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(loadTypeOptions);
+                dropdownitems.Add(Units.FilteredForceUnits);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(_mode.ToString());
+                selecteditems.Add(Units.ForceUnit.ToString());
+                selecteditems.Add(Units.LengthUnitGeometry.ToString());
+
                 first = false;
             }
 
-            m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Load Type");
+            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
         }
-
-
-        public void SetSelected(string selected)
+        public void SetSelected(int i, int j)
         {
-            selecteditem = selected;
-            switch (selected)
+            // change selected item
+            selecteditems[i] = dropdownitems[i][j];
+
+            if (i == 0) // change is made to the first dropdown list
             {
-                case "Node":
-                    _mode = FoldMode.Node;
-                    break;
-                case "Applied Displ":
-                    _mode = FoldMode.Applied_Displ;
-                    break;
-                case "Settlement":
-                    _mode = FoldMode.Settlements;
-                    break;
+                switch (selecteditems[0])
+                {
+                    case "Node":
+                        _mode = FoldMode.Node;
+                        break;
+                    case "Applied Displ":
+                        _mode = FoldMode.Applied_Displ;
+                        break;
+                    case "Settlement":
+                        _mode = FoldMode.Settlements;
+                        break;
+                }
             }
+            else
+            {
+                switch (i)
+                {
+                    case 1:
+                        forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
+                        break;
+                    case 2:
+                        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
+                        break;
+                }
+
+                (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            }
+
+            // update input params
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+        private void UpdateUIFromSelectedItems()
+        {
+            _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
+            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
+            lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
+
+            CreateAttributes();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
         }
         #endregion
 
         #region Input and output
-        readonly List<string> dropdownitems = new List<string>(new string[]
+        readonly List<string> loadTypeOptions = new List<string>(new string[]
         {
             "Node",
             "Applied Displ",
             "Settlement"
         });
 
-        string selecteditem;
+        // list of lists with all dropdown lists conctent
+        List<List<string>> dropdownitems;
+        // list of selected items
+        List<string> selecteditems;
+        // list of descriptions 
+        List<string> spacerDescriptions = new List<string>(new string[]
+        {
+            "Load Type",
+            "Unit",
+        });
+
+        private ForceUnit forceUnit = Units.ForceUnit;
+        private LengthUnit lengthUnit = Units.LengthUnitGeometry;
 
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            IQuantity force = new Force(0, forceUnit);
+            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            IQuantity length = new Length(0, lengthUnit);
+            string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+            string funit = forceUnitAbbreviation + ", " + forceUnitAbbreviation + lengthUnitAbbreviation;
+
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
             pManager.AddTextParameter("Node list", "No", "List of Nodes to apply load to." + System.Environment.NewLine +
                  "Node list should take the form:" + System.Environment.NewLine +
@@ -83,7 +146,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "xx" +
                     System.Environment.NewLine + "yy" +
                     System.Environment.NewLine + "zz", GH_ParamAccess.item, "z");
-            pManager.AddNumberParameter("Value (" + Units.Force + ")", "V", "Load Value (" + Units.Force + ")", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Value [" + funit + "]", "V", "Load Value", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
@@ -173,13 +236,37 @@ namespace GhSA.Components
             nodeLoad.NodeLoad.Direction = direc;
 
             double load = 0;
-            if (DA.GetData(4, ref load))
+            if (_mode == FoldMode.Node)
             {
-                load *= 1000; // convert to kN
-                //if (direc == Direction.Z)
-                //    load *= -1000; //convert to kN
-                //else
-                //    load *= 1000;
+                switch (dir)
+                {
+                    case "X":
+                    case "Y":
+                    case "Z":
+                        load = GetInput.Force(this, DA, 4, forceUnit).Newtons;
+                        break;
+                    case "XX":
+                    case "YY":
+                    case "ZZ":
+                        load = GetInput.Force(this, DA, 4, forceUnit).Newtons * new Length(1, lengthUnit).Meters;
+                        break;
+                }
+            }
+            else
+            {
+                switch (dir)
+                {
+                    case "X":
+                    case "Y":
+                    case "Z":
+                        load = GetInput.Length(this, DA, 4, lengthUnit).Meters;
+                        break;
+                    case "XX":
+                    case "YY":
+                    case "ZZ":
+                        load = GetInput.Angle(this, DA, 4, AngleUnit.Radian).Radians;
+                        break;
+                }
             }
 
             nodeLoad.NodeLoad.Value = load;
@@ -202,15 +289,32 @@ namespace GhSA.Components
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            writer.SetInt32("Mode", (int)_mode);
-            writer.SetString("select", selecteditem);
+            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            _mode = (FoldMode)reader.GetInt32("Mode");
-            selecteditem = reader.GetString("select");
-            this.CreateAttributes();
+            try // this will fail if user has an old version of the component
+            {
+                Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+            }
+            catch (Exception) // we set the stored values like first initation of component
+            {
+                _mode = (FoldMode)reader.GetInt32("Mode");
+
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(loadTypeOptions);
+                dropdownitems.Add(Units.FilteredForceUnits);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(reader.GetString("select"));
+                selecteditems.Add(ForceUnit.Kilonewton.ToString());
+                selecteditems.Add(LengthUnit.Meter.ToString());
+            }
+            first = false;
+
+            UpdateUIFromSelectedItems();
             return base.Read(reader);
         }
 
@@ -234,7 +338,21 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            
+            IQuantity force = new Force(0, forceUnit);
+            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            IQuantity length = new Length(0, lengthUnit);
+            string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+            string funit = forceUnitAbbreviation + ", " + forceUnitAbbreviation + lengthUnitAbbreviation;
+            string lunit = lengthUnitAbbreviation + ", rad";
+
+            if (_mode == FoldMode.Node)
+            {
+                Params.Input[4].Name = "Value [" + funit + "]";
+            }
+            else
+            {
+                Params.Input[4].Name = "Value [" + lunit + "]";
+            }
         }
         #endregion
     }

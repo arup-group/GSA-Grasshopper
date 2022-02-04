@@ -67,6 +67,8 @@ namespace GhSA.Util.GH
                     dropdownitems.Add(tempcontent);
                 }
             }
+            else
+                throw new Exception("Component doesnt have 'dropdown' content stored");
 
             // spacer list
             if (reader.GetBoolean("spacer"))

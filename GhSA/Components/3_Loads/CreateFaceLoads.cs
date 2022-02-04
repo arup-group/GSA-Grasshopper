@@ -131,8 +131,6 @@ namespace GhSA.Components
         private ForceUnit forceUnit = Units.ForceUnit;
         private AreaUnit areaUnit = 
             (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry)).Unit;
-
-
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -260,15 +258,10 @@ namespace GhSA.Components
                             GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
                         faceLoad.FaceLoad.IsProjected = prj;
 
-
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            load1 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load1 *= -1000; //convert to kN
-                            //else
-                            //    load1 *= 1000;
+                            load1 = new Force(load1, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
                         }
 
                         // set position and value
@@ -291,38 +284,22 @@ namespace GhSA.Components
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            load1 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load1 *= -1000; //convert to kN
-                            //else
-                            //    load1 *= 1000;
+                            load1 = new Force(load1, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
                         }
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
                         {
-                            load2 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load2 *= -1000; //convert to kN
-                            //else
-                            //    load2 *= 1000;
+                            load2 = new Force(load2, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
                         }
                         double load3 = 0;
                         if (DA.GetData(8, ref load3))
                         {
-                            load3 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load3 *= -1000; //convert to kN
-                            //else
-                            //    load3 *= 1000;
+                            load3 = new Force(load3, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
                         }
                         double load4 = 0;
                         if (DA.GetData(9, ref load4))
                         {
-                            load4 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //   load4 *= -1000; //convert to kN
-                            //else
-                            //    load4 *= 1000;
+                            load4 = new Force(load4, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
                         }
 
                         // set value
@@ -348,11 +325,7 @@ namespace GhSA.Components
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            load1 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load1 *= -1000; //convert to kN
-                            //else
-                            //    load1 *= 1000;
+                            load1 = new Force(load1, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
                         }
                         double r = 0;
                         DA.GetData(7, ref r);
@@ -380,21 +353,13 @@ namespace GhSA.Components
                         double load1 = 0;
                         if (DA.GetData(6, ref load1))
                         {
-                            load1 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load1 *= -1000; //convert to kN
-                            //else
-                            //    load1 *= 1000;
+                            load1 = new Force(load1, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
                         }
 
                         double load2 = 0;
                         if (DA.GetData(7, ref load2))
                         {
-                            load2 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load2 *= -1000; //convert to kN
-                            //else
-                            //    load2 *= 1000;
+                            load2 = new Force(load2, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
                         }
 
                         // set value
@@ -565,10 +530,10 @@ namespace GhSA.Components
 
                 selecteditems = new List<string>();
                 selecteditems.Add(reader.GetString("select"));
-                selecteditems.Add(Units.ForceUnit.ToString());
-                selecteditems.Add(Units.LengthUnitGeometry.ToString());
-                first = false;
+                selecteditems.Add(ForceUnit.Kilonewton.ToString());
+                selecteditems.Add(LengthUnit.Meter.ToString());
             }
+            first = false;
 
             UpdateUIFromSelectedItems();
             return base.Read(reader);
@@ -594,6 +559,12 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
+            IQuantity force = new Force(0, forceUnit);
+            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            IQuantity area = new Area(0, areaUnit);
+            string areaUnitAbbreviation = string.Concat(area.ToString().Where(char.IsLetter));
+            string unitAbbreviation = forceUnitAbbreviation + "/" + areaUnitAbbreviation;
+
             if (_mode == FoldMode.Uniform)
             {
                 Params.Input[5].NickName = "Pj";
@@ -603,8 +574,8 @@ namespace GhSA.Components
                 Params.Input[5].Optional = true;
                 
                 Params.Input[6].NickName = "V";
-                Params.Input[6].Name = "Value (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
-                Params.Input[6].Description = "Load Value (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
+                Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
+                Params.Input[6].Description = "Load Value";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = false;
             }
@@ -618,26 +589,26 @@ namespace GhSA.Components
                 Params.Input[5].Optional = true;
 
                 Params.Input[6].NickName = "V1";
-                Params.Input[6].Name = "Value 1 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
-                Params.Input[6].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
+                Params.Input[6].Name = "Value 1 [" + unitAbbreviation + "]";
+                Params.Input[6].Description = "Load Value Corner 1";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = true;
 
                 Params.Input[7].NickName = "V2";
-                Params.Input[7].Name = "Value 2 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
-                Params.Input[7].Description = "Load Value Corner 2 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
+                Params.Input[7].Name = "Value 2 [" + unitAbbreviation + "]";
+                Params.Input[7].Description = "Load Value Corner 2";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = true;
 
                 Params.Input[8].NickName = "V3";
-                Params.Input[8].Name = "Value 3 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
-                Params.Input[8].Description = "Load Value Corner 3 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
+                Params.Input[8].Name = "Value 3 [" + unitAbbreviation + "]";
+                Params.Input[8].Description = "Load Value Corner 3";
                 Params.Input[8].Access = GH_ParamAccess.item;
                 Params.Input[8].Optional = true;
 
                 Params.Input[9].NickName = "V4";
-                Params.Input[9].Name = "Value 4 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
-                Params.Input[9].Description = "Load Value Corner 4 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
+                Params.Input[9].Name = "Value 4 [" + unitAbbreviation + "]";
+                Params.Input[9].Description = "Load Value Corner 4";
                 Params.Input[9].Access = GH_ParamAccess.item;
                 Params.Input[9].Optional = true;
             }
@@ -651,8 +622,8 @@ namespace GhSA.Components
                 Params.Input[5].Optional = true;
 
                 Params.Input[6].NickName = "V";
-                Params.Input[6].Name = "Value (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
-                Params.Input[6].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
+                Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
+                Params.Input[6].Description = "Load Value Corner 1";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = false;
 
@@ -684,14 +655,14 @@ namespace GhSA.Components
                 Params.Input[5].Optional = false;
 
                 Params.Input[6].NickName = "V1";
-                Params.Input[6].Name = "Value 1 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
-                Params.Input[6].Description = "Load Value Corner 1 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
+                Params.Input[6].Name = "Value 1 [" + unitAbbreviation + "]";
+                Params.Input[6].Description = "Load Value Corner 1";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = false;
 
                 Params.Input[7].NickName = "V2";
-                Params.Input[7].Name = "Value 2 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
-                Params.Input[7].Description = "Load Value Corner 2 (" + Units.Force + "/" + Units.LengthUnitGeometry + "\xB2)";
+                Params.Input[7].Name = "Value 2 [" + unitAbbreviation + "]";
+                Params.Input[7].Description = "Load Value Corner 2";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = false;
             }

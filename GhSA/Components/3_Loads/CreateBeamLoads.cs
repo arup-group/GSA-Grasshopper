@@ -517,10 +517,10 @@ namespace GhSA.Components
 
                 selecteditems = new List<string>();
                 selecteditems.Add(reader.GetString("select"));
-                selecteditems.Add(Units.ForceUnit.ToString());
-                selecteditems.Add(Units.LengthUnitGeometry.ToString());
-                first = false;
+                selecteditems.Add(ForceUnit.Kilonewton.ToString());
+                selecteditems.Add(LengthUnit.Meter.ToString());
             }
+            first = false;
 
             UpdateUIFromSelectedItems();
             return base.Read(reader);

@@ -200,8 +200,6 @@ namespace GhSA.Components
 
                 IQuantity quantity = new Length(0, lengthUnit);
                 unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-                first = false;
             }
 
             UpdateUIFromSelectedItems();

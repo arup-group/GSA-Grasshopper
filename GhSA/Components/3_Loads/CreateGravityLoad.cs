@@ -97,13 +97,12 @@ namespace GhSA.Components
             factor.X = vect.X; factor.Y = vect.Y; factor.Z = vect.Z;
 
             if (vect.Z > 0)
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Just a friendly note that your gravity vector is pointing upwards.");
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Just a friendly note that your gravity vector is pointing upwards and that is not normal.");
 
             gravityLoad.GravityLoad.Factor = factor; 
 
             GsaLoad gsaLoad = new GsaLoad(gravityLoad);
             DA.SetData(0, new GsaLoadGoo(gsaLoad));
-            
         }
     }
 }
