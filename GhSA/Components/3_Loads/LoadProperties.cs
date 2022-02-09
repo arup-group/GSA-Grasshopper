@@ -6,10 +6,13 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using Rhino.Geometry;
 using GhSA.Parameters;
+using UnitsNet.Units;
+using UnitsNet;
+using UnitsNet.GH;
 
 namespace GhSA.Components
 {
-    public class LoadProp : GH_Component
+    public class LoadProp : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         public LoadProp()
@@ -20,35 +23,112 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("0df96bee-3440-4699-b08d-d805220d1f68");
         public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.LoadProp;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.LoadInfo;
         #endregion
 
         #region Custom UI
         //This region overrides the typical component layout
+        public override void CreateAttributes()
+        {
+            if (first)
+            {
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(Units.FilteredForceUnits);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(Units.ForceUnit.ToString());
+                selecteditems.Add(Units.LengthUnitGeometry.ToString());
+
+                first = false;
+            }
+
+            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
+        }
+
+        public void SetSelected(int i, int j)
+        {
+            // change selected item
+            selecteditems[i] = dropdownitems[i][j];
+
+            switch (i)
+            {
+                case 0:
+                    forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[0]);
+                    break;
+                case 1:
+                    lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[1]);
+                    break;
+            }
+
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            
+            // update input params
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+
+        private void UpdateUIFromSelectedItems()
+        {
+            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
+            lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
+
+            CreateAttributes();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
         #endregion
 
-        #region input and output
+        #region Input and output
+        // list of lists with all dropdown lists conctent
+        List<List<string>> dropdownitems;
+        // list of selected items
+        List<string> selecteditems;
+        // list of descriptions 
+        List<string> spacerDescriptions = new List<string>(new string[]
+        {
+            "Unit"
+        });
+
+        private ForcePerLengthUnit forcePerLengthUnit;
+        private ForceUnit forceUnit = Units.ForceUnit;
+        private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+        bool first = true;
+
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Load", "Ld", "Load to get some info out of", GH_ParamAccess.item);
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
+            IQuantity force = new Force(0, forceUnit);
+            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            IQuantity length = new Length(0, lengthUnit);
+            string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+            string unitAbbreviation = forceUnitAbbreviation + "/" + lengthUnitAbbreviation;
+
             pManager.AddIntegerParameter("Load case", "LC", "Load case number)", GH_ParamAccess.item);
             pManager.AddTextParameter("Name", "Na", "Load name", GH_ParamAccess.item);
             pManager.AddGenericParameter("Elements/Nodes/Definition", "De", "Element/Node list that load is applied to or Grid point / polygon definition", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Axis", "Ax", "Axis Property (0 : Global // -1 : Local", GH_ParamAccess.item);
             pManager.AddTextParameter("Direction", "Di", "Load direction", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor X (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", "V1", "Value at Start, Point 1 or Factor X (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor Y (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", "V2", "Value at End, Point 2 or Factor Y (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor Z (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", "V3", "Value at Point 3 or Factor Z (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", "V4", "Value at Point 4 (" + Units.Force + " or " + Units.Force + "/" + Units.LengthUnitGeometry + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value or Factor X [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V1", "Value at Start, Point 1 or Factor X", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value or Factor Y [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V2", "Value at End, Point 2 or Factor Y", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value or Factor Z [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V3", "Value at Point 3 or Factor Z", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Load Value [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V4", "Value at Point 4", GH_ParamAccess.item);
             pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface", GH_ParamAccess.item);
         }
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            Force kN = Force.From(1, forceUnit);
+            Length m = Length.From(1, lengthUnit);
+            ForcePerLength kNperM = kN / m;
+            forcePerLengthUnit = kNperM.Unit;
+            PressureUnit pressureUnit = (kN / (Length.From(1, lengthUnit) * Length.From(1, lengthUnit))).Unit;
             // Get Loads input
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(0, ref gh_typ))
@@ -73,7 +153,9 @@ namespace GhSA.Components
                             DA.SetData(2, gsaload.NodeLoad.NodeLoad.Nodes);
                             DA.SetData(3, gsaload.NodeLoad.NodeLoad.AxisProperty);
                             DA.SetData(4, gsaload.NodeLoad.NodeLoad.Direction);
-                            DA.SetData(6, gsaload.NodeLoad.NodeLoad.Value / 1000);
+                            Force apiNodeForce = new Force(gsaload.NodeLoad.NodeLoad.Value, ForceUnit.Newton);
+                            Force outNodeForce = new Force(apiNodeForce.As(forceUnit), forceUnit);
+                            DA.SetData(6, new GH_UnitNumber(outNodeForce));
                             return;
                         case GsaLoad.LoadTypes.Beam:
                             DA.SetData(0, gsaload.BeamLoad.BeamLoad.Case);
@@ -82,8 +164,12 @@ namespace GhSA.Components
                             DA.SetData(3, gsaload.BeamLoad.BeamLoad.AxisProperty);
                             DA.SetData(4, gsaload.BeamLoad.BeamLoad.Direction);
                             DA.SetData(5, gsaload.BeamLoad.BeamLoad.IsProjected);
-                            DA.SetData(6, gsaload.BeamLoad.BeamLoad.Value(0) / 1000);
-                            DA.SetData(7, gsaload.BeamLoad.BeamLoad.Value(1) / 1000);
+                            ForcePerLength apiBeamForce1 = new ForcePerLength(gsaload.BeamLoad.BeamLoad.Value(0), ForcePerLengthUnit.NewtonPerMeter);
+                            ForcePerLength outBeamForce1 = new ForcePerLength(apiBeamForce1.As(forcePerLengthUnit), forcePerLengthUnit);
+                            DA.SetData(6, new GH_UnitNumber(outBeamForce1));
+                            ForcePerLength apiBeamForce2 = new ForcePerLength(gsaload.BeamLoad.BeamLoad.Value(1), ForcePerLengthUnit.NewtonPerMeter);
+                            ForcePerLength outBeamForce2 = new ForcePerLength(apiBeamForce2.As(forcePerLengthUnit), forcePerLengthUnit);
+                            DA.SetData(7, new GH_UnitNumber(outBeamForce2));
                             return;
                         case GsaLoad.LoadTypes.Face:
                             DA.SetData(0, gsaload.FaceLoad.FaceLoad.Case);
@@ -92,10 +178,18 @@ namespace GhSA.Components
                             DA.SetData(3, gsaload.FaceLoad.FaceLoad.AxisProperty);
                             DA.SetData(4, gsaload.FaceLoad.FaceLoad.Direction);
                             DA.SetData(5, gsaload.FaceLoad.FaceLoad.IsProjected);
-                            DA.SetData(6, gsaload.FaceLoad.FaceLoad.Value(0)/1000);
-                            DA.SetData(7, gsaload.FaceLoad.FaceLoad.Value(1) / 1000);
-                            DA.SetData(8, gsaload.FaceLoad.FaceLoad.Value(2) / 1000);
-                            DA.SetData(9, gsaload.FaceLoad.FaceLoad.Value(3) / 1000);
+                            Pressure apiFaceForce1 = new Pressure(gsaload.FaceLoad.FaceLoad.Value(0), PressureUnit.NewtonPerSquareMeter);
+                            Pressure outFaceForce1 = new Pressure(apiFaceForce1.As(pressureUnit), pressureUnit);
+                            DA.SetData(6, new GH_UnitNumber(outFaceForce1));
+                            Pressure apiFaceForce2 = new Pressure(gsaload.FaceLoad.FaceLoad.Value(1), PressureUnit.NewtonPerSquareMeter);
+                            Pressure outFaceForce2 = new Pressure(apiFaceForce2.As(pressureUnit), pressureUnit);
+                            DA.SetData(7, new GH_UnitNumber(outFaceForce2));
+                            Pressure apiFaceForce3 = new Pressure(gsaload.FaceLoad.FaceLoad.Value(2), PressureUnit.NewtonPerSquareMeter);
+                            Pressure outFaceForce3 = new Pressure(apiFaceForce3.As(pressureUnit), pressureUnit);
+                            DA.SetData(8, new GH_UnitNumber(outFaceForce3));
+                            Pressure apiFaceForce4 = new Pressure(gsaload.FaceLoad.FaceLoad.Value(3), PressureUnit.NewtonPerSquareMeter);
+                            Pressure outFaceForce4 = new Pressure(apiFaceForce4.As(pressureUnit), pressureUnit);
+                            DA.SetData(9, new GH_UnitNumber(outFaceForce4));
                             return;
                         case GsaLoad.LoadTypes.GridPoint:
                             DA.SetData(0, gsaload.PointLoad.GridPointLoad.Case);
@@ -103,7 +197,9 @@ namespace GhSA.Components
                             DA.SetData(2, "(" + gsaload.PointLoad.GridPointLoad.X + "," + gsaload.PointLoad.GridPointLoad.Y + ")");
                             DA.SetData(3, gsaload.PointLoad.GridPointLoad.AxisProperty);
                             DA.SetData(4, gsaload.PointLoad.GridPointLoad.Direction);
-                            DA.SetData(6, gsaload.PointLoad.GridPointLoad.Value / 1000);
+                            Force apiPointForce = new Force(gsaload.NodeLoad.NodeLoad.Value, ForceUnit.Newton);
+                            Force outPointForce = new Force(apiPointForce.As(forceUnit), forceUnit);
+                            DA.SetData(6, new GH_UnitNumber(outPointForce));
                             DA.SetData(10, new GsaGridPlaneSurfaceGoo(gsaload.PointLoad.GridPlaneSurface));
                             return;
                         case GsaLoad.LoadTypes.GridLine:
@@ -112,8 +208,12 @@ namespace GhSA.Components
                             DA.SetData(2, gsaload.LineLoad.GridLineLoad.PolyLineDefinition);
                             DA.SetData(3, gsaload.LineLoad.GridLineLoad.AxisProperty);
                             DA.SetData(4, gsaload.LineLoad.GridLineLoad.Direction);
-                            DA.SetData(6, gsaload.LineLoad.GridLineLoad.ValueAtStart / 1000);
-                            DA.SetData(7, gsaload.LineLoad.GridLineLoad.ValueAtEnd / 1000);
+                            ForcePerLength apiLineForce1 = new ForcePerLength(gsaload.LineLoad.GridLineLoad.ValueAtStart, ForcePerLengthUnit.NewtonPerMeter);
+                            ForcePerLength outLineForce1 = new ForcePerLength(apiLineForce1.As(forcePerLengthUnit), forcePerLengthUnit);
+                            DA.SetData(6, new GH_UnitNumber(outLineForce1));
+                            ForcePerLength apiLineForce2 = new ForcePerLength(gsaload.LineLoad.GridLineLoad.ValueAtEnd, ForcePerLengthUnit.NewtonPerMeter);
+                            ForcePerLength outLineForce2 = new ForcePerLength(apiLineForce2.As(forcePerLengthUnit), forcePerLengthUnit);
+                            DA.SetData(7, new GH_UnitNumber(outLineForce2));
                             DA.SetData(10, new GsaGridPlaneSurfaceGoo(gsaload.LineLoad.GridPlaneSurface));
                             return;
                         case GsaLoad.LoadTypes.GridArea:
@@ -122,7 +222,9 @@ namespace GhSA.Components
                             DA.SetData(2, gsaload.AreaLoad.GridAreaLoad.PolyLineDefinition);
                             DA.SetData(3, gsaload.AreaLoad.GridAreaLoad.AxisProperty);
                             DA.SetData(4, gsaload.AreaLoad.GridAreaLoad.Direction);
-                            DA.SetData(6, gsaload.AreaLoad.GridAreaLoad.Value / 1000);
+                            Pressure apiAreaForce = new Pressure(gsaload.AreaLoad.GridAreaLoad.Value, PressureUnit.NewtonPerSquareMeter);
+                            Pressure outAreaForce = new Pressure(apiAreaForce.As(pressureUnit), pressureUnit);
+                            DA.SetData(6, new GH_UnitNumber(outAreaForce));
                             DA.SetData(10, new GsaGridPlaneSurfaceGoo(gsaload.AreaLoad.GridPlaneSurface));
                             return;
                     }
@@ -134,5 +236,74 @@ namespace GhSA.Components
                 }
             }
         }
+        #region (de)serialization
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
+            return base.Write(writer);
+        }
+        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        {
+            try // this will fail if user has an old version of the component
+            {
+                Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+            }
+            catch (Exception) // we set the stored values like first initation of component
+            {
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(Units.FilteredForceUnits);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(ForceUnit.Kilonewton.ToString());
+                selecteditems.Add(LengthUnit.Meter.ToString());
+            }
+            first = false;
+
+            UpdateUIFromSelectedItems();
+            return base.Read(reader);
+        }
+
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+            return null;
+        }
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        #endregion
+        #region IGH_VariableParameterComponent null implementation
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            IQuantity force = new Force(0, forceUnit);
+            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            IQuantity length = new Length(0, lengthUnit);
+            string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+            string unitAbbreviation = forceUnitAbbreviation + "/" + lengthUnitAbbreviation;
+
+            Params.Input[6].NickName = "V";
+            Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
+            Params.Input[6].Description = "Load Value";
+            Params.Input[6].Access = GH_ParamAccess.item;
+            Params.Input[6].Optional = false;
+
+            Params.Input[7].NickName = "t";
+            Params.Input[7].Name = "Position (%)";
+            Params.Input[7].Description = "Line parameter where point load act (between 0.0 and 1.0)";
+            Params.Input[7].Access = GH_ParamAccess.item;
+            Params.Input[7].Optional = true;
+
+
+        }
+        #endregion
     }
 }

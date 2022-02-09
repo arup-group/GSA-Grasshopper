@@ -33,12 +33,11 @@ namespace GhSA.Components
             if (first)
             {
                 dropdownitems = new List<List<string>>();
-                dropdownitems.Add(Units.FilteredForceUnits);
-                dropdownitems.Add(Units.FilteredLengthUnits);
+                dropdownitems.Add(Units.FilteredStressUnits);
 
                 selecteditems = new List<string>();
-                selecteditems.Add(Units.ForceUnit.ToString());
-                selecteditems.Add(Units.LengthUnitGeometry.ToString());
+                PressureUnit pressureUnit = (Force.From(1, Units.ForceUnit) / (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry))).Unit;
+                selecteditems.Add(pressureUnit.ToString());
 
                 first = false;
             }
@@ -50,16 +49,7 @@ namespace GhSA.Components
             // change selected item
             selecteditems[i] = dropdownitems[i][j];
 
-            switch (i)
-            {
-                case 0:
-                    forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
-                    break;
-                case 1:
-                    LengthUnit length = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
-                    areaUnit = (Length.From(1, length) * Length.From(1, length)).Unit;
-                    break;
-            }
+            forceAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[0]);
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
 
@@ -71,9 +61,7 @@ namespace GhSA.Components
 
         private void UpdateUIFromSelectedItems()
         {
-            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[0]);
-            LengthUnit length = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
-            areaUnit = (Length.From(1, length) * Length.From(1, length)).Unit;
+            forceAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[0]);
 
             CreateAttributes();
             ExpireSolution(true);
@@ -93,17 +81,12 @@ namespace GhSA.Components
             "Unit",
         });
         bool first = true;
-        private ForceUnit forceUnit = Units.ForceUnit;
-        private AreaUnit areaUnit =
-            (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry)).Unit;
+        private PressureUnit forceAreaUnit = (Force.From(1, Units.ForceUnit) / (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry))).Unit;
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            IQuantity force = new Force(0, forceUnit);
-            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-            IQuantity area = new Area(0, areaUnit);
-            string areaUnitAbbreviation = string.Concat(area.ToString().Where(char.IsLetter));
-            string unitAbbreviation = forceUnitAbbreviation + "/" + areaUnitAbbreviation;
+            IQuantity force = new Pressure(0, forceAreaUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
 
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
             pManager.AddBrepParameter("Brep", "B", "(Optional) Brep. If no input the whole plane method will be used. If both Grid Plane Surface and Brep are inputted, this Brep will be projected onto the Grid Plane.", GH_ParamAccess.item);
@@ -308,10 +291,7 @@ namespace GhSA.Components
             }
 
             // 7 load value
-            double load1 = 0;
-            if (DA.GetData(7, ref load1))
-                load1 = new Force(load1, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
-            gridareaload.GridAreaLoad.Value = load1;
+            gridareaload.GridAreaLoad.Value = GetInput.Stress(this, DA, 7, forceAreaUnit).NewtonsPerSquareMeter;
                         
             // convert to goo
             GsaLoad gsaLoad = new GsaLoad(gridareaload);
@@ -332,12 +312,10 @@ namespace GhSA.Components
             catch (Exception) // we set the stored values like first initation of component
             {
                 dropdownitems = new List<List<string>>();
-                dropdownitems.Add(Units.FilteredForceUnits);
-                dropdownitems.Add(Units.FilteredLengthUnits);
+                dropdownitems.Add(Units.FilteredStressUnits);
 
                 selecteditems = new List<string>();
-                selecteditems.Add(ForceUnit.Kilonewton.ToString());
-                selecteditems.Add(LengthUnit.Meter.ToString());
+                selecteditems.Add(PressureUnit.KilonewtonPerSquareMeter.ToString());
             }
             first = false;
 
@@ -365,11 +343,8 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            IQuantity force = new Force(0, forceUnit);
-            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-            IQuantity area = new Area(0, areaUnit);
-            string areaUnitAbbreviation = string.Concat(area.ToString().Where(char.IsLetter));
-            string unitAbbreviation = forceUnitAbbreviation + "/" + areaUnitAbbreviation;
+            IQuantity force = new Pressure(0, forceAreaUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
 
             Params.Input[7].Name = "Value [" + unitAbbreviation + "]";
         }

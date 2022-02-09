@@ -36,13 +36,13 @@ namespace GhSA.Components
             {
                 dropdownitems = new List<List<string>>();
                 dropdownitems.Add(loadTypeOptions);
-                dropdownitems.Add(Units.FilteredForceUnits);
-                dropdownitems.Add(Units.FilteredLengthUnits);
+                dropdownitems.Add(Units.FilteredStressUnits);
 
                 selecteditems = new List<string>();
                 selecteditems.Add(_mode.ToString());
-                selecteditems.Add(Units.ForceUnit.ToString());
-                selecteditems.Add(Units.LengthUnitGeometry.ToString());
+
+                PressureUnit pressureUnit = (Force.From(1, Units.ForceUnit) / (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry))).Unit;
+                selecteditems.Add(pressureUnit.ToString());
 
                 first = false;
             }
@@ -74,17 +74,7 @@ namespace GhSA.Components
             }
             else
             {
-                switch (i)
-                {
-                    case 1:
-                        forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
-                        break;
-                    case 2:
-                        LengthUnit length = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
-                        areaUnit = (Length.From(1, length) * Length.From(1, length)).Unit;
-                        break;
-                }
-
+                forceAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[1]);
                 (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             }
 
@@ -97,9 +87,7 @@ namespace GhSA.Components
         private void UpdateUIFromSelectedItems()
         {
             _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
-            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
-            LengthUnit length = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
-            areaUnit = (Length.From(1, length) * Length.From(1, length)).Unit;
+            forceAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[1]);
 
             CreateAttributes();
             ExpireSolution(true);
@@ -128,18 +116,13 @@ namespace GhSA.Components
             "Unit",
         });
 
-        private ForceUnit forceUnit = Units.ForceUnit;
-        private AreaUnit areaUnit = 
-            (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry)).Unit;
+        private PressureUnit forceAreaUnit = (Force.From(1, Units.ForceUnit) / (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry))).Unit;
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            IQuantity force = new Force(0, forceUnit);
-            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-            IQuantity area = new Area(0, areaUnit);
-            string areaUnitAbbreviation = string.Concat(area.ToString().Where(char.IsLetter));
-            string unitAbbreviation = forceUnitAbbreviation + "/" + areaUnitAbbreviation;
+            IQuantity force = new Pressure(0, forceAreaUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
 
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
             pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to." + System.Environment.NewLine +
@@ -258,14 +241,10 @@ namespace GhSA.Components
                             GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
                         faceLoad.FaceLoad.IsProjected = prj;
 
-                        double load1 = 0;
-                        if (DA.GetData(6, ref load1))
-                        {
-                            load1 = new Force(load1, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
-                        }
+                        Pressure load1 = GetInput.Stress(this, DA, 6, forceAreaUnit);
 
                         // set position and value
-                        faceLoad.FaceLoad.SetValue(0, load1);
+                        faceLoad.FaceLoad.SetValue(0, load1.NewtonsPerSquareMeter);
                     }
                     break;
 
@@ -281,32 +260,11 @@ namespace GhSA.Components
                             GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
                         faceLoad.FaceLoad.IsProjected = prj;
 
-                        double load1 = 0;
-                        if (DA.GetData(6, ref load1))
-                        {
-                            load1 = new Force(load1, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
-                        }
-                        double load2 = 0;
-                        if (DA.GetData(7, ref load2))
-                        {
-                            load2 = new Force(load2, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
-                        }
-                        double load3 = 0;
-                        if (DA.GetData(8, ref load3))
-                        {
-                            load3 = new Force(load3, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
-                        }
-                        double load4 = 0;
-                        if (DA.GetData(9, ref load4))
-                        {
-                            load4 = new Force(load4, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
-                        }
-
                         // set value
-                        faceLoad.FaceLoad.SetValue(0, load1);
-                        faceLoad.FaceLoad.SetValue(1, load2);
-                        faceLoad.FaceLoad.SetValue(2, load3);
-                        faceLoad.FaceLoad.SetValue(3, load4);
+                        faceLoad.FaceLoad.SetValue(0, GetInput.Stress(this, DA, 6, forceAreaUnit, true).NewtonsPerSquareMeter);
+                        faceLoad.FaceLoad.SetValue(1, GetInput.Stress(this, DA, 7, forceAreaUnit, true).NewtonsPerSquareMeter);
+                        faceLoad.FaceLoad.SetValue(2, GetInput.Stress(this, DA, 8, forceAreaUnit, true).NewtonsPerSquareMeter);
+                        faceLoad.FaceLoad.SetValue(3, GetInput.Stress(this, DA, 9, forceAreaUnit, true).NewtonsPerSquareMeter);
                     }
                     break;
 
@@ -322,11 +280,6 @@ namespace GhSA.Components
                             GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
                         faceLoad.FaceLoad.IsProjected = prj;
 
-                        double load1 = 0;
-                        if (DA.GetData(6, ref load1))
-                        {
-                            load1 = new Force(load1, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
-                        }
                         double r = 0;
                         DA.GetData(7, ref r);
                             
@@ -334,10 +287,10 @@ namespace GhSA.Components
                         DA.GetData(8, ref s);
                         
                         // set position and value
-                        faceLoad.FaceLoad.SetValue(0, load1);
+                        faceLoad.FaceLoad.SetValue(0, GetInput.Stress(this, DA, 6, forceAreaUnit).NewtonsPerSquareMeter);
                         //faceLoad.Position.X = r; //note Vector2 currently only get in GsaAPI
                         //faceLoad.Position.Y = s;
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "note position cannot be set in GsaAPI at the moment");
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning: the position cannot be set in GsaAPI at the moment");
                     }
                     break;
 
@@ -350,24 +303,15 @@ namespace GhSA.Components
                         int edge = 1;
                         DA.GetData(5, ref edge);
 
-                        double load1 = 0;
-                        if (DA.GetData(6, ref load1))
-                        {
-                            load1 = new Force(load1, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
-                        }
+                        faceLoad.FaceLoad.SetValue(0, GetInput.Stress(this, DA, 6, forceAreaUnit).NewtonsPerSquareMeter);
+                        if (this.Params.Input[7].SourceCount != 0)
+                            faceLoad.FaceLoad.SetValue(1, GetInput.Stress(this, DA, 7, forceAreaUnit).NewtonsPerSquareMeter);
+                        else
+                            faceLoad.FaceLoad.SetValue(1, faceLoad.FaceLoad.Value(0));
 
-                        double load2 = 0;
-                        if (DA.GetData(7, ref load2))
-                        {
-                            load2 = new Force(load2, forceUnit).Newtons / new Area(1, areaUnit).SquareMeters;
-                        }
+                        //faceLoad.FaceLoad. = edge; //note implementation of edge-load is not yet supported in GsaAPI
 
-                        // set value
-                        faceLoad.FaceLoad.SetValue(0, load1);
-                        faceLoad.FaceLoad.SetValue(1, load2);
-                        //faceLoad.Edge = edge; //note implementation of edge-load is not yet supported in GsaAPI
-
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "edge-load is not yet supported in GsaAPI");
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning: edge-load is not yet supported in GsaAPI");
                     }
                     break;
 
@@ -525,13 +469,11 @@ namespace GhSA.Components
 
                 dropdownitems = new List<List<string>>();
                 dropdownitems.Add(loadTypeOptions);
-                dropdownitems.Add(Units.FilteredForceUnits);
-                dropdownitems.Add(Units.FilteredLengthUnits);
+                dropdownitems.Add(Units.FilteredStressUnits);
 
                 selecteditems = new List<string>();
                 selecteditems.Add(reader.GetString("select"));
-                selecteditems.Add(ForceUnit.Kilonewton.ToString());
-                selecteditems.Add(LengthUnit.Meter.ToString());
+                selecteditems.Add(PressureUnit.KilonewtonPerSquareMeter.ToString());
             }
             first = false;
 
@@ -559,11 +501,8 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            IQuantity force = new Force(0, forceUnit);
-            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-            IQuantity area = new Area(0, areaUnit);
-            string areaUnitAbbreviation = string.Concat(area.ToString().Where(char.IsLetter));
-            string unitAbbreviation = forceUnitAbbreviation + "/" + areaUnitAbbreviation;
+            IQuantity force = new Pressure(0, forceAreaUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
 
             if (_mode == FoldMode.Uniform)
             {
