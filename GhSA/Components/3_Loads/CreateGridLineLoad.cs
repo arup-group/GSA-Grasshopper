@@ -32,17 +32,10 @@ namespace GhSA.Components
             if (first)
             {
                 dropdownitems = new List<List<string>>();
-                dropdownitems.Add(Units.FilteredForceUnits);
-                dropdownitems.Add(Units.FilteredLengthUnits);
+                dropdownitems.Add(Units.FilteredForcePerLengthUnits);
 
                 selecteditems = new List<string>();
-                selecteditems.Add(Units.ForceUnit.ToString());
-                selecteditems.Add(Units.LengthUnitGeometry.ToString());
-
-                Force kN = Force.From(1, forceUnit);
-                Length m = Length.From(1, lengthUnit);
-                ForcePerLength kNperM = kN / m;
-                forcePerLengthUnit = kNperM.Unit;
+                selecteditems.Add(Units.ForcePerLengthUnit.ToString());
 
                 first = false;
             }
@@ -55,21 +48,7 @@ namespace GhSA.Components
             // change selected item
             selecteditems[i] = dropdownitems[i][j];
 
-            switch (i)
-            {
-                case 0:
-                    forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
-                    break;
-                case 1:
-                    lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
-                    break;
-            }
-
-            Force kN = Force.From(1, forceUnit);
-            Length m = Length.From(1, lengthUnit);
-            ForcePerLength kNperM = kN / m;
-            forcePerLengthUnit = kNperM.Unit;
-
+            forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[0]);
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
 
             // update input params
@@ -79,13 +58,7 @@ namespace GhSA.Components
         }
         private void UpdateUIFromSelectedItems()
         {
-            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[0]);
-            lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[1]);
-
-            Force kN = Force.From(1, forceUnit);
-            Length m = Length.From(1, lengthUnit);
-            ForcePerLength kNperM = kN / m;
-            forcePerLengthUnit = kNperM.Unit;
+            forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[0]);
 
             CreateAttributes();
             ExpireSolution(true);
@@ -111,11 +84,8 @@ namespace GhSA.Components
         bool first = true;
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            IQuantity force = new Force(0, forceUnit);
-            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-            IQuantity length = new Length(0, lengthUnit);
-            string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-            string unitAbbreviation = forceUnitAbbreviation + "/" + lengthUnitAbbreviation;
+            IQuantity force = new ForcePerLength(0, forcePerLengthUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
 
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
             pManager.AddCurveParameter("PolyLine", "L", "PolyLine. If you input grid plane below only x and y coordinate positions will be used from this polyline, but if not a new Grid Plane Surface (best-fit plane) will be created from PolyLine control points.", GH_ParamAccess.item);
@@ -375,11 +345,8 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            IQuantity force = new Force(0, forceUnit);
-            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-            IQuantity length = new Length(0, lengthUnit);
-            string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-            string unitAbbreviation = forceUnitAbbreviation + "/" + lengthUnitAbbreviation;
+            IQuantity force = new ForcePerLength(0, forcePerLengthUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
 
             Params.Input[7].Name = "Value Start [" + unitAbbreviation + "]";
             Params.Input[8].Name = "Value End [" + unitAbbreviation + "]";

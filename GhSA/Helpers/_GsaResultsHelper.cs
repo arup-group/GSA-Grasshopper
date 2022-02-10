@@ -1,8 +1,13 @@
-﻿using System;
+﻿using GsaAPI;
+using Oasys.Units;
+using Rhino.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnitsNet;
+using UnitsNet.Units;
 
 namespace GhSA.Util.Gsa
 {
@@ -66,6 +71,34 @@ namespace GhSA.Util.Gsa
                     return Math.Round(result, digits - (int)leftSideNumbers, MidpointRounding.AwayFromZero);
                 }
             }
+        }
+        public static Vector3d GetResult(Double6 result, ForceUnit unit)
+        {
+            double x = new Force(result.X, ForceUnit.Newton).As(unit);
+            double y = new Force(result.Y, ForceUnit.Newton).As(unit);
+            double z = new Force(result.Z, ForceUnit.Newton).As(unit);
+            return new Vector3d(x, y, z);
+        }
+        public static Vector3d GetResult(Double6 result, MomentUnit unit)
+        {
+            double xx = new Moment(result.XX, MomentUnit.NewtonMeter).As(unit);
+            double yy = new Moment(result.YY, MomentUnit.NewtonMeter).As(unit);
+            double zz = new Moment(result.ZZ, MomentUnit.NewtonMeter).As(unit);
+            return new Vector3d(xx, yy, zz);
+        }
+        public static Vector3d GetResult(Double6 result, LengthUnit unit)
+        {
+            double x = new Length(result.X, LengthUnit.Meter).As(unit);
+            double y = new Length(result.YY, LengthUnit.Meter).As(unit);
+            double z = new Length(result.ZZ, LengthUnit.Meter).As(unit);
+            return new Vector3d(x, y, z);
+        }
+        public static Vector3d GetResult(Double6 result, AngleUnit unit)
+        {
+            double xx = new Angle(result.XX, AngleUnit.Radian).As(unit);
+            double yy = new Angle(result.YY, AngleUnit.Radian).As(unit);
+            double zz = new Angle(result.ZZ, AngleUnit.Radian).As(unit);
+            return new Vector3d(xx, yy, zz);
         }
     }
 }

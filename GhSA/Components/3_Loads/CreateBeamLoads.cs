@@ -37,18 +37,11 @@ namespace GhSA.Components
             {
                 dropdownitems = new List<List<string>>();
                 dropdownitems.Add(loadTypeOptions);
-                dropdownitems.Add(Units.FilteredForceUnits);
-                dropdownitems.Add(Units.FilteredLengthUnits);
+                dropdownitems.Add(Units.FilteredForcePerLengthUnits);
 
                 selecteditems = new List<string>();
                 selecteditems.Add(_mode.ToString());
-                selecteditems.Add(Units.ForceUnit.ToString());
-                selecteditems.Add(Units.LengthUnitGeometry.ToString());
-
-                Force kN = Force.From(1, forceUnit);
-                Length m = Length.From(1, lengthUnit);
-                ForcePerLength kNperM = kN / m;
-                forcePerLengthUnit = kNperM.Unit;
+                selecteditems.Add(Units.ForcePerLengthUnit.ToString());
 
                 first = false;
             }
@@ -84,21 +77,7 @@ namespace GhSA.Components
             }
             else
             {
-                switch (i)
-                {
-                    case 1:
-                        forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
-                        break;
-                    case 2:
-                        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
-                        break;
-                }
-
-                Force kN = Force.From(1, forceUnit);
-                Length m = Length.From(1, lengthUnit);
-                ForcePerLength kNperM = kN / m;
-                forcePerLengthUnit = kNperM.Unit;
-
+                forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[1]);
                 (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             }
                 
@@ -110,13 +89,7 @@ namespace GhSA.Components
         private void UpdateUIFromSelectedItems()
         {
             _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
-            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
-            lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
-
-            Force kN = Force.From(1, forceUnit);
-            Length m = Length.From(1, lengthUnit);
-            ForcePerLength kNperM = kN / m;
-            forcePerLengthUnit = kNperM.Unit;
+            forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[1]);
 
             CreateAttributes();
             ExpireSolution(true);
@@ -147,18 +120,13 @@ namespace GhSA.Components
         });
 
         private ForcePerLengthUnit forcePerLengthUnit;
-        private ForceUnit forceUnit = Units.ForceUnit;
-        private LengthUnit lengthUnit = Units.LengthUnitGeometry;
 
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            IQuantity force = new Force(0, forceUnit);
-            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-            IQuantity length = new Length(0, lengthUnit);
-            string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-            string unitAbbreviation = forceUnitAbbreviation + "/" + lengthUnitAbbreviation;
+            IQuantity force = new ForcePerLength(0, forcePerLengthUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
 
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
             pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to." + System.Environment.NewLine +
@@ -546,11 +514,8 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            IQuantity force = new Force(0, forceUnit);
-            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-            IQuantity length = new Length(0, lengthUnit);
-            string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-            string unitAbbreviation = forceUnitAbbreviation + "/" + lengthUnitAbbreviation;
+            IQuantity force = new ForcePerLength(0, forcePerLengthUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
 
             if (_mode == FoldMode.Point)
             {

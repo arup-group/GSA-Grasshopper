@@ -209,6 +209,7 @@ namespace GhSA
                 return kNperM.Unit;
             }
         }
+        
         internal static List<string> FilteredForcePerLengthUnits = new List<string>()
         {
             ForcePerLengthUnit.NewtonPerMillimeter.ToString(),
@@ -232,7 +233,6 @@ namespace GhSA
             ForcePerLengthUnit.KilopoundForcePerInch.ToString(),
             ForcePerLengthUnit.KilopoundForcePerFoot.ToString()
         };
-        
         #endregion
 
         #region moment
