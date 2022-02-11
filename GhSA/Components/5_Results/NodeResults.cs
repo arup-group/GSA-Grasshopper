@@ -15,6 +15,10 @@ using GsaAPI;
 using GhSA.Parameters;
 using System.Resources;
 using System.Linq;
+using Oasys.Units;
+using UnitsNet.Units;
+using UnitsNet;
+using GhSA.Util.Gsa;
 
 namespace GhSA.Components
 {
@@ -36,7 +40,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.NodeResults;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Result0D;
         #endregion
 
         #region Custom UI
@@ -48,9 +52,13 @@ namespace GhSA.Components
                 dropdowncontents = new List<List<string>>();
                 dropdowncontents.Add(dropdownitems);
                 dropdowncontents.Add(dropdowndisplacement);
+                dropdowncontents.Add(Units.FilteredLengthUnits);
+                dropdowncontents.Add(Units.FilteredLengthUnits);
                 selections = new List<string>();
                 selections.Add(dropdowncontents[0][0]);
                 selections.Add(dropdowncontents[1][3]);
+                selections.Add(Units.LengthUnitResult.ToString());
+                selections.Add(Units.LengthUnitGeometry.ToString());
                 first = false;
             }
             m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, DefScale, MaxValue, MinValue, noDigits, spacertext);
@@ -81,8 +89,10 @@ namespace GhSA.Components
                     if (dropdowncontents[1] != dropdowndisplacement)
                     {
                         dropdowncontents[1] = dropdowndisplacement;
+                        dropdowncontents[2] = Units.FilteredLengthUnits;
                         selections[0] = dropdowncontents[0][0];
                         selections[1] = dropdowncontents[1][3];
+                        selections[2] = resultLengthUnit.ToString();
                         getresults = true;
                         Mode1Clicked();
                     }
@@ -95,12 +105,13 @@ namespace GhSA.Components
                         dropdowncontents[1] = dropdownreaction;
                         selections[0] = dropdowncontents[0][1];
                         selections[1] = dropdowncontents[1][3];
+                        selections[2] = forceUnit.ToString(); // default when changing is |F|
                         getresults = true;
                         Mode2Clicked();
                     }
                         
                 }
-                if (selectedidd == 2)
+                if (selectedidd == 2) // this should currently not be hit
                 {
                     if (dropdowncontents[1] != dropdownforce)
                     {
@@ -112,28 +123,44 @@ namespace GhSA.Components
                     }
                 }
             }
-            else
+            else if (dropdownlistidd == 1)
             {
-                if (selectedidd == 0)
-                    _disp = DisplayValue.X;
-                if (selectedidd == 1)
-                    _disp = DisplayValue.Y;
-                if (selectedidd == 2)
-                    _disp = DisplayValue.Z;
-                if (selectedidd == 3)
-                    _disp = DisplayValue.resXYZ;
-                if (selectedidd == 4)
-                    _disp = DisplayValue.XX;
-                if (selectedidd == 5)
-                    _disp = DisplayValue.YY;
-                if (selectedidd == 6)
-                    _disp = DisplayValue.ZZ;
-                if (selectedidd == 7)
-                    _disp = DisplayValue.resXXYYZZ;
+                if (_mode == FoldMode.Reaction)
+                {
+                    if ((int)_disp > 3 && selectedidd < 4)
+                    {
+                        dropdowncontents[2] = Units.FilteredForceUnits;
+                        selections[2] = forceUnit.ToString();
+                    }
+                    if ((int)_disp < 4 && selectedidd > 3)
+                    {
+                        dropdowncontents[2] = Units.FilteredMomentUnits;
+                        selections[2] = momentUnit.ToString();
+                    }
+                }
+                _disp = (DisplayValue)selectedidd;
                 selections[1] = dropdowncontents[1][selectedidd];
+
                 (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
                 Params.OnParametersChanged();
                 ExpireSolution(true);
+            }
+            else // change is made to the unit
+            {
+                if (dropdownlistidd == 2) // result units
+                {
+                    if (_mode == FoldMode.Displacement)
+                        resultLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selections[2]);
+                    else
+                    {
+                        if ((int)_disp < 4)
+                            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selections[2]);
+                        else
+                            momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), selections[2]);
+                    }
+                }
+                else // geometry unit
+                    geometryLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selections[3]);
             }
         }
         #endregion
@@ -146,13 +173,15 @@ namespace GhSA.Components
         {
             "Result Type",
             "Display Result",
+            "Result Unit",
+            "Geometry Unit",
             "Deform Shape"
         });
         readonly List<string> dropdownitems = new List<string>(new string[]
         {
             "Displacement",
             "Reaction",
-            "Spring Force"
+            //"Spring Force"
         });
 
         readonly List<string> dropdowndisplacement = new List<string>(new string[]
@@ -191,6 +220,10 @@ namespace GhSA.Components
             "Resolved |M|",
         });
 
+        private MomentUnit momentUnit = Units.MomentUnit;
+        private ForceUnit forceUnit = Units.ForceUnit;
+        private LengthUnit resultLengthUnit = Units.LengthUnitResult;
+        private LengthUnit geometryLengthUnit = Units.LengthUnitGeometry;
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -211,12 +244,15 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddVectorParameter("Translation", "U\u0305", "X, Y, Z translation values (" + Units.LengthUnitResult + ")", GH_ParamAccess.list);
-            pManager.AddVectorParameter("Rotation", "R\u0305", "XX, YY, ZZ rotation values (" + Units.Angle + ")", GH_ParamAccess.list);
+            IQuantity length = new Length(0, resultLengthUnit);
+            string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
+            pManager.AddVectorParameter("Translation [" + lengthunitAbbreviation + "]", "U\u0305", "(X, Y, Z) Translation Vector", GH_ParamAccess.list);
+            pManager.AddVectorParameter("Rotations [rad]", "R\u0305", "(XX, YY, ZZ) Rotation Vector", GH_ParamAccess.list);
             pManager.AddGenericParameter("Point", "P", "Point with result value", GH_ParamAccess.list);
             pManager.AddGenericParameter("Result Colour", "Co", "Colours representing the result value at each point", GH_ParamAccess.list);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthUnitResult + ")", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values", GH_ParamAccess.list);
         }
 
         #region fields
@@ -363,8 +399,8 @@ namespace GhSA.Components
                     dmin_xyz = 0;
                     dmin_xxyyzz = 0;
 
-                    double unitfactorxyz = 1;
-                    double unitfactorxxyyzz = 1;
+                    //double unitfactorxyz = 1;
+                    //double unitfactorxxyyzz = 1;
 
                     // if reaction type, then we reuse the nodeList to filter support nodes from the rest
                     if (_mode == FoldMode.Reaction)
@@ -400,64 +436,35 @@ namespace GhSA.Components
                         {
                             case (FoldMode.Displacement):
                                 values = result.Displacement;
-                                unitfactorxyz = 0.001;
-                                unitfactorxxyyzz = 1;
+                                //unitfactorxyz = 0.001;
+                                //unitfactorxxyyzz = 1;
                                 break;
                             case (FoldMode.Reaction):
                                 values = result.Reaction;
-                                unitfactorxyz = 1000;
-                                unitfactorxxyyzz = 1000;
+                                //unitfactorxyz = 1000;
+                                //unitfactorxxyyzz = 1000;
                                 break;
                             case (FoldMode.SpringForce):
                                 values = result.SpringForce;
-                                unitfactorxyz = 1000;
-                                unitfactorxxyyzz = 1000;
+                                //unitfactorxyz = 1000;
+                                //unitfactorxxyyzz = 1000;
                                 break;
                             case (FoldMode.Constraint):
                                 values = result.Constraint;
                                 break;
                         }
 
-                        // update max and min values
-                        //if (values.X / unitfactorxyz > dmax_x)
-                        //    dmax_x = values.X / unitfactorxyz;
-                        //if (values.Y / unitfactorxyz > dmax_y)
-                        //    dmax_y = values.Y / unitfactorxyz;
-                        //if (values.Z / unitfactorxyz > dmax_z)
-                        //    dmax_z = values.Z / unitfactorxyz;
-                        //if (Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz > dmax_xyz)
-                        //    dmax_xyz = Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz;
-
-                        //if (values.XX / unitfactorxxyyzz > dmax_xx)
-                        //    dmax_xx = values.XX / unitfactorxxyyzz;
-                        //if (values.YY / unitfactorxxyyzz > dmax_yy)
-                        //    dmax_yy = values.YY / unitfactorxxyyzz;
-                        //if (values.ZZ / unitfactorxxyyzz > dmax_zz)
-                        //    dmax_zz = values.ZZ / unitfactorxxyyzz;
-                        //if (Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz > dmax_xxyyzz)
-                        //    dmax_xxyyzz = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz;
-
-                        //if (values.X / unitfactorxyz < dmin_x)
-                        //    dmin_x = values.X / unitfactorxyz;
-                        //if (values.Y / unitfactorxyz < dmin_y)
-                        //    dmin_y = values.Y / unitfactorxyz;
-                        //if (values.Z / unitfactorxyz < dmin_z)
-                        //    dmin_z = values.Z / unitfactorxyz;
-                        //if (Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz < dmin_xyz)
-                        //    dmin_xyz = Math.Sqrt(Math.Pow(values.X, 2) + Math.Pow(values.Y, 2) + Math.Pow(values.Z, 2)) / unitfactorxyz;
-
-                        //if (values.XX / unitfactorxxyyzz < dmin_xx)
-                        //    dmin_xx = values.XX / unitfactorxxyyzz;
-                        //if (values.YY / unitfactorxxyyzz < dmin_yy)
-                        //    dmin_yy = values.YY / unitfactorxxyyzz;
-                        //if (values.ZZ / unitfactorxxyyzz < dmin_zz)
-                        //    dmin_zz = values.ZZ / unitfactorxxyyzz;
-                        //if (Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz < dmin_xxyyzz)
-                        //    dmin_xxyyzz = Math.Sqrt(Math.Pow(values.XX, 2) + Math.Pow(values.YY, 2) + Math.Pow(values.ZZ, 2)) / unitfactorxxyyzz;
-
                         // add the values to the vector lists
-                        xyz[nodeID] = new Vector3d(values.X / unitfactorxyz, values.Y / unitfactorxyz, values.Z / unitfactorxyz);
-                        xxyyzz[nodeID] = new Vector3d(values.XX / unitfactorxxyyzz, values.YY / unitfactorxxyyzz, values.ZZ / unitfactorxxyyzz);
+                        if (_mode == FoldMode.Displacement)
+                        {
+                            xyz[nodeID] = ResultHelper.GetResult(values, resultLengthUnit);
+                            xxyyzz[nodeID] = ResultHelper.GetResult(values, AngleUnit.Radian);
+                        }
+                        else
+                        {
+                            xyz[nodeID] = ResultHelper.GetResult(values, forceUnit);
+                            xxyyzz[nodeID] = ResultHelper.GetResult(values, momentUnit);
+                        }
                     });
                     #endregion
 
@@ -495,7 +502,7 @@ namespace GhSA.Components
                 // ### Coloured Result Points ###
 
                 // Get nodes for point location and restraint check in case of reaction force
-                List<GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodes(nodes);
+                List<GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodes(nodes, geometryLengthUnit);
 
                 //Find Colour and Values for legend output
                 
@@ -757,6 +764,11 @@ namespace GhSA.Components
             writer.SetDouble("valMax", MaxValue);
             writer.SetDouble("valMin", MinValue);
             writer.SetDouble("val", DefScale);
+            writer.SetString("selectedUnit", selections[2]);
+            writer.SetString("resultLengthUnit", resultLengthUnit.ToString());
+            writer.SetString("forceUnit", forceUnit.ToString());
+            writer.SetString("momentUnit", momentUnit.ToString());
+            writer.SetString("geometryLengthUnit", geometryLengthUnit.ToString());
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
@@ -782,6 +794,31 @@ namespace GhSA.Components
             selections = new List<string>();
             selections.Add(dropdowncontents[0][(int)_mode]);
             selections.Add(dropdowncontents[1][(int)_disp]);
+            try
+            {
+                selections.Add(reader.GetString("selectedUnit"));
+                resultLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("resultLengthUnit"));
+                forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), reader.GetString("forceUnit"));
+                momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), reader.GetString("momentUnit"));
+                geometryLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("geometryLengthUnit"));
+            }
+            catch (Exception) // if user has old component this will fail and we set it to kN, kN/m or mm
+            {
+                resultLengthUnit = LengthUnit.Millimeter;
+                forceUnit = ForceUnit.Kilonewton;
+                momentUnit = MomentUnit.KilonewtonMeter;
+                geometryLengthUnit = LengthUnit.Meter;
+                if (_mode == FoldMode.Displacement)
+                    selections.Add(resultLengthUnit.ToString());
+                else
+                {
+                    if ((int)_disp < 4)
+                        selections.Add(forceUnit.ToString());
+                    else
+                        selections.Add(momentUnit.ToString());
+                }
+            }
+            selections.Add(geometryLengthUnit.ToString());
             first = false;
 
             this.CreateAttributes();
@@ -808,38 +845,42 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            
+            string momentunitAbbreviation = Oasys.Units.Moment.GetAbbreviation(momentUnit);
+            IQuantity force = new Force(0, forceUnit);
+            string forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            IQuantity length = new Length(0, resultLengthUnit);
+            string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
             if (_mode == FoldMode.Displacement)
             {
                 Params.Output[0].NickName = "U\u0305";
-                Params.Output[0].Name = "Translation";
-                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Units.LengthUnitResult + ")";
+                Params.Output[0].Name = "Translations [" + lengthunitAbbreviation + "]";
+                Params.Output[0].Description = "(X, Y, Z) Translation Vector";
 
                 Params.Output[1].NickName = "R\u0305";
-                Params.Output[1].Name = "Rotation";
-                Params.Output[1].Description = "Rotation Vector [Rxx, Ryy, Rzz] (" + Units.Angle + ")";
+                Params.Output[1].Name = "Rotations [rad]";
+                Params.Output[1].Description = "(XX, YY, ZZ) Rotation Vector";
 
                 if ((int)_disp < 4)
-                    Params.Output[5].Description = "Legend Values (" + Units.LengthUnitResult + ")";
+                    Params.Output[5].Name = "Values [" + lengthunitAbbreviation + "]";
                 else
-                    Params.Output[5].Description = "Legend Values (" + Units.Angle + ")";
-
+                    Params.Output[5].Name = "Values [rad]";
             }
 
             if (_mode == FoldMode.Reaction | _mode == FoldMode.SpringForce)
             {
                 Params.Output[0].NickName = "F\u0305";
-                Params.Output[0].Name = "Force";
-                Params.Output[0].Description = "Force Vector [Nx, Vy, Vz] (" + Units.Force + ")";
+                Params.Output[0].Name = "Forces [" + forceunitAbbreviation + "]";
+                Params.Output[0].Description = "(Nx, Vy, Vz) Force Vector ";
 
                 Params.Output[1].NickName = "M\u0305";
-                Params.Output[1].Name = "Moment";
-                Params.Output[1].Description = "Moment Vector [Mxx, Myy, Mzz] (" + Units.Force + "/" + Units.LengthUnitGeometry + ")";
+                Params.Output[1].Name = "Moments [" + momentunitAbbreviation + "]";
+                Params.Output[1].Description = "(Mxx, Myy, Mzz) Moment Vector";
 
                 if ((int)_disp < 4)
-                    Params.Output[5].Description = "Legend Values (" + Units.Force + ")";
+                    Params.Output[5].Description = "Legend Values [" + forceunitAbbreviation + "]";
                 else
-                    Params.Output[5].Description = "Legend Values (" + Units.Force + "/" + Units.LengthUnitGeometry + ")";
+                    Params.Output[5].Description = "Legend Values [" + momentunitAbbreviation + "]";
             }
         }
         #endregion  

@@ -16,6 +16,10 @@ using GhSA.Parameters;
 using System.Resources;
 using System.Linq;
 using Grasshopper.Kernel.Data;
+using Oasys.Units;
+using UnitsNet.Units;
+using UnitsNet;
+using GhSA.Util.Gsa;
 
 namespace GhSA.Components
 {
@@ -37,7 +41,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Elem2dResults;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Result2D;
         #endregion
 
         #region Custom UI
@@ -49,9 +53,14 @@ namespace GhSA.Components
                 dropdowncontents = new List<List<string>>();
                 dropdowncontents.Add(dropdownitems);
                 dropdowncontents.Add(dropdowndisplacement);
+                dropdowncontents.Add(Units.FilteredLengthUnits);
+                dropdowncontents.Add(Units.FilteredLengthUnits);
                 selections = new List<string>();
                 selections.Add(dropdowncontents[0][0]);
                 selections.Add(dropdowncontents[1][3]);
+                selections.Add(Units.LengthUnitResult.ToString());
+                selections.Add(Units.LengthUnitGeometry.ToString());
+                spacertext = spacertextOther;
                 first = false;
             }
             m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, DefScale, MaxValue, MinValue, noDigits, spacertext);
@@ -75,66 +84,100 @@ namespace GhSA.Components
         {
             if (dropdownlistidd == 0) // if change is made to first list
             {
-                if (selectedidd == 0)
+                if (selectedidd == 0) // displacement mode
                 {
                     if (dropdowncontents[1] != dropdowndisplacement)
                     {
+                        if (dropdowncontents.Count == 5)
+                        {
+                            dropdowncontents.RemoveAt(2);
+                            selections.RemoveAt(2);
+                            spacertext = spacertextOther;
+                        }
+
                         dropdowncontents[1] = dropdowndisplacement;
+                        dropdowncontents[2] = Units.FilteredLengthUnits;
+
                         selections[0] = dropdowncontents[0][0];
                         selections[1] = dropdowncontents[1][3];
-                        if (dropdowncontents.Count > 2)
-                            dropdowncontents.RemoveAt(2);
+                        selections[2] = resultLengthUnit.ToString(); // displacement
                         _disp = (DisplayValue)3;
+
                         flayer = 0;
                         getresults = true;
                         Mode1Clicked();
                     }
                 }
-                if (selectedidd == 1)
+                if (selectedidd == 1)  // force mode
                 {
                     if (dropdowncontents[1] != dropdownforce)
                     {
+                        if (dropdowncontents.Count == 5)
+                        {
+                            dropdowncontents.RemoveAt(2);
+                            selections.RemoveAt(2);
+                            spacertext = spacertextOther;
+                        }
+
                         dropdowncontents[1] = dropdownforce;
+                        dropdowncontents[2] = Units.FilteredForceUnits;
+
                         selections[0] = dropdowncontents[0][1];
                         selections[1] = dropdowncontents[1][0];
-                        if (dropdowncontents.Count > 2)
-                            dropdowncontents.RemoveAt(2);
+                        selections[2] = forceUnit.ToString(); // default when changing is Fx
+                        
                         _disp = 0;
                         flayer = 0;
                         getresults = true;
                         Mode2Clicked();
                     }
                 }
-                if (selectedidd == 2)
+                if (selectedidd == 2) // shear mode
                 {
                     if (dropdowncontents[1] != dropdownshear)
                     {
+                        if (dropdowncontents.Count == 5)
+                        {
+                            dropdowncontents.RemoveAt(2);
+                            selections.RemoveAt(2);
+                            spacertext = spacertextOther;
+                        }
+
                         dropdowncontents[1] = dropdownshear;
+                        dropdowncontents[2] = Units.FilteredForceUnits;
+
                         selections[0] = dropdowncontents[0][2];
                         selections[1] = dropdowncontents[1][0];
-                        if (dropdowncontents.Count > 2)
-                            dropdowncontents.RemoveAt(2);
+                        selections[2] = forceUnit.ToString(); // default when changing is Fx
+                        
                         _disp = 0;
                         flayer = 0;
                         getresults = true;
                         Mode3Clicked();
                     }
                 }
-                if (selectedidd == 3)
+                if (selectedidd == 3) // stress mode
                 {
                     if (dropdowncontents[1] != dropdownstress)
                     {
+                        if (dropdowncontents.Count < 5)
+                        {
+                            dropdowncontents.Insert(2, dropdownlayer);
+                            spacertext = spacertextStress;
+                        }
+
                         dropdowncontents[1] = dropdownstress;
+                        dropdowncontents[3] = Units.FilteredStressUnits;
+
                         selections[0] = dropdowncontents[0][3];
                         selections[1] = dropdowncontents[1][0];
                         
-                        if (dropdowncontents.Count < 3)
-                            dropdowncontents.Add(dropdownlayer);
-
-                        if (selections.Count < 3)
-                            selections.Add(dropdowncontents[2][1]);
+                        if (selections.Count < 5)
+                            selections.Insert(2, dropdowncontents[2][1]);
                         else
                             selections[2] = dropdowncontents[2][1];
+
+                        selections[3] = stressUnit.ToString(); // default when changing is Myy
 
                         _disp = 0;
                         getresults = true;
@@ -142,9 +185,7 @@ namespace GhSA.Components
                     }
                 }
             }
-
-
-            if (dropdownlistidd == 1) // if change is made to second list
+            else if (dropdownlistidd == 1) // if change is made to second list
             {
                 bool redraw = false;
                 selections[1] = dropdowncontents[1][selectedidd];
@@ -174,8 +215,7 @@ namespace GhSA.Components
                 Params.OnParametersChanged();
                 ExpireSolution(true);
             }
-
-            if (dropdownlistidd == 2) // if change is made to third list
+            else if (dropdownlistidd == 2 && _mode == FoldMode.Stress) // if change is made to third list
             {
                 if (selectedidd == 0)
                     flayer = 1;
@@ -186,6 +226,23 @@ namespace GhSA.Components
                 getresults = true;
                 ExpireSolution(true);
             }
+            else
+            {
+                if (dropdownlistidd == dropdowncontents.Count - 2)
+                {
+                    if (_mode == FoldMode.Displacement)
+                        resultLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selections[2]);
+                    else
+                    {
+                        if ((int)_disp < 4)
+                            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selections[2]);
+                        else
+                            momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), selections[2]);
+                    }
+                }
+                else
+                    geometryLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selections[3]);
+            }
         }
         #endregion
 
@@ -193,10 +250,22 @@ namespace GhSA.Components
         List<List<string>> dropdowncontents; // list that holds all dropdown contents
         List<string> selections;
         bool first = true;
-        readonly List<string> spacertext = new List<string>(new string[]
+        List<string> spacertext;
+        readonly List<string> spacertextOther = new List<string>(new string[]
         {
             "Result Type",
             "Display Result",
+            "Result Unit",
+            "Geometry Unit",
+            "Deform Shape"
+        });
+        readonly List<string> spacertextStress = new List<string>(new string[]
+        {
+            "Result Type",
+            "Display Result",
+            "Layer",
+            "Result Unit",
+            "Geometry Unit",
             "Deform Shape"
         });
         readonly List<string> dropdownitems = new List<string>(new string[]
@@ -251,6 +320,11 @@ namespace GhSA.Components
             "Middle",
             "Bottom"
         });
+        private MomentUnit momentUnit = Units.MomentUnit;
+        private ForceUnit forceUnit = Units.ForceUnit;
+        private LengthUnit resultLengthUnit = Units.LengthUnitResult;
+        private LengthUnit geometryLengthUnit = Units.LengthUnitGeometry;
+        private PressureUnit stressUnit = Units.StressUnit;
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -427,8 +501,8 @@ namespace GhSA.Components
                     dmin_xyz = 0;
                     dmin_xxyyzz = 0;
 
-                    double unitfactorxyz = 1;
-                    double unitfactorxxyyzz = 1;
+                    //double unitfactorxyz = 1;
+                    //double unitfactorxxyyzz = 1;
 
                     Parallel.ForEach(globalResults.Keys, key =>
                     {
@@ -446,8 +520,8 @@ namespace GhSA.Components
                             switch (_mode)
                             {
                                 case (FoldMode.Displacement):
-                                    unitfactorxyz = 0.001;
-                                    unitfactorxxyyzz = 1;
+                                    //unitfactorxyz = 0.001;
+                                    //unitfactorxxyyzz = 1;
 
                                     List<Double6> disp = elementResults.Displacement.ToList();
                                     Parallel.For(0, disp.Count * 2, i => // (Double6 val in values)
@@ -455,33 +529,35 @@ namespace GhSA.Components
                                         // split computation into two parts by doubling the i-counter
                                         if (i < disp.Count)
                                         {
-                                            Double6 val = disp[i];
-                                            Vector3d valxyz = new Vector3d
-                                            {
-                                                X = val.X / unitfactorxyz,
-                                                Y = val.Y / unitfactorxyz,
-                                                Z = val.Z / unitfactorxyz
-                                            };
-                                            xyzRes[i] = valxyz;
+                                            xyzRes[i] = ResultHelper.GetResult(disp[i], resultLengthUnit);
+                                            //Double6 val = disp[i];
+                                            //Vector3d valxyz = new Vector3d
+                                            //{
+                                            //    X = val.X / unitfactorxyz,
+                                            //    Y = val.Y / unitfactorxyz,
+                                            //    Z = val.Z / unitfactorxyz
+                                            //};
+                                            //xyzRes[i] = valxyz;
                                         }
                                         else
                                         {
-                                            Double6 val = disp[i - disp.Count];
-                                            Vector3d valxxyyzz = new Vector3d
-                                            {
-                                                X = val.XX / unitfactorxxyyzz,
-                                                Y = val.YY / unitfactorxxyyzz,
-                                                Z = val.ZZ / unitfactorxxyyzz
-                                            };
-                                            xxyyzzRes[i - disp.Count] = valxxyyzz;
+                                            xyzRes[i - disp.Count] = ResultHelper.GetResult(disp[i - disp.Count], AngleUnit.Radian);
+                                            //Double6 val = disp[i - disp.Count];
+                                            //Vector3d valxxyyzz = new Vector3d
+                                            //{
+                                            //    X = val.XX / unitfactorxxyyzz,
+                                            //    Y = val.YY / unitfactorxxyyzz,
+                                            //    Z = val.ZZ / unitfactorxxyyzz
+                                            //};
+                                            //xxyyzzRes[i - disp.Count] = valxxyyzz;
                                         }
                                     });
                                     break;
 
                                 case (FoldMode.Force):
-                                    unitfactorxyz = 1000;
+                                    //unitfactorxyz = 1000;
                                     List<Tensor2> forces = elementResults.Force.ToList();
-                                    unitfactorxxyyzz = 1000;
+                                    //unitfactorxxyyzz = 1000;
                                     List<Tensor2> moments = elementResults.Moment.ToList();
                                     Parallel.For(0, forces.Count + moments.Count, i => // (Tensor2 force in forces)
                                     {
@@ -489,44 +565,47 @@ namespace GhSA.Components
                                         // calculations in parallel by doubling the i-counter
                                         if (i < forces.Count)
                                         {
-                                            Tensor2 force = forces[i];
-                                            Vector3d valxyz = new Vector3d
-                                            {
-                                                X = force.XX / unitfactorxyz,
-                                                Y = force.YY / unitfactorxyz,
-                                                Z = force.XY / unitfactorxyz
-                                            };
-                                            xyzRes[i] = valxyz;
+                                            xyzRes[i] = ResultHelper.GetResult(forces[i], forceUnit);
+                                            //Tensor2 force = forces[i];
+                                            //Vector3d valxyz = new Vector3d
+                                            //{
+                                            //    X = force.XX / unitfactorxyz,
+                                            //    Y = force.YY / unitfactorxyz,
+                                            //    Z = force.XY / unitfactorxyz
+                                            //};
+                                            //xyzRes[i] = valxyz;
                                         }
                                         else
                                         {
-                                            Tensor2 moment = moments[i - forces.Count];
-                                            Vector3d valxxyyzz = new Vector3d
-                                            {
-                                                X = moment.XX / unitfactorxxyyzz,
-                                                Y = moment.YY / unitfactorxxyyzz,
-                                                Z = moment.XY / unitfactorxxyyzz
-                                            };
-                                            xxyyzzRes[i - forces.Count] = valxxyyzz;
+                                            xyzRes[i] = ResultHelper.GetResult(forces[i], momentUnit);
+                                            //Tensor2 moment = moments[i - forces.Count];
+                                            //Vector3d valxxyyzz = new Vector3d
+                                            //{
+                                            //    X = moment.XX / unitfactorxxyyzz,
+                                            //    Y = moment.YY / unitfactorxxyyzz,
+                                            //    Z = moment.XY / unitfactorxxyyzz
+                                            //};
+                                            //xxyyzzRes[i - forces.Count] = valxxyyzz;
                                         }
                                     });
                                     break;
 
                                 case (FoldMode.Shear):
-                                    unitfactorxyz = 1000;
-                                    unitfactorxxyyzz = 1000;
+                                    //unitfactorxyz = 1000;
+                                    //unitfactorxxyyzz = 1000;
                                     List<Vector2> shears = elementResults.Shear.ToList();
                                     Parallel.For(0, shears.Count, i => // (Vector2 shear in shears)
                                     {
-                                        Vector2 shear = shears[i];
-                                        Vector3d valxyz = new Vector3d
-                                        {
-                                            X = shear.X / unitfactorxyz,
-                                            Y = shear.Y / unitfactorxyz,
-                                            Z = 0,
-                                        };
+                                        xyzRes[i] = ResultHelper.GetResult(shears[i], forceUnit);
+                                        //Vector2 shear = shears[i];
+                                        //Vector3d valxyz = new Vector3d
+                                        //{
+                                        //    X = shear.X / unitfactorxyz,
+                                        //    Y = shear.Y / unitfactorxyz,
+                                        //    Z = 0,
+                                        //};
 
-                                        xyzRes[i] = valxyz;
+                                        //xyzRes[i] = valxyz;
                                     });
                                     break;
 
@@ -563,47 +642,10 @@ namespace GhSA.Components
                                     });
                                     break;
                             }
-                            //// update max and min values
-                            //dmax_x = Math.Max(xyz.Max(val => val.X), dmax_x);
-                            //dmax_y = Math.Max(xyz.Max(val => val.Y), dmax_y);
-                            //dmax_z = Math.Max(xyz.Max(val => val.Z), dmax_z);
-
-                            //dmax_xyz = Math.Max(
-                            //    xyz.Max(val =>
-                            //    Math.Sqrt(
-                            //        Math.Pow(val.X, 2) +
-                            //        Math.Pow(val.Y, 2) +
-                            //        Math.Pow(val.Z, 2))),
-                            //    dmax_xyz);
-
-                            //if (_mode != FoldMode.Shear)
-                            //{
-                            //    dmax_xx = Math.Max(xxyyzz.Max(val => val.X), dmax_xx);
-                            //    dmax_yy = Math.Max(xxyyzz.Max(val => val.Y), dmax_yy);
-                            //    dmax_zz = Math.Max(xxyyzz.Max(val => val.Z), dmax_zz);
-
-                            //    dmax_xxyyzz = Math.Max(
-                            //        xxyyzz.Max(val =>
-                            //        Math.Sqrt(
-                            //            Math.Pow(val.X, 2) +
-                            //            Math.Pow(val.Y, 2) +
-                            //            Math.Pow(val.Z, 2))),
-                            //        dmax_xxyyzz);
-                            //}
-
-                            //dmin_x = Math.Min(xyz.Min(val => val.X), dmin_x);
-                            //dmin_y = Math.Min(xyz.Min(val => val.Y), dmin_y);
-                            //dmin_z = Math.Min(xyz.Min(val => val.Z), dmin_z);
-
-                            //dmin_xx = Math.Min(xxyyzz.Min(val => val.X), dmin_xx);
-                            //dmin_yy = Math.Min(xxyyzz.Min(val => val.Y), dmin_yy);
-                            //dmin_zz = Math.Min(xxyyzz.Min(val => val.Z), dmin_zz);
 
                             // add vector lists to main lists
                             xyzResults[key] = xyzRes;
                             xxyyzzResults[key] = xxyyzzRes;
-                            //xyz_out.AddRange(xyz, new GH_Path(key));
-                            //xxyyzz_out.AddRange(xxyyzz, new GH_Path(key));
                         }
                     });
 
@@ -952,7 +994,7 @@ namespace GhSA.Components
 
             slider = false;
             DefScale = 0;
-            spacertext[2] = "Layer";
+            
 
             ReDrawComponent();
 
@@ -972,6 +1014,12 @@ namespace GhSA.Components
             writer.SetDouble("valMax", MaxValue);
             writer.SetDouble("valMin", MinValue);
             writer.SetDouble("val", DefScale);
+            writer.SetString("selectedUnit", selections[2]);
+            writer.SetString("resultLengthUnit", resultLengthUnit.ToString());
+            writer.SetString("forceUnit", forceUnit.ToString());
+            writer.SetString("momentUnit", momentUnit.ToString());
+            writer.SetString("stressLengthUnit", stressUnit.ToString());
+            writer.SetString("geometryLengthUnit", geometryLengthUnit.ToString());
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
@@ -1000,6 +1048,12 @@ namespace GhSA.Components
                 dropdowncontents.Add(dropdownlayer);
             }
 
+            if (_mode == FoldMode.Stress)
+                spacertext = spacertextStress;
+            else
+                spacertext = spacertextOther;
+
+
             selections = new List<string>();
             selections.Add(dropdowncontents[0][(int)_mode]);
             selections.Add(dropdowncontents[1][(int)_disp]);
@@ -1012,7 +1066,32 @@ namespace GhSA.Components
                 if (flayer == -1)
                     selections.Add(dropdowncontents[2][2]);
             }
-                
+            try
+            {
+                selections.Add(reader.GetString("selectedUnit"));
+                resultLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("resultLengthUnit"));
+                forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), reader.GetString("forceUnit"));
+                momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), reader.GetString("momentUnit"));
+                geometryLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("geometryLengthUnit"));
+            }
+            catch (Exception) // if user has old component this will fail and we set it to kN, kN/m or mm
+            {
+                resultLengthUnit = LengthUnit.Millimeter;
+                forceUnit = ForceUnit.Kilonewton;
+                momentUnit = MomentUnit.KilonewtonMeter;
+                geometryLengthUnit = LengthUnit.Meter;
+                stressUnit = PressureUnit.NewtonPerSquareMillimeter;
+                if (_mode == FoldMode.Displacement)
+                    selections.Add(resultLengthUnit.ToString());
+                else
+                {
+                    if ((int)_disp < 4)
+                        selections.Add(forceUnit.ToString());
+                    else
+                        selections.Add(momentUnit.ToString());
+                }
+            }
+            selections.Add(geometryLengthUnit.ToString());
             first = false;
 
             this.CreateAttributes();
@@ -1039,49 +1118,56 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            
+            string momentunitAbbreviation = Oasys.Units.Moment.GetAbbreviation(momentUnit);
+            IQuantity force = new Force(0, forceUnit);
+            string forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            IQuantity length = new Length(0, resultLengthUnit);
+            string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+            IQuantity stress = new Pressure(0, stressUnit);
+            string stressunitAbbreviation = string.Concat(stress.ToString().Where(char.IsLetter));
+
             if (_mode == FoldMode.Displacement)
             {
                 Params.Output[0].NickName = "U\u0305";
-                Params.Output[0].Name = "Translation";
-                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Units.LengthUnitResult + ")"
+                Params.Output[0].Name = "Translations [" + lengthunitAbbreviation + "]";
+                Params.Output[0].Description = "(X, Y, Z) Translation Vector"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 Params.Output[1].NickName = "R\u0305";
-                Params.Output[1].Name = "Rotation";
-                Params.Output[1].Description = "Rotation Vector [Rxx, Ryy, Rzz] (" + Units.Angle + ")"
+                Params.Output[1].Name = "Rotations [rad]";
+                Params.Output[1].Description = "(XX, YY, ZZ) Rotation Vector"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 if ((int)_disp < 4)
-                    Params.Output[4].Description = "Legend Values (" + Units.LengthUnitResult + ")";
+                    Params.Output[5].Name = "Values [" + lengthunitAbbreviation + "]";
                 else
-                    Params.Output[4].Description = "Legend Values (" + Units.Angle + ")";
+                    Params.Output[5].Name = "Values [rad]";
 
             }
 
             if (_mode == FoldMode.Force)
             {
                 Params.Output[0].NickName = "F\u0305";
-                Params.Output[0].Name = "Force";
-                Params.Output[0].Description = "Force vector [Fx, Fy, Fxy] (" + Units.Force + ")"
+                Params.Output[0].Name = "Forces [" + forceunitAbbreviation + "]";
+                Params.Output[0].Description = "(Fx, Fy, Fxy) Force Vector"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 Params.Output[1].NickName = "M\u0305";
-                Params.Output[1].Name = "Moment";
-                Params.Output[1].Description = "Moment vector [Mxx, Myy, Mxy] (" + Units.Force + "/" + Units.LengthUnitGeometry + ")"
+                Params.Output[1].Name = "Moments [" + momentunitAbbreviation + "]";
+                Params.Output[1].Description = "(Mxx, Myy, Mxy) Moment Vector"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 if ((int)_disp < 4)
-                    Params.Output[4].Description = "Legend Values (" + Units.Force + ")";
+                    Params.Output[5].Description = "Legend Values [" + forceunitAbbreviation + "]";
                 else
-                    Params.Output[4].Description = "Legend Values (" + Units.Force + "/" + Units.LengthUnitGeometry + ")";
+                    Params.Output[5].Description = "Legend Values [" + momentunitAbbreviation + "]";
             }
 
             if ( _mode == FoldMode.Shear)
             {
                 Params.Output[0].NickName = "V\u0305";
-                Params.Output[0].Name = "Shear 2D-Vector";
-                Params.Output[0].Description = "Shear 2D-Vector [Vx, Vy, --] (" + Units.Force + ")"
+                Params.Output[0].Name = "Shear [" + forceunitAbbreviation + "]";
+                Params.Output[0].Description = "(Vx, Vy, --) Shear 2D-Vector"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 Params.Output[1].NickName = "-";
@@ -1089,24 +1175,24 @@ namespace GhSA.Components
                 Params.Output[1].Description = "No output for the selected result type";
 
                 if ((int)_disp < 4)
-                    Params.Output[4].Description = "Legend Values (" + Units.Force + ")";
+                    Params.Output[5].Description = "Legend Values [" + forceunitAbbreviation + "]";
                 else
-                    Params.Output[4].Description = "Legend Values (" + Units.Force + "/" + Units.LengthUnitGeometry + ")";
+                    Params.Output[5].Description = "Legend Values [" + momentunitAbbreviation + "]";
             }
 
             if (_mode == FoldMode.Stress)
             {
                 Params.Output[0].NickName = "σ\u0305";
-                Params.Output[0].Name = "Projected Stress Vector";
-                Params.Output[0].Description = "Stress Vector [σxx, σyy, σzz] (" + Units.Stress + ")"
+                Params.Output[0].Name = "Stress [" + stressunitAbbreviation + "]";
+                Params.Output[0].Description = "(σxx, σyy, σzz) Projected Stress Vector"
                     + System.Environment.NewLine + "Value order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 Params.Output[1].NickName = "τ\u0305";
-                Params.Output[1].Name = "Projected Shear Stress Vector";
-                Params.Output[1].Description = "Shear Stress Vector [τxy, τyz, τzx] (" + Units.Stress + ")"
+                Params.Output[1].Name = "Shear Stress [" + stressunitAbbreviation + "]";
+                Params.Output[1].Description = "(τxy, τyz, τzx) Shear Stress Vector"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
-                Params.Output[4].Description = "Legend Values (" + Units.Stress + ")";
+                Params.Output[4].Description = "Legend Values [" + stressunitAbbreviation + "]";
             }
         }
         #endregion  

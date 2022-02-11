@@ -89,8 +89,8 @@ namespace GhSA.Util.Gsa
         public static Vector3d GetResult(Double6 result, LengthUnit unit)
         {
             double x = new Length(result.X, LengthUnit.Meter).As(unit);
-            double y = new Length(result.YY, LengthUnit.Meter).As(unit);
-            double z = new Length(result.ZZ, LengthUnit.Meter).As(unit);
+            double y = new Length(result.Y, LengthUnit.Meter).As(unit);
+            double z = new Length(result.Z, LengthUnit.Meter).As(unit);
             return new Vector3d(x, y, z);
         }
         public static Vector3d GetResult(Double6 result, AngleUnit unit)
@@ -99,6 +99,44 @@ namespace GhSA.Util.Gsa
             double yy = new Angle(result.YY, AngleUnit.Radian).As(unit);
             double zz = new Angle(result.ZZ, AngleUnit.Radian).As(unit);
             return new Vector3d(xx, yy, zz);
+        }
+        public static Vector3d GetResult(Double6 result, PressureUnit unit, bool shear = false)
+        {
+            if (shear)
+            {
+                double xx = new Pressure(result.XX, PressureUnit.Pascal).As(unit);
+                double yy = new Pressure(result.YY, PressureUnit.Pascal).As(unit);
+                double zz = new Pressure(result.ZZ, PressureUnit.Pascal).As(unit);
+                return new Vector3d(xx, yy, zz);
+            }
+            else
+            {
+                double x = new Pressure(result.X, PressureUnit.Pascal).As(unit);
+                double y = new Pressure(result.Y, PressureUnit.Pascal).As(unit);
+                double z = new Pressure(result.Z, PressureUnit.Pascal).As(unit);
+                return new Vector3d(x, y, z);
+            }
+        }
+        public static Vector3d GetResult(Tensor2 result, ForceUnit unit)
+        {
+            double x = new Force(result.XX, ForceUnit.Newton).As(unit);
+            double y = new Force(result.YY, ForceUnit.Newton).As(unit);
+            double z = new Force(result.XY, ForceUnit.Newton).As(unit);
+            return new Vector3d(x, y, z);
+        }
+        public static Vector3d GetResult(Tensor2 result, MomentUnit unit)
+        {
+            double x = new Moment(result.XX, MomentUnit.NewtonMeter).As(unit);
+            double y = new Moment(result.YY, MomentUnit.NewtonMeter).As(unit);
+            double z = new Moment(result.XY, MomentUnit.NewtonMeter).As(unit);
+            return new Vector3d(x, y, z);
+        }
+        public static Vector3d GetResult(Vector2 result, ForceUnit unit)
+        {
+            double x = new Force(result.X, ForceUnit.Newton).As(unit);
+            double y = new Force(result.Y, ForceUnit.Newton).As(unit);
+            double z = 0;
+            return new Vector3d(x, y, z);
         }
     }
 }

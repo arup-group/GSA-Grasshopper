@@ -94,7 +94,7 @@ namespace GhSA.Components
 
                         selections[0] = dropdowncontents[0][0];
                         selections[1] = dropdowncontents[1][3];
-                        selections[2] = resultLengthUnit.ToString();
+                        selections[2] = resultLengthUnit.ToString(); // displacement
 
                         _disp = DisplayValue.resXYZ;
                         getresults = true;
@@ -111,7 +111,7 @@ namespace GhSA.Components
 
                         selections[0] = dropdowncontents[0][1];
                         selections[1] = dropdowncontents[1][5];
-                        selections[2] = momentUnit.ToString();
+                        selections[2] = momentUnit.ToString(); // default when changing is Myy
                         
                         _disp = DisplayValue.YY;
                         getresults = true;
@@ -193,6 +193,8 @@ namespace GhSA.Components
         {
             "Result Type",
             "Display Result",
+            "Result Unit",
+            "Geometry Unit",
             "Deform Shape"
         });
         readonly List<string> dropdownitems = new List<string>(new string[]
@@ -393,6 +395,8 @@ namespace GhSA.Components
                     //Get analysis case from model
                     AnalysisCaseResult analysisCaseResult = null;
                     gsaModel.Model.Results().TryGetValue(analCase, out analysisCaseResult);
+                    //CombinationCaseResult combinationCaseResult = null;
+                    //gsaModel.Model.CombinationCaseResults().TryGetValue(analCase, out combinationCaseResult);
                     if (analysisCaseResult == null)
                     {
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No results exist for Analysis Case " + analCase + " in file");
@@ -889,7 +893,8 @@ namespace GhSA.Components
                         selections.Add(momentUnit.ToString());
                 }
             }
-
+            selections.Add(geometryLengthUnit.ToString());
+            first = false;
             this.CreateAttributes();
             return base.Read(reader);
         }
@@ -935,14 +940,13 @@ namespace GhSA.Components
                     Params.Output[5].Name = "Values [" + lengthunitAbbreviation + "]";
                 else
                     Params.Output[5].Name = "Values [rad]";
-
             }
 
             if (_mode == FoldMode.Force)
             {
                 Params.Output[0].NickName = "F\u0305";
                 Params.Output[0].Name = "Forces [" + forceunitAbbreviation + "]";
-                Params.Output[0].Description = "(Nx, Vy, Vz) Force Vector ";
+                Params.Output[0].Description = "(Nx, Vy, Vz) Force Vector";
                 
                 Params.Output[1].NickName = "M\u0305";
                 Params.Output[1].Name = "Moments [" + momentunitAbbreviation + "]";
