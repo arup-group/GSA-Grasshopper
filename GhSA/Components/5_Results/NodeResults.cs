@@ -878,9 +878,9 @@ namespace GhSA.Components
                 Params.Output[1].Description = "(Mxx, Myy, Mzz) Moment Vector";
 
                 if ((int)_disp < 4)
-                    Params.Output[5].Description = "Legend Values [" + forceunitAbbreviation + "]";
+                    Params.Output[5].Name = "Legend Values [" + forceunitAbbreviation + "]";
                 else
-                    Params.Output[5].Description = "Legend Values [" + momentunitAbbreviation + "]";
+                    Params.Output[5].Name = "Legend Values [" + momentunitAbbreviation + "]";
             }
         }
         #endregion  

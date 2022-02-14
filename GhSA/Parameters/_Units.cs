@@ -146,6 +146,24 @@ namespace GhSA
                 }
             }
         }
+        internal static AreaMomentOfInertiaUnit GetSectionAreaMomentOfInertiaUnit(LengthUnit unit)
+        {
+            switch (unit)
+            {
+                case LengthUnit.Millimeter:
+                    return AreaMomentOfInertiaUnit.MillimeterToTheFourth;
+                case LengthUnit.Centimeter:
+                    return AreaMomentOfInertiaUnit.CentimeterToTheFourth;
+                case LengthUnit.Meter:
+                    return AreaMomentOfInertiaUnit.MeterToTheFourth;
+                case LengthUnit.Foot:
+                    return AreaMomentOfInertiaUnit.FootToTheFourth;
+                case LengthUnit.Inch:
+                    return AreaMomentOfInertiaUnit.InchToTheFourth;
+                default:
+                    return AreaMomentOfInertiaUnit.Undefined;
+            }
+        }
         internal static AreaUnit SectionAreaUnit
         {
             get

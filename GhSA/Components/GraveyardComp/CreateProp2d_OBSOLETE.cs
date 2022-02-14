@@ -13,6 +13,7 @@ using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GhSA.Parameters;
 using System.Resources;
+using UnitsNet;
 
 namespace GhSA.Components
 {
@@ -32,7 +33,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.hidden;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateProp2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateProp2d;
         #endregion
 
         #region Custom UI
@@ -165,7 +166,7 @@ namespace GhSA.Components
                     double thickness = 200;
                     if (DA.GetData(1, ref gh_THK))
                         GH_Convert.ToDouble(gh_THK, out thickness, GH_Conversion.Both);
-                    prop.Thickness = thickness;
+                    prop.Thickness = new Length(thickness, UnitsNet.Units.LengthUnit.Millimeter);
                 }
                 else
                     prop.Material = new GsaMaterial(8);

@@ -177,7 +177,7 @@ namespace GhSA.Components
                         else
                             selections[2] = dropdowncontents[2][1];
 
-                        selections[3] = stressUnit.ToString(); // default when changing is Myy
+                        selections[3] = stressUnit.ToString();
 
                         _disp = 0;
                         getresults = true;
@@ -232,6 +232,10 @@ namespace GhSA.Components
                 {
                     if (_mode == FoldMode.Displacement)
                         resultLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selections[2]);
+                    else if (_mode == FoldMode.Stress)
+                    {
+                        stressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selections[2]);
+                    }
                     else
                     {
                         if ((int)_disp < 4)
@@ -343,11 +347,14 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddVectorParameter("Translation", "U\u0305", "X, Y, Z translation values (" + Units.LengthUnitResult + ")", GH_ParamAccess.tree);
-            pManager.AddVectorParameter("Rotation", "R\u0305", "XX, YY, ZZ rotation values(" + Units.Angle + ")", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Mesh", "M", "Mesh with result values", GH_ParamAccess.item);
+            IQuantity length = new Length(0, resultLengthUnit);
+            string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
+            pManager.AddVectorParameter("Translation [" + lengthunitAbbreviation + "]", "U\u0305", "(X, Y, Z) Translation Vector", GH_ParamAccess.tree);
+            pManager.AddVectorParameter("Rotations [rad]", "R\u0305", "(XX, YY, ZZ) Rotation Vector", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Mesh", "M", "Mesh with coloured result values", GH_ParamAccess.item);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthUnitResult + ")", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values", GH_ParamAccess.list);
         }
 
         #region fields
@@ -577,7 +584,7 @@ namespace GhSA.Components
                                         }
                                         else
                                         {
-                                            xyzRes[i] = ResultHelper.GetResult(forces[i], momentUnit);
+                                            xxyyzzRes[i - forces.Count] = ResultHelper.GetResult(moments[i - forces.Count], momentUnit);
                                             //Tensor2 moment = moments[i - forces.Count];
                                             //Vector3d valxxyyzz = new Vector3d
                                             //{
@@ -610,8 +617,8 @@ namespace GhSA.Components
                                     break;
 
                                 case (FoldMode.Stress):
-                                    unitfactorxyz = 1000000;
-                                    unitfactorxxyyzz = 1000000;
+                                    //unitfactorxyz = 1000000;
+                                    //unitfactorxxyyzz = 1000000;
 
                                     List<Tensor3> stresses = elementResults.Stress.ToList();
                                     Parallel.For(0, stresses.Count * 2, i => // (Tensor3 stress in stresses)
@@ -619,25 +626,27 @@ namespace GhSA.Components
                                         // split computation into two parts by doubling the i-counter
                                         if (i < stresses.Count)
                                         {
-                                            Tensor3 stress = stresses[i];
-                                            Vector3d valxyz = new Vector3d
-                                            {
-                                                X = stress.XX / unitfactorxyz,
-                                                Y = stress.YY / unitfactorxyz,
-                                                Z = stress.ZZ / unitfactorxyz
-                                            };
-                                            xyzRes[i] = valxyz;
+                                            xyzRes[i] = ResultHelper.GetResult(stresses[i], stressUnit, false);
+                                            //Tensor3 stress = stresses[i];
+                                            //Vector3d valxyz = new Vector3d
+                                            //{
+                                            //    X = stress.XX / unitfactorxyz,
+                                            //    Y = stress.YY / unitfactorxyz,
+                                            //    Z = stress.ZZ / unitfactorxyz
+                                            //};
+                                            //xyzRes[i] = valxyz;
                                         }
                                         else
                                         {
-                                            Tensor3 stress = stresses[i - stresses.Count];
-                                            Vector3d valxxyyzz = new Vector3d
-                                            {
-                                                X = stress.XY / unitfactorxxyyzz,
-                                                Y = stress.YZ / unitfactorxxyyzz,
-                                                Z = stress.ZX / unitfactorxxyyzz
-                                            };
-                                            xxyyzzRes[i - stresses.Count] = valxxyyzz;
+                                            xxyyzzRes[i - stresses.Count] = ResultHelper.GetResult(stresses[i - stresses.Count], stressUnit, true);
+                                            //Tensor3 stress = stresses[i - stresses.Count];
+                                            //Vector3d valxxyyzz = new Vector3d
+                                            //{
+                                            //    X = stress.XY / unitfactorxxyyzz,
+                                            //    Y = stress.YZ / unitfactorxxyyzz,
+                                            //    Z = stress.ZX / unitfactorxxyyzz
+                                            //};
+                                            //xxyyzzRes[i - stresses.Count] = valxxyyzz;
                                         }
                                     });
                                     break;
@@ -746,7 +755,7 @@ namespace GhSA.Components
                 {
                     elems.TryGetValue(key, out Element element);
 
-                    Mesh tempmesh = Util.Gsa.FromGSA.ConvertElement2D(element, nodes);
+                    Mesh tempmesh = Util.Gsa.FromGSA.ConvertElement2D(element, nodes, geometryLengthUnit);
                     if (tempmesh == null) { return; }
 
                     List<Vector3d> transformation = null;
@@ -1192,7 +1201,7 @@ namespace GhSA.Components
                 Params.Output[1].Description = "(τxy, τyz, τzx) Shear Stress Vector"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
-                Params.Output[4].Description = "Legend Values [" + stressunitAbbreviation + "]";
+                Params.Output[4].Name = "Legend Values [" + stressunitAbbreviation + "]";
             }
         }
         #endregion  

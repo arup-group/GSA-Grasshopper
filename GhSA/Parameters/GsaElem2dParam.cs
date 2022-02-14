@@ -256,17 +256,17 @@ namespace GhSA.Parameters
                     case apiObjectMember.offset:
                         if (off.Count > i)
                         {
-                            elems[i].Offset.X1 = off[i].X1;
-                            elems[i].Offset.X2 = off[i].X2;
-                            elems[i].Offset.Y = off[i].Y;
-                            elems[i].Offset.Z = off[i].Z;
+                            elems[i].Offset.X1 = off[i].X1.Meters;
+                            elems[i].Offset.X2 = off[i].X2.Meters;
+                            elems[i].Offset.Y = off[i].Y.Meters;
+                            elems[i].Offset.Z = off[i].Z.Meters;
                         }
                         else
                         {
-                            elems[i].Offset.X1 = off.Last().X1;
-                            elems[i].Offset.X2 = off.Last().X2;
-                            elems[i].Offset.Y = off.Last().Y;
-                            elems[i].Offset.Z = off.Last().Z;
+                            elems[i].Offset.X1 = off.Last().X1.Meters;
+                            elems[i].Offset.X2 = off.Last().X2.Meters;
+                            elems[i].Offset.Y = off.Last().Y.Meters;
+                            elems[i].Offset.Z = off.Last().Z.Meters;
                         }
                         break;
                     case apiObjectMember.property:
@@ -685,7 +685,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaElement2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Elem2dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

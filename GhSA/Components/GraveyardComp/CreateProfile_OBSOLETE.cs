@@ -18,6 +18,7 @@ using System.Linq;
 using GhSA.Util;
 using GhSA.Util.Gsa;
 using System.IO;
+using UnitsNet;
 
 namespace GhSA.Components
 {
@@ -709,7 +710,9 @@ namespace GhSA.Components
             }
             #endregion
             #region units
-            switch (Units.LengthUnitSection)
+            IQuantity length = new Length(0, Units.LengthUnitSection);
+            string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+            switch (lengthunitAbbreviation)
             {
                 case "mm":
                     profile.sectUnit = Profile.SectUnitOptions.u_mm;

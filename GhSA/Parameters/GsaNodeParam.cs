@@ -26,11 +26,11 @@ namespace GhSA.Parameters
                 return true;
             }
         }
-        public GsaSpring Spring
-        {
-            get { return m_spring; }
-            set { m_spring = value; }
-        }
+        //public GsaSpring Spring
+        //{
+        //    get { return m_spring; }
+        //    set { m_spring = value; }
+        //}
         public int ID
         {
             get { return m_id; }
@@ -229,7 +229,7 @@ namespace GhSA.Parameters
         #region fields
         private Plane m_plane; 
         private int m_id;
-        private GsaSpring m_spring;
+        //private GsaSpring m_spring;
         private Node m_node;
         #endregion
 
@@ -262,7 +262,7 @@ namespace GhSA.Parameters
             if (cloneApiNode)
                 dup.CloneApiNode();
             dup.m_plane = m_plane;
-            dup.m_spring = m_spring;
+            //dup.m_spring = m_spring;
             dup.UpdatePreview();
             return dup;
         }

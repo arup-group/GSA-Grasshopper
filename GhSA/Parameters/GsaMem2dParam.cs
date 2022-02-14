@@ -696,7 +696,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)Value.PolyCurve.ToPolyline(GhSA.Units.Tolerance, 2, 0, 0);
+                    target = (Q)(object)Value.PolyCurve.ToPolyline(GhSA.Units.Tolerance.As(Units.LengthUnitGeometry), 2, 0, 0);
                     if (Value.PolyCurve == null)
                         return false;
                 }
@@ -946,7 +946,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaMem2D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Mem2dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

@@ -32,11 +32,11 @@ namespace GhSA.Util.Gsa.ToGSA
             Node apiNode = node.GetApiNodeToUnit(unit);
 
             // Add spring to model
-            if (node.Spring != null)
-            {
+            //if (node.Spring != null)
+            //{
                 // Spring not implemented in GsaAPI
                 //node.Node.SpringProperty = gsa.AddSpring(node.Spring); // assuming this will send back the spring ID in the model
-            }
+            //}
 
             // Add axis to model
             if (node.LocalAxis != null)

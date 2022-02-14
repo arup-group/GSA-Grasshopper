@@ -151,12 +151,12 @@ namespace GhSA.Components
                 }
 
                 // 5 Spring
-                GsaSpring spring = new GsaSpring();
-                if (DA.GetData(5, ref spring))
-                {
-                    if (spring != null)
-                        node.Spring = spring;
-                }
+                //GsaSpring spring = new GsaSpring();
+                //if (DA.GetData(5, ref spring))
+                //{
+                //    if (spring != null)
+                //        node.Spring = spring;
+                //}
 
                 // 6 Name
                 GH_String ghStr = new GH_String();
@@ -180,7 +180,7 @@ namespace GhSA.Components
                 DA.SetData(2, node.Point);
                 DA.SetData(3, new GH_Plane(node.LocalAxis));
                 DA.SetData(4, node.Restraint);
-                DA.SetData(5, new GsaSpringGoo(node.Spring));
+                //DA.SetData(5, new GsaSpringGoo(node.Spring));
                 DA.SetData(6, node.API_Node.Name);
                 DA.SetData(7, node.Colour);
 

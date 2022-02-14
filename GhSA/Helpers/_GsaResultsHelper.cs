@@ -93,6 +93,13 @@ namespace GhSA.Util.Gsa
             double z = new Length(result.Z, LengthUnit.Meter).As(unit);
             return new Vector3d(x, y, z);
         }
+        public static Vector3d GetResult(Double3 result, LengthUnit unit)
+        {
+            double x = new Length(result.X, LengthUnit.Meter).As(unit);
+            double y = new Length(result.Y, LengthUnit.Meter).As(unit);
+            double z = new Length(result.Z, LengthUnit.Meter).As(unit);
+            return new Vector3d(x, y, z);
+        }
         public static Vector3d GetResult(Double6 result, AngleUnit unit)
         {
             double xx = new Angle(result.XX, AngleUnit.Radian).As(unit);
@@ -137,6 +144,23 @@ namespace GhSA.Util.Gsa
             double y = new Force(result.Y, ForceUnit.Newton).As(unit);
             double z = 0;
             return new Vector3d(x, y, z);
+        }
+        public static Vector3d GetResult(Tensor3 result, PressureUnit unit, bool shear = false)
+        {
+            if (shear)
+            {
+                double xy = new Pressure(result.XY, PressureUnit.Pascal).As(unit);
+                double yz = new Pressure(result.YZ, PressureUnit.Pascal).As(unit);
+                double zx = new Pressure(result.ZX, PressureUnit.Pascal).As(unit);
+                return new Vector3d(xy, yz, zx);
+            }
+            else
+            {
+                double xx = new Pressure(result.XX, PressureUnit.Pascal).As(unit);
+                double yy = new Pressure(result.YY, PressureUnit.Pascal).As(unit);
+                double zz = new Pressure(result.ZZ, PressureUnit.Pascal).As(unit);
+                return new Vector3d(xx, yy, zz);
+            }
         }
     }
 }

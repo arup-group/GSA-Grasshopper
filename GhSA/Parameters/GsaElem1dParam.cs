@@ -155,10 +155,10 @@ namespace GhSA.Parameters
             set
             {
                 CloneApiElement();
-                m_element.Offset.X1 = value.X1;
-                m_element.Offset.X2 = value.X2;
-                m_element.Offset.Y = value.Y;
-                m_element.Offset.Z = value.Z;
+                m_element.Offset.X1 = value.X1.Meters;
+                m_element.Offset.X2 = value.X2.Meters;
+                m_element.Offset.Y = value.Y.Meters;
+                m_element.Offset.Z = value.Z.Meters;
             }
         }
         public double OrientationAngle
@@ -717,7 +717,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaElem1D;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Elem1dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

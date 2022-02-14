@@ -10,6 +10,7 @@ using Rhino.Geometry;
 using Rhino.Collections;
 using Rhino.Geometry.Collections;
 using System.Collections.Concurrent;
+using UnitsNet;
 
 namespace GhSA.Util.GH
 {
@@ -770,7 +771,7 @@ namespace GhSA.Util.GH
 
             // create 2d member from flattened geometry
             Parameters.GsaMember2d mem = new Parameters.GsaMember2d(flattened[0], inclCrvs.ToList(), inclPts.ToList());
-            mem.MeshSize = meshSize;
+            mem.MeshSize = new Length(meshSize, Units.LengthUnitGeometry);
             
             // add to temp list for input in assemble function
             List<Parameters.GsaMember2d> mem2ds = new List<Parameters.GsaMember2d>();

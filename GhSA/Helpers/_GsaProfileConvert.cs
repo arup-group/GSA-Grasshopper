@@ -87,87 +87,87 @@ namespace GhSA.Util.Gsa
         /// <param name="gsaProfile"></param>
         /// <param name="factorValues"></param>
         /// <returns></returns>
-        public static Profile UpdateSectUnit(Profile gsaProfile, bool factorValues)
-        {
-            if (gsaProfile.sectUnit.ToString() != Units.LengthUnitSection)
-            {
-                if (Units.LengthUnitSection == "mm" || Units.LengthUnitSection == "cm" || Units.LengthUnitSection == "m" ||
-                Units.LengthUnitSection == "ft" || Units.LengthUnitSection == "in")
-                {
+        //public static Profile UpdateSectUnit(Profile gsaProfile, bool factorValues)
+        //{
+        //    if (gsaProfile.sectUnit.ToString() != Units.LengthUnitSection)
+        //    {
+        //        if (Units.LengthUnitSection == "mm" || Units.LengthUnitSection == "cm" || Units.LengthUnitSection == "m" ||
+        //        Units.LengthUnitSection == "ft" || Units.LengthUnitSection == "in")
+        //        {
                     
-                    if (factorValues)
-                    {
-                        double conversionFactor = 1;
-                        // convert current unit back to meters, I know that one
-                        double toMeters = 1;
-                        switch (Units.LengthUnitSection)
-                        {
-                            case "mm":
-                                toMeters = 1/1000;
-                                break;
-                            case "cm":
-                                toMeters = 1/100;
-                                break;
-                            case "m":
-                                toMeters = 1;
-                                break;
-                            case "in":
-                                toMeters = 1/(1000 / 25.4);
-                                break;
-                            case "ft":
-                                toMeters = 1/(1000 / (12 * 25.4));
-                                break;
-                        }
-                        // convert to new unit
-                        switch (gsaProfile.sectUnit.ToString())
-                        {
-                            case "mm":
-                                conversionFactor = toMeters * 1000;
-                                break;
-                            case "cm":
-                                conversionFactor = toMeters * 100;
-                                break;
-                            case "m":
-                                conversionFactor = toMeters * 1;
-                                break;
-                            case "in":
-                                conversionFactor = toMeters * 1000 / 25.4;
-                                break;
-                            case "ft":
-                                conversionFactor = toMeters * 1000 / (12 * 25.4);
-                                break;
-                        }
-                        gsaProfile.d *= conversionFactor;
-                        gsaProfile.b1 *= conversionFactor;
-                        gsaProfile.b2 *= conversionFactor;
-                        gsaProfile.tf1 *= conversionFactor;
-                        gsaProfile.tf2 *= conversionFactor;
-                        gsaProfile.tw1 *= conversionFactor;
-                        gsaProfile.tw2 *= conversionFactor;
-                    }
+        //            if (factorValues)
+        //            {
+        //                double conversionFactor = 1;
+        //                // convert current unit back to meters, I know that one
+        //                double toMeters = 1;
+        //                switch (Units.LengthUnitSection)
+        //                {
+        //                    case "mm":
+        //                        toMeters = 1/1000;
+        //                        break;
+        //                    case "cm":
+        //                        toMeters = 1/100;
+        //                        break;
+        //                    case "m":
+        //                        toMeters = 1;
+        //                        break;
+        //                    case "in":
+        //                        toMeters = 1/(1000 / 25.4);
+        //                        break;
+        //                    case "ft":
+        //                        toMeters = 1/(1000 / (12 * 25.4));
+        //                        break;
+        //                }
+        //                // convert to new unit
+        //                switch (gsaProfile.sectUnit.ToString())
+        //                {
+        //                    case "mm":
+        //                        conversionFactor = toMeters * 1000;
+        //                        break;
+        //                    case "cm":
+        //                        conversionFactor = toMeters * 100;
+        //                        break;
+        //                    case "m":
+        //                        conversionFactor = toMeters * 1;
+        //                        break;
+        //                    case "in":
+        //                        conversionFactor = toMeters * 1000 / 25.4;
+        //                        break;
+        //                    case "ft":
+        //                        conversionFactor = toMeters * 1000 / (12 * 25.4);
+        //                        break;
+        //                }
+        //                gsaProfile.d *= conversionFactor;
+        //                gsaProfile.b1 *= conversionFactor;
+        //                gsaProfile.b2 *= conversionFactor;
+        //                gsaProfile.tf1 *= conversionFactor;
+        //                gsaProfile.tf2 *= conversionFactor;
+        //                gsaProfile.tw1 *= conversionFactor;
+        //                gsaProfile.tw2 *= conversionFactor;
+        //            }
                         
-                    switch (Units.LengthUnitSection)
-                    {
-                        case "mm":
-                            gsaProfile.sectUnit = Profile.SectUnitOptions.u_mm;
-                            break;
-                        case "cm":
-                            gsaProfile.sectUnit = Profile.SectUnitOptions.u_cm;
-                            break;
-                        case "m":
-                            gsaProfile.sectUnit = Profile.SectUnitOptions.u_m;
-                            break;
-                        case "in":
-                            gsaProfile.sectUnit = Profile.SectUnitOptions.u_in;
-                            break;
-                        case "ft":
-                            gsaProfile.sectUnit = Profile.SectUnitOptions.u_ft;
-                            break;
-                    }
-                }
-            }
-            return gsaProfile;
-        }
+        //            switch (Units.LengthUnitSection)
+        //            {
+        //                case "mm":
+        //                    gsaProfile.sectUnit = Profile.SectUnitOptions.u_mm;
+        //                    break;
+        //                case "cm":
+        //                    gsaProfile.sectUnit = Profile.SectUnitOptions.u_cm;
+        //                    break;
+        //                case "m":
+        //                    gsaProfile.sectUnit = Profile.SectUnitOptions.u_m;
+        //                    break;
+        //                case "in":
+        //                    gsaProfile.sectUnit = Profile.SectUnitOptions.u_in;
+        //                    break;
+        //                case "ft":
+        //                    gsaProfile.sectUnit = Profile.SectUnitOptions.u_ft;
+        //                    break;
+        //            }
+        //        }
+        //    }
+        //    return gsaProfile;
+        //}
         /// <summary>
         /// Method to convert a GsaProfile to a string that can be read by GSA
         /// (in GsaAPI.Section.Profile or GhSA.Parameters.GsaSection.Section.Profile)

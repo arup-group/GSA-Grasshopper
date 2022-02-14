@@ -16,6 +16,9 @@ using GhSA.Parameters;
 using System.Resources;
 using System.Linq;
 using Grasshopper.Kernel.Data;
+using UnitsNet.Units;
+using UnitsNet;
+using GhSA.Util.Gsa;
 
 namespace GhSA.Components
 {
@@ -37,7 +40,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Elem3dResults;
+        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Result3D;
         #endregion
 
         #region Custom UI
@@ -49,9 +52,13 @@ namespace GhSA.Components
                 dropdowncontents = new List<List<string>>();
                 dropdowncontents.Add(dropdownitems);
                 dropdowncontents.Add(dropdowndisplacement);
+                dropdowncontents.Add(Units.FilteredLengthUnits);
+                dropdowncontents.Add(Units.FilteredLengthUnits);
                 selections = new List<string>();
                 selections.Add(dropdowncontents[0][0]);
                 selections.Add(dropdowncontents[1][3]);
+                selections.Add(Units.LengthUnitResult.ToString());
+                selections.Add(Units.LengthUnitGeometry.ToString());
                 first = false;
             }
             m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, DefScale, MaxValue, MinValue, noDigits, spacertext);
@@ -80,8 +87,10 @@ namespace GhSA.Components
                     if (dropdowncontents[1] != dropdowndisplacement)
                     {
                         dropdowncontents[1] = dropdowndisplacement;
+                        dropdowncontents[2] = Units.FilteredLengthUnits;
                         selections[0] = dropdowncontents[0][0];
                         selections[1] = dropdowncontents[1][3];
+                        selections[2] = resultLengthUnit.ToString(); // displacement
 
                         _disp = (DisplayValue)3;
                         getresults = true;
@@ -93,8 +102,10 @@ namespace GhSA.Components
                     if (dropdowncontents[1] != dropdownstress)
                     {
                         dropdowncontents[1] = dropdownstress;
+                        dropdowncontents[2] = Units.FilteredStressUnits;
                         selections[0] = dropdowncontents[0][1];
                         selections[1] = dropdowncontents[1][0];
+                        selections[2] = stressUnit.ToString(); // stress
 
                         _disp = (DisplayValue)0;
                         getresults = true;
@@ -102,8 +113,7 @@ namespace GhSA.Components
                     }
                 }
             }
-
-            if (dropdownlistidd == 1) // if change is made to second list
+            else if (dropdownlistidd == 1) // if change is made to second list
             {
                 bool redraw = false;
                 selections[1] = dropdowncontents[1][selectedidd];
@@ -134,6 +144,20 @@ namespace GhSA.Components
                 Params.OnParametersChanged();
                 ExpireSolution(true);
             }
+            else
+            {
+                if (dropdownlistidd == dropdowncontents.Count - 2)
+                {
+                    if (_mode == FoldMode.Displacement)
+                        resultLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selections[2]);
+                    else //(_mode == FoldMode.Stress)
+                    {
+                        stressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selections[2]);
+                    }
+                }
+                else
+                    geometryLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selections[3]);
+            }
         }
         #endregion
 
@@ -145,6 +169,8 @@ namespace GhSA.Components
         {
             "Result Type",
             "Display Result",
+            "Result Unit",
+            "Geometry Unit",
             "Deform Shape"
         });
         readonly List<string> dropdownitems = new List<string>(new string[]
@@ -171,6 +197,9 @@ namespace GhSA.Components
             "Stress zx",
         });
 
+        private LengthUnit resultLengthUnit = Units.LengthUnitResult;
+        private LengthUnit geometryLengthUnit = Units.LengthUnitGeometry;
+        private PressureUnit stressUnit = Units.StressUnit;
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -189,7 +218,10 @@ namespace GhSA.Components
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddVectorParameter("Translation", "U\u0305", "X, Y, Z translation values (" + Units.LengthUnitResult + ")", GH_ParamAccess.tree);
+            IQuantity length = new Length(0, resultLengthUnit);
+            string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
+            pManager.AddVectorParameter("Translation [" + lengthunitAbbreviation + "]", "U\u0305", "(X, Y, Z) Translation Vector", GH_ParamAccess.tree);
             //pManager.AddVectorParameter("Stress", "σ\u0305", "XX, YY, ZZ stress values(" + Units.Stress + ")", GH_ParamAccess.tree);
             pManager.AddGenericParameter("Mesh", "M", "Mesh with result values", GH_ParamAccess.item);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
@@ -341,8 +373,8 @@ namespace GhSA.Components
                     dmin_xyz = 0;
                     dmin_xxyyzz = 0;
 
-                    double unitfactorxyz = 1;
-                    double unitfactorxxyyzz = 1;
+                    //double unitfactorxyz = 1;
+                    //double unitfactorxxyyzz = 1;
 
                     Parallel.ForEach(globalResults.Keys, key =>
                     {
@@ -359,23 +391,24 @@ namespace GhSA.Components
                             switch (_mode)
                             {
                                 case FoldMode.Displacement:
-                                    unitfactorxyz = 0.001;
+                                    //unitfactorxyz = 0.001;
                                     List<Double3> trans_vals = elementResults.Displacement.ToList();
                                     Parallel.For(0, trans_vals.Count, i => //foreach (Double3 val in trans_vals)
                                     {
-                                        Double3 val = trans_vals[i];
-                                        Vector3d valxyz = new Vector3d
-                                        {
-                                            X = val.X / unitfactorxyz,
-                                            Y = val.Y / unitfactorxyz,
-                                            Z = val.Z / unitfactorxyz
-                                        };
-                                        xyzRes[i] = valxyz;
+                                        xyzRes[i] = ResultHelper.GetResult(trans_vals[i], resultLengthUnit);
+                                        //Double3 val = trans_vals[i];
+                                        //Vector3d valxyz = new Vector3d
+                                        //{
+                                        //    X = val.X / unitfactorxyz,
+                                        //    Y = val.Y / unitfactorxyz,
+                                        //    Z = val.Z / unitfactorxyz
+                                        //};
+                                        //xyzRes[i] = valxyz;
                                     });
                                     break;
 
                                 case FoldMode.Stress:
-                                    unitfactorxxyyzz = 1000000;
+                                    //unitfactorxxyyzz = 1000000;
 
                                     List<Tensor3> stress_vals = elementResults.Stress.ToList();
                                     Parallel.For(0, stress_vals.Count * 2, i => // (Tensor3 val in stress_vals)
@@ -383,25 +416,27 @@ namespace GhSA.Components
                                         // split computation into two parts by doubling the i-counter
                                         if (i < stress_vals.Count)
                                         {
-                                            Tensor3 val = stress_vals[i];
-                                            Vector3d valxyz = new Vector3d
-                                            {
-                                                X = val.XX / unitfactorxxyyzz,
-                                                Y = val.YY / unitfactorxxyyzz,
-                                                Z = val.ZZ / unitfactorxxyyzz
-                                            };
-                                            xyzRes[i] = valxyz;
+                                            xyzRes[i] = ResultHelper.GetResult(stress_vals[i], stressUnit);
+                                            //Tensor3 val = stress_vals[i];
+                                            //Vector3d valxyz = new Vector3d
+                                            //{
+                                            //    X = val.XX / unitfactorxxyyzz,
+                                            //    Y = val.YY / unitfactorxxyyzz,
+                                            //    Z = val.ZZ / unitfactorxxyyzz
+                                            //};
+                                            //xyzRes[i] = valxyz;
                                         }
                                         else
                                         {
-                                            Tensor3 val = stress_vals[i - stress_vals.Count];
-                                            Vector3d valxxyyzz = new Vector3d
-                                            {
-                                                X = val.XY / unitfactorxxyyzz,
-                                                Y = val.YZ / unitfactorxxyyzz,
-                                                Z = val.ZX / unitfactorxxyyzz
-                                            };
-                                            xxyyzzRes[i - stress_vals.Count] = valxxyyzz;
+                                            xxyyzzRes[i - stress_vals.Count] = ResultHelper.GetResult(stress_vals[i - stress_vals.Count], stressUnit);
+                                            //Tensor3 val = stress_vals[i - stress_vals.Count];
+                                            //Vector3d valxxyyzz = new Vector3d
+                                            //{
+                                            //    X = val.XY / unitfactorxxyyzz,
+                                            //    Y = val.YZ / unitfactorxxyyzz,
+                                            //    Z = val.ZX / unitfactorxxyyzz
+                                            //};
+                                            //xxyyzzRes[i - stress_vals.Count] = valxxyyzz;
                                         }
                                     });
                                     break;
@@ -537,7 +572,7 @@ namespace GhSA.Components
                 {
                     elems.TryGetValue(key, out Element element);
 
-                    Mesh tempmesh = GhSA.Util.Gsa.FromGSA.ConvertElement3D(element, nodes);
+                    Mesh tempmesh = GhSA.Util.Gsa.FromGSA.ConvertElement3D(element, nodes, geometryLengthUnit);
                     if (tempmesh == null) { return; }
 
                     List<Vector3d> transformation = null;
@@ -762,6 +797,10 @@ namespace GhSA.Components
             writer.SetDouble("valMax", MaxValue);
             writer.SetDouble("valMin", MinValue);
             writer.SetDouble("val", DefScale);
+            writer.SetString("selectedUnit", selections[2]);
+            writer.SetString("resultLengthUnit", resultLengthUnit.ToString());
+            writer.SetString("stressLengthUnit", stressUnit.ToString());
+            writer.SetString("geometryLengthUnit", geometryLengthUnit.ToString());
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
@@ -787,7 +826,28 @@ namespace GhSA.Components
             selections = new List<string>();
             selections.Add(dropdowncontents[0][(int)_mode]);
             selections.Add(dropdowncontents[1][(int)_disp]);
-                
+
+            try
+            {
+                selections.Add(reader.GetString("selectedUnit"));
+                resultLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("resultLengthUnit"));
+                geometryLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("geometryLengthUnit"));
+                stressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), reader.GetString("stressLengthUnit"));
+            }
+            catch (Exception) // if user has old component this will fail and we set it to kN, kN/m or mm
+            {
+                resultLengthUnit = LengthUnit.Millimeter;
+                geometryLengthUnit = LengthUnit.Meter;
+                stressUnit = PressureUnit.NewtonPerSquareMillimeter;
+                if (_mode == FoldMode.Displacement)
+                    selections.Add(resultLengthUnit.ToString());
+                else
+                {
+                    selections.Add(stressUnit.ToString());
+                }
+            }
+            selections.Add(geometryLengthUnit.ToString());
+
             first = false;
 
             this.CreateAttributes();
@@ -814,29 +874,34 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
+            IQuantity length = new Length(0, resultLengthUnit);
+            string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+            IQuantity stress = new Pressure(0, stressUnit);
+            string stressunitAbbreviation = string.Concat(stress.ToString().Where(char.IsLetter));
+
             if (_mode == FoldMode.Displacement)
             {
                 Params.Output[0].NickName = "U\u0305";
-                Params.Output[0].Name = "Translation";
-                Params.Output[0].Description = "Translation Vector [Ux, Uy, Uz] (" + Units.LengthUnitResult + ")"
+                Params.Output[0].Name = "Translations [" + lengthunitAbbreviation + "]";
+                Params.Output[0].Description = "(X, Y, Z) Translation Vector"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
-                Params.Output[3].Description = "Legend Values (" + Units.LengthUnitResult + ")";
+                Params.Output[3].Name = "Values [" + lengthunitAbbreviation + "]";
             }
 
             if (_mode == FoldMode.Stress)
             {
                 Params.Output[0].NickName = "σ\u0305";
-                Params.Output[0].Name = "Projected Stress Vector";
-                Params.Output[0].Description = "Stress Vector [σxx, σyy, σzz] (" + Units.Stress + ")"
+                Params.Output[0].Name = "Stress [" + stressunitAbbreviation + "]";
+                Params.Output[0].Description = "(σxx, σyy, σzz) Projected Stress Vector"
                     + System.Environment.NewLine + "Value order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 Params.Output[1].NickName = "τ\u0305";
-                Params.Output[1].Name = "Projected Shear Stress Vector";
-                Params.Output[1].Description = "Shear Stress Vector [τxy, τyz, τzx] (" + Units.Stress + ")"
+                Params.Output[1].Name = "Shear Stress [" + stressunitAbbreviation + "]";
+                Params.Output[1].Description = "(τxy, τyz, τzx) Shear Stress Vector"
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
-                Params.Output[4].Description = "Legend Values (" + Units.Stress + ")";
+                Params.Output[4].Name = "Legend Values [" + stressunitAbbreviation + "]";
             }
         }
         #endregion  

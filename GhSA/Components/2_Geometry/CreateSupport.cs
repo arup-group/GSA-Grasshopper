@@ -107,12 +107,12 @@ namespace GhSA.Components
             pManager.AddPointParameter("Point", "Pt", "Point (x, y, z) location of support", GH_ParamAccess.item);
             pManager.AddPlaneParameter("Plane", "Pl", "(Optional) Plane for local axis", GH_ParamAccess.item, Plane.WorldXY);
             pManager.AddGenericParameter("Restraints", "B6", "(Optional) Restraint in Bool6 form", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Spring", "PS", "(Optional) GSA Spring", GH_ParamAccess.item);
+            //pManager.AddGenericParameter("Spring", "PS", "(Optional) GSA Spring", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager.HideParameter(1);
             pManager[2].Optional = true;
-            pManager[3].Optional = true;
+            //pManager[3].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -148,9 +148,9 @@ namespace GhSA.Components
                         zz = bool6.ZZ;
                     }
 
-                    GsaSpring spring = new GsaSpring();
-                    if (DA.GetData(3, ref spring))
-                        node.Spring = spring;
+                    //GsaSpring spring = new GsaSpring();
+                    //if (DA.GetData(3, ref spring))
+                    //    node.Spring = spring;
 
                     node.LocalAxis = localAxis;
 

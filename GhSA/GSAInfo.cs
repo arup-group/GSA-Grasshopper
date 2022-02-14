@@ -113,7 +113,7 @@ namespace GhSA
 
             // ### Create Ribbon Category name and icon ###
             Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
-            Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", GhSA.Properties.Resources.GsaGhLogo);
+            Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", GhSA.Properties.Resources.GSALogo);
             
             return GH_LoadingInstruction.Proceed;
         }
@@ -240,7 +240,7 @@ namespace GhSA
                 return "GSA";
             }
         }
-        public override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaModel;
+        public override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GSALogo;
         public override string Description
         {
             get

@@ -803,6 +803,16 @@ namespace GhSA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap ResultGlobal {
+            get {
+                object obj = ResourceManager.GetObject("ResultGlobal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap SaveModel {
             get {
                 object obj = ResourceManager.GetObject("SaveModel", resourceCulture);

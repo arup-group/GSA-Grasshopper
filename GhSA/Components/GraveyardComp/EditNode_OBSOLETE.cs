@@ -157,12 +157,12 @@ namespace GhSA.Components
                 }
 
                 // 5 Spring
-                GsaSpring spring = new GsaSpring();
-                if (DA.GetData(5, ref spring))
-                {
-                    if (spring != null)
-                        node.Spring = spring;
-                }
+                //GsaSpring spring = new GsaSpring();
+                //if (DA.GetData(5, ref spring))
+                //{
+                //    if (spring != null)
+                //        node.Spring = spring;
+                //}
 
                 // 6 Name
                 GH_String ghStr = new GH_String();
@@ -195,12 +195,12 @@ namespace GhSA.Components
                     ZZ = node.API_Node.Restraint.ZZ
                 };
                 DA.SetData(4, new GsaBool6Goo(restraint1));
-                GsaSpring spring1 = new GsaSpring();
-                if (node.Spring != null)
-                {
-                    spring1 = node.Spring.Duplicate();
-                }
-                DA.SetData(5, new GsaSpringGoo(spring1));
+                //GsaSpring spring1 = new GsaSpring();
+                //if (node.Spring != null)
+                //{
+                //    spring1 = node.Spring.Duplicate();
+                //}
+                //DA.SetData(5, new GsaSpringGoo(spring1));
                 DA.SetData(6, node.API_Node.Name);
                 DA.SetData(7, node.Colour);
                 try { DA.SetDataList(8, node.API_Node.ConnectedElements); } catch (Exception) { }
