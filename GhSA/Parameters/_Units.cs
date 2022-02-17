@@ -62,7 +62,7 @@ namespace GhSA
             get { return m_tolerance; }
             set { m_tolerance = value; }
         }
-        private static Length m_tolerance;
+        private static Length m_tolerance = new Length(0.0001, LengthUnit.Meter);
 
         public static int SignificantDigits
         {
@@ -527,15 +527,13 @@ namespace GhSA
         internal static void SetupUnits()
         {
             bool settingsExist = ReadSettings();
-            LengthUnit length;
-            if (settingsExist)
-            {
-                length = m_length_geometry;
-            }
-            else
+            if (!settingsExist)
             {
                 // get rhino document length unit
-                m_length_geometry = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
+                m_length_geometry = GetRhinoLengthUnit(RhinoDoc.ActiveDoc.ModelUnitSystem);
+                m_length_section = LengthUnit.Centimeter;
+                m_length_result = LengthUnit.Millimeter;
+
                 SaveSettings();
             }
             // get SI units

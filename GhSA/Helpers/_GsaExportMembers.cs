@@ -20,7 +20,7 @@ namespace GhSA.Util.Gsa.ToGSA
                 nodeidcounter = 1;
 
             // take out api member
-            Member apimember = member1d.API_Member;
+            Member apimember = member1d.GetAPI_MemberClone();
 
             // create topology string to build
             string topo = "";
@@ -56,7 +56,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
             ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid)
         {
-            Member apiMember = member1d.API_Member;
+            Member apiMember = member1d.GetAPI_MemberClone();
 
             // update topology list to fit model nodes
             string topo = "";
@@ -187,7 +187,7 @@ namespace GhSA.Util.Gsa.ToGSA
         public static Member ConvertMember2D(GsaMember2d member2d, ref List<Node> nodes, ref int nodeidcounter, LengthUnit unit)
         {
             // take out api member
-            Member apimember = member2d.API_Member;
+            Member apimember = member2d.GetAPI_MemberClone();
 
             // create string to build topology
             string topo = "";
@@ -311,7 +311,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
             ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid)
         {
-            Member apiMember = member2d.API_Member;
+            Member apiMember = member2d.GetAPI_MemberClone();
 
             // update topology list to fit model nodes
             string topo = "";
@@ -539,7 +539,7 @@ namespace GhSA.Util.Gsa.ToGSA
                 nodeidcounter = 1;
 
             // take out api member
-            Member apimember = member3d.API_Member;
+            Member apimember = member3d.GetAPI_MemberClone();
 
             // create string to build topology list
             string topo = "";
@@ -581,7 +581,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit)
         {
-            Member apiMember = member3d.API_Member;
+            Member apiMember = member3d.GetAPI_MemberClone();
 
             // update topology list to fit model nodes
             string topo = "";

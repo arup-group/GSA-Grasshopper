@@ -184,7 +184,7 @@ namespace UnitsNet.GH
 
         public override Guid ComponentGuid => new Guid("6368cb74-1c8d-411f-9455-1134a6d9df44");
 
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
 
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.UnitParam;

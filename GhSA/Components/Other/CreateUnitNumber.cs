@@ -31,7 +31,7 @@ namespace GhSA.Components
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat9())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.quinary;
 
         protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateUnitNumber;
         #endregion
@@ -47,6 +47,10 @@ namespace GhSA.Components
 
                 // unit types
                 dropdownitems.Add(Enum.GetNames(typeof(Units.GsaUnits)).ToList());
+                dropdownitems[0].RemoveAt(0);
+                dropdownitems[0].RemoveAt(0);
+                dropdownitems[0].RemoveAt(0);
+                dropdownitems[0].Insert(0, "Length");
                 selecteditems.Add(dropdownitems[0][0]);
 
                 // first type
@@ -80,9 +84,12 @@ namespace GhSA.Components
             if (i == 0)
             {
                 // get selected unit
-                Units.GsaUnits unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
+                Units.GsaUnits unit = Units.GsaUnits.Length_Geometry;
+                if (selecteditems[0] != "Length")
+                    unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
                 UpdateQuantityUnitTypeFromUnitString(unit);
                 UpdateMeasureDictionary();
+                selecteditems[1] = selectedMeasure.ToString();
             }
             else // if change is made to the measure of a unit
             {
@@ -99,15 +106,12 @@ namespace GhSA.Components
 
         private void UpdateUnitMeasureAndAbbreviation()
         {
+            Units.GsaUnits unit = Units.GsaUnits.Length_Geometry;
+            if (selecteditems[0] != "Length") 
+                unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
             // switch case
-            switch ((Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]))
+            switch (unit)
             {
-                case Units.GsaUnits.Length_Geometry:
-                case Units.GsaUnits.Length_Section:
-                case Units.GsaUnits.Length_Results:
-                    quantity = new Length(val, (UnitsNet.Units.LengthUnit)selectedMeasure);
-                    unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-                    break;
                 case Units.GsaUnits.Force:
                     quantity = new Force(val, (UnitsNet.Units.ForceUnit)selectedMeasure);
                     unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
@@ -132,18 +136,22 @@ namespace GhSA.Components
                     quantity = new Temperature(val, (UnitsNet.Units.TemperatureUnit)selectedMeasure);
                     unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
                     break;
-                    //case Units.GsaUnits.AxialStiffness:
-                    //    quantity = new Oasys.Units.AxialStiffness(val, (Oasys.Units.AxialStiffnessUnit)selectedMeasure);
-                    //    unitAbbreviation = Oasys.Units.AxialStiffness.GetAbbreviation((Oasys.Units.AxialStiffnessUnit)selectedMeasure);
-                    //    break;
-                    //case Units.GsaUnits.BendingStiffness:
-                    //    quantity = new Oasys.Units.BendingStiffness(val, (Oasys.Units.BendingStiffnessUnit)selectedMeasure);
-                    //    unitAbbreviation = Oasys.Units.BendingStiffness.GetAbbreviation((Oasys.Units.BendingStiffnessUnit)selectedMeasure);
-                    //    break;
-                    //case Units.GsaUnits.Curvature:
-                    //    quantity = new Oasys.Units.Curvature(val, (Oasys.Units.CurvatureUnit)selectedMeasure);
-                    //    unitAbbreviation = Oasys.Units.Curvature.GetAbbreviation((Oasys.Units.CurvatureUnit)selectedMeasure);
-                    //    break;
+                //case Units.GsaUnits.AxialStiffness:
+                //    quantity = new Oasys.Units.AxialStiffness(val, (Oasys.Units.AxialStiffnessUnit)selectedMeasure);
+                //    unitAbbreviation = Oasys.Units.AxialStiffness.GetAbbreviation((Oasys.Units.AxialStiffnessUnit)selectedMeasure);
+                //    break;
+                //case Units.GsaUnits.BendingStiffness:
+                //    quantity = new Oasys.Units.BendingStiffness(val, (Oasys.Units.BendingStiffnessUnit)selectedMeasure);
+                //    unitAbbreviation = Oasys.Units.BendingStiffness.GetAbbreviation((Oasys.Units.BendingStiffnessUnit)selectedMeasure);
+                //    break;
+                //case Units.GsaUnits.Curvature:
+                //    quantity = new Oasys.Units.Curvature(val, (Oasys.Units.CurvatureUnit)selectedMeasure);
+                //    unitAbbreviation = Oasys.Units.Curvature.GetAbbreviation((Oasys.Units.CurvatureUnit)selectedMeasure);
+                //    break;
+                default:
+                    quantity = new Length(val, (UnitsNet.Units.LengthUnit)selectedMeasure);
+                    unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+                    break;
             }
         }
 
@@ -152,15 +160,6 @@ namespace GhSA.Components
             // switch case
             switch (unit)
             {
-                case Units.GsaUnits.Length_Geometry:
-                    quantity = new Length(val, Units.LengthUnitGeometry);
-                    break;
-                case Units.GsaUnits.Length_Section:
-                    quantity = new Length(val, Units.LengthUnitSection);
-                    break;
-                case Units.GsaUnits.Length_Results:
-                    quantity = new Length(val, Units.LengthUnitResult);
-                    break;
                 case Units.GsaUnits.Force:
                     quantity = new Force(val, Units.ForceUnit);
                     break;
@@ -179,15 +178,18 @@ namespace GhSA.Components
                 case Units.GsaUnits.Temperature:
                     quantity = new Temperature(val, Units.TemperatureUnit);
                     break;
-                    //case Units.AdSecUnits.AxialStiffness:
-                    //    quantity = new Oasys.Units.AxialStiffness(val, Units.AxialStiffnessUnit);
-                    //    break;
-                    //case Units.AdSecUnits.BendingStiffness:
-                    //    quantity = new Oasys.Units.BendingStiffness(val, Units.BendingStiffnessUnit);
-                    //    break;
-                    //case Units.AdSecUnits.Curvature:
-                    //    quantity = new Oasys.Units.Curvature(val, Units.CurvatureUnit);
-                    //    break;
+                //case Units.AdSecUnits.AxialStiffness:
+                //    quantity = new Oasys.Units.AxialStiffness(val, Units.AxialStiffnessUnit);
+                //    break;
+                //case Units.AdSecUnits.BendingStiffness:
+                //    quantity = new Oasys.Units.BendingStiffness(val, Units.BendingStiffnessUnit);
+                //    break;
+                //case Units.AdSecUnits.Curvature:
+                //    quantity = new Oasys.Units.Curvature(val, Units.CurvatureUnit);
+                //    break;
+                default:
+                    quantity = new Length(val, Units.LengthUnitGeometry);
+                    break;
             }
 
             selectedMeasure = quantity.Unit;
@@ -203,17 +205,18 @@ namespace GhSA.Components
             }
             // update dropdown list
             dropdownitems[1] = measureDictionary.Keys.ToList();
-
-            selectedMeasure = measureDictionary[selecteditems.Last()];
         }
 
         private void UpdateUIFromSelectedItems()
         {
             // get selected unit
-            Units.GsaUnits unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
+            Units.GsaUnits unit = Units.GsaUnits.Length_Geometry;
+            if (selecteditems[0] != "Length")
+                unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
             UpdateQuantityUnitTypeFromUnitString(unit);
             UpdateMeasureDictionary();
             UpdateUnitMeasureAndAbbreviation();
+            selectedMeasure = measureDictionary[selecteditems.Last()];
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             CreateAttributes();

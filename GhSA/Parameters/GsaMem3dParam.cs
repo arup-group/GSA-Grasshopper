@@ -24,6 +24,27 @@ namespace GhSA.Parameters
             get { return m_member; }
             set { m_member = value; }
         }
+        internal Member GetAPI_MemberClone()
+        {
+            Member mem = new Member
+            {
+                Group = m_member.Group,
+                IsDummy = m_member.IsDummy,
+                MeshSize = m_member.MeshSize,
+                Name = m_member.Name.ToString(),
+                Offset = m_member.Offset,
+                OrientationAngle = m_member.OrientationAngle,
+                OrientationNode = m_member.OrientationNode,
+                Property = m_member.Property,
+                Topology = m_member.Topology.ToString(),
+                Type = m_member.Type,
+            };
+
+            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                mem.Colour = m_member.Colour;
+
+            return mem;
+        }
         public Mesh SolidMesh
         {
             get { return m_mesh; }
@@ -359,7 +380,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.API_Member;
+                    target = (Q)(object)Value.GetAPI_MemberClone();
                 return true;
             }
 

@@ -26,7 +26,7 @@ namespace GhSA.Components
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("04e69999-8e87-4753-8ae1-7e5f216e4935");
+        public override Guid ComponentGuid => new Guid("3fd61492-b5ff-47ea-8c7c-89cf639b32dc");
         public CreateProp2d()
           : base("Create 2D Property", "Prop2d", "Create GSA 2D Property",
                 Ribbon.CategoryName.Name(),
@@ -57,7 +57,6 @@ namespace GhSA.Components
                 unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
                 first = false;
-                
             }
                 
             m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, new List<string>() { "Element Type", "Unit" });
@@ -141,18 +140,13 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            if (first)
-            {
-                first = false;
-                //register input parameter
-                //Params.RegisterInputParam(new Param_Integer());
-                Params.RegisterInputParam(new Param_GenericObject());
-                Params.RegisterInputParam(new Param_Number());
+            //register input parameter
+            Params.RegisterInputParam(new Param_GenericObject());
+            Params.RegisterInputParam(new Param_Number());
 
-                (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-                Params.OnParametersChanged();
-                ExpireSolution(true);
-            }
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            Params.OnParametersChanged();
+            ExpireSolution(true);
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -288,8 +282,6 @@ namespace GhSA.Components
             //register input parameter
             //Params.RegisterInputParam(new Param_Integer());
             Params.RegisterInputParam(new Param_GenericObject());
-            
-
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -420,13 +412,9 @@ namespace GhSA.Components
                 IQuantity quantity = new Length(0, lengthUnit);
                 unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
-                first = false;
             }
-
             UpdateUIFromSelectedItems();
-
             first = false;
-
             return base.Read(reader);
         }
 

@@ -395,6 +395,7 @@ namespace GhSA.UI
                             unfolded[j] = false;
                         }
                         comp.ExpireSolution(true);
+                        //comp.OnDisplayExpired(true);
                         return GH_ObjectResponse.Handled;
                     }
 
@@ -422,12 +423,11 @@ namespace GhSA.UI
                                             for (int k = i + 1; k < dropdownlists.Count; k++)
                                                 displayTexts[k] = initialTxts[k];
                                         }
+                                        // close the dropdown
+                                        unfolded[i] = !unfolded[i];
 
                                         // send the selected item back to component (i = dropdownlist index, j = selected item in that list)
                                         action(i, j);
-
-                                        // close the dropdown
-                                        unfolded[i] = !unfolded[i];
                                         
                                         // recalculate component
                                         comp.ExpireSolution(true);

@@ -70,8 +70,8 @@ namespace GhSA.Components
 
             pManager.AddGenericParameter("Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
             
-            pManager.AddNumberParameter("Mesh Size", "Ms", "Set target mesh size", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item, true);
+            pManager.AddGenericParameter("Mesh Size", "Ms", "Set target mesh size", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
             pManager.AddTextParameter("Member2d Name", "Na", "Set Name of Member2d", GH_ParamAccess.item);
             pManager.AddColourParameter("Member2d Colour", "Co", "Set Member 2d Colour", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Dummy Member", "Dm", "Set Member to Dummy", GH_ParamAccess.item);
@@ -103,7 +103,7 @@ namespace GhSA.Components
                 "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm", GH_ParamAccess.item);
 
             pManager.AddGenericParameter("Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Mesh Size", "Ms", "Get Targe mesh size", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Mesh Size", "Ms", "Get Targe mesh size", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
             
             pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
@@ -235,16 +235,23 @@ namespace GhSA.Components
 
                 // 10 mesh size
                 GH_Number ghmsz = new GH_Number();
-                if (DA.GetData(10, ref ghmsz))
+                if (Params.Input[10].Sources.Count > 0)
                 {
-                    if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
-                    {
-                        mem.MeshSize = new Length(msz, Units.LengthUnitGeometry);
-                        string unitAbbreviation = string.Concat(mem.MeshSize.ToString().Where(char.IsLetter));
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + unitAbbreviation + "]"
+                    mem.MeshSize = GetInput.Length(this, DA, 10, Units.LengthUnitGeometry, true);
+                    if (Units.LengthUnitGeometry != UnitsNet.Units.LengthUnit.Meter)
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]"
                             + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
-                    }
                 }
+                //if (DA.GetData(10, ref ghmsz))
+                //{
+                //    if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
+                //    {
+                //        mem.MeshSize = new Length(msz, Units.LengthUnitGeometry);
+                //        string unitAbbreviation = string.Concat(mem.MeshSize.ToString().Where(char.IsLetter));
+                //        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + unitAbbreviation + "]"
+                //            + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
+                //    }
+                //}
 
                 // 11 mesh with others
                 GH_Boolean ghbool = new GH_Boolean();

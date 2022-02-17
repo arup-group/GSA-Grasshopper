@@ -78,7 +78,7 @@ namespace GhSA.Components
             "Unit",
         });
 
-        private ForcePerLengthUnit forcePerLengthUnit;
+        private ForcePerLengthUnit forcePerLengthUnit = Units.ForcePerLengthUnit;
         private ForceUnit forceUnit = Units.ForceUnit;
         private LengthUnit lengthUnit = Units.LengthUnitGeometry;
         bool first = true;

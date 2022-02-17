@@ -69,7 +69,6 @@ namespace GhSA.Components
 
             // update name of inputs (to display unit on sliders)
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-            ExpireSolution(true);
             Params.OnParametersChanged();
             this.OnDisplayExpired(true);
         }
@@ -214,9 +213,7 @@ namespace GhSA.Components
             ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
             try
             {
-
-            
-            Parallel.ForEach(steps, i =>
+                Parallel.ForEach(steps, i =>
                 {
                     if (i == 0)
                     {
@@ -253,7 +250,6 @@ namespace GhSA.Components
                         results.Mem2ds = memberTuple.Item2;
                         results.Mem3ds = memberTuple.Item3;
                     }
-
                 });
             }
             catch (Exception e)
@@ -281,8 +277,6 @@ namespace GhSA.Components
                         return;
                     }
 
-                    //GsaModel in_Model = gsaModel.Clone();
-
                     // import lists
                     string nodeList = "all";
                     if (data.GetData(1, ref nodeList))
@@ -304,39 +298,38 @@ namespace GhSA.Components
             SolveResults results;
             try
             {
-            
-            if (!GetSolveResults(data, out results))
-            {
-                // Compute right here, right now.
-                // 1. Collect
-                GsaModel gsaModel = new GsaModel();
-                GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-                if (data.GetData(0, ref gh_typ))
+                if (!GetSolveResults(data, out results))
                 {
-                    if (gh_typ.Value is GsaModelGoo)
-                        gh_typ.CastTo(ref gsaModel);
-                    else
+                    // Compute right here, right now.
+                    // 1. Collect
+                    GsaModel gsaModel = new GsaModel();
+                    GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+                    if (data.GetData(0, ref gh_typ))
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
-                        return;
+                        if (gh_typ.Value is GsaModelGoo)
+                            gh_typ.CastTo(ref gsaModel);
+                        else
+                        {
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
+                            return;
+                        }
+
+                        // import lists
+                        string nodeList = "all";
+                        if (data.GetData(1, ref nodeList))
+                            nodeList = nodeList.ToString();
+                        string elemList = "all";
+                        if (data.GetData(2, ref elemList))
+                            elemList = elemList.ToString();
+                        string memList = "all";
+                        if (data.GetData(3, ref memList))
+                            memList = memList.ToString();
+
+                        // 2. Compute
+                        results = Compute(gsaModel, nodeList, elemList, memList);
                     }
-
-                    // import lists
-                    string nodeList = "all";
-                    if (data.GetData(1, ref nodeList))
-                        nodeList = nodeList.ToString();
-                    string elemList = "all";
-                    if (data.GetData(2, ref elemList))
-                        elemList = elemList.ToString();
-                    string memList = "all";
-                    if (data.GetData(3, ref memList))
-                        memList = memList.ToString();
-
-                    // 2. Compute
-                    results = Compute(gsaModel, nodeList, elemList, memList);
+                    else return;
                 }
-                else return;
-            }
             }
             catch (Exception e)
             {

@@ -103,6 +103,25 @@ namespace GhSA.Parameters
             get { return m_element; }
             set { m_element = value; }
         }
+        internal Element GetAPI_ElementClone()
+        {
+            Element elem = new Element()
+            {
+            Group = m_element.Group,
+                IsDummy = m_element.IsDummy,
+                Name = m_element.Name.ToString(),
+                Offset = m_element.Offset,
+                OrientationAngle = m_element.OrientationAngle,
+                OrientationNode = m_element.OrientationNode,
+                ParentMember = m_element.ParentMember,
+                Property = m_element.Property,
+                Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
+                Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
+            };
+            if ((System.Drawing.Color) m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                elem.Colour = m_element.Colour;
+            return elem;
+        }
         public System.Drawing.Color Colour
         {
             get
@@ -211,6 +230,7 @@ namespace GhSA.Parameters
                 elem.Colour = m_element.Colour;
             m_element = elem;
         }
+        
         #endregion
         #region preview
         internal Point3d previewPointStart;
@@ -511,7 +531,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.API_Element;
+                    target = (Q)(object)Value.GetAPI_ElementClone();
                 return true;
             }
 
@@ -715,7 +735,7 @@ namespace GhSA.Parameters
 
         public override Guid ComponentGuid => new Guid("9c045214-cab6-47d9-a158-ae1f4f494b66");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Elem1dParam;
 

@@ -290,19 +290,15 @@ namespace GhSA.Components
             string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
             string unitAbbreviation = forceUnitAbbreviation + "/" + lengthUnitAbbreviation;
 
-            Params.Input[6].NickName = "V";
-            Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
-            Params.Input[6].Description = "Load Value";
-            Params.Input[6].Access = GH_ParamAccess.item;
-            Params.Input[6].Optional = false;
+            Params.Output[6].NickName = "V";
+            Params.Output[6].Name = "Value [" + unitAbbreviation + "]";
+            Params.Output[6].Description = "Load Value";
+            Params.Output[6].Access = GH_ParamAccess.item;
 
-            Params.Input[7].NickName = "t";
-            Params.Input[7].Name = "Position (%)";
-            Params.Input[7].Description = "Line parameter where point load act (between 0.0 and 1.0)";
-            Params.Input[7].Access = GH_ParamAccess.item;
-            Params.Input[7].Optional = true;
-
-
+            Params.Output[7].NickName = "t";
+            Params.Output[7].Name = "Position (%)";
+            Params.Output[7].Description = "Line parameter where point load act (between 0.0 and 1.0)";
+            Params.Output[7].Access = GH_ParamAccess.item;
         }
         #endregion
     }

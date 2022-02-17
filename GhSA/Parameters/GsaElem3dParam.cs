@@ -23,6 +23,22 @@ namespace GhSA.Parameters
             get { return m_elements; }
             set { m_elements = value; }
         }
+        internal Element GetAPI_ElementClone(int i)
+        {
+            return new Element()
+            {
+                Group = m_elements[i].Group,
+                IsDummy = m_elements[i].IsDummy,
+                Name = m_elements[i].Name.ToString(),
+                OrientationNode = m_elements[i].OrientationNode,
+                OrientationAngle = m_elements[i].OrientationAngle,
+                Offset = m_elements[i].Offset,
+                ParentMember = m_elements[i].ParentMember,
+                Property = m_elements[i].Property,
+                Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
+                Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
+            };
+        }
         public int Count
         {
             get { return m_elements.Count; }

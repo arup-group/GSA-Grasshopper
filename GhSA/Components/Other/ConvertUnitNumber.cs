@@ -25,13 +25,13 @@ namespace GhSA.Components
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("42f42580-8ed7-42fb-9cc7-c6f6171a0248");
+        public override Guid ComponentGuid => new Guid("9864b817-3ac4-4d3f-b565-e43174f4fb0c");
         public ConvertUnitNumber()
           : base("Convert UnitNumber", "ConvertUnit", "Convert a unit number (quantity) into another unit",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat9())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.quinary;
 
         protected override System.Drawing.Bitmap Icon => Properties.Resources.ConvertUnitNumber;
         #endregion

@@ -1148,9 +1148,9 @@ namespace GhSA.Components
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 if ((int)_disp < 4)
-                    Params.Output[5].Name = "Values [" + lengthunitAbbreviation + "]";
+                    Params.Output[4].Name = "Values [" + lengthunitAbbreviation + "]";
                 else
-                    Params.Output[5].Name = "Values [rad]";
+                    Params.Output[4].Name = "Values [rad]";
 
             }
 
@@ -1167,9 +1167,9 @@ namespace GhSA.Components
                     + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
                 if ((int)_disp < 4)
-                    Params.Output[5].Description = "Legend Values [" + forceunitAbbreviation + "]";
+                    Params.Output[4].Name = "Legend Values [" + forceunitAbbreviation + "]";
                 else
-                    Params.Output[5].Description = "Legend Values [" + momentunitAbbreviation + "]";
+                    Params.Output[4].Name = "Legend Values [" + momentunitAbbreviation + "]";
             }
 
             if ( _mode == FoldMode.Shear)
@@ -1184,9 +1184,9 @@ namespace GhSA.Components
                 Params.Output[1].Description = "No output for the selected result type";
 
                 if ((int)_disp < 4)
-                    Params.Output[5].Description = "Legend Values [" + forceunitAbbreviation + "]";
+                    Params.Output[4].Name = "Legend Values [" + forceunitAbbreviation + "]";
                 else
-                    Params.Output[5].Description = "Legend Values [" + momentunitAbbreviation + "]";
+                    Params.Output[4].Name = "Legend Values [" + momentunitAbbreviation + "]";
             }
 
             if (_mode == FoldMode.Stress)

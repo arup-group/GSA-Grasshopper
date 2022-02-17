@@ -181,7 +181,7 @@ namespace GhSA.Components
                 DA.SetData(3, new GH_Plane(node.LocalAxis));
                 DA.SetData(4, node.Restraint);
                 //DA.SetData(5, new GsaSpringGoo(node.Spring));
-                DA.SetData(6, node.API_Node.Name);
+                DA.SetData(6, node.API_Node.Name.ToString());
                 DA.SetData(7, node.Colour);
 
                 // only get connected elements/members if enabled (computationally expensive)

@@ -119,7 +119,7 @@ namespace GhSA.Components
             "Unit",
         });
 
-        private ForcePerLengthUnit forcePerLengthUnit;
+        private ForcePerLengthUnit forcePerLengthUnit = Units.ForcePerLengthUnit;
 
         #endregion
 

@@ -211,10 +211,10 @@ namespace GhSA.Components
             IQuantity length = new Length(0, lengthUnit);
             unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
             int i = 4;
-            Params.Input[i++].Name = "Grid Point Loads [" + unitAbbreviation + "]";
-            Params.Input[i++].Name = "Grid Line Loads [" + unitAbbreviation + "]";
-            Params.Input[i++].Name = "Grid Area Loads [" + unitAbbreviation + "]";
-            Params.Input[i++].Name = "Grid Plane Surfaces [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "Grid Point Loads [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "Grid Line Loads [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "Grid Area Loads [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "Grid Plane Surfaces [" + unitAbbreviation + "]";
         }
         #endregion  
     }

@@ -19,7 +19,7 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid)
         {
             LineCurve line = element1d.Line;
-            Element apiElement = element1d.API_Element;
+            Element apiElement = element1d.GetAPI_ElementClone();
 
             // update topology list to fit model nodes
             List<int> topo = new List<int>();
@@ -127,7 +127,7 @@ namespace GhSA.Util.Gsa.ToGSA
             //Loop through all faces in mesh to update topology list to fit model nodes
             for (int i = 0; i < element2d.API_Elements.Count; i++)
             {
-                Element apiMeshElement = element2d.API_Elements[i];
+                Element apiMeshElement = element2d.GetAPI_ElementClone(i);
                 List<int> meshVertexIndex = element2d.TopoInt[i];
 
                 List<int> topo = new List<int>(); // temp topologylist
@@ -216,7 +216,7 @@ namespace GhSA.Util.Gsa.ToGSA
             //Loop through all faces in mesh to update topology list to fit model nodes
             for (int i = 0; i < element3d.API_Elements.Count; i++)
             {
-                Element apiMeshElement = element3d.API_Elements[i];
+                Element apiMeshElement = element3d.GetAPI_ElementClone(i);
                 List<int> meshVertexIndex = element3d.TopoInt[i];
 
                 List<int> topo = new List<int>(); // temp topologylist

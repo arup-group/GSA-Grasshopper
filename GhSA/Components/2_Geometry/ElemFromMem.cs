@@ -231,7 +231,10 @@ namespace GhSA.Components
 
             // manually add a warning if no input is set, as all three inputs are optional
             if (in_mem1ds.Count < 1 & in_mem2ds.Count < 1 & in_mem3ds.Count < 1)
+            {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameters failed to collect data");
+                return;
+            }
             #endregion
 
             // Assemble model

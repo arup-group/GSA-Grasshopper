@@ -62,9 +62,7 @@ namespace GhSA.Util.Gsa
 
             // create new node with basic Position and ID values
 
-            UpdateNodePositionUnit(ref node, unit);
-
-            return new GsaNode(node, ID, local);
+            return new GsaNode(node, ID, unit, local);
         }
 
 
@@ -978,14 +976,17 @@ namespace GhSA.Util.Gsa
                             new Length(yMeter, LengthUnit.Meter).As(unit),
                             new Length(zMeter, LengthUnit.Meter).As(unit));
         }
-        internal static void UpdateNodePositionUnit(ref Node node, LengthUnit unit)
+        internal static Node UpdateNodePositionUnit(Node node, LengthUnit unit)
         {
             if (unit != LengthUnit.Meter) // convert from meter to input unit if not meter
             {
-                node.Position.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
-                node.Position.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
-                node.Position.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
+                Vector3 pos = new Vector3();
+                pos.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
+                pos.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
+                pos.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
+                node.Position = pos;
             }
+            return node;
         }
         #endregion
 

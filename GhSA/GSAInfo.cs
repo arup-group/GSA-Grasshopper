@@ -28,7 +28,7 @@ namespace GhSA
             // ### Set system environment variables to allow user rights to read below dlls ###
             const string name = "PATH";
             string pathvar = System.Environment.GetEnvironmentVariable(name);
-            var value = pathvar + ";" + PluginPath;
+            var value = pathvar + ";" + InstallPath;
             var target = EnvironmentVariableTarget.Process;
             System.Environment.SetEnvironmentVariable(name, value, target);
 
@@ -36,7 +36,7 @@ namespace GhSA
             // set folder to latest GSA version.
             try
             {
-                Assembly GsaAPI = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
+                Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
             }
             catch (Exception e)
             {
@@ -67,7 +67,7 @@ namespace GhSA
 
             try
             {
-                Assembly ass2 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\System.Data.SQLite.dll");
+                Assembly ass2 = Assembly.LoadFile(InstallPath + "\\System.Data.SQLite.dll");
             }
             catch (Exception e)
             {
@@ -107,18 +107,22 @@ namespace GhSA
                 return GH_LoadingInstruction.Abort;
             }
 
-            // create main menu dropdown
+            // ### Queue up Main menu loader ###
             UI.Menu.Loader menuLoad = new UI.Menu.Loader();
             menuLoad.CreateMainMenuItem();
 
             // ### Create Ribbon Category name and icon ###
             Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
             Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", GhSA.Properties.Resources.GSALogo);
-            
+
+            // ### Setup units ###
+            Units.SetupUnits();
+
             return GH_LoadingInstruction.Proceed;
         }
         public static Assembly GsaAPI;
         public static string PluginPath;
+        public static string InstallPath = Util.Gsa.InstallationFolderPath.GetPath;
     }
     public class InitiateGsaAPI
     {
@@ -268,7 +272,7 @@ namespace GhSA
             get
             {
                 //Return a string identifying you or your company.
-                return "Oasys / Kristjan Nielsen";
+                return "Oasys";
             }
         }
         public override string AuthorContact

@@ -156,38 +156,34 @@ namespace GhSA.Parameters
         }
         internal Node GetApiNodeToUnit(LengthUnit unit = LengthUnit.Meter)
         {
-            if (unit == LengthUnit.Meter) { return m_node; }
-            else
+            Node node = new Node
             {
-                Node node = new Node
+                AxisProperty = m_node.AxisProperty,
+                DamperProperty = m_node.DamperProperty,
+                MassProperty = m_node.MassProperty,
+                Name = m_node.Name.ToString(),
+                Restraint = new NodalRestraint
                 {
-                    AxisProperty = m_node.AxisProperty,
-                    DamperProperty = m_node.DamperProperty,
-                    MassProperty = m_node.MassProperty,
-                    Name = m_node.Name.ToString(),
-                    Restraint = new NodalRestraint
-                    {
-                        X = m_node.Restraint.X,
-                        Y = m_node.Restraint.Y,
-                        Z = m_node.Restraint.Z,
-                        XX = m_node.Restraint.XX,
-                        YY = m_node.Restraint.YY,
-                        ZZ = m_node.Restraint.ZZ,
-                    },
-                    SpringProperty = m_node.SpringProperty,
-                    Position = new Vector3
-                    {
-                        X = (unit == LengthUnit.Meter) ? m_node.Position.X : new Length(m_node.Position.X, unit).Meters,
-                        Y = (unit == LengthUnit.Meter) ? m_node.Position.Y : new Length(m_node.Position.Y, unit).Meters,
-                        Z = (unit == LengthUnit.Meter) ? m_node.Position.Z : new Length(m_node.Position.Z, unit).Meters
-                    }
-                };
+                    X = m_node.Restraint.X,
+                    Y = m_node.Restraint.Y,
+                    Z = m_node.Restraint.Z,
+                    XX = m_node.Restraint.XX,
+                    YY = m_node.Restraint.YY,
+                    ZZ = m_node.Restraint.ZZ,
+                },
+                SpringProperty = m_node.SpringProperty,
+                Position = new Vector3
+                {
+                    X = (unit == LengthUnit.Meter) ? m_node.Position.X : new Length(m_node.Position.X, unit).Meters,
+                    Y = (unit == LengthUnit.Meter) ? m_node.Position.Y : new Length(m_node.Position.Y, unit).Meters,
+                    Z = (unit == LengthUnit.Meter) ? m_node.Position.Z : new Length(m_node.Position.Z, unit).Meters
+                }
+            };
 
-                if ((System.Drawing.Color)m_node.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                    node.Colour = m_node.Colour;
-                
-                return node;
-            }
+            if ((System.Drawing.Color)m_node.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                node.Colour = m_node.Colour;
+
+            return node;
         }
         #endregion
 
@@ -239,9 +235,16 @@ namespace GhSA.Parameters
             m_node = new Node();
         }
 
-        internal GsaNode(Node node, int ID, Plane localAxis = new Plane())
+        internal GsaNode(Node node, int ID, LengthUnit unit, Plane localAxis = new Plane())
         {
             m_node = node;
+            CloneApiNode();
+            if (unit != LengthUnit.Meter)
+            {
+                m_node.Position.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
+                m_node.Position.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
+                m_node.Position.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
+            }
             m_id = ID;
             m_plane = localAxis;
             UpdatePreview();
@@ -271,6 +274,16 @@ namespace GhSA.Parameters
         
 
         #region methods
+        public void UpdateUnit(LengthUnit unit)
+        {
+            if (unit != LengthUnit.Meter) // convert from meter to input unit if not meter
+            {
+                Vector3 pos = new Vector3();
+                this.API_Node.Position.X = new Length(this.API_Node.Position.X, LengthUnit.Meter).As(unit);
+                this.API_Node.Position.Y = new Length(this.API_Node.Position.Y, LengthUnit.Meter).As(unit);
+                this.API_Node.Position.Z = new Length(this.API_Node.Position.Z, LengthUnit.Meter).As(unit);
+            }
+        }
         public override string ToString()
         {
             if (API_Node == null) { return "Null Node"; }
@@ -612,7 +625,7 @@ namespace GhSA.Parameters
 
         public override Guid ComponentGuid => new Guid("8ebdc693-e882-494d-8177-b0bd9c3d84a3");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
         protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.NodeParam;
 

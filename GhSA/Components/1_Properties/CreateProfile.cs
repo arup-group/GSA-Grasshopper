@@ -147,12 +147,12 @@ namespace GhSA.Components
                     // set types to all
                     typeIndex = -1;
                     // update typelist with all catalogues
-                    typedata = SqlReader.GetTypesDataFromSQLite(catalogueIndex, Path.Combine(AddReferencePriority.PluginPath, "sectlib.db3"), inclSS);
+                    typedata = SqlReader.GetTypesDataFromSQLite(catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
                     typeNames = typedata.Item1;
                     typeNumbers = typedata.Item2;
 
                     // update section list to all types
-                    sectionList = SqlReader.GetSectionsDataFromSQLite(typeNumbers, Path.Combine(AddReferencePriority.PluginPath, "sectlib.db3"), inclSS);
+                    sectionList = SqlReader.GetSectionsDataFromSQLite(typeNumbers, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
 
                     // filter by search pattern
                     filteredlist = new List<string>();
@@ -208,14 +208,14 @@ namespace GhSA.Components
                     selecteditems[1] = catalogueNames[j];
 
                     // update typelist with selected input catalogue
-                    typedata = SqlReader.GetTypesDataFromSQLite(catalogueIndex, Path.Combine(AddReferencePriority.PluginPath, "sectlib.db3"), inclSS);
+                    typedata = SqlReader.GetTypesDataFromSQLite(catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
                     typeNames = typedata.Item1;
                     typeNumbers = typedata.Item2;
 
                     // update section list from new types (all new types in catalogue)
                     List<int> types = typeNumbers.ToList();
                     types.RemoveAt(0); // remove -1 from beginning of list
-                    sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.PluginPath, "sectlib.db3"), inclSS);
+                    sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
 
                     // filter by search pattern
                     filteredlist = new List<string>();
@@ -273,7 +273,7 @@ namespace GhSA.Components
 
 
                     // section list with selected types (only types in selected type)
-                    sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.PluginPath, "sectlib.db3"), inclSS);
+                    sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
 
                     // filter by search pattern
                     filteredlist = new List<string>();
@@ -371,7 +371,7 @@ namespace GhSA.Components
 
                 catalogueNames = cataloguedata.Item1;
                 catalogueNumbers = cataloguedata.Item2;
-                typedata = SqlReader.GetTypesDataFromSQLite(catalogueIndex, Path.Combine(AddReferencePriority.PluginPath, "sectlib.db3"), inclSS);
+                typedata = SqlReader.GetTypesDataFromSQLite(catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
                 typeNames = typedata.Item1;
                 typeNumbers = typedata.Item2;
 
@@ -453,19 +453,19 @@ namespace GhSA.Components
         #region catalogue sections
         // for catalogue selection
         // Catalogues
-        readonly Tuple<List<string>, List<int>> cataloguedata = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(AddReferencePriority.PluginPath, "sectlib.db3"));
+        readonly Tuple<List<string>, List<int>> cataloguedata = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
         List<int> catalogueNumbers = new List<int>(); // internal db catalogue numbers
         List<string> catalogueNames = new List<string>(); // list of displayed catalogues
         bool inclSS;
 
         // Types
-        Tuple<List<string>, List<int>> typedata = SqlReader.GetTypesDataFromSQLite(-1, Path.Combine(AddReferencePriority.PluginPath, "sectlib.db3"), false);
+        Tuple<List<string>, List<int>> typedata = SqlReader.GetTypesDataFromSQLite(-1, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
         List<int> typeNumbers = new List<int>(); //  internal db type numbers
         List<string> typeNames = new List<string>(); // list of displayed types
 
         // Sections
         // list of displayed sections
-        List<string> sectionList = SqlReader.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.PluginPath, "sectlib.db3"), false);
+        List<string> sectionList = SqlReader.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
         List<string> filteredlist = new List<string>();
         int catalogueIndex = -1; //-1 is all
         int typeIndex = -1;
