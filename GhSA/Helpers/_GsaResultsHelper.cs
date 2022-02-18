@@ -3,13 +3,10 @@ using Oasys.Units;
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnitsNet;
 using UnitsNet.Units;
 
-namespace GhSA.Util.Gsa
+namespace GsaGH.Util.Gsa
 {
     class ResultHelper
     {

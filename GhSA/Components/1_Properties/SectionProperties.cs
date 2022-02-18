@@ -1,23 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
-using UnitsNet;
-using UnitsNet.Units;
+using GsaGH.Parameters;
 using UnitsNet.GH;
-using Oasys.Units;
-using System.Linq;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to get geometric properties of a section
@@ -35,7 +22,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.SectionProperties;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SectionProperties;
         #endregion
 
         #region Custom UI

@@ -1,11 +1,11 @@
-﻿using GhSA.Parameters;
+﻿using GsaGH.Parameters;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 using System;
 using GsaAPI;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to edit a 1D Element
@@ -25,7 +25,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditElem1d;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditElem1d;
         #endregion
 
         #region Custom UI

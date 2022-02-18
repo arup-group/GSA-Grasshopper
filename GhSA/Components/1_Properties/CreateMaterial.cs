@@ -1,22 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using UnitsNet;
-using Oasys.Units;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 using System.Linq;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to create a new Material
@@ -34,7 +26,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateMaterial;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateMaterial;
         #endregion
 
         #region Custom UI

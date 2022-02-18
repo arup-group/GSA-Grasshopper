@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
-using GhSA;
-using GhSA.Parameters;
+using GsaGH;
+using GsaGH.Parameters;
 using Rhino.Geometry;
 using GsaAPI;
 
@@ -32,7 +32,7 @@ namespace ParamsIntegrationTests
             GsaModel m = new GsaModel();
 
             // get the GSA install path
-            string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath;
+            string installPath = GsaGH.Util.Gsa.InstallationFolderPath.GetPath;
 
             // open existing GSA model (steel design sample)
             m.Model.Open(installPath + "\\UnitTests\\Steel_Design_Simple.gwb");
@@ -51,7 +51,7 @@ namespace ParamsIntegrationTests
             GsaModel m = new GsaModel();
 
             // get the GSA install path
-            string installPath = GhSA.Util.Gsa.InstallationFolderPath.GetPath;
+            string installPath = GsaGH.Util.Gsa.InstallationFolderPath.GetPath;
 
             // open existing GSA model (steel design sample)
             ReturnValue returnValue = m.Model.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");

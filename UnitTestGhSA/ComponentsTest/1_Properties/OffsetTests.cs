@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
-using GhSA;
-using GhSA.Parameters;
+using GsaGH;
+using GsaGH.Parameters;
 using Rhino.Geometry;
 using Rhino;
 using Grasshopper;
@@ -15,7 +15,7 @@ namespace ComponentsTest
         public void CreateOffsetComponentTest()
         {
             // create the component
-            var comp = new GhSA.Components.CreateOffset();
+            var comp = new GsaGH.Components.CreateOffset();
             comp.CreateAttributes();
 
             Component.SetInput(comp, "0.5");

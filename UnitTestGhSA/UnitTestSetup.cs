@@ -3,8 +3,8 @@ using System.Reflection;
 using NUnit.Framework;
 using NUnit;
 using GsaAPI;
-using GhSA;
-using GhSA.Parameters;
+using GsaGH;
+using GsaGH.Parameters;
 using System.Runtime.InteropServices;
 
 // A SetUpFixture outside of any namespace provides SetUp and TearDown for the entire assembly.
@@ -69,12 +69,12 @@ namespace UnitTestGhSA
         public static void LoadRefs()
         {
             // set folder to latest GSA version.
-            Assembly ass1 = Assembly.LoadFile(GhSA.Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
-            Assembly ass2 = Assembly.LoadFile(GhSA.Util.Gsa.InstallationFolderPath.GetPath + "\\System.Data.SQLite.dll");
+            Assembly ass1 = Assembly.LoadFile(GsaGH.Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
+            Assembly ass2 = Assembly.LoadFile(GsaGH.Util.Gsa.InstallationFolderPath.GetPath + "\\System.Data.SQLite.dll");
 
             const string name = "PATH";
             string pathvar = System.Environment.GetEnvironmentVariable(name);
-            var value = pathvar + ";" + GhSA.Util.Gsa.InstallationFolderPath.GetPath + "\\";
+            var value = pathvar + ";" + GsaGH.Util.Gsa.InstallationFolderPath.GetPath + "\\";
             var target = EnvironmentVariableTarget.Process;
             System.Environment.SetEnvironmentVariable(name, value, target);
         }
@@ -95,7 +95,7 @@ namespace UnitTestGhSA
 
         public static void SetUnits()
         {
-            GhSA.Units.SetUnits_kN_m();
+            GsaGH.Units.SetUnits_kN_m();
         }
     }
     public class InitiateRhinoGH

@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Section class, this class defines the basic properties and methods for any Gsa Section
@@ -343,7 +337,7 @@ namespace GhSA.Parameters
     public class GsaMaterialParameter : GH_PersistentParam<GsaMaterialGoo>
     {
         public GsaMaterialParameter()
-          : base(new GH_InstanceDescription("Material", "Ma", "GSA Material", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Material", "Ma", "GSA Material", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -351,7 +345,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.MaterialParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.MaterialParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaMaterialGoo> values)
         {

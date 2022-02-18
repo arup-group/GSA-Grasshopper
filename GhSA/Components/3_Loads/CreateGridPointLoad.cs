@@ -3,13 +3,13 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using Rhino.Geometry;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using UnitsNet.Units;
 using System.Collections.Generic;
 using UnitsNet;
 using System.Linq;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     public class CreateGridPointLoad : GH_Component, IGH_VariableParameterComponent
     {
@@ -22,7 +22,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("076f03c6-67ba-49d3-9462-cd4a4b5aff92");
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.PointLoad;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.PointLoad;
         #endregion
 
         #region Custom UI

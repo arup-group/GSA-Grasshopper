@@ -1,18 +1,11 @@
-﻿using GhSA.Parameters;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnitsNet.GH;
 using UnitsNet;
 using UnitsNet.Units;
 using Oasys.Units;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     class GetInput
     {

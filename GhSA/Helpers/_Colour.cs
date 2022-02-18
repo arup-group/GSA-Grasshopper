@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Rhino.Display;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Colour class holding the main colours used in colour scheme. 

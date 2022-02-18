@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Grasshopper;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Parameters;
 using Rhino.Geometry;
 using GsaAPI;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using Rhino;
 using UnitsNet;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     public class CreateGridSurface : GH_Component, IGH_VariableParameterComponent
     {
@@ -25,7 +23,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("1052955c-cf97-4378-81d3-8491e0defad0");
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridSurface;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GridSurface;
         #endregion
 
         #region Custom UI

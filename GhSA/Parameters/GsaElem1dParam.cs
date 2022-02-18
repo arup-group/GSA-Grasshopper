@@ -7,12 +7,8 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
@@ -313,7 +309,7 @@ namespace GhSA.Parameters
                     #endregion
                     PolyCurve crv = new PolyCurve();
                     crv.Append(m_line);
-                    GhSA.UI.Display.Preview1D(crv, m_element.OrientationAngle * Math.PI / 180.0, m_rel1, m_rel2,
+                    GsaGH.UI.Display.Preview1D(crv, m_element.OrientationAngle * Math.PI / 180.0, m_rel1, m_rel2,
                         ref previewGreenLines, ref previewRedLines);
                 }
                 else
@@ -729,7 +725,7 @@ namespace GhSA.Parameters
     public class GsaElement1dParameter : GH_PersistentGeometryParam<GsaElement1dGoo>, IGH_PreviewObject
     {
         public GsaElement1dParameter()
-          : base(new GH_InstanceDescription("1D Element", "E1D", "Maintains a collection of GSA 1D Element data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("1D Element", "E1D", "Maintains a collection of GSA 1D Element data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -737,7 +733,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Elem1dParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Elem1dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

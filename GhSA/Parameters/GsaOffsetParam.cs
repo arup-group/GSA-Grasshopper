@@ -5,15 +5,10 @@ using System.Linq;
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 using UnitsNet;
 using UnitsNet.Units;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Offset class, this class defines the basic properties and methods for any Gsa Offset
@@ -270,7 +265,7 @@ namespace GhSA.Parameters
     public class GsaOffsetParameter : GH_PersistentParam<GsaOffsetGoo>
     {
         public GsaOffsetParameter()
-          : base(new GH_InstanceDescription("Offset", "Of", "GSA Offset", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Offset", "Of", "GSA Offset", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -278,7 +273,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.OffsetParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.OffsetParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

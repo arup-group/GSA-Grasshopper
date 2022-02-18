@@ -1,11 +1,9 @@
-﻿using System.Drawing;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Rhino.Display;
-using Grasshopper.Kernel;
 using Rhino.Geometry;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Colour class holding the main colours used in colour scheme. 

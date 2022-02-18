@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
 using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using UnitsNet.Units;
 using UnitsNet;
 using System.Linq;
 using Oasys.Units;
-using GhSA.Util.GH;
+using GsaGH.Util.GH;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to retrieve non-geometric objects from a GSA model
@@ -34,7 +29,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.ResultGlobal;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ResultGlobal;
         #endregion
 
         #region Custom UI

@@ -1,29 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
 using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using System.Text.RegularExpressions;
 
 using Grasshopper.Kernel.Parameters;
-using GhSA.Parameters;
-using GhSA.Util;
-using System.Resources;
+using GsaGH.Util;
 using System.Linq;
 using System.IO;
-using System.Text;
 using System.Reflection;
 using UnitsNet;
-using UnitsNet.GH;
-using GhSA.Util.GH;
-using GhSA.Util.Gsa;
+using GsaGH.Util.GH;
+using GsaGH.Util.Gsa;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to create AdSec profile

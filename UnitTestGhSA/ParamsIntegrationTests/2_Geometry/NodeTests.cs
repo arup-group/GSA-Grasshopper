@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
-using GhSA;
-using GhSA.Parameters;
+using GsaGH;
+using GsaGH.Parameters;
 using Rhino.Geometry;
 using GsaAPI;
 

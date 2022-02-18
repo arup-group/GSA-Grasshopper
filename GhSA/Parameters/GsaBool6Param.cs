@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Bool6 class, this class defines the basic properties and methods for any Gsa Bool6
@@ -292,7 +286,7 @@ namespace GhSA.Parameters
     public class GsaBool6Parameter : GH_PersistentParam<GsaBool6Goo>
     {
         public GsaBool6Parameter()
-          : base(new GH_InstanceDescription("Bool6", "B6", "GSA Bool6 to set releases and restraints", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Bool6", "B6", "GSA Bool6 to set releases and restraints", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -300,7 +294,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Bool6Param;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Bool6Param;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaBool6Goo> values)
         {

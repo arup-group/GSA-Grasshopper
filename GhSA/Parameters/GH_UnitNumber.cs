@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using Rhino;
-using Grasshopper.Documentation;
-using Rhino.Collections;
-using UnitsNet;
-using Oasys.Units;
 
 namespace UnitsNet.GH
 {
@@ -178,7 +171,7 @@ namespace UnitsNet.GH
     public class GH_UnitNumberParameter : GH_PersistentParam<GH_UnitNumber>
     {
         public GH_UnitNumberParameter()
-          : base(new GH_InstanceDescription("UnitNumber", "UNum", "Quantity = number + unit", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("UnitNumber", "UNum", "Quantity = number + unit", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -187,7 +180,7 @@ namespace UnitsNet.GH
         public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
 
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.UnitParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.UnitParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GH_UnitNumber> values)
         {

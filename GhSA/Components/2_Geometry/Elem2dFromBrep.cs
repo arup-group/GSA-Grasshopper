@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
 using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to edit a Node
@@ -31,7 +24,7 @@ namespace GhSA.Components
         }
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateElemsFromBreps;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateElemsFromBreps;
         #endregion
 
         #region Custom UI
@@ -93,7 +86,7 @@ namespace GhSA.Components
                             else
                             {
                                 string type = gh_types[i].Value.GetType().ToString();
-                                type = type.Replace("GhSA.Parameters.", "");
+                                type = type.Replace("GsaGH.Parameters.", "");
                                 type = type.Replace("Goo", "");
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert incl. Point/Node input parameter of type " + 
                                     type + " to point or node");
@@ -123,7 +116,7 @@ namespace GhSA.Components
                             else
                             {
                                 string type = gh_types[i].Value.GetType().ToString();
-                                type = type.Replace("GhSA.Parameters.", "");
+                                type = type.Replace("GsaGH.Parameters.", "");
                                 type = type.Replace("Goo", "");
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert incl. Curve/Mem1D input parameter of type " +
                                     type + " to curve or 1D Member");

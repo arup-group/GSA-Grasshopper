@@ -2,13 +2,12 @@
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using System.Linq;
-using System.Collections.ObjectModel;
 using UnitsNet.Units;
 using UnitsNet;
 
-namespace GhSA.Util.Gsa.ToGSA
+namespace GsaGH.Util.Gsa.ToGSA
 {
     class Members
     {

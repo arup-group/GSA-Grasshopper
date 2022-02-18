@@ -5,11 +5,11 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using Rhino.Geometry;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using UnitsNet;
 using UnitsNet.Units;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     public class CreateGridLineLoad : GH_Component, IGH_VariableParameterComponent
     {
@@ -22,7 +22,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("e1f22e6f-8550-4078-8613-ea5ed2ede2b9");
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.LineLoad;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.LineLoad;
         #endregion
 
         #region Custom UI

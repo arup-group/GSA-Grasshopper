@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
-using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using UnitsNet;
-using System.Resources;
 using System.Linq;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to create a new Offset
@@ -32,7 +23,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateOffset;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateOffset;
         #endregion
 
         #region Custom UI
@@ -94,7 +85,7 @@ namespace GhSA.Components
             "Measure"
         });
         private bool first = true;
-        private UnitsNet.Units.LengthUnit lengthUnit = GhSA.Units.LengthUnitGeometry;
+        private UnitsNet.Units.LengthUnit lengthUnit = GsaGH.Units.LengthUnitGeometry;
         string unitAbbreviation;
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
@@ -131,13 +122,13 @@ namespace GhSA.Components
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            GhSA.Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
+            GsaGH.Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
 
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            GhSA.Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+            GsaGH.Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
             UpdateUIFromSelectedItems();
             first = false;
             return base.Read(reader);

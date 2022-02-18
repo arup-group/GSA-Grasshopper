@@ -3,14 +3,12 @@ using System.Linq;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using Rhino.Geometry;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using UnitsNet.Units;
 using UnitsNet;
 using UnitsNet.GH;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     public class LoadProp : GH_Component, IGH_VariableParameterComponent
     {
@@ -23,7 +21,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("0df96bee-3440-4699-b08d-d805220d1f68");
         public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.LoadInfo;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.LoadInfo;
         #endregion
 
         #region Custom UI

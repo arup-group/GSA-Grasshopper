@@ -1,23 +1,14 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Drawing;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
-using Grasshopper;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GhSA.Parameters;
-using System.Linq;
-using System.Collections.ObjectModel;
+using GsaGH.Parameters;
 using GrasshopperAsyncComponent;
 
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to open an existing GSA model
@@ -36,7 +27,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.hidden;
 
-        protected override Bitmap Icon => GhSA.Properties.Resources.OpenModel;
+        protected override Bitmap Icon => GsaGH.Properties.Resources.OpenModel;
         #endregion
 
         #region Custom UI

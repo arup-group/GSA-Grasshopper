@@ -6,11 +6,10 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 using Rhino.Display;
-using Rhino.Collections;
 using UnitsNet.Units;
 using UnitsNet;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Node class, this class defines the basic properties and methods for any Gsa Node
@@ -199,7 +198,7 @@ namespace GhSA.Parameters
             if (m_node.Restraint.X || m_node.Restraint.Y || m_node.Restraint.Z ||
                 m_node.Restraint.XX || m_node.Restraint.YY || m_node.Restraint.ZZ)
             {
-                GhSA.UI.Display.PreviewRestraint(Restraint, m_plane, Point, 
+                GsaGH.UI.Display.PreviewRestraint(Restraint, m_plane, Point, 
                     ref previewSupportSymbol, ref previewText);
             }
             else
@@ -619,7 +618,7 @@ namespace GhSA.Parameters
     public class GsaNodeParameter : GH_PersistentGeometryParam<GsaNodeGoo>, IGH_PreviewObject
     {
         public GsaNodeParameter()
-          : base(new GH_InstanceDescription("Node", "No", "Maintains a collection of GSA Node data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Node", "No", "Maintains a collection of GSA Node data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -627,7 +626,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.NodeParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.NodeParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

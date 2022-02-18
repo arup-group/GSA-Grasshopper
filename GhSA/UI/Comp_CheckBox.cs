@@ -6,10 +6,8 @@ using Grasshopper;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.ComponentModel;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class to create custom component UI boolean toggle boxes
@@ -43,8 +41,8 @@ namespace GhSA.UI
             get
             {
                 List<string> texts = new List<string>(){ spacerTxt };
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(texts, new Font(GH_FontServer.FamilyStandard, 7));
-                float dd1 = GhSA.UI.ComponentUI.MaxTextWidth(toggleTexts, new Font(GH_FontServer.FamilyStandard, 7));
+                float sp = GsaGH.UI.ComponentUI.MaxTextWidth(texts, new Font(GH_FontServer.FamilyStandard, 7));
+                float dd1 = GsaGH.UI.ComponentUI.MaxTextWidth(toggleTexts, new Font(GH_FontServer.FamilyStandard, 7));
                 float num = Math.Max(Math.Max(sp, dd1 + 15), 90); 
                 return num;
             }
@@ -145,7 +143,7 @@ namespace GhSA.UI
                     List<string> incl = new List<string>();
                     incl.Add(toggleTexts[i]);
                     RectangleF txtBound = ToggleTextBound[i];
-                    txtBound.Width = GhSA.UI.ComponentUI.MaxTextWidth(incl, font);
+                    txtBound.Width = GsaGH.UI.ComponentUI.MaxTextWidth(incl, font);
                     ToggleTextBound[i] = txtBound;
                 }
             }

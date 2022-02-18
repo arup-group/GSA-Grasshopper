@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Collections.ObjectModel;
-using System.Text;
-using System.Threading.Tasks;
 using GsaAPI;
 using Rhino;
 using Rhino.Geometry;
@@ -12,7 +9,7 @@ using Rhino.Geometry.Collections;
 using System.Collections.Concurrent;
 using UnitsNet;
 
-namespace GhSA.Util.GH
+namespace GsaGH.Util.GH
 {
     /// <summary>
     /// Tolerance class

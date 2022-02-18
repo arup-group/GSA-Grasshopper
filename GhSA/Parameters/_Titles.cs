@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GsaAPI;
-using Rhino;
+﻿using GsaAPI;
 
-namespace GhSA
+namespace GsaGH
 {
     /// <summary>
     /// Class to hold Titles used in Grasshopper GSA file. 

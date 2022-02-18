@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Grasshopper;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Parameters;
-using Rhino.Geometry;
 using GsaAPI;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using UnitsNet;
 using UnitsNet.Units;
-using Oasys.Units;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     public class CreateBeamLoads : GH_Component, IGH_VariableParameterComponent
     {
@@ -26,7 +22,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.BeamLoad;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.BeamLoad;
         #endregion
 
         #region Custom UI

@@ -1,21 +1,19 @@
 ﻿using GsaAPI;
 using Rhino.Geometry;
-using Rhino.Collections;
 using System;
 using System.Collections.Generic;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using System.Linq;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using UnitsNet.Units;
 using UnitsNet;
 
-namespace GhSA.Util.Gsa.ToGSA
+namespace GsaGH.Util.Gsa.ToGSA
 {
     class Nodes
     {
         /// <summary>
-        /// Method to convert a GhSA GsaNode to GsaAPI.Node
+        /// Method to convert a GsaNode to GsaAPI.Node
         /// The method will look for existing nodes and avoid 
         /// creating duplicates. the inputs for existing 
         /// nodes, existing axes and the node id counter will

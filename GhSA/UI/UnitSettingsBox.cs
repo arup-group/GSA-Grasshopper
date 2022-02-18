@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using UnitsNet.Units;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     partial class UnitSettingsBox : Form
     {
@@ -15,30 +15,29 @@ namespace GhSA.UI
             this.Text = "Default GSA Units";
             this.labelDescription.Text = "Settings will apply to new components and display";
 
-            this.labelMass.Text = "Length";
-            this.comboBoxMass.DataSource = lengthdropdown;
-            this.comboBoxMass.DropDownStyle = ComboBoxStyle.DropDownList;
-            if (!Units.useRhinoLengthGeometryUnit)
-                this.comboBoxMass.SelectedIndex = lengthdropdown.IndexOf(Units.LengthUnitGeometry.ToString());
-
-            lengthdropdown.Insert(0, "Use Rhino unit: " + Units.GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem).ToString());
+            List<string> lengthGeometrydropdown = lengthdropdown.ToList();
+            lengthGeometrydropdown.Insert(0, "Use Rhino unit: " + Units.GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem).ToString());
             this.labelLengthGeometry.Text = "Length - geometry";
-            this.comboBoxLengthGeometry.DataSource = lengthdropdown;
+            this.comboBoxLengthGeometry.DataSource = lengthGeometrydropdown;
             this.comboBoxLengthGeometry.DropDownStyle = ComboBoxStyle.DropDownList;
             if (!Units.useRhinoLengthGeometryUnit)
-                this.comboBoxLengthGeometry.SelectedIndex = lengthdropdown.IndexOf(Units.LengthUnitGeometry.ToString());
+                this.comboBoxLengthGeometry.SelectedIndex = lengthGeometrydropdown.IndexOf(Units.LengthUnitGeometry.ToString());
 
+            List<string> lengthSectiondropdown = lengthdropdown.ToList();
+            lengthSectiondropdown.Insert(0, "Use Rhino unit: " + Units.GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem).ToString());
             this.labelLengthSection.Text = "Length - section";
-            this.comboBoxLengthSection.DataSource = lengthdropdown;
+            this.comboBoxLengthSection.DataSource = lengthSectiondropdown;
             this.comboBoxLengthSection.DropDownStyle = ComboBoxStyle.DropDownList;
             if (!Units.useRhinoLengthSectionUnit)
-                this.comboBoxLengthSection.SelectedIndex = lengthdropdown.IndexOf(Units.LengthUnitSection.ToString());
+                this.comboBoxLengthSection.SelectedIndex = lengthSectiondropdown.IndexOf(Units.LengthUnitSection.ToString());
 
+            List<string> lengthResultdropdown = lengthdropdown.ToList();
+            lengthResultdropdown.Insert(0, "Use Rhino unit: " + Units.GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem).ToString());
             this.labelLengthResult.Text = "Length - result";
-            this.comboBoxLengthResult.DataSource = lengthdropdown;
+            this.comboBoxLengthResult.DataSource = lengthResultdropdown;
             this.comboBoxLengthResult.DropDownStyle = ComboBoxStyle.DropDownList;
             if (!Units.useRhinoLengthResultUnit)
-                this.comboBoxLengthResult.SelectedIndex = lengthdropdown.IndexOf(Units.LengthUnitSection.ToString());
+                this.comboBoxLengthResult.SelectedIndex = lengthResultdropdown.IndexOf(Units.LengthUnitSection.ToString());
 
             this.labelForce.Text = "Force";
             this.comboBoxForce.DataSource = Units.FilteredForceUnits;
@@ -60,7 +59,15 @@ namespace GhSA.UI
             this.comboBoxStrain.DropDownStyle = ComboBoxStyle.DropDownList;
             this.comboBoxStrain.SelectedIndex = Units.FilteredStrainUnits.IndexOf(Units.StrainUnit.ToString());
 
-            
+            this.labelMass.Text = "Mass";
+            this.comboBoxMass.DataSource = Units.FilteredMassUnits;
+            this.comboBoxMass.DropDownStyle = ComboBoxStyle.DropDownList;
+            this.comboBoxMass.SelectedIndex = Units.FilteredMassUnits.IndexOf(Units.MassUnit.ToString());
+
+            this.labelTemperature.Text = "Temperatur";
+            this.comboBoxTemperature.DataSource = Units.FilteredTemperatureUnits;
+            this.comboBoxTemperature.DropDownStyle = ComboBoxStyle.DropDownList;
+            this.comboBoxTemperature.SelectedIndex = Units.FilteredTemperatureUnits.IndexOf(Units.TemperatureUnit.ToString());
         }
 
         #region Temporary units
@@ -180,35 +187,54 @@ namespace GhSA.UI
         private void comboBoxLengthSection_SelectedIndexChanged(object sender, EventArgs e)
         {
             lengthSection = this.comboBoxLengthSection.SelectedItem.ToString();
+            if (this.comboBoxLengthSection.SelectedIndex == 0)
+                useRhinoUnitsSection = true;
+            else
+                useRhinoUnitsSection = false;
         }
 
         private void comboBoxLengthResult_SelectedIndexChanged(object sender, EventArgs e)
         {
             lengthResult = this.comboBoxLengthResult.SelectedItem.ToString();
+            if (this.comboBoxLengthResult.SelectedIndex == 0)
+                useRhinoUnitsResult = true;
+            else
+                useRhinoUnitsResult = false;
         }
 
         private void updateSelections()
         {
-            if (!useRhinoUnitsGeometry)
-                this.comboBoxMass.SelectedIndex = lengthdropdown.IndexOf(mass);
-            else
-                this.comboBoxMass.SelectedIndex = 0;
+            
             this.comboBoxForce.SelectedIndex = Units.FilteredForceUnits.IndexOf(force);
             this.comboBoxMoment.SelectedIndex = Units.FilteredMomentUnits.IndexOf(moment);
             this.comboBoxStress.SelectedIndex = Units.FilteredStressUnits.IndexOf(stress);
             this.comboBoxStrain.SelectedIndex = Units.FilteredStrainUnits.IndexOf(strain);
-            this.comboBoxLengthGeometry.SelectedIndex = Units.FilteredLengthUnits.IndexOf(lengthGeometry);
-            this.comboBoxLengthSection.SelectedIndex = Units.FilteredLengthUnits.IndexOf(lengthSection);
-            this.comboBoxLengthResult.SelectedIndex = Units.FilteredLengthUnits.IndexOf(lengthResult);
+            this.comboBoxMass.SelectedIndex = Units.FilteredMassUnits.IndexOf(mass);
+            this.comboBoxTemperature.SelectedIndex = Units.FilteredTemperatureUnits.IndexOf(temperature);
+            if (!useRhinoUnitsGeometry)
+                this.comboBoxLengthGeometry.SelectedIndex = lengthdropdown.IndexOf(lengthGeometry) + 1;
+            else
+                this.comboBoxLengthGeometry.SelectedIndex = 0;
+            if (!useRhinoUnitsSection)
+                this.comboBoxLengthSection.SelectedIndex = lengthdropdown.IndexOf(lengthSection) + 1;
+            else
+                this.comboBoxLengthSection.SelectedIndex = 0;
+            if (!useRhinoUnitsResult)
+                this.comboBoxLengthResult.SelectedIndex = lengthdropdown.IndexOf(lengthResult) + 1;
+            else
+                this.comboBoxLengthResult.SelectedIndex = 0;
         }
         private void buttonSI_Click(object sender, EventArgs e)
         {
             useRhinoUnitsGeometry = false;
-            mass = LengthUnit.Meter.ToString();
+            useRhinoUnitsSection = false;
+            useRhinoUnitsResult = false;
             force = ForceUnit.Newton.ToString();
             moment = MomentUnit.NewtonMeter.ToString();
             stress = PressureUnit.Pascal.ToString();
             strain = StrainUnit.Ratio.ToString();
+            mass = MassUnit.Kilogram.ToString();
+            temperature = TemperatureUnit.Kelvin.ToString();
             lengthGeometry = LengthUnit.Meter.ToString();
             lengthResult = LengthUnit.Meter.ToString();
             lengthSection = LengthUnit.Meter.ToString();
@@ -218,42 +244,51 @@ namespace GhSA.UI
         private void buttonkNm_Click(object sender, EventArgs e)
         {
             useRhinoUnitsGeometry = false;
-            mass = LengthUnit.Meter.ToString();
+            useRhinoUnitsSection = false;
+            useRhinoUnitsResult = false;
             force = ForceUnit.Kilonewton.ToString();
             moment = MomentUnit.KilonewtonMeter.ToString();
             stress = PressureUnit.NewtonPerSquareMillimeter.ToString();
             strain = StrainUnit.MilliStrain.ToString();
-            lengthGeometry = AxialStiffnessUnit.Kilonewton.ToString();
-            lengthResult = CurvatureUnit.PerMeter.ToString();
-            lengthSection = BendingStiffnessUnit.NewtonSquareMillimeter.ToString();
+            mass = MassUnit.Tonne.ToString();
+            temperature = TemperatureUnit.DegreeCelsius.ToString();
+            lengthGeometry = LengthUnit.Meter.ToString();
+            lengthResult = LengthUnit.Millimeter.ToString();
+            lengthSection = LengthUnit.Centimeter.ToString();
             updateSelections();
         }
 
         private void buttonkipFt_Click(object sender, EventArgs e)
         {
             useRhinoUnitsGeometry = false;
-            mass = LengthUnit.Foot.ToString();
+            useRhinoUnitsSection = false;
+            useRhinoUnitsResult = false;
             force = ForceUnit.KilopoundForce.ToString();
             moment = MomentUnit.KilopoundForceFoot.ToString();
             stress = PressureUnit.KilopoundForcePerSquareInch.ToString();
             strain = StrainUnit.Percent.ToString();
-            lengthGeometry = AxialStiffnessUnit.KilopoundForce.ToString();
-            lengthResult = CurvatureUnit.PerMeter.ToString();
-            lengthSection = BendingStiffnessUnit.PoundForceSquareFoot.ToString();
+            mass = MassUnit.Kilopound.ToString();
+            temperature = TemperatureUnit.DegreeFahrenheit.ToString();
+            lengthGeometry = LengthUnit.Foot.ToString();
+            lengthResult = LengthUnit.Inch.ToString();
+            lengthSection = LengthUnit.Inch.ToString();
             updateSelections();
         }
 
         private void buttonkipIn_Click(object sender, EventArgs e)
         {
             useRhinoUnitsGeometry = false;
-            mass = LengthUnit.Inch.ToString();
+            useRhinoUnitsSection = false;
+            useRhinoUnitsResult = false;
             force = ForceUnit.KilopoundForce.ToString();
             moment = MomentUnit.KilopoundForceInch.ToString();
             stress = PressureUnit.KilopoundForcePerSquareInch.ToString();
             strain = StrainUnit.Percent.ToString();
-            lengthGeometry = AxialStiffnessUnit.KilopoundForce.ToString();
-            lengthResult = CurvatureUnit.PerMeter.ToString();
-            lengthSection = BendingStiffnessUnit.PoundForceSquareInch.ToString();
+            mass = MassUnit.Kilopound.ToString();
+            temperature = TemperatureUnit.DegreeFahrenheit.ToString();
+            lengthGeometry = LengthUnit.Inch.ToString();
+            lengthResult = LengthUnit.Inch.ToString();
+            lengthSection = LengthUnit.Inch.ToString();
             updateSelections();
         }
 

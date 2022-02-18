@@ -6,12 +6,8 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Element3d class, this class defines the basic properties and methods for any Gsa Element 3d
@@ -744,7 +740,7 @@ namespace GhSA.Parameters
     public class GsaElement3dParameter : GH_PersistentGeometryParam<GsaElement3dGoo>, IGH_PreviewObject
     {
         public GsaElement3dParameter()
-          : base(new GH_InstanceDescription("3D Element", "E3D", "Maintains a collection of GSA 3D Element data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("3D Element", "E3D", "Maintains a collection of GSA 3D Element data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -752,7 +748,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Elem3dParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Elem3dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

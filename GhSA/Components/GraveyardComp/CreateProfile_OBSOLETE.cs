@@ -1,26 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
 using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using System.Text.RegularExpressions;
 
 using Grasshopper.Kernel.Parameters;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
 using System.Linq;
-using GhSA.Util;
-using GhSA.Util.Gsa;
+using GsaGH.Util;
+using GsaGH.Util.Gsa;
 using System.IO;
 using UnitsNet;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to create a profile text-string
@@ -39,7 +31,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.hidden;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateProfile;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateProfile;
         #endregion
 
         #region Custom UI

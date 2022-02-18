@@ -8,8 +8,8 @@
     <ProjectGuid>{362F5ED1-BA80-4F21-881D-6BD8784612E4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GhSA</RootNamespace>
-    <AssemblyName>GhSA</AssemblyName>
+    <RootNamespace>GsaGH</RootNamespace>
+    <AssemblyName>GsaGH</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -195,7 +195,7 @@
     <Compile Include="Helpers\_GsaResultsHelper.cs" />
     <Compile Include="Helpers\_GhRibbonLayout.cs" />
     <Compile Include="Components\0_Model\OpenModel.cs" />
-    <Compile Include="GSAInfo.cs" />
+    <Compile Include="GsaGHInfo.cs" />
     <Compile Include="Helpers\_MenuSettings.cs" />
     <Compile Include="Helpers\_SqlReader.cs" />
     <Compile Include="Parameters\GH_UnitNumber.cs" />

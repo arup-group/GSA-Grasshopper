@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 using UnitsNet;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Member3d class, this class defines the basic properties and methods for any Gsa Member 3d
@@ -164,7 +159,7 @@ namespace GhSA.Parameters
         internal List<Point3d> previewPts;
         private void UpdatePreview()
         {
-            GhSA.UI.Display.PreviewMem3d(ref m_mesh, ref previewHiddenLines, ref previewEdgeLines, ref previewPts);
+            GsaGH.UI.Display.PreviewMem3d(ref m_mesh, ref previewHiddenLines, ref previewEdgeLines, ref previewPts);
         }
         #endregion
         #region fields
@@ -186,7 +181,7 @@ namespace GhSA.Parameters
         {
             m_member = member;
             m_id = id;
-            m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
             UpdatePreview();
         }
         public GsaMember3d(Mesh mesh)
@@ -196,7 +191,7 @@ namespace GhSA.Parameters
                 Type = MemberType.GENERIC_3D
             };
 
-            m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
             if (m_mesh == null)
             {
                 throw new Exception("Unable to convert Mesh to solid mesh");
@@ -213,7 +208,7 @@ namespace GhSA.Parameters
                 Type = MemberType.GENERIC_3D
             };
 
-            m_mesh = GhSA.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
+            m_mesh = GsaGH.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
             if (m_mesh == null)
             {
                 throw new Exception("Unable to convert Brep to solid mesh");
@@ -240,7 +235,7 @@ namespace GhSA.Parameters
         {
             if (this == null) { return null; }
             GsaMember3d dup = this.Duplicate();
-            dup.m_mesh = GhSA.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
+            dup.m_mesh = GsaGH.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
             dup.UpdatePreview();
             return dup;
         }
@@ -248,7 +243,7 @@ namespace GhSA.Parameters
         {
             if (this == null) { return null; }
             GsaMember3d dup = this.Duplicate();
-            dup.m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            dup.m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
             dup.UpdatePreview();
             return dup;
         }
@@ -580,7 +575,7 @@ namespace GhSA.Parameters
     public class GsaMember3dParameter : GH_PersistentGeometryParam<GsaMember3dGoo>, IGH_PreviewObject
     {
         public GsaMember3dParameter()
-          : base(new GH_InstanceDescription("3D Member", "M3D", "Maintains a collection of GSA 3D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("3D Member", "M3D", "Maintains a collection of GSA 3D Member data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -588,7 +583,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Mem3dParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Mem3dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

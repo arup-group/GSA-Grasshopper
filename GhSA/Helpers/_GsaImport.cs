@@ -5,13 +5,13 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using GsaAPI;
 using Rhino.Geometry;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using UnitsNet.Units;
 using UnitsNet;
 
-namespace GhSA.Util.Gsa
+namespace GsaGH.Util.Gsa
 {
     /// <summary>
     /// Class containing functions to import various object types from GSA
@@ -68,7 +68,7 @@ namespace GhSA.Util.Gsa
 
         /// <summary>
         /// Method to import Nodes from a GSA model.
-        /// Will output a list of GhSA GsaNodeGoos.
+        /// Will output a list of GsaNodeGoos.
         /// Input node dictionary pre-filtered for selected nodes to import;
         /// </summary>
         /// <param name="nDict">Dictionary of GSA Nodes pre-filtered for nodes to import</param>
@@ -122,7 +122,7 @@ namespace GhSA.Util.Gsa
 
         #region elements
         /// <summary>
-        /// /// Method to convert Elements to GhSA Element 1D and Element 2D
+        /// /// Method to convert Elements to Element 1D and Element 2D
         /// Element 3Ds to be implemented
         /// Will output a tuple containing a:
         /// 1. List of GsaElement1dGoos and 
@@ -169,7 +169,7 @@ namespace GhSA.Util.Gsa
                 switch (elemDimension)
                 {
                     case 1:
-                        // create new GhSA element from api element;
+                        // create new element from api element;
                         elem1dDict.TryAdd(item.Key, item.Value);
                         new GsaElement1dGoo(
                             ConvertToElement1D(
@@ -191,7 +191,7 @@ namespace GhSA.Util.Gsa
             });
 
             // if import found any 1D elements add these in one go.
-            // GhSA GsaElement2d and 3d consist of a list of 2D elements in order
+            // GsaElement2d and 3d consist of a list of 2D elements in order
             // to display a combined mesh: each 2D element is a mesh face
             if (elem1dDict.Count > 0)
                 elem1ds = elem1dDict.AsParallel().
@@ -209,7 +209,7 @@ namespace GhSA.Util.Gsa
         }
 
         /// <summary>
-        /// Method to convert a single 1D Element to a GhSA Element 1D
+        /// Method to convert a single 1D Element to a Element 1D
         /// Will output a GsaElement1d
         /// </summary>
         /// <param name="element">GsaAPI Element to be converted</param>
@@ -350,7 +350,7 @@ namespace GhSA.Util.Gsa
         }
 
         /// <summary>
-        /// Method to bulk convert 2D Elements to GhSA Element 2Ds
+        /// Method to bulk convert 2D Elements to Element 2Ds
         /// Will output a list of GsaElement2dGoos
         /// </summary>
         /// <param name="elements">Dictionary of 2D Elements</param>
@@ -710,7 +710,7 @@ namespace GhSA.Util.Gsa
         }
         #region members
         /// <summary>
-        /// Method to convert Members to GhSA Member 1D, 2D and 3D
+        /// Method to convert Members to Member 1D, 2D and 3D
         /// Will output a tuple containing a:
         /// 1. List of GsaMember1dGoos and 
         /// 2. List of GsaMember2dGoos and
@@ -863,7 +863,7 @@ namespace GhSA.Util.Gsa
                             }
                         }
 
-                        // create GhSA Members
+                        // create Members
 
                         // Member1D:
                         if (mem.Type == MemberType.GENERIC_1D | mem.Type == MemberType.BEAM | mem.Type == MemberType.CANTILEVER |
@@ -1270,7 +1270,7 @@ namespace GhSA.Util.Gsa
         #region section and properties
         /// <summary>
         /// Method to import Sections from a GSA model.
-        /// Will output a list of GhSA GsaSectionsGoo.
+        /// Will output a list of GsaSectionsGoo.
         /// </summary>
         /// <param name="sDict">Dictionary of pre-filtered sections to import</param>
         /// <returns></returns>
@@ -1294,7 +1294,7 @@ namespace GhSA.Util.Gsa
         }
         /// <summary>
         /// Method to import Prop2ds from a GSA model.
-        /// Will output a list of GhSA GsaProp2dGoo.
+        /// Will output a list of GsaProp2dGoo.
         /// </summary>
         /// <param name="pDict">Dictionary of pre-filtered 2D Properties to import</param>
         /// <returns></returns>
@@ -1321,7 +1321,7 @@ namespace GhSA.Util.Gsa
         #region loads
         /// <summary>
         /// Method to import Gravity Loads from a GSA model.
-        /// Will output a list of GhSA GsaLoadsGoo.
+        /// Will output a list of GsaLoadsGoo.
         /// </summary>
         /// <param name="gravityLoads">Collection of gravity loads to import</param>
         /// <returns></returns>
@@ -1348,7 +1348,7 @@ namespace GhSA.Util.Gsa
         /// method seems to be toogling through all enum types which
         /// requeres the entire model to be inputted to this method.
         /// 
-        /// Will output a list of GhSA GsaLoads.
+        /// Will output a list of GsaLoads.
         /// </summary>
         /// <param name="model">GSA model containing node loads</param>
         /// <returns></returns>
@@ -1402,7 +1402,7 @@ namespace GhSA.Util.Gsa
         }
         /// <summary>
         /// Method to import Beam Loads from a GSA model.
-        /// Will output a list of GhSA GsaLoads.
+        /// Will output a list of GsaLoads.
         /// </summary>
         /// <param name="beamLoads">Collection of beams loads to be imported</param>
         /// <returns></returns>
@@ -1424,7 +1424,7 @@ namespace GhSA.Util.Gsa
         }
         /// <summary>
         /// Method to import Face Loads from a GSA model.
-        /// Will output a list of GhSA GsaLoads.
+        /// Will output a list of GsaLoads.
         /// </summary>
         /// <param name="faceLoads">Collection of Face loads to be imported</param>
         /// <returns></returns>
@@ -1446,7 +1446,7 @@ namespace GhSA.Util.Gsa
         }
         /// <summary>
         /// Method to import Grid Point Loads from a GSA model.
-        /// Will output a list of GhSA GsaLoads.
+        /// Will output a list of GsaLoads.
         /// </summary>
         /// <param name="pointLoads">Collection of Grid Point loads to be imported</param>
         /// <param name="srfDict">Grid Surface Dictionary</param>
@@ -1478,7 +1478,7 @@ namespace GhSA.Util.Gsa
         }
         /// <summary>
         /// Method to import Grid Line Loads from a GSA model.
-        /// Will output a list of GhSA GsaLoads.
+        /// Will output a list of GsaLoads.
         /// </summary>
         /// <param name="lineLoads">Collection of Grid Line loads to be imported</param>
         /// <param name="srfDict">Grid Surface Dictionary</param>
@@ -1510,7 +1510,7 @@ namespace GhSA.Util.Gsa
         }
         /// <summary>
         /// Method to import Grid Area Loads from a GSA model.
-        /// Will output a list of GhSA GsaLoads.
+        /// Will output a list of GsaLoads.
         /// </summary>
         /// <param name="areaLoads">Collection of Grid Area loads to be imported</param>
         /// <param name="srfDict">Grid Surface Dictionary</param>

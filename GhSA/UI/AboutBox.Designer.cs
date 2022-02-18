@@ -1,5 +1,5 @@
-﻿using GhSA;
-namespace GhSA.UI
+﻿using GsaGH;
+namespace GsaGH.UI
 {
     partial class AboutGsaBox
     {

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using Grasshopper.Kernel;
+using System;
 using System.Timers;
 using System.Windows.Forms;
-using Grasshopper.Kernel;
 
-
-namespace GhSA.UI.Menu
+namespace GsaGH.UI.Menu
 {
     public class Loader
     {
@@ -25,6 +20,51 @@ namespace GhSA.UI.Menu
             loadTimer.Elapsed += AddMenuItem;
             trimTimer = new System.Timers.Timer(500);
             trimTimer.Elapsed += TrimMenuItem;
+        }
+        
+        private void AddMenuItem(object sender, ElapsedEventArgs e)
+        {
+            if (Grasshopper.Instances.DocumentEditor == null) return;
+            GH_AssemblyInfo thisPlugin = Grasshopper.Instances.ComponentServer.FindAssembly(new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f"));
+            if (thisPlugin == null) return;
+
+
+            if (MenuHasBeenAdded)
+            {
+                loadTimer.Stop();
+                trimTimer.Start();
+                return;
+            }
+
+            // get main menu
+            var mainMenu = Grasshopper.Instances.DocumentEditor.MainMenuStrip;
+
+            // create menu
+            ToolStripMenuItem oasysMenu = new ToolStripMenuItem("Oasys");
+
+            // add units
+            oasysMenu.DropDown.Items.Add("GSA Units", Properties.Resources.Units, (s, a) =>
+            {
+                UnitSettingsBox unitBox = new UnitSettingsBox();
+                unitBox.Show();
+            });
+            // add info
+            oasysMenu.DropDown.Items.Add("GSA Info", Properties.Resources.GSAInfo, (s, a) =>
+            {
+                AboutGsaBox aboutBox = new AboutGsaBox();
+                aboutBox.Show();
+            });
+            
+            try
+            {
+                mainMenu.Items.Insert(mainMenu.Items.Count - 2, oasysMenu);
+                MenuHasBeenAdded = true;
+                loadTimer.Stop();
+                trimTimer.Start();
+            }
+            catch (Exception)
+            {
+            }
         }
         private void TrimMenuItem(object sender, ElapsedEventArgs e)
         {
@@ -46,47 +86,6 @@ namespace GhSA.UI.Menu
                 }
             }
             trimTimer.Stop();
-        }
-        private void AddMenuItem(object sender, ElapsedEventArgs e)
-        {
-            if (Grasshopper.Instances.DocumentEditor == null) return;
-
-            if (MenuHasBeenAdded)
-            {
-                loadTimer.Stop();
-                trimTimer.Start();
-                return;
-            }
-
-            // get main menu
-            var mainMenu = Grasshopper.Instances.DocumentEditor.MainMenuStrip;
-
-            // create menu
-            ToolStripMenuItem oasysMenu = new ToolStripMenuItem("Oasys");
-
-            // add units
-            oasysMenu.DropDown.Items.Add("GSA Units", Properties.Resources.Units, (s, a) =>
-            {
-                //GhSA.UI.UnitSettingsBox unitBox = new UI.UnitSettingsBox();
-                //unitBox.Show();
-            });
-            // add info
-            oasysMenu.DropDown.Items.Add("GSA Info", Properties.Resources.GSAInfo, (s, a) =>
-            {
-                AboutGsaBox aboutBox = new AboutGsaBox();
-                aboutBox.Show();
-            });
-            
-            try
-            {
-                mainMenu.Items.Insert(mainMenu.Items.Count - 2, oasysMenu);
-                MenuHasBeenAdded = true;
-                loadTimer.Stop();
-                trimTimer.Start();
-            }
-            catch (Exception)
-            {
-            }
         }
     }
 }

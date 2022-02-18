@@ -5,15 +5,10 @@ using System.Linq;
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 using UnitsNet;
 using UnitsNet.Units;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Prop2d class, this class defines the basic properties and methods for any Gsa Prop2d
@@ -383,7 +378,7 @@ namespace GhSA.Parameters
     public class GsaProp2dParameter : GH_PersistentParam<GsaProp2dGoo>
     {
         public GsaProp2dParameter()
-          : base(new GH_InstanceDescription("2D Property", "PA", "GSA 2D Property", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("2D Property", "PA", "GSA 2D Property", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -391,7 +386,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Prop2dParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Prop2dParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaProp2dGoo> values)
         {

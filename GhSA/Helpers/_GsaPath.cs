@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace GhSA.Util.Gsa
+namespace GsaGH.Util.Gsa
 {
     /// <summary>
     /// GsaPath class holding the path to the folder containing the GSA installation.

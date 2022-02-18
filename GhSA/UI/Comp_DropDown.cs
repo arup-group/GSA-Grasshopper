@@ -6,10 +6,8 @@ using Grasshopper;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.ComponentModel;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class to create custom component UI with a single dropdown menu
@@ -55,9 +53,9 @@ namespace GhSA.UI
             {
                 List<string> spacers = new List<string>();
                 spacers.Add(SpacerTxt);
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
+                float sp = GsaGH.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
                 List<string> buttons = new List<string>();
-                float bt = GhSA.UI.ComponentUI.MaxTextWidth(dropdownlist, new Font(GH_FontServer.FamilyStandard, 7));
+                float bt = GsaGH.UI.ComponentUI.MaxTextWidth(dropdownlist, new Font(GH_FontServer.FamilyStandard, 7));
                 if (dropdownlist.Count > maxNoRows)
                     bt += 15; // add room for vertical scroll bar
                 float num = Math.Max(Math.Max(sp, bt), 90);

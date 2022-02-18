@@ -1,14 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel;
 using System.Reflection;
 using GsaAPI;
 using System.Net;
 
-namespace GhSA
+namespace GsaGH
 {
     public class AddReferencePriority : GH_AssemblyPriority
     {
@@ -113,7 +111,7 @@ namespace GhSA
 
             // ### Create Ribbon Category name and icon ###
             Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
-            Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", GhSA.Properties.Resources.GSALogo);
+            Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", GsaGH.Properties.Resources.GSALogo);
 
             // ### Setup units ###
             Units.SetupUnits();
@@ -235,16 +233,25 @@ namespace GhSA
             m.Dispose();
         }
     }
-    public class GSAInfo : GH_AssemblyInfo
+    public class GsaGHInfo : GH_AssemblyInfo
     {
+        internal static Guid GUID = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
+        internal const string Company = "Oasys";
+        internal const string Copyright = "Copyright © Oasys 1985 - 2022";
+        internal const string Contact = "https://www.oasys-software.com/";
+        internal const string Vers = "0.9.0";
+        internal static bool isBeta = true;
+        internal const string ProductName = "GSA";
+        internal const string PluginName = "GsaGH";
+
         public override string Name
         {
             get
             {
-                return "GSA";
+                return ProductName;
             }
         }
-        public override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GSALogo;
+        public override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GSALogo;
         public override string Description
         {
             get
@@ -256,14 +263,14 @@ namespace GhSA
                 + System.Environment.NewLine + "is required to use this plugin."
                 + System.Environment.NewLine 
                 + System.Environment.NewLine + "Contact oasys@arup.com to request a free trial version."
-                + System.Environment.NewLine + System.Environment.NewLine + "Copyright © Oasys 1985 - 2022";
+                + System.Environment.NewLine + System.Environment.NewLine + Copyright;
             }
         }
         public override Guid Id
         {
             get
             {
-                return new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
+                return GUID;
             }
         }
 
@@ -272,7 +279,7 @@ namespace GhSA
             get
             {
                 //Return a string identifying you or your company.
-                return "Oasys";
+                return Company;
             }
         }
         public override string AuthorContact
@@ -280,13 +287,14 @@ namespace GhSA
             get
             {
                 //Return a string representing your preferred contact details.
-                return "https://www.oasys-software.com/";
+                return Contact;
             }
         }
         public string icon_url
         {
             get
             {
+                // to be updated - not supported by yak currently
                 return "https://raw.githubusercontent.com/arup-group/GSA-Grasshopper/master/GhSA/Properties/Icons/icons/4x/GsaGhLogo%404x.png";
             }
         }
@@ -295,7 +303,10 @@ namespace GhSA
         {
             get
             {
-                return "0.3.8-beta";
+                if (isBeta)
+                    return Vers + "-beta";
+                else
+                    return Vers;
             }
         }
     }

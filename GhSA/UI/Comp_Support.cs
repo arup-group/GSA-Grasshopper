@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Windows.Forms;
-using Rhino.Geometry;
 
 using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Attributes;
-using GhSA.Components;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class to create custom component UI with three buttons and 6 check box toggles underneath

@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
 using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 using UnitsNet;
 using System.Linq;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to edit a 1D Member
@@ -34,7 +27,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditMem1d;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem1d;
         #endregion
 
         #region Custom UI

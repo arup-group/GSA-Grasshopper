@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to create a new Bool6
@@ -30,7 +21,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateBool6;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateBool6;
         #endregion
 
         #region Custom UI

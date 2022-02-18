@@ -1,15 +1,8 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
-using GhSA.Util;
 using Rhino.Geometry;
-using System.Windows.Forms;
 
-namespace GhSA.Util.Gsa
+namespace GsaGH.Util.Gsa
 {
     /// <summary>
     /// Profile class holds information about a profile
@@ -94,7 +87,7 @@ namespace GhSA.Util.Gsa
         //        if (Units.LengthUnitSection == "mm" || Units.LengthUnitSection == "cm" || Units.LengthUnitSection == "m" ||
         //        Units.LengthUnitSection == "ft" || Units.LengthUnitSection == "in")
         //        {
-                    
+
         //            if (factorValues)
         //            {
         //                double conversionFactor = 1;
@@ -145,7 +138,7 @@ namespace GhSA.Util.Gsa
         //                gsaProfile.tw1 *= conversionFactor;
         //                gsaProfile.tw2 *= conversionFactor;
         //            }
-                        
+
         //            switch (Units.LengthUnitSection)
         //            {
         //                case "mm":
@@ -170,7 +163,7 @@ namespace GhSA.Util.Gsa
         //}
         /// <summary>
         /// Method to convert a GsaProfile to a string that can be read by GSA
-        /// (in GsaAPI.Section.Profile or GhSA.Parameters.GsaSection.Section.Profile)
+        /// (in GsaAPI.Section.Profile or GsaGH.Parameters.GsaSection.Section.Profile)
         /// 
         /// NOTE: 
         /// - Does not cover all profile types available in GSA (but all available in GsaProfile)

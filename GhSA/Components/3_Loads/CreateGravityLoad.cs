@@ -3,9 +3,9 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using Rhino.Geometry;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     public class CreateGravityLoad : GH_Component
     {
@@ -18,7 +18,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("f9099874-92fa-4608-b4ed-a788df85a407");
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GravityLoad;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GravityLoad;
         #endregion
 
         #region Custom UI

@@ -5,10 +5,8 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino.Display;
-using Rhino.Collections;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Grid Plane Surface class, this class defines the basic properties and methods for any Gsa Grid Plane Surface
@@ -443,7 +441,7 @@ namespace GhSA.Parameters
     public class GsaGridPlaneParameter : GH_PersistentGeometryParam<GsaGridPlaneSurfaceGoo>, IGH_PreviewObject
     {
         public GsaGridPlaneParameter()
-          : base(new GH_InstanceDescription("Grid Plane Surface", "GPS", "Maintains a collection of GSA Grid Plane and Grid Surface data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Grid Plane Surface", "GPS", "Maintains a collection of GSA Grid Plane and Grid Surface data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -451,7 +449,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridPlaneParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GridPlaneParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

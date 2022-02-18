@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Drawing2D;
-namespace GhSA.UI.ButtonsUI
+namespace GsaGH.UI.ButtonsUI
 {
     /// <summary>
     /// Class holding custom UI graphical buttons/boxes

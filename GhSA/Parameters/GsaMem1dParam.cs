@@ -6,13 +6,10 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
 using Rhino.Collections;
 using UnitsNet;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Member1d class, this class defines the basic properties and methods for any Gsa Member 1d
@@ -312,7 +309,7 @@ namespace GhSA.Parameters
                     previewRedLines.Add(previewEZZ1);
                     previewRedLines.Add(previewEZZ2);
                     #endregion
-                    GhSA.UI.Display.Preview1D(m_crv, m_member.OrientationAngle * Math.PI / 180.0, m_rel1, m_rel2,
+                    GsaGH.UI.Display.Preview1D(m_crv, m_member.OrientationAngle * Math.PI / 180.0, m_rel1, m_rel2,
                     ref previewGreenLines, ref previewRedLines);
                 }
                 else
@@ -783,7 +780,7 @@ namespace GhSA.Parameters
     public class GsaMember1dParameter : GH_PersistentGeometryParam<GsaMember1dGoo>, IGH_PreviewObject
     {
         public GsaMember1dParameter()
-          : base(new GH_InstanceDescription("1D Member", "M1D", "Maintains a collection of GSA 1D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("1D Member", "M1D", "Maintains a collection of GSA 1D Member data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -791,7 +788,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Mem1dParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Mem1dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

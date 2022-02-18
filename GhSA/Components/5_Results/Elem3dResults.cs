@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper;
 using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 using System.Linq;
 using Grasshopper.Kernel.Data;
 using UnitsNet.Units;
 using UnitsNet;
-using GhSA.Util.Gsa;
+using GsaGH.Util.Gsa;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to get Element2d results
@@ -40,7 +35,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Result3D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Result3D;
         #endregion
 
         #region Custom UI
@@ -572,7 +567,7 @@ namespace GhSA.Components
                 {
                     elems.TryGetValue(key, out Element element);
 
-                    Mesh tempmesh = GhSA.Util.Gsa.FromGSA.ConvertElement3D(element, nodes, geometryLengthUnit);
+                    Mesh tempmesh = GsaGH.Util.Gsa.FromGSA.ConvertElement3D(element, nodes, geometryLengthUnit);
                     if (tempmesh == null) { return; }
 
                     List<Vector3d> transformation = null;

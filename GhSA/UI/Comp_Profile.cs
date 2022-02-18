@@ -6,10 +6,8 @@ using Grasshopper;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.ComponentModel;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class to create custom component UI with multiple dropdowns and boolean toggle boxes
@@ -102,14 +100,14 @@ namespace GhSA.UI
         {
             get
             {
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacerTxts, new Font(GH_FontServer.FamilyStandard, 7));
-                float dd1 = GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[0], new Font(GH_FontServer.FamilyStandard, 7));
+                float sp = GsaGH.UI.ComponentUI.MaxTextWidth(spacerTxts, new Font(GH_FontServer.FamilyStandard, 7));
+                float dd1 = GsaGH.UI.ComponentUI.MaxTextWidth(dropdownlists[0], new Font(GH_FontServer.FamilyStandard, 7));
                 float dd2 = 0;
                 if (dropdownlists.Count > 1)
-                    dd2 = (displayTexts[0] == "Geometric") ? 0 : GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[1], new Font(GH_FontServer.FamilyStandard, 7));
+                    dd2 = (displayTexts[0] == "Geometric") ? 0 : GsaGH.UI.ComponentUI.MaxTextWidth(dropdownlists[1], new Font(GH_FontServer.FamilyStandard, 7));
                 float dd3 = 0; 
                 if (dropdownlists.Count > 2)
-                    dd3 = (displayTexts[0] == "Catalogue") ? GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[2], new Font(GH_FontServer.FamilyStandard, 7)) : 0;
+                    dd3 = (displayTexts[0] == "Catalogue") ? GsaGH.UI.ComponentUI.MaxTextWidth(dropdownlists[2], new Font(GH_FontServer.FamilyStandard, 7)) : 0;
                 float num = Math.Max(Math.Max(Math.Max(Math.Max(sp, dd1), dd2 + 15), dd3 + 15), 90); // (displayTexts[0] == "Catalogue") ? 90 : 90);
                 //num = Math.Min(num, 130);
                 //if (displayTexts[0] == "Catalogue")
@@ -590,7 +588,7 @@ namespace GhSA.UI
 
                     List<string> incl = new List<string>();
                     incl.Add("Incl. superseeded");
-                    inclSsTxtBounds.Width = GhSA.UI.ComponentUI.MaxTextWidth(incl, font);
+                    inclSsTxtBounds.Width = GsaGH.UI.ComponentUI.MaxTextWidth(incl, font);
 
                 }
 

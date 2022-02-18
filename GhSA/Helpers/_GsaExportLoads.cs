@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
-using Rhino.Geometry;
-using GhSA.Parameters;
-using System.Threading;
+using GsaGH.Parameters;
 using UnitsNet.Units;
 
-namespace GhSA.Util.Gsa.ToGSA
+namespace GsaGH.Util.Gsa.ToGSA
 {
     class Loads
     {

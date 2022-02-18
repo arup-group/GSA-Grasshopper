@@ -1,22 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 using System.Linq;
 using System.Collections.ObjectModel;
-using Grasshopper.Kernel.Data;
 using UnitsNet;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to assemble and analyse a GSA model
@@ -34,7 +26,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Analyse;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Analyse;
         #endregion
 
         #region Custom UI
@@ -178,7 +170,7 @@ namespace GhSA.Components
                     else
                     {
                         string type = gh_typ.Value.GetType().ToString();
-                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("GsaGH.Parameters.", "");
                         type = type.Replace("Goo", "");
                         Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input parameter of type " +
                             type + " to GsaModel");
@@ -214,7 +206,7 @@ namespace GhSA.Components
                     else
                     {
                         string type = gh_typ.Value.GetType().ToString();
-                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("GsaGH.Parameters.", "");
                         type = type.Replace("Goo", "");
                         Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Prop input parameter of type " +
                             type + " to GsaSection or GsaProp2d");
@@ -289,7 +281,7 @@ namespace GhSA.Components
                     else
                     {
                         string type = gh_typ.Value.GetType().ToString();
-                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("GsaGH.Parameters.", "");
                         type = type.Replace("Goo", "");
                         Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input parameter of type " +
                             type + System.Environment.NewLine + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
@@ -339,7 +331,7 @@ namespace GhSA.Components
                     else
                     {
                         string type = gh_typ.Value.GetType().ToString();
-                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("GsaGH.Parameters.", "");
                         type = type.Replace("Goo", "");
                         Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Load input parameter of type " +
                             type + " to Load or GridPlaneSurface");

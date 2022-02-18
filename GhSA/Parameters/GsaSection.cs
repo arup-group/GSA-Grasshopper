@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 using UnitsNet;
-using UnitsNet.Units;
-using Oasys.Units;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Section class, this class defines the basic properties and methods for any Gsa Section
@@ -432,7 +424,7 @@ namespace GhSA.Parameters
     public class GsaSectionParameter : GH_PersistentParam<GsaSectionGoo>
     {
         public GsaSectionParameter()
-          : base(new GH_InstanceDescription("Section", "PB", "GSA Section", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Section", "PB", "GSA Section", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -440,7 +432,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.SectionParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SectionParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaSectionGoo> values)
         {

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GhSA.Util.GH
+namespace GsaGH.Util.GH
 {
     internal class DeSerialization
     {

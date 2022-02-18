@@ -1,12 +1,10 @@
 ﻿using GsaAPI;
-using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using System.Linq;
-using System.Collections.ObjectModel;
 
-namespace GhSA.Util.Gsa.ToGSA
+namespace GsaGH.Util.Gsa.ToGSA
 {
     class Materials
     {

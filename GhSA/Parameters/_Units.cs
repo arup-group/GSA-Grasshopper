@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rhino;
-using System.Reflection;
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 using UnitsNet;
 using UnitsNet.Units;
 using Oasys.Units;
 
-namespace GhSA
+namespace GsaGH
 {
     /// <summary>
     /// Class to hold units used in Grasshopper GSA file. 

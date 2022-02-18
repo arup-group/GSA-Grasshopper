@@ -6,14 +6,9 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino.Geometry.Collections;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 using UnitsNet;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
@@ -718,7 +713,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)Value.PolyCurve.ToPolyline(GhSA.Units.Tolerance.As(Units.LengthUnitGeometry), 2, 0, 0);
+                    target = (Q)(object)Value.PolyCurve.ToPolyline(GsaGH.Units.Tolerance.As(Units.LengthUnitGeometry), 2, 0, 0);
                     if (Value.PolyCurve == null)
                         return false;
                 }
@@ -960,7 +955,7 @@ namespace GhSA.Parameters
     public class GsaMember2dParameter : GH_PersistentGeometryParam<GsaMember2dGoo>, IGH_PreviewObject
     {
         public GsaMember2dParameter()
-          : base(new GH_InstanceDescription("2D Member", "M2D", "Maintains a collection of GSA 2D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("2D Member", "M2D", "Maintains a collection of GSA 2D Member data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -968,7 +963,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Mem2dParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Mem2dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

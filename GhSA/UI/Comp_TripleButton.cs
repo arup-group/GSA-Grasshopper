@@ -3,12 +3,11 @@ using Grasshopper.Kernel.Attributes;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using System.Windows.Forms;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class to create custom component UI with a button
@@ -54,12 +53,12 @@ namespace GhSA.UI
             {
                 List<string> spacers = new List<string>();
                 spacers.Add(SpacerTxt);
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
+                float sp = GsaGH.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
                 List<string> buttons = new List<string>();
                 buttons.Add(button1Text);
                 buttons.Add(button2Text);
                 buttons.Add(button3Text);
-                float bt = GhSA.UI.ComponentUI.MaxTextWidth(buttons, GH_FontServer.Standard);
+                float bt = GsaGH.UI.ComponentUI.MaxTextWidth(buttons, GH_FontServer.Standard);
 
                 float num = Math.Max(Math.Max(sp, bt), 90);
                 return num;

@@ -7,10 +7,8 @@ using System.Windows.Forms;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.ComponentModel;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class to create custom component UI with a single dropdown menu
@@ -57,7 +55,7 @@ namespace GhSA.UI
             {
                 List<string> spacers = new List<string>();
                 spacers.Add(SpacerTxt);
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
+                float sp = GsaGH.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
                 List<string> buttons = new List<string>();
                 float num = Math.Max(sp, 90);
                 return num;

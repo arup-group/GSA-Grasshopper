@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Linq;
-using System.Drawing;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using Rhino.Geometry;
-using Grasshopper;
-using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Types;
-using GhSA.Parameters;
 using System.Data.SQLite;
 using System.Data;
 
-namespace GhSA.Util
+namespace GsaGH.Util
 {
     /// <summary>
     /// Class containing functions to interface with SQLite db files.
