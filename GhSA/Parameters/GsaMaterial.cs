@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -60,7 +59,7 @@ namespace GsaGH.Parameters
         {
             get { return m_guid; }
         }
-        public AnalysisMaterial AnalysisMaterial
+        internal AnalysisMaterial AnalysisMaterial
         {
             get { return m_AnalysisMaterial; }
             set
@@ -121,19 +120,19 @@ namespace GsaGH.Parameters
             MaterialType = (MatType)material_id;
         }
         
-        public GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null)
+        internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null)
         {
             if (section == null) { return; }
             if (section.API_Section == null) { return; }
             CreateFromAPI(section.API_Section.MaterialType, section.API_Section.MaterialAnalysisProperty, section.API_Section.MaterialGradeProperty, analysisMaterial);
         }
-        public GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null)
+        internal GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null)
         {
             if (prop == null) { return;  }
             if (prop.API_Prop2d == null) { return; }
             CreateFromAPI(prop.API_Prop2d.MaterialType, prop.API_Prop2d.MaterialAnalysisProperty, prop.API_Prop2d.MaterialGradeProperty, analysisMaterial);
         }
-        private void CreateFromAPI(GsaAPI.MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial)
+        private void CreateFromAPI(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial)
         {
             MaterialType = getType(materialType);
             GradeProperty = gradeProp;

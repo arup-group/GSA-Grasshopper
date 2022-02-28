@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel;
 using System.Reflection;
-using GsaAPI;
+//using GsaAPI;
 using System.Net;
 
 namespace GsaGH
@@ -140,7 +140,7 @@ namespace GsaGH
             // create new GH-GSA model
             try
             {
-                Model mTest = new Model();
+                GsaAPI.Model mTest = new GsaAPI.Model();
             }
             catch (Exception e)
             {
@@ -148,7 +148,7 @@ namespace GsaGH
                 GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Model error", exception);
                 Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
             }
-            Model m = new Model();
+            GsaAPI.Model m = new GsaAPI.Model();
 
 
             // get the GSA install path
@@ -165,7 +165,7 @@ namespace GsaGH
             // try open stair sample file
             try
             {
-                ReturnValue openTest = m.Open(tempPath + "\\Samples\\Env.gwb");
+                GsaAPI.ReturnValue openTest = m.Open(tempPath + "\\Samples\\Env.gwb");
             }
             catch (Exception e)
             {
@@ -173,10 +173,10 @@ namespace GsaGH
                 GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Open error", exception);
                 Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
             }
-            ReturnValue open = m.Open(tempPath + "\\Samples\\Env.gwb");
+            GsaAPI.ReturnValue open = m.Open(tempPath + "\\Samples\\Env.gwb");
             
             // check if success
-            if (open == ReturnValue.GS_FILE_OPEN_ERROR)
+            if (open == GsaAPI.ReturnValue.GS_FILE_OPEN_ERROR)
             {
                 // if not create new directory
                 System.IO.Directory.CreateDirectory(tempPath + "\\Samples\\");
@@ -198,17 +198,17 @@ namespace GsaGH
                 open = m.Open(tempPath + "\\Samples\\Env.gwb");
                 
                 // if model is opened run it
-                if (open == ReturnValue.GS_OK)
+                if (open == GsaAPI.ReturnValue.GS_OK)
                 {
                     try
                     {
                         //m.Analyse(1);
-                        ReadOnlyDictionary<int, Section> sDict = m.Sections();
-                        sDict.TryGetValue(1, out Section apisection);
+                        ReadOnlyDictionary<int, GsaAPI.Section> sDict = m.Sections();
+                        sDict.TryGetValue(1, out GsaAPI.Section apisection);
                         double area1 = apisection.Area;
                         string profile1 = apisection.Profile;
                         string profile = "CAT HE HE200.B";
-                        Section section = new Section();
+                        GsaAPI.Section section = new GsaAPI.Section();
                         section.Profile = profile;
                         double area = section.Area * Math.Pow(10, 6);
                     }
@@ -225,12 +225,12 @@ namespace GsaGH
                 try
                 {
                     //m.Analyse(1);
-                    ReadOnlyDictionary<int, Section> sDict = m.Sections();
-                    sDict.TryGetValue(1, out Section apisection);
+                    ReadOnlyDictionary<int, GsaAPI.Section> sDict = m.Sections();
+                    sDict.TryGetValue(1, out GsaAPI.Section apisection);
                     double area1 = apisection.Area;
                     string profile1 = apisection.Profile;
                     string profile = "CAT HE HE200.B";
-                    Section section = new Section();
+                    GsaAPI.Section section = new GsaAPI.Section();
                     section.Profile = profile;
                     double area = section.Area * Math.Pow(10, 6);
                 }
