@@ -135,7 +135,8 @@ namespace GsaGH.Util.Gsa
         /// <returns></returns>
         public static Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> 
             GetElements(ConcurrentDictionary<int, Element> eDict, ConcurrentDictionary<int, Node> nDict,
-            ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, LengthUnit unit)
+            ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict,
+            ConcurrentDictionary<int, AnalysisMaterial> mDict, LengthUnit unit)
         {
             // Create lists for Rhino lines and meshes
             List<GsaElement1dGoo> elem1ds = new List<GsaElement1dGoo>();
@@ -173,7 +174,7 @@ namespace GsaGH.Util.Gsa
                         elem1dDict.TryAdd(item.Key, item.Value);
                         new GsaElement1dGoo(
                             ConvertToElement1D(
-                                item.Value, item.Key, nDict, sDict, unit));
+                                item.Value, item.Key, nDict, sDict, mDict, unit));
                         break;
 
                     case 2:
@@ -196,10 +197,10 @@ namespace GsaGH.Util.Gsa
             if (elem1dDict.Count > 0)
                 elem1ds = elem1dDict.AsParallel().
                     Select(item => new GsaElement1dGoo(
-                        ConvertToElement1D(item.Value, item.Key, nDict, sDict, unit))).OrderBy(e => e.Value.ID).ToList();
+                        ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, unit))).OrderBy(e => e.Value.ID).ToList();
 
             if (elem2dDict.Count > 0)
-                elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, unit);
+                elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, unit);
 
             if (elem3dDict.Count > 0)
                 elem3ds = ConvertToElement3Ds(elem3dDict, nDict, unit);
@@ -217,7 +218,9 @@ namespace GsaGH.Util.Gsa
         /// <param name="nodes">Dictionary of Nodes that elements refers to by topology. Include all Nodes unless you are sure what you are doing</param>
         /// <param name="sections">Dictionary of Sections</param>
         /// <returns></returns>
-        public static GsaElement1d ConvertToElement1D(Element element, int ID, IReadOnlyDictionary<int, Node> nodes, IReadOnlyDictionary<int, Section> sections, LengthUnit unit)
+        public static GsaElement1d ConvertToElement1D(Element element, 
+            int ID, IReadOnlyDictionary<int, Node> nodes, IReadOnlyDictionary<int, Section> sections, 
+            IReadOnlyDictionary<int, AnalysisMaterial> materials, LengthUnit unit)
         {
             // get element's topology
             ReadOnlyCollection<int> topo = element.Topology;
@@ -253,6 +256,16 @@ namespace GsaGH.Util.Gsa
                 {
                     section = new GsaSection(element.Property);
                     section.API_Section = apisection;
+
+                    // get material (if analysis material exist)
+                    if (section.API_Section.MaterialAnalysisProperty > 0)
+                    {
+                        materials.TryGetValue(apisection.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+                        section.Material = new GsaMaterial(section, apimaterial);
+                    }
+                    else
+                        section.Material = new GsaMaterial(section);
+                    
                 }
 
                 // create GH GsaElement1d
@@ -359,7 +372,7 @@ namespace GsaGH.Util.Gsa
         /// <returns></returns>
         public static List<GsaElement2dGoo> ConvertToElement2Ds(
             ConcurrentDictionary<int, Element> elements, ConcurrentDictionary<int, Node> nodes, 
-            ConcurrentDictionary<int, Prop2D> properties, LengthUnit unit)
+            ConcurrentDictionary<int, Prop2D> properties, ConcurrentDictionary<int, AnalysisMaterial> materials, LengthUnit unit)
         {
             // main sorted dictionary with 
             // key = parent member
@@ -411,6 +424,15 @@ namespace GsaGH.Util.Gsa
                     {
                         prop = new GsaProp2d(propID);
                         prop.API_Prop2d = apiprop;
+
+                        // get material (if analysis material exist)
+                        if (prop.API_Prop2d.MaterialAnalysisProperty > 0)
+                        {
+                            materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+                            prop.Material = new GsaMaterial(prop, apimaterial);
+                        }
+                        else
+                            prop.Material = new GsaMaterial(prop);
                     }
 
                     prop2Ds[elementID] = prop;
@@ -1286,7 +1308,7 @@ namespace GsaGH.Util.Gsa
                     GsaSection sect = new GsaSection(key);
                     sect.API_Section = apisection;
                     if (apisection.MaterialType == MaterialType.UNDEF)
-                        sect.Material.ElasticIsotropicMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+                        sect.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
                     sections.Add(new GsaSectionGoo(sect));
                 }
             }
@@ -1310,7 +1332,7 @@ namespace GsaGH.Util.Gsa
                     GsaProp2d prop = new GsaProp2d(key);
                     prop.API_Prop2d = apisection;
                     if (apisection.MaterialType == MaterialType.UNDEF)
-                        prop.Material.ElasticIsotropicMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+                        prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
                     prop2ds.Add(new GsaProp2dGoo(prop));
                 }
             }

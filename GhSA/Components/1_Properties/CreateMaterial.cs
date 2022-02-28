@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using Grasshopper.Kernel.Attributes;
+using Grasshopper.GUI.Canvas;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
+using Grasshopper;
+using Rhino.Geometry;
+using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using UnitsNet;
+
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Parameters;
-using System.Linq;
+using System.Resources;
 
 namespace GsaGH.Components
 {
@@ -26,7 +32,7 @@ namespace GsaGH.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateMaterial;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMaterial;
         #endregion
 
         #region Custom UI
@@ -35,96 +41,48 @@ namespace GsaGH.Components
         {
             if (first)
             {
-                dropdownitems = new List<List<string>>();
-                dropdownitems.Add(topLevelDropdownItems);
-                dropdownitems.Add(Units.FilteredStressUnits);
-                dropdownitems.Add(Units.FilteredDensityUnits);
-                dropdownitems.Add(Units.FilteredTemperatureUnits);
-
-                selecteditems = new List<string>();
-                selecteditems.Add(_mode.ToString());
-                selecteditems.Add(Units.StressUnit.ToString());
-                selecteditems.Add(Units.DensityUnit.ToString());
-                selecteditems.Add(Units.TemperatureUnit.ToString());
-                first = false;
+                selecteditem = _mode.ToString();
+                //first = false;
             }
-                
-            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
+
+            m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Material Type");
         }
 
-        public void SetSelected(int i, int j)
+        public void SetSelected(string selected)
         {
-            // change selected item
-            selecteditems[i] = dropdownitems[i][j];
-
-            if (i == 0) // change is made to the first dropdown list
+            selecteditem = selected;
+            switch (selected)
             {
-                switch (selecteditems[0])
-                {
-                    case "Generic":
-                        Mode1Clicked();
-                        break;
-                    case "Steel":
-                        Mode2Clicked();
-                        break;
-                    case "Concrete":
-                        Mode3Clicked();
-                        break;
-                    case "Timber":
-                        Mode4Clicked();
-                        break;
-                    case "Aluminium":
-                        Mode5Clicked();
-                        break;
-                    case "FRP":
-                        Mode6Clicked();
-                        break;
-                    case "Glass":
-                        Mode7Clicked();
-                        break;
-                    case "Fabric":
-                        Mode8Clicked();
-                        break;
-                    case "ElasticIsotropic":
-                        Mode9Clicked();
-                        break;
-                }
+                case "Generic":
+                    Mode1Clicked();
+                    break;
+                case "Steel":
+                    Mode2Clicked();
+                    break;
+                case "Concrete":
+                    Mode3Clicked();
+                    break;
+                case "Timber":
+                    Mode4Clicked();
+                    break;
+                case "Aluminium":
+                    Mode5Clicked();
+                    break;
+                case "FRP":
+                    Mode6Clicked();
+                    break;
+                case "Glass":
+                    Mode7Clicked();
+                    break;
+                case "Fabric":
+                    Mode8Clicked();
+                    break;
             }
-            else
-            {
-                switch (i)
-                {
-                    case 1:
-                        stressUnit = (UnitsNet.Units.PressureUnit)Enum.Parse(typeof(UnitsNet.Units.PressureUnit), selecteditems[1]);
-                        break;
-                    case 2:
-                        densityUnit = (UnitsNet.Units.DensityUnit)Enum.Parse(typeof(UnitsNet.Units.DensityUnit), selecteditems[2]);
-                        break;
-                    case 3:
-                        temperatureUnit = (UnitsNet.Units.TemperatureUnit)Enum.Parse(typeof(UnitsNet.Units.TemperatureUnit), selecteditems[3]);
-                        break;
-
-                }
-                (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-            }
-
-            // update input params
-            ExpireSolution(true);
-            Params.OnParametersChanged();
-            this.OnDisplayExpired(true);
-        }
-        private void UpdateUIFromSelectedItems()
-        {
-            CreateAttributes();
-            UpdateInputs();
-            ExpireSolution(true);
-            Params.OnParametersChanged();
-            this.OnDisplayExpired(true);
         }
         #endregion
 
         #region Input and output
-        readonly List<string> topLevelDropdownItems = new List<string>(new string[]
+        readonly List<string> dropdownitems = new List<string>(new string[]
         {
             "Generic",
             "Steel",
@@ -133,45 +91,17 @@ namespace GsaGH.Components
             "Aluminium",
             "FRP",
             "Glass",
-            "Fabric",
-            "ElasticIsotropic"
-        });
-        // list of lists with all dropdown lists conctent
-        List<List<string>> dropdownitems;
-        // list of selected items
-        List<string> selecteditems;
-        // list of descriptions 
-        List<string> spacerDescriptions = new List<string>(new string[]
-        {
-            "Material Type",
-            "Stress Unit",
-            "Density Unit",
-            "Temperature Unit"
+            "Fabric"
         });
 
-        private UnitsNet.Units.DensityUnit densityUnit = Units.DensityUnit;
-        private UnitsNet.Units.PressureUnit stressUnit = Units.StressUnit;
-        private UnitsNet.Units.TemperatureUnit temperatureUnit = Units.TemperatureUnit;
-        string densityUnitAbbreviation;
-        string stressUnitAbbreviation;
-        string temperatureUnitAbbreviation;
+        string selecteditem;
+
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            IQuantity stress = new Pressure(0, stressUnit);
-            stressUnitAbbreviation = string.Concat(stress.ToString().Where(char.IsLetter));
-            IQuantity density = new Density(0, densityUnit);
-            densityUnitAbbreviation = string.Concat(density.ToString().Where(char.IsLetter));
-            IQuantity temperature = new Temperature(0, temperatureUnit);
-            temperatureUnitAbbreviation = string.Concat(temperature.ToString().Where(char.IsLetter));
-            
             pManager.AddIntegerParameter("Analysis Property", "An", "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
-            pManager.AddGenericParameter("Elastic Modulus [" + stressUnitAbbreviation + "]", "E", "Elastic Modulus of the elastic isotropic material", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Poisson's Ratio", "ν", "Poisson's Ratio of the elastic isotropic material", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Density [" + densityUnitAbbreviation + "]", "ρ", "Density of the elastic isotropic material", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Thermal Expansion [/" + temperatureUnitAbbreviation + "]", "α", "Thermal Expansion Coefficient of the elastic isotropic material", GH_ParamAccess.item);
-            pManager[4].Optional = true;
+            pManager.AddIntegerParameter("Grade", "Gr", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -190,56 +120,31 @@ namespace GsaGH.Components
                 material.AnalysisProperty = anal;
             }
 
-            if (_mode == FoldMode.ElasticIsotropic)
+            GH_Integer gh_grade = new GH_Integer();
+            if (DA.GetData(1, ref gh_grade))
             {
-                material.GradeProperty = 1;
-                
-                double poisson = 0.3;
-                DA.GetData(2, ref poisson);
-
-                double tempCoefficient = 0;
-                DA.GetData(4, ref tempCoefficient);
-                if (temperatureUnit == UnitsNet.Units.TemperatureUnit.DegreeFahrenheit)
-                    tempCoefficient = tempCoefficient * 0.555555556;
-                material.ElasticIsotropicMaterial = new AnalysisMaterial()
-                {
-                    ElasticModulus = GetInput.Stress(this, DA, 1, stressUnit).As(UnitsNet.Units.PressureUnit.Pascal),
-                    PoissonsRatio = poisson,
-                    Density = GetInput.Density(this, DA, 3, densityUnit).As(UnitsNet.Units.DensityUnit.KilogramPerCubicMeter),
-                    CoefficientOfThermalExpansion = tempCoefficient
-                };
+                int grade = 1;
+                GH_Convert.ToInt32(gh_grade, out grade, GH_Conversion.Both);
+                material.GradeProperty = grade;
             }
-            else
-            {
-                GH_Integer gh_grade = new GH_Integer();
-                if (DA.GetData(1, ref gh_grade))
-                {
-                    int grade = 1;
-                    GH_Convert.ToInt32(gh_grade, out grade, GH_Conversion.Both);
-                    material.GradeProperty = grade;
-                }
-                else
-                    material.GradeProperty = 1;
 
-                // element type (picked in dropdown)
-                if (_mode == FoldMode.Generic)
-                    material.MaterialType = GsaMaterial.MatType.GENERIC;
-                if (_mode == FoldMode.Steel)
-                    material.MaterialType = GsaMaterial.MatType.STEEL;
-                if (_mode == FoldMode.Concrete)
-                    material.MaterialType = GsaMaterial.MatType.CONCRETE;
-                if (_mode == FoldMode.Timber)
-                    material.MaterialType = GsaMaterial.MatType.TIMBER;
-                if (_mode == FoldMode.Aluminium)
-                    material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
-                if (_mode == FoldMode.FRP)
-                    material.MaterialType = GsaMaterial.MatType.FRP;
-                if (_mode == FoldMode.Glass)
-                    material.MaterialType = GsaMaterial.MatType.GLASS;
-                if (_mode == FoldMode.Fabric)
-                    material.MaterialType = GsaMaterial.MatType.FABRIC;
-            }
-            
+            // element type (picked in dropdown)
+            if (_mode == FoldMode.Generic)
+                material.MaterialType = GsaMaterial.MatType.GENERIC;
+            if (_mode == FoldMode.Steel)
+                material.MaterialType = GsaMaterial.MatType.STEEL;
+            if (_mode == FoldMode.Concrete)
+                material.MaterialType = GsaMaterial.MatType.CONCRETE;
+            if (_mode == FoldMode.Timber)
+                material.MaterialType = GsaMaterial.MatType.TIMBER;
+            if (_mode == FoldMode.Aluminium)
+                material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
+            if (_mode == FoldMode.FRP)
+                material.MaterialType = GsaMaterial.MatType.FRP;
+            if (_mode == FoldMode.Glass)
+                material.MaterialType = GsaMaterial.MatType.GLASS;
+            if (_mode == FoldMode.Fabric)
+                material.MaterialType = GsaMaterial.MatType.FABRIC;
 
             DA.SetData(0, new GsaMaterialGoo(material));
         }
@@ -253,11 +158,10 @@ namespace GsaGH.Components
             Aluminium,
             FRP,
             Glass,
-            Fabric,
-            ElasticIsotropic
+            Fabric
         }
         private bool first = true;
-        private FoldMode _mode = FoldMode.ElasticIsotropic;
+        private FoldMode _mode = FoldMode.Timber;
 
 
         private void Mode1Clicked()
@@ -266,10 +170,10 @@ namespace GsaGH.Components
                 return;
 
             RecordUndoEvent(_mode.ToString() + "Parameters");
-            
+
             _mode = FoldMode.Generic;
 
-            UpdateInputs();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
             ExpireSolution(true);
         }
@@ -282,7 +186,7 @@ namespace GsaGH.Components
 
             _mode = FoldMode.Steel;
 
-            UpdateInputs();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
             ExpireSolution(true);
         }
@@ -295,7 +199,7 @@ namespace GsaGH.Components
 
             _mode = FoldMode.Concrete;
 
-            UpdateInputs();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
             ExpireSolution(true);
         }
@@ -308,7 +212,7 @@ namespace GsaGH.Components
 
             _mode = FoldMode.Timber;
 
-            UpdateInputs();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
             ExpireSolution(true);
         }
@@ -321,7 +225,7 @@ namespace GsaGH.Components
 
             _mode = FoldMode.Aluminium;
 
-            UpdateInputs();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
             ExpireSolution(true);
         }
@@ -334,7 +238,7 @@ namespace GsaGH.Components
 
             _mode = FoldMode.FRP;
 
-            UpdateInputs();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
             ExpireSolution(true);
         }
@@ -347,7 +251,7 @@ namespace GsaGH.Components
 
             _mode = FoldMode.Glass;
 
-            UpdateInputs();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
             ExpireSolution(true);
         }
@@ -360,92 +264,26 @@ namespace GsaGH.Components
 
             _mode = FoldMode.Fabric;
 
-            UpdateInputs();
-            Params.OnParametersChanged();
-            ExpireSolution(true);
-        }
-        private void Mode9Clicked()
-        {
-            if (_mode == FoldMode.ElasticIsotropic)
-                return;
-
-            RecordUndoEvent(_mode.ToString() + "Parameters");
-
-            _mode = FoldMode.ElasticIsotropic;
-
-            UpdateInputs();
-            Params.OnParametersChanged();
-            ExpireSolution(true);
-        }
-        private void UpdateInputs()
-        {
-            if (_mode == FoldMode.ElasticIsotropic)
-                if (Params.Input.Count == 5) { return; }
-            else
-                if (Params.Input.Count == 2) { return; }
-
-            RecordUndoEvent("Changed dropdown");
-
-            // change number of input parameters
-            if (_mode == FoldMode.ElasticIsotropic)
-            {
-                Params.UnregisterInputParameter(Params.Input[1], true);
-                Params.RegisterInputParam(new Param_GenericObject());
-                Params.RegisterInputParam(new Param_Number());
-                Params.RegisterInputParam(new Param_GenericObject());
-                Params.RegisterInputParam(new Param_GenericObject());
-            }
-            else
-            {
-                while (Params.Input.Count > 1)
-                    Params.UnregisterInputParameter(Params.Input[1], true);
-                Params.RegisterInputParam(new Param_Integer());
-            }
-
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            Params.OnParametersChanged();
+            ExpireSolution(true);
         }
         #endregion
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-
+            writer.SetInt32("Mode", (int)_mode);
+            writer.SetString("select", selecteditem);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            try // this will fail if user got an old version of the component
-            {
-                Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-
-                _mode = (FoldMode)reader.GetInt32(selecteditems[0]);
-
-                stressUnit = (UnitsNet.Units.PressureUnit)Enum.Parse(typeof(UnitsNet.Units.PressureUnit), selecteditems[1]);
-                densityUnit = (UnitsNet.Units.DensityUnit)Enum.Parse(typeof(UnitsNet.Units.DensityUnit), selecteditems[2]);
-                temperatureUnit = (UnitsNet.Units.TemperatureUnit)Enum.Parse(typeof(UnitsNet.Units.TemperatureUnit), selecteditems[3]);
-            }
-            catch (Exception) // if old version, we set the dropdowns as it was first time
-            {
-                dropdownitems = new List<List<string>>();
-                dropdownitems.Add(topLevelDropdownItems);
-                dropdownitems.Add(Units.FilteredStressUnits);
-                dropdownitems.Add(Units.FilteredDensityUnits);
-                dropdownitems.Add(Units.FilteredTemperatureUnits);
-
-                selecteditems = new List<string>();
-                selecteditems.Add(_mode.ToString());
-                selecteditems.Add(Units.StressUnit.ToString());
-                selecteditems.Add(Units.DensityUnit.ToString());
-                selecteditems.Add(Units.TemperatureUnit.ToString());
-            }
-            
-            UpdateUIFromSelectedItems();
-            first = false;
+            _mode = (FoldMode)reader.GetInt32("Mode");
+            selecteditem = reader.GetString("select");
+            this.CreateAttributes();
             return base.Read(reader);
         }
 
-        #endregion
-        #region IGH_VariableParameterComponent null implementation
         bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
         {
             return false;
@@ -462,51 +300,11 @@ namespace GsaGH.Components
         {
             return false;
         }
+        #endregion
+        #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            if (_mode == FoldMode.ElasticIsotropic)
-            {
-                IQuantity stress = new Pressure(0, stressUnit);
-                stressUnitAbbreviation = string.Concat(stress.ToString().Where(char.IsLetter));
-                IQuantity density = new Density(0, densityUnit);
-                densityUnitAbbreviation = string.Concat(density.ToString().Where(char.IsLetter));
-                IQuantity temperature = new Temperature(0, temperatureUnit);
-                temperatureUnitAbbreviation = string.Concat(temperature.ToString().Where(char.IsLetter));
 
-                int i = 1;
-                Params.Input[i].Name = "Elastic Modulus [" + stressUnitAbbreviation + "]";
-                Params.Input[i].NickName = "E";
-                Params.Input[i].Description = "Elastic Modulus of the elastic isotropic material";
-                Params.Input[i].Access = GH_ParamAccess.item;
-                Params.Input[i].Optional = false;
-                i++;
-                Params.Input[i].Name = "Poisson's Ratio";
-                Params.Input[i].NickName = "ν";
-                Params.Input[i].Description = "Poisson's Ratio of the elastic isotropic material";
-                Params.Input[i].Access = GH_ParamAccess.item;
-                Params.Input[i].Optional = false;
-                i++;
-                Params.Input[i].Name = "Density [" + densityUnitAbbreviation + "]";
-                Params.Input[i].NickName = "ρ";
-                Params.Input[i].Description = "Density of the elastic isotropic material";
-                Params.Input[i].Access = GH_ParamAccess.item;
-                Params.Input[i].Optional = false;
-                i++;
-                Params.Input[i].Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
-                Params.Input[i].NickName = "α";
-                Params.Input[i].Description = "Thermal Expansion Coefficient of the elastic isotropic material";
-                Params.Input[i].Access = GH_ParamAccess.item;
-                Params.Input[i].Optional = true;
-            }
-            else
-            {
-                // pManager.AddIntegerParameter("Grade", "Gr", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
-                Params.Input[1].Name = "Grade";
-                Params.Input[1].NickName = "Gr";
-                Params.Input[1].Description = "[Optional] Material Grade (default = 1)";
-                Params.Input[1].Access = GH_ParamAccess.item;
-                Params.Input[1].Optional = true;
-            }
         }
         #endregion  
     }

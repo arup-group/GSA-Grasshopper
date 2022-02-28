@@ -10,18 +10,31 @@ namespace GsaGH
 {
     public class AddReferencePriority : GH_AssemblyPriority
     {
-        
-        /// <summary>
-        /// This method finds the user's GSA installation folder and loads GsaAPI.dll so that this plugin does not need to ship with an additional dll file
-        /// 
-        /// Method also provides access rights to Grasshopper to read dynamically linked dll files in the GSA installation folder.
-        /// </summary>
-        /// <returns></returns>
         public override GH_LoadingInstruction PriorityLoad()
         {
+            // ### Search for plugin path ###
+
+            // initially look in %appdata% folder where package manager will store the plugin
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            path = Path.Combine(path, "McNeel", "Rhinoceros", "Packages", Rhino.RhinoApp.ExeVersion + ".0", "GSA");
+
+            if (!File.Exists(Path.Combine(path, "GSA.gha"))) // if no plugin file is found there continue search
+            {
+                // look in all the other Grasshopper assembly (plugin) folders
+                foreach (GH_AssemblyFolderInfo pluginFolder in Grasshopper.Folders.AssemblyFolders)
+                {
+                    if (File.Exists(Path.Combine(pluginFolder.Folder, "GSA.gha"))) // if the folder contains the plugin
+                    {
+                        path = pluginFolder.Folder;
+                        break;
+                    }
+                }
+            }
+            PluginPath = Path.GetDirectoryName(path);
+            
             // ## Get plugin assembly file location
-            PluginPath = Assembly.GetExecutingAssembly().Location; // full path+name
-            PluginPath = PluginPath.Replace("GSA.gha", "");
+            //PluginPath = Assembly.GetExecutingAssembly().Location; // full path+name
+            //PluginPath = PluginPath.Replace("GSA.gha", "");
 
             // ### Set system environment variables to allow user rights to read below dlls ###
             const string name = "PATH";
@@ -93,8 +106,6 @@ namespace GsaGH
                 return GH_LoadingInstruction.Abort;
             }
 
-            //Assembly ass3 = Assembly.LoadFile(Util.Gsa.InstallationFolderPath.GetPath + "\\libiomp5md.dll");
-
             // ### Use GsaAPI to load referenced dlls ###
             try
             {
@@ -118,7 +129,7 @@ namespace GsaGH
 
             return GH_LoadingInstruction.Proceed;
         }
-        public static Assembly GsaAPI;
+        //public static Assembly GsaAPI;
         public static string PluginPath;
         public static string InstallPath = Util.Gsa.InstallationFolderPath.GetPath;
     }

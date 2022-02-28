@@ -53,7 +53,8 @@ namespace GsaGH.Util.Gsa.ToGSA
         public static void ConvertMember1D(GsaMember1d member1d,
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
-            ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid)
+            ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
             Member apiMember = member1d.GetAPI_MemberClone();
 
@@ -104,7 +105,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             }
 
             // Section
-            apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections, ref sections_guid);
+            apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections, ref sections_guid, ref existingMaterials, ref materials_guid);
 
             // set apimember in dictionary
             if (member1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -150,6 +151,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes, LengthUnit unit,
             ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
@@ -170,7 +172,7 @@ namespace GsaGH.Util.Gsa.ToGSA
                     {
                         GsaMember1d member1d = member1ds[i];
 
-                        ConvertMember1D(member1d, ref existingMembers, ref memberidcounter, ref existingNodes, ref nodeidcounter, unit, ref existingSections, ref sections_guid);
+                        ConvertMember1D(member1d, ref existingMembers, ref memberidcounter, ref existingNodes, ref nodeidcounter, unit, ref existingSections, ref sections_guid, ref existingMaterials, ref materials_guid);
                     }
                 }
             }
@@ -308,7 +310,8 @@ namespace GsaGH.Util.Gsa.ToGSA
         public static void ConvertMember2D(GsaMember2d member2d,
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
-            ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid)
+            ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
             Member apiMember = member2d.GetAPI_MemberClone();
 
@@ -443,7 +446,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             apiMember.Topology = string.Copy(topo);
 
             // Prop2d
-            apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref existingProp2Ds, ref prop2d_guid);
+            apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref existingProp2Ds, ref prop2d_guid, ref existingMaterials, ref materials_guid);
 
             // set apimember in dictionary
             if (member2d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -493,6 +496,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes, LengthUnit unit,
             ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
@@ -518,7 +522,8 @@ namespace GsaGH.Util.Gsa.ToGSA
                         ConvertMember2D(member2d,
                            ref existingMembers, ref memberidcounter,
                            ref existingNodes, ref nodeidcounter, unit,
-                           ref existingProp2Ds, ref prop2d_guid);
+                           ref existingProp2Ds, ref prop2d_guid,
+                           ref existingMaterials, ref materials_guid);
                     }
                 }
             }

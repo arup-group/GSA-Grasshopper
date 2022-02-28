@@ -16,7 +16,8 @@ namespace GsaGH.Util.Gsa.ToGSA
         public static void ConvertElement1D(GsaElement1d element1d,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
-            ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid)
+            ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
             LineCurve line = element1d.Line;
             Element apiElement = element1d.GetAPI_ElementClone();
@@ -63,7 +64,9 @@ namespace GsaGH.Util.Gsa.ToGSA
             apiElement.Topology = new ReadOnlyCollection<int>(topo.ToList());
 
             // section
-            apiElement.Property = Sections.ConvertSection(element1d.Section, ref existingSections, ref sections_guid);
+            apiElement.Property = Sections.ConvertSection(element1d.Section, 
+                ref existingSections, ref sections_guid, 
+                ref existingMaterials, ref materials_guid);
 
             // set apielement in dictionary
             if (element1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -81,6 +84,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
             ref Dictionary<int, Node> existingNodes, LengthUnit unit,
             ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
@@ -104,7 +108,8 @@ namespace GsaGH.Util.Gsa.ToGSA
 
                         // Add/set element
                         ConvertElement1D(element1d, ref existingElements, ref elementidcounter,
-                            ref existingNodes, ref nodeidcounter, unit, ref existingSections, ref sections_guid);
+                            ref existingNodes, ref nodeidcounter, unit, ref existingSections, ref sections_guid,
+                            ref existingMaterials, ref materials_guid);
                     }
                 }
             }
@@ -120,7 +125,8 @@ namespace GsaGH.Util.Gsa.ToGSA
         public static void ConvertElement2D(GsaElement2d element2d,
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
             ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
-            ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid)
+            ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
             List<Point3d> meshVerticies = element2d.Topology;
 
@@ -150,7 +156,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
                 // Prop2d
                 GsaProp2d prop = (i > element2d.Properties.Count - 1) ? element2d.Properties.Last() : element2d.Properties[i];
-                apiMeshElement.Property = Prop2ds.ConvertProp2d(prop, ref existingProp2Ds, ref prop2d_guid);
+                apiMeshElement.Property = Prop2ds.ConvertProp2d(prop, ref existingProp2Ds, ref prop2d_guid, ref existingMaterials, ref materials_guid);
 
                 // set api element in dictionary
                 if (element2d.ID[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -168,6 +174,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             ref Dictionary<int, Element> existingElements, ref int elementidcounter,
             ref Dictionary<int, Node> existingNodes, LengthUnit unit,
             ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid,
             GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
             Action<string, double> ReportProgress = null)
         {
@@ -193,7 +200,8 @@ namespace GsaGH.Util.Gsa.ToGSA
                         ConvertElement2D(element2d, 
                             ref existingElements, ref elementidcounter, 
                             ref existingNodes, ref nodeidcounter, unit,
-                            ref existingProp2Ds, ref prop2d_guid);
+                            ref existingProp2Ds, ref prop2d_guid,
+                            ref existingMaterials, ref materials_guid);
                     }
                 }
             }

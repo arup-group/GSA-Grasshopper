@@ -58,23 +58,23 @@ namespace GsaGH.Components
             }
             if (gsaMaterial != null)
             {
-                if (gsaMaterial.ElasticIsotropicMaterial == null)
+                if (gsaMaterial.AnalysisMaterial == null)
                 {
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input material not of elastic isotropic type");
                     return;
                 }
 
-                Pressure eModulus = new Pressure(gsaMaterial.ElasticIsotropicMaterial.ElasticModulus, UnitSystem.SI);
+                Pressure eModulus = new Pressure(gsaMaterial.AnalysisMaterial.ElasticModulus, UnitSystem.SI);
                 eModulus = new Pressure(eModulus.As(Units.StressUnit), Units.StressUnit);
                 DA.SetData(0, new GH_UnitNumber(eModulus));
 
-                DA.SetData(1, gsaMaterial.ElasticIsotropicMaterial.PoissonsRatio);
+                DA.SetData(1, gsaMaterial.AnalysisMaterial.PoissonsRatio);
 
-                Density density = new Density(gsaMaterial.ElasticIsotropicMaterial.Density, UnitSystem.SI);
+                Density density = new Density(gsaMaterial.AnalysisMaterial.Density, UnitSystem.SI);
                 density = new Density(density.As(Units.DensityUnit), Units.DensityUnit);
                 DA.SetData(2, new GH_UnitNumber(density));
 
-                CoefficientOfThermalExpansion deltaT = new CoefficientOfThermalExpansion(gsaMaterial.ElasticIsotropicMaterial.CoefficientOfThermalExpansion, UnitSystem.SI);
+                CoefficientOfThermalExpansion deltaT = new CoefficientOfThermalExpansion(gsaMaterial.AnalysisMaterial.CoefficientOfThermalExpansion, UnitSystem.SI);
                 deltaT = new CoefficientOfThermalExpansion(deltaT.As(Units.CoefficientOfThermalExpansionUnit), Units.CoefficientOfThermalExpansionUnit);
                 DA.SetData(3, new GH_UnitNumber(deltaT));
             }

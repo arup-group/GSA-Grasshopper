@@ -48,6 +48,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             ConcurrentDictionary<int, Member> mDict = new ConcurrentDictionary<int, Member>(model.Members());
             ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
             ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
+            ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
 
             // get nodes
             List<GsaNodeGoo> goonodes = Util.Gsa.FromGSA.GetNodes(nDict, LengthUnit.Meter);
@@ -58,7 +59,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
             // get elements
             Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> elementTuple
-                = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, LengthUnit.Meter);
+                = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, amDict, LengthUnit.Meter);
             // convert from Goo-type
             List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
             // change all members in List's ID to 0;
@@ -232,14 +233,21 @@ namespace GsaGH.Util.Gsa.ToGSA
 
             #region Properties
             // ### Sections ###
-            // list to keep track of duplicated sextions
+            // list to keep track of duplicated sections
             Dictionary<Guid, int> sections_guid = new Dictionary<Guid, int>();
             
             // Get existing sections
             IReadOnlyDictionary<int, Section> gsaSections = gsa.Sections();
             Dictionary<int, Section> apisections = gsaSections.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            // Get existing materials
+            IReadOnlyDictionary<int, AnalysisMaterial> gsaMaterials = gsa.AnalysisMaterials();
+            Dictionary<int, AnalysisMaterial> apimaterials = gsaMaterials.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            // list to keep track of duplicated materials
+            Dictionary<Guid, int> materials_guid = new Dictionary<Guid, int>();
+
             // add / set sections
-            Sections.ConvertSection(sections, ref apisections, ref sections_guid, workerInstance, ReportProgress);
+            Sections.ConvertSection(sections, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
 
             // ### Prop2ds ###
             // list to keep track of duplicated sextions
@@ -248,7 +256,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             IReadOnlyDictionary<int, Prop2D> gsaProp2ds = gsa.Prop2Ds();
             Dictionary<int, Prop2D> apiprop2ds = gsaProp2ds.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             // add / set prop2ds
-            Prop2ds.ConvertProp2d(prop2Ds, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
+            Prop2ds.ConvertProp2d(prop2Ds, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
             #endregion
 
             #region Elements
@@ -284,10 +292,10 @@ namespace GsaGH.Util.Gsa.ToGSA
             }
             
             // Set / add 1D elements to dictionary
-            Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, workerInstance, ReportProgress);
+            Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
 
             // Set / add 2D elements to dictionary
-            Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
+            Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
 
             // Set / add 3D elements to dictionary
             Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, lengthUnit, workerInstance, ReportProgress);
@@ -337,10 +345,10 @@ namespace GsaGH.Util.Gsa.ToGSA
             }
 
             // Set / add 1D members to dictionary
-            Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, workerInstance, ReportProgress);
+            Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
 
             // Set / add 2D members to dictionary
-            Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, workerInstance, ReportProgress);
+            Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
 
             // Set / add 3D members to dictionary
             Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, workerInstance, ReportProgress);
@@ -438,6 +446,12 @@ namespace GsaGH.Util.Gsa.ToGSA
             //prop2ds
             ReadOnlyDictionary<int, Prop2D> setpr2d = new ReadOnlyDictionary<int, Prop2D>(apiprop2ds);
             gsa.SetProp2Ds(setpr2d);
+            //materials
+            if (apimaterials.Count > 0)
+            {
+                foreach (KeyValuePair<int, AnalysisMaterial> mat in apimaterials)
+                    gsa.SetAnalysisMaterial(mat.Key, mat.Value);
+            }
 
 
             if (workerInstance != null)
