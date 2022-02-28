@@ -105,9 +105,8 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="UnitsNet">
-      <HintPath>..\packages\UnitsNet.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="UnitsNet, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f8601875a1f041da, processorArchitecture=MSIL">
+      <HintPath>..\packages\UnitsNet.4.89.0\lib\net40\UnitsNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
