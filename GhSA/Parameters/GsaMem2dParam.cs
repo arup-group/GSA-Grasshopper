@@ -306,7 +306,7 @@ namespace GsaGH.Parameters
             List<List<Point3d>> inlcusion_lines_topology,
             List<List<string>> inclusion_topology_type,
             List<Point3d> includePoints,
-            GsaProp2d prop)
+            GsaProp2d prop, GH_Component owner = null)
         {
             m_member = member;
             m_id = id;
@@ -316,6 +316,21 @@ namespace GsaGH.Parameters
                 m_brep = null;
                 m_edgeCrv = null;
                 m_inclPts = null;
+                return;
+            }
+
+            if (topology.Count < 3) // we need minimum 3 nodes to create a 2D member
+            {
+                m_brep = null;
+                m_edgeCrv = null;
+                m_inclPts = null;
+                string error = " Invalid topology Mem2D ID: " + id + ".";
+                if (owner == null)
+                {
+                    throw new Exception(error);
+                }
+                else
+                    owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, error);
                 return;
             }
 
@@ -367,7 +382,16 @@ namespace GsaGH.Parameters
 
             m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs);
             if (m_brep == null)
-                throw new Exception(" Error with Mem2D: Unable to build Brep, please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
+            {
+                string error = " Error with Mem2D ID: " + id + ". Unable to build Brep, please verify input geometry is valid and tolerance is set to something reasonable." +
+                    System.Environment.NewLine + "It may be that the topology list is invalid, please check your input. Member " + id + " has not been imported!";
+                if (owner == null)
+                {
+                    throw new Exception(error);
+                }
+                else
+                    owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, error);
+            }
 
             m_prop = prop;
         }

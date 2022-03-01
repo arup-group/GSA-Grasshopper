@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using UnitsNet.Units;
 using UnitsNet;
+using Grasshopper.Kernel;
 
 namespace GsaGH.Util.Gsa
 {
@@ -745,7 +746,7 @@ namespace GsaGH.Util.Gsa
         /// <returns></returns>
         public static Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>> 
             GetMembers(ConcurrentDictionary<int, Member> mDict, ConcurrentDictionary<int, Node> nDict, LengthUnit unit,
-            ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict)
+            ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, GH_Component owner = null)
         {
             // Create lists for Rhino lines and meshes
             ConcurrentBag<GsaMember1dGoo> mem1ds = new ConcurrentBag<GsaMember1dGoo>();
@@ -753,8 +754,8 @@ namespace GsaGH.Util.Gsa
             ConcurrentBag<GsaMember3dGoo> mem3ds = new ConcurrentBag<GsaMember3dGoo>();
 
             // Loop through all members in Member dictionary 
-            try
-            {
+            //try
+            //{
             Parallel.ForEach(mDict.Keys, key =>
             {
                 if (mDict.TryGetValue(key, out Member member))
@@ -948,7 +949,7 @@ namespace GsaGH.Util.Gsa
                                 incLines_topo.ToList(),
                                 inclLines_topoType.ToList(),
                                 incl_pts.ToList(),
-                                prop2d);
+                                prop2d, owner);
 
                             // add member to output list
                             mem2ds.Add(new GsaMember2dGoo(mem2d));
@@ -964,11 +965,14 @@ namespace GsaGH.Util.Gsa
                     }
                 }
             });
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.InnerException.Message);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    if (owner == null)
+            //        throw new Exception(e.InnerException.Message);
+            //    else
+            //        owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.InnerException.Message);
+            //}
             return new Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>>(
                 mem1ds.AsParallel().OrderBy(e => e.Value.ID).ToList(), 
                 mem2ds.AsParallel().OrderBy(e => e.Value.ID).ToList(), 

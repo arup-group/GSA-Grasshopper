@@ -207,8 +207,8 @@ namespace GsaGH.Components
             ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
             ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
             ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
-            try
-            {
+            //try
+            //{
                 Parallel.ForEach(steps, i =>
                 {
                     if (i == 0)
@@ -240,18 +240,18 @@ namespace GsaGH.Components
 
                         // create members
                         Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>> memberTuple
-                            = Util.Gsa.FromGSA.GetMembers(mDict, nDict, lengthUnit, sDict, pDict);
+                            = Util.Gsa.FromGSA.GetMembers(mDict, nDict, lengthUnit, sDict, pDict, this);
 
                         results.Mem1ds = memberTuple.Item1;
                         results.Mem2ds = memberTuple.Item2;
                         results.Mem3ds = memberTuple.Item3;
                     }
                 });
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.InnerException.Message);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.InnerException.Message);
+            //}
             return results;
         }
 
