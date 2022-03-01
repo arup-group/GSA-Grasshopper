@@ -893,13 +893,14 @@ namespace GsaGH.Util.Gsa
                             mem.Type == MemberType.COLUMN | mem.Type == MemberType.COMPOS | mem.Type == MemberType.PILE)
                         {
                             // check if Mem1D topology has minimum 2 points
-                            // if invalid we try import settings, props, ets
-                            // so it can be used by other components. We use
-                            // the same point twice and create a 0-length line
                             if (topopts.Count < 2)
                             {
-                                topopts.Add(topopts[0]);
-                                topoType.Add(topoType[0]);
+                                //topopts.Add(topopts[0]);
+                                //topoType.Add(topoType[0]);
+                                string error = " Invalid topology Mem1D ID: " + key + ".";
+                                if (owner != null)
+                                    owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, error);
+                                return;
                             }
 
                             // orientation node
