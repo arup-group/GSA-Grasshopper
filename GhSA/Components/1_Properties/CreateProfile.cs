@@ -48,35 +48,6 @@ namespace GsaGH.Components
         {
             if (first)
             {
-                // to be enabled when Oasys.Profiles is available
-                //Dictionary<string, Type> profileTypesInitial = Util.GH.Helpers.ReflectAdSecAPI.ReflectAdSecNamespace("Oasys.Profiles");
-                //profileTypes = new Dictionary<string, Type>();
-
-                //foreach (KeyValuePair<string, Type> kvp in profileTypesInitial)
-                //{
-                //    // filter out IProfile, IPoint, IFlange, IWeb and ITrapezoidProfileAbstractInterface
-                //    if (!excludedInterfaces.Contains(kvp.Key))
-                //    {
-                //        // remove the "Profile" from name
-                //        string key = kvp.Key.Replace("Profile", "");
-                //        // rempove the "I" from name
-                //        key = key.Remove(0, 1);
-                //        // add whitespace in front of capital characters
-                //        StringBuilder name = new StringBuilder(key.Length * 2);
-                //        name.Append(key[0]);
-                //        for (int i = 1; i < key.Length; i++)
-                //        {
-                //            if (char.IsUpper(key[i]))
-                //                if ((key[i - 1] != ' ' && !char.IsUpper(key[i - 1])) ||
-                //                    (char.IsUpper(key[i - 1]) &&
-                //                     i < key.Length - 1 && !char.IsUpper(key[i + 1])))
-                //                    name.Append(' ');
-                //            name.Append(key[i]);
-                //        }
-                //        // add to final dictionary
-                //        profileTypes.Add(name.ToString(), kvp.Value);
-                //    }
-                //}
                 if (selecteditems == null)
                 {
                     // create a new list of selected items and add the first material type
@@ -318,9 +289,6 @@ namespace GsaGH.Components
             {
                 // update spacer description to match none-catalogue dropdowns
                 spacerDescriptions[1] = "Measure";// = new List<string>(new string[]
-                //{
-                //    "Profile type", "Measure", "Type", "Profile"
-                //});
 
                 if (_mode != FoldMode.Other)
                 {
@@ -345,7 +313,17 @@ namespace GsaGH.Components
                 {
                     // change unit
                     lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[i]);
+
+                    IQuantity quantity = new Length(0, lengthUnit);
+                    unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                    // update name of inputs (to display unit on sliders)
+                    (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+                    ExpireSolution(true);
+                    Params.OnParametersChanged();
+                    this.OnDisplayExpired(true);
                 }
+
             }
         }
 
@@ -384,7 +362,10 @@ namespace GsaGH.Components
                 typ = profileTypes[selecteditems[0]];
                 Mode2Clicked();
             }
-
+            
+            IQuantity quantity = new Length(0, lengthUnit);
+            unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+            
             CreateAttributes();
             ExpireSolution(true);
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -470,6 +451,9 @@ namespace GsaGH.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            IQuantity quantity = new Length(0, lengthUnit);
+            unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
             pManager.AddGenericParameter("Width [" + unitAbbreviation + "]", "B", "Profile width", GH_ParamAccess.item);
             pManager.AddGenericParameter("Depth [" + unitAbbreviation + "]", "H", "Profile depth", GH_ParamAccess.item);
         }
@@ -1270,6 +1254,9 @@ namespace GsaGH.Components
             }
             else
             {
+                IQuantity quantity = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
                 int i = 0;
                 // angle
                 if (typ == "IAngleProfile") //(typ.Name.Equals(typeof(IAngleProfile).Name))

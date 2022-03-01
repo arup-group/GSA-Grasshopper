@@ -121,48 +121,24 @@ namespace GsaGH
         {
             get
             {
-                switch (LengthUnitSection)
-                {
-                    case LengthUnit.Millimeter:
-                        return AreaMomentOfInertiaUnit.MillimeterToTheFourth;
-                    case LengthUnit.Centimeter:
-                        return AreaMomentOfInertiaUnit.CentimeterToTheFourth;
-                    case LengthUnit.Meter:
-                        return AreaMomentOfInertiaUnit.MeterToTheFourth;
-                    case LengthUnit.Foot:
-                        return AreaMomentOfInertiaUnit.FootToTheFourth;
-                    case LengthUnit.Inch:
-                        return AreaMomentOfInertiaUnit.InchToTheFourth;
-                    default:
-                        return AreaMomentOfInertiaUnit.Undefined;
-                }
+                BaseUnits baseUnits = new BaseUnits(LengthUnitSection, SI.Mass, SI.Time, SI.Current, SI.Temperature, SI.Amount, SI.LuminousIntensity);
+                UnitsNet.UnitSystem unitSystem = new UnitsNet.UnitSystem(baseUnits);
+                return new AreaMomentOfInertia(1, unitSystem).Unit;
             }
         }
         internal static AreaMomentOfInertiaUnit GetSectionAreaMomentOfInertiaUnit(LengthUnit unit)
         {
-            switch (unit)
-            {
-                case LengthUnit.Millimeter:
-                    return AreaMomentOfInertiaUnit.MillimeterToTheFourth;
-                case LengthUnit.Centimeter:
-                    return AreaMomentOfInertiaUnit.CentimeterToTheFourth;
-                case LengthUnit.Meter:
-                    return AreaMomentOfInertiaUnit.MeterToTheFourth;
-                case LengthUnit.Foot:
-                    return AreaMomentOfInertiaUnit.FootToTheFourth;
-                case LengthUnit.Inch:
-                    return AreaMomentOfInertiaUnit.InchToTheFourth;
-                default:
-                    return AreaMomentOfInertiaUnit.Undefined;
-            }
+            BaseUnits baseUnits = new BaseUnits(unit, SI.Mass, SI.Time, SI.Current, SI.Temperature, SI.Amount, SI.LuminousIntensity);
+            UnitsNet.UnitSystem unitSystem = new UnitsNet.UnitSystem(baseUnits);
+            return new AreaMomentOfInertia(1, unitSystem).Unit;
         }
         internal static AreaUnit SectionAreaUnit
         {
             get
             {
-                Length len = new Length(1, Units.LengthUnitSection);
-                Area unitArea = len * len;
-                return unitArea.Unit;
+                BaseUnits baseUnits = new BaseUnits(LengthUnitSection, SI.Mass, SI.Time, SI.Current, SI.Temperature, SI.Amount, SI.LuminousIntensity);
+                UnitsNet.UnitSystem unitSystem = new UnitsNet.UnitSystem(baseUnits);
+                return new Area(1, unitSystem).Unit;
             }
         }
 
@@ -213,6 +189,9 @@ namespace GsaGH
         {
             get
             {
+                BaseUnits baseUnits = new BaseUnits(LengthUnitSection, SI.Mass, SI.Time, SI.Current, SI.Temperature, SI.Amount, SI.LuminousIntensity);
+                UnitsNet.UnitSystem unitSystem = new UnitsNet.UnitSystem(baseUnits);
+
                 Force force = Force.From(1, ForceUnit);
                 Length length = Length.From(1, LengthUnitGeometry);
                 ForcePerLength kNperM = force / length;
@@ -514,6 +493,7 @@ namespace GsaGH
             set { m_units = value; }
         }
         private static UnitsNet.UnitSystem m_units;
+        private static BaseUnits SI = UnitsNet.UnitSystem.SI.BaseUnits;
         #endregion
         #region methods
         internal static void SetupUnits()

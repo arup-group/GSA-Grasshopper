@@ -251,7 +251,10 @@ namespace GsaGH.Components
         {
             if (DA.GetData(0, ref val))
             {
-                Units.GsaUnits unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
+
+                Units.GsaUnits unit = Units.GsaUnits.Length_Geometry;
+                if (selecteditems[0] != "Length")
+                    unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
 
                 // switch case
                 switch (unit)
