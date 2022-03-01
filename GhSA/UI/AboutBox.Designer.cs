@@ -1,7 +1,7 @@
 ﻿using GsaGH;
 namespace GsaGH.UI
 {
-    partial class AboutGsaBox
+    partial class AboutBox
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace GsaGH.UI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutGsaBox));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutBox));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.logoPictureBox = new System.Windows.Forms.PictureBox();
             this.labelProductName = new System.Windows.Forms.Label();

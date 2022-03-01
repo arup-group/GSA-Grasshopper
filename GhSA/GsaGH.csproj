@@ -201,7 +201,7 @@
     <Compile Include="Helpers\_GhRibbonLayout.cs" />
     <Compile Include="Components\0_Model\OpenModel.cs" />
     <Compile Include="GsaGHInfo.cs" />
-    <Compile Include="Helpers\_MenuSettings.cs" />
+    <Compile Include="Helpers\LoadMainMenu.cs" />
     <Compile Include="Helpers\_SqlReader.cs" />
     <Compile Include="Parameters\GH_UnitNumber.cs" />
     <Compile Include="Parameters\GsaElem3dParam.cs" />
