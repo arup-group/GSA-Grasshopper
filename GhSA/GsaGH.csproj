@@ -110,12 +110,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsyncComponentBase\GH_AsyncComponent.cs" />
-    <Compile Include="AsyncComponentBase\WorkerInstance.cs" />
     <Compile Include="Components\1_Properties\CustomMaterial.cs" />
     <Compile Include="Components\1_Properties\MaterialProperties.cs" />
-    <Compile Include="Components\GraveyardComp\AsyncOpenModel_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\AsyncSaveModel_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
     <Compile Include="Components\1_Properties\CreateMaterial.cs" />
     <Compile Include="Components\GraveyardComp\CreateOffset_OBSOLETE.cs" />
@@ -176,7 +172,6 @@
     <Compile Include="Components\3_Loads\CreateGridPointLoad.cs" />
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
-    <Compile Include="Components\GraveyardComp\AsyncAnalyse_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateBeamLoads_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateFaceLoads_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateGridAreaLoad_OBSOLETE.cs" />

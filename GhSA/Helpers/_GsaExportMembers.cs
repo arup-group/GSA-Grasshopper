@@ -151,9 +151,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes, LengthUnit unit,
             ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
-            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid,
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null)
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
             int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
 
@@ -162,12 +160,6 @@ namespace GsaGH.Util.Gsa.ToGSA
             {
                 for (int i = 0; i < member1ds.Count; i++)
                 {
-                    if (workerInstance != null)
-                    {
-                        if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Mem1D ", (double)i / (member1ds.Count - 1));
-                    }
-
                     if (member1ds[i] != null)
                     {
                         GsaMember1d member1d = member1ds[i];
@@ -175,10 +167,6 @@ namespace GsaGH.Util.Gsa.ToGSA
                         ConvertMember1D(member1d, ref existingMembers, ref memberidcounter, ref existingNodes, ref nodeidcounter, unit, ref existingSections, ref sections_guid, ref existingMaterials, ref materials_guid);
                     }
                 }
-            }
-            if (workerInstance != null)
-            {
-                ReportProgress("Mem1D assembled", -2);
             }
         }
         
@@ -496,9 +484,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
             ref Dictionary<int, Node> existingNodes, LengthUnit unit,
             ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
-            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid,
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null)
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
             // create a counter for creating new elements, nodes and properties
             int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
@@ -508,13 +494,6 @@ namespace GsaGH.Util.Gsa.ToGSA
 
                 for (int i = 0; i < member2ds.Count; i++)
                 {
-                    if (workerInstance != null)
-                    {
-                        if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Mem2D ", (double)i / (member2ds.Count - 1));
-                    }
-
-
                     if (member2ds[i] != null)
                     {
                         GsaMember2d member2d = member2ds[i];
@@ -527,14 +506,10 @@ namespace GsaGH.Util.Gsa.ToGSA
                     }
                 }
             }
-            if (workerInstance != null)
-            {
-                ReportProgress("Mem2D assembled", -2);
-            }
         }
-            #endregion
+        #endregion
 
-            #region member3d
+        #region member3d
 
         public static Member ConvertMember3D(GsaMember3d member3d, ref List<Node> nodes, ref int nodeidcounter, LengthUnit unit)
         {
@@ -674,9 +649,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
         public static void ConvertMember3D(List<GsaMember3d> member3ds,
         ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-        ref Dictionary<int, Node> existingNodes, LengthUnit unit,
-        GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-        Action<string, double> ReportProgress = null)
+        ref Dictionary<int, Node> existingNodes, LengthUnit unit)
         {
             // create a counter for creating new elements, nodes and properties
             int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
@@ -686,13 +659,6 @@ namespace GsaGH.Util.Gsa.ToGSA
             {
                 for (int i = 0; i < member3ds.Count; i++)
                 {
-                    if (workerInstance != null)
-                    {
-                        if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Mem3D ", (double)i / (member3ds.Count - 1));
-                    }
-
-
                     if (member3ds[i] != null)
                     {
                         GsaMember3d member3d = member3ds[i];
@@ -701,11 +667,7 @@ namespace GsaGH.Util.Gsa.ToGSA
                     }
                 }
             }
-            if (workerInstance != null)
-            {
-                ReportProgress("Mem3D assembled", -2);
-            }
         }
-            #endregion
+        #endregion
     }
 }

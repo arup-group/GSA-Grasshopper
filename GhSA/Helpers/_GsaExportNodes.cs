@@ -107,9 +107,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         }
         
         public static void ConvertNode(List<GsaNode> nodes, ref Dictionary<int, Node> existingNodes,
-            ref Dictionary<int, Axis> existingAxes, LengthUnit lengthUnit,
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null)
+            ref Dictionary<int, Axis> existingAxes, LengthUnit lengthUnit)
         {
             int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
 
@@ -125,13 +123,6 @@ namespace GsaGH.Util.Gsa.ToGSA
 
                     for (int i = 0; i < nodes.Count; i++)
                     {
-                        // if method is called by a Async component check for cancellation and report progress
-                        if (workerInstance != null)
-                        {
-                            if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                            ReportProgress("Nodes ", (double)i / (nodes.Count - 1));
-                        }
-
                         if (nodes[i] != null)
                         {
                             GsaNode node = nodes[i];
@@ -141,10 +132,6 @@ namespace GsaGH.Util.Gsa.ToGSA
                         }
                     }
                 }
-            }
-            if (workerInstance != null)
-            {
-                ReportProgress("Nodes assembled", -2);
             }
         }
 

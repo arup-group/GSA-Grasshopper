@@ -205,10 +205,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
             List<GsaSection> sections, List<GsaProp2d> prop2Ds, 
             List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
-            LengthUnit lengthUnit,
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null
-            )
+            LengthUnit lengthUnit)
         {
             // Set model to work on
             Model gsa = new Model();
@@ -228,7 +225,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             Dictionary<int, Axis> apiaxes = gsaAxes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
             // Set / add nodes to dictionary
-            Nodes.ConvertNode(nodes, ref apinodes, ref apiaxes, lengthUnit, workerInstance, ReportProgress);
+            Nodes.ConvertNode(nodes, ref apinodes, ref apiaxes, lengthUnit);
             #endregion
 
             #region Properties
@@ -247,7 +244,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             Dictionary<Guid, int> materials_guid = new Dictionary<Guid, int>();
 
             // add / set sections
-            Sections.ConvertSection(sections, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
+            Sections.ConvertSection(sections, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid);
 
             // ### Prop2ds ###
             // list to keep track of duplicated sextions
@@ -256,7 +253,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             IReadOnlyDictionary<int, Prop2D> gsaProp2ds = gsa.Prop2Ds();
             Dictionary<int, Prop2D> apiprop2ds = gsaProp2ds.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             // add / set prop2ds
-            Prop2ds.ConvertProp2d(prop2Ds, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
+            Prop2ds.ConvertProp2d(prop2Ds, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid);
             #endregion
 
             #region Elements
@@ -292,13 +289,13 @@ namespace GsaGH.Util.Gsa.ToGSA
             }
             
             // Set / add 1D elements to dictionary
-            Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
+            Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid);
 
             // Set / add 2D elements to dictionary
-            Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
+            Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid);
 
             // Set / add 3D elements to dictionary
-            Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, lengthUnit, workerInstance, ReportProgress);
+            Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, lengthUnit);
             #endregion
 
             #region Members
@@ -345,13 +342,13 @@ namespace GsaGH.Util.Gsa.ToGSA
             }
 
             // Set / add 1D members to dictionary
-            Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
+            Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid);
 
             // Set / add 2D members to dictionary
-            Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid, workerInstance, ReportProgress);
+            Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid);
 
             // Set / add 3D members to dictionary
-            Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, workerInstance, ReportProgress);
+            Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, lengthUnit);
             #endregion
 
             #region Loads
@@ -381,82 +378,53 @@ namespace GsaGH.Util.Gsa.ToGSA
 
             // Set / add Grid plane surfaces - do this first to set any GridPlane and GridSurfaces with IDs.
             Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
-                ref gp_guid, ref gs_guid, lengthUnit, workerInstance, ReportProgress);
+                ref gp_guid, ref gs_guid, lengthUnit);
 
             // Set / add loads to lists
             Loads.ConvertLoad(loads, ref gravityLoads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle,
                 ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads,
-                ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, lengthUnit,
-                workerInstance, ReportProgress);
+                ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, lengthUnit);
             #endregion
-
             
 
             #region set stuff in model
-            if (workerInstance != null)
-            {
-                if (workerInstance.CancellationToken.IsCancellationRequested) return null;
-            }
             //nodes
-            ReadOnlyDictionary<int, Node> setnodes = new ReadOnlyDictionary<int, Node>(apinodes);
-            gsa.SetNodes(setnodes);
+            gsa.SetNodes(new ReadOnlyDictionary<int, Node>(apinodes));
             //elements
-            ReadOnlyDictionary<int, Element> setelem = new ReadOnlyDictionary<int, Element>(elems);
-            gsa.SetElements(setelem);
+            gsa.SetElements(new ReadOnlyDictionary<int, Element>(elems));
             //members
-            ReadOnlyDictionary<int, Member> setmem = new ReadOnlyDictionary<int, Member>(mems);
-            gsa.SetMembers(setmem);
+            gsa.SetMembers(new ReadOnlyDictionary<int, Member>(mems));
             //gravity load
-            ReadOnlyCollection<GravityLoad> setgrav = new ReadOnlyCollection<GravityLoad>(gravityLoads);
-            gsa.AddGravityLoads(setgrav);
+            gsa.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(gravityLoads));
             //node loads
-            ReadOnlyCollection<NodeLoad> setnode_disp = new ReadOnlyCollection<NodeLoad>(nodeLoads_displ);
-            gsa.AddNodeLoads(NodeLoadType.APPL_DISP, setnode_disp);
-            ReadOnlyCollection<NodeLoad> setnode_node = new ReadOnlyCollection<NodeLoad>(nodeLoads_node);
-            gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, setnode_node);
-            ReadOnlyCollection<NodeLoad> setnode_setl = new ReadOnlyCollection<NodeLoad>(nodeLoads_settle);
-            gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, setnode_setl);
+            gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoads_displ));
+            gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoads_node));
+            gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(nodeLoads_settle));
             //beam loads
-            ReadOnlyCollection<BeamLoad> setbeam = new ReadOnlyCollection<BeamLoad>(beamLoads);
-            gsa.AddBeamLoads(setbeam);
+            gsa.AddBeamLoads(new ReadOnlyCollection<BeamLoad>(beamLoads));
             //face loads
-            ReadOnlyCollection<FaceLoad> setface = new ReadOnlyCollection<FaceLoad>(faceLoads);
-            gsa.AddFaceLoads(setface);
+            gsa.AddFaceLoads(new ReadOnlyCollection<FaceLoad>(faceLoads));
             //grid point loads
-            ReadOnlyCollection<GridPointLoad> setpoint = new ReadOnlyCollection<GridPointLoad>(gridPointLoads);
-            gsa.AddGridPointLoads(setpoint);
+            gsa.AddGridPointLoads(new ReadOnlyCollection<GridPointLoad>(gridPointLoads));
             //grid line loads
-            ReadOnlyCollection<GridLineLoad> setline = new ReadOnlyCollection<GridLineLoad>(gridLineLoads);
-            gsa.AddGridLineLoads(setline);
+            gsa.AddGridLineLoads(new ReadOnlyCollection<GridLineLoad>(gridLineLoads));
             //grid area loads
-            ReadOnlyCollection<GridAreaLoad> setarea = new ReadOnlyCollection<GridAreaLoad>(gridAreaLoads);
-            gsa.AddGridAreaLoads(setarea);
+            gsa.AddGridAreaLoads(new ReadOnlyCollection<GridAreaLoad>(gridAreaLoads));
             //axes
-            ReadOnlyDictionary<int, Axis> setax = new ReadOnlyDictionary<int, Axis>(apiaxes);
-            gsa.SetAxes(setax);
+            gsa.SetAxes(new ReadOnlyDictionary<int, Axis>(apiaxes));
             //gridplanes
-            ReadOnlyDictionary<int, GridPlane> setgp = new ReadOnlyDictionary<int, GridPlane>(apiGridPlanes);
-            gsa.SetGridPlanes(setgp);
+            gsa.SetGridPlanes(new ReadOnlyDictionary<int, GridPlane>(apiGridPlanes));
             //gridsurfaces
-            ReadOnlyDictionary<int, GridSurface> setgs = new ReadOnlyDictionary<int, GridSurface>(apiGridSurfaces);
-            gsa.SetGridSurfaces(setgs);
+            gsa.SetGridSurfaces(new ReadOnlyDictionary<int, GridSurface>(apiGridSurfaces));
             //sections
-            ReadOnlyDictionary<int, Section> setsect = new ReadOnlyDictionary<int, Section>(apisections);
-            gsa.SetSections(setsect);
+            gsa.SetSections(new ReadOnlyDictionary<int, Section>(apisections));
             //prop2ds
-            ReadOnlyDictionary<int, Prop2D> setpr2d = new ReadOnlyDictionary<int, Prop2D>(apiprop2ds);
-            gsa.SetProp2Ds(setpr2d);
+            gsa.SetProp2Ds(new ReadOnlyDictionary<int, Prop2D>(apiprop2ds));
             //materials
             if (apimaterials.Count > 0)
             {
                 foreach (KeyValuePair<int, AnalysisMaterial> mat in apimaterials)
                     gsa.SetAnalysisMaterial(mat.Key, mat.Value);
-            }
-
-
-            if (workerInstance != null)
-            {
-                ReportProgress("Model assembled", -2);
             }
             #endregion
 

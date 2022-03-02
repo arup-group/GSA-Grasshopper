@@ -128,9 +128,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
         public static void ConvertSection(List<GsaSection> sections,
             ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
-            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid,
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null)
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
             // create a counter for creating new nodes
             int sectionidcounter = (existingSections.Count > 0) ? existingSections.Keys.Max() + 1 : 1; //checking the existing model
@@ -147,13 +145,6 @@ namespace GsaGH.Util.Gsa.ToGSA
 
                     for (int i = 0; i < sections.Count; i++)
                     {
-                        if (workerInstance != null)
-                        {
-                            if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                            ReportProgress("Sections ", (double)i / (sections.Count - 1));
-                        }
-
-
                         if (sections[i] != null)
                         {
                             GsaSection section = sections[i];
@@ -186,10 +177,6 @@ namespace GsaGH.Util.Gsa.ToGSA
                         }
                     }
                 }
-            }
-            if (workerInstance != null)
-            {
-                ReportProgress("Sections assembled", -2);
             }
         }
     }
@@ -245,9 +232,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
         public static void ConvertProp2d(List<GsaProp2d> prop2Ds,
             ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
-            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid,
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null)
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
             // create a counter for creating new properties
             int prop2didcounter = (existingProp2Ds.Count > 0) ? existingProp2Ds.Keys.Max() + 1 : 1; //checking the existing model
@@ -264,12 +249,6 @@ namespace GsaGH.Util.Gsa.ToGSA
 
                     for (int i = 0; i < prop2Ds.Count; i++)
                     {
-                        if (workerInstance != null)
-                        {
-                            if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                            ReportProgress("Prop2D ", (double)i / (prop2Ds.Count - 1));
-                        }
-
                         if (prop2Ds[i] != null)
                         {
                             GsaProp2d prop2d = prop2Ds[i];
@@ -303,10 +282,6 @@ namespace GsaGH.Util.Gsa.ToGSA
                         }
                     }
                 }
-            }
-            if (workerInstance != null)
-            {
-                ReportProgress("Prop2D assembled", -2);
             }
         }
     }

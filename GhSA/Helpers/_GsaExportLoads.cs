@@ -77,17 +77,10 @@ namespace GsaGH.Util.Gsa.ToGSA
             ref Dictionary<int, Axis> existingAxes, 
             ref Dictionary<int, GridPlane> existingGridPlanes,
             ref Dictionary<int, GridSurface> existingGridSurfaces,
-            ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit,
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null)
+            ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit)
         {
             if (loads != null)
             {
-                if (workerInstance != null)
-                {
-                    ReportProgress("Initiating Loads assembly", -2);
-                }
-
                 // create a counter for creating new axes, gridplanes and gridsurfaces
                 int axisidcounter = (existingAxes.Count > 0) ? existingAxes.Keys.Max() + 1 : 1;
                 int gridplaneidcounter = (existingGridPlanes.Count > 0) ? existingGridPlanes.Keys.Max() + 1 : 1;
@@ -98,12 +91,6 @@ namespace GsaGH.Util.Gsa.ToGSA
 
                 for (int i = 0; i < loads.Count; i++)
                 {
-                    if (workerInstance != null)
-                    {
-                        if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Assembling Loads ", (double)i / (loads.Count - 1));
-                    }
-
                     if (loads[i] != null)
                     {
                         GsaLoad load = loads[i];
@@ -113,10 +100,6 @@ namespace GsaGH.Util.Gsa.ToGSA
                                     ref existingGridSurfaces, ref gridsurfaceidcounter, ref gp_guid, ref gs_guid, unit);
                     }
                 }
-            }
-            if (workerInstance != null)
-            {
-                ReportProgress("Loads assembled", -2);
             }
         }
         /// <summary>
@@ -516,17 +499,10 @@ namespace GsaGH.Util.Gsa.ToGSA
         public static void ConvertGridPlaneSurface(List<GsaGridPlaneSurface> gridPlaneSurfaces,
             ref Dictionary<int, Axis> existingAxes, ref Dictionary<int, GridPlane> existingGridPlanes,
             ref Dictionary<int, GridSurface> existingGridSurfaces, 
-            ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit,
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null)
+            ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit)
         {
             if (gridPlaneSurfaces != null)
             {
-                if (workerInstance != null)
-                {
-                    ReportProgress("Initiating GridPlaneSurfaces assembly", -2);
-                }
-
                 // create a counter for creating new axes, gridplanes and gridsurfaces
                 int axisidcounter = (existingAxes.Count > 0) ? existingAxes.Keys.Max() + 1 : 1;
                 int gridplaneidcounter = (existingGridPlanes.Count > 0) ? existingGridPlanes.Keys.Max() + 1 : 1;
@@ -553,10 +529,6 @@ namespace GsaGH.Util.Gsa.ToGSA
                         SetGridSurface(ref gps, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes);
                     }
                 }
-            }
-            if (workerInstance != null)
-            {
-                ReportProgress("GridPlaneSurfaces assembled", -2);
             }
         }
     }

@@ -32,10 +32,6 @@ namespace GsaGH
             }
             PluginPath = Path.GetDirectoryName(path);
             
-            // ## Get plugin assembly file location
-            //PluginPath = Assembly.GetExecutingAssembly().Location; // full path+name
-            //PluginPath = PluginPath.Replace("GSA.gha", "");
-
             // ### Set system environment variables to allow user rights to read below dlls ###
             const string name = "PATH";
             string pathvar = System.Environment.GetEnvironmentVariable(name);
