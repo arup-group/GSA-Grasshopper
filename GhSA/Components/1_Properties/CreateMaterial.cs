@@ -26,7 +26,7 @@ namespace GsaGH.Components
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("72bfce91-9204-4fe4-b81d-0036babf0c6d");
         public CreateMaterial()
-          : base("Create Material", "Material", "Create GSA Material",
+          : base("Create Material", "Material", "Create GSA Material by reference to existing type and grade",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat1())
         { this.Hidden = true; } // sets the initial state of the component to hidden
@@ -100,7 +100,7 @@ namespace GsaGH.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Analysis Property", "An", "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Analysis Property Number", "ID", "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
             pManager.AddIntegerParameter("Grade", "Gr", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)

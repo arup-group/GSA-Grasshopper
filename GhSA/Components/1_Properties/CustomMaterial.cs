@@ -26,7 +26,7 @@ namespace GsaGH.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateMaterial;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CustomMaterial;
         #endregion
 
         #region Custom UI
@@ -137,12 +137,15 @@ namespace GsaGH.Components
             IQuantity temperature = new Temperature(0, temperatureUnit);
             temperatureUnitAbbreviation = string.Concat(temperature.ToString().Where(char.IsLetter));
             
-            pManager.AddIntegerParameter("Analysis Material", "ID", "Analysis Material ID", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Analysis Property Number", "ID", "Analysis Property Number (do not use 0 -> 'from Grade')", GH_ParamAccess.item);
             pManager.AddGenericParameter("Elastic Modulus [" + stressUnitAbbreviation + "]", "E", "Elastic Modulus of the elastic isotropic material", GH_ParamAccess.item);
             pManager.AddNumberParameter("Poisson's Ratio", "ν", "Poisson's Ratio of the elastic isotropic material", GH_ParamAccess.item);
             pManager.AddGenericParameter("Density [" + densityUnitAbbreviation + "]", "ρ", "Density of the elastic isotropic material", GH_ParamAccess.item);
             pManager.AddGenericParameter("Thermal Expansion [/" + temperatureUnitAbbreviation + "]", "α", "Thermal Expansion Coefficient of the elastic isotropic material", GH_ParamAccess.item);
+            //pManager.AddTextParameter("Material Name", "Na", "Custom Material Name", GH_ParamAccess.item);
             pManager[0].Optional = true;
+            pManager[4].Optional = true;
+            //pManager[5].Optional = true;
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
@@ -161,7 +164,8 @@ namespace GsaGH.Components
                 material.AnalysisProperty = anal;
                 if (anal == 0)
                 {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Material ID cannot be 0 - that is 'from Grade'. Leave blank or use -1 for auto assigning.");
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Material ID cannot be 0 - that is 'from Grade'. " +
+                         System.Environment.NewLine + "Leave blank or use -1 for automatic assigning.");
                     return;
                 }
             }
@@ -271,28 +275,12 @@ namespace GsaGH.Components
 
             int i = 1;
             Params.Input[i].Name = "Elastic Modulus [" + stressUnitAbbreviation + "]";
-            Params.Input[i].NickName = "E";
-            Params.Input[i].Description = "Elastic Modulus of the elastic isotropic material";
-            Params.Input[i].Access = GH_ParamAccess.item;
-            Params.Input[i].Optional = false;
             i++;
-            Params.Input[i].Name = "Poisson's Ratio";
-            Params.Input[i].NickName = "ν";
-            Params.Input[i].Description = "Poisson's Ratio of the elastic isotropic material";
-            Params.Input[i].Access = GH_ParamAccess.item;
-            Params.Input[i].Optional = false;
             i++;
             Params.Input[i].Name = "Density [" + densityUnitAbbreviation + "]";
-            Params.Input[i].NickName = "ρ";
-            Params.Input[i].Description = "Density of the elastic isotropic material";
-            Params.Input[i].Access = GH_ParamAccess.item;
-            Params.Input[i].Optional = false;
             i++;
             Params.Input[i].Name = "Thermal Expansion [/" + temperatureUnitAbbreviation + "]";
-            Params.Input[i].NickName = "α";
-            Params.Input[i].Description = "Thermal Expansion Coefficient of the elastic isotropic material";
-            Params.Input[i].Access = GH_ParamAccess.item;
-            Params.Input[i].Optional = true;
+            
         }
         #endregion  
     }
