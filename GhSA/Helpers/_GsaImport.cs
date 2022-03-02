@@ -136,7 +136,7 @@ namespace GsaGH.Util.Gsa
         /// <returns></returns>
         public static Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> 
             GetElements(ConcurrentDictionary<int, Element> eDict, ConcurrentDictionary<int, Node> nDict,
-            ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict,
+            ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, ConcurrentDictionary<int, Prop3D> p3Dict,
             ConcurrentDictionary<int, AnalysisMaterial> mDict, LengthUnit unit)
         {
             // Create lists for Rhino lines and meshes
@@ -204,7 +204,7 @@ namespace GsaGH.Util.Gsa
                 elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, unit);
 
             if (elem3dDict.Count > 0)
-                elem3ds = ConvertToElement3Ds(elem3dDict, nDict, unit);
+                elem3ds = ConvertToElement3Ds(elem3dDict, nDict, p3Dict, mDict, unit);
 
 
             return new Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>>(elem1ds, elem2ds, elem3ds);
@@ -577,7 +577,8 @@ namespace GsaGH.Util.Gsa
             return outMesh;
         }
 
-        public static List<GsaElement3dGoo> ConvertToElement3Ds(ConcurrentDictionary<int, Element> elements, ConcurrentDictionary<int, Node> nodes, LengthUnit unit)
+        public static List<GsaElement3dGoo> ConvertToElement3Ds(ConcurrentDictionary<int, Element> elements, ConcurrentDictionary<int, Node> nodes,
+            ConcurrentDictionary<int, Prop3D> properties, ConcurrentDictionary<int, AnalysisMaterial> materials, LengthUnit unit)
         {
             // main sorted dictionary with 
             // key = parent member
@@ -610,7 +611,7 @@ namespace GsaGH.Util.Gsa
                 ConcurrentDictionary<int, Element> elems = sortedElements[parentID];
 
                 // create list of Prop3Ds
-                //ConcurrentDictionary<int, GsaProp2d> prop2Ds = new ConcurrentDictionary<int, GsaProp2d>();
+                ConcurrentDictionary<int, GsaProp3d> prop3Ds = new ConcurrentDictionary<int, GsaProp3d>();
 
                 // create list of meshes
                 ConcurrentDictionary<int, Mesh> mList = new ConcurrentDictionary<int, Mesh>();
@@ -621,6 +622,26 @@ namespace GsaGH.Util.Gsa
                     Mesh ngonClosedMesh = ConvertElement3D(elems[elementID], nodes, unit);
                     if (ngonClosedMesh == null) { return; }
                     mList[elementID] = ngonClosedMesh;
+
+                    // get prop2d (if it exist)
+                    int propID = elems[elementID].Property;
+                    GsaProp3d prop = new GsaProp3d(propID);
+                    if (properties.TryGetValue(propID, out Prop3D apiprop))
+                    {
+                        prop = new GsaProp3d(propID);
+                        prop.API_Prop3d = apiprop;
+
+                        // get material (if analysis material exist)
+                        if (prop.API_Prop3d.MaterialAnalysisProperty > 0)
+                        {
+                            materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+                            prop.Material = new GsaMaterial(prop, apimaterial);
+                        }
+                        else
+                            prop.Material = new GsaMaterial(prop);
+                    }
+
+                    prop3Ds[elementID] = prop;
                 });
 
                 // create one large mesh from single mesh face using
@@ -639,13 +660,13 @@ namespace GsaGH.Util.Gsa
                         // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
                         elems.TryGetValue(key, out Element api_elem);
                         mList.TryGetValue(key, out Mesh mesh);
-                        //prop2Ds.TryGetValue(key, out GsaProp2d prop);
+                        prop3Ds.TryGetValue(key, out GsaProp3d prop);
 
                         GsaElement3d singleelement3D = new GsaElement3d(
                             new List<Element> { api_elem },
                             new List<int> { key },
-                            mesh
-                            //new List<GsaProp2d> { prop }
+                            mesh,
+                            new List<GsaProp3d> { prop }
                             );
 
                         // add the element to list of goo 2d elements
@@ -657,14 +678,14 @@ namespace GsaGH.Util.Gsa
                     // lists needed to create GsaElement3d
                     List<Element> api_elems = elems.Values.ToList();
                     List<int> ids = elems.Keys.ToList();
-                    //List<GsaProp2d> props = prop2Ds.Values.ToList();
+                    List<GsaProp3d> props = prop3Ds.Values.ToList();
 
                     // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
                     GsaElement3d element3D = new GsaElement3d(
                         api_elems,
                         ids,
-                        m
-                        //props
+                        m,
+                        props
                         );
 
                     elem3dGoos.Add(new GsaElement3dGoo(element3D));

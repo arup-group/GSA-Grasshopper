@@ -75,11 +75,11 @@ namespace GsaGH.Parameters
             get { return m_faceInt; }
             set { m_faceInt = value; }
         }
-        //public List<GsaProp3d> Properties
-        //{
-        //    get { return m_props; }
-        //    set { m_props = value; }
-        //}
+        public List<GsaProp3d> Properties
+        {
+            get { return m_props; }
+            set { m_props = value; }
+        }
         #region GsaAPI.Element members
         public List<System.Drawing.Color> Colours
         {
@@ -373,7 +373,7 @@ namespace GsaGH.Parameters
         private List<List<int>> m_faceInt; // list of face integers included in each solid mesh referring to the mesh face list
         private List<Point3d> m_topo; // list of topology points for visualisation
         private List<int> m_id;
-        //private List<GsaProp2d> m_props;
+        private List<GsaProp3d> m_props;
         #endregion
 
         #region constructors
@@ -395,16 +395,14 @@ namespace GsaGH.Parameters
 
             m_id = new List<int>(new int[m_mesh.Faces.Count()]);
 
-            //m_props = new List<GsaProp2d>();
-            //for (int i = 0; i < m_mesh.Faces.Count(); i++)
-            //{
-            //    GsaProp2d property = new GsaProp2d();
-            //    property.Prop2d = null;
-            //    m_props.Add(property);
-            //}
+            m_props = new List<GsaProp3d>();
+            for (int i = 0; i < m_mesh.Faces.Count(); i++)
+            {
+                m_props.Add(new GsaProp3d());
+            }
             UpdatePreview();
         }
-        internal GsaElement3d(List<Element> elements, List<int> ids, Mesh mesh)
+        internal GsaElement3d(List<Element> elements, List<int> ids, Mesh mesh, List<GsaProp3d> prop3ds)
         {
             m_elements = elements;
             m_mesh = mesh;
@@ -415,13 +413,7 @@ namespace GsaGH.Parameters
 
             m_id = ids;
 
-            //m_props = new List<GsaProp2d>();
-            //for (int i = 0; i < m_mesh.Faces.Count(); i++)
-            //{
-            //    GsaProp2d property = new GsaProp2d();
-            //    property.Prop2d = null;
-            //    m_props.Add(property);
-            //}
+            m_props = prop3ds;
             UpdatePreview();
         }
         public GsaElement3d Duplicate(bool cloneApiElements = false)
@@ -438,6 +430,7 @@ namespace GsaGH.Parameters
             if (cloneApiElements)
                 dup.CloneApiElements();
             dup.m_id = m_id.ToList();
+            dup.m_props = m_props.ConvertAll(x => x.Duplicate());
             dup.UpdatePreview();
             return dup;
         }

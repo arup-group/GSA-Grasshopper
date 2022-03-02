@@ -55,16 +55,16 @@ namespace GsaGH.Parameters
             set { m_id = value; }
         }
 
-        //public GsaSection Section
-        //{
-        //    get { return m_section; }
-        //    set 
-        //    {
-        //        if (m_section == null)
-        //            PropertyID = 0;
-        //        m_section = value; 
-        //    }
-        //}
+        public GsaProp3d Property
+        {
+            get { return m_prop; }
+            set 
+            {
+                if (m_prop == null)
+                    PropertyID = 0;
+                m_prop = value; 
+            }
+        }
 
         #region GsaAPI.Member members
         public System.Drawing.Color Colour
@@ -166,8 +166,8 @@ namespace GsaGH.Parameters
         private Member m_member;
         private int m_id = 0;
 
-        private Mesh m_mesh; 
-        //private GsaSection m_section;
+        private Mesh m_mesh;
+        private GsaProp3d m_prop;
         #endregion
 
         #region constructors
@@ -176,12 +176,14 @@ namespace GsaGH.Parameters
             m_member = new Member();
             m_member.Type = MemberType.GENERIC_3D;
             m_mesh = new Mesh();
+            m_prop = new GsaProp3d();
         }
         internal GsaMember3d(Member member, int id, Mesh mesh)
         {
             m_member = member;
             m_id = id;
             m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            m_prop = new GsaProp3d();
             UpdatePreview();
         }
         public GsaMember3d(Mesh mesh)
@@ -190,7 +192,7 @@ namespace GsaGH.Parameters
             {
                 Type = MemberType.GENERIC_3D
             };
-
+            m_prop = new GsaProp3d();
             m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
             if (m_mesh == null)
             {
@@ -207,7 +209,7 @@ namespace GsaGH.Parameters
             {
                 Type = MemberType.GENERIC_3D
             };
-
+            m_prop = new GsaProp3d();
             m_mesh = GsaGH.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
             if (m_mesh == null)
             {
@@ -224,6 +226,7 @@ namespace GsaGH.Parameters
             GsaMember3d dup = new GsaMember3d();
             dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
             dup.m_member = m_member;
+            dup.m_prop = m_prop.Duplicate();
             if (cloneApiMember)
                 dup.CloneApiMember();
             //dup.m_section = m_section;

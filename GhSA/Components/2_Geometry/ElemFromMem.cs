@@ -248,6 +248,7 @@ namespace GsaGH.Components
                     new ConcurrentDictionary<int, Node>(gsa.Nodes()),
                     new ConcurrentDictionary<int, Section>(gsa.Sections()),
                     new ConcurrentDictionary<int, Prop2D>(gsa.Prop2Ds()),
+                    new ConcurrentDictionary<int, Prop3D>(gsa.Prop3Ds()),
                     new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials()),
                     lengthUnit);
 

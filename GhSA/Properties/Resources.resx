@@ -181,6 +181,9 @@
   <data name="CreateProp2d" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateProp2d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="CreateProp3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateProp3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="CreateSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateSection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -228,6 +231,9 @@
   </data>
   <data name="EditProp2d" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditProp2d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditProp3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EditProp3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditSection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -330,6 +336,9 @@
   </data>
   <data name="Prop2dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Prop2dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Prop3dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Prop3dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Result0D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Result0D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

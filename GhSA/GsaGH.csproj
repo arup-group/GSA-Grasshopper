@@ -204,6 +204,7 @@
     <Compile Include="Parameters\GsaGridPlaneSurfaceParam.cs" />
     <Compile Include="Parameters\GsaMem3dParam.cs" />
     <Compile Include="Parameters\GsaMaterial.cs" />
+    <Compile Include="Parameters\GsaProp3d.cs" />
     <Compile Include="Parameters\_ResultMesh.cs" />
     <Compile Include="Parameters\_ResultLine.cs" />
     <Compile Include="Parameters\_ResultPoint.cs" />
@@ -523,6 +524,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\CustomMaterial.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateProp3d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditProp3d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Prop3dParam.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

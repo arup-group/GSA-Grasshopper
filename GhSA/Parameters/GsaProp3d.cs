@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -12,15 +13,15 @@ namespace GsaGH.Parameters
     /// <summary>
     /// Prop2d class, this class defines the basic properties and methods for any Gsa Prop2d
     /// </summary>
-    public class GsaProp2d
+    public class GsaProp3d
     {
-        internal Prop2D API_Prop2d
+        internal Prop3D API_Prop3d
         {
-            get { return m_prop2d; }
+            get { return m_prop3d; }
             set
             {
                 m_guid = Guid.NewGuid();
-                m_prop2d = value;
+                m_prop3d = value;
                 m_material = new GsaMaterial(this);
             }
         }
@@ -39,124 +40,78 @@ namespace GsaGH.Parameters
             set 
             {
                 m_material = value;
-                if (m_prop2d == null)
-                    m_prop2d = new Prop2D();
+                if (m_prop3d == null)
+                    m_prop3d = new Prop3D();
                 else
                     CloneProperty();
-                m_prop2d.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
-                m_prop2d.MaterialAnalysisProperty = m_material.AnalysisProperty;
-                m_prop2d.MaterialGradeProperty = m_material.GradeProperty;
+                m_prop3d.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
+                m_prop3d.MaterialAnalysisProperty = m_material.AnalysisProperty;
+                m_prop3d.MaterialGradeProperty = m_material.GradeProperty;
             }
         }
         #region GsaAPI members
         public string Name
         {
-            get { return m_prop2d.Name; }
+            get { return m_prop3d.Name; }
             set
             {
                 CloneProperty();
-                m_prop2d.Name = value;
+                m_prop3d.Name = value;
             }
         }
         public int MaterialID
         {
-            get { return m_prop2d.MaterialAnalysisProperty; }
+            get { return m_prop3d.MaterialAnalysisProperty; }
             set
             {
                 CloneProperty();
-                m_prop2d.MaterialAnalysisProperty = value;
-                m_material.AnalysisProperty = m_prop2d.MaterialAnalysisProperty;
+                m_prop3d.MaterialAnalysisProperty = value;
+                m_material.AnalysisProperty = m_prop3d.MaterialAnalysisProperty;
             }
         }
-        public Length Thickness
-        {
-            set
-            {
-                CloneProperty();
-                IQuantity length = new Length(0, value.Unit);
-                string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-                m_prop2d.Description = value.ToString() + "(" + unitAbbreviation + ")";
-            }
-            get 
-            {
-                if (m_prop2d.Description.Last() == ')')
-                {
-                    // thickness could be written as "30.33(in)"
-
-                    string unitAbbreviation = m_prop2d.Description.Split('(', ')')[1];
-                    LengthUnit unit = UnitParser.Default.Parse<LengthUnit>(unitAbbreviation);
-                    
-                    double val = double.Parse(m_prop2d.Description.Split('(')[0], System.Globalization.CultureInfo.InvariantCulture);
-                    
-                    return new Length(val, unit);
-                }
-                else
-                    return new Length(
-                        double.Parse(m_prop2d.Description, System.Globalization.CultureInfo.InvariantCulture),
-                        LengthUnit.Meter);
-                    
-            }
-        }
-        public string Description
-        {
-            get { return m_prop2d.Description.Replace("%", " "); }
-            set
-            {
-                CloneProperty();
-                m_prop2d.Description = value;
-            }
-        }
+        
+        
         public int AxisProperty
         {
-            get { return m_prop2d.AxisProperty; }
+            get { return m_prop3d.AxisProperty; }
             set
             {
                 CloneProperty();
                 value = Math.Min(1, value);
                 value = Math.Max(0, value);
-                m_prop2d.AxisProperty = value * -1;
+                m_prop3d.AxisProperty = value * -1;
             }
         }
-        public Property2D_Type Type
-        {
-            get { return m_prop2d.Type; }
-            set
-            {
-                CloneProperty();
-                m_prop2d.Type = value;
-            }
-        }
+        
         public System.Drawing.Color Colour
         {
-            get { return (System.Drawing.Color)m_prop2d.Colour; }
+            get { return (System.Drawing.Color)m_prop3d.Colour; }
             set
             {
                 CloneProperty();
-                m_prop2d.Colour = value;
+                m_prop3d.Colour = value;
             }
         }
         private void CloneProperty()
         {
-            if (m_prop2d == null) 
+            if (m_prop3d == null) 
             { 
-                m_prop2d = new Prop2D();
+                m_prop3d = new Prop3D();
                 m_guid = Guid.NewGuid(); 
                 return; 
             }
-            Prop2D prop = new Prop2D
+            Prop3D prop = new Prop3D
             {
-                MaterialAnalysisProperty = m_prop2d.MaterialAnalysisProperty,
-                MaterialGradeProperty = m_prop2d.MaterialGradeProperty,
-                MaterialType = m_prop2d.MaterialType,
-                Name = m_prop2d.Name.ToString(),
-                Description = m_prop2d.Description.ToString(),
-                Type = m_prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
-                AxisProperty = m_prop2d.AxisProperty
+                MaterialAnalysisProperty = m_prop3d.MaterialAnalysisProperty,
+                MaterialGradeProperty = m_prop3d.MaterialGradeProperty,
+                MaterialType = m_prop3d.MaterialType,
+                Name = m_prop3d.Name.ToString(),
+                AxisProperty = m_prop3d.AxisProperty
             };
-            if ((System.Drawing.Color)m_prop2d.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-                prop.Colour = m_prop2d.Colour;
+            if ((System.Drawing.Color)m_prop3d.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                prop.Colour = m_prop3d.Colour;
 
-            m_prop2d = prop;
+            m_prop3d = prop;
             m_guid = Guid.NewGuid();
         }
         #endregion
@@ -166,39 +121,32 @@ namespace GsaGH.Parameters
         }
 
         #region fields
-        Prop2D m_prop2d;
+        Prop3D m_prop3d;
         int m_idd;
         GsaMaterial m_material = null;
         private Guid m_guid;
         #endregion
 
         #region constructors
-        public GsaProp2d()
+        public GsaProp3d()
         {
-            m_prop2d = null;
+            m_prop3d = null;
             m_guid = Guid.Empty;
             m_idd = 0;
         }
-        public GsaProp2d(int id)
+        public GsaProp3d(int id)
         {
-            m_prop2d = null; 
+            m_prop3d = null; 
             m_guid = Guid.Empty;
             m_idd = id;
         }
-        public GsaProp2d(Length thickness, int ID = 0)
-        {
-            m_prop2d = new Prop2D();
-            m_material = new GsaMaterial();
-            Thickness = thickness;
-            m_idd = ID;
-            m_guid = Guid.NewGuid();
-        }
-        public GsaProp2d Duplicate()
+        
+        public GsaProp3d Duplicate()
         {
             if (this == null) { return null; }
-            GsaProp2d dup = new GsaProp2d();
-            if (m_prop2d != null)
-                dup.m_prop2d = m_prop2d;
+            GsaProp3d dup = new GsaProp3d();
+            if (m_prop3d != null)
+                dup.m_prop3d = m_prop3d;
             dup.m_idd = m_idd;
             if (m_material != null)
                 dup.m_material = m_material.Duplicate();
@@ -221,13 +169,13 @@ namespace GsaGH.Parameters
         public override string ToString()
         {
             string str = "";
-            if (m_prop2d != null)
+            if (m_prop3d != null)
             {
-                str = m_prop2d.Type.ToString();
+                str = m_prop3d.MaterialType.ToString();
                 str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
             }
-            string pa = (ID > 0) ? "PA" + ID + " " : ""; 
-            return "GSA 2D Property " + ((ID > 0) ? pa : "") + ((m_prop2d == null) ? "" : str);
+            string pa = (ID > 0) ? "PV" + ID + " " : ""; 
+            return "GSA 3D Property " + ((ID > 0) ? pa : "") + ((m_prop3d == null) ? "" : str);
         }
 
         #endregion
@@ -236,17 +184,17 @@ namespace GsaGH.Parameters
     /// <summary>
     /// GsaProp2d Goo wrapper class, makes sure GsaProp2d can be used in Grasshopper.
     /// </summary>
-    public class GsaProp2dGoo : GH_Goo<GsaProp2d>
+    public class GsaProp3dGoo : GH_Goo<GsaProp3d>
     {
         #region constructors
-        public GsaProp2dGoo()
+        public GsaProp3dGoo()
         {
-            this.Value = new GsaProp2d();
+            this.Value = new GsaProp3d();
         }
-        public GsaProp2dGoo(GsaProp2d prop)
+        public GsaProp3dGoo(GsaProp3d prop)
         {
             if (prop == null)
-                prop = new GsaProp2d();
+                prop = new GsaProp3d();
             this.Value = prop; //prop.Duplicate();
         }
 
@@ -254,9 +202,9 @@ namespace GsaGH.Parameters
         {
             return DuplicateGsaProp2d();
         }
-        public GsaProp2dGoo DuplicateGsaProp2d()
+        public GsaProp3dGoo DuplicateGsaProp2d()
         {
-            return new GsaProp2dGoo(Value == null ? new GsaProp2d() : Value); //Value.Duplicate());
+            return new GsaProp3dGoo(Value == null ? new GsaProp3d() : Value); //Value.Duplicate());
         }
         #endregion
 
@@ -281,17 +229,17 @@ namespace GsaGH.Parameters
         public override string ToString()
         {
             if (Value == null)
-                return "Null GSA Prop2d";
+                return "Null GSA Prop3d";
             else
                 return Value.ToString();
         }
         public override string TypeName
         {
-            get { return ("GSA 2D Property"); }
+            get { return ("GSA 3D Property"); }
         }
         public override string TypeDescription
         {
-            get { return ("GSA 2D Property"); }
+            get { return ("GSA 3D Property"); }
         }
 
 
@@ -303,7 +251,7 @@ namespace GsaGH.Parameters
             // This function is called when Grasshopper needs to convert this 
             // instance of GsaProp2d into some other type Q.            
 
-            if (typeof(Q).IsAssignableFrom(typeof(GsaProp2d)))
+            if (typeof(Q).IsAssignableFrom(typeof(GsaProp3d)))
             {
                 if (Value == null)
                     target = default;
@@ -312,7 +260,7 @@ namespace GsaGH.Parameters
                 return true;
             }
 
-            if (typeof(Q).IsAssignableFrom(typeof(Prop2D)))
+            if (typeof(Q).IsAssignableFrom(typeof(Prop3D)))
             {
                 if (Value == null)
                     target = default;
@@ -347,25 +295,20 @@ namespace GsaGH.Parameters
             if (source == null) { return false; }
 
             //Cast from GsaProp2d
-            if (typeof(GsaProp2d).IsAssignableFrom(source.GetType()))
+            if (typeof(GsaProp3d).IsAssignableFrom(source.GetType()))
             {
-                Value = (GsaProp2d)source;
+                Value = (GsaProp3d)source;
                 return true;
             }
 
             //Cast from GsaAPI Prop2d
-            if (typeof(Prop2D).IsAssignableFrom(source.GetType()))
+            if (typeof(Prop3D).IsAssignableFrom(source.GetType()))
             {
-                Value = new GsaProp2d();
-                Value.API_Prop2d = (Prop2D)source;
+                Value = new GsaProp3d();
+                Value.API_Prop3d = (Prop3D)source;
                 return true;
             }
 
-            //Cast from double
-            if (GH_Convert.ToDouble(source, out double thk, GH_Conversion.Both))
-            {
-                Value = new GsaProp2d(new Length(thk, Units.LengthUnitSection));
-            }
             return false;
         }
         #endregion
@@ -374,18 +317,18 @@ namespace GsaGH.Parameters
     /// <summary>
     /// This class provides a Parameter interface for the Data_GsaSection type.
     /// </summary>
-    public class GsaProp2dParameter : GH_PersistentParam<GsaProp2dGoo>
+    public class GsaProp3dParameter : GH_PersistentParam<GsaProp2dGoo>
     {
-        public GsaProp2dParameter()
-          : base(new GH_InstanceDescription("2D Property", "PA", "GSA 2D Property", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+        public GsaProp3dParameter()
+          : base(new GH_InstanceDescription("3D Property", "PV", "GSA 3D Property", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
-        public override Guid ComponentGuid => new Guid("05a034ad-683d-479b-9768-5c04379c0606");
+        public override Guid ComponentGuid => new Guid("277c96bb-8ea4-4d95-ab02-2954f14203f3");
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Prop2dParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Prop3dParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaProp2dGoo> values)
         {

@@ -804,6 +804,7 @@ namespace GsaGH.Util.GH
                     new ConcurrentDictionary<int, Node>(model.Nodes()),
                     new ConcurrentDictionary<int, Section>(model.Sections()),
                     new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds()),
+                    new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds()),
                     new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials()),
                     Units.LengthUnitGeometry);
 

@@ -273,6 +273,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CreateProp3d {
+            get {
+                object obj = ResourceManager.GetObject("CreateProp3d", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap CreateSection {
             get {
                 object obj = ResourceManager.GetObject("CreateSection", resourceCulture);
@@ -426,6 +436,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap EditProp2d {
             get {
                 object obj = ResourceManager.GetObject("EditProp2d", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap EditProp3d {
+            get {
+                object obj = ResourceManager.GetObject("EditProp3d", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -766,6 +786,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap Prop2dParam {
             get {
                 object obj = ResourceManager.GetObject("Prop2dParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Prop3dParam {
+            get {
+                object obj = ResourceManager.GetObject("Prop3dParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

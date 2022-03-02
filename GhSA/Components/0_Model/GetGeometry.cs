@@ -206,6 +206,7 @@ namespace GsaGH.Components
             ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
             ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
             ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
+            ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
             ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
             //try
             //{
@@ -227,7 +228,7 @@ namespace GsaGH.Components
 
                         // create elements
                         Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> elementTuple
-                            = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, amDict, lengthUnit);
+                            = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, lengthUnit);
 
                         results.Elem1ds = elementTuple.Item1;
                         results.Elem2ds = elementTuple.Item2;
