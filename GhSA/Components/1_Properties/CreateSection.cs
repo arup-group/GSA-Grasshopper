@@ -34,7 +34,7 @@ namespace GsaGH.Components
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Profile", "Pf", "Cross-Section Profile", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Material", "Ma", "GsaMaterial or Number for referring to a Material already in Existing GSA Model." + System.Environment.NewLine
+            pManager.AddGenericParameter("Material", "Ma", "GsaMaterial or Number referring to a Material already in Existing GSA Model." + System.Environment.NewLine
                     + "Accepted inputs are: " + System.Environment.NewLine
                     + "0 : Generic" + System.Environment.NewLine
                     + "1 : Steel" + System.Environment.NewLine
@@ -42,7 +42,7 @@ namespace GsaGH.Components
                     + "3 : Aluminium" + System.Environment.NewLine
                     + "4 : Glass" + System.Environment.NewLine
                     + "5 : FRP" + System.Environment.NewLine
-                    + "7 : Timber (default - because your Carbon Emissions matter!)" + System.Environment.NewLine
+                    + "7 : Timber" + System.Environment.NewLine
                     + "8 : Fabric", GH_ParamAccess.item);
 
             for (int i = 1; i < pManager.ParamCount; i++)

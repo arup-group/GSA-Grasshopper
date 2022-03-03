@@ -1357,9 +1357,27 @@ namespace GsaGH.Util.Gsa
                 {
                     GsaProp2d prop = new GsaProp2d(key);
                     prop.API_Prop2d = apisection;
-                    if (apisection.MaterialType == MaterialType.UNDEF)
+                    if (prop.API_Prop2d.MaterialAnalysisProperty != 0)
                         prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
                     prop2ds.Add(new GsaProp2dGoo(prop));
+                }
+            }
+            return prop2ds;
+        }
+        public static List<GsaProp3dGoo> GetProp3ds(IReadOnlyDictionary<int, Prop3D> pDict, ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials)
+        {
+            List<GsaProp3dGoo> prop2ds = new List<GsaProp3dGoo>();
+
+            // Loop through all sections in Properties dictionary and create new GsaProp2d
+            foreach (int key in pDict.Keys)
+            {
+                if (pDict.TryGetValue(key, out Prop3D apisection)) //1-base numbering
+                {
+                    GsaProp3d prop = new GsaProp3d(key);
+                    prop.API_Prop3d = apisection;
+                    if (prop.API_Prop3d.MaterialAnalysisProperty != 0)
+                        prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+                    prop2ds.Add(new GsaProp3dGoo(prop));
                 }
             }
             return prop2ds;

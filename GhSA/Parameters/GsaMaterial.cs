@@ -124,18 +124,24 @@ namespace GsaGH.Parameters
         {
             if (section == null) { return; }
             if (section.API_Section == null) { return; }
+            if (section.API_Section.MaterialAnalysisProperty > 0 && section.Material != null && analysisMaterial == null)
+                analysisMaterial = section.Material.AnalysisMaterial;
             CreateFromAPI(section.API_Section.MaterialType, section.API_Section.MaterialAnalysisProperty, section.API_Section.MaterialGradeProperty, analysisMaterial);
         }
         internal GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null)
         {
             if (prop == null) { return;  }
             if (prop.API_Prop2d == null) { return; }
+            if (prop.API_Prop2d.MaterialAnalysisProperty > 0 && prop.Material != null && analysisMaterial == null)
+                analysisMaterial = prop.Material.AnalysisMaterial;
             CreateFromAPI(prop.API_Prop2d.MaterialType, prop.API_Prop2d.MaterialAnalysisProperty, prop.API_Prop2d.MaterialGradeProperty, analysisMaterial);
         }
         internal GsaMaterial(GsaProp3d prop, AnalysisMaterial analysisMaterial = null)
         {
             if (prop == null) { return; }
             if (prop.API_Prop3d == null) { return; }
+            if (prop.API_Prop3d.MaterialAnalysisProperty > 0 && prop.Material != null && analysisMaterial == null)
+                analysisMaterial = prop.Material.AnalysisMaterial;
             CreateFromAPI(prop.API_Prop3d.MaterialType, prop.API_Prop3d.MaterialAnalysisProperty, prop.API_Prop3d.MaterialGradeProperty, analysisMaterial);
         }
         private void CreateFromAPI(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial)

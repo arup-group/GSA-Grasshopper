@@ -439,7 +439,7 @@ namespace GsaGH.Components
                 int i = 0;
                 Params.Input[i].NickName = "Mat";
                 Params.Input[i].Name = "Material";
-                Params.Input[i].Description = "GsaMaterial or Number for referring to a Material already in Existing GSA Model." + System.Environment.NewLine
+                Params.Input[i].Description = "GsaMaterial or Number referring to a Material already in Existing GSA Model." + System.Environment.NewLine
                     + "Accepted inputs are: " + System.Environment.NewLine
                     + "0 : Generic" + System.Environment.NewLine
                     + "1 : Steel" + System.Environment.NewLine

@@ -60,7 +60,7 @@ namespace GsaGH.Components
             {
                 if (gsaMaterial.AnalysisMaterial == null)
                 {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input material not of elastic isotropic type");
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "One or more materials are not custom material");
                     return;
                 }
 
@@ -70,7 +70,7 @@ namespace GsaGH.Components
 
                 DA.SetData(1, gsaMaterial.AnalysisMaterial.PoissonsRatio);
 
-                Density density = new Density(gsaMaterial.AnalysisMaterial.Density, UnitSystem.SI);
+                Density density = new Density(gsaMaterial.AnalysisMaterial.Density, UnitsNet.Units.DensityUnit.KilogramPerCubicMeter);
                 density = new Density(density.As(Units.DensityUnit), Units.DensityUnit);
                 DA.SetData(2, new GH_UnitNumber(density));
 

@@ -89,6 +89,46 @@ namespace GsaGH.Components
 
             return (Density)unitNumber.Value;
         }
+        internal static CoefficientOfThermalExpansion CoefficientOfThermalExpansion(GH_Component owner, IGH_DataAccess DA, int inputid, CoefficientOfThermalExpansionUnit coefficientOfThermalExpansionUnit, bool isOptional = false)
+        {
+            GH_UnitNumber unitNumber = null;
+            GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+            if (DA.GetData(inputid, ref gh_typ))
+            {
+                // try cast directly to quantity type
+                if (gh_typ.Value is GH_UnitNumber)
+                {
+                    unitNumber = (GH_UnitNumber)gh_typ.Value;
+                    // check that unit is of right type
+                    if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(CoefficientOfThermalExpansionUnit)))
+                    {
+                        owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
+                            + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Coefficient of thermal expansion");
+                        return UnitsNet.CoefficientOfThermalExpansion.Zero;
+                    }
+                }
+                // try cast to double
+                else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
+                {
+                    // create new quantity from default units
+                    unitNumber = new GH_UnitNumber(new CoefficientOfThermalExpansion(val, coefficientOfThermalExpansionUnit));
+                }
+                else
+                {
+                    owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
+                    return UnitsNet.CoefficientOfThermalExpansion.Zero;
+                }
+            }
+            else if (!isOptional)
+                owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
+            else
+            {
+                if (unitNumber == null)
+                    return UnitsNet.CoefficientOfThermalExpansion.Zero;
+            }
+
+            return (CoefficientOfThermalExpansion)unitNumber.Value;
+        }
         internal static Pressure Stress(GH_Component owner, IGH_DataAccess DA, int inputid, PressureUnit stressUnit, bool isOptional = false)
         {
             Pressure stressFib = new Pressure();

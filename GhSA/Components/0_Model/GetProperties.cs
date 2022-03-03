@@ -41,6 +41,7 @@ namespace GsaGH.Components
         {
             pManager.AddGenericParameter("Sections", "PB", "Section Properties from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("2D Properties", "PA", "2D Properties from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("3D Properties", "PV", "3D Properties from GSA Model", GH_ParamAccess.list);
             //pManager.AddGenericParameter("Springs", "PS", "Spring Properties from GSA Model", GH_ParamAccess.list);
         }
         #endregion
@@ -54,10 +55,11 @@ namespace GsaGH.Components
 
                 List<GsaSectionGoo> sections = Util.Gsa.FromGSA.GetSections(model.Sections(), model.AnalysisMaterials());
                 List<GsaProp2dGoo> prop2Ds = Util.Gsa.FromGSA.GetProp2ds(model.Prop2Ds(), model.AnalysisMaterials());
-                // spring import missing in GsaAPI. To be implemented
+                List<GsaProp3dGoo> prop3Ds = Util.Gsa.FromGSA.GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
 
                 DA.SetDataList(0, sections);
                 DA.SetDataList(1, prop2Ds);
+                DA.SetDataList(2, prop3Ds);
             }
         }
     }

@@ -97,7 +97,7 @@ namespace GsaGH.Components
             unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
             pManager.AddGeometryParameter("Solid", "S", "Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
-            pManager.AddGenericParameter("3D Prop", "P3", "3D Property", GH_ParamAccess.item);
+            pManager.AddGenericParameter("3D Prop", "PV", "GSA 3D Property. Input either a GSA 3D Property, a GSA Material or an Integer to use a 3D Property already defined in model", GH_ParamAccess.item);
             pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Targe mesh size", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
@@ -139,24 +139,31 @@ namespace GsaGH.Components
 
                 // 1 prop3d to be implemented GsaAPI
                 gh_typ = new GH_ObjectWrapper();
-                //GsaProp2d prop2d = new GsaProp2d();
+                GsaProp3d prop3d = new GsaProp3d();
                 if (DA.GetData(1, ref gh_typ))
                 {
-                    //if (gh_typ.Value is GsaProp2dGoo)
-                    //{
-                    //    gh_typ.CastTo(ref prop2d);
-                    //    mem.Property = prop2d;
-                    //}
-                    //else
-                    //{
-                    if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                        mem.PropertyID = idd; //new GsaProp3d(idd);
+                    if (gh_typ.Value is GsaProp3dGoo)
+                    {
+                        gh_typ.CastTo(ref prop3d);
+                        mem.Property = prop3d;
+                    }
+                    else if (gh_typ.Value is GsaMaterialGoo)
+                    {
+                        GsaMaterial mat = new GsaMaterial();
+                        gh_typ.CastTo(ref mat);
+                        prop3d = new GsaProp3d(mat);
+                        mem.Property = prop3d;
+                    }
                     else
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
-                        return;
+                        if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+                            mem.PropertyID = idd; //new GsaProp3d(idd);
+                        else
+                        {
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
+                            return;
+                        }
                     }
-                    //}
                 }
 
                 // 2 mesh size

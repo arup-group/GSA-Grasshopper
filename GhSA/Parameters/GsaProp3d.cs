@@ -140,7 +140,15 @@ namespace GsaGH.Parameters
             m_guid = Guid.Empty;
             m_idd = id;
         }
-        
+        public GsaProp3d(GsaMaterial material)
+        {
+            m_prop3d = new Prop3D();
+            m_guid = Guid.Empty;
+            m_idd = 0;
+            this.Material = material;
+        }
+
+
         public GsaProp3d Duplicate()
         {
             if (this == null) { return null; }
@@ -326,7 +334,7 @@ namespace GsaGH.Parameters
 
         public override Guid ComponentGuid => new Guid("277c96bb-8ea4-4d95-ab02-2954f14203f3");
 
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Prop3dParam;
 

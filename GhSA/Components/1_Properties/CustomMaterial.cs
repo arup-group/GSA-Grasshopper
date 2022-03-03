@@ -7,6 +7,7 @@ using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Parameters;
 using System.Linq;
+using UnitsNet.Units;
 
 namespace GsaGH.Components
 {
@@ -177,16 +178,23 @@ namespace GsaGH.Components
             double poisson = 0.3;
             DA.GetData(2, ref poisson);
 
-            double tempCoefficient = 0;
-            DA.GetData(4, ref tempCoefficient);
-            if (temperatureUnit == UnitsNet.Units.TemperatureUnit.DegreeFahrenheit)
-                tempCoefficient = tempCoefficient * 0.555555556;
+            CoefficientOfThermalExpansionUnit thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseDegreeCelsius;
+            switch (temperatureUnit)
+            {
+                case TemperatureUnit.DegreeFahrenheit:
+                    thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseDegreeFahrenheit;
+                    break;
+                case TemperatureUnit.Kelvin:
+                    thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseKelvin;
+                    break;
+            }    
+
             material.AnalysisMaterial = new AnalysisMaterial()
             {
                 ElasticModulus = GetInput.Stress(this, DA, 1, stressUnit).As(UnitsNet.Units.PressureUnit.Pascal),
                 PoissonsRatio = poisson,
                 Density = GetInput.Density(this, DA, 3, densityUnit).As(UnitsNet.Units.DensityUnit.KilogramPerCubicMeter),
-                CoefficientOfThermalExpansion = tempCoefficient
+                CoefficientOfThermalExpansion = GetInput.CoefficientOfThermalExpansion(this, DA, 4, thermalExpansionUnit, true).As(UnitsNet.Units.CoefficientOfThermalExpansionUnit.InverseDegreeCelsius)
             };
 
             material.GradeProperty = 0; //will be ignored

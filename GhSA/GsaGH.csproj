@@ -110,7 +110,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\1_Properties\CreateProp3d.cs" />
     <Compile Include="Components\1_Properties\CustomMaterial.cs" />
+    <Compile Include="Components\1_Properties\EditProp3d.cs" />
     <Compile Include="Components\1_Properties\MaterialProperties.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
     <Compile Include="Components\1_Properties\CreateMaterial.cs" />

@@ -99,6 +99,11 @@ namespace GsaGH.Util.Gsa.ToGSA
             List<GsaProp2d> prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
             // change all members in List's ID to 0;
             prop2Ds.Select(c => { c.ID = 0; return c; }).ToList();
+            List<GsaProp3dGoo> gooprop3Ds = FromGSA.GetProp3ds(p3Dict, model.AnalysisMaterials());
+            // convert from Goo-type
+            List<GsaProp3d> prop3Ds = gooprop3Ds.Select(n => n.Value).ToList();
+            // change all members in List's ID to 0;
+            prop3Ds.Select(c => { c.ID = 0; return c; }).ToList();
 
             // get loads
             List<GsaLoadGoo> gooloads = new List<GsaLoadGoo>();
@@ -124,7 +129,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             List<GsaGridPlaneSurface> gps = gpsgoo.Select(n => n.Value).ToList();
 
             // return new assembled model
-            mainModel.Model = Assemble.AssembleModel(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, loads, gps, LengthUnit.Meter);
+            mainModel.Model = Assemble.AssembleModel(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, LengthUnit.Meter);
             return mainModel;
         }
     }
@@ -204,7 +209,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         public static Model AssembleModel(GsaModel model, List<GsaNode> nodes, 
             List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,
             List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
-            List<GsaSection> sections, List<GsaProp2d> prop2Ds, 
+            List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds,
             List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
             LengthUnit lengthUnit)
         {
@@ -255,6 +260,15 @@ namespace GsaGH.Util.Gsa.ToGSA
             Dictionary<int, Prop2D> apiprop2ds = gsaProp2ds.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             // add / set prop2ds
             Prop2ds.ConvertProp2d(prop2Ds, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid);
+
+            // ### Prop3ds ###
+            // list to keep track of duplicated sextions
+            Dictionary<Guid, int> prop3d_guid = new Dictionary<Guid, int>();
+            // Get existing prop2ds
+            IReadOnlyDictionary<int, Prop3D> gsaProp3ds = gsa.Prop3Ds();
+            Dictionary<int, Prop3D> apiprop3ds = gsaProp3ds.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            // add / set prop2ds
+            Prop3ds.ConvertProp3d(prop3Ds, ref apiprop3ds, ref prop3d_guid, ref apimaterials, ref materials_guid);
             #endregion
 
             #region Elements
@@ -421,6 +435,8 @@ namespace GsaGH.Util.Gsa.ToGSA
             gsa.SetSections(new ReadOnlyDictionary<int, Section>(apisections));
             //prop2ds
             gsa.SetProp2Ds(new ReadOnlyDictionary<int, Prop2D>(apiprop2ds));
+            //prop2ds
+            gsa.SetProp3Ds(new ReadOnlyDictionary<int, Prop3D>(apiprop3ds));
             //materials
             if (apimaterials.Count > 0)
             {

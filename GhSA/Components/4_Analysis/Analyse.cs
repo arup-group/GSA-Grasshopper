@@ -107,7 +107,7 @@ namespace GsaGH.Components
 
             pManager.AddGenericParameter("GSA Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
                 "If you input more than one model they will be merged" + System.Environment.NewLine + "with first model in list taking priority for IDs", GH_ParamAccess.list);
-            pManager.AddGenericParameter("GSA Properties", "Prob", "Sections and Prop2Ds to add/set in model" + System.Environment.NewLine +
+            pManager.AddGenericParameter("GSA Properties", "Prob", "Sections, Prop2Ds and Prop3Ds to add/set in model" + System.Environment.NewLine +
                 "Properties already added to Elements or Members" + System.Environment.NewLine + "will automatically be added with Geometry input", GH_ParamAccess.list);
             pManager.AddGenericParameter("GSA Geometry in [" + unitAbbreviation + "]", "Geo", "Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
             pManager.AddGenericParameter("GSA Load", "Load", "Loads to add to the model" + System.Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
@@ -132,6 +132,7 @@ namespace GsaGH.Components
         List<GsaLoad> Loads { get; set; }
         List<GsaSection> Sections { get; set; }
         List<GsaProp2d> Prop2Ds { get; set; }
+        List<GsaProp3d> Prop3Ds { get; set; }
         List<GsaGridPlaneSurface> GridPlaneSurfaces { get; set; }
         GsaModel OutModel { get; set; }
         #endregion
@@ -150,6 +151,7 @@ namespace GsaGH.Components
             Loads = null;
             Sections = null;
             Prop2Ds = null;
+            Prop3Ds = null;
             GridPlaneSurfaces = null;
 
             // Get Model input
@@ -185,7 +187,8 @@ namespace GsaGH.Components
             if (DA.GetDataList(1, gh_types))
             {
                 List<GsaSection> in_sect = new List<GsaSection>();
-                List<GsaProp2d> in_prop = new List<GsaProp2d>();
+                List<GsaProp2d> in_prop2d = new List<GsaProp2d>();
+                List<GsaProp3d> in_prop3d = new List<GsaProp3d>();
                 for (int i = 0; i < gh_types.Count; i++)
                 {
                     GH_ObjectWrapper gh_typ = gh_types[i];
@@ -201,7 +204,13 @@ namespace GsaGH.Components
                     {
                         GsaProp2d gsaprop = new GsaProp2d();
                         gh_typ.CastTo(ref gsaprop);
-                        in_prop.Add(gsaprop.Duplicate());
+                        in_prop2d.Add(gsaprop.Duplicate());
+                    }
+                    else if (gh_typ.Value is GsaProp3dGoo)
+                    {
+                        GsaProp3d gsaprop = new GsaProp3d();
+                        gh_typ.CastTo(ref gsaprop);
+                        in_prop3d.Add(gsaprop.Duplicate());
                     }
                     else
                     {
@@ -215,8 +224,10 @@ namespace GsaGH.Components
                 }
                 if (in_sect.Count > 0)
                     Sections = in_sect;
-                if (in_prop.Count > 0)
-                    Prop2Ds = in_prop;
+                if (in_prop2d.Count > 0)
+                    Prop2Ds = in_prop2d;
+                if (in_prop3d.Count > 0)
+                    Prop3Ds = in_prop3d;
             }
 
             // Get Geometry input
@@ -376,7 +387,7 @@ namespace GsaGH.Components
                 OutModel = new GsaModel();
 
             // Assemble model
-            Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces, lengthUnit);
+            Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Prop3Ds, Loads, GridPlaneSurfaces, lengthUnit);
             
             #region meshing
             // Create elements from members
