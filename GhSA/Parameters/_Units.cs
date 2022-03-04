@@ -245,11 +245,14 @@ namespace GsaGH
             PressureUnit.Megapascal.ToString(),
             PressureUnit.Gigapascal.ToString(),
             PressureUnit.NewtonPerSquareMillimeter.ToString(),
-            PressureUnit.KilonewtonPerSquareCentimeter.ToString(),
+            PressureUnit.NewtonPerSquareCentimeter.ToString(),
             PressureUnit.NewtonPerSquareMeter.ToString(),
-            PressureUnit.KilopoundForcePerSquareInch.ToString(),
+            PressureUnit.KilogramForcePerSquareMillimeter.ToString(),
+            PressureUnit.KilonewtonPerSquareCentimeter.ToString(),
+            PressureUnit.KilonewtonPerSquareMeter.ToString(),
             PressureUnit.PoundForcePerSquareInch.ToString(),
             PressureUnit.PoundForcePerSquareFoot.ToString(),
+            PressureUnit.KilopoundForcePerSquareInch.ToString(),
             PressureUnit.KilopoundForcePerSquareInch.ToString(),
             PressureUnit.KilopoundForcePerSquareFoot.ToString()
         };

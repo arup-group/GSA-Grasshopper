@@ -268,9 +268,8 @@ namespace GsaGH
                 + System.Environment.NewLine + "A licensed version of GSA 10.1 installed in"
                 + System.Environment.NewLine + @"C:\Program Files\Oasys\GSA 10.1\ "
                 + System.Environment.NewLine + "is required to use this plugin."
-                + System.Environment.NewLine 
                 + System.Environment.NewLine + "Contact oasys@arup.com to request a free trial version."
-                + System.Environment.NewLine + System.Environment.NewLine + Copyright;
+                + System.Environment.NewLine + Copyright;
             }
         }
         public override Guid Id

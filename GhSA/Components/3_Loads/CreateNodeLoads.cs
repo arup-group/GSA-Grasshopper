@@ -114,7 +114,8 @@ namespace GsaGH.Components
         List<string> spacerDescriptions = new List<string>(new string[]
         {
             "Load Type",
-            "Unit",
+            "Force Unit",
+            "Length Unit"
         });
 
         private ForceUnit forceUnit = Units.ForceUnit;

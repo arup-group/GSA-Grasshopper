@@ -87,7 +87,8 @@ namespace GsaGH.Components
         // list of descriptions 
         List<string> spacerDescriptions = new List<string>(new string[]
         {
-            "Unit"
+            "Force Unit",
+            "Length Unit"
         });
 
         private ForcePerLengthUnit forcePerLengthUnit;
@@ -109,14 +110,14 @@ namespace GsaGH.Components
 
             pManager.AddIntegerParameter("Load case", "LC", "Load case number)", GH_ParamAccess.item);
             pManager.AddTextParameter("Name", "Na", "Load name", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Elements/Nodes/Definition", "De", "Element/Node list that load is applied to or Grid point / polygon definition", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Elements/Nodes/Definition", "Def", "Element/Node list that load is applied to or Grid point / polygon definition", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Axis", "Ax", "Axis Property (0 : Global // -1 : Local", GH_ParamAccess.item);
             pManager.AddTextParameter("Direction", "Di", "Load direction", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor X [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V1", "Value at Start, Point 1 or Factor X", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor Y [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V2", "Value at End, Point 2 or Factor Y", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value or Factor Z [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V3", "Value at Point 3 or Factor Z", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Load Value [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V4", "Value at Point 4", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Load Value or Factor X [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V1", "Value at Start, Point 1 or Factor X", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Load Value or Factor Y [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V2", "Value at End, Point 2 or Factor Y", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Load Value or Factor Z [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V3", "Value at Point 3 or Factor Z", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Load Value [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V4", "Value at Point 4", GH_ParamAccess.item);
             pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface", GH_ParamAccess.item);
         }
         #endregion
@@ -288,15 +289,10 @@ namespace GsaGH.Components
             string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
             string unitAbbreviation = forceUnitAbbreviation + "/" + lengthUnitAbbreviation;
 
-            Params.Output[6].NickName = "V";
-            Params.Output[6].Name = "Value [" + unitAbbreviation + "]";
-            Params.Output[6].Description = "Load Value";
-            Params.Output[6].Access = GH_ParamAccess.item;
-
-            Params.Output[7].NickName = "t";
-            Params.Output[7].Name = "Position (%)";
-            Params.Output[7].Description = "Line parameter where point load act (between 0.0 and 1.0)";
-            Params.Output[7].Access = GH_ParamAccess.item;
+            Params.Output[6].Name = "Load Value or Factor X [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]";
+            Params.Output[7].Name = "Load Value or Factor X [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]";
+            Params.Output[8].Name = "Load Value or Factor X [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]";
+            Params.Output[9].Name = "Load Value [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]";
         }
         #endregion
     }

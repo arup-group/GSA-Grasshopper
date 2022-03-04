@@ -260,22 +260,22 @@ namespace GsaGH.Components
         #region IGH_variable parameter null implementation
         public bool CanInsertParameter(GH_ParameterSide side, int index)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public bool CanRemoveParameter(GH_ParameterSide side, int index)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public IGH_Param CreateParameter(GH_ParameterSide side, int index)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public bool DestroyParameter(GH_ParameterSide side, int index)
         {
-            throw new NotImplementedException();
+            return false;
         }
         #endregion
     }

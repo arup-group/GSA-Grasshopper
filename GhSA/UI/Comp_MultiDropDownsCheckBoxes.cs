@@ -88,6 +88,9 @@ namespace GsaGH.UI
                     if (tbt > bt)
                         bt = tbt;
                 }
+                float tbt2 = 15 + GsaGH.UI.ComponentUI.MaxTextWidth(toggleTexts, new Font(GH_FontServer.FamilyStandard, 7)); //add 15 for button width
+                if (tbt2 > bt)
+                    bt = tbt2;
                 float num = Math.Max(Math.Max(sp, bt), 90);
                 return num;
             }
@@ -259,20 +262,34 @@ namespace GsaGH.UI
             }
 
 
-            // ### check boxes ###
+            // spacer
+            int i_after_dropdown = dropdownlists.Count;
+            if (spacerTxts[i_after_dropdown] != "")
+            {
+                if (i_after_dropdown < 1)
+                    Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height - (CentralSettings.CanvasObjectIcons ? 5 : 0));
 
+                h0 = 10;
+                RectangleF tempSpacer = new RectangleF(Bounds.X, Bounds.Bottom + s / 2, Bounds.Width, h0);
+                SpacerBounds.Add(tempSpacer);
+            }
+            // add check boxes
+            h1 = 15; // height border
+            bw = h1; // button width
+
+            // check boxes
             ToggleTextBound = new List<RectangleF>();
             ToggleBoxBound = new List<RectangleF>();
 
             for (int i = 0; i < toggleTexts.Count; i++)
             {
                 // add text box 
-                ToggleBoxBound.Add(new RectangleF(Bounds.X + 2 * s + bw, Bounds.Bottom + s + h0 + i * h1, Bounds.Width - 4 * s - bw, h1));
+                ToggleTextBound.Add(new RectangleF(Bounds.X + 2 * s + bw, Bounds.Bottom + s + h0 + i * h1, Bounds.Width - 4 * s - bw, h1));
                 // add check box
-                ToggleTextBound.Add(new RectangleF(Bounds.X + s, Bounds.Bottom + s + h0 + i * h1, bw, h1));
+                ToggleBoxBound.Add(new RectangleF(Bounds.X + s, Bounds.Bottom + s + h0 + i * h1, bw, h1));
 
-                // update component bounds
             }
+            // update component bounds
             Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + h0 + toggleTexts.Count * h1 + 2 * s);
         }
 
@@ -390,6 +407,15 @@ namespace GsaGH.UI
                         scrollPen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
                         graphics.DrawLine(scrollPen, scrollBar.X + 4, scrollBar.Y + 4, scrollBar.X + 4, scrollBar.Y + scrollBar.Height - 4);
                     }
+                }
+
+                //Draw divider line
+                int k = dropdownlists.Count;
+                if (spacerTxts[k] != "")
+                {
+                    graphics.DrawString(spacerTxts[k], sml, UI.Colour.AnnotationTextDark, SpacerBounds[k], GH_TextRenderingConstants.CenterCenter);
+                    graphics.DrawLine(spacer, SpacerBounds[k].X, SpacerBounds[k].Y + SpacerBounds[k].Height / 2, SpacerBounds[k].X + (SpacerBounds[k].Width - GH_FontServer.StringWidth(spacerTxts[k], sml)) / 2 - 4, SpacerBounds[k].Y + SpacerBounds[k].Height / 2);
+                    graphics.DrawLine(spacer, SpacerBounds[k].X + (SpacerBounds[k].Width - GH_FontServer.StringWidth(spacerTxts[k], sml)) / 2 + GH_FontServer.StringWidth(spacerTxts[k], sml) + 4, SpacerBounds[k].Y + SpacerBounds[k].Height / 2, SpacerBounds[k].X + SpacerBounds[k].Width, SpacerBounds[k].Y + SpacerBounds[k].Height / 2);
                 }
 
                 // #### check boxes ####
