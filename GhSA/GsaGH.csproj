@@ -110,6 +110,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\1_Properties\CreateProp3d.cs" />
     <Compile Include="Components\1_Properties\CustomMaterial.cs" />
     <Compile Include="Components\1_Properties\EditProp3d.cs" />
@@ -120,7 +121,7 @@
     <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProp2d_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\Version_OBSOLETE.cs" />
-    <Compile Include="Components\0_Model\GetAnalysis.cs" />
+    <Compile Include="Components\GraveyardComp\GetAnalysis_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
     <Compile Include="Components\1_Properties\EditMaterial.cs" />
@@ -201,12 +202,14 @@
     <Compile Include="Helpers\LoadMainMenu.cs" />
     <Compile Include="Helpers\_SqlReader.cs" />
     <Compile Include="Parameters\GH_UnitNumber.cs" />
+    <Compile Include="Parameters\GsaAnalysisCase.cs" />
     <Compile Include="Parameters\GsaElem3dParam.cs" />
     <Compile Include="Parameters\GsaLoadParam.cs" />
     <Compile Include="Parameters\GsaGridPlaneSurfaceParam.cs" />
     <Compile Include="Parameters\GsaMem3dParam.cs" />
     <Compile Include="Parameters\GsaMaterial.cs" />
     <Compile Include="Parameters\GsaProp3d.cs" />
+    <Compile Include="Parameters\GsaAnalysisTask.cs" />
     <Compile Include="Parameters\_ResultMesh.cs" />
     <Compile Include="Parameters\_ResultLine.cs" />
     <Compile Include="Parameters\_ResultPoint.cs" />

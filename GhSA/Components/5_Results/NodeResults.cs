@@ -495,7 +495,7 @@ namespace GsaGH.Components
                 // ### Coloured Result Points ###
 
                 // Get nodes for point location and restraint check in case of reaction force
-                List<GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodes(nodes, geometryLengthUnit);
+                ConcurrentDictionary<int, GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodeDictionary(nodes, geometryLengthUnit);
 
                 //Find Colour and Values for legend output
                 
@@ -549,11 +549,11 @@ namespace GsaGH.Components
                 ConcurrentDictionary<int, ResultPoint> pts = new ConcurrentDictionary<int, ResultPoint>();
                 ConcurrentDictionary<int, System.Drawing.Color> col = new ConcurrentDictionary<int, System.Drawing.Color>();
 
-                Parallel.For(0, gsanodes.Count, i =>
+                Parallel.ForEach(gsanodes, node =>
                 {
-                    if (gsanodes[i].Value != null)
+                    if (node.Value.Value != null)
                     {
-                        int nodeID = gsanodes[i].Value.ID;
+                        int nodeID = node.Value.Value.ID;
                         if (xyz.ContainsKey(nodeID))
                         {
                             if (!(dmin == 0 & dmax == 0))
@@ -607,7 +607,7 @@ namespace GsaGH.Components
                                     Math.Max(2, (float)(Math.Abs(t) / Math.Abs(dmin) * scale));
 
                                 // create deflection point
-                                Point3d def = new Point3d(gsanodes[i].Value.Point);
+                                Point3d def = new Point3d(node.Value.Value.Point);
                                 def.Transform(Transform.Translation(translation));
 
                                 // add our special resultpoint to the list of points

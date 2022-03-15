@@ -4,6 +4,7 @@ using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 using System;
 using GsaAPI;
+using System.Collections.ObjectModel;
 
 namespace GsaGH.Components
 {
@@ -97,7 +98,8 @@ namespace GsaGH.Components
             pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
-            
+            pManager.AddIntegerParameter("Topology", "Tp", "Get the Element's original topology list referencing node IDs in Model that Element was created from", GH_ParamAccess.list);
+
         }
         #endregion
 
@@ -239,6 +241,7 @@ namespace GsaGH.Components
                         elem.IsDummy = dum; // elem.Element.IsDummy = dum;
                 }
 
+
                 // #### outputs ####
                 DA.SetData(0, new GsaElement1dGoo(elem));
                 DA.SetData(1, elem.ID);
@@ -256,6 +259,7 @@ namespace GsaGH.Components
                 DA.SetData(13, elem.IsDummy);
 
                 try { DA.SetData(14, elem.ParentMember); } catch (Exception) { }
+                DA.SetDataList(15, new Collection<int>(elem.API_Element.Topology));
             }
         }
     }

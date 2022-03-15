@@ -71,6 +71,7 @@ namespace GsaGH.Components
             pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
             pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Topology", "Tp", "Get the Element's original topology list referencing node IDs in Model that Element was created from", GH_ParamAccess.list);
         }
         #endregion
 
@@ -265,8 +266,8 @@ namespace GsaGH.Components
                 DA.SetDataList(8, elem.Colours);
                 DA.SetDataList(9, elem.isDummies);
                 DA.SetDataList(10, elem.ParentMembers);
+                DA.SetDataTree(11, elem.TopologyIDs);
             }
         }
     }
 }
-

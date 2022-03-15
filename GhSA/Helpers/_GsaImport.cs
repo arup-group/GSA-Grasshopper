@@ -75,10 +75,29 @@ namespace GsaGH.Util.Gsa
         /// <param name="nDict">Dictionary of GSA Nodes pre-filtered for nodes to import</param>
         /// <param name="model">GSA Model, only used in case node refers to a local axis</param>
         /// <returns></returns>
-        public static List<GsaNodeGoo> GetNodes(ConcurrentDictionary<int, Node> nDict, LengthUnit unit, ConcurrentDictionary<int, Axis> axDict = null)
+        public static ConcurrentBag<GsaNodeGoo> GetNodes(ConcurrentDictionary<int, Node> nDict, LengthUnit unit, ConcurrentDictionary<int, Axis> axDict = null)
         {
+            ConcurrentBag<GsaNodeGoo> outNodes = new ConcurrentBag<GsaNodeGoo> ();
+            Parallel.ForEach(nDict, node =>
+            {
+                outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
+            });
+            return outNodes;
+
             // use linq parallel
-            return nDict.AsParallel().Select(node => new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict))).OrderBy(n => n.Value.ID).ToList();
+            //return nDict.AsParallel().Select(node => new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
+        }
+        public static ConcurrentDictionary<int, GsaNodeGoo> GetNodeDictionary(ConcurrentDictionary<int, Node> nDict, LengthUnit unit, ConcurrentDictionary<int, Axis> axDict = null)
+        {
+            ConcurrentDictionary<int, GsaNodeGoo> outNodes = new ConcurrentDictionary<int, GsaNodeGoo>();
+            Parallel.ForEach(nDict, node =>
+            {
+                outNodes.TryAdd(node.Key, new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
+            });
+            return outNodes;
+
+            // use linq parallel
+            //return nDict.AsParallel().Select(node => new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
         }
 
         /// <summary>
@@ -134,15 +153,15 @@ namespace GsaGH.Util.Gsa
         /// <param name="sDict">Dictionary of Sections (for 1D elements)</param>
         /// <param name="pDict">Dictionary of 2D Properties (for 2D elements)</param>
         /// <returns></returns>
-        public static Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> 
+        public static Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> 
             GetElements(ConcurrentDictionary<int, Element> eDict, ConcurrentDictionary<int, Node> nDict,
             ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, ConcurrentDictionary<int, Prop3D> p3Dict,
             ConcurrentDictionary<int, AnalysisMaterial> mDict, LengthUnit unit)
         {
             // Create lists for Rhino lines and meshes
-            List<GsaElement1dGoo> elem1ds = new List<GsaElement1dGoo>();
-            List<GsaElement2dGoo> elem2ds = new List<GsaElement2dGoo>();
-            List<GsaElement3dGoo> elem3ds = new List<GsaElement3dGoo>();
+            ConcurrentBag<GsaElement1dGoo> elem1ds = new ConcurrentBag<GsaElement1dGoo>();
+            ConcurrentBag<GsaElement2dGoo> elem2ds = new ConcurrentBag<GsaElement2dGoo>();
+            ConcurrentBag<GsaElement3dGoo> elem3ds = new ConcurrentBag<GsaElement3dGoo>();
 
             ConcurrentDictionary<int, Element> elem1dDict = new ConcurrentDictionary<int, Element>();
             ConcurrentDictionary<int, Element> elem2dDict = new ConcurrentDictionary<int, Element>();
@@ -173,9 +192,9 @@ namespace GsaGH.Util.Gsa
                     case 1:
                         // create new element from api element;
                         elem1dDict.TryAdd(item.Key, item.Value);
-                        new GsaElement1dGoo(
-                            ConvertToElement1D(
-                                item.Value, item.Key, nDict, sDict, mDict, unit));
+                        //elem1ds.Add(new GsaElement1dGoo(
+                        //    ConvertToElement1D(
+                        //        item.Value, item.Key, nDict, sDict, mDict, unit)));
                         break;
 
                     case 2:
@@ -196,9 +215,9 @@ namespace GsaGH.Util.Gsa
             // GsaElement2d and 3d consist of a list of 2D elements in order
             // to display a combined mesh: each 2D element is a mesh face
             if (elem1dDict.Count > 0)
-                elem1ds = elem1dDict.AsParallel().
+                elem1ds = new ConcurrentBag<GsaElement1dGoo>(elem1dDict.AsParallel().
                     Select(item => new GsaElement1dGoo(
-                        ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, unit))).OrderBy(e => e.Value.ID).ToList();
+                        ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, unit))));
 
             if (elem2dDict.Count > 0)
                 elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, unit);
@@ -207,7 +226,8 @@ namespace GsaGH.Util.Gsa
                 elem3ds = ConvertToElement3Ds(elem3dDict, nDict, p3Dict, mDict, unit);
 
 
-            return new Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>>(elem1ds, elem2ds, elem3ds);
+            return new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>
+                (elem1ds, elem2ds, elem3ds);
         }
 
         /// <summary>
@@ -220,8 +240,8 @@ namespace GsaGH.Util.Gsa
         /// <param name="sections">Dictionary of Sections</param>
         /// <returns></returns>
         public static GsaElement1d ConvertToElement1D(Element element, 
-            int ID, IReadOnlyDictionary<int, Node> nodes, IReadOnlyDictionary<int, Section> sections, 
-            IReadOnlyDictionary<int, AnalysisMaterial> materials, LengthUnit unit)
+            int ID, ConcurrentDictionary<int, Node> nodes, ConcurrentDictionary<int, Section> sections,
+            ConcurrentDictionary<int, AnalysisMaterial> materials, LengthUnit unit)
         {
             // get element's topology
             ReadOnlyCollection<int> topo = element.Topology;
@@ -258,15 +278,15 @@ namespace GsaGH.Util.Gsa
                     section = new GsaSection(element.Property);
                     section.API_Section = apisection;
 
-                    // get material (if analysis material exist)
-                    if (section.API_Section.MaterialAnalysisProperty > 0)
-                    {
-                        materials.TryGetValue(apisection.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-                        section.Material = new GsaMaterial(section, apimaterial);
-                    }
-                    else
-                        section.Material = new GsaMaterial(section);
-                    
+                    //// get material (if analysis material exist)
+                    //if (section.API_Section.MaterialAnalysisProperty > 0)
+                    //{
+                    //    materials.TryGetValue(apisection.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+                    //    section.Material = new GsaMaterial(section, apimaterial);
+                    //}
+                    //else
+                    //    section.Material = new GsaMaterial(section);
+
                 }
 
                 // create GH GsaElement1d
@@ -371,7 +391,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="nodes">Dictionary of Nodes that elements refers to by topology. Include all Nodes unless you are sure what you are doing</param>
         /// <param name="properties">Dictionary of 2D Properties</param>
         /// <returns></returns>
-        public static List<GsaElement2dGoo> ConvertToElement2Ds(
+        public static ConcurrentBag<GsaElement2dGoo> ConvertToElement2Ds(
             ConcurrentDictionary<int, Element> elements, ConcurrentDictionary<int, Node> nodes, 
             ConcurrentDictionary<int, Prop2D> properties, ConcurrentDictionary<int, AnalysisMaterial> materials, LengthUnit unit)
         {
@@ -487,7 +507,8 @@ namespace GsaGH.Util.Gsa
 
             });
 
-            return elem2dGoos.AsParallel().OrderBy(e => e.Value.ID.Max()).ToList();
+            return elem2dGoos; 
+            //return elem2dGoos.AsParallel().OrderBy(e => e.Value.ID.Max()).ToList();
         }
 
         public static Mesh ConvertElement3D(Element element, ConcurrentDictionary<int, Node> nodes, LengthUnit unit)
@@ -577,7 +598,7 @@ namespace GsaGH.Util.Gsa
             return outMesh;
         }
 
-        public static List<GsaElement3dGoo> ConvertToElement3Ds(ConcurrentDictionary<int, Element> elements, ConcurrentDictionary<int, Node> nodes,
+        public static ConcurrentBag<GsaElement3dGoo> ConvertToElement3Ds(ConcurrentDictionary<int, Element> elements, ConcurrentDictionary<int, Node> nodes,
             ConcurrentDictionary<int, Prop3D> properties, ConcurrentDictionary<int, AnalysisMaterial> materials, LengthUnit unit)
         {
             // main sorted dictionary with 
@@ -692,8 +713,8 @@ namespace GsaGH.Util.Gsa
                 }
 
             });
-
-            return elem3dGoos.AsParallel().OrderBy(e => e.Value.ID.Max()).ToList();
+            return elem3dGoos;
+            //return elem3dGoos.AsParallel().OrderBy(e => e.Value.ID.Max()).ToList();
 
         }
         public static Element DuplicateElement(Element elem)
@@ -765,7 +786,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="sDict">Dictionary of Sections (for 1D elements)</param>
         /// <param name="pDict">Dictionary of 2D Properties (for 2D elements)</param>
         /// <returns></returns>
-        public static Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>> 
+        public static Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> 
             GetMembers(ConcurrentDictionary<int, Member> mDict, ConcurrentDictionary<int, Node> nDict, LengthUnit unit,
             ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, GH_Component owner = null)
         {
@@ -995,10 +1016,13 @@ namespace GsaGH.Util.Gsa
             //    else
             //        owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.InnerException.Message);
             //}
-            return new Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>>(
-                mem1ds.AsParallel().OrderBy(e => e.Value.ID).ToList(), 
-                mem2ds.AsParallel().OrderBy(e => e.Value.ID).ToList(), 
-                mem3ds.AsParallel().OrderBy(e => e.Value.ID).ToList());
+            return new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>(
+                mem1ds, mem2ds, mem3ds);
+
+                //return new Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>>(
+                //    mem1ds.AsParallel().OrderBy(e => e.Value.ID).ToList(), 
+                //    mem2ds.AsParallel().OrderBy(e => e.Value.ID).ToList(), 
+                //    mem3ds.AsParallel().OrderBy(e => e.Value.ID).ToList());
         }
         internal static Point3d Point3dFromNode(Node node, LengthUnit unit)
         {

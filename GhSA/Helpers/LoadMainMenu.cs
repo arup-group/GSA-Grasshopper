@@ -154,6 +154,7 @@ namespace GsaGH.UI.Menu
                         }
                         else
                         {
+                            
                             mainMenu.Items.RemoveAt(i);
                             i--;
                         }

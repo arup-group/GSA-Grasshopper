@@ -10,6 +10,7 @@ using GsaGH.Parameters;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using UnitsNet;
+using Grasshopper;
 
 namespace GsaGH.Components
 {
@@ -96,7 +97,7 @@ namespace GsaGH.Components
             List
         }
 
-        private FoldMode _mode = FoldMode.Graft;
+        private FoldMode _mode = FoldMode.List;
 
         protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
         {
@@ -173,62 +174,52 @@ namespace GsaGH.Components
             pManager.AddGenericParameter("3D Elements [" + unitAbbreviation + "]", "E3D", "3D Elements (Analysis Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
             pManager.HideParameter(2);
             //pManager.HideParameter(3);
-            pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]", "M1D", "1D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
-            pManager.AddGenericParameter("2D Members [" + unitAbbreviation + "]", "M2D", "2D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
-            pManager.AddGenericParameter("3D Members [" + unitAbbreviation + "]", "M3D", "3D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
+            pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]", "M1D", "1D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("2D Members [" + unitAbbreviation + "]", "M2D", "2D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("3D Members [" + unitAbbreviation + "]", "M3D", "3D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.tree);
         }
         #endregion
 
         public class SolveResults
         {
-            public List<GsaNodeGoo> Nodes { get; set; }
-            internal List<GsaNodeGoo> displaySupports { get; set; }
-            public List<GsaElement1dGoo> Elem1ds { get; set; }
-            public List<GsaElement2dGoo> Elem2ds { get; set; }
-            public List<GsaElement3dGoo> Elem3ds { get; set; }
-            public List<GsaMember1dGoo> Mem1ds { get; set; }
-            public List<GsaMember2dGoo> Mem2ds { get; set; }
-            public List<GsaMember3dGoo> Mem3ds { get; set; }
+            internal ConcurrentBag<GsaNodeGoo> Nodes { get; set; }
+            internal ConcurrentBag<GsaNodeGoo> displaySupports { get; set; }
+            internal ConcurrentBag<GsaElement1dGoo> Elem1ds { get; set; }
+            internal ConcurrentBag<GsaElement2dGoo> Elem2ds { get; set; }
+            internal ConcurrentBag<GsaElement3dGoo> Elem3ds { get; set; }
+            internal ConcurrentBag<GsaMember1dGoo> Mem1ds { get; set; }
+            internal ConcurrentBag<GsaMember2dGoo> Mem2ds { get; set; }
+            internal ConcurrentBag<GsaMember3dGoo> Mem3ds { get; set; }
         }
-        SolveResults Compute(GsaModel gsaModel, string nodeList, string elemList, string memList)
+        SolveResults Compute(ConcurrentDictionary<int, Node> allnDict, ConcurrentDictionary<int, Axis> axDict,
+            ConcurrentDictionary<int, Node> nDict,
+            ConcurrentDictionary<int, Element> eDict,
+            ConcurrentDictionary<int, Member> mDict, 
+            ConcurrentDictionary<int, Section> sDict,
+            ConcurrentDictionary<int, Prop2D> pDict,
+            ConcurrentDictionary<int, Prop3D> p3Dict,
+            ConcurrentDictionary<int, AnalysisMaterial> amDict
+            )
         {
             SolveResults results = new SolveResults();
             List<int> steps = new List<int> { 0, 1, 2 };
 
-            ConcurrentDictionary<int, Axis> axDict;
-            ConcurrentDictionary<int, Node> out_nDict;
-            ConcurrentDictionary<int, Element> eDict;
-            ConcurrentDictionary<int, Member> mDict;
-
-            Model model = gsaModel.Model;
-
-            // get dictionaries from model
-            ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
-            ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
-            ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
-            ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
-            ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
-            //try
-            //{
+            try
+            {
                 Parallel.ForEach(steps, i =>
                 {
                     if (i == 0)
                     {
-                        axDict = new ConcurrentDictionary<int, Axis>(model.Axes());
-                        out_nDict = (nodeList.ToLower() == "all") ? nDict : new ConcurrentDictionary<int, Node>(model.Nodes(nodeList));
-
                         // create nodes
-                        results.Nodes = Util.Gsa.FromGSA.GetNodes(out_nDict, lengthUnit, axDict);
-                        results.displaySupports = results.Nodes.AsParallel().Where(n => n.Value.isSupport).ToList();
+                        results.Nodes = Util.Gsa.FromGSA.GetNodes(nDict, lengthUnit, axDict);
+                        results.displaySupports = new ConcurrentBag<GsaNodeGoo>(results.Nodes.AsParallel().Where(n => n.Value.isSupport));
                     }
 
                     if (i == 1)
                     {
-                        eDict = new ConcurrentDictionary<int, Element>(model.Elements(elemList));
-
                         // create elements
-                        Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> elementTuple
-                            = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, lengthUnit);
+                        Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
+                            = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, lengthUnit);
 
                         results.Elem1ds = elementTuple.Item1;
                         results.Elem2ds = elementTuple.Item2;
@@ -237,22 +228,37 @@ namespace GsaGH.Components
 
                     if (i == 2)
                     {
-                        mDict = new ConcurrentDictionary<int, Member>(model.Members(memList));
-
                         // create members
-                        Tuple<List<GsaMember1dGoo>, List<GsaMember2dGoo>, List<GsaMember3dGoo>> memberTuple
-                            = Util.Gsa.FromGSA.GetMembers(mDict, nDict, lengthUnit, sDict, pDict, this);
+                        Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
+                            = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, lengthUnit, sDict, pDict, this);
 
                         results.Mem1ds = memberTuple.Item1;
                         results.Mem2ds = memberTuple.Item2;
                         results.Mem3ds = memberTuple.Item3;
                     }
                 });
-            //}
-            //catch (Exception e)
-            //{
-            //    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.InnerException.Message);
-            //}
+            }
+            catch (Exception e)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.InnerException.Message);
+            }
+            if (results.Elem1ds != null)
+            {
+                foreach (GsaElement1dGoo element in results.Elem1ds)
+                {
+                    if (element.Value.Section != null && element.Value.Section.API_Section != null)
+                    {
+                        if (element.Value.Section.API_Section.MaterialAnalysisProperty > 0)
+                        {
+                            amDict.TryGetValue(element.Value.Section.API_Section.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+                            element.Value.Section.Material = new GsaMaterial(element.Value.Section, apimaterial);
+                        }
+                        else
+                            element.Value.Section.Material = new GsaMaterial(element.Value.Section);
+                    }
+                }
+            }
+
             return results;
         }
 
@@ -285,7 +291,21 @@ namespace GsaGH.Components
                     if (data.GetData(3, ref memList))
                         memList = memList.ToString();
 
-                    tsk = Task.Run(() => Compute(gsaModel, nodeList, elemList, memList), CancelToken);
+                    // collect data from model:
+                    Model model = gsaModel.Model;
+                    
+                    ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
+                    ConcurrentDictionary<int, Axis> axDict = new ConcurrentDictionary<int, Axis>(model.Axes());
+                    ConcurrentDictionary<int, Node> out_nDict = (nodeList.ToLower() == "all") ? nDict : new ConcurrentDictionary<int, Node>(model.Nodes(nodeList));
+                    ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(model.Elements(elemList));
+                    ConcurrentDictionary<int, Member> mDict = new ConcurrentDictionary<int, Member>(model.Members(memList));
+                    ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
+                    ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
+                    ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
+                    ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
+
+                    tsk = Task.Run(() => Compute(nDict, axDict, out_nDict,
+                        eDict, mDict, sDict, pDict, p3Dict, amDict), CancelToken);
                 }
                 // Add a null task even if data collection fails. This keeps the
                 // list size in sync with the iterations
@@ -293,8 +313,8 @@ namespace GsaGH.Components
                 return;
             }
             SolveResults results;
-            try
-            {
+            //try
+            //{
                 if (!GetSolveResults(data, out results))
                 {
                     // Compute right here, right now.
@@ -323,15 +343,29 @@ namespace GsaGH.Components
                             memList = memList.ToString();
 
                         // 2. Compute
-                        results = Compute(gsaModel, nodeList, elemList, memList);
+                        // collect data from model:
+                        Model model = gsaModel.Model;
+
+                        ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
+                        ConcurrentDictionary<int, Axis> axDict = new ConcurrentDictionary<int, Axis>(model.Axes());
+                        ConcurrentDictionary<int, Node> out_nDict = (nodeList.ToLower() == "all") ? nDict : new ConcurrentDictionary<int, Node>(model.Nodes(nodeList));
+                        ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(model.Elements(elemList));
+                        ConcurrentDictionary<int, Member> mDict = new ConcurrentDictionary<int, Member>(model.Members(memList));
+                        ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
+                        ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
+                        ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
+                        ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
+
+                        results = Compute(nDict, axDict, out_nDict,
+                        eDict, mDict, sDict, pDict, p3Dict, amDict);
                     }
                     else return;
                 }
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.InnerException.Message);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    throw new Exception(e.InnerException.Message);
+            //}
 
             // 3. Set
             if (results != null)
@@ -343,11 +377,27 @@ namespace GsaGH.Components
                 }
                 if (results.Elem1ds != null)
                 {
-                    data.SetDataList(1, results.Elem1ds);
+                    if (_mode == FoldMode.List)
+                        data.SetDataList(1, results.Elem1ds.OrderBy(item => item.Value.ID));
+                    else
+                    {
+                        DataTree<GsaElement1dGoo> tree = new DataTree<GsaElement1dGoo>();
+                        foreach (GsaElement1dGoo element in results.Elem1ds)
+                            tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Section.ID));
+                        data.SetDataTree(1, tree);
+                    }
                 }
                 if (results.Elem2ds != null)
                 {
-                    data.SetDataList(2, results.Elem2ds);
+                    if (_mode == FoldMode.List)
+                        data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.ID));
+                    else
+                    {
+                        DataTree<GsaElement2dGoo> tree = new DataTree<GsaElement2dGoo>();
+                        foreach (GsaElement2dGoo element in results.Elem2ds)
+                            tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Properties.First().ID));
+                        data.SetDataTree(2, tree);
+                    }
                     element2ds = results.Elem2ds;
 
                     ConcurrentBag<GsaElement2dGoo> element2dsShaded = new ConcurrentBag<GsaElement2dGoo>();
@@ -366,41 +416,93 @@ namespace GsaGH.Components
                 }
                 if (results.Elem3ds != null)
                 {
-                    data.SetDataList(3, results.Elem3ds);
+                    if (_mode == FoldMode.List)
+                        data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.ID));
+                    else
+                    {
+                        DataTree<GsaElement3dGoo> tree = new DataTree<GsaElement3dGoo>();
+                        foreach (GsaElement3dGoo element in results.Elem3ds)
+                            tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.PropertyIDs.First()));
+                        data.SetDataTree(3, tree);
+                    }
+                    element3ds = results.Elem3ds;
+                    ConcurrentBag<GsaElement3dGoo> element3dsShaded = new ConcurrentBag<GsaElement3dGoo>();
+                    ConcurrentBag<GsaElement3dGoo> element3dsNotShaded = new ConcurrentBag<GsaElement3dGoo>();
+                    Parallel.ForEach(element3ds, elem =>
+                    {
+                        if (elem.Value.API_Elements[0].ParentMember.Member > 0)
+                            element3dsShaded.Add(elem);
+                        else
+                            element3dsNotShaded.Add(elem);
+                    });
+                    cachedDisplayNgonMeshShaded = new Mesh();
+                    cachedDisplayNgonMeshShaded.Append(element3dsShaded.Select(e => e.Value.DisplayMesh));
+                    cachedDisplayNgonMeshNotShaded = new Mesh();
+                    cachedDisplayNgonMeshNotShaded.Append(element3dsNotShaded.Select(e => e.Value.DisplayMesh));
                 }
                 if (results.Mem1ds != null)
                 {
-                    data.SetDataList(4, results.Mem1ds);
+                    if (_mode == FoldMode.List)
+                        data.SetDataList(4, results.Mem1ds.OrderBy(item => item.Value.ID));
+                    else
+                    {
+                        DataTree<GsaMember1dGoo> tree = new DataTree<GsaMember1dGoo>();
+                        foreach (GsaMember1dGoo element in results.Mem1ds)
+                            tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Section.ID));
+                        data.SetDataTree(4, tree);
+                    }
                 }
                 if (results.Mem2ds != null)
                 {
-                    data.SetDataList(5, results.Mem2ds);
+                    if (_mode == FoldMode.List)
+                        data.SetDataList(5, results.Mem2ds.OrderBy(item => item.Value.ID));
+                    else
+                    {
+                        DataTree<GsaMember2dGoo> tree = new DataTree<GsaMember2dGoo>();
+                        foreach (GsaMember2dGoo element in results.Mem2ds)
+                            tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Property.ID));
+                        data.SetDataTree(5, tree);
+                    }
                 }
                 if (results.Mem3ds != null)
                 {
-                    data.SetDataList(6, results.Mem3ds);
+                    if (_mode == FoldMode.List)
+                        data.SetDataList(6, results.Mem3ds.OrderBy(item => item.Value.ID));
+                    else
+                    {
+                        DataTree<GsaMember3dGoo> tree = new DataTree<GsaMember3dGoo>();
+                        foreach (GsaMember3dGoo element in results.Mem3ds)
+                            tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Property.ID));
+                        data.SetDataTree(6, tree);
+                    }
                 }
 
-                update = true;
+                update = false;
             }
         }
 
         bool update;
-        List<GsaElement2dGoo> element2ds;
+        ConcurrentBag<GsaElement2dGoo> element2ds;
+        ConcurrentBag<GsaElement3dGoo> element3ds;
         Mesh cachedDisplayMeshShaded;
         Mesh cachedDisplayMeshNotShaded;
-        List<GsaNodeGoo> supportNodes;
+        Mesh cachedDisplayNgonMeshShaded;
+        Mesh cachedDisplayNgonMeshNotShaded;
+        ConcurrentBag<GsaNodeGoo> supportNodes;
 
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {
             base.DrawViewportWires(args);
 
-
             if (cachedDisplayMeshShaded != null)
             {
                 args.Display.DrawMeshWires(cachedDisplayMeshShaded, System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
             }
-            
+            if (cachedDisplayNgonMeshShaded != null)
+            {
+                args.Display.DrawMeshWires(cachedDisplayNgonMeshShaded, System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
+            }
+
             if (cachedDisplayMeshNotShaded != null)
             {
                 if (this.Attributes.Selected)
@@ -410,6 +512,17 @@ namespace GsaGH.Components
                 else
                 {
                     args.Display.DrawMeshWires(cachedDisplayMeshNotShaded, UI.Colour.Element2dEdge, 1);
+                }
+            }
+            if (cachedDisplayNgonMeshNotShaded != null)
+            {
+                if (this.Attributes.Selected)
+                {
+                    args.Display.DrawMeshWires(cachedDisplayNgonMeshNotShaded, UI.Colour.Element2dEdgeSelected, 2);
+                }
+                else
+                {
+                    args.Display.DrawMeshWires(cachedDisplayNgonMeshNotShaded, UI.Colour.Element2dEdge, 1);
                 }
             }
 
@@ -523,6 +636,16 @@ namespace GsaGH.Components
             Params.Output[i++].Name = "1D Members [" + unitAbbreviation + "]";
             Params.Output[i++].Name = "2D Members [" + unitAbbreviation + "]";
             Params.Output[i++].Name = "3D Members [" + unitAbbreviation + "]";
+
+            i = 1;
+            for (int j = 1; j < 7; j++)
+            {
+                if (_mode == FoldMode.List)
+                    Params.Output[i].Access = GH_ParamAccess.list;
+                else
+                    Params.Output[i].Access = GH_ParamAccess.tree;
+            }
+            
         }
 
         #endregion

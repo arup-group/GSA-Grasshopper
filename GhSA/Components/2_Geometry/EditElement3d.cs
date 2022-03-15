@@ -5,6 +5,7 @@ using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using System.Linq;
+using Grasshopper;
 
 namespace GsaGH.Components
 {
@@ -70,6 +71,7 @@ namespace GsaGH.Components
             pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
             pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Topology", "Tp", "Get the Element's original topology list referencing node IDs in Model that Element was created from", GH_ParamAccess.list);
         }
         #endregion
 
@@ -252,6 +254,7 @@ namespace GsaGH.Components
                 DA.SetDataList(7, elem.Colours);
                 DA.SetDataList(8, elem.isDummies);
                 DA.SetDataList(9, elem.ParentMembers);
+                DA.SetDataTree(10, elem.TopologyIDs);
             }
         }
     }

@@ -99,9 +99,15 @@ namespace GsaGH.Util.Gsa
         }
         public static Vector3d GetResult(Double6 result, AngleUnit unit)
         {
-            double xx = new Angle(result.XX, AngleUnit.Radian).As(unit);
-            double yy = new Angle(result.YY, AngleUnit.Radian).As(unit);
-            double zz = new Angle(result.ZZ, AngleUnit.Radian).As(unit);
+            double xx = 0; 
+            if (result.XX != double.NaN)
+                new Angle(result.XX, AngleUnit.Radian).As(unit);
+            double yy = 0;
+            if (result.YY != double.NaN) 
+                new Angle(result.YY, AngleUnit.Radian).As(unit);
+            double zz = 0;
+            if (result.ZZ != double.NaN) 
+                new Angle(result.ZZ, AngleUnit.Radian).As(unit);
             return new Vector3d(xx, yy, zz);
         }
         public static Vector3d GetResult(Double6 result, PressureUnit unit, bool shear = false)

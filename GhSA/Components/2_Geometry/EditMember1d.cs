@@ -107,6 +107,7 @@ namespace GsaGH.Components
             
             pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Dummy Member", "Dm", "Get it Member is Dummy", GH_ParamAccess.item);
+            pManager.AddTextParameter("Topology", "Tp", "Get the Member's original topology list referencing node IDs in Model that Model was created from", GH_ParamAccess.item);
         }
         #endregion
 
@@ -309,6 +310,7 @@ namespace GsaGH.Components
                 
                 DA.SetData(15, mem.Colour);
                 DA.SetData(16, mem.IsDummy);
+                DA.SetData(17, mem.Topology.ToString());
             }
         }
     }

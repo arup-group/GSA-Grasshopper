@@ -239,10 +239,10 @@ namespace GsaGH.Components
             #endregion
 
             // extract nodes from model
-            List<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()), lengthUnit);
+            ConcurrentBag<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()), lengthUnit);
 
             // extract elements from model
-            Tuple<List<GsaElement1dGoo>, List<GsaElement2dGoo>, List<GsaElement3dGoo>> elementTuple
+            Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
                 = Util.Gsa.FromGSA.GetElements(
                     new ConcurrentDictionary<int, Element>(gsa.Elements()), 
                     new ConcurrentDictionary<int, Node>(gsa.Nodes()),
@@ -257,15 +257,15 @@ namespace GsaGH.Components
             outModel.Model = gsa;
 
             DA.SetDataList(0, nodes);
-            DA.SetDataList(1, elementTuple.Item1);
-            DA.SetDataList(2, elementTuple.Item2);
-            DA.SetDataList(3, elementTuple.Item3);
+            DA.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.ID));
+            DA.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.ID));
+            DA.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.ID));
             DA.SetData(4, new GsaModelGoo(outModel));
             
             // custom display settings for element2d mesh
             element2ds = elementTuple.Item2;
         }
-        List<GsaElement2dGoo> element2ds;
+        ConcurrentBag<GsaElement2dGoo> element2ds;
         public override void DrawViewportMeshes(IGH_PreviewArgs args)
         {
 

@@ -8,6 +8,7 @@ using Rhino.Collections;
 using Rhino.Geometry.Collections;
 using System.Collections.Concurrent;
 using UnitsNet;
+using GsaGH.Parameters;
 
 namespace GsaGH.Util.GH
 {
@@ -798,7 +799,7 @@ namespace GsaGH.Util.GH
             model.CreateElementsFromMembers();
 
             // extract elements from model
-            Tuple<List<Parameters.GsaElement1dGoo>, List<Parameters.GsaElement2dGoo>, List<Parameters.GsaElement3dGoo>> elementTuple
+            Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
                 = Util.Gsa.FromGSA.GetElements(
                     new ConcurrentDictionary<int, Element>(model.Elements()),
                     new ConcurrentDictionary<int, Node>(model.Nodes()),
@@ -808,7 +809,7 @@ namespace GsaGH.Util.GH
                     new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials()),
                     Units.LengthUnitGeometry);
 
-            List<Parameters.GsaElement2dGoo> elem2dgoo = elementTuple.Item2;
+            List<GsaElement2dGoo> elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.ID).ToList();
             Mesh mesh = elem2dgoo[0].Value.Mesh;
 
             Surface flat = flattened[0].Surfaces[0];

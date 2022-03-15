@@ -6,6 +6,7 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
+using Grasshopper;
 
 namespace GsaGH.Parameters
 {
@@ -79,6 +80,19 @@ namespace GsaGH.Parameters
         {
             get { return m_props; }
             set { m_props = value; }
+        }
+        public DataTree<int> TopologyIDs
+        {
+            get
+            {
+                DataTree<int> topos = new DataTree<int>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (m_elements[i] != null)
+                        topos.AddRange(m_elements[i].Topology.ToList(), new Grasshopper.Kernel.Data.GH_Path(i));
+                }
+                return topos;
+            }
         }
         #region GsaAPI.Element members
         public List<System.Drawing.Color> Colours
