@@ -89,8 +89,9 @@ namespace GsaGH.Components
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Name", "Na", "Task Name", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Analysis Cases", "ΣCs", "List of GSA Analysis Cases (if left empty, all load cases in model will be added)", GH_ParamAccess.list);
             pManager[0].Optional = true;
-            pManager.AddGenericParameter("Analysis Cases", "ΣCs", "List of GSA Analysis Cases", GH_ParamAccess.list);
+            pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -104,10 +105,12 @@ namespace GsaGH.Components
             string name = analtype.ToString();
             DA.GetData(0, ref name);
 
+            List<GsaAnalysisCase> cases = null;
+
             List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
             if (DA.GetDataList(1, gh_types))
             {
-                List<GsaAnalysisCase> cases = new List<GsaAnalysisCase>();
+                cases = new List<GsaAnalysisCase>();
                 for (int i = 0; i < gh_types.Count; i++)
                 {
                     GH_ObjectWrapper gh_typ = gh_types[i];
@@ -126,13 +129,20 @@ namespace GsaGH.Components
                         return;
                     }
                 }
-
-                GsaAnalysisTask task = new GsaAnalysisTask();
-                task.Name = name;
-                task.Cases = cases;
-                task.Type = analtype;
-                DA.SetData(0, new GsaAnalysisTaskGoo(task));
             }
+            
+            if (cases == null)
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Default Task has been created; it will by default contain all cases found in model");
+
+            if (analtype != GsaAnalysisTask.AnalysisType.Static)
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "It is currently not possible to adjust the solver settings. " +
+                    System.Environment.NewLine + "Please verify the solver settings in GSA ('Task and Cases' -> 'Analysis Tasks')");
+
+            GsaAnalysisTask task = new GsaAnalysisTask();
+            task.Name = name;
+            task.Cases = cases;
+            task.Type = analtype;
+            DA.SetData(0, new GsaAnalysisTaskGoo(task));
         }
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)

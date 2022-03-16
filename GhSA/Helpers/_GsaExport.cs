@@ -1,10 +1,10 @@
-﻿using System;
+﻿using GsaAPI;
+using GsaGH.Parameters;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using GsaAPI;
-using GsaGH.Parameters;
-using System.Collections.Concurrent;
 using UnitsNet;
 using UnitsNet.Units;
 
@@ -129,7 +129,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             List<GsaGridPlaneSurface> gps = gpsgoo.Select(n => n.Value).ToList();
 
             // return new assembled model
-            mainModel.Model = Assemble.AssembleModel(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, LengthUnit.Meter);
+            mainModel.Model = Assemble.AssembleModel(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter);
             return mainModel;
         }
     }
@@ -211,6 +211,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
             List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds,
             List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
+            List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
             LengthUnit lengthUnit)
         {
             // Set model to work on
@@ -442,6 +443,28 @@ namespace GsaGH.Util.Gsa.ToGSA
             {
                 foreach (KeyValuePair<int, AnalysisMaterial> mat in apimaterials)
                     gsa.SetAnalysisMaterial(mat.Key, mat.Value);
+            }
+            //tasks
+            if (analysisTasks != null)
+            {
+                ReadOnlyDictionary<int, AnalysisTask> existingTasks = gsa.AnalysisTasks();
+                foreach (GsaAnalysisTask task in analysisTasks)
+                {
+                    if (!existingTasks.Keys.Contains(task.ID))
+                        task.SetID(gsa.AddAnalysisTask());
+
+                    if (task.Cases == null)
+                        task.CreateDeafultCases(model);
+
+                    foreach (GsaAnalysisCase ca in task.Cases)
+                        gsa.AddAnalysisCaseToTask(task.ID, ca.Name, ca.Description);
+                }
+            }
+            //combinations
+            if (combinations != null)
+            {
+                foreach (GsaCombinationCase co in combinations)
+                    gsa.AddCombinationCase(co.Name, co.Description);
             }
             #endregion
 

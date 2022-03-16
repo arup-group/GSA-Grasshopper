@@ -143,6 +143,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CombinationCaseResult {
+            get {
+                object obj = ResourceManager.GetObject("CombinationCaseResult", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap ConvertUnitNumber {
             get {
                 object obj = ResourceManager.GetObject("ConvertUnitNumber", resourceCulture);
@@ -176,6 +186,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap CreateBool6 {
             get {
                 object obj = ResourceManager.GetObject("CreateBool6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CreateCombinationCase {
+            get {
+                object obj = ResourceManager.GetObject("CreateCombinationCase", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

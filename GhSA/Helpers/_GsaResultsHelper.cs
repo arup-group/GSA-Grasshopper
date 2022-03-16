@@ -100,13 +100,13 @@ namespace GsaGH.Util.Gsa
         public static Vector3d GetResult(Double6 result, AngleUnit unit)
         {
             double xx = 0; 
-            if (result.XX != double.NaN)
+            if (!double.IsNaN(result.XX))
                 new Angle(result.XX, AngleUnit.Radian).As(unit);
             double yy = 0;
-            if (result.YY != double.NaN) 
+            if (!double.IsNaN(result.YY)) 
                 new Angle(result.YY, AngleUnit.Radian).As(unit);
             double zz = 0;
-            if (result.ZZ != double.NaN) 
+            if (!double.IsNaN(result.ZZ)) 
                 new Angle(result.ZZ, AngleUnit.Radian).As(unit);
             return new Vector3d(xx, yy, zz);
         }

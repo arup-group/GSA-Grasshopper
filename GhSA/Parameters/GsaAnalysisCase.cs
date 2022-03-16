@@ -179,7 +179,7 @@ namespace GsaGH.Parameters
 
         public override Guid ComponentGuid => new Guid("6b99a192-bdbd-41bf-8efa-1bc146d3c224");
 
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisCaseParam;
 

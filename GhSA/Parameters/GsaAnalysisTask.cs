@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -37,10 +37,13 @@ namespace GsaGH.Parameters
         public string Name { get; set; }
         public AnalysisType Type { get; set; }
         public int ID { get { return m_idd; } }
-
+        internal void SetID(int id)
+        {
+            m_idd = id;
+        }
         #region fields
         private int m_idd = 0;
-        public List<GsaAnalysisCase> Cases { get; set; }
+        public List<GsaAnalysisCase> Cases { get; set; } = null;
         #endregion
 
         #region constructors
@@ -62,6 +65,11 @@ namespace GsaGH.Parameters
             }
             Type = (AnalysisType)task.Type;
             Name = task.Name;
+        }
+        internal void CreateDeafultCases(GsaModel model)
+        {
+            Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Util.Gsa.FromGSA.GetAnalysisTasksAndCombinations(model);
+            this.Cases = tuple.Item2.Select(x => x.Value).ToList();
         }
         
         public GsaAnalysisTask Duplicate()
@@ -220,7 +228,7 @@ namespace GsaGH.Parameters
 
         public override Guid ComponentGuid => new Guid("51048d67-3652-45d0-9eec-0f9ef339c1a5");
 
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisTaskParam;
 

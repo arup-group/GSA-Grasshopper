@@ -43,7 +43,7 @@ namespace GsaGH.Components
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Analysis Tasks", "ΣT", "List of Analysis Tasks in model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Analysis Cases", "ΣC", "Tree with list of Analysis Cases per Analysis Task", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Analysis Cases", "ΣC", "List of Analysis Cases in model", GH_ParamAccess.list);
         }
         #endregion
 
@@ -52,21 +52,10 @@ namespace GsaGH.Components
             GsaModel gsaModel = new GsaModel();
             if (DA.GetData(0, ref gsaModel))
             {
-                Model model = gsaModel.Model;
-                ReadOnlyDictionary<int, AnalysisTask> tasks = model.AnalysisTasks();
+                Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Util.Gsa.FromGSA.GetAnalysisTasksAndCombinations(gsaModel);
 
-                List<GsaAnalysisTaskGoo> tasksList = new List<GsaAnalysisTaskGoo>();
-                DataTree<GsaAnalysisCaseGoo> tree = new DataTree<GsaAnalysisCaseGoo>();
-
-                foreach (KeyValuePair<int, AnalysisTask> item in tasks)
-                {
-                    GsaAnalysisTask task = new GsaAnalysisTask(item.Key, item.Value, model);
-                    tasksList.Add(new GsaAnalysisTaskGoo(task));
-                    tree.AddRange(task.Cases.Select(c => new GsaAnalysisCaseGoo(c)).ToList(), new Grasshopper.Kernel.Data.GH_Path(item.Key));
-                }
-
-                DA.SetDataList(0, tasksList);
-                DA.SetDataTree(1, tree);
+                DA.SetDataList(0, tuple.Item1);
+                DA.SetDataList(1, tuple.Item2);
             }
         }
     }

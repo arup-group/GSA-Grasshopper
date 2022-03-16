@@ -90,7 +90,7 @@ namespace GsaGH.Components
         // list of descriptions 
         List<string> spacerDescriptions = new List<string>(new string[]
         {
-            "Unit",
+            "Geometry Unit",
             "Settings"
         });
         private bool first = true;
@@ -105,12 +105,13 @@ namespace GsaGH.Components
             IQuantity length = new Length(0, lengthUnit);
             unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-            pManager.AddGenericParameter("GSA Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
+            pManager.AddGenericParameter("Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
                 "If you input more than one model they will be merged" + System.Environment.NewLine + "with first model in list taking priority for IDs", GH_ParamAccess.list);
-            pManager.AddGenericParameter("GSA Properties", "Prob", "Sections, Prop2Ds and Prop3Ds to add/set in model" + System.Environment.NewLine +
+            pManager.AddGenericParameter("Properties", "P", "Sections (PB), Prop2Ds (PA) and Prop3Ds (PV) to add/set in the model" + System.Environment.NewLine +
                 "Properties already added to Elements or Members" + System.Environment.NewLine + "will automatically be added with Geometry input", GH_ParamAccess.list);
             pManager.AddGenericParameter("GSA Geometry in [" + unitAbbreviation + "]", "Geo", "Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("GSA Load", "Load", "Loads to add to the model" + System.Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Load", "Ld", "GSA Loads to add to the model" + System.Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Analysis Tasks & Combinations", "ΣT", "GSA Analysis Tasks and Combination Cases to add to the model", GH_ParamAccess.list);
             for (int i = 0; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
         }
@@ -135,6 +136,8 @@ namespace GsaGH.Components
         List<GsaProp3d> Prop3Ds { get; set; }
         List<GsaGridPlaneSurface> GridPlaneSurfaces { get; set; }
         GsaModel OutModel { get; set; }
+        List<GsaAnalysisTask> AnalysisTasks { get; set; }
+        List<GsaCombinationCase> CombinationCases { get; set; }
         #endregion
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -153,6 +156,8 @@ namespace GsaGH.Components
             Prop2Ds = null;
             Prop3Ds = null;
             GridPlaneSurfaces = null;
+            AnalysisTasks = null;
+            CombinationCases = null;
 
             // Get Model input
             List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
@@ -354,10 +359,47 @@ namespace GsaGH.Components
                 if (in_gps.Count > 0)
                     GridPlaneSurfaces = in_gps;
             }
+            
+            // Get AnalysisTasks input
+            gh_types = new List<GH_ObjectWrapper>();
+            if (DA.GetDataList(4, gh_types))
+            {
+                List<GsaAnalysisTask> in_tasks = new List<GsaAnalysisTask>();
+                List<GsaCombinationCase> in_comb = new List<GsaCombinationCase>();
+                for (int i = 0; i < gh_types.Count; i++)
+                {
+                    GH_ObjectWrapper gh_typ = gh_types[i];
+                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis input (index: " + i + ") is null and has been ignored"); continue; }
+
+                    if (gh_typ.Value is GsaAnalysisTaskGoo)
+                    {
+                        in_tasks.Add(((GsaAnalysisTaskGoo)gh_typ.Value).Value.Duplicate());
+                    }
+                    else if (gh_typ.Value is GsaCombinationCaseGoo)
+                    {
+                        in_comb.Add(((GsaCombinationCaseGoo)gh_typ.Value).Value.Duplicate());
+                    }
+                    else
+                    {
+                        string type = gh_typ.Value.GetType().ToString();
+                        type = type.Replace("GsaGH.Parameters.", "");
+                        type = type.Replace("Goo", "");
+                        Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Analysis input parameter of type " +
+                            type + " to Analysis Task or Combination Case");
+                        return;
+                    }
+                }
+                if (in_tasks.Count > 0)
+                    AnalysisTasks = in_tasks;
+                if (in_comb.Count > 0)
+                    CombinationCases = in_comb;
+            }
+
             // manually add a warning if no input is set, as all inputs are optional
             if (Models == null & Nodes == null & Elem1ds == null & Elem2ds == null &
                 Mem1ds == null & Mem2ds == null & Mem3ds == null & Sections == null
-                & Prop2Ds == null & Loads == null & GridPlaneSurfaces == null)
+                & Prop2Ds == null & Loads == null & GridPlaneSurfaces == null
+                & AnalysisTasks == null & CombinationCases == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameters failed to collect data");
                 return;
@@ -387,7 +429,7 @@ namespace GsaGH.Components
                 OutModel = new GsaModel();
 
             // Assemble model
-            Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Prop3Ds, Loads, GridPlaneSurfaces, lengthUnit);
+            Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Prop3Ds, Loads, GridPlaneSurfaces, AnalysisTasks, CombinationCases, lengthUnit);
             
             #region meshing
             // Create elements from members
@@ -402,7 +444,20 @@ namespace GsaGH.Components
             {
                 IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
                 if (gsaTasks.Count < 1)
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contains no Analysis Tasks");
+                {
+                    GsaAnalysisTask task = new GsaAnalysisTask();
+                    task.SetID(gsa.AddAnalysisTask());
+                    task.CreateDeafultCases(analysisModel);
+                    if (task.Cases == null || task.Cases.Count == 0)
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contains no Analysis Tasks or Loads. Model has not been analysed");
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contained no Analysis Tasks. Default Task has been created containing all cases found in model");
+                        foreach (GsaAnalysisCase ca in task.Cases)
+                            gsa.AddAnalysisCaseToTask(task.ID, ca.Name, ca.Description);
+                        gsaTasks = gsa.AnalysisTasks();
+                    }
+                }
 
                 foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
                 {

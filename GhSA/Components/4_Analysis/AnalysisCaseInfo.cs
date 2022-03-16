@@ -25,7 +25,7 @@ namespace GsaGH.Components
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat4())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisCaseInfo;
         #endregion
@@ -44,10 +44,7 @@ namespace GsaGH.Components
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddTextParameter("Name", "Na", "Analysis Case Name", GH_ParamAccess.item);
-            pManager.AddTextParameter("Description", "De",
-                "The description should take the form: 1.5A1 + 0.4A3." + System.Environment.NewLine +
-                "Use 'or' for enveloping cases eg (1 or -1.4)A1," + System.Environment.NewLine +
-                "'to' for enveloping a range of cases eg (C1 to C3)", GH_ParamAccess.item);
+            pManager.AddTextParameter("Description", "De", "The description of the analysis case", GH_ParamAccess.item);
             pManager.AddIntegerParameter("CaseID", "ID", "The Case number if the Analysis Case ever belonged to a model", GH_ParamAccess.item);
         }
         #endregion

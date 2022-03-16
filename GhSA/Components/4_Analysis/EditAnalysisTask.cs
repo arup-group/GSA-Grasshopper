@@ -25,7 +25,7 @@ namespace GsaGH.Components
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat4())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditAnalysisTask;
         #endregion
@@ -44,26 +44,28 @@ namespace GsaGH.Components
             pManager.AddTextParameter("Solver Type", "sT", "Set Solver Type" + System.Environment.NewLine +
                 "Default is 1: Static - Accepted inputs are:" + System.Environment.NewLine +
                 "Static" + System.Environment.NewLine +
-            "Static_P_delta" + System.Environment.NewLine +
-            "Nonlinear_static" + System.Environment.NewLine +
-            "Modal_dynamic" + System.Environment.NewLine +
-            "Modal_P_delta" + System.Environment.NewLine +
-            "Ritz" + System.Environment.NewLine +
-            "Ritz_P_Delta" + System.Environment.NewLine +
-            "Response_spectrum" + System.Environment.NewLine +
-            "Pseudo_Response_spectrum" + System.Environment.NewLine +
-            "Linear_time_history" + System.Environment.NewLine +
-            "Harmonic" + System.Environment.NewLine +
-            "Footfall" + System.Environment.NewLine +
-            "Periodic" + System.Environment.NewLine +
-            "Buckling" + System.Environment.NewLine +
-            "Form_finding" + System.Environment.NewLine +
-            "Envelope" + System.Environment.NewLine +
-            "Model_stability" + System.Environment.NewLine +
-            "Model_stability_P_delta", GH_ParamAccess.item);
+                "Static_P_delta" + System.Environment.NewLine +
+                "Nonlinear_static" + System.Environment.NewLine +
+                "Modal_dynamic" + System.Environment.NewLine +
+                "Modal_P_delta" + System.Environment.NewLine +
+                "Ritz" + System.Environment.NewLine +
+                "Ritz_P_Delta" + System.Environment.NewLine +
+                "Response_spectrum" + System.Environment.NewLine +
+                "Pseudo_Response_spectrum" + System.Environment.NewLine +
+                "Linear_time_history" + System.Environment.NewLine +
+                "Harmonic" + System.Environment.NewLine +
+                "Footfall" + System.Environment.NewLine +
+                "Periodic" + System.Environment.NewLine +
+                "Buckling" + System.Environment.NewLine +
+                "Form_finding" + System.Environment.NewLine +
+                "Envelope" + System.Environment.NewLine +
+                "Model_stability" + System.Environment.NewLine +
+                "Model_stability_P_delta", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("TaskID", "ID", "The Task number - only set this if you want to append cases to an existing task.", GH_ParamAccess.item);
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
+            pManager[4].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -118,6 +120,10 @@ namespace GsaGH.Components
                     string type = gsaTask.Type.ToString();
                     if (DA.GetData(3, ref type))
                         gsaTask.Type = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType), type);
+
+                    int id = 0;
+                    if (DA.GetData(4, ref id))
+                        gsaTask.SetID(id);
 
                     DA.SetData(0, new GsaAnalysisTaskGoo(gsaTask));
                     DA.SetData(1, gsaTask.Name);

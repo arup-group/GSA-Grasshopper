@@ -175,6 +175,7 @@ namespace GsaGH.Components
                 }
                 else
                     geometryLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selections[3]);
+                getresults = true;
             }
         }
         #endregion
@@ -538,6 +539,22 @@ namespace GsaGH.Components
                     dmin_xxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
                         Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))
                         ).Min()).Min();
+
+                    if (dmax_x == 0 & 
+                    dmax_y == 0 &
+                    dmax_z == 0 &
+                    dmax_xx == 0 &
+                    dmax_yy == 0 &
+                    dmax_zz == 0 &
+                    dmin_x == 0 &
+                    dmin_y == 0 &
+                    dmin_z == 0 &
+                    dmin_xx == 0 &
+                    dmin_yy == 0 &
+                    dmin_zz == 0)
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "All results are zero");
+                    }
 
                     getresults = false;
                 }
