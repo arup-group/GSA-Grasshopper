@@ -73,9 +73,39 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AnalysisCaseInfo {
+            get {
+                object obj = ResourceManager.GetObject("AnalysisCaseInfo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AnalysisCaseParam {
+            get {
+                object obj = ResourceManager.GetObject("AnalysisCaseParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AnalysisTaskInfo {
             get {
                 object obj = ResourceManager.GetObject("AnalysisTaskInfo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AnalysisTaskParam {
+            get {
+                object obj = ResourceManager.GetObject("AnalysisTaskParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -116,6 +146,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap ConvertUnitNumber {
             get {
                 object obj = ResourceManager.GetObject("ConvertUnitNumber", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CreateAnalysisCase {
+            get {
+                object obj = ResourceManager.GetObject("CreateAnalysisCase", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -326,6 +366,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap CustomMaterial {
             get {
                 object obj = ResourceManager.GetObject("CustomMaterial", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap EditAnalysisTask {
+            get {
+                object obj = ResourceManager.GetObject("EditAnalysisTask", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

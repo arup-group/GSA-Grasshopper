@@ -89,9 +89,8 @@ namespace GsaGH.Parameters
         #region methods
         public override string ToString()
         {
-            return "GSA Analysis Task " + ((ID > 0) ? ID.ToString() : "") + " " + Type.ToString();
+            return "GSA Analysis Task" + ((ID > 0) ? " " + ID.ToString() : "") + " '" + Name + "' {" + Type.ToString() + "}";
         }
-
         #endregion
     }
 
@@ -215,7 +214,7 @@ namespace GsaGH.Parameters
     public class GsaAnalysisTaskParameter : GH_PersistentParam<GsaAnalysisTaskGoo>
     {
         public GsaAnalysisTaskParameter()
-          : base(new GH_InstanceDescription("AnalysisTask", "AT", "GSA Analysis Task", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("AnalysisTask", "ΣT", "GSA Analysis Task", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -223,7 +222,7 @@ namespace GsaGH.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SectionParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisTaskParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaAnalysisTaskGoo> values)
         {

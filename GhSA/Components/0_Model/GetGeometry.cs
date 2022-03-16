@@ -390,7 +390,7 @@ namespace GsaGH.Components
                 if (results.Elem2ds != null)
                 {
                     if (_mode == FoldMode.List)
-                        data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.ID));
+                        data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.ID.First()));
                     else
                     {
                         DataTree<GsaElement2dGoo> tree = new DataTree<GsaElement2dGoo>();
@@ -417,7 +417,7 @@ namespace GsaGH.Components
                 if (results.Elem3ds != null)
                 {
                     if (_mode == FoldMode.List)
-                        data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.ID));
+                        data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.ID.First()));
                     else
                     {
                         DataTree<GsaElement3dGoo> tree = new DataTree<GsaElement3dGoo>();

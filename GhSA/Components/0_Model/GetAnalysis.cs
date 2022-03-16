@@ -42,8 +42,8 @@ namespace GsaGH.Components
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Analysis Tasks", "AT", "List of Analysis Tasks in model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Analysis Cases", "AC", "Tree with list of Analysis Cases per Analysis Task", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Analysis Tasks", "ΣT", "List of Analysis Tasks in model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Analysis Cases", "ΣC", "Tree with list of Analysis Cases per Analysis Task", GH_ParamAccess.tree);
         }
         #endregion
 

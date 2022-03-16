@@ -117,6 +117,10 @@
     <Compile Include="Components\1_Properties\MaterialProperties.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
     <Compile Include="Components\1_Properties\CreateMaterial.cs" />
+    <Compile Include="Components\4_Analysis\EditAnalysisTask.cs" />
+    <Compile Include="Components\4_Analysis\AnalysisCaseInfo.cs" />
+    <Compile Include="Components\4_Analysis\CreateAnalysisCase.cs" />
+    <Compile Include="Components\4_Analysis\CreateAnalysisTask.cs" />
     <Compile Include="Components\GraveyardComp\CreateOffset_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProp2d_OBSOLETE.cs" />
@@ -538,6 +542,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\Prop3dParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\AnalysisCaseInfo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\AnalysisCaseParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\AnalysisTaskParam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CreateAnalysisCase.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\EditAnalysisTask.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

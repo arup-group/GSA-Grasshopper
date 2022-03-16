@@ -12,13 +12,18 @@ namespace GsaGH.Parameters
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public int ID { get; set; }
+        internal int ID { get; set; } = 0;
         public GsaAnalysisCase()
         { }
-        public GsaAnalysisCase(int id, string name, string description)
+        internal GsaAnalysisCase(int id, string name, string description)
         {
             this.ID = id;
             this.Name = name;  
+            this.Description = description;
+        }
+        public GsaAnalysisCase(string name, string description)
+        {
+            this.Name = name;
             this.Description = description;
         }
         public GsaAnalysisCase Duplicate()
@@ -39,7 +44,7 @@ namespace GsaGH.Parameters
         #region methods
         public override string ToString()
         {
-            return "GSA Analysis Case " + ((ID > 0) ? ID.ToString() : "") + " " + Name.ToString() + " " + Description.ToString();
+            return "GSA Analysis Case '" + Name.ToString() + "' {" + Description.ToString() + "}";
         }
 
         #endregion
@@ -168,7 +173,7 @@ namespace GsaGH.Parameters
     public class GsaAnalysisCaseParameter : GH_PersistentParam<GsaAnalysisCaseGoo>
     {
         public GsaAnalysisCaseParameter()
-          : base(new GH_InstanceDescription("AnalysisCase", "AC", "GSA Analysis Case", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("AnalysisCase", "ΣC", "GSA Analysis Case", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -176,7 +181,7 @@ namespace GsaGH.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SectionParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisCaseParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaAnalysisCaseGoo> values)
         {

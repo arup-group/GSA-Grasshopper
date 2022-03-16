@@ -14,7 +14,7 @@ namespace GsaGH.Components
     {
         #region Name and Ribbon Layout
         public LoadProp()
-            : base("Load Properties", "LoadProp", "Load Properties",
+            : base("Load Properties", "LoadProp", "Get properties of a GSA Load",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat3())
         { this.Hidden = true; } // sets the initial state of the component to hidden

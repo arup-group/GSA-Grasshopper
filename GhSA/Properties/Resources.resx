@@ -121,8 +121,17 @@
   <data name="Analyse" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Analyse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="AnalysisCaseInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\AnalysisCaseInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AnalysisCaseParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\AnalysisCaseParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="AnalysisTaskInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AnalysisTaskInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AnalysisTaskParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\AnalysisTaskParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="AreaLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AreaLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -135,6 +144,9 @@
   </data>
   <data name="ConvertUnitNumber" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\ConvertUnitNumber.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateAnalysisCase" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateAnalysisCase.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CreateAnalysisTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateAnalysisTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -198,6 +210,9 @@
   </data>
   <data name="CustomMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CustomMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditAnalysisTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EditAnalysisTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditBool6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditBool6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
