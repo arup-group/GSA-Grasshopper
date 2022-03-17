@@ -31,7 +31,7 @@ namespace GsaGH.Components
         {
         }
 
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
         protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Result0D;
         #endregion

@@ -165,5 +165,19 @@ namespace GsaGH.Util.Gsa
                 return new Vector3d(xx, yy, zz);
             }
         }
+        public static Vector3d GetResult(Vector3 result, MassUnit unit)
+        {
+            double x = new Mass(result.X, MassUnit.Kilogram).As(unit);
+            double y = new Mass(result.Y, MassUnit.Kilogram).As(unit);
+            double z = new Mass(result.Z, MassUnit.Kilogram).As(unit);
+            return new Vector3d(x, y, z);
+        }
+        public static Vector3d GetResult(Vector3 result, AreaMomentOfInertiaUnit unit)
+        {
+            double x = new AreaMomentOfInertia(result.X, AreaMomentOfInertiaUnit.MeterToTheFourth).As(unit);
+            double y = new AreaMomentOfInertia(result.Y, AreaMomentOfInertiaUnit.MeterToTheFourth).As(unit);
+            double z = new AreaMomentOfInertia(result.Z, AreaMomentOfInertiaUnit.MeterToTheFourth).As(unit);
+            return new Vector3d(x, y, z);
+        }
     }
 }

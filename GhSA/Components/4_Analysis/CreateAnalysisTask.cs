@@ -89,7 +89,7 @@ namespace GsaGH.Components
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Name", "Na", "Task Name", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Analysis Cases", "ΣCs", "List of GSA Analysis Cases (if left empty, all load cases in model will be added)", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Analysis Cases", "ΣAs", "List of GSA Analysis Cases (if left empty, all load cases in model will be added)", GH_ParamAccess.list);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
         }

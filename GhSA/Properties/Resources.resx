@@ -127,9 +127,6 @@
   <data name="AnalysisCaseParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AnalysisCaseParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="AnalysisTaskInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\AnalysisTaskInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="AnalysisTaskParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AnalysisTaskParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -142,9 +139,6 @@
   <data name="Bool6Param" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Bool6Param.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CombinationCaseResult" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CombinationCaseResult.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="ConvertUnitNumber" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\ConvertUnitNumber.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -156,6 +150,9 @@
   </data>
   <data name="CreateBool6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateBool6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateCombination" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateCombination.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CreateCombinationCase" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateCombinationCase.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -384,6 +381,9 @@
   </data>
   <data name="SectionProperties" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SectionProperties.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SelectResult" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SelectResult.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SpringParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SpringParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

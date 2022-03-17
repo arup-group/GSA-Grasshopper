@@ -173,7 +173,7 @@ namespace GsaGH.Parameters
     public class GsaAnalysisCaseParameter : GH_PersistentParam<GsaAnalysisCaseGoo>
     {
         public GsaAnalysisCaseParameter()
-          : base(new GH_InstanceDescription("AnalysisCase", "ΣC", "GSA Analysis Case", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("AnalysisCase", "ΣA", "GSA Analysis Case", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 

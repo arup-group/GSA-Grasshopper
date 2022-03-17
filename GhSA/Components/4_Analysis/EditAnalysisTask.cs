@@ -40,7 +40,7 @@ namespace GsaGH.Components
         {
             pManager.AddGenericParameter("Analysis Task", "ΣT", "GSA Analysis Task to Edit", GH_ParamAccess.item);
             pManager.AddTextParameter("Name", "Na", "Set Task Name", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Analysis Cases", "ΣCs", "Set List of GSA Analysis Cases", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Analysis Cases", "ΣAs", "Set List of GSA Analysis Cases", GH_ParamAccess.list);
             pManager.AddTextParameter("Solver Type", "sT", "Set Solver Type" + System.Environment.NewLine +
                 "Default is 1: Static - Accepted inputs are:" + System.Environment.NewLine +
                 "Static" + System.Environment.NewLine +
@@ -72,7 +72,7 @@ namespace GsaGH.Components
         {
             pManager.AddGenericParameter("Analysis Task", "ΣT", "GSA Analysis Task to Edit", GH_ParamAccess.item);
             pManager.AddTextParameter("Name", "Na", "Task Name", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Analysis Cases", "ΣCs", "List of GSA Analysis Cases", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Analysis Cases", "ΣAs", "List of GSA Analysis Cases", GH_ParamAccess.list);
             pManager.AddTextParameter("Solver Type", "sT", "Solver Type", GH_ParamAccess.item);
             pManager.AddIntegerParameter("TaskID", "ID", "The Task number if the Analysis Case ever belonged to a model", GH_ParamAccess.item);
         }

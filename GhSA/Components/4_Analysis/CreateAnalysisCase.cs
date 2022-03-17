@@ -46,7 +46,7 @@ namespace GsaGH.Components
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Analysis Case", "ΣC", "GSA Analysis Case", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Analysis Case", "ΣA", "GSA Analysis Case", GH_ParamAccess.item);
         }
         #endregion
 

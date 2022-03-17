@@ -102,12 +102,12 @@ namespace GsaGH.Components
             IQuantity length = new Length(0, lengthUnit);
             unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-            pManager.AddGenericParameter("GSA Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
+            pManager.AddGenericParameter("Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
                 "If you input more than one model they will be merged" + System.Environment.NewLine + "with first model in list taking priority for IDs", GH_ParamAccess.list);
-            pManager.AddGenericParameter("GSA Properties", "P", "Sections (PB), Prop2Ds (PA) and Prop3Ds (PV) to add/set in the model" + System.Environment.NewLine +
+            pManager.AddGenericParameter("Properties", "Pro", "GSA Sections (PB), Prop2Ds (PA) and Prop3Ds (PV) to add/set in the model" + System.Environment.NewLine +
                 "Properties already added to Elements or Members" + System.Environment.NewLine + "will automatically be added with Geometry input", GH_ParamAccess.list);
-            pManager.AddGenericParameter("GSA Geometry in [" + unitAbbreviation + "]", "Geo", "Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("GSA Load", "Ld", "Loads to add to the model" + System.Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Geometry in [" + unitAbbreviation + "]", "Geo", "GSA Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Load", "Ld", "Loads to add to the model" + System.Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
             pManager.AddGenericParameter("Analysis Tasks & Combinations", "ΣT", "GSA Analysis Tasks and Combination Cases to add to the model", GH_ParamAccess.list);
             for (int i = 0; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;

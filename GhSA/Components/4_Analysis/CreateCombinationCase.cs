@@ -46,7 +46,7 @@ namespace GsaGH.Components
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Combination Case", "Σ◑◐", "GSA Combination Case", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Combination Case", "ΣC", "GSA Combination Case", GH_ParamAccess.item);
         }
         #endregion
 

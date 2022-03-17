@@ -93,16 +93,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap AnalysisTaskInfo {
-            get {
-                object obj = ResourceManager.GetObject("AnalysisTaskInfo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap AnalysisTaskParam {
             get {
                 object obj = ResourceManager.GetObject("AnalysisTaskParam", resourceCulture);
@@ -143,16 +133,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap CombinationCaseResult {
-            get {
-                object obj = ResourceManager.GetObject("CombinationCaseResult", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap ConvertUnitNumber {
             get {
                 object obj = ResourceManager.GetObject("ConvertUnitNumber", resourceCulture);
@@ -186,6 +166,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap CreateBool6 {
             get {
                 object obj = ResourceManager.GetObject("CreateBool6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CreateCombination {
+            get {
+                object obj = ResourceManager.GetObject("CreateCombination", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -946,6 +936,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap SectionProperties {
             get {
                 object obj = ResourceManager.GetObject("SectionProperties", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap SelectResult {
+            get {
+                object obj = ResourceManager.GetObject("SelectResult", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

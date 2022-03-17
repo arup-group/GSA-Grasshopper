@@ -49,6 +49,15 @@ namespace GsaGH
             LengthUnit.Foot.ToString()
         };
 
+        internal static List<string> FilteredAreaMomentOfInertiaUnits = new List<string>()
+        {
+            AreaMomentOfInertiaUnit.MillimeterToTheFourth.ToString(),
+            AreaMomentOfInertiaUnit.CentimeterToTheFourth.ToString(),
+            AreaMomentOfInertiaUnit.MeterToTheFourth.ToString(),
+            AreaMomentOfInertiaUnit.InchToTheFourth.ToString(),
+            AreaMomentOfInertiaUnit.FootToTheFourth.ToString()
+        };
+
         public static Length Tolerance
         {
             get { return m_tolerance; }
@@ -228,7 +237,7 @@ namespace GsaGH
             set { m_moment = value; }
         }
         private static MomentUnit m_moment = Oasys.Units.MomentUnit.KilonewtonMeter;
-        internal static List<string> FilteredMomentUnits = Enum.GetNames(typeof(MomentUnit)).ToList();
+        internal static List<string> FilteredMomentUnits = Enum.GetNames(typeof(MomentUnit)).Skip(1).ToList();
         #endregion
 
         #region stress
@@ -281,7 +290,7 @@ namespace GsaGH
             set { m_axialstiffness = value; }
         }
         private static AxialStiffnessUnit m_axialstiffness = Oasys.Units.AxialStiffnessUnit.Kilonewton;
-        internal static List<string> FilteredAxialStiffnessUnits = Enum.GetNames(typeof(AxialStiffnessUnit)).ToList();
+        internal static List<string> FilteredAxialStiffnessUnits = Enum.GetNames(typeof(AxialStiffnessUnit)).Skip(1).ToList();
         #endregion
 
         #region bending stiffness
@@ -291,7 +300,7 @@ namespace GsaGH
             set { m_bendingstiffness = value; }
         }
         private static BendingStiffnessUnit m_bendingstiffness = Oasys.Units.BendingStiffnessUnit.KilonewtonSquareMeter;
-        internal static List<string> FilteredBendingStiffnessUnits = Enum.GetNames(typeof(BendingStiffnessUnit)).ToList();
+        internal static List<string> FilteredBendingStiffnessUnits = Enum.GetNames(typeof(BendingStiffnessUnit)).Skip(1).ToList();
         #endregion
 
         #region curvature

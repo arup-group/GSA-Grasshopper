@@ -16,18 +16,18 @@ namespace GsaGH.Components
     /// <summary>
     /// Component to retrieve non-geometric objects from a GSA model
     /// </summary>
-    public class GlobalResult : GH_Component
+    public class GlobalResult_OBSOLETE : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("267d8dc3-aa6e-4ed2-b82d-57fc290173cc");
-        public GlobalResult()
+        public GlobalResult_OBSOLETE()
           : base("Global Results", "GlobalResult", "Get Global Results from GSA model",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat5())
         { this.Hidden = true; } // sets the initial state of the component to hidden
-        public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ResultGlobal;
         #endregion
@@ -35,83 +35,7 @@ namespace GsaGH.Components
         #region Custom UI
         //This region overrides the typical component layout
         #endregion
-        public override void CreateAttributes()
-        {
-            if (first)
-            {
-                dropdownitems = new List<List<string>>();
-                dropdownitems.Add(Units.FilteredForceUnits);
-                dropdownitems.Add(Units.FilteredMomentUnits);
-                dropdownitems.Add(Units.FilteredMassUnits);
-                dropdownitems.Add(Units.FilteredLengthUnits);
-
-                selecteditems = new List<string>();
-                selecteditems.Add(Units.ForceUnit.ToString());
-                selecteditems.Add(Units.MomentUnit.ToString());
-                selecteditems.Add(Units.MassUnit.ToString());
-                selecteditems.Add(Units.LengthUnitGeometry.ToString());
-
-                first = false;
-            }
-
-            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-        }
-        public void SetSelected(int i, int j)
-        {
-            // change selected item
-            selecteditems[i] = dropdownitems[i][j];
-
-            switch (i)
-            {
-                case 0:
-                    forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[i]);
-                    break;
-                case 1:
-                    momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), selecteditems[i]);
-                    break;
-                case 2:
-                    massUnit = (MassUnit)Enum.Parse(typeof(MassUnit), selecteditems[i]);
-                    break;
-                case 3:
-                    lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
-                    break;
-            }
-            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-            ExpireSolution(true);
-            Params.OnParametersChanged();
-            this.OnDisplayExpired(true);
-        }
-        private void UpdateUIFromSelectedItems()
-        {
-            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[0]);
-            momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), selecteditems[1]);
-            massUnit = (MassUnit)Enum.Parse(typeof(MassUnit), selecteditems[2]);
-            lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[3]);
-
-            CreateAttributes();
-            ExpireSolution(true);
-            Params.OnParametersChanged();
-            this.OnDisplayExpired(true);
-        }
-
-        // list of lists with all dropdown lists conctent
-        List<List<string>> dropdownitems;
-        // list of selected items
-        List<string> selecteditems;
-        // list of descriptions 
-        List<string> spacerDescriptions = new List<string>(new string[]
-        {
-            "Force Unit",
-            "Moment Unit",
-            "Mass Unit",
-            "Inertia Unit",
-        });
-
-        private ForceUnit forceUnit = Units.ForceUnit;
-        private MomentUnit momentUnit = Units.MomentUnit;
-        private MassUnit massUnit = Units.MassUnit;
-        private LengthUnit lengthUnit = Units.LengthUnitGeometry;
-        bool first = true;
+        
         #region Input and output
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -123,20 +47,13 @@ namespace GsaGH.Components
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            IQuantity force = new Force(0, forceUnit);
-            string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-            string momentunitAbbreviation = Oasys.Units.Moment.GetAbbreviation(momentUnit);
-            IQuantity mass = new Mass(0, massUnit);
-            string massUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-            IQuantity inertia = new AreaMomentOfInertia(0, Units.GetSectionAreaMomentOfInertiaUnit(lengthUnit));
-            string inertiaUnitAbbreviation = string.Concat(inertia.ToString().Where(char.IsLetter));
 
-            pManager.AddVectorParameter("Total Force Loads [" + forceUnitAbbreviation + "]", "ΣF", "Sum of all Force Loads in GSA Model", GH_ParamAccess.item);
-            pManager.AddVectorParameter("Total Moment Loads [" + momentunitAbbreviation + "]", "ΣM", "Sum of all Moment Loads in GSA Model", GH_ParamAccess.item);
-            pManager.AddVectorParameter("Total Force Reactions [" + forceUnitAbbreviation + "]", "ΣRf", "Sum of all Rection Forces in GSA Model", GH_ParamAccess.item);
-            pManager.AddVectorParameter("Total Moment Reactions [" + momentunitAbbreviation + "]", "ΣRm", "Sum of all Reaction Moments in GSA Model", GH_ParamAccess.item);
-            pManager.AddVectorParameter("Effective Mass [" + massUnitAbbreviation + "]", "Σkg", "Effective Mass in GSA Model", GH_ParamAccess.item);
-            pManager.AddVectorParameter("Effective Inertia [" + inertiaUnitAbbreviation + "]", "ΣI", "Effective Inertia in GSA Model", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Total Force Loads [kN]", "ΣF", "Sum of all Force Loads in GSA Model", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Total Moment Loads [kNm]", "ΣM", "Sum of all Moment Loads in GSA Model", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Total Force Reactions [kN]", "ΣRf", "Sum of all Rection Forces in GSA Model", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Total Moment Reactions [kNm]", "ΣRm", "Sum of all Reaction Moments in GSA Model", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Effective Mass [kg]", "Σkg", "Effective Mass in GSA Model", GH_ParamAccess.item);
+            pManager.AddVectorParameter("Effective Inertia [m4]", "ΣI", "Effective Inertia in GSA Model", GH_ParamAccess.item);
             pManager.AddNumberParameter("Mode", "Mo", "Mode number if LC is a dynamic task", GH_ParamAccess.item);
             pManager.AddVectorParameter("Modal", "Md", "Modal results in vector form:" + System.Environment.NewLine + 
                 "x: Modal Mass" + System.Environment.NewLine +
@@ -241,39 +158,6 @@ namespace GsaGH.Components
                 DA.SetData(9, analysisCaseResult.Global.LoadFactor);
             }
         }
-        #region (de)serialization
-        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-        {
-            DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-            return base.Write(writer);
-        }
-        public override bool Read(GH_IO.Serialization.GH_IReader reader)
-        {
-            try
-            {
-                DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-            }
-            catch (Exception)
-            {
-                dropdownitems = new List<List<string>>();
-                dropdownitems.Add(Units.FilteredForceUnits);
-                dropdownitems.Add(Units.FilteredMomentUnits);
-                dropdownitems.Add(Units.FilteredMassUnits);
-                dropdownitems.Add(Units.FilteredLengthUnits);
-
-                selecteditems = new List<string>();
-                selecteditems.Add(ForceUnit.Kilonewton.ToString());
-                selecteditems.Add(MomentUnit.KilonewtonMeter.ToString());
-                selecteditems.Add(MassUnit.Kilogram.ToString());
-                selecteditems.Add(LengthUnit.Meter.ToString());
-            }
-            
-            first = false;
-            UpdateUIFromSelectedItems();
-            return base.Read(reader);
-        }
-
-        #endregion
     }
 }
 

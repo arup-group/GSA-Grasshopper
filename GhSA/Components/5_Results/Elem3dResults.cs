@@ -33,7 +33,7 @@ namespace GsaGH.Components
         {
         }
 
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
         protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Result3D;
         #endregion
@@ -368,9 +368,6 @@ namespace GsaGH.Components
                     dmin_xyz = 0;
                     dmin_xxyyzz = 0;
 
-                    //double unitfactorxyz = 1;
-                    //double unitfactorxxyyzz = 1;
-
                     Parallel.ForEach(globalResults.Keys, key =>
                     {
                         // lists for results
@@ -391,14 +388,7 @@ namespace GsaGH.Components
                                     Parallel.For(0, trans_vals.Count, i => //foreach (Double3 val in trans_vals)
                                     {
                                         xyzRes[i] = ResultHelper.GetResult(trans_vals[i], resultLengthUnit);
-                                        //Double3 val = trans_vals[i];
-                                        //Vector3d valxyz = new Vector3d
-                                        //{
-                                        //    X = val.X / unitfactorxyz,
-                                        //    Y = val.Y / unitfactorxyz,
-                                        //    Z = val.Z / unitfactorxyz
-                                        //};
-                                        //xyzRes[i] = valxyz;
+                                        
                                     });
                                     break;
 
@@ -412,64 +402,18 @@ namespace GsaGH.Components
                                         if (i < stress_vals.Count)
                                         {
                                             xyzRes[i] = ResultHelper.GetResult(stress_vals[i], stressUnit);
-                                            //Tensor3 val = stress_vals[i];
-                                            //Vector3d valxyz = new Vector3d
-                                            //{
-                                            //    X = val.XX / unitfactorxxyyzz,
-                                            //    Y = val.YY / unitfactorxxyyzz,
-                                            //    Z = val.ZZ / unitfactorxxyyzz
-                                            //};
-                                            //xyzRes[i] = valxyz;
                                         }
                                         else
                                         {
                                             xxyyzzRes[i - stress_vals.Count] = ResultHelper.GetResult(stress_vals[i - stress_vals.Count], stressUnit);
-                                            //Tensor3 val = stress_vals[i - stress_vals.Count];
-                                            //Vector3d valxxyyzz = new Vector3d
-                                            //{
-                                            //    X = val.XY / unitfactorxxyyzz,
-                                            //    Y = val.YZ / unitfactorxxyyzz,
-                                            //    Z = val.ZX / unitfactorxxyyzz
-                                            //};
-                                            //xxyyzzRes[i - stress_vals.Count] = valxxyyzz;
                                         }
                                     });
                                     break;
                             }
 
-                            // update max and min values
-                            //dmax_x = Math.Max(xyz.Max(val => val.X), dmax_x);
-                            //dmax_y = Math.Max(xyz.Max(val => val.Y), dmax_y);
-                            //dmax_z = Math.Max(xyz.Max(val => val.Z), dmax_z);
-
-                            //dmax_xyz = Math.Max(
-                            //    xyz.Max(val =>
-                            //    Math.Sqrt(
-                            //        Math.Pow(val.X, 2) +
-                            //        Math.Pow(val.Y, 2) +
-                            //        Math.Pow(val.Z, 2))),
-                            //    dmax_xyz);
-
-                            //dmin_x = Math.Min(xyz.Min(val => val.X), dmin_x);
-                            //dmin_y = Math.Min(xyz.Min(val => val.Y), dmin_y);
-                            //dmin_z = Math.Min(xyz.Min(val => val.Z), dmin_z);
-
-                            //if (_mode == FoldMode.Stress)
-                            //{
-                            //    dmax_xx = Math.Max(xxyyzz.Max(val => val.X), dmax_xx);
-                            //    dmax_yy = Math.Max(xxyyzz.Max(val => val.Y), dmax_yy);
-                            //    dmax_zz = Math.Max(xxyyzz.Max(val => val.Z), dmax_zz);
-
-                            //    dmin_xx = Math.Min(xxyyzz.Min(val => val.X), dmin_xx);
-                            //    dmin_yy = Math.Min(xxyyzz.Min(val => val.Y), dmin_yy);
-                            //    dmin_zz = Math.Min(xxyyzz.Min(val => val.Z), dmin_zz);
-                            //}
-
                             // add vector lists to main lists
                             xyzResults[key] = xyzRes;
                             xxyyzzResults[key] = xxyyzzRes;
-                            //xyz_out.AddRange(xyz, new GH_Path(key));
-                            //xxyyzz_out.AddRange(xxyyzz, new GH_Path(key));
                         }
                     });
 
@@ -669,12 +613,7 @@ namespace GsaGH.Components
                     }
                     meshes[key] = tempmesh;
                     values[key] = vals;
-                    //resultMeshes.Add(tempmesh, vals);
-                    //meshes.Add(tempmesh);
-                    //resultMeshes.Add(resultMesh);
                     #endregion
-                    //elemID.Add(key);
-                    //parentMember.Add(element.ParentMember.Member);
                 });
                 resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList());
                 //resultMeshes.Finalise();
