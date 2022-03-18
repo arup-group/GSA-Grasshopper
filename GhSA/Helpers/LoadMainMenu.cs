@@ -24,7 +24,7 @@ namespace GsaGH.UI.Menu
 
             AppDomain currentDomain = AppDomain.CurrentDomain;
             Assembly[] assemblies = currentDomain.GetAssemblies();
-            foreach (Assembly ass in currentDomain.GetAssemblies())
+            foreach (Assembly ass in assemblies)
             {
                 if (ass.FullName.StartsWith("AdSecGH"))
                 {
@@ -112,34 +112,21 @@ namespace GsaGH.UI.Menu
                 // return if menu has not yet been created
                 if (mainMenu == null || mainMenu.Items.Count == 0)
                     return;
-                // return if trim loop has not yet been run by GSA plugin
-                int n = 0;
                 for (int i = 0; i < mainMenu.Items.Count; i++)
                 {
                     if (mainMenu.Items[i].ToString() == "Oasys")
-                        n++;
-                }
-                if (n > 1) // if more than one Oasys menu exist we let GSA plugin handle removing that
-                    return;
-                else if (n == 1) // if there is just one Oasys menu we append to that one
-                {
-                    for (int i = 0; i < mainMenu.Items.Count; i++)
                     {
-                        if (mainMenu.Items[i].ToString() == "Oasys")
+                        ToolStripMenuItem oasysMenu = mainMenu.Items[i] as ToolStripMenuItem;
+                        if (oasysMenu.DropDown.Items.Count == n_existingMenus)
                         {
-                            ToolStripMenuItem oasysMenu = mainMenu.Items[i] as ToolStripMenuItem;
-                            if (oasysMenu.DropDown.Items.Count == n_existingMenus)
-                            {
-                                // add separator first
-                                oasysMenu.DropDown.Items.Add(GH_DocumentObject.Menu_AppendSeparator(oasysMenu.DropDown));
-                                // append Compos menu items
-                                AddMenuItem(oasysMenu, sender, e);
-                            }
+                            // add separator first
+                            oasysMenu.DropDown.Items.Add(GH_DocumentObject.Menu_AppendSeparator(oasysMenu.DropDown));
+                            // append menu items
+                            AddMenuItem(oasysMenu, sender, e);
+                            menuTrimTimer.Stop();
                         }
                     }
                 }
-                else
-                    return;
             }
             else
             {
@@ -154,28 +141,28 @@ namespace GsaGH.UI.Menu
                         }
                         else
                         {
-                            
                             mainMenu.Items.RemoveAt(i);
                             i--;
                         }
                     }
                 }
+                menuTrimTimer.Stop();
             }
 
-            menuTrimTimer.Stop();
+            
 
-            if (AppendToExistingMenu)
-            {
-                for (int i = 0; i < mainMenu.Items.Count; i++)
-                {
-                    if (mainMenu.Items[i].ToString() == "Oasys")
-                    {
-                        ToolStripMenuItem oasysMenu = mainMenu.Items[i] as ToolStripMenuItem;
-                        while (oasysMenu.DropDown.Items.Count > n_existingMenus + 3)
-                            oasysMenu.DropDown.Items.RemoveAt(n_existingMenus + 3);
-                    }
-                }
-            }
+            //if (AppendToExistingMenu)
+            //{
+            //    for (int i = 0; i < mainMenu.Items.Count; i++)
+            //    {
+            //        if (mainMenu.Items[i].ToString() == "Oasys")
+            //        {
+            //            ToolStripMenuItem oasysMenu = mainMenu.Items[i] as ToolStripMenuItem;
+            //            while (oasysMenu.DropDown.Items.Count > n_existingMenus + 3)
+            //                oasysMenu.DropDown.Items.RemoveAt(n_existingMenus + 3);
+            //        }
+            //    }
+            //}
         }
     }
 }

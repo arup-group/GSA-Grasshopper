@@ -5,11 +5,34 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using UnitsNet;
+using System.Collections.Concurrent;
+using Rhino.Geometry;
+using UnitsNet.Units;
+using Oasys.Units;
 
 namespace GsaGH.Parameters
 {
-    internal class GsaResultsMinMax
+    internal class GsaResultQuantity
     {
+        internal IQuantity X { get; set; }
+        internal IQuantity Y { get; set; }
+        internal IQuantity Z { get; set; }
+        internal IQuantity XYZ { get; set; }
+        internal GsaResultQuantity()
+        { }
+    }
+    internal class GsaResultsValues
+    {
+        internal enum ResultType
+        {
+            Displacement,
+            Force,
+            Stress,
+            Shear,
+            StrainEnergy
+        }
+        internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults { get; set; } = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
+        internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults { get; set; } = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
         internal double dmax_x { get; set; } = 0;
         internal double dmax_y { get; set; } = 0;
         internal double dmax_z { get; set; } = 0;
@@ -27,28 +50,143 @@ namespace GsaGH.Parameters
         internal double dmin_xyz { get; set; } = 0;
         internal double dmin_xxyyzz { get; set; } = 0;
 
-        internal GsaResultsMinMax()
+        internal GsaResultsValues()
         { }
     }
     public class GsaResult
     {
         #region analysiscase members
+        /// <summary>
+        /// Analysis Case API Result
+        /// </summary>
         internal AnalysisCaseResult AnalysisCaseResult { get; set; }
+
+        /// <summary>
+        /// Analysis Case 3DElement API Result Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// </summary>
         internal Dictionary<string, ReadOnlyDictionary<int, Element3DResult>> ACaseElement3DResults { get; set; }
+        /// <summary>
+        /// Analysis Case 3DElement Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// </summary>
+        internal Dictionary<string, GsaResultsValues> ACaseElement3DValues { get; set; }
+
+        /// <summary>
+        /// Analysis Case 2DElement API Result Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// </summary>
         internal Dictionary<string, ReadOnlyDictionary<int, Element2DResult>> ACaseElement2DResults { get; set; }
-        internal Dictionary<string, ReadOnlyDictionary<int, Element1DResult>> ACaseElement1DResults { get; set; }
+        /// <summary>
+        /// Analysis Case 2DElement Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// </summary>
+        internal Dictionary<string, GsaResultsValues> ACaseElement2DValues { get; set; }
+
+        /// <summary>
+        /// Analysis Case 1DElement API Result Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = Tuple<elementList, numberOfDivisions>
+        /// </summary>
+        internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, Element1DResult>> ACaseElement1DResults { get; set; }
+        /// <summary>
+        /// Analysis Case 1DElement Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = Tuple<elementList, numberOfDivisions>
+        /// </summary>
+        internal Dictionary<Tuple<string, int>, GsaResultsValues> ACaseElement1DValues { get; set; }
+
+        /// <summary>
+        /// Analysis Case Node API Result Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// </summary>
         internal Dictionary<string, ReadOnlyDictionary<int, NodeResult>> ACaseNodeResults { get; set; }
-        internal Dictionary<string, GsaResultsMinMax> ACaseResultsMinMax { get; set; }
+        /// <summary>
+        /// Analysis Case Node Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// </summary>
+        internal Dictionary<string, GsaResultsValues> ACaseNodeValues { get; set; }
         #endregion
+
         #region combination members
+        /// <summary>
+        /// Combination Case API Result
+        /// </summary>
         internal CombinationCaseResult CombinationCaseResult { get; set; }
+        /// <summary>
+        /// User set permutation ID. If -1 => return all.
+        /// </summary>
         internal int CombPermutationID { get; set; }
-        internal int NumPermutations { get; set; }
+        /// <summary>
+        /// Calculated number of permutations in combination case
+        /// </summary>
+        internal int NumPermutations { get; }
+
+        /// <summary>
+        /// Combination Case 3DElement API Result Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// value = <elementID, collection<permutationResult>
+        /// </summary>
         internal Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<Element3DResult>>> ComboElement3DResults { get; set; }
+        /// <summary>
+        /// Combination Case 3DElement Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// value = List<permutationsResults>
+        /// </summary>
+        internal Dictionary<string, List<GsaResultsValues>> ComboElement3DValues { get; set; }
+
+        /// <summary>
+        /// Combination Case 1DElement API Result Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = Tuple<elementList, numberOfDivisions>
+        /// value = <elementID, collection<permutationResult>
+        /// </summary>
         internal Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>>> ComboElement2DResults { get; set; }
-        internal Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>> ComboElement1DResults { get; set; }
+        /// <summary>
+        /// Combination Case 2DElement Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// value = List<permutationsResults>
+        /// </summary>
+        internal Dictionary<string, List<GsaResultsValues>> ComboElement2DValues { get; set; }
+
+        /// <summary>
+        /// Combination Case 1DElement API Result Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = Tuple<elementList, numberOfDivisions>
+        /// value = <elementID, collection<permutationResult>
+        /// </summary>
+        internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>> ComboElement1DResults { get; set; }
+        /// <summary>
+        /// Combination Case 1DElement Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// value = List<permutationsResults>
+        /// </summary>
+        internal Dictionary<Tuple<string, int>, List<GsaResultsValues>> ComboElement1DValues { get; set; }
+
+        /// <summary>
+        /// Combination Case Node API Result Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// value = <elementID, collection<permutationResult>
+        /// </summary>
         internal Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>>> ComboNodeResults { get; set; }
-        internal Dictionary<string, List<GsaResultsMinMax>> ComboResultsMinMax { get; set; }
+        /// <summary>
+        /// Combination Case Node Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// value = List<permutationsResults>
+        /// </summary>
+        internal Dictionary<string, List<GsaResultsValues>> ComboNodeValues { get; set; }
         #endregion
         internal int CaseID { get; set; }
         public enum ResultType
