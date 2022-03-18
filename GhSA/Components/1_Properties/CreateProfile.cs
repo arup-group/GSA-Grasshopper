@@ -396,7 +396,7 @@ namespace GsaGH.Components
         {
             { "Angle", "IAngleProfile" },
             { "Catalogue", "ICatalogueProfile" },
-            { "Channel", "IChannel" },
+            { "Channel", "IChannelProfile" },
             { "Circle Hollow", "ICircleHollowProfile" },
             { "Circle", "ICircleProfile" },
             { "Cruciform Symmetrical", "ICruciformSymmetricalProfile" },
@@ -464,6 +464,10 @@ namespace GsaGH.Components
         #endregion
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            this.ClearRuntimeMessages();
+            for (int i = 0; i < this.Params.Input.Count; i++)
+                this.Params.Input[i].ClearRuntimeMessages();
+
             #region catalogue
             this.ClearRuntimeMessages();
             if (_mode == FoldMode.Catalogue)

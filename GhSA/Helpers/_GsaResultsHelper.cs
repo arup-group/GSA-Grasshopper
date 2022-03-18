@@ -437,11 +437,11 @@ namespace GsaGH.Util.Gsa
                             // calculations in parallel by doubling the i-counter
                             if (i < forces.Count)
                             {
-                                xyzRes[i] = GetResult(forces[i], forceUnit);
+                                xyzRes[i] = GetQuantityResult(forces[i], forceUnit);
                             }
                             else
                             {
-                                xxyyzzRes[i - forces.Count] = GetResult(moments[i - forces.Count], momentUnit);
+                                xxyyzzRes[i - forces.Count] = GetQuantityResult(moments[i - forces.Count], momentUnit);
                             }
                         });
                         break;
@@ -450,7 +450,7 @@ namespace GsaGH.Util.Gsa
                         List<Vector2> shears = elementResults.Shear.ToList();
                         Parallel.For(0, shears.Count, i => // (Vector2 shear in shears)
                         {
-                            xyzRes[i] = GetResult(shears[i], forceUnit);
+                            xyzRes[i] = GetQuantityResult(shears[i], forceUnit);
                         });
                         break;
 
@@ -461,11 +461,11 @@ namespace GsaGH.Util.Gsa
                             // split computation into two parts by doubling the i-counter
                             if (i < stresses.Count)
                             {
-                                xyzRes[i] = GetResult(stresses[i], stressUnit, false);
+                                xyzRes[i] = GetQuantityResult(stresses[i], stressUnit, false);
                             }
                             else
                             {
-                                xxyyzzRes[i - stresses.Count] = GetResult(stresses[i - stresses.Count], stressUnit, true);
+                                xxyyzzRes[i - stresses.Count] = GetQuantityResult(stresses[i - stresses.Count], stressUnit, true);
                             }
                         });
                         break;
@@ -477,31 +477,25 @@ namespace GsaGH.Util.Gsa
             });
 
             // update max and min values
-            r.dmax_x = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
-            r.dmax_y = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
-            r.dmax_z = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
-            r.dmax_xyz = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
-                Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))
-                ).Max()).Max();
-            r.dmin_x = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
-            r.dmin_y = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
-            r.dmin_z = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
-            r.dmin_xyz = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
-                Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))).Min()).Min();
+            r.dmax_x = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Max()).Max();
+            r.dmax_y = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Max()).Max();
+            r.dmax_z = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Max()).Max();
+            r.dmax_xyz = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Max()).Max();
+            r.dmin_x = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Min()).Min();
+            r.dmin_y = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Min()).Min();
+            r.dmin_z = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Min()).Min();
+            r.dmin_xyz = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Min()).Min();
 
             if (type != GsaResultsValues.ResultType.Shear)
             {
-                r.dmax_xx = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
-                r.dmax_yy = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
-                r.dmax_zz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
-                r.dmax_xxyyzz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
-                    Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))).Max()).Max();
-
-                r.dmin_xx = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
-                r.dmin_yy = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
-                r.dmin_zz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
-                r.dmin_xxyyzz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
-                    Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))).Min()).Min();
+                r.dmax_xx = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Max()).Max();
+                r.dmax_yy = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Max()).Max();
+                r.dmax_zz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Max()).Max();
+                r.dmax_xxyyzz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Max()).Max();
+                r.dmin_xx = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Min()).Min();
+                r.dmin_yy = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Min()).Min();
+                r.dmin_zz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Min()).Min();
+                r.dmin_xxyyzz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Min()).Min();
             }
             return r;
         }
@@ -516,9 +510,9 @@ namespace GsaGH.Util.Gsa
                     // lists for results
                     Element1DResult elementResults = globalResults[key];
                     List<Double6> values = new List<Double6>();
-                    ConcurrentDictionary<int, Vector3d> xyzRes = new ConcurrentDictionary<int, Vector3d>();
+                    ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
                     xyzRes.AsParallel().AsOrdered();
-                    ConcurrentDictionary<int, Vector3d> xxyyzzRes = new ConcurrentDictionary<int, Vector3d>();
+                    ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
                     xxyyzzRes.AsParallel().AsOrdered();
 
                     // set the result type dependent on user selection in dropdown
@@ -541,12 +535,12 @@ namespace GsaGH.Util.Gsa
                         switch (type)
                         {
                             case (GsaResultsValues.ResultType.Displacement):
-                                xyzRes[i] = GetResult(result, resultLengthUnit);
-                                xxyyzzRes[i] = GetResult(result, AngleUnit.Radian);
+                                xyzRes[i] = GetQuantityResult(result, resultLengthUnit);
+                                xxyyzzRes[i] = GetQuantityResult(result, AngleUnit.Radian);
                                 break;
                             case (GsaResultsValues.ResultType.Force):
-                                xyzRes[i] = GetResult(result, forceUnit);
-                                xxyyzzRes[i] = GetResult(result, momentUnit);
+                                xyzRes[i] = GetQuantityResult(result, forceUnit);
+                                xxyyzzRes[i] = GetQuantityResult(result, momentUnit);
                                 break;
                         }
                     });
@@ -556,30 +550,24 @@ namespace GsaGH.Util.Gsa
                 });
 
             // update max and min values
-            r.dmax_x = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
-            r.dmax_y = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
-            r.dmax_z = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
-            r.dmax_xyz = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
-                    Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))).Max()).Max();
-            r.dmin_x = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
-            r.dmin_y = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
-            r.dmin_z = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
-            r.dmin_xyz = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
-                    Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))).Min()).Min();
-            r.dmax_xx = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
-            r.dmax_yy = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
-            r.dmax_zz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
-            r.dmax_xxyyzz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
-                    Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))).Max()).Max();
-            r.dmin_xx = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
-            r.dmin_yy = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
-            r.dmin_zz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
-            r.dmin_xxyyzz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
-                    Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))).Min()).Min();
+            r.dmax_x = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Max()).Max();
+            r.dmax_y = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Max()).Max();
+            r.dmax_z = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Max()).Max();
+            r.dmax_xyz = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Max()).Max();
+            r.dmin_x = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Min()).Min();
+            r.dmin_y = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Min()).Min();
+            r.dmin_z = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Min()).Min();
+            r.dmin_xyz = r.xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Min()).Min();
+            r.dmax_xx = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Max()).Max();
+            r.dmax_yy = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Max()).Max();
+            r.dmax_zz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Max()).Max();
+            r.dmax_xxyyzz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Max()).Max();
+            r.dmin_xx = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Min()).Min();
+            r.dmin_yy = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Min()).Min();
+            r.dmin_zz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Min()).Min();
+            r.dmin_xxyyzz = r.xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Min()).Min();
                 
             return r;
         }
-
-
     }
 }

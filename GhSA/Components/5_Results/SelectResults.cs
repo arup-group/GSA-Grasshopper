@@ -342,7 +342,7 @@ namespace GsaGH.Components
                         result = new GsaResult(gsaModel.Model, combinationCaseResults[CaseID], CaseID, Permutation);
                         break;
                 }
-                result.
+                
                 DA.SetData(0, new GsaResultGoo(result));
             }
         }

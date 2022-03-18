@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\1_Properties\CreateProp3d.cs" />
+    <Compile Include="Components\1_Properties\TaperProfile.cs" />
     <Compile Include="Components\1_Properties\CustomMaterial.cs" />
     <Compile Include="Components\1_Properties\EditProp3d.cs" />
     <Compile Include="Components\1_Properties\MaterialProperties.cs" />
@@ -574,6 +575,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\SelectResult.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\TaperProfile.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -963,6 +963,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap TaperProfile {
+            get {
+                object obj = ResourceManager.GetObject("TaperProfile", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Titles {
             get {
                 object obj = ResourceManager.GetObject("Titles", resourceCulture);
