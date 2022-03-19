@@ -1707,9 +1707,12 @@ namespace GsaGH.Util.Gsa
         #endregion
 
         #region analysis
-        public static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(GsaModel gsaModel)
+        internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(GsaModel gsaModel)
         {
-            Model model = gsaModel.Model;
+            return GetAnalysisTasksAndCombinations(gsaModel.Model);
+        }
+        internal static Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations(Model model)
+        {
             ReadOnlyDictionary<int, AnalysisTask> tasks = model.AnalysisTasks();
 
             List<GsaAnalysisTaskGoo> tasksList = new List<GsaAnalysisTaskGoo>();

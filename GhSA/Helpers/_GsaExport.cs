@@ -454,7 +454,7 @@ namespace GsaGH.Util.Gsa.ToGSA
                         task.SetID(gsa.AddAnalysisTask());
 
                     if (task.Cases == null)
-                        task.CreateDeafultCases(model);
+                        task.CreateDeafultCases(gsa);
 
                     foreach (GsaAnalysisCase ca in task.Cases)
                         gsa.AddAnalysisCaseToTask(task.ID, ca.Name, ca.Description);

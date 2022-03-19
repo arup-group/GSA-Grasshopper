@@ -42,25 +42,25 @@ namespace GsaGH.Components
             pManager.AddTextParameter("Name", "Na", "Set Task Name", GH_ParamAccess.item);
             pManager.AddGenericParameter("Analysis Cases", "ΣAs", "Set List of GSA Analysis Cases", GH_ParamAccess.list);
             pManager.AddTextParameter("Solver Type", "sT", "Set Solver Type" + System.Environment.NewLine +
-                "Default is 1: Static - Accepted inputs are:" + System.Environment.NewLine +
-                "Static" + System.Environment.NewLine +
-                "Static_P_delta" + System.Environment.NewLine +
-                "Nonlinear_static" + System.Environment.NewLine +
-                "Modal_dynamic" + System.Environment.NewLine +
-                "Modal_P_delta" + System.Environment.NewLine +
-                "Ritz" + System.Environment.NewLine +
-                "Ritz_P_Delta" + System.Environment.NewLine +
-                "Response_spectrum" + System.Environment.NewLine +
-                "Pseudo_Response_spectrum" + System.Environment.NewLine +
-                "Linear_time_history" + System.Environment.NewLine +
-                "Harmonic" + System.Environment.NewLine +
-                "Footfall" + System.Environment.NewLine +
-                "Periodic" + System.Environment.NewLine +
-                "Buckling" + System.Environment.NewLine +
-                "Form_finding" + System.Environment.NewLine +
-                "Envelope" + System.Environment.NewLine +
-                "Model_stability" + System.Environment.NewLine +
-                "Model_stability_P_delta", GH_ParamAccess.item);
+                "Default is: '1 : Static' - Accepted inputs are (either integer or text):" + System.Environment.NewLine +
+                "1 : Static" + System.Environment.NewLine +
+                "4 : Static_P_delta" + System.Environment.NewLine +
+                "8 : Nonlinear_static" + System.Environment.NewLine +
+                "2 : Modal_dynamic" + System.Environment.NewLine +
+                "5 : Modal_P_delta" + System.Environment.NewLine +
+                "32 : Ritz" + System.Environment.NewLine +
+                "33 : Ritz_P_Delta" + System.Environment.NewLine +
+                "6 : Response_spectrum" + System.Environment.NewLine +
+                "42 : Pseudo_Response_spectrum" + System.Environment.NewLine +
+                "15 : Linear_time_history" + System.Environment.NewLine +
+                "14 : Harmonic" + System.Environment.NewLine +
+                "34 : Footfall" + System.Environment.NewLine +
+                "35 : Periodic" + System.Environment.NewLine +
+                "3 : Buckling" + System.Environment.NewLine +
+                "9 : Form_finding" + System.Environment.NewLine +
+                "37 : Envelope" + System.Environment.NewLine +
+                "39 : Model_stability" + System.Environment.NewLine +
+                "40 : Model_stability_P_delta", GH_ParamAccess.item);
             pManager.AddIntegerParameter("TaskID", "ID", "The Task number - only set this if you want to append cases to an existing task.", GH_ParamAccess.item);
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -119,7 +119,12 @@ namespace GsaGH.Components
 
                     string type = gsaTask.Type.ToString();
                     if (DA.GetData(3, ref type))
-                        gsaTask.Type = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType), type);
+                    {
+                        if (type.Any(char.IsDigit))
+                            gsaTask.Type = (GsaAnalysisTask.AnalysisType)int.Parse(type);
+                        else
+                            gsaTask.Type = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType), type);
+                    }
 
                     int id = 0;
                     if (DA.GetData(4, ref id))
@@ -127,7 +132,10 @@ namespace GsaGH.Components
 
                     DA.SetData(0, new GsaAnalysisTaskGoo(gsaTask));
                     DA.SetData(1, gsaTask.Name);
-                    DA.SetDataList(2, new List<GsaAnalysisCaseGoo>(gsaTask.Cases.Select(x => new GsaAnalysisCaseGoo(x))));
+                    if (gsaTask.Cases != null)
+                        DA.SetDataList(2, new List<GsaAnalysisCaseGoo>(gsaTask.Cases.Select(x => new GsaAnalysisCaseGoo(x))));
+                    else
+                        DA.SetData(2, null);
                     DA.SetData(3, type);
                     DA.SetData(4, gsaTask.ID);
                 }
