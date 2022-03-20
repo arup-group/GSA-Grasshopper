@@ -272,6 +272,11 @@ namespace GsaGH.Components
                     {
                         case GsaResult.ResultType.AnalysisCase:
                             analysisCaseResults = gsaModel.Model.Results();
+                            if (analysisCaseResults == null || analysisCaseResults.Count == 0 )
+                            {
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "The GSA Model contains no results. Please analyse the model first.");
+                                return;
+                            }
                             dropdownitems[1] = new List<string>();
                             dropdownitems[1].Add("All");
                             // add analysis cases to dropdown menu
@@ -297,6 +302,11 @@ namespace GsaGH.Components
 
                         case GsaResult.ResultType.Combination:
                             combinationCaseResults = gsaModel.Model.CombinationCaseResults();
+                            if (combinationCaseResults == null || combinationCaseResults.Count == 0)
+                            {
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "The GSA Model contains no Combination Cases.");
+                                return;
+                            }
                             dropdownitems[1] = new List<string>();
                             dropdownitems[1].Add("All");
                             // add analysis cases to dropdown menu
@@ -313,7 +323,7 @@ namespace GsaGH.Components
                             }
                             combinationCaseResult = combinationCaseResults[CaseID];
                             tempNodeResult = combinationCaseResult.NodeResults("all");
-                            int nP = tempNodeResult[CaseID].Count;
+                            int nP = tempNodeResult[tempNodeResult.Keys.First()].Count;
                             dropdownitems[2] = new List<string>();
                             dropdownitems[2].Add("All");
                             if (nP > 1)

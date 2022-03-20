@@ -123,6 +123,7 @@
     <Compile Include="Components\4_Analysis\AnalysisCaseInfo.cs" />
     <Compile Include="Components\4_Analysis\CreateAnalysisCase.cs" />
     <Compile Include="Components\4_Analysis\CreateAnalysisTask.cs" />
+    <Compile Include="Components\5_Results\BeamDispResult.cs" />
     <Compile Include="Components\5_Results\NodeReactionForceResult.cs" />
     <Compile Include="Components\5_Results\NodeDispResult.cs" />
     <Compile Include="Components\5_Results\SelectResults.cs" />
@@ -295,9 +296,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\Analyse.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\AnalysisTaskInfo.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\AreaLoad.png" />
@@ -567,9 +565,6 @@
     <None Include="Properties\Icons\EditAnalysisTask.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\Icons\CombinationCaseResult.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Properties\Icons\CreateCombinationCase.png" />
   </ItemGroup>
   <ItemGroup>
@@ -610,6 +605,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\Stress3D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\ResultParam.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

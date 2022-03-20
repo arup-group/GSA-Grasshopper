@@ -103,7 +103,14 @@ namespace GsaGH.Parameters
         /// Append to this dictionary to chache results
         /// key = elementList
         /// </summary>
-        internal Dictionary<string, GsaResultsValues> ACaseElement3DValues { get; set; } = new Dictionary<string, GsaResultsValues>();
+        internal Dictionary<string, GsaResultsValues> ACaseElement3DDisplacementValues { get; set; } = new Dictionary<string, GsaResultsValues>();
+
+        /// <summary>
+        /// Analysis Case 3DElement Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// </summary>
+        internal Dictionary<string, GsaResultsValues> ACaseElement3DStressValues { get; set; } = new Dictionary<string, GsaResultsValues>();
 
         /// <summary>
         /// Analysis Case 2DElement API Result Dictionary 
@@ -113,11 +120,32 @@ namespace GsaGH.Parameters
         internal Dictionary<string, ReadOnlyDictionary<int, Element2DResult>> ACaseElement2DResults { get; set; } = new Dictionary<string, ReadOnlyDictionary<int, Element2DResult>>();
         
         /// <summary>
-        /// Analysis Case 2DElement Result VALUES Dictionary 
+        /// Analysis Case 2DElement Displacement Result VALUES Dictionary 
         /// Append to this dictionary to chache results
         /// key = elementList
         /// </summary>
-        internal Dictionary<string, GsaResultsValues> ACaseElement2DValues { get; set; } = new Dictionary<string, GsaResultsValues>();
+        internal Dictionary<string, GsaResultsValues> ACaseElement2DDisplacementValues { get; set; } = new Dictionary<string, GsaResultsValues>();
+
+        /// <summary>
+        /// Analysis Case 2DElement Force Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// </summary>
+        internal Dictionary<string, GsaResultsValues> ACaseElement2DForceValues { get; set; } = new Dictionary<string, GsaResultsValues>();
+
+        /// <summary>
+        /// Analysis Case 2DElement Shear Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// </summary>
+        internal Dictionary<string, GsaResultsValues> ACaseElement2DShearValues { get; set; } = new Dictionary<string, GsaResultsValues>();
+
+        /// <summary>
+        /// Analysis Case 2DElement Stress Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = elementList
+        /// </summary>
+        internal Dictionary<string, GsaResultsValues> ACaseElement2DStressValues { get; set; } = new Dictionary<string, GsaResultsValues>();
 
         /// <summary>
         /// Analysis Case 1DElement API Result Dictionary 
@@ -127,11 +155,18 @@ namespace GsaGH.Parameters
         internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, Element1DResult>> ACaseElement1DResults { get; set; } = new Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, Element1DResult>>();
         
         /// <summary>
-        /// Analysis Case 1DElement Result VALUES Dictionary 
+        /// Analysis Case 1DElement Displacement Result VALUES Dictionary 
         /// Append to this dictionary to chache results
         /// key = Tuple<elementList, numberOfDivisions>
         /// </summary>
-        internal Dictionary<Tuple<string, int>, GsaResultsValues> ACaseElement1DValues { get; set; } = new Dictionary<Tuple<string, int>, GsaResultsValues>();
+        internal Dictionary<Tuple<string, int>, GsaResultsValues> ACaseElement1DDisplacementValues { get; set; } = new Dictionary<Tuple<string, int>, GsaResultsValues>();
+
+        /// <summary>
+        /// Analysis Case 1DElement Force Result VALUES Dictionary 
+        /// Append to this dictionary to chache results
+        /// key = Tuple<elementList, numberOfDivisions>
+        /// </summary>
+        internal Dictionary<Tuple<string, int>, GsaResultsValues> ACaseElement1DForceValues { get; set; } = new Dictionary<Tuple<string, int>, GsaResultsValues>();
 
         /// <summary>
         /// Analysis Case Node API Result Dictionary 
@@ -227,38 +262,38 @@ namespace GsaGH.Parameters
         /// value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
         /// </summary>
         internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> Combo2DStressValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
-        
+
         /// <summary>
         /// Combination Case 2DElement Result VALUES Dictionary 
         /// Append to this dictionary to chache results
-        /// key = elementList
-        /// value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
+        /// key = Tuple<elementList, permutations>
+        /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
         /// </summary>
         internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> Combo2DShearValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
-        
+
         /// <summary>
         /// Combination Case 1DElement API Result Dictionary 
         /// Append to this dictionary to chache results
-        /// key = Tuple<elementList, numberOfDivisions>
-        /// value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
+        /// key = Tuple<elementList, permutations>
+        /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
         /// </summary>
         internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>> ComboElement1DResults { get; set; } = new Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
-        
+
         /// <summary>
         /// Combination Case 1DElement Forves Result VALUES Dictionary 
         /// Append to this dictionary to chache results
-        /// key = Tuple<elementList, numberOfDivisions>
-        /// value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
+        /// key = Tuple<elementList, permutations>
+        /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
         /// </summary>
-        internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>> Combo1DForceValues { get; set; } = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
-        
+        internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>> ComboElement1DForceValues { get; set; } = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
+
         /// <summary>
         /// Combination Case 1DElement Forves Result VALUES Dictionary 
         /// Append to this dictionary to chache results
-        /// key = Tuple<elementList, numberOfDivisions>
-        /// value = Dictionary<permutation, permutationsResults>
+        /// key = Tuple<elementList, permutations>
+        /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
         /// </summary>
-        internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>> Combo1DDisplacementValues { get; set; } = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
+        internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>> ComboElement1DDisplacementValues { get; set; } = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
         
         /// <summary>
         /// Combination Case Node API Result Dictionary 
@@ -364,7 +399,7 @@ namespace GsaGH.Parameters
                     this.ComboNodeDisplacementValues.Add(nodelist,
                         ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], lengthUnit, CombPermutationID));
                 }
-                return ComboNodeDisplacementValues[nodelist].Values.ToList();
+                return new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values);
             }
         }
 
@@ -420,7 +455,50 @@ namespace GsaGH.Parameters
                     this.ComboNodeReactionForceValues.Add(nodelist,
                         ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, CombPermutationID));
                 }
-                return ComboNodeDisplacementValues[nodelist].Values.ToList();
+                return new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values);
+            }
+        }
+
+        /// <summary>
+        /// Get beam displacement values 
+        /// For analysis case the length of the list will be 1
+        /// This method will use cache data if it exists
+        /// </summary>
+        /// <param name="elementlist"></param>
+        /// <param name="lengthUnit"></param>
+        /// <returns></returns>
+        internal List<GsaResultsValues> Element1DDisplacementValues(string elementlist, int positionsCount, LengthUnit lengthUnit)
+        {
+            Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
+            if (this.Type == ResultType.AnalysisCase)
+            {
+                if (!this.ACaseElement1DDisplacementValues.ContainsKey(key)) // see if values exist
+                {
+                    if (!this.ACaseElement1DResults.ContainsKey(key)) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ACaseElement1DResults.Add(key, AnalysisCaseResult.Element1DResults(elementlist, positionsCount));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ACaseElement1DDisplacementValues.Add(key,
+                        ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], lengthUnit));
+                }
+                return new List<GsaResultsValues>() { ACaseElement1DDisplacementValues[key] };
+            }
+            else
+            {
+                if (!this.ComboElement1DDisplacementValues.ContainsKey(key)) // see if values exist
+                {
+                    if (!this.ComboElement1DResults.ContainsKey(key)) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, positionsCount));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ComboElement1DDisplacementValues.Add(key,
+                        ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], lengthUnit, CombPermutationID));
+                }
+            return new List<GsaResultsValues>(ComboElement1DDisplacementValues[key].Values);
             }
         }
 
@@ -540,58 +618,59 @@ namespace GsaGH.Parameters
     /// <summary>
     /// This class provides a Parameter interface for the Data_GsaSection type.
     /// </summary>
-    //public class GsaAnalysisCaseParameter : GH_PersistentParam<GsaAnalysisCaseGoo>
-    //{
-    //    public GsaAnalysisCaseParameter()
-    //      : base(new GH_InstanceDescription("AnalysisCase", "ΣC", "GSA Analysis Case", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-    //    {
-    //    }
+    public class GsaResultsParameter : GH_PersistentParam<GsaResultGoo>
+    {
+        public GsaResultsParameter()
+          : base(new GH_InstanceDescription("Result", "Res", "GSA Result", GsaGH.Components.Ribbon.CategoryName.Name(), 
+              GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+        {
+        }
 
-    //    public override Guid ComponentGuid => new Guid("6b99a192-bdbd-41bf-8efa-1bc146d3c224");
+        public override Guid ComponentGuid => new Guid("81f6f103-cb53-414c-908b-6adf46c3260d");
 
-    //    public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override GH_Exposure Exposure => GH_Exposure.primary;
 
-    //    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisCaseParam;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ResultParam;
 
-    //    protected override GH_GetterResult Prompt_Plural(ref List<GsaAnalysisCaseGoo> values)
-    //    {
-    //        return GH_GetterResult.cancel;
-    //    }
-    //    protected override GH_GetterResult Prompt_Singular(ref GsaAnalysisCaseGoo value)
-    //    {
-    //        return GH_GetterResult.cancel;
-    //    }
-    //    protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
-    //    {
-    //        System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
-    //        {
-    //            Text = "Not available",
-    //            Visible = false
-    //        };
-    //        return item;
-    //    }
-    //    protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
-    //    {
-    //        System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
-    //        {
-    //            Text = "Not available",
-    //            Visible = false
-    //        };
-    //        return item;
-    //    }
+        protected override GH_GetterResult Prompt_Plural(ref List<GsaResultGoo> values)
+        {
+            return GH_GetterResult.cancel;
+        }
+        protected override GH_GetterResult Prompt_Singular(ref GsaResultGoo value)
+        {
+            return GH_GetterResult.cancel;
+        }
+        protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
+        {
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
+            return item;
+        }
+        protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
+        {
+            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
+            {
+                Text = "Not available",
+                Visible = false
+            };
+            return item;
+        }
 
-    //    #region preview methods
+        #region preview methods
 
-    //    public bool Hidden
-    //    {
-    //        get { return true; }
-    //        //set { m_hidden = value; }
-    //    }
-    //    public bool IsPreviewCapable
-    //    {
-    //        get { return false; }
-    //    }
-    //    #endregion
-    //}
+        public bool Hidden
+        {
+            get { return true; }
+            //set { m_hidden = value; }
+        }
+        public bool IsPreviewCapable
+        {
+            get { return false; }
+        }
+        #endregion
+    }
 
 }

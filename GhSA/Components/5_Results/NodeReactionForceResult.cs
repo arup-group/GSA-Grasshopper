@@ -120,14 +120,17 @@ namespace GsaGH.Components
             forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
             momentunitAbbreviation = Moment.GetAbbreviation(momentUnit);
 
-            pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx", "Reaction Forces in X-direction in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy", "Reaction Forces in Y-direction in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz", "Reaction Forces in Z-direction in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Force |XYZ| [" + forceunitAbbreviation + "]", "|F|", "Combined |XYZ| Reaction Forces in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx", "Reaction Moments around X-axis in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy", "Reaction Moments Y-axis in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz", "Reaction Moments Z-axis in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|", "Combined |XXYYZZ| Reaction Moments in global axis", GH_ParamAccess.tree);
+            string note = System.Environment.NewLine + "DataTree organised as { CaseID ; (Permutation) } where each" +
+                System.Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
+
+            pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx", "Reaction Forces in X-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy", "Reaction Forces in Y-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz", "Reaction Forces in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Force |XYZ| [" + forceunitAbbreviation + "]", "|F|", "Combined |XYZ| Reaction Forces in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx", "Reaction Moments around X-axis in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy", "Reaction Moments Y-axis in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz", "Reaction Moments Z-axis in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|", "Combined |XXYYZZ| Reaction Moments in Global Axis." + note, GH_ParamAccess.tree);
             pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value", GH_ParamAccess.list);
         }
         
@@ -176,11 +179,7 @@ namespace GsaGH.Components
 
                     for (int permutation = 0; permutation < vals.Count; permutation++)
                     {
-                        GH_Path p = new GH_Path();
-                        if (vals.Count > 1)
-                            p = new GH_Path(result.CaseID, permutation + 1);
-                        else 
-                            p = new GH_Path(result.CaseID);
+                        GH_Path p = p = new GH_Path(result.CaseID, permutation + 1);
 
                         List<GH_UnitNumber> transX = new List<GH_UnitNumber>();
                         List<GH_UnitNumber> transY = new List<GH_UnitNumber>();
@@ -197,7 +196,7 @@ namespace GsaGH.Components
                             {
                                 foreach (ConcurrentDictionary<int, GsaResultQuantity> res in vals[permutation].xyzResults.Values)
                                 {
-                                    GsaResultQuantity values = res[0];
+                                    GsaResultQuantity values = res[0]; // there is only one result per node
                                     transX.Add(new GH_UnitNumber(values.X.ToUnit(forceUnit))); // use ToUnit to capture changes in dropdown
                                     transY.Add(new GH_UnitNumber(values.Y.ToUnit(forceUnit)));
                                     transZ.Add(new GH_UnitNumber(values.Z.ToUnit(forceUnit)));
@@ -208,7 +207,7 @@ namespace GsaGH.Components
                             {
                                 foreach (ConcurrentDictionary<int, GsaResultQuantity> res in vals[permutation].xxyyzzResults.Values)
                                 {
-                                    GsaResultQuantity values = res[0];
+                                    GsaResultQuantity values = res[0]; // there is only one result per node
                                     rotX.Add(new GH_UnitNumber(values.X.ToUnit(momentUnit))); // use ToUnit to capture changes in dropdown
                                     rotY.Add(new GH_UnitNumber(values.Y.ToUnit(momentUnit)));
                                     rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(momentUnit)));
