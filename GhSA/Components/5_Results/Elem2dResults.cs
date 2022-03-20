@@ -542,7 +542,7 @@ namespace GsaGH.Components
                                         }
                                         else
                                         {
-                                            xyzRes[i - disp.Count] = ResultHelper.GetResult(disp[i - disp.Count], AngleUnit.Radian);
+                                            xxyyzzRes[i - disp.Count] = ResultHelper.GetResult(disp[i - disp.Count], AngleUnit.Radian);
                                             //Double6 val = disp[i - disp.Count];
                                             //Vector3d valxxyyzz = new Vector3d
                                             //{

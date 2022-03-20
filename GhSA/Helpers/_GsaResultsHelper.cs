@@ -554,7 +554,7 @@ namespace GsaGH.Util.Gsa
                     if (i < disp.Count)
                         xyzRes[i] = GetQuantityResult(disp[i], resultLengthUnit);
                     else
-                        xyzRes[i - disp.Count] = GetQuantityResult(disp[i - disp.Count], AngleUnit.Radian);
+                        xxyyzzRes[i - disp.Count] = GetQuantityResult(disp[i - disp.Count], AngleUnit.Radian);
                 });
 
                 // add vector lists to main lists
