@@ -23,14 +23,14 @@ namespace GsaGH.Components
     /// <summary>
     /// Component to retrieve non-geometric objects from a GSA model
     /// </summary>
-    public class NodeDisplacement : GH_Component, IGH_VariableParameterComponent
+    public class ReactionForce : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("83844063-3da9-4d96-95d3-ea39f96f3e2a");
-        public NodeDisplacement()
-          : base("Node Displacement", "NodeDisp", "Node Translation and Rotation result values",
+        public override Guid ComponentGuid => new Guid("4f06d674-c736-4d9c-89d9-377bc424c547");
+        public ReactionForce()
+          : base("Reaction Forces", "ReacForce", "Reaction Force result values",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat5())
         { this.Hidden = true; } // sets the initial state of the component to hidden
@@ -48,13 +48,14 @@ namespace GsaGH.Components
                 dropdownitems = new List<List<string>>();
                 selecteditems = new List<string>();
 
-                // length
-                //dropdownitems.Add(Enum.GetNames(typeof(UnitsNet.Units.LengthUnit)).ToList());
-                dropdownitems.Add(Units.FilteredLengthUnits);
-                selecteditems.Add(lengthUnit.ToString());
+                // force
+                dropdownitems.Add(Units.FilteredForceUnits);
+                selecteditems.Add(forceUnit.ToString());
 
-                IQuantity quantity = new Length(0, lengthUnit);
-                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+                // moment
+                dropdownitems.Add(Units.FilteredMomentUnits);
+                selecteditems.Add(momentUnit.ToString());
+
 
                 first = false;
             }
@@ -64,8 +65,10 @@ namespace GsaGH.Components
         {
             // change selected item
             selecteditems[i] = dropdownitems[i][j];
-
-            lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
+            if (i == 0)
+                forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[i]);
+            else if (i == 1)
+                momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), selecteditems[i]);
 
             // update name of inputs (to display unit on sliders)
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -75,7 +78,8 @@ namespace GsaGH.Components
         }
         private void UpdateUIFromSelectedItems()
         {
-            lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
+            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[0]);
+            momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), selecteditems[1]);
 
             CreateAttributes();
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -90,11 +94,14 @@ namespace GsaGH.Components
         // list of descriptions 
         List<string> spacerDescriptions = new List<string>(new string[]
         {
-            "Unit"
+            "Force Unit",
+            "Moment Unit"
         });
         private bool first = true;
-        private LengthUnit lengthUnit = Units.LengthUnitResult;
-        string unitAbbreviation;
+        private ForceUnit forceUnit = Units.ForceUnit;
+        private MomentUnit momentUnit = Units.MomentUnit;
+        string forceunitAbbreviation;
+        string momentunitAbbreviation;
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -109,17 +116,18 @@ namespace GsaGH.Components
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            IQuantity quantity = new Length(0, lengthUnit);
-            unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+            IQuantity force = new Force(0, forceUnit);
+            forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            momentunitAbbreviation = Moment.GetAbbreviation(momentUnit);
 
-            pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux", "Translations in X-direction in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Translations Y [" + unitAbbreviation + "]", "Uy", "Translations in Y-direction in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Translations Z [" + unitAbbreviation + "]", "Uz", "Translations in Z-direction in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Translations |XYZ| [" + unitAbbreviation + "]", "|U|", "Combined |XYZ| Translations in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Rotations XX [rad]", "Rxx", "Rotations around X-axis in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Rotations YY [rad]", "Ryy", "Rotations around Y-axis in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Rotations ZZ [rad]", "Rzz", "Rotations around Z-axis in global axis", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|", "Combined |XXYYZZ| Rotations in global axis", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx", "Reaction Forces in X-direction in global axis", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy", "Reaction Forces in Y-direction in global axis", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz", "Reaction Forces in Z-direction in global axis", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Force |XYZ| [" + forceunitAbbreviation + "]", "|F|", "Combined |XYZ| Reaction Forces in global axis", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx", "Reaction Moments around X-axis in global axis", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy", "Reaction Moments Y-axis in global axis", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz", "Reaction Moments Z-axis in global axis", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|", "Combined |XXYYZZ| Reaction Moments in global axis", GH_ParamAccess.tree);
             pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value", GH_ParamAccess.list);
         }
         
@@ -164,7 +172,7 @@ namespace GsaGH.Components
                         return;
                     }
                     
-                    List<GsaResultsValues> vals = result.NodeDisplacementValues(nodeList, lengthUnit);
+                    List<GsaResultsValues> vals = result.NodeReactionForceValues(nodeList, forceUnit, momentUnit);
 
                     for (int permutation = 0; permutation < vals.Count; permutation++)
                     {
@@ -190,10 +198,10 @@ namespace GsaGH.Components
                                 foreach (ConcurrentDictionary<int, GsaResultQuantity> res in vals[permutation].xyzResults.Values)
                                 {
                                     GsaResultQuantity values = res[0];
-                                    transX.Add(new GH_UnitNumber(values.X.ToUnit(lengthUnit))); // use ToUnit to capture changes in dropdown
-                                    transY.Add(new GH_UnitNumber(values.Y.ToUnit(lengthUnit)));
-                                    transZ.Add(new GH_UnitNumber(values.Z.ToUnit(lengthUnit)));
-                                    transXYZ.Add(new GH_UnitNumber(values.XYZ));
+                                    transX.Add(new GH_UnitNumber(values.X.ToUnit(forceUnit))); // use ToUnit to capture changes in dropdown
+                                    transY.Add(new GH_UnitNumber(values.Y.ToUnit(forceUnit)));
+                                    transZ.Add(new GH_UnitNumber(values.Z.ToUnit(forceUnit)));
+                                    transXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(forceUnit)));
                                 }
                             }
                             if (item == 1)
@@ -201,10 +209,10 @@ namespace GsaGH.Components
                                 foreach (ConcurrentDictionary<int, GsaResultQuantity> res in vals[permutation].xxyyzzResults.Values)
                                 {
                                     GsaResultQuantity values = res[0];
-                                    rotX.Add(new GH_UnitNumber(values.X)); 
-                                    rotY.Add(new GH_UnitNumber(values.Y));
-                                    rotZ.Add(new GH_UnitNumber(values.Z));
-                                    rotXYZ.Add(new GH_UnitNumber(values.XYZ));
+                                    rotX.Add(new GH_UnitNumber(values.X.ToUnit(momentUnit))); // use ToUnit to capture changes in dropdown
+                                    rotY.Add(new GH_UnitNumber(values.Y.ToUnit(momentUnit)));
+                                    rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(momentUnit)));
+                                    rotXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(momentUnit)));
                                 }
                             }
                         });
@@ -270,15 +278,19 @@ namespace GsaGH.Components
         }
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            IQuantity quantity = new Length(0, lengthUnit);
-            unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+            IQuantity force = new Force(0, forceUnit);
+            forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            momentunitAbbreviation = Moment.GetAbbreviation(momentUnit);
 
             int i = 0;
-            Params.Output[i++].Name = "Translations X [" + unitAbbreviation + "]";
-            Params.Output[i++].Name = "Translations Y [" + unitAbbreviation + "]";
-            Params.Output[i++].Name = "Translations Z [" + unitAbbreviation + "]";
-            Params.Output[i++].Name = "Translations |XYZ| [" + unitAbbreviation + "]";
-
+            Params.Output[i++].Name = "Force X [" + forceunitAbbreviation + "]";
+            Params.Output[i++].Name = "Force Y [" + forceunitAbbreviation + "]";
+            Params.Output[i++].Name = "Force Z [" + forceunitAbbreviation + "]";
+            Params.Output[i++].Name = "Force |XYZ| [" + forceunitAbbreviation + "]";
+            Params.Output[i++].Name = "Moment XX [" + momentunitAbbreviation + "]";
+            Params.Output[i++].Name = "Moment YY [" + momentunitAbbreviation + "]";
+            Params.Output[i++].Name = "Moment ZZ [" + momentunitAbbreviation + "]";
+            Params.Output[i++].Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
         }
         #endregion  
     }
