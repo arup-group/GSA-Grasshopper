@@ -133,6 +133,12 @@
   <data name="AreaLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AreaLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="BeamDisplacement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\BeamDisplacement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BeamForces" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\BeamForces.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="BeamLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\BeamLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -214,6 +220,12 @@
   <data name="CustomMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CustomMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Displacement2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Displacement2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Displacement3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Displacement3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="EditAnalysisTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditAnalysisTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -270,6 +282,12 @@
   </data>
   <data name="FaceLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\FaceLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Forces2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Forces2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Forces3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Forces3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="GetAnalysisTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\GetAnalysisTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -334,6 +352,9 @@
   <data name="ModelParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\ModelParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="NodeDisplacement" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\NodeDisplacement.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="NodeLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\NodeLoad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -357,6 +378,9 @@
   </data>
   <data name="Prop3dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Prop3dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ReactionForces" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ReactionForces.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Result0D" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Result0D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -387,6 +411,12 @@
   </data>
   <data name="SpringParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SpringParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stress2D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Stress2D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stress3D" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Stress3D.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="TaperProfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\TaperProfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

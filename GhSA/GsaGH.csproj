@@ -581,6 +581,36 @@
   <ItemGroup>
     <None Include="Properties\Icons\TaperProfile.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\BeamDisplacement.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\BeamForces.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Displacement2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Displacement3D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Forces2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Forces3D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\NodeDisplacement.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\ReactionForces.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Stress2D.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Stress3D.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

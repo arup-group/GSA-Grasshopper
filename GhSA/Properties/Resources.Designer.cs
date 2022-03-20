@@ -113,6 +113,26 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap BeamDisplacement {
+            get {
+                object obj = ResourceManager.GetObject("BeamDisplacement", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap BeamForces {
+            get {
+                object obj = ResourceManager.GetObject("BeamForces", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap BeamLoad {
             get {
                 object obj = ResourceManager.GetObject("BeamLoad", resourceCulture);
@@ -383,6 +403,26 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Displacement2D {
+            get {
+                object obj = ResourceManager.GetObject("Displacement2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Displacement3D {
+            get {
+                object obj = ResourceManager.GetObject("Displacement3D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap EditAnalysisTask {
             get {
                 object obj = ResourceManager.GetObject("EditAnalysisTask", resourceCulture);
@@ -566,6 +606,26 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap FaceLoad {
             get {
                 object obj = ResourceManager.GetObject("FaceLoad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Forces2D {
+            get {
+                object obj = ResourceManager.GetObject("Forces2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Forces3D {
+            get {
+                object obj = ResourceManager.GetObject("Forces3D", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -783,6 +843,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap NodeDisplacement {
+            get {
+                object obj = ResourceManager.GetObject("NodeDisplacement", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap NodeLoad {
             get {
                 object obj = ResourceManager.GetObject("NodeLoad", resourceCulture);
@@ -856,6 +926,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap Prop3dParam {
             get {
                 object obj = ResourceManager.GetObject("Prop3dParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ReactionForces {
+            get {
+                object obj = ResourceManager.GetObject("ReactionForces", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -956,6 +1036,26 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap SpringParam {
             get {
                 object obj = ResourceManager.GetObject("SpringParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Stress2D {
+            get {
+                object obj = ResourceManager.GetObject("Stress2D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Stress3D {
+            get {
+                object obj = ResourceManager.GetObject("Stress3D", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
