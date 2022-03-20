@@ -123,6 +123,7 @@
     <Compile Include="Components\4_Analysis\AnalysisCaseInfo.cs" />
     <Compile Include="Components\4_Analysis\CreateAnalysisCase.cs" />
     <Compile Include="Components\4_Analysis\CreateAnalysisTask.cs" />
+    <Compile Include="Components\5_Results\Elem2dForceResult.cs" />
     <Compile Include="Components\5_Results\Elem2dDispResult.cs" />
     <Compile Include="Components\5_Results\BeamForceResult.cs" />
     <Compile Include="Components\5_Results\BeamDispResult.cs" />

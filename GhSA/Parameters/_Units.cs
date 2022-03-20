@@ -198,9 +198,65 @@ namespace GsaGH
         {
             get
             {
+                switch (m_force)
+                {
+                    case ForceUnit.Newton:
+                        switch (m_length_geometry)
+                        {
+                            case LengthUnit.Millimeter:
+                                return ForcePerLengthUnit.NewtonPerMillimeter;
+                            case LengthUnit.Centimeter:
+                                return ForcePerLengthUnit.NewtonPerCentimeter;
+                            case LengthUnit.Meter:
+                                return ForcePerLengthUnit.NewtonPerMeter;
+                        }
+                        break;
+                    case ForceUnit.Kilonewton:
+                        switch (m_length_geometry)
+                        {
+                            case LengthUnit.Millimeter:
+                                return ForcePerLengthUnit.KilonewtonPerMillimeter;
+                            case LengthUnit.Centimeter:
+                                return ForcePerLengthUnit.KilonewtonPerCentimeter;
+                            case LengthUnit.Meter:
+                                return ForcePerLengthUnit.KilonewtonPerMeter;
+                        }
+                        break;
+                    case ForceUnit.Meganewton:
+                        switch (m_length_geometry)
+                        {
+                            case LengthUnit.Millimeter:
+                                return ForcePerLengthUnit.MeganewtonPerMillimeter;
+                            case LengthUnit.Centimeter:
+                                return ForcePerLengthUnit.MeganewtonPerCentimeter;
+                            case LengthUnit.Meter:
+                                return ForcePerLengthUnit.MeganewtonPerMeter;
+                        }
+                        break;
+                    case ForceUnit.KilopoundForce:
+                        switch (m_length_geometry)
+                        {
+                            case LengthUnit.Inch:
+                                return ForcePerLengthUnit.KilopoundForcePerInch;
+                            case LengthUnit.Foot:
+                                return ForcePerLengthUnit.KilopoundForcePerFoot;
+                        }
+                        break;
+                    case ForceUnit.PoundForce:
+                        switch (m_length_geometry)
+                        {
+                            case LengthUnit.Inch:
+                                return ForcePerLengthUnit.PoundForcePerInch;
+                            case LengthUnit.Foot:
+                                return ForcePerLengthUnit.PoundForcePerFoot;
+                        }
+                        break;
+                }
+                
                 Force force = Force.From(1, ForceUnit);
                 Length length = Length.From(1, LengthUnitGeometry);
                 ForcePerLength kNperM = force / length;
+                
                 return kNperM.Unit;
             }
         }

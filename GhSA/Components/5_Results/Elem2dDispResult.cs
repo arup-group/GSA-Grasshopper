@@ -112,8 +112,8 @@ namespace GsaGH.Components
             unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
             string note = System.Environment.NewLine + "DataTree organised as { CaseID ; (Permutation) ; ElementID } where each" +
-                System.Environment.NewLine + "branch contains a list of results in the following order: first being the centre" +
-                System.Environment.NewLine + "Centre of element, Vertex(1), Vertex(2), ..., Vertex(i)";
+                System.Environment.NewLine + "branch contains a list of results in the following order:" +
+                System.Environment.NewLine + "Vertex(1), Vertex(2), ..., Vertex(i), Centre";
 
             pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux", "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);
             pManager.AddGenericParameter("Translations Y [" + unitAbbreviation + "]", "Uy", "Translations in Y-direction in Global Axis." + note, GH_ParamAccess.tree);

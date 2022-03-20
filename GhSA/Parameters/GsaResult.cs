@@ -606,7 +606,7 @@ namespace GsaGH.Parameters
         /// <param name="forceUnit"></param>
         /// <param name="momentUnit"></param>
         /// <returns></returns>
-        internal List<GsaResultsValues> Element2DForceValues(string elementlist, ForceUnit forceUnit, MomentUnit momentUnit)
+        internal List<GsaResultsValues> Element2DForceValues(string elementlist, ForcePerLengthUnit forceUnit, ForceUnit momentUnit)
         {
             if (this.Type == ResultType.AnalysisCase)
             {
@@ -648,7 +648,7 @@ namespace GsaGH.Parameters
         /// <param name="elementlist"></param>
         /// /// <param name="forceUnit"></param>
         /// <returns></returns>
-        internal List<GsaResultsValues> Element2DShearValues(string elementlist, ForceUnit forceUnit)
+        internal List<GsaResultsValues> Element2DShearValues(string elementlist, ForcePerLengthUnit forceUnit)
         {
             if (this.Type == ResultType.AnalysisCase)
             {
