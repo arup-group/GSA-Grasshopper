@@ -23,20 +23,20 @@ namespace GsaGH.Components
     /// <summary>
     /// Component to retrieve non-geometric objects from a GSA model
     /// </summary>
-    public class ReactionForce : GH_Component, IGH_VariableParameterComponent
+    public class BeamForces : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("4f06d674-c736-4d9c-89d9-377bc424c547");
-        public ReactionForce()
-          : base("Reaction Forces", "ReacForce", "Reaction Force result values",
+        public override Guid ComponentGuid => new Guid("5dee1b78-7b47-4c65-9d17-446140fc4e0d");
+        public BeamForces()
+          : base("Beam Forces and Moments", "BeamForces", "Element1D Force and Moments result values",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat5())
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ReactionForces;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.BeamForces;
         #endregion
 
         #region Custom UI
@@ -107,11 +107,11 @@ namespace GsaGH.Components
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Result", "Res", "GSA Result", GH_ParamAccess.list);
-            pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + System.Environment.NewLine +
-                "Node list should take the form:" + System.Environment.NewLine +
-                " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
+            pManager.AddTextParameter("Element filter list", "El", "Filter results by list." + System.Environment.NewLine +
+                "Element list should take the form:" + System.Environment.NewLine +
+                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            pManager[1].Optional = true;
+            pManager.AddIntegerParameter("Intermediate Points", "nP", "Number of positions equidistant points", GH_ParamAccess.item, 0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -120,18 +120,19 @@ namespace GsaGH.Components
             forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
             momentunitAbbreviation = Moment.GetAbbreviation(momentUnit);
 
+            string forcerule = System.Environment.NewLine + "+ve axial forces are tensile";
+            string momentrule = System.Environment.NewLine + "Moments follow the right hand grip rule";
             string note = System.Environment.NewLine + "DataTree organised as { CaseID ; (Permutation) } where each" +
                 System.Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
 
-            pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx", "Reaction Forces in X-direction in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy", "Reaction Forces in Y-direction in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz", "Reaction Forces in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Force |XYZ| [" + forceunitAbbreviation + "]", "|F|", "Combined |XYZ| Reaction Forces in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx", "Reaction Moments around X-axis in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy", "Reaction Moments around Y-axis in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz", "Reaction Moments around Z-axis in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|", "Combined |XXYYZZ| Reaction Moments in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx", "Element Axial Forces in Local Element X-direction." + forcerule + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy", "Element Shear Forces in Local Element Y-direction." + forcerule + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz", "Element Shear Forces in Local Element Z-direction." + forcerule + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Force |YZ| [" + forceunitAbbreviation + "]", "|Fyz|", "Total |YZ| Element Shear Forces." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx", "Element Torsional Moments around Local Element X-axis." + momentrule + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy", "Element Bending Moments around Local Element Y-axis." + momentrule + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz", "Element Bending Moments around Local Element Z-axis." + momentrule + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Moment |YZ| [" + momentunitAbbreviation + "]", "|Myz|", "Total |YYZZ| Element Bending Moments." + note, GH_ParamAccess.tree);
         }
         
 
@@ -141,10 +142,16 @@ namespace GsaGH.Components
             GsaResult result = new GsaResult();
 
             // Get filer case
-            string nodeList = "All";
+            string elementlist = "All";
             GH_String gh_Type = new GH_String();
             if (DA.GetData(1, ref gh_Type))
-                GH_Convert.ToString(gh_Type, out nodeList, GH_Conversion.Both);
+                GH_Convert.ToString(gh_Type, out elementlist, GH_Conversion.Both);
+
+            // Get number of divisions
+            GH_Integer gh_Div = new GH_Integer();
+            DA.GetData(2, ref gh_Div);
+            GH_Convert.ToInt32(gh_Div, out int positionsCount, GH_Conversion.Both);
+            positionsCount = Math.Abs(positionsCount) + 2; // taken absolute value and add 2 end points.
 
             // data trees to output
             DataTree<GH_UnitNumber> out_transX = new DataTree<GH_UnitNumber>();
@@ -162,7 +169,7 @@ namespace GsaGH.Components
             {
                 List<GsaResult> results = new List<GsaResult>();
                 
-                for (int i = 0; i < gh_types.Count; i++)
+                for (int i = 0; i < gh_types.Count; i++) // loop through all case/combinations
                 {
                     GH_ObjectWrapper gh_typ = gh_types[i];
                     if (gh_typ.Value is GsaResultGoo)
@@ -175,59 +182,51 @@ namespace GsaGH.Components
                         return;
                     }
                     
-                    List<GsaResultsValues> vals = result.NodeReactionForceValues(nodeList, forceUnit, momentUnit);
+                    List<GsaResultsValues> vals = result.Element1DForceValues(elementlist, positionsCount, forceUnit, momentUnit);
 
+                    // loop through all permutations (analysis case will just have one)
                     for (int permutation = 0; permutation < vals.Count; permutation++)
                     {
-                        GH_Path p = p = new GH_Path(result.CaseID, permutation + 1);
-
-                        List<GH_UnitNumber> transX = new List<GH_UnitNumber>();
-                        List<GH_UnitNumber> transY = new List<GH_UnitNumber>();
-                        List<GH_UnitNumber> transZ = new List<GH_UnitNumber>();
-                        List<GH_UnitNumber> transXYZ = new List<GH_UnitNumber>();
-                        List<GH_UnitNumber> rotX = new List<GH_UnitNumber>();
-                        List<GH_UnitNumber> rotY = new List<GH_UnitNumber>();
-                        List<GH_UnitNumber> rotZ = new List<GH_UnitNumber>();
-                        List<GH_UnitNumber> rotXYZ = new List<GH_UnitNumber>();
-
-                        Parallel.For(0, 2, item => // split into two tasks
+                        Parallel.For(0, 2, thread => // split computation in two for xyz and xxyyzz
                         {
-                            if (item == 0)
+                            if (thread == 0)
                             {
-                                foreach (ConcurrentDictionary<int, GsaResultQuantity> res in vals[permutation].xyzResults.Values)
+                                //do xyz part of results
+
+                                // loop through all elements
+                                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[permutation].xyzResults)
                                 {
-                                    GsaResultQuantity values = res[0]; // there is only one result per node
-                                    transX.Add(new GH_UnitNumber(values.X.ToUnit(forceUnit))); // use ToUnit to capture changes in dropdown
-                                    transY.Add(new GH_UnitNumber(values.Y.ToUnit(forceUnit)));
-                                    transZ.Add(new GH_UnitNumber(values.Z.ToUnit(forceUnit)));
-                                    transXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(forceUnit)));
+                                    int elementID = kvp.Key;
+                                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+
+                                    GH_Path p = new GH_Path(result.CaseID, permutation + 1, elementID);
+
+                                    out_transX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(forceUnit))), p); // use ToUnit to capture changes in dropdown
+                                    out_transY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(forceUnit))), p);
+                                    out_transZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(forceUnit))), p);
+                                    out_transXYZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(forceUnit))), p);
                                 }
                             }
-                            if (item == 1)
+                            if (thread == 1)
                             {
-                                foreach (ConcurrentDictionary<int, GsaResultQuantity> res in vals[permutation].xxyyzzResults.Values)
+                                //do xxyyzz
+
+                                // loop through all elements
+                                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[permutation].xxyyzzResults)
                                 {
-                                    GsaResultQuantity values = res[0]; // there is only one result per node
-                                    rotX.Add(new GH_UnitNumber(values.X.ToUnit(momentUnit))); // use ToUnit to capture changes in dropdown
-                                    rotY.Add(new GH_UnitNumber(values.Y.ToUnit(momentUnit)));
-                                    rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(momentUnit)));
-                                    rotXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(momentUnit)));
+                                    int elementID = kvp.Key;
+                                    ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+
+                                    GH_Path p = new GH_Path(result.CaseID, permutation + 1, elementID);
+
+                                    out_rotX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(momentUnit))), p); // always use [rad] units
+                                    out_rotY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(momentUnit))), p);
+                                    out_rotZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(momentUnit))), p);
+                                    out_rotXYZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(momentUnit))), p);
                                 }
                             }
                         });
-
-                        out_transX.AddRange(transX, p);
-                        out_transY.AddRange(transY, p);
-                        out_transZ.AddRange(transZ, p);
-                        out_transXYZ.AddRange(transXYZ, p);
-                        out_rotX.AddRange(rotX, p);
-                        out_rotY.AddRange(rotY, p);
-                        out_rotZ.AddRange(rotZ, p);
-                        out_rotXYZ.AddRange(rotXYZ, p);
                     }
-
-                    if (i == 0)
-                        DA.SetDataList(8, vals.First().xyzResults.Keys.ToList());
                 }
 
                 DA.SetDataTree(0, out_transX);
@@ -238,7 +237,6 @@ namespace GsaGH.Components
                 DA.SetDataTree(5, out_rotY);
                 DA.SetDataTree(6, out_rotZ);
                 DA.SetDataTree(7, out_rotXYZ);
-                
             }
         }
         #region (de)serialization
@@ -290,6 +288,7 @@ namespace GsaGH.Components
             Params.Output[i++].Name = "Moment YY [" + momentunitAbbreviation + "]";
             Params.Output[i++].Name = "Moment ZZ [" + momentunitAbbreviation + "]";
             Params.Output[i++].Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
+
         }
         #endregion  
     }

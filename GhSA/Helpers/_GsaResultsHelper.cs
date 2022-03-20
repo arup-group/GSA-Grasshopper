@@ -15,7 +15,7 @@ namespace GsaGH.Util.Gsa
 {
     class ResultHelper
     {
-        public static List<double> SmartRounder(double max, double min)
+        internal static List<double> SmartRounder(double max, double min)
         {
             // find the biggest abs value of max and min
             double val = Math.Max(Math.Abs(max), Math.Abs(min));
@@ -48,7 +48,7 @@ namespace GsaGH.Util.Gsa
 
             return roundedvals;
         }
-        public static double RoundToSignificantDigits(double d, int digits)
+        internal static double RoundToSignificantDigits(double d, int digits)
         {
 
             if (d == 0.0)
@@ -75,35 +75,35 @@ namespace GsaGH.Util.Gsa
             }
         }
         #region Vector3d results
-        public static Vector3d GetResult(Double6 result, ForceUnit unit)
+        internal static Vector3d GetResult(Double6 result, ForceUnit unit)
         {
             double x = new Force(result.X, ForceUnit.Newton).As(unit);
             double y = new Force(result.Y, ForceUnit.Newton).As(unit);
             double z = new Force(result.Z, ForceUnit.Newton).As(unit);
             return new Vector3d(x, y, z);
         }
-        public static Vector3d GetResult(Double6 result, MomentUnit unit)
+        internal static Vector3d GetResult(Double6 result, MomentUnit unit)
         {
             double xx = new Moment(result.XX, MomentUnit.NewtonMeter).As(unit);
             double yy = new Moment(result.YY, MomentUnit.NewtonMeter).As(unit);
             double zz = new Moment(result.ZZ, MomentUnit.NewtonMeter).As(unit);
             return new Vector3d(xx, yy, zz);
         }
-        public static Vector3d GetResult(Double6 result, LengthUnit unit)
+        internal static Vector3d GetResult(Double6 result, LengthUnit unit)
         {
             double x = new Length(result.X, LengthUnit.Meter).As(unit);
             double y = new Length(result.Y, LengthUnit.Meter).As(unit);
             double z = new Length(result.Z, LengthUnit.Meter).As(unit);
             return new Vector3d(x, y, z);
         }
-        public static Vector3d GetResult(Double3 result, LengthUnit unit)
+        internal static Vector3d GetResult(Double3 result, LengthUnit unit)
         {
             double x = new Length(result.X, LengthUnit.Meter).As(unit);
             double y = new Length(result.Y, LengthUnit.Meter).As(unit);
             double z = new Length(result.Z, LengthUnit.Meter).As(unit);
             return new Vector3d(x, y, z);
         }
-        public static Vector3d GetResult(Double6 result, AngleUnit unit)
+        internal static Vector3d GetResult(Double6 result, AngleUnit unit)
         {
             double xx = 0;
             if (!double.IsNaN(result.XX))
@@ -116,7 +116,7 @@ namespace GsaGH.Util.Gsa
                 new Angle(result.ZZ, AngleUnit.Radian).As(unit);
             return new Vector3d(xx, yy, zz);
         }
-        public static Vector3d GetResult(Double6 result, PressureUnit unit, bool shear = false)
+        internal static Vector3d GetResult(Double6 result, PressureUnit unit, bool shear = false)
         {
             if (shear)
             {
@@ -133,28 +133,28 @@ namespace GsaGH.Util.Gsa
                 return new Vector3d(x, y, z);
             }
         }
-        public static Vector3d GetResult(Tensor2 result, ForceUnit unit)
+        internal static Vector3d GetResult(Tensor2 result, ForceUnit unit)
         {
             double x = new Force(result.XX, ForceUnit.Newton).As(unit);
             double y = new Force(result.YY, ForceUnit.Newton).As(unit);
             double z = new Force(result.XY, ForceUnit.Newton).As(unit);
             return new Vector3d(x, y, z);
         }
-        public static Vector3d GetResult(Tensor2 result, MomentUnit unit)
+        internal static Vector3d GetResult(Tensor2 result, MomentUnit unit)
         {
             double x = new Moment(result.XX, MomentUnit.NewtonMeter).As(unit);
             double y = new Moment(result.YY, MomentUnit.NewtonMeter).As(unit);
             double z = new Moment(result.XY, MomentUnit.NewtonMeter).As(unit);
             return new Vector3d(x, y, z);
         }
-        public static Vector3d GetResult(Vector2 result, ForceUnit unit)
+        internal static Vector3d GetResult(Vector2 result, ForceUnit unit)
         {
             double x = new Force(result.X, ForceUnit.Newton).As(unit);
             double y = new Force(result.Y, ForceUnit.Newton).As(unit);
             double z = 0;
             return new Vector3d(x, y, z);
         }
-        public static Vector3d GetResult(Tensor3 result, PressureUnit unit, bool shear = false)
+        internal static Vector3d GetResult(Tensor3 result, PressureUnit unit, bool shear = false)
         {
             if (shear)
             {
@@ -171,14 +171,14 @@ namespace GsaGH.Util.Gsa
                 return new Vector3d(xx, yy, zz);
             }
         }
-        public static Vector3d GetResult(Vector3 result, MassUnit unit)
+        internal static Vector3d GetResult(Vector3 result, MassUnit unit)
         {
             double x = new Mass(result.X, MassUnit.Kilogram).As(unit);
             double y = new Mass(result.Y, MassUnit.Kilogram).As(unit);
             double z = new Mass(result.Z, MassUnit.Kilogram).As(unit);
             return new Vector3d(x, y, z);
         }
-        public static Vector3d GetResult(Vector3 result, AreaMomentOfInertiaUnit unit)
+        internal static Vector3d GetResult(Vector3 result, AreaMomentOfInertiaUnit unit)
         {
             double x = new AreaMomentOfInertia(result.X, AreaMomentOfInertiaUnit.MeterToTheFourth).As(unit);
             double y = new AreaMomentOfInertia(result.Y, AreaMomentOfInertiaUnit.MeterToTheFourth).As(unit);
@@ -187,25 +187,33 @@ namespace GsaGH.Util.Gsa
         }
         #endregion
         #region Quantity results
-        public static GsaResultQuantity GetQuantityResult(Double6 result, ForceUnit unit)
+        internal static GsaResultQuantity GetQuantityResult(Double6 result, ForceUnit unit, bool isBeam = false)
         {
             IQuantity x = new Force(new Force(result.X, ForceUnit.Newton).As(unit), unit);
             IQuantity y = new Force(new Force(result.Y, ForceUnit.Newton).As(unit), unit);
             IQuantity z = new Force(new Force(result.Z, ForceUnit.Newton).As(unit), unit);
-            double pyth = Math.Sqrt(Math.Pow(result.X, 2) + Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2));
+            double pyth = 0;
+            if (isBeam)
+                pyth = Math.Sqrt(Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2)); // absolute shear is only |YZ|
+            else
+                pyth = Math.Sqrt(Math.Pow(result.X, 2) + Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2));
             IQuantity xyz = new Force(new Force(pyth, ForceUnit.Newton).As(unit), unit);
             return new GsaResultQuantity() { X = x, Y = y, Z = z, XYZ = xyz};
         }
-        public static GsaResultQuantity GetQuantityResult(Double6 result, MomentUnit unit)
+        internal static GsaResultQuantity GetQuantityResult(Double6 result, MomentUnit unit, bool isBeam = false)
         {
             IQuantity xx = new Moment(new Moment(result.XX, MomentUnit.NewtonMeter).As(unit), unit);
             IQuantity yy = new Moment(new Moment(result.YY, MomentUnit.NewtonMeter).As(unit), unit);
             IQuantity zz = new Moment(new Moment(result.ZZ, MomentUnit.NewtonMeter).As(unit), unit);
-            double pyth = Math.Sqrt(Math.Pow(result.XX, 2) + Math.Pow(result.YY, 2) + Math.Pow(result.ZZ, 2));
+            double pyth = 0;
+            if (isBeam)
+                pyth = Math.Sqrt(Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2)); // absolute bending is only |YZ|
+            else
+                pyth = Math.Sqrt(Math.Pow(result.X, 2) + Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2));
             IQuantity xxyyzz = new Moment(new Moment(pyth, MomentUnit.NewtonMeter).As(unit), unit);
             return new GsaResultQuantity() { X = xx, Y = yy, Z = zz, XYZ = xxyyzz };
         }
-        public static GsaResultQuantity GetQuantityResult(Double6 result, LengthUnit unit)
+        internal static GsaResultQuantity GetQuantityResult(Double6 result, LengthUnit unit)
         {
             IQuantity x = new Length(new Length(result.X, LengthUnit.Meter).As(unit), unit);
             IQuantity y = new Length(new Length(result.Y, LengthUnit.Meter).As(unit), unit);
@@ -214,7 +222,7 @@ namespace GsaGH.Util.Gsa
             IQuantity xyz = new Length(new Length(pyth, LengthUnit.Meter).As(unit), unit);
             return new GsaResultQuantity() { X = x, Y = y, Z = z, XYZ = xyz };
         }
-        public static GsaResultQuantity GetQuantityResult(Double3 result, LengthUnit unit)
+        internal static GsaResultQuantity GetQuantityResult(Double3 result, LengthUnit unit)
         {
             IQuantity x = new Length(new Length(result.X, LengthUnit.Meter).As(unit), unit);
             IQuantity y = new Length(new Length(result.Y, LengthUnit.Meter).As(unit), unit);
@@ -223,7 +231,7 @@ namespace GsaGH.Util.Gsa
             IQuantity xyz = new Length(new Length(pyth, LengthUnit.Meter).As(unit), unit);
             return new GsaResultQuantity() { X = x, Y = y, Z = z, XYZ = xyz };
         }
-        public static GsaResultQuantity GetQuantityResult(Double6 result, AngleUnit unit)
+        internal static GsaResultQuantity GetQuantityResult(Double6 result, AngleUnit unit)
         {
             IQuantity x;
             if (!double.IsNaN(result.XX))
@@ -246,7 +254,7 @@ namespace GsaGH.Util.Gsa
             IQuantity xyz = new Angle(new Angle(pyth, AngleUnit.Radian).As(unit), unit);
             return new GsaResultQuantity() { X = x, Y = y, Z = z, XYZ = xyz };
         }
-        public static GsaResultQuantity GetQuantityResult(Double6 result, PressureUnit unit, bool shear = false)
+        internal static GsaResultQuantity GetQuantityResult(Double6 result, PressureUnit unit, bool shear = false)
         {
             if (shear)
             {
@@ -267,27 +275,27 @@ namespace GsaGH.Util.Gsa
                 return new GsaResultQuantity() { X = x, Y = y, Z = z, XYZ = xyz };
             }
         }
-        public static GsaResultQuantity GetQuantityResult(Tensor2 result, ForceUnit unit)
+        internal static GsaResultQuantity GetQuantityResult(Tensor2 result, ForceUnit unit)
         {
             IQuantity x = new Force(new Force(result.XX, ForceUnit.Newton).As(unit), unit);
             IQuantity y = new Force(new Force(result.YY, ForceUnit.Newton).As(unit), unit);
             IQuantity z = new Force(new Force(result.XY, ForceUnit.Newton).As(unit), unit);
             return new GsaResultQuantity() { X = x, Y = y, Z = z, XYZ = null };
         }
-        public static GsaResultQuantity GetQuantityResult(Tensor2 result, MomentUnit unit)
+        internal static GsaResultQuantity GetQuantityResult(Tensor2 result, MomentUnit unit)
         {
             IQuantity xx = new Moment(new Moment(result.XX, MomentUnit.NewtonMeter).As(unit), unit);
             IQuantity yy = new Moment(new Moment(result.YY, MomentUnit.NewtonMeter).As(unit), unit);
             IQuantity zz = new Moment(new Moment(result.XY, MomentUnit.NewtonMeter).As(unit), unit);
             return new GsaResultQuantity() { X = xx, Y = yy, Z = zz, XYZ = null };
         }
-        public static GsaResultQuantity GetQuantityResult(Vector2 result, ForceUnit unit)
+        internal static GsaResultQuantity GetQuantityResult(Vector2 result, ForceUnit unit)
         {
             IQuantity x = new Force(new Force(result.X, ForceUnit.Newton).As(unit), unit);
             IQuantity y = new Force(new Force(result.Y, ForceUnit.Newton).As(unit), unit);
             return new GsaResultQuantity() { X = x, Y = y, Z = null, XYZ = null };
         }
-        public static GsaResultQuantity GetQuantityResult(Tensor3 result, PressureUnit unit, bool shear = false)
+        internal static GsaResultQuantity GetQuantityResult(Tensor3 result, PressureUnit unit, bool shear = false)
         {
             if (shear)
             {
@@ -304,7 +312,7 @@ namespace GsaGH.Util.Gsa
                 return new GsaResultQuantity() { X = x, Y = y, Z = z, XYZ = null };
             }
         }
-        public static GsaResultQuantity GetQuantityResult(Vector3 result, MassUnit unit)
+        internal static GsaResultQuantity GetQuantityResult(Vector3 result, MassUnit unit)
         {
             IQuantity x = new Mass(new Mass(result.X, MassUnit.Kilogram).As(unit), unit);
             IQuantity y = new Mass(new Mass(result.Y, MassUnit.Kilogram).As(unit), unit);
@@ -313,7 +321,7 @@ namespace GsaGH.Util.Gsa
             IQuantity xyz = new Mass(new Mass(pyth, MassUnit.Kilogram).As(unit), unit);
             return new GsaResultQuantity() { X = x, Y = y, Z = z, XYZ = xyz };
         }
-        public static GsaResultQuantity GetQuantityResult(Vector3 result, AreaMomentOfInertiaUnit unit)
+        internal static GsaResultQuantity GetQuantityResult(Vector3 result, AreaMomentOfInertiaUnit unit)
         {
             IQuantity x = new AreaMomentOfInertia(new AreaMomentOfInertia(result.X, AreaMomentOfInertiaUnit.MeterToTheFourth).As(unit), unit);
             IQuantity y = new AreaMomentOfInertia(new AreaMomentOfInertia(result.Y, AreaMomentOfInertiaUnit.MeterToTheFourth).As(unit), unit);
@@ -331,7 +339,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="globalResults"></param>
         /// <param name="resultLengthUnit"></param>
         /// <returns></returns>
-        public static GsaResultsValues GetElement3DResultValues(ReadOnlyDictionary<int, Element3DResult> globalResults, 
+        internal static GsaResultsValues GetElement3DResultValues(ReadOnlyDictionary<int, Element3DResult> globalResults, 
             LengthUnit resultLengthUnit)
         {
             GsaResultsValues r = new GsaResultsValues();
@@ -343,8 +351,6 @@ namespace GsaGH.Util.Gsa
                 Element3DResult elementResults = globalResults[key];
                 ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
                 xyzRes.AsParallel().AsOrdered();
-                ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-                xxyyzzRes.AsParallel().AsOrdered();
 
                 List<Double3> trans_vals = elementResults.Displacement.ToList();
                 Parallel.For(0, trans_vals.Count, i => //foreach (Double3 val in trans_vals)
@@ -355,7 +361,6 @@ namespace GsaGH.Util.Gsa
 
                 // add vector lists to main lists
                 r.xyzResults.TryAdd(key, xyzRes);
-                r.xxyyzzResults.TryAdd(key, xxyyzzRes);
             });
 
             r.UpdateMinMax();
@@ -368,7 +373,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="globalResults"></param>
         /// <param name="stressUnit"></param>
         /// <returns></returns>
-        public static GsaResultsValues GetElement3DResultValues(ReadOnlyDictionary<int, Element3DResult> globalResults,
+        internal static GsaResultsValues GetElement3DResultValues(ReadOnlyDictionary<int, Element3DResult> globalResults,
             PressureUnit stressUnit)
         {
             GsaResultsValues r = new GsaResultsValues();
@@ -408,7 +413,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="globalResults"></param>
         /// <param name="stressUnit"></param>
         /// <returns></returns>
-        public static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
+        internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
             PressureUnit stressUnit)
         {
             GsaResultsValues r = new GsaResultsValues();
@@ -446,10 +451,9 @@ namespace GsaGH.Util.Gsa
         /// Returns shear result values
         /// </summary>
         /// <param name="globalResults"></param>
-        /// <param name="type"></param>
         /// <param name="forceUnit"></param>
         /// <returns></returns>
-        public static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
+        internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
             ForceUnit forceUnit)
         {
             GsaResultsValues r = new GsaResultsValues();
@@ -486,7 +490,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="forceUnit"></param>
         /// <param name="momentUnit"></param>
         /// <returns></returns>
-        public static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults, 
+        internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults, 
             ForceUnit forceUnit, MomentUnit momentUnit)
         {
             GsaResultsValues r = new GsaResultsValues();
@@ -528,7 +532,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="globalResults"></param>
         /// <param name="resultLengthUnit"></param>
         /// <returns></returns>
-        public static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
+        internal static GsaResultsValues GetElement2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
             LengthUnit resultLengthUnit)
         {
             GsaResultsValues r = new GsaResultsValues();
@@ -569,7 +573,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="forceUnit"></param>
         /// <param name="momentUnit"></param>
         /// <returns></returns>
-        public static GsaResultsValues GetElement1DResultValues(ReadOnlyDictionary<int, Element1DResult> globalResults,
+        internal static GsaResultsValues GetElement1DResultValues(ReadOnlyDictionary<int, Element1DResult> globalResults,
             ForceUnit forceUnit, MomentUnit momentUnit)
         {
             GsaResultsValues r = new GsaResultsValues();
@@ -593,8 +597,8 @@ namespace GsaGH.Util.Gsa
                     Double6 result = values[i];
 
                     // add the values to the vector lists
-                    xyzRes[i] = GetQuantityResult(result, forceUnit);
-                    xxyyzzRes[i] = GetQuantityResult(result, momentUnit);
+                    xyzRes[i] = GetQuantityResult(result, forceUnit, true);
+                    xxyyzzRes[i] = GetQuantityResult(result, momentUnit, true);
                 });
                 // add the vector list to the out tree
                 r.xyzResults.TryAdd(key, xyzRes);
@@ -611,7 +615,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="globalResults"></param>
         /// <param name="resultLengthUnit"></param>
         /// <returns></returns>
-        public static GsaResultsValues GetElement1DResultValues(ReadOnlyDictionary<int, Element1DResult> globalResults, 
+        internal static GsaResultsValues GetElement1DResultValues(ReadOnlyDictionary<int, Element1DResult> globalResults, 
             LengthUnit resultLengthUnit)
         {
             GsaResultsValues r = new GsaResultsValues();
@@ -654,7 +658,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="globalResults"></param>
         /// <param name="resultLengthUnit"></param>
         /// <returns></returns>
-        public static GsaResultsValues GetNodeResultValues(ReadOnlyDictionary<int, NodeResult> globalResults,
+        internal static GsaResultsValues GetNodeResultValues(ReadOnlyDictionary<int, NodeResult> globalResults,
             LengthUnit resultLengthUnit)
         {
             GsaResultsValues r = new GsaResultsValues();
@@ -684,7 +688,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="forceUnit"></param>
         /// <param name="momentUnit"></param>
         /// <returns></returns>
-        public static GsaResultsValues GetNodeResultValues(ReadOnlyDictionary<int, NodeResult> globalResults,
+        internal static GsaResultsValues GetNodeResultValues(ReadOnlyDictionary<int, NodeResult> globalResults,
             ForceUnit forceUnit, MomentUnit momentUnit)
         {
             GsaResultsValues r = new GsaResultsValues();
@@ -716,344 +720,555 @@ namespace GsaGH.Util.Gsa
         /// <param name="globalResults"></param>
         /// <param name="resultLengthUnit"></param>
         /// <returns></returns>
-        //public static ConcurrentDictionary<int, GsaResultsValues> Get3DResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<Element3DResult>> globalResults,
-        //    LengthUnit resultLengthUnit, int permutation)
-        //{
-        //    ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
+        internal static ConcurrentDictionary<int, GsaResultsValues> GetElement3DResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<Element3DResult>> globalResults,
+            LengthUnit lengthUnit, int permutation)
+        {
+            ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
 
-        //    if (permutation > 0)
-        //    {
-        //        GsaResultsValues r = new GsaResultsValues();
+            if (permutation > 0)
+            {
+                GsaResultsValues r = new GsaResultsValues();
+                r.Type = GsaResultsValues.ResultType.Displacement;
 
-        //        Parallel.ForEach(globalResults.Keys, key =>
-        //        {
-        //            // lists for results
-        //            ReadOnlyCollection<Element3DResult> results = globalResults[key];
-        //            Element3DResult elementResults = results[permutation];
-        //            ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //            xyzRes.AsParallel().AsOrdered();
-        //            ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //            xxyyzzRes.AsParallel().AsOrdered();
+                Parallel.ForEach(globalResults.Keys, key =>
+                {
+                    // lists for results
+                    ReadOnlyCollection<Element3DResult> results = globalResults[key];
+                    Element3DResult result = results[permutation - 1];
+                    List<Double3> values = result.Displacement.ToList();
+                    ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xyzRes.AsParallel().AsOrdered();
 
-        //            List<Double3> trans_vals = elementResults.Displacement.ToList();
-        //            Parallel.For(0, trans_vals.Count, i => //foreach (Double3 val in trans_vals)
-        //            {
-        //                xyzRes[i] = GetQuantityResult(trans_vals[i], resultLengthUnit);
+                    // loop through the results
+                    Parallel.For(0, values.Count, i =>
+                    {
+                        // add the values to the vector lists
+                        xyzRes.TryAdd(i, GetQuantityResult(values[i], lengthUnit));
+                    });
+                    // add the vector list to the out tree
+                    r.xyzResults.TryAdd(key, xyzRes);
+                });
+                r.UpdateMinMax();
+                rs.TryAdd(permutation, r);
+            }
+            else
+            {
+                int permutationCount = globalResults[globalResults.Keys.First()].Count;
 
-        //            });
+                Parallel.For(0, permutationCount, index => // loop through permutations
+                {
+                    GsaResultsValues r = new GsaResultsValues();
+                    r.Type = GsaResultsValues.ResultType.Displacement;
 
-        //            // add vector lists to main lists
-        //            r.xyzResults[key] = xyzRes;
-        //            r.xxyyzzResults[key] = xxyyzzRes;
-        //        });
+                    Parallel.ForEach(globalResults.Keys, key =>
+                    {
+                        // lists for results
+                        ReadOnlyCollection<Element3DResult> results = globalResults[key];
+                        Element3DResult result = results[index];
+                        List<Double3> values = result.Displacement.ToList();
+                        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xyzRes.AsParallel().AsOrdered();
 
-        //        r.UpdateMinMax();
-        //        rs.TryAdd(permutation, r);
-        //    }
-        //    else
-        //    {
-        //        int permutationCount = globalResults[globalResults.Keys.First()].Count;
-        //        for (int i = 0; i < permutationCount; i++)
-        //        {
-        //            GsaResultsValues r = new GsaResultsValues();
+                        // loop through the results
+                        Parallel.For(0, values.Count, i =>
+                        {
+                            // add the values to the vector lists
+                            xyzRes.TryAdd(i, GetQuantityResult(values[i], lengthUnit));
+                        });
+                        // add the vector list to the out tree
+                        r.xyzResults.TryAdd(key, xyzRes);
+                    });
+                    r.UpdateMinMax();
+                    rs.TryAdd(index + 1, r); // permutation ID = index + 1
+                });
+            }
 
-        //            Parallel.ForEach(globalResults.Keys, key =>
-        //            {
-        //                // lists for results
-        //                ReadOnlyCollection<Element3DResult> results = globalResults[key];
-        //                Element3DResult elementResults = results[i];
-        //                ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //                xyzRes.AsParallel().AsOrdered();
-        //                ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //                xxyyzzRes.AsParallel().AsOrdered();
+            return rs;
+        }
 
-        //                List<Double3> trans_vals = elementResults.Displacement.ToList();
-        //                Parallel.For(0, trans_vals.Count, j => //foreach (Double3 val in trans_vals)
-        //                {
-        //                    xyzRes[j] = GetQuantityResult(trans_vals[j], resultLengthUnit);
-
-        //                });
-
-        //                // add vector lists to main lists
-        //                r.xyzResults[key] = xyzRes;
-        //                r.xxyyzzResults[key] = xxyyzzRes;
-        //            });
-
-        //            r.UpdateMinMax();
-        //            rs.TryAdd(permutation, r);
-        //        }
-        //    }
-
-
-        //    return rs;
-        //}
         /// <summary>
         /// Returns stress result values
         /// </summary>
         /// <param name="globalResults"></param>
         /// <param name="stressUnit"></param>
         /// <returns></returns>
-        //public static GsaResultsValues Get3DResultValues(ReadOnlyDictionary<int, Element3DResult> globalResults,
-        //    PressureUnit stressUnit)
-        //{
-        //    GsaResultsValues r = new GsaResultsValues();
-        //    r.Type = GsaResultsValues.ResultType.Stress;
+        internal static ConcurrentDictionary<int, GsaResultsValues> GetElement3DResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<Element3DResult>> globalResults,
+            PressureUnit stressUnit, int permutation)
+        {
+            ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
 
-        //    Parallel.ForEach(globalResults.Keys, key =>
-        //    {
-        //        // lists for results
-        //        Element3DResult elementResults = globalResults[key];
-        //        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xyzRes.AsParallel().AsOrdered();
-        //        ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xxyyzzRes.AsParallel().AsOrdered();
+            if (permutation > 0)
+            {
+                GsaResultsValues r = new GsaResultsValues();
+                r.Type = GsaResultsValues.ResultType.Stress;
 
-        //        List<Tensor3> stress_vals = elementResults.Stress.ToList();
-        //        Parallel.For(0, stress_vals.Count * 2, i => // (Tensor3 val in stress_vals)
-        //        {
-        //            // split computation into two parts by doubling the i-counter
-        //            if (i < stress_vals.Count)
-        //            {
-        //                xyzRes[i] = GetQuantityResult(stress_vals[i], stressUnit);
-        //            }
-        //            else
-        //            {
-        //                xxyyzzRes[i - stress_vals.Count] = GetQuantityResult(stress_vals[i - stress_vals.Count], stressUnit);
-        //            }
-        //        });
+                Parallel.ForEach(globalResults.Keys, key =>
+                {
+                    // lists for results
+                    ReadOnlyCollection<Element3DResult> results = globalResults[key];
+                    Element3DResult result = results[permutation - 1];
+                    List<Tensor3> values = result.Stress.ToList();
+                    ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xyzRes.AsParallel().AsOrdered();
+                    ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xxyyzzRes.AsParallel().AsOrdered();
 
-        //        // add vector lists to main lists
-        //        r.xyzResults[key] = xyzRes;
-        //        r.xxyyzzResults[key] = xxyyzzRes;
-        //    });
+                    // loop through the results
+                    Parallel.For(0, values.Count, i =>
+                    {
+                        // add the values to the vector lists
+                        xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
+                        xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
+                    });
+                    // add the vector list to the out tree
+                    r.xyzResults.TryAdd(key, xyzRes);
+                    r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+                });
+                r.UpdateMinMax();
+                rs.TryAdd(permutation, r);
+            }
+            else
+            {
+                int permutationCount = globalResults[globalResults.Keys.First()].Count;
 
-        //    r.UpdateMinMax();
+                Parallel.For(0, permutationCount, index => // loop through permutations
+                {
+                    GsaResultsValues r = new GsaResultsValues();
+                    r.Type = GsaResultsValues.ResultType.Stress;
 
-        //    return r;
-        //}
-        ///// <summary>
-        ///// Returns stress result values
-        ///// </summary>
-        ///// <param name="globalResults"></param>
-        ///// <param name="stressUnit"></param>
-        ///// <returns></returns>
-        //public static GsaResultsValues Get2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
-        //    PressureUnit stressUnit)
-        //{
-        //    GsaResultsValues r = new GsaResultsValues();
-        //    r.Type = GsaResultsValues.ResultType.Stress;
+                    Parallel.ForEach(globalResults.Keys, key =>
+                    {
+                        // lists for results
+                        ReadOnlyCollection<Element3DResult> results = globalResults[key];
+                        Element3DResult result = results[index];
+                        List<Tensor3> values = result.Stress.ToList();
+                        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xyzRes.AsParallel().AsOrdered();
+                        ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xxyyzzRes.AsParallel().AsOrdered();
 
-        //    Parallel.ForEach(globalResults.Keys, key =>
-        //    {
-        //        // lists for results
-        //        Element2DResult elementResults = globalResults[key];
-        //        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xyzRes.AsParallel().AsOrdered();
-        //        ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xxyyzzRes.AsParallel().AsOrdered();
+                        // loop through the results
+                        Parallel.For(0, values.Count, i =>
+                        {
+                            // add the values to the vector lists
+                            xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
+                            xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
+                        });
+                        // add the vector list to the out tree
+                        r.xyzResults.TryAdd(key, xyzRes);
+                        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+                    });
+                    r.UpdateMinMax();
+                    rs.TryAdd(index + 1, r); // permutation ID = index + 1
+                });
+            }
 
-        //        List<Tensor3> stresses = elementResults.Stress.ToList();
-        //        Parallel.For(0, stresses.Count * 2, i => // (Tensor3 stress in stresses)
-        //        {
-        //            // split computation into two parts by doubling the i-counter
-        //            if (i < stresses.Count)
-        //            {
-        //                xyzRes[i] = GetQuantityResult(stresses[i], stressUnit, false);
-        //            }
-        //            else
-        //            {
-        //                xxyyzzRes[i - stresses.Count] = GetQuantityResult(stresses[i - stresses.Count], stressUnit, true);
-        //            }
-        //        });
+            return rs;
+        }
 
-        //        // add vector lists to main lists
-        //        r.xyzResults[key] = xyzRes;
-        //        r.xxyyzzResults[key] = xxyyzzRes;
-        //    });
+        /// <summary>
+        /// Returns stress result values
+        /// </summary>
+        /// <param name="globalResults"></param>
+        /// <param name="stressUnit"></param>
+        /// <returns></returns>
+        internal static ConcurrentDictionary<int, GsaResultsValues> GetElement2DResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>> globalResults,
+            PressureUnit stressUnit, int permutation)
+        {
+            ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
 
-        //    r.UpdateMinMax();
+            if (permutation > 0)
+            {
+                GsaResultsValues r = new GsaResultsValues();
+                r.Type = GsaResultsValues.ResultType.Stress;
 
-        //    return r;
-        //}
-        ///// <summary>
-        ///// Returns shear result values
-        ///// </summary>
-        ///// <param name="globalResults"></param>
-        ///// <param name="type"></param>
-        ///// <param name="forceUnit"></param>
-        ///// <returns></returns>
-        //public static GsaResultsValues Get2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults, GsaResultsValues.ResultType type,
-        //    ForceUnit forceUnit)
-        //{
-        //    GsaResultsValues r = new GsaResultsValues();
-        //    r.Type = GsaResultsValues.ResultType.Shear;
+                Parallel.ForEach(globalResults.Keys, key =>
+                {
+                    // lists for results
+                    ReadOnlyCollection<Element2DResult> results = globalResults[key];
+                    Element2DResult result = results[permutation - 1];
+                    List<Tensor3> values = result.Stress.ToList();
+                    ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xyzRes.AsParallel().AsOrdered();
+                    ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xxyyzzRes.AsParallel().AsOrdered();
 
-        //    Parallel.ForEach(globalResults.Keys, key =>
-        //    {
-        //        // lists for results
-        //        Element2DResult elementResults = globalResults[key];
-        //        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xyzRes.AsParallel().AsOrdered();
-        //        ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xxyyzzRes.AsParallel().AsOrdered();
+                    // loop through the results
+                    Parallel.For(0, values.Count, i =>
+                    {
+                        // add the values to the vector lists
+                        xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
+                        xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
+                    });
+                    // add the vector list to the out tree
+                    r.xyzResults.TryAdd(key, xyzRes);
+                    r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+                });
+                r.UpdateMinMax();
+                rs.TryAdd(permutation, r);
+            }
+            else
+            {
+                int permutationCount = globalResults[globalResults.Keys.First()].Count;
 
-        //        List<Vector2> shears = elementResults.Shear.ToList();
-        //        Parallel.For(0, shears.Count, i => // (Vector2 shear in shears)
-        //        {
-        //            xyzRes[i] = GetQuantityResult(shears[i], forceUnit);
-        //        });
+                Parallel.For(0, permutationCount, index => // loop through permutations
+                {
+                    GsaResultsValues r = new GsaResultsValues();
+                    r.Type = GsaResultsValues.ResultType.Stress;
 
-        //        // add vector lists to main lists
-        //        r.xyzResults[key] = xyzRes;
-        //        r.xxyyzzResults[key] = xxyyzzRes;
-        //    });
+                    Parallel.ForEach(globalResults.Keys, key =>
+                    {
+                        // lists for results
+                        ReadOnlyCollection<Element2DResult> results = globalResults[key];
+                        Element2DResult result = results[index];
+                        List<Tensor3> values = result.Stress.ToList();
+                        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xyzRes.AsParallel().AsOrdered();
+                        ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xxyyzzRes.AsParallel().AsOrdered();
 
-        //    r.UpdateMinMax();
+                        // loop through the results
+                        Parallel.For(0, values.Count, i =>
+                        {
+                            // add the values to the vector lists
+                            xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
+                            xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
+                        });
+                        // add the vector list to the out tree
+                        r.xyzResults.TryAdd(key, xyzRes);
+                        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+                    });
+                    r.UpdateMinMax();
+                    rs.TryAdd(index + 1, r); // permutation ID = index + 1
+                });
+            }
 
-        //    return r;
-        //}
-        ///// <summary>
-        ///// Returns force & moment result values
-        ///// </summary>
-        ///// <param name="globalResults"></param>
-        ///// <param name="forceUnit"></param>
-        ///// <param name="momentUnit"></param>
-        ///// <returns></returns>
-        //public static GsaResultsValues Get2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
-        //    ForceUnit forceUnit, MomentUnit momentUnit)
-        //{
-        //    GsaResultsValues r = new GsaResultsValues();
-        //    r.Type = GsaResultsValues.ResultType.Force;
+            return rs;
+        }
 
-        //    Parallel.ForEach(globalResults.Keys, key =>
-        //    {
-        //        // lists for results
-        //        Element2DResult elementResults = globalResults[key];
-        //        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xyzRes.AsParallel().AsOrdered();
-        //        ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xxyyzzRes.AsParallel().AsOrdered();
+        /// <summary>
+        /// Returns shear result values
+        /// </summary>
+        /// <param name="globalResults"></param>
+        /// <param name="type"></param>
+        /// <param name="forceUnit"></param>
+        /// <returns></returns>
+        internal static ConcurrentDictionary<int, GsaResultsValues> GetElement2DResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>> globalResults,
+            ForceUnit forceUnit, int permutation)
+        {
+            ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
 
-        //        List<Tensor2> forces = elementResults.Force.ToList();
-        //        List<Tensor2> moments = elementResults.Moment.ToList();
-        //        Parallel.For(0, forces.Count + moments.Count, i => // (Tensor2 force in forces)
-        //        {
-        //            // combine forces and momemts (list lengths must be the same) to run
-        //            // calculations in parallel by doubling the i-counter
-        //            if (i < forces.Count)
-        //            {
-        //                xyzRes[i] = GetQuantityResult(forces[i], forceUnit);
-        //            }
-        //            else
-        //            {
-        //                xxyyzzRes[i - forces.Count] = GetQuantityResult(moments[i - forces.Count], momentUnit);
-        //            }
-        //        });
+            if (permutation > 0)
+            {
+                GsaResultsValues r = new GsaResultsValues();
+                r.Type = GsaResultsValues.ResultType.Shear;
 
-        //        // add vector lists to main lists
-        //        r.xyzResults[key] = xyzRes;
-        //        r.xxyyzzResults[key] = xxyyzzRes;
-        //    });
+                Parallel.ForEach(globalResults.Keys, key =>
+                {
+                    // lists for results
+                    ReadOnlyCollection<Element2DResult> results = globalResults[key];
+                    Element2DResult result = results[permutation - 1];
+                    List<Vector2> values = result.Shear.ToList();
+                    ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xyzRes.AsParallel().AsOrdered();
 
-        //    r.UpdateMinMax();
+                    // loop through the results
+                    Parallel.For(0, values.Count, i =>
+                    {
+                        // add the values to the vector lists
+                        xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit));
+                    });
+                    // add the vector list to the out tree
+                    r.xyzResults.TryAdd(key, xyzRes);
+                });
+                r.UpdateMinMax();
+                rs.TryAdd(permutation, r);
+            }
+            else
+            {
+                int permutationCount = globalResults[globalResults.Keys.First()].Count;
 
-        //    return r;
-        //}
-        ///// <summary>
-        ///// Returns displacement result values
-        ///// </summary>
-        ///// <param name="globalResults"></param>
-        ///// <param name="resultLengthUnit"></param>
-        ///// <returns></returns>
-        //public static GsaResultsValues Get2DResultValues(ReadOnlyDictionary<int, Element2DResult> globalResults,
-        //    LengthUnit resultLengthUnit)
-        //{
-        //    GsaResultsValues r = new GsaResultsValues();
-        //    r.Type = GsaResultsValues.ResultType.Displacement;
+                Parallel.For(0, permutationCount, index => // loop through permutations
+                {
+                    GsaResultsValues r = new GsaResultsValues();
+                    r.Type = GsaResultsValues.ResultType.Shear;
 
-        //    Parallel.ForEach(globalResults.Keys, key =>
-        //    {
-        //        // lists for results
-        //        Element2DResult elementResults = globalResults[key];
-        //        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xyzRes.AsParallel().AsOrdered();
-        //        ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xxyyzzRes.AsParallel().AsOrdered();
+                    Parallel.ForEach(globalResults.Keys, key =>
+                    {
+                        // lists for results
+                        ReadOnlyCollection<Element2DResult> results = globalResults[key];
+                        Element2DResult result = results[index];
+                        List<Vector2> values = result.Shear.ToList();
+                        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xyzRes.AsParallel().AsOrdered();
 
-        //        List<Double6> disp = elementResults.Displacement.ToList();
-        //        Parallel.For(0, disp.Count * 2, i => // (Double6 val in values)
-        //        {
-        //            // split computation into two parts by doubling the i-counter
-        //            if (i < disp.Count)
-        //            {
-        //                xyzRes[i] = GetQuantityResult(disp[i], resultLengthUnit);
-        //            }
-        //            else
-        //            {
-        //                xyzRes[i - disp.Count] = GetQuantityResult(disp[i - disp.Count], AngleUnit.Radian);
-        //            }
-        //        });
+                        // loop through the results
+                        Parallel.For(0, values.Count, i =>
+                        {
+                            // add the values to the vector lists
+                            xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit));
+                        });
+                        // add the vector list to the out tree
+                        r.xyzResults.TryAdd(key, xyzRes);
+                    });
+                    r.UpdateMinMax();
+                    rs.TryAdd(index + 1, r); // permutation ID = index + 1
+                });
+            }
 
-        //        // add vector lists to main lists
-        //        r.xyzResults[key] = xyzRes;
-        //        r.xxyyzzResults[key] = xxyyzzRes;
-        //    });
+            return rs;
+        }
 
-        //    r.UpdateMinMax();
+        /// <summary>
+        /// Returns force & moment result values
+        /// </summary>
+        /// <param name="globalResults"></param>
+        /// <param name="forceUnit"></param>
+        /// <param name="momentUnit"></param>
+        /// <returns></returns>
+        internal static ConcurrentDictionary<int, GsaResultsValues> GetElement2DResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>> globalResults,
+            ForceUnit forceUnit, MomentUnit momentUnit, int permutation)
+        {
+            ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
 
-        //    return r;
-        //}
-        ///// <summary>
-        ///// Returns forces result values
-        ///// </summary>
-        ///// <param name="globalResults"></param>
-        ///// <param name="forceUnit"></param>
-        ///// <param name="momentUnit"></param>
-        ///// <returns></returns>
-        //public static GsaResultsValues Get1DResultValues(ReadOnlyDictionary<int, Element1DResult> globalResults,
-        //    ForceUnit forceUnit, MomentUnit momentUnit)
-        //{
-        //    GsaResultsValues r = new GsaResultsValues();
-        //    r.Type = GsaResultsValues.ResultType.Force;
+            if (permutation > 0)
+            {
+                GsaResultsValues r = new GsaResultsValues();
+                r.Type = GsaResultsValues.ResultType.Force;
 
-        //    Parallel.ForEach(globalResults.Keys, key =>
-        //    {
-        //        // lists for results
-        //        Element1DResult elementResults = globalResults[key];
-        //        List<Double6> values = new List<Double6>();
-        //        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xyzRes.AsParallel().AsOrdered();
-        //        ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        //        xxyyzzRes.AsParallel().AsOrdered();
+                Parallel.ForEach(globalResults.Keys, key =>
+                {
+                    // lists for results
+                    ReadOnlyCollection<Element2DResult> results = globalResults[key];
+                    Element2DResult result = results[permutation - 1];
+                    List<Tensor2> values = result.Force.ToList();
+                    ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xyzRes.AsParallel().AsOrdered();
+                    ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xxyyzzRes.AsParallel().AsOrdered();
 
-        //        values = elementResults.Force.ToList();
+                    // loop through the results
+                    Parallel.For(0, values.Count, i =>
+                    {
+                        // add the values to the vector lists
+                        xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit));
+                        xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], momentUnit));
+                    });
+                    // add the vector list to the out tree
+                    r.xyzResults.TryAdd(key, xyzRes);
+                    r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+                });
+                r.UpdateMinMax();
+                rs.TryAdd(permutation, r);
+            }
+            else
+            {
+                int permutationCount = globalResults[globalResults.Keys.First()].Count;
 
-        //        // loop through the results
-        //        Parallel.For(0, values.Count, i =>
-        //        {
-        //            Double6 result = values[i];
+                Parallel.For(0, permutationCount, index => // loop through permutations
+                {
+                    GsaResultsValues r = new GsaResultsValues();
+                    r.Type = GsaResultsValues.ResultType.Force;
 
-        //            // add the values to the vector lists
-        //            xyzRes[i] = GetQuantityResult(result, forceUnit);
-        //            xxyyzzRes[i] = GetQuantityResult(result, momentUnit);
-        //        });
-        //        // add the vector list to the out tree
-        //        r.xyzResults[key] = xyzRes;
-        //        r.xxyyzzResults[key] = xxyyzzRes;
-        //    });
+                    Parallel.ForEach(globalResults.Keys, key =>
+                    {
+                        // lists for results
+                        ReadOnlyCollection<Element2DResult> results = globalResults[key];
+                        Element2DResult result = results[index];
+                        List<Tensor2> values = result.Force.ToList();
+                        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xyzRes.AsParallel().AsOrdered();
+                        ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xxyyzzRes.AsParallel().AsOrdered();
 
-        //    r.UpdateMinMax();
+                        // loop through the results
+                        Parallel.For(0, values.Count, i =>
+                        {
+                            // add the values to the vector lists
+                            xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit));
+                            xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], momentUnit));
+                        });
+                        // add the vector list to the out tree
+                        r.xyzResults.TryAdd(key, xyzRes);
+                        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+                    });
+                    r.UpdateMinMax();
+                    rs.TryAdd(index + 1, r); // permutation ID = index + 1
+                });
+            }
 
-        //    return r;
-        //}
-        
+            return rs;
+        }
+
         /// <summary>
         /// Returns displacement result values
         /// </summary>
         /// <param name="globalResults"></param>
         /// <param name="resultLengthUnit"></param>
         /// <returns></returns>
-        public static ConcurrentDictionary<int, GsaResultsValues> GetElement1DResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>> globalResults,
+        internal static ConcurrentDictionary<int, GsaResultsValues> GetElement2DResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>> globalResults,
+            LengthUnit resultLengthUnit, int permutation)
+        {
+            ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
+
+            if (permutation > 0)
+            {
+                GsaResultsValues r = new GsaResultsValues();
+                r.Type = GsaResultsValues.ResultType.Displacement;
+
+                Parallel.ForEach(globalResults.Keys, key =>
+                {
+                    // lists for results
+                    ReadOnlyCollection<Element2DResult> results = globalResults[key];
+                    Element2DResult result = results[permutation - 1];
+                    List<Double6> values = result.Displacement.ToList();
+                    ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xyzRes.AsParallel().AsOrdered();
+                    ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xxyyzzRes.AsParallel().AsOrdered();
+
+                    // loop through the results
+                    Parallel.For(0, values.Count, i =>
+                    {
+                        // add the values to the vector lists
+                        xyzRes.TryAdd(i, GetQuantityResult(values[i], resultLengthUnit));
+                        xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], AngleUnit.Radian));
+                    });
+                    // add the vector list to the out tree
+                    r.xyzResults.TryAdd(key, xyzRes);
+                    r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+                });
+                r.UpdateMinMax();
+                rs.TryAdd(permutation, r);
+            }
+            else
+            {
+                int permutationCount = globalResults[globalResults.Keys.First()].Count;
+
+                Parallel.For(0, permutationCount, index => // loop through permutations
+                {
+                    GsaResultsValues r = new GsaResultsValues();
+                    r.Type = GsaResultsValues.ResultType.Displacement;
+
+                    Parallel.ForEach(globalResults.Keys, key =>
+                    {
+                        // lists for results
+                        ReadOnlyCollection<Element2DResult> results = globalResults[key];
+                        Element2DResult result = results[index];
+                        List<Double6> values = result.Displacement.ToList();
+                        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xyzRes.AsParallel().AsOrdered();
+                        ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xxyyzzRes.AsParallel().AsOrdered();
+
+                        // loop through the results
+                        Parallel.For(0, values.Count, i =>
+                        {
+                            // add the values to the vector lists
+                            xyzRes.TryAdd(i, GetQuantityResult(values[i], resultLengthUnit));
+                            xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], AngleUnit.Radian));
+                        });
+                        // add the vector list to the out tree
+                        r.xyzResults.TryAdd(key, xyzRes);
+                        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+                    });
+                    r.UpdateMinMax();
+                    rs.TryAdd(index + 1, r); // permutation ID = index + 1
+                });
+            }
+
+            return rs;
+        }
+
+        /// <summary>
+        /// Returns forces result values
+        /// </summary>
+        /// <param name="globalResults"></param>
+        /// <param name="forceUnit"></param>
+        /// <param name="momentUnit"></param>
+        /// /// <param name="permutation"></param>
+        /// <returns></returns>
+        internal static ConcurrentDictionary<int, GsaResultsValues> GetElement1DResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>> globalResults,
+            ForceUnit forceUnit, MomentUnit momentUnit, int permutation)
+        {
+            ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
+
+            if (permutation > 0)
+            {
+                GsaResultsValues r = new GsaResultsValues();
+                r.Type = GsaResultsValues.ResultType.Force;
+
+                Parallel.ForEach(globalResults.Keys, key =>
+                {
+                    // lists for results
+                    ReadOnlyCollection<Element1DResult> results = globalResults[key];
+                    Element1DResult result = results[permutation - 1];
+                    List<Double6> values = result.Force.ToList();
+                    ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xyzRes.AsParallel().AsOrdered();
+                    ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                    xxyyzzRes.AsParallel().AsOrdered();
+
+                    // loop through the results
+                    Parallel.For(0, values.Count, i =>
+                    {
+                        // add the values to the vector lists
+                        xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit, true));
+                        xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], momentUnit, true));
+                    });
+                    // add the vector list to the out tree
+                    r.xyzResults.TryAdd(key, xyzRes);
+                    r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+                });
+                r.UpdateMinMax();
+                rs.TryAdd(permutation, r);
+            }
+            else
+            {
+                int permutationCount = globalResults[globalResults.Keys.First()].Count;
+
+                Parallel.For(0, permutationCount, index => // loop through permutations
+                {
+                    GsaResultsValues r = new GsaResultsValues();
+                    r.Type = GsaResultsValues.ResultType.Force;
+
+                    Parallel.ForEach(globalResults.Keys, key =>
+                    {
+                        // lists for results
+                        ReadOnlyCollection<Element1DResult> results = globalResults[key];
+                        Element1DResult result = results[index];
+                        List<Double6> values = result.Force.ToList();
+                        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xyzRes.AsParallel().AsOrdered();
+                        ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+                        xxyyzzRes.AsParallel().AsOrdered();
+
+                        // loop through the results
+                        Parallel.For(0, values.Count, i =>
+                        {
+                            // add the values to the vector lists
+                            xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit, true));
+                            xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], momentUnit, true));
+                        });
+                        // add the vector list to the out tree
+                        r.xyzResults.TryAdd(key, xyzRes);
+                        r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+                    });
+                    r.UpdateMinMax();
+                    rs.TryAdd(index + 1, r); // permutation ID = index + 1
+                });
+            }
+
+            return rs;
+        }
+
+        /// <summary>
+        /// Returns displacement result values
+        /// </summary>
+        /// <param name="globalResults"></param>
+        /// <param name="resultLengthUnit"></param>
+        /// <returns></returns>
+        internal static ConcurrentDictionary<int, GsaResultsValues> GetElement1DResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>> globalResults,
             LengthUnit resultLengthUnit, int permutation)
         {
             ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
@@ -1132,7 +1347,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="globalResults"></param>
         /// <param name="resultLengthUnit"></param>
         /// <returns></returns>
-        public static ConcurrentDictionary<int, GsaResultsValues> GetNodeResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults,
+        internal static ConcurrentDictionary<int, GsaResultsValues> GetNodeResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults,
             LengthUnit resultLengthUnit, int permutation)
         {
             ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int,GsaResultsValues>();
@@ -1196,7 +1411,7 @@ namespace GsaGH.Util.Gsa
         /// <param name="forceUnit"></param>
         /// <param name="momentUnit"></param>
         /// <returns></returns>
-        public static ConcurrentDictionary<int, GsaResultsValues> GetNodeResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults,
+        internal static ConcurrentDictionary<int, GsaResultsValues> GetNodeResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults,
             ForceUnit forceUnit, MomentUnit momentUnit, int permutation)
         {
             ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();

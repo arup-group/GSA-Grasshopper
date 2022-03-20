@@ -30,7 +30,7 @@ namespace GsaGH.Components
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("83844063-3da9-4d96-95d3-ea39f96f3e2a");
         public NodeDisplacement()
-          : base("Node Displacement", "NodeDisp", "Node Translation and Rotation result values",
+          : base("Node Displacements", "NodeDisp", "Node Translation and Rotation result values",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat5())
         { this.Hidden = true; } // sets the initial state of the component to hidden
@@ -125,7 +125,6 @@ namespace GsaGH.Components
             pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|", "Combined |XXYYZZ| Rotations in Global Axis" + note, GH_ParamAccess.tree);
             pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value", GH_ParamAccess.list);
         }
-        
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {

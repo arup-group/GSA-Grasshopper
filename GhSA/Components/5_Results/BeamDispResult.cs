@@ -30,7 +30,7 @@ namespace GsaGH.Components
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("21ec9005-1b2f-4eb8-8171-b2c0190a4a54");
         public BeamDisplacement()
-          : base("Beam Displacement", "BeamDisp", "Element1D Translation and Rotation result values",
+          : base("Beam Displacements", "BeamDisp", "Element1D Translation and Rotation result values",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat5())
         { this.Hidden = true; } // sets the initial state of the component to hidden

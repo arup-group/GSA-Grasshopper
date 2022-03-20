@@ -115,9 +115,9 @@ namespace GsaGH.Parameters
         /// <summary>
         /// Analysis Case 2DElement API Result Dictionary 
         /// Append to this dictionary to chache results
-        /// key = elementList
+        /// key = tuple<elementList, layer>
         /// </summary>
-        internal Dictionary<string, ReadOnlyDictionary<int, Element2DResult>> ACaseElement2DResults { get; set; } = new Dictionary<string, ReadOnlyDictionary<int, Element2DResult>>();
+        internal Dictionary<Tuple<string, double>, ReadOnlyDictionary<int, Element2DResult>> ACaseElement2DResults { get; set; } = new Dictionary<Tuple<string, double>, ReadOnlyDictionary<int, Element2DResult>>();
         
         /// <summary>
         /// Analysis Case 2DElement Displacement Result VALUES Dictionary 
@@ -143,9 +143,9 @@ namespace GsaGH.Parameters
         /// <summary>
         /// Analysis Case 2DElement Stress Result VALUES Dictionary 
         /// Append to this dictionary to chache results
-        /// key = elementList
+        /// key = tuple<elementList, layer>
         /// </summary>
-        internal Dictionary<string, GsaResultsValues> ACaseElement2DStressValues { get; set; } = new Dictionary<string, GsaResultsValues>();
+        internal Dictionary<Tuple<string, double>, GsaResultsValues> ACaseElement2DStressValues { get; set; } = new Dictionary<Tuple<string, double>, GsaResultsValues>();
 
         /// <summary>
         /// Analysis Case 1DElement API Result Dictionary 
@@ -221,7 +221,7 @@ namespace GsaGH.Parameters
         /// key = elementList
         /// value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
         /// </summary>
-        internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> Combo3DDisplacementValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
+        internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> ComboElement3DDisplacementValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
         
         /// <summary>
         /// Combination Case 3DElement Stress Result VALUES Dictionary 
@@ -229,15 +229,15 @@ namespace GsaGH.Parameters
         /// key = elementList
         /// value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
         /// </summary>
-        internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> Combo3DStressValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
+        internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> ComboElement3DStressValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
 
         /// <summary>
         /// Combination Case 2DElement API Result Dictionary 
         /// Append to this dictionary to chache results
-        /// key = Tuple<elementList, numberOfDivisions>
+        /// key = Tuple<elementList, layer>
         /// value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
         /// </summary>
-        internal Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>>> ComboElement2DResults { get; set; } = new Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>>>();
+        internal Dictionary<Tuple<string, double>, ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>>> ComboElement2DResults { get; set; } = new Dictionary<Tuple<string, double>, ReadOnlyDictionary<int, ReadOnlyCollection<Element2DResult>>>();
         
         /// <summary>
         /// Combination Case 2DElement Displacement Result VALUES Dictionary 
@@ -245,7 +245,7 @@ namespace GsaGH.Parameters
         /// key = elementList
         /// value = <elementID, collection<permutationResult>
         /// </summary>
-        internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> Combo2DDisplacementValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
+        internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> ComboElement2DDisplacementValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
         
         /// <summary>
         /// Combination Case 2DElement Force/Moment Result VALUES Dictionary 
@@ -253,23 +253,23 @@ namespace GsaGH.Parameters
         /// key = elementList
         /// value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
         /// </summary>
-        internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> Combo2DForceValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
-        
+        internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> ComboElement2DForceValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
+
         /// <summary>
         /// Combination Case 2DElement Stress Result VALUES Dictionary 
         /// Append to this dictionary to chache results
-        /// key = elementList
+        /// key = tuple<elementList, layer>
         /// value = Dictionary<elementID, Dictionary<permutationID, permutationsResults>>
         /// </summary>
-        internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> Combo2DStressValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
+        internal Dictionary<Tuple<string, double>, ConcurrentDictionary<int, GsaResultsValues>> ComboElement2DStressValues { get; set; } = new Dictionary<Tuple<string, double>, ConcurrentDictionary<int, GsaResultsValues>>();
 
         /// <summary>
         /// Combination Case 2DElement Result VALUES Dictionary 
         /// Append to this dictionary to chache results
-        /// key = Tuple<elementList, permutations>
+        /// key = elementList
         /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
         /// </summary>
-        internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> Combo2DShearValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
+        internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>> ComboElement2DShearValues { get; set; } = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
 
         /// <summary>
         /// Combination Case 1DElement API Result Dictionary 
@@ -502,6 +502,304 @@ namespace GsaGH.Parameters
             }
         }
 
+        /// <summary>
+        /// Get beam force values 
+        /// For analysis case the length of the list will be 1
+        /// This method will use cache data if it exists
+        /// </summary>
+        /// <param name="elementlist"></param>
+        /// <param name="forceUnit"></param>
+        /// /// <param name="momentUnit"></param>
+        /// <returns></returns>
+        internal List<GsaResultsValues> Element1DForceValues(string elementlist, int positionsCount, ForceUnit forceUnit, MomentUnit momentUnit)
+        {
+            Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
+            if (this.Type == ResultType.AnalysisCase)
+            {
+                if (!this.ACaseElement1DForceValues.ContainsKey(key)) // see if values exist
+                {
+                    if (!this.ACaseElement1DResults.ContainsKey(key)) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ACaseElement1DResults.Add(key, AnalysisCaseResult.Element1DResults(elementlist, positionsCount));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ACaseElement1DForceValues.Add(key,
+                        ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], forceUnit, momentUnit));
+                }
+                return new List<GsaResultsValues>() { ACaseElement1DForceValues[key] };
+            }
+            else
+            {
+                if (!this.ComboElement1DForceValues.ContainsKey(key)) // see if values exist
+                {
+                    if (!this.ComboElement1DResults.ContainsKey(key)) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, positionsCount));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ComboElement1DForceValues.Add(key,
+                        ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], forceUnit, momentUnit, CombPermutationID));
+                }
+                return new List<GsaResultsValues>(ComboElement1DForceValues[key].Values);
+            }
+        }
+
+        /// <summary>
+        /// Get 2D displacement values 
+        /// For analysis case the length of the list will be 1
+        /// This method will use cache data if it exists
+        /// </summary>
+        /// <param name="elementlist"></param>
+        /// <param name="lengthUnit"></param>
+        /// <returns></returns>
+        internal List<GsaResultsValues> Element2DDisplacementValues(string elementlist, LengthUnit lengthUnit)
+        {
+            if (this.Type == ResultType.AnalysisCase)
+            {
+                if (!this.ACaseElement2DDisplacementValues.ContainsKey(elementlist)) // see if values exist
+                {
+                    if (!this.ACaseElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ACaseElement2DResults.Add(new Tuple<string, double>(elementlist, 0), AnalysisCaseResult.Element2DResults(elementlist, 0));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ACaseElement2DDisplacementValues.Add(elementlist,
+                        ResultHelper.GetElement2DResultValues(ACaseElement2DResults[new Tuple<string, double>(elementlist, 0)], lengthUnit));
+                }
+                return new List<GsaResultsValues>() { ACaseElement2DDisplacementValues[elementlist] };
+            }
+            else
+            {
+                if (!this.ComboElement2DDisplacementValues.ContainsKey(elementlist)) // see if values exist
+                {
+                    if (!this.ComboElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ComboElement2DResults.Add(new Tuple<string, double>(elementlist, 0), CombinationCaseResult.Element2DResults(elementlist, 0));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ComboElement2DDisplacementValues.Add(elementlist,
+                        ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], lengthUnit, CombPermutationID));
+                }
+                return new List<GsaResultsValues>(ComboElement2DDisplacementValues[elementlist].Values);
+            }
+        }
+
+        /// <summary>
+        /// Get 2D force values 
+        /// For analysis case the length of the list will be 1
+        /// This method will use cache data if it exists
+        /// </summary>
+        /// <param name="elementlist"></param>
+        /// <param name="forceUnit"></param>
+        /// <param name="momentUnit"></param>
+        /// <returns></returns>
+        internal List<GsaResultsValues> Element2DForceValues(string elementlist, ForceUnit forceUnit, MomentUnit momentUnit)
+        {
+            if (this.Type == ResultType.AnalysisCase)
+            {
+                if (!this.ACaseElement2DForceValues.ContainsKey(elementlist)) // see if values exist
+                {
+                    if (!this.ACaseElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ACaseElement2DResults.Add(new Tuple<string, double>(elementlist, 0), AnalysisCaseResult.Element2DResults(elementlist, 0));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ACaseElement2DForceValues.Add(elementlist,
+                        ResultHelper.GetElement2DResultValues(ACaseElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, momentUnit));
+                }
+                return new List<GsaResultsValues>() { ACaseElement2DForceValues[elementlist] };
+            }
+            else
+            {
+                if (!this.ComboElement2DForceValues.ContainsKey(elementlist)) // see if values exist
+                {
+                    if (!this.ComboElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ComboElement2DResults.Add(new Tuple<string, double>(elementlist, 0), CombinationCaseResult.Element2DResults(elementlist, 0));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ComboElement2DForceValues.Add(elementlist,
+                        ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, momentUnit, CombPermutationID));
+                }
+                return new List<GsaResultsValues>(ComboElement2DForceValues[elementlist].Values);
+            }
+        }
+        
+        /// <summary>
+        /// Get 2D shear force values 
+        /// For analysis case the length of the list will be 1
+        /// This method will use cache data if it exists
+        /// </summary>
+        /// <param name="elementlist"></param>
+        /// /// <param name="forceUnit"></param>
+        /// <returns></returns>
+        internal List<GsaResultsValues> Element2DShearValues(string elementlist, ForceUnit forceUnit)
+        {
+            if (this.Type == ResultType.AnalysisCase)
+            {
+                if (!this.ACaseElement2DShearValues.ContainsKey(elementlist)) // see if values exist
+                {
+                    if (!this.ACaseElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ACaseElement2DResults.Add(new Tuple<string, double>(elementlist, 0), AnalysisCaseResult.Element2DResults(elementlist, 0));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ACaseElement2DShearValues.Add(elementlist,
+                        ResultHelper.GetElement2DResultValues(ACaseElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit));
+                }
+                return new List<GsaResultsValues>() { ACaseElement2DShearValues[elementlist] };
+            }
+            else
+            {
+                if (!this.ComboElement2DShearValues.ContainsKey(elementlist)) // see if values exist
+                {
+                    if (!this.ComboElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ComboElement2DResults.Add(new Tuple<string, double>(elementlist, 0), CombinationCaseResult.Element2DResults(elementlist, 0));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ComboElement2DShearValues.Add(elementlist,
+                        ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, CombPermutationID));
+                }
+                return new List<GsaResultsValues>(ComboElement2DShearValues[elementlist].Values);
+            }
+        }
+
+        /// <summary>
+        /// Get 2D stress values 
+        /// For analysis case the length of the list will be 1
+        /// This method will use cache data if it exists
+        /// </summary>
+        /// <param name="elementlist"></param>
+        /// <param name="layer"></param>
+        /// <param name="stressUnit"></param>
+        /// <returns></returns>
+        internal List<GsaResultsValues> Element2DStressValues(string elementlist, double layer, PressureUnit stressUnit)
+        {
+            Tuple<string, double> key = new Tuple<string, double>(elementlist, layer);
+            if (this.Type == ResultType.AnalysisCase)
+            {
+                if (!this.ACaseElement2DStressValues.ContainsKey(key)) // see if values exist
+                {
+                    if (!this.ACaseElement2DResults.ContainsKey(key)) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ACaseElement2DResults.Add(key, AnalysisCaseResult.Element2DResults(elementlist, 0));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ACaseElement2DStressValues.Add(key,
+                        ResultHelper.GetElement2DResultValues(ACaseElement2DResults[key], stressUnit));
+                }
+                return new List<GsaResultsValues>() { ACaseElement2DStressValues[key] };
+            }
+            else
+            {
+                if (!this.ComboElement2DStressValues.ContainsKey(key)) // see if values exist
+                {
+                    if (!this.ComboElement2DResults.ContainsKey(key)) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ComboElement2DResults.Add(key, CombinationCaseResult.Element2DResults(elementlist, 0));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ComboElement2DStressValues.Add(key,
+                        ResultHelper.GetElement2DResultValues(ComboElement2DResults[key], stressUnit, CombPermutationID));
+                }
+                return new List<GsaResultsValues>(ComboElement2DStressValues[key].Values);
+            }
+        }
+
+        /// <summary>
+        /// Get 3D displacement values 
+        /// For analysis case the length of the list will be 1
+        /// This method will use cache data if it exists
+        /// </summary>
+        /// <param name="elementlist"></param>
+        /// <param name="lengthUnit"></param>
+        /// <returns></returns>
+        internal List<GsaResultsValues> Element3DDisplacementValues(string elementlist, LengthUnit lengthUnit)
+        {
+            if (this.Type == ResultType.AnalysisCase)
+            {
+                if (!this.ACaseElement3DDisplacementValues.ContainsKey(elementlist)) // see if values exist
+                {
+                    if (!this.ACaseElement3DResults.ContainsKey(elementlist)) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ACaseElement3DResults.Add(elementlist, AnalysisCaseResult.Element3DResults(elementlist));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ACaseElement3DDisplacementValues.Add(elementlist,
+                        ResultHelper.GetElement3DResultValues(ACaseElement3DResults[elementlist], lengthUnit));
+                }
+                return new List<GsaResultsValues>() { ACaseElement3DDisplacementValues[elementlist] };
+            }
+            else
+            {
+                if (!this.ComboElement3DDisplacementValues.ContainsKey(elementlist)) // see if values exist
+                {
+                    if (!this.ComboElement3DResults.ContainsKey(elementlist)) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ComboElement3DResults.Add(elementlist, CombinationCaseResult.Element3DResults(elementlist));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ComboElement3DDisplacementValues.Add(elementlist,
+                        ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], lengthUnit, CombPermutationID));
+                }
+                return new List<GsaResultsValues>(ComboElement3DDisplacementValues[elementlist].Values);
+            }
+        }
+
+        /// <summary>
+        /// Get 2D stress values 
+        /// For analysis case the length of the list will be 1
+        /// This method will use cache data if it exists
+        /// </summary>
+        /// <param name="elementlist"></param>
+        /// <param name="stressUnit"></param>
+        /// <returns></returns>
+        internal List<GsaResultsValues> Element3DStressValues(string elementlist, PressureUnit stressUnit)
+        {
+            if (this.Type == ResultType.AnalysisCase)
+            {
+                if (!this.ACaseElement3DStressValues.ContainsKey(elementlist)) // see if values exist
+                {
+                    if (!this.ACaseElement3DResults.ContainsKey(elementlist)) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ACaseElement3DResults.Add(elementlist, AnalysisCaseResult.Element3DResults(elementlist));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ACaseElement3DStressValues.Add(elementlist,
+                        ResultHelper.GetElement3DResultValues(ACaseElement3DResults[elementlist], stressUnit));
+                }
+                return new List<GsaResultsValues>() { ACaseElement3DStressValues[elementlist] };
+            }
+            else
+            {
+                if (!this.ComboElement3DStressValues.ContainsKey(elementlist)) // see if values exist
+                {
+                    if (!this.ComboElement3DResults.ContainsKey(elementlist)) // see if result exist
+                    {
+                        // if the results hasn't already been taken out and add them to our dictionary
+                        this.ComboElement3DResults.Add(elementlist, CombinationCaseResult.Element3DResults(elementlist));
+                    }
+                    // compute result values and add to dictionary for cache
+                    this.ComboElement3DStressValues.Add(elementlist,
+                        ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], stressUnit, CombPermutationID));
+                }
+                return new List<GsaResultsValues>(ComboElement3DStressValues[elementlist].Values);
+            }
+        }
         #endregion
         #region other methods
         public override string ToString()
