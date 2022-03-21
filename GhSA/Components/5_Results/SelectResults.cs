@@ -158,7 +158,7 @@ namespace GsaGH.Components
         // list of descriptions 
         List<string> spacerDescriptions = new List<string>(new string[]
         {
-            "Result Type",
+            "Type",
             "Case ID",
             "Permutation"
         });
