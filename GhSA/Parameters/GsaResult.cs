@@ -701,7 +701,7 @@ namespace GsaGH.Parameters
                     if (!this.ACaseElement2DResults.ContainsKey(key)) // see if result exist
                     {
                         // if the results hasn't already been taken out and add them to our dictionary
-                        this.ACaseElement2DResults.Add(key, AnalysisCaseResult.Element2DResults(elementlist, 0));
+                        this.ACaseElement2DResults.Add(key, AnalysisCaseResult.Element2DResults(elementlist, layer));
                     }
                     // compute result values and add to dictionary for cache
                     this.ACaseElement2DStressValues.Add(key,
@@ -716,7 +716,7 @@ namespace GsaGH.Parameters
                     if (!this.ComboElement2DResults.ContainsKey(key)) // see if result exist
                     {
                         // if the results hasn't already been taken out and add them to our dictionary
-                        this.ComboElement2DResults.Add(key, CombinationCaseResult.Element2DResults(elementlist, 0));
+                        this.ComboElement2DResults.Add(key, CombinationCaseResult.Element2DResults(elementlist, layer));
                     }
                     // compute result values and add to dictionary for cache
                     this.ComboElement2DStressValues.Add(key,

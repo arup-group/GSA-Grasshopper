@@ -23,20 +23,20 @@ namespace GsaGH.Components
     /// <summary>
     /// Component to retrieve non-geometric objects from a GSA model
     /// </summary>
-    public class Elem2dDisplacement : GH_Component, IGH_VariableParameterComponent
+    public class Elem2dStress : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("22f87d33-4f9a-49d6-9f3d-b366e446a75f");
-        public Elem2dDisplacement()
-          : base("2D Displacements", "Disp2D", "2D Translation and Rotation result values",
+        public override Guid ComponentGuid => new Guid("b5eb8a78-e0dd-442b-bbd7-0384d6c944cb");
+        public Elem2dStress()
+          : base("2D Stresses", "Stress2D", "2D Projected Stress result values",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat5())
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Displacement2D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Stress2D;
         #endregion
 
         #region Custom UI
@@ -48,13 +48,9 @@ namespace GsaGH.Components
                 dropdownitems = new List<List<string>>();
                 selecteditems = new List<string>();
 
-                // length
-                //dropdownitems.Add(Enum.GetNames(typeof(UnitsNet.Units.LengthUnit)).ToList());
-                dropdownitems.Add(Units.FilteredLengthUnits);
-                selecteditems.Add(lengthUnit.ToString());
-
-                IQuantity quantity = new Length(0, lengthUnit);
-                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+                // Stress
+                dropdownitems.Add(Units.FilteredStressUnits);
+                selecteditems.Add(stresshUnit.ToString());
 
                 first = false;
             }
@@ -65,7 +61,7 @@ namespace GsaGH.Components
             // change selected item
             selecteditems[i] = dropdownitems[i][j];
 
-            lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
+            stresshUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[i]);
 
             // update name of inputs (to display unit on sliders)
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -75,7 +71,7 @@ namespace GsaGH.Components
         }
         private void UpdateUIFromSelectedItems()
         {
-            lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
+            stresshUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[0]);
 
             CreateAttributes();
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -93,7 +89,7 @@ namespace GsaGH.Components
             "Unit"
         });
         private bool first = true;
-        private LengthUnit lengthUnit = Units.LengthUnitResult;
+        private PressureUnit stresshUnit = Units.StressUnit;
         string unitAbbreviation;
         #endregion
 
@@ -104,25 +100,26 @@ namespace GsaGH.Components
                 "Element list should take the form:" + System.Environment.NewLine +
                 " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+            pManager.AddNumberParameter("Stress Layer", "σL", "Layer within the cross-section to get results." +
+                                 System.Environment.NewLine + "Input a number between -1 and 1, representing the normalised thickness," +
+                                 System.Environment.NewLine + "default value is zero => middle of the element.", GH_ParamAccess.item, 0);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            IQuantity quantity = new Length(0, lengthUnit);
+            IQuantity quantity = new Pressure(0, stresshUnit);
             unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
             string note = System.Environment.NewLine + "DataTree organised as { CaseID ; (Permutation) ; ElementID } where each" +
                 System.Environment.NewLine + "branch contains a list of results in the following order:" +
                 System.Environment.NewLine + "Vertex(1), Vertex(2), ..., Vertex(i), Centre";
 
-            pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux", "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Translations Y [" + unitAbbreviation + "]", "Uy", "Translations in Y-direction in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Translations Z [" + unitAbbreviation + "]", "Uz", "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Translations |XYZ| [" + unitAbbreviation + "]", "|U|", "Combined |XYZ| Translations in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Rotations XX [rad]", "Rxx", "Rotations around X-axis in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Rotations YY [rad]", "Ryy", "Rotations around Y-axis in Global Axiss." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Rotations ZZ [rad]", "Rzz", "Rotations around Z-axis in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|", "Combined |XXYYZZ| Rotations in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress XX [" + unitAbbreviation + "]", "xx", "Stress in X-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress YY [" + unitAbbreviation + "]", "yy", "Stress in Y-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress ZZ [" + unitAbbreviation + "]", "zz", "Stress in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress XY [" + unitAbbreviation + "]", "xy", "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress YZ [" + unitAbbreviation + "]", "yz", "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress ZX [" + unitAbbreviation + "]", "zx", "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
         }
         
 
@@ -131,21 +128,25 @@ namespace GsaGH.Components
             // Result to work on
             GsaResult result = new GsaResult();
 
-            // Get filer case
+            // Get filter case
             string elementlist = "All";
             GH_String gh_Type = new GH_String();
             if (DA.GetData(1, ref gh_Type))
                 GH_Convert.ToString(gh_Type, out elementlist, GH_Conversion.Both);
 
+            // Get layer
+            double layer = 0;
+            GH_String gh_Type1 = new GH_String();
+            if (DA.GetData(2, ref gh_Type1))
+                GH_Convert.ToDouble(gh_Type1, out layer, GH_Conversion.Both);
+
             // data trees to output
-            DataTree<GH_UnitNumber> out_transX = new DataTree<GH_UnitNumber>();
-            DataTree<GH_UnitNumber> out_transY = new DataTree<GH_UnitNumber>();
-            DataTree<GH_UnitNumber> out_transZ = new DataTree<GH_UnitNumber>();
-            DataTree<GH_UnitNumber> out_transXYZ = new DataTree<GH_UnitNumber>();
-            DataTree<GH_UnitNumber> out_rotX = new DataTree<GH_UnitNumber>();
-            DataTree<GH_UnitNumber> out_rotY = new DataTree<GH_UnitNumber>();
-            DataTree<GH_UnitNumber> out_rotZ = new DataTree<GH_UnitNumber>();
-            DataTree<GH_UnitNumber> out_rotXYZ = new DataTree<GH_UnitNumber>();
+            DataTree<GH_UnitNumber> out_XX = new DataTree<GH_UnitNumber>();
+            DataTree<GH_UnitNumber> out_YY = new DataTree<GH_UnitNumber>();
+            DataTree<GH_UnitNumber> out_ZZ = new DataTree<GH_UnitNumber>();
+            DataTree<GH_UnitNumber> out_XY = new DataTree<GH_UnitNumber>();
+            DataTree<GH_UnitNumber> out_YZ = new DataTree<GH_UnitNumber>();
+            DataTree<GH_UnitNumber> out_ZX = new DataTree<GH_UnitNumber>();
 
             // Get Model
             List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
@@ -166,7 +167,7 @@ namespace GsaGH.Components
                         return;
                     }
                     
-                    List<GsaResultsValues> vals = result.Element2DDisplacementValues(elementlist, lengthUnit);
+                    List<GsaResultsValues> vals = result.Element2DStressValues(elementlist, layer, stresshUnit);
 
                     // loop through all permutations (analysis case will just have one)
                     for (int permutation = 0; permutation < vals.Count; permutation++)
@@ -185,10 +186,9 @@ namespace GsaGH.Components
 
                                     GH_Path p = new GH_Path(result.CaseID, permutation + 1, elementID);
 
-                                    out_transX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(lengthUnit))), p); // use ToUnit to capture changes in dropdown
-                                    out_transY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(lengthUnit))), p);
-                                    out_transZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(lengthUnit))), p);
-                                    out_transXYZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(lengthUnit))), p);
+                                    out_XX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(stresshUnit))), p); // use ToUnit to capture changes in dropdown
+                                    out_YY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(stresshUnit))), p);
+                                    out_ZZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(stresshUnit))), p);
                                 }
                             }
                             if (thread == 1)
@@ -203,24 +203,21 @@ namespace GsaGH.Components
 
                                     GH_Path p = new GH_Path(result.CaseID, permutation + 1, elementID);
 
-                                    out_rotX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X)), p); // always use [rad] units
-                                    out_rotY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y)), p);
-                                    out_rotZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z)), p);
-                                    out_rotXYZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.XYZ)), p);
+                                    out_XY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X)), p); // always use [rad] units
+                                    out_YZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y)), p);
+                                    out_ZX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z)), p);
                                 }
                             }
                         });
                     }
                 }
 
-                DA.SetDataTree(0, out_transX);
-                DA.SetDataTree(1, out_transY);
-                DA.SetDataTree(2, out_transZ);
-                DA.SetDataTree(3, out_transXYZ);
-                DA.SetDataTree(4, out_rotX);
-                DA.SetDataTree(5, out_rotY);
-                DA.SetDataTree(6, out_rotZ);
-                DA.SetDataTree(7, out_rotXYZ);
+                DA.SetDataTree(0, out_XX);
+                DA.SetDataTree(1, out_YY);
+                DA.SetDataTree(2, out_ZZ);
+                DA.SetDataTree(3, out_XY);
+                DA.SetDataTree(4, out_YZ);
+                DA.SetDataTree(5, out_ZX);
             }
         }
         #region (de)serialization
@@ -259,15 +256,16 @@ namespace GsaGH.Components
         }
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            IQuantity quantity = new Length(0, lengthUnit);
+            IQuantity quantity = new Pressure(0, stresshUnit);
             unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
             int i = 0;
-            Params.Output[i++].Name = "Translations X [" + unitAbbreviation + "]";
-            Params.Output[i++].Name = "Translations Y [" + unitAbbreviation + "]";
-            Params.Output[i++].Name = "Translations Z [" + unitAbbreviation + "]";
-            Params.Output[i++].Name = "Translations |XYZ| [" + unitAbbreviation + "]";
-
+            Params.Output[i++].Name = "Stress XX [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "Stress YY [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "Stress ZZ [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "Stress XY [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "Stress YZ [" + unitAbbreviation + "]";
+            Params.Output[i++].Name = "Stress ZX [" + unitAbbreviation + "]";
         }
         #endregion  
     }

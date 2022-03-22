@@ -30,7 +30,7 @@ namespace GsaGH.Components
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("ea42e671-710e-4fd3-a113-1724049159cf");
         public Elem2dForces()
-          : base("2D Forces and Moments", "Forces2D", "Element2D Force, Shear and Moments result values",
+          : base("2D Forces and Moments", "Forces2D", "2D Projected Force and Moment result values",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat5())
         { this.Hidden = true; } // sets the initial state of the component to hidden
