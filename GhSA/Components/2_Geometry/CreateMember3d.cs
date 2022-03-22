@@ -25,7 +25,7 @@ namespace GsaGH.Components
         {
         }
 
-        public override GH_Exposure Exposure => GH_Exposure.primary;
+        public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
 
         protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateMem3d;
         #endregion

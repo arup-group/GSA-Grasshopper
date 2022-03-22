@@ -151,10 +151,10 @@
     <Compile Include="Components\3_Loads\LoadProperties.cs" />
     <Compile Include="Components\0_Model\CreateModel.cs" />
     <Compile Include="Components\4_Analysis\Analyse.cs" />
-    <Compile Include="Components\5_Results\Elem3dResults.cs" />
-    <Compile Include="Components\5_Results\Elem2dResults.cs" />
+    <Compile Include="Components\GraveyardComp\Elem3dResults_OBSOLETE.cs" />
+    <Compile Include="Components\GraveyardComp\Elem2dResults_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\GlobalResult_OBSOLETE.cs" />
-    <Compile Include="Components\5_Results\Elem1dResults.cs" />
+    <Compile Include="Components\GraveyardComp\Elem1dResults_OBSOLETE.cs" />
     <Compile Include="Components\5_Results\NodeResults.cs" />
     <Compile Include="Components\GraveyardComp\EditTitles_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\GetLoads.cs" />

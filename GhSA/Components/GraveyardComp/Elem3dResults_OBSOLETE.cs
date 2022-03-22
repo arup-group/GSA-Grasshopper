@@ -6,36 +6,36 @@ using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Parameters;
 using System.Linq;
 using Grasshopper.Kernel.Data;
 using UnitsNet.Units;
 using UnitsNet;
-using Oasys.Units;
 using GsaGH.Util.Gsa;
 
 namespace GsaGH.Components
 {
     /// <summary>
-    /// Component to get Element1D results
+    /// Component to get Element2d results
     /// </summary>
-    public class Elem1DResults : GH_Component, IGH_VariableParameterComponent
+    public class Elem3dResults_OBSOLETE : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
-        public override Guid ComponentGuid => new Guid("79cd1187-2b27-4bee-a77f-4f94c98e73c3");
-        public Elem1DResults()
-          : base("1D Element Results", "Elem1dResults", "Get 1D Element Results from GSA",
+        public override Guid ComponentGuid => new Guid("aad5e74b-fbe5-4f6e-9673-28fbc6c1f635");
+        public Elem3dResults_OBSOLETE()
+          : base("3D Element Results", "Elem3dResults", "Get 3D Element Results from GSA",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat5())
         {
         }
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
-        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Result1D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Result3D;
         #endregion
 
         #region Custom UI
@@ -64,7 +64,6 @@ namespace GsaGH.Components
         double DefScale = 100;
         int noDigits = 0;
         bool slider = true;
-
         public void SetVal(double value)
         {
             DefScale = value;
@@ -74,103 +73,81 @@ namespace GsaGH.Components
             MaxValue = max;
             MinValue = min;
         }
-
         public void SetSelected(int dropdownlistidd, int selectedidd)
         {
-            if (dropdownlistidd == 0) // if change is made to result type (displacement or force)
+            if (dropdownlistidd == 0) // if change is made to first list
             {
-                if (selectedidd == 0) // displacement selected
+                if (selectedidd == 0)
                 {
                     if (dropdowncontents[1] != dropdowndisplacement)
                     {
                         dropdowncontents[1] = dropdowndisplacement;
                         dropdowncontents[2] = Units.FilteredLengthUnits;
-
                         selections[0] = dropdowncontents[0][0];
                         selections[1] = dropdowncontents[1][3];
                         selections[2] = resultLengthUnit.ToString(); // displacement
 
-                        _disp = DisplayValue.resXYZ;
+                        _disp = (DisplayValue)3;
                         getresults = true;
                         Mode1Clicked();
                     }
-                    
                 }
-                if (selectedidd == 1) // force selected
+                if (selectedidd == 1)
                 {
-                    if (dropdowncontents[1] != dropdownforce)
+                    if (dropdowncontents[1] != dropdownstress)
                     {
-                        dropdowncontents[1] = dropdownforce;
-                        dropdowncontents[2] = Units.FilteredForcePerLengthUnits;
-
+                        dropdowncontents[1] = dropdownstress;
+                        dropdowncontents[2] = Units.FilteredStressUnits;
                         selections[0] = dropdowncontents[0][1];
-                        selections[1] = dropdowncontents[1][5];
-                        selections[2] = momentUnit.ToString(); // default when changing is Myy
-                        
-                        _disp = DisplayValue.YY;
+                        selections[1] = dropdowncontents[1][0];
+                        selections[2] = stressUnit.ToString(); // stress
+
+                        _disp = (DisplayValue)0;
                         getresults = true;
                         Mode2Clicked();
                     }
                 }
-            } // if changes to the selected result type
-            else if (dropdownlistidd == 1)
+            }
+            else if (dropdownlistidd == 1) // if change is made to second list
             {
                 bool redraw = false;
-
-                if (selectedidd < 4)
-                {
-                    if ((int)_disp > 3) // chekc if we are coming from other half of display modes
-                    {
-                        if (_mode == FoldMode.Displacement)
-                        {
-                            redraw = true;
-                            slider = true;
-                        }
-                        else
-                        {
-                            dropdowncontents[2] = Units.FilteredForceUnits;
-                            selections[2] = forceUnit.ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    if ((int)_disp < 4) // chekc if we are coming from other half of display modes
-                    {
-                        if (_mode == FoldMode.Displacement)
-                        {
-                            redraw = true;
-                            slider = false;
-                        }
-                        else
-                        {
-                            dropdowncontents[2] = Units.FilteredForcePerLengthUnits;
-                            selections[2] = momentUnit.ToString();
-                        }
-                    }
-                }
-                _disp = (DisplayValue)selectedidd;
-                
                 selections[1] = dropdowncontents[1][selectedidd];
+                if (_mode == FoldMode.Displacement)
+                {
+                    if ((int)_disp > 3 & selectedidd < 4)
+                    {
+                        redraw = true;
+                        slider = true;
+                    }
+                    if ((int)_disp < 4 & selectedidd > 3)
+                    {
+                        redraw = true;
+                        slider = false;
+
+                    }
+                }
+
+                _disp = (DisplayValue)selectedidd;
+                if (dropdowncontents[1] != dropdowndisplacement)
+                    if (selectedidd > 2)
+                        _disp = (DisplayValue)selectedidd + 1;
 
                 if (redraw)
                     ReDrawComponent();
+
                 (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
                 Params.OnParametersChanged();
                 ExpireSolution(true);
             }
-            else // change is made to the unit
+            else
             {
-                if (dropdownlistidd == 2)
+                if (dropdownlistidd == dropdowncontents.Count - 2)
                 {
                     if (_mode == FoldMode.Displacement)
                         resultLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selections[2]);
-                    else
+                    else //(_mode == FoldMode.Stress)
                     {
-                        if ((int)_disp < 4)
-                            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selections[2]);
-                        else
-                            momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), selections[2]);
+                        stressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selections[2]);
                     }
                 }
                 else
@@ -195,7 +172,7 @@ namespace GsaGH.Components
         readonly List<string> dropdownitems = new List<string>(new string[]
         {
             "Displacement",
-            "Force",
+            "Stress"
         });
 
         readonly List<string> dropdowndisplacement = new List<string>(new string[]
@@ -204,28 +181,21 @@ namespace GsaGH.Components
             "Translation Uy",
             "Translation Uz",
             "Resolved |U|",
-            "Rotation Rxx",
-            "Rotation Ryy",
-            "Rotation Rzz",
-            "Resolved |R|"
         });
 
-        readonly List<string> dropdownforce = new List<string>(new string[]
+        readonly List<string> dropdownstress = new List<string>(new string[]
         {
-            "Axial Force Fx",
-            "Shear Force Fy",
-            "Shear Force Fz",
-            "Resolved |F|",
-            "Torsion Mxx",
-            "Moment Myy",
-            "Moment Mzz",
-            "Resolved |M|",
+            "Stress xx",
+            "Stress yy",
+            "Stress zz",
+            "Stress xy",
+            "Stress yz",
+            "Stress zx",
         });
 
-        private MomentUnit momentUnit = Units.MomentUnit;
-        private ForceUnit forceUnit = Units.ForceUnit;
         private LengthUnit resultLengthUnit = Units.LengthUnitResult;
         private LengthUnit geometryLengthUnit = Units.LengthUnitGeometry;
+        private PressureUnit stressUnit = Units.StressUnit;
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -236,34 +206,28 @@ namespace GsaGH.Components
                 "Element list should take the form:" + System.Environment.NewLine +
                 " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            pManager.AddIntegerParameter("No. Positions", "nP", "Number of results (positions) for each line", GH_ParamAccess.item, 10);
             pManager.AddColourParameter("Colour", "Co", "Optional list of colours to override default colours" +
                 System.Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Scale", "x:X", "Scale the result display size", GH_ParamAccess.item, 10);
             pManager[1].Optional = true;
             pManager[2].Optional = true;
             pManager[3].Optional = true;
-            pManager[4].Optional = true;
-            pManager[5].Optional = true;
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             IQuantity length = new Length(0, resultLengthUnit);
             string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-            pManager.AddVectorParameter("Translations [" + lengthunitAbbreviation + "]", "U\u0305", "(X, Y, Z) Translation Vector", GH_ParamAccess.tree);
-            pManager.AddVectorParameter("Rotations [rad]", "R\u0305", "(XX, YY, ZZ) Rotation Vector", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Line", "L", "Line with coloured result values", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Result Colour", "Co", "Colours representing the result value at each point", GH_ParamAccess.tree);
+            pManager.AddVectorParameter("Translation [" + lengthunitAbbreviation + "]", "U\u0305", "(X, Y, Z) Translation Vector", GH_ParamAccess.tree);
+            //pManager.AddVectorParameter("Stress", "σ\u0305", "XX, YY, ZZ stress values(" + Units.Stress + ")", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Mesh", "M", "Mesh with result values", GH_ParamAccess.item);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthUnitResult + ")", GH_ParamAccess.list);
         }
 
         #region fields
         // new lists of vectors to output results in:
         ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>> xyzResults = new ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>>();
         ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>> xxyyzzResults = new ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>>();
-        ConcurrentDictionary<int, ConcurrentDictionary<int, Line>> lineResults = new ConcurrentDictionary<int, ConcurrentDictionary<int, Line>>();
         double dmax_x;
         double dmax_y;
         double dmax_z;
@@ -284,8 +248,6 @@ namespace GsaGH.Components
 
         int analCase = 0;
         string elemList = "";
-        int positionsCount = 0;
-
         GsaModel gsaModel;
         #endregion
 
@@ -293,7 +255,7 @@ namespace GsaGH.Components
         {
             // Model to work on
             GsaModel in_Model = new GsaModel();
-            
+
             // Get Model
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
             if (DA.GetData(0, ref gh_typ))
@@ -329,21 +291,10 @@ namespace GsaGH.Components
                 DA.GetData(2, ref gh_elList);
                 GH_Convert.ToString(gh_elList, out string tempelemList, GH_Conversion.Both);
 
-                // Get number of divisions
-                GH_Integer gh_Div = new GH_Integer();
-                DA.GetData(3, ref gh_Div);
-                GH_Convert.ToInt32(gh_Div, out int temppositionsCount, GH_Conversion.Both);
-                if (temppositionsCount < 2)
-                {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Number of positions must be at least 2, one for start and end of line" 
-                        + System.Environment.NewLine + "Number of positions has been set to 2.");
-                    temppositionsCount = 2;
-                }
-
                 // Get colours
                 List<GH_Colour> gh_Colours = new List<GH_Colour>();
                 List<System.Drawing.Color> colors = new List<System.Drawing.Color>();
-                if (DA.GetDataList(4, gh_Colours))
+                if (DA.GetDataList(3, gh_Colours))
                 {
                     for (int i = 0; i < gh_Colours.Count; i++)
                     {
@@ -354,11 +305,6 @@ namespace GsaGH.Components
                 }
                 Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = UI.Colour.Stress_Gradient(colors);
 
-                // Get scalar 
-                GH_Number gh_Scale = new GH_Number();
-                DA.GetData(5, ref gh_Scale);
-                double scale = 1;
-                GH_Convert.ToDouble(gh_Scale, out scale, GH_Conversion.Both);
                 #endregion
 
                 #region get results?
@@ -374,12 +320,6 @@ namespace GsaGH.Components
                     elemList = tempelemList;
                     getresults = true;
                 }
-
-                if (positionsCount == 0 || positionsCount != temppositionsCount)
-                {
-                    positionsCount = temppositionsCount;
-                    getresults = true;
-                }
                 #endregion
 
                 #region Create results output
@@ -390,23 +330,18 @@ namespace GsaGH.Components
                     //Get analysis case from model
                     AnalysisCaseResult analysisCaseResult = null;
                     gsaModel.Model.Results().TryGetValue(analCase, out analysisCaseResult);
-                    //CombinationCaseResult combinationCaseResult = null;
-                    //gsaModel.Model.CombinationCaseResults().TryGetValue(analCase, out combinationCaseResult);
                     if (analysisCaseResult == null)
                     {
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No results exist for Analysis Case " + analCase + " in file");
                         return;
                     }
-                    ConcurrentDictionary<int, Element> elems = new ConcurrentDictionary<int, Element>(gsaModel.Model.Elements(elemList));
-                    if (elems.Count == 0)
+                    IReadOnlyDictionary<int, Element3DResult> globalResults = analysisCaseResult.Element3DResults(elemList);
+                    if (globalResults.Count == 0)
                     {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No elements in list: " + elemList + " found");
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No results exist for element list: " + elemList);
                         return;
                     }
-                    ConcurrentDictionary<int, Element1DResult> globalResults = new ConcurrentDictionary<int, Element1DResult>(analysisCaseResult.Element1DResults(elemList, positionsCount));
-                    ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(gsaModel.Model.Nodes());
                     #endregion
-
 
                     // ### Loop through results ###
                     // clear existing result lists
@@ -414,8 +349,6 @@ namespace GsaGH.Components
                     xyzResults.AsParallel().AsOrdered();
                     xxyyzzResults = new ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>>();
                     xxyyzzResults.AsParallel().AsOrdered();
-                    lineResults = new ConcurrentDictionary<int, ConcurrentDictionary<int, Line>>();
-                    lineResults.AsParallel().AsOrdered();
 
                     // maximum and minimum result values for colouring later
                     dmax_x = 0;
@@ -435,83 +368,53 @@ namespace GsaGH.Components
                     dmin_xyz = 0;
                     dmin_xxyyzz = 0;
 
-                    //double unitfactorxyz = 1;
-                    //double unitfactorxxyyzz = 1;
-
                     Parallel.ForEach(globalResults.Keys, key =>
                     {
-                        // list for element geometry and info
-                        Element element = new Element();
-                        elems.TryGetValue(key, out element);
-                        if (element.IsDummy) { return; }
-                        Node start = new Node();
-                        nodes.TryGetValue(element.Topology[0], out start);
-                        Point3d pt1 = FromGSA.Point3dFromNode(start, geometryLengthUnit);
-                        Node end = new Node();
-                        nodes.TryGetValue(element.Topology[1], out end);
-                        Point3d pt2 = FromGSA.Point3dFromNode(end, geometryLengthUnit);
-                        Line ln = new Line(pt1, pt2);
-
                         // lists for results
-                        Element1DResult elementResults;
-                        globalResults.TryGetValue(key, out elementResults);
-                        List<Double6> values = new List<Double6>();
-                        ConcurrentDictionary<int, Vector3d> xyzRes = new ConcurrentDictionary<int, Vector3d>();
-                        xyzRes.AsParallel().AsOrdered();
-                        ConcurrentDictionary<int, Vector3d> xxyyzzRes = new ConcurrentDictionary<int, Vector3d>();
-                        xxyyzzRes.AsParallel().AsOrdered();
-                        ConcurrentDictionary<int, Line> lineRes = new ConcurrentDictionary<int, Line>();
-                        lineRes.AsParallel().AsOrdered();
-
-                        // set the result type dependent on user selection in dropdown
-                        switch (_mode)
+                        Element3DResult elementResults;
+                        if (globalResults.TryGetValue(key, out elementResults))
                         {
-                            case (FoldMode.Displacement):
-                                values = elementResults.Displacement.ToList();
-                                //unitfactorxyz = 0.001;
-                                //unitfactorxxyyzz = 1;
-                                break;
-                            case (FoldMode.Force):
-                                values = elementResults.Force.ToList();
-                                //unitfactorxyz = 1000;
-                                //unitfactorxxyyzz = 1000;
-                                break;
+                            ConcurrentDictionary<int, Vector3d> xyzRes = new ConcurrentDictionary<int, Vector3d>();
+                            xyzRes.AsParallel().AsOrdered();
+                            ConcurrentDictionary<int, Vector3d> xxyyzzRes = new ConcurrentDictionary<int, Vector3d>();
+                            xxyyzzRes.AsParallel().AsOrdered();
+                            ConcurrentDictionary<int, Line> lineRes = new ConcurrentDictionary<int, Line>();
+
+                            switch (_mode)
+                            {
+                                case FoldMode.Displacement:
+                                    //unitfactorxyz = 0.001;
+                                    List<Double3> trans_vals = elementResults.Displacement.ToList();
+                                    Parallel.For(0, trans_vals.Count, i => //foreach (Double3 val in trans_vals)
+                                    {
+                                        xyzRes[i] = ResultHelper.GetResult(trans_vals[i], resultLengthUnit);
+                                        
+                                    });
+                                    break;
+
+                                case FoldMode.Stress:
+                                    //unitfactorxxyyzz = 1000000;
+
+                                    List<Tensor3> stress_vals = elementResults.Stress.ToList();
+                                    Parallel.For(0, stress_vals.Count * 2, i => // (Tensor3 val in stress_vals)
+                                    {
+                                        // split computation into two parts by doubling the i-counter
+                                        if (i < stress_vals.Count)
+                                        {
+                                            xyzRes[i] = ResultHelper.GetResult(stress_vals[i], stressUnit);
+                                        }
+                                        else
+                                        {
+                                            xxyyzzRes[i - stress_vals.Count] = ResultHelper.GetResult(stress_vals[i - stress_vals.Count], stressUnit);
+                                        }
+                                    });
+                                    break;
+                            }
+
+                            // add vector lists to main lists
+                            xyzResults[key] = xyzRes;
+                            xxyyzzResults[key] = xxyyzzRes;
                         }
-
-                        // prepare the line segments
-                        int segments = Math.Max(1, values.Count - 1); // number of segment lines is 1 less than number of points
-
-                        // loop through the results
-                        Parallel.For(0, values.Count, i =>
-                        {
-                            Double6 result = values[i];
-
-                            // add the values to the vector lists
-                            if (_mode == FoldMode.Displacement)
-                            {
-                                xyzRes[i] = ResultHelper.GetResult(result, resultLengthUnit);
-                                xxyyzzRes[i] = ResultHelper.GetResult(result, AngleUnit.Radian);
-                            }
-                            else
-                            {
-                                xyzRes[i] = ResultHelper.GetResult(result, forceUnit);
-                                xxyyzzRes[i] = ResultHelper.GetResult(result, momentUnit);
-                            }
-
-                            // create ResultLines
-                            if (i < segments)
-                            {
-                                Line segmentline = new Line(
-                                    ln.PointAt((double)i / segments),
-                                    ln.PointAt((double)(i + 1) / segments)
-                                    );
-                                lineRes[i] = segmentline;
-                            }
-                        });
-                        // add the vector list to the out tree
-                        xyzResults[key] = xyzRes;
-                        xxyyzzResults[key] = xxyyzzRes;
-                        lineResults[key] = lineRes;
                     });
 
                     // update max and min values
@@ -525,22 +428,20 @@ namespace GsaGH.Components
                     dmin_y = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
                     dmin_z = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
                     dmin_xyz = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
-                        Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))
-                        ).Min()).Min();
-                    dmax_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
-                    dmax_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
-                    dmax_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
-                    dmax_xxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
-                        Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))
-                        ).Max()).Max();
-                    dmin_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
-                    dmin_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
-                    dmin_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
-                    dmin_xxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res =>
-                        Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))
-                        ).Min()).Min();
+                        Math.Sqrt(Math.Pow(res.X, 2) + Math.Pow(res.Y, 2) + Math.Pow(res.Z, 2))).Min()).Min();
+                    
+                    if (_mode == FoldMode.Stress)
+                    {
+                        dmax_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
+                        dmax_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
+                        dmax_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
+                        
+                        dmin_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
+                        dmin_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
+                        dmin_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
+                    }
 
-                    if (dmax_x == 0 & 
+                    if (dmax_x == 0 &
                     dmax_y == 0 &
                     dmax_z == 0 &
                     dmax_xx == 0 &
@@ -560,8 +461,8 @@ namespace GsaGH.Components
                 }
                 #endregion
 
-                #region Result line values
-                // ### Coloured Result Lines ###
+                #region Result mesh values
+                // ### Coloured Result Meshes ###
 
                 // round max and min to reasonable numbers
                 double dmax = 0;
@@ -606,126 +507,116 @@ namespace GsaGH.Components
                 dmax = rounded[0];
                 dmin = rounded[1];
 
-                // Loop through segmented lines and set result colour into ResultLine format
-                ConcurrentDictionary<int, ConcurrentDictionary<int, ResultLine>> resultLines = new ConcurrentDictionary<int, ConcurrentDictionary<int, ResultLine>>();
-                DataTree<ResultLine> lines_out = new DataTree<ResultLine>();
-                DataTree<System.Drawing.Color> col_out = new DataTree<System.Drawing.Color>();
+                #region create mesh
+                // get elements and nodes from model
+                elemList = string.Join(" ", xyzResults.Keys.ToList());
+                IReadOnlyDictionary<int, Element> elems = gsaModel.Model.Elements(elemList);
+                ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(gsaModel.Model.Nodes());
 
-                Parallel.ForEach(lineResults.Keys, key =>
+                List<int> elemID = new List<int>();
+                List<int> parentMember = new List<int>();
+                ResultMesh resultMeshes = new ResultMesh(new Mesh(), new List<List<double>>());
+                //List<Mesh> meshes = new List<Mesh>();
+                ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
+                meshes.AsParallel().AsOrdered();
+                ConcurrentDictionary<int, List<double>> values = new ConcurrentDictionary<int, List<double>>();
+                values.AsParallel().AsOrdered();
+
+                // loop through elements
+                Parallel.ForEach(elems.Keys, key => // (int key in elems.Keys)
                 {
+                    elems.TryGetValue(key, out Element element);
+
+                    Mesh tempmesh = GsaGH.Util.Gsa.FromGSA.ConvertElement3D(element, nodes, geometryLengthUnit);
+                    if (tempmesh == null) { return; }
+
+                    List<Vector3d> transformation = null;
+                    // add mesh colour
+                    List<double> vals = new List<double>();
+
                     GH_Path path = new GH_Path(key);
-                    ConcurrentDictionary<int, ResultLine> resLns = new ConcurrentDictionary<int, ResultLine>();
-                    ConcurrentDictionary<int, System.Drawing.Color> resCol = new ConcurrentDictionary<int, System.Drawing.Color>();
 
-                    ConcurrentDictionary<int, Line> lineRes = lineResults[key];
-
-                    List<Line> segmentedlines = lineRes.Values.ToList();
-
-                    for (int j = 0; j < segmentedlines.Count; j++)
+                    List<Vector3d> tempXYZ = xyzResults[key].Values.ToList();
+                    List<Vector3d> tempXXYYZZ = xxyyzzResults[key].Values.ToList();
+                    switch (_disp)
                     {
-                        if (!(dmin == 0 & dmax == 0))
-                        {
-                            Vector3d startTranslation = new Vector3d(0, 0, 0);
-                            Vector3d endTranslation = new Vector3d(0, 0, 0);
-
-                            double t1 = 0;
-                            double t2 = 0;
-
-                            // pick the right value to display
-                            switch (_disp)
+                        case (DisplayValue.X):
+                            vals = tempXYZ.ConvertAll(val => val.X);
+                            transformation = new List<Vector3d>();
+                            for (int i = 0; i < vals.Count; i++)
                             {
-                                case (DisplayValue.X):
-                                    t1 = xyzResults[key][j].X;
-                                    t2 = xyzResults[key][j + 1].X;
-                                    startTranslation.X = t1 * DefScale / 1000;
-                                    endTranslation.X = t2 * DefScale / 1000;
-                                    break;
-                                case (DisplayValue.Y):
-                                    t1 = xyzResults[key][j].Y;
-                                    t2 = xyzResults[key][j + 1].Y;
-                                    startTranslation.Y = t1 * DefScale / 1000;
-                                    endTranslation.Y = t2 * DefScale / 1000;
-                                    break;
-                                case (DisplayValue.Z):
-                                    t1 = xyzResults[key][j].Z;
-                                    t2 = xyzResults[key][j + 1].Z;
-                                    startTranslation.Z = t1 * DefScale / 1000;
-                                    endTranslation.Z = t2 * DefScale / 1000;
-                                    break;
-                                case (DisplayValue.resXYZ):
-                                    t1 = Math.Sqrt(Math.Pow(xyzResults[key][j].X, 2) + Math.Pow(xyzResults[key][j].Y, 2) + Math.Pow(xyzResults[key][j].Z, 2));
-                                    t2 = Math.Sqrt(Math.Pow(xyzResults[key][j + 1].X, 2) + Math.Pow(xyzResults[key][j + 1].Y, 2) + Math.Pow(xyzResults[key][j + 1].Z, 2));
-                                    startTranslation.X = xyzResults[key][j].X * DefScale / 1000;
-                                    endTranslation.X = xyzResults[key][j + 1].X * DefScale / 1000;
-                                    startTranslation.Y = xyzResults[key][j].Y * DefScale / 1000;
-                                    endTranslation.Y = xyzResults[key][j + 1].Y * DefScale / 1000;
-                                    startTranslation.Z = xyzResults[key][j].Z * DefScale / 1000;
-                                    endTranslation.Z = xyzResults[key][j + 1].Z * DefScale / 1000;
-                                    break;
-                                case (DisplayValue.XX):
-                                    t1 = xxyyzzResults[key][j].X;
-                                    t2 = xxyyzzResults[key][j + 1].X;
-                                    break;
-                                case (DisplayValue.YY):
-                                    t1 = xxyyzzResults[key][j].Y;
-                                    t2 = xxyyzzResults[key][j + 1].Y;
-                                    break;
-                                case (DisplayValue.ZZ):
-                                    t1 = xxyyzzResults[key][j].Z;
-                                    t2 = xxyyzzResults[key][j + 1].Z;
-                                    break;
-                                case (DisplayValue.resXXYYZZ):
-                                    t1 = Math.Sqrt(Math.Pow(xxyyzzResults[key][j].X, 2) + Math.Pow(xxyyzzResults[key][j].Y, 2) + Math.Pow(xxyyzzResults[key][j].Z, 2));
-                                    t2 = Math.Sqrt(Math.Pow(xxyyzzResults[key][j + 1].X, 2) + Math.Pow(xxyyzzResults[key][j + 1].Y, 2) + Math.Pow(xxyyzzResults[key][j + 1].Z, 2));
-                                    break;
+                                transformation.Add(new Vector3d(vals[i] * DefScale / 1000, 0, 0));
                             }
-                            Point3d start = new Point3d(segmentedlines[j].PointAt(0));
-                            start.Transform(Transform.Translation(startTranslation));
-                            Point3d end = new Point3d(segmentedlines[j].PointAt(1));
-                            end.Transform(Transform.Translation(endTranslation));
-                            Line segmentline = new Line(start, end);
+                            break;
+                        case (DisplayValue.Y):
+                            vals = tempXYZ.ConvertAll(val => val.Y);
+                            transformation = new List<Vector3d>();
+                            for (int i = 0; i < vals.Count; i++)
+                            {
+                                transformation.Add(new Vector3d(0, vals[i] * DefScale / 1000, 0));
+                            }
+                            break;
+                        case (DisplayValue.Z):
+                            vals = tempXYZ.ConvertAll(val => val.Z);
+                            transformation = new List<Vector3d>();
+                            for (int i = 0; i < vals.Count; i++)
+                            {
+                                transformation.Add(new Vector3d(0, 0, vals[i] * DefScale / 1000));
+                            }
+                            break;
+                        case (DisplayValue.resXYZ):
+                            vals = tempXYZ.ConvertAll(val => (
+                            Math.Sqrt(
+                                    Math.Pow(val.X, 2) +
+                                    Math.Pow(val.Y, 2) +
+                                    Math.Pow(val.Z, 2))));
+                            transformation = tempXYZ.ConvertAll(vec => Vector3d.Multiply(DefScale / 1000, vec));
+                            break;
+                        case (DisplayValue.XX):
+                            vals = tempXXYYZZ.ConvertAll(val => val.X);
+                            break;
+                        case (DisplayValue.YY):
+                            vals = tempXXYYZZ.ConvertAll(val => val.Y);
+                            break;
+                        case (DisplayValue.ZZ):
+                            vals = tempXXYYZZ.ConvertAll(val => val.Z);
+                            break;
+                        case (DisplayValue.resXXYYZZ):
+                            vals = tempXXYYZZ.ConvertAll(val => (
+                            Math.Sqrt(
+                                    Math.Pow(val.X, 2) +
+                                    Math.Pow(val.Y, 2) +
+                                    Math.Pow(val.Z, 2))));
+                            break;
+                    }
 
-                            //normalised value between -1 and 1
-                            double tnorm1 = 2 * (t1 - dmin) / (dmax - dmin) - 1;
-                            double tnorm2 = 2 * (t2 - dmin) / (dmax - dmin) - 1;
-
-                            // get colour for that normalised value
-
-                            System.Drawing.Color valcol1 = double.IsNaN(tnorm1) ? System.Drawing.Color.Black : gH_Gradient.ColourAt(tnorm1);
-                            System.Drawing.Color valcol2 = double.IsNaN(tnorm2) ? System.Drawing.Color.Black : gH_Gradient.ColourAt(tnorm2);
-
-                            // set the size of the line ends for ResultLine class. Size is calculated from 0-base, so not a normalised value between extremes
-                            float size1 = (t1 >= 0 && dmax != 0) ?
-                                Math.Max(2, (float)(t1 / dmax * scale)) :
-                                Math.Max(2, (float)(Math.Abs(t1) / Math.Abs(dmin) * scale));
-                            if (double.IsNaN(size1))
-                                size1 = 1;
-                            float size2 = (t2 >= 0 && dmax != 0) ?
-                                Math.Max(2, (float)(t2 / dmax * scale)) :
-                                Math.Max(2, (float)(Math.Abs(t2) / Math.Abs(dmin) * scale));
-                            if (double.IsNaN(size2))
-                                size2 = 1;
-
-                            // add our special resultline to the list of lines
-                            resLns[j] = new ResultLine(segmentline, t1, t2, valcol1, valcol2, size1, size2);
-
-                            // add the colour to the colours list
-                            resCol[j] = valcol1;
-                            if (j == segmentedlines.Count - 1)
-                                resCol[j + 1] = valcol2;
+                    for (int i = 1; i < vals.Count; i++) // start at i=1 as the first index is the centre point in GsaAPI output
+                    {
+                        //normalised value between -1 and 1
+                        double tnorm = 2 * (vals[i] - dmin) / (dmax - dmin) - 1;
+                        System.Drawing.Color col = (double.IsNaN(tnorm)) ? System.Drawing.Color.Transparent : gH_Gradient.ColourAt(tnorm);
+                        tempmesh.VertexColors.Add(col);
+                        if (transformation != null)
+                        {
+                            Point3f def = tempmesh.Vertices[i - 1];
+                            def.Transform(Transform.Translation(transformation[i]));
+                            tempmesh.Vertices[i - 1] = def;
                         }
                     }
-                    lock (lines_out)
+                    if (vals.Count == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
                     {
-                        lines_out.AddRange(resLns.Values.ToList(), path);
+                        //normalised value between -1 and 1
+                        double tnorm = 2 * (vals[0] - dmin) / (dmax - dmin) - 1;
+                        System.Drawing.Color col = (double.IsNaN(tnorm)) ? System.Drawing.Color.Transparent : gH_Gradient.ColourAt(tnorm);
+                        for (int i = 0; i < tempmesh.Vertices.Count; i++)
+                            tempmesh.VertexColors.Add(col);
                     }
-                    lock (col_out)
-                    {
-                        col_out.AddRange(resCol.Values.ToList(), path);
-                    }
-
+                    meshes[key] = tempmesh;
+                    values[key] = vals;
+                    #endregion
                 });
-
+                resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList());
+                //resultMeshes.Finalise();
                 #endregion 
 
                 #region Legend
@@ -748,7 +639,7 @@ namespace GsaGH.Components
                     cs.Add(gradientcolour);
                 }
                 #endregion
-
+                
                 // convert result libraries to datatrees
                 DataTree<Vector3d> xyz_out = new DataTree<Vector3d>();
                 DataTree<Vector3d> xxyyzz_out = new DataTree<Vector3d>();
@@ -767,12 +658,13 @@ namespace GsaGH.Components
                 });
 
                 // set outputs
-                DA.SetDataTree(0, xyz_out);
-                DA.SetDataTree(1, xxyyzz_out);
-                DA.SetDataTree(2, lines_out);
-                DA.SetDataTree(3, col_out);
-                DA.SetDataList(4, cs);
-                DA.SetDataList(5, ts);
+                int outind = 0;
+                DA.SetDataTree(outind++, xyz_out);
+                if (_mode == FoldMode.Stress)
+                    DA.SetDataTree(outind++, xxyyzz_out);
+                DA.SetData(outind++, resultMeshes);
+                DA.SetDataList(outind++, cs);
+                DA.SetDataList(outind++, ts);
             }
         }
 
@@ -782,18 +674,18 @@ namespace GsaGH.Components
         private enum FoldMode
         {
             Displacement,
-            Force
+            Stress
         }
         private FoldMode _mode = FoldMode.Displacement;
 
         private enum DisplayValue
         {
-            X,
-            Y,
-            Z,
-            resXYZ,
-            XX,
-            YY,
+            X, //xx
+            Y, //yy
+            Z, //zz
+            resXYZ, //xy
+            XX, //yz
+            YY, //zx
             ZZ,
             resXXYYZZ
         }
@@ -814,6 +706,8 @@ namespace GsaGH.Components
             RecordUndoEvent(_mode.ToString() + " Parameters");
             _mode = FoldMode.Displacement;
 
+            Params.UnregisterOutputParameter(Params.Output[1], true);
+
             slider = true;
             DefScale = 100;
 
@@ -825,11 +719,13 @@ namespace GsaGH.Components
         }
         private void Mode2Clicked()
         {
-            if (_mode == FoldMode.Force)
+            if (_mode == FoldMode.Stress)
                 return;
 
             RecordUndoEvent(_mode.ToString() + " Parameters");
-            _mode = FoldMode.Force;
+            _mode = FoldMode.Stress;
+
+            Params.RegisterOutputParam(new Param_Vector(), 1);
 
             slider = false;
             DefScale = 0;
@@ -840,7 +736,6 @@ namespace GsaGH.Components
             Params.OnParametersChanged();
             ExpireSolution(true);
         }
-
         #endregion
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
@@ -854,8 +749,7 @@ namespace GsaGH.Components
             writer.SetDouble("val", DefScale);
             writer.SetString("selectedUnit", selections[2]);
             writer.SetString("resultLengthUnit", resultLengthUnit.ToString());
-            writer.SetString("forceUnit", forceUnit.ToString());
-            writer.SetString("momentUnit", momentUnit.ToString());
+            writer.SetString("stressLengthUnit", stressUnit.ToString());
             writer.SetString("geometryLengthUnit", geometryLengthUnit.ToString());
             return base.Write(writer);
         }
@@ -863,7 +757,7 @@ namespace GsaGH.Components
         {
             _mode = (FoldMode)reader.GetInt32("Mode");
             _disp = (DisplayValue)reader.GetInt32("Display");
-
+            
             slider = reader.GetBoolean("slider");
             noDigits = reader.GetInt32("noDec");
             MaxValue = reader.GetDouble("valMax");
@@ -874,38 +768,38 @@ namespace GsaGH.Components
             dropdowncontents.Add(dropdownitems);
             if (_mode == FoldMode.Displacement)
                 dropdowncontents.Add(dropdowndisplacement);
-            if (_mode == FoldMode.Force)
-                dropdowncontents.Add(dropdownforce);
+            if (_mode == FoldMode.Stress)
+            {
+                dropdowncontents.Add(dropdownstress);
+            }
 
             selections = new List<string>();
             selections.Add(dropdowncontents[0][(int)_mode]);
             selections.Add(dropdowncontents[1][(int)_disp]);
+
             try
             {
                 selections.Add(reader.GetString("selectedUnit"));
                 resultLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("resultLengthUnit"));
-                forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), reader.GetString("forceUnit"));
-                momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), reader.GetString("momentUnit"));
                 geometryLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("geometryLengthUnit"));
+                stressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), reader.GetString("stressLengthUnit"));
             }
             catch (Exception) // if user has old component this will fail and we set it to kN, kN/m or mm
             {
                 resultLengthUnit = LengthUnit.Millimeter;
-                forceUnit = ForceUnit.Kilonewton;
-                momentUnit = MomentUnit.KilonewtonMeter;
                 geometryLengthUnit = LengthUnit.Meter;
+                stressUnit = PressureUnit.NewtonPerSquareMillimeter;
                 if (_mode == FoldMode.Displacement)
                     selections.Add(resultLengthUnit.ToString());
                 else
                 {
-                    if ((int)_disp < 4)
-                        selections.Add(forceUnit.ToString());
-                    else
-                        selections.Add(momentUnit.ToString());
+                    selections.Add(stressUnit.ToString());
                 }
             }
             selections.Add(geometryLengthUnit.ToString());
+
             first = false;
+
             this.CreateAttributes();
             return base.Read(reader);
         }
@@ -930,43 +824,34 @@ namespace GsaGH.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            string momentunitAbbreviation = Oasys.Units.Moment.GetAbbreviation(momentUnit);
-            IQuantity force = new Force(0, forceUnit);
-            string forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
             IQuantity length = new Length(0, resultLengthUnit);
             string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-
+            IQuantity stress = new Pressure(0, stressUnit);
+            string stressunitAbbreviation = string.Concat(stress.ToString().Where(char.IsLetter));
 
             if (_mode == FoldMode.Displacement)
             {
                 Params.Output[0].NickName = "U\u0305";
                 Params.Output[0].Name = "Translations [" + lengthunitAbbreviation + "]";
-                Params.Output[0].Description = "(X, Y, Z) Translation Vector";
+                Params.Output[0].Description = "(X, Y, Z) Translation Vector"
+                    + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
-                Params.Output[1].NickName = "R\u0305";
-                Params.Output[1].Name = "Rotations [rad]";
-                Params.Output[1].Description = "(XX, YY, ZZ) Rotation Vector";
-
-                if ((int)_disp < 4)
-                    Params.Output[5].Name = "Values [" + lengthunitAbbreviation + "]";
-                else
-                    Params.Output[5].Name = "Values [rad]";
+                Params.Output[3].Name = "Values [" + lengthunitAbbreviation + "]";
             }
 
-            if (_mode == FoldMode.Force)
+            if (_mode == FoldMode.Stress)
             {
-                Params.Output[0].NickName = "F\u0305";
-                Params.Output[0].Name = "Forces [" + forceunitAbbreviation + "]";
-                Params.Output[0].Description = "(Nx, Vy, Vz) Force Vector";
-                
-                Params.Output[1].NickName = "M\u0305";
-                Params.Output[1].Name = "Moments [" + momentunitAbbreviation + "]";
-                Params.Output[1].Description = "(Mxx, Myy, Mzz) Moment Vector";
+                Params.Output[0].NickName = "σ\u0305";
+                Params.Output[0].Name = "Stress [" + stressunitAbbreviation + "]";
+                Params.Output[0].Description = "(σxx, σyy, σzz) Projected Stress Vector"
+                    + System.Environment.NewLine + "Value order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
 
-                if ((int)_disp < 4)
-                    Params.Output[5].Name = "Legend Values [" + forceunitAbbreviation + "]";
-                else
-                    Params.Output[5].Name = "Legend Values [" + momentunitAbbreviation + "]";
+                Params.Output[1].NickName = "τ\u0305";
+                Params.Output[1].Name = "Shear Stress [" + stressunitAbbreviation + "]";
+                Params.Output[1].Description = "(τxy, τyz, τzx) Shear Stress Vector"
+                    + System.Environment.NewLine + "Values order: [Centre, Vertex(0), Vertex(1), ..., Vertex(i)]";
+
+                Params.Output[4].Name = "Legend Values [" + stressunitAbbreviation + "]";
             }
         }
         #endregion  
