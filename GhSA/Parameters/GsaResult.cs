@@ -37,33 +37,38 @@ namespace GsaGH.Parameters
         internal ResultType Type { get; set; }
         internal void UpdateMinMax()
         {
-            // update max and min values
-            dmax_x = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Max()).Max();
-            dmax_y = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Max()).Max();
-            try { dmax_z = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Max()).Max(); } catch (Exception) { } // shear does not set this value
-            try { dmax_xyz = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Max()).Max(); } catch (Exception) { } // resultant may not always be computed
-            dmin_x = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Min()).Min();
-            dmin_y = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Min()).Min();
-            try { dmin_z = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Min()).Min(); } catch (Exception) { } // shear does not set this value
-            try { dmin_xyz = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Min()).Min(); } catch (Exception) { } // resultant may not always be computed
-            try // some cases doesnt compute xxyyzz results at all
+            if (xyzResults.Count > 0)
             {
-                dmax_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Max()).Max();
-                dmax_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Max()).Max();
-                dmax_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Max()).Max();
+                // update max and min values
+                dmax_x = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Max()).Max();
+                dmax_y = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Max()).Max();
+                try { dmax_z = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Max()).Max(); } catch (Exception) { } // shear does not set this value
+                try { dmax_xyz = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Max()).Max(); } catch (Exception) { } // resultant may not always be computed
+                dmin_x = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Min()).Min();
+                dmin_y = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Min()).Min();
+                try { dmin_z = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Min()).Min(); } catch (Exception) { } // shear does not set this value
+                try { dmin_xyz = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Min()).Min(); } catch (Exception) { } // resultant may not always be computed
             }
-            catch (Exception) { }
-            try { dmax_xxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Max()).Max(); } catch (Exception) { } // resultant may not always be computed
-            try // some cases doesnt compute xxyyzz results at all
+            if (xxyyzzResults.Count > 0)
             {
-                dmin_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Min()).Min();
-                dmin_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Min()).Min();
-                dmin_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Min()).Min();
-            }
-            catch (Exception) { }
-            
-            try { dmin_xxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Min()).Min(); } catch (Exception) { } // resultant may not always be computed
+                try // some cases doesnt compute xxyyzz results at all
+                {
+                    dmax_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Max()).Max();
+                    dmax_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Max()).Max();
+                    dmax_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Max()).Max();
+                }
+                catch (Exception) { }
+                try { dmax_xxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Max()).Max(); } catch (Exception) { } // resultant may not always be computed
+                try // some cases doesnt compute xxyyzz results at all
+                {
+                    dmin_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X.Value).Min()).Min();
+                    dmin_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y.Value).Min()).Min();
+                    dmin_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z.Value).Min()).Min();
+                }
+                catch (Exception) { }
 
+                try { dmin_xxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ.Value).Min()).Min(); } catch (Exception) { } // resultant may not always be computed
+            }
         }
         /// <summary>
         /// Translation, forces, etc results

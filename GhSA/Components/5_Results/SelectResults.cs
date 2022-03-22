@@ -214,6 +214,7 @@ namespace GsaGH.Components
                             gsaModel = in_Model;
                             updateCases = true;
                             Result = new Dictionary<Tuple<GsaResult.ResultType, int>, GsaResult>();
+                            ClearData();
                         }
                     }
                     else
@@ -238,9 +239,34 @@ namespace GsaGH.Components
                     if (GH_Convert.ToString(gh_Type, out type, GH_Conversion.Both))
                     {
                         if (type.ToUpper().StartsWith("A"))
+                        {
                             ResultType = GsaResult.ResultType.AnalysisCase;
+                            selecteditems[0] = dropdownitems[0][0];
+                        }
                         else if (type.ToUpper().StartsWith("C"))
-                            ResultType = GsaResult.ResultType.Combination;
+                        {
+                            selecteditems[0] = dropdownitems[0][1];
+                            if (ResultType != GsaResult.ResultType.Combination)
+                            {
+                                ResultType = GsaResult.ResultType.Combination;
+                                if (dropdownitems.Count < 3)
+                                {
+                                    dropdownitems.Add(new List<string>() { "All" });
+                                    if (selecteditems.Count < 3)
+                                    {
+                                        selecteditems.Add("All");
+                                    }
+                                }
+                                if (selecteditems[1] != "   ")
+                                {
+                                    if (selecteditems[1] != "All")
+                                    {
+                                        selecteditems[1] = "C" + CaseID.ToString();
+                                    }
+                                    updateCases = true;
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -250,7 +276,15 @@ namespace GsaGH.Components
                 {
                     int analCase = 1;
                     if (GH_Convert.ToInt32(gh_aCase, out analCase, GH_Conversion.Both))
+                    {
                         CaseID = analCase;
+                        if (analCase < 1)
+                            selecteditems[1] = "All";
+                        else
+                            selecteditems[1] = (ResultType == GsaResult.ResultType.AnalysisCase) ? "A" : "C" + analCase;
+                        
+                        updateCases = false;
+                    }
                 }
 
                 // Get permutation case 
@@ -259,7 +293,14 @@ namespace GsaGH.Components
                 {
                     int permutation = -1;
                     if (GH_Convert.ToInt32(gh_perm, out permutation, GH_Conversion.Both))
+                    {
                         Permutation = permutation;
+                        if (permutation < 1)
+                            selecteditems[2] = "All";
+                        else
+                            selecteditems[2] = "P" + permutation;
+                        updatePermutations = false;
+                    }
                 }
 
                 AnalysisCaseResult analysisCaseResult;
@@ -324,6 +365,8 @@ namespace GsaGH.Components
                             combinationCaseResult = combinationCaseResults[CaseID];
                             tempNodeResult = combinationCaseResult.NodeResults("all");
                             int nP = tempNodeResult[tempNodeResult.Keys.First()].Count;
+                            if (dropdownitems.Count < 3)
+                                dropdownitems.Add(new List<string>());
                             dropdownitems[2] = new List<string>();
                             dropdownitems[2].Add("All");
                             if (nP > 1)
@@ -335,23 +378,39 @@ namespace GsaGH.Components
                             return;
                     }
                 }
-                if (ResultType == GsaResult.ResultType.Combination & updatePermutations)
+                if (ResultType == GsaResult.ResultType.Combination & updatePermutations | Permutation > 0)
                 {
-                    // update permutations
+                    // calc permutations
+                    if (combinationCaseResults == null)
+                        combinationCaseResults = gsaModel.Model.CombinationCaseResults();
                     if (!combinationCaseResults.ContainsKey(CaseID))
                         CaseID = combinationCaseResults.Keys.OrderBy(x => x).ToList().First();
                     combinationCaseResult = combinationCaseResults[CaseID];
                     tempNodeResult = combinationCaseResult.NodeResults("all");
                     int nP = tempNodeResult[tempNodeResult.Keys.First()].Count;
-                    dropdownitems[2] = new List<string>();
-                    dropdownitems[2].Add("All");
-                    if (nP > 1)
-                        for (int i = 1; i < nP + 1; i++)
-                            dropdownitems[2].Add("P" + i.ToString());
-                    updatePermutations = false;
-                    ExpireSolution(true);
-                    return;
+                    
+                    if (ResultType == GsaResult.ResultType.Combination & updatePermutations)
+                    {
+                        if (dropdownitems.Count < 3)
+                            dropdownitems.Add(new List<string>());
+                        dropdownitems[2] = new List<string>();
+                        dropdownitems[2].Add("All");
+                        if (nP > 1)
+                            for (int i = 1; i < nP + 1; i++)
+                                dropdownitems[2].Add("P" + i.ToString());
+                        updatePermutations = false;
+                        ExpireSolution(true);
+                        return;
+                    }
+                    if (Permutation > nP)
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Combination Case C" + CaseID + " does not contain permutation " + Permutation);
+                        return;
+                    }
                 }
+
+                
+
 
                 // Get results from model and create result object
                 
@@ -361,9 +420,14 @@ namespace GsaGH.Components
                     case GsaResult.ResultType.AnalysisCase:
                         if (CaseID > 0)
                         {
+                            if (analysisCaseResults == null)
+                            {
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No Analysis Case Results exist in Model");
+                                return;
+                            }
                             if (!analysisCaseResults.ContainsKey(CaseID))
                             {
-                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis case does not exist in model");
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Case does not exist in model");
                                 return;
                             }
                             if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, CaseID)))
@@ -374,6 +438,11 @@ namespace GsaGH.Components
                         }
                         else
                         {
+                            if (analysisCaseResults == null)
+                            {
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No Analysis Case Results exist in Model");
+                                return;
+                            }
                             foreach (int key in analysisCaseResults.Keys)
                             {
                                 if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, key)))
@@ -388,9 +457,14 @@ namespace GsaGH.Components
                     case GsaResult.ResultType.Combination:
                         if (CaseID > 0)
                         {
+                            if (combinationCaseResults == null)
+                            {
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No Combination Case Results exist in Model");
+                                return;
+                            }
                             if (!combinationCaseResults.ContainsKey(CaseID))
                             {
-                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Combination case does not exist in model");
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Combination Case does not exist in model");
                                 return;
                             }
                             if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, CaseID)))
@@ -401,6 +475,11 @@ namespace GsaGH.Components
                         }
                         else
                         {
+                            if (combinationCaseResults == null)
+                            {
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No Combination Case Results exist in Model");
+                                return;
+                            }
                             foreach (int key in combinationCaseResults.Keys)
                             {
                                 if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, key)))

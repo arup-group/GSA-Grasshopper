@@ -353,11 +353,12 @@ namespace GsaGH.Util.Gsa
                 xyzRes.AsParallel().AsOrdered();
 
                 List<Double3> trans_vals = elementResults.Displacement.ToList();
-                Parallel.For(0, trans_vals.Count, i => //foreach (Double3 val in trans_vals)
+                Parallel.For(1, trans_vals.Count, i => //foreach (Double3 val in trans_vals)
                 {
                     xyzRes[i] = GetQuantityResult(trans_vals[i], resultLengthUnit);
 
                 });
+                xyzRes[trans_vals.Count] = GetQuantityResult(trans_vals[0], resultLengthUnit); // add centre point at the end
 
                 // add vector lists to main lists
                 r.xyzResults.TryAdd(key, xyzRes);
@@ -389,17 +390,21 @@ namespace GsaGH.Util.Gsa
                 xxyyzzRes.AsParallel().AsOrdered();
 
                 List<Tensor3> stress_vals = elementResults.Stress.ToList();
-                Parallel.For(0, stress_vals.Count * 2, i => // (Tensor3 val in stress_vals)
+                Parallel.For(1, stress_vals.Count * 2, i => // (Tensor3 val in stress_vals)
                 {
+                    if (i == stress_vals.Count)
+                        return;
                     // split computation into two parts by doubling the i-counter
                     if (i < stress_vals.Count)
                         xyzRes[i] = GetQuantityResult(stress_vals[i], stressUnit);
                     else
-                        xxyyzzRes[i - stress_vals.Count] = GetQuantityResult(stress_vals[i - stress_vals.Count], stressUnit);
+                        xxyyzzRes[i - stress_vals.Count] = GetQuantityResult(stress_vals[i - stress_vals.Count], stressUnit, true);
                 });
+                xyzRes[stress_vals.Count] = GetQuantityResult(stress_vals[0], stressUnit); // add centre point at the end
+                xxyyzzRes[stress_vals.Count] = GetQuantityResult(stress_vals[0], stressUnit, true);
 
                 // add vector lists to main lists
-                r.xyzResults.TryAdd(key, xyzRes);
+                r.xyzResults.TryAdd(key, xyzRes); 
                 r.xxyyzzResults.TryAdd(key, xxyyzzRes);
             });
 

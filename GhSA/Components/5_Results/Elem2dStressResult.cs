@@ -112,14 +112,17 @@ namespace GsaGH.Components
 
             string note = System.Environment.NewLine + "DataTree organised as { CaseID ; (Permutation) ; ElementID } where each" +
                 System.Environment.NewLine + "branch contains a list of results in the following order:" +
-                System.Environment.NewLine + "Vertex(1), Vertex(2), ..., Vertex(i), Centre";
+                System.Environment.NewLine + "Vertex(1), Vertex(2), ..., Vertex(i), Centre" +
+                System.Environment.NewLine + "+ve in-plane stresses: tensile(ie. + ve direct strain)." +
+                System.Environment.NewLine + "+ve bending stress gives rise to tension on the top surface." +
+                System.Environment.NewLine + "+ve shear stresses: +ve shear strain.";
 
-            pManager.AddGenericParameter("Stress XX [" + unitAbbreviation + "]", "xx", "Stress in X-direction in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Stress YY [" + unitAbbreviation + "]", "yy", "Stress in Y-direction in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Stress ZZ [" + unitAbbreviation + "]", "zz", "Stress in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Stress XY [" + unitAbbreviation + "]", "xy", "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Stress YZ [" + unitAbbreviation + "]", "yz", "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Stress ZX [" + unitAbbreviation + "]", "zx", "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress XX [" + unitAbbreviation + "]", "xx", "Stress in XX-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress YY [" + unitAbbreviation + "]", "yy", "Stress in YY-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress ZZ [" + unitAbbreviation + "]", "zz", "Stress in ZZ-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress XY [" + unitAbbreviation + "]", "xy", "Stress in XY-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress YZ [" + unitAbbreviation + "]", "yz", "Stress in YZ-direction in Global Axis." + note, GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Stress ZX [" + unitAbbreviation + "]", "zx", "Stress in ZX-direction in Global Axis." + note, GH_ParamAccess.tree);
         }
         
 
@@ -172,6 +175,13 @@ namespace GsaGH.Components
                     // loop through all permutations (analysis case will just have one)
                     for (int permutation = 0; permutation < vals.Count; permutation++)
                     {
+                        if (vals[permutation].xyzResults.Count == 0 & vals[permutation].xxyyzzResults.Count == 0)
+                        {
+                            string[] typ = result.ToString().Split('{');
+                            string acase = typ[1].Replace('}', ' ');
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + "contains no Element2D results.");
+                            continue;
+                        }
                         Parallel.For(0, 2, thread => // split computation in two for xyz and xxyyzz
                         {
                             if (thread == 0)

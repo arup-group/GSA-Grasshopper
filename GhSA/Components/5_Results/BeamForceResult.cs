@@ -187,6 +187,13 @@ namespace GsaGH.Components
                     // loop through all permutations (analysis case will just have one)
                     for (int permutation = 0; permutation < vals.Count; permutation++)
                     {
+                        if (vals[permutation].xyzResults.Count == 0 & vals[permutation].xxyyzzResults.Count == 0)
+                        {
+                            string[] typ = result.ToString().Split('{');
+                            string acase = typ[1].Replace('}', ' ');
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + "contains no Element1D results.");
+                            continue;
+                        }
                         Parallel.For(0, 2, thread => // split computation in two for xyz and xxyyzz
                         {
                             if (thread == 0)
