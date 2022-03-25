@@ -17,6 +17,17 @@ namespace GsaGH.Util.Gsa
     {
         internal static List<double> SmartRounder(double max, double min)
         {
+            // list to hold output values
+            List<double> roundedvals = new List<double>();
+            
+            // check if both are zero then return
+            if (max == 0 & min == 0)
+            {
+                roundedvals.Add(max);
+                roundedvals.Add(min);
+                roundedvals.Add(0);
+                return roundedvals;
+            }
             int signMax = Math.Sign(max);
             int signMin = Math.Sign(min);
 
@@ -26,38 +37,78 @@ namespace GsaGH.Util.Gsa
             double val = Math.Max(Math.Abs(max), Math.Abs(min));
 
             // round that with 4 significant digits
-            double scale = RoundToSignificantDigits(val, significantNumbers);
+            double scale = RoundToSignificantDigits(val, 1);
             
-            // list to hold output values
-            List<double> roundedvals = new List<double>();
+            
 
+            // a value for how to round the values on the legend
+            int numberOfDigitsOut = significantNumbers;
+            //factor for scaling small numbers (0.00012312451)
             double factor = 1;
             if (val < 1)
             {
-                string valString = val.ToString();
-                int power = valString.Split('.')[1].Where(d => d == '0').Count();
-                factor = Math.Pow(10, power + significantNumbers);
+                // count the number of zeroes after the decimal point
+                string valString = val.ToString().Split('.')[1];
+                int digits = 0;
+                while (valString[digits] == '0')
+                    digits++;
+                // create the factor, we want to remove the zeroes as well as making it big enough for rounding
+                factor = Math.Pow(10, digits + 1);
+                // scale up max/min values 
                 max = max * factor;
+                min = min * factor;
+                scale = scale * factor;
+                max = Math.Ceiling(max);
+                min = Math.Floor(min);
+                max = max / factor;
+                min = min / factor;
+                numberOfDigitsOut = digits + significantNumbers;
             }
-            // do max
-            if (max == 0)
-                roundedvals.Add(0);
             else
             {
-                double tempmax = scale * Math.Round(Math.Abs(max) / (scale), significantNumbers);
-                tempmax = Math.Ceiling(tempmax * Math.Pow(10, significantNumbers) / Math.Pow(10, significantNumbers));
-                roundedvals.Add(tempmax * signMax / factor);
-            }
+                string valString = val.ToString();
+                // count the number of digits before the decimal point
+                int digits = valString.Split('.')[0].Count();
+                // create the factor, we want to remove the zeroes as well as making it big enough for rounding
+                int power = 10;
+                if (val < 500)
+                    power = 5;
 
-            // do min
-            if (min == 0)
-                roundedvals.Add(0);
-            else
-            {
-                double tempmin = scale * Math.Round(Math.Abs(min) / (scale), significantNumbers);
-                tempmin = Math.Floor(tempmin * Math.Pow(10, significantNumbers) / Math.Pow(10, significantNumbers));
-                roundedvals.Add(tempmin * signMin / factor);
+                factor = Math.Pow(power, digits - 1);
+                // scale up max/min values 
+                max = max / factor;
+                min = min / factor;
+                max = Math.Ceiling(max);
+                min = Math.Floor(min);
+                max = max * factor;
+                min = min * factor;
+                if (digits > 4)
+                    numberOfDigitsOut = 4;
+                else
+                    numberOfDigitsOut = digits;
             }
+            //// do max
+            //if (max == 0)
+            //    roundedvals.Add(0);
+            //else
+            //{
+            //    double tempmax = scale * Math.Round(Math.Abs(max) / scale, significantNumbers);
+            //    tempmax = Math.Ceiling(tempmax / Math.Pow(10, significantNumbers) * Math.Pow(10, significantNumbers));
+            //    roundedvals.Add(tempmax * signMax / factor);
+            //}
+
+            //// do min
+            //if (min == 0)
+            //    roundedvals.Add(0);
+            //else
+            //{
+            //    double tempmin = scale * Math.Round(Math.Abs(min) / scale, significantNumbers);
+            //    tempmin = Math.Floor(tempmin / Math.Pow(10, significantNumbers) * Math.Pow(10, significantNumbers));
+            //    roundedvals.Add(tempmin * signMin / factor);
+            //}
+            roundedvals.Add(max);
+            roundedvals.Add(min);
+            roundedvals.Add(numberOfDigitsOut);
 
             return roundedvals;
         }

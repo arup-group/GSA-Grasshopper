@@ -369,7 +369,8 @@ namespace GsaGH.Components
                 List<double> rounded = Util.Gsa.ResultHelper.SmartRounder(dmax, dmin);
                 dmax = rounded[0];
                 dmin = rounded[1];
-                
+                int significantDigits = (int)rounded[2];
+
                 // Loop through nodes and set result colour into ResultPoint format
                 ConcurrentDictionary<int, ResultPoint> pts = new ConcurrentDictionary<int, ResultPoint>();
                 ConcurrentDictionary<int, System.Drawing.Color> col = new ConcurrentDictionary<int, System.Drawing.Color>();
@@ -490,9 +491,10 @@ namespace GsaGH.Components
                 for (int i = 0; i < GH_Gradient.GripCount; i++)
                 {
                     double t = dmin + (dmax - dmin) / ((double)GH_Gradient.GripCount - 1) * (double)i;
-                    double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
-                    scl = Math.Max(scl, 1);
-                    t = scl * Math.Round(t / scl, 3);
+                    //double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
+                    //scl = Math.Max(scl, 1);
+                    //t = scl * Math.Round(t / scl, 3);
+                    t = ResultHelper.RoundToSignificantDigits(t, significantDigits);
                     ts.Add(t);
 
                     System.Drawing.Color gradientcolour = GH_Gradient.ColourAt(2 * (double)i / ((double)GH_Gradient.GripCount - 1) - 1);
@@ -512,17 +514,19 @@ namespace GsaGH.Components
                     if (_mode == FoldMode.Displacement)
                     {
                         if ((int)_disp < 4)
-                            legendValues.Add(new Length(t, geometryLengthUnit).ToString());
+                            legendValues.Add(new Length(t, geometryLengthUnit).ToString("f" + significantDigits));
                         else
-                            legendValues.Add(new Angle(t, AngleUnit.Radian).ToString());
+                            legendValues.Add(new Angle(t, AngleUnit.Radian).ToString("s" + significantDigits));
                     }
                     if (_mode == FoldMode.Reaction)
                     {
                         if ((int)_disp < 4)
-                            legendValues.Add(new Force(t, Units.ForceUnit).ToString());
+                            legendValues.Add(new Force(t, Units.ForceUnit).ToString("s" + significantDigits));
                         else
-                            legendValues.Add(new Moment(t, Units.MomentUnit).ToString());
+                            legendValues.Add(t.ToString("F" + significantDigits) + " " + Moment.GetAbbreviation(Units.MomentUnit));
                     }
+                    if (Math.Abs(t) > 1)
+                        legendValues[i] = legendValues[i].Replace(",", string.Empty); // remove thousand separator
                     legendValuesPosY.Add(legend.Height - starty + gripheight/2 - 2);
                 }
                 #endregion
