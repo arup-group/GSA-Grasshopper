@@ -17,23 +17,36 @@ namespace GsaGH.Util.Gsa
     {
         internal static List<double> SmartRounder(double max, double min)
         {
+            int signMax = Math.Sign(max);
+            int signMin = Math.Sign(min);
+
+            int significantNumbers = 4;
+
             // find the biggest abs value of max and min
             double val = Math.Max(Math.Abs(max), Math.Abs(min));
 
             // round that with 4 significant digits
-            double scale = RoundToSignificantDigits(val, 4);
-
+            double scale = RoundToSignificantDigits(val, significantNumbers);
+            
             // list to hold output values
             List<double> roundedvals = new List<double>();
 
+            double factor = 1;
+            if (val < 1)
+            {
+                string valString = val.ToString();
+                int power = valString.Split('.')[1].Where(d => d == '0').Count();
+                factor = Math.Pow(10, power + significantNumbers);
+                max = max * factor;
+            }
             // do max
             if (max == 0)
                 roundedvals.Add(0);
             else
             {
-                double tempmax = scale * Math.Round(max / (scale), 4);
-                tempmax = Math.Ceiling(tempmax * 1000) / 1000;
-                roundedvals.Add(tempmax);
+                double tempmax = scale * Math.Round(Math.Abs(max) / (scale), significantNumbers);
+                tempmax = Math.Ceiling(tempmax * Math.Pow(10, significantNumbers) / Math.Pow(10, significantNumbers));
+                roundedvals.Add(tempmax * signMax / factor);
             }
 
             // do min
@@ -41,9 +54,9 @@ namespace GsaGH.Util.Gsa
                 roundedvals.Add(0);
             else
             {
-                double tempmin = scale * Math.Round(min / (scale), 4);
-                tempmin = Math.Floor(tempmin * 1000) / 1000;
-                roundedvals.Add(tempmin);
+                double tempmin = scale * Math.Round(Math.Abs(min) / (scale), significantNumbers);
+                tempmin = Math.Floor(tempmin * Math.Pow(10, significantNumbers) / Math.Pow(10, significantNumbers));
+                roundedvals.Add(tempmin * signMin / factor);
             }
 
             return roundedvals;
@@ -209,7 +222,7 @@ namespace GsaGH.Util.Gsa
             if (isBeam)
                 pyth = Math.Sqrt(Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2)); // absolute bending is only |YZ|
             else
-                pyth = Math.Sqrt(Math.Pow(result.X, 2) + Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2));
+                pyth = Math.Sqrt(Math.Pow(result.XX, 2) + Math.Pow(result.YY, 2) + Math.Pow(result.ZZ, 2));
             IQuantity xxyyzz = new Moment(new Moment(pyth, MomentUnit.NewtonMeter).As(unit), unit);
             return new GsaResultQuantity() { X = xx, Y = yy, Z = zz, XYZ = xxyyzz };
         }

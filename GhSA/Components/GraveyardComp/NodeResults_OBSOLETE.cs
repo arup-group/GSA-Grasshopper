@@ -19,20 +19,20 @@ namespace GsaGH.Components
     /// <summary>
     /// Component to create a new Prop2d
     /// </summary>
-    public class NodeResults : GH_Component, IGH_VariableParameterComponent
+    public class NodeResults_OBSOLETE : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("7a8250b8-781e-4aeb-a05b-1b1fce9fbe3b");
-        public NodeResults()
+        public NodeResults_OBSOLETE()
           : base("Node Results", "NodeResult", "Get GSA Node Results",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat5())
         {
         }
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
         protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Result0D;
         #endregion

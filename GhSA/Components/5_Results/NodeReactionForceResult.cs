@@ -174,8 +174,9 @@ namespace GsaGH.Components
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
                         return;
                     }
-                    
-                    List<GsaResultsValues> vals = result.NodeReactionForceValues(nodeList, forceUnit, momentUnit);
+                    Tuple<List<GsaResultsValues>, string> resultgetter = result.NodeReactionForceValues(nodeList, forceUnit, momentUnit);
+                    List <GsaResultsValues> vals = resultgetter.Item1;
+
 
                     for (int permutation = 0; permutation < vals.Count; permutation++)
                     {

@@ -132,6 +132,7 @@
     <Compile Include="Components\5_Results\BeamDispResult.cs" />
     <Compile Include="Components\5_Results\NodeReactionForceResult.cs" />
     <Compile Include="Components\5_Results\NodeDispResult.cs" />
+    <Compile Include="Components\5_Results\ContourNodeResults.cs" />
     <Compile Include="Components\5_Results\SelectResults.cs" />
     <Compile Include="Components\5_Results\GlobalResult .cs" />
     <Compile Include="Components\GraveyardComp\CreateOffset_OBSOLETE.cs" />
@@ -155,7 +156,7 @@
     <Compile Include="Components\GraveyardComp\Elem2dResults_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\GlobalResult_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\Elem1dResults_OBSOLETE.cs" />
-    <Compile Include="Components\5_Results\NodeResults.cs" />
+    <Compile Include="Components\GraveyardComp\NodeResults_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\EditTitles_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\GetLoads.cs" />
     <Compile Include="Components\0_Model\GetProperties.cs" />
