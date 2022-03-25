@@ -31,15 +31,12 @@ namespace GsaGH.Util.Gsa
             int signMax = Math.Sign(max);
             int signMin = Math.Sign(min);
 
-            int significantNumbers = 4;
+            int significantNumbers = 2;
 
             // find the biggest abs value of max and min
             double val = Math.Max(Math.Abs(max), Math.Abs(min));
-
-            // round that with 4 significant digits
-            double scale = RoundToSignificantDigits(val, 1);
-            
-            
+            max = Math.Abs(max);
+            min = Math.Abs(min);
 
             // a value for how to round the values on the legend
             int numberOfDigitsOut = significantNumbers;
@@ -57,7 +54,6 @@ namespace GsaGH.Util.Gsa
                 // scale up max/min values 
                 max = max * factor;
                 min = min * factor;
-                scale = scale * factor;
                 max = Math.Ceiling(max);
                 min = Math.Floor(min);
                 max = max / factor;
@@ -82,32 +78,11 @@ namespace GsaGH.Util.Gsa
                 min = Math.Floor(min);
                 max = max * factor;
                 min = min * factor;
-                if (digits > 4)
-                    numberOfDigitsOut = 4;
-                else
-                    numberOfDigitsOut = digits;
+                numberOfDigitsOut = significantNumbers;
             }
-            //// do max
-            //if (max == 0)
-            //    roundedvals.Add(0);
-            //else
-            //{
-            //    double tempmax = scale * Math.Round(Math.Abs(max) / scale, significantNumbers);
-            //    tempmax = Math.Ceiling(tempmax / Math.Pow(10, significantNumbers) * Math.Pow(10, significantNumbers));
-            //    roundedvals.Add(tempmax * signMax / factor);
-            //}
-
-            //// do min
-            //if (min == 0)
-            //    roundedvals.Add(0);
-            //else
-            //{
-            //    double tempmin = scale * Math.Round(Math.Abs(min) / scale, significantNumbers);
-            //    tempmin = Math.Floor(tempmin / Math.Pow(10, significantNumbers) * Math.Pow(10, significantNumbers));
-            //    roundedvals.Add(tempmin * signMin / factor);
-            //}
-            roundedvals.Add(max);
-            roundedvals.Add(min);
+            
+            roundedvals.Add(max * signMax);
+            roundedvals.Add(min * signMin);
             roundedvals.Add(numberOfDigitsOut);
 
             return roundedvals;
