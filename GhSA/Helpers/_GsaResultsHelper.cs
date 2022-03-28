@@ -246,7 +246,7 @@ namespace GsaGH.Util.Gsa
             IQuantity zz = new Moment(new Moment(result.ZZ, MomentUnit.NewtonMeter).As(unit), unit);
             double pyth = 0;
             if (isBeam)
-                pyth = Math.Sqrt(Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2)); // absolute bending is only |YZ|
+                pyth = Math.Sqrt(Math.Pow(result.YY, 2) + Math.Pow(result.ZZ, 2)); // absolute bending is only |YZ|
             else
                 pyth = Math.Sqrt(Math.Pow(result.XX, 2) + Math.Pow(result.YY, 2) + Math.Pow(result.ZZ, 2));
             IQuantity xxyyzz = new Moment(new Moment(pyth, MomentUnit.NewtonMeter).As(unit), unit);

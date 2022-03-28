@@ -409,12 +409,7 @@ namespace GsaGH.Components
                     }
                 }
 
-                
-
-
                 // Get results from model and create result object
-                
-                
                 switch (ResultType)
                 {
                     case GsaResult.ResultType.AnalysisCase:

@@ -23,13 +23,13 @@ namespace GsaGH.Components
     /// <summary>
     /// Component to create a new Prop2d
     /// </summary>
-    public class ContourNodeResults : GH_Component, IGH_VariableParameterComponent
+    public class NodeContourResults : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("47053884-2c22-4f2c-b092-8531fa5751e1");
-        public ContourNodeResults()
+        public NodeContourResults()
           : base("Node Contour Results", "ContourNode", "Diplays GSA Node Results as Contours",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat5())
@@ -183,7 +183,6 @@ namespace GsaGH.Components
         });
 
         private LengthUnit geometryLengthUnit = Units.LengthUnitGeometry;
-        Grasshopper.GUI.Gradient.GH_Gradient GH_Gradient;
         string _case = "";
         #endregion
 
@@ -206,8 +205,7 @@ namespace GsaGH.Components
             IQuantity length = new Length(0, geometryLengthUnit);
             string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-            pManager.AddGenericParameter("Point", "P", "Point with result value", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Result Colour", "Co", "Colours representing the result value at each point", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Point", "P", "Contoured Points with result values", GH_ParamAccess.list);
             pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
             pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values", GH_ParamAccess.list);
         }
@@ -235,7 +233,7 @@ namespace GsaGH.Components
                     if (result.Type == GsaResult.ResultType.Combination)
                         _case = "Case C" + result.CaseID + " P" + result.CombPermutationID;
                     if (result.Type == GsaResult.ResultType.AnalysisCase)
-                        _case = "Case A" + result.CaseID;
+                        _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
                 }
                 else
                 {
@@ -259,12 +257,12 @@ namespace GsaGH.Components
                 {
                     for (int i = 0; i < gh_Colours.Count; i++)
                     {
-                        System.Drawing.Color color = new System.Drawing.Color();
+                        Color color = new Color();
                         GH_Convert.ToColor(gh_Colours[i], out color, GH_Conversion.Both);
                         colors.Add(color);
                     }
                 }
-                GH_Gradient = UI.Colour.Stress_Gradient(colors);
+                Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = UI.Colour.Stress_Gradient(colors);
 
                 // Get scalar 
                 GH_Number gh_Scale = new GH_Number();
@@ -287,6 +285,8 @@ namespace GsaGH.Components
                         nodeList = resultgetter.Item2;
                         break;
                 }
+
+                // get geometry for display from results class
                 ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(result.Model.Nodes(nodeList));
 
                 ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.xyzResults;
@@ -325,7 +325,7 @@ namespace GsaGH.Components
 
                 //Find Colour and Values for legend output
                 List<double> ts = new List<double>();
-                List<System.Drawing.Color> cs = new List<System.Drawing.Color>();
+                List<Color> cs = new List<Color>();
 
                 // round max and min to reasonable numbers
                 double dmax = 0;
@@ -335,45 +335,76 @@ namespace GsaGH.Components
                     case (DisplayValue.X):
                         dmax = dmax_x;
                         dmin = dmin_x;
+                        if (_mode == FoldMode.Displacement)
+                            resType = "Translation, Ux";
+                        else
+                            resType = "Reaction Force, Fx";
                         break;
                     case (DisplayValue.Y):
                         dmax = dmax_y;
                         dmin = dmin_y;
+                        if (_mode == FoldMode.Displacement)
+                            resType = "Translation, Uy";
+                        else
+                            resType = "Reaction Force, Fy";
                         break;
                     case (DisplayValue.Z):
                         dmax = dmax_z;
                         dmin = dmin_z;
+                        if (_mode == FoldMode.Displacement)
+                            resType = "Translation, Uz";
+                        else
+                            resType = "Reaction Force, Fz";
                         break;
                     case (DisplayValue.resXYZ):
                         dmax = dmax_xyz;
                         dmin = dmin_xyz;
+                        if (_mode == FoldMode.Displacement)
+                            resType = "Res. Trans., |U|";
+                        else
+                            resType = "Res. Rxn. Force, |F|";
                         break;
                     case (DisplayValue.XX):
                         dmax = dmax_xx;
                         dmin = dmin_xx;
+                        if (_mode == FoldMode.Displacement)
+                            resType = "Rotation, Rxx";
+                        else
+                            resType = "Reaction Moment, Mxx";
                         break;
                     case (DisplayValue.YY):
                         dmax = dmax_yy;
                         dmin = dmin_yy;
+                        if (_mode == FoldMode.Displacement)
+                            resType = "Rotation, Ryy";
+                        else
+                            resType = "Reaction Moment, Ryy";
                         break;
                     case (DisplayValue.ZZ):
                         dmax = dmax_zz;
                         dmin = dmin_zz;
+                        if (_mode == FoldMode.Displacement)
+                            resType = "Rotation, Rzz";
+                        else
+                            resType = "Reaction Moment, Rzz";
                         break;
                     case (DisplayValue.resXXYYZZ):
                         dmax = dmax_xxyyzz;
                         dmin = dmin_xxyyzz;
+                        if (_mode == FoldMode.Displacement)
+                            resType = "Res. Rot., |R|";
+                        else
+                            resType = "Res. Rxn. Mom., |M|";
                         break;
                 }
 
-                List<double> rounded = Util.Gsa.ResultHelper.SmartRounder(dmax, dmin);
+                List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
                 dmax = rounded[0];
                 dmin = rounded[1];
                 int significantDigits = (int)rounded[2];
 
                 // Loop through nodes and set result colour into ResultPoint format
                 ConcurrentDictionary<int, ResultPoint> pts = new ConcurrentDictionary<int, ResultPoint>();
-                ConcurrentDictionary<int, System.Drawing.Color> col = new ConcurrentDictionary<int, System.Drawing.Color>();
 
                 Parallel.ForEach(gsanodes, node =>
                 {
@@ -414,16 +445,16 @@ namespace GsaGH.Components
                                                 translation.Z = xyzResults[nodeID][0].Z.As(geometryLengthUnit) * DefScale;
                                                 break;
                                             case (DisplayValue.XX):
-                                                t = xxyyzzResults[nodeID][0].X.As(geometryLengthUnit);
+                                                t = xxyyzzResults[nodeID][0].X.As(AngleUnit.Radian);
                                                 break;
                                             case (DisplayValue.YY):
-                                                t = xxyyzzResults[nodeID][0].Y.As(geometryLengthUnit);
+                                                t = xxyyzzResults[nodeID][0].Y.As(AngleUnit.Radian);
                                                 break;
                                             case (DisplayValue.ZZ):
-                                                t = xxyyzzResults[nodeID][0].Z.As(geometryLengthUnit);
+                                                t = xxyyzzResults[nodeID][0].Z.As(AngleUnit.Radian);
                                                 break;
                                             case (DisplayValue.resXXYYZZ):
-                                                t = xxyyzzResults[nodeID][0].XYZ.As(geometryLengthUnit);
+                                                t = xxyyzzResults[nodeID][0].XYZ.As(AngleUnit.Radian);
                                                 break;
                                         }
                                         def.Transform(Transform.Translation(translation));
@@ -464,7 +495,7 @@ namespace GsaGH.Components
                                 double tnorm = 2 * (t - dmin) / (dmax - dmin) - 1;
 
                                 // get colour for that normalised value
-                                System.Drawing.Color valcol = GH_Gradient.ColourAt(tnorm);
+                                Color valcol = gH_Gradient.ColourAt(tnorm);
 
                                 // set the size of the point for ResultPoint class. Size is calculated from 0-base, so not a normalised value between extremes
                                 float size = (t >= 0 && dmax != 0) ?
@@ -473,9 +504,6 @@ namespace GsaGH.Components
 
                                 // add our special resultpoint to the list of points
                                 pts[nodeID] = new ResultPoint(def, t, valcol, size);
-
-                                // add the colour to the colours list
-                                col[nodeID] = valcol;
                             }
                         }
                     }
@@ -485,19 +513,19 @@ namespace GsaGH.Components
                 #region Legend
                 // ### Legend ###
                 // loop through number of grip points in gradient to create legend
-                int gripheight = legend.Height / GH_Gradient.GripCount;
+                int gripheight = legend.Height / gH_Gradient.GripCount;
                 legendValues = new List<string>();
                 legendValuesPosY = new List<int>();
-                for (int i = 0; i < GH_Gradient.GripCount; i++)
+                for (int i = 0; i < gH_Gradient.GripCount; i++)
                 {
-                    double t = dmin + (dmax - dmin) / ((double)GH_Gradient.GripCount - 1) * (double)i;
+                    double t = dmin + (dmax - dmin) / ((double)gH_Gradient.GripCount - 1) * (double)i;
                     //double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
                     //scl = Math.Max(scl, 1);
                     //t = scl * Math.Round(t / scl, 3);
                     t = ResultHelper.RoundToSignificantDigits(t, significantDigits);
                     ts.Add(t);
 
-                    System.Drawing.Color gradientcolour = GH_Gradient.ColourAt(2 * (double)i / ((double)GH_Gradient.GripCount - 1) - 1);
+                    Color gradientcolour = gH_Gradient.ColourAt(2 * (double)i / ((double)gH_Gradient.GripCount - 1) - 1);
                     cs.Add(gradientcolour);
 
                     // create legend for viewport
@@ -531,12 +559,10 @@ namespace GsaGH.Components
                 }
                 #endregion
 
-
                 // set outputs
                 DA.SetDataList(0, pts.OrderBy(x => x.Key).Select(y => y.Value).ToList());
-                DA.SetDataList(1, col.OrderBy(x => x.Key).Select(y => y.Value).ToList());
-                DA.SetDataList(2, cs);
-                DA.SetDataList(3, ts);
+                DA.SetDataList(1, cs);
+                DA.SetDataList(2, ts);
             }
         }
 
@@ -618,11 +644,26 @@ namespace GsaGH.Components
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
+            writer.SetInt32("Mode", (int)_mode);
+            writer.SetInt32("Display", (int)_disp);
+            writer.SetBoolean("slider", slider);
+            writer.SetInt32("noDec", noDigits);
+            writer.SetDouble("valMax", MaxValue);
+            writer.SetDouble("valMin", MinValue);
+            writer.SetDouble("val", DefScale);
             Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
+            _mode = (FoldMode)reader.GetInt32("Mode");
+            _disp = (DisplayValue)reader.GetInt32("Display");
+
+            slider = reader.GetBoolean("slider");
+            noDigits = reader.GetInt32("noDec");
+            MaxValue = reader.GetDouble("valMax");
+            MinValue = reader.GetDouble("valMin");
+            DefScale = reader.GetDouble("val");
             Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
 
             first = false;
@@ -659,10 +700,10 @@ namespace GsaGH.Components
                 {
                     IQuantity length = new Length(0, geometryLengthUnit);
                     string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-                    Params.Output[3].Name = "Values [" + lengthunitAbbreviation + "]";
+                    Params.Output[2].Name = "Values [" + lengthunitAbbreviation + "]";
                 }
                 else
-                    Params.Output[3].Name = "Values [rad]";
+                    Params.Output[2].Name = "Values [rad]";
             }
 
             if (_mode == FoldMode.Reaction)
@@ -671,12 +712,12 @@ namespace GsaGH.Components
                 {
                     IQuantity force = new Force(0, Units.ForceUnit);
                     string forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-                    Params.Output[3].Name = "Values [" + forceunitAbbreviation + "]";
+                    Params.Output[2].Name = "Values [" + forceunitAbbreviation + "]";
                 }
                 else
                 {
                     string momentunitAbbreviation = Oasys.Units.Moment.GetAbbreviation(Units.MomentUnit);
-                    Params.Output[3].Name = "Values [" + momentunitAbbreviation + "]";
+                    Params.Output[2].Name = "Values [" + momentunitAbbreviation + "]";
                 }
             }
         }
@@ -687,23 +728,17 @@ namespace GsaGH.Components
         Bitmap legend = new Bitmap(15, 120);
         List<string> legendValues;
         List<int> legendValuesPosY;
+        string resType;
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {
             base.DrawViewportWires(args);
             if (showLegend)
             {
-                args.Display.DrawBitmap(new DisplayBitmap(legend), args.Viewport.Bounds.Right - 100, 20);
+                args.Display.DrawBitmap(new DisplayBitmap(legend), args.Viewport.Bounds.Right - 110, 20);
                 for (int i = 0; i < legendValues.Count; i++)
-                    args.Display.Draw2dText(legendValues[i], Color.Black, new Point2d(args.Viewport.Bounds.Right - 75, legendValuesPosY[i]), false);
-                if (_mode == FoldMode.Displacement)
-                {
-                    args.Display.Draw2dText("Displacement", Color.Black, new Point2d(args.Viewport.Bounds.Right - 100, 7), false);
-                }
-                if (_mode == FoldMode.Reaction)
-                {
-                    args.Display.Draw2dText("Reaction Forces", Color.Black, new Point2d(args.Viewport.Bounds.Right - 100, 10), false);
-                }
-                args.Display.Draw2dText(_case, Color.Black, new Point2d(args.Viewport.Bounds.Right - 100, 145), false);
+                    args.Display.Draw2dText(legendValues[i], Color.Black, new Point2d(args.Viewport.Bounds.Right - 85, legendValuesPosY[i]), false);
+                args.Display.Draw2dText(resType, Color.Black, new Point2d(args.Viewport.Bounds.Right - 110, 7), false);
+                args.Display.Draw2dText(_case, Color.Black, new Point2d(args.Viewport.Bounds.Right - 110, 145), false);
             }
         }
             #endregion

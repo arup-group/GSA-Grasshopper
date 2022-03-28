@@ -84,6 +84,18 @@ namespace GsaGH.Parameters
                 return true;
             }
 
+            if (typeof(TQ).IsAssignableFrom(typeof(GH_Number)))
+            {
+                target = (TQ)(object)new GH_Number(m_result);
+                return true;
+            }
+
+            if (typeof(TQ).IsAssignableFrom(typeof(GH_Colour)))
+            {
+                target = (TQ)(object)new GH_Colour(m_colour);
+                return true;
+            }
+
             target = default(TQ);
             return false;
         }

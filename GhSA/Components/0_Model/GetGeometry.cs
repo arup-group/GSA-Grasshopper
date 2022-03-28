@@ -264,6 +264,7 @@ namespace GsaGH.Components
 
         protected override void SolveInstance(IGH_DataAccess data)
         {
+            ConcurrentDictionary<int, Member> mDict = null;
             if (InPreSolve)
             {
                 // First pass; collect data and construct tasks
@@ -298,7 +299,7 @@ namespace GsaGH.Components
                     ConcurrentDictionary<int, Axis> axDict = new ConcurrentDictionary<int, Axis>(model.Axes());
                     ConcurrentDictionary<int, Node> out_nDict = (nodeList.ToLower() == "all") ? nDict : new ConcurrentDictionary<int, Node>(model.Nodes(nodeList));
                     ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(model.Elements(elemList));
-                    ConcurrentDictionary<int, Member> mDict = new ConcurrentDictionary<int, Member>(model.Members(memList));
+                    mDict = new ConcurrentDictionary<int, Member>(model.Members(memList));
                     ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
                     ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
                     ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
@@ -312,60 +313,54 @@ namespace GsaGH.Components
                 TaskList.Add(tsk);
                 return;
             }
+            
             SolveResults results;
-            //try
-            //{
-                if (!GetSolveResults(data, out results))
+            if (!GetSolveResults(data, out results))
+            {
+                // Compute right here, right now.
+                // 1. Collect
+                GsaModel gsaModel = new GsaModel();
+                GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+                if (data.GetData(0, ref gh_typ))
                 {
-                    // Compute right here, right now.
-                    // 1. Collect
-                    GsaModel gsaModel = new GsaModel();
-                    GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-                    if (data.GetData(0, ref gh_typ))
+                    if (gh_typ.Value is GsaModelGoo)
+                        gh_typ.CastTo(ref gsaModel);
+                    else
                     {
-                        if (gh_typ.Value is GsaModelGoo)
-                            gh_typ.CastTo(ref gsaModel);
-                        else
-                        {
-                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
-                            return;
-                        }
-
-                        // import lists
-                        string nodeList = "all";
-                        if (data.GetData(1, ref nodeList))
-                            nodeList = nodeList.ToString();
-                        string elemList = "all";
-                        if (data.GetData(2, ref elemList))
-                            elemList = elemList.ToString();
-                        string memList = "all";
-                        if (data.GetData(3, ref memList))
-                            memList = memList.ToString();
-
-                        // 2. Compute
-                        // collect data from model:
-                        Model model = gsaModel.Model;
-
-                        ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
-                        ConcurrentDictionary<int, Axis> axDict = new ConcurrentDictionary<int, Axis>(model.Axes());
-                        ConcurrentDictionary<int, Node> out_nDict = (nodeList.ToLower() == "all") ? nDict : new ConcurrentDictionary<int, Node>(model.Nodes(nodeList));
-                        ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(model.Elements(elemList));
-                        ConcurrentDictionary<int, Member> mDict = new ConcurrentDictionary<int, Member>(model.Members(memList));
-                        ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
-                        ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
-                        ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
-                        ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
-
-                        results = Compute(nDict, axDict, out_nDict,
-                        eDict, mDict, sDict, pDict, p3Dict, amDict);
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
+                        return;
                     }
-                    else return;
+
+                    // import lists
+                    string nodeList = "all";
+                    if (data.GetData(1, ref nodeList))
+                        nodeList = nodeList.ToString();
+                    string elemList = "all";
+                    if (data.GetData(2, ref elemList))
+                        elemList = elemList.ToString();
+                    string memList = "all";
+                    if (data.GetData(3, ref memList))
+                        memList = memList.ToString();
+
+                    // 2. Compute
+                    // collect data from model:
+                    Model model = gsaModel.Model;
+
+                    ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
+                    ConcurrentDictionary<int, Axis> axDict = new ConcurrentDictionary<int, Axis>(model.Axes());
+                    ConcurrentDictionary<int, Node> out_nDict = (nodeList.ToLower() == "all") ? nDict : new ConcurrentDictionary<int, Node>(model.Nodes(nodeList));
+                    ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(model.Elements(elemList));
+                    mDict = new ConcurrentDictionary<int, Member>(model.Members(memList));
+                    ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
+                    ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
+                    ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
+                    ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
+
+                    results = Compute(nDict, axDict, out_nDict,
+                    eDict, mDict, sDict, pDict, p3Dict, amDict);
                 }
-            //}
-            //catch (Exception e)
-            //{
-            //    throw new Exception(e.InnerException.Message);
-            //}
+                else return;
+            }
 
             // 3. Set
             if (results != null)
@@ -404,7 +399,8 @@ namespace GsaGH.Components
                     ConcurrentBag<GsaElement2dGoo> element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
                     Parallel.ForEach(element2ds, elem =>
                     {
-                        if (elem.Value.API_Elements[0].ParentMember.Member > 0)
+                        if (elem.Value.API_Elements[0].ParentMember.Member > 0 
+                        && mDict.ContainsKey(elem.Value.API_Elements[0].ParentMember.Member))
                             element2dsShaded.Add(elem);
                         else
                             element2dsNotShaded.Add(elem);
@@ -430,7 +426,8 @@ namespace GsaGH.Components
                     ConcurrentBag<GsaElement3dGoo> element3dsNotShaded = new ConcurrentBag<GsaElement3dGoo>();
                     Parallel.ForEach(element3ds, elem =>
                     {
-                        if (elem.Value.API_Elements[0].ParentMember.Member > 0)
+                        if (elem.Value.API_Elements[0].ParentMember.Member > 0
+                            && mDict.ContainsKey(elem.Value.API_Elements[0].ParentMember.Member))
                             element3dsShaded.Add(elem);
                         else
                             element3dsNotShaded.Add(elem);
@@ -476,12 +473,9 @@ namespace GsaGH.Components
                         data.SetDataTree(6, tree);
                     }
                 }
-
-                update = false;
             }
         }
 
-        bool update;
         ConcurrentBag<GsaElement2dGoo> element2ds;
         ConcurrentBag<GsaElement3dGoo> element3ds;
         Mesh cachedDisplayMeshShaded;

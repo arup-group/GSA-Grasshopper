@@ -336,6 +336,7 @@ namespace GsaGH.Parameters
         #endregion
         
         internal int CaseID { get; set; }
+        internal string CaseName { get; set; }
         public enum ResultType
         {
             AnalysisCase,
@@ -351,6 +352,7 @@ namespace GsaGH.Parameters
             this.AnalysisCaseResult = result;
             this.Type = ResultType.AnalysisCase;
             this.CaseID = id;
+            this.CaseName = model.AnalysisCaseName(CaseID);
         }
         internal GsaResult(Model model, CombinationCaseResult result, int id, int permutation = -1)
         {

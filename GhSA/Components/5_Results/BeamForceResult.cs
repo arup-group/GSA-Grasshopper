@@ -111,7 +111,7 @@ namespace GsaGH.Components
                 "Element list should take the form:" + System.Environment.NewLine +
                 " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                 "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-            pManager.AddIntegerParameter("Intermediate Points", "nP", "Number of positions equidistant points", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Intermediate Points", "nP", "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
