@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
 using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 using System.Linq;
-using Rhino.Collections;
+using UnitsNet;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to edit a 3D Member
@@ -32,9 +24,9 @@ namespace GhSA.Components
         {
         }
 
-        public override GH_Exposure Exposure => GH_Exposure.secondary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditMem3D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem3d;
         #endregion
 
         #region Custom UI
@@ -45,7 +37,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             
             pManager.AddGenericParameter("3D Member", "M3D", "GSA 3D Member to Modify", GH_ParamAccess.item);
@@ -66,7 +58,7 @@ namespace GhSA.Components
             pManager.HideParameter(2);
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("3D Member", "M3D", "Modified GSA 3D Member", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
@@ -79,6 +71,7 @@ namespace GhSA.Components
             pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
             pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Dummy Member", "Dm", "Get if Member is Dummy", GH_ParamAccess.item);
+            pManager.AddTextParameter("Topology", "Tp", "Get the Member's original topology list referencing node IDs in Model that Model was created from", GH_ParamAccess.item);
         }
         #endregion
 
@@ -144,13 +137,19 @@ namespace GhSA.Components
                 if (DA.GetData(4, ref ghmsz))
                 {
                     if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
-                        mem.MeshSize = msz;
+                    {
+                        mem.MeshSize = new Length(msz, Units.LengthUnitGeometry);
+                        string unitAbbreviation = string.Concat(mem.MeshSize.ToString().Where(char.IsLetter));
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + unitAbbreviation + "]"
+                            + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
+                    }
                 }
 
                 // 5 mesh with others
                 GH_Boolean ghbool = new GH_Boolean();
                 if (DA.GetData(5, ref ghbool))
                 {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "'Mesh with others' not currently implemented");
                     if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
                     {
                         //mem.member.MeshWithOthers
@@ -204,6 +203,7 @@ namespace GhSA.Components
                 DA.SetData(7, mem.Group);
                 DA.SetData(8, mem.Colour);
                 DA.SetData(9, mem.IsDummy);
+                DA.SetData(10, mem.API_Member.Topology.ToString());
             }
         }
     }

@@ -6,10 +6,8 @@ using Grasshopper;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.ComponentModel;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class to create custom component UI with multiple dropdowns and boolean toggle boxes
@@ -102,14 +100,14 @@ namespace GhSA.UI
         {
             get
             {
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacerTxts, new Font(GH_FontServer.FamilyStandard, 7));
-                float dd1 = GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[0], new Font(GH_FontServer.FamilyStandard, 7));
+                float sp = GsaGH.UI.ComponentUI.MaxTextWidth(spacerTxts, new Font(GH_FontServer.FamilyStandard, 7));
+                float dd1 = GsaGH.UI.ComponentUI.MaxTextWidth(dropdownlists[0], new Font(GH_FontServer.FamilyStandard, 7));
                 float dd2 = 0;
                 if (dropdownlists.Count > 1)
-                    dd2 = (displayTexts[0] == "Geometric") ? 0 : GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[1], new Font(GH_FontServer.FamilyStandard, 7));
+                    dd2 = (displayTexts[0] == "Geometric") ? 0 : GsaGH.UI.ComponentUI.MaxTextWidth(dropdownlists[1], new Font(GH_FontServer.FamilyStandard, 7));
                 float dd3 = 0; 
                 if (dropdownlists.Count > 2)
-                    dd3 = (displayTexts[0] == "Catalogue") ? GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[2], new Font(GH_FontServer.FamilyStandard, 7)) : 0;
+                    dd3 = (displayTexts[0] == "Catalogue") ? GsaGH.UI.ComponentUI.MaxTextWidth(dropdownlists[2], new Font(GH_FontServer.FamilyStandard, 7)) : 0;
                 float num = Math.Max(Math.Max(Math.Max(Math.Max(sp, dd1), dd2 + 15), dd3 + 15), 90); // (displayTexts[0] == "Catalogue") ? 90 : 90);
                 //num = Math.Min(num, 130);
                 //if (displayTexts[0] == "Catalogue")
@@ -452,7 +450,7 @@ namespace GhSA.UI
         }
         
 
-        protected override void Render(GH_Canvas canvas, System.Drawing.Graphics graphics, GH_CanvasChannel channel)
+        protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
         {
             base.Render(canvas, graphics, channel);
 
@@ -590,7 +588,7 @@ namespace GhSA.UI
 
                     List<string> incl = new List<string>();
                     incl.Add("Incl. superseeded");
-                    inclSsTxtBounds.Width = GhSA.UI.ComponentUI.MaxTextWidth(incl, font);
+                    inclSsTxtBounds.Width = GsaGH.UI.ComponentUI.MaxTextWidth(incl, font);
 
                 }
 
@@ -681,7 +679,7 @@ namespace GhSA.UI
 
                 for (int i = 0; i < dropdownlists.Count; i++)
                 {
-                    System.Drawing.RectangleF rec = BorderBound[i];
+                    RectangleF rec = BorderBound[i];
                     if (rec.Contains(e.CanvasLocation))
                     {
                         unfolded[i] = !unfolded[i];
@@ -698,12 +696,12 @@ namespace GhSA.UI
 
                     if (unfolded[i])
                     {
-                        System.Drawing.RectangleF rec2 = dropdownBound[i];
+                        RectangleF rec2 = dropdownBound[i];
                         if (rec2.Contains(e.CanvasLocation))
                         {
                             for (int j = 0; j < dropdownBounds[i].Count; j++)
                             {
-                                System.Drawing.RectangleF rec3 = dropdownBounds[i][j];
+                                RectangleF rec3 = dropdownBounds[i][j];
                                 if (rec3.Contains(e.CanvasLocation))
                                 {
                                     if (displayTexts[i] != dropdownlists[i][j])
@@ -806,13 +804,13 @@ namespace GhSA.UI
         }
         public override GH_ObjectResponse RespondToMouseDown(GH_Canvas sender, GH_CanvasMouseEvent e)
         {
-            for (int i = 0; i < dropdownlists.Count; i++)
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                if (unfolded[i])
+                for (int i = 0; i < dropdownlists.Count; i++)
                 {
-                    if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                    if (unfolded[i])
                     {
-                        System.Drawing.RectangleF rec = scrollBar;
+                        RectangleF rec = scrollBar;
                         GH_Component comp = Owner as GH_Component;
                         if (rec.Contains(e.CanvasLocation))
                         {

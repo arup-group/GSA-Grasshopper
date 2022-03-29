@@ -1,18 +1,11 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Drawing;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to open an existing GSA model
@@ -24,13 +17,13 @@ namespace GhSA.Components
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
         public SaveModel()
-          : base("Save Model", "Save", "Saves your GSA model from this parametric nightmare",
+          : base("Save GSA Model", "Save", "Saves your GSA model from this parametric nightmare",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat0())
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.SaveModel;
+        protected override Bitmap Icon => GsaGH.Properties.Resources.SaveModel;
         #endregion
 
         #region Custom UI
@@ -65,7 +58,7 @@ namespace GhSA.Components
 
         public void SaveAsFile()
         {
-            var fdi = new Rhino.UI.SaveFileDialog { Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*" };
+            var fdi = new Rhino.UI.SaveFileDialog { Filter = "GSA File (*.gwb)|*.gwb|All files (*.*)|*.*" };
             var res = fdi.ShowSaveDialog();
             if (res) // == DialogResult.OK)
             {
@@ -130,7 +123,7 @@ namespace GhSA.Components
         bool usersetFileName = false;
         Model gsaSaveModel;
         bool canOpen = false;
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA model to save", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Save?", "Save", "Input 'True' to save or use button", GH_ParamAccess.item, false);
@@ -138,7 +131,7 @@ namespace GhSA.Components
             pManager[1].Optional = true;
             pManager[2].Optional = true;
         }
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA Model", GH_ParamAccess.item);
         }
@@ -179,17 +172,22 @@ namespace GhSA.Components
         // component states will be remembered when reopening GH script
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            //writer.SetInt32("Mode", (int)_mode);
             writer.SetString("File", (string)fileName);
-            //writer.SetBoolean("Advanced", (bool)advanced);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            //_mode = (FoldMode)reader.GetInt32("Mode");
             fileName = (string)reader.GetString("File");
-            //advanced = (bool)reader.GetBoolean("Advanced");
+            UpdateUIFromSelectedItems();
             return base.Read(reader);
+        }
+        private void UpdateUIFromSelectedItems()
+        {
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
         }
         #endregion
 

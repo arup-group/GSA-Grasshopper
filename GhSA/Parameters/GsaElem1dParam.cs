@@ -7,12 +7,8 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
@@ -103,6 +99,25 @@ namespace GhSA.Parameters
             get { return m_element; }
             set { m_element = value; }
         }
+        internal Element GetAPI_ElementClone()
+        {
+            Element elem = new Element()
+            {
+            Group = m_element.Group,
+                IsDummy = m_element.IsDummy,
+                Name = m_element.Name.ToString(),
+                Offset = m_element.Offset,
+                OrientationAngle = m_element.OrientationAngle,
+                OrientationNode = m_element.OrientationNode,
+                ParentMember = m_element.ParentMember,
+                Property = m_element.Property,
+                Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
+                Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
+            };
+            if ((System.Drawing.Color) m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                elem.Colour = m_element.Colour;
+            return elem;
+        }
         public System.Drawing.Color Colour
         {
             get
@@ -155,10 +170,10 @@ namespace GhSA.Parameters
             set
             {
                 CloneApiElement();
-                m_element.Offset.X1 = value.X1;
-                m_element.Offset.X2 = value.X2;
-                m_element.Offset.Y = value.Y;
-                m_element.Offset.Z = value.Z;
+                m_element.Offset.X1 = value.X1.Meters;
+                m_element.Offset.X2 = value.X2.Meters;
+                m_element.Offset.Y = value.Y.Meters;
+                m_element.Offset.Z = value.Z.Meters;
             }
         }
         public double OrientationAngle
@@ -211,6 +226,7 @@ namespace GhSA.Parameters
                 elem.Colour = m_element.Colour;
             m_element = elem;
         }
+        
         #endregion
         #region preview
         internal Point3d previewPointStart;
@@ -293,7 +309,7 @@ namespace GhSA.Parameters
                     #endregion
                     PolyCurve crv = new PolyCurve();
                     crv.Append(m_line);
-                    GhSA.UI.Display.Preview1D(crv, m_element.OrientationAngle, m_rel1, m_rel2,
+                    GsaGH.UI.Display.Preview1D(crv, m_element.OrientationAngle * Math.PI / 180.0, m_rel1, m_rel2,
                         ref previewGreenLines, ref previewRedLines);
                 }
                 else
@@ -511,7 +527,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.API_Element;
+                    target = (Q)(object)Value.GetAPI_ElementClone();
                 return true;
             }
 
@@ -709,15 +725,15 @@ namespace GhSA.Parameters
     public class GsaElement1dParameter : GH_PersistentGeometryParam<GsaElement1dGoo>, IGH_PreviewObject
     {
         public GsaElement1dParameter()
-          : base(new GH_InstanceDescription("1D Element", "E1D", "Maintains a collection of GSA 1D Element data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("1D Element", "E1D", "Maintains a collection of GSA 1D Element data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("9c045214-cab6-47d9-a158-ae1f4f494b66");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaElem1D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Elem1dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

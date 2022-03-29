@@ -1,16 +1,16 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using GsaGH;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GSA")]
-[assembly: AssemblyDescription("Oasys GSA Grasshopper plugin")]
+[assembly: AssemblyTitle(GsaGHInfo.PluginName)]
+[assembly: AssemblyDescription(GsaGHInfo.Company + " " + GsaGHInfo.ProductName + " Grasshopper plugin")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Oasys")]
-[assembly: AssemblyProduct("GSA")]
-[assembly: AssemblyCopyright("Copyright © 2021")]
+[assembly: AssemblyCompany(GsaGHInfo.Company)]
+[assembly: AssemblyProduct(GsaGHInfo.ProductName)]
+[assembly: AssemblyCopyright(GsaGHInfo.Copyright)]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.0.1.19")]
-[assembly: AssemblyFileVersion("0.0.1.0")]
+[assembly: AssemblyVersion(GsaGHInfo.Vers)]
+[assembly: AssemblyFileVersion(GsaGHInfo.Vers + ".0")]

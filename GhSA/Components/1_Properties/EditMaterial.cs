@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to edit a Material and ouput the information
     /// </summary>
-    public class EditMaterial : GH_Component, IGH_PreviewObject
+    public class EditMaterial : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
@@ -30,7 +22,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditMaterial;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMaterial;
         #endregion
 
         #region Custom UI
@@ -41,7 +33,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             
             pManager.AddGenericParameter("Material", "Ma", "GSA Material to get or set information for", GH_ParamAccess.item);
@@ -62,7 +54,7 @@ namespace GhSA.Components
                 pManager[i].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Material", "Ma", "GSA Material with changes", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Analysis Property", "An", "Get Material Analysis Property (0 -> 'from Grade')", GH_ParamAccess.item);

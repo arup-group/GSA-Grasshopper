@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
 using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to create new 1D Member
     /// </summary>
-    public class CreateMember1d : GH_Component, IGH_PreviewObject
+    public class CreateMember1d : GH_Component, IGH_PreviewObject, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
@@ -32,7 +24,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateMem1D;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMem1d;
         #endregion
 
         #region Custom UI
@@ -57,6 +49,11 @@ namespace GhSA.Components
             xx2 = resxx2;
             yy2 = resyy2;
             zz2 = reszz2;
+
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
         }
 
         #endregion
@@ -110,12 +107,17 @@ namespace GhSA.Components
             zz2 = (bool)reader.GetBoolean("zz2");
             // we need to recreate the custom UI again as this is created before this read IO is called
             // otherwise the component will not display the selected item on the canvas
-            this.CreateAttributes();
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+
             return base.Read(reader);
         }
         #endregion
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Curve", "C", "Curve (NURBS curve will be converted to a Polyline)", GH_ParamAccess.item);
             pManager.AddGenericParameter("Section", "PB", "GSA Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
@@ -124,7 +126,7 @@ namespace GhSA.Components
             pManager.HideParameter(0);
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("1D Member", "M1D", "GSA 1D Member", GH_ParamAccess.item);
             
@@ -191,6 +193,29 @@ namespace GhSA.Components
                 }
             }
         }
+        #region IGH_VariableParameterComponent null implementation
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+            return null;
+        }
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+
+        }
+        #endregion  
+
     }
 }
 

@@ -6,10 +6,8 @@ using Grasshopper;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.ComponentModel;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class to create custom component UI with a single dropdown menu
@@ -55,9 +53,9 @@ namespace GhSA.UI
             {
                 List<string> spacers = new List<string>();
                 spacers.Add(SpacerTxt);
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
+                float sp = GsaGH.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
                 List<string> buttons = new List<string>();
-                float bt = GhSA.UI.ComponentUI.MaxTextWidth(dropdownlist, new Font(GH_FontServer.FamilyStandard, 7));
+                float bt = GsaGH.UI.ComponentUI.MaxTextWidth(dropdownlist, new Font(GH_FontServer.FamilyStandard, 7));
                 if (dropdownlist.Count > maxNoRows)
                     bt += 15; // add room for vertical scroll bar
                 float num = Math.Max(Math.Max(sp, bt), 90);
@@ -166,7 +164,7 @@ namespace GhSA.UI
             }
         }
 
-        protected override void Render(GH_Canvas canvas, System.Drawing.Graphics graphics, GH_CanvasChannel channel)
+        protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
         {
             base.Render(canvas, graphics, channel);
 
@@ -278,7 +276,7 @@ namespace GhSA.UI
                     return GH_ObjectResponse.Release;
                 }
 
-                System.Drawing.RectangleF rec = BorderBound;
+                RectangleF rec = BorderBound;
                 if (rec.Contains(e.CanvasLocation))
                 {
                     unfolded = !unfolded;
@@ -288,12 +286,12 @@ namespace GhSA.UI
 
                 if (unfolded)
                 {
-                    System.Drawing.RectangleF rec3 = dropdownBound;
+                    RectangleF rec3 = dropdownBound;
                     if (rec3.Contains(e.CanvasLocation))
                     {
                         for (int i = 0; i < dropdownlist.Count; i++)
                         {
-                            System.Drawing.RectangleF rec4 = dropdownBounds[i];
+                            RectangleF rec4 = dropdownBounds[i];
                             if (rec4.Contains(e.CanvasLocation))
                             {
                                 comp.RecordUndoEvent("Selected " + dropdownlist[i]);
@@ -322,7 +320,7 @@ namespace GhSA.UI
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    System.Drawing.RectangleF rec = scrollBar;
+                    RectangleF rec = scrollBar;
                     GH_Component comp = Owner as GH_Component;
                     if (rec.Contains(e.CanvasLocation))
                     {

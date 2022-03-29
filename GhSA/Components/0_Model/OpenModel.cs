@@ -1,19 +1,13 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Drawing;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to open an existing GSA model
@@ -32,7 +26,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.OpenModel;
+        protected override Bitmap Icon => GsaGH.Properties.Resources.OpenModel;
         #endregion
 
         #region Custom UI
@@ -101,13 +95,13 @@ namespace GhSA.Components
 
         string fileName = null;
         Guid panelGUID = Guid.NewGuid();
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Filename and path", "File", "GSA model to open and work with." + 
                     System.Environment.NewLine + "Input either path component, a text string with path and " +
                     System.Environment.NewLine + "filename or an existing GSA model created in Grasshopper.", GH_ParamAccess.item);
         }
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA Model", GH_ParamAccess.item);
         }
@@ -202,7 +196,7 @@ namespace GhSA.Components
                         return;
                     }
                 }
-                else if (gh_typ.Value is GsaAPI.Model)
+                else if (gh_typ.Value is Model)
                 {
                     gh_typ.CastTo(ref model);
                     GsaModel gsaModel = new GsaModel

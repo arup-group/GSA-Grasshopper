@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
 using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
+using UnitsNet;
+using System.Linq;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to edit a 1D Member
@@ -32,7 +27,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditMem1D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem1d;
         #endregion
 
         #region Custom UI
@@ -43,7 +38,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             
             pManager.AddGenericParameter("1D Member", "M1D", "GSA 1D Member to Modify", GH_ParamAccess.item);
@@ -90,7 +85,7 @@ namespace GhSA.Components
             pManager.HideParameter(2);
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("1D Member", "M1D", "Modified GSA 1D Member", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Member1d Number", "ID", "Get Member Number", GH_ParamAccess.item);
@@ -112,6 +107,7 @@ namespace GhSA.Components
             
             pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Dummy Member", "Dm", "Get it Member is Dummy", GH_ParamAccess.item);
+            pManager.AddTextParameter("Topology", "Tp", "Get the Member's original topology list referencing node IDs in Model that Model was created from", GH_ParamAccess.item);
         }
         #endregion
 
@@ -139,7 +135,13 @@ namespace GhSA.Components
                     Curve crv = null;
                     if (GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both))
                     {
-                        mem.PolyCurve = (PolyCurve)crv;
+                        if (crv is PolyCurve)
+                            mem.PolyCurve = (PolyCurve)crv;
+                        else
+                        {
+                            GsaMember1d tempMem = new GsaMember1d(crv);
+                            mem.PolyCurve = tempMem.PolyCurve;
+                        }
                     }
                 }
 
@@ -241,13 +243,19 @@ namespace GhSA.Components
                 if (DA.GetData(12, ref ghmsz))
                 {
                     if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
-                        mem.MeshSize = msz;
+                    {
+                        mem.MeshSize = new Length(msz, Units.LengthUnitGeometry);
+                        string unitAbbreviation = string.Concat(mem.MeshSize.ToString().Where(char.IsLetter));
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + unitAbbreviation + "]"
+                            + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
+                    }
                 }
 
                 // 13 mesh with others
                 GH_Boolean ghbool = new GH_Boolean();
                 if (DA.GetData(13, ref ghbool))
                 {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "'Mesh with others' not currently implemented");
                     if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
                     {
                         //mem.MeshWithOthers
@@ -302,6 +310,7 @@ namespace GhSA.Components
                 
                 DA.SetData(15, mem.Colour);
                 DA.SetData(16, mem.IsDummy);
+                DA.SetData(17, mem.Topology.ToString());
             }
         }
     }

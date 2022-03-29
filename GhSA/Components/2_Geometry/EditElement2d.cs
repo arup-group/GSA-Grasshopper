@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 using System.Linq;
-using Rhino.Collections;
+using UnitsNet;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to edit a 2D Element
@@ -34,7 +26,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditElem2D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditElem2d;
         #endregion
 
         #region Custom UI
@@ -45,7 +37,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             
             pManager.AddGenericParameter("2D Element", "E2D", "GSA 2D Element to Modify", GH_ParamAccess.item);
@@ -63,7 +55,7 @@ namespace GhSA.Components
             pManager.HideParameter(0);
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("2D Element", "E2D", "Modified GSA 2d Element", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
@@ -79,6 +71,7 @@ namespace GhSA.Components
             pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
             pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Topology", "Tp", "Get the Element's original topology list referencing node IDs in Model that Element was created from", GH_ParamAccess.list);
         }
         #endregion
 
@@ -189,7 +182,12 @@ namespace GhSA.Components
                         else
                         {
                             if (GH_Convert.ToDouble(gh_typ.Value, out double z, GH_Conversion.Both))
-                                offset.Z = z;
+                            {
+                                offset.Z = new Length(z, Units.LengthUnitGeometry);
+                                string unitAbbreviation = string.Concat(offset.Z.ToString().Where(char.IsLetter));
+                                AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Offset input converted to Z-offset in [" + unitAbbreviation + "]"
+                                    + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
+                            }
                             else
                             {
                                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Offset input to Offset or double");
@@ -268,8 +266,8 @@ namespace GhSA.Components
                 DA.SetDataList(8, elem.Colours);
                 DA.SetDataList(9, elem.isDummies);
                 DA.SetDataList(10, elem.ParentMembers);
+                DA.SetDataTree(11, elem.TopologyIDs);
             }
         }
     }
 }
-

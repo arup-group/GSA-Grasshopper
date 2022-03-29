@@ -1,23 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Section class, this class defines the basic properties and methods for any Gsa Section
     /// </summary>
     public class GsaMaterial
-
     {
         public enum MatType
         {
@@ -45,39 +37,55 @@ namespace GhSA.Parameters
             BARMAT = 65280
         }
 
-        //public int ID
-        //{
-        //    get { return m_idd; }
-        //    set { m_idd = value; }
-        //}
         public int GradeProperty
         {
             get { return m_grade; }
-            set { m_grade = value; }
+            set 
+            {
+                m_grade = value; 
+            }
         }
         public int AnalysisProperty
         {
             get { return m_analProp; }
-            set { m_analProp = value; }
+            set 
+            {
+                m_analProp = value; 
+                if (m_analProp != 0)
+                    m_guid = Guid.NewGuid();
+            }
         }
-
-        public MatType MaterialType;
-
+        public Guid GUID
+        {
+            get { return m_guid; }
+        }
+        internal AnalysisMaterial AnalysisMaterial
+        {
+            get { return m_AnalysisMaterial; }
+            set
+            {
+                m_AnalysisMaterial = value;
+                m_guid = Guid.NewGuid();
+            }
+        }
         #region fields
+        public MatType MaterialType;
+        private AnalysisMaterial m_AnalysisMaterial;
         //int m_idd = 0;
         int m_grade = 1;
         int m_analProp = 0;
-        
+        private Guid m_guid;
         #endregion
 
         #region constructors
         public GsaMaterial()
         {
-            MaterialType = MatType.GENERIC;
+            MaterialType = MatType.UNDEF;
         }
         private MatType getType(MaterialType materialType)
         {
-            MatType m_type = MatType.NONE;
+            MatType m_type = MatType.UNDEF; // custom material
+
             if (materialType == GsaAPI.MaterialType.GENERIC)
                 m_type = MatType.GENERIC;
             if (materialType == GsaAPI.MaterialType.STEEL)
@@ -111,23 +119,47 @@ namespace GhSA.Parameters
         {
             MaterialType = (MatType)material_id;
         }
-        public GsaMaterial(GsaSection section)
+        
+        internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null)
         {
             if (section == null) { return; }
             if (section.API_Section == null) { return; }
-
-            MaterialType = getType(section.API_Section.MaterialType);
-            AnalysisProperty = section.API_Section.MaterialAnalysisProperty;
-            GradeProperty = section.API_Section.MaterialGradeProperty;
+            if (section.API_Section.MaterialAnalysisProperty > 0 && section.Material != null && analysisMaterial == null)
+                analysisMaterial = section.Material.AnalysisMaterial;
+            CreateFromAPI(section.API_Section.MaterialType, section.API_Section.MaterialAnalysisProperty, section.API_Section.MaterialGradeProperty, analysisMaterial);
         }
-        public GsaMaterial(GsaProp2d prop)
+        internal GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null)
         {
             if (prop == null) { return;  }
             if (prop.API_Prop2d == null) { return; }
-
-            MaterialType = getType(prop.API_Prop2d.MaterialType);
-            AnalysisProperty = prop.API_Prop2d.MaterialAnalysisProperty;
-            GradeProperty = prop.API_Prop2d.MaterialGradeProperty;
+            if (prop.API_Prop2d.MaterialAnalysisProperty > 0 && prop.Material != null && analysisMaterial == null)
+                analysisMaterial = prop.Material.AnalysisMaterial;
+            CreateFromAPI(prop.API_Prop2d.MaterialType, prop.API_Prop2d.MaterialAnalysisProperty, prop.API_Prop2d.MaterialGradeProperty, analysisMaterial);
+        }
+        internal GsaMaterial(GsaProp3d prop, AnalysisMaterial analysisMaterial = null)
+        {
+            if (prop == null) { return; }
+            if (prop.API_Prop3d == null) { return; }
+            if (prop.API_Prop3d.MaterialAnalysisProperty > 0 && prop.Material != null && analysisMaterial == null)
+                analysisMaterial = prop.Material.AnalysisMaterial;
+            CreateFromAPI(prop.API_Prop3d.MaterialType, prop.API_Prop3d.MaterialAnalysisProperty, prop.API_Prop3d.MaterialGradeProperty, analysisMaterial);
+        }
+        private void CreateFromAPI(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial)
+        {
+            MaterialType = getType(materialType);
+            GradeProperty = gradeProp;
+            AnalysisProperty = analysisProp;
+            if (AnalysisProperty != 0 & analysisMaterial != null)
+            {
+                m_guid = Guid.NewGuid();
+                m_AnalysisMaterial = new AnalysisMaterial()
+                {
+                    CoefficientOfThermalExpansion = analysisMaterial.CoefficientOfThermalExpansion,
+                    Density = analysisMaterial.Density,
+                    ElasticModulus = analysisMaterial.ElasticModulus,
+                    PoissonsRatio = analysisMaterial.PoissonsRatio
+                };
+            }
         }
 
         public GsaMaterial Duplicate()
@@ -135,10 +167,19 @@ namespace GhSA.Parameters
             if (this == null) { return null; }
             GsaMaterial dup = new GsaMaterial();
             dup.MaterialType = MaterialType;
-            //dup.ID = m_idd;
             dup.GradeProperty = m_grade;
             dup.AnalysisProperty = m_analProp;
-            
+            if (m_analProp != 0)
+            {
+                dup.m_guid = Guid.NewGuid();
+                dup.AnalysisMaterial = new AnalysisMaterial()
+                {
+                    CoefficientOfThermalExpansion = AnalysisMaterial.CoefficientOfThermalExpansion,
+                    Density = AnalysisMaterial.Density,
+                    ElasticModulus = AnalysisMaterial.ElasticModulus,
+                    PoissonsRatio = AnalysisMaterial.PoissonsRatio
+                };
+            }
             return dup;
         }
         #endregion
@@ -156,10 +197,12 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
+            if (MaterialType == MatType.UNDEF)
+            {
+                return "Custom Elastic Isotropic";
+            }
             string mate = MaterialType.ToString();
-            mate = Char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
-            
-            return "GSA Material " + mate;
+            return Char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
         }
 
         #endregion
@@ -213,18 +256,12 @@ namespace GhSA.Parameters
         public override string ToString()
         {
             if (Value == null)
-                return "Null GSA Material";
+                return "Null";
             else
-                return Value.ToString();
+                return "GSA " + TypeName + " {" + Value.ToString() + "}";
         }
-        public override string TypeName
-        {
-            get { return ("GSA Material"); }
-        }
-        public override string TypeDescription
-        {
-            get { return ("GSA Material"); }
-        }
+        public override string TypeName => "Material";
+        public override string TypeDescription => "GSA " + this.TypeName + " Parameter";
 
 
         #endregion
@@ -332,7 +369,7 @@ namespace GhSA.Parameters
     public class GsaMaterialParameter : GH_PersistentParam<GsaMaterialGoo>
     {
         public GsaMaterialParameter()
-          : base(new GH_InstanceDescription("Material", "Ma", "GSA Material", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Material", "Ma", "GSA Material", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -340,7 +377,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaMaterial;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.MaterialParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaMaterialGoo> values)
         {

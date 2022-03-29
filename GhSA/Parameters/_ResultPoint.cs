@@ -1,32 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-
-using Rhino;
-using Rhino.Geometry;
-
-using Grasshopper;
+﻿using Rhino.Geometry;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
-
-using System.IO;
-using System.Linq;
-using System.Data;
 using System.Drawing;
-using System.Reflection;
-using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Linq;
-using System.Runtime.InteropServices;
-
-using Rhino.DocObjects;
-using Rhino.Collections;
-using GH_IO;
-using GH_IO.Serialization;
 using Rhino.Display;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     public class ResultPoint : GH_GeometricGoo<Point3d>, IGH_PreviewData
     {
@@ -103,6 +81,18 @@ namespace GhSA.Parameters
             if (typeof(TQ).IsAssignableFrom(typeof(GH_Point)))
             {
                 target = (TQ)(object)new GH_Point(Value);
+                return true;
+            }
+
+            if (typeof(TQ).IsAssignableFrom(typeof(GH_Number)))
+            {
+                target = (TQ)(object)new GH_Number(m_result);
+                return true;
+            }
+
+            if (typeof(TQ).IsAssignableFrom(typeof(GH_Colour)))
+            {
+                target = (TQ)(object)new GH_Colour(m_colour);
                 return true;
             }
 

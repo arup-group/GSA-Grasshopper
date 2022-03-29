@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
-using Rhino.Geometry;
-using GhSA.Parameters;
-using System.Threading;
+using GsaGH.Parameters;
+using UnitsNet.Units;
 
-namespace GhSA.Util.Gsa.ToGSA
+namespace GsaGH.Util.Gsa.ToGSA
 {
     class Loads
     {
@@ -79,17 +77,10 @@ namespace GhSA.Util.Gsa.ToGSA
             ref Dictionary<int, Axis> existingAxes, 
             ref Dictionary<int, GridPlane> existingGridPlanes,
             ref Dictionary<int, GridSurface> existingGridSurfaces,
-            ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid,
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null)
+            ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit)
         {
             if (loads != null)
             {
-                if (workerInstance != null)
-                {
-                    ReportProgress("Initiating Loads assembly", -2);
-                }
-
                 // create a counter for creating new axes, gridplanes and gridsurfaces
                 int axisidcounter = (existingAxes.Count > 0) ? existingAxes.Keys.Max() + 1 : 1;
                 int gridplaneidcounter = (existingGridPlanes.Count > 0) ? existingGridPlanes.Keys.Max() + 1 : 1;
@@ -100,25 +91,15 @@ namespace GhSA.Util.Gsa.ToGSA
 
                 for (int i = 0; i < loads.Count; i++)
                 {
-                    if (workerInstance != null)
-                    {
-                        if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Assembling Loads ", (double)i / (loads.Count - 1));
-                    }
-
                     if (loads[i] != null)
                     {
                         GsaLoad load = loads[i];
                         ConvertLoad(load, ref gravityLoads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle,
                             ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads,
                                 ref existingAxes, ref axisidcounter, ref existingGridPlanes, ref gridplaneidcounter,
-                                    ref existingGridSurfaces, ref gridsurfaceidcounter, ref gp_guid, ref gs_guid);
+                                    ref existingGridSurfaces, ref gridsurfaceidcounter, ref gp_guid, ref gs_guid, unit);
                     }
                 }
-            }
-            if (workerInstance != null)
-            {
-                ReportProgress("Loads assembled", -2);
             }
         }
         /// <summary>
@@ -150,7 +131,7 @@ namespace GhSA.Util.Gsa.ToGSA
         ref Dictionary<int, Axis> existingAxes, ref int axisidcounter,
         ref Dictionary<int, GridPlane> existingGridPlanes, ref int gridplaneidcounter,
         ref Dictionary<int, GridSurface> existingGridSurfaces, ref int gridsurfaceidcounter,
-        ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid)
+        ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit)
         {
 
             switch (load.LoadType)
@@ -197,7 +178,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
                         // ### AXIS ###
                         // set axis property in grid plane, add/set axis in model
-                        gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter);
+                        gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter, unit);
 
                         // ### GRID PLANE ###
                         // set grid plane number in grid surface, add/set grid plane in model
@@ -233,7 +214,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
                         // ### AXIS ###
                         // set axis property in grid plane, add/set axis in model
-                        gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter);
+                        gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter, unit);
 
                         // ### GRID PLANE ###
                         // set grid plane number in grid surface, add/set grid plane in model
@@ -268,7 +249,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
                         // ### AXIS ###
                         // set axis property in grid plane, add/set axis in model
-                        gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter);
+                        gridplnsrf.GridPlane.AxisProperty = SetAxis(ref gridplnsrf, ref existingAxes, ref axisidcounter, unit);
 
                         // ### GRID PLANE ###
                         // set grid plane number in grid surface, add/set grid plane in model
@@ -292,7 +273,7 @@ namespace GhSA.Util.Gsa.ToGSA
         /// <param name="axisidcounter"></param>
         /// <returns></returns>
         public static int SetAxis(ref GsaGridPlaneSurface gridplanesurface,
-            ref Dictionary<int, Axis> existingAxes, ref int axisidcounter)
+            ref Dictionary<int, Axis> existingAxes, ref int axisidcounter, LengthUnit unit)
         {
             int axis_id = gridplanesurface.AxisID;
             Axis axis = gridplanesurface.Axis;
@@ -518,17 +499,10 @@ namespace GhSA.Util.Gsa.ToGSA
         public static void ConvertGridPlaneSurface(List<GsaGridPlaneSurface> gridPlaneSurfaces,
             ref Dictionary<int, Axis> existingAxes, ref Dictionary<int, GridPlane> existingGridPlanes,
             ref Dictionary<int, GridSurface> existingGridSurfaces, 
-            ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, 
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null)
+            ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit)
         {
             if (gridPlaneSurfaces != null)
             {
-                if (workerInstance != null)
-                {
-                    ReportProgress("Initiating GridPlaneSurfaces assembly", -2);
-                }
-
                 // create a counter for creating new axes, gridplanes and gridsurfaces
                 int axisidcounter = (existingAxes.Count > 0) ? existingAxes.Keys.Max() + 1 : 1;
                 int gridplaneidcounter = (existingGridPlanes.Count > 0) ? existingGridPlanes.Keys.Max() + 1 : 1;
@@ -546,7 +520,7 @@ namespace GhSA.Util.Gsa.ToGSA
                         if (gps.GridPlane != null)
                         {
                             // add / set Axis and set the id in the grid plane
-                            gps.GridPlane.AxisProperty = SetAxis(ref gps, ref existingAxes, ref axisidcounter);
+                            gps.GridPlane.AxisProperty = SetAxis(ref gps, ref existingAxes, ref axisidcounter, unit);
 
                             // add / set Grid Plane and set the id in the grid surface
                             gps.GridSurface.GridPlane = SetGridPlane(ref gps, ref existingGridPlanes, ref gridplaneidcounter, ref gp_guid, existingAxes);
@@ -555,10 +529,6 @@ namespace GhSA.Util.Gsa.ToGSA
                         SetGridSurface(ref gps, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes);
                     }
                 }
-            }
-            if (workerInstance != null)
-            {
-                ReportProgress("GridPlaneSurfaces assembled", -2);
             }
         }
     }

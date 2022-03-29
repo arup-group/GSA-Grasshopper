@@ -7,7 +7,7 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class to create custom component UI with a button
@@ -21,7 +21,7 @@ namespace GhSA.UI
         public ButtonComponentUI(GH_Component owner, string displayText, Action clickHandle, string spacerText = "") : base(owner) { buttonText = displayText; SpacerTxt = spacerText; action = clickHandle; }
 
         readonly string buttonText; // text to be displayed
-        System.Drawing.RectangleF ButtonBounds; // area for button to be displayed
+        RectangleF ButtonBounds; // area for button to be displayed
         readonly Action action;
 
         RectangleF SpacerBounds; // spacer between standard component and button
@@ -33,10 +33,10 @@ namespace GhSA.UI
             {
                 List<string> spacers = new List<string>();
                 spacers.Add(SpacerTxt);
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
+                float sp = GsaGH.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
                 List<string> buttons = new List<string>();
                 buttons.Add(buttonText);
-                float bt = GhSA.UI.ComponentUI.MaxTextWidth(buttons, GH_FontServer.Standard);
+                float bt = GsaGH.UI.ComponentUI.MaxTextWidth(buttons, GH_FontServer.Standard);
 
                 float num = Math.Max(Math.Max(sp, bt), 90);
                 return num;
@@ -68,7 +68,7 @@ namespace GhSA.UI
             Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + h0 + h1 + 4 * s);
         }
 
-        protected override void Render(GH_Canvas canvas, System.Drawing.Graphics graphics, GH_CanvasChannel channel)
+        protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
         {
             base.Render(canvas, graphics, channel);
 
@@ -125,7 +125,7 @@ namespace GhSA.UI
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                System.Drawing.RectangleF rec = ButtonBounds;
+                RectangleF rec = ButtonBounds;
                 if (rec.Contains(e.CanvasLocation))
                 {
                     mouseDown = true;
@@ -140,7 +140,7 @@ namespace GhSA.UI
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                System.Drawing.RectangleF rec = ButtonBounds;
+                RectangleF rec = ButtonBounds;
                 if (rec.Contains(e.CanvasLocation))
                 {
                     if (mouseDown)

@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
 using Rhino.Geometry;
 using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 using Grasshopper.Kernel.Parameters;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to edit a Node
@@ -33,7 +26,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditNode;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditNode;
         #endregion
 
         #region Custom UI
@@ -44,7 +37,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             
             pManager.AddGenericParameter("Node", "No", "GSA Node to Edit. If no input a new node will be created.", GH_ParamAccess.item);
@@ -68,7 +61,7 @@ namespace GhSA.Components
             pManager.HideParameter(3);
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Node", "No", "Modified GSA Node", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Node number", "ID", "Original Node number (ID) if Node ever belonged to a GSA Model", GH_ParamAccess.item);
@@ -151,12 +144,12 @@ namespace GhSA.Components
                 }
 
                 // 5 Spring
-                GsaSpring spring = new GsaSpring();
-                if (DA.GetData(5, ref spring))
-                {
-                    if (spring != null)
-                        node.Spring = spring;
-                }
+                //GsaSpring spring = new GsaSpring();
+                //if (DA.GetData(5, ref spring))
+                //{
+                //    if (spring != null)
+                //        node.Spring = spring;
+                //}
 
                 // 6 Name
                 GH_String ghStr = new GH_String();
@@ -180,11 +173,11 @@ namespace GhSA.Components
                 DA.SetData(2, node.Point);
                 DA.SetData(3, new GH_Plane(node.LocalAxis));
                 DA.SetData(4, node.Restraint);
-                DA.SetData(5, new GsaSpringGoo(node.Spring));
-                DA.SetData(6, node.API_Node.Name);
+                //DA.SetData(5, new GsaSpringGoo(node.Spring));
+                DA.SetData(6, node.API_Node.Name.ToString());
                 DA.SetData(7, node.Colour);
 
-                // only get connected elements/members if enabled (computationally heavy)
+                // only get connected elements/members if enabled (computationally expensive)
                 if (_mode == FoldMode.GetConnected)
                 {
                     try { DA.SetDataList(8, node.API_Node.ConnectedElements); } catch (Exception) { }
@@ -202,7 +195,7 @@ namespace GhSA.Components
 
         private FoldMode _mode = FoldMode.DoNotGetConnected;
 
-        protected override void AppendAdditionalComponentMenuItems(System.Windows.Forms.ToolStripDropDown menu)
+        protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
         {
             Menu_AppendItem(menu, "Try get connected Element & Members", FlipMode, true, _mode == FoldMode.GetConnected);
         }
@@ -267,22 +260,22 @@ namespace GhSA.Components
         #region IGH_variable parameter null implementation
         public bool CanInsertParameter(GH_ParameterSide side, int index)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public bool CanRemoveParameter(GH_ParameterSide side, int index)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public IGH_Param CreateParameter(GH_ParameterSide side, int index)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public bool DestroyParameter(GH_ParameterSide side, int index)
         {
-            throw new NotImplementedException();
+            return false;
         }
         #endregion
     }

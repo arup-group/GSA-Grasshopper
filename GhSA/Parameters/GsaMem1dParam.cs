@@ -6,12 +6,10 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
 using Rhino.Collections;
+using UnitsNet;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Member1d class, this class defines the basic properties and methods for any Gsa Member 1d
@@ -80,6 +78,28 @@ namespace GhSA.Parameters
             get { return m_member; }
             set { m_member = value; }
         }
+        internal Member GetAPI_MemberClone()
+        {
+            Member mem = new Member
+            {
+                Group = m_member.Group,
+                IsDummy = m_member.IsDummy,
+                MeshSize = m_member.MeshSize,
+                Name = m_member.Name.ToString(),
+                Offset = m_member.Offset,
+                OrientationAngle = m_member.OrientationAngle,
+                OrientationNode = m_member.OrientationNode,
+                Property = m_member.Property,
+                Topology = m_member.Topology.ToString(),
+                Type = m_member.Type,
+                Type1D = m_member.Type1D
+            };
+
+            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                mem.Colour = m_member.Colour;
+
+            return mem;
+        }
         public System.Drawing.Color Colour
         {
             get 
@@ -121,13 +141,17 @@ namespace GhSA.Parameters
                 m_member.Name = value;
             }
         }
-        public double MeshSize
+        public Length MeshSize
         {
-            get { return m_member.MeshSize; }
+            get
+            {
+                Length l = new Length(m_member.MeshSize, UnitsNet.Units.LengthUnit.Meter);
+                return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
+            }
             set
             {
                 CloneApiMember();
-                m_member.MeshSize = value;
+                m_member.MeshSize = value.Meters;
             }
         }
         public GsaOffset Offset
@@ -143,10 +167,10 @@ namespace GhSA.Parameters
             set
             {
                 CloneApiMember();
-                m_member.Offset.X1 = value.X1;
-                m_member.Offset.X2 = value.X2;
-                m_member.Offset.Y = value.Y;
-                m_member.Offset.Z = value.Z;
+                m_member.Offset.X1 = value.X1.Meters;
+                m_member.Offset.X2 = value.X2.Meters;
+                m_member.Offset.Y = value.Y.Meters;
+                m_member.Offset.Z = value.Z.Meters;
             }
         }
         public double OrientationAngle
@@ -285,7 +309,7 @@ namespace GhSA.Parameters
                     previewRedLines.Add(previewEZZ1);
                     previewRedLines.Add(previewEZZ2);
                     #endregion
-                    GhSA.UI.Display.Preview1D(m_crv, m_member.OrientationAngle, m_rel1, m_rel2,
+                    GsaGH.UI.Display.Preview1D(m_crv, m_member.OrientationAngle * Math.PI / 180.0, m_rel1, m_rel2,
                     ref previewGreenLines, ref previewRedLines);
                 }
                 else
@@ -532,7 +556,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.API_Member;
+                    target = (Q)(object)Value.GetAPI_MemberClone();
                 return true;
             }
 
@@ -592,7 +616,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)Value.PolyCurve.ToPolyline(GhSA.Units.Tolerance, 2, 0, 0);
+                    target = (Q)(object)Value.PolyCurve.ToPolyline(Units.Tolerance.As(Units.LengthUnitGeometry), 2, 0, 0);
                     if (Value.PolyCurve == null)
                         return false;
                 }
@@ -756,15 +780,15 @@ namespace GhSA.Parameters
     public class GsaMember1dParameter : GH_PersistentGeometryParam<GsaMember1dGoo>, IGH_PreviewObject
     {
         public GsaMember1dParameter()
-          : base(new GH_InstanceDescription("1D Member", "M1D", "Maintains a collection of GSA 1D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("1D Member", "M1D", "Maintains a collection of GSA 1D Member data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("0392a5a0-7762-4214-8c30-fb395365056e");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaMem1D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Mem1dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

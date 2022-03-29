@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Grasshopper;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Parameters;
-using Rhino.Geometry;
 using GsaAPI;
-using GhSA.Parameters;
+using GsaGH.Parameters;
+using UnitsNet;
+using UnitsNet.Units;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     public class CreateBeamLoads : GH_Component, IGH_VariableParameterComponent
     {
@@ -23,7 +22,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.BeamLoad;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.BeamLoad;
         #endregion
 
         #region Custom UI
@@ -32,39 +31,71 @@ namespace GhSA.Components
         {
             if (first)
             {
-                selecteditem = _mode.ToString();
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(loadTypeOptions);
+                dropdownitems.Add(Units.FilteredForcePerLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(_mode.ToString());
+                selecteditems.Add(Units.ForcePerLengthUnit.ToString());
+
                 first = false;
             }
 
-            m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Load Type");
+            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
         }
 
-        public void SetSelected(string selected)
+        public void SetSelected(int i, int j)
         {
-            selecteditem = selected;
-            switch (selected)
+            // change selected item
+            selecteditems[i] = dropdownitems[i][j];
+
+            if (i == 0) // change is made to the first dropdown list
             {
-                case "Point":
-                    Mode1Clicked();
-                    break;
-                case "Uniform":
-                    Mode2Clicked();
-                    break;
-                case "Linear":
-                    Mode3Clicked();
-                    break;
-                case "Patch":
-                    Mode4Clicked();
-                    break;
-                case "Trilinear":
-                    Mode5Clicked();
-                    break;
+                switch (selecteditems[0])
+                {
+                    case "Point":
+                        Mode1Clicked();
+                        break;
+                    case "Uniform":
+                        Mode2Clicked();
+                        break;
+                    case "Linear":
+                        Mode3Clicked();
+                        break;
+                    case "Patch":
+                        Mode4Clicked();
+                        break;
+                    case "Trilinear":
+                        Mode5Clicked();
+                        break;
+                }
             }
+            else
+            {
+                forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[1]);
+                (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            }
+                
+            // update input params
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+        private void UpdateUIFromSelectedItems()
+        {
+            _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
+            forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[1]);
+
+            CreateAttributes();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
         }
         #endregion
 
         #region Input and output
-        readonly List<string> dropdownitems = new List<string>(new string[]
+        readonly List<string> loadTypeOptions = new List<string>(new string[]
         {
             "Point",
             "Uniform",
@@ -73,12 +104,26 @@ namespace GhSA.Components
             "Trilinear"
         });
 
-        string selecteditem;
+        // list of lists with all dropdown lists conctent
+        List<List<string>> dropdownitems;
+        // list of selected items
+        List<string> selecteditems;
+        // list of descriptions 
+        List<string> spacerDescriptions = new List<string>(new string[]
+        {
+            "Load Type",
+            "Unit",
+        });
+
+        private ForcePerLengthUnit forcePerLengthUnit = Units.ForcePerLengthUnit;
 
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            IQuantity force = new ForcePerLength(0, forcePerLengthUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
             pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to." + System.Environment.NewLine +
                 "Element list should take the form:" + System.Environment.NewLine +
@@ -98,7 +143,7 @@ namespace GhSA.Components
                     System.Environment.NewLine + "yy" +
                     System.Environment.NewLine + "zz", GH_ParamAccess.item, "z");
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
-            pManager.AddNumberParameter("Value (" + Units.Force + "/" + Units.LengthLarge + ")", "V", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Value [" + unitAbbreviation + "]", "V", "Load Value", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[2].Optional = true;
@@ -200,16 +245,7 @@ namespace GhSA.Components
             beamLoad.BeamLoad.IsProjected = prj;
 
             // 6 value (1)
-            double load1 = 0;
-            if (DA.GetData(6, ref load1))
-            {
-                load1 *= 1000; //convert to kN
-                //if (direc == Direction.Z)
-                //    load1 *= -1000; //convert to kN
-                //else
-                //    load1 *= 1000;
-            }
-                
+            ForcePerLength load1 = GetInput.ForcePerLength(this, DA, 6, forcePerLengthUnit);
             
             switch (_mode)
             {
@@ -224,7 +260,7 @@ namespace GhSA.Components
                             pos *= -1;
 
                         // set position and value
-                        beamLoad.BeamLoad.SetValue(0, load1);
+                        beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
                         beamLoad.BeamLoad.SetPosition(0, pos);
                     }
                     break;
@@ -234,7 +270,7 @@ namespace GhSA.Components
                     {
                         beamLoad.BeamLoad.Type = BeamLoadType.UNIFORM;
                         // set value
-                        beamLoad.BeamLoad.SetValue(0, load1);
+                        beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
                     }
                     break;
 
@@ -243,20 +279,12 @@ namespace GhSA.Components
                     {
                         beamLoad.BeamLoad.Type = BeamLoadType.LINEAR;
 
-                        // 6 value (2)
-                        double load2 = 0;
-                        if (DA.GetData(7, ref load2))
-                        {
-                            load2 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load2 *= -1000; //convert to kN
-                            //else
-                            //    load2 *= 1000;
-                        }
+                        // 7 value (2)
+                        ForcePerLength load2 = GetInput.ForcePerLength(this, DA, 7, forcePerLengthUnit);
 
                         // set value
-                        beamLoad.BeamLoad.SetValue(0, load1);
-                        beamLoad.BeamLoad.SetValue(1, load2);
+                        beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
+                        beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
                     }
                     break;
 
@@ -276,19 +304,11 @@ namespace GhSA.Components
                             pos2 *= -1;
 
                         // 8 value (2)
-                        double load2 = 0;
-                        if (DA.GetData(8, ref load2))
-                        {
-                            load2 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load2 *= -1000; //convert to kN
-                            //else
-                            //    load2 *= 1000;
-                        }
+                        ForcePerLength load2 = GetInput.ForcePerLength(this, DA, 8, forcePerLengthUnit);
 
                         // set value
-                        beamLoad.BeamLoad.SetValue(0, load1);
-                        beamLoad.BeamLoad.SetValue(1, load2);
+                        beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
+                        beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
                         beamLoad.BeamLoad.SetPosition(0, pos1);
                         beamLoad.BeamLoad.SetPosition(1, pos2);
                     }
@@ -310,26 +330,15 @@ namespace GhSA.Components
                             pos2 *= -1;
 
                         // 8 value (2)
-                        double load2 = 0;
-                        if (DA.GetData(8, ref load2))
-                        {
-                            load2 *= 1000; // convert to kN
-                            //if (direc == Direction.Z)
-                            //    load2 *= -1000; //convert to kN
-                            //else
-                            //    load2 *= 1000;
-                        }
+                        ForcePerLength load2 = GetInput.ForcePerLength(this, DA, 8, forcePerLengthUnit);
 
                         // set value
-                        beamLoad.BeamLoad.SetValue(0, load1);
-                        beamLoad.BeamLoad.SetValue(1, load2);
+                        beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
+                        beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
                         beamLoad.BeamLoad.SetPosition(0, pos1);
                         beamLoad.BeamLoad.SetPosition(1, pos2);
                     }
                     break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
 
             GsaLoad gsaLoad = new GsaLoad(beamLoad);
@@ -359,7 +368,7 @@ namespace GhSA.Components
             //remove input parameters
             while (Params.Input.Count > 7)
                 Params.UnregisterInputParameter(Params.Input[7], true);
-            Params.RegisterInputParam(new Param_Number());
+            Params.RegisterInputParam(new Param_GenericObject());
             
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -394,7 +403,7 @@ namespace GhSA.Components
                 Params.UnregisterInputParameter(Params.Input[7], true);
 
             //add input parameters
-            Params.RegisterInputParam(new Param_Number());
+            Params.RegisterInputParam(new Param_GenericObject());
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -415,7 +424,7 @@ namespace GhSA.Components
 
                 //add input parameters
                 Params.RegisterInputParam(new Param_Number());
-                Params.RegisterInputParam(new Param_Number());
+                Params.RegisterInputParam(new Param_GenericObject());
                 Params.RegisterInputParam(new Param_Number());
             }
                 
@@ -439,7 +448,7 @@ namespace GhSA.Components
 
                 //add input parameters
                 Params.RegisterInputParam(new Param_Number());
-                Params.RegisterInputParam(new Param_Number());
+                Params.RegisterInputParam(new Param_GenericObject());
                 Params.RegisterInputParam(new Param_Number());
             }
             _mode = FoldMode.Trilinear;
@@ -452,15 +461,32 @@ namespace GhSA.Components
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
-            writer.SetInt32("Mode", (int)_mode);
-            writer.SetString("select", selecteditem);
+            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
             return base.Write(writer);
         }
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
-            _mode = (FoldMode)reader.GetInt32("Mode");
-            selecteditem = reader.GetString("select");
-            this.CreateAttributes();
+            try // this will fail if user has an old version of the component
+            {
+                Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+            }
+            catch (Exception) // we set the stored values like first initation of component
+            {
+                _mode = (FoldMode)reader.GetInt32("Mode");
+
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(loadTypeOptions);
+                dropdownitems.Add(Units.FilteredForceUnits);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(reader.GetString("select"));
+                selecteditems.Add(ForceUnit.Kilonewton.ToString());
+                selecteditems.Add(LengthUnit.Meter.ToString());
+            }
+            first = false;
+
+            UpdateUIFromSelectedItems();
             return base.Read(reader);
         }
         
@@ -484,11 +510,14 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
+            IQuantity force = new ForcePerLength(0, forcePerLengthUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+
             if (_mode == FoldMode.Point)
             {
                 Params.Input[6].NickName = "V";
-                Params.Input[6].Name = "Value (" + Units.Force + "/" + Units.LengthLarge + ")";
-                Params.Input[6].Description = "Load Value (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
+                Params.Input[6].Description = "Load Value";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = false;
                 
@@ -502,8 +531,8 @@ namespace GhSA.Components
             if (_mode == FoldMode.Uniform)
             {
                 Params.Input[6].NickName = "V";
-                Params.Input[6].Name = "Load (kN/m)";
-                Params.Input[6].Description = "Load value (kN/m)";
+                Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
+                Params.Input[6].Description = "Load Value";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = false;
             }
@@ -511,14 +540,14 @@ namespace GhSA.Components
             if (_mode == FoldMode.Linear)
             {
                 Params.Input[6].NickName = "V1";
-                Params.Input[6].Name = "Value Start (" + Units.Force + "/" + Units.LengthLarge + ")";
-                Params.Input[6].Description = "Load Value at Beam Start (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[6].Name = "Value Start [" + unitAbbreviation + "]";
+                Params.Input[6].Description = "Load Value at Beam Start";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = true;
 
                 Params.Input[7].NickName = "V2";
-                Params.Input[7].Name = "Value End (" + Units.Force + "/" + Units.LengthLarge + ")";
-                Params.Input[7].Description = "Load Value at Beam End (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[7].Name = "Value End [" + unitAbbreviation + "]";
+                Params.Input[7].Description = "Load Value at Beam End";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = true;
             }
@@ -526,25 +555,25 @@ namespace GhSA.Components
             if (_mode == FoldMode.Patch)
             {
                 Params.Input[6].NickName = "V1";
-                Params.Input[6].Name = "Load t1 (" + Units.Force + "/" + Units.LengthLarge + ")";
-                Params.Input[6].Description = "Load Value at Position 1 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[6].Name = "Load t1 [" + unitAbbreviation + "]";
+                Params.Input[6].Description = "Load Value at Position 1";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = true;
 
                 Params.Input[7].NickName = "t1";
-                Params.Input[7].Name = "Position 1 (%)";
+                Params.Input[7].Name = "Position 1 [%]";
                 Params.Input[7].Description = "Line parameter where patch load begins (between 0.0 and 1.0, but less than t2)";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = true;
 
                 Params.Input[8].NickName = "V2";
-                Params.Input[8].Name = "Load t2 (" + Units.Force + "/" + Units.LengthLarge + ")";
-                Params.Input[8].Description = "Load Value at Position 2 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[8].Name = "Load t2 [" + unitAbbreviation + "]";
+                Params.Input[8].Description = "Load Value at Position 2";
                 Params.Input[8].Access = GH_ParamAccess.item;
                 Params.Input[8].Optional = true;
 
                 Params.Input[9].NickName = "t2";
-                Params.Input[9].Name = "Position 2 (%)";
+                Params.Input[9].Name = "Position 2 [%]";
                 Params.Input[9].Description = "Line parameter where patch load ends (between 0.0 and 1.0, but bigger than t1)";
                 Params.Input[9].Access = GH_ParamAccess.item;
                 Params.Input[9].Optional = true;
@@ -553,25 +582,25 @@ namespace GhSA.Components
             if (_mode == FoldMode.Trilinear)
             {
                 Params.Input[6].NickName = "V1";
-                Params.Input[6].Name = "Load t1 (" + Units.Force + "/" + Units.LengthLarge + ")";
-                Params.Input[6].Description = "Load Value at Position 1 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[6].Name = "Load t1 [" + unitAbbreviation + "]";
+                Params.Input[6].Description = "Load Value at Position 1";
                 Params.Input[6].Access = GH_ParamAccess.item;
                 Params.Input[6].Optional = true;
 
                 Params.Input[7].NickName = "t1";
-                Params.Input[7].Name = "Position 1 (%)";
+                Params.Input[7].Name = "Position 1 [%]";
                 Params.Input[7].Description = "Line parameter where L1 applies (between 0.0 and 1.0, but less than t2)";
                 Params.Input[7].Access = GH_ParamAccess.item;
                 Params.Input[7].Optional = true;
 
                 Params.Input[8].NickName = "V2";
-                Params.Input[8].Name = "Load t2 (" + Units.Force + "/" + Units.LengthLarge + ")";
-                Params.Input[8].Description = "Load Value at Position 2 (" + Units.Force + "/" + Units.LengthLarge + ")";
+                Params.Input[8].Name = "Load t2 [" + unitAbbreviation + "]";
+                Params.Input[8].Description = "Load Value at Position 2";
                 Params.Input[8].Access = GH_ParamAccess.item;
                 Params.Input[8].Optional = true;
 
                 Params.Input[9].NickName = "t2";
-                Params.Input[9].Name = "Position 2 (%)";
+                Params.Input[9].Name = "Position 2 [%]";
                 Params.Input[9].Description = "Line parameter where L2 applies (between 0.0 and 1.0, but bigger than t1)";
                 Params.Input[9].Access = GH_ParamAccess.item;
                 Params.Input[9].Optional = true;

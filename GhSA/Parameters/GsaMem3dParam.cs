@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
+using UnitsNet;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Member3d class, this class defines the basic properties and methods for any Gsa Member 3d
@@ -22,6 +18,27 @@ namespace GhSA.Parameters
         {
             get { return m_member; }
             set { m_member = value; }
+        }
+        internal Member GetAPI_MemberClone()
+        {
+            Member mem = new Member
+            {
+                Group = m_member.Group,
+                IsDummy = m_member.IsDummy,
+                MeshSize = m_member.MeshSize,
+                Name = m_member.Name.ToString(),
+                Offset = m_member.Offset,
+                OrientationAngle = m_member.OrientationAngle,
+                OrientationNode = m_member.OrientationNode,
+                Property = m_member.Property,
+                Topology = m_member.Topology.ToString(),
+                Type = m_member.Type,
+            };
+
+            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                mem.Colour = m_member.Colour;
+
+            return mem;
         }
         public Mesh SolidMesh
         {
@@ -38,16 +55,16 @@ namespace GhSA.Parameters
             set { m_id = value; }
         }
 
-        //public GsaSection Section
-        //{
-        //    get { return m_section; }
-        //    set 
-        //    {
-        //        if (m_section == null)
-        //            PropertyID = 0;
-        //        m_section = value; 
-        //    }
-        //}
+        public GsaProp3d Property
+        {
+            get { return m_prop; }
+            set 
+            {
+                if (m_prop == null)
+                    PropertyID = 0;
+                m_prop = value; 
+            }
+        }
 
         #region GsaAPI.Member members
         public System.Drawing.Color Colour
@@ -91,13 +108,17 @@ namespace GhSA.Parameters
                 m_member.Name = value;
             }
         }
-        public double MeshSize
+        public Length MeshSize
         {
-            get { return m_member.MeshSize; }
+            get 
+            {
+                Length l = new Length(m_member.MeshSize, UnitsNet.Units.LengthUnit.Meter);
+                return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
+            }
             set
             {
                 CloneApiMember();
-                m_member.MeshSize = value;
+                m_member.MeshSize = value.Meters;
             }
         }
         public int PropertyID
@@ -138,15 +159,15 @@ namespace GhSA.Parameters
         internal List<Point3d> previewPts;
         private void UpdatePreview()
         {
-            GhSA.UI.Display.PreviewMem3d(ref m_mesh, ref previewHiddenLines, ref previewEdgeLines, ref previewPts);
+            GsaGH.UI.Display.PreviewMem3d(ref m_mesh, ref previewHiddenLines, ref previewEdgeLines, ref previewPts);
         }
         #endregion
         #region fields
         private Member m_member;
         private int m_id = 0;
 
-        private Mesh m_mesh; 
-        //private GsaSection m_section;
+        private Mesh m_mesh;
+        private GsaProp3d m_prop;
         #endregion
 
         #region constructors
@@ -155,12 +176,14 @@ namespace GhSA.Parameters
             m_member = new Member();
             m_member.Type = MemberType.GENERIC_3D;
             m_mesh = new Mesh();
+            m_prop = new GsaProp3d();
         }
         internal GsaMember3d(Member member, int id, Mesh mesh)
         {
             m_member = member;
             m_id = id;
-            m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            m_prop = new GsaProp3d();
             UpdatePreview();
         }
         public GsaMember3d(Mesh mesh)
@@ -169,8 +192,8 @@ namespace GhSA.Parameters
             {
                 Type = MemberType.GENERIC_3D
             };
-
-            m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            m_prop = new GsaProp3d();
+            m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
             if (m_mesh == null)
             {
                 throw new Exception("Unable to convert Mesh to solid mesh");
@@ -186,8 +209,8 @@ namespace GhSA.Parameters
             {
                 Type = MemberType.GENERIC_3D
             };
-
-            m_mesh = GhSA.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
+            m_prop = new GsaProp3d();
+            m_mesh = GsaGH.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
             if (m_mesh == null)
             {
                 throw new Exception("Unable to convert Brep to solid mesh");
@@ -203,6 +226,7 @@ namespace GhSA.Parameters
             GsaMember3d dup = new GsaMember3d();
             dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
             dup.m_member = m_member;
+            dup.m_prop = m_prop.Duplicate();
             if (cloneApiMember)
                 dup.CloneApiMember();
             //dup.m_section = m_section;
@@ -214,7 +238,7 @@ namespace GhSA.Parameters
         {
             if (this == null) { return null; }
             GsaMember3d dup = this.Duplicate();
-            dup.m_mesh = GhSA.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
+            dup.m_mesh = GsaGH.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
             dup.UpdatePreview();
             return dup;
         }
@@ -222,7 +246,7 @@ namespace GhSA.Parameters
         {
             if (this == null) { return null; }
             GsaMember3d dup = this.Duplicate();
-            dup.m_mesh = GhSA.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            dup.m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
             dup.UpdatePreview();
             return dup;
         }
@@ -354,7 +378,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.API_Member;
+                    target = (Q)(object)Value.GetAPI_MemberClone();
                 return true;
             }
 
@@ -554,7 +578,7 @@ namespace GhSA.Parameters
     public class GsaMember3dParameter : GH_PersistentGeometryParam<GsaMember3dGoo>, IGH_PreviewObject
     {
         public GsaMember3dParameter()
-          : base(new GH_InstanceDescription("3D Member", "M3D", "Maintains a collection of GSA 3D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("3D Member", "M3D", "Maintains a collection of GSA 3D Member data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -562,7 +586,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaMem3D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Mem3dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

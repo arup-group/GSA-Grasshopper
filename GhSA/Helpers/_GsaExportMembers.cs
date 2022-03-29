@@ -2,23 +2,24 @@
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using System.Linq;
-using System.Collections.ObjectModel;
+using UnitsNet.Units;
+using UnitsNet;
 
-namespace GhSA.Util.Gsa.ToGSA
+namespace GsaGH.Util.Gsa.ToGSA
 {
     class Members
     {
         #region member1d
-        public static Member ConvertMember1D(GsaMember1d member1d, ref List<Node> nodes, ref int nodeidcounter)
+        public static Member ConvertMember1D(GsaMember1d member1d, ref List<Node> nodes, ref int nodeidcounter, LengthUnit unit)
         {
             // ensure node id is at least 1
             if (nodeidcounter < 1)
                 nodeidcounter = 1;
 
             // take out api member
-            Member apimember = member1d.API_Member;
+            Member apimember = member1d.GetAPI_MemberClone();
 
             // create topology string to build
             string topo = "";
@@ -36,11 +37,7 @@ namespace GhSA.Util.Gsa.ToGSA
                 }
 
                 Point3d pt = member1d.Topology[i];
-                Node node = new Node();
-                node.Position.X = pt.X;
-                node.Position.Y = pt.Y;
-                node.Position.Z = pt.Z;
-                nodes.Add(node);
+                nodes.Add(Nodes.NodeFromPoint(pt, unit));
 
                 topo += nodeidcounter++;
 
@@ -55,10 +52,11 @@ namespace GhSA.Util.Gsa.ToGSA
 
         public static void ConvertMember1D(GsaMember1d member1d,
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter,
-            ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid)
+            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
+            ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
-            Member apiMember = member1d.API_Member;
+            Member apiMember = member1d.GetAPI_MemberClone();
 
             // update topology list to fit model nodes
             string topo = "";
@@ -76,12 +74,12 @@ namespace GhSA.Util.Gsa.ToGSA
                         topo += topologyType.ToLower() + " "; // add topology type (nothing or "a") in front of node id
                 }
 
-                int id = Nodes.GetExistingNodeID(existingNodes, pt);
+                int id = Nodes.GetExistingNodeID(existingNodes, pt, unit);
                 if (id > 0)
                     topo += id;
                 else
                 {
-                    existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt));
+                    existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt, unit));
                     topo += nodeidcounter;
                     nodeidcounter++;
                 }
@@ -95,19 +93,19 @@ namespace GhSA.Util.Gsa.ToGSA
             //Orientation node
             if (member1d.OrientationNode != null)
             {
-                int id = Nodes.GetExistingNodeID(existingNodes, member1d.OrientationNode.Point);
+                int id = Nodes.GetExistingNodeID(existingNodes, member1d.OrientationNode.Point, unit);
                 if (id > 0)
                     apiMember.OrientationNode = id;
                 else
                 {
-                    existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(member1d.OrientationNode.Point));
+                    existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(member1d.OrientationNode.Point, unit));
                     apiMember.OrientationNode = nodeidcounter;
                     nodeidcounter++;
                 }
             }
 
             // Section
-            apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections, ref sections_guid);
+            apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections, ref sections_guid, ref existingMaterials, ref materials_guid);
 
             // set apimember in dictionary
             if (member1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -121,7 +119,7 @@ namespace GhSA.Util.Gsa.ToGSA
             }
         }
 
-        public static List<Member> ConvertMember1D(List<GsaMember1d> member1ds, ref List<Node> nodes, ref int nodeidcounter)
+        public static List<Member> ConvertMember1D(List<GsaMember1d> member1ds, ref List<Node> nodes, ref int nodeidcounter, LengthUnit unit)
         {
             // List to set members in
             List<Member> mems = new List<Member>();
@@ -138,7 +136,7 @@ namespace GhSA.Util.Gsa.ToGSA
                         {
                             GsaMember1d member1d = member1ds[i];
 
-                            Member apiMember = Members.ConvertMember1D(member1d, ref nodes, ref nodeidcounter);
+                            Member apiMember = ConvertMember1D(member1d, ref nodes, ref nodeidcounter, unit);
 
                             mems.Add(apiMember);
                         }
@@ -151,10 +149,9 @@ namespace GhSA.Util.Gsa.ToGSA
         
         public static void ConvertMember1D(List<GsaMember1d> member1ds,
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-            ref Dictionary<int, Node> existingNodes,
+            ref Dictionary<int, Node> existingNodes, LengthUnit unit,
             ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null)
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
             int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
 
@@ -163,33 +160,23 @@ namespace GhSA.Util.Gsa.ToGSA
             {
                 for (int i = 0; i < member1ds.Count; i++)
                 {
-                    if (workerInstance != null)
-                    {
-                        if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Mem1D ", (double)i / (member1ds.Count - 1));
-                    }
-
                     if (member1ds[i] != null)
                     {
                         GsaMember1d member1d = member1ds[i];
 
-                        ConvertMember1D(member1d, ref existingMembers, ref memberidcounter, ref existingNodes, ref nodeidcounter, ref existingSections, ref sections_guid);
+                        ConvertMember1D(member1d, ref existingMembers, ref memberidcounter, ref existingNodes, ref nodeidcounter, unit, ref existingSections, ref sections_guid, ref existingMaterials, ref materials_guid);
                     }
                 }
-            }
-            if (workerInstance != null)
-            {
-                ReportProgress("Mem1D assembled", -2);
             }
         }
         
         #endregion
 
         #region member2d
-        public static Member ConvertMember2D(GsaMember2d member2d, ref List<Node> nodes, ref int nodeidcounter)
+        public static Member ConvertMember2D(GsaMember2d member2d, ref List<Node> nodes, ref int nodeidcounter, LengthUnit unit)
         {
             // take out api member
-            Member apimember = member2d.API_Member;
+            Member apimember = member2d.GetAPI_MemberClone();
 
             // create string to build topology
             string topo = "";
@@ -209,11 +196,7 @@ namespace GhSA.Util.Gsa.ToGSA
                 }
 
                 Point3d pt = member2d.Topology[j];
-                Node node = new Node();
-                node.Position.X = pt.X;
-                node.Position.Y = pt.Y;
-                node.Position.Z = pt.Z;
-                nodes.Add(node);
+                nodes.Add(Nodes.NodeFromPoint(pt, unit));
 
                 topo += nodeidcounter++;
 
@@ -240,11 +223,7 @@ namespace GhSA.Util.Gsa.ToGSA
                             topo += voidtopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
 
                         Point3d pt = member2d.VoidTopology[j][k];
-                        Node node = new Node();
-                        node.Position.X = pt.X;
-                        node.Position.Y = pt.Y;
-                        node.Position.Z = pt.Z;
-                        nodes.Add(node);
+                        nodes.Add(Nodes.NodeFromPoint(pt, unit));
 
                         topo += nodeidcounter++;
 
@@ -275,11 +254,7 @@ namespace GhSA.Util.Gsa.ToGSA
                             topo += inclineTopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
 
                         Point3d pt = member2d.IncLinesTopology[j][k];
-                        Node node = new Node();
-                        node.Position.X = pt.X;
-                        node.Position.Y = pt.Y;
-                        node.Position.Z = pt.Z;
-                        nodes.Add(node);
+                        nodes.Add(Nodes.NodeFromPoint(pt, unit));
 
                         topo += nodeidcounter++;
 
@@ -302,11 +277,7 @@ namespace GhSA.Util.Gsa.ToGSA
                         topo += " P(";
 
                     Point3d pt = member2d.InclusionPoints[j];
-                    Node node = new Node();
-                    node.Position.X = pt.X;
-                    node.Position.Y = pt.Y;
-                    node.Position.Z = pt.Z;
-                    nodes.Add(node);
+                    nodes.Add(Nodes.NodeFromPoint(pt, unit));
 
                     topo += nodeidcounter++;
 
@@ -326,10 +297,11 @@ namespace GhSA.Util.Gsa.ToGSA
 
         public static void ConvertMember2D(GsaMember2d member2d,
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter,
-            ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid)
+            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
+            ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
-            Member apiMember = member2d.API_Member;
+            Member apiMember = member2d.GetAPI_MemberClone();
 
             // update topology list to fit model nodes
             string topo = "";
@@ -348,12 +320,12 @@ namespace GhSA.Util.Gsa.ToGSA
                         topo += topologyType.ToLower() + " "; // add topology type (nothing or "a") in front of node id
                 }
 
-                int id = Nodes.GetExistingNodeID(existingNodes, pt);
+                int id = Nodes.GetExistingNodeID(existingNodes, pt, unit);
                 if (id > 0)
                     topo += id;
                 else
                 {
-                    existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt));
+                    existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt, unit));
                     topo += nodeidcounter;
                     nodeidcounter++;
                 }
@@ -379,12 +351,12 @@ namespace GhSA.Util.Gsa.ToGSA
                         else
                             topo += voidtopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
 
-                        int id = Nodes.GetExistingNodeID(existingNodes, pt);
+                        int id = Nodes.GetExistingNodeID(existingNodes, pt, unit);
                         if (id > 0)
                             topo += id;
                         else
                         {
-                            existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt));
+                            existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt, unit));
                             topo += nodeidcounter;
                             nodeidcounter++;
                         }
@@ -414,12 +386,12 @@ namespace GhSA.Util.Gsa.ToGSA
                         else
                             topo += inclineTopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
 
-                        int id = Nodes.GetExistingNodeID(existingNodes, pt);
+                        int id = Nodes.GetExistingNodeID(existingNodes, pt, unit);
                         if (id > 0)
                             topo += id;
                         else
                         {
-                            existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt));
+                            existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt, unit));
                             topo += nodeidcounter;
                             nodeidcounter++;
                         }
@@ -441,12 +413,12 @@ namespace GhSA.Util.Gsa.ToGSA
                     if (i == 0)
                         topo += " P(";
 
-                    int id = Nodes.GetExistingNodeID(existingNodes, pt);
+                    int id = Nodes.GetExistingNodeID(existingNodes, pt, unit);
                     if (id > 0)
                         topo += id;
                     else
                     {
-                        existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt));
+                        existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt, unit));
                         topo += nodeidcounter;
                         nodeidcounter++;
                     }
@@ -462,7 +434,7 @@ namespace GhSA.Util.Gsa.ToGSA
             apiMember.Topology = string.Copy(topo);
 
             // Prop2d
-            apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref existingProp2Ds, ref prop2d_guid);
+            apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref existingProp2Ds, ref prop2d_guid, ref existingMaterials, ref materials_guid);
 
             // set apimember in dictionary
             if (member2d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
@@ -476,7 +448,7 @@ namespace GhSA.Util.Gsa.ToGSA
             }
         }
 
-        public static List<Member> ConvertMember2D(List<GsaMember2d> member2ds, ref List<Node> nodes, ref int nodeidcounter)
+        public static List<Member> ConvertMember2D(List<GsaMember2d> member2ds, ref List<Node> nodes, ref int nodeidcounter, LengthUnit unit)
         {
             // ensure node id is at least 1
             if (nodeidcounter < 1)
@@ -497,7 +469,7 @@ namespace GhSA.Util.Gsa.ToGSA
                         {
                             GsaMember2d member2d = member2ds[i];
 
-                            Member apiMember = Members.ConvertMember2D(member2d, ref nodes, ref nodeidcounter);
+                            Member apiMember = Members.ConvertMember2D(member2d, ref nodes, ref nodeidcounter, unit);
 
                             mems.Add(apiMember);
                         }
@@ -510,10 +482,9 @@ namespace GhSA.Util.Gsa.ToGSA
 
         public static void ConvertMember2D(List<GsaMember2d> member2ds,
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-            ref Dictionary<int, Node> existingNodes,
+            ref Dictionary<int, Node> existingNodes, LengthUnit unit,
             ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
-            GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-            Action<string, double> ReportProgress = null)
+            ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
         {
             // create a counter for creating new elements, nodes and properties
             int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
@@ -523,41 +494,31 @@ namespace GhSA.Util.Gsa.ToGSA
 
                 for (int i = 0; i < member2ds.Count; i++)
                 {
-                    if (workerInstance != null)
-                    {
-                        if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Mem2D ", (double)i / (member2ds.Count - 1));
-                    }
-
-
                     if (member2ds[i] != null)
                     {
                         GsaMember2d member2d = member2ds[i];
 
                         ConvertMember2D(member2d,
                            ref existingMembers, ref memberidcounter,
-                           ref existingNodes, ref nodeidcounter,
-                           ref existingProp2Ds, ref prop2d_guid);
+                           ref existingNodes, ref nodeidcounter, unit,
+                           ref existingProp2Ds, ref prop2d_guid,
+                           ref existingMaterials, ref materials_guid);
                     }
                 }
             }
-            if (workerInstance != null)
-            {
-                ReportProgress("Mem2D assembled", -2);
-            }
         }
-            #endregion
+        #endregion
 
-            #region member3d
+        #region member3d
 
-        public static Member ConvertMember3D(GsaMember3d member3d, ref List<Node> nodes, ref int nodeidcounter)
+        public static Member ConvertMember3D(GsaMember3d member3d, ref List<Node> nodes, ref int nodeidcounter, LengthUnit unit)
         {
             // ensure node id is at least 1
             if (nodeidcounter < 1)
                 nodeidcounter = 1;
 
             // take out api member
-            Member apimember = member3d.API_Member;
+            Member apimember = member3d.GetAPI_MemberClone();
 
             // create string to build topology list
             string topo = "";
@@ -577,11 +538,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
                     // vertex point of current face corner
                     Point3d pt = member3d.SolidMesh.Vertices[faceint];
-                    Node node = new Node();
-                    node.Position.X = pt.X;
-                    node.Position.Y = pt.Y;
-                    node.Position.Z = pt.Z;
-                    nodes.Add(node);
+                    nodes.Add(Nodes.NodeFromPoint(pt, unit));
 
                     // add space if we are not in first iteration
                     if (k > 0)
@@ -601,9 +558,9 @@ namespace GhSA.Util.Gsa.ToGSA
 
         public static void ConvertMember3D(GsaMember3d member3d,
             ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter)
+            ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit)
         {
-            Member apiMember = member3d.API_Member;
+            Member apiMember = member3d.GetAPI_MemberClone();
 
             // update topology list to fit model nodes
             string topo = "";
@@ -629,12 +586,12 @@ namespace GhSA.Util.Gsa.ToGSA
                         topo += " ";
 
                     // check point against existing nodes in model
-                    int id = Nodes.GetExistingNodeID(existingNodes, pt);
+                    int id = Nodes.GetExistingNodeID(existingNodes, pt, unit);
                     if (id > 0)
                         topo += id;
                     else
                     {
-                        existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt));
+                        existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt, unit));
                         topo += nodeidcounter;
                         nodeidcounter++;
                     }
@@ -662,7 +619,7 @@ namespace GhSA.Util.Gsa.ToGSA
             }
         }
 
-        public static List<Member> ConvertMember3D(List<GsaMember3d> member3ds, ref List<Node> nodes, ref int nodeidcounter)
+        public static List<Member> ConvertMember3D(List<GsaMember3d> member3ds, ref List<Node> nodes, ref int nodeidcounter, LengthUnit unit)
         {
             // List to set members in
             List<Member> mems = new List<Member>();
@@ -679,7 +636,7 @@ namespace GhSA.Util.Gsa.ToGSA
                         {
                             GsaMember3d member3d = member3ds[i];
 
-                            Member apiMember = Members.ConvertMember3D(member3d, ref nodes, ref nodeidcounter);
+                            Member apiMember = Members.ConvertMember3D(member3d, ref nodes, ref nodeidcounter, unit);
 
                             mems.Add(apiMember);
                         }
@@ -692,9 +649,7 @@ namespace GhSA.Util.Gsa.ToGSA
 
         public static void ConvertMember3D(List<GsaMember3d> member3ds,
         ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-        ref Dictionary<int, Node> existingNodes,
-        GrasshopperAsyncComponent.WorkerInstance workerInstance = null,
-        Action<string, double> ReportProgress = null)
+        ref Dictionary<int, Node> existingNodes, LengthUnit unit)
         {
             // create a counter for creating new elements, nodes and properties
             int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
@@ -704,26 +659,15 @@ namespace GhSA.Util.Gsa.ToGSA
             {
                 for (int i = 0; i < member3ds.Count; i++)
                 {
-                    if (workerInstance != null)
-                    {
-                        if (workerInstance.CancellationToken.IsCancellationRequested) return;
-                        ReportProgress("Mem3D ", (double)i / (member3ds.Count - 1));
-                    }
-
-
                     if (member3ds[i] != null)
                     {
                         GsaMember3d member3d = member3ds[i];
 
-                        ConvertMember3D(member3d, ref existingMembers, ref memberidcounter, ref existingNodes, ref nodeidcounter);
+                        ConvertMember3D(member3d, ref existingMembers, ref memberidcounter, ref existingNodes, ref nodeidcounter, unit);
                     }
                 }
             }
-            if (workerInstance != null)
-            {
-                ReportProgress("Mem3D assembled", -2);
-            }
         }
-            #endregion
+        #endregion
     }
 }

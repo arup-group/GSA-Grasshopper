@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 using System.Linq;
 using System.Collections.ObjectModel;
-using Grasshopper.Kernel.Data;
+using UnitsNet;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to assemble and analyse a GSA model
     /// </summary>
-    public class GH_Analyse : GH_Component
+    public class GH_Analyse : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
@@ -33,16 +26,43 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.Analyse;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Analyse;
         #endregion
 
         #region Custom UI
         //This region overrides the typical component layout
         public override void CreateAttributes()
         {
-            m_attributes = new UI.CheckBoxComponentUI(this, SetAnalysis, checkboxText, initialCheckState, "Settings");
-        }
+            if (first)
+            {
+                dropdownitems = new List<List<string>>();
+                selecteditems = new List<string>();
 
+                // length
+                //dropdownitems.Add(Enum.GetNames(typeof(UnitsNet.Units.LengthUnit)).ToList());
+                dropdownitems.Add(Units.FilteredLengthUnits);
+                selecteditems.Add(lengthUnit.ToString());
+
+                IQuantity quantity = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                first = false;
+            }
+            m_attributes = new UI.MultiDropDownCheckBoxesComponentUI(this, SetSelected, dropdownitems, selecteditems, SetAnalysis, initialCheckState, checkboxText, spacerDescriptions);
+        }
+        public void SetSelected(int i, int j)
+        {
+            // change selected item
+            selecteditems[i] = dropdownitems[i][j];
+
+            lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[i]);
+
+            // update name of inputs (to display unit on sliders)
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
         List<string> checkboxText = new List<string>() { "Analyse task(s)", "ElemsFromMems" };
         List<bool> initialCheckState = new List<bool>() { true, true };
         bool Analysis = true;
@@ -53,18 +73,45 @@ namespace GhSA.Components
             Analysis = value[0];
             ReMesh = value[1];
         }
+        private void UpdateUIFromSelectedItems()
+        {
+            lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[0]);
+
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+        // list of lists with all dropdown lists conctent
+        List<List<string>> dropdownitems;
+        // list of selected items
+        List<string> selecteditems;
+        // list of descriptions 
+        List<string> spacerDescriptions = new List<string>(new string[]
+        {
+            "Geometry Unit",
+            "Settings"
+        });
+        private bool first = true;
+        private UnitsNet.Units.LengthUnit lengthUnit = Units.LengthUnitGeometry;
+        string unitAbbreviation;
         #endregion
 
         #region input and output
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("GSA Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
+            IQuantity length = new Length(0, lengthUnit);
+            unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
+            pManager.AddGenericParameter("Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
                 "If you input more than one model they will be merged" + System.Environment.NewLine + "with first model in list taking priority for IDs", GH_ParamAccess.list);
-            pManager.AddGenericParameter("GSA Properties", "Prob", "Sections and Prop2Ds to add/set in model" + System.Environment.NewLine +
+            pManager.AddGenericParameter("Properties", "Pro", "GSA Sections (PB), Prop2Ds (PA) and Prop3Ds (PV) to add/set in the model" + System.Environment.NewLine +
                 "Properties already added to Elements or Members" + System.Environment.NewLine + "will automatically be added with Geometry input", GH_ParamAccess.list);
-            pManager.AddGenericParameter("GSA Geometry", "Geo", "Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
-            pManager.AddGenericParameter("GSA Load", "Load", "Loads to add to the model" + System.Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
+            pManager.AddGenericParameter("GSA Geometry in [" + unitAbbreviation + "]", "Geo", "GSA Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Loads", "Ld", "GSA Loads to add to the model" + System.Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Analysis Tasks & Combinations", "ΣT", "GSA Analysis Tasks and Combination Cases to add to the model", GH_ParamAccess.list);
             for (int i = 0; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
         }
@@ -86,8 +133,11 @@ namespace GhSA.Components
         List<GsaLoad> Loads { get; set; }
         List<GsaSection> Sections { get; set; }
         List<GsaProp2d> Prop2Ds { get; set; }
+        List<GsaProp3d> Prop3Ds { get; set; }
         List<GsaGridPlaneSurface> GridPlaneSurfaces { get; set; }
         GsaModel OutModel { get; set; }
+        List<GsaAnalysisTask> AnalysisTasks { get; set; }
+        List<GsaCombinationCase> CombinationCases { get; set; }
         #endregion
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -104,7 +154,10 @@ namespace GhSA.Components
             Loads = null;
             Sections = null;
             Prop2Ds = null;
+            Prop3Ds = null;
             GridPlaneSurfaces = null;
+            AnalysisTasks = null;
+            CombinationCases = null;
 
             // Get Model input
             List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
@@ -124,7 +177,7 @@ namespace GhSA.Components
                     else
                     {
                         string type = gh_typ.Value.GetType().ToString();
-                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("GsaGH.Parameters.", "");
                         type = type.Replace("Goo", "");
                         Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert GSA input parameter of type " +
                             type + " to GsaModel");
@@ -139,7 +192,8 @@ namespace GhSA.Components
             if (DA.GetDataList(1, gh_types))
             {
                 List<GsaSection> in_sect = new List<GsaSection>();
-                List<GsaProp2d> in_prop = new List<GsaProp2d>();
+                List<GsaProp2d> in_prop2d = new List<GsaProp2d>();
+                List<GsaProp3d> in_prop3d = new List<GsaProp3d>();
                 for (int i = 0; i < gh_types.Count; i++)
                 {
                     GH_ObjectWrapper gh_typ = gh_types[i];
@@ -155,12 +209,18 @@ namespace GhSA.Components
                     {
                         GsaProp2d gsaprop = new GsaProp2d();
                         gh_typ.CastTo(ref gsaprop);
-                        in_prop.Add(gsaprop.Duplicate());
+                        in_prop2d.Add(gsaprop.Duplicate());
+                    }
+                    else if (gh_typ.Value is GsaProp3dGoo)
+                    {
+                        GsaProp3d gsaprop = new GsaProp3d();
+                        gh_typ.CastTo(ref gsaprop);
+                        in_prop3d.Add(gsaprop.Duplicate());
                     }
                     else
                     {
                         string type = gh_typ.Value.GetType().ToString();
-                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("GsaGH.Parameters.", "");
                         type = type.Replace("Goo", "");
                         Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Prop input parameter of type " +
                             type + " to GsaSection or GsaProp2d");
@@ -169,8 +229,10 @@ namespace GhSA.Components
                 }
                 if (in_sect.Count > 0)
                     Sections = in_sect;
-                if (in_prop.Count > 0)
-                    Prop2Ds = in_prop;
+                if (in_prop2d.Count > 0)
+                    Prop2Ds = in_prop2d;
+                if (in_prop3d.Count > 0)
+                    Prop3Ds = in_prop3d;
             }
 
             // Get Geometry input
@@ -235,7 +297,7 @@ namespace GhSA.Components
                     else
                     {
                         string type = gh_typ.Value.GetType().ToString();
-                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("GsaGH.Parameters.", "");
                         type = type.Replace("Goo", "");
                         Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input parameter of type " +
                             type + System.Environment.NewLine + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
@@ -285,7 +347,7 @@ namespace GhSA.Components
                     else
                     {
                         string type = gh_typ.Value.GetType().ToString();
-                        type = type.Replace("GhSA.Parameters.", "");
+                        type = type.Replace("GsaGH.Parameters.", "");
                         type = type.Replace("Goo", "");
                         Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Load input parameter of type " +
                             type + " to Load or GridPlaneSurface");
@@ -297,10 +359,47 @@ namespace GhSA.Components
                 if (in_gps.Count > 0)
                     GridPlaneSurfaces = in_gps;
             }
+            
+            // Get AnalysisTasks input
+            gh_types = new List<GH_ObjectWrapper>();
+            if (DA.GetDataList(4, gh_types))
+            {
+                List<GsaAnalysisTask> in_tasks = new List<GsaAnalysisTask>();
+                List<GsaCombinationCase> in_comb = new List<GsaCombinationCase>();
+                for (int i = 0; i < gh_types.Count; i++)
+                {
+                    GH_ObjectWrapper gh_typ = gh_types[i];
+                    if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis input (index: " + i + ") is null and has been ignored"); continue; }
+
+                    if (gh_typ.Value is GsaAnalysisTaskGoo)
+                    {
+                        in_tasks.Add(((GsaAnalysisTaskGoo)gh_typ.Value).Value.Duplicate());
+                    }
+                    else if (gh_typ.Value is GsaCombinationCaseGoo)
+                    {
+                        in_comb.Add(((GsaCombinationCaseGoo)gh_typ.Value).Value.Duplicate());
+                    }
+                    else
+                    {
+                        string type = gh_typ.Value.GetType().ToString();
+                        type = type.Replace("GsaGH.Parameters.", "");
+                        type = type.Replace("Goo", "");
+                        Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Analysis input parameter of type " +
+                            type + " to Analysis Task or Combination Case");
+                        return;
+                    }
+                }
+                if (in_tasks.Count > 0)
+                    AnalysisTasks = in_tasks;
+                if (in_comb.Count > 0)
+                    CombinationCases = in_comb;
+            }
+
             // manually add a warning if no input is set, as all inputs are optional
             if (Models == null & Nodes == null & Elem1ds == null & Elem2ds == null &
                 Mem1ds == null & Mem2ds == null & Mem3ds == null & Sections == null
-                & Prop2Ds == null & Loads == null & GridPlaneSurfaces == null)
+                & Prop2Ds == null & Loads == null & GridPlaneSurfaces == null
+                & AnalysisTasks == null & CombinationCases == null)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameters failed to collect data");
                 return;
@@ -330,7 +429,7 @@ namespace GhSA.Components
                 OutModel = new GsaModel();
 
             // Assemble model
-            Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Loads, GridPlaneSurfaces);
+            Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Prop3Ds, Loads, GridPlaneSurfaces, AnalysisTasks, CombinationCases, lengthUnit);
             
             #region meshing
             // Create elements from members
@@ -345,7 +444,20 @@ namespace GhSA.Components
             {
                 IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
                 if (gsaTasks.Count < 1)
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contains no Analysis Tasks");
+                {
+                    GsaAnalysisTask task = new GsaAnalysisTask();
+                    task.SetID(gsa.AddAnalysisTask());
+                    task.CreateDeafultCases(analysisModel);
+                    if (task.Cases == null || task.Cases.Count == 0)
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contains no Analysis Tasks or Loads. Model has not been analysed");
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contained no Analysis Tasks. Default Task has been created containing all cases found in model");
+                        foreach (GsaAnalysisCase ca in task.Cases)
+                            gsa.AddAnalysisCaseToTask(task.ID, ca.Name, ca.Description);
+                        gsaTasks = gsa.AnalysisTasks();
+                    }
+                }
 
                 foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
                 {
@@ -353,7 +465,7 @@ namespace GhSA.Components
                     {
                         if (!(gsa.Analyse(task.Key)))
                             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
-                        System.Collections.ObjectModel.ReadOnlyDictionary<int, GsaAPI.AnalysisCaseResult> results = gsa.Results();
+                        ReadOnlyDictionary<int, AnalysisCaseResult> results = gsa.Results();
                     }
                     catch (Exception e)
                     {
@@ -374,6 +486,8 @@ namespace GhSA.Components
         #region (de)serialization
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
+            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
+
             writer.SetBoolean("Analyse", Analysis);
             writer.SetBoolean("ReMesh", ReMesh);
             return base.Write(writer);
@@ -384,20 +498,84 @@ namespace GhSA.Components
             {
                 Analysis = reader.GetBoolean("Analyse");
                 ReMesh = reader.GetBoolean("ReMesh");
+                try // if users has an old versopm of this component then dropdown menu wont read
+                {
+                    Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+                }
+                catch (Exception) // we create the dropdown menu with our chosen default
+                {
+                    dropdownitems = new List<List<string>>();
+                    selecteditems = new List<string>();
+
+                    // set length to meters as this was the only option for old components
+                    lengthUnit = UnitsNet.Units.LengthUnit.Meter;
+
+                    dropdownitems.Add(Units.FilteredLengthUnits);
+                    selecteditems.Add(lengthUnit.ToString());
+
+                    IQuantity quantity = new Length(0, lengthUnit);
+                    unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                    first = false;
+                }
             }
             catch (Exception)
             {
                 Analysis = true;
                 ReMesh = true;
+
+                dropdownitems = new List<List<string>>();
+                selecteditems = new List<string>();
+
+                // set length to meters as this was the only option for old components
+                lengthUnit = UnitsNet.Units.LengthUnit.Meter;
+
+                dropdownitems.Add(Units.FilteredLengthUnits);
+                selecteditems.Add(lengthUnit.ToString());
+
+                IQuantity quantity = new Length(0, lengthUnit);
+                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+
+                first = false;
             }
 
             initialCheckState = new List<bool>();
             initialCheckState.Add(Analysis);
             initialCheckState.Add(ReMesh);
-            this.CreateAttributes();
+
+            UpdateUIFromSelectedItems();
+
+            first = false;
+
             return base.Read(reader);
         }
         #endregion
+
+        #region IGH_VariableParameterComponent null implementation
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+            return null;
+        }
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            IQuantity length = new Length(0, lengthUnit);
+            unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
+            Params.Input[2].Name = "GSA Geometry in [" + unitAbbreviation + "]";
+        }
+        #endregion 
     }
 }
 

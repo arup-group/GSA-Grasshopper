@@ -1,10 +1,9 @@
 ﻿using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class holding custom UI graphical buttons/boxes

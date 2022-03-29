@@ -5,13 +5,10 @@ using System.Linq;
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
+using UnitsNet;
+using UnitsNet.Units;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Offset class, this class defines the basic properties and methods for any Gsa Offset
@@ -19,28 +16,44 @@ namespace GhSA.Parameters
     public class GsaOffset
 
     {
-        public double X1
+        public Length X1
         {
-            get { return m_x1; }
-            set { m_x1 = value; } //m_offset.X1 = m_x1; }
+            get
+            {
+                Length l = new Length(m_x1, UnitsNet.UnitSystem.SI);
+                return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
+            }
+            set { m_x1 = value.Meters; } 
         }
 
-        public double Y
+        public Length Y
         {
-            get { return m_y; }
-            set { m_y = value; } //m_offset.Y = m_y; }
+            get
+            {
+                Length l = new Length(m_y, UnitsNet.UnitSystem.SI);
+                return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
+            }
+            set { m_y = value.Meters; }
         }
 
-        public double Z
+        public Length Z
         {
-            get { return m_z; }
-            set { m_z = value; } //m_offset.Z = m_z; }
+            get
+            {
+                Length l = new Length(m_z, UnitsNet.UnitSystem.SI);
+                return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
+            }
+            set { m_z = value.Meters; }
         }
 
-        public double X2
+        public Length X2
         {
-            get { return m_x2; }
-            set { m_x2 = value; } //m_offset.X2 = m_x2; }
+            get
+            {
+                Length l = new Length(m_x2, UnitsNet.UnitSystem.SI);
+                return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
+            }
+            set { m_x2 = value.Meters; }
         }
 
 
@@ -65,12 +78,12 @@ namespace GhSA.Parameters
             //m_offset.Z = m_z;
         }
 
-        public GsaOffset(double x1, double x2, double y, double z)
+        public GsaOffset(double x1, double x2, double y, double z, LengthUnit unit = LengthUnit.Meter)
         {
-            m_x1 = x1;
-            m_x2 = x2;
-            m_y = y;
-            m_z = z;
+            m_x1 = new Length(x1, unit).Meters;
+            m_x2 = new Length(x2, unit).Meters;
+            m_y = new Length(y, unit).Meters;
+            m_z = new Length(z, unit).Meters;
             //m_offset.X1 = m_x1;
             //m_offset.X2 = m_x2;
             //m_offset.Y = m_y;
@@ -83,10 +96,10 @@ namespace GhSA.Parameters
             if (this == null) { return null; }
             GsaOffset dup = new GsaOffset
             {
-                X1 = m_x1,
-                Y = m_y,
-                Z = m_z,
-                X2 = m_x2
+                X1 = new Length(m_x1, UnitsNet.UnitSystem.SI),
+                Y = new Length(m_y, UnitsNet.UnitSystem.SI),
+                Z = new Length(m_z, UnitsNet.UnitSystem.SI),
+                X2 = new Length(m_x2, UnitsNet.UnitSystem.SI)
             };
 
             return dup;
@@ -109,11 +122,14 @@ namespace GhSA.Parameters
         #region methods
         public override string ToString()
         {
-            string str = "{X1:" + X1.ToString()
-                + ", X2:" + X2.ToString()
-                + ", Y:" + Y.ToString()
-                + ", Z:" + Z.ToString() + "}";
-            return "GSA Offset " + str;
+            IQuantity quantity = new Length(0, Units.LengthUnitGeometry);
+            string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+            
+            return "Offset" + " {X1: "
+                + Math.Round(X1.As(Units.LengthUnitGeometry), 4) + ", X2: "
+                + Math.Round(X2.As(Units.LengthUnitGeometry), 4) + ", Y: "
+                + Math.Round(Y.As(Units.LengthUnitGeometry), 4) + ", Z: "
+                + Math.Round(Z.As(Units.LengthUnitGeometry), 4) + " [" + unitAbbreviation + "]}";
         }
 
         #endregion
@@ -231,7 +247,7 @@ namespace GhSA.Parameters
             //Cast from double
             if (GH_Convert.ToDouble(source, out double myval, GH_Conversion.Both))
             {
-                Value.Z = myval;
+                Value.Z = new Length(myval, Units.LengthUnitGeometry);
                 // if input to parameter is a single number convert it to the most common Z-offset
                 return true;
             }
@@ -249,7 +265,7 @@ namespace GhSA.Parameters
     public class GsaOffsetParameter : GH_PersistentParam<GsaOffsetGoo>
     {
         public GsaOffsetParameter()
-          : base(new GH_InstanceDescription("Offset", "Of", "GSA Offset", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Offset", "Of", "GSA Offset", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -257,7 +273,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaOffset;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.OffsetParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

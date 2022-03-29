@@ -11,10 +11,10 @@ using Grasshopper.Kernel.Types;
 
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using System.Resources;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to create a new Material
@@ -26,13 +26,13 @@ namespace GhSA.Components
         // including name, exposure level and icon
         public override Guid ComponentGuid => new Guid("72bfce91-9204-4fe4-b81d-0036babf0c6d");
         public CreateMaterial()
-          : base("Create Material", "Material", "Create GSA Material",
+          : base("Create Material", "Material", "Create GSA Material by reference to existing type and grade",
                 Ribbon.CategoryName.Name(),
                 Ribbon.SubCategoryName.Cat1())
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateMaterial;
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMaterial;
         #endregion
 
         #region Custom UI
@@ -44,7 +44,7 @@ namespace GhSA.Components
                 selecteditem = _mode.ToString();
                 //first = false;
             }
-                
+
             m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Material Type");
         }
 
@@ -100,7 +100,7 @@ namespace GhSA.Components
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Analysis Property", "An", "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("Analysis Property Number", "ID", "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
             pManager.AddIntegerParameter("Grade", "Gr", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -170,7 +170,7 @@ namespace GhSA.Components
                 return;
 
             RecordUndoEvent(_mode.ToString() + "Parameters");
-            
+
             _mode = FoldMode.Generic;
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -304,7 +304,7 @@ namespace GhSA.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            
+
         }
         #endregion  
     }

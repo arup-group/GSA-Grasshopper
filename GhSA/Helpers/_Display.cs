@@ -1,11 +1,9 @@
-﻿using System.Drawing;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Rhino.Display;
-using Grasshopper.Kernel;
 using Rhino.Geometry;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Colour class holding the main colours used in colour scheme. 
@@ -14,7 +12,7 @@ namespace GhSA.UI
     /// </summary>
     public class Display
     {
-        public static void Preview1D(PolyCurve crv, double angle, GsaBool6 start, GsaBool6 end,
+        public static void Preview1D(PolyCurve crv, double angle_radian, GsaBool6 start, GsaBool6 end,
             ref List<Line> greenLines20, ref List<Line> redLines10)
         {
             int i = 0;
@@ -35,7 +33,7 @@ namespace GhSA.UI
 
                 Plane pln = new Plane();
                 crv.PerpendicularFrameAt(0.02, out pln);
-                pln.Rotate(angle, pln.Normal);
+                pln.Rotate(angle_radian, pln.Normal);
                 Vector3d vec1 = new Vector3d(pln.XAxis);
                 vec1.Unitize();
                 vec1 = new Vector3d(vec1.X * 0.025 * scale, vec1.Y * 0.025 * scale, vec1.Z * 0.025 * scale);
@@ -74,7 +72,7 @@ namespace GhSA.UI
 
                 Plane pln = new Plane();
                 crv.PerpendicularFrameAt(0.02, out pln);
-                pln.Rotate(angle, pln.Normal);
+                pln.Rotate(angle_radian, pln.Normal);
                 Vector3d vec1 = new Vector3d(pln.XAxis);
                 vec1.Unitize();
                 vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
@@ -137,7 +135,7 @@ namespace GhSA.UI
 
                 Plane pln = new Plane();
                 crv.PerpendicularFrameAt(0.02, out pln);
-                pln.Rotate(angle, pln.Normal);
+                pln.Rotate(angle_radian, pln.Normal);
                 Vector3d vec1 = new Vector3d(pln.YAxis);
                 vec1.Unitize();
                 vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
@@ -205,7 +203,7 @@ namespace GhSA.UI
 
                 Plane pln = new Plane();
                 crv.PerpendicularFrameAt(0.98, out pln);
-                pln.Rotate(angle, pln.Normal);
+                pln.Rotate(angle_radian, pln.Normal);
                 Vector3d vec1 = new Vector3d(pln.XAxis);
                 vec1.Unitize();
                 vec1 = new Vector3d(vec1.X * 0.025 * scale, vec1.Y * 0.025 * scale, vec1.Z * 0.025 * scale);
@@ -248,7 +246,7 @@ namespace GhSA.UI
 
                 Plane pln = new Plane();
                 crv.PerpendicularFrameAt(0.02, out pln);
-                pln.Rotate(angle, pln.Normal);
+                pln.Rotate(angle_radian, pln.Normal);
                 Vector3d vec1 = new Vector3d(pln.XAxis);
                 vec1.Unitize();
                 vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
@@ -314,7 +312,7 @@ namespace GhSA.UI
 
                 Plane pln = new Plane();
                 crv.PerpendicularFrameAt(0.02, out pln);
-                pln.Rotate(angle, pln.Normal);
+                pln.Rotate(angle_radian, pln.Normal);
                 Vector3d vec1 = new Vector3d(pln.YAxis);
                 vec1.Unitize();
                 vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
@@ -404,7 +402,7 @@ namespace GhSA.UI
 
                 Plane pln = new Plane();
                 crv.PerpendicularFrameAt(0.02, out pln);
-                pln.Rotate(angle, pln.Normal);
+                pln.Rotate(angle_radian, pln.Normal);
                 Vector3d vec1 = new Vector3d(pln.XAxis);
                 vec1.Unitize();
                 vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
@@ -446,7 +444,7 @@ namespace GhSA.UI
 
                 Plane pln = new Plane();
                 crv.PerpendicularFrameAt(0.02, out pln);
-                pln.Rotate(angle, pln.Normal);
+                pln.Rotate(angle_radian, pln.Normal);
                 Vector3d vec1 = new Vector3d(pln.YAxis);
                 vec1.Unitize();
                 vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
@@ -521,7 +519,7 @@ namespace GhSA.UI
 
                 Plane pln = new Plane();
                 crv.PerpendicularFrameAt(0.02, out pln);
-                pln.Rotate(angle, pln.Normal);
+                pln.Rotate(angle_radian, pln.Normal);
                 Vector3d vec1 = new Vector3d(pln.XAxis);
                 vec1.Unitize();
                 vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
@@ -566,7 +564,7 @@ namespace GhSA.UI
 
                 Plane pln = new Plane();
                 crv.PerpendicularFrameAt(0.02, out pln);
-                pln.Rotate(angle, pln.Normal);
+                pln.Rotate(angle_radian, pln.Normal);
                 Vector3d vec1 = new Vector3d(pln.YAxis);
                 vec1.Unitize();
                 vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
@@ -596,7 +594,7 @@ namespace GhSA.UI
             }
             #endregion
         }
-        public static void PreviewRestraint(GsaBool6 restraint, Plane localAxis, Point3d pt, ref Brep support, ref Rhino.Display.Text3d text)
+        public static void PreviewRestraint(GsaBool6 restraint, Plane localAxis, Point3d pt, ref Brep support, ref Text3d text)
         {
             // pin
             if (restraint.X == true & restraint.Y == true & restraint.Z == true &

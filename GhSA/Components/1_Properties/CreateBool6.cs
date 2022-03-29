@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to create a new Bool6
@@ -30,7 +21,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateBool6;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateBool6;
         #endregion
 
         #region Custom UI
@@ -83,11 +74,15 @@ namespace GhSA.Components
             zz = (bool)reader.GetBoolean("zz");
             // we need to recreate the custom UI again as this is created before this read IO is called
             // otherwise the component will not display the selected items on the canvas
-            this.CreateAttributes();
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
             return base.Read(reader);
         }
         #endregion
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
@@ -104,7 +99,7 @@ namespace GhSA.Components
             pManager[5].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Bool6", "B6", "GSA Bool6 to set releases or restraints", GH_ParamAccess.item);
             

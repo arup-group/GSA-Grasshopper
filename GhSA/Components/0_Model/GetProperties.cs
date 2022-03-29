@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to retrieve non-geometric objects from a GSA model
@@ -30,7 +23,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GetProperties;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GetSection;
         #endregion
 
         #region Custom UI
@@ -39,15 +32,16 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("GSA Model", "GSA", "GSA model containing some properties", GH_ParamAccess.item);
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Sections", "PB", "Section Properties from GSA Model", GH_ParamAccess.list);
             pManager.AddGenericParameter("2D Properties", "PA", "2D Properties from GSA Model", GH_ParamAccess.list);
+            pManager.AddGenericParameter("3D Properties", "PV", "3D Properties from GSA Model", GH_ParamAccess.list);
             //pManager.AddGenericParameter("Springs", "PS", "Spring Properties from GSA Model", GH_ParamAccess.list);
         }
         #endregion
@@ -59,12 +53,13 @@ namespace GhSA.Components
             {
                 Model model = gsaModel.Model;
 
-                List<GsaSectionGoo> sections = Util.Gsa.FromGSA.GetSections(model.Sections());
-                List<GsaProp2dGoo> prop2Ds = Util.Gsa.FromGSA.GetProp2ds(model.Prop2Ds());
-                // spring import missing in GsaAPI. To be implemented
+                List<GsaSectionGoo> sections = Util.Gsa.FromGSA.GetSections(model.Sections(), model.AnalysisMaterials());
+                List<GsaProp2dGoo> prop2Ds = Util.Gsa.FromGSA.GetProp2ds(model.Prop2Ds(), model.AnalysisMaterials());
+                List<GsaProp3dGoo> prop3Ds = Util.Gsa.FromGSA.GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
 
                 DA.SetDataList(0, sections);
                 DA.SetDataList(1, prop2Ds);
+                DA.SetDataList(2, prop3Ds);
             }
         }
     }

@@ -6,12 +6,9 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
+using Grasshopper;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Element2d class, this class defines the basic properties and methods for any Gsa Element 2d
@@ -22,6 +19,22 @@ namespace GhSA.Parameters
         {
             get { return m_elements; }
             set { m_elements = value; }
+        }
+        internal Element GetAPI_ElementClone(int i)
+        {
+            return new Element()
+            {
+                Group = m_elements[i].Group,
+                IsDummy = m_elements[i].IsDummy,
+                Name = m_elements[i].Name.ToString(),
+                OrientationNode = m_elements[i].OrientationNode,
+                OrientationAngle = m_elements[i].OrientationAngle,
+                Offset = m_elements[i].Offset,
+                ParentMember = m_elements[i].ParentMember,
+                Property = m_elements[i].Property,
+                Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
+                Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
+            };
         }
         public int Count
         {
@@ -201,6 +214,20 @@ namespace GhSA.Parameters
             }
         }
 
+        public DataTree<int> TopologyIDs
+        {
+            get
+            {
+                DataTree<int> topos = new DataTree<int>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (m_elements[i] != null)
+                        topos.AddRange(m_elements[i].Topology.ToList(), new Grasshopper.Kernel.Data.GH_Path(i));
+                }
+                return topos;
+            }
+        }
+
         private void CloneApiElements(apiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null,  
             List<double> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<System.Drawing.Color> col = null)
         {
@@ -256,17 +283,17 @@ namespace GhSA.Parameters
                     case apiObjectMember.offset:
                         if (off.Count > i)
                         {
-                            elems[i].Offset.X1 = off[i].X1;
-                            elems[i].Offset.X2 = off[i].X2;
-                            elems[i].Offset.Y = off[i].Y;
-                            elems[i].Offset.Z = off[i].Z;
+                            elems[i].Offset.X1 = off[i].X1.Meters;
+                            elems[i].Offset.X2 = off[i].X2.Meters;
+                            elems[i].Offset.Y = off[i].Y.Meters;
+                            elems[i].Offset.Z = off[i].Z.Meters;
                         }
                         else
                         {
-                            elems[i].Offset.X1 = off.Last().X1;
-                            elems[i].Offset.X2 = off.Last().X2;
-                            elems[i].Offset.Y = off.Last().Y;
-                            elems[i].Offset.Z = off.Last().Z;
+                            elems[i].Offset.X1 = off.Last().X1.Meters;
+                            elems[i].Offset.X2 = off.Last().X2.Meters;
+                            elems[i].Offset.Y = off.Last().Y.Meters;
+                            elems[i].Offset.Z = off.Last().Z.Meters;
                         }
                         break;
                     case apiObjectMember.property:
@@ -677,15 +704,15 @@ namespace GhSA.Parameters
     public class GsaElement2dParameter : GH_PersistentGeometryParam<GsaElement2dGoo>, IGH_PreviewObject
     {
         public GsaElement2dParameter()
-          : base(new GH_InstanceDescription("2D Element", "E2D", "Maintains a collection of GSA 2D Element data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("2D Element", "E2D", "Maintains a collection of GSA 2D Element data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("bfaa6912-77b0-40b1-aa78-54e2b28614d0");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaElement2D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Elem2dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

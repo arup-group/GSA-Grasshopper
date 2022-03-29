@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
 using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to create new Node with restraints (support)
     /// </summary>
-    public class CreateSupport : GH_Component, IGH_PreviewObject
+    public class CreateSupport : GH_Component, IGH_PreviewObject, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
@@ -32,7 +24,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateSupport;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateSupport;
         #endregion
 
         #region Custom UI
@@ -50,6 +42,12 @@ namespace GhSA.Components
             xx = resxx;
             yy = resyy;
             zz = reszz;
+
+            // update name of inputs (to display unit on sliders)
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
         }
 
         #endregion
@@ -83,27 +81,33 @@ namespace GhSA.Components
             xx = (bool)reader.GetBoolean("xx");
             yy = (bool)reader.GetBoolean("yy");
             zz = (bool)reader.GetBoolean("zz");
+            
             // we need to recreate the custom UI again as this is created before this read IO is called
             // otherwise the component will not display the selected item on the canvas
-            this.CreateAttributes();
+            CreateAttributes();
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+
             return base.Read(reader);
         }
         #endregion
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddPointParameter("Point", "Pt", "Point (x, y, z) location of support", GH_ParamAccess.item);
             pManager.AddPlaneParameter("Plane", "Pl", "(Optional) Plane for local axis", GH_ParamAccess.item, Plane.WorldXY);
             pManager.AddGenericParameter("Restraints", "B6", "(Optional) Restraint in Bool6 form", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Spring", "PS", "(Optional) GSA Spring", GH_ParamAccess.item);
+            //pManager.AddGenericParameter("Spring", "PS", "(Optional) GSA Spring", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager.HideParameter(1);
             pManager[2].Optional = true;
-            pManager[3].Optional = true;
+            //pManager[3].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Node", "No", "GSA Node with Restraint", GH_ParamAccess.list);
             
@@ -136,9 +140,9 @@ namespace GhSA.Components
                         zz = bool6.ZZ;
                     }
 
-                    GsaSpring spring = new GsaSpring();
-                    if (DA.GetData(3, ref spring))
-                        node.Spring = spring;
+                    //GsaSpring spring = new GsaSpring();
+                    //if (DA.GetData(3, ref spring))
+                    //    node.Spring = spring;
 
                     node.LocalAxis = localAxis;
 
@@ -156,6 +160,28 @@ namespace GhSA.Components
                 }
             }
         }
+        #region IGH_VariableParameterComponent null implementation
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+            return null;
+        }
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            
+        }
+        #endregion  
     }
 }
 

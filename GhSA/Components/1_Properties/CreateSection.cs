@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to create a new Section
@@ -30,7 +21,7 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateSection;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateSection;
         #endregion
 
         #region Custom UI
@@ -40,10 +31,10 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Profile", "Pf", "Cross-Section Profile", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Material", "Ma", "GsaMaterial or Number for referring to a Material already in Existing GSA Model." + System.Environment.NewLine
+            pManager.AddGenericParameter("Material", "Ma", "GsaMaterial or Number referring to a Material already in Existing GSA Model." + System.Environment.NewLine
                     + "Accepted inputs are: " + System.Environment.NewLine
                     + "0 : Generic" + System.Environment.NewLine
                     + "1 : Steel" + System.Environment.NewLine
@@ -51,14 +42,14 @@ namespace GhSA.Components
                     + "3 : Aluminium" + System.Environment.NewLine
                     + "4 : Glass" + System.Environment.NewLine
                     + "5 : FRP" + System.Environment.NewLine
-                    + "7 : Timber (default - because your Carbon Emissions matter!)" + System.Environment.NewLine
+                    + "7 : Timber" + System.Environment.NewLine
                     + "8 : Fabric", GH_ParamAccess.item);
 
             for (int i = 1; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Section", "PB", "GSA Section", GH_ParamAccess.item);
         }

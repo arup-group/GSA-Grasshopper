@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Individual load type classes holding GsaAPI load type along with any required geometry objects
@@ -736,7 +731,7 @@ namespace GhSA.Parameters
     public class GsaLoadParameter : GH_PersistentParam<GsaLoadGoo>
     {
         public GsaLoadParameter()
-          : base(new GH_InstanceDescription("Load", "Ld", "GSA Load", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Load", "Ld", "GSA Load", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -744,7 +739,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaLoad;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.LoadParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaLoadGoo> values)
         {

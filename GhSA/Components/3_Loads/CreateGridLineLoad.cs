@@ -5,11 +5,13 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using Rhino.Geometry;
-using GhSA.Parameters;
+using GsaGH.Parameters;
+using UnitsNet;
+using UnitsNet.Units;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
-    public class CreateGridLineLoad : GH_Component
+    public class CreateGridLineLoad : GH_Component, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         public CreateGridLineLoad()
@@ -20,16 +22,71 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("e1f22e6f-8550-4078-8613-ea5ed2ede2b9");
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridLineLoad;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.LineLoad;
         #endregion
 
         #region Custom UI
         //This region overrides the typical component layout
+        public override void CreateAttributes()
+        {
+            if (first)
+            {
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(Units.FilteredForcePerLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(Units.ForcePerLengthUnit.ToString());
+
+                first = false;
+            }
+
+            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
+        }
+
+        public void SetSelected(int i, int j)
+        {
+            // change selected item
+            selecteditems[i] = dropdownitems[i][j];
+
+            forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[0]);
+            (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+
+            // update input params
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
+        private void UpdateUIFromSelectedItems()
+        {
+            forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[0]);
+
+            CreateAttributes();
+            ExpireSolution(true);
+            Params.OnParametersChanged();
+            this.OnDisplayExpired(true);
+        }
         #endregion
 
-        #region input and output
+        #region Input and output
+        // list of lists with all dropdown lists conctent
+        List<List<string>> dropdownitems;
+        // list of selected items
+        List<string> selecteditems;
+        // list of descriptions 
+        List<string> spacerDescriptions = new List<string>(new string[]
+        {
+            "Unit",
+        });
+
+        private ForcePerLengthUnit forcePerLengthUnit = Units.ForcePerLengthUnit;
+        private ForceUnit forceUnit = Units.ForceUnit;
+        private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+        bool first = true;
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            IQuantity force = new ForcePerLength(0, forcePerLengthUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+
             pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
             pManager.AddCurveParameter("PolyLine", "L", "PolyLine. If you input grid plane below only x and y coordinate positions will be used from this polyline, but if not a new Grid Plane Surface (best-fit plane) will be created from PolyLine control points.", GH_ParamAccess.item);
             pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface or Plane (optional). If no input here then the line's best-fit plane will be used", GH_ParamAccess.item);
@@ -44,8 +101,8 @@ namespace GhSA.Components
                     System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
             pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
             pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Value Start (" + Units.Force + "/" + Units.LengthLarge + ")", "V1", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ") at Start of Line", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Value End (" + Units.Force + "/" + Units.LengthLarge + ")", "V2", "Load Value (" + Units.Force + "/" + Units.LengthLarge + ") at End of Line (default : Start Value)", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Value Start [" + unitAbbreviation + "]", "V1", "Load Value at Start of Line", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Value End [" + unitAbbreviation + "]", "V2", "Load Value at End of Line (default : Start Value)", GH_ParamAccess.item);
 
             pManager[0].Optional = true;
             pManager[2].Optional = true;
@@ -165,7 +222,7 @@ namespace GhSA.Components
                         desc += "(" + temppt.X + "," + temppt.Y + ")";
                     }
                     // add units to the end
-                    desc += "(" + Units.LengthLarge + ")";
+                    desc += "(" + Units.LengthUnitGeometry + ")";
 
                     // set polyline in grid line load
                     gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
@@ -227,20 +284,73 @@ namespace GhSA.Components
             }
 
             // 7 load value
-            double load1 = 0;
-            if (DA.GetData(7, ref load1))
-                load1 *= 1000; //convert to kN
+            double load1 = GetInput.ForcePerLength(this, DA, 7, forcePerLengthUnit).NewtonsPerMeter;
             gridlineload.GridLineLoad.ValueAtStart = load1;
 
             // 8 load value
             double load2 = load1;
             if (DA.GetData(8, ref load2))
-                load2 *= 1000; //convert to kN
+                load2 = GetInput.ForcePerLength(this, DA, 6, forcePerLengthUnit, true).NewtonsPerMeter;
             gridlineload.GridLineLoad.ValueAtEnd = load2;
 
             // convert to goo
             GsaLoad gsaLoad = new GsaLoad(gridlineload);
             DA.SetData(0, new GsaLoadGoo(gsaLoad));
         }
+        #region (de)serialization
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
+            return base.Write(writer);
+        }
+        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        {
+            try // this will fail if user has an old version of the component
+            {
+                Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+            }
+            catch (Exception) // we set the stored values like first initation of component
+            {
+                dropdownitems = new List<List<string>>();
+                dropdownitems.Add(Units.FilteredForceUnits);
+                dropdownitems.Add(Units.FilteredLengthUnits);
+
+                selecteditems = new List<string>();
+                selecteditems.Add(ForceUnit.Kilonewton.ToString());
+                selecteditems.Add(LengthUnit.Meter.ToString());
+            }
+            first = false;
+
+            UpdateUIFromSelectedItems();
+            return base.Read(reader);
+        }
+
+        bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+        {
+            return null;
+        }
+        bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+        #endregion
+        #region IGH_VariableParameterComponent null implementation
+        void IGH_VariableParameterComponent.VariableParameterMaintenance()
+        {
+            IQuantity force = new ForcePerLength(0, forcePerLengthUnit);
+            string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+
+            Params.Input[7].Name = "Value Start [" + unitAbbreviation + "]";
+            Params.Input[8].Name = "Value End [" + unitAbbreviation + "]";
+        }
+        #endregion
     }
 }

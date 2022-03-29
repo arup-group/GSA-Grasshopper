@@ -1,11 +1,12 @@
-﻿using GhSA.Parameters;
+﻿using GsaGH.Parameters;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 using System;
 using GsaAPI;
+using System.Collections.ObjectModel;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to edit a 1D Element
@@ -25,7 +26,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditElem1D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditElem1d;
         #endregion
 
         #region Custom UI
@@ -36,7 +37,7 @@ namespace GhSA.Components
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             
             pManager.AddGenericParameter("1D Element", "E1D", "GSA 1D Element to Modify", GH_ParamAccess.item);
@@ -75,7 +76,7 @@ namespace GhSA.Components
             pManager.HideParameter(2);
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("1D Element", "E1D", "Modified GSA 1D Element", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Number", "ID", "Get Element Number. If ID is set it will replace any existing 1D Element in the model", GH_ParamAccess.item);
@@ -97,7 +98,8 @@ namespace GhSA.Components
             pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
-            
+            pManager.AddIntegerParameter("Topology", "Tp", "Get the Element's original topology list referencing node IDs in Model that Element was created from", GH_ParamAccess.list);
+
         }
         #endregion
 
@@ -239,6 +241,7 @@ namespace GhSA.Components
                         elem.IsDummy = dum; // elem.Element.IsDummy = dum;
                 }
 
+
                 // #### outputs ####
                 DA.SetData(0, new GsaElement1dGoo(elem));
                 DA.SetData(1, elem.ID);
@@ -256,6 +259,7 @@ namespace GhSA.Components
                 DA.SetData(13, elem.IsDummy);
 
                 try { DA.SetData(14, elem.ParentMember); } catch (Exception) { }
+                DA.SetDataList(15, new Collection<int>(elem.API_Element.Topology));
             }
         }
     }

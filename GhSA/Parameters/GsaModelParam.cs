@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Model class, this class defines the basic properties and methods for any Gsa Model
@@ -313,7 +306,7 @@ namespace GhSA.Parameters
     public class GsaModelParameter : GH_PersistentParam<GsaModelGoo>
     {
         public GsaModelParameter()
-          : base(new GH_InstanceDescription("GSA Model", "GSA", "A GSA Model", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("GSA Model", "GSA", "A GSA Model", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -321,7 +314,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.primary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaModel;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ModelParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

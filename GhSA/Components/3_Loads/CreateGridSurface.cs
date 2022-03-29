@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Grasshopper;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Parameters;
 using Rhino.Geometry;
 using GsaAPI;
-using GhSA.Parameters;
+using GsaGH.Parameters;
+using Rhino;
+using UnitsNet;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     public class CreateGridSurface : GH_Component, IGH_VariableParameterComponent
     {
@@ -23,7 +23,7 @@ namespace GhSA.Components
         public override Guid ComponentGuid => new Guid("1052955c-cf97-4378-81d3-8491e0defad0");
         public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridSurface;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GridSurface;
         #endregion
 
         #region Custom UI
@@ -66,11 +66,18 @@ namespace GhSA.Components
         });
 
         string selecteditem = "1D, One-way span";
-
+        private bool _useDegrees = false;
         #endregion
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            string angleUnit = "rad";
+            if (_useDegrees)
+                angleUnit = "deg";
+
+            IQuantity length = new Length(0, Units.LengthUnitGeometry);
+            string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
             pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model", GH_ParamAccess.item, 0);
             pManager.AddTextParameter("Element list", "El", "List of Elements for which load should be expanded to (by default 'all')." + System.Environment.NewLine +
@@ -78,7 +85,7 @@ namespace GhSA.Components
                " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
                "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
             pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Tolerance (" + Units.LengthLarge + ")", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 0.01);
+            pManager.AddNumberParameter("Tolerance [" + unitAbbreviation + "]", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 0.01);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -89,16 +96,23 @@ namespace GhSA.Components
             if (first)
             {
                 _mode = FoldMode.One_Dimensional_One_Way;
-                pManager.AddNumberParameter("Span Direction", "Di", "Span Direction (" + Units.Angle + ") between -180 and 180 degrees", GH_ParamAccess.item, 0);
+                pManager.AddAngleParameter("Span Direction [" + angleUnit + "]", "Di", "Span Direction between -180 and 180 degrees", GH_ParamAccess.item, 0);
                 pManager[5].Optional = true;
                 first = false;
+                angleInputParam = this.Params.Input[5];
             }
         }
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Grid Surface", "GPS", "GSA Grid Surface", GH_ParamAccess.item);
         }
-
+        protected override void BeforeSolveInstance()
+        {
+            _useDegrees = false;
+            Param_Number angleParameter = Params.Input[5] as Param_Number;
+            if (angleParameter != null)
+                _useDegrees = angleParameter.UseDegrees;
+        }
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // 0 Plane
@@ -198,15 +212,10 @@ namespace GhSA.Components
             }
 
             // 4 Tolerance
-            GH_Number ghtol = new GH_Number();
-            if (DA.GetData(4, ref ghtol))
+            if (this.Params.Input[4].SourceCount != 0)
             {
-                double tol = 10;
-                if (GH_Convert.ToDouble(ghtol, out tol, GH_Conversion.Both))
-                {
-                    gs.Tolerance = tol;
-                    changeGS = true;
-                }
+                gs.Tolerance = GetInput.Length(this, DA, 4, Units.LengthUnitGeometry, true).Millimeters;
+                changeGS = true;
             }
 
             switch (_mode)
@@ -216,18 +225,17 @@ namespace GhSA.Components
                     gs.SpanType = GridSurface.Span_Type.ONE_WAY;
                     
                     // 5 span direction
-                    GH_Number ghdir = new GH_Number();
-                    if (DA.GetData(5, ref ghdir))
+                    double dir = 0.0;
+                    if (DA.GetData(5, ref dir))
                     {
-                        double dir = 0;
-                        if (GH_Convert.ToDouble(ghdir, out dir, GH_Conversion.Both))
-                        {
-                            if (dir > 180 || dir < -180)
-                                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
-                            gs.Direction = dir;
-                            if (dir != 0)
-                                changeGS = true;
-                        }
+                        if (!_useDegrees)
+                            dir = RhinoMath.ToDegrees(dir);
+
+                        if (dir > 180 || dir < -180)
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
+                        gs.Direction = dir;
+                        if (dir != 0.0)
+                            changeGS = true;
                     }
                     break;
 
@@ -279,6 +287,7 @@ namespace GhSA.Components
         }
         private bool first = true;
         private FoldMode _mode = FoldMode.One_Dimensional_One_Way;
+        private IGH_Param angleInputParam;
 
         private void Mode1Clicked()
         {
@@ -293,7 +302,7 @@ namespace GhSA.Components
                 Params.UnregisterInputParameter(Params.Input[5], true);
 
             //add input parameters
-            Params.RegisterInputParam(new Param_Number());
+            Params.RegisterInputParam(angleInputParam);
 
             (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
             Params.OnParametersChanged();
@@ -303,6 +312,8 @@ namespace GhSA.Components
         {
             if (_mode == FoldMode.One_Dimensional_Two_Way)
                 return;
+            if (_mode == FoldMode.One_Dimensional_One_Way)
+                angleInputParam = Params.Input[5];
 
             RecordUndoEvent("1D, two-way Parameters");
             _mode = FoldMode.One_Dimensional_Two_Way;
@@ -323,6 +334,8 @@ namespace GhSA.Components
         {
             if (_mode == FoldMode.Two_Dimensional)
                 return;
+            if (_mode == FoldMode.One_Dimensional_One_Way)
+                angleInputParam = Params.Input[5];
 
             RecordUndoEvent("2D Parameters");
             _mode = FoldMode.Two_Dimensional;
@@ -360,9 +373,12 @@ namespace GhSA.Components
         {
             if (_mode == FoldMode.One_Dimensional_One_Way)
             {
+                string angleUnit = "rad";
+                if (_useDegrees)
+                    angleUnit = "deg";
                 Params.Input[5].NickName = "Dir";
-                Params.Input[5].Name = "Span Direction";
-                Params.Input[5].Description = "Span Direction (" + Units.Angle + ") between -180 and 180 degrees";
+                Params.Input[5].Name = "Span Direction [" + angleUnit + "]";
+                Params.Input[5].Description = "Span Direction between -180 and 180 degrees";
                 Params.Input[5].Access = GH_ParamAccess.item;
                 Params.Input[5].Optional = true;
             }

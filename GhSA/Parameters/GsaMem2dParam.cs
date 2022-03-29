@@ -6,13 +6,9 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino.Geometry.Collections;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
+using UnitsNet;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
@@ -23,6 +19,28 @@ namespace GhSA.Parameters
         {
             get { return m_member; }
             set { m_member = value; }
+        }
+        internal Member GetAPI_MemberClone()
+        {
+            Member mem = new Member
+            {
+                Group = m_member.Group,
+                IsDummy = m_member.IsDummy,
+                MeshSize = m_member.MeshSize,
+                Name = m_member.Name.ToString(),
+                Offset = m_member.Offset,
+                OrientationAngle = m_member.OrientationAngle,
+                OrientationNode = m_member.OrientationNode,
+                Property = m_member.Property,
+                Topology = m_member.Topology.ToString(),
+                Type = m_member.Type,
+                Type2D = m_member.Type2D
+            };
+
+            if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                mem.Colour = m_member.Colour;
+
+            return mem;
         }
         public PolyCurve PolyCurve
         {
@@ -125,13 +143,17 @@ namespace GhSA.Parameters
                 m_member.Name = value;
             }
         }
-        public double MeshSize
+        public Length MeshSize
         {
-            get { return m_member.MeshSize; }
+            get 
+            {
+                Length l = new Length(m_member.MeshSize, UnitsNet.Units.LengthUnit.Meter);
+                return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry); 
+            }
             set
             {
                 CloneApiMember();
-                m_member.MeshSize = value;
+                m_member.MeshSize = value.Meters;
             }
         }
         public GsaOffset Offset
@@ -147,10 +169,10 @@ namespace GhSA.Parameters
             set
             {
                 CloneApiMember();
-                m_member.Offset.X1 = value.X1;
-                m_member.Offset.X2 = value.X2;
-                m_member.Offset.Y = value.Y;
-                m_member.Offset.Z = value.Z;
+                m_member.Offset.X1 = value.X1.Meters;
+                m_member.Offset.X2 = value.X2.Meters;
+                m_member.Offset.Y = value.Y.Meters;
+                m_member.Offset.Z = value.Z.Meters;
             }
         }
         public double OrientationAngle
@@ -284,7 +306,7 @@ namespace GhSA.Parameters
             List<List<Point3d>> inlcusion_lines_topology,
             List<List<string>> inclusion_topology_type,
             List<Point3d> includePoints,
-            GsaProp2d prop)
+            GsaProp2d prop, GH_Component owner = null)
         {
             m_member = member;
             m_id = id;
@@ -294,6 +316,21 @@ namespace GhSA.Parameters
                 m_brep = null;
                 m_edgeCrv = null;
                 m_inclPts = null;
+                return;
+            }
+
+            if (topology.Count < 3) // we need minimum 3 nodes to create a 2D member
+            {
+                m_brep = null;
+                m_edgeCrv = null;
+                m_inclPts = null;
+                string error = " Invalid topology Mem2D ID: " + id + ".";
+                if (owner == null)
+                {
+                    throw new Exception(error);
+                }
+                else
+                    owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, error);
                 return;
             }
 
@@ -345,7 +382,16 @@ namespace GhSA.Parameters
 
             m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs);
             if (m_brep == null)
-                throw new Exception(" Error with Mem2D: Unable to build Brep, please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
+            {
+                string error = " Error with Mem2D ID: " + id + ". Unable to build Brep, please verify input geometry is valid and tolerance is set to something reasonable." +
+                    System.Environment.NewLine + "It may be that the topology list is invalid, please check your input. Member " + id + " has not been imported!";
+                if (owner == null)
+                {
+                    throw new Exception(error);
+                }
+                else
+                    owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, error);
+            }
 
             m_prop = prop;
         }
@@ -631,7 +677,7 @@ namespace GhSA.Parameters
                 if (Value == null)
                     target = default;
                 else
-                    target = (Q)(object)Value.API_Member;
+                    target = (Q)(object)Value.GetAPI_MemberClone();
                 return true;
             }
 
@@ -691,7 +737,7 @@ namespace GhSA.Parameters
                     target = default;
                 else
                 {
-                    target = (Q)(object)Value.PolyCurve.ToPolyline(GhSA.Units.Tolerance, 2, 0, 0);
+                    target = (Q)(object)Value.PolyCurve.ToPolyline(GsaGH.Units.Tolerance.As(Units.LengthUnitGeometry), 2, 0, 0);
                     if (Value.PolyCurve == null)
                         return false;
                 }
@@ -933,15 +979,15 @@ namespace GhSA.Parameters
     public class GsaMember2dParameter : GH_PersistentGeometryParam<GsaMember2dGoo>, IGH_PreviewObject
     {
         public GsaMember2dParameter()
-          : base(new GH_InstanceDescription("2D Member", "M2D", "Maintains a collection of GSA 2D Member data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("2D Member", "M2D", "Maintains a collection of GSA 2D Member data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("fa512c2d-4767-49f1-a574-32bf66a66568");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaMem2D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Mem2dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-
-namespace GhSA.Components.Ribbon
+﻿namespace GsaGH.Components.Ribbon
 {
-	/// <summary>
-	/// Class containing the ribbon tab display name
-	/// 
-	/// Call this class from all components in plugin for naming consistency
-	/// </summary>
-	public class CategoryName
+    /// <summary>
+    /// Class containing the ribbon tab display name
+    /// 
+    /// Call this class from all components in plugin for naming consistency
+    /// </summary>
+    public class CategoryName
 	{
 		public static string Name()
 		{

@@ -3,12 +3,11 @@ using Grasshopper.Kernel.Attributes;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using System.Windows.Forms;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class to create custom component UI with a button
@@ -34,9 +33,9 @@ namespace GhSA.UI
         readonly string button1Text; // text to be displayed button 1
         readonly string button2Text; // text to be displayed button 2
         readonly string button3Text; // text to be displayed button 3
-        System.Drawing.RectangleF Button1Bounds; // area for button1 to be displayed
-        System.Drawing.RectangleF Button2Bounds; // area for button2 to be displayed
-        System.Drawing.RectangleF Button3Bounds; // area for button3 to be displayed
+        RectangleF Button1Bounds; // area for button1 to be displayed
+        RectangleF Button2Bounds; // area for button2 to be displayed
+        RectangleF Button3Bounds; // area for button3 to be displayed
         readonly Action action1;
         readonly Action action2;
         readonly Action action3;
@@ -54,12 +53,12 @@ namespace GhSA.UI
             {
                 List<string> spacers = new List<string>();
                 spacers.Add(SpacerTxt);
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
+                float sp = GsaGH.UI.ComponentUI.MaxTextWidth(spacers, GH_FontServer.Small);
                 List<string> buttons = new List<string>();
                 buttons.Add(button1Text);
                 buttons.Add(button2Text);
                 buttons.Add(button3Text);
-                float bt = GhSA.UI.ComponentUI.MaxTextWidth(buttons, GH_FontServer.Standard);
+                float bt = GsaGH.UI.ComponentUI.MaxTextWidth(buttons, GH_FontServer.Standard);
 
                 float num = Math.Max(Math.Max(sp, bt), 90);
                 return num;
@@ -92,7 +91,7 @@ namespace GhSA.UI
             Bounds = new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height + h0 + 3 * h1 + 8 * s);
         }
 
-        protected override void Render(GH_Canvas canvas, System.Drawing.Graphics graphics, GH_CanvasChannel channel)
+        protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
         {
             base.Render(canvas, graphics, channel);
 
@@ -210,7 +209,7 @@ namespace GhSA.UI
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                System.Drawing.RectangleF rec1 = Button1Bounds;
+                RectangleF rec1 = Button1Bounds;
                 if (rec1.Contains(e.CanvasLocation))
                 {
                     mouseDown1 = true;
@@ -219,7 +218,7 @@ namespace GhSA.UI
                     Owner.ExpireSolution(true);
                     return GH_ObjectResponse.Capture;
                 }
-                System.Drawing.RectangleF rec2 = Button2Bounds;
+                RectangleF rec2 = Button2Bounds;
                 if (rec2.Contains(e.CanvasLocation))
                 {
                     mouseDown1 = false;
@@ -228,7 +227,7 @@ namespace GhSA.UI
                     Owner.ExpireSolution(true);
                     return GH_ObjectResponse.Capture;
                 }
-                System.Drawing.RectangleF rec3 = Button3Bounds;
+                RectangleF rec3 = Button3Bounds;
                 if (rec3.Contains(e.CanvasLocation))
                 {
                     mouseDown1 = false;
@@ -245,7 +244,7 @@ namespace GhSA.UI
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                System.Drawing.RectangleF rec1 = Button1Bounds;
+                RectangleF rec1 = Button1Bounds;
                 if (rec1.Contains(e.CanvasLocation))
                 {
                     if (mouseDown1)
@@ -258,7 +257,7 @@ namespace GhSA.UI
                         return GH_ObjectResponse.Release;
                     }
                 }
-                System.Drawing.RectangleF rec2 = Button2Bounds;
+                RectangleF rec2 = Button2Bounds;
                 if (rec2.Contains(e.CanvasLocation))
                 {
                     if (mouseDown2)
@@ -271,7 +270,7 @@ namespace GhSA.UI
                         return GH_ObjectResponse.Release;
                     }
                 }
-                System.Drawing.RectangleF rec3 = Button3Bounds;
+                RectangleF rec3 = Button3Bounds;
                 if (rec3.Contains(e.CanvasLocation))
                 {
                     if (mouseDown3)

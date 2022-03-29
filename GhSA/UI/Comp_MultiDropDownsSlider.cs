@@ -7,10 +7,8 @@ using System.Windows.Forms;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.ComponentModel;
 
-namespace GhSA.UI
+namespace GsaGH.UI
 {
     /// <summary>
     /// Class to create custom component UI with multiple dropdowns
@@ -97,11 +95,11 @@ namespace GhSA.UI
         {
             get
             {
-                float sp = GhSA.UI.ComponentUI.MaxTextWidth(spacerTxts, GH_FontServer.Small);
+                float sp = GsaGH.UI.ComponentUI.MaxTextWidth(spacerTxts, GH_FontServer.Small);
                 float bt = 0;
                 for (int i = 0; i < dropdownlists.Count; i++)
                 {
-                    float tbt = GhSA.UI.ComponentUI.MaxTextWidth(dropdownlists[i], new Font(GH_FontServer.FamilyStandard, 7));
+                    float tbt = GsaGH.UI.ComponentUI.MaxTextWidth(dropdownlists[i], new Font(GH_FontServer.FamilyStandard, 7));
                     if (tbt > bt)
                         bt = tbt;
                 }
@@ -357,7 +355,7 @@ namespace GhSA.UI
         }
         
 
-        protected override void Render(GH_Canvas canvas, System.Drawing.Graphics graphics, GH_CanvasChannel channel)
+        protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
         {
             base.Render(canvas, graphics, channel);
 
@@ -532,7 +530,7 @@ namespace GhSA.UI
 
                 for (int i = 0; i < dropdownlists.Count; i++)
                 {
-                    System.Drawing.RectangleF rec = BorderBound[i];
+                    RectangleF rec = BorderBound[i];
                     if (rec.Contains(e.CanvasLocation))
                     {
                         unfolded[i] = !unfolded[i];
@@ -549,12 +547,12 @@ namespace GhSA.UI
 
                     if (unfolded[i])
                     {
-                        System.Drawing.RectangleF rec2 = dropdownBound[i];
+                        RectangleF rec2 = dropdownBound[i];
                         if (rec2.Contains(e.CanvasLocation))
                         {
                             for (int j = 0; j < dropdownBounds[i].Count; j++)
                             {
-                                System.Drawing.RectangleF rec3 = dropdownBounds[i][j];
+                                RectangleF rec3 = dropdownBounds[i][j];
                                 if (rec3.Contains(e.CanvasLocation))
                                 {
                                     if (displayTexts[i] != dropdownlists[i][j])
@@ -605,7 +603,7 @@ namespace GhSA.UI
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                System.Drawing.RectangleF rec = GrabBound;
+                RectangleF rec = GrabBound;
                 GH_Component comp = Owner as GH_Component;
                 if (rec.Contains(e.CanvasLocation))
                 {
@@ -701,7 +699,7 @@ namespace GhSA.UI
                 hiddenSlider.Slider.Type = noDigits == 0 ? Grasshopper.GUI.Base.GH_SliderAccuracy.Integer : Grasshopper.GUI.Base.GH_SliderAccuracy.Float;
                 hiddenSlider.Name = Owner.Name + " Slider";
                 hiddenSlider.Slider.Value = (decimal)CurrentValue;
-                Grasshopper.GUI.GH_NumberSliderPopup gH_MenuSliderForm = new Grasshopper.GUI.GH_NumberSliderPopup();
+                GH_NumberSliderPopup gH_MenuSliderForm = new GH_NumberSliderPopup();
                 GH_WindowsFormUtil.CenterFormOnCursor(gH_MenuSliderForm, true);
                 gH_MenuSliderForm.Setup(hiddenSlider);
                 var res = gH_MenuSliderForm.ShowDialog();

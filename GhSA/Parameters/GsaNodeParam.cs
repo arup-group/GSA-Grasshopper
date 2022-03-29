@@ -6,20 +6,30 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 using Rhino.Display;
-using Rhino.Collections;
+using UnitsNet.Units;
+using UnitsNet;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Node class, this class defines the basic properties and methods for any Gsa Node
     /// </summary>
     public class GsaNode
     {
-        public GsaSpring Spring
+        #region properties
+        public bool IsValid
         {
-            get { return m_spring; }
-            set { m_spring = value; }
+            get
+            {
+                if (API_Node == null) { return false; }
+                return true;
+            }
         }
+        //public GsaSpring Spring
+        //{
+        //    get { return m_spring; }
+        //    set { m_spring = value; }
+        //}
         public int ID
         {
             get { return m_id; }
@@ -56,6 +66,9 @@ namespace GhSA.Parameters
                 UpdatePreview();
             }
         }
+        
+        #endregion
+
         #region GsaAPI.Node members
         internal Node API_Node
         {
@@ -131,7 +144,7 @@ namespace GhSA.Parameters
                 {
                     X = m_node.Position.X,
                     Y = m_node.Position.Y,
-                    Z = m_node.Position.Z,
+                    Z = m_node.Position.Z
                 }
             };
 
@@ -140,19 +153,52 @@ namespace GhSA.Parameters
 
             m_node = node;
         }
+        internal Node GetApiNodeToUnit(LengthUnit unit = LengthUnit.Meter)
+        {
+            Node node = new Node
+            {
+                AxisProperty = m_node.AxisProperty,
+                DamperProperty = m_node.DamperProperty,
+                MassProperty = m_node.MassProperty,
+                Name = m_node.Name.ToString(),
+                Restraint = new NodalRestraint
+                {
+                    X = m_node.Restraint.X,
+                    Y = m_node.Restraint.Y,
+                    Z = m_node.Restraint.Z,
+                    XX = m_node.Restraint.XX,
+                    YY = m_node.Restraint.YY,
+                    ZZ = m_node.Restraint.ZZ,
+                },
+                SpringProperty = m_node.SpringProperty,
+                Position = new Vector3
+                {
+                    X = (unit == LengthUnit.Meter) ? m_node.Position.X : new Length(m_node.Position.X, unit).Meters,
+                    Y = (unit == LengthUnit.Meter) ? m_node.Position.Y : new Length(m_node.Position.Y, unit).Meters,
+                    Z = (unit == LengthUnit.Meter) ? m_node.Position.Z : new Length(m_node.Position.Z, unit).Meters
+                }
+            };
+
+            if ((System.Drawing.Color)m_node.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+                node.Colour = m_node.Colour;
+
+            return node;
+        }
         #endregion
+
         #region preview
         internal Line previewXaxis;
         internal Line previewYaxis;
         internal Line previewZaxis;
         internal Brep previewSupportSymbol;
-        internal Rhino.Display.Text3d previewText;
+        internal Text3d previewText;
+        
         internal void UpdatePreview()
         {
             if (m_node.Restraint.X || m_node.Restraint.Y || m_node.Restraint.Z ||
                 m_node.Restraint.XX || m_node.Restraint.YY || m_node.Restraint.ZZ)
             {
-                GhSA.UI.Display.PreviewRestraint(Restraint, m_plane, Point, 
+                GsaGH.UI.Display.PreviewRestraint(Restraint, m_plane, Point, 
                     ref previewSupportSymbol, ref previewText);
             }
             else
@@ -178,19 +224,26 @@ namespace GhSA.Parameters
         #region fields
         private Plane m_plane; 
         private int m_id;
-        private GsaSpring m_spring;
-        private Node m_node; 
+        //private GsaSpring m_spring;
+        private Node m_node;
         #endregion
-        
+
         #region constructors
         public GsaNode()
         {
             m_node = new Node();
         }
 
-        internal GsaNode(Node node, int ID, Plane localAxis = new Plane())
+        internal GsaNode(Node node, int ID, LengthUnit unit, Plane localAxis = new Plane())
         {
             m_node = node;
+            CloneApiNode();
+            if (unit != LengthUnit.Meter)
+            {
+                m_node.Position.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
+                m_node.Position.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
+                m_node.Position.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
+            }
             m_id = ID;
             m_plane = localAxis;
             UpdatePreview();
@@ -211,25 +264,25 @@ namespace GhSA.Parameters
             if (cloneApiNode)
                 dup.CloneApiNode();
             dup.m_plane = m_plane;
-            dup.m_spring = m_spring;
+            //dup.m_spring = m_spring;
             dup.UpdatePreview();
             return dup;
         }
         #endregion
 
-        #region properties
-        public bool IsValid
-        {
-            get
-            {
-                if (API_Node == null) { return false; }
-                return true;
-            }
-        }
-
-        #endregion
+        
 
         #region methods
+        public void UpdateUnit(LengthUnit unit)
+        {
+            if (unit != LengthUnit.Meter) // convert from meter to input unit if not meter
+            {
+                Vector3 pos = new Vector3();
+                this.API_Node.Position.X = new Length(this.API_Node.Position.X, LengthUnit.Meter).As(unit);
+                this.API_Node.Position.Y = new Length(this.API_Node.Position.Y, LengthUnit.Meter).As(unit);
+                this.API_Node.Position.Z = new Length(this.API_Node.Position.Z, LengthUnit.Meter).As(unit);
+            }
+        }
         public override string ToString()
         {
             if (API_Node == null) { return "Null Node"; }
@@ -565,15 +618,15 @@ namespace GhSA.Parameters
     public class GsaNodeParameter : GH_PersistentGeometryParam<GsaNodeGoo>, IGH_PreviewObject
     {
         public GsaNodeParameter()
-          : base(new GH_InstanceDescription("Node", "No", "Maintains a collection of GSA Node data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Node", "No", "Maintains a collection of GSA Node data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("8ebdc693-e882-494d-8177-b0bd9c3d84a3");
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.tertiary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaNode;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.NodeParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.

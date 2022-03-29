@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel.Attributes;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GhSA.Parameters;
-using System.Resources;
+using GsaGH.Parameters;
+using UnitsNet.GH;
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     /// <summary>
     /// Component to get geometric properties of a section
     /// </summary>
-    public class GetSectionProperties : GH_Component, IGH_PreviewObject
+    public class GetSectionProperties : GH_Component
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
@@ -30,33 +22,32 @@ namespace GhSA.Components
         { this.Hidden = true; } // sets the initial state of the component to hidden
         public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.SectionProperties;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SectionProperties;
         #endregion
 
         #region Custom UI
         //This region overrides the typical component layout
 
-
         #endregion
 
         #region Input and output
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Section", "PB", "Profile or GSA Section to get a bit more info out of", GH_ParamAccess.item);
         }
 
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Area", "A", "GSA Section Area (" + Units.LengthSection + "\xB2)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia y-y", "Iyy", "GSA Section Moment of Intertia around local y-y axis (" + Units.LengthSection + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia z-z", "Izz", "GSA Section Moment of Intertia around local z-z axis (" + Units.LengthSection + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Moment of Inertia y-z", "Iyz", "GSA Section Moment of Intertia around local y-z axis (" + Units.LengthSection + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Torsion constant", "J", "GSA Section Torsion constant J (" + Units.LengthSection + "\x2074)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Shear Area Factor in y", "Ky", "GSA Section Shear Area Factor in local y-direction (-)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Shear Area Factor in z", "Kz", "GSA Section Shear Area Factor in local z-direction (-)", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Surface A/Length", "S/L", "GSA Section Surface Area per Unit Length (" + Units.LengthSection + "\xB2/"+ Units.LengthLarge + ")", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Volume/Length", "V/L", "GSA Section Volume per Unit Length (" + Units.LengthSection + "\xB3/"+ Units.LengthLarge + ")", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Area", "A", "Section Area", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Moment of Inertia y-y", "Iyy", "Section Moment of Intertia around local y-y axis", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Moment of Inertia z-z", "Izz", "Section Moment of Intertia around local z-z axis", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Moment of Inertia y-z", "Iyz", "Section Moment of Intertia around local y-z axis", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Torsion constant", "J", "Section Torsion constant J", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Shear Area Factor in y", "Ky", "Section Shear Area Factor in local y-direction", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Shear Area Factor in z", "Kz", "Section Shear Area Factor in local z-direction", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Surface A/Length", "S/L", "Section Surface Area per Unit Length", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Volume/Length", "V/L", "Section Volume per Unit Length", GH_ParamAccess.item);
         }
         #endregion
 
@@ -77,34 +68,16 @@ namespace GhSA.Components
             }
             if (gsaSection != null)
             {
-                double conversionfactor = 1;
-                if (Units.LengthSection != "m")
-                {
-                    switch (Units.LengthSection)
-                    {
-                        case "mm":
-                            conversionfactor = 1000;
-                            break;
-                        case "cm":
-                            conversionfactor = 100;
-                            break;
-                        case "in":
-                            conversionfactor = 1000 / 25.4;
-                            break;
-                        case "ft":
-                            conversionfactor = 1000 / (12 * 25.4);
-                            break;
-                    }
-                }
-                DA.SetData(0, gsaSection.Area * Math.Pow(conversionfactor, 2));
-                DA.SetData(1, gsaSection.Iyy * Math.Pow(conversionfactor, 4));
-                DA.SetData(2, gsaSection.Izz * Math.Pow(conversionfactor, 4));
-                DA.SetData(3, gsaSection.Iyz * Math.Pow(conversionfactor, 4));
-                DA.SetData(4, gsaSection.J * Math.Pow(conversionfactor, 4));
+
+                DA.SetData(0, new GH_UnitNumber(gsaSection.Area));
+                DA.SetData(1, new GH_UnitNumber(gsaSection.Iyy));
+                DA.SetData(2, new GH_UnitNumber(gsaSection.Izz));
+                DA.SetData(3, new GH_UnitNumber(gsaSection.Iyz));
+                DA.SetData(4, new GH_UnitNumber(gsaSection.J));
                 DA.SetData(5, gsaSection.Ky);
                 DA.SetData(6, gsaSection.Kz);
-                DA.SetData(7, gsaSection.SurfaceAreaPerLength * Math.Pow(conversionfactor, 2));
-                DA.SetData(8, gsaSection.VolumePerLength * Math.Pow(conversionfactor, 3));
+                DA.SetData(7, new GH_UnitNumber(gsaSection.SurfaceAreaPerLength));
+                DA.SetData(8, new GH_UnitNumber(gsaSection.VolumePerLength));
             }
         }
     }

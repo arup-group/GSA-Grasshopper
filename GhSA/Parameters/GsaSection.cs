@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
+using UnitsNet;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Section class, this class defines the basic properties and methods for any Gsa Section
@@ -29,25 +24,45 @@ namespace GhSA.Parameters
             }
         }
         #region section properties
-        public double Area
+        public Area Area
         {
-            get { return m_section.Area; }
+            get 
+            {
+                Area area = new Area(m_section.Area, UnitsNet.UnitSystem.SI);
+                return new Area(area.As(Units.SectionAreaUnit), Units.SectionAreaUnit); 
+            }
         }
-        public double Iyy
+        public AreaMomentOfInertia Iyy
         {
-            get { return m_section.Iyy; }
+            get 
+            {
+                AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Iyy, UnitsNet.UnitSystem.SI);
+                return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
+            }
         }
-        public double Iyz
+        public AreaMomentOfInertia Iyz
         {
-            get { return m_section.Iyz; }
+            get
+            {
+                AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Iyz, UnitsNet.UnitSystem.SI);
+                return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
+            }
         }
-        public double Izz
+        public AreaMomentOfInertia Izz
         {
-            get { return m_section.Izz; }
+            get
+            {
+                AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Izz, UnitsNet.UnitSystem.SI);
+                return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
+            }
         }
-        public double J
+        public AreaMomentOfInertia J
         {
-            get { return m_section.J; }
+            get
+            {
+                AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.J, UnitsNet.UnitSystem.SI);
+                return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
+            }
         }
         public double Ky
         {
@@ -57,13 +72,20 @@ namespace GhSA.Parameters
         {
             get { return m_section.Kz; }
         }
-        public double SurfaceAreaPerLength
+        public IQuantity SurfaceAreaPerLength
         {
-            get { return m_section.SurfaceAreaPerLength; }
+            get 
+            {
+                Area area = new Area(m_section.SurfaceAreaPerLength, UnitsNet.UnitSystem.SI);
+                Length len = new Length(1, Units.LengthUnitSection);
+                Area unitArea = len * len;
+                Area areaOut = new Area(area.As(unitArea.Unit), unitArea.Unit);
+                return areaOut / len; 
+            }
         }
-        public double VolumePerLength
+        public VolumePerLength VolumePerLength
         {
-            get { return m_section.VolumePerLength; }
+            get { return new VolumePerLength(m_section.VolumePerLength, UnitsNet.UnitSystem.SI); }
         }
         #endregion
         public int ID
@@ -402,15 +424,15 @@ namespace GhSA.Parameters
     public class GsaSectionParameter : GH_PersistentParam<GsaSectionGoo>
     {
         public GsaSectionParameter()
-          : base(new GH_InstanceDescription("Section", "PB", "GSA Section", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("Section", "PB", "GSA Section", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
         public override Guid ComponentGuid => new Guid("8500f335-fad7-46a0-b1be-bdad22ab1474");
 
-        public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaSection;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SectionParam;
 
         protected override GH_GetterResult Prompt_Plural(ref List<GsaSectionGoo> values)
         {

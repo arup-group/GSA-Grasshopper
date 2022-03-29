@@ -6,12 +6,9 @@ using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
-using Rhino;
-using GhSA.Util.Gsa;
-using Grasshopper.Documentation;
-using Rhino.Collections;
+using Grasshopper;
 
-namespace GhSA.Parameters
+namespace GsaGH.Parameters
 {
     /// <summary>
     /// Element3d class, this class defines the basic properties and methods for any Gsa Element 3d
@@ -22,6 +19,22 @@ namespace GhSA.Parameters
         {
             get { return m_elements; }
             set { m_elements = value; }
+        }
+        internal Element GetAPI_ElementClone(int i)
+        {
+            return new Element()
+            {
+                Group = m_elements[i].Group,
+                IsDummy = m_elements[i].IsDummy,
+                Name = m_elements[i].Name.ToString(),
+                OrientationNode = m_elements[i].OrientationNode,
+                OrientationAngle = m_elements[i].OrientationAngle,
+                Offset = m_elements[i].Offset,
+                ParentMember = m_elements[i].ParentMember,
+                Property = m_elements[i].Property,
+                Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
+                Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
+            };
         }
         public int Count
         {
@@ -63,11 +76,24 @@ namespace GhSA.Parameters
             get { return m_faceInt; }
             set { m_faceInt = value; }
         }
-        //public List<GsaProp3d> Properties
-        //{
-        //    get { return m_props; }
-        //    set { m_props = value; }
-        //}
+        public List<GsaProp3d> Properties
+        {
+            get { return m_props; }
+            set { m_props = value; }
+        }
+        public DataTree<int> TopologyIDs
+        {
+            get
+            {
+                DataTree<int> topos = new DataTree<int>();
+                for (int i = 0; i < m_elements.Count; i++)
+                {
+                    if (m_elements[i] != null)
+                        topos.AddRange(m_elements[i].Topology.ToList(), new Grasshopper.Kernel.Data.GH_Path(i));
+                }
+                return topos;
+            }
+        }
         #region GsaAPI.Element members
         public List<System.Drawing.Color> Colours
         {
@@ -279,17 +305,17 @@ namespace GhSA.Parameters
                     case apiObjectMember.offset:
                         if (off.Count > i)
                         {
-                            elems[i].Offset.X1 = off[i].X1;
-                            elems[i].Offset.X2 = off[i].X2;
-                            elems[i].Offset.Y = off[i].Y;
-                            elems[i].Offset.Z = off[i].Z;
+                            elems[i].Offset.X1 = off[i].X1.Meters;
+                            elems[i].Offset.X2 = off[i].X2.Meters;
+                            elems[i].Offset.Y = off[i].Y.Meters;
+                            elems[i].Offset.Z = off[i].Z.Meters;
                         }
                         else
                         {
-                            elems[i].Offset.X1 = off.Last().X1;
-                            elems[i].Offset.X2 = off.Last().X2;
-                            elems[i].Offset.Y = off.Last().Y;
-                            elems[i].Offset.Z = off.Last().Z;
+                            elems[i].Offset.X1 = off.Last().X1.Meters;
+                            elems[i].Offset.X2 = off.Last().X2.Meters;
+                            elems[i].Offset.Y = off.Last().Y.Meters;
+                            elems[i].Offset.Z = off.Last().Z.Meters;
                         }
                         break;
                     case apiObjectMember.property:
@@ -361,7 +387,7 @@ namespace GhSA.Parameters
         private List<List<int>> m_faceInt; // list of face integers included in each solid mesh referring to the mesh face list
         private List<Point3d> m_topo; // list of topology points for visualisation
         private List<int> m_id;
-        //private List<GsaProp2d> m_props;
+        private List<GsaProp3d> m_props;
         #endregion
 
         #region constructors
@@ -383,16 +409,14 @@ namespace GhSA.Parameters
 
             m_id = new List<int>(new int[m_mesh.Faces.Count()]);
 
-            //m_props = new List<GsaProp2d>();
-            //for (int i = 0; i < m_mesh.Faces.Count(); i++)
-            //{
-            //    GsaProp2d property = new GsaProp2d();
-            //    property.Prop2d = null;
-            //    m_props.Add(property);
-            //}
+            m_props = new List<GsaProp3d>();
+            for (int i = 0; i < m_mesh.Faces.Count(); i++)
+            {
+                m_props.Add(new GsaProp3d());
+            }
             UpdatePreview();
         }
-        internal GsaElement3d(List<Element> elements, List<int> ids, Mesh mesh)
+        internal GsaElement3d(List<Element> elements, List<int> ids, Mesh mesh, List<GsaProp3d> prop3ds)
         {
             m_elements = elements;
             m_mesh = mesh;
@@ -403,13 +427,7 @@ namespace GhSA.Parameters
 
             m_id = ids;
 
-            //m_props = new List<GsaProp2d>();
-            //for (int i = 0; i < m_mesh.Faces.Count(); i++)
-            //{
-            //    GsaProp2d property = new GsaProp2d();
-            //    property.Prop2d = null;
-            //    m_props.Add(property);
-            //}
+            m_props = prop3ds;
             UpdatePreview();
         }
         public GsaElement3d Duplicate(bool cloneApiElements = false)
@@ -426,6 +444,7 @@ namespace GhSA.Parameters
             if (cloneApiElements)
                 dup.CloneApiElements();
             dup.m_id = m_id.ToList();
+            dup.m_props = m_props.ConvertAll(x => x.Duplicate());
             dup.UpdatePreview();
             return dup;
         }
@@ -728,7 +747,7 @@ namespace GhSA.Parameters
     public class GsaElement3dParameter : GH_PersistentGeometryParam<GsaElement3dGoo>, IGH_PreviewObject
     {
         public GsaElement3dParameter()
-          : base(new GH_InstanceDescription("3D Element", "E3D", "Maintains a collection of GSA 3D Element data.", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+          : base(new GH_InstanceDescription("3D Element", "E3D", "Maintains a collection of GSA 3D Element data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
         {
         }
 
@@ -736,7 +755,7 @@ namespace GhSA.Parameters
 
         public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaElement3D;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Elem3dParam;
 
         //We do not allow users to pick parameter, 
         //therefore the following 4 methods disable all this ui.
