@@ -36,7 +36,7 @@ namespace GsaGH.Components
         {
         }
 
-        public override GH_Exposure Exposure => GH_Exposure.tertiary;
+        public override GH_Exposure Exposure => GH_Exposure.secondary;
 
         protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Result0D;
         #endregion
@@ -651,6 +651,7 @@ namespace GsaGH.Components
             writer.SetDouble("valMax", MaxValue);
             writer.SetDouble("valMin", MinValue);
             writer.SetDouble("val", DefScale);
+            writer.SetBoolean("legend", showLegend);
             Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
             return base.Write(writer);
         }
@@ -664,6 +665,7 @@ namespace GsaGH.Components
             MaxValue = reader.GetDouble("valMax");
             MinValue = reader.GetDouble("valMin");
             DefScale = reader.GetDouble("val");
+            showLegend = reader.GetBoolean("legend");
             Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
 
             first = false;
