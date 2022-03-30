@@ -43,7 +43,7 @@ namespace GsaGH.Components
                 dropdownitems.Add(dropdownTopList);
                 dropdownitems.Add(Units.FilteredLengthUnits);
 
-                selecteditem = _mode.ToString();
+                selecteditems.Add(dropdownTopList[3]);
                 selecteditems.Add(lengthUnit.ToString());
 
                 IQuantity quantity = new Length(0, lengthUnit);
@@ -52,7 +52,7 @@ namespace GsaGH.Components
                 first = false;
             }
                 
-            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, new List<string>() { "Element Type", "Unit" });
+            m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
         }
 
         public void SetSelected(int i, int j)
@@ -116,7 +116,6 @@ namespace GsaGH.Components
             "Load Panel"
         });
 
-        string selecteditem;
         // list of lists with all dropdown lists conctent
         List<List<string>> dropdownitems;
         // list of selected items
@@ -124,6 +123,7 @@ namespace GsaGH.Components
         // list of descriptions 
         List<string> spacerDescriptions = new List<string>(new string[]
         {
+            "Element Type",
             "Unit"
         });
         private bool first = true;
@@ -381,13 +381,12 @@ namespace GsaGH.Components
             {
                 Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
                 _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
-                selecteditem = selecteditems[0];
                 lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[1]);
             }
             catch (Exception)
             {
                 _mode = (FoldMode)reader.GetInt32("Mode"); //old version would have this set
-                selecteditem = reader.GetString("select"); // same
+                selecteditems.Add(reader.GetString("select")); // same
 
                 // set length to meters as this was the only option for old components
                 lengthUnit = UnitsNet.Units.LengthUnit.Meter;
@@ -399,7 +398,6 @@ namespace GsaGH.Components
                 dropdownitems.Add(dropdownTopList);
                 dropdownitems.Add(Units.FilteredLengthUnits);
 
-                selecteditem = _mode.ToString();
                 selecteditems.Add(lengthUnit.ToString());
 
                 IQuantity quantity = new Length(0, lengthUnit);
