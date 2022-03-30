@@ -75,7 +75,7 @@ namespace GsaGH.Parameters
                 CloneProperty();
                 IQuantity length = new Length(0, value.Unit);
                 string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-                m_prop2d.Description = value.ToString() + "(" + unitAbbreviation + ")";
+                m_prop2d.Description = value.Value.ToString() + "(" + unitAbbreviation + ")";
             }
             get 
             {
@@ -93,8 +93,7 @@ namespace GsaGH.Parameters
                 else
                     return new Length(
                         double.Parse(m_prop2d.Description, System.Globalization.CultureInfo.InvariantCulture),
-                        LengthUnit.Meter);
-                    
+                        LengthUnit.Millimeter);
             }
         }
         public string Description

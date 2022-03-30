@@ -40,7 +40,10 @@ namespace GsaGH.Components
                 }
             }
             else if (!isOptional)
+            {
                 owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
+                return UnitsNet.Length.Zero;
+            }
             else
             {
                 if (unitNumber == null)

@@ -447,9 +447,9 @@ namespace GsaGH.Components
                 {
                     GsaAnalysisTask task = new GsaAnalysisTask();
                     task.SetID(gsa.AddAnalysisTask());
-                    task.CreateDeafultCases(analysisModel);
+                    task.CreateDeafultCases(gsa);
                     if (task.Cases == null || task.Cases.Count == 0)
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contains no Analysis Tasks or Loads. Model has not been analysed");
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contains no loads. Model has not been analysed");
                     else
                     {
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contained no Analysis Tasks. Default Task has been created containing all cases found in model");

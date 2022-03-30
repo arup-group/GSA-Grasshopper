@@ -4,6 +4,7 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using UnitsNet;
 using System.Linq;
+using UnitsNet.GH;
 
 namespace GsaGH.Components
 {
@@ -47,7 +48,7 @@ namespace GsaGH.Components
             pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
             pManager.AddColourParameter("Prop2d Colour", "Co", "Set 2D Property Colour", GH_ParamAccess.item);
 
-            for (int i = 0; i < pManager.ParamCount; i++)
+            for (int i = 1; i < pManager.ParamCount; i++)
                 pManager[i].Optional = true;
         }
 
@@ -56,7 +57,7 @@ namespace GsaGH.Components
             pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property with changes", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Prop2d Number", "ID", "2D Property Number", GH_ParamAccess.item);
             pManager.AddGenericParameter("Material", "Ma", "Get GSA Material", GH_ParamAccess.item);
-            pManager.AddTextParameter("Thickness", "Th", "Get Property Thickness", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Thickness", "Th", "Get Property Thickness", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Axis", "Ax", "Get Axis: Global (0) or Topological (1)", GH_ParamAccess.item);
             pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
             pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
@@ -71,6 +72,10 @@ namespace GsaGH.Components
             if (DA.GetData(0, ref gsaProp2d))
             {
                 prop = gsaProp2d.Duplicate();
+            }
+            else
+            {
+                return;
             }
 
             // #### inputs ####
@@ -105,7 +110,8 @@ namespace GsaGH.Components
             }
 
             // 3 Thickness
-            prop.Thickness = GetInput.Length(this, DA, 3, Units.LengthUnitSection, true);
+            if (this.Params.Input[3].SourceCount > 0)
+                prop.Thickness = GetInput.Length(this, DA, 3, Units.LengthUnitSection, true);
 
             // 4 Axis
             GH_Integer ghax = new GH_Integer();
@@ -134,7 +140,6 @@ namespace GsaGH.Components
             }
 
             //#### outputs ####
-            string desc = (prop.API_Prop2d == null) ? "--" : prop.Description;
             int ax = (prop.API_Prop2d == null) ? 0 : prop.AxisProperty;
             string nm = (prop.API_Prop2d == null) ? "--" : prop.Name;
             ValueType colour = (prop.API_Prop2d == null) ? null : prop.API_Prop2d.Colour;
@@ -142,7 +147,7 @@ namespace GsaGH.Components
             DA.SetData(0, new GsaProp2dGoo(prop));
             DA.SetData(1, prop.ID);
             DA.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
-            DA.SetData(3, desc); 
+            DA.SetData(3, new GH_UnitNumber(prop.Thickness));
             DA.SetData(4, ax);
             DA.SetData(5, nm);
             DA.SetData(6, colour);
