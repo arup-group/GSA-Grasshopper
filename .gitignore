@@ -345,3 +345,4 @@ dist/*
 !
 *.bak
 /UnitTestGhSA/bin/Debug
+/GhSA/bin/x64/Debug
