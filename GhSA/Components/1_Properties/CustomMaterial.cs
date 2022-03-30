@@ -243,7 +243,7 @@ namespace GsaGH.Components
         {
             Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
 
-            _mode = (FoldMode)reader.GetInt32(selecteditems[0]);
+            _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
 
             stressUnit = (UnitsNet.Units.PressureUnit)Enum.Parse(typeof(UnitsNet.Units.PressureUnit), selecteditems[1]);
             densityUnit = (UnitsNet.Units.DensityUnit)Enum.Parse(typeof(UnitsNet.Units.DensityUnit), selecteditems[2]);

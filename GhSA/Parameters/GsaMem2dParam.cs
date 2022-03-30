@@ -533,7 +533,7 @@ namespace GsaGH.Parameters
                 return true;
             }
         }
-        
+
 
         #endregion
 
@@ -548,7 +548,7 @@ namespace GsaGH.Parameters
             string incl = "";
             if (!(m_inclCrvs == null & m_inclPts == null))
                 if (m_inclCrvs.Count > 0 | m_inclPts.Count > 0)
-                    incl = System.Environment.NewLine + "Contains ";
+                    incl = " {Contains ";
             if (m_inclCrvs != null)
             {
                 if (m_inclCrvs.Count > 0)
@@ -556,11 +556,11 @@ namespace GsaGH.Parameters
                 if (m_inclCrvs.Count > 1)
                     incl += "s";
             }
-            
+
             if (m_inclCrvs != null & m_inclPts != null)
                 if (m_inclCrvs.Count > 0 & m_inclPts.Count > 0)
                     incl += " and ";
-            
+
             if (m_inclPts != null)
             {
                 if (m_inclPts.Count > 0)
@@ -568,6 +568,8 @@ namespace GsaGH.Parameters
                 if (m_inclPts.Count > 1)
                     incl += "s";
             }
+            if (incl != "")
+                incl += "}";
 
             return typeTxt + incl;
         }

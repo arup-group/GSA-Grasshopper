@@ -166,7 +166,8 @@ namespace GsaGH.Util.GH
                     if (tolerance < 0)
                         tolerance = Units.Tolerance.As(Units.LengthUnitGeometry); // use the user set unit
 
-                    crv = crv.ToPolyline(tolerance, 2, 0, 0);
+                    if (!crv.IsPolyline())
+                        crv = crv.ToPolyline(tolerance, 2, 0, 0);
                     if (!crv.IsValid)
                         throw new Exception(" Error converting edge or curve to polyline: please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
 
