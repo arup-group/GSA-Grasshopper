@@ -25,16 +25,15 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
+          cd GhSa\bin\x64
           curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
           .\yak version
-          mkdir dist
-          cp -v GSA.gha dist\
-          cd dist
+          cd Release
           ..\yak spec
-          ..\yak build
+          ..\yak build --platform win
           $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
           $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
           Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
-          ..\yak build
+          ..\yak build --platform win
           cd ..
-          ls dist\*.yak |% {.\yak push $_.FullName}
+          ls Release\*.yak |% {.\yak push $_.FullName}
