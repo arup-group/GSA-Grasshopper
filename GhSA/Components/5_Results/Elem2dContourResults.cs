@@ -793,7 +793,7 @@ namespace GsaGH.Components
             Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
             first = false;
 
-            this.CreateAttributes();
+            UpdateUIFromSelectedItems();
             return base.Read(reader);
         }
 

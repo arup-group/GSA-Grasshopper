@@ -41,7 +41,7 @@ namespace GsaGH.Components
             pManager.AddTextParameter("Description", "De",
                 "The description should take the form: 1.4L1 + 0.8L3." + System.Environment.NewLine +
                 "It may also take the form: 1.4A4 or 1.6C2." + System.Environment.NewLine +
-                "The referenced analysis and combination cases must exist in model", GH_ParamAccess.item);
+                "The referenced loads (L#), analysis (A#), and combination (C#) cases must exist in model", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)

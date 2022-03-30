@@ -449,7 +449,7 @@ namespace GsaGH.Components
                     task.SetID(gsa.AddAnalysisTask());
                     task.CreateDeafultCases(gsa);
                     if (task.Cases == null || task.Cases.Count == 0)
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contains no loads. Model has not been analysed");
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Model contains no loads and has not been analysed, but has been assembled.");
                     else
                     {
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contained no Analysis Tasks. Default Task has been created containing all cases found in model");
@@ -463,15 +463,15 @@ namespace GsaGH.Components
                 {
                     try
                     {
-                        if (!(gsa.Analyse(task.Key)))
-                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Analysis Case " + task.Key + " could not be analysed");
-                        ReadOnlyDictionary<int, AnalysisCaseResult> results = gsa.Results();
+                        if (!gsa.Analyse(task.Key))
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
+                        if (!gsa.Results().ContainsKey(task.Key))
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
                     }
                     catch (Exception e)
                     {
                         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
                     }
-                    
                 }
             }
 
