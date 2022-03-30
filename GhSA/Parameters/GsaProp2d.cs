@@ -94,7 +94,6 @@ namespace GsaGH.Parameters
                     return new Length(
                         double.Parse(m_prop2d.Description, System.Globalization.CultureInfo.InvariantCulture),
                         LengthUnit.Millimeter);
-                    
             }
         }
         public string Description
