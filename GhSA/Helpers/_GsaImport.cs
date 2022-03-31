@@ -1357,8 +1357,11 @@ namespace GsaGH.Util.Gsa
                 {
                     GsaSection sect = new GsaSection(key);
                     sect.API_Section = apisection;
-                    if (apisection.MaterialType == MaterialType.UNDEF)
-                        sect.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+                    if (sect.API_Section.MaterialAnalysisProperty != 0)
+                    {
+                        if (analysisMaterials.ContainsKey(sect.API_Section.MaterialAnalysisProperty))
+                            sect.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+                    }
                     sections.Add(new GsaSectionGoo(sect));
                 }
             }
@@ -1382,7 +1385,11 @@ namespace GsaGH.Util.Gsa
                     GsaProp2d prop = new GsaProp2d(key);
                     prop.API_Prop2d = apisection;
                     if (prop.API_Prop2d.MaterialAnalysisProperty != 0)
-                        prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+                    {
+                        if (analysisMaterials.ContainsKey(prop.API_Prop2d.MaterialAnalysisProperty))
+                            prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+                    }
+
                     prop2ds.Add(new GsaProp2dGoo(prop));
                 }
             }
@@ -1400,7 +1407,10 @@ namespace GsaGH.Util.Gsa
                     GsaProp3d prop = new GsaProp3d(key);
                     prop.API_Prop3d = apisection;
                     if (prop.API_Prop3d.MaterialAnalysisProperty != 0)
-                        prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+                    {
+                        if (analysisMaterials.ContainsKey(prop.API_Prop3d.MaterialAnalysisProperty))
+                            prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+                    }
                     prop2ds.Add(new GsaProp3dGoo(prop));
                 }
             }
