@@ -432,6 +432,7 @@ namespace GsaGH.Components
 
                     // list for element geometry and info
                     if (element.Value.IsDummy) { return; }
+                    if (element.Value.Topology.Count > 2) { return; }
                     Line ln = new Line(
                         FromGSA.Point3dFromNode(nodes[element.Value.Topology[0]], lengthUnit), // start point
                         FromGSA.Point3dFromNode(nodes[element.Value.Topology[1]], lengthUnit));// end point

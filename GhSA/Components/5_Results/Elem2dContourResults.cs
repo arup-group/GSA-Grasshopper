@@ -510,7 +510,7 @@ namespace GsaGH.Components
                 Parallel.ForEach(elems.Keys, key => //foreach (int key in elems.Keys)
                 {
                     Element element = elems[key];
-
+                    if (element.Topology.Count < 3) { return; }
                     Mesh tempmesh = Util.Gsa.FromGSA.ConvertElement2D(element, nodes, lengthUnit);
                     if (tempmesh == null) { return; }
 
