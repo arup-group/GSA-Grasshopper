@@ -64,9 +64,6 @@ namespace GsaGH.Components
                 // length
                 dropdownitems.Add(Units.FilteredLengthUnits);
                 selecteditems.Add(lengthUnit.ToString());
-
-                IQuantity quantity = new Length(0, lengthUnit);
-                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
             }
 
             m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);

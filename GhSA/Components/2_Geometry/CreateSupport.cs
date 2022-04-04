@@ -99,23 +99,21 @@ namespace GsaGH.Components
             pManager.AddPointParameter("Point", "Pt", "Point (x, y, z) location of support", GH_ParamAccess.item);
             pManager.AddPlaneParameter("Plane", "Pl", "(Optional) Plane for local axis", GH_ParamAccess.item, Plane.WorldXY);
             pManager.AddGenericParameter("Restraints", "B6", "(Optional) Restraint in Bool6 form", GH_ParamAccess.item);
-            //pManager.AddGenericParameter("Spring", "PS", "(Optional) GSA Spring", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager.HideParameter(1);
             pManager[2].Optional = true;
-            //pManager[3].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Node", "No", "GSA Node with Restraint", GH_ParamAccess.list);
-            
         }
         #endregion
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            string name = this.Params.Input[0].Name;
             GH_Point ghpt = new GH_Point();
             if (DA.GetData(0, ref ghpt))
             {

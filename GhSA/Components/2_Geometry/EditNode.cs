@@ -45,7 +45,6 @@ namespace GsaGH.Components
             pManager.AddPointParameter("Node Position", "Pt", "Set new Position (x, y, z) of Node", GH_ParamAccess.item);
             pManager.AddPlaneParameter("Node local axis", "Pl", "Set Local axis (Plane) of Node", GH_ParamAccess.item);
             pManager.AddGenericParameter("Node Restraints", "B6", "Set Restraints (Bool6) of Node", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Node Spring", "PS", "Set Spring (Type: General)", GH_ParamAccess.item);
             pManager.AddTextParameter("Node Name", "Na", "Set Name of Node", GH_ParamAccess.item);
             pManager.AddColourParameter("Node Colour", "Co", "Set colour of node", GH_ParamAccess.item);
             pManager[1].Optional = true;
@@ -54,7 +53,6 @@ namespace GsaGH.Components
             pManager[4].Optional = true;
             pManager[5].Optional = true;
             pManager[6].Optional = true;
-            pManager[7].Optional = true;
 
             pManager.HideParameter(0);
             pManager.HideParameter(2);
@@ -70,7 +68,6 @@ namespace GsaGH.Components
             pManager.AddPlaneParameter("Node local axis", "Pl", "Local axis (Plane) of Node", GH_ParamAccess.item);
             pManager.HideParameter(3);
             pManager.AddGenericParameter("Node Restraints", "B6", "Restraints (Bool6) of Node", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Node Spring", "PS", "Spring attached to Node", GH_ParamAccess.item);
             pManager.AddTextParameter("Node Name", "Na", "Name of Node", GH_ParamAccess.item);
             pManager.AddColourParameter("Node Colour", "Co", "Get colour of node", GH_ParamAccess.item);
             if (_mode == FoldMode.GetConnected)
@@ -143,25 +140,17 @@ namespace GsaGH.Components
                     node.Restraint = restraint;
                 }
 
-                // 5 Spring
-                //GsaSpring spring = new GsaSpring();
-                //if (DA.GetData(5, ref spring))
-                //{
-                //    if (spring != null)
-                //        node.Spring = spring;
-                //}
-
-                // 6 Name
+                // 5 Name
                 GH_String ghStr = new GH_String();
-                if (DA.GetData(6, ref ghStr))
+                if (DA.GetData(5, ref ghStr))
                 {
                     if (GH_Convert.ToString(ghStr, out string name, GH_Conversion.Both))
                         node.Name = name;
                 }
 
-                // 7 Colour
+                // 6 Colour
                 GH_Colour ghcol = new GH_Colour();
-                if (DA.GetData(7, ref ghcol))
+                if (DA.GetData(6, ref ghcol))
                 {
                     if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
                         node.Colour = col;
@@ -173,15 +162,14 @@ namespace GsaGH.Components
                 DA.SetData(2, node.Point);
                 DA.SetData(3, new GH_Plane(node.LocalAxis));
                 DA.SetData(4, node.Restraint);
-                //DA.SetData(5, new GsaSpringGoo(node.Spring));
-                DA.SetData(6, node.API_Node.Name.ToString());
-                DA.SetData(7, node.Colour);
+                DA.SetData(5, node.API_Node.Name.ToString());
+                DA.SetData(6, node.Colour);
 
                 // only get connected elements/members if enabled (computationally expensive)
                 if (_mode == FoldMode.GetConnected)
                 {
-                    try { DA.SetDataList(8, node.API_Node.ConnectedElements); } catch (Exception) { }
-                    try { DA.SetDataList(9, node.API_Node.ConnectedMembers); } catch (Exception) { }
+                    try { DA.SetDataList(7, node.API_Node.ConnectedElements); } catch (Exception) { }
+                    try { DA.SetDataList(8, node.API_Node.ConnectedMembers); } catch (Exception) { }
                 }
             }
         }

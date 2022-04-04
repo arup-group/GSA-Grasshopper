@@ -224,7 +224,6 @@ namespace GsaGH.Parameters
         #region fields
         private Plane m_plane; 
         private int m_id;
-        //private GsaSpring m_spring;
         private Node m_node;
         #endregion
 

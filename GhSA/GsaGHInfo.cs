@@ -3,7 +3,6 @@ using System.IO;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel;
 using System.Reflection;
-//using GsaAPI;
 using System.Net;
 
 namespace GsaGH
