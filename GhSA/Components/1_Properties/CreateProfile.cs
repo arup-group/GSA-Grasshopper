@@ -64,9 +64,6 @@ namespace GsaGH.Components
                 // length
                 dropdownitems.Add(Units.FilteredLengthUnits);
                 selecteditems.Add(lengthUnit.ToString());
-
-                IQuantity quantity = new Length(0, lengthUnit);
-                unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
             }
 
             m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
@@ -497,13 +494,6 @@ namespace GsaGH.Components
                     this.ExpireSolution(true);
                 }
 
-
-                //AdSecProfileGoo catalogueProfile = new AdSecProfileGoo(ICatalogueProfile.Create("CAT " + profileString), local);
-                //Oasys.Collections.IList<Oasys.AdSec.IWarning> warn = catalogueProfile.Profile.Validate();
-                //foreach (Oasys.AdSec.IWarning warning in warn)
-                //    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, warning.Description);
-                //DA.SetData(0, catalogueProfile);
-
                 DA.SetData(0, "CAT " + profileString);
 
                 return;
@@ -646,7 +636,7 @@ namespace GsaGH.Components
                 // IIBeamAsymmetricalProfile
                 else if (typ == "IIBeamAsymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamAsymmetricalProfile).Name))
                 {
-                    profile += "GC" + unit +
+                    profile += "GI" + unit +
                         GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
                         GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
                         GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +

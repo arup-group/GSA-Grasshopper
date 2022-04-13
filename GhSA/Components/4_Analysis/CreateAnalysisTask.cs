@@ -39,9 +39,9 @@ namespace GsaGH.Components
                 dropdownitems = new List<List<string>>();
                 selecteditems = new List<string>();
 
-                // length
-                //dropdownitems.Add(Enum.GetNames(typeof(UnitsNet.Units.LengthUnit)).ToList());
-                dropdownitems.Add(Enum.GetValues(typeof(GsaAnalysisTask.AnalysisType)).Cast<GsaAnalysisTask.AnalysisType>().Select(x => x.ToString()).ToList());
+                // analysis types
+                //dropdownitems.Add(Enum.GetValues(typeof(GsaAnalysisTask.AnalysisType)).Cast<GsaAnalysisTask.AnalysisType>().Select(x => x.ToString()).ToList());
+                dropdownitems.Add(new List<string>() { GsaAnalysisTask.AnalysisType.Static.ToString() } ); // temp workaround, we cannot set type back into model at present
                 selecteditems.Add(analtype.ToString());
 
                 first = false;

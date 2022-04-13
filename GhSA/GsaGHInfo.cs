@@ -3,7 +3,6 @@ using System.IO;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel;
 using System.Reflection;
-//using GsaAPI;
 using System.Net;
 
 namespace GsaGH
@@ -246,7 +245,7 @@ namespace GsaGH
         internal const string Company = "Oasys";
         internal const string Copyright = "Copyright © Oasys 1985 - 2022";
         internal const string Contact = "https://www.oasys-software.com/";
-        internal const string Vers = "0.9.4";
+        internal const string Vers = "0.9.5";
         internal static bool isBeta = true;
         internal const string ProductName = "GSA";
         internal const string PluginName = "GsaGH";

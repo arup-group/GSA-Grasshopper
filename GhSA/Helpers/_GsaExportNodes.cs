@@ -37,7 +37,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             //}
 
             // Add axis to model
-            if (node.LocalAxis != null)
+            if (node.LocalAxis != null && node.LocalAxis.IsValid)
             {
                 if (node.LocalAxis != Plane.WorldXY)
                 {
