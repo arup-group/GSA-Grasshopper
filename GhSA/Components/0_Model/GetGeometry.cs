@@ -399,11 +399,18 @@ namespace GsaGH.Components
                     ConcurrentBag<GsaElement2dGoo> element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
                     Parallel.ForEach(element2ds, elem =>
                     {
-                        if (elem.Value.API_Elements[0].ParentMember.Member > 0 
-                        && mDict.ContainsKey(elem.Value.API_Elements[0].ParentMember.Member))
-                            element2dsShaded.Add(elem);
-                        else
+                        try
+                        {
+                            if (elem.Value.API_Elements[0].ParentMember.Member > 0
+                                                    && mDict.ContainsKey(elem.Value.API_Elements[0].ParentMember.Member))
+                                element2dsShaded.Add(elem);
+                            else
+                                element2dsNotShaded.Add(elem);
+                        }
+                        catch (Exception)
+                        {
                             element2dsNotShaded.Add(elem);
+                        }
                     });
                     cachedDisplayMeshShaded = new Mesh();
                     cachedDisplayMeshShaded.Append(element2dsShaded.Select(e => e.Value.Mesh));
@@ -426,11 +433,18 @@ namespace GsaGH.Components
                     ConcurrentBag<GsaElement3dGoo> element3dsNotShaded = new ConcurrentBag<GsaElement3dGoo>();
                     Parallel.ForEach(element3ds, elem =>
                     {
-                        if (elem.Value.API_Elements[0].ParentMember.Member > 0
+                        try
+                        {
+                            if (elem.Value.API_Elements[0].ParentMember.Member > 0
                             && mDict.ContainsKey(elem.Value.API_Elements[0].ParentMember.Member))
-                            element3dsShaded.Add(elem);
-                        else
+                                element3dsShaded.Add(elem);
+                            else
+                                element3dsNotShaded.Add(elem);
+                        }
+                        catch (Exception)
+                        {
                             element3dsNotShaded.Add(elem);
+                        }
                     });
                     cachedDisplayNgonMeshShaded = new Mesh();
                     cachedDisplayNgonMeshShaded.Append(element3dsShaded.Select(e => e.Value.DisplayMesh));
