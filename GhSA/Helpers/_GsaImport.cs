@@ -447,13 +447,13 @@ namespace GsaGH.Util.Gsa
                         prop.API_Prop2d = apiprop;
 
                         // get material (if analysis material exist)
-                        if (prop.API_Prop2d.MaterialAnalysisProperty > 0)
-                        {
-                            materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-                            prop.Material = new GsaMaterial(prop, apimaterial);
-                        }
-                        else
-                            prop.Material = new GsaMaterial(prop);
+                        //if (prop.API_Prop2d.MaterialAnalysisProperty > 0)
+                        //{
+                        //    materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+                        //    prop.Material = new GsaMaterial(prop, apimaterial);
+                        //}
+                        //else
+                        //    prop.Material = new GsaMaterial(prop);
                     }
 
                     prop2Ds[elementID] = prop;
@@ -653,13 +653,13 @@ namespace GsaGH.Util.Gsa
                         prop.API_Prop3d = apiprop;
 
                         // get material (if analysis material exist)
-                        if (prop.API_Prop3d.MaterialAnalysisProperty > 0)
-                        {
-                            materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-                            prop.Material = new GsaMaterial(prop, apimaterial);
-                        }
-                        else
-                            prop.Material = new GsaMaterial(prop);
+                        //if (prop.API_Prop3d.MaterialAnalysisProperty > 0)
+                        //{
+                        //    materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+                        //    prop.Material = new GsaMaterial(prop, apimaterial);
+                        //}
+                        //else
+                        //    prop.Material = new GsaMaterial(prop);
                     }
 
                     prop3Ds[elementID] = prop;
@@ -788,7 +788,7 @@ namespace GsaGH.Util.Gsa
         /// <returns></returns>
         public static Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> 
             GetMembers(ConcurrentDictionary<int, Member> mDict, ConcurrentDictionary<int, Node> nDict, LengthUnit unit,
-            ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, GH_Component owner = null)
+            ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, ConcurrentDictionary<int, Prop3D> p3Dict, GH_Component owner = null)
         {
             // Create lists for Rhino lines and meshes
             ConcurrentBag<GsaMember1dGoo> mem1ds = new ConcurrentBag<GsaMember1dGoo>();
@@ -848,8 +848,26 @@ namespace GsaGH.Util.Gsa
                         // append list of meshes (faster than appending each mesh one by one)
                         m.Append(mList);
 
+                        // create prop
+                        int propID = mem.Property;
+                        GsaProp3d prop = new GsaProp3d(propID);
+                        if (p3Dict.TryGetValue(propID, out Prop3D apiprop))
+                        {
+                            prop = new GsaProp3d(propID);
+                            prop.API_Prop3d = apiprop;
+
+                            // get material (if analysis material exist)
+                            //if (prop.API_Prop3d.MaterialAnalysisProperty > 0)
+                            //{
+                            //    materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+                            //    prop.Material = new GsaMaterial(prop, apimaterial);
+                            //}
+                            //else
+                            //    prop.Material = new GsaMaterial(prop);
+                        }
+
                         // create 3D member from mesh
-                        GsaMember3d mem3d = new GsaMember3d(mem, key, m);
+                        GsaMember3d mem3d = new GsaMember3d(mem, key, m, prop);
 
                         // add member to list
                         mem3ds.Add(new GsaMember3dGoo(mem3d));
@@ -962,6 +980,8 @@ namespace GsaGH.Util.Gsa
                             {
                                 section = new GsaSection(mem.Property);
                                 section.API_Section = apisection;
+
+                                // material to be implemented
                             }
 
                             // create the element from list of points and type description
@@ -981,6 +1001,8 @@ namespace GsaGH.Util.Gsa
                             {
                                 prop2d = new GsaProp2d(mem.Property);
                                 prop2d.API_Prop2d = apiProp;
+
+                                // material to be implemented
                             }
 
                             // create member from topology lists

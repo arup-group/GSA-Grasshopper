@@ -78,7 +78,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
             // get members
             Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-                = Util.Gsa.FromGSA.GetMembers(mDict, nDict, LengthUnit.Meter, sDict, pDict);
+                = Util.Gsa.FromGSA.GetMembers(mDict, nDict, LengthUnit.Meter, sDict, pDict, p3Dict);
             // convert from Goo-type
             List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
             // change all members in List's ID to 0;

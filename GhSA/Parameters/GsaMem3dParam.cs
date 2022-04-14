@@ -186,6 +186,14 @@ namespace GsaGH.Parameters
             m_prop = new GsaProp3d();
             UpdatePreview();
         }
+        internal GsaMember3d(Member member, int id, Mesh mesh, GsaProp3d prop)
+        {
+            m_member = member;
+            m_id = id;
+            m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+            m_prop = prop.Duplicate();
+            UpdatePreview();
+        }
         public GsaMember3d(Mesh mesh)
         {
             m_member = new Member
