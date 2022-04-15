@@ -112,7 +112,8 @@ namespace GsaGH.Components
             IQuantity quantity = new Length(0, lengthUnit);
             unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
-            string note = System.Environment.NewLine + "DataTree organised as { CaseID ; (Permutation) ; ElementID } where each" +
+            string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
+                          System.Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
                 System.Environment.NewLine + "branch contains a list of results per element position.";
 
             pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux", "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);

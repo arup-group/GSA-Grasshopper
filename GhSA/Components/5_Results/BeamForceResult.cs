@@ -122,7 +122,8 @@ namespace GsaGH.Components
 
             string forcerule = System.Environment.NewLine + "+ve axial forces are tensile";
             string momentrule = System.Environment.NewLine + "Moments follow the right hand grip rule";
-            string note = System.Environment.NewLine + "DataTree organised as { CaseID ; (Permutation) } where each" +
+            string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
+                          System.Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
                 System.Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
 
             pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx", "Element Axial Forces in Local Element X-direction." + forcerule + note, GH_ParamAccess.tree);

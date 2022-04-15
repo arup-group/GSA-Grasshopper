@@ -107,7 +107,8 @@ namespace GsaGH.Components
             IQuantity quantity = new Pressure(0, stresshUnit);
             unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
-            string note = System.Environment.NewLine + "DataTree organised as { CaseID ; (Permutation) ; ElementID } where each" +
+            string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
+                          System.Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
                 System.Environment.NewLine + "branch contains a list of results in the following order:" +
                 System.Environment.NewLine + "Vertex(1), Vertex(2), ..., Vertex(i), Centre." +
                 System.Environment.NewLine + "+ve stresses: tensile (ie. +ve direct strain)";

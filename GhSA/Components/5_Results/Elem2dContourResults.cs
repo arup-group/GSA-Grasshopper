@@ -507,7 +507,7 @@ namespace GsaGH.Components
                 values.AsParallel().AsOrdered();
 
                 // loop through elements
-                Parallel.ForEach(elems.Keys, key => //foreach (int key in elems.Keys)
+                foreach (int key in elems.Keys) //Parallel.ForEach(elems.Keys, key => //
                 {
                     Element element = elems[key];
                     if (element.Topology.Count < 3) { return; }
@@ -595,7 +595,7 @@ namespace GsaGH.Components
                     meshes[key] = tempmesh;
                     values[key] = vals;
                     #endregion
-                });
+                }//);
                 #endregion 
                 resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList());
 
@@ -851,7 +851,7 @@ namespace GsaGH.Components
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {
             base.DrawViewportWires(args);
-            if (showLegend)
+            if (legendValues != null & showLegend)
             {
                 args.Display.DrawBitmap(new DisplayBitmap(legend), args.Viewport.Bounds.Right - 110, 20);
                 for (int i = 0; i < legendValues.Count; i++)

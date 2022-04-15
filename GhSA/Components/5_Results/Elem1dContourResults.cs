@@ -803,7 +803,7 @@ namespace GsaGH.Components
         public override void DrawViewportWires(IGH_PreviewArgs args)
         {
             base.DrawViewportWires(args);
-            if (showLegend)
+            if (legendValues != null & showLegend)
             {
                 args.Display.DrawBitmap(new DisplayBitmap(legend), args.Viewport.Bounds.Right - 110, 20);
                 for (int i = 0; i < legendValues.Count; i++)
