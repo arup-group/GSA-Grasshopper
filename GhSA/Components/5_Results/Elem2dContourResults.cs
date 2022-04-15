@@ -507,7 +507,7 @@ namespace GsaGH.Components
                 values.AsParallel().AsOrdered();
 
                 // loop through elements
-                foreach (int key in elems.Keys) //Parallel.ForEach(elems.Keys, key => //
+                Parallel.ForEach(elems.Keys, key => //foreach (int key in elems.Keys)
                 {
                     Element element = elems[key];
                     if (element.Topology.Count < 3) { return; }
@@ -595,7 +595,7 @@ namespace GsaGH.Components
                     meshes[key] = tempmesh;
                     values[key] = vals;
                     #endregion
-                }//);
+                });
                 #endregion 
                 resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList());
 
