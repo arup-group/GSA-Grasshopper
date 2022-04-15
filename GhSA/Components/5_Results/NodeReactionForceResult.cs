@@ -120,7 +120,8 @@ namespace GsaGH.Components
             forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
             momentunitAbbreviation = Moment.GetAbbreviation(momentUnit);
 
-            string note = System.Environment.NewLine + "DataTree organised as { CaseID ; (Permutation) } where each" +
+            string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation } " +
+                          System.Environment.NewLine + "fx. {1;2} is Case 1, Permutation 2, where each branch " +
                 System.Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
 
             pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx", "Reaction Forces in X-direction in Global Axis." + note, GH_ParamAccess.tree);

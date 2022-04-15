@@ -54,8 +54,8 @@ namespace GsaGH.Util.Gsa
                 // scale up max/min values 
                 max = max * factor;
                 min = min * factor;
-                max = Math.Ceiling(max);
-                min = Math.Floor(min);
+                max = (signMax > 0) ? Math.Ceiling(max) : Math.Floor(max);
+                min = (signMin > 0) ? Math.Floor(min) : Math.Ceiling(min);
                 max = max / factor;
                 min = min / factor;
                 numberOfDigitsOut = digits + significantNumbers;
@@ -74,8 +74,8 @@ namespace GsaGH.Util.Gsa
                 // scale up max/min values 
                 max = max / factor;
                 min = min / factor;
-                max = Math.Ceiling(max);
-                min = Math.Floor(min);
+                max = (signMax > 0) ? Math.Ceiling(max) : Math.Floor(max);
+                min = (signMin > 0) ? Math.Floor(min) : Math.Ceiling(min);
                 max = max * factor;
                 min = min * factor;
                 numberOfDigitsOut = significantNumbers;
@@ -556,7 +556,7 @@ namespace GsaGH.Util.Gsa
 
                 List<Tensor2> forces = elementResults.Force.ToList();
                 List<Tensor2> moments = elementResults.Moment.ToList();
-                Parallel.For(0, forces.Count + moments.Count, i => // (Tensor2 force in forces)
+                Parallel.For(1, forces.Count + moments.Count, i => // (Tensor2 force in forces)
                 {
                     if (i == forces.Count)
                         return;

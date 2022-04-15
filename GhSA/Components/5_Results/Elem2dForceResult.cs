@@ -122,7 +122,8 @@ namespace GsaGH.Components
 
             string forcerule = System.Environment.NewLine + "+ve in plane force resultant: tensile";
             string momentrule = System.Environment.NewLine + "+ve moments correspond to +ve stress on the top (eg. Mx +ve if top Sxx +ve)";
-            string note = System.Environment.NewLine + "DataTree organised as { CaseID ; (Permutation) } where each " +
+            string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
+                          System.Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
                           System.Environment.NewLine + "branch contains a list of results in the following order: " +
                           System.Environment.NewLine + "Vertex(1), Vertex(2), ..., Vertex(i), Centre" +
                           System.Environment.NewLine + "Element results are NOT averaged at nodes";

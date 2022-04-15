@@ -354,7 +354,7 @@ namespace GsaGH.Parameters
             this.CaseID = id;
             this.CaseName = model.AnalysisCaseName(CaseID);
         }
-        internal GsaResult(Model model, CombinationCaseResult result, int id, int permutation = -1)
+        internal GsaResult(Model model, CombinationCaseResult result, int id, int permutation, int firstNodeID)
         {
             this.Model = model;
             this.CombinationCaseResult = result;
@@ -362,8 +362,8 @@ namespace GsaGH.Parameters
             this.CaseID = id;
             this.CombPermutationID = permutation;
             this.ComboNodeResults = new Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>>>();
-            this.ComboNodeResults.Add("all", CombinationCaseResult.NodeResults("all"));
-            this.NumPermutations = ComboNodeResults["all"].First().Value.Count;
+            this.ComboNodeResults.Add(firstNodeID.ToString(), CombinationCaseResult.NodeResults(firstNodeID.ToString()));
+            this.NumPermutations = ComboNodeResults[firstNodeID.ToString()].First().Value.Count;
         }
 
         #region properties
@@ -835,7 +835,6 @@ namespace GsaGH.Parameters
                 }
                 else
                     txt = txt + " P" + CombPermutationID;
-
             }
             return "GSA Result {" + txt + "}";
         }
