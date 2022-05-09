@@ -310,21 +310,27 @@ namespace GsaGH
             PressureUnit.Megapascal.ToString(),
             PressureUnit.Gigapascal.ToString(),
             PressureUnit.NewtonPerSquareMillimeter.ToString(),
+            PressureUnit.NewtonPerSquareMeter.ToString(),
+            PressureUnit.PoundForcePerSquareInch.ToString(),
+            PressureUnit.PoundForcePerSquareFoot.ToString(),
+            PressureUnit.KilopoundForcePerSquareInch.ToString(),
+        };
+        internal static List<string> FilteredForcePerAreaUnits = new List<string>()
+        {
+            PressureUnit.NewtonPerSquareMillimeter.ToString(),
             PressureUnit.NewtonPerSquareCentimeter.ToString(),
             PressureUnit.NewtonPerSquareMeter.ToString(),
-            PressureUnit.KilogramForcePerSquareMillimeter.ToString(),
             PressureUnit.KilonewtonPerSquareCentimeter.ToString(),
+            PressureUnit.KilonewtonPerSquareMillimeter.ToString(),
             PressureUnit.KilonewtonPerSquareMeter.ToString(),
             PressureUnit.PoundForcePerSquareInch.ToString(),
             PressureUnit.PoundForcePerSquareFoot.ToString(),
             PressureUnit.KilopoundForcePerSquareInch.ToString(),
-            PressureUnit.KilopoundForcePerSquareInch.ToString(),
-            PressureUnit.KilopoundForcePerSquareFoot.ToString()
         };
-        #endregion
+    #endregion
 
-        #region strain
-        public static StrainUnit StrainUnit
+    #region strain
+    public static StrainUnit StrainUnit
         {
             get { return m_strain; }
             set { m_strain = value; }

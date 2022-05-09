@@ -33,7 +33,7 @@ namespace GsaGH.Components
             if (first)
             {
                 dropdownitems = new List<List<string>>();
-                dropdownitems.Add(Units.FilteredStressUnits);
+                dropdownitems.Add(Units.FilteredForcePerAreaUnits);
 
                 selecteditems = new List<string>();
                 PressureUnit pressureUnit = (Force.From(1, Units.ForceUnit) / (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry))).Unit;

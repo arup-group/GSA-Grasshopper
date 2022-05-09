@@ -162,7 +162,7 @@ namespace GsaGH.UI
                     BorderBound[i] = tempBorder;
 
                 // text box inside border
-                RectangleF tempText = new RectangleF(BorderBound[i].X, BorderBound[i].Y, BorderBound[i].Width - bw, BorderBound[i].Height);
+                RectangleF tempText = new RectangleF(BorderBound[i].X, BorderBound[i].Y, BorderBound[i].Width, BorderBound[i].Height);
                 if (TextBound.Count == i || TextBound[i] == null)
                     TextBound.Add(tempText);
                 else

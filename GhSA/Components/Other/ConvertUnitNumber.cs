@@ -117,7 +117,6 @@ namespace GsaGH.Components
                     inUnitNumber = (GH_UnitNumber)gh_typ.Value;
                     if (convertedUnitNumber == null || !convertedUnitNumber.Value.QuantityInfo.UnitType.Equals(inUnitNumber.Value.QuantityInfo.UnitType))
                     {
-
                         unitDict = new Dictionary<string, Enum>();
                         foreach (UnitsNet.UnitInfo unit in inUnitNumber.Value.QuantityInfo.UnitInfos)
                         {

@@ -452,7 +452,7 @@ namespace GsaGH.Components
             {
                 if (results.Nodes != null)
                 {
-                    data.SetDataList(0, results.Nodes);
+                    data.SetDataList(0, results.Nodes.OrderBy(item => item.Value.ID));
                     supportNodes = results.displaySupports;
                 }
                 if (results.Elem1ds != null)
