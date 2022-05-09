@@ -1758,7 +1758,7 @@ namespace GsaGH.Util.Gsa
                 foreach (GsaAnalysisCase acase in task.Cases)
                 {
                     caseIDs.Add(acase.ID);
-                }
+                 }
             }
             ReadOnlyCollection<GravityLoad> gravities = model.GravityLoads();
             caseIDs.AddRange(gravities.Select(x => x.Case));
