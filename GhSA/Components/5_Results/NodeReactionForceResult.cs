@@ -176,8 +176,7 @@ namespace GsaGH.Components
                         return;
                     }
                     Tuple<List<GsaResultsValues>, string> resultgetter = result.NodeReactionForceValues(nodeList, forceUnit, momentUnit);
-                    List <GsaResultsValues> vals = resultgetter.Item1;
-
+                    List<GsaResultsValues> vals = resultgetter.Item1.OrderBy(x => x.xyzResults.Keys).ToList();
 
                     for (int permutation = 0; permutation < vals.Count; permutation++)
                     {

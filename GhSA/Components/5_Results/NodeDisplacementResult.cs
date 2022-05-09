@@ -167,7 +167,7 @@ namespace GsaGH.Components
                         return;
                     }
                     
-                    List<GsaResultsValues> vals = result.NodeDisplacementValues(nodeList, lengthUnit);
+                    List<GsaResultsValues> vals = result.NodeDisplacementValues(nodeList, lengthUnit).OrderBy(x => x.xyzResults.Keys).ToList();
 
                     for (int permutation = 0; permutation < vals.Count; permutation++)
                     {
