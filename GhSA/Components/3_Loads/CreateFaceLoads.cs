@@ -33,7 +33,7 @@ namespace GsaGH.Components
             {
                 dropdownitems = new List<List<string>>();
                 dropdownitems.Add(loadTypeOptions);
-                dropdownitems.Add(Units.FilteredStressUnits);
+                dropdownitems.Add(Units.FilteredForcePerAreaUnits);
 
                 selecteditems = new List<string>();
                 selecteditems.Add(_mode.ToString());

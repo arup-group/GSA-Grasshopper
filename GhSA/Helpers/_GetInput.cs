@@ -326,7 +326,7 @@ namespace GsaGH.Components
                 }
                 else
                 {
-                    owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber of Force");
+                    owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber of ForcePerLength");
                     return UnitsNet.ForcePerLength.Zero;
                 }
                 return force;
