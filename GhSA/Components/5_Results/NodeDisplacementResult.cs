@@ -219,7 +219,7 @@ namespace GsaGH.Components
                     }
 
                     if (i == 0)
-                        DA.SetDataList(8, vals.First().xyzResults.Keys.ToList());
+                        DA.SetDataList(8, vals.First().xyzResults.Keys.OrderBy(x => x).ToList());
                 }
 
                 DA.SetDataTree(0, out_transX);
