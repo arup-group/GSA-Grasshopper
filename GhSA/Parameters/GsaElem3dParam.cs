@@ -485,7 +485,8 @@ namespace GsaGH.Parameters
         #region methods
         public override string ToString()
         {
-            return "GSA 3D Element(s)";
+            string valid = (this.IsValid) ? "" : "Invalid ";
+            return valid + "GSA 3D Element(s)";
         }
         #endregion
     }

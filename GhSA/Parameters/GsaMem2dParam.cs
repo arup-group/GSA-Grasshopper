@@ -570,8 +570,8 @@ namespace GsaGH.Parameters
             }
             if (incl != "")
                 incl += "}";
-
-            return typeTxt + incl;
+            string valid = (this.IsValid) ? "" : "Invalid ";
+            return valid + typeTxt + incl;
         }
 
         #endregion
