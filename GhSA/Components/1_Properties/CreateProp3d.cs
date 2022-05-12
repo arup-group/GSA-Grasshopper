@@ -61,7 +61,7 @@ namespace GsaGH.Components
             GsaProp3d prop = new GsaProp3d();
 
             GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-            if (DA.GetData(1, ref gh_typ))
+            if (DA.GetData(0, ref gh_typ))
             {
                 GsaMaterial material = new GsaMaterial();
                 if (gh_typ.Value is GsaMaterialGoo)

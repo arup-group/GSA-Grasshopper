@@ -450,7 +450,8 @@ namespace GsaGH.Parameters
             string mes = m_member.Type.ToString();
             string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
             typeTxt = typeTxt.Replace("1d", "1D");
-            return typeTxt;
+            string valid = (this.IsValid) ? "" : "Invalid ";
+            return valid + typeTxt;
         }
 
         #endregion

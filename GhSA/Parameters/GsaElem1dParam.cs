@@ -422,7 +422,12 @@ namespace GsaGH.Parameters
         {
             string idd = " " + ID.ToString();
             if (ID == 0) { idd = ""; }
-            return "GSA 1D Element" + idd;
+            string valid = (this.IsValid) ? "" : "Invalid ";
+            if (this.Line != null)
+            {
+              if (this.Line.GetLength() == 0) { valid = "Invalid ";  }
+            }
+            return valid + "GSA 1D Element" + idd;
         }
         #endregion
     }

@@ -440,7 +440,8 @@ namespace GsaGH.Parameters
         #region methods
         public override string ToString()
         {
-            return "GSA 2D Element(s)";
+          string valid = (this.IsValid) ? "" : "Invalid ";
+          return valid + "GSA 2D Element(s)";
         }
         #endregion
     }
