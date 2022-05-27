@@ -86,6 +86,8 @@ namespace GsaGH.Parameters
         Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
         Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
       };
+      elem.SetRelease(0, m_element.Release(0));
+      elem.SetRelease(1, m_element.Release(1));
       if ((System.Drawing.Color)m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         elem.Colour = m_element.Colour;
       return elem;
@@ -181,22 +183,7 @@ namespace GsaGH.Parameters
     }
     internal void CloneApiElement()
     {
-      Element elem = new Element()
-      {
-        Group = m_element.Group,
-        IsDummy = m_element.IsDummy,
-        Name = m_element.Name.ToString(),
-        Offset = m_element.Offset,
-        OrientationAngle = m_element.OrientationAngle,
-        OrientationNode = m_element.OrientationNode,
-        ParentMember = m_element.ParentMember,
-        Property = m_element.Property,
-        Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
-        Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
-      };
-      if ((System.Drawing.Color)m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        elem.Colour = m_element.Colour;
-      m_element = elem;
+      m_element = this.GetAPI_ElementClone();
     }
 
     #endregion
