@@ -17,3 +17,6 @@ jobs:
 
     - name: Build
       run: msbuild /m /p:Configuration=Release GsaGH.sln
+      
+    - name: Run Tests
+      run: dotnet test .\UnitTestGhSA\bin\Release\net6.0\UnitTestGhSA.dll
