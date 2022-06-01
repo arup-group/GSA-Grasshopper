@@ -840,22 +840,31 @@ namespace GsaGH.Components
                 this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Cannot convert edge to Polyline");
                 return;
               }
-              Plane.FitPlaneToPoints(ctrl_pts, out Plane plane);
-              // make sure orientation of plane is always in the same direction
-              if (plane.Normal.Y < 0)
-              {
-                Vector3d normal = new Vector3d(plane.Normal);
-                normal.Y = -1 * plane.Normal.Y;
-                plane = new Plane(plane.Origin, normal);
-              }
-              Transform xform = Rhino.Geometry.Transform.ChangeBasis(Plane.WorldXY, plane);
+
+              Point3d origin = new Point3d(ctrl_pts[0]);
+              double x1 = ctrl_pts[ctrl_pts.Count - 2].X - origin.X;
+              double y1 = ctrl_pts[ctrl_pts.Count - 2].Y - origin.Y;
+              double z1 = ctrl_pts[ctrl_pts.Count - 2].Z - origin.Z;
+              Vector3d xDirection = new Vector3d(x1, y1, z1);
+              xDirection.Unitize();
+
+              double x2 = ctrl_pts[1].X - origin.X;
+              double y2 = ctrl_pts[1].Y - origin.Y;
+              double z2 = ctrl_pts[1].Z - origin.Z;
+              Vector3d yDirection = new Vector3d(x2, y2, z2);
+              yDirection.Unitize();
+
+              Plane plane = new Plane(Point3d.Origin, xDirection, yDirection);
+              Transform translation = Transform.Translation(-origin.X, -origin.Y, -origin.Z);
+              Transform rotation = Transform.ChangeBasis(Vector3d.XAxis, Vector3d.YAxis, Vector3d.ZAxis, plane.XAxis, plane.YAxis, plane.ZAxis);
 
               perimeter.geoType = Profile.GeoTypes.Perim;
 
               List<Point2d> pts = new List<Point2d>();
               foreach (Point3d pt3d in ctrl_pts)
               {
-                pt3d.Transform(xform);
+                pt3d.Transform(translation);
+                pt3d.Transform(rotation);
                 Point2d pt2d = new Point2d(pt3d);
                 pts.Add(pt2d);
               }
@@ -878,7 +887,8 @@ namespace GsaGH.Components
                     pts = new List<Point2d>();
                     foreach (Point3d pt3d in ctrl_pts)
                     {
-                      pt3d.Transform(xform);
+                      pt3d.Transform(translation);
+                      pt3d.Transform(rotation);
                       Point2d pt2d = new Point2d(pt3d);
                       pts.Add(pt2d);
                     }
