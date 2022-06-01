@@ -58,9 +58,9 @@
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="OasysUnits">
-      <HintPath>..\packages\OasysUnits.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OasysUnits, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\OasysUnits.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.UI, Version=6.27.20176.5000, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.27.20176.5001\lib\net45\Rhino.UI.dll</HintPath>
