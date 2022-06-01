@@ -1,9 +1,9 @@
 ﻿using System;
-using NUnit.Framework;
+using GsaAPI;
 using GsaGH;
 using GsaGH.Parameters;
+using NUnit.Framework;
 using Rhino.Geometry;
-using GsaAPI;
 
 namespace ParamsIntegrationTests
 {

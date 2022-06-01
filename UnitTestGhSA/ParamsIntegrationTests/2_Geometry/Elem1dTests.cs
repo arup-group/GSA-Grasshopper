@@ -102,7 +102,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(1, dup.Group);
             Assert.IsFalse(dup.IsDummy);
             Assert.AreEqual("Tilman", dup.Name);
-            Assert.AreEqual(2.9, dup.Offset.Y, 1E-9);
+            Assert.AreEqual(2.9, dup.Offset.Y.Value, 1E-9);
             Assert.AreEqual(-0.14, dup.OrientationAngle, 1E-9);
 
             // check that original has changed values
@@ -118,7 +118,7 @@ namespace ParamsIntegrationTests
             Assert.AreEqual(2, orig.Group);
             Assert.IsTrue(orig.IsDummy);
             Assert.AreEqual("Hugh", orig.Name);
-            Assert.AreEqual(-0.991, orig.Offset.Y, 1E-9);
+            Assert.AreEqual(-0.991, orig.Offset.Y.Value, 1E-9);
             Assert.AreEqual(0, orig.OrientationAngle, 1E-9);
         }
 

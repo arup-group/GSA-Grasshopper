@@ -1,11 +1,12 @@
 ﻿using System;
-
-using NUnit.Framework;
+using System.Collections.Generic;
+using GsaAPI;
 using GsaGH;
 using GsaGH.Parameters;
+using NUnit.Framework;
 using Rhino.Geometry;
-using GsaAPI;
-using System.Collections.Generic;
+using UnitsNet;
+using UnitsNet.Units;
 
 namespace ParamsIntegrationTests
 {
@@ -211,7 +212,7 @@ namespace ParamsIntegrationTests
                 origi.Groups[i] = 4;
                 origi.isDummies[i] = true;
                 origi.Names[i] = "Mani";
-                origi.Offsets[i].Z = -0.17;
+                origi.Offsets[i].Z = new Length(-0.17, LengthUnit.Meter);
                 grps2.Add(4);
                 dum2.Add(true);
                 nms2.Add("Mani");
