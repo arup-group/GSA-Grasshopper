@@ -169,19 +169,19 @@ namespace GsaGH.Util.Gsa
 
       Parallel.ForEach(eDict, item =>
       {
-              // find type of element, 1D, 2D or 3D:
+        // find type of element, 1D, 2D or 3D:
         int elemDimension = 1; // default assume 1D element
 
-              // get element type
+        // get element type
         ElementType type = item.Value.Type;
 
-              // change to 2D if type is one of these
+        // change to 2D if type is one of these
         if (type == ElementType.TRI3 || type == ElementType.TRI6 ||
                   type == ElementType.QUAD4 || type == ElementType.QUAD8 ||
                   type == ElementType.TWO_D || type == ElementType.TWO_D_FE ||
                   type == ElementType.TWO_D_LOAD)
           elemDimension = 2;
-              // change to 3D if type is one of these
+        // change to 3D if type is one of these
         if (type == ElementType.BRICK8 || type == ElementType.WEDGE6 ||
                   type == ElementType.PYRAMID5 || type == ElementType.TETRA4 ||
                   type == ElementType.THREE_D)
@@ -190,22 +190,22 @@ namespace GsaGH.Util.Gsa
         switch (elemDimension)
         {
           case 1:
-                  // create new element from api element;
+            // create new element from api element;
             elem1dDict.TryAdd(item.Key, item.Value);
-                  //elem1ds.Add(new GsaElement1dGoo(
-                  //    ConvertToElement1D(
-                  //        item.Value, item.Key, nDict, sDict, mDict, unit)));
+            //elem1ds.Add(new GsaElement1dGoo(
+            //    ConvertToElement1D(
+            //        item.Value, item.Key, nDict, sDict, mDict, unit)));
             break;
 
           case 2:
-                  // add 2D element to dictionary to bulk create and combine
-                  // meshes in one go
+            // add 2D element to dictionary to bulk create and combine
+            // meshes in one go
             elem2dDict.TryAdd(item.Key, item.Value);
             break;
 
           case 3:
-                  // add 3D element to dictionary to bulk create and combine
-                  // meshes in one go
+            // add 3D element to dictionary to bulk create and combine
+            // meshes in one go
             elem3dDict.TryAdd(item.Key, item.Value);
             break;
         }
@@ -404,14 +404,14 @@ namespace GsaGH.Util.Gsa
 
       Parallel.ForEach(elements, elem =>
       {
-              // get parent member
+        // get parent member
         int parent = elem.Value.ParentMember.Member;
 
         if (!sortedElements.ContainsKey(parent))
         {
           sortedElements.TryAdd(parent, new ConcurrentDictionary<int, Element>());
         }
-              // add elements to parent member
+        // add elements to parent member
         sortedElements[parent][elem.Key] = elem.Value;
       });
 
@@ -422,57 +422,57 @@ namespace GsaGH.Util.Gsa
       {
         int parentID = sortedElements.Keys.ElementAt(i);
 
-              // list of elements with same parent
+        // list of elements with same parent
         ConcurrentDictionary<int, Element> elems = sortedElements[parentID];
 
-              // create list of Prop2Ds
+        // create list of Prop2Ds
         ConcurrentDictionary<int, GsaProp2d> prop2Ds = new ConcurrentDictionary<int, GsaProp2d>();
 
-              // create list of meshes
+        // create list of meshes
         ConcurrentDictionary<int, Mesh> mList = new ConcurrentDictionary<int, Mesh>();
 
         Parallel.For(0, elems.Count, j =>
               {
-            int elementID = elems.Keys.ElementAt(j);
-            Mesh faceMesh = ConvertElement2D(elems[elementID], nodes, unit);
-            if (faceMesh == null) { return; }
-            mList[elementID] = faceMesh;
+                int elementID = elems.Keys.ElementAt(j);
+                Mesh faceMesh = ConvertElement2D(elems[elementID], nodes, unit);
+                if (faceMesh == null) { return; }
+                mList[elementID] = faceMesh;
 
-                  // get prop2d (if it exist)
-            int propID = elems[elementID].Property;
-            GsaProp2d prop = new GsaProp2d(propID);
-            if (properties.TryGetValue(propID, out Prop2D apiprop))
-            {
-              prop = new GsaProp2d(propID);
-              prop.API_Prop2d = apiprop;
+                // get prop2d (if it exist)
+                int propID = elems[elementID].Property;
+                GsaProp2d prop = new GsaProp2d(propID);
+                if (properties.TryGetValue(propID, out Prop2D apiprop))
+                {
+                  prop = new GsaProp2d(propID);
+                  prop.API_Prop2d = apiprop;
 
-                    // get material (if analysis material exist)
-                    //if (prop.API_Prop2d.MaterialAnalysisProperty > 0)
-                    //{
-                    //    materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-                    //    prop.Material = new GsaMaterial(prop, apimaterial);
-                    //}
-                    //else
-                    //    prop.Material = new GsaMaterial(prop);
-            }
+                  // get material (if analysis material exist)
+                  //if (prop.API_Prop2d.MaterialAnalysisProperty > 0)
+                  //{
+                  //    materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+                  //    prop.Material = new GsaMaterial(prop, apimaterial);
+                  //}
+                  //else
+                  //    prop.Material = new GsaMaterial(prop);
+                }
 
-            prop2Ds[elementID] = prop;
-          });
+                prop2Ds[elementID] = prop;
+              });
 
-              // create one large mesh from single mesh face using
-              // append list of meshes (faster than appending each mesh one by one)
+        // create one large mesh from single mesh face using
+        // append list of meshes (faster than appending each mesh one by one)
         Mesh m = new Mesh(); // new mesh to merge existing into
         m.Append(mList.Values.ToList());
 
-              // if parent member value is 0 then no parent member exist for element
-              // we can therefore not be sure all elements with parent member = 0 are
-              // connected in one mesh.
+        // if parent member value is 0 then no parent member exist for element
+        // we can therefore not be sure all elements with parent member = 0 are
+        // connected in one mesh.
         if (parentID == 0 && m.DisjointMeshCount > 1)
         {
-                // revert back to list of meshes instead of the joined one
+          // revert back to list of meshes instead of the joined one
           foreach (int key in elems.Keys)
           {
-                  // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
+            // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
             elems.TryGetValue(key, out Element api_elem);
             mList.TryGetValue(key, out Mesh mesh);
             prop2Ds.TryGetValue(key, out GsaProp2d prop);
@@ -484,18 +484,18 @@ namespace GsaGH.Util.Gsa
                       new List<GsaProp2d> { prop }
                       );
 
-                  // add the element to list of goo 2d elements
+            // add the element to list of goo 2d elements
             elem2dGoos.Add(new GsaElement2dGoo(singleelement2D));
           }
         }
         else
         {
-                // lists needed to create GsaElement2d
+          // lists needed to create GsaElement2d
           List<Element> api_elems = elems.Values.ToList();
           List<int> ids = elems.Keys.ToList();
           List<GsaProp2d> props = prop2Ds.Values.ToList();
 
-                // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
+          // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
           GsaElement2d element2D = new GsaElement2d(
                     api_elems,
                     ids,
@@ -610,14 +610,14 @@ namespace GsaGH.Util.Gsa
 
       Parallel.ForEach(elements, elem =>
       {
-              // get parent member
+        // get parent member
         int parent = elem.Value.ParentMember.Member;
 
         if (!sortedElements.ContainsKey(parent))
         {
           sortedElements.TryAdd(parent, new ConcurrentDictionary<int, Element>());
         }
-              // add elements to parent member
+        // add elements to parent member
         sortedElements[parent][elem.Key] = elem.Value;
       });
 
@@ -628,57 +628,57 @@ namespace GsaGH.Util.Gsa
       {
         int parentID = sortedElements.Keys.ElementAt(i);
 
-              // list of elements with same parent
+        // list of elements with same parent
         ConcurrentDictionary<int, Element> elems = sortedElements[parentID];
 
-              // create list of Prop3Ds
+        // create list of Prop3Ds
         ConcurrentDictionary<int, GsaProp3d> prop3Ds = new ConcurrentDictionary<int, GsaProp3d>();
 
-              // create list of meshes
+        // create list of meshes
         ConcurrentDictionary<int, Mesh> mList = new ConcurrentDictionary<int, Mesh>();
 
         Parallel.For(0, elems.Count, j =>
               {
-            int elementID = elems.Keys.ElementAt(j);
-            Mesh ngonClosedMesh = ConvertElement3D(elems[elementID], nodes, unit);
-            if (ngonClosedMesh == null) { return; }
-            mList[elementID] = ngonClosedMesh;
+                int elementID = elems.Keys.ElementAt(j);
+                Mesh ngonClosedMesh = ConvertElement3D(elems[elementID], nodes, unit);
+                if (ngonClosedMesh == null) { return; }
+                mList[elementID] = ngonClosedMesh;
 
-                  // get prop2d (if it exist)
-            int propID = elems[elementID].Property;
-            GsaProp3d prop = new GsaProp3d(propID);
-            if (properties.TryGetValue(propID, out Prop3D apiprop))
-            {
-              prop = new GsaProp3d(propID);
-              prop.API_Prop3d = apiprop;
+                // get prop2d (if it exist)
+                int propID = elems[elementID].Property;
+                GsaProp3d prop = new GsaProp3d(propID);
+                if (properties.TryGetValue(propID, out Prop3D apiprop))
+                {
+                  prop = new GsaProp3d(propID);
+                  prop.API_Prop3d = apiprop;
 
-                    // get material (if analysis material exist)
-                    //if (prop.API_Prop3d.MaterialAnalysisProperty > 0)
-                    //{
-                    //    materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-                    //    prop.Material = new GsaMaterial(prop, apimaterial);
-                    //}
-                    //else
-                    //    prop.Material = new GsaMaterial(prop);
-            }
+                  // get material (if analysis material exist)
+                  //if (prop.API_Prop3d.MaterialAnalysisProperty > 0)
+                  //{
+                  //    materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+                  //    prop.Material = new GsaMaterial(prop, apimaterial);
+                  //}
+                  //else
+                  //    prop.Material = new GsaMaterial(prop);
+                }
 
-            prop3Ds[elementID] = prop;
-          });
+                prop3Ds[elementID] = prop;
+              });
 
-              // create one large mesh from single mesh face using
-              // append list of meshes (faster than appending each mesh one by one)
+        // create one large mesh from single mesh face using
+        // append list of meshes (faster than appending each mesh one by one)
         Mesh m = new Mesh(); // new mesh to merge existing into
         m.Append(mList.Values.ToList());
 
-              // if parent member value is 0 then no parent member exist for element
-              // we can therefore not be sure all elements with parent member = 0 are
-              // connected in one mesh.
+        // if parent member value is 0 then no parent member exist for element
+        // we can therefore not be sure all elements with parent member = 0 are
+        // connected in one mesh.
         if (parentID == 0 && m.DisjointMeshCount > 1)
         {
-                // revert back to list of meshes instead of the joined one
+          // revert back to list of meshes instead of the joined one
           foreach (int key in elems.Keys)
           {
-                  // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
+            // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
             elems.TryGetValue(key, out Element api_elem);
             mList.TryGetValue(key, out Mesh mesh);
             prop3Ds.TryGetValue(key, out GsaProp3d prop);
@@ -690,18 +690,18 @@ namespace GsaGH.Util.Gsa
                       new List<GsaProp3d> { prop }
                       );
 
-                  // add the element to list of goo 2d elements
+            // add the element to list of goo 2d elements
             elem3dGoos.Add(new GsaElement3dGoo(singleelement3D));
           }
         }
         else
         {
-                // lists needed to create GsaElement3d
+          // lists needed to create GsaElement3d
           List<Element> api_elems = elems.Values.ToList();
           List<int> ids = elems.Keys.ToList();
           List<GsaProp3d> props = prop3Ds.Values.ToList();
 
-                // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
+          // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
           GsaElement3d element3D = new GsaElement3d(
                     api_elems,
                     ids,
@@ -802,26 +802,26 @@ namespace GsaGH.Util.Gsa
       {
         if (mDict.TryGetValue(key, out Member member))
         {
-                //Member mem = DuplicateMember(member);
+          //Member mem = DuplicateMember(member);
           Member mem = member;
 
-                // Get member topology list
+          // Get member topology list
           string toporg = mem.Topology; //original topology list
 
-                // ## Member 3D ##
-                // if 3D member we have different method:
+          // ## Member 3D ##
+          // if 3D member we have different method:
           if (mem.Type == MemberType.GENERIC_3D)
           {
             List<List<int>> topints = Topology_detangler_Mem3d(toporg);
 
-                  // create list of meshes
+            // create list of meshes
             List<Mesh> mList = new List<Mesh>();
             bool invalid_node = false;
-                  // loop through elements in list
+            // loop through elements in list
             for (int i = 0; i < topints.Count; i++)
             {
               Mesh tempMesh = new Mesh();
-                    // Get verticies:
+              // Get verticies:
               for (int j = 0; j < topints[i].Count; j++)
               {
                 if (nDict.TryGetValue(topints[i][j], out Node node))
@@ -833,7 +833,7 @@ namespace GsaGH.Util.Gsa
                   invalid_node = true; // if node cannot be found continue with next key
               }
 
-                    // Create mesh face (Tri- or Quad):
+              // Create mesh face (Tri- or Quad):
               tempMesh.Faces.AddFace(0, 1, 2);
 
               mList.Add(tempMesh);
@@ -841,14 +841,14 @@ namespace GsaGH.Util.Gsa
             if (invalid_node)
               return;
 
-                  // new mesh to merge existing into
+            // new mesh to merge existing into
             Mesh m = new Mesh();
 
-                  // create one large mesh from single mesh face using
-                  // append list of meshes (faster than appending each mesh one by one)
+            // create one large mesh from single mesh face using
+            // append list of meshes (faster than appending each mesh one by one)
             m.Append(mList);
 
-                  // create prop
+            // create prop
             int propID = mem.Property;
             GsaProp3d prop = new GsaProp3d(propID);
             if (p3Dict.TryGetValue(propID, out Prop3D apiprop))
@@ -856,35 +856,35 @@ namespace GsaGH.Util.Gsa
               prop = new GsaProp3d(propID);
               prop.API_Prop3d = apiprop;
 
-                    // get material (if analysis material exist)
-                    //if (prop.API_Prop3d.MaterialAnalysisProperty > 0)
-                    //{
-                    //    materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-                    //    prop.Material = new GsaMaterial(prop, apimaterial);
-                    //}
-                    //else
-                    //    prop.Material = new GsaMaterial(prop);
+              // get material (if analysis material exist)
+              //if (prop.API_Prop3d.MaterialAnalysisProperty > 0)
+              //{
+              //    materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+              //    prop.Material = new GsaMaterial(prop, apimaterial);
+              //}
+              //else
+              //    prop.Material = new GsaMaterial(prop);
             }
 
-                  // create 3D member from mesh
+            // create 3D member from mesh
             GsaMember3d mem3d = new GsaMember3d(mem, key, m, prop);
 
-                  // add member to list
+            // add member to list
             mem3ds.Add(new GsaMember3dGoo(mem3d));
 
-                  //topints.Clear();
+            //topints.Clear();
           }
           else // ## Member1D or Member2D ##
           {
-                  // Build topology lists:
+            // Build topology lists:
 
             Tuple<Tuple<List<int>, List<string>>, Tuple<List<List<int>>, List<List<string>>>,
                   Tuple<List<List<int>>, List<List<string>>>, List<int>> topologyTuple = Topology_detangler(toporg);
-                  // tuple of int and string describing the outline topology
+            // tuple of int and string describing the outline topology
             Tuple<List<int>, List<string>> topoTuple = topologyTuple.Item1;
-                  // tuple of list of int and strings describing voids topology (one list for each void)
+            // tuple of list of int and strings describing voids topology (one list for each void)
             Tuple<List<List<int>>, List<List<string>>> voidTuple = topologyTuple.Item2;
-                  // tuple of list of int and strings describing inclusion lines topology (one list for each line)
+            // tuple of list of int and strings describing inclusion lines topology (one list for each line)
             Tuple<List<List<int>>, List<List<string>>> lineTuple = topologyTuple.Item3;
 
             List<int> topo_int = topoTuple.Item1;
@@ -898,7 +898,7 @@ namespace GsaGH.Util.Gsa
 
             List<int> inclpts = topologyTuple.Item4;
 
-                  // replace topology integers with actual points
+            // replace topology integers with actual points
             List<Point3d> topopts = new List<Point3d>(); // list of topology points for visualisation /member1d/member2d
             bool invalid_node = false;
             for (int i = 0; i < topo_int.Count; i++)
@@ -911,7 +911,7 @@ namespace GsaGH.Util.Gsa
             if (invalid_node)
               return;
 
-                  //list of lists of void points /member2d
+            //list of lists of void points /member2d
             List<List<Point3d>> void_topo = new List<List<Point3d>>();
             for (int i = 0; i < void_topo_int.Count; i++)
             {
@@ -923,7 +923,7 @@ namespace GsaGH.Util.Gsa
               }
             }
 
-                  //list of lists of line inclusion topology points /member2d
+            //list of lists of line inclusion topology points /member2d
             List<List<Point3d>> incLines_topo = new List<List<Point3d>>();
             for (int i = 0; i < incLines_topo_int.Count; i++)
             {
@@ -935,7 +935,7 @@ namespace GsaGH.Util.Gsa
               }
             }
 
-                  //list of points for inclusion /member2d
+            //list of points for inclusion /member2d
             List<Point3d> incl_pts = new List<Point3d>();
             for (int i = 0; i < inclpts.Count; i++)
             {
@@ -946,24 +946,24 @@ namespace GsaGH.Util.Gsa
               }
             }
 
-                  // create Members
+            // create Members
 
-                  // Member1D:
+            // Member1D:
             if (mem.Type == MemberType.GENERIC_1D | mem.Type == MemberType.BEAM | mem.Type == MemberType.CANTILEVER |
                       mem.Type == MemberType.COLUMN | mem.Type == MemberType.COMPOS | mem.Type == MemberType.PILE)
             {
-                    // check if Mem1D topology has minimum 2 points
+              // check if Mem1D topology has minimum 2 points
               if (topopts.Count < 2)
               {
-                      //topopts.Add(topopts[0]);
-                      //topoType.Add(topoType[0]);
+                //topopts.Add(topopts[0]);
+                //topoType.Add(topoType[0]);
                 string error = " Invalid topology Mem1D ID: " + key + ".";
                 if (owner != null)
                   owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, error);
                 return;
               }
 
-                    // orientation node
+              // orientation node
               GsaNode orient = null;
               if (mem.OrientationNode > 0)
               {
@@ -974,38 +974,38 @@ namespace GsaGH.Util.Gsa
                 }
               }
 
-                    // get section (if it exist)
+              // get section (if it exist)
               GsaSection section = new GsaSection(mem.Property);
               if (sDict.TryGetValue(mem.Property, out Section apisection))
               {
                 section = new GsaSection(mem.Property);
                 section.API_Section = apisection;
 
-                      // material to be implemented
+                // material to be implemented
               }
 
-                    // create the element from list of points and type description
+              // create the element from list of points and type description
               GsaMember1d mem1d = new GsaMember1d(mem, key, topopts.ToList(), topoType.ToList(), section, orient);
 
-                    // releases to be implemented here - GsaAPI bug
+              // releases to be implemented here - GsaAPI bug
 
-                    // add member to output list
+              // add member to output list
               mem1ds.Add(new GsaMember1dGoo(mem1d));
             }
             else // Member2D:
             {
 
-                    // create 2d property
+              // create 2d property
               GsaProp2d prop2d = new GsaProp2d(mem.Property);
               if (pDict.TryGetValue(mem.Property, out Prop2D apiProp))
               {
                 prop2d = new GsaProp2d(mem.Property);
                 prop2d.API_Prop2d = apiProp;
 
-                      // material to be implemented
+                // material to be implemented
               }
 
-                    // create member from topology lists
+              // create member from topology lists
               GsaMember2d mem2d = new GsaMember2d(mem, key,
                         topopts.ToList(),
                         topoType.ToList(),
@@ -1016,7 +1016,7 @@ namespace GsaGH.Util.Gsa
                         incl_pts.ToList(),
                         prop2d, owner);
 
-                    // add member to output list
+              // add member to output list
               mem2ds.Add(new GsaMember2dGoo(mem2d));
             }
 
