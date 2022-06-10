@@ -664,7 +664,6 @@ namespace GsaGH.Parameters
       // This function is called when Grasshopper needs to convert this 
       // instance of GsaMember into some other type Q.            
 
-
       if (typeof(Q).IsAssignableFrom(typeof(GsaMember2d)))
       {
         if (Value == null)
