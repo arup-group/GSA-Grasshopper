@@ -306,6 +306,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       // update topology list to fit model nodes
       string topo = "";
 
+      int lastId = int.MinValue;
       // Loop through the topology list
       for (int i = 0; i < member2d.Topology.Count; i++)
       {
@@ -322,11 +323,17 @@ namespace GsaGH.Util.Gsa.ToGSA
 
         int id = Nodes.GetExistingNodeID(existingNodes, pt, unit);
         if (id > 0)
-          topo += id;
+        {
+          // check if node id has just been added
+          if (id != lastId)
+            topo += id;
+          lastId = id;
+        }
         else
         {
           existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt, unit));
           topo += nodeidcounter;
+          lastId = nodeidcounter;
           nodeidcounter++;
         }
 
