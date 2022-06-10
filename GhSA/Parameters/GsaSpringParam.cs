@@ -67,7 +67,7 @@
 //        #region constructors
 //        public GsaSpring()
 //        {
-            
+
 //        }
 
 //        //public GsaSpring(Double6 double6)
@@ -242,7 +242,7 @@
 //                // if input to parameter is a single number convert it to an axial spring
 //                return true;
 //            }
-            
+
 //            return false;
 //        }
 //        #endregion
