@@ -687,11 +687,11 @@ namespace GsaGH.Parameters
       if (Value == null) { return null; }
       if (Value.NgonMesh == null) { return null; }
 
-      GsaElement3d elem = Value.Duplicate();
-
-      Mesh xMs = Value.NgonMesh.DuplicateMesh();
+      GsaElement3d dup = Value.Duplicate();
+      dup.ID = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
+      Mesh xMs = dup.NgonMesh.DuplicateMesh();
       xMs.Transform(xform);
-      return new GsaElement3dGoo(Value.UpdateGeometry(xMs));
+      return new GsaElement3dGoo(dup.UpdateGeometry(xMs));
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
@@ -699,9 +699,11 @@ namespace GsaGH.Parameters
       if (Value == null) { return null; }
       if (Value.NgonMesh == null) { return null; }
 
-      Mesh xMs = Value.NgonMesh.DuplicateMesh();
+      GsaElement3d dup = Value.Duplicate();
+      dup.ID = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
+      Mesh xMs = dup.NgonMesh.DuplicateMesh();
       xmorph.Morph(xMs);
-      return new GsaElement3dGoo(Value.UpdateGeometry(xMs));
+      return new GsaElement3dGoo(dup.UpdateGeometry(xMs));
     }
 
     #endregion

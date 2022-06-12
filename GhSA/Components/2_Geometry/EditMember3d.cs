@@ -45,7 +45,7 @@ namespace GsaGH.Components
       pManager.AddGeometryParameter("Solid", "S", "Reposition Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
       pManager.AddGenericParameter("3D Property", "P3", "Change 3D Property", GH_ParamAccess.item);
       pManager.AddNumberParameter("Mesh Size", "Ms", "Set target mesh size", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item, true);
+      pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
       pManager.AddTextParameter("Member3d Name", "Na", "Set Name of Member3d", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member3d Group", "Gr", "Set Member 3d Group", GH_ParamAccess.item);
       pManager.AddColourParameter("Member3d Colour", "Co", "Set Member 3d Colour", GH_ParamAccess.item);
@@ -149,10 +149,10 @@ namespace GsaGH.Components
         GH_Boolean ghbool = new GH_Boolean();
         if (DA.GetData(5, ref ghbool))
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "'Mesh with others' not currently implemented");
           if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
           {
-            //mem.member.MeshWithOthers
+            if (mem.MeshWithOthers != mbool)
+              mem.MeshWithOthers = mbool;
           }
         }
 
@@ -197,7 +197,7 @@ namespace GsaGH.Components
         DA.SetData(3, mem.PropertyID);
 
         DA.SetData(4, mem.MeshSize);
-        //DA.SetData(5, mem.Member.MeshWithOthers);
+        DA.SetData(5, mem.MeshWithOthers);
 
         DA.SetData(6, mem.Name);
         DA.SetData(7, mem.Group);

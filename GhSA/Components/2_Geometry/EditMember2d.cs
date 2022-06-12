@@ -236,25 +236,15 @@ namespace GsaGH.Components
             AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]"
                 + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
         }
-        //if (DA.GetData(10, ref ghmsz))
-        //{
-        //    if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
-        //    {
-        //        mem.MeshSize = new Length(msz, Units.LengthUnitGeometry);
-        //        string unitAbbreviation = string.Concat(mem.MeshSize.ToString().Where(char.IsLetter));
-        //        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + unitAbbreviation + "]"
-        //            + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
-        //    }
-        //}
 
         // 11 mesh with others
         GH_Boolean ghbool = new GH_Boolean();
         if (DA.GetData(11, ref ghbool))
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "'Mesh with others' not currently implemented");
           if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
           {
-            //mem.member.MeshWithOthers
+            if (mem.MeshWithOthers != mbool)
+              mem.MeshWithOthers = mbool;
           }
         }
 
@@ -299,7 +289,7 @@ namespace GsaGH.Components
         DA.SetData(9, new GsaOffsetGoo(mem.Offset));
 
         DA.SetData(10, mem.MeshSize);
-        //DA.SetData(11, mem.Member.MeshWithOthers);
+        DA.SetData(11, mem.MeshWithOthers);
 
         DA.SetData(12, mem.Name);
         DA.SetData(13, mem.Colour);

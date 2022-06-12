@@ -121,6 +121,18 @@ namespace GsaGH.Parameters
         m_member.MeshSize = value.Meters;
       }
     }
+    public bool MeshWithOthers
+    {
+      get
+      {
+        return m_member.IsIntersector;
+      }
+      set
+      {
+        CloneApiMember();
+        m_member.IsIntersector = value;
+      }
+    }
     public int PropertyID
     {
       get { return m_member.Property; }
@@ -137,15 +149,20 @@ namespace GsaGH.Parameters
       {
         Group = m_member.Group,
         IsDummy = m_member.IsDummy,
+        IsIntersector = m_member.IsIntersector,
         MeshSize = m_member.MeshSize,
+        LateralTorsionalBucklingFactor = m_member.LateralTorsionalBucklingFactor,
+        MomentAmplificationFactorStrongAxis = m_member.MomentAmplificationFactorStrongAxis,
+        MomentAmplificationFactorWeakAxis = m_member.MomentAmplificationFactorWeakAxis,
         Name = m_member.Name.ToString(),
         Offset = m_member.Offset,
         OrientationAngle = m_member.OrientationAngle,
         OrientationNode = m_member.OrientationNode,
         Property = m_member.Property,
-        Topology = m_member.Topology.ToString(),
         Type = m_member.Type,
       };
+      if (m_member.Topology != String.Empty)
+        mem.Topology = m_member.Topology;
 
       if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         mem.Colour = m_member.Colour;
@@ -483,10 +500,11 @@ namespace GsaGH.Parameters
       if (Value == null) { return null; }
       if (Value.SolidMesh == null) { return null; }
 
-      GsaMember3d elem = Value.Duplicate(true);
-      elem.SolidMesh.Transform(xform);
+      GsaMember3d dup = Value.Duplicate(true);
+      dup.ID = 0;
+      dup.SolidMesh.Transform(xform);
 
-      return new GsaMember3dGoo(elem);
+      return new GsaMember3dGoo(dup);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
@@ -494,10 +512,11 @@ namespace GsaGH.Parameters
       if (Value == null) { return null; }
       if (Value.SolidMesh == null) { return null; }
 
-      GsaMember3d elem = Value.Duplicate(true);
-      xmorph.Morph(elem.SolidMesh.Duplicate());
+      GsaMember3d dup = Value.Duplicate(true);
+      dup.ID = 0;
+      xmorph.Morph(dup.SolidMesh.Duplicate());
 
-      return new GsaMember3dGoo(elem);
+      return new GsaMember3dGoo(dup);
     }
 
     #endregion

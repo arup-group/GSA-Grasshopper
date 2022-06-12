@@ -46,23 +46,31 @@ namespace GsaGH.Parameters
 
     public GsaBool6 ReleaseStart
     {
-      get { return m_rel1; }
+      get
+      {
+        return new GsaBool6(m_member.GetEndRelease(0).Releases);
+      }
       set
       {
         m_rel1 = value;
-        if (m_rel2 == null)
-          m_rel2 = new GsaBool6();
+        if (m_rel1 == null) { m_rel1 = new GsaBool6(); }
+        CloneApiMember();
+        m_member.SetEndRelease(0, new EndRelease(m_rel1.API_Bool6));
         UpdatePreview();
       }
     }
     public GsaBool6 ReleaseEnd
     {
-      get { return m_rel2; }
+      get
+      {
+        return new GsaBool6(m_member.GetEndRelease(1).Releases);
+      }
       set
       {
         m_rel2 = value;
-        if (m_rel1 == null)
-          m_rel1 = new GsaBool6();
+        if (m_rel2 == null) { m_rel2 = new GsaBool6(); }
+        CloneApiMember();
+        m_member.SetEndRelease(1, new EndRelease(m_rel2.API_Bool6));
         UpdatePreview();
       }
     }
@@ -84,16 +92,24 @@ namespace GsaGH.Parameters
       {
         Group = m_member.Group,
         IsDummy = m_member.IsDummy,
+        IsIntersector = m_member.IsIntersector,
+        LateralTorsionalBucklingFactor = m_member.LateralTorsionalBucklingFactor,
         MeshSize = m_member.MeshSize,
+        MomentAmplificationFactorStrongAxis = m_member.MomentAmplificationFactorStrongAxis,
+        MomentAmplificationFactorWeakAxis = m_member.MomentAmplificationFactorWeakAxis,
         Name = m_member.Name.ToString(),
         Offset = m_member.Offset,
         OrientationAngle = m_member.OrientationAngle,
         OrientationNode = m_member.OrientationNode,
         Property = m_member.Property,
-        Topology = m_member.Topology.ToString(),
         Type = m_member.Type,
         Type1D = m_member.Type1D
       };
+      if (m_member.Topology != String.Empty)
+        mem.Topology = m_member.Topology;
+      
+      mem.SetEndRelease(0, m_member.GetEndRelease(0));
+      mem.SetEndRelease(1, m_member.GetEndRelease(1));
 
       if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         mem.Colour = m_member.Colour;
@@ -104,14 +120,13 @@ namespace GsaGH.Parameters
     {
       get
       {
-        //if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
-        //    m_member.Colour = UI.Colour.Member1d;
         return (System.Drawing.Color)m_member.Colour;
       }
       set
       {
         CloneApiMember();
         m_member.Colour = value;
+        UpdatePreview();
       }
     }
     public int Group
@@ -130,6 +145,7 @@ namespace GsaGH.Parameters
       {
         CloneApiMember();
         m_member.IsDummy = value;
+        UpdatePreview();
       }
     }
     public string Name
@@ -152,6 +168,18 @@ namespace GsaGH.Parameters
       {
         CloneApiMember();
         m_member.MeshSize = value.Meters;
+      }
+    }
+    public bool MeshWithOthers
+    {
+      get
+      {
+        return m_member.IsIntersector;
+      }
+      set
+      {
+        CloneApiMember();
+        m_member.IsIntersector = value;
       }
     }
     public GsaOffset Offset
@@ -211,25 +239,7 @@ namespace GsaGH.Parameters
     }
     internal void CloneApiMember()
     {
-      Member mem = new Member
-      {
-        Group = m_member.Group,
-        IsDummy = m_member.IsDummy,
-        MeshSize = m_member.MeshSize,
-        Name = m_member.Name.ToString(),
-        Offset = m_member.Offset,
-        OrientationAngle = m_member.OrientationAngle,
-        OrientationNode = m_member.OrientationNode,
-        Property = m_member.Property,
-        Topology = m_member.Topology.ToString(),
-        Type = m_member.Type,
-        Type1D = m_member.Type1D
-      };
-
-      if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        mem.Colour = m_member.Colour;
-
-      m_member = mem;
+      m_member = this.GetAPI_MemberClone();
     }
     #endregion
     #region preview
@@ -346,6 +356,8 @@ namespace GsaGH.Parameters
       m_topo = topology;
       m_topoType = topo_type;
       m_section = section;
+      m_rel1 = new GsaBool6(m_member.GetEndRelease(0).Releases);
+      m_rel2 = new GsaBool6(m_member.GetEndRelease(1).Releases);
       if (orientationNode != null)
         m_orientationNode = orientationNode;
       UpdatePreview();
@@ -393,6 +405,7 @@ namespace GsaGH.Parameters
       if (this == null) { return null; }
 
       GsaMember1d dup = this.Duplicate(true);
+      dup.ID = 0;
 
       List<Point3d> pts = m_topo.ToList();
       Point3dList xpts = new Point3dList(pts);
@@ -413,6 +426,7 @@ namespace GsaGH.Parameters
       if (this == null) { return null; }
 
       GsaMember1d dup = this.Duplicate(true);
+      dup.ID = 0;
 
       List<Point3d> pts = m_topo.ToList();
       for (int i = 0; i < pts.Count; i++)
