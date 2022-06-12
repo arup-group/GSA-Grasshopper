@@ -33,58 +33,30 @@ namespace GsaGH.Parameters
     {
       get
       {
-        Bool6 rel1 = m_element.Release(0);
-        m_rel1 = new GsaBool6();
-        m_rel1.X = rel1.X;
-        m_rel1.Y = rel1.Y;
-        m_rel1.Z = rel1.Z;
-        m_rel1.XX = rel1.XX;
-        m_rel1.YY = rel1.YY;
-        m_rel1.ZZ = rel1.ZZ;
-        return m_rel1;
+        return new GsaBool6(m_element.Release(0));
       }
       set
       {
         m_rel1 = value;
-        if (m_rel2 == null) { m_rel2 = new GsaBool6(); }
+        if (m_rel1 == null) { m_rel1 = new GsaBool6(); }
+        CloneApiElement();
+        m_element.SetRelease(0, m_rel1.API_Bool6);
         UpdatePreview();
-        //Bool6 bool6 = new Bool6();
-        //bool6.X = m_rel1.X;
-        //bool6.Y = m_rel1.Y;
-        //bool6.Z = m_rel1.Z;
-        //bool6.XX = m_rel1.XX;
-        //bool6.YY = m_rel1.YY;
-        //bool6.ZZ = m_rel1.ZZ;
-        //m_element.SetRelease(0, Bool6);
       }
     }
     public GsaBool6 ReleaseEnd
     {
       get
       {
-        Bool6 rel2 = m_element.Release(1);
-        m_rel2 = new GsaBool6();
-        m_rel2.X = rel2.X;
-        m_rel2.Y = rel2.Y;
-        m_rel2.Z = rel2.Z;
-        m_rel2.XX = rel2.XX;
-        m_rel2.YY = rel2.YY;
-        m_rel2.ZZ = rel2.ZZ;
-        return m_rel2;
+        return new GsaBool6(m_element.Release(1));
       }
       set
       {
         m_rel2 = value;
-        if (m_rel1 == null) { m_rel1 = new GsaBool6(); }
+        if (m_rel2 == null) { m_rel2 = new GsaBool6(); }
+        CloneApiElement();
+        m_element.SetRelease(1, m_rel2.API_Bool6);
         UpdatePreview();
-        //Bool6 bool6 = new Bool6();
-        //bool6.X = m_rel2.X;
-        //bool6.Y = m_rel2.Y;
-        //bool6.Z = m_rel2.Z;
-        //bool6.XX = m_rel2.XX;
-        //bool6.YY = m_rel2.YY;
-        //bool6.ZZ = m_rel2.ZZ;
-        //m_element.SetRelease(1, Bool6);
       }
     }
     public GsaSection Section
@@ -114,6 +86,8 @@ namespace GsaGH.Parameters
         Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
         Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
       };
+      elem.SetRelease(0, m_element.Release(0));
+      elem.SetRelease(1, m_element.Release(1));
       if ((System.Drawing.Color)m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         elem.Colour = m_element.Colour;
       return elem;
@@ -209,22 +183,7 @@ namespace GsaGH.Parameters
     }
     internal void CloneApiElement()
     {
-      Element elem = new Element()
-      {
-        Group = m_element.Group,
-        IsDummy = m_element.IsDummy,
-        Name = m_element.Name.ToString(),
-        Offset = m_element.Offset,
-        OrientationAngle = m_element.OrientationAngle,
-        OrientationNode = m_element.OrientationNode,
-        ParentMember = m_element.ParentMember,
-        Property = m_element.Property,
-        Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
-        Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
-      };
-      if ((System.Drawing.Color)m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        elem.Colour = m_element.Colour;
-      m_element = elem;
+      m_element = this.GetAPI_ElementClone();
     }
 
     #endregion
@@ -356,24 +315,8 @@ namespace GsaGH.Parameters
       m_element = elem;
       m_line = line;
 
-      m_rel1 = new GsaBool6()
-      {
-        X = elem.Release(0).X,
-        Y = elem.Release(0).Y,
-        Z = elem.Release(0).Z,
-        XX = elem.Release(0).XX,
-        YY = elem.Release(0).YY,
-        ZZ = elem.Release(0).ZZ
-      };
-      m_rel2 = new GsaBool6()
-      {
-        X = elem.Release(1).X,
-        Y = elem.Release(1).Y,
-        Z = elem.Release(1).Z,
-        XX = elem.Release(1).XX,
-        YY = elem.Release(1).YY,
-        ZZ = elem.Release(1).ZZ
-      };
+      m_rel1 = new GsaBool6(elem.Release(0));
+      m_rel2 = new GsaBool6(elem.Release(1));
 
       m_id = ID;
 

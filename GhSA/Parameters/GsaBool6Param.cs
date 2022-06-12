@@ -57,6 +57,10 @@ namespace GsaGH.Parameters
     {
       API_Bool6 = new Bool6(X, Y, Z, XX, YY, ZZ);
     }
+    internal GsaBool6(Bool6 bool6)
+    {
+      API_Bool6 = bool6;
+    }
 
     public GsaBool6 Duplicate()
     {
@@ -127,7 +131,7 @@ namespace GsaGH.Parameters
     }
     public GsaBool6Goo DuplicateGsaBool6()
     {
-      return new GsaBool6Goo(Value == null ? new GsaBool6() : Value); //Value.Duplicate());
+      return new GsaBool6Goo(Value ?? new GsaBool6()); // same as => return new GsaBool6Goo(Value == null ? new GsaBool6() : Value);
     }
     #endregion
 
@@ -271,13 +275,55 @@ namespace GsaGH.Parameters
           Value.ZZ = true;
           return true;
         }
+        if ((mystring.Length == 6))
+        {
+          if (mystring[0] == 'f')
+            Value.X = false;
+          else if (mystring[0] == 'r')
+            Value.X = true;
+          else
+            return false;
+
+          if (mystring[1] == 'f')
+            Value.Y = false;
+          else if (mystring[1] == 'r')
+            Value.Y = true;
+          else
+            return false;
+
+          if (mystring[2] == 'f')
+            Value.Z = false;
+          else if (mystring[2] == 'r')
+            Value.Z = true;
+          else
+            return false;
+
+          if (mystring[3] == 'f')
+            Value.XX = false;
+          else if (mystring[3] == 'r')
+            Value.XX = true;
+          else
+            return false;
+
+          if (mystring[4] == 'f')
+            Value.YY = false;
+          else if (mystring[4] == 'r')
+            Value.YY = true;
+          else
+            return false;
+
+          if (mystring[5] == 'f')
+            Value.ZZ = false;
+          else if (mystring[5] == 'r')
+            Value.ZZ = true;
+          else
+            return false;
+        }
         return false;
       }
       return false;
     }
     #endregion
-
-
   }
 
   /// <summary>
@@ -336,5 +382,4 @@ namespace GsaGH.Parameters
     }
     #endregion
   }
-
 }

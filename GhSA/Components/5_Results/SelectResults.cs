@@ -343,7 +343,38 @@ namespace GsaGH.Components
           if (combinationCaseResults == null)
             updateCases = true;
         }
-        // get results
+
+        // skip 'reflection' if inputs have been set
+        if (ResultType == GsaResult.ResultType.AnalysisCase && this.Params.Input[1].SourceCount > 0
+          && this.Params.Input[2].SourceCount > 0)
+        {
+          analysisCaseResults = gsaModel.Model.Results();
+          if (analysisCaseResults == null || analysisCaseResults.Count == 0 || !analysisCaseResults.ContainsKey(CaseID))
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "The GSA Model contains no results for Analysis Case A" + CaseID);
+            return;
+          }
+          goto GetResults;
+        }
+        if (ResultType == GsaResult.ResultType.Combination && this.Params.Input[1].SourceCount > 0
+          && this.Params.Input[2].SourceCount > 0 && this.Params.Input[3].SourceCount > 0)
+        {
+          combinationCaseResults = gsaModel.Model.CombinationCaseResults();
+          if (combinationCaseResults == null || combinationCaseResults.Count == 0 || !combinationCaseResults.ContainsKey(CaseID))
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "The GSA Model contains no results for Combination Case C" + CaseID);
+            return;
+          }
+          tempNodeResult = combinationCaseResults[CaseID].NodeResults(tempNodeID.ToString());
+          if (!tempNodeResult.ContainsKey(Permutation))
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "The GSA Model contains no results for Permutaion P" + Permutation + " for Combination Case C" + CaseID);
+            return;
+          }
+          goto GetResults;
+        }
+
+        // 'reflect' model results and create dropdown lists
         if (updateCases | analysisCaseResults == null)
         {
           switch (ResultType)
@@ -446,6 +477,7 @@ namespace GsaGH.Components
           }
         }
 
+        GetResults:
         // Get results from model and create result object
         switch (ResultType)
         {
