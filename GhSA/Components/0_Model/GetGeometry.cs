@@ -210,16 +210,16 @@ namespace GsaGH.Components
         {
           if (i == 0)
           {
-                    // create nodes
-                    results.Nodes = Util.Gsa.FromGSA.GetNodes(nDict, lengthUnit, axDict);
+            // create nodes
+            results.Nodes = Util.Gsa.FromGSA.GetNodes(nDict, lengthUnit, axDict);
             results.displaySupports = new ConcurrentBag<GsaNodeGoo>(results.Nodes.AsParallel().Where(n => n.Value.isSupport));
           }
 
           if (i == 1)
           {
-                    // create elements
-                    Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-                        = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, lengthUnit);
+            // create elements
+            Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
+                = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, lengthUnit);
 
             results.Elem1ds = elementTuple.Item1;
             results.Elem2ds = elementTuple.Item2;
@@ -228,9 +228,9 @@ namespace GsaGH.Components
 
           if (i == 2)
           {
-                    // create members
-                    Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-                        = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, lengthUnit, sDict, pDict, p3Dict, this);
+            // create members
+            Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
+                = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, lengthUnit, sDict, pDict, p3Dict, this);
 
             results.Mem1ds = memberTuple.Item1;
             results.Mem2ds = memberTuple.Item2;
@@ -510,7 +510,7 @@ namespace GsaGH.Components
         }
         if (results.Elem3ds != null)
         {
-          
+
           if (_mode == FoldMode.List)
             data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.ID.First()));
           else

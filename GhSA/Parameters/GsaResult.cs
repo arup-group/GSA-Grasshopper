@@ -400,7 +400,7 @@ namespace GsaGH.Parameters
           this.ACaseNodeDisplacementValues.Add(nodelist,
               ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], lengthUnit));
         }
-        return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues>{ ACaseNodeDisplacementValues[nodelist] },Model.Nodes(nodelist).Keys.ToList());
+        return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> { ACaseNodeDisplacementValues[nodelist] }, Model.Nodes(nodelist).Keys.ToList());
       }
       else
       {
