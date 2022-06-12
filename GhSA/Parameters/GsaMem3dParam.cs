@@ -483,10 +483,11 @@ namespace GsaGH.Parameters
       if (Value == null) { return null; }
       if (Value.SolidMesh == null) { return null; }
 
-      GsaMember3d elem = Value.Duplicate(true);
-      elem.SolidMesh.Transform(xform);
+      GsaMember3d dup = Value.Duplicate(true);
+      dup.ID = 0;
+      dup.SolidMesh.Transform(xform);
 
-      return new GsaMember3dGoo(elem);
+      return new GsaMember3dGoo(dup);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
@@ -494,10 +495,11 @@ namespace GsaGH.Parameters
       if (Value == null) { return null; }
       if (Value.SolidMesh == null) { return null; }
 
-      GsaMember3d elem = Value.Duplicate(true);
-      xmorph.Morph(elem.SolidMesh.Duplicate());
+      GsaMember3d dup = Value.Duplicate(true);
+      dup.ID = 0;
+      xmorph.Morph(dup.SolidMesh.Duplicate());
 
-      return new GsaMember3dGoo(elem);
+      return new GsaMember3dGoo(dup);
     }
 
     #endregion

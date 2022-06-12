@@ -255,12 +255,10 @@ namespace GsaGH.Components
         GH_Boolean ghbool = new GH_Boolean();
         if (DA.GetData(13, ref ghbool))
         {
-
           if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
           {
-            //mem.MeshWithOthers
-            if (mbool)
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "'Mesh with others' not currently implemented");
+            if (mem.MeshWithOthers != mbool)
+              mem.MeshWithOthers = mbool;
           }
         }
 
@@ -306,7 +304,7 @@ namespace GsaGH.Components
         DA.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
         DA.SetData(12, mem.MeshSize);
-        //DA.SetData(13, mem.member.MeshSize); //mesh with others bool
+        DA.SetData(13, mem.MeshWithOthers);
 
         DA.SetData(14, mem.Name);
 

@@ -272,8 +272,6 @@ namespace GsaGH.Parameters
     }
     #endregion
 
-
-
     #region methods
     public void UpdateUnit(LengthUnit unit)
     {
@@ -536,6 +534,7 @@ namespace GsaGH.Parameters
       if (Value.Point == null) { return null; }
 
       GsaNode node = Value.Duplicate(true);
+      node.ID = 0;
       Point3d pt = new Point3d(node.Point);
       pt.Transform(xform);
 
@@ -549,6 +548,7 @@ namespace GsaGH.Parameters
       if (Value.Point == null) { return null; }
 
       GsaNode node = Value.Duplicate();
+      node.ID = 0;
 
       Point3d pt = new Point3d(node.Point);
       pt = xmorph.MorphPoint(pt);

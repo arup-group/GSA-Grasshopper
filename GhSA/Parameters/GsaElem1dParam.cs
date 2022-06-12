@@ -279,6 +279,7 @@ namespace GsaGH.Parameters
       previewPointEnd = m_line.PointAtEnd;
     }
     #endregion
+
     #region fields
     private Element m_element;
     private LineCurve m_line;
@@ -288,6 +289,7 @@ namespace GsaGH.Parameters
     private GsaSection m_section;
     private GsaNode m_orientationNode;
     #endregion
+    
     #region constructors
     public GsaElement1d()
     {
@@ -584,6 +586,7 @@ namespace GsaGH.Parameters
       if (Value.Line == null) { return null; }
 
       GsaElement1d elem = Value.Duplicate(true);
+      elem.ID = 0;
       LineCurve xLn = elem.Line;
       xLn.Transform(xform);
       elem.Line = xLn;

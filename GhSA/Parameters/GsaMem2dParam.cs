@@ -451,6 +451,7 @@ namespace GsaGH.Parameters
     {
       if (this == null) { return null; }
       GsaMember2d dup = this.Duplicate(true);
+      dup.ID = 0;
 
       // Brep
       if (dup.m_brep != null)
@@ -486,6 +487,7 @@ namespace GsaGH.Parameters
     {
       if (this == null) { return null; }
       GsaMember2d dup = this.Duplicate(true);
+      dup.ID = 0;
 
       // Brep
       if (dup.m_brep != null)
