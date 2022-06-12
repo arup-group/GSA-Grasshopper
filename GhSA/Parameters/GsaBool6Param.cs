@@ -275,6 +275,50 @@ namespace GsaGH.Parameters
           Value.ZZ = true;
           return true;
         }
+        if ((mystring.Length == 6))
+        {
+          if (mystring[0] == 'f')
+            Value.X = false;
+          else if (mystring[0] == 'r')
+            Value.X = true;
+          else
+            return false;
+
+          if (mystring[1] == 'f')
+            Value.Y = false;
+          else if (mystring[1] == 'r')
+            Value.Y = true;
+          else
+            return false;
+
+          if (mystring[2] == 'f')
+            Value.Z = false;
+          else if (mystring[2] == 'r')
+            Value.Z = true;
+          else
+            return false;
+
+          if (mystring[3] == 'f')
+            Value.XX = false;
+          else if (mystring[3] == 'r')
+            Value.XX = true;
+          else
+            return false;
+
+          if (mystring[4] == 'f')
+            Value.YY = false;
+          else if (mystring[4] == 'r')
+            Value.YY = true;
+          else
+            return false;
+
+          if (mystring[5] == 'f')
+            Value.ZZ = false;
+          else if (mystring[5] == 'r')
+            Value.ZZ = true;
+          else
+            return false;
+        }
         return false;
       }
       return false;
