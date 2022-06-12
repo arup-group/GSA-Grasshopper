@@ -72,7 +72,7 @@ namespace GsaGH.Components
       pManager.AddNumberParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle in degrees", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Member Orientation Node", GH_ParamAccess.item);
       pManager.AddNumberParameter("Mesh Size", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item, false);
+      pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
       pManager.AddColourParameter("Member1d Colour", "Co", "Set Member 1D Colour", GH_ParamAccess.item);

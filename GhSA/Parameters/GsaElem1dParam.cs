@@ -33,14 +33,14 @@ namespace GsaGH.Parameters
     {
       get
       {
-        return new GsaBool6(m_element.Release(0));
+        return new GsaBool6(m_element.GetEndRelease(0).Releases);
       }
       set
       {
         m_rel1 = value;
         if (m_rel1 == null) { m_rel1 = new GsaBool6(); }
         CloneApiElement();
-        m_element.SetRelease(0, m_rel1.API_Bool6);
+        m_element.SetEndRelease(0, new EndRelease(m_rel1.API_Bool6));
         UpdatePreview();
       }
     }
@@ -48,14 +48,14 @@ namespace GsaGH.Parameters
     {
       get
       {
-        return new GsaBool6(m_element.Release(1));
+        return new GsaBool6(m_element.GetEndRelease(1).Releases);
       }
       set
       {
         m_rel2 = value;
         if (m_rel2 == null) { m_rel2 = new GsaBool6(); }
         CloneApiElement();
-        m_element.SetRelease(1, m_rel2.API_Bool6);
+        m_element.SetEndRelease(1, new EndRelease(m_rel2.API_Bool6));
         UpdatePreview();
       }
     }
@@ -86,8 +86,8 @@ namespace GsaGH.Parameters
         Topology = new ReadOnlyCollection<int>(m_element.Topology.ToList()),
         Type = m_element.Type //GsaToModel.Element1dType((int)Element.Type)
       };
-      elem.SetRelease(0, m_element.Release(0));
-      elem.SetRelease(1, m_element.Release(1));
+      elem.SetEndRelease(0, m_element.GetEndRelease(0));
+      elem.SetEndRelease(1, m_element.GetEndRelease(1));
       if ((System.Drawing.Color)m_element.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         elem.Colour = m_element.Colour;
       return elem;
@@ -317,8 +317,8 @@ namespace GsaGH.Parameters
       m_element = elem;
       m_line = line;
 
-      m_rel1 = new GsaBool6(elem.Release(0));
-      m_rel2 = new GsaBool6(elem.Release(1));
+      m_rel1 = new GsaBool6(m_element.GetEndRelease(0).Releases);
+      m_rel2 = new GsaBool6(m_element.GetEndRelease(1).Releases);
 
       m_id = ID;
 
