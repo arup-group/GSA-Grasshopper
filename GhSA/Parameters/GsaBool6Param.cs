@@ -131,7 +131,7 @@ namespace GsaGH.Parameters
     }
     public GsaBool6Goo DuplicateGsaBool6()
     {
-      return new GsaBool6Goo(Value == null ? new GsaBool6() : Value); //Value.Duplicate());
+      return new GsaBool6Goo(Value ?? new GsaBool6()); // same as => return new GsaBool6Goo(Value == null ? new GsaBool6() : Value);
     }
     #endregion
 
