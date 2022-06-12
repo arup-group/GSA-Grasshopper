@@ -45,86 +45,13 @@ namespace GsaGH.Parameters
     }
 
     /// <summary>
-    /// NB! -work in progress, do NOT call this method
+    /// Clones this model so we can make changes safely
     /// </summary>
-    /// <returns></returns>
-    public GsaModel Copy() // work in progress
-    {
-      // Let's work just on the model (not wrapped)
-      Model gsa = new Model();
-
-      gsa.SetNodes(m_model.Nodes());
-      gsa.SetElements(m_model.Elements());
-      gsa.SetMembers(m_model.Members());
-      gsa.SetSections(m_model.Sections());
-      gsa.SetProp2Ds(m_model.Prop2Ds());
-      gsa.SetAxes(m_model.Axes());
-      gsa.SetGridPlanes(m_model.GridPlanes());
-
-      //gravity load
-      ReadOnlyCollection<GravityLoad> setgrav = m_model.GravityLoads();
-      for (int i = 0; i < setgrav.Count; i++)
-        gsa.SetGravityLoad(i + 1, setgrav[i]);
-
-      //node loads
-      ReadOnlyCollection<NodeLoad> setnode_disp = m_model.NodeLoads(NodeLoadType.APPL_DISP);
-      for (int i = 0; i < setnode_disp.Count; i++)
-        gsa.SetNodeLoad(NodeLoadType.APPL_DISP, i + 1, setnode_disp[i]);
-
-      ReadOnlyCollection<NodeLoad> setnode_node = m_model.NodeLoads(NodeLoadType.NODE_LOAD);
-      for (int i = 0; i < setnode_node.Count; i++)
-        gsa.SetNodeLoad(NodeLoadType.NODE_LOAD, i + 1, setnode_node[i]);
-
-      ReadOnlyCollection<NodeLoad> setnode_setl = m_model.NodeLoads(NodeLoadType.SETTLEMENT);
-      for (int i = 0; i < setnode_setl.Count; i++)
-        gsa.SetNodeLoad(NodeLoadType.SETTLEMENT, i + 1, setnode_setl[i]);
-
-      //beam loads
-      ReadOnlyCollection<BeamLoad> setbeam = m_model.BeamLoads();
-      for (int i = 0; i < setbeam.Count; i++)
-        gsa.SetBeamLoad(i + 1, setbeam[i]);
-
-      //face loads
-      ReadOnlyCollection<FaceLoad> setface = m_model.FaceLoads();
-      for (int i = 0; i < setface.Count; i++)
-        gsa.SetFaceLoad(i + 1, setface[i]);
-
-      //grid point loads
-      ReadOnlyCollection<GridPointLoad> setpoint = m_model.GridPointLoads();
-      for (int i = 0; i < setpoint.Count; i++)
-        gsa.SetGridPointLoad(i + 1, setpoint[i]);
-
-      //grid line loads
-      ReadOnlyCollection<GridLineLoad> setline = m_model.GridLineLoads();
-      for (int i = 0; i < setline.Count; i++)
-        gsa.SetGridLineLoad(i + 1, setline[i]);
-
-      //grid area loads
-      ReadOnlyCollection<GridAreaLoad> setarea = m_model.GridAreaLoads();
-      for (int i = 0; i < setarea.Count; i++)
-        gsa.SetGridAreaLoad(i + 1, setarea[i]);
-      #endregion
-
-      //analysis
-      IReadOnlyDictionary<int, AnalysisTask> gsaTasks = m_model.AnalysisTasks();
-
-      GsaModel gsaModel = new GsaModel();
-      gsaModel.Model = gsa;
-      return gsaModel;
-    }
-    /// <summary>
-    /// This method will save gwb as a temp file and reopen it,  
-    /// </summary>
-    /// <returns>Return opened model with new GUID</returns>
+    /// <returns>Returns a clone of this model with a new GUID</returns>
     public GsaModel Clone()
     {
       GsaModel clone = new GsaModel();
-
-      // workaround duplicate model
-      string tempfilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Oasys") + "GSA-Grasshopper_temp_.gwb";
-      m_model.SaveAs(tempfilename);
-      clone.Model.Open(tempfilename);
-
+      clone.Model = m_model.Clone();
       clone.FileName = m_filename;
       clone.m_guid = Guid.NewGuid();
       return clone;
@@ -143,6 +70,7 @@ namespace GsaGH.Parameters
       }
       return null;
     }
+    #endregion
 
     #region properties
     public bool IsValid
