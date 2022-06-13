@@ -32,10 +32,11 @@ namespace GsaGH.Parameters
         OrientationAngle = m_member.OrientationAngle,
         OrientationNode = m_member.OrientationNode,
         Property = m_member.Property,
-        Topology = m_member.Topology.ToString(),
         Type = m_member.Type,
         Type2D = m_member.Type2D
       };
+      if (m_member.Topology != String.Empty)
+        mem.Topology = m_member.Topology;
 
       if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         mem.Colour = m_member.Colour;
@@ -224,33 +225,12 @@ namespace GsaGH.Parameters
         m_member.Type2D = value;
       }
     }
-    private void CloneApiMember()
+
+    internal void CloneApiMember()
     {
-      Member mem = new Member
-      {
-        Group = m_member.Group,
-        IsDummy = m_member.IsDummy,
-        IsIntersector = m_member.IsIntersector,
-        MeshSize = m_member.MeshSize,
-        LateralTorsionalBucklingFactor = m_member.LateralTorsionalBucklingFactor,
-        MomentAmplificationFactorStrongAxis = m_member.MomentAmplificationFactorStrongAxis,
-        MomentAmplificationFactorWeakAxis = m_member.MomentAmplificationFactorWeakAxis,
-        Name = m_member.Name.ToString(),
-        Offset = m_member.Offset,
-        OrientationAngle = m_member.OrientationAngle,
-        OrientationNode = m_member.OrientationNode,
-        Property = m_member.Property,
-        Type = m_member.Type,
-        Type2D = m_member.Type2D
-      };
-      if (m_member.Topology != String.Empty)
-        mem.Topology = m_member.Topology;
-
-      if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        mem.Colour = m_member.Colour;
-
-      m_member = mem;
+      m_member = this.GetAPI_MemberClone();
     }
+
     #endregion
 
     #region fields
