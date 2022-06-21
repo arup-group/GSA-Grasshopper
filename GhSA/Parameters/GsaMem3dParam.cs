@@ -72,8 +72,6 @@ namespace GsaGH.Parameters
     {
       get
       {
-        //if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
-        //    m_member.Colour = UI.Colour.Member1d;
         return (System.Drawing.Color)m_member.Colour;
       }
       set
@@ -141,7 +139,6 @@ namespace GsaGH.Parameters
       {
         CloneApiMember();
         m_member.Property = value;
-        //m_section = null;
       }
     }
     internal void CloneApiMember()
