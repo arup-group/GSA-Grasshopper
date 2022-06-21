@@ -251,7 +251,7 @@ namespace GsaGH
     internal const string Contact = "https://www.oasys-software.com/";
     internal const string Vers = "0.9.18";
     internal static bool isBeta = true;
-    internal string disclaimer = PluginName + " is pre-release and under active development, including further testing to be undertaken.It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes.Any files, results, or other types of output information created using " + PluginName + " should not be relied upon without thorough and independent checking.";
+    internal static string Disclaimer = PluginName + " is pre-release and under active development, including further testing to be undertaken.It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes.Any files, results, or other types of output information created using " + PluginName + " should not be relied upon without thorough and independent checking.";
     internal const string ProductName = "GSA";
     internal const string PluginName = "GsaGH";
 
@@ -269,10 +269,9 @@ namespace GsaGH
       {
         //Return a short string describing the purpose of this GHA library.
         return "Official Oasys GSA Grasshopper Plugin" + System.Environment.NewLine
-          + (isBeta ? disclaimer : "")
+          + (isBeta ? Disclaimer : "")
         + System.Environment.NewLine + "A licensed version of GSA 10.1.60 or later installed in"
-        + System.Environment.NewLine + @"C:\Program Files\Oasys\GSA 10.1\ "
-        + System.Environment.NewLine + "is required to use this plugin."
+        + @"C:\Program Files\Oasys\GSA 10.1\ is required to use this plugin."
         + System.Environment.NewLine + "Contact oasys@arup.com to request a free trial version."
         + System.Environment.NewLine + Copyright;
       }
