@@ -203,8 +203,10 @@ namespace GsaGH
             double area1 = apisection.Area;
             string profile1 = apisection.Profile;
             string profile = "CAT HE HE200.B";
-            GsaAPI.Section section = new GsaAPI.Section();
-            section.Profile = profile;
+            GsaAPI.Section section = new GsaAPI.Section
+            {
+              Profile = profile
+            };
             double area = section.Area * Math.Pow(10, 6);
           }
           catch (Exception e)
@@ -225,8 +227,10 @@ namespace GsaGH
           double area1 = apisection.Area;
           string profile1 = apisection.Profile;
           string profile = "CAT HE HE200.B";
-          GsaAPI.Section section = new GsaAPI.Section();
-          section.Profile = profile;
+          GsaAPI.Section section = new GsaAPI.Section
+          {
+            Profile = profile
+          };
           double area = section.Area * Math.Pow(10, 6);
         }
         catch (Exception e)
@@ -247,6 +251,7 @@ namespace GsaGH
     internal const string Contact = "https://www.oasys-software.com/";
     internal const string Vers = "0.9.18";
     internal static bool isBeta = true;
+    internal string disclaimer = PluginName + " is pre-release and under active development, including further testing to be undertaken.It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes.Any files, results, or other types of output information created using " + PluginName + " should not be relied upon without thorough and independent checking.";
     internal const string ProductName = "GSA";
     internal const string PluginName = "GsaGH";
 
@@ -264,6 +269,7 @@ namespace GsaGH
       {
         //Return a short string describing the purpose of this GHA library.
         return "Official Oasys GSA Grasshopper Plugin" + System.Environment.NewLine
+          + (isBeta ? disclaimer : "")
         + System.Environment.NewLine + "A licensed version of GSA 10.1.60 or later installed in"
         + System.Environment.NewLine + @"C:\Program Files\Oasys\GSA 10.1\ "
         + System.Environment.NewLine + "is required to use this plugin."
@@ -295,11 +301,11 @@ namespace GsaGH
         return Contact;
       }
     }
-    public string icon_url
+    public string Icon_url
     {
       get
       {
-        // to be updated - not supported by yak currently
+        // TODO to be updated - not supported by yak currently
         return "https://raw.githubusercontent.com/arup-group/GSA-Grasshopper/master/GhSA/Properties/Icons/icons/4x/GsaGhLogo%404x.png";
       }
     }
