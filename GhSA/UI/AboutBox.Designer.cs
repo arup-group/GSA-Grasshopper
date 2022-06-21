@@ -74,7 +74,7 @@ namespace GsaGH.UI
       this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
       this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
       this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
-      this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 75F));
+      this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 66F));
       this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
       this.tableLayoutPanel.Size = new System.Drawing.Size(556, 273);
       this.tableLayoutPanel.TabIndex = 0;
@@ -185,7 +185,7 @@ namespace GsaGH.UI
       this.linkWebsite.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this.linkWebsite.AutoSize = true;
       this.tableLayoutPanel.SetColumnSpan(this.linkWebsite, 2);
-      this.linkWebsite.Location = new System.Drawing.Point(8, 250);
+      this.linkWebsite.Location = new System.Drawing.Point(8, 244);
       this.linkWebsite.Margin = new System.Windows.Forms.Padding(8, 0, 4, 0);
       this.linkWebsite.Name = "linkWebsite";
       this.linkWebsite.Size = new System.Drawing.Size(157, 16);
@@ -198,7 +198,7 @@ namespace GsaGH.UI
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.okButton.Location = new System.Drawing.Point(452, 246);
+      this.okButton.Location = new System.Drawing.Point(452, 243);
       this.okButton.Margin = new System.Windows.Forms.Padding(4);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(100, 26);
@@ -213,7 +213,7 @@ namespace GsaGH.UI
       this.disclaimer.Location = new System.Drawing.Point(8, 165);
       this.disclaimer.Margin = new System.Windows.Forms.Padding(8, 0, 4, 0);
       this.disclaimer.Name = "disclaimer";
-      this.disclaimer.Size = new System.Drawing.Size(544, 74);
+      this.disclaimer.Size = new System.Drawing.Size(544, 66);
       this.disclaimer.TabIndex = 28;
       this.disclaimer.Text = "disclaimer";
       // 
