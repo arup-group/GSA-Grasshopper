@@ -566,6 +566,7 @@ namespace GsaGH
     private static UnitsNet.UnitSystem m_units;
     private static BaseUnits SI = UnitsNet.UnitSystem.SI.BaseUnits;
     #endregion
+
     #region methods
     internal static void SetupUnits()
     {

@@ -6,6 +6,8 @@ using GsaGH.Parameters;
 using Rhino.Geometry;
 using GsaAPI;
 using System.Collections.Generic;
+using UnitsNet.Units;
+using UnitsNet;
 
 namespace ParamsIntegrationTests
 {
@@ -43,7 +45,7 @@ namespace ParamsIntegrationTests
         grps.Add(22);
         dum.Add(true);
         nms.Add("Shahin");
-        off.Add(new GsaOffset(0, 0, 0, 0.1));
+        off.Add(new GsaOffset(0, 0, 0, 0.1, LengthUnit.Meter));
       }
       elem.Groups = grps;
       elem.isDummies = dum;
@@ -140,7 +142,7 @@ namespace ParamsIntegrationTests
         grps.Add(2);
         dum.Add(false);
         nms.Add("Esmaeil");
-        off.Add(new GsaOffset(0, 0, 0, -0.15));
+        off.Add(new GsaOffset(0, 0, 0, -0.15, LengthUnit.Meter));
       }
       origi.Groups = grps;
       origi.isDummies = dum;
@@ -211,7 +213,7 @@ namespace ParamsIntegrationTests
         origi.Groups[i] = 4;
         origi.isDummies[i] = true;
         origi.Names[i] = "Mani";
-        origi.Offsets[i].Z = -0.17;
+        origi.Offsets[i].Z = new Length(-0.17, LengthUnit.Meter);
         grps2.Add(4);
         dum2.Add(true);
         nms2.Add("Mani");
