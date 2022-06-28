@@ -69,7 +69,7 @@ namespace GsaGH
       }
       set { m_tolerance = value; }
     }
-    private static Length m_tolerance = new Length(1, LengthUnit.Millimeter);
+    private static Length m_tolerance = new Length(1, LengthUnit.Centimeter);
 
     public static int SignificantDigits
     {
