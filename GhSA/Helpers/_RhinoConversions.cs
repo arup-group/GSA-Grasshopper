@@ -448,7 +448,7 @@ namespace GsaGH.Util.GH
     public static Brep BuildBrep(PolyCurve externalEdge, List<PolyCurve> voidCurves = null, double tolerance = -1)
     {
       if (tolerance < 0)
-        tolerance = Units.Tolerance.As(Units.LengthUnitGeometry) * 0.5; // use the user set units
+        tolerance = Units.Tolerance.As(Units.LengthUnitGeometry); // use the user set units
 
       CurveList curves = new CurveList
             {
@@ -460,11 +460,18 @@ namespace GsaGH.Util.GH
       Brep[] brep = Brep.CreatePlanarBreps(curves, tolerance);
       if (brep == null)
       {
-        Brep brep2 = Brep.CreateEdgeSurface(curves);
+        tolerance = tolerance * 2;
+        brep = Brep.CreatePlanarBreps(curves, tolerance);
         if (brep == null)
-          return null;
+        {
+          Brep brep2 = Brep.CreateEdgeSurface(curves);
+          if (brep2 == null)
+            return null;
+          else
+            return brep2;
+        }
         else
-          return brep2;
+          return brep[0];
       }
       else
         return brep[0];

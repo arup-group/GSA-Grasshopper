@@ -60,10 +60,16 @@ namespace GsaGH
 
     public static Length Tolerance
     {
-      get { return m_tolerance; }
+      get 
+      {
+        if (useRhinoLengthGeometryUnit)
+          return GetRhinoTolerance();
+        else
+          return m_tolerance; 
+      }
       set { m_tolerance = value; }
     }
-    private static Length m_tolerance = new Length(0.0001, LengthUnit.Meter);
+    private static Length m_tolerance = new Length(1, LengthUnit.Millimeter);
 
     public static int SignificantDigits
     {
@@ -707,6 +713,12 @@ namespace GsaGH
     internal static LengthUnit GetRhinoLengthUnit()
     {
       return GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
+    }
+    internal static Length GetRhinoTolerance()
+    {
+      LengthUnit lengthUnit = GetRhinoLengthUnit();
+      double tolerance = Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
+      return new Length(tolerance, lengthUnit);
     }
     internal static LengthUnit GetRhinoLengthUnit(Rhino.UnitSystem rhinoUnits)
     {

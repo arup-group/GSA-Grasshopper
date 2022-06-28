@@ -377,18 +377,19 @@ namespace GsaGH.Parameters
 
       m_inclPts = includePoints;
 
-      m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs);
-      if (m_brep == null)
-      {
-        string error = " Error with Mem2D ID: " + id + ". Unable to build Brep, please verify input geometry is valid and tolerance is set to something reasonable." +
-            System.Environment.NewLine + "It may be that the topology list is invalid, please check your input. Member " + id + " has not been imported!";
-        if (owner == null)
-        {
-          throw new Exception(error);
-        }
-        else
-          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, error);
-      }
+      m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs, 
+        new Length(0.25, UnitsNet.Units.LengthUnit.Meter).As(Units.LengthUnitGeometry)); // use relative high tolerance as if the member worked in GSA we want to import it even if warped
+      //if (m_brep == null)
+      //{
+      //  string error = " Error with Mem2D ID: " + id + ". Unable to build Brep, please verify input geometry is valid and tolerance is set to something reasonable." +
+      //      System.Environment.NewLine + "It may be that the topology list is invalid, please check your input. Member " + id + " has not been imported!";
+      //  if (owner == null)
+      //  {
+      //    throw new Exception(error);
+      //  }
+      //  else
+      //    owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, error);
+      //}
 
       m_prop = prop;
     }
