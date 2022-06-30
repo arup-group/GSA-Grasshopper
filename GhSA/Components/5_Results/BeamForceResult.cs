@@ -30,7 +30,7 @@ namespace GsaGH.Components
     // including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("5dee1b78-7b47-4c65-9d17-446140fc4e0d");
     public BeamForces()
-      : base("Beam Forces and Moments", "BeamForces", "Element1D Force and Moments result values",
+      : base("Beam Forces and Moments", "BeamForces", "Element1D Force and Moment result values",
             Ribbon.CategoryName.Name(),
             Ribbon.SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
@@ -185,10 +185,12 @@ namespace GsaGH.Components
 
           List<GsaResultsValues> vals = result.Element1DForceValues(elementlist, positionsCount, forceUnit, momentUnit);
 
+          List<int> permutations = result.SelectedPermutationIDs;
+
           // loop through all permutations (analysis case will just have one)
-          for (int permutation = 0; permutation < vals.Count; permutation++)
+          for (int index = 0; index < vals.Count; index++)
           {
-            if (vals[permutation].xyzResults.Count == 0 & vals[permutation].xxyyzzResults.Count == 0)
+            if (vals[index].xyzResults.Count == 0 & vals[index].xxyyzzResults.Count == 0)
             {
               string[] typ = result.ToString().Split('{');
               string acase = typ[1].Replace('}', ' ');
@@ -199,15 +201,15 @@ namespace GsaGH.Components
             {
               if (thread == 0)
               {
-                            //do xyz part of results
+                //do xyz part of results
 
-                            // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[permutation].xyzResults)
+                // loop through all elements
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xyzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
 
-                  GH_Path p = new GH_Path(result.CaseID, permutation + 1, elementID);
+                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
                   out_transX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(forceUnit))), p); // use ToUnit to capture changes in dropdown
                   out_transY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(forceUnit))), p);
@@ -217,15 +219,15 @@ namespace GsaGH.Components
               }
               if (thread == 1)
               {
-                            //do xxyyzz
+                //do xxyyzz
 
-                            // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[permutation].xxyyzzResults)
+                // loop through all elements
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xxyyzzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
 
-                  GH_Path p = new GH_Path(result.CaseID, permutation + 1, elementID);
+                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
                   out_rotX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(momentUnit))), p); // always use [rad] units
                   out_rotY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(momentUnit))), p);

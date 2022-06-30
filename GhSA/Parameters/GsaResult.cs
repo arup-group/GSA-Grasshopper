@@ -214,12 +214,7 @@ namespace GsaGH.Parameters
     /// <summary>
     /// User set permutation ID. If -1 => return all.
     /// </summary>
-    internal int CombPermutationID { get; set; }
-
-    /// <summary>
-    /// Calculated number of permutations in combination case
-    /// </summary>
-    internal int NumPermutations { get; }
+    internal List<int> SelectedPermutationIDs { get; set; }
 
     /// <summary>
     /// Combination Case 3DElement API Result Dictionary 
@@ -346,24 +341,21 @@ namespace GsaGH.Parameters
     internal Model Model { get; set; }
     public GsaResult()
     { }
-    internal GsaResult(Model model, AnalysisCaseResult result, int id)
+    internal GsaResult(Model model, AnalysisCaseResult result, int caseID)
     {
       this.Model = model;
       this.AnalysisCaseResult = result;
       this.Type = ResultType.AnalysisCase;
-      this.CaseID = id;
-      this.CaseName = model.AnalysisCaseName(CaseID);
+      this.CaseID = caseID;
+      this.CaseName = model.AnalysisCaseName(this.CaseID);
     }
-    internal GsaResult(Model model, CombinationCaseResult result, int id, int permutation, int firstNodeID)
+    internal GsaResult(Model model, CombinationCaseResult result, int caseID, List<int> permutations)
     {
       this.Model = model;
       this.CombinationCaseResult = result;
       this.Type = ResultType.Combination;
-      this.CaseID = id;
-      this.CombPermutationID = permutation;
-      this.ComboNodeResults = new Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>>>();
-      this.ComboNodeResults.Add(firstNodeID.ToString(), CombinationCaseResult.NodeResults(firstNodeID.ToString()));
-      this.NumPermutations = ComboNodeResults[firstNodeID.ToString()].First().Value.Count;
+      this.CaseID = caseID;
+      this.SelectedPermutationIDs = permutations.OrderBy(x => x).ToList();
     }
 
     #region properties
@@ -413,7 +405,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboNodeDisplacementValues.Add(nodelist,
-              ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], lengthUnit, CombPermutationID));
+              ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], lengthUnit, SelectedPermutationIDs));
         }
         return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values), Model.Nodes(nodelist).Keys.ToList());
       }
@@ -470,7 +462,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboNodeReactionForceValues.Add(nodelist,
-              ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, CombPermutationID));
+              ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, SelectedPermutationIDs));
         }
         return new Tuple<List<GsaResultsValues>, string>(
             new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values), nodelist);
@@ -514,7 +506,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement1DDisplacementValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], lengthUnit, CombPermutationID));
+              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], lengthUnit, SelectedPermutationIDs));
         }
         return new List<GsaResultsValues>(ComboElement1DDisplacementValues[key].Values);
       }
@@ -558,7 +550,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement1DForceValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], forceUnit, momentUnit, CombPermutationID));
+              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], forceUnit, momentUnit, SelectedPermutationIDs));
         }
         return new List<GsaResultsValues>(ComboElement1DForceValues[key].Values);
       }
@@ -600,7 +592,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement2DDisplacementValues.Add(elementlist,
-              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], lengthUnit, CombPermutationID));
+              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], lengthUnit, SelectedPermutationIDs));
         }
         return new List<GsaResultsValues>(ComboElement2DDisplacementValues[elementlist].Values);
       }
@@ -643,7 +635,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement2DForceValues.Add(elementlist,
-              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, momentUnit, CombPermutationID));
+              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, momentUnit, SelectedPermutationIDs));
         }
         return new List<GsaResultsValues>(ComboElement2DForceValues[elementlist].Values);
       }
@@ -685,7 +677,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement2DShearValues.Add(elementlist,
-              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, CombPermutationID));
+              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, SelectedPermutationIDs));
         }
         return new List<GsaResultsValues>(ComboElement2DShearValues[elementlist].Values);
       }
@@ -729,7 +721,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement2DStressValues.Add(key,
-              ResultHelper.GetElement2DResultValues(ComboElement2DResults[key], stressUnit, CombPermutationID));
+              ResultHelper.GetElement2DResultValues(ComboElement2DResults[key], stressUnit, SelectedPermutationIDs));
         }
         return new List<GsaResultsValues>(ComboElement2DStressValues[key].Values);
       }
@@ -771,7 +763,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement3DDisplacementValues.Add(elementlist,
-              ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], lengthUnit, CombPermutationID));
+              ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], lengthUnit, SelectedPermutationIDs));
         }
         return new List<GsaResultsValues>(ComboElement3DDisplacementValues[elementlist].Values);
       }
@@ -813,7 +805,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement3DStressValues.Add(elementlist,
-              ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], stressUnit, CombPermutationID));
+              ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], stressUnit, SelectedPermutationIDs));
         }
         return new List<GsaResultsValues>(ComboElement3DStressValues[elementlist].Values);
       }
@@ -828,13 +820,13 @@ namespace GsaGH.Parameters
       else if (Type == ResultType.Combination)
       {
         txt = "C" + CaseID;
-        if (CombPermutationID <= 0)
+        if (SelectedPermutationIDs.Count > 0)
         {
-          if (NumPermutations > 1)
-            txt = txt + " " + NumPermutations + " permutations";
+          if (SelectedPermutationIDs.Count > 1)
+            txt = txt + " " + SelectedPermutationIDs.Count + " permutations";
+          else
+            txt = txt + " P" + SelectedPermutationIDs[0];
         }
-        else
-          txt = txt + " P" + CombPermutationID;
       }
       return "GSA Result {" + txt + "}";
     }
