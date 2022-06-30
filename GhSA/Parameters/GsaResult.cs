@@ -294,7 +294,7 @@ namespace GsaGH.Parameters
     internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>> ComboElement1DResults { get; set; } = new Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
 
     /// <summary>
-    /// Combination Case 1DElement Forves Result VALUES Dictionary 
+    /// Combination Case 1DElement Forces Result VALUES Dictionary 
     /// Append to this dictionary to chache results
     /// key = Tuple<elementList, permutations>
     /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
@@ -302,7 +302,7 @@ namespace GsaGH.Parameters
     internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>> ComboElement1DForceValues { get; set; } = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
 
     /// <summary>
-    /// Combination Case 1DElement Forves Result VALUES Dictionary 
+    /// Combination Case 1DElement Displacement Result VALUES Dictionary 
     /// Append to this dictionary to chache results
     /// key = Tuple<elementList, permutations>
     /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
@@ -510,7 +510,7 @@ namespace GsaGH.Parameters
           if (!this.ComboElement1DResults.ContainsKey(key)) // see if result exist
           {
             // if the results hasn't already been taken out and add them to our dictionary
-            this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, positionsCount));
+            this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, positionsCount, false));
           }
           // compute result values and add to dictionary for cache
           this.ComboElement1DDisplacementValues.Add(key,
@@ -554,7 +554,7 @@ namespace GsaGH.Parameters
           if (!this.ComboElement1DResults.ContainsKey(key)) // see if result exist
           {
             // if the results hasn't already been taken out and add them to our dictionary
-            this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, positionsCount));
+            this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, positionsCount, false));
           }
           // compute result values and add to dictionary for cache
           this.ComboElement1DForceValues.Add(key,
