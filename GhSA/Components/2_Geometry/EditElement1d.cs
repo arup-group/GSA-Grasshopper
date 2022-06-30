@@ -39,7 +39,6 @@ namespace GsaGH.Components
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-
       pManager.AddGenericParameter("1D Element", "E1D", "GSA 1D Element to Modify", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Set Element Number. If ID is set it will replace any existing 1D Element in the model", GH_ParamAccess.item);
       pManager.AddLineParameter("Line", "L", "Reposition Element Line", GH_ParamAccess.item);

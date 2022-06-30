@@ -35,8 +35,8 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddGenericParameter("Section", "PB", "GSA Section to get or set information for", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Section Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
-      pManager.AddTextParameter("Section Profile", "Pf", "Profile name following GSA naming convetion (eg 'STD I 1000 500 15 25')", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Section Number", "ID", "Set Section Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
+      pManager.AddTextParameter("Section Profile", "Pf", "Profile name following GSA naming convention (eg 'STD I 1000 500 15 25')", GH_ParamAccess.item);
       pManager.AddGenericParameter("Material", "Ma", "Set GSA Material or reference existing material by ID", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Pool", "Po", "Set Section pool", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Name", "Na", "Set Section name", GH_ParamAccess.item);
