@@ -421,8 +421,10 @@ namespace GsaGH.Util.GH
       {
         for (int i = 0; i < inclCrvs.Count; i++)
         {
-          if (!inclCrvs[i].IsInPlane(plane))
+          if (!inclCrvs[i].IsInPlane(plane, Units.Tolerance.As(Units.LengthUnitGeometry)))
             inclCrvs[i] = Curve.ProjectToPlane(inclCrvs[i], plane);
+          else
+            break;
           convert = GH.Convert.ConvertMem2dCrv(inclCrvs[i], tolerance);
           incl_crvs.Add(convert.Item1);
           incl_topo.Add(convert.Item2);
@@ -432,8 +434,14 @@ namespace GsaGH.Util.GH
 
       if (inclPts != null)
       {
+        List<Point3d> inclPtsWithinTolerance = new List<Point3d>();
         for (int i = 0; i < inclPts.Count; i++)
-          inclPts[i] = plane.ClosestPoint(inclPts[i]);
+        {
+          Point3d tempPt = plane.ClosestPoint(inclPts[i]);
+          if (inclPts[i].DistanceTo(tempPt) > Units.Tolerance.As(Units.LengthUnitGeometry))
+            inclPtsWithinTolerance.Add(tempPt);
+        }
+        inclPts = inclPtsWithinTolerance;
       }
 
       Tuple<PolyCurve, List<Point3d>, List<string>> edgeTuple = new Tuple<PolyCurve, List<Point3d>, List<string>>(edge_crv, m_topo, m_topoType);
