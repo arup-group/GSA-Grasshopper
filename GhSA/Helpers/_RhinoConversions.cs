@@ -374,13 +374,9 @@ namespace GsaGH.Util.GH
       for (int i = 0; i < brep.Loops.Count; i++)
       {
         if (brep.Loops[i].LoopType == BrepLoopType.Outer)
-        {
           outer = brep.Loops[i].To3dCurve();
-        }
         else
-        {
           inner.Add(brep.Loops[i].To3dCurve());
-        }
       }
       List<Curve> edges = new List<Curve>();
       edges.Add(outer);
@@ -424,7 +420,10 @@ namespace GsaGH.Util.GH
           if (!inclCrvs[i].IsInPlane(plane, Units.Tolerance.As(Units.LengthUnitGeometry)))
             inclCrvs[i] = Curve.ProjectToPlane(inclCrvs[i], plane);
           else
+          {
+            //TODO - find intersection overlaps or points btw curve and plane: https://developer.rhino3d.com/api/RhinoCommon/html/T_Rhino_Geometry_Intersect_IntersectionEvent.htm
             break;
+          }
           convert = GH.Convert.ConvertMem2dCrv(inclCrvs[i], tolerance);
           incl_crvs.Add(convert.Item1);
           incl_topo.Add(convert.Item2);
