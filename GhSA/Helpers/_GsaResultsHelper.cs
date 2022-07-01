@@ -807,6 +807,7 @@ namespace GsaGH.Util.Gsa
           ReadOnlyCollection<Element3DResult> results = globalResults[key];
           Element3DResult result = results[permutationID - 1];
           ReadOnlyCollection<Double3> values = result.Displacement;
+          if (values.Count == 0) { return; }
           ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
 
@@ -854,6 +855,7 @@ namespace GsaGH.Util.Gsa
           ReadOnlyCollection<Element3DResult> results = globalResults[key];
           Element3DResult result = results[permutationID - 1];
           ReadOnlyCollection<Tensor3> values = result.Stress;
+          if (values.Count == 0) { return; }
           ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
           ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
@@ -905,6 +907,7 @@ namespace GsaGH.Util.Gsa
           ReadOnlyCollection<Element2DResult> results = globalResults[key];
           Element2DResult result = results[permutationID - 1];
           ReadOnlyCollection<Tensor3> values = result.Stress;
+          if (values.Count == 0) { return; }
           ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
           ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
@@ -958,6 +961,7 @@ namespace GsaGH.Util.Gsa
           ReadOnlyCollection<Element2DResult> results = globalResults[key];
           Element2DResult result = results[permutationID - 1];
           ReadOnlyCollection<Vector2> values = result.Shear;
+          if (values.Count == 0) { return; }
           ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
 
@@ -1008,6 +1012,7 @@ namespace GsaGH.Util.Gsa
           ReadOnlyCollection<Element2DResult> results = globalResults[key];
           Element2DResult result = results[permutationID - 1];
           ReadOnlyCollection<Tensor2> values = result.Force;
+          if (values.Count == 0) { return; }
           ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
           ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
@@ -1060,7 +1065,8 @@ namespace GsaGH.Util.Gsa
           // lists for results
           ReadOnlyCollection<Element2DResult> results = globalResults[key];
           Element2DResult result = results[permutationID - 1];
-          List<Double6> values = result.Displacement.ToList();
+          ReadOnlyCollection<Double6> values = result.Displacement;
+          if (values.Count == 0) { return; }
           ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
           ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
@@ -1114,7 +1120,8 @@ namespace GsaGH.Util.Gsa
           // lists for results
           ReadOnlyCollection<Element1DResult> results = globalResults[key];
           Element1DResult result = results[permutationID - 1];
-          List<Double6> values = result.Force.ToList();
+          ReadOnlyCollection<Double6> values = result.Force;
+          if (values.Count == 0) { return; }
           ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
           ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
@@ -1165,7 +1172,8 @@ namespace GsaGH.Util.Gsa
           // lists for results
           ReadOnlyCollection<Element1DResult> results = globalResults[key];
           Element1DResult result = results[permutationID - 1];
-          List<Double6> values = result.Displacement.ToList();
+          ReadOnlyCollection<Double6> values = result.Displacement;
+          if (values.Count == 0) { return; }
           ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
           ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
@@ -1215,7 +1223,7 @@ namespace GsaGH.Util.Gsa
           ReadOnlyCollection<NodeResult> results = globalResults[nodeID];
           NodeResult result = results[permutationID - 1];
           Double6 values = result.Displacement;
-
+          
           ConcurrentDictionary<int, GsaResultQuantity> xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyz.TryAdd(0, GetQuantityResult(values, resultLengthUnit));
           r.xyzResults.TryAdd(nodeID, xyz);
