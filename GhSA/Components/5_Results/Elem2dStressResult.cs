@@ -173,7 +173,7 @@ namespace GsaGH.Components
 
           List<GsaResultsValues> vals = result.Element2DStressValues(elementlist, layer, stresshUnit);
 
-          List<int> permutations = result.SelectedPermutationIDs;
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
 
           // loop through all permutations (analysis case will just have one)
           for (int index = 0; index < vals.Count; index++)

@@ -180,7 +180,7 @@ namespace GsaGH.Components
           List<GsaResultsValues> vals = resultgetter.Item1;
           List<int> sortedIDs = result.Model.Nodes(resultgetter.Item2).Keys.ToList();
 
-          List<int> permutations = result.SelectedPermutationIDs;
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
 
           for (int index = 0; index < vals.Count; index++)
           {

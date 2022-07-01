@@ -300,10 +300,12 @@ namespace GsaGH.Components
 
         // get results from results class
         GsaResultsValues res = new GsaResultsValues();
+        
         switch (_mode)
         {
           case FoldMode.Displacement:
             res = result.Element1DDisplacementValues(elementlist, positionsCount, lengthUnit)[0];
+            
             break;
 
           case FoldMode.Force:
@@ -313,6 +315,14 @@ namespace GsaGH.Components
         }
 
         // get geometry for display from results class
+        List<int> elementIDs = new List<int>();
+        if (result.Type == GsaResult.ResultType.AnalysisCase)
+          elementIDs = result.ACaseElement1DResults.Values.First().Select(x => x.Key).ToList();
+        else
+          elementIDs = result.ComboElement1DResults.Values.First().Select(x => x.Key).ToList();
+        if (elementlist.ToLower() == "all")
+          elementlist = String.Join(" ", elementIDs);
+
         ConcurrentDictionary<int, Element> elems = new ConcurrentDictionary<int, Element>(result.Model.Elements(elementlist));
         ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(result.Model.Nodes());
 
@@ -432,6 +442,7 @@ namespace GsaGH.Components
 
                   // list for element geometry and info
           if (element.Value.IsDummy) { return; }
+          if (element.Value.Type == ElementType.LINK) { return; }
           if (element.Value.Topology.Count > 2) { return; }
           Line ln = new Line(
                       FromGSA.Point3dFromNode(nodes[element.Value.Topology[0]], lengthUnit), // start point
@@ -616,7 +627,6 @@ namespace GsaGH.Components
             {
               legend.SetPixel(x, legend.Height - y - 1, gradientcolour);
             }
-
           }
           if (_mode == FoldMode.Displacement)
           {

@@ -182,7 +182,7 @@ namespace GsaGH.Components
           List<GsaResultsValues> vals = result.Element2DForceValues(elementlist, forceUnit, momentUnit);
           List<GsaResultsValues> valsShear = result.Element2DShearValues(elementlist, forceUnit);
 
-          List<int> permutations = result.SelectedPermutationIDs;
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
 
           // loop through all permutations (analysis case will just have one)
           for (int index = 0; index < vals.Count; index++)

@@ -172,7 +172,7 @@ namespace GsaGH.Components
           List<GsaResultsValues> vals = nodedisp.Item1;
           List<int> sortedIDs = nodedisp.Item2;
 
-          List<int> permutations = result.SelectedPermutationIDs;
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
 
           for (int index = 0; index < vals.Count; index++)
           {
