@@ -230,7 +230,7 @@ namespace GsaGH.Components
           {
             // create members
             Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-                = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, lengthUnit, sDict, pDict, p3Dict, amDict, this);
+                = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, lengthUnit, sDict, pDict, p3Dict, this);
 
             results.Mem1ds = memberTuple.Item1;
             results.Mem2ds = memberTuple.Item2;
@@ -243,106 +243,106 @@ namespace GsaGH.Components
         AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.InnerException.Message);
       }
       // post process materials (as they currently have a bug when running parallel!)
-      //if (results.Elem1ds != null)
-      //{
-      //  foreach (GsaElement1dGoo element in results.Elem1ds)
-      //  {
-      //    if (element.Value.Section != null && element.Value.Section.API_Section != null)
-      //    {
-      //      if (element.Value.Section.API_Section.MaterialAnalysisProperty > 0)
-      //      {
-      //        amDict.TryGetValue(element.Value.Section.API_Section.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-      //        element.Value.Section.Material = new GsaMaterial(element.Value.Section, apimaterial);
-      //      }
-      //      else
-      //        element.Value.Section.Material = new GsaMaterial(element.Value.Section);
-      //    }
-      //  }
-      //}
-      //if (results.Elem2ds != null)
-      //{
-      //  foreach (GsaElement2dGoo element in results.Elem2ds)
-      //  {
-      //    if (element.Value.Properties != null && element.Value.Properties[0].API_Prop2d != null)
-      //    {
-      //      if (element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty > 0)
-      //      {
-      //        amDict.TryGetValue(element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-      //        foreach (GsaProp2d prop in element.Value.Properties)
-      //          prop.Material = new GsaMaterial(prop, apimaterial);
-      //      }
-      //      else
-      //        foreach (GsaProp2d prop in element.Value.Properties)
-      //          prop.Material = new GsaMaterial(prop);
-      //    }
-      //  }
-      //}
-      //if (results.Elem3ds != null)
-      //{
-      //  foreach (GsaElement3dGoo element in results.Elem3ds)
-      //  {
-      //    if (element.Value.Properties != null && element.Value.Properties[0].API_Prop3d != null)
-      //    {
-      //      if (element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty > 0)
-      //      {
-      //        amDict.TryGetValue(element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-      //        foreach (GsaProp3d prop in element.Value.Properties)
-      //          prop.Material = new GsaMaterial(prop, apimaterial);
-      //      }
-      //      else
-      //        foreach (GsaProp3d prop in element.Value.Properties)
-      //          prop.Material = new GsaMaterial(prop);
-      //    }
-      //  }
-      //}
-      //if (results.Mem1ds != null)
-      //{
-      //  foreach (GsaMember1dGoo element in results.Mem1ds)
-      //  {
-      //    if (element.Value.Section != null && element.Value.Section.API_Section != null)
-      //    {
-      //      if (element.Value.Section.API_Section.MaterialAnalysisProperty > 0)
-      //      {
-      //        amDict.TryGetValue(element.Value.Section.API_Section.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-      //        element.Value.Section.Material = new GsaMaterial(element.Value.Section, apimaterial);
-      //      }
-      //      else
-      //        element.Value.Section.Material = new GsaMaterial(element.Value.Section);
-      //    }
-      //  }
-      //}
-      //if (results.Mem2ds != null)
-      //{
-      //  foreach (GsaMember2dGoo element in results.Mem2ds)
-      //  {
-      //    if (element.Value.Property != null && element.Value.Property.API_Prop2d != null)
-      //    {
-      //      if (element.Value.Property.API_Prop2d.MaterialAnalysisProperty > 0)
-      //      {
-      //        amDict.TryGetValue(element.Value.Property.API_Prop2d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-      //        element.Value.Property.Material = new GsaMaterial(element.Value.Property, apimaterial);
-      //      }
-      //      else
-      //        element.Value.Property.Material = new GsaMaterial(element.Value.Property);
-      //    }
-      //  }
-      //}
-      //if (results.Mem3ds != null)
-      //{
-      //  foreach (GsaMember3dGoo element in results.Mem3ds)
-      //  {
-      //    if (element.Value.Property != null && element.Value.Property.API_Prop3d != null)
-      //    {
-      //      if (element.Value.Property.API_Prop3d.MaterialAnalysisProperty > 0)
-      //      {
-      //        amDict.TryGetValue(element.Value.Property.API_Prop3d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-      //        element.Value.Property.Material = new GsaMaterial(element.Value.Property, apimaterial);
-      //      }
-      //      else
-      //        element.Value.Property.Material = new GsaMaterial(element.Value.Property);
-      //    }
-      //  }
-      //}
+      if (results.Elem1ds != null)
+      {
+        foreach (GsaElement1dGoo element in results.Elem1ds)
+        {
+          if (element.Value.Section != null && element.Value.Section.API_Section != null)
+          {
+            if (element.Value.Section.API_Section.MaterialAnalysisProperty > 0)
+            {
+              amDict.TryGetValue(element.Value.Section.API_Section.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+              element.Value.Section.Material = new GsaMaterial(element.Value.Section, apimaterial);
+            }
+            else
+              element.Value.Section.Material = new GsaMaterial(element.Value.Section);
+          }
+        }
+      }
+      if (results.Elem2ds != null)
+      {
+        foreach (GsaElement2dGoo element in results.Elem2ds)
+        {
+          if (element.Value.Properties != null && element.Value.Properties[0].API_Prop2d != null)
+          {
+            if (element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty > 0)
+            {
+              amDict.TryGetValue(element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+              foreach (GsaProp2d prop in element.Value.Properties)
+                prop.Material = new GsaMaterial(prop, apimaterial);
+            }
+            else
+              foreach (GsaProp2d prop in element.Value.Properties)
+                prop.Material = new GsaMaterial(prop);
+          }
+        }
+      }
+      if (results.Elem3ds != null)
+      {
+        foreach (GsaElement3dGoo element in results.Elem3ds)
+        {
+          if (element.Value.Properties != null && element.Value.Properties[0].API_Prop3d != null)
+          {
+            if (element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty > 0)
+            {
+              amDict.TryGetValue(element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+              foreach (GsaProp3d prop in element.Value.Properties)
+                prop.Material = new GsaMaterial(prop, apimaterial);
+            }
+            else
+              foreach (GsaProp3d prop in element.Value.Properties)
+                prop.Material = new GsaMaterial(prop);
+          }
+        }
+      }
+      if (results.Mem1ds != null)
+      {
+        foreach (GsaMember1dGoo element in results.Mem1ds)
+        {
+          if (element.Value.Section != null && element.Value.Section.API_Section != null)
+          {
+            if (element.Value.Section.API_Section.MaterialAnalysisProperty > 0)
+            {
+              amDict.TryGetValue(element.Value.Section.API_Section.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+              element.Value.Section.Material = new GsaMaterial(element.Value.Section, apimaterial);
+            }
+            else
+              element.Value.Section.Material = new GsaMaterial(element.Value.Section);
+          }
+        }
+      }
+      if (results.Mem2ds != null)
+      {
+        foreach (GsaMember2dGoo element in results.Mem2ds)
+        {
+          if (element.Value.Property != null && element.Value.Property.API_Prop2d != null)
+          {
+            if (element.Value.Property.API_Prop2d.MaterialAnalysisProperty > 0)
+            {
+              amDict.TryGetValue(element.Value.Property.API_Prop2d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+              element.Value.Property.Material = new GsaMaterial(element.Value.Property, apimaterial);
+            }
+            else
+              element.Value.Property.Material = new GsaMaterial(element.Value.Property);
+          }
+        }
+      }
+      if (results.Mem3ds != null)
+      {
+        foreach (GsaMember3dGoo element in results.Mem3ds)
+        {
+          if (element.Value.Property != null && element.Value.Property.API_Prop3d != null)
+          {
+            if (element.Value.Property.API_Prop3d.MaterialAnalysisProperty > 0)
+            {
+              amDict.TryGetValue(element.Value.Property.API_Prop3d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+              element.Value.Property.Material = new GsaMaterial(element.Value.Property, apimaterial);
+            }
+            else
+              element.Value.Property.Material = new GsaMaterial(element.Value.Property);
+          }
+        }
+      }
 
       return results;
     }
