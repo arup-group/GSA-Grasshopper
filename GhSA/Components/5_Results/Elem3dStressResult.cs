@@ -184,12 +184,13 @@ namespace GsaGH.Components
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) { continue; }
 
                   GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_XX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(stresshUnit))), p); // use ToUnit to capture changes in dropdown
-                  out_YY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(stresshUnit))), p);
-                  out_ZZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(stresshUnit))), p);
+                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(stresshUnit))), p); // use ToUnit to capture changes in dropdown
+                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(stresshUnit))), p);
+                  out_ZZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(stresshUnit))), p);
                 }
               }
               if (thread == 1)
@@ -201,12 +202,13 @@ namespace GsaGH.Components
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) { continue; }
 
                   GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_XY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X)), p); // always use [rad] units
-                  out_YZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y)), p);
-                  out_ZX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z)), p);
+                  out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)), p); // always use [rad] units
+                  out_YZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), p);
+                  out_ZX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), p);
                 }
               }
             });

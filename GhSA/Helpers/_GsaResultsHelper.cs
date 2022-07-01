@@ -747,7 +747,7 @@ namespace GsaGH.Util.Gsa
     /// <param name="momentUnit"></param>
     /// <returns></returns>
     internal static GsaResultsValues GetNodeResultValues(ReadOnlyDictionary<int, NodeResult> globalResults,
-        ForceUnit forceUnit, MomentUnit momentUnit)
+        ForceUnit forceUnit, MomentUnit momentUnit, ConcurrentBag<int> supportnodeIDs = null)
     {
       GsaResultsValues r = new GsaResultsValues();
       r.Type = GsaResultsValues.ResultType.Force;
@@ -756,6 +756,13 @@ namespace GsaGH.Util.Gsa
       {
         NodeResult result = globalResults[nodeID];
         Double6 values = result.Reaction;
+
+        if (supportnodeIDs != null && !supportnodeIDs.Contains(nodeID))
+        {
+          if (values.X == 0 & values.Y == 0 & values.Z == 0
+          & values.XX == 0 & values.YY == 0 & values.ZZ == 0)
+          { return; }
+        }
 
         ConcurrentDictionary<int, GsaResultQuantity> xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyz.TryAdd(0, GetQuantityResult(values, forceUnit));
@@ -1230,9 +1237,10 @@ namespace GsaGH.Util.Gsa
     /// <param name="forceUnit"></param>
     /// <param name="momentUnit"></param>
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
+    /// <param name="supportnodeIDs">bag of support node IDs, if input contains ids then this method will test all nodes and include results for these IDs even if they are all zero</param>
     /// <returns></returns>
     internal static ConcurrentDictionary<int, GsaResultsValues> GetNodeResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults,
-        ForceUnit forceUnit, MomentUnit momentUnit, List<int> permutations)
+        ForceUnit forceUnit, MomentUnit momentUnit, List<int> permutations, ConcurrentBag<int> supportnodeIDs = null)
     {
       ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
 
@@ -1251,6 +1259,13 @@ namespace GsaGH.Util.Gsa
           ReadOnlyCollection<NodeResult> results = globalResults[nodeID];
           NodeResult result = results[permutationID - 1];
           Double6 values = result.Reaction;
+          
+          if (supportnodeIDs != null && !supportnodeIDs.Contains(nodeID))
+          {
+            if (values.X == 0 & values.Y == 0 & values.Z == 0
+            & values.XX == 0 & values.YY == 0 & values.ZZ == 0)
+            { return ; }
+          }
 
           ConcurrentDictionary<int, GsaResultQuantity> xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyz.TryAdd(0, GetQuantityResult(values, forceUnit));

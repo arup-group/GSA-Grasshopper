@@ -199,35 +199,35 @@ namespace GsaGH.Components
               if (thread == 0)
               {
                 //do xyz part of results
-
                 // loop through all elements
                 foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xyzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) { continue; }
 
                   GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_X.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(forceUnit))), p); // use ToUnit to capture changes in dropdown
-                  out_Y.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(forceUnit))), p);
-                  out_XY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(forceUnit))), p);
+                  out_X.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(forceUnit))), p); // use ToUnit to capture changes in dropdown
+                  out_Y.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(forceUnit))), p);
+                  out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(forceUnit))), p);
                 }
               }
               if (thread == 1)
               {
                 //do xxyyzz
-
                 // loop through all elements
                 foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xxyyzzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) { continue; }
 
                   GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_XX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(momentUnit))), p); // always use [rad] units
-                  out_YY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(momentUnit))), p);
-                  out_XXYY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(momentUnit))), p);
+                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(momentUnit))), p); // always use [rad] units
+                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(momentUnit))), p);
+                  out_XXYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(momentUnit))), p);
                 }
               }
               if (thread == 2)
@@ -242,8 +242,8 @@ namespace GsaGH.Components
 
                   GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_qX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(forceUnit))), p); // always use [rad] units
-                  out_qY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(forceUnit))), p);
+                  out_qX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(forceUnit))), p); // always use [rad] units
+                  out_qY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(forceUnit))), p);
                 }
               }
             });

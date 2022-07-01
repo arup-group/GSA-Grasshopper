@@ -281,9 +281,9 @@ namespace GsaGH.Components
             break;
 
           case FoldMode.Reaction:
-            Tuple<List<GsaResultsValues>, string> resultgetter = result.NodeReactionForceValues(nodeList, Units.ForceUnit, Units.MomentUnit);
+            Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, Units.ForceUnit, Units.MomentUnit);
             res = resultgetter.Item1[0];
-            nodeList = resultgetter.Item2;
+            nodeList = string.Join(" ", resultgetter.Item2);
             break;
         }
 

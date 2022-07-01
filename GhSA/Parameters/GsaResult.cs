@@ -420,20 +420,21 @@ namespace GsaGH.Parameters
     /// <param name="nodelist"></param>
     /// <param name="lengthUnit"></param>
     /// <returns></returns>
-    internal Tuple<List<GsaResultsValues>, string> NodeReactionForceValues(string nodelist, ForceUnit forceUnit, MomentUnit momentUnit)
+    internal Tuple<List<GsaResultsValues>, List<int>> NodeReactionForceValues(string nodelist, ForceUnit forceUnit, MomentUnit momentUnit)
     {
       // get list of support nodes
+      ConcurrentBag<int> supportnodeIDs = null;
       if (nodelist.ToLower() == "all" | nodelist == "")
       {
+        supportnodeIDs = new ConcurrentBag<int>();
         ReadOnlyDictionary<int, Node> nodes = Model.Nodes();
-        ConcurrentBag<int> supportnodeIDs = new ConcurrentBag<int>();
         Parallel.ForEach(nodes, node =>
         {
           NodalRestraint rest = node.Value.Restraint;
           if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ)
             supportnodeIDs.Add(node.Key);
         });
-        nodelist = string.Join(" ", supportnodeIDs.OrderBy(x => x).ToArray());
+        nodelist = "All";
       }
 
       if (this.Type == ResultType.AnalysisCase)
@@ -447,10 +448,10 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ACaseNodeReactionForceValues.Add(nodelist,
-              ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], forceUnit, momentUnit));
+              ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], forceUnit, momentUnit, supportnodeIDs));
         }
-        return new Tuple<List<GsaResultsValues>, string>(
-            new List<GsaResultsValues> { ACaseNodeReactionForceValues[nodelist] }, nodelist);
+        return new Tuple<List<GsaResultsValues>, List<int>>(
+            new List<GsaResultsValues> { ACaseNodeReactionForceValues[nodelist] }, ACaseNodeReactionForceValues[nodelist].xyzResults.Keys.OrderBy(x => x).ToList());
       }
       else
       {
@@ -463,10 +464,10 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboNodeReactionForceValues.Add(nodelist,
-              ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, SelectedPermutationIDs));
+              ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, SelectedPermutationIDs, supportnodeIDs));
         }
-        return new Tuple<List<GsaResultsValues>, string>(
-            new List<GsaResultsValues>(ComboNodeReactionForceValues[nodelist].Values), nodelist);
+        return new Tuple<List<GsaResultsValues>, List<int>>(
+            new List<GsaResultsValues>(ComboNodeReactionForceValues[nodelist].Values), ComboNodeReactionForceValues[nodelist].Values.First().xyzResults.Keys.OrderBy(x => x).ToList());
       }
     }
 

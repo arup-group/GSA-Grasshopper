@@ -176,9 +176,9 @@ namespace GsaGH.Components
             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
             return;
           }
-          Tuple<List<GsaResultsValues>, string> resultgetter = result.NodeReactionForceValues(nodeList, forceUnit, momentUnit);
+          Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, forceUnit, momentUnit);
           List<GsaResultsValues> vals = resultgetter.Item1;
-          List<int> sortedIDs = result.Model.Nodes(resultgetter.Item2).Keys.ToList();
+          List<int> sortedIDs = resultgetter.Item2;
 
           List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
 
