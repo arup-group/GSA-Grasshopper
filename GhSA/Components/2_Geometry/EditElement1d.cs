@@ -182,14 +182,14 @@ namespace GsaGH.Components
         GsaBool6 start = new GsaBool6();
         if (DA.GetData(7, ref start))
         {
-          elem.ReleaseStart = start; //should handle setting the release in elem.Element.SetRelease
+          elem.ReleaseStart = start; 
         }
 
         // 8 end release
         GsaBool6 end = new GsaBool6();
         if (DA.GetData(8, ref end))
         {
-          elem.ReleaseEnd = end; //should handle setting the release in elem.Element.SetRelease
+          elem.ReleaseEnd = end; 
         }
 
         // 9 orientation angle
@@ -197,7 +197,7 @@ namespace GsaGH.Components
         if (DA.GetData(9, ref ghangle))
         {
           if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
-            elem.OrientationAngle = angle; //elem.Element.OrientationAngle = angle;
+            elem.OrientationAngle = angle; 
         }
 
         // 10 orientation node
@@ -221,7 +221,7 @@ namespace GsaGH.Components
         if (DA.GetData(11, ref ghnm))
         {
           if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
-            elem.Name = name; //elem.Element.Name = name;
+            elem.Name = name; 
         }
 
         // 12 Colour
@@ -229,7 +229,7 @@ namespace GsaGH.Components
         if (DA.GetData(12, ref ghcol))
         {
           if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
-            elem.Colour = col; // elem.Element.Colour = col;
+            elem.Colour = col; 
         }
 
         // 13 Dummy
@@ -237,9 +237,8 @@ namespace GsaGH.Components
         if (DA.GetData(13, ref ghdum))
         {
           if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
-            elem.IsDummy = dum; // elem.Element.IsDummy = dum;
+            elem.IsDummy = dum; 
         }
-
 
         // #### outputs ####
         DA.SetData(0, new GsaElement1dGoo(elem));
