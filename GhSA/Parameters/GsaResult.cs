@@ -465,7 +465,7 @@ namespace GsaGH.Parameters
               ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, SelectedPermutationIDs));
         }
         return new Tuple<List<GsaResultsValues>, string>(
-            new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values), nodelist);
+            new List<GsaResultsValues>(ComboNodeReactionForceValues[nodelist].Values), nodelist);
       }
     }
 
