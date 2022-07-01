@@ -407,7 +407,8 @@ namespace GsaGH.Parameters
           this.ComboNodeDisplacementValues.Add(nodelist,
               ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], lengthUnit, SelectedPermutationIDs));
         }
-        return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values), Model.Nodes(nodelist).Keys.ToList());
+        return new Tuple<List<GsaResultsValues>, List<int>>(
+          new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values), Model.Nodes(nodelist).Keys.ToList());
       }
     }
 
