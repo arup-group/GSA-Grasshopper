@@ -156,7 +156,21 @@ namespace GsaGH
         return new Area(1, unitSystem).Unit;
       }
     }
-
+    public static VolumePerLengthUnit VolumePerLengthUnit
+    {
+      get
+      {
+        switch (m_length_section)
+        {
+          case LengthUnit.Yard:
+          case LengthUnit.Inch:
+          case LengthUnit.Foot:
+            return VolumePerLengthUnit.CubicYardPerFoot;
+          default:
+            return VolumePerLengthUnit.CubicMeterPerMeter;
+        }
+      }
+    }
     public static LengthUnit LengthUnitResult
     {
       get
