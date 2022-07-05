@@ -50,6 +50,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
       ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
       ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
+      ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
 
       // get nodes
       ConcurrentBag<GsaNodeGoo> goonodes = Util.Gsa.FromGSA.GetNodes(nDict, LengthUnit.Meter);
@@ -60,7 +61,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
       // get elements
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, LengthUnit.Meter);
+          = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, LengthUnit.Meter);
       // convert from Goo-type
       List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -89,7 +90,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       mem2ds.Select(c => { c.ID = 0; return c; }).ToList();
 
       // get properties
-      List<GsaSectionGoo> goosections = FromGSA.GetSections(sDict, model.AnalysisMaterials());
+      List<GsaSectionGoo> goosections = FromGSA.GetSections(sDict, model.AnalysisMaterials(), model.SectionModifiers());
       // convert from Goo-type
       List<GsaSection> sections = goosections.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;

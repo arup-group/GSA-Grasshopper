@@ -198,7 +198,8 @@ namespace GsaGH.Components
         ConcurrentDictionary<int, Section> sDict,
         ConcurrentDictionary<int, Prop2D> pDict,
         ConcurrentDictionary<int, Prop3D> p3Dict,
-        ConcurrentDictionary<int, AnalysisMaterial> amDict
+        ConcurrentDictionary<int, AnalysisMaterial> amDict,
+        ConcurrentDictionary<int, SectionModifier> modDict
         )
     {
       SolveResults results = new SolveResults();
@@ -219,7 +220,7 @@ namespace GsaGH.Components
           {
             // create elements
             Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-                = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, lengthUnit);
+                = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, modDict, lengthUnit);
 
             results.Elem1ds = elementTuple.Item1;
             results.Elem2ds = elementTuple.Item2;
@@ -389,9 +390,10 @@ namespace GsaGH.Components
           ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
           ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
           ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
+          ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
 
           tsk = Task.Run(() => Compute(nDict, axDict, out_nDict,
-              eDict, mDict, sDict, pDict, p3Dict, amDict), CancelToken);
+              eDict, mDict, sDict, pDict, p3Dict, amDict, modDict), CancelToken);
         }
         // Add a null task even if data collection fails. This keeps the
         // list size in sync with the iterations
@@ -440,9 +442,10 @@ namespace GsaGH.Components
           ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
           ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
           ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
+          ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
 
           results = Compute(nDict, axDict, out_nDict,
-          eDict, mDict, sDict, pDict, p3Dict, amDict);
+          eDict, mDict, sDict, pDict, p3Dict, amDict, modDict);
         }
         else return;
       }

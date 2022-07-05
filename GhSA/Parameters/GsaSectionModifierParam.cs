@@ -23,42 +23,46 @@ namespace GsaGH.Parameters
   {
 
     internal SectionModifier API_SectionModifier;
-    private void CloneAPIModifier()
+    
+    public bool isModified
     {
-      SectionModifier dup = new SectionModifier();
-      
-      dup.AreaModifier = new SectionModifierAttribute(
-        this.API_SectionModifier.AreaModifier.Option, this.API_SectionModifier.AreaModifier.Value);
-      
-      dup.I11Modifier = new SectionModifierAttribute(
-        this.API_SectionModifier.I11Modifier.Option, this.API_SectionModifier.I11Modifier.Value);
-      
-      dup.I22Modifier = new SectionModifierAttribute(
-        this.API_SectionModifier.I22Modifier.Option, this.API_SectionModifier.I22Modifier.Value);
-      
-      dup.JModifier = new SectionModifierAttribute(
-        this.API_SectionModifier.JModifier.Option, this.API_SectionModifier.JModifier.Value);
-      
-      dup.K11Modifier = new SectionModifierAttribute(
-        this.API_SectionModifier.K11Modifier.Option, this.API_SectionModifier.K11Modifier.Value);
-      
-      dup.K22Modifier = new SectionModifierAttribute(
-        this.API_SectionModifier.K22Modifier.Option, this.API_SectionModifier.K22Modifier.Value);
-      
-      dup.VolumeModifier = new SectionModifierAttribute(
-        this.API_SectionModifier.VolumeModifier.Option, this.API_SectionModifier.VolumeModifier.Value);
-      
-      dup.AdditionalMass = this.API_SectionModifier.AdditionalMass;
-      
-      dup.StressOption = this.API_SectionModifier.StressOption;
-      
-      dup.IsBendingAxesPrincipal = this.API_SectionModifier.IsBendingAxesPrincipal;
-      
-      dup.IsReferencePointCentroid = this.API_SectionModifier.IsReferencePointCentroid;
-      
-      this.API_SectionModifier = dup;
+      get
+      {
+        if (API_SectionModifier == null) return false;
+        if (isAttributeModified(this.API_SectionModifier.AreaModifier))
+          return true;
+        if (isAttributeModified(this.API_SectionModifier.I11Modifier))
+          return true;
+        if (isAttributeModified(this.API_SectionModifier.I22Modifier))
+          return true;
+        if (isAttributeModified(this.API_SectionModifier.JModifier))
+          return true;
+        if (isAttributeModified(this.API_SectionModifier.K11Modifier))
+          return true;
+        if (isAttributeModified(this.API_SectionModifier.K22Modifier))
+          return true;
+        if (isAttributeModified(this.API_SectionModifier.VolumeModifier))
+          return true;
+        if (isBendingAxesPrincipal)
+          return true;
+        if (isReferencePointCentroid)
+          return true;
+        if (this.API_SectionModifier.AdditionalMass != 0)
+          return true;
+        if (this.API_SectionModifier.StressOption != SectionModifierStressType.NO_MOD)
+          return true;
+        return false;
+      }
     }
-
+    private bool isAttributeModified(SectionModifierAttribute attribute)
+    {
+      if (attribute.Option == SectionModifierOptionType.TO)
+        return true;
+      if (attribute.Value != 1)
+        return true;
+      else
+        return false;
+    }
     public IQuantity AreaModifier
     {
       get 
@@ -330,10 +334,34 @@ namespace GsaGH.Parameters
       }
     }
 
+    private void CloneAPIModifier()
+    {
+      if (this.API_SectionModifier == null)
+      {
+        this.API_SectionModifier = new SectionModifier();
+        return;
+      }
+
+      SectionModifier dup = new SectionModifier();
+      dup.AreaModifier = new SectionModifierAttribute(this.API_SectionModifier.AreaModifier.Option, this.API_SectionModifier.AreaModifier.Value);
+      dup.I11Modifier = new SectionModifierAttribute(this.API_SectionModifier.I11Modifier.Option, this.API_SectionModifier.I11Modifier.Value);
+      dup.I22Modifier = new SectionModifierAttribute(
+        this.API_SectionModifier.I22Modifier.Option, this.API_SectionModifier.I22Modifier.Value);
+      dup.JModifier = new SectionModifierAttribute(this.API_SectionModifier.JModifier.Option, this.API_SectionModifier.JModifier.Value);
+      dup.K11Modifier = new SectionModifierAttribute(this.API_SectionModifier.K11Modifier.Option, this.API_SectionModifier.K11Modifier.Value);
+      dup.K22Modifier = new SectionModifierAttribute(this.API_SectionModifier.K22Modifier.Option, this.API_SectionModifier.K22Modifier.Value);
+      dup.VolumeModifier = new SectionModifierAttribute(this.API_SectionModifier.VolumeModifier.Option, this.API_SectionModifier.VolumeModifier.Value);
+      dup.AdditionalMass = this.API_SectionModifier.AdditionalMass;
+      dup.StressOption = this.API_SectionModifier.StressOption;
+      dup.IsBendingAxesPrincipal = this.API_SectionModifier.IsBendingAxesPrincipal;
+      dup.IsReferencePointCentroid = this.API_SectionModifier.IsReferencePointCentroid;
+      this.API_SectionModifier = dup;
+    }
+
     #region constructors
     public GsaSectionModifier() 
     { 
-      this.API_SectionModifier = new SectionModifier();
+      // empty constructor will create internal null API object
     }
 
     internal GsaSectionModifier(SectionModifier apiMod)
@@ -360,6 +388,7 @@ namespace GsaGH.Parameters
     #endregion
 
     #region methods
+
     public override string ToString()
     {
       string str = "Section Modifier";

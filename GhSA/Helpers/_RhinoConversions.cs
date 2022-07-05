@@ -822,6 +822,7 @@ namespace GsaGH.Util.GH
               new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds()),
               new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds()),
               new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials()),
+              new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers()),
               Units.LengthUnitGeometry);
 
       List<GsaElement2dGoo> elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.ID).ToList();

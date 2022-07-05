@@ -246,6 +246,7 @@ namespace GsaGH.Components
               new ConcurrentDictionary<int, Prop2D>(gsa.Prop2Ds()),
               new ConcurrentDictionary<int, Prop3D>(gsa.Prop3Ds()),
               new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials()),
+              new ConcurrentDictionary<int, SectionModifier>(gsa.SectionModifiers()),
               lengthUnit);
 
       // post process materials (as they currently have a bug when running parallel!)

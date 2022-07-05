@@ -112,6 +112,13 @@ namespace GsaGH.Parameters
         m_section.MaterialGradeProperty = m_material.GradeProperty;
       }
     }
+
+    public GsaSectionModifier Modifier
+    {
+      get { return m_modifier; }
+      set { m_modifier = value; }
+    }
+
     #region GsaAPI members
     public string Name
     {
@@ -197,7 +204,8 @@ namespace GsaGH.Parameters
     #region fields
     Section m_section;
     int m_idd = 0;
-    GsaMaterial m_material; //to be added when GsaAPI supports materials
+    GsaMaterial m_material; 
+    GsaSectionModifier m_modifier;
     private Guid m_guid;
     #endregion
 
@@ -242,6 +250,8 @@ namespace GsaGH.Parameters
       dup.m_idd = m_idd;
       if (m_material != null)
         dup.m_material = m_material.Duplicate();
+      if (m_modifier != null)
+        dup.m_modifier = m_modifier.Duplicate();
       dup.m_guid = new Guid(m_guid.ToString());
       return dup;
     }
@@ -414,8 +424,6 @@ namespace GsaGH.Parameters
       return false;
     }
     #endregion
-
-
   }
 
   /// <summary>
