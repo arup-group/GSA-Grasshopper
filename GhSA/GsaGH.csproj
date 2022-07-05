@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
+    <Compile Include="Components\1_Properties\CreateSectionModifier.cs" />
     <Compile Include="Components\1_Properties\CreateProp3d.cs" />
     <Compile Include="Components\1_Properties\TaperProfile.cs" />
     <Compile Include="Components\1_Properties\CustomMaterial.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="Components\GraveyardComp\CreateOffset_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProp2d_OBSOLETE.cs" />
+    <Compile Include="Components\GraveyardComp\EditSection_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\Version_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\GetAnalysis_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />

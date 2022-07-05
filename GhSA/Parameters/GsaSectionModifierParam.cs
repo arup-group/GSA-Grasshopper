@@ -9,19 +9,17 @@ using UnitsNet.Units;
 
 namespace GsaGH.Parameters
 {
-  public enum StressOptionType
-  {
-    NoCalculation,
-    UseModified,
-    UseUnmodified
-  }
-
   /// <summary>
   /// Section Modifier class, this class defines the basic properties and methods for any Gsa Offset
   /// </summary>
   public class GsaSectionModifier
   {
-
+    public enum StressOptionType
+    {
+      NoCalculation,
+      UseModified,
+      UseUnmodified
+    }
     internal SectionModifier API_SectionModifier;
     
     public bool isModified
@@ -78,7 +76,7 @@ namespace GsaGH.Parameters
       set
       {
         if (value.QuantityInfo.UnitType != typeof(AreaUnit)
-          | value.QuantityInfo.UnitType != typeof(RatioUnit))
+          & value.QuantityInfo.UnitType != typeof(RatioUnit))
           throw new ArgumentException("AreaModifier must be either Area or Ratio");
         else
         {
@@ -109,7 +107,7 @@ namespace GsaGH.Parameters
       set
       {
         if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit)
-          | value.QuantityInfo.UnitType != typeof(RatioUnit))
+          & value.QuantityInfo.UnitType != typeof(RatioUnit))
           throw new ArgumentException("I11Modifier must be either AreaMomentOfInertia or Ratio");
         else
         {
@@ -139,7 +137,7 @@ namespace GsaGH.Parameters
       set
       {
         if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit)
-          | value.QuantityInfo.UnitType != typeof(RatioUnit))
+          & value.QuantityInfo.UnitType != typeof(RatioUnit))
           throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
         else
         {
@@ -170,7 +168,7 @@ namespace GsaGH.Parameters
       set
       {
         if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit)
-          | value.QuantityInfo.UnitType != typeof(RatioUnit))
+          & value.QuantityInfo.UnitType != typeof(RatioUnit))
           throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
         else
         {
@@ -200,7 +198,7 @@ namespace GsaGH.Parameters
       set
       {
         if (value.QuantityInfo.UnitType != typeof(VolumePerLengthUnit)
-          | value.QuantityInfo.UnitType != typeof(RatioUnit))
+          & value.QuantityInfo.UnitType != typeof(RatioUnit))
           throw new ArgumentException("VolumeModifier must be either VolumePerLength or Ratio");
         else
         {
@@ -620,7 +618,7 @@ namespace GsaGH.Parameters
   public class GsaSectionModifierParameter : GH_PersistentParam<GsaSectionModifierGoo>
   {
     public GsaSectionModifierParameter()
-      : base(new GH_InstanceDescription("Section Modifier", "SecMod", "GSA Section Modifier", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+      : base(new GH_InstanceDescription("Section Modifier", "Mo", "GSA Section Modifier", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
     {
     }
 

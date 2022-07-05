@@ -141,11 +141,45 @@ namespace GsaGH
         return new AreaMomentOfInertia(1, unitSystem).Unit;
       }
     }
-    internal static AreaMomentOfInertiaUnit GetSectionAreaMomentOfInertiaUnit(LengthUnit unit)
+    internal static AreaMomentOfInertiaUnit GetAreaMomentOfInertiaUnit(LengthUnit unit)
     {
+      switch (unit)
+      {
+        case LengthUnit.Millimeter:
+          return AreaMomentOfInertiaUnit.MillimeterToTheFourth;
+        case LengthUnit.Centimeter:
+          return AreaMomentOfInertiaUnit.CentimeterToTheFourth;
+        case LengthUnit.Meter:
+          return AreaMomentOfInertiaUnit.MeterToTheFourth;
+        case LengthUnit.Foot:
+          return AreaMomentOfInertiaUnit.FootToTheFourth;
+        case LengthUnit.Inch:
+          return AreaMomentOfInertiaUnit.InchToTheFourth;
+      }
+      // fallback:
       BaseUnits baseUnits = new BaseUnits(unit, SI.Mass, SI.Time, SI.Current, SI.Temperature, SI.Amount, SI.LuminousIntensity);
       UnitsNet.UnitSystem unitSystem = new UnitsNet.UnitSystem(baseUnits);
       return new AreaMomentOfInertia(1, unitSystem).Unit;
+    }
+    internal static AreaUnit GetAreaUnit(LengthUnit unit)
+    {
+      switch (unit)
+      {
+        case LengthUnit.Millimeter:
+          return AreaUnit.SquareMillimeter;
+        case LengthUnit.Centimeter:
+          return AreaUnit.SquareCentimeter;
+        case LengthUnit.Meter:
+          return AreaUnit.SquareMeter;
+        case LengthUnit.Foot:
+          return AreaUnit.SquareFoot;
+        case LengthUnit.Inch:
+          return AreaUnit.SquareInch;
+      }
+      // fallback:
+      BaseUnits baseUnits = new BaseUnits(unit, SI.Mass, SI.Time, SI.Current, SI.Temperature, SI.Amount, SI.LuminousIntensity);
+      UnitsNet.UnitSystem unitSystem = new UnitsNet.UnitSystem(baseUnits);
+      return new Area(1, unitSystem).Unit;
     }
     internal static AreaUnit SectionAreaUnit
     {
@@ -170,6 +204,23 @@ namespace GsaGH
             return VolumePerLengthUnit.CubicMeterPerMeter;
         }
       }
+    }
+    internal static VolumePerLengthUnit GetVolumePerLengthUnit(LengthUnit unit)
+    {
+      switch (unit)
+      {
+        case LengthUnit.Millimeter:
+        case LengthUnit.Centimeter:
+        case LengthUnit.Meter:
+          return VolumePerLengthUnit.CubicMeterPerMeter;
+        case LengthUnit.Foot:
+        case LengthUnit.Inch:
+          return VolumePerLengthUnit.CubicYardPerFoot;
+      }
+      // fallback:
+      BaseUnits baseUnits = new BaseUnits(unit, SI.Mass, SI.Time, SI.Current, SI.Temperature, SI.Amount, SI.LuminousIntensity);
+      UnitsNet.UnitSystem unitSystem = new UnitsNet.UnitSystem(baseUnits);
+      return new VolumePerLength(1, unitSystem).Unit;
     }
     public static LengthUnit LengthUnitResult
     {
@@ -450,6 +501,44 @@ namespace GsaGH
             DensityUnit.PoundPerCubicInch.ToString(),
             DensityUnit.KilopoundPerCubicFoot.ToString(),
             DensityUnit.KilopoundPerCubicInch.ToString(),
+        };
+    public static LinearDensityUnit LinearDensityUnit
+    {
+      get
+      {
+        switch (m_mass)
+        {
+          case MassUnit.Kilogram:
+            switch (m_length_geometry)
+            {
+              case LengthUnit.Millimeter:
+                return LinearDensityUnit.KilogramPerMillimeter;
+              case LengthUnit.Centimeter:
+                return LinearDensityUnit.KilogramPerCentimeter;
+              case LengthUnit.Meter:
+                return LinearDensityUnit.KilogramPerMeter;
+            }
+            break;
+          case MassUnit.Pound:
+            switch (m_length_geometry)
+            {
+              case LengthUnit.Foot:
+                return LinearDensityUnit.PoundPerFoot;
+              case LengthUnit.Inch:
+                return LinearDensityUnit.PoundPerInch;
+            }
+            break;
+        }
+        return LinearDensityUnit.KilogramPerMeter;
+      }
+    }
+    internal static List<string> FilteredLinearDensityUnitUnits = new List<string>()
+        {
+            LinearDensityUnit.KilogramPerMillimeter.ToString(),
+            LinearDensityUnit.KilogramPerCentimeter.ToString(),
+            LinearDensityUnit.KilogramPerMeter.ToString(),
+            LinearDensityUnit.PoundPerFoot.ToString(),
+            LinearDensityUnit.PoundPerInch.ToString(),
         };
     #endregion
 
