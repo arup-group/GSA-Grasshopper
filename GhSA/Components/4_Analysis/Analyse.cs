@@ -373,7 +373,11 @@ namespace GsaGH.Components
 
           if (gh_typ.Value is GsaAnalysisTaskGoo)
           {
-            in_tasks.Add(((GsaAnalysisTaskGoo)gh_typ.Value).Value.Duplicate());
+            if (((GsaAnalysisTaskGoo)gh_typ.Value).Value.Type == GsaAnalysisTask.AnalysisType.Static)
+              in_tasks.Add(((GsaAnalysisTaskGoo)gh_typ.Value).Value.Duplicate());
+            else
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Currently only 'Static' analysis tasks can be set." 
+              + System.Environment.NewLine + "As a workaround, it is possible to use a seed model with the desired analysis tasks (and their dependency) already set up.");
           }
           else if (gh_typ.Value is GsaCombinationCaseGoo)
           {
