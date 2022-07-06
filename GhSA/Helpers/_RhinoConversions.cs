@@ -417,7 +417,7 @@ namespace GsaGH.Util.GH
       {
         for (int i = 0; i < inclCrvs.Count; i++)
         {
-          if (!inclCrvs[i].IsInPlane(plane, Units.Tolerance.As(Units.LengthUnitGeometry)))
+          if (inclCrvs[i].IsInPlane(plane, Units.Tolerance.As(Units.LengthUnitGeometry)))
             inclCrvs[i] = Curve.ProjectToPlane(inclCrvs[i], plane);
           else
           {
@@ -437,7 +437,7 @@ namespace GsaGH.Util.GH
         for (int i = 0; i < inclPts.Count; i++)
         {
           Point3d tempPt = plane.ClosestPoint(inclPts[i]);
-          if (inclPts[i].DistanceTo(tempPt) > Units.Tolerance.As(Units.LengthUnitGeometry))
+          if (inclPts[i].DistanceTo(tempPt) <= Units.Tolerance.As(Units.LengthUnitGeometry))
             inclPtsWithinTolerance.Add(tempPt);
         }
         inclPts = inclPtsWithinTolerance;
