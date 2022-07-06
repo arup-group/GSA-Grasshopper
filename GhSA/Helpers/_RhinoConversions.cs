@@ -779,7 +779,7 @@ namespace GsaGH.Util.GH
       Brep[] flattened = unroller.PerformUnroll(out inclCrvs, out inclPts, out unused);
       if (flattened.Length == 0)
       {
-        throw new Exception(" Unable to unroll surface for re-meshing, the curvature is likely too high!");
+        throw new Exception(" Unable to unroll surface for re-meshing, the curvature is likely too high! Try with a more non-dramatic curvature.");
       }
 
       // create 2d member from flattened geometry

@@ -179,11 +179,10 @@ namespace GsaGH.Components
     private GsaSectionModifier.StressOptionType stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
     private LinearDensityUnit densityUnit = Units.LinearDensityUnit;
     private LengthUnit lengthUnit = Units.LengthUnitSection;
-    string unitAbbreviation;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       IQuantity quantity = new LinearDensity(0, densityUnit);
-      unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+      string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("Area Modifier", "A", "[Optional] Modify the effective Area BY this decimal fraction value (Default = 1.0 -> 100%)", GH_ParamAccess.item);
       pManager.AddGenericParameter("I11 Modifier", "I11", "[Optional] Modify the effective Iyy/Iuu BY this decimal fraction value (Default = 1.0 -> 100%)", GH_ParamAccess.item);
@@ -241,17 +240,16 @@ namespace GsaGH.Components
       }
 
       modifier.AdditionalMass = GetInput.LinearDensity(this, DA, 7, densityUnit, true);
-
-      bool pt = false;
-      if (DA.GetData(9, ref pt))
-        modifier.isReferencePointCentroid = pt;
+      
       bool ax = false;
       if (DA.GetData(8, ref ax))
         modifier.isBendingAxesPrincipal = ax;
 
+      bool pt = false;
+      if (DA.GetData(9, ref pt))
+        modifier.isReferencePointCentroid = pt;
 
       modifier.StressOption = stressOption;
-
 
       DA.SetData(0, new GsaSectionModifierGoo(modifier));
     }

@@ -98,6 +98,7 @@
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\1_Properties\CreateSectionModifier.cs" />
     <Compile Include="Components\1_Properties\CreateProp3d.cs" />
+    <Compile Include="Components\1_Properties\EditSectionModifier.cs" />
     <Compile Include="Components\1_Properties\TaperProfile.cs" />
     <Compile Include="Components\1_Properties\CustomMaterial.cs" />
     <Compile Include="Components\1_Properties\EditProp3d.cs" />
