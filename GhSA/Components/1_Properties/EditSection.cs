@@ -43,7 +43,7 @@ namespace GsaGH.Components
       pManager.AddTextParameter("Section Name", "Na", "Set Section name", GH_ParamAccess.item);
       pManager.AddColourParameter("Section Colour", "Co", "Set Section colour", GH_ParamAccess.item);
 
-      for (int i = 0; i < pManager.ParamCount; i++)
+      for (int i = 1; i < pManager.ParamCount; i++)
         pManager[i].Optional = true;
     }
 
@@ -159,6 +159,8 @@ namespace GsaGH.Components
         DA.SetData(6, nm);
         DA.SetData(7, colour);
       }
+      else
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Section is Null");
     }
   }
 }

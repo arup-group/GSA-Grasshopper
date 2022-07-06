@@ -31,7 +31,7 @@ namespace GsaGH.Components
         else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
         {
           // create new quantity from default units
-          unitNumber = new GH_UnitNumber(new Ratio(val, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent));
+          return new Ratio(val, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
         }
         else
         {
@@ -63,7 +63,7 @@ namespace GsaGH.Components
         else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
         {
           // create new quantity from default units
-          unitNumber = new GH_UnitNumber(new Ratio(val, RatioUnit.DecimalFraction));
+          return new Ratio(val, RatioUnit.DecimalFraction);
         }
         else
         {
@@ -138,7 +138,7 @@ namespace GsaGH.Components
         else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
         {
           // create new quantity from default units
-          unitNumber = new GH_UnitNumber(new Density(val, densityUnit));
+          return new Density(val, densityUnit);
         }
         else
         {
