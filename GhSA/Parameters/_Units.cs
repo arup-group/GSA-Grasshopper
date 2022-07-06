@@ -15,23 +15,20 @@ namespace GsaGH
   {
     public enum GsaUnits
     {
-      Length_Geometry,
-      Length_Section,
-      Length_Results,
+      Length,
+      Area,
+      AreaMomentOfInertia,
       Force,
       Moment,
       Stress,
       Strain,
       Temperature,
       Mass,
+      Density,
+      LinearDensity,
       Velocity,
       Acceleration,
-      Time_Short,
-      Time_Medium,
-      Time_Long,
-      AxialStiffness,
-      BendingStiffness,
-      Curvature
+      Ratio
     }
 
     internal static List<string> FilteredAngleUnits = new List<string>()
