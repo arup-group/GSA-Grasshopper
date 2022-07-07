@@ -434,11 +434,6 @@ namespace GsaGH.Components
 
       // Assemble model
       Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Prop3Ds, Loads, GridPlaneSurfaces, AnalysisTasks, CombinationCases, lengthUnit);
-      if (Analysis == true)
-      {
-
-      }
-
 
       #region meshing
       // Create elements from members

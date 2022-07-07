@@ -17,6 +17,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         ref Dictionary<int, Element> existingElements, ref int elementidcounter,
         ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
         ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
+        ref Dictionary<int, SectionModifier> existingSectionModifiers,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {
       LineCurve line = element1d.Line;
@@ -65,7 +66,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
       // section
       apiElement.Property = Sections.ConvertSection(element1d.Section,
-          ref existingSections, ref sections_guid,
+          ref existingSections, ref sections_guid, ref existingSectionModifiers,
           ref existingMaterials, ref materials_guid);
 
       // set apielement in dictionary
@@ -84,6 +85,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         ref Dictionary<int, Element> existingElements, ref int elementidcounter,
         ref Dictionary<int, Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
+        ref Dictionary<int, SectionModifier> existingSectionModifiers,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {
       int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
@@ -101,6 +103,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             // Add/set element
             ConvertElement1D(element1d, ref existingElements, ref elementidcounter,
                 ref existingNodes, ref nodeidcounter, unit, ref existingSections, ref sections_guid,
+                ref existingSectionModifiers,
                 ref existingMaterials, ref materials_guid);
           }
         }

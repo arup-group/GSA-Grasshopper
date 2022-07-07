@@ -244,6 +244,9 @@ namespace GsaGH.Util.Gsa.ToGSA
       // Get existing sections
       IReadOnlyDictionary<int, Section> gsaSections = gsa.Sections();
       Dictionary<int, Section> apisections = gsaSections.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+      // Get existing modifiers
+      IReadOnlyDictionary<int, SectionModifier> gsaSectionModifiers = gsa.SectionModifiers();
+      Dictionary<int, SectionModifier> apimodifiers = gsaSectionModifiers.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
       // Get existing materials
       IReadOnlyDictionary<int, AnalysisMaterial> gsaMaterials = gsa.AnalysisMaterials();
@@ -252,7 +255,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       Dictionary<Guid, int> materials_guid = new Dictionary<Guid, int>();
 
       // add / set sections
-      Sections.ConvertSection(sections, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid);
+      Sections.ConvertSection(sections, ref apisections, ref sections_guid, ref apimodifiers, ref apimaterials, ref materials_guid);
 
       // ### Prop2ds ###
       // list to keep track of duplicated sextions
@@ -306,7 +309,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       }
 
       // Set / add 1D elements to dictionary
-      Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid);
+      Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimodifiers, ref apimaterials, ref materials_guid);
 
       // Set / add 2D elements to dictionary
       Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid);
@@ -359,7 +362,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       }
 
       // Set / add 1D members to dictionary
-      Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimaterials, ref materials_guid);
+      Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimodifiers, ref apimaterials, ref materials_guid);
 
       // Set / add 2D members to dictionary
       Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid);
@@ -435,6 +438,8 @@ namespace GsaGH.Util.Gsa.ToGSA
       gsa.SetGridSurfaces(new ReadOnlyDictionary<int, GridSurface>(apiGridSurfaces));
       //sections
       gsa.SetSections(new ReadOnlyDictionary<int, Section>(apisections));
+      //section modifiers
+      gsa.SetSectionModifiers(new ReadOnlyDictionary<int, SectionModifier>(apimodifiers));
       //prop2ds
       gsa.SetProp2Ds(new ReadOnlyDictionary<int, Prop2D>(apiprop2ds));
       //prop2ds
