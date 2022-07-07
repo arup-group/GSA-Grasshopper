@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using Grasshopper.Kernel;
 using System.Reflection;
 using System.Net;
+using System.Diagnostics;
 
 namespace GsaGH
 {
@@ -43,6 +44,15 @@ namespace GsaGH
       try
       {
         Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
+
+        FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
+        if (myFileVersionInfo.FileBuildPart < 60)
+        {
+          Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper require GSA 10.1.60 installed. Please upgrade GSA.");
+          GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
+          Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
+          return GH_LoadingInstruction.Abort;
+        }
       }
       catch (Exception e)
       {

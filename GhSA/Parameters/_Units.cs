@@ -77,6 +77,8 @@ namespace GsaGH
     {
       get
       {
+        if (m_units == null)
+          SetupUnits();
         if (m_units == null || useRhinoLengthGeometryUnit)
         {
           m_length_geometry = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
@@ -114,6 +116,8 @@ namespace GsaGH
         {
           m_length_section = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
         }
+        if (m_length_section == LengthUnit.Undefined)
+          SetupUnits();
         return m_length_section;
       }
       set
@@ -227,6 +231,8 @@ namespace GsaGH
         {
           m_length_result = GetRhinoLengthUnit(Rhino.RhinoDoc.ActiveDoc.ModelUnitSystem);
         }
+        if (m_length_result == LengthUnit.Undefined)
+          SetupUnits();
         return m_length_result;
       }
       set
@@ -248,7 +254,12 @@ namespace GsaGH
     #region force
     public static ForceUnit ForceUnit
     {
-      get { return m_force; }
+      get 
+      {
+        if (m_force == ForceUnit.Undefined)
+          SetupUnits();
+        return m_force; 
+      }
       set { m_force = value; }
     }
     private static ForceUnit m_force = ForceUnit.Kilonewton;
@@ -357,7 +368,12 @@ namespace GsaGH
     #region moment
     public static MomentUnit MomentUnit
     {
-      get { return m_moment; }
+      get 
+      {
+        if (m_moment == MomentUnit.Undefined)
+          SetupUnits();
+        return m_moment; 
+      }
       set { m_moment = value; }
     }
     private static MomentUnit m_moment = Oasys.Units.MomentUnit.KilonewtonMeter;
@@ -367,7 +383,12 @@ namespace GsaGH
     #region stress
     public static PressureUnit StressUnit
     {
-      get { return m_stress; }
+      get 
+      {
+        if (m_stress == PressureUnit.Undefined)
+          SetupUnits();
+        return m_stress; 
+      }
       set { m_stress = value; }
     }
     private static PressureUnit m_stress = PressureUnit.Megapascal;
@@ -400,7 +421,12 @@ namespace GsaGH
     #region strain
     public static StrainUnit StrainUnit
     {
-      get { return m_strain; }
+      get 
+      {
+        if (m_strain == StrainUnit.Undefined)
+          SetupUnits();
+        return m_strain; 
+      }
       set { m_strain = value; }
     }
     private static StrainUnit m_strain = Oasys.Units.StrainUnit.MilliStrain;
@@ -416,7 +442,12 @@ namespace GsaGH
     #region axial stiffness
     public static AxialStiffnessUnit AxialStiffnessUnit
     {
-      get { return m_axialstiffness; }
+      get 
+      {
+        if (m_axialstiffness == AxialStiffnessUnit.Undefined)
+          SetupUnits();
+        return m_axialstiffness; 
+      }
       set { m_axialstiffness = value; }
     }
     private static AxialStiffnessUnit m_axialstiffness = Oasys.Units.AxialStiffnessUnit.Kilonewton;
@@ -426,7 +457,12 @@ namespace GsaGH
     #region bending stiffness
     public static BendingStiffnessUnit BendingStiffnessUnit
     {
-      get { return m_bendingstiffness; }
+      get 
+      {
+        if (m_bendingstiffness == BendingStiffnessUnit.Undefined)
+          SetupUnits();
+        return m_bendingstiffness; 
+      }
       set { m_bendingstiffness = value; }
     }
     private static BendingStiffnessUnit m_bendingstiffness = Oasys.Units.BendingStiffnessUnit.KilonewtonSquareMeter;
@@ -436,7 +472,12 @@ namespace GsaGH
     #region curvature
     public static CurvatureUnit CurvatureUnit
     {
-      get { return m_curvature; }
+      get 
+      {
+        if (m_curvature == CurvatureUnit.Undefined)
+          SetupUnits();
+        return m_curvature; 
+      }
       set { m_curvature = value; }
     }
     private static CurvatureUnit m_curvature = (CurvatureUnit)Enum.Parse(typeof(CurvatureUnit), "Per" + LengthUnitGeometry.ToString());
@@ -453,7 +494,12 @@ namespace GsaGH
     #region mass
     public static MassUnit MassUnit
     {
-      get { return m_mass; }
+      get 
+      {
+        if (m_mass == MassUnit.Undefined)
+          SetupUnits();
+        return m_mass; 
+      }
       set { m_mass = value; }
     }
     private static MassUnit m_mass = MassUnit.Tonne;
@@ -542,7 +588,12 @@ namespace GsaGH
     #region temperature
     public static TemperatureUnit TemperatureUnit
     {
-      get { return m_temperature; }
+      get 
+      {
+        if (m_temperature == TemperatureUnit.Undefined)
+          SetupUnits();
+        return m_temperature; 
+      }
       set { m_temperature = value; }
     }
     private static TemperatureUnit m_temperature = TemperatureUnit.DegreeCelsius;
@@ -574,7 +625,12 @@ namespace GsaGH
     #region velocity
     public static SpeedUnit VelocityUnit
     {
-      get { return m_velocity; }
+      get 
+      {
+        if (m_velocity == SpeedUnit.Undefined)
+          SetupUnits();
+        return m_velocity; 
+      }
       set { m_velocity = value; }
     }
     private static SpeedUnit m_velocity = SpeedUnit.MeterPerSecond;
@@ -593,7 +649,12 @@ namespace GsaGH
     #region acceleration
     public static AccelerationUnit AccelerationUnit
     {
-      get { return m_acceleration; }
+      get 
+      {
+        if (m_acceleration == AccelerationUnit.Undefined)
+          SetupUnits();
+        return m_acceleration; 
+      }
       set { m_acceleration = value; }
     }
     private static AccelerationUnit m_acceleration = AccelerationUnit.MeterPerSecondSquared;
@@ -612,7 +673,12 @@ namespace GsaGH
     #region energy
     public static EnergyUnit EnergyUnit
     {
-      get { return m_energy; }
+      get 
+      {
+        if (m_energy == EnergyUnit.Undefined)
+          SetupUnits();
+        return m_energy; 
+      }
       set { m_energy = value; }
     }
     private static EnergyUnit m_energy = EnergyUnit.Megajoule;
@@ -640,19 +706,34 @@ namespace GsaGH
         };
     public static DurationUnit TimeShortUnit
     {
-      get { return m_time_short; }
+      get 
+      {
+        if (m_time_short == DurationUnit.Undefined)
+          SetupUnits();
+        return m_time_short; 
+      }
       set { m_time_short = value; }
     }
     private static DurationUnit m_time_short = DurationUnit.Second;
     public static DurationUnit TimeMediumUnit
     {
-      get { return m_time_medium; }
+      get
+      {
+        if (m_time_medium == DurationUnit.Undefined)
+          SetupUnits();
+        return m_time_medium;
+      }
       set { m_time_medium = value; }
     }
     private static DurationUnit m_time_medium = DurationUnit.Minute;
     public static DurationUnit TimeLongUnit
     {
-      get { return m_time_long; }
+      get
+      {
+        if (m_time_long == DurationUnit.Undefined)
+          SetupUnits();
+        return m_time_long;
+      }
       set { m_time_long = value; }
     }
     private static DurationUnit m_time_long = DurationUnit.Day;
@@ -666,7 +747,12 @@ namespace GsaGH
     #region unit system
     public static UnitsNet.UnitSystem UnitSystem
     {
-      get { return m_units; }
+      get 
+      {
+        if (m_units == null)
+          SetupUnits();
+        return m_units; 
+      }
       set { m_units = value; }
     }
     private static UnitsNet.UnitSystem m_units;
@@ -730,7 +816,7 @@ namespace GsaGH
     }
     internal static bool ReadSettings()
     {
-      if (!Grasshopper.Instances.Settings.ConstainsEntry("GsaLengthUnit"))
+      if (!Grasshopper.Instances.Settings.ConstainsEntry("GsaLengthUnitGeometry"))
         return false;
 
       string lengthGeometry = Grasshopper.Instances.Settings.GetValue("GsaLengthUnitGeometry", string.Empty);
