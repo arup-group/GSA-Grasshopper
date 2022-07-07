@@ -376,7 +376,7 @@ namespace GsaGH.Components
             if (((GsaAnalysisTaskGoo)gh_typ.Value).Value.Type == GsaAnalysisTask.AnalysisType.Static)
               in_tasks.Add(((GsaAnalysisTaskGoo)gh_typ.Value).Value.Duplicate());
             else
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Currently only 'Static' analysis tasks can be set." 
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Currently only 'Static' analysis tasks can be set."
               + System.Environment.NewLine + "As a workaround, it is possible to use a seed model with the desired analysis tasks (and their dependency) already set up.");
           }
           else if (gh_typ.Value is GsaCombinationCaseGoo)
@@ -434,6 +434,11 @@ namespace GsaGH.Components
 
       // Assemble model
       Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Prop3Ds, Loads, GridPlaneSurfaces, AnalysisTasks, CombinationCases, lengthUnit);
+      if (Analysis == true)
+      {
+
+      }
+
 
       #region meshing
       // Create elements from members
@@ -446,6 +451,7 @@ namespace GsaGH.Components
       //analysis
       if (Analysis)
       {
+        // get or create analysis tasks
         IReadOnlyDictionary<int, AnalysisTask> gsaTasks = gsa.AnalysisTasks();
         if (gsaTasks.Count < 1)
         {
@@ -463,18 +469,38 @@ namespace GsaGH.Components
           }
         }
 
-        foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
+        // Workaround BUG in GsaAPI that will crash the application if element.property = 0:
+        ReadOnlyDictionary<int, Element> apielems = gsa.Elements();
+        bool tryAnalyse = true;
+        foreach (int key in apielems.Keys)
         {
-          try
+          if (apielems[key].Property == 0)
           {
-            if (!gsa.Analyse(task.Key))
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
-            if (!gsa.Results().ContainsKey(task.Key))
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
+            if (apielems[key].IsDummy == false)
+            {
+              {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to analyse model. Element ID " + key + " has no property set!");
+                tryAnalyse = false;
+              }
+            }
           }
-          catch (Exception e)
+        }
+
+        if (tryAnalyse)
+        {
+          foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+            try
+            {
+              if (!gsa.Analyse(task.Key))
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
+              if (!gsa.Results().ContainsKey(task.Key))
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
+            }
+            catch (Exception e)
+            {
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+            }
           }
         }
       }
