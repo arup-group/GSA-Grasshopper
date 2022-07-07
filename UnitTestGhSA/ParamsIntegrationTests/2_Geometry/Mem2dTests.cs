@@ -6,6 +6,8 @@ using GsaGH.Parameters;
 using Rhino.Geometry;
 using GsaAPI;
 using System.Collections.Generic;
+using UnitsNet.Units;
+using UnitsNet;
 
 namespace ParamsIntegrationTests
 {
@@ -35,7 +37,7 @@ namespace ParamsIntegrationTests
       // set some members
       mem.Colour = System.Drawing.Color.White;
       mem.ID = 4;
-      mem.MeshSize = 0.56;
+      mem.MeshSize = new Length(0.56, LengthUnit.Meter);
       mem.Name = "meminem";
       mem.IsDummy = true;
       mem.Offset = new GsaOffset(0, 0, 0, -0.45);
@@ -92,10 +94,10 @@ namespace ParamsIntegrationTests
       // set some members
       original.Colour = System.Drawing.Color.Blue;
       original.ID = 13;
-      original.MeshSize = 1.56;
+      original.MeshSize = new Length(1.56, LengthUnit.Meter);
       original.Name = "ehbaba";
       original.IsDummy = false;
-      original.Offset = new GsaOffset(0.33, 0, 0, 0);
+      original.Offset = new GsaOffset(0.33, 0, 0, 0, LengthUnit.Meter);
       original.Property.ID = 3;
       original.Type2D = AnalysisOrder.RIGID_DIAPHRAGM;
       original.Type = MemberType.GENERIC_2D;
@@ -147,10 +149,10 @@ namespace ParamsIntegrationTests
       // changes to class members
       original.Colour = System.Drawing.Color.Black;
       original.ID = 7;
-      original.MeshSize = 0;
+      original.MeshSize = UnitsNet.Length.Zero;
       original.Name = "Persepolis";
       original.IsDummy = true;
-      original.Offset = new GsaOffset(0.12, 0, 0, 0);
+      original.Offset = new GsaOffset(0.12, 0, 0, 0, LengthUnit.Meter);
       original.Property.ID = 44;
       original.Type2D = AnalysisOrder.QUADRATIC;
       original.Type = MemberType.WALL;
@@ -170,10 +172,10 @@ namespace ParamsIntegrationTests
       // check that duplicate keeps it's member values
       Assert.AreEqual(System.Drawing.Color.FromArgb(255, 0, 0, 255), dup.Colour);
       Assert.AreEqual(13, dup.ID);
-      Assert.AreEqual(1.56, dup.MeshSize);
+      Assert.AreEqual(1.56, dup.MeshSize.Meters);
       Assert.AreEqual("ehbaba", dup.Name);
       Assert.IsFalse(dup.IsDummy);
-      Assert.AreEqual(0.33, dup.Offset.X1);
+      Assert.AreEqual(0.33, dup.Offset.X1.Meters);
       Assert.AreEqual(3, dup.Property.ID);
       Assert.AreEqual(AnalysisOrder.RIGID_DIAPHRAGM, dup.Type2D);
       Assert.AreEqual(MemberType.GENERIC_2D, dup.Type);

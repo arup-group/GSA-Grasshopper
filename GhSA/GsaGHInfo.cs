@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using Grasshopper.Kernel;
 using System.Reflection;
 using System.Net;
+using System.Diagnostics;
 
 namespace GsaGH
 {
@@ -43,6 +44,15 @@ namespace GsaGH
       try
       {
         Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
+
+        FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
+        if (myFileVersionInfo.FileBuildPart < 60)
+        {
+          Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper require GSA 10.1.60 installed. Please upgrade GSA.");
+          GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
+          Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
+          return GH_LoadingInstruction.Abort;
+        }
       }
       catch (Exception e)
       {
@@ -203,8 +213,10 @@ namespace GsaGH
             double area1 = apisection.Area;
             string profile1 = apisection.Profile;
             string profile = "CAT HE HE200.B";
-            GsaAPI.Section section = new GsaAPI.Section();
-            section.Profile = profile;
+            GsaAPI.Section section = new GsaAPI.Section
+            {
+              Profile = profile
+            };
             double area = section.Area * Math.Pow(10, 6);
           }
           catch (Exception e)
@@ -225,8 +237,10 @@ namespace GsaGH
           double area1 = apisection.Area;
           string profile1 = apisection.Profile;
           string profile = "CAT HE HE200.B";
-          GsaAPI.Section section = new GsaAPI.Section();
-          section.Profile = profile;
+          GsaAPI.Section section = new GsaAPI.Section
+          {
+            Profile = profile
+          };
           double area = section.Area * Math.Pow(10, 6);
         }
         catch (Exception e)
@@ -245,8 +259,9 @@ namespace GsaGH
     internal const string Company = "Oasys";
     internal const string Copyright = "Copyright © Oasys 1985 - 2022";
     internal const string Contact = "https://www.oasys-software.com/";
-    internal const string Vers = "0.9.17";
+    internal const string Vers = "0.9.18";
     internal static bool isBeta = true;
+    internal static string Disclaimer = PluginName + " is pre-release and under active development, including further testing to be undertaken.It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes.Any files, results, or other types of output information created using " + PluginName + " should not be relied upon without thorough and independent checking.";
     internal const string ProductName = "GSA";
     internal const string PluginName = "GsaGH";
 
@@ -264,9 +279,9 @@ namespace GsaGH
       {
         //Return a short string describing the purpose of this GHA library.
         return "Official Oasys GSA Grasshopper Plugin" + System.Environment.NewLine
-        + System.Environment.NewLine + "A licensed version of GSA 10.1 installed in"
-        + System.Environment.NewLine + @"C:\Program Files\Oasys\GSA 10.1\ "
-        + System.Environment.NewLine + "is required to use this plugin."
+          + (isBeta ? Disclaimer : "")
+        + System.Environment.NewLine + "A licensed version of GSA 10.1.60 or later installed in"
+        + @"C:\Program Files\Oasys\GSA 10.1\ is required to use this plugin."
         + System.Environment.NewLine + "Contact oasys@arup.com to request a free trial version."
         + System.Environment.NewLine + Copyright;
       }
@@ -295,11 +310,11 @@ namespace GsaGH
         return Contact;
       }
     }
-    public string icon_url
+    public string Icon_url
     {
       get
       {
-        // to be updated - not supported by yak currently
+        // TODO to be updated - not supported by yak currently
         return "https://raw.githubusercontent.com/arup-group/GSA-Grasshopper/master/GhSA/Properties/Icons/icons/4x/GsaGhLogo%404x.png";
       }
     }

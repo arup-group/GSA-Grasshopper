@@ -37,10 +37,6 @@ namespace GsaGH.Components
 
         // unit types
         dropdownitems.Add(Enum.GetNames(typeof(Units.GsaUnits)).ToList());
-        dropdownitems[0].RemoveAt(0);
-        dropdownitems[0].RemoveAt(0);
-        dropdownitems[0].RemoveAt(0);
-        dropdownitems[0].Insert(0, "Length");
         selecteditems.Add(dropdownitems[0][0]);
 
         // first type
@@ -74,9 +70,7 @@ namespace GsaGH.Components
       if (i == 0)
       {
         // get selected unit
-        Units.GsaUnits unit = Units.GsaUnits.Length_Geometry;
-        if (selecteditems[0] != "Length")
-          unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
+        Units.GsaUnits unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
         UpdateQuantityUnitTypeFromUnitString(unit);
         UpdateMeasureDictionary();
         selecteditems[1] = selectedMeasure.ToString();
@@ -87,8 +81,8 @@ namespace GsaGH.Components
         UpdateUnitMeasureAndAbbreviation();
       }
 
-        // update name of inputs (to display unit on sliders)
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      // update name of inputs (to display unit on sliders)
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
       Params.OnParametersChanged();
       this.OnDisplayExpired(true);
@@ -96,51 +90,51 @@ namespace GsaGH.Components
 
     private void UpdateUnitMeasureAndAbbreviation()
     {
-      Units.GsaUnits unit = Units.GsaUnits.Length_Geometry;
-      if (selecteditems[0] != "Length")
-        unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
+      Units.GsaUnits unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
       // switch case
       switch (unit)
       {
+        case Units.GsaUnits.Length:
+          quantity = new Length(val, (UnitsNet.Units.LengthUnit)selectedMeasure);
+          break;
+        case Units.GsaUnits.Area:
+          quantity = new Area(val, (UnitsNet.Units.AreaUnit)selectedMeasure);
+          break;
+        case Units.GsaUnits.AreaMomentOfInertia:
+          quantity = new AreaMomentOfInertia(val, (UnitsNet.Units.AreaMomentOfInertiaUnit)selectedMeasure);
+          break;
         case Units.GsaUnits.Force:
           quantity = new Force(val, (UnitsNet.Units.ForceUnit)selectedMeasure);
-          unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
           break;
         case Units.GsaUnits.Moment:
           quantity = new Oasys.Units.Moment(val, (Oasys.Units.MomentUnit)selectedMeasure);
-          unitAbbreviation = Oasys.Units.Moment.GetAbbreviation((Oasys.Units.MomentUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Stress:
           quantity = new Pressure(val, (UnitsNet.Units.PressureUnit)selectedMeasure);
-          unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
           break;
         case Units.GsaUnits.Strain:
           quantity = new Oasys.Units.Strain(val, (Oasys.Units.StrainUnit)selectedMeasure);
-          unitAbbreviation = Oasys.Units.Strain.GetAbbreviation((Oasys.Units.StrainUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Mass:
           quantity = new Mass(val, (UnitsNet.Units.MassUnit)selectedMeasure);
-          unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+          break;
+        case Units.GsaUnits.Density:
+          quantity = new Density(val, (UnitsNet.Units.DensityUnit)selectedMeasure);
+          break;
+        case Units.GsaUnits.LinearDensity:
+          quantity = new LinearDensity(val, (UnitsNet.Units.LinearDensityUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Temperature:
           quantity = new Temperature(val, (UnitsNet.Units.TemperatureUnit)selectedMeasure);
-          unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
           break;
-        //case Units.GsaUnits.AxialStiffness:
-        //    quantity = new Oasys.Units.AxialStiffness(val, (Oasys.Units.AxialStiffnessUnit)selectedMeasure);
-        //    unitAbbreviation = Oasys.Units.AxialStiffness.GetAbbreviation((Oasys.Units.AxialStiffnessUnit)selectedMeasure);
-        //    break;
-        //case Units.GsaUnits.BendingStiffness:
-        //    quantity = new Oasys.Units.BendingStiffness(val, (Oasys.Units.BendingStiffnessUnit)selectedMeasure);
-        //    unitAbbreviation = Oasys.Units.BendingStiffness.GetAbbreviation((Oasys.Units.BendingStiffnessUnit)selectedMeasure);
-        //    break;
-        //case Units.GsaUnits.Curvature:
-        //    quantity = new Oasys.Units.Curvature(val, (Oasys.Units.CurvatureUnit)selectedMeasure);
-        //    unitAbbreviation = Oasys.Units.Curvature.GetAbbreviation((Oasys.Units.CurvatureUnit)selectedMeasure);
-        //    break;
-        default:
-          quantity = new Length(val, (UnitsNet.Units.LengthUnit)selectedMeasure);
-          unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+        case Units.GsaUnits.Velocity:
+          quantity = new Speed(val, (UnitsNet.Units.SpeedUnit)selectedMeasure);
+          break;
+        case Units.GsaUnits.Acceleration:
+          quantity = new Acceleration(val, (UnitsNet.Units.AccelerationUnit)selectedMeasure);
+          break;
+        case Units.GsaUnits.Ratio:
+          quantity = new Ratio(val, (UnitsNet.Units.RatioUnit)selectedMeasure);
           break;
       }
     }
@@ -150,6 +144,15 @@ namespace GsaGH.Components
       // switch case
       switch (unit)
       {
+        case Units.GsaUnits.Length:
+          quantity = new Length(val, Units.LengthUnitGeometry);
+          break;
+        case Units.GsaUnits.Area:
+          quantity = new Area(val, Units.SectionAreaUnit);
+          break;
+        case Units.GsaUnits.AreaMomentOfInertia:
+          quantity = new AreaMomentOfInertia(val, Units.SectionAreaMomentOfInertiaUnit);
+          break;
         case Units.GsaUnits.Force:
           quantity = new Force(val, Units.ForceUnit);
           break;
@@ -165,23 +168,28 @@ namespace GsaGH.Components
         case Units.GsaUnits.Mass:
           quantity = new Mass(val, Units.MassUnit);
           break;
+        case Units.GsaUnits.Density:
+          quantity = new Density(val, Units.DensityUnit);
+          break;
+        case Units.GsaUnits.LinearDensity:
+          quantity = new LinearDensity(val, Units.LinearDensityUnit);
+          break;
         case Units.GsaUnits.Temperature:
           quantity = new Temperature(val, Units.TemperatureUnit);
           break;
-        //case Units.AdSecUnits.AxialStiffness:
-        //    quantity = new Oasys.Units.AxialStiffness(val, Units.AxialStiffnessUnit);
-        //    break;
-        //case Units.AdSecUnits.BendingStiffness:
-        //    quantity = new Oasys.Units.BendingStiffness(val, Units.BendingStiffnessUnit);
-        //    break;
-        //case Units.AdSecUnits.Curvature:
-        //    quantity = new Oasys.Units.Curvature(val, Units.CurvatureUnit);
-        //    break;
+        case Units.GsaUnits.Velocity:
+          quantity = new Speed(val, Units.VelocityUnit);
+          break;
+        case Units.GsaUnits.Acceleration:
+          quantity = new Acceleration(val, Units.AccelerationUnit);
+          break;
+        case Units.GsaUnits.Ratio:
+          quantity = new Ratio(val, UnitsNet.Units.RatioUnit.Percent);
+          break;
         default:
           quantity = new Length(val, Units.LengthUnitGeometry);
           break;
       }
-
       selectedMeasure = quantity.Unit;
     }
 
@@ -200,9 +208,7 @@ namespace GsaGH.Components
     private void UpdateUIFromSelectedItems()
     {
       // get selected unit
-      Units.GsaUnits unit = Units.GsaUnits.Length_Geometry;
-      if (selecteditems[0] != "Length")
-        unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
+      Units.GsaUnits unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
       UpdateQuantityUnitTypeFromUnitString(unit);
       UpdateMeasureDictionary();
       UpdateUnitMeasureAndAbbreviation();
@@ -251,18 +257,19 @@ namespace GsaGH.Components
     {
       if (DA.GetData(0, ref val))
       {
-
-        Units.GsaUnits unit = Units.GsaUnits.Length_Geometry;
-        if (selecteditems[0] != "Length")
-          unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
+        Units.GsaUnits unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
 
         // switch case
         switch (unit)
         {
-          case Units.GsaUnits.Length_Geometry:
-          case Units.GsaUnits.Length_Section:
-          case Units.GsaUnits.Length_Results:
+          case Units.GsaUnits.Length:
             quantity = new Length(val, (UnitsNet.Units.LengthUnit)selectedMeasure);
+            break;
+          case Units.GsaUnits.Area:
+            quantity = new Area(val, (UnitsNet.Units.AreaUnit)selectedMeasure);
+            break;
+          case Units.GsaUnits.AreaMomentOfInertia:
+            quantity = new AreaMomentOfInertia(val, (UnitsNet.Units.AreaMomentOfInertiaUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Force:
             quantity = new Force(val, (UnitsNet.Units.ForceUnit)selectedMeasure);
@@ -277,20 +284,26 @@ namespace GsaGH.Components
             quantity = new Oasys.Units.Strain(val, (Oasys.Units.StrainUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Mass:
-            quantity = new Mass(val, Units.MassUnit);
+            quantity = new Mass(val, (UnitsNet.Units.MassUnit)selectedMeasure);
+            break;
+          case Units.GsaUnits.Density:
+            quantity = new Density(val, (UnitsNet.Units.DensityUnit)selectedMeasure);
+            break;
+          case Units.GsaUnits.LinearDensity:
+            quantity = new LinearDensity(val, (UnitsNet.Units.LinearDensityUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Temperature:
-            quantity = new Temperature(val, Units.TemperatureUnit);
+            quantity = new Temperature(val, (UnitsNet.Units.TemperatureUnit)selectedMeasure);
             break;
-            //case Units.GsaUnits.AxialStiffness:
-            //    quantity = new Oasys.Units.AxialStiffness(val, (Oasys.Units.AxialStiffnessUnit)selectedMeasure);
-            //    break;
-            //case Units.GsaUnits.BendingStiffness:
-            //    quantity = new Oasys.Units.BendingStiffness(val, (Oasys.Units.BendingStiffnessUnit)selectedMeasure);
-            //    break;
-            //case Units.GsaUnits.Curvature:
-            //    quantity = new Oasys.Units.Curvature(val, (Oasys.Units.CurvatureUnit)selectedMeasure);
-            //    break;
+          case Units.GsaUnits.Velocity:
+            quantity = new Speed(val, (UnitsNet.Units.SpeedUnit)selectedMeasure);
+            break;
+          case Units.GsaUnits.Acceleration:
+            quantity = new Acceleration(val, (UnitsNet.Units.AccelerationUnit)selectedMeasure);
+            break;
+          case Units.GsaUnits.Ratio:
+            quantity = new Ratio(val, (UnitsNet.Units.RatioUnit)selectedMeasure);
+            break;
         }
 
         // convert unit to selected output
@@ -336,6 +349,53 @@ namespace GsaGH.Components
     #region IGH_VariableParameterComponent null implementation
     void IGH_VariableParameterComponent.VariableParameterMaintenance()
     {
+      Units.GsaUnits unit = (Units.GsaUnits)Enum.Parse(typeof(Units.GsaUnits), selecteditems[0]);
+      // switch case
+      switch (unit)
+      {
+        case Units.GsaUnits.Length:
+          unitAbbreviation = ((Length)quantity).ToString("a");
+          break;
+        case Units.GsaUnits.Area:
+          unitAbbreviation = ((Area)quantity).ToString("a");
+          break;
+        case Units.GsaUnits.AreaMomentOfInertia:
+          unitAbbreviation = ((AreaMomentOfInertia)quantity).ToString("a");
+          break;
+        case Units.GsaUnits.Force:
+          unitAbbreviation = ((Force)quantity).ToString("a");
+          break;
+        case Units.GsaUnits.Moment:
+          unitAbbreviation = Oasys.Units.Moment.GetAbbreviation((Oasys.Units.MomentUnit)selectedMeasure);
+          break;
+        case Units.GsaUnits.Stress:
+          unitAbbreviation = ((Pressure)quantity).ToString("a");
+          break;
+        case Units.GsaUnits.Strain:
+          unitAbbreviation = Oasys.Units.Strain.GetAbbreviation((Oasys.Units.StrainUnit)selectedMeasure);
+          break;
+        case Units.GsaUnits.Mass:
+          unitAbbreviation = ((Mass)quantity).ToString("a");
+          break;
+        case Units.GsaUnits.Density:
+          unitAbbreviation = ((Density)quantity).ToString("a");
+          break;
+        case Units.GsaUnits.LinearDensity:
+          unitAbbreviation = ((LinearDensity)quantity).ToString("a");
+          break;
+        case Units.GsaUnits.Temperature:
+          unitAbbreviation = ((Temperature)quantity).ToString("a");
+          break;
+        case Units.GsaUnits.Velocity:
+          unitAbbreviation = ((Speed)quantity).ToString("a");
+          break;
+        case Units.GsaUnits.Acceleration:
+          unitAbbreviation = ((Acceleration)quantity).ToString("a");
+          break;
+        case Units.GsaUnits.Ratio:
+          unitAbbreviation = ((Ratio)quantity).ToString("a");
+          break;
+      }
       Params.Input[0].Name = "Number [" + unitAbbreviation + "]";
     }
     #endregion

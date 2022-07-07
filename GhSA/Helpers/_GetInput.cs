@@ -9,6 +9,102 @@ namespace GsaGH.Components
 {
   class GetInput
   {
+    internal static GH_UnitNumber UnitNumberOrDoubleAsRatioToPercentage(GH_Component owner, IGH_DataAccess DA, int inputid, bool isOptional = false)
+    {
+      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+      if (DA.GetData(inputid, ref gh_typ))
+      {
+        // try cast directly to quantity type
+        if (gh_typ.Value is GH_UnitNumber)
+        {
+          return (GH_UnitNumber)gh_typ.Value;
+        }
+        // try cast to double
+        else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
+        {
+          // create new quantity from default units
+          Ratio rat = new Ratio(val, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
+          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Note: Input " + owner.Params.Input[inputid].NickName + " was automatically converted from DecimalFraction (" + val + ") to Percentage (" + rat.ToString("f0") + ")");
+          return new GH_UnitNumber(rat);
+        }
+        else
+        {
+          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
+          return null;
+        }
+      }
+      else if (!isOptional)
+      {
+        owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
+      }
+      return null;
+    }
+    internal static Ratio RatioInDecimalFractionToPercentage(GH_Component owner, IGH_DataAccess DA, int inputid)
+    {
+      GH_UnitNumber unitNumber = null;
+      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+      if (DA.GetData(inputid, ref gh_typ))
+      {
+        // try cast directly to quantity type
+        if (gh_typ.Value is GH_UnitNumber)
+        {
+          unitNumber = (GH_UnitNumber)gh_typ.Value;
+          // check that unit is of right type
+          if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(RatioUnit)))
+          {
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
+                + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Ratio");
+            return new Ratio(100, RatioUnit.Percent);
+          }
+        }
+        // try cast to double
+        else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
+        {
+          // create new quantity from default units
+          Ratio rat = new Ratio(val, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
+          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Note: Input " + owner.Params.Input[inputid].NickName + " was automatically converted from DecimalFraction (" + val + ") to Percentage (" + rat.ToString("f0") + ")");
+          return rat;
+        }
+        else
+        {
+          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
+          return new Ratio(100, RatioUnit.Percent);
+        }
+      }
+      return new Ratio(100, RatioUnit.Percent);
+    }
+    internal static Ratio RatioInDecimalFractionToDecimalFraction(GH_Component owner, IGH_DataAccess DA, int inputid)
+    {
+      GH_UnitNumber unitNumber = null;
+      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+      if (DA.GetData(inputid, ref gh_typ))
+      {
+        // try cast directly to quantity type
+        if (gh_typ.Value is GH_UnitNumber)
+        {
+          unitNumber = (GH_UnitNumber)gh_typ.Value;
+          // check that unit is of right type
+          if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(RatioUnit)))
+          {
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
+                + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Ratio");
+            return new Ratio(1, RatioUnit.DecimalFraction);
+          }
+        }
+        // try cast to double
+        else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
+        {
+          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Note: Input " + owner.Params.Input[inputid].NickName + " was not automatically converted to percentage");
+          return new Ratio(val, RatioUnit.DecimalFraction);
+        }
+        else
+        {
+          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
+          return new Ratio(1, RatioUnit.DecimalFraction);
+        }
+      }
+      return new Ratio(1, RatioUnit.DecimalFraction);
+    }
     internal static Length Length(GH_Component owner, IGH_DataAccess DA, int inputid, LengthUnit lengthUnit, bool isOptional = false)
     {
       GH_UnitNumber unitNumber = null;
@@ -74,7 +170,7 @@ namespace GsaGH.Components
         else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
         {
           // create new quantity from default units
-          unitNumber = new GH_UnitNumber(new Density(val, densityUnit));
+          return new Density(val, densityUnit);
         }
         else
         {
@@ -91,6 +187,167 @@ namespace GsaGH.Components
       }
 
       return (Density)unitNumber.Value;
+    }
+
+    internal static LinearDensity LinearDensity(GH_Component owner, IGH_DataAccess DA, int inputid, LinearDensityUnit densityUnit, bool isOptional = false)
+    {
+      GH_UnitNumber unitNumber = null;
+      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+      if (DA.GetData(inputid, ref gh_typ))
+      {
+        // try cast directly to quantity type
+        if (gh_typ.Value is GH_UnitNumber)
+        {
+          unitNumber = (GH_UnitNumber)gh_typ.Value;
+          // check that unit is of right type
+          if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(LinearDensityUnit)))
+          {
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
+                + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be LinearDensity");
+            return UnitsNet.LinearDensity.Zero;
+          }
+        }
+        // try cast to double
+        else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
+        {
+          // create new quantity from default units
+          unitNumber = new GH_UnitNumber(new LinearDensity(val, densityUnit));
+        }
+        else
+        {
+          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
+          return UnitsNet.LinearDensity.Zero;
+        }
+      }
+      else if (!isOptional)
+        owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
+      else
+      {
+        if (unitNumber == null)
+          return UnitsNet.LinearDensity.Zero;
+      }
+
+      return (LinearDensity)unitNumber.Value;
+    }
+    internal static VolumePerLength VolumePerLength(GH_Component owner, IGH_DataAccess DA, int inputid, VolumePerLengthUnit volumePerLengthUnit, bool isOptional = false)
+    {
+      GH_UnitNumber unitNumber = null;
+      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+      if (DA.GetData(inputid, ref gh_typ))
+      {
+        // try cast directly to quantity type
+        if (gh_typ.Value is GH_UnitNumber)
+        {
+          unitNumber = (GH_UnitNumber)gh_typ.Value;
+          // check that unit is of right type
+          if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(VolumePerLengthUnit)))
+          {
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
+                + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be VolumePerLength");
+            return UnitsNet.VolumePerLength.Zero;
+          }
+        }
+        // try cast to double
+        else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
+        {
+          // create new quantity from default units
+          unitNumber = new GH_UnitNumber(new VolumePerLength(val, volumePerLengthUnit));
+        }
+        else
+        {
+          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
+          return UnitsNet.VolumePerLength.Zero;
+        }
+      }
+      else if (!isOptional)
+        owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
+      else
+      {
+        if (unitNumber == null)
+          return UnitsNet.VolumePerLength.Zero;
+      }
+
+      return (VolumePerLength)unitNumber.Value;
+    }
+    internal static Area Area(GH_Component owner, IGH_DataAccess DA, int inputid, AreaUnit areaUnit, bool isOptional = false)
+    {
+      GH_UnitNumber unitNumber = null;
+      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+      if (DA.GetData(inputid, ref gh_typ))
+      {
+        // try cast directly to quantity type
+        if (gh_typ.Value is GH_UnitNumber)
+        {
+          unitNumber = (GH_UnitNumber)gh_typ.Value;
+          // check that unit is of right type
+          if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(AreaUnit)))
+          {
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
+                + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Area");
+            return UnitsNet.Area.Zero;
+          }
+        }
+        // try cast to double
+        else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
+        {
+          // create new quantity from default units
+          unitNumber = new GH_UnitNumber(new Area(val, areaUnit));
+        }
+        else
+        {
+          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
+          return UnitsNet.Area.Zero;
+        }
+      }
+      else if (!isOptional)
+        owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
+      else
+      {
+        if (unitNumber == null)
+          return UnitsNet.Area.Zero;
+      }
+
+      return (Area)unitNumber.Value;
+    }
+    internal static AreaMomentOfInertia AreaMomentOfInertia(GH_Component owner, IGH_DataAccess DA, int inputid, AreaMomentOfInertiaUnit areaUnit, bool isOptional = false)
+    {
+      GH_UnitNumber unitNumber = null;
+      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+      if (DA.GetData(inputid, ref gh_typ))
+      {
+        // try cast directly to quantity type
+        if (gh_typ.Value is GH_UnitNumber)
+        {
+          unitNumber = (GH_UnitNumber)gh_typ.Value;
+          // check that unit is of right type
+          if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(AreaMomentOfInertiaUnit)))
+          {
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
+                + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be AreaMomentOfInertia");
+            return UnitsNet.AreaMomentOfInertia.Zero;
+          }
+        }
+        // try cast to double
+        else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
+        {
+          // create new quantity from default units
+          unitNumber = new GH_UnitNumber(new AreaMomentOfInertia(val, areaUnit));
+        }
+        else
+        {
+          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
+          return UnitsNet.AreaMomentOfInertia.Zero;
+        }
+      }
+      else if (!isOptional)
+        owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
+      else
+      {
+        if (unitNumber == null)
+          return UnitsNet.AreaMomentOfInertia.Zero;
+      }
+
+      return (AreaMomentOfInertia)unitNumber.Value;
     }
     internal static CoefficientOfThermalExpansion CoefficientOfThermalExpansion(GH_Component owner, IGH_DataAccess DA, int inputid, CoefficientOfThermalExpansionUnit coefficientOfThermalExpansionUnit, bool isOptional = false)
     {

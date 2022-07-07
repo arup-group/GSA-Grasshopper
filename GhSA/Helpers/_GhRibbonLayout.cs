@@ -45,7 +45,7 @@
 
     public static string Cat4()
     {
-      return new string(' ', 3) + "Analyse";
+      return new string(' ', 3) + "Analysis";
     }
 
     public static string Cat5()

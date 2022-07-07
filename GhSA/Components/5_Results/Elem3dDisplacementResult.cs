@@ -169,10 +169,12 @@ namespace GsaGH.Components
 
           List<GsaResultsValues> vals = result.Element3DDisplacementValues(elementlist, lengthUnit);
 
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
+
           // loop through all permutations (analysis case will just have one)
-          for (int permutation = 0; permutation < vals.Count; permutation++)
+          for (int index = 0; index < vals.Count; index++)
           {
-            if (vals[permutation].xyzResults.Count == 0 & vals[permutation].xxyyzzResults.Count == 0)
+            if (vals[index].xyzResults.Count == 0 & vals[index].xxyyzzResults.Count == 0)
             {
               string[] typ = result.ToString().Split('{');
               string acase = typ[1].Replace('}', ' ');
@@ -183,38 +185,40 @@ namespace GsaGH.Components
             {
               if (thread == 0)
               {
-                            //do xyz part of results
+                //do xyz part of results
 
-                            // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[permutation].xyzResults)
+                // loop through all elements
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xyzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) { continue; }
 
-                  GH_Path p = new GH_Path(result.CaseID, permutation + 1, elementID);
+                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_transX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(lengthUnit))), p); // use ToUnit to capture changes in dropdown
-                  out_transY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(lengthUnit))), p);
-                  out_transZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(lengthUnit))), p);
-                  out_transXYZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(lengthUnit))), p);
+                  out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(lengthUnit))), p); // use ToUnit to capture changes in dropdown
+                  out_transY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(lengthUnit))), p);
+                  out_transZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(lengthUnit))), p);
+                  out_transXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(lengthUnit))), p);
                 }
               }
               if (thread == 1)
               {
-                            //do xxyyzz
+                //do xxyyzz
 
-                            // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[permutation].xxyyzzResults)
+                // loop through all elements
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xxyyzzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) { continue; }
 
-                  GH_Path p = new GH_Path(result.CaseID, permutation + 1, elementID);
+                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_rotX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X)), p); // always use [rad] units
-                  out_rotY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y)), p);
-                  out_rotZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z)), p);
-                  out_rotXYZ.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.XYZ)), p);
+                  out_rotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)), p); // always use [rad] units
+                  out_rotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), p);
+                  out_rotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), p);
+                  out_rotXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ)), p);
                 }
               }
             });

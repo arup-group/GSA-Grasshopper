@@ -182,10 +182,12 @@ namespace GsaGH.Components
           List<GsaResultsValues> vals = result.Element2DForceValues(elementlist, forceUnit, momentUnit);
           List<GsaResultsValues> valsShear = result.Element2DShearValues(elementlist, forceUnit);
 
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
+
           // loop through all permutations (analysis case will just have one)
-          for (int permutation = 0; permutation < vals.Count; permutation++)
+          for (int index = 0; index < vals.Count; index++)
           {
-            if (vals[permutation].xyzResults.Count == 0 & vals[permutation].xxyyzzResults.Count == 0)
+            if (vals[index].xyzResults.Count == 0 & vals[index].xxyyzzResults.Count == 0)
             {
               string[] typ = result.ToString().Split('{');
               string acase = typ[1].Replace('}', ' ');
@@ -196,52 +198,52 @@ namespace GsaGH.Components
             {
               if (thread == 0)
               {
-                            //do xyz part of results
-
-                            // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[permutation].xyzResults)
+                //do xyz part of results
+                // loop through all elements
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xyzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) { continue; }
 
-                  GH_Path p = new GH_Path(result.CaseID, permutation + 1, elementID);
+                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_X.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(forceUnit))), p); // use ToUnit to capture changes in dropdown
-                  out_Y.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(forceUnit))), p);
-                  out_XY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(forceUnit))), p);
+                  out_X.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(forceUnit))), p); // use ToUnit to capture changes in dropdown
+                  out_Y.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(forceUnit))), p);
+                  out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(forceUnit))), p);
                 }
               }
               if (thread == 1)
               {
-                            //do xxyyzz
-
-                            // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[permutation].xxyyzzResults)
+                //do xxyyzz
+                // loop through all elements
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xxyyzzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) { continue; }
 
-                  GH_Path p = new GH_Path(result.CaseID, permutation + 1, elementID);
+                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_XX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(momentUnit))), p); // always use [rad] units
-                  out_YY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(momentUnit))), p);
-                  out_XXYY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(momentUnit))), p);
+                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(momentUnit))), p); // always use [rad] units
+                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(momentUnit))), p);
+                  out_XXYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(momentUnit))), p);
                 }
               }
               if (thread == 2)
               {
-                            //do shear
+                //do shear
 
-                            // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in valsShear[permutation].xyzResults)
+                // loop through all elements
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in valsShear[index].xyzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
 
-                  GH_Path p = new GH_Path(result.CaseID, permutation + 1, elementID);
+                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_qX.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(forceUnit))), p); // always use [rad] units
-                  out_qY.AddRange(kvp.Value.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(forceUnit))), p);
+                  out_qX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(forceUnit))), p); // always use [rad] units
+                  out_qY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(forceUnit))), p);
                 }
               }
             });

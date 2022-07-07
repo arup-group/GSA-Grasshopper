@@ -53,7 +53,7 @@ namespace GsaGH.Components
       {
         Model model = gsaModel.Model;
 
-        List<GsaSectionGoo> sections = Util.Gsa.FromGSA.GetSections(model.Sections(), model.AnalysisMaterials());
+        List<GsaSectionGoo> sections = Util.Gsa.FromGSA.GetSections(model.Sections(), model.AnalysisMaterials(), model.SectionModifiers());
         List<GsaProp2dGoo> prop2Ds = Util.Gsa.FromGSA.GetProp2ds(model.Prop2Ds(), model.AnalysisMaterials());
         List<GsaProp3dGoo> prop3Ds = Util.Gsa.FromGSA.GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
 

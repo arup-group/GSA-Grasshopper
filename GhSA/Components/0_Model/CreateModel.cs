@@ -19,7 +19,7 @@ namespace GsaGH.Components
     // including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("326aa021-10b3-45a0-8286-eefb3dc3e2e1");
     public CreateModel()
-      : base("Create Model", "Model", "Create a GSA Model",
+      : base("Create Model", "Model", "Assemble a GSA Model",
             Ribbon.CategoryName.Name(),
             Ribbon.SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden

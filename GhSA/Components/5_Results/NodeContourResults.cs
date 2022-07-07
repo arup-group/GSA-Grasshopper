@@ -224,14 +224,14 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.ResultType.Combination && result.CombPermutationID < 1)
+          if (result.Type == GsaResult.ResultType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination case contains "
-                + result.NumPermutations + " - only one permutation can be displayed at a time." +
-                System.Environment.NewLine + "Displaying Permutation 1; please use the 'Select Results' to select other single permutations");
+                + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
+                System.Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.ResultType.Combination)
-            _case = "Case C" + result.CaseID + " P" + result.CombPermutationID;
+            _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
           if (result.Type == GsaResult.ResultType.AnalysisCase)
             _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
         }
@@ -281,9 +281,9 @@ namespace GsaGH.Components
             break;
 
           case FoldMode.Reaction:
-            Tuple<List<GsaResultsValues>, string> resultgetter = result.NodeReactionForceValues(nodeList, Units.ForceUnit, Units.MomentUnit);
+            Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, Units.ForceUnit, Units.MomentUnit);
             res = resultgetter.Item1[0];
-            nodeList = resultgetter.Item2;
+            nodeList = string.Join(" ", resultgetter.Item2);
             break;
         }
 

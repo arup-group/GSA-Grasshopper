@@ -208,6 +208,9 @@
   <data name="CreateSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateSection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="CreateSectionModifier" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateSectionModifier.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="CreateSpring" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateSpring.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -267,6 +270,9 @@
   </data>
   <data name="EditSection" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditSection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditSectionModifier" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EditSectionModifier.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditSpring" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditSpring.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -403,6 +409,9 @@
   <data name="SaveModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SaveModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="SectionModifierParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SectionModifierParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="SectionParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SectionParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -432,5 +441,8 @@
   </data>
   <data name="Units" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Units.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="unused" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\unused.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

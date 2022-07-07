@@ -156,7 +156,7 @@ namespace GsaGH.Util.Gsa
     public static Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>
         GetElements(ConcurrentDictionary<int, Element> eDict, ConcurrentDictionary<int, Node> nDict,
         ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, ConcurrentDictionary<int, Prop3D> p3Dict,
-        ConcurrentDictionary<int, AnalysisMaterial> mDict, LengthUnit unit)
+        ConcurrentDictionary<int, AnalysisMaterial> mDict, ConcurrentDictionary<int, SectionModifier> modDict, LengthUnit unit)
     {
       // Create lists for Rhino lines and meshes
       ConcurrentBag<GsaElement1dGoo> elem1ds = new ConcurrentBag<GsaElement1dGoo>();
@@ -217,7 +217,7 @@ namespace GsaGH.Util.Gsa
       if (elem1dDict.Count > 0)
         elem1ds = new ConcurrentBag<GsaElement1dGoo>(elem1dDict.AsParallel().
             Select(item => new GsaElement1dGoo(
-                ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, unit))));
+                ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, modDict, unit))));
 
       if (elem2dDict.Count > 0)
         elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, unit);
@@ -241,7 +241,7 @@ namespace GsaGH.Util.Gsa
     /// <returns></returns>
     public static GsaElement1d ConvertToElement1D(Element element,
         int ID, ConcurrentDictionary<int, Node> nodes, ConcurrentDictionary<int, Section> sections,
-        ConcurrentDictionary<int, AnalysisMaterial> materials, LengthUnit unit)
+        ConcurrentDictionary<int, AnalysisMaterial> materials, ConcurrentDictionary<int, SectionModifier> sectionModifiers, LengthUnit unit)
     {
       // get element's topology
       ReadOnlyCollection<int> topo = element.Topology;
@@ -287,6 +287,8 @@ namespace GsaGH.Util.Gsa
           //else
           //    section.Material = new GsaMaterial(section);
 
+          if (sectionModifiers.TryGetValue(element.Property, out SectionModifier sectionModifier))
+            section.Modifier = new GsaSectionModifier(sectionModifier);
         }
 
         // create GH GsaElement1d
@@ -1368,7 +1370,7 @@ namespace GsaGH.Util.Gsa
     /// </summary>
     /// <param name="sDict">Dictionary of pre-filtered sections to import</param>
     /// <returns></returns>
-    public static List<GsaSectionGoo> GetSections(IReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials)
+    public static List<GsaSectionGoo> GetSections(IReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials, IReadOnlyDictionary<int, SectionModifier> modDict)
     {
       List<GsaSectionGoo> sections = new List<GsaSectionGoo>();
 
@@ -1384,6 +1386,8 @@ namespace GsaGH.Util.Gsa
             if (analysisMaterials.ContainsKey(sect.API_Section.MaterialAnalysisProperty))
               sect.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
           }
+          if (modDict.Keys.Contains(key))
+            sect.Modifier = new GsaSectionModifier(modDict[key]);
           sections.Add(new GsaSectionGoo(sect));
         }
       }

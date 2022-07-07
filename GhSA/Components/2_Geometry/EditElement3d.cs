@@ -43,7 +43,7 @@ namespace GsaGH.Components
 
       pManager.AddGenericParameter("3D Element", "E3D", "GSA 3d Element to Modify", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Element3d Number", "ID", "Set Element Number. If ID is set it will replace any existing 3d Element in the model", GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Property", "PA", "Change 3D Property. Input either a GSA 3D Property or an Integer to use a Property already defined in model", GH_ParamAccess.list);
+      pManager.AddGenericParameter("3D Property", "PV", "Change 3D Property. Input either a GSA 3D Property or an Integer to use a Property already defined in model", GH_ParamAccess.list);
       pManager.AddIntegerParameter("Element3d Group", "Gr", "Set Element Group", GH_ParamAccess.list);
       pManager.AddTextParameter("Element3d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
       pManager.AddColourParameter("Element3d Colour", "Co", "Set Element Colour", GH_ParamAccess.list);
@@ -57,10 +57,10 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("3D Element", "E3D", "Modified GSA 3d Element", GH_ParamAccess.item);
+      pManager.AddGenericParameter("3D Element", "E3D", "Modified GSA 3D Element", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
       pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh. " + System.Environment.NewLine
-          + "This will export a list of solid meshes representing each 3d element." + System.Environment.NewLine
+          + "This will export a list of solid meshes representing each 3D element." + System.Environment.NewLine
           + "To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly", GH_ParamAccess.item);
       pManager.HideParameter(2);
       pManager.AddGenericParameter("3D Property", "PA", "Get 3D Property. Input either a GSA 3D Property or an Integer to use a Property already defined in model", GH_ParamAccess.list);

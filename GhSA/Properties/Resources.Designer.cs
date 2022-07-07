@@ -363,6 +363,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CreateSectionModifier {
+            get {
+                object obj = ResourceManager.GetObject("CreateSectionModifier", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap CreateSpring {
             get {
                 object obj = ResourceManager.GetObject("CreateSpring", resourceCulture);
@@ -556,6 +566,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap EditSection {
             get {
                 object obj = ResourceManager.GetObject("EditSection", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap EditSectionModifier {
+            get {
+                object obj = ResourceManager.GetObject("EditSectionModifier", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1013,6 +1033,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap SectionModifierParam {
+            get {
+                object obj = ResourceManager.GetObject("SectionModifierParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap SectionParam {
             get {
                 object obj = ResourceManager.GetObject("SectionParam", resourceCulture);
@@ -1106,6 +1136,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap Units {
             get {
                 object obj = ResourceManager.GetObject("Units", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap unused {
+            get {
+                object obj = ResourceManager.GetObject("unused", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

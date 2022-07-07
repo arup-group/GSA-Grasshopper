@@ -66,31 +66,30 @@ namespace GsaGH.Components
       GsaOffset gsaoffset = new GsaOffset();
       if (DA.GetData(0, ref gsaoffset))
       {
-        offset = gsaoffset.Duplicate();
-      }
-      if (offset != null)
-      {
-        int inp = 0;
-        if (this.Params.Input[inp].SourceCount != 0)
-          offset.X1 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
+        if (offset != null)
+        {
+          int inp = 1;
+          if (this.Params.Input[inp].SourceCount != 0)
+            offset.X1 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
 
-        if (this.Params.Input[inp].SourceCount != 0)
-          offset.X2 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
+          if (this.Params.Input[inp].SourceCount != 0)
+            offset.X2 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
 
-        if (this.Params.Input[inp].SourceCount != 0)
-          offset.Y = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
+          if (this.Params.Input[inp].SourceCount != 0)
+            offset.Y = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
 
-        if (this.Params.Input[inp].SourceCount != 0)
-          offset.Z = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
+          if (this.Params.Input[inp].SourceCount != 0)
+            offset.Z = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
 
-        //outputs
-        int outp = 0;
-        DA.SetData(outp++, new GsaOffsetGoo(offset));
+          //outputs
+          int outp = 0;
+          DA.SetData(outp++, new GsaOffsetGoo(offset));
 
-        DA.SetData(outp++, new GH_UnitNumber(offset.X1));
-        DA.SetData(outp++, new GH_UnitNumber(offset.X2));
-        DA.SetData(outp++, new GH_UnitNumber(offset.Y));
-        DA.SetData(outp++, new GH_UnitNumber(offset.Z));
+          DA.SetData(outp++, new GH_UnitNumber(offset.X1));
+          DA.SetData(outp++, new GH_UnitNumber(offset.X2));
+          DA.SetData(outp++, new GH_UnitNumber(offset.Y));
+          DA.SetData(outp++, new GH_UnitNumber(offset.Z));
+        }
       }
     }
   }

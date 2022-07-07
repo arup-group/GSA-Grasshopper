@@ -72,7 +72,6 @@ namespace GsaGH.UI.Menu
         {
           mainMenu.Items.Insert(mainMenu.Items.Count - 2, oasysMenu);
           MenuHasBeenAdded = true;
-
         }
         catch (Exception)
         {
@@ -89,13 +88,13 @@ namespace GsaGH.UI.Menu
       oasysMenu.DropDown.Items.Add("GSA Units", Properties.Resources.Units, (s, a) =>
       {
         UI.UnitSettingsBox unitBox = new UI.UnitSettingsBox();
-        unitBox.Show();
+        unitBox.ShowDialog();
       });
       // add info
       oasysMenu.DropDown.Items.Add("GSA Info", Properties.Resources.GSAInfo, (s, a) =>
       {
         UI.AboutBox aboutBox = new UI.AboutBox();
-        aboutBox.Show();
+        aboutBox.ShowDialog();
       });
 
       return oasysMenu;
@@ -148,21 +147,6 @@ namespace GsaGH.UI.Menu
         }
         menuTrimTimer.Stop();
       }
-
-
-
-      //if (AppendToExistingMenu)
-      //{
-      //    for (int i = 0; i < mainMenu.Items.Count; i++)
-      //    {
-      //        if (mainMenu.Items[i].ToString() == "Oasys")
-      //        {
-      //            ToolStripMenuItem oasysMenu = mainMenu.Items[i] as ToolStripMenuItem;
-      //            while (oasysMenu.DropDown.Items.Count > n_existingMenus + 3)
-      //                oasysMenu.DropDown.Items.RemoveAt(n_existingMenus + 3);
-      //        }
-      //    }
-      //}
     }
   }
 }

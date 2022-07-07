@@ -108,10 +108,13 @@ namespace GsaGH.Components
     }
     protected override void BeforeSolveInstance()
     {
-      _useDegrees = false;
-      Param_Number angleParameter = Params.Input[5] as Param_Number;
-      if (angleParameter != null)
-        _useDegrees = angleParameter.UseDegrees;
+      if (_mode == FoldMode.One_Dimensional_One_Way)
+      {
+        _useDegrees = false;
+        Param_Number angleParameter = Params.Input[5] as Param_Number;
+        if (angleParameter != null)
+          _useDegrees = angleParameter.UseDegrees;
+      }
     }
     protected override void SolveInstance(IGH_DataAccess DA)
     {

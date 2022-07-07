@@ -246,7 +246,65 @@ namespace GsaGH.Components
               new ConcurrentDictionary<int, Prop2D>(gsa.Prop2Ds()),
               new ConcurrentDictionary<int, Prop3D>(gsa.Prop3Ds()),
               new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials()),
+              new ConcurrentDictionary<int, SectionModifier>(gsa.SectionModifiers()),
               lengthUnit);
+
+      // post process materials (as they currently have a bug when running parallel!)
+      
+      ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials());
+      
+      if (elementTuple.Item1 != null)
+      {
+        foreach (GsaElement1dGoo element in elementTuple.Item1)
+        {
+          if (element.Value.Section != null && element.Value.Section.API_Section != null)
+          {
+            if (element.Value.Section.API_Section.MaterialAnalysisProperty > 0)
+            {
+              amDict.TryGetValue(element.Value.Section.API_Section.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+              element.Value.Section.Material = new GsaMaterial(element.Value.Section, apimaterial);
+            }
+            else
+              element.Value.Section.Material = new GsaMaterial(element.Value.Section);
+          }
+        }
+      }
+      if (elementTuple.Item2 != null)
+      {
+        foreach (GsaElement2dGoo element in elementTuple.Item2)
+        {
+          if (element.Value.Properties != null && element.Value.Properties[0].API_Prop2d != null)
+          {
+            if (element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty > 0)
+            {
+              amDict.TryGetValue(element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+              foreach (GsaProp2d prop in element.Value.Properties)
+                prop.Material = new GsaMaterial(prop, apimaterial);
+            }
+            else
+              foreach (GsaProp2d prop in element.Value.Properties)
+                prop.Material = new GsaMaterial(prop);
+          }
+        }
+      }
+      if (elementTuple.Item3 != null)
+      {
+        foreach (GsaElement3dGoo element in elementTuple.Item3)
+        {
+          if (element.Value.Properties != null && element.Value.Properties[0].API_Prop3d != null)
+          {
+            if (element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty > 0)
+            {
+              amDict.TryGetValue(element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
+              foreach (GsaProp3d prop in element.Value.Properties)
+                prop.Material = new GsaMaterial(prop, apimaterial);
+            }
+            else
+              foreach (GsaProp3d prop in element.Value.Properties)
+                prop.Material = new GsaMaterial(prop);
+          }
+        }
+      }
 
       // expose internal model if anyone wants to use it
       GsaModel outModel = new GsaModel();

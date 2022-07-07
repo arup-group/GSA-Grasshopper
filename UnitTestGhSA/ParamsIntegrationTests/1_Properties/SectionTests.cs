@@ -4,6 +4,8 @@ using GsaGH;
 using GsaGH.Parameters;
 using Rhino.Geometry;
 using GsaAPI;
+using UnitsNet;
+using UnitsNet.Units;
 
 namespace ParamsIntegrationTests
 {
@@ -18,14 +20,12 @@ namespace ParamsIntegrationTests
           Math.PI / 4 * Math.Pow(200, 2)
           - Math.PI / 4 * Math.Pow(200 - 2 * 10, 2),
           10);
+      Area area_expected = new Area(myarea, AreaUnit.SquareMillimeter);
 
       // create new section
       GsaSection sect = new GsaSection(profile);
 
-      double area = Math.Round(
-          sect.Area * Math.Pow(10, 6), // unit conversion
-          10);
-      Assert.AreEqual(myarea, area);
+      Assert.AreEqual(area_expected, sect.Area);
 
       // set other properties in section
 
@@ -49,11 +49,12 @@ namespace ParamsIntegrationTests
       // string defining the profile
       string profile = "STD R 15 20";
       double myarea = 15 * 20;
+      Area area_expected = new Area(myarea, AreaUnit.SquareMillimeter);
+
       // create new section with profile and ID
       GsaSection sect = new GsaSection(profile, 15);
 
-      double area = sect.Area * Math.Pow(10, 6); // unit conversion
-      Assert.AreEqual(myarea, area);
+      Assert.AreEqual(area_expected, sect.Area);
       Assert.AreEqual(15, sect.ID);
     }
 
@@ -63,8 +64,8 @@ namespace ParamsIntegrationTests
       string profile = "CAT HE HE200.B";
       GsaSection section = new GsaSection(profile);
 
-      double area = section.Area * Math.Pow(10, 6);
-      Assert.AreEqual(7808.121, area);
+      Area area_expected = new Area(7808.121, AreaUnit.SquareMillimeter);
+      Assert.AreEqual(area_expected, section.Area);
     }
 
     [TestCase]
@@ -87,6 +88,7 @@ namespace ParamsIntegrationTests
       // make some changes to original
       string profile2 = "STD%R%15%20";
       double myarea2 = 15 * 20;
+      Area area_expected = new Area(myarea2, AreaUnit.SquareMillimeter);
       orig.Profile = profile2;
       orig.Material.AnalysisProperty = 4;
       orig.Material.GradeProperty = 6;
@@ -94,13 +96,11 @@ namespace ParamsIntegrationTests
       orig.Name = "kris";
       orig.Pool = 99;
 
-      double area2 = orig.Area * Math.Pow(10, 6);
       Assert.AreEqual("STD R 15 20", orig.Profile);
-      Assert.AreEqual(myarea2, area2);
+      Assert.AreEqual(area_expected, orig.Area);
 
-      double area1 = dup.Area * Math.Pow(10, 6);
       Assert.AreEqual(profile, dup.Profile);
-      Assert.AreEqual(myarea1, area1);
+      Assert.AreEqual(area_expected, dup.Area);
 
       Assert.AreEqual(1, dup.Material.AnalysisProperty);
       Assert.AreEqual(2, dup.Material.GradeProperty);

@@ -14,95 +14,27 @@ namespace GsaGH.Parameters
   /// Offset class, this class defines the basic properties and methods for any Gsa Offset
   /// </summary>
   public class GsaOffset
-
   {
-    public Length X1
-    {
-      get
-      {
-        Length l = new Length(m_x1, UnitsNet.UnitSystem.SI);
-        return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
-      }
-      set { m_x1 = value.Meters; }
-    }
-
-    public Length Y
-    {
-      get
-      {
-        Length l = new Length(m_y, UnitsNet.UnitSystem.SI);
-        return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
-      }
-      set { m_y = value.Meters; }
-    }
-
-    public Length Z
-    {
-      get
-      {
-        Length l = new Length(m_z, UnitsNet.UnitSystem.SI);
-        return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
-      }
-      set { m_z = value.Meters; }
-    }
-
-    public Length X2
-    {
-      get
-      {
-        Length l = new Length(m_x2, UnitsNet.UnitSystem.SI);
-        return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
-      }
-      set { m_x2 = value.Meters; }
-    }
-
-
-    #region fields
-    private double m_x1;
-    private double m_y;
-    private double m_z;
-    private double m_x2;
-    //private Offset m_offset;
-    #endregion
+    public Length X1 { get; set; } = Length.Zero;
+    public Length X2 { get; set; } = Length.Zero;
+    public Length Y { get; set; } = Length.Zero;
+    public Length Z { get; set; } = Length.Zero;
 
     #region constructors
-    public GsaOffset()
-    {
-      m_x1 = 0;
-      m_x2 = 0;
-      m_y = 0;
-      m_z = 0;
-      //m_offset.X1 = m_x1;
-      //m_offset.X2 = m_x2;
-      //m_offset.Y = m_y;
-      //m_offset.Z = m_z;
-    }
+    public GsaOffset() { }
 
     public GsaOffset(double x1, double x2, double y, double z, LengthUnit unit = LengthUnit.Meter)
     {
-      m_x1 = new Length(x1, unit).Meters;
-      m_x2 = new Length(x2, unit).Meters;
-      m_y = new Length(y, unit).Meters;
-      m_z = new Length(z, unit).Meters;
-      //m_offset.X1 = m_x1;
-      //m_offset.X2 = m_x2;
-      //m_offset.Y = m_y;
-      //m_offset.Z = m_z;
+      X1 = new Length(x1, unit);
+      X2 = new Length(x2, unit);
+      Y = new Length(y, unit);
+      Z = new Length(z, unit);
     }
-
 
     public GsaOffset Duplicate()
     {
       if (this == null) { return null; }
-      GsaOffset dup = new GsaOffset
-      {
-        X1 = new Length(m_x1, UnitsNet.UnitSystem.SI),
-        Y = new Length(m_y, UnitsNet.UnitSystem.SI),
-        Z = new Length(m_z, UnitsNet.UnitSystem.SI),
-        X2 = new Length(m_x2, UnitsNet.UnitSystem.SI)
-      };
-
-      return dup;
+      return (GsaOffset)this.MemberwiseClone(); // all members are structs
     }
     #endregion
 
@@ -115,8 +47,6 @@ namespace GsaGH.Parameters
         return true;
       }
     }
-
-
     #endregion
 
     #region methods
@@ -131,7 +61,6 @@ namespace GsaGH.Parameters
           + Math.Round(Y.As(Units.LengthUnitGeometry), 4) + ", Z: "
           + Math.Round(Z.As(Units.LengthUnitGeometry), 4) + " [" + unitAbbreviation + "]}";
     }
-
     #endregion
   }
 

@@ -81,6 +81,7 @@ namespace GsaGH.Util.Gsa.ToGSA
   {
     public static int ConvertSection(GsaSection section,
         ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
+        ref Dictionary<int, SectionModifier> existingSectionModifiers,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {
       if (section == null) { return 0; }
@@ -98,6 +99,9 @@ namespace GsaGH.Util.Gsa.ToGSA
       // set material
       if (section.API_Section.MaterialAnalysisProperty != 0 && section.Material != null && section.Material.AnalysisMaterial != null)
         section.API_Section.MaterialAnalysisProperty = Materials.ConvertCustomMaterial(section.Material, ref existingMaterials, ref materials_guid);
+
+      
+
 
       // section
       if (section.ID > 0)
@@ -123,17 +127,26 @@ namespace GsaGH.Util.Gsa.ToGSA
       // set guid in dictionary
       sections_guid.Add(section.GUID, outID);
 
+      // set modifier
+      if (section.Modifier.isModified)
+      {
+        if (existingSectionModifiers.ContainsKey(outID))
+          existingSectionModifiers[outID] = section.Modifier.API_SectionModifier;
+        else
+          existingSectionModifiers.Add(outID, section.Modifier.API_SectionModifier);
+      }
+
       return outID;
     }
 
     public static void ConvertSection(List<GsaSection> sections,
-        ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
+        ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid, ref Dictionary<int, SectionModifier> apimodifiers,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {
-      // create a counter for creating new nodes
+      // create a counter for creating new sections
       int sectionidcounter = (existingSections.Count > 0) ? existingSections.Keys.Max() + 1 : 1; //checking the existing model
 
-      // Add/Set Nodes
+      // Add/Set sections
       if (sections != null)
       {
         if (sections.Count != 0)
@@ -149,6 +162,15 @@ namespace GsaGH.Util.Gsa.ToGSA
             {
               GsaSection section = sections[i];
               Section apiSection = section.API_Section;
+
+              // set modifier
+              if (section.Modifier.isModified)
+              {
+                if (apimodifiers.ContainsKey(i))
+                  apimodifiers[i] = section.Modifier.API_SectionModifier;
+                else
+                  apimodifiers.Add(i, section.Modifier.API_SectionModifier);
+              }
 
               // set material
               if (section.API_Section.MaterialAnalysisProperty != 0 && section.Material != null && section.Material.AnalysisMaterial != null)

@@ -43,7 +43,7 @@ namespace GsaGH.Components
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
-
+      AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
       pManager.HideParameter(0);
       pManager.HideParameter(1);
       pManager.HideParameter(2);
