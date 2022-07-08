@@ -32,10 +32,11 @@ namespace GsaGH.Parameters
         OrientationAngle = m_member.OrientationAngle,
         OrientationNode = m_member.OrientationNode,
         Property = m_member.Property,
-        Topology = m_member.Topology.ToString(),
         Type = m_member.Type,
         Type2D = m_member.Type2D
       };
+      if (m_member.Topology != String.Empty)
+        mem.Topology = m_member.Topology;
 
       if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         mem.Colour = m_member.Colour;
@@ -156,6 +157,18 @@ namespace GsaGH.Parameters
         m_member.MeshSize = value.Meters;
       }
     }
+    public bool MeshWithOthers
+    {
+      get
+      {
+        return m_member.IsIntersector;
+      }
+      set
+      {
+        CloneApiMember();
+        m_member.IsIntersector = value;
+      }
+    }
     public GsaOffset Offset
     {
       get
@@ -212,28 +225,12 @@ namespace GsaGH.Parameters
         m_member.Type2D = value;
       }
     }
-    private void CloneApiMember()
+
+    internal void CloneApiMember()
     {
-      Member mem = new Member
-      {
-        Group = m_member.Group,
-        IsDummy = m_member.IsDummy,
-        MeshSize = m_member.MeshSize,
-        Name = m_member.Name.ToString(),
-        Offset = m_member.Offset,
-        OrientationAngle = m_member.OrientationAngle,
-        OrientationNode = m_member.OrientationNode,
-        Property = m_member.Property,
-        Topology = m_member.Topology.ToString(),
-        Type = m_member.Type,
-        Type2D = m_member.Type2D
-      };
-
-      if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        mem.Colour = m_member.Colour;
-
-      m_member = mem;
+      m_member = this.GetAPI_MemberClone();
     }
+
     #endregion
 
     #region fields
@@ -380,18 +377,19 @@ namespace GsaGH.Parameters
 
       m_inclPts = includePoints;
 
-      m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs);
-      if (m_brep == null)
-      {
-        string error = " Error with Mem2D ID: " + id + ". Unable to build Brep, please verify input geometry is valid and tolerance is set to something reasonable." +
-            System.Environment.NewLine + "It may be that the topology list is invalid, please check your input. Member " + id + " has not been imported!";
-        if (owner == null)
-        {
-          throw new Exception(error);
-        }
-        else
-          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, error);
-      }
+      m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs, 
+        new Length(0.25, UnitsNet.Units.LengthUnit.Meter).As(Units.LengthUnitGeometry)); // use relative high tolerance as if the member worked in GSA we want to import it even if warped
+      //if (m_brep == null)
+      //{
+      //  string error = " Error with Mem2D ID: " + id + ". Unable to build Brep, please verify input geometry is valid and tolerance is set to something reasonable." +
+      //      System.Environment.NewLine + "It may be that the topology list is invalid, please check your input. Member " + id + " has not been imported!";
+      //  if (owner == null)
+      //  {
+      //    throw new Exception(error);
+      //  }
+      //  else
+      //    owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, error);
+      //}
 
       m_prop = prop;
     }
@@ -451,6 +449,7 @@ namespace GsaGH.Parameters
     {
       if (this == null) { return null; }
       GsaMember2d dup = this.Duplicate(true);
+      dup.ID = 0;
 
       // Brep
       if (dup.m_brep != null)
@@ -486,6 +485,7 @@ namespace GsaGH.Parameters
     {
       if (this == null) { return null; }
       GsaMember2d dup = this.Duplicate(true);
+      dup.ID = 0;
 
       // Brep
       if (dup.m_brep != null)

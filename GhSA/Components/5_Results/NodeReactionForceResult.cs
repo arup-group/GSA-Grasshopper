@@ -176,13 +176,15 @@ namespace GsaGH.Components
             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
             return;
           }
-          Tuple<List<GsaResultsValues>, string> resultgetter = result.NodeReactionForceValues(nodeList, forceUnit, momentUnit);
+          Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, forceUnit, momentUnit);
           List<GsaResultsValues> vals = resultgetter.Item1;
-          List<int> sortedIDs = result.Model.Nodes(resultgetter.Item2).Keys.ToList();
+          List<int> sortedIDs = resultgetter.Item2;
 
-          for (int permutation = 0; permutation < vals.Count; permutation++)
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
+
+          for (int index = 0; index < vals.Count; index++)
           {
-            GH_Path p = p = new GH_Path(result.CaseID, permutation + 1);
+            GH_Path p = p = new GH_Path(result.CaseID, permutations[index]);
 
             List<GH_UnitNumber> transX = new List<GH_UnitNumber>();
             List<GH_UnitNumber> transY = new List<GH_UnitNumber>();
@@ -202,42 +204,26 @@ namespace GsaGH.Components
                 {
                   int ID = sortedIDs[j];
                   ids.Add(ID);
-                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[permutation].xyzResults[ID];
+                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[index].xyzResults[ID];
                   GsaResultQuantity values = res[0]; // there is only one result per node
                   transX.Add(new GH_UnitNumber(values.X.ToUnit(forceUnit))); // use ToUnit to capture changes in dropdown
                   transY.Add(new GH_UnitNumber(values.Y.ToUnit(forceUnit)));
                   transZ.Add(new GH_UnitNumber(values.Z.ToUnit(forceUnit)));
                   transXYZ.Add(new GH_UnitNumber(values.XYZ));
                 }
-                //foreach (ConcurrentDictionary<int, GsaResultQuantity> res in vals[permutation].xyzResults.Values)
-                //{
-                //  GsaResultQuantity values = res[0]; // there is only one result per node
-                //              transX.Add(new GH_UnitNumber(values.X.ToUnit(forceUnit))); // use ToUnit to capture changes in dropdown
-                //              transY.Add(new GH_UnitNumber(values.Y.ToUnit(forceUnit)));
-                //  transZ.Add(new GH_UnitNumber(values.Z.ToUnit(forceUnit)));
-                //  transXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(forceUnit)));
-                //}
               }
               if (item == 1)
               {
                 for (int j = 0; j < sortedIDs.Count; j++)
                 {
                   int ID = sortedIDs[j];
-                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[permutation].xxyyzzResults[ID];
+                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[index].xxyyzzResults[ID];
                   GsaResultQuantity values = res[0]; // there is only one result per node
                   rotX.Add(new GH_UnitNumber(values.X.ToUnit(momentUnit))); // use ToUnit to capture changes in dropdown
                   rotY.Add(new GH_UnitNumber(values.Y.ToUnit(momentUnit)));
                   rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(momentUnit)));
                   rotXYZ.Add(new GH_UnitNumber(values.XYZ));
                 }
-                //foreach (ConcurrentDictionary<int, GsaResultQuantity> res in vals[permutation].xxyyzzResults.Values)
-                //{
-                //  GsaResultQuantity values = res[0]; // there is only one result per node
-                //              rotX.Add(new GH_UnitNumber(values.X.ToUnit(momentUnit))); // use ToUnit to capture changes in dropdown
-                //              rotY.Add(new GH_UnitNumber(values.Y.ToUnit(momentUnit)));
-                //  rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(momentUnit)));
-                //  rotXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(momentUnit)));
-                //}
               }
             });
 
@@ -251,9 +237,6 @@ namespace GsaGH.Components
             out_rotXYZ.AddRange(rotXYZ, p);
             outIDs.AddRange(ids, p);
           }
-
-          //if (i == 0)
-          //  DA.SetDataList(8, vals.First().xyzResults.Keys.OrderBy(x => x).ToList());
         }
 
         DA.SetDataTree(0, out_transX);

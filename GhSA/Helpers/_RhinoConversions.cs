@@ -374,13 +374,9 @@ namespace GsaGH.Util.GH
       for (int i = 0; i < brep.Loops.Count; i++)
       {
         if (brep.Loops[i].LoopType == BrepLoopType.Outer)
-        {
           outer = brep.Loops[i].To3dCurve();
-        }
         else
-        {
           inner.Add(brep.Loops[i].To3dCurve());
-        }
       }
       List<Curve> edges = new List<Curve>();
       edges.Add(outer);
@@ -421,8 +417,13 @@ namespace GsaGH.Util.GH
       {
         for (int i = 0; i < inclCrvs.Count; i++)
         {
-          if (!inclCrvs[i].IsInPlane(plane))
+          if (inclCrvs[i].IsInPlane(plane, Units.Tolerance.As(Units.LengthUnitGeometry)))
             inclCrvs[i] = Curve.ProjectToPlane(inclCrvs[i], plane);
+          else
+          {
+            //TODO - find intersection overlaps or points btw curve and plane: https://developer.rhino3d.com/api/RhinoCommon/html/T_Rhino_Geometry_Intersect_IntersectionEvent.htm
+            break;
+          }
           convert = GH.Convert.ConvertMem2dCrv(inclCrvs[i], tolerance);
           incl_crvs.Add(convert.Item1);
           incl_topo.Add(convert.Item2);
@@ -432,8 +433,14 @@ namespace GsaGH.Util.GH
 
       if (inclPts != null)
       {
+        List<Point3d> inclPtsWithinTolerance = new List<Point3d>();
         for (int i = 0; i < inclPts.Count; i++)
-          inclPts[i] = plane.ClosestPoint(inclPts[i]);
+        {
+          Point3d tempPt = plane.ClosestPoint(inclPts[i]);
+          if (inclPts[i].DistanceTo(tempPt) <= Units.Tolerance.As(Units.LengthUnitGeometry))
+            inclPtsWithinTolerance.Add(tempPt);
+        }
+        inclPts = inclPtsWithinTolerance;
       }
 
       Tuple<PolyCurve, List<Point3d>, List<string>> edgeTuple = new Tuple<PolyCurve, List<Point3d>, List<string>>(edge_crv, m_topo, m_topoType);
@@ -448,7 +455,7 @@ namespace GsaGH.Util.GH
     public static Brep BuildBrep(PolyCurve externalEdge, List<PolyCurve> voidCurves = null, double tolerance = -1)
     {
       if (tolerance < 0)
-        tolerance = Units.Tolerance.As(Units.LengthUnitGeometry) * 0.5; // use the user set units
+        tolerance = Units.Tolerance.As(Units.LengthUnitGeometry); // use the user set units
 
       CurveList curves = new CurveList
             {
@@ -460,11 +467,18 @@ namespace GsaGH.Util.GH
       Brep[] brep = Brep.CreatePlanarBreps(curves, tolerance);
       if (brep == null)
       {
-        Brep brep2 = Brep.CreateEdgeSurface(curves);
+        tolerance = tolerance * 2;
+        brep = Brep.CreatePlanarBreps(curves, tolerance);
         if (brep == null)
-          return null;
+        {
+          Brep brep2 = Brep.CreateEdgeSurface(curves);
+          if (brep2 == null)
+            return null;
+          else
+            return brep2;
+        }
         else
-          return brep2;
+          return brep[0];
       }
       else
         return brep[0];
@@ -765,7 +779,7 @@ namespace GsaGH.Util.GH
       Brep[] flattened = unroller.PerformUnroll(out inclCrvs, out inclPts, out unused);
       if (flattened.Length == 0)
       {
-        throw new Exception(" Unable to unroll surface for re-meshing, the curvature is likely too high!");
+        throw new Exception(" Unable to unroll surface for re-meshing, the curvature is likely too high! Try with a more non-dramatic curvature.");
       }
 
       // create 2d member from flattened geometry
@@ -808,6 +822,7 @@ namespace GsaGH.Util.GH
               new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds()),
               new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds()),
               new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials()),
+              new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers()),
               Units.LengthUnitGeometry);
 
       List<GsaElement2dGoo> elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.ID).ToList();

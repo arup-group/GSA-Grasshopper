@@ -224,14 +224,14 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.ResultType.Combination && result.CombPermutationID < 1)
+          if (result.Type == GsaResult.ResultType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination case contains "
-                + result.NumPermutations + " - only one permutation can be displayed at a time." +
-                System.Environment.NewLine + "Displaying Permutation 1; please use the 'Select Results' to select other single permutations");
+                + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
+                System.Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.ResultType.Combination)
-            _case = "Case C" + result.CaseID + " P" + result.CombPermutationID;
+            _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
           if (result.Type == GsaResult.ResultType.AnalysisCase)
             _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
         }
@@ -281,9 +281,9 @@ namespace GsaGH.Components
             break;
 
           case FoldMode.Reaction:
-            Tuple<List<GsaResultsValues>, string> resultgetter = result.NodeReactionForceValues(nodeList, Units.ForceUnit, Units.MomentUnit);
+            Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, Units.ForceUnit, Units.MomentUnit);
             res = resultgetter.Item1[0];
-            nodeList = resultgetter.Item2;
+            nodeList = string.Join(" ", resultgetter.Item2);
             break;
         }
 
@@ -416,16 +416,16 @@ namespace GsaGH.Components
             {
               if (!(dmin == 0 & dmax == 0))
               {
-                        // create deflection point
-                        Point3d def = new Point3d(node.Value.Value.Point);
+                // create deflection point
+                Point3d def = new Point3d(node.Value.Value.Point);
 
                 double t = 0;
                 switch (_mode)
                 {
                   case FoldMode.Displacement:
                     Vector3d translation = new Vector3d(0, 0, 0);
-                            // pick the right value to display
-                            switch (_disp)
+                    // pick the right value to display
+                    switch (_disp)
                     {
                       case (DisplayValue.X):
                         t = xyzResults[nodeID][0].X.As(geometryLengthUnit);
@@ -461,8 +461,8 @@ namespace GsaGH.Components
                     def.Transform(Transform.Translation(translation));
                     break;
                   case FoldMode.Reaction:
-                            // pick the right value to display
-                            switch (_disp)
+                    // pick the right value to display
+                    switch (_disp)
                     {
                       case (DisplayValue.X):
                         t = xyzResults[nodeID][0].X.As(Units.ForceUnit);
@@ -492,19 +492,19 @@ namespace GsaGH.Components
                     break;
                 }
 
-                        //normalised value between -1 and 1
-                        double tnorm = 2 * (t - dmin) / (dmax - dmin) - 1;
+                //normalised value between -1 and 1
+                double tnorm = 2 * (t - dmin) / (dmax - dmin) - 1;
 
-                        // get colour for that normalised value
-                        Color valcol = gH_Gradient.ColourAt(tnorm);
+                // get colour for that normalised value
+                Color valcol = gH_Gradient.ColourAt(tnorm);
 
-                        // set the size of the point for ResultPoint class. Size is calculated from 0-base, so not a normalised value between extremes
-                        float size = (t >= 0 && dmax != 0) ?
-                            Math.Max(2, (float)(t / dmax * scale)) :
-                            Math.Max(2, (float)(Math.Abs(t) / Math.Abs(dmin) * scale));
+                // set the size of the point for ResultPoint class. Size is calculated from 0-base, so not a normalised value between extremes
+                float size = (t >= 0 && dmax != 0) ?
+                    Math.Max(2, (float)(t / dmax * scale)) :
+                    Math.Max(2, (float)(Math.Abs(t) / Math.Abs(dmin) * scale));
 
-                        // add our special resultpoint to the list of points
-                        pts[nodeID] = new ResultPoint(def, t, valcol, size);
+                // add our special resultpoint to the list of points
+                pts[nodeID] = new ResultPoint(def, t, valcol, size);
               }
             }
           }

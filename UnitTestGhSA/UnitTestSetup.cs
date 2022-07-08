@@ -6,6 +6,9 @@ using NUnit;
 using GsaAPI;
 using GsaGH;
 using GsaGH.Parameters;
+using System.Runtime.InteropServices;
+using UnitsNet.Units;
+using Oasys.Units;
 
 // A SetUpFixture outside of any namespace provides SetUp and TearDown for the entire assembly.
 [SetUpFixture]
@@ -42,7 +45,6 @@ public class SetUp
     UnitTestGhSA.InitiateRhinoGH.ExitInProcess();
   }
 }
-
 namespace ComponentsTest
 {
   [SetUpFixture]
@@ -63,7 +65,6 @@ namespace ComponentsTest
     }
   }
 }
-
 namespace UnitTestGhSA
 {
   public class InitiateGsa
@@ -80,7 +81,6 @@ namespace UnitTestGhSA
       var target = EnvironmentVariableTarget.Process;
       System.Environment.SetEnvironmentVariable(name, value, target);
     }
-
     public static void UseGsaAPI()
     {
       // create new GH-GSA model 
@@ -98,10 +98,15 @@ namespace UnitTestGhSA
 
     public static void SetUnits()
     {
-      //GsaGH.Units.SetUnits_kN_m();
+      Units.LengthUnitGeometry = LengthUnit.Meter;
+      Units.LengthUnitSection = LengthUnit.Millimeter;
+      Units.LengthUnitResult = LengthUnit.Millimeter;
+      Units.StressUnit = PressureUnit.Megapascal;
+      Units.ForceUnit = ForceUnit.Kilonewton;
+      Units.MomentUnit = MomentUnit.KilonewtonMeter;
+      Units.MassUnit = MassUnit.Tonne;
     }
   }
-
   public class InitiateRhinoGH
   {
     public static void LoadRhino7GH()
