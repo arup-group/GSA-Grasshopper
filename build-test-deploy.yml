@@ -1,0 +1,78 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+
+variables:
+  - group: s3PushInstallers
+  - group: pipeline-tokens
+  - name: configuration
+    value: Release
+
+pool: 'vs17_2'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  displayName: 'Restoring NuGet packages'
+  inputs:
+      command: 'restore'
+      restoreSolution: 'GsaGH.sln'
+  
+- task: VSBuild@1
+  displayName: 'Building project in $(configuration)'
+  inputs:
+    solution: 'GsaGH.sln'
+    msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false'
+    platform: 'x64'
+    configuration: '$(configuration)'
+    clean: true
+  env:
+    MSBUILDDISABLENODEREUSE: 1
+
+#- powershell: |
+#    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\3.1.0\build --results-directory .\results .\AdSecGHTests\bin\Release\net6.0\AdSecGHTests.dll
+#  displayName: dotnet tests
+
+#- task: PublishCodeCoverageResults@1
+#  inputs:
+#    codeCoverageTool: 'cobertura'
+#    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/**/coverage.cobertura.xml'
+#    pathToSources: '$(System.DefaultWorkingDirectory)'
+
+#- powershell: |
+#    codecov -t $env:CODECOV_TOKEN -f ComposTests\coverage.json -F unittests
+#  env:
+#    CODECOV_TOKEN: $(CODECOV_TOKEN)
+#  displayName: Upload Code Coverage to codecovio
+
+- powershell: |
+    cd GhSA\bin\x64
+    curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
+    .\yak version
+    cd Release
+    ..\yak spec
+    ..\yak build --platform win
+    $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
+    $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
+    Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
+    ..\yak build --platform win
+    cd ..
+    ls Release\*.yak |% {.\yak push $_.FullName}
+  env:
+    YAK_TOKEN: $(YAK_TOKEN)
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables.isRelease, 'true'))
+  displayName: Deploy yak package 
+
+# copied from github, won´t work, see https://docs.microsoft.com/en-gb/azure/devops/pipelines/artifacts/nuget?view=azure-devops&tabs=yaml
+#- powershell: |
+#    nuget pack package -Version ${{ github.event.release.tag_name }}
+#  displayName: Create NuGet package
+
+#- powershell: |
+#    dotnet nuget update source oasys-software-libraries --username "unused" --password "${{ secrets.DEVOPS_TOKEN }}" --configfile nuget.config
+#    dotnet nuget push "*.nupkg" --api-key AzureDevOps
+#  displayName: Push NuGet package
