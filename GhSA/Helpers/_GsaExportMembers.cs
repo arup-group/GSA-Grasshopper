@@ -93,7 +93,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         apiMember.Topology = string.Copy(topo);
       }
-      catch (Exception e)
+      catch (Exception)
       {
         List<string> errors = member1d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
         string error = string.Join(", ", errors);
