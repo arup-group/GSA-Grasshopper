@@ -10,6 +10,8 @@ variables:
   - group: pipeline-tokens
   - name: configuration
     value: Release
+  - name: latest_released_gsa_version
+    value: GSA/10.1/10.1.60/10.1.60.42/2022-07-01/36296/Arup_GSA_x64_10.1.60.42
 
 pool: 'vs17_2'
 
