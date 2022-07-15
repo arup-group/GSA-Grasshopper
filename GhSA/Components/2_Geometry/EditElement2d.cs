@@ -113,6 +113,7 @@ namespace GsaGH.Components
               in_ids.Add(id);
             }
           }
+          elem.ID = in_ids;
         }
 
         // 2 section
