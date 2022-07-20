@@ -309,7 +309,7 @@ namespace GsaGH.Components
 
         DA.SetData(15, mem.Colour);
         DA.SetData(16, mem.IsDummy);
-        DA.SetData(17, mem.Topology.ToString());
+        DA.SetData(17, mem.API_Member.Topology.ToString());
       }
     }
   }
