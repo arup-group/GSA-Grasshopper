@@ -91,7 +91,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       // set topology in api member
       try
       {
-        apiMember.Topology = string.Copy(topo);
+        apiMember.Topology = string.Copy(topo.Replace("  ", " "));
       }
       catch (Exception)
       {
