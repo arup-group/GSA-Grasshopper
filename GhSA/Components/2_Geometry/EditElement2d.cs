@@ -95,7 +95,7 @@ namespace GsaGH.Components
         {
           for (int i = 0; i < ghID.Count; i++)
           {
-            if (i > elem.API_Elements.Count)
+            if (i > elem.API_Elements.Count - 1)
             {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "ID input List Length is longer than number of elements." + System.Environment.NewLine + "Excess ID's have been ignored");
               continue;
@@ -113,6 +113,7 @@ namespace GsaGH.Components
               in_ids.Add(id);
             }
           }
+          elem.ID = in_ids;
         }
 
         // 2 section

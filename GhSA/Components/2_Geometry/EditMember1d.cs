@@ -6,6 +6,7 @@ using GsaAPI;
 using GsaGH.Parameters;
 using UnitsNet;
 using System.Linq;
+using UnitsNet.GH;
 
 namespace GsaGH.Components
 {
@@ -71,7 +72,8 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("End release", "⭲", "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
       pManager.AddNumberParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle in degrees", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Member Orientation Node", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Mesh Size", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
+      Length ms = new Length(1, Units.LengthUnitGeometry);
+      pManager.AddGenericParameter("Mesh Size [" + ms.ToString("a") + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
@@ -100,7 +102,7 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("End release", "⭲", "Get Release (Bool6) at End of Member", GH_ParamAccess.item);
       pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Member Orientation Angle in degrees", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Get Member Orientation Node", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Mesh Size", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Mesh Size", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);
@@ -240,15 +242,12 @@ namespace GsaGH.Components
 
         // 12 mesh size
         GH_Number ghmsz = new GH_Number();
-        if (DA.GetData(12, ref ghmsz))
+        if (Params.Input[12].Sources.Count > 0)
         {
-          if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
-          {
-            mem.MeshSize = new Length(msz, Units.LengthUnitGeometry);
-            string unitAbbreviation = string.Concat(mem.MeshSize.ToString().Where(char.IsLetter));
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + unitAbbreviation + "]"
-                + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
-          }
+          mem.MeshSize = GetInput.Length(this, DA, 12, Units.LengthUnitGeometry, true);
+          if (Units.LengthUnitGeometry != UnitsNet.Units.LengthUnit.Meter)
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
+                + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }
 
         // 13 mesh with others
@@ -303,14 +302,14 @@ namespace GsaGH.Components
         DA.SetData(10, mem.OrientationAngle);
         DA.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
-        DA.SetData(12, mem.MeshSize);
+        DA.SetData(12, new GH_UnitNumber(mem.MeshSize));
         DA.SetData(13, mem.MeshWithOthers);
 
         DA.SetData(14, mem.Name);
 
         DA.SetData(15, mem.Colour);
         DA.SetData(16, mem.IsDummy);
-        DA.SetData(17, mem.Topology.ToString());
+        DA.SetData(17, mem.API_Member.Topology.ToString());
       }
     }
   }

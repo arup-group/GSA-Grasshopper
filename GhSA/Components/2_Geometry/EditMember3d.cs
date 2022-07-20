@@ -44,7 +44,8 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Member3d Number", "ID", "Set Member Number. If ID is set it will replace any existing 3d Member in the model", GH_ParamAccess.item);
       pManager.AddGeometryParameter("Solid", "S", "Reposition Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
       pManager.AddGenericParameter("3D Property", "P3", "Change 3D Property", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Mesh Size", "Ms", "Set target mesh size", GH_ParamAccess.item);
+      Length ms = new Length(1, Units.LengthUnitGeometry);
+      pManager.AddGenericParameter("Mesh Size [" + ms.ToString("a") + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
       pManager.AddTextParameter("Member3d Name", "Na", "Set Name of Member3d", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member3d Group", "Gr", "Set Member 3d Group", GH_ParamAccess.item);
@@ -114,35 +115,30 @@ namespace GsaGH.Components
         gh_typ = new GH_ObjectWrapper();
         if (DA.GetData(3, ref gh_typ))
         {
-          if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-            mem.PropertyID = idd;
-          //GsaProp3d prop3d = new GsaProp3d();
-          //if (gh_typ.Value is GsaProp3dGoo)
-          //    gh_typ.CastTo(ref prop3d);
-          //else
-          //{
-          //    if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-          //        prop3d.ID = idd;
-          //    else
-          //    {
-          //        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 3D Property of reference integer");
-          //        return;
-          //    }
-          //}
-          //mem.Property = prop3d;
+          GsaProp3d prop3d = new GsaProp3d();
+          if (gh_typ.Value is GsaProp3dGoo)
+            gh_typ.CastTo(ref prop3d);
+          else
+          {
+            if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+              prop3d.ID = idd;
+            else
+            {
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 3D Property of reference integer");
+              return;
+            }
+          }
+          mem.Property = prop3d;
         }
 
         // 4 mesh size
         GH_Number ghmsz = new GH_Number();
-        if (DA.GetData(4, ref ghmsz))
+        if (Params.Input[4].Sources.Count > 0)
         {
-          if (GH_Convert.ToDouble(ghmsz, out double msz, GH_Conversion.Both))
-          {
-            mem.MeshSize = new Length(msz, Units.LengthUnitGeometry);
-            string unitAbbreviation = string.Concat(mem.MeshSize.ToString().Where(char.IsLetter));
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + unitAbbreviation + "]"
-                + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
-          }
+          mem.MeshSize = GetInput.Length(this, DA, 4, Units.LengthUnitGeometry, true);
+          if (Units.LengthUnitGeometry != UnitsNet.Units.LengthUnit.Meter)
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
+                + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }
 
         // 5 mesh with others
