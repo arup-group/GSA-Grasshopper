@@ -629,6 +629,7 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)GSA.gha"
+Copy "$(ProjectDir)\Properties\Icons\GSALogo128.png" "$(TargetDir)GsaIcon.png"
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
