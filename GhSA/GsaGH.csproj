@@ -58,6 +58,9 @@
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="OasysUnits">
       <HintPath>..\packages\OasysUnits.dll</HintPath>
       <Private>True</Private>
@@ -81,6 +84,7 @@
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\System.Data.SQLite.Linq.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
       <Private>False</Private>
@@ -191,6 +195,8 @@
     <Compile Include="Components\GraveyardComp\CreateNodeLoads_OBSOLETE.cs" />
     <Compile Include="Components\Other\ConvertUnitNumber.cs" />
     <Compile Include="Components\Other\CreateUnitNumber.cs" />
+    <Compile Include="Components\PostHogComponent.cs" />
+    <Compile Include="Helpers\PostHog.cs" />
     <Compile Include="Helpers\_DeSerialization.cs" />
     <Compile Include="Helpers\_Display.cs" />
     <Compile Include="Helpers\_GetInput.cs" />
