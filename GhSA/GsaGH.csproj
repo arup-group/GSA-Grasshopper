@@ -620,6 +620,9 @@
     <None Include="Properties\Icons\unused.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\Icons\Documentation.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Properties\Icons\GsaLogo64.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
