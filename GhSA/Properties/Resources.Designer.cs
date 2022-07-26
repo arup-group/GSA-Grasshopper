@@ -773,6 +773,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap GsaLogo64 {
+            get {
+                object obj = ResourceManager.GetObject("GsaLogo64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap LineLoad {
             get {
                 object obj = ResourceManager.GetObject("LineLoad", resourceCulture);
