@@ -14,21 +14,13 @@ namespace GsaGH.Components
 
     public override void AddedToDocument(GH_Document document)
     {
-      string eventName = this.Name + "_AddedToDocument";
-      _ = PostHog.SendToPostHog(eventName);
-
+      PostHog.AddedToDocument(this);
       base.AddedToDocument(document);
     }
 
     public override void RemovedFromDocument(GH_Document document)
     {
-      string eventName = this.Name + "_RemovedFromDocument";
-      Dictionary<string, object> properties = new Dictionary<string, object>()
-      {
-        { "runCount", this.RunCount },
-      };
-      _ = PostHog.SendToPostHog(eventName, properties);
-
+      PostHog.RemovedFromDocument(this);
       base.RemovedFromDocument(document);
     }
   }

@@ -5,7 +5,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Grasshopper.Kernel;
 using Newtonsoft.Json;
+using GsaGH.Components;
 
 namespace GsaGH.Helpers
 {
@@ -22,18 +24,49 @@ namespace GsaGH.Helpers
       Dictionary<string, object> properties = new Dictionary<string, object>() {
         { "distinct_id", Environment.UserName },
         { "user", user },
+        { "pluginName", GsaGH.GsaGHInfo.PluginName },
         { "version", GsaGH.GsaGHInfo.Vers },
-        { "isBeta", GsaGH.GsaGHInfo.isBeta }
+        { "isBeta", GsaGH.GsaGHInfo.isBeta },
       };
 
-      if(additionalProperties != null)
-        properties.Concat(additionalProperties);
+      if (additionalProperties != null)
+      {
+        foreach (string key in additionalProperties.Keys)
+          properties.Add(key, additionalProperties[key]);
+      }
 
       var container = new PhContainer(eventName, properties);
       var body = JsonConvert.SerializeObject(container);
       var content = new StringContent(body, Encoding.UTF8, "application/json");
       var response = await _phClient.PostAsync("https://posthog.insights.arup.com/capture/", content);
       return response;
+    }
+
+    public static void AddedToDocument(GH_Component component)
+    {
+      string eventName = "AddedToDocument";
+      Dictionary<string, object> properties = new Dictionary<string, object>()
+      {
+        { "componentName", component.Name },
+      };
+      _ = PostHog.SendToPostHog(eventName, properties);
+    }
+
+    public static void PluginLoaded()
+    {
+      string eventName = "PluginLoaded";
+      _ = PostHog.SendToPostHog(eventName);
+    }
+
+    internal static void RemovedFromDocument(GH_Component component)
+    {
+      string eventName = "RemovedFromDocument";
+      Dictionary<string, object> properties = new Dictionary<string, object>()
+      {
+        { "componentName", component.Name },
+        { "runCount", component.RunCount },
+      };
+      _ = PostHog.SendToPostHog(eventName, properties);
     }
 
     private class PhContainer
