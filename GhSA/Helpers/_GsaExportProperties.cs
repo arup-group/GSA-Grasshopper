@@ -164,7 +164,7 @@ namespace GsaGH.Util.Gsa.ToGSA
               Section apiSection = section.API_Section;
 
               // set modifier
-              if (section.Modifier.isModified)
+              if (section.Modifier != null && section.Modifier.isModified)
               {
                 if (apimodifiers.ContainsKey(i))
                   apimodifiers[i] = section.Modifier.API_SectionModifier;

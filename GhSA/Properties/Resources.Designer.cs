@@ -433,6 +433,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Documentation {
+            get {
+                object obj = ResourceManager.GetObject("Documentation", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap EditAnalysisTask {
             get {
                 object obj = ResourceManager.GetObject("EditAnalysisTask", resourceCulture);
@@ -766,6 +776,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap GSALogo128 {
             get {
                 object obj = ResourceManager.GetObject("GSALogo128", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap GsaLogo64 {
+            get {
+                object obj = ResourceManager.GetObject("GsaLogo64", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

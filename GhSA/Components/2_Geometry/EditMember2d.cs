@@ -7,6 +7,8 @@ using GsaAPI;
 using GsaGH.Parameters;
 using System.Linq;
 using Rhino.Collections;
+using UnitsNet.GH;
+using UnitsNet;
 
 namespace GsaGH.Components
 {
@@ -96,7 +98,8 @@ namespace GsaGH.Components
           "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm", GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size", "Ms", "Get Targe mesh size", GH_ParamAccess.item);
+      Length ms = new Length(1, Units.LengthUnitGeometry);
+      pManager.AddGenericParameter("Mesh Size [" + ms.ToString("a") + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
@@ -233,8 +236,8 @@ namespace GsaGH.Components
         {
           mem.MeshSize = GetInput.Length(this, DA, 10, Units.LengthUnitGeometry, true);
           if (Units.LengthUnitGeometry != UnitsNet.Units.LengthUnit.Meter)
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]"
-                + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
+                + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }
 
         // 11 mesh with others
@@ -288,13 +291,13 @@ namespace GsaGH.Components
 
         DA.SetData(9, new GsaOffsetGoo(mem.Offset));
 
-        DA.SetData(10, mem.MeshSize);
+        DA.SetData(10, new GH_UnitNumber(mem.MeshSize));
         DA.SetData(11, mem.MeshWithOthers);
 
         DA.SetData(12, mem.Name);
         DA.SetData(13, mem.Colour);
         DA.SetData(14, mem.IsDummy);
-        DA.SetData(15, mem.Topology.ToString());
+        DA.SetData(15, mem.API_Member.Topology.ToString());
       }
     }
   }

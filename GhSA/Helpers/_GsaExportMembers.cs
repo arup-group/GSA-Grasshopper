@@ -89,7 +89,17 @@ namespace GsaGH.Util.Gsa.ToGSA
           topo += " ";
       }
       // set topology in api member
-      apiMember.Topology = string.Copy(topo);
+      try
+      {
+        apiMember.Topology = string.Copy(topo.Replace("  ", " "));
+      }
+      catch (Exception)
+      {
+        List<string> errors = member1d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
+        string error = string.Join(", ", errors);
+        throw new Exception(" Invalid topology for Member1D: " + topo + " for original points: " + error);
+      }
+      
 
       //Orientation node
       if (member1d.OrientationNode != null)

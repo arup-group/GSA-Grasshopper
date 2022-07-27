@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Timers;
 using System.Windows.Forms;
@@ -84,6 +85,16 @@ namespace GsaGH.UI.Menu
 
     private ToolStripMenuItem AddMenuItem(ToolStripMenuItem oasysMenu, object sender, ElapsedEventArgs e)
     {
+
+      // add documentation
+      oasysMenu.DropDown.Items.Add("GSA Documentation", Properties.Resources.Documentation, (s, a) =>
+      {
+        System.Diagnostics.Process.Start(new ProcessStartInfo
+        {
+          FileName = "https://docs.oasys-software.com/structural/gsa/explanations/gsagh-introduction.html",
+          UseShellExecute = true
+        });
+      });
       // add units
       oasysMenu.DropDown.Items.Add("GSA Units", Properties.Resources.Units, (s, a) =>
       {
@@ -93,7 +104,7 @@ namespace GsaGH.UI.Menu
       // add info
       oasysMenu.DropDown.Items.Add("GSA Info", Properties.Resources.GSAInfo, (s, a) =>
       {
-        UI.AboutBox aboutBox = new UI.AboutBox();
+        UI.AboutBox aboutBox = new UI.AboutBox(); 
         aboutBox.ShowDialog();
       });
 
