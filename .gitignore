@@ -16,17 +16,15 @@
 # Build results
 # [Dd]ebug/
 [Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
 x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
-[Bb]in/
+
 [Oo]bj/
 [Ll]og/
-
+!bin/X64/Release/
+!/GhSA/bin/x64/Release/
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
@@ -184,6 +182,7 @@ PublishScripts/
 *.nupkg
 # The packages folder can be ignored because of Package Restore
 **/[Pp]ackages/*
+!/[Pp]ackages/OasysUnits.dll
 # except build/, which is used as an MSBuild target.
 !**/[Pp]ackages/build/
 # Uncomment if necessary however generally it will be regenerated when needed
@@ -343,4 +342,14 @@ healthchecksdb
 yak.exe
 dist/*
 !dist/manifest.yml
-/.gitignore.bak
+!
+*.bak
+/UnitTestGhSA/bin
+/UnitTestGhSA/obj
+/GhSA/bin/x64/Debug
+/GhSA/obj
+/GsaGHTests/bin
+/GsaGHTests/obj
+/IntegrationTests/bin
+/IntegrationTests/obj
+
