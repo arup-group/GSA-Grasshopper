@@ -343,3 +343,4 @@ healthchecksdb
 yak.exe
 dist/*
 !dist/manifest.yml
+/.gitignore.bak
