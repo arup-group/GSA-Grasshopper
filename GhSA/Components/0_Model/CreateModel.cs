@@ -12,7 +12,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to assemble and analyse a GSA model
   /// </summary>
-  public class CreateModel : GH_Component, IGH_VariableParameterComponent
+  public class CreateModel : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

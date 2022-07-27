@@ -10,7 +10,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a Node
   /// </summary>
-  public class Elem2dFromBrep : GH_Component, IGH_PreviewObject
+  public class Elem2dFromBrep : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

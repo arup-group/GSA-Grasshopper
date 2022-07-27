@@ -19,7 +19,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Material
   /// </summary>
-  public class CreateMaterial : PostHogComponent, IGH_VariableParameterComponent
+  public class CreateMaterial : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

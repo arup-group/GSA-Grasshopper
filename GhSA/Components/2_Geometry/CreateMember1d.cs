@@ -9,7 +9,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create new 1D Member
   /// </summary>
-  public class CreateMember1d : GH_Component, IGH_PreviewObject, IGH_VariableParameterComponent
+  public class CreateMember1d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

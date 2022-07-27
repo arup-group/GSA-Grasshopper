@@ -17,7 +17,7 @@
 //    /// <summary>
 //    /// Component to edit a Spring and ouput the information
 //    /// </summary>
-//    public class EditSpring_OBSOLETE : GH_Component
+//    public class EditSpring_OBSOLETE : GH_OasysComponent
 //    {
 //        #region Name and Ribbon Layout
 //        // This region handles how the component in displayed on the ribbon

@@ -7,7 +7,7 @@
 
 //namespace GhSA.Components
 //{
-//    public class CreateGridPointLoad_OBSOLETE : GH_Component
+//    public class CreateGridPointLoad_OBSOLETE : GH_OasysComponent
 //    {
 //        #region Name and Ribbon Layout
 //        public CreateGridPointLoad_OBSOLETE()

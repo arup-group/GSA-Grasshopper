@@ -128,6 +128,7 @@
     <Compile Include="Components\5_Results\NodeContourResults.cs" />
     <Compile Include="Components\5_Results\SelectResults.cs" />
     <Compile Include="Components\5_Results\GlobalResult .cs" />
+    <Compile Include="Components\GH_OasysTaskCapableComponent.cs" />
     <Compile Include="Components\GraveyardComp\CreateOffset_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProp2d_OBSOLETE.cs" />
@@ -195,7 +196,7 @@
     <Compile Include="Components\GraveyardComp\CreateNodeLoads_OBSOLETE.cs" />
     <Compile Include="Components\Other\ConvertUnitNumber.cs" />
     <Compile Include="Components\Other\CreateUnitNumber.cs" />
-    <Compile Include="Components\PostHogComponent.cs" />
+    <Compile Include="Components\GH_OasysComponent.cs" />
     <Compile Include="Helpers\PostHog.cs" />
     <Compile Include="Helpers\_DeSerialization.cs" />
     <Compile Include="Helpers\_Display.cs" />

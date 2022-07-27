@@ -11,7 +11,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a Node
   /// </summary>
-  public class EditNode : GH_Component, IGH_PreviewObject, IGH_VariableParameterComponent
+  public class EditNode : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

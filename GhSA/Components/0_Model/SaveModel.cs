@@ -10,7 +10,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to open an existing GSA model
   /// </summary>
-  public class SaveModel : GH_Component, IGH_VariableParameterComponent
+  public class SaveModel : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

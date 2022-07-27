@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace GsaGH.Components
 {
-  public class CreateGridPointLoad : GH_Component, IGH_VariableParameterComponent
+  public class CreateGridPointLoad : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public CreateGridPointLoad()

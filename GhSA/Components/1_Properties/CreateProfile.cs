@@ -19,7 +19,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create AdSec profile
   /// </summary>
-  public class CreateProfile : GH_Component, IGH_VariableParameterComponent
+  public class CreateProfile : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

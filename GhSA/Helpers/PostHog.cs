@@ -13,7 +13,7 @@ namespace GsaGH.Helpers
   {
     private static HttpClient _phClient = new HttpClient();
 
-    public static async Task<HttpResponseMessage> SendToPostHog(string eventName)
+    public static async Task<HttpResponseMessage> SendToPostHog(string eventName, Dictionary<string, object> additionalProperties = null)
     {
       // posthog ADS plugin requires a user object
       User user = new User();
@@ -25,6 +25,9 @@ namespace GsaGH.Helpers
         { "version", GsaGH.GsaGHInfo.Vers },
         { "isBeta", GsaGH.GsaGHInfo.isBeta }
       };
+
+      if(additionalProperties != null)
+        properties.Concat(additionalProperties);
 
       var container = new PhContainer(eventName, properties);
       var body = JsonConvert.SerializeObject(container);

@@ -17,7 +17,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to retrieve geometric objects from a GSA model
   /// </summary>
-  public class GetGeometry : GH_TaskCapableComponent<GetGeometry.SolveResults>, IGH_PreviewObject, IGH_VariableParameterComponent
+  public class GetGeometry : GH_OasysTaskCapableComponent<GetGeometry.SolveResults>, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

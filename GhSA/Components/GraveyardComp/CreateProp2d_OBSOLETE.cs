@@ -20,7 +20,7 @@
 //    /// <summary>
 //    /// Component to create a new Prop2d
 //    /// </summary>
-//    public class CreateProp2d_OBSOLETE : GH_Component, IGH_VariableParameterComponent
+//    public class CreateProp2d_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
 //    {
 //        #region Name and Ribbon Layout
 //        // This region handles how the component in displayed on the ribbon

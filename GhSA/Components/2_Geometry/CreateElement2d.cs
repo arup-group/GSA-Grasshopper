@@ -10,7 +10,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create new 2D Element
   /// </summary>
-  public class CreateElement2d : GH_Component, IGH_PreviewObject
+  public class CreateElement2d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

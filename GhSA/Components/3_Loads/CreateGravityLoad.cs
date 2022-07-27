@@ -7,7 +7,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Components
 {
-  public class CreateGravityLoad : GH_Component
+  public class CreateGravityLoad : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public CreateGravityLoad()

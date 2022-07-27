@@ -14,7 +14,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to retrieve non-geometric objects from a GSA model
   /// </summary>
-  public class AnalysisCaseInfo : GH_Component
+  public class AnalysisCaseInfo : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

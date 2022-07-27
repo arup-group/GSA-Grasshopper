@@ -13,7 +13,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a 1D Member
   /// </summary>
-  public class EditMember1d : GH_Component, IGH_PreviewObject
+  public class EditMember1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
