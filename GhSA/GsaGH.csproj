@@ -626,6 +626,12 @@
   <ItemGroup>
     <None Include="Properties\Icons\unused.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\Documentation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GsaLogo64.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -636,6 +642,7 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)GSA.gha"
+Copy "$(ProjectDir)\Properties\Icons\GSALogo64.png" "$(TargetDir)GsaIcon.png"
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
