@@ -5,6 +5,7 @@ using Grasshopper.Kernel;
 using System.Reflection;
 using System.Net;
 using System.Diagnostics;
+using GsaGH.Helpers;
 
 namespace GsaGH
 {
@@ -132,12 +133,16 @@ namespace GsaGH
       // ### Setup units ###
       Units.SetupUnits();
 
+      PostHog.PluginLoaded();
+
       return GH_LoadingInstruction.Proceed;
     }
+
     //public static Assembly GsaAPI;
     public static string PluginPath;
     public static string InstallPath = Util.Gsa.InstallationFolderPath.GetPath;
   }
+
   public class InitiateGsaAPI
   {
     internal static void UseGsaAPI()

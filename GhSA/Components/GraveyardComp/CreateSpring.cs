@@ -17,7 +17,7 @@
 //    /// <summary>
 //    /// Component to create a new spring
 //    /// </summary>
-//    public class CreateSpring_OBSOLETE : GH_Component
+//    public class CreateSpring_OBSOLETE : GH_OasysComponent
 //    {
 //        #region Name and Ribbon Layout
 //        // This region handles how the component in displayed on the ribbon

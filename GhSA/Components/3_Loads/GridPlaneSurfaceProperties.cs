@@ -6,7 +6,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Components
 {
-  public class GridPlaneSurfaceProperties : GH_Component
+  public class GridPlaneSurfaceProperties : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public GridPlaneSurfaceProperties()

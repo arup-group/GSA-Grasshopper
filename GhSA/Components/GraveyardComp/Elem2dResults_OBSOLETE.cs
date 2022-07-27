@@ -20,7 +20,7 @@ namespace GsaGH.Components
     /// <summary>
     /// Component to get Element2d results
     /// </summary>
-    public class Elem2DResults_OBSOLETE : GH_Component, IGH_VariableParameterComponent
+    public class Elem2DResults_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon

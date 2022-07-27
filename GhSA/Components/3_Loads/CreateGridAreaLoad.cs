@@ -11,7 +11,7 @@ using UnitsNet;
 
 namespace GsaGH.Components
 {
-  public class CreateGridAreaLoad : GH_Component, IGH_VariableParameterComponent
+  public class CreateGridAreaLoad : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public CreateGridAreaLoad()

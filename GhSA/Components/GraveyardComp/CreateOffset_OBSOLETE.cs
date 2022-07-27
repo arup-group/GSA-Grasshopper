@@ -17,7 +17,7 @@
 //    /// <summary>
 //    /// Component to create a new Offset
 //    /// </summary>
-//    public class CreateOffset_OBSOLETE : GH_Component
+//    public class CreateOffset_OBSOLETE : GH_OasysComponent
 //    {
 //        #region Name and Ribbon Layout
 //        // This region handles how the component in displayed on the ribbon

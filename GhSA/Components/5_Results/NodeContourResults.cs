@@ -23,7 +23,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Prop2d
   /// </summary>
-  public class NodeContourResults : GH_Component, IGH_VariableParameterComponent
+  public class NodeContourResults : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

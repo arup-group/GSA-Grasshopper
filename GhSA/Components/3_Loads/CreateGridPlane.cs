@@ -8,7 +8,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Components
 {
-  public class CreateGridPlane : GH_Component, IGH_VariableParameterComponent
+  public class CreateGridPlane : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public CreateGridPlane()

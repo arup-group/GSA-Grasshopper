@@ -10,7 +10,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Offset
   /// </summary>
-  public class CreateOffset : GH_Component, IGH_VariableParameterComponent
+  public class CreateOffset : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

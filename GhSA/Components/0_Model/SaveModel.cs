@@ -4,13 +4,14 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Helpers;
 
 namespace GsaGH.Components
 {
   /// <summary>
   /// Component to open an existing GSA model
   /// </summary>
-  public class SaveModel : GH_Component, IGH_VariableParameterComponent
+  public class SaveModel : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
@@ -225,7 +226,10 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref save))
         {
           if (save)
+          {
             Message = gsaSaveModel.SaveAs(fileName).ToString();
+            PostHog.ModelIO("saveGWB");
+          }
         }
 
         DA.SetData(0, new GsaModelGoo(gsaModel));

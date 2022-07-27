@@ -9,7 +9,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a Material and ouput the information
   /// </summary>
-  public class EditMaterial : GH_Component
+  public class EditMaterial : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

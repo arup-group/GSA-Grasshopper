@@ -18,7 +18,7 @@
 //    /// <summary>
 //    /// Component to retrieve geometric objects from a GSA model
 //    /// </summary>
-//    public class GetGeometry_OBSOLETE : GH_Component, IGH_PreviewObject, IGH_VariableParameterComponent
+//    public class GetGeometry_OBSOLETE : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
 //    {
 //        #region Name and Ribbon Layout
 //        // This region handles how the component in displayed on the ribbon

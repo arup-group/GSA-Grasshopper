@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace GsaGH.Components
 {
-  public class CreateNodeLoad : GH_Component, IGH_VariableParameterComponent
+  public class CreateNodeLoad : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public CreateNodeLoad()

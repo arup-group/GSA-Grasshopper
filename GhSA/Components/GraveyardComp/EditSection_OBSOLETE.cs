@@ -8,7 +8,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a Section and ouput the information
   /// </summary>
-  public class EditSection_OBSOLETE : GH_Component, IGH_PreviewObject
+  public class EditSection_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

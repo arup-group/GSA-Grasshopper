@@ -58,6 +58,9 @@
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="OasysUnits, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\OasysUnits.dll</HintPath>
@@ -81,6 +84,8 @@
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\System.Data.SQLite.Linq.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
       <Private>False</Private>
@@ -124,6 +129,7 @@
     <Compile Include="Components\5_Results\NodeContourResults.cs" />
     <Compile Include="Components\5_Results\SelectResults.cs" />
     <Compile Include="Components\5_Results\GlobalResult .cs" />
+    <Compile Include="Components\GH_OasysTaskCapableComponent.cs" />
     <Compile Include="Components\GraveyardComp\CreateOffset_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProp2d_OBSOLETE.cs" />
@@ -191,6 +197,8 @@
     <Compile Include="Components\GraveyardComp\CreateNodeLoads_OBSOLETE.cs" />
     <Compile Include="Components\Other\ConvertUnitNumber.cs" />
     <Compile Include="Components\Other\CreateUnitNumber.cs" />
+    <Compile Include="Components\GH_OasysComponent.cs" />
+    <Compile Include="Helpers\PostHog.cs" />
     <Compile Include="Helpers\_DeSerialization.cs" />
     <Compile Include="Helpers\_Display.cs" />
     <Compile Include="Helpers\_GetInput.cs" />

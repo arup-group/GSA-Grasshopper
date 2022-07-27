@@ -17,7 +17,7 @@ namespace GsaGH.Components
     /// <summary>
     /// Component to create a profile text-string
     /// </summary>
-    public class CreateProfile_OBSOLETE : GH_Component, IGH_VariableParameterComponent
+    public class CreateProfile_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon

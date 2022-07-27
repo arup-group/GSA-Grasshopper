@@ -8,7 +8,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Bool6
   /// </summary>
-  public class CreateBool6 : GH_Component
+  public class CreateBool6 : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

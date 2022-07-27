@@ -10,7 +10,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to get geometric properties of a section
   /// </summary>
-  public class GetMaterialProperties : GH_Component
+  public class GetMaterialProperties : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

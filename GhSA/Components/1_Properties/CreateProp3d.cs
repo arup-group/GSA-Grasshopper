@@ -14,7 +14,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Prop2d
   /// </summary>
-  public class CreateProp3d : GH_Component
+  public class CreateProp3d : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon

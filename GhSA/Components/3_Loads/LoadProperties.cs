@@ -10,7 +10,7 @@ using UnitsNet.GH;
 
 namespace GsaGH.Components
 {
-  public class LoadProp : GH_Component, IGH_VariableParameterComponent
+  public class LoadProp : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public LoadProp()
