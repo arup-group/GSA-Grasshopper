@@ -4,6 +4,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Helpers;
 
 namespace GsaGH.Components
 {
@@ -225,7 +226,10 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref save))
         {
           if (save)
+          {
             Message = gsaSaveModel.SaveAs(fileName).ToString();
+            PostHog.ModelIO("saveGWB");
+          }
         }
 
         DA.SetData(0, new GsaModelGoo(gsaModel));

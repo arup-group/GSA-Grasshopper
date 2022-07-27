@@ -52,6 +52,16 @@ namespace GsaGH.Helpers
       _ = PostHog.SendToPostHog(eventName, properties);
     }
 
+    public static void ModelIO(string interactionType)
+    {
+      string eventName = "ModelIO";
+      Dictionary<string, object> properties = new Dictionary<string, object>()
+      {
+        { "interactionType", interactionType },
+      };
+      _ = PostHog.SendToPostHog(eventName, properties);
+    }
+
     public static void PluginLoaded()
     {
       string eventName = "PluginLoaded";

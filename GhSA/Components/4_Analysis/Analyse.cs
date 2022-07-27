@@ -7,6 +7,7 @@ using GsaGH.Parameters;
 using System.Linq;
 using System.Collections.ObjectModel;
 using UnitsNet;
+using GsaGH.Helpers;
 
 namespace GsaGH.Components
 {
@@ -487,7 +488,9 @@ namespace GsaGH.Components
           {
             try
             {
-              if (!gsa.Analyse(task.Key))
+              if (gsa.Analyse(task.Key))
+                PostHog.ModelIO("analyse");
+              else
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
               if (!gsa.Results().ContainsKey(task.Key))
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
@@ -497,6 +500,7 @@ namespace GsaGH.Components
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
             }
           }
+
         }
       }
 

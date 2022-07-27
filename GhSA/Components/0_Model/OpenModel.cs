@@ -5,7 +5,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-
+using GsaGH.Helpers;
 
 namespace GsaGH.Components
 {
@@ -188,6 +188,9 @@ namespace GsaGH.Components
             mes = mes.Substring(0, mes.Length - 4);
             Message = mes;
             DA.SetData(0, new GsaModelGoo(gsaModel));
+
+            PostHog.ModelIO("openGWB");
+
             return;
           }
           else
