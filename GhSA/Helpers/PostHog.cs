@@ -18,10 +18,14 @@ namespace GsaGH.Helpers
     {
       // posthog ADS plugin requires a user object
       User user = new User();
-      user.email = System.DirectoryServices.AccountManagement.UserPrincipal.Current.EmailAddress; // case sensitive
+      user.email = UserPrincipal.Current.EmailAddress; // case sensitive
+
+      string userName = Environment.UserName;
+      if (!user.email.EndsWith("arup.com"))
+        userName = "External";
 
       Dictionary<string, object> properties = new Dictionary<string, object>() {
-        { "distinct_id", Environment.UserName },
+        { "distinct_id", userName },
         { "user", user },
         { "pluginName", GsaGH.GsaGHInfo.PluginName },
         { "version", GsaGH.GsaGHInfo.Vers },

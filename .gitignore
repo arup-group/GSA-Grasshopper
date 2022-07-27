@@ -346,9 +346,10 @@ dist/*
 *.bak
 /UnitTestGhSA/bin
 /UnitTestGhSA/obj
-/GhSA/bin
+/GhSA/bin/x64/Debug
 /GhSA/obj
 /GsaGHTests/bin
 /GsaGHTests/obj
 /IntegrationTests/bin
 /IntegrationTests/obj
+
