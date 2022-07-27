@@ -1,9 +1,8 @@
 ﻿using System;
-using NUnit.Framework;
 using GsaGH;
 using GsaGH.Parameters;
-using Rhino.Geometry;
 using GsaAPI;
+using NUnit.Framework;
 using UnitsNet;
 using UnitsNet.Units;
 
