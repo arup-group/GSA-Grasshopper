@@ -1,0 +1,121 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+
+variables:
+  - group: s3PushInstallers
+  - group: pipeline-tokens
+  - name: configuration
+    value: Release
+  - name: latest_released_gsa_version
+    value: GSA/10.1/10.1.60/10.1.60.42/2022-07-01/36296/Arup_GSA_x64_10.1.60.42
+
+pool: 'vs17_2'
+
+steps:
+
+- powershell: aws s3 cp s3://oasys-installer-store/$(latest_released_gsa_version).msi .\gsa.msi
+  displayName: 'Download GSA'
+  failOnStderr: true
+
+- powershell: |
+    $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
+    Write-output "Installer Path: ${installerPath}"
+    $app = Start-Process ${installerPath} -ArgumentList '/passive /quiet /l* msiLog.txt' -PassThru -Wait
+    $app.WaitForExit()
+    Write-Output "Exit code: $($app.ExitCode)"
+    Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
+    if ($app.ExitCode -ne 0) {
+      Write-Error "Application could not be installed. Error code $($app.ExitCode)"
+      exit(1)
+    }
+  displayName: 'Install GSA'
+  failOnStderr: true
+  
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  displayName: 'Restoring NuGet packages'
+  inputs:
+      command: 'restore'
+      restoreSolution: 'GsaGH.sln'
+  
+- task: VSBuild@1
+  displayName: 'Building project in $(configuration)'
+  inputs:
+    solution: 'GsaGH.sln'
+    msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false'
+    platform: 'x64'
+    configuration: '$(configuration)'
+    clean: true
+  env:
+    MSBUILDDISABLENODEREUSE: 1
+
+#- powershell: |
+#    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\3.1.0\build --results-directory .\results .\AdSecGHTests\bin\Release\net6.0\AdSecGHTests.dll
+#  displayName: dotnet tests
+
+#- task: PublishCodeCoverageResults@1
+#  inputs:
+#    codeCoverageTool: 'cobertura'
+#    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/**/coverage.cobertura.xml'
+#    pathToSources: '$(System.DefaultWorkingDirectory)'
+
+#- powershell: |
+#    codecov -t $env:CODECOV_TOKEN -f ComposTests\coverage.json -F unittests
+#  env:
+#    CODECOV_TOKEN: $(CODECOV_TOKEN)
+#  displayName: Upload Code Coverage to codecovio
+
+- powershell: |
+    cd GhSA\bin\x64
+    curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
+    .\yak version
+    cd Release
+    ..\yak spec
+    ..\echo icon: GsaIcon.png >> manifest.yml
+    ..\yak build --platform win
+    $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
+    $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
+    Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
+    ..\yak build --platform win
+    cd ..
+    ls Release\*.yak |% {.\yak push $_.FullName}
+  env:
+    YAK_TOKEN: $(YAK_TOKEN)
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables.isRelease, 'true'))
+  displayName: Deploy yak package 
+
+# copied from github, won´t work, see https://docs.microsoft.com/en-gb/azure/devops/pipelines/artifacts/nuget?view=azure-devops&tabs=yaml
+#- powershell: |
+#    nuget pack package -Version ${{ github.event.release.tag_name }}
+#  displayName: Create NuGet package
+
+#- powershell: |
+#    dotnet nuget update source oasys-software-libraries --username "unused" --password "${{ secrets.DEVOPS_TOKEN }}" --configfile nuget.config
+#    dotnet nuget push "*.nupkg" --api-key AzureDevOps
+#  displayName: Push NuGet package
+
+
+- powershell: |
+    $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
+    Write-output "Installer Path: ${installerPath}"
+    $app = Start-Process "msiexec.exe" -ArgumentList "/x ${installerPath} /quiet /passive /norestart /l* msiUninstallLog.txt" -PassThru -Wait
+    $app.WaitForExit()
+    Write-Output "Exit code: $($app.ExitCode)"
+    Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
+    ### Success error codes: 0 = ERROR_SUCCESS, 1641 = ERROR_SUCCESS_REBOOT_INITIATED, 3010 = ERROR_SUCCESS_REBOOT_REQUIRED
+    ### See https://docs.microsoft.com/en-us/windows/win32/msi/error-codes
+    if (($app.ExitCode -eq 0) -or ($app.ExitCode -eq 1641) -or ($app.ExitCode -eq 3010)) {
+      Write-Output "Application successfully uninstalled with exit code $($app.ExitCode)"
+      rm $installerPath
+      exit(0)
+    } else {
+      Write-Error "Application could not be uninstalled. Error code $($app.ExitCode)"
+      exit(1)
+    }
+  condition: always()
+  displayName: 'Uninstall Application'
