@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Newtonsoft.Json;
-using GsaGH.Components;
 
 namespace GsaGH.Helpers
 {
