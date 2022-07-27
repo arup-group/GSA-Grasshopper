@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using NUnit.Framework;
 using NUnit;
 using GsaAPI;

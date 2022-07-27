@@ -69,6 +69,7 @@ steps:
 #  env:
 #    CODECOV_TOKEN: $(CODECOV_TOKEN)
 #  displayName: Upload Code Coverage to codecovio
+#  failOnStderr: true
 
 - powershell: |
     cd GhSA\bin\x64
