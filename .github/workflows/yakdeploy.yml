@@ -30,7 +30,7 @@ jobs:
           .\yak version
           cd Release
           ..\yak spec
-          ..\echo icon: GsaIcon.png >> manifest.yml
+          echo icon: GsaIcon.png >> manifest.yml
           ..\yak build --platform win
           $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
           $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
