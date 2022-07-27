@@ -489,7 +489,7 @@ namespace GsaGH.Components
             try
             {
               if (gsa.Analyse(task.Key))
-                PostHog.ModelIO("analyse");
+                PostHog.ModelIO("analyse", apielems.Count);
               else
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
               if (!gsa.Results().ContainsKey(task.Key))

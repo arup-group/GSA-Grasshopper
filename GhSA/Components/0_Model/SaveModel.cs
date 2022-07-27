@@ -5,6 +5,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Helpers;
+using System.IO;
 
 namespace GsaGH.Components
 {
@@ -228,7 +229,7 @@ namespace GsaGH.Components
           if (save)
           {
             Message = gsaSaveModel.SaveAs(fileName).ToString();
-            PostHog.ModelIO("saveGWB");
+            PostHog.ModelIO("saveGWB", (int)(new FileInfo(fileName).Length / 1024));
           }
         }
 

@@ -55,12 +55,13 @@ namespace GsaGH.Helpers
       _ = PostHog.SendToPostHog(eventName, properties);
     }
 
-    public static void ModelIO(string interactionType)
+    public static void ModelIO(string interactionType, int size = 0)
     {
       string eventName = "ModelIO";
       Dictionary<string, object> properties = new Dictionary<string, object>()
       {
         { "interactionType", interactionType },
+        { "size", size },
       };
       _ = PostHog.SendToPostHog(eventName, properties);
     }
