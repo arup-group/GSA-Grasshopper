@@ -32,8 +32,8 @@ jobs:
           ..\yak spec
           echo icon: GsaIcon.png >> manifest.yml
           ..\yak build --platform win
-          $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
-          $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
+          echo $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
+          echo $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
           Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
           ..\yak build --platform win
           cd ..
