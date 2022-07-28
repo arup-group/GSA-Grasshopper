@@ -201,7 +201,7 @@ namespace GsaGH.Components
                   transX.Add(new GH_UnitNumber(values.X.ToUnit(lengthUnit))); // use ToUnit to capture changes in dropdown
                   transY.Add(new GH_UnitNumber(values.Y.ToUnit(lengthUnit)));
                   transZ.Add(new GH_UnitNumber(values.Z.ToUnit(lengthUnit)));
-                  transXYZ.Add(new GH_UnitNumber(values.XYZ));
+                  transXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(lengthUnit)));
                 }
               }
               if (item == 1)
