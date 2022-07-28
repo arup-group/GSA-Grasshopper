@@ -55,12 +55,13 @@ namespace GsaGH.Helpers
       _ = PostHog.SendToPostHog(eventName, properties);
     }
 
-    public static void ModelIO(string interactionType)
+    public static void ModelIO(string interactionType, int size = 0)
     {
       string eventName = "ModelIO";
       Dictionary<string, object> properties = new Dictionary<string, object>()
       {
         { "interactionType", interactionType },
+        { "size", size },
       };
       _ = PostHog.SendToPostHog(eventName, properties);
     }
@@ -73,13 +74,16 @@ namespace GsaGH.Helpers
 
     internal static void RemovedFromDocument(GH_Component component)
     {
-      string eventName = "RemovedFromDocument";
-      Dictionary<string, object> properties = new Dictionary<string, object>()
+      if (component.Attributes.Selected)
       {
-        { "componentName", component.Name },
-        { "runCount", component.RunCount },
-      };
-      _ = PostHog.SendToPostHog(eventName, properties);
+        string eventName = "RemovedFromDocument";
+        Dictionary<string, object> properties = new Dictionary<string, object>()
+        {
+          { "componentName", component.Name },
+          { "runCount", component.RunCount },
+        };
+        _ = PostHog.SendToPostHog(eventName, properties);
+      }
     }
 
     private class PhContainer
