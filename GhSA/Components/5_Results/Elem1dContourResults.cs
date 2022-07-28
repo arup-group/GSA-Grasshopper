@@ -17,6 +17,7 @@ using GsaGH.Util.Gsa;
 using System.Drawing;
 using System.Windows.Forms;
 using Rhino.Display;
+using UnitsNet.GH;
 
 namespace GsaGH.Components
 {
@@ -206,6 +207,7 @@ namespace GsaGH.Components
     });
 
     private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private LengthUnit lengthResultUnit = Units.LengthUnitResult;
     string _case = "";
     #endregion
 
@@ -227,7 +229,7 @@ namespace GsaGH.Components
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      IQuantity length = new Length(0, lengthUnit);
+      IQuantity length = new Length(0, lengthResultUnit);
       string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("Line", "L", "Contoured Line segments with result values", GH_ParamAccess.tree);
@@ -604,7 +606,7 @@ namespace GsaGH.Components
         legendValuesPosY = new List<int>();
 
         //Find Colour and Values for legend output
-        List<double> ts = new List<double>();
+        List<GH_UnitNumber> ts = new List<GH_UnitNumber>();
         List<Color> cs = new List<Color>();
 
         for (int i = 0; i < gH_Gradient.GripCount; i++)
@@ -613,7 +615,6 @@ namespace GsaGH.Components
           double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
           scl = Math.Max(scl, 1);
           t = scl * Math.Round(t / scl, 3);
-          ts.Add(t);
 
           Color gradientcolour = gH_Gradient.ColourAt(2 * (double)i / ((double)gH_Gradient.GripCount - 1) - 1);
           cs.Add(gradientcolour);
@@ -624,23 +625,37 @@ namespace GsaGH.Components
           for (int y = starty; y < endy; y++)
           {
             for (int x = 0; x < legend.Width; x++)
-            {
               legend.SetPixel(x, legend.Height - y - 1, gradientcolour);
-            }
           }
           if (_mode == FoldMode.Displacement)
           {
             if ((int)_disp < 4)
-              legendValues.Add(new Length(t, lengthUnit).ToString("f" + significantDigits));
+            {
+              Length displacement = new Length(t, lengthUnit).ToUnit(lengthResultUnit);
+              legendValues.Add(displacement.ToString("f" + significantDigits));
+              ts.Add(new GH_UnitNumber(displacement));
+            }
             else
-              legendValues.Add(new Angle(t, AngleUnit.Radian).ToString("s" + significantDigits));
+            {
+              Angle rotation = new Angle(t, AngleUnit.Radian);
+              legendValues.Add(rotation.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(rotation));
+            }
           }
           if (_mode == FoldMode.Force)
           {
             if ((int)_disp < 4)
-              legendValues.Add(new Force(t, Units.ForceUnit).ToString("s" + significantDigits));
+            {
+              Force force = new Force(t, Units.ForceUnit);
+              legendValues.Add(force.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(force));
+            }
             else
+            {
+              Moment moment = new Moment(t, Units.MomentUnit);
               legendValues.Add(t.ToString("F" + significantDigits) + " " + Moment.GetAbbreviation(Units.MomentUnit));
+              ts.Add(new GH_UnitNumber(moment));
+            }
           }
           if (Math.Abs(t) > 1)
             legendValues[i] = legendValues[i].Replace(",", string.Empty); // remove thousand separator

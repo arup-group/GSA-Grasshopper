@@ -114,12 +114,12 @@ namespace GsaGH.Components
       }
       else // change is made to the unit
       {
-        geometryLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
+        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
       }
     }
     private void UpdateUIFromSelectedItems()
     {
-      geometryLengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
+      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
 
       CreateAttributes();
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -182,7 +182,8 @@ namespace GsaGH.Components
             "Resolved |M|",
     });
 
-    private LengthUnit geometryLengthUnit = Units.LengthUnitGeometry;
+    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private LengthUnit lengthResultUnit = Units.LengthUnitResult;
     string _case = "";
     #endregion
 
@@ -202,7 +203,7 @@ namespace GsaGH.Components
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      IQuantity length = new Length(0, geometryLengthUnit);
+      IQuantity length = new Length(0, lengthResultUnit);
       string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("Point", "P", "Contoured Points with result values", GH_ParamAccess.list);
@@ -276,7 +277,7 @@ namespace GsaGH.Components
         switch (_mode)
         {
           case FoldMode.Displacement:
-            Tuple<List<GsaResultsValues>, List<int>> nodedisp = result.NodeDisplacementValues(nodeList, geometryLengthUnit);
+            Tuple<List<GsaResultsValues>, List<int>> nodedisp = result.NodeDisplacementValues(nodeList, lengthUnit);
             res = nodedisp.Item1[0];
             break;
 
@@ -293,7 +294,7 @@ namespace GsaGH.Components
         ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.xyzResults;
         ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
 
-        Enum xyzunit = geometryLengthUnit;
+        Enum xyzunit = lengthUnit;
         Enum xxyyzzunit = AngleUnit.Radian;
         if (_mode == FoldMode.Reaction)
         {
@@ -322,11 +323,7 @@ namespace GsaGH.Components
         // ### Coloured Result Points ###
 
         // Get nodes for point location and restraint check in case of reaction force
-        ConcurrentDictionary<int, GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodeDictionary(nodes, geometryLengthUnit);
-
-        //Find Colour and Values for legend output
-        List<double> ts = new List<double>();
-        List<Color> cs = new List<Color>();
+        ConcurrentDictionary<int, GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodeDictionary(nodes, lengthUnit);
 
         // round max and min to reasonable numbers
         double dmax = 0;
@@ -428,22 +425,22 @@ namespace GsaGH.Components
                     switch (_disp)
                     {
                       case (DisplayValue.X):
-                        t = xyzResults[nodeID][0].X.As(geometryLengthUnit);
+                        t = xyzResults[nodeID][0].X.As(lengthUnit);
                         translation.X = t * DefScale;
                         break;
                       case (DisplayValue.Y):
-                        t = xyzResults[nodeID][0].Y.As(geometryLengthUnit);
+                        t = xyzResults[nodeID][0].Y.As(lengthUnit);
                         translation.Y = t * DefScale;
                         break;
                       case (DisplayValue.Z):
-                        t = xyzResults[nodeID][0].Z.As(geometryLengthUnit);
+                        t = xyzResults[nodeID][0].Z.As(lengthUnit);
                         translation.Z = t * DefScale;
                         break;
                       case (DisplayValue.resXYZ):
-                        t = xyzResults[nodeID][0].XYZ.As(geometryLengthUnit);
-                        translation.X = xyzResults[nodeID][0].X.As(geometryLengthUnit) * DefScale;
-                        translation.Y = xyzResults[nodeID][0].Y.As(geometryLengthUnit) * DefScale;
-                        translation.Z = xyzResults[nodeID][0].Z.As(geometryLengthUnit) * DefScale;
+                        t = xyzResults[nodeID][0].XYZ.As(lengthUnit);
+                        translation.X = xyzResults[nodeID][0].X.As(lengthUnit) * DefScale;
+                        translation.Y = xyzResults[nodeID][0].Y.As(lengthUnit) * DefScale;
+                        translation.Z = xyzResults[nodeID][0].Z.As(lengthUnit) * DefScale;
                         break;
                       case (DisplayValue.XX):
                         t = xxyyzzResults[nodeID][0].X.As(AngleUnit.Radian);
@@ -517,14 +514,15 @@ namespace GsaGH.Components
         int gripheight = legend.Height / gH_Gradient.GripCount;
         legendValues = new List<string>();
         legendValuesPosY = new List<int>();
+
+        //Find Colour and Values for legend output
+        List<GH_UnitNumber> ts = new List<GH_UnitNumber>();
+        List<Color> cs = new List<Color>();
+
         for (int i = 0; i < gH_Gradient.GripCount; i++)
         {
           double t = dmin + (dmax - dmin) / ((double)gH_Gradient.GripCount - 1) * (double)i;
-          //double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
-          //scl = Math.Max(scl, 1);
-          //t = scl * Math.Round(t / scl, 3);
           t = ResultHelper.RoundToSignificantDigits(t, significantDigits);
-          ts.Add(t);
 
           Color gradientcolour = gH_Gradient.ColourAt(2 * (double)i / ((double)gH_Gradient.GripCount - 1) - 1);
           cs.Add(gradientcolour);
@@ -535,24 +533,37 @@ namespace GsaGH.Components
           for (int y = starty; y < endy; y++)
           {
             for (int x = 0; x < legend.Width; x++)
-            {
               legend.SetPixel(x, legend.Height - y - 1, gradientcolour);
-            }
-
           }
           if (_mode == FoldMode.Displacement)
           {
             if ((int)_disp < 4)
-              legendValues.Add(new Length(t, geometryLengthUnit).ToString("f" + significantDigits));
+            {
+              Length displacement = new Length(t, lengthUnit).ToUnit(lengthResultUnit);
+              legendValues.Add(displacement.ToString("f" + significantDigits));
+              ts.Add(new GH_UnitNumber(displacement));
+            }
             else
-              legendValues.Add(new Angle(t, AngleUnit.Radian).ToString("s" + significantDigits));
+            {
+              Angle rotation = new Angle(t, AngleUnit.Radian);
+              legendValues.Add(rotation.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(rotation));
+            }
           }
           if (_mode == FoldMode.Reaction)
           {
             if ((int)_disp < 4)
-              legendValues.Add(new Force(t, Units.ForceUnit).ToString("s" + significantDigits));
+            {
+              Force reactionForce = new Force(t, Units.ForceUnit);
+              legendValues.Add(reactionForce.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(reactionForce));
+            }
             else
+            {
+              Moment reactionMoment = new Moment(t, Units.MomentUnit);
               legendValues.Add(t.ToString("F" + significantDigits) + " " + Moment.GetAbbreviation(Units.MomentUnit));
+              ts.Add(new GH_UnitNumber(reactionMoment));
+            }
           }
           if (Math.Abs(t) > 1)
             legendValues[i] = legendValues[i].Replace(",", string.Empty); // remove thousand separator
@@ -701,7 +712,7 @@ namespace GsaGH.Components
 
         if ((int)_disp < 4)
         {
-          IQuantity length = new Length(0, geometryLengthUnit);
+          IQuantity length = new Length(0, lengthUnit);
           string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
           Params.Output[2].Name = "Values [" + lengthunitAbbreviation + "]";
         }
