@@ -34,7 +34,7 @@ namespace GsaGH.UI
       this.labelLengthResult.Text = "Length - result";
       this.comboBoxLengthResult.DataSource = lengthResultdropdown;
       this.comboBoxLengthResult.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.comboBoxLengthResult.SelectedIndex = lengthResultdropdown.IndexOf(Units.LengthUnitSection.ToString());
+      this.comboBoxLengthResult.SelectedIndex = lengthResultdropdown.IndexOf(Units.LengthUnitResult.ToString());
 
       this.labelForce.Text = "Force";
       this.comboBoxForce.DataSource = Units.FilteredForceUnits;
