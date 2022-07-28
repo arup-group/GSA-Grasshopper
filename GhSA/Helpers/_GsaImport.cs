@@ -1267,8 +1267,11 @@ namespace GsaGH.Util.Gsa
       List<int> inclpoint = new List<int>();
       for (int i = 0; i < pts.Count(); i++)
       {
-        int tpt = Int32.Parse(pts[i]);
-        inclpoint.Add(tpt);
+        if (pts[i] != "")
+        {
+          int tpt = Int32.Parse(pts[i]);
+          inclpoint.Add(tpt);
+        }
       }
 
       // write out topology type (A) to list
