@@ -74,13 +74,16 @@ namespace GsaGH.Helpers
 
     internal static void RemovedFromDocument(GH_Component component)
     {
-      string eventName = "RemovedFromDocument";
-      Dictionary<string, object> properties = new Dictionary<string, object>()
+      if (component.Attributes.Selected)
       {
-        { "componentName", component.Name },
-        { "runCount", component.RunCount },
-      };
-      _ = PostHog.SendToPostHog(eventName, properties);
+        string eventName = "RemovedFromDocument";
+        Dictionary<string, object> properties = new Dictionary<string, object>()
+        {
+          { "componentName", component.Name },
+          { "runCount", component.RunCount },
+        };
+        _ = PostHog.SendToPostHog(eventName, properties);
+      }
     }
 
     private class PhContainer

@@ -73,6 +73,8 @@ namespace GsaGH.Components
           //CreateAttributes();
           mes = "Saved file";
 
+          PostHog.ModelIO("saveGWB", (int)(new FileInfo(fileName).Length / 1024));
+
           //add panel input with string
           //delete existing inputs if any
           while (Params.Input[2].Sources.Count > 0)
