@@ -131,7 +131,7 @@ namespace GsaGH
       Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", GsaGH.Properties.Resources.GSALogo);
 
       // ### Setup units ###
-      Units.SetupUnits();
+      Units.SetupUnitsDuringLoad();
 
       PostHog.PluginLoaded();
 

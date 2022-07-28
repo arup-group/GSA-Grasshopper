@@ -189,7 +189,7 @@ namespace GsaGH.Components
             Message = mes;
             DA.SetData(0, new GsaModelGoo(gsaModel));
 
-            PostHog.ModelIO("openGWB");
+            PostHog.ModelIO("openGWB", (int)(new FileInfo(fileName).Length / 1024));
 
             return;
           }
