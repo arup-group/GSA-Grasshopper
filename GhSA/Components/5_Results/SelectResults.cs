@@ -471,7 +471,7 @@ namespace GsaGH.Components
           combinationCaseResult = combinationCaseResults[CaseID];
           tempNodeResult = combinationCaseResult.NodeResults(tempNodeID.ToString());
           int nP = tempNodeResult[tempNodeResult.Keys.First()].Count;
-
+          Permutations = Enumerable.Range(1, nP).ToList();
           if (ResultType == GsaResult.ResultType.Combination & updatePermutations)
           {
             if (dropdownitems.Count < 3)
