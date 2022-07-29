@@ -2,6 +2,7 @@
 using Rhino.Display;
 using Rhino.Geometry;
 using GsaGH.Parameters;
+using System;
 
 namespace GsaGH.UI
 {
@@ -12,6 +13,35 @@ namespace GsaGH.UI
   /// </summary>
   public class Display
   {
+    public static Tuple<Vector3d, Vector3d, Vector3d> GetLocalPlane(PolyCurve crv, double t, double angle_radian)
+    {
+      crv.PerpendicularFrameAt(t, out Plane pln);
+      Vector3d outX = pln.ZAxis;
+      Vector3d outY = pln.XAxis;
+      Vector3d outZ = pln.YAxis;
+
+      pln.Rotate(angle_radian, pln.Normal);
+
+      Vector3d absZ = new Vector3d(Math.Abs(pln.ZAxis.X), Math.Abs(pln.ZAxis.Y), Math.Abs(pln.ZAxis.Z));
+      double absAngleToZ = Vector3d.VectorAngle(absZ, Vector3d.ZAxis);
+
+      if (absAngleToZ < Math.PI / 180)
+      {
+        double realAngleToZ = Vector3d.VectorAngle(pln.ZAxis, Vector3d.ZAxis);
+        Vector3d x = Vector3d.ZAxis;
+        Vector3d y = Vector3d.YAxis;
+        Vector3d z = Vector3d.XAxis;
+        if (realAngleToZ > Math.PI / 2)
+          x.Reverse();
+        else
+          z.Reverse();
+        outX = x;
+        outY = y;
+        outZ = z;
+      }
+
+      return new Tuple<Vector3d, Vector3d, Vector3d>(outX, outY, outZ);
+    }
     public static void Preview1D(PolyCurve crv, double angle_radian, GsaBool6 start, GsaBool6 end,
         ref List<Line> greenLines20, ref List<Line> redLines10)
     {
