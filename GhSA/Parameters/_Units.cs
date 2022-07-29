@@ -59,7 +59,7 @@ namespace GsaGH
     {
       get
       {
-        if (useRhinoLengthGeometryUnit)
+        if (useRhinoTolerance)
           return GetRhinoTolerance();
         else
           return m_tolerance;
@@ -67,7 +67,7 @@ namespace GsaGH
       set { m_tolerance = value; }
     }
     private static Length m_tolerance = new Length(1, LengthUnit.Centimeter);
-
+    internal static bool useRhinoTolerance;
     public static int SignificantDigits
     {
       get { return BitConverter.GetBytes(decimal.GetBits((decimal)m_tolerance.As(LengthUnitGeometry))[3])[2]; ; }
@@ -684,6 +684,7 @@ namespace GsaGH
     {
       Grasshopper.Instances.Settings.SetValue("GsaLengthUnitGeometry", LengthUnitGeometry.ToString());
       Grasshopper.Instances.Settings.SetValue("GsaUseRhinoLengthGeometryUnit", useRhinoLengthGeometryUnit);
+      Grasshopper.Instances.Settings.SetValue("GsaUseRhinoTolerance", useRhinoTolerance);
 
       Grasshopper.Instances.Settings.SetValue("GsaLengthUnitSection", LengthUnitSection.ToString());
 
@@ -718,11 +719,12 @@ namespace GsaGH
 
       string lengthGeometry = Grasshopper.Instances.Settings.GetValue("GsaLengthUnitGeometry", string.Empty);
       useRhinoLengthGeometryUnit = Grasshopper.Instances.Settings.GetValue("GsaUseRhinoLengthGeometryUnit", false);
-
       string lengthSection = Grasshopper.Instances.Settings.GetValue("GsaLengthUnitSection", string.Empty);
-
       string lengthResult = Grasshopper.Instances.Settings.GetValue("GsaLengthUnitResult", string.Empty);
-
+      
+      useRhinoTolerance = useRhinoLengthGeometryUnit;
+      if (Grasshopper.Instances.Settings.ConstainsEntry("GsaUseRhinoTolerance"))
+        useRhinoTolerance = Grasshopper.Instances.Settings.GetValue("GsaUseRhinoTolerance", false);
       double tolerance = Grasshopper.Instances.Settings.GetValue("GsaTolerance", double.NaN);
 
       string force = Grasshopper.Instances.Settings.GetValue("GsaForceUnit", string.Empty);
