@@ -7,9 +7,45 @@ using System.Text;
 using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Newtonsoft.Json;
+using static GsaGH.Helpers.PostHogUser;
 
 namespace GsaGH.Helpers
 {
+  public static class PostHogUser
+  {
+    public class User
+    {
+      public string email { get; set; }
+      public string userName { get; set; }
+    }
+    private static User thisUser = null;
+    public static User CurrentUser 
+    { 
+      get
+      {
+        if (thisUser == null)
+        {
+          thisUser = new User();
+          thisUser.userName = Environment.UserName;
+          if (thisUser.email == null)
+          {
+            try
+            {
+              thisUser.email = UserPrincipal.Current.EmailAddress; // case sensitive
+              if (!thisUser.email.EndsWith("arup.com"))
+                thisUser.userName = "External";
+            }
+            catch (Exception)
+            {
+              thisUser.userName = "Unknown";
+            }
+          }
+        }
+        return thisUser;
+      }
+    }
+
+  }
   public static class PostHog
   {
     private static HttpClient _phClient = new HttpClient();
@@ -17,15 +53,10 @@ namespace GsaGH.Helpers
     public static async Task<HttpResponseMessage> SendToPostHog(string eventName, Dictionary<string, object> additionalProperties = null)
     {
       // posthog ADS plugin requires a user object
-      User user = new User();
-      user.email = UserPrincipal.Current.EmailAddress; // case sensitive
-
-      string userName = Environment.UserName;
-      if (!user.email.EndsWith("arup.com"))
-        userName = "External";
+      User user = PostHogUser.CurrentUser;
 
       Dictionary<string, object> properties = new Dictionary<string, object>() {
-        { "distinct_id", userName },
+        { "distinct_id", user.userName },
         { "user", user },
         { "pluginName", GsaGH.GsaGHInfo.PluginName },
         { "version", GsaGH.GsaGHInfo.Vers },
@@ -104,9 +135,6 @@ namespace GsaGH.Helpers
       }
     }
 
-    private class User
-    {
-      public string email { get; set; }
-    }
+
   }
 }
