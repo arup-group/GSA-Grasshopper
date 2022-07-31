@@ -71,6 +71,11 @@ namespace GsaGH.UI
       this.comboBoxTemperature.DropDownStyle = ComboBoxStyle.DropDownList;
       this.comboBoxTemperature.SelectedIndex = Units.FilteredTemperatureUnits.IndexOf(Units.TemperatureUnit.ToString());
 
+      this.labelEnergy.Text = "Energy";
+      this.comboBoxEnergy.DataSource = Units.FilteredEnergyUnits;
+      this.comboBoxEnergy.DropDownStyle = ComboBoxStyle.DropDownList;
+      this.comboBoxEnergy.SelectedIndex = Units.FilteredEnergyUnits.IndexOf(Units.EnergyUnit.ToString());
+
       this.toleranceValueBox.Value = (decimal)Units.Tolerance.As(Units.LengthUnitGeometry);
       this.useRhinoToleranceCheckBox.Checked = Units.useRhinoTolerance;
       if (this.useRhinoToleranceCheckBox.Checked)
@@ -95,6 +100,7 @@ namespace GsaGH.UI
     string stress = Units.StressUnit.ToString();
     string strain = Units.StrainUnit.ToString();
     string mass = Units.MassUnit.ToString();
+    string energy = Units.EnergyUnit.ToString();
     string temperature = Units.TemperatureUnit.ToString();
     decimal tolerance = (decimal)Units.Tolerance.As(Units.LengthUnitGeometry);
     internal void SetUnits()
@@ -130,6 +136,7 @@ namespace GsaGH.UI
       Units.StressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), stress);
       Units.StrainUnit = (StrainUnit)Enum.Parse(typeof(StrainUnit), strain);
       Units.MassUnit = (MassUnit)Enum.Parse(typeof(MassUnit), mass);
+      Units.EnergyUnit = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), energy);
       Units.TemperatureUnit = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), temperature);
 
       //Units.AxialStiffnessUnit = (AxialStiffnessUnit)Enum.Parse(typeof(AxialStiffnessUnit), lengthGeometry);
@@ -181,6 +188,10 @@ namespace GsaGH.UI
     {
       strain = this.comboBoxStrain.SelectedItem.ToString();
     }
+    private void comboBoxEnergy_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      energy = this.comboBoxEnergy.SelectedItem.ToString();
+    }
 
     private void comboBoxLengthGeometry_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -197,6 +208,7 @@ namespace GsaGH.UI
       }
       lengthAbbr = "[" + new Length(1, lengthUnit).ToString("a") + "]";
       this.labelTolerance.Text = "Tolerance " + lengthAbbr;
+      this.toleranceValueBox.Value = (decimal)Units.Tolerance.As(lengthUnit);
     }
 
     private void comboBoxLengthSection_SelectedIndexChanged(object sender, EventArgs e)
@@ -312,5 +324,7 @@ namespace GsaGH.UI
       useRhinoTolerance = false;
       updateSelections();
     }
+
+    
   }
 }
