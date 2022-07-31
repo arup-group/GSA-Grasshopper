@@ -124,6 +124,7 @@
     <Compile Include="Components\5_Results\Elem2dDisplacementResult.cs" />
     <Compile Include="Components\5_Results\BeamForceResult.cs" />
     <Compile Include="Components\5_Results\BeamDispResult.cs" />
+    <Compile Include="Components\5_Results\SpringReactionForceResult.cs" />
     <Compile Include="Components\5_Results\NodeReactionForceResult.cs" />
     <Compile Include="Components\5_Results\NodeDisplacementResult.cs" />
     <Compile Include="Components\5_Results\NodeContourResults.cs" />
@@ -633,6 +634,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\GsaLogo64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\SpringReactionForces.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
