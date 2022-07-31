@@ -79,14 +79,13 @@ namespace GsaGH.Components
 
     public void SetSelected(int dropdownlistidd, int selectedidd)
     {
-      if (dropdownlistidd == 0) // if change is made to result type (displacement or force)
+      if (dropdownlistidd == 0) // if change is made to result type (displacement, force, or strain energy)
       {
         if (selectedidd == 0) // displacement selected
         {
           if (dropdownitems[1] != dropdowndisplacement)
           {
             dropdownitems[1] = dropdowndisplacement;
-            dropdownitems[2] = Units.FilteredLengthUnits;
 
             selecteditems[0] = dropdownitems[0][0];
             selecteditems[1] = dropdownitems[1][3];
@@ -101,13 +100,25 @@ namespace GsaGH.Components
           if (dropdownitems[1] != dropdownforce)
           {
             dropdownitems[1] = dropdownforce;
-            dropdownitems[2] = Units.FilteredForcePerLengthUnits;
 
             selecteditems[0] = dropdownitems[0][1];
             selecteditems[1] = dropdownitems[1][5]; // set Myy as default
 
             _disp = DisplayValue.YY;
             Mode2Clicked();
+          }
+        }
+        if (selectedidd == 2) // strain energy selected
+        {
+          if (dropdownitems[1] != dropdownstrainenergy)
+          {
+            dropdownitems[1] = dropdownstrainenergy;
+
+            selecteditems[0] = dropdownitems[0][2];
+            selecteditems[1] = dropdownitems[1][1]; // set average as default
+
+            _disp = DisplayValue.Y;
+            Mode3Clicked();
           }
         }
       } // if changes to the selected result type
@@ -180,6 +191,7 @@ namespace GsaGH.Components
     {
             "Displacement",
             "Force",
+            "Strain Energy"
     });
 
     readonly List<string> dropdowndisplacement = new List<string>(new string[]
@@ -205,9 +217,15 @@ namespace GsaGH.Components
             "Moment Mzz",
             "Res. Moment |Myz|",
     });
+    readonly List<string> dropdownstrainenergy = new List<string>(new string[]
+    {
+            "Intermediate Pts",
+            "Average"
+    });
 
     private LengthUnit lengthUnit = Units.LengthUnitGeometry;
     private LengthUnit lengthResultUnit = Units.LengthUnitResult;
+    private EnergyUnit energyResultUnit = Units.EnergyUnit;
     string _case = "";
     #endregion
 
@@ -302,17 +320,23 @@ namespace GsaGH.Components
 
         // get results from results class
         GsaResultsValues res = new GsaResultsValues();
-        
+
         switch (_mode)
         {
           case FoldMode.Displacement:
             res = result.Element1DDisplacementValues(elementlist, positionsCount, lengthUnit)[0];
-            
+
             break;
 
           case FoldMode.Force:
             res = result.Element1DForceValues(elementlist, positionsCount,
                 Units.ForceUnit, Units.MomentUnit)[0];
+            break;
+          case FoldMode.StrainEnergy:
+            if (_disp == DisplayValue.X)
+              res = result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, energyResultUnit)[0];
+            else
+              res = result.Element1DStrainEnergyDensityValues(elementlist, energyResultUnit)[0];
             break;
         }
 
@@ -338,23 +362,25 @@ namespace GsaGH.Components
           xyzunit = Units.ForceUnit;
           xxyyzzunit = Units.MomentUnit;
         }
+        else if (_mode == FoldMode.StrainEnergy)
+          xyzunit = Units.EnergyUnit;
 
         double dmax_x = res.dmax_x.As(xyzunit);
-        double dmax_y = res.dmax_y.As(xyzunit);
-        double dmax_z = res.dmax_z.As(xyzunit);
-        double dmax_xyz = res.dmax_xyz.As(xyzunit);
-        double dmin_x = res.dmin_x.As(xyzunit);
-        double dmin_y = res.dmin_y.As(xyzunit);
-        double dmin_z = res.dmin_z.As(xyzunit);
-        double dmin_xyz = res.dmin_xyz.As(xyzunit);
-        double dmax_xx = res.dmax_xx.As(xxyyzzunit);
-        double dmax_yy = res.dmax_yy.As(xxyyzzunit);
-        double dmax_zz = res.dmax_zz.As(xxyyzzunit);
-        double dmax_xxyyzz = res.dmax_xxyyzz.As(xxyyzzunit);
-        double dmin_xx = res.dmin_xx.As(xxyyzzunit);
-        double dmin_yy = res.dmin_yy.As(xxyyzzunit);
-        double dmin_zz = res.dmin_zz.As(xxyyzzunit);
-        double dmin_xxyyzz = res.dmin_xxyyzz.As(xxyyzzunit);
+        double dmax_y = _mode == FoldMode.StrainEnergy ? 0 : res.dmax_y.As(xyzunit);
+        double dmax_z = _mode == FoldMode.StrainEnergy ? 0 : res.dmax_z.As(xyzunit);
+        double dmax_xyz = _mode == FoldMode.StrainEnergy ? 0 : res.dmax_xyz.As(xyzunit);
+        double dmin_x = _mode == FoldMode.StrainEnergy ? 0 : res.dmin_x.As(xyzunit);
+        double dmin_y = _mode == FoldMode.StrainEnergy ? 0 : res.dmin_y.As(xyzunit);
+        double dmin_z = _mode == FoldMode.StrainEnergy ? 0 : res.dmin_z.As(xyzunit);
+        double dmin_xyz = _mode == FoldMode.StrainEnergy ? 0 : res.dmin_xyz.As(xyzunit);
+        double dmax_xx = _mode == FoldMode.StrainEnergy ? 0 : res.dmax_xx.As(xxyyzzunit);
+        double dmax_yy = _mode == FoldMode.StrainEnergy ? 0 : res.dmax_yy.As(xxyyzzunit);
+        double dmax_zz = _mode == FoldMode.StrainEnergy ? 0 : res.dmax_zz.As(xxyyzzunit);
+        double dmax_xxyyzz = _mode == FoldMode.StrainEnergy ? 0 : res.dmax_xxyyzz.As(xxyyzzunit);
+        double dmin_xx = _mode == FoldMode.StrainEnergy ? 0 : res.dmin_xx.As(xxyyzzunit);
+        double dmin_yy = _mode == FoldMode.StrainEnergy ? 0 : res.dmin_yy.As(xxyyzzunit);
+        double dmin_zz = _mode == FoldMode.StrainEnergy ? 0 : res.dmin_zz.As(xxyyzzunit);
+        double dmin_xxyyzz = _mode == FoldMode.StrainEnergy ? 0 : res.dmin_xxyyzz.As(xxyyzzunit);
 
         #region Result line values
         // ### Coloured Result Lines ###
@@ -362,72 +388,87 @@ namespace GsaGH.Components
         // round max and min to reasonable numbers
         double dmax = 0;
         double dmin = 0;
-        switch (_disp)
+        if (_mode == FoldMode.StrainEnergy)
         {
-          case (DisplayValue.X):
-            dmax = dmax_x;
-            dmin = dmin_x;
-            if (_mode == FoldMode.Displacement)
-              resType = "Elem. Trans., Ux";
-            else
-              resType = "Axial Force, Fx";
-            break;
-          case (DisplayValue.Y):
-            dmax = dmax_y;
-            dmin = dmin_y;
-            if (_mode == FoldMode.Displacement)
-              resType = "Elem. Trans., Uy";
-            else
-              resType = "Shear Force, Fy";
-            break;
-          case (DisplayValue.Z):
-            dmax = dmax_z;
-            dmin = dmin_z;
-            if (_mode == FoldMode.Displacement)
-              resType = "Elem. Trans., Uz";
-            else
-              resType = "Shear Force, Fz";
-            break;
-          case (DisplayValue.resXYZ):
-            dmax = dmax_xyz;
-            dmin = dmin_xyz;
-            if (_mode == FoldMode.Displacement)
-              resType = "Res. Trans., |U|";
-            else
-              resType = "Res. Shear, |Fyz|";
-            break;
-          case (DisplayValue.XX):
-            dmax = dmax_xx;
-            dmin = dmin_xx;
-            if (_mode == FoldMode.Displacement)
-              resType = "Elem. Rot., Rxx";
-            else
-              resType = "Torsion, Mxx";
-            break;
-          case (DisplayValue.YY):
-            dmax = dmax_yy;
-            dmin = dmin_yy;
-            if (_mode == FoldMode.Displacement)
-              resType = "Elem. Rot., Ryy";
-            else
-              resType = "Moment, Myy";
-            break;
-          case (DisplayValue.ZZ):
-            dmax = dmax_zz;
-            dmin = dmin_zz;
-            if (_mode == FoldMode.Displacement)
-              resType = "Elem. Rot., Rzz";
-            else
-              resType = "Moment, Mzz";
-            break;
-          case (DisplayValue.resXXYYZZ):
-            dmax = dmax_xxyyzz;
-            dmin = dmin_xxyyzz;
-            if (_mode == FoldMode.Displacement)
-              resType = "Res. Rot., |U|";
-            else
-              resType = "Res. Moment, |Myz|";
-            break;
+          dmax = dmax_x;
+          dmin = dmin_x;
+          if (_disp == DisplayValue.X)
+            resType = "Strain Energy Density";
+          else
+          {
+            positionsCount = 2;
+            resType = "Average Strain E Dens.";
+          }
+        }
+        else
+        {
+          switch (_disp)
+          {
+            case (DisplayValue.X):
+              dmax = dmax_x;
+              dmin = dmin_x;
+              if (_mode == FoldMode.Displacement)
+                resType = "Elem. Trans., Ux";
+              else
+                resType = "Axial Force, Fx";
+              break;
+            case (DisplayValue.Y):
+              dmax = dmax_y;
+              dmin = dmin_y;
+              if (_mode == FoldMode.Displacement)
+                resType = "Elem. Trans., Uy";
+              else
+                resType = "Shear Force, Fy";
+              break;
+            case (DisplayValue.Z):
+              dmax = dmax_z;
+              dmin = dmin_z;
+              if (_mode == FoldMode.Displacement)
+                resType = "Elem. Trans., Uz";
+              else
+                resType = "Shear Force, Fz";
+              break;
+            case (DisplayValue.resXYZ):
+              dmax = dmax_xyz;
+              dmin = dmin_xyz;
+              if (_mode == FoldMode.Displacement)
+                resType = "Res. Trans., |U|";
+              else
+                resType = "Res. Shear, |Fyz|";
+              break;
+            case (DisplayValue.XX):
+              dmax = dmax_xx;
+              dmin = dmin_xx;
+              if (_mode == FoldMode.Displacement)
+                resType = "Elem. Rot., Rxx";
+              else
+                resType = "Torsion, Mxx";
+              break;
+            case (DisplayValue.YY):
+              dmax = dmax_yy;
+              dmin = dmin_yy;
+              if (_mode == FoldMode.Displacement)
+                resType = "Elem. Rot., Ryy";
+              else
+                resType = "Moment, Myy";
+              break;
+            case (DisplayValue.ZZ):
+              dmax = dmax_zz;
+              dmin = dmin_zz;
+              if (_mode == FoldMode.Displacement)
+                resType = "Elem. Rot., Rzz";
+              else
+                resType = "Moment, Mzz";
+              break;
+            case (DisplayValue.resXXYYZZ):
+              dmax = dmax_xxyyzz;
+              dmin = dmin_xxyyzz;
+              if (_mode == FoldMode.Displacement)
+                resType = "Res. Rot., |U|";
+              else
+                resType = "Res. Moment, |Myz|";
+              break;
+          }
         }
 
         List<double> rounded = Util.Gsa.ResultHelper.SmartRounder(dmax, dmin);
@@ -442,7 +483,7 @@ namespace GsaGH.Components
         {
           ConcurrentDictionary<int, ResultLine> resLns = new ConcurrentDictionary<int, ResultLine>();
 
-                  // list for element geometry and info
+          // list for element geometry and info
           if (element.Value.IsDummy) { return; }
           if (element.Value.Type == ElementType.LINK) { return; }
           if (element.Value.Topology.Count > 2) { return; }
@@ -465,12 +506,12 @@ namespace GsaGH.Components
               Point3d start = new Point3d(ln.PointAt((double)i / (positionsCount - 1)));
               Point3d end = new Point3d(ln.PointAt((double)(i + 1) / (positionsCount - 1)));
 
-                      // pick the right value to display
+              // pick the right value to display
               switch (_mode)
               {
                 case FoldMode.Displacement:
                   Vector3d translation = new Vector3d(0, 0, 0);
-                          // pick the right value to display
+                  // pick the right value to display
                   switch (_disp)
                   {
                     case (DisplayValue.X):
@@ -524,7 +565,7 @@ namespace GsaGH.Components
                   end.Transform(Transform.Translation(endTranslation));
                   break;
                 case FoldMode.Force:
-                          // pick the right value to display
+                  // pick the right value to display
                   switch (_disp)
                   {
                     case (DisplayValue.X):
@@ -561,19 +602,31 @@ namespace GsaGH.Components
                       break;
                   }
                   break;
+                case FoldMode.StrainEnergy:
+                  if (_disp == DisplayValue.X)
+                  {
+                    t1 = xyzResults[key][i].X.As(Units.EnergyUnit);
+                    t2 = xyzResults[key][i + 1].X.As(Units.EnergyUnit);
+                  }
+                  else
+                  {
+                    t1 = xyzResults[key][i].X.As(Units.EnergyUnit);
+                    t2 = xyzResults[key][i].X.As(Units.EnergyUnit);
+                  }
+                  break;
               }
 
               Line segmentline = new Line(start, end);
 
-                      //normalised value between -1 and 1
+              //normalised value between -1 and 1
               double tnorm1 = 2 * (t1 - dmin) / (dmax - dmin) - 1;
               double tnorm2 = 2 * (t2 - dmin) / (dmax - dmin) - 1;
 
-                      // get colour for that normalised value
+              // get colour for that normalised value
               Color valcol1 = double.IsNaN(tnorm1) ? Color.Black : gH_Gradient.ColourAt(tnorm1);
               Color valcol2 = double.IsNaN(tnorm2) ? Color.Black : gH_Gradient.ColourAt(tnorm2);
 
-                      // set the size of the line ends for ResultLine class. Size is calculated from 0-base, so not a normalised value between extremes
+              // set the size of the line ends for ResultLine class. Size is calculated from 0-base, so not a normalised value between extremes
               float size1 = (t1 >= 0 && dmax != 0) ?
                           Math.Max(2, (float)(t1 / dmax * scale)) :
                           Math.Max(2, (float)(Math.Abs(t1) / Math.Abs(dmin) * scale));
@@ -585,7 +638,7 @@ namespace GsaGH.Components
               if (double.IsNaN(size2))
                 size2 = 1;
 
-                      // add our special resultline to the list of lines
+              // add our special resultline to the list of lines
               lock (resultLines)
               {
                 resultLines.Add(
@@ -642,7 +695,7 @@ namespace GsaGH.Components
               ts.Add(new GH_UnitNumber(rotation));
             }
           }
-          if (_mode == FoldMode.Force)
+          else if (_mode == FoldMode.Force)
           {
             if ((int)_disp < 4)
             {
@@ -657,6 +710,13 @@ namespace GsaGH.Components
               ts.Add(new GH_UnitNumber(moment));
             }
           }
+          else
+          {
+            Energy energy = new Energy(t, Units.EnergyUnit);
+            legendValues.Add(energy.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(energy));
+          }
+
           if (Math.Abs(t) > 1)
             legendValues[i] = legendValues[i].Replace(",", string.Empty); // remove thousand separator
           legendValuesPosY.Add(legend.Height - starty + gripheight / 2 - 2);
@@ -676,7 +736,8 @@ namespace GsaGH.Components
     private enum FoldMode
     {
       Displacement,
-      Force
+      Force,
+      StrainEnergy
     }
     private FoldMode _mode = FoldMode.Displacement;
 
@@ -724,6 +785,23 @@ namespace GsaGH.Components
 
       RecordUndoEvent(_mode.ToString() + " Parameters");
       _mode = FoldMode.Force;
+
+      slider = false;
+      DefScale = 0;
+
+      ReDrawComponent();
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      Params.OnParametersChanged();
+      ExpireSolution(true);
+    }
+    private void Mode3Clicked()
+    {
+      if (_mode == FoldMode.StrainEnergy)
+        return;
+
+      RecordUndoEvent(_mode.ToString() + " Parameters");
+      _mode = FoldMode.StrainEnergy;
 
       slider = false;
       DefScale = 0;
