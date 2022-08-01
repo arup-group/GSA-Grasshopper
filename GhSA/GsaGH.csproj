@@ -116,6 +116,7 @@
     <Compile Include="Components\4_Analysis\AnalysisCaseInfo.cs" />
     <Compile Include="Components\4_Analysis\CreateAnalysisCase.cs" />
     <Compile Include="Components\4_Analysis\CreateAnalysisTask.cs" />
+    <Compile Include="Components\5_Results\BeamStrainEnergyResult.cs" />
     <Compile Include="Components\5_Results\Elem1dContourResults.cs" />
     <Compile Include="Components\5_Results\Elem2dContourResults.cs" />
     <Compile Include="Components\5_Results\Elem3dStressResult.cs" />
@@ -634,6 +635,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\GsaLogo64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\StrainEnergyDensity.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\LocalAxes.png" />

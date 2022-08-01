@@ -9,6 +9,7 @@ using Rhino.Geometry.Collections;
 using System.Collections.Concurrent;
 using UnitsNet;
 using GsaGH.Parameters;
+using UnitsNet.Units;
 
 namespace GsaGH.Util.GH
 {
@@ -744,7 +745,7 @@ namespace GsaGH.Util.GH
       return new Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>>(elems, topoPts, topoInts, faceInts);
     }
 
-    public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<Parameters.GsaMember1d> mem1ds = null, List<Parameters.GsaNode> nodes = null)
+    public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, Length meshSize, LengthUnit unit, List<Parameters.GsaMember1d> mem1ds = null, List<Parameters.GsaNode> nodes = null)
     {
       Brep in_brep = brep.DuplicateBrep();
       in_brep.Faces.ShrinkFaces();
@@ -767,7 +768,7 @@ namespace GsaGH.Util.GH
 
       unroller.AddFollowingGeometry(points);
       unroller.AddFollowingGeometry(curves);
-      //unroller.RelativeTolerance = double.PositiveInfinity;
+      unroller.RelativeTolerance = Units.Tolerance.As(unit);
       //unroller.AbsoluteTolerance = double.PositiveInfinity;
       //unroller.ExplodeOutput = false;
 
@@ -784,7 +785,7 @@ namespace GsaGH.Util.GH
 
       // create 2d member from flattened geometry
       Parameters.GsaMember2d mem = new Parameters.GsaMember2d(flattened[0], inclCrvs.ToList(), inclPts.ToList());
-      mem.MeshSize = new Length(meshSize, Units.LengthUnitGeometry);
+      mem.MeshSize = meshSize;
 
       // add to temp list for input in assemble function
       List<Parameters.GsaMember2d> mem2ds = new List<Parameters.GsaMember2d>();
@@ -808,7 +809,7 @@ namespace GsaGH.Util.GH
       }
 
       // assemble temp model
-      Model model = Util.Gsa.ToGSA.Assemble.AssembleModel(Units.LengthUnitGeometry, null, mem2ds, mem1ds, nodes);
+      Model model = Util.Gsa.ToGSA.Assemble.AssembleModel(unit, null, mem2ds, mem1ds, nodes);
 
       // call the meshing algorithm
       model.CreateElementsFromMembers();
@@ -823,7 +824,7 @@ namespace GsaGH.Util.GH
               new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds()),
               new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials()),
               new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers()),
-              Units.LengthUnitGeometry);
+              unit);
 
       List<GsaElement2dGoo> elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.ID).ToList();
       Mesh mesh = elem2dgoo[0].Value.Mesh;
