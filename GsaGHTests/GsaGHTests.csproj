@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <Reference Include="GsaAPI">
-      <HintPath>..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
 
