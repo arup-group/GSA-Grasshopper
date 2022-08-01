@@ -559,6 +559,92 @@ namespace GsaGH.Parameters
     }
 
     /// <summary>
+    /// Get beam strain energy density values 
+    /// For analysis case the length of the list will be 1
+    /// This method will use cache data if it exists
+    /// </summary>
+    /// <param name="elementlist"></param>
+    /// <param name="energyUnit"></param>
+    /// <returns></returns>
+    internal List<GsaResultsValues> Element1DStrainEnergyDensityValues(string elementlist, int positionsCount, EnergyUnit energyUnit)
+    {
+      Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
+      if (this.Type == ResultType.AnalysisCase)
+      {
+        if (!this.ACaseElement1DForceValues.ContainsKey(key)) // see if values exist
+        {
+          if (!this.ACaseElement1DResults.ContainsKey(key)) // see if result exist
+          {
+            // if the results hasn't already been taken out and add them to our dictionary
+            this.ACaseElement1DResults.Add(key, AnalysisCaseResult.Element1DResults(elementlist, positionsCount));
+          }
+          // compute result values and add to dictionary for cache
+          this.ACaseElement1DForceValues.Add(key,
+              ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit));
+        }
+        return new List<GsaResultsValues>() { ACaseElement1DForceValues[key] };
+      }
+      else
+      {
+        if (!this.ComboElement1DForceValues.ContainsKey(key)) // see if values exist
+        {
+          if (!this.ComboElement1DResults.ContainsKey(key)) // see if result exist
+          {
+            // if the results hasn't already been taken out and add them to our dictionary
+            this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, positionsCount, true));
+          }
+          // compute result values and add to dictionary for cache
+          this.ComboElement1DForceValues.Add(key,
+              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], energyUnit, SelectedPermutationIDs));
+        }
+        return new List<GsaResultsValues>(ComboElement1DForceValues[key].Values);
+      }
+    }
+
+    /// <summary>
+    /// Get beam average strain energy density values 
+    /// For analysis case the length of the list will be 1
+    /// This method will use cache data if it exists
+    /// </summary>
+    /// <param name="elementlist"></param>
+    /// <param name="energyUnit"></param>
+    /// <returns></returns>
+    internal List<GsaResultsValues> Element1DStrainEnergyDensityValues(string elementlist, EnergyUnit energyUnit)
+    {
+      Tuple<string, int> key = new Tuple<string, int>(elementlist, 1);
+      if (this.Type == ResultType.AnalysisCase)
+      {
+        if (!this.ACaseElement1DForceValues.ContainsKey(key)) // see if values exist
+        {
+          if (!this.ACaseElement1DResults.ContainsKey(key)) // see if result exist
+          {
+            // if the results hasn't already been taken out and add them to our dictionary
+            this.ACaseElement1DResults.Add(key, AnalysisCaseResult.Element1DResults(elementlist, 1));
+          }
+          // compute result values and add to dictionary for cache
+          this.ACaseElement1DForceValues.Add(key,
+              ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit, true));
+        }
+        return new List<GsaResultsValues>() { ACaseElement1DForceValues[key] };
+      }
+      else
+      {
+        if (!this.ComboElement1DForceValues.ContainsKey(key)) // see if values exist
+        {
+          if (!this.ComboElement1DResults.ContainsKey(key)) // see if result exist
+          {
+            // if the results hasn't already been taken out and add them to our dictionary
+            this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, 1, true));
+          }
+          // compute result values and add to dictionary for cache
+          this.ComboElement1DForceValues.Add(key,
+              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], energyUnit, SelectedPermutationIDs, true));
+        }
+        return new List<GsaResultsValues>(ComboElement1DForceValues[key].Values);
+      }
+    }
+
+    /// <summary>
     /// Get 2D displacement values 
     /// For analysis case the length of the list will be 1
     /// This method will use cache data if it exists
