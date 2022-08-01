@@ -158,8 +158,10 @@ namespace GsaGH.Components
       if (!Average)
       {
         GH_Integer gh_Div = new GH_Integer();
-        DA.GetData(2, ref gh_Div);
-        GH_Convert.ToInt32(gh_Div, out positionsCount, GH_Conversion.Both);
+        if( DA.GetData(2, ref gh_Div))
+          GH_Convert.ToInt32(gh_Div, out positionsCount, GH_Conversion.Both);
+        else
+          positionsCount = 3;
         positionsCount = Math.Abs(positionsCount) + 2; // taken absolute value and add 2 end points.
       }
 
