@@ -26,25 +26,35 @@ namespace GsaGH.Helpers
         if (thisUser == null)
         {
           thisUser = new User();
-          thisUser.userName = Environment.UserName;
-          if (thisUser.email == null)
+          thisUser.userName = Environment.UserName.ToLower();
+          try
           {
-            try
+            var task = Task.Run(() => UserPrincipal.Current.EmailAddress);
+            if (task.Wait(TimeSpan.FromSeconds(2)))
             {
-              thisUser.email = UserPrincipal.Current.EmailAddress; // case sensitive
+              thisUser.email = task.Result;
               if (!thisUser.email.EndsWith("arup.com"))
                 thisUser.userName = "External";
             }
-            catch (Exception)
+            else
             {
-              thisUser.userName = "Unknown";
+              if (Environment.UserDomainName.ToLower() == "global")
+                thisUser.email = thisUser.userName + "@arup.com";
+              else
+                thisUser.userName = "External";
             }
+          }
+          catch (Exception)
+          {
+            if (Environment.UserDomainName.ToLower() == "global")
+              thisUser.email = thisUser.userName + "@arup.com";
+            else
+              thisUser.userName = "External";
           }
         }
         return thisUser;
       }
     }
-
   }
   public static class PostHog
   {
