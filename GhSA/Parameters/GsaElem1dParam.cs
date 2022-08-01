@@ -288,6 +288,15 @@ namespace GsaGH.Parameters
     private GsaBool6 m_rel2;
     private GsaSection m_section;
     private GsaNode m_orientationNode;
+    internal Tuple<Vector3d, Vector3d, Vector3d> LocalAxes
+    {
+      get
+      {
+        PolyCurve crv = new PolyCurve();
+        crv.Append(m_line);
+        return UI.Display.GetLocalPlane(crv, crv.GetLength() / 2, m_element.OrientationAngle * Math.PI / 180.0);
+      }
+    }
     #endregion
     
     #region constructors
