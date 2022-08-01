@@ -107,7 +107,10 @@ namespace GsaGH.Components
       if (i == 1)
       {
         if (selecteditems[i].ToLower() == "all")
+        {
           CaseID = -1;
+          updateCases = false;
+        }
         else
         {
           int newID = int.Parse(string.Join("", selecteditems[i].ToCharArray().Where(Char.IsDigit)));
@@ -349,6 +352,8 @@ namespace GsaGH.Components
           if (combinationCaseResults == null)
             updateCases = true;
         }
+        if (CaseID < 0)
+          updateCases = false;
 
         // skip 'reflection' if inputs have been set
         if (ResultType == GsaResult.ResultType.AnalysisCase && this.Params.Input[1].SourceCount > 0
@@ -455,7 +460,8 @@ namespace GsaGH.Components
               return;
           }
         }
-        if (ResultType == GsaResult.ResultType.Combination & updatePermutations | Permutations.Count > 0)
+        
+        if (ResultType == GsaResult.ResultType.Combination & updatePermutations | (CaseID > 0  & Permutations.Count > 0))
         {
           // calc permutations
           if (combinationCaseResults == null)
@@ -465,7 +471,7 @@ namespace GsaGH.Components
           combinationCaseResult = combinationCaseResults[CaseID];
           tempNodeResult = combinationCaseResult.NodeResults(tempNodeID.ToString());
           int nP = tempNodeResult[tempNodeResult.Keys.First()].Count;
-
+          Permutations = Enumerable.Range(1, nP).ToList();
           if (ResultType == GsaResult.ResultType.Combination & updatePermutations)
           {
             if (dropdownitems.Count < 3)
@@ -562,6 +568,15 @@ namespace GsaGH.Components
               {
                 if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, key)))
                 {
+                  // update number of permutations in case
+                  if (selecteditems[2].ToLower() == "all")
+                  {
+                    combinationCaseResult = combinationCaseResults[key];
+                    tempNodeResult = combinationCaseResult.NodeResults(tempNodeID.ToString());
+                    int nP = tempNodeResult[tempNodeResult.Keys.First()].Count;
+                    Permutations = Enumerable.Range(1, nP).ToList();
+                  }
+                  
                   Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, key),
                       new GsaResult(gsaModel.Model, combinationCaseResults[key], key, Permutations));
                 }
@@ -578,10 +593,11 @@ namespace GsaGH.Components
         {
           // in case all results are selected
           List<GsaResultGoo> results = new List<GsaResultGoo>();
-          List<Tuple<GsaResult.ResultType, int>> combinations = Result.Keys.ToList();
-          List<int> caseIds = combinations.Where(x => x.Item1 == ResultType).Select(x => x.Item2).ToList();
-          foreach (int id in caseIds)
+          List<int> caseIDs = Result.Keys.Where(x => x.Item1 == ResultType).Select(x => x.Item2).ToList();
+          caseIDs.Sort();
+          foreach (int id in caseIDs)
             results.Add(new GsaResultGoo(Result[new Tuple<GsaResult.ResultType, int>(ResultType, id)]));
+          
           DA.SetDataList(0, results);
         }
       }

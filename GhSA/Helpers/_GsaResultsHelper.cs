@@ -239,6 +239,12 @@ namespace GsaGH.Util.Gsa
       IQuantity xyz = new Force(new Force(pyth, ForceUnit.Newton).As(unit), unit);
       return new GsaResultQuantity() { X = x, Y = y, Z = z, XYZ = xyz };
     }
+    internal static GsaResultQuantity GetQuantityResult(double result, EnergyUnit unit)
+    {
+      IQuantity x = new Energy(new Energy(result, EnergyUnit.Joule).As(unit), unit);
+      
+      return new GsaResultQuantity() { X = x };
+    }
     internal static GsaResultQuantity GetQuantityResult(Double6 result, MomentUnit unit, bool isBeam = false)
     {
       IQuantity xx = new Moment(new Moment(result.XX, MomentUnit.NewtonMeter).As(unit), unit);
@@ -661,6 +667,52 @@ namespace GsaGH.Util.Gsa
               // add the vector list to the out tree
         r.xyzResults.TryAdd(key, xyzRes);
         r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+      });
+
+      r.UpdateMinMax();
+
+      return r;
+    }
+    /// <summary>
+    /// Returns strain energy density result values
+    /// </summary>
+    /// <param name="globalResults"></param>
+    /// <param name="energyUnit"></param>
+    /// <returns></returns>
+    internal static GsaResultsValues GetElement1DResultValues(ReadOnlyDictionary<int, Element1DResult> globalResults,
+        EnergyUnit energyUnit, bool average = false)
+    {
+      GsaResultsValues r = new GsaResultsValues();
+      r.Type = GsaResultsValues.ResultType.StrainEnergy;
+
+      Parallel.ForEach(globalResults.Keys, key =>
+      {
+        // lists for results
+        Element1DResult elementResults = globalResults[key];
+        List<double> values = new List<double>();
+        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xyzRes.AsParallel().AsOrdered();
+
+        if (average)
+        {
+          xyzRes[0] = GetQuantityResult(elementResults.AverageStrainEnergyDensity, energyUnit);
+          r.xyzResults.TryAdd(key, xyzRes);
+        }
+        else
+        {
+          values = elementResults.StrainEnergyDensity.ToList();
+
+          // loop through the results
+          Parallel.For(0, values.Count, i =>
+          {
+            double result = values[i];
+
+            // add the values to the vector lists
+            xyzRes[i] = GetQuantityResult(result, energyUnit);
+          });
+          // add the vector list to the out tree
+          r.xyzResults.TryAdd(key, xyzRes);
+        }
       });
 
       r.UpdateMinMax();
@@ -1174,6 +1226,63 @@ namespace GsaGH.Util.Gsa
           // add the vector list to the out tree
           r.xyzResults.TryAdd(key, xyzRes);
           r.xxyyzzResults.TryAdd(key, xxyyzzRes);
+        });
+        r.UpdateMinMax();
+        rs.TryAdd(permutationID, r);
+      });
+
+      return rs;
+    }
+
+    /// <summary>
+    /// Returns strain energy density result values
+    /// </summary>
+    /// <param name="globalResults"></param>
+    /// <param name="energyUnit"></param>
+    /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
+    /// <returns></returns>
+    internal static ConcurrentDictionary<int, GsaResultsValues> GetElement1DResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>> globalResults,
+        EnergyUnit energyUnit, List<int> permutations, bool average = false)
+    {
+      ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
+
+      if (permutations.Count == 0)
+        permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count).ToList();
+      int permutationCount = permutations.Count;
+
+      Parallel.For(0, permutationCount, index => // loop through permutations
+      {
+        int permutationID = permutations[index];
+        GsaResultsValues r = new GsaResultsValues();
+        r.Type = GsaResultsValues.ResultType.StrainEnergy;
+
+        Parallel.ForEach(globalResults.Keys, key =>
+        {
+          // lists for results
+          ReadOnlyCollection<Element1DResult> results = globalResults[key];
+          Element1DResult result = results[permutationID - 1];
+          ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+          xyzRes.AsParallel().AsOrdered();
+          
+          if (average)
+          {
+            xyzRes.TryAdd(0, GetQuantityResult(result.AverageStrainEnergyDensity, energyUnit));
+            r.xyzResults.TryAdd(key, xyzRes);
+          }
+          else
+          {
+            ReadOnlyCollection<double> values = result.StrainEnergyDensity;
+            if (values.Count == 0) { return; }
+
+            // loop through the results
+            Parallel.For(0, values.Count, i =>
+            {
+              // add the values to the vector lists
+              xyzRes.TryAdd(i, GetQuantityResult(values[i], energyUnit));
+            });
+            // add the vector list to the out tree
+            r.xyzResults.TryAdd(key, xyzRes);
+          }
         });
         r.UpdateMinMax();
         rs.TryAdd(permutationID, r);
