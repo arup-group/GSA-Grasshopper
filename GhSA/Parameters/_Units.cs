@@ -59,7 +59,7 @@ namespace GsaGH
     {
       get
       {
-        if (useRhinoLengthGeometryUnit)
+        if (useRhinoTolerance)
           return GetRhinoTolerance();
         else
           return m_tolerance;
@@ -67,7 +67,7 @@ namespace GsaGH
       set { m_tolerance = value; }
     }
     private static Length m_tolerance = new Length(1, LengthUnit.Centimeter);
-
+    internal static bool useRhinoTolerance;
     public static int SignificantDigits
     {
       get { return BitConverter.GetBytes(decimal.GetBits((decimal)m_tolerance.As(LengthUnitGeometry))[3])[2]; ; }
@@ -684,6 +684,7 @@ namespace GsaGH
     {
       Grasshopper.Instances.Settings.SetValue("GsaLengthUnitGeometry", LengthUnitGeometry.ToString());
       Grasshopper.Instances.Settings.SetValue("GsaUseRhinoLengthGeometryUnit", useRhinoLengthGeometryUnit);
+      Grasshopper.Instances.Settings.SetValue("GsaUseRhinoTolerance", useRhinoTolerance);
 
       Grasshopper.Instances.Settings.SetValue("GsaLengthUnitSection", LengthUnitSection.ToString());
 
@@ -703,7 +704,7 @@ namespace GsaGH
       Grasshopper.Instances.Settings.SetValue("GsaTemperatureUnit", TemperatureUnit.ToString());
       //Grasshopper.Instances.Settings.SetValue("GsaVelocityUnit", VelocityUnit.ToString());
       //Grasshopper.Instances.Settings.SetValue("GsaAccelerationUnit", AccelerationUnit.ToString());
-      //Grasshopper.Instances.Settings.SetValue("GsaEnergyUnit", EnergyUnit.ToString());
+      Grasshopper.Instances.Settings.SetValue("GsaEnergyUnit", EnergyUnit.ToString());
       //Grasshopper.Instances.Settings.SetValue("GsaTimeShortUnit", TimeShortUnit.ToString());
       //Grasshopper.Instances.Settings.SetValue("GsaTimeMediumUnit", TimeMediumUnit.ToString());
       //Grasshopper.Instances.Settings.SetValue("GsaTimeLongUnit", TimeLongUnit.ToString());
@@ -718,11 +719,12 @@ namespace GsaGH
 
       string lengthGeometry = Grasshopper.Instances.Settings.GetValue("GsaLengthUnitGeometry", string.Empty);
       useRhinoLengthGeometryUnit = Grasshopper.Instances.Settings.GetValue("GsaUseRhinoLengthGeometryUnit", false);
-
       string lengthSection = Grasshopper.Instances.Settings.GetValue("GsaLengthUnitSection", string.Empty);
-
       string lengthResult = Grasshopper.Instances.Settings.GetValue("GsaLengthUnitResult", string.Empty);
-
+      
+      useRhinoTolerance = useRhinoLengthGeometryUnit;
+      if (Grasshopper.Instances.Settings.ConstainsEntry("GsaUseRhinoTolerance"))
+        useRhinoTolerance = Grasshopper.Instances.Settings.GetValue("GsaUseRhinoTolerance", false);
       double tolerance = Grasshopper.Instances.Settings.GetValue("GsaTolerance", double.NaN);
 
       string force = Grasshopper.Instances.Settings.GetValue("GsaForceUnit", string.Empty);
@@ -737,7 +739,9 @@ namespace GsaGH
       string temperature = Grasshopper.Instances.Settings.GetValue("GsaTemperatureUnit", string.Empty);
       //string velocity = Grasshopper.Instances.Settings.GetValue("GsaVelocityUnit", string.Empty);
       //string acceleration = Grasshopper.Instances.Settings.GetValue("GsaAccelerationUnit", string.Empty);
-      //string energy = Grasshopper.Instances.Settings.GetValue("GsaEnergyUnit", string.Empty);
+      string energy = EnergyUnit.ToString();
+      if (Grasshopper.Instances.Settings.ConstainsEntry("GsaEnergyUnit"))
+        energy = Grasshopper.Instances.Settings.GetValue("GsaEnergyUnit", string.Empty);
       //string timeShort = Grasshopper.Instances.Settings.GetValue("GsaTimeShortUnit", string.Empty);
       //string timeMedium = Grasshopper.Instances.Settings.GetValue("GsaTimeMediumUnit", string.Empty);
       //string timeLong = Grasshopper.Instances.Settings.GetValue("GsaTimeLongUnit", string.Empty);
@@ -765,7 +769,7 @@ namespace GsaGH
       m_temperature = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), temperature);
       //m_velocity = (SpeedUnit)Enum.Parse(typeof(SpeedUnit), velocity);
       //m_acceleration = (AccelerationUnit)Enum.Parse(typeof(AccelerationUnit), acceleration);
-      //m_energy = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), energy);
+      m_energy = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), energy);
       //m_time_short = (DurationUnit)Enum.Parse(typeof(DurationUnit), timeShort);
       //m_time_medium = (DurationUnit)Enum.Parse(typeof(DurationUnit), timeMedium);
       //m_time_long = (DurationUnit)Enum.Parse(typeof(DurationUnit), timeLong);
