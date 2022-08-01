@@ -448,7 +448,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ACaseNodeReactionForceValues.Add(nodelist,
-              ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], forceUnit, momentUnit, supportnodeIDs));
+              ResultHelper.GetNodeReactionForceResultValues(ACaseNodeResults[nodelist], forceUnit, momentUnit, supportnodeIDs));
         }
         return new Tuple<List<GsaResultsValues>, List<int>>(
             new List<GsaResultsValues> { ACaseNodeReactionForceValues[nodelist] }, ACaseNodeReactionForceValues[nodelist].xyzResults.Keys.OrderBy(x => x).ToList());
@@ -464,7 +464,66 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboNodeReactionForceValues.Add(nodelist,
-              ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, SelectedPermutationIDs, supportnodeIDs));
+              ResultHelper.GetNodeReactionForceResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, SelectedPermutationIDs, supportnodeIDs));
+        }
+        return new Tuple<List<GsaResultsValues>, List<int>>(
+            new List<GsaResultsValues>(ComboNodeReactionForceValues[nodelist].Values), ComboNodeReactionForceValues[nodelist].Values.First().xyzResults.Keys.OrderBy(x => x).ToList());
+      }
+    }
+
+    /// <summary>
+    /// Get node displacement values 
+    /// For analysis case the length of the list will be 1
+    /// This method will use cache data if it exists
+    /// </summary>
+    /// <param name="nodelist"></param>
+    /// <param name="lengthUnit"></param>
+    /// <returns></returns>
+    internal Tuple<List<GsaResultsValues>, List<int>> SpringReactionForceValues(string nodelist, ForceUnit forceUnit, MomentUnit momentUnit)
+    {
+      // get list of support nodes
+      ConcurrentBag<int> supportnodeIDs = null;
+      if (nodelist.ToLower() == "all" | nodelist == "")
+      {
+        supportnodeIDs = new ConcurrentBag<int>();
+        ReadOnlyDictionary<int, Node> nodes = Model.Nodes();
+        Parallel.ForEach(nodes, node =>
+        {
+          NodalRestraint rest = node.Value.Restraint;
+          if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ)
+            supportnodeIDs.Add(node.Key);
+        });
+        nodelist = "All";
+      }
+
+      if (this.Type == ResultType.AnalysisCase)
+      {
+        if (!this.ACaseNodeReactionForceValues.ContainsKey(nodelist)) // see if values exist
+        {
+          if (!this.ACaseNodeResults.ContainsKey(nodelist)) // see if result exist
+          {
+            // if the results hasn't already been taken out and add them to our dictionary
+            this.ACaseNodeResults.Add(nodelist, AnalysisCaseResult.NodeResults(nodelist));
+          }
+          // compute result values and add to dictionary for cache
+          this.ACaseNodeReactionForceValues.Add(nodelist,
+              ResultHelper.GetNodeSpringForceResultValues(ACaseNodeResults[nodelist], forceUnit, momentUnit, supportnodeIDs));
+        }
+        return new Tuple<List<GsaResultsValues>, List<int>>(
+            new List<GsaResultsValues> { ACaseNodeReactionForceValues[nodelist] }, ACaseNodeReactionForceValues[nodelist].xyzResults.Keys.OrderBy(x => x).ToList());
+      }
+      else
+      {
+        if (!this.ComboNodeReactionForceValues.ContainsKey(nodelist)) // see if values exist
+        {
+          if (!this.ComboNodeResults.ContainsKey(nodelist)) // see if result exist
+          {
+            // if the results hasn't already been taken out and add them to our dictionary
+            this.ComboNodeResults.Add(nodelist, CombinationCaseResult.NodeResults(nodelist));
+          }
+          // compute result values and add to dictionary for cache
+          this.ComboNodeReactionForceValues.Add(nodelist,
+              ResultHelper.GetNodeSpringForceResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, SelectedPermutationIDs, supportnodeIDs));
         }
         return new Tuple<List<GsaResultsValues>, List<int>>(
             new List<GsaResultsValues>(ComboNodeReactionForceValues[nodelist].Values), ComboNodeReactionForceValues[nodelist].Values.First().xyzResults.Keys.OrderBy(x => x).ToList());

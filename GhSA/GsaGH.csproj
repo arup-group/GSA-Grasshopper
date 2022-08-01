@@ -126,6 +126,7 @@
     <Compile Include="Components\5_Results\Elem2dDisplacementResult.cs" />
     <Compile Include="Components\5_Results\BeamForceResult.cs" />
     <Compile Include="Components\5_Results\BeamDispResult.cs" />
+    <Compile Include="Components\5_Results\SpringReactionForceResult.cs" />
     <Compile Include="Components\5_Results\NodeReactionForceResult.cs" />
     <Compile Include="Components\5_Results\NodeDisplacementResult.cs" />
     <Compile Include="Components\5_Results\NodeContourResults.cs" />
@@ -638,6 +639,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\StrainEnergyDensity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\SpringReactionForces.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\LocalAxes.png" />

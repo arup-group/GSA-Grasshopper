@@ -798,7 +798,7 @@ namespace GsaGH.Util.Gsa
     /// <param name="forceUnit"></param>
     /// <param name="momentUnit"></param>
     /// <returns></returns>
-    internal static GsaResultsValues GetNodeResultValues(ReadOnlyDictionary<int, NodeResult> globalResults,
+    internal static GsaResultsValues GetNodeReactionForceResultValues(ReadOnlyDictionary<int, NodeResult> globalResults,
         ForceUnit forceUnit, MomentUnit momentUnit, ConcurrentBag<int> supportnodeIDs = null)
     {
       GsaResultsValues r = new GsaResultsValues();
@@ -808,6 +808,43 @@ namespace GsaGH.Util.Gsa
       {
         NodeResult result = globalResults[nodeID];
         Double6 values = result.Reaction;
+
+        if (supportnodeIDs != null && !supportnodeIDs.Contains(nodeID))
+        {
+          if (values.X == 0 & values.Y == 0 & values.Z == 0
+          & values.XX == 0 & values.YY == 0 & values.ZZ == 0)
+          { return; }
+        }
+
+        ConcurrentDictionary<int, GsaResultQuantity> xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xyz.TryAdd(0, GetQuantityResult(values, forceUnit));
+        r.xyzResults.TryAdd(nodeID, xyz);
+        ConcurrentDictionary<int, GsaResultQuantity> xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
+        xxyyzz.TryAdd(0, GetQuantityResult(values, momentUnit));
+        r.xxyyzzResults.TryAdd(nodeID, xxyyzz);
+      });
+
+      r.UpdateMinMax();
+
+      return r;
+    }
+    /// <summary>
+    /// Returns spring reaction forces result values
+    /// </summary>
+    /// <param name="globalResults"></param>
+    /// <param name="forceUnit"></param>
+    /// <param name="momentUnit"></param>
+    /// <returns></returns>
+    internal static GsaResultsValues GetNodeSpringForceResultValues(ReadOnlyDictionary<int, NodeResult> globalResults,
+        ForceUnit forceUnit, MomentUnit momentUnit, ConcurrentBag<int> supportnodeIDs = null)
+    {
+      GsaResultsValues r = new GsaResultsValues();
+      r.Type = GsaResultsValues.ResultType.Force;
+
+      Parallel.ForEach(globalResults.Keys, nodeID =>
+      {
+        NodeResult result = globalResults[nodeID];
+        Double6 values = result.SpringForce;
 
         if (supportnodeIDs != null && !supportnodeIDs.Contains(nodeID))
         {
@@ -1356,7 +1393,7 @@ namespace GsaGH.Util.Gsa
     /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
     /// <param name="supportnodeIDs">bag of support node IDs, if input contains ids then this method will test all nodes and include results for these IDs even if they are all zero</param>
     /// <returns></returns>
-    internal static ConcurrentDictionary<int, GsaResultsValues> GetNodeResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults,
+    internal static ConcurrentDictionary<int, GsaResultsValues> GetNodeReactionForceResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults,
         ForceUnit forceUnit, MomentUnit momentUnit, List<int> permutations, ConcurrentBag<int> supportnodeIDs = null)
     {
       ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
@@ -1382,6 +1419,57 @@ namespace GsaGH.Util.Gsa
             if (values.X == 0 & values.Y == 0 & values.Z == 0
             & values.XX == 0 & values.YY == 0 & values.ZZ == 0)
             { return ; }
+          }
+
+          ConcurrentDictionary<int, GsaResultQuantity> xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
+          xyz.TryAdd(0, GetQuantityResult(values, forceUnit));
+          r.xyzResults.TryAdd(nodeID, xyz);
+          ConcurrentDictionary<int, GsaResultQuantity> xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
+          xxyyzz.TryAdd(0, GetQuantityResult(values, momentUnit));
+          r.xxyyzzResults.TryAdd(nodeID, xxyyzz);
+        });
+
+        r.UpdateMinMax();
+        rs.TryAdd(permutationID, r);
+      });
+
+      return rs;
+    }
+    /// <summary>
+    /// Returns spring reaction forces result values
+    /// </summary>
+    /// <param name="globalResults"></param>
+    /// <param name="forceUnit"></param>
+    /// <param name="momentUnit"></param>
+    /// <param name="permutations">list of permutations, input an empty list to get all permutations</param>
+    /// <param name="supportnodeIDs">bag of support node IDs, if input contains ids then this method will test all nodes and include results for these IDs even if they are all zero</param>
+    /// <returns></returns>
+    internal static ConcurrentDictionary<int, GsaResultsValues> GetNodeSpringForceResultValues(ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> globalResults,
+        ForceUnit forceUnit, MomentUnit momentUnit, List<int> permutations, ConcurrentBag<int> supportnodeIDs = null)
+    {
+      ConcurrentDictionary<int, GsaResultsValues> rs = new ConcurrentDictionary<int, GsaResultsValues>();
+
+      if (permutations.Count == 0)
+        permutations = Enumerable.Range(1, globalResults[globalResults.Keys.First()].Count).ToList();
+      int permutationCount = permutations.Count;
+
+      Parallel.For(0, permutationCount, index =>
+      {
+        int permutationID = permutations[index];
+        GsaResultsValues r = new GsaResultsValues();
+        r.Type = GsaResultsValues.ResultType.Force;
+
+        Parallel.ForEach(globalResults.Keys, nodeID =>
+        {
+          ReadOnlyCollection<NodeResult> results = globalResults[nodeID];
+          NodeResult result = results[permutationID - 1];
+          Double6 values = result.SpringForce;
+
+          if (supportnodeIDs != null && !supportnodeIDs.Contains(nodeID))
+          {
+            if (values.X == 0 & values.Y == 0 & values.Z == 0
+            & values.XX == 0 & values.YY == 0 & values.ZZ == 0)
+            { return; }
           }
 
           ConcurrentDictionary<int, GsaResultQuantity> xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
