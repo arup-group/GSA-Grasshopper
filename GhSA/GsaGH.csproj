@@ -110,6 +110,7 @@
     <Compile Include="Components\1_Properties\MaterialProperties.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
     <Compile Include="Components\1_Properties\CreateMaterial.cs" />
+    <Compile Include="Components\2_Geometry\LocalAxis.cs" />
     <Compile Include="Components\4_Analysis\CreateCombinationCase.cs" />
     <Compile Include="Components\4_Analysis\EditAnalysisTask.cs" />
     <Compile Include="Components\4_Analysis\AnalysisCaseInfo.cs" />
@@ -641,6 +642,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\SpringReactionForces.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\LocalAxes.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
