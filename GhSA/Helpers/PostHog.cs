@@ -39,7 +39,6 @@ namespace GsaGH.Helpers
                 thisUser.email = task.Result.GetHashCode().ToString();
                 thisUser.userName = thisUser.userName.GetHashCode().ToString();
               }  
-              
             }
             else
             {
