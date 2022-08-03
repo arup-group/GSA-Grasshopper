@@ -32,16 +32,21 @@ namespace GsaGH.Helpers
             var task = Task.Run(() => UserPrincipal.Current.EmailAddress);
             if (task.Wait(TimeSpan.FromSeconds(2)))
             {
-              thisUser.email = task.Result;
-              if (!thisUser.email.EndsWith("arup.com"))
-                thisUser.userName = "External";
+              if (task.Result.EndsWith("arup.com"))
+                thisUser.email = task.Result;
+              else
+              {
+                thisUser.email = task.Result.GetHashCode().ToString();
+                thisUser.userName = thisUser.userName.GetHashCode().ToString();
+              }  
+              
             }
             else
             {
               if (Environment.UserDomainName.ToLower() == "global")
                 thisUser.email = thisUser.userName + "@arup.com";
               else
-                thisUser.userName = "External";
+                thisUser.userName = thisUser.userName.GetHashCode().ToString();
             }
           }
           catch (Exception)
@@ -49,7 +54,7 @@ namespace GsaGH.Helpers
             if (Environment.UserDomainName.ToLower() == "global")
               thisUser.email = thisUser.userName + "@arup.com";
             else
-              thisUser.userName = "External";
+              thisUser.userName = thisUser.userName.GetHashCode().ToString();
           }
         }
         return thisUser;
@@ -110,7 +115,15 @@ namespace GsaGH.Helpers
     public static void PluginLoaded()
     {
       string eventName = "PluginLoaded";
-      _ = PostHog.SendToPostHog(eventName);
+
+      Dictionary<string, object> properties = new Dictionary<string, object>()
+        {
+          { "rhinoVersion", Rhino.RhinoApp.Version.ToString().Split('.')[0] 
+          + "." + Rhino.RhinoApp.Version.ToString().Split('.')[1] },
+          { "rhinoMajorVersion", Rhino.RhinoApp.ExeVersion },
+          { "rhinoServiceRelease", Rhino.RhinoApp.ExeServiceRelease },
+        };
+      _ = PostHog.SendToPostHog(eventName, properties);
     }
 
     internal static void RemovedFromDocument(GH_Component component)
@@ -144,7 +157,5 @@ namespace GsaGH.Helpers
         this.ph_timestamp = DateTime.UtcNow;
       }
     }
-
-
   }
 }
