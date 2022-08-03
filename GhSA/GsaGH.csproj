@@ -110,11 +110,13 @@
     <Compile Include="Components\1_Properties\MaterialProperties.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />
     <Compile Include="Components\1_Properties\CreateMaterial.cs" />
+    <Compile Include="Components\2_Geometry\LocalAxis.cs" />
     <Compile Include="Components\4_Analysis\CreateCombinationCase.cs" />
     <Compile Include="Components\4_Analysis\EditAnalysisTask.cs" />
     <Compile Include="Components\4_Analysis\AnalysisCaseInfo.cs" />
     <Compile Include="Components\4_Analysis\CreateAnalysisCase.cs" />
     <Compile Include="Components\4_Analysis\CreateAnalysisTask.cs" />
+    <Compile Include="Components\5_Results\BeamStrainEnergyResult.cs" />
     <Compile Include="Components\5_Results\Elem1dContourResults.cs" />
     <Compile Include="Components\5_Results\Elem2dContourResults.cs" />
     <Compile Include="Components\5_Results\Elem3dStressResult.cs" />
@@ -124,6 +126,7 @@
     <Compile Include="Components\5_Results\Elem2dDisplacementResult.cs" />
     <Compile Include="Components\5_Results\BeamForceResult.cs" />
     <Compile Include="Components\5_Results\BeamDispResult.cs" />
+    <Compile Include="Components\5_Results\SpringReactionForceResult.cs" />
     <Compile Include="Components\5_Results\NodeReactionForceResult.cs" />
     <Compile Include="Components\5_Results\NodeDisplacementResult.cs" />
     <Compile Include="Components\5_Results\NodeContourResults.cs" />
@@ -633,6 +636,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\GsaLogo64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\StrainEnergyDensity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\SpringReactionForces.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\LocalAxes.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

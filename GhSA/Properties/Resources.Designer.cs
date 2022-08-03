@@ -823,6 +823,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap LocalAxes {
+            get {
+                object obj = ResourceManager.GetObject("LocalAxes", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap MaterialParam {
             get {
                 object obj = ResourceManager.GetObject("MaterialParam", resourceCulture);
@@ -1096,6 +1106,26 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap SpringParam {
             get {
                 object obj = ResourceManager.GetObject("SpringParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap StrainEnergyDensity {
+            get {
+                object obj = ResourceManager.GetObject("StrainEnergyDensity", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap SpringReactionForces {
+            get {
+                object obj = ResourceManager.GetObject("SpringReactionForces", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

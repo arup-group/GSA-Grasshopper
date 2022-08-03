@@ -74,7 +74,13 @@ namespace GsaGH.Parameters
         UpdatePreview();
       }
     }
-
+    internal Tuple<Vector3d, Vector3d, Vector3d> LocalAxes
+    {
+      get
+      {
+        return UI.Display.GetLocalPlane(m_crv, m_crv.GetLength() / 2, m_member.OrientationAngle * Math.PI / 180.0);
+      }
+    }
     public GsaSection Section
     {
       get { return m_section; }
