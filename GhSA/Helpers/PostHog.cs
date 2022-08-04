@@ -7,74 +7,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Newtonsoft.Json;
-using static GsaGH.Helpers.PostHogUser;
 
 namespace GsaGH.Helpers
 {
-  public static class PostHogUser
-  {
-    public class User
-    {
-      public string email { get; set; }
-      public string userName { get; set; }
-    }
-    private static User thisUser = null;
-    public static User CurrentUser 
-    { 
-      get
-      {
-        if (thisUser == null)
-        {
-          thisUser = new User();
-          thisUser.userName = Environment.UserName.ToLower();
-          try
-          {
-            var task = Task.Run(() => UserPrincipal.Current.EmailAddress);
-            if (task.Wait(TimeSpan.FromSeconds(2)))
-            {
-              if (task.Result.EndsWith("arup.com"))
-                thisUser.email = task.Result;
-              else
-              {
-                thisUser.email = task.Result.GetHashCode().ToString();
-                thisUser.userName = thisUser.userName.GetHashCode().ToString();
-              }  
-            }
-            else
-            {
-              if (Environment.UserDomainName.ToLower() == "global")
-                thisUser.email = thisUser.userName + "@arup.com";
-              else
-                thisUser.userName = thisUser.userName.GetHashCode().ToString();
-            }
-          }
-          catch (Exception)
-          {
-            if (Environment.UserDomainName.ToLower() == "global")
-              thisUser.email = thisUser.userName + "@arup.com";
-            else
-              thisUser.userName = thisUser.userName.GetHashCode().ToString();
-          }
-        }
-        return thisUser;
-      }
-    }
-  }
-  public static class PostHog
+  public class PostHog
   {
     private static HttpClient _phClient = new HttpClient();
+    internal static User CurrentUser = new User();
 
     public static async Task<HttpResponseMessage> SendToPostHog(string eventName, Dictionary<string, object> additionalProperties = null)
     {
       // posthog ADS plugin requires a user object
-      User user = PostHogUser.CurrentUser;
+      User user = CurrentUser;
 
       Dictionary<string, object> properties = new Dictionary<string, object>() {
         { "distinct_id", user.userName },
         { "user", user },
-        { "pluginName", GsaGH.GsaGHInfo.PluginName },
-        { "version", GsaGH.GsaGHInfo.Vers },
-        { "isBeta", GsaGH.GsaGHInfo.isBeta },
+        { "pluginName", GsaGHInfo.PluginName },
+        { "version", GsaGHInfo.Vers },
+        { "isBeta", GsaGHInfo.isBeta },
       };
 
       if (additionalProperties != null)
@@ -117,8 +68,8 @@ namespace GsaGH.Helpers
 
       Dictionary<string, object> properties = new Dictionary<string, object>()
         {
-          { "rhinoVersion", Rhino.RhinoApp.Version.ToString().Split('.')[0] 
-          + "." + Rhino.RhinoApp.Version.ToString().Split('.')[1] },
+          { "rhinoVersion", Rhino.RhinoApp.Version.ToString().Split('.')
+             + "." + Rhino.RhinoApp.Version.ToString().Split('.')[1] },
           { "rhinoMajorVersion", Rhino.RhinoApp.ExeVersion },
           { "rhinoServiceRelease", Rhino.RhinoApp.ExeServiceRelease },
         };
@@ -154,7 +105,39 @@ namespace GsaGH.Helpers
         this.ph_event = eventName;
         this.properties = properties;
         this.ph_timestamp = DateTime.UtcNow;
+
       }
+    }
+  }
+  internal class User
+  {
+    public string email { get; set; }
+    public string userName { get; set; }
+
+    internal User()
+    {
+      userName = Environment.UserName.ToLower();
+      try
+      {
+        var task = Task.Run(() => UserPrincipal.Current.EmailAddress);
+        if (task.Wait(TimeSpan.FromSeconds(2)))
+        {
+          if (task.Result.EndsWith("arup.com"))
+            email = task.Result;
+          else
+          {
+            email = task.Result.GetHashCode().ToString();
+            userName = userName.GetHashCode().ToString();
+          }
+          return;
+        }
+      }
+      catch (Exception) { }
+
+      if (Environment.UserDomainName.ToLower() == "global")
+        email = userName + "@arup.com";
+      else
+        userName = userName.GetHashCode().ToString();
     }
   }
 }
