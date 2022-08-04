@@ -10,26 +10,22 @@ using Newtonsoft.Json;
 
 namespace GsaGH.Helpers
 {
-  public static class PostHog
+  public class PostHog
   {
     private static HttpClient _phClient = new HttpClient();
+    internal static User CurrentUser = new User();
 
     public static async Task<HttpResponseMessage> SendToPostHog(string eventName, Dictionary<string, object> additionalProperties = null)
     {
       // posthog ADS plugin requires a user object
-      User user = new User();
-      user.email = UserPrincipal.Current.EmailAddress; // case sensitive
-
-      string userName = Environment.UserName;
-      if (!user.email.EndsWith("arup.com"))
-        userName = "External";
+      User user = CurrentUser;
 
       Dictionary<string, object> properties = new Dictionary<string, object>() {
-        { "distinct_id", userName },
+        { "distinct_id", user.userName },
         { "user", user },
-        { "pluginName", GsaGH.GsaGHInfo.PluginName },
-        { "version", GsaGH.GsaGHInfo.Vers },
-        { "isBeta", GsaGH.GsaGHInfo.isBeta },
+        { "pluginName", GsaGHInfo.PluginName },
+        { "version", GsaGHInfo.Vers },
+        { "isBeta", GsaGHInfo.isBeta },
       };
 
       if (additionalProperties != null)
@@ -69,7 +65,15 @@ namespace GsaGH.Helpers
     public static void PluginLoaded()
     {
       string eventName = "PluginLoaded";
-      _ = PostHog.SendToPostHog(eventName);
+
+      Dictionary<string, object> properties = new Dictionary<string, object>()
+        {
+          { "rhinoVersion", Rhino.RhinoApp.Version.ToString().Split('.')
+             + "." + Rhino.RhinoApp.Version.ToString().Split('.')[1] },
+          { "rhinoMajorVersion", Rhino.RhinoApp.ExeVersion },
+          { "rhinoServiceRelease", Rhino.RhinoApp.ExeServiceRelease },
+        };
+      _ = PostHog.SendToPostHog(eventName, properties);
     }
 
     internal static void RemovedFromDocument(GH_Component component)
@@ -101,12 +105,39 @@ namespace GsaGH.Helpers
         this.ph_event = eventName;
         this.properties = properties;
         this.ph_timestamp = DateTime.UtcNow;
+
       }
     }
+  }
+  internal class User
+  {
+    public string email { get; set; }
+    public string userName { get; set; }
 
-    private class User
+    internal User()
     {
-      public string email { get; set; }
+      userName = Environment.UserName.ToLower();
+      try
+      {
+        var task = Task.Run(() => UserPrincipal.Current.EmailAddress);
+        if (task.Wait(TimeSpan.FromSeconds(2)))
+        {
+          if (task.Result.EndsWith("arup.com"))
+            email = task.Result;
+          else
+          {
+            email = task.Result.GetHashCode().ToString();
+            userName = userName.GetHashCode().ToString();
+          }
+          return;
+        }
+      }
+      catch (Exception) { }
+
+      if (Environment.UserDomainName.ToLower() == "global")
+        email = userName + "@arup.com";
+      else
+        userName = userName.GetHashCode().ToString();
     }
   }
 }
