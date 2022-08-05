@@ -644,6 +644,9 @@
     <None Include="Properties\Icons\SpringReactionForces.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\Icons\StrainEnergyDensity.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Properties\Icons\LocalAxes.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

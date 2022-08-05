@@ -147,7 +147,10 @@ namespace GsaGH.Components
       DA.SetData(0, new GsaProp2dGoo(prop));
       DA.SetData(1, prop.ID);
       DA.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
-      DA.SetData(3, new GH_UnitNumber(prop.Thickness));
+      if (prop.API_Prop2d.Description == "")
+        DA.SetData(3, new GH_UnitNumber(Length.Zero));
+      else
+        DA.SetData(3, new GH_UnitNumber(prop.Thickness));
       DA.SetData(4, ax);
       DA.SetData(5, nm);
       DA.SetData(6, colour);

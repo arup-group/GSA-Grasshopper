@@ -65,21 +65,33 @@ namespace GsaGH.Components
         switch (selecteditems[i])
         {
           case "Plane Stress":
+            if (dropdownitems.Count < 2)
+              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
             Mode1Clicked();
             break;
           case "Fabric":
+            if (dropdownitems.Count > 1)
+              dropdownitems.RemoveAt(1); // remove length unit dropdown
             Mode2Clicked();
             break;
           case "Flat Plate":
+            if (dropdownitems.Count < 2)
+              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
             Mode3Clicked();
             break;
           case "Shell":
+            if (dropdownitems.Count < 2)
+              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
             Mode4Clicked();
             break;
           case "Curved Shell":
+            if (dropdownitems.Count < 2)
+              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
             Mode5Clicked();
             break;
           case "Load Panel":
+            if (dropdownitems.Count > 1)
+              dropdownitems.RemoveAt(1); // remove length unit dropdown
             Mode6Clicked();
             break;
         }
@@ -380,7 +392,7 @@ namespace GsaGH.Components
       try// if users has an old version of this component then dropdown menu wont read
       {
         Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
+        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0].Replace(" ", string.Empty));
         lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[1]);
       }
       catch (Exception)
