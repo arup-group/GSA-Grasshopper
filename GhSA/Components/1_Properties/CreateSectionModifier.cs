@@ -123,16 +123,7 @@ namespace GsaGH.Components
     {
       if (toMode)
       {
-        densityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), selecteditems[1]);
-        if (selecteditems[2] == stressOptions[0])
-          stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-        if (selecteditems[2] == stressOptions[1])
-          stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-        if (selecteditems[2] == stressOptions[2])
-          stressOption = GsaSectionModifier.StressOptionType.UseModified;
-      }
-      else
-      {
+
         lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[1]);
         densityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), selecteditems[2]);
         if (selecteditems[3] == stressOptions[0])
@@ -140,6 +131,16 @@ namespace GsaGH.Components
         if (selecteditems[3] == stressOptions[1])
           stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
         if (selecteditems[3] == stressOptions[2])
+          stressOption = GsaSectionModifier.StressOptionType.UseModified;
+      }
+      else
+      {
+        densityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), selecteditems[1]);
+        if (selecteditems[2] == stressOptions[0])
+          stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+        if (selecteditems[2] == stressOptions[1])
+          stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+        if (selecteditems[2] == stressOptions[2])
           stressOption = GsaSectionModifier.StressOptionType.UseModified;
       }
 
@@ -258,7 +259,7 @@ namespace GsaGH.Components
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
     {
       GsaGH.Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      writer.SetBoolean("byMode", toMode);
+      writer.SetBoolean("toMode", toMode);
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
