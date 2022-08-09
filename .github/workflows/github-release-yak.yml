@@ -1,4 +1,4 @@
-name: Push AdSecGH yak package
+name: Push GsaGH yak package
 
 # On run when release is published
 on:
