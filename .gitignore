@@ -353,3 +353,4 @@ dist/*
 /IntegrationTests/bin
 /IntegrationTests/obj
 
+/GhSA/bin/x64/Release
