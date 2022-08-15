@@ -667,13 +667,16 @@ namespace GsaGH
     private static BaseUnits SI = UnitsNet.UnitSystem.SI.BaseUnits;
 
     #region methods
-    internal static void SetupUnitsDuringLoad()
+    public static void SetupUnitsDuringLoad(bool headless = false)
     {
       bool settingsExist = ReadSettings();
       if (!settingsExist)
       {
         // get rhino document length unit
-        m_length_geometry = GetRhinoLengthUnit(RhinoDoc.ActiveDoc.ModelUnitSystem);
+        if (headless)
+          m_length_geometry = LengthUnit.Meter;
+        else
+          m_length_geometry = GetRhinoLengthUnit(RhinoDoc.ActiveDoc.ModelUnitSystem);
         m_length_section = LengthUnit.Centimeter;
         m_length_result = LengthUnit.Millimeter;
 
