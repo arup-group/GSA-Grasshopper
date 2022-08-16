@@ -289,6 +289,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="licenses\Newtonsoft" />
+    <None Include="licenses\UnitsNet" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
