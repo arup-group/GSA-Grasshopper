@@ -1,0 +1,26 @@
+name: Push GsaGH yak package
+
+# On run when release is published
+on:
+  release:
+    types: [published]
+
+jobs:
+  pushYakPackage:
+    runs-on: windows-latest
+    env:
+      YAK_TOKEN: ${{ secrets.YAK_TOKEN }} 
+    steps:
+      - name: Download yak Package
+        uses: i3h/download-release-asset@v1
+        with:
+          owner: ${{ github.repository_owner }}
+          repo: GSA-Grasshopper
+          tag: ${{ github.event.release.tag_name }}
+          file: /.*\.yak/
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push yak file
+        run: |
+          curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
+          ls *.yak |% {.\yak push $_.FullName}

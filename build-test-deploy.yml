@@ -3,7 +3,8 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger: none
+trigger:
+- master
 
 variables:
   - group: s3PushInstallers
@@ -16,7 +17,6 @@ variables:
 pool: 'vs17_2'
 
 steps:
-
 - powershell: aws s3 cp s3://oasys-installer-store/$(latest_released_gsa_version).msi .\gsa.msi
   displayName: 'Download GSA'
   failOnStderr: true
@@ -71,6 +71,39 @@ steps:
 #  displayName: Upload Code Coverage to codecovio
 #  failOnStderr: true
 
+- task: PowerShell@2
+  displayName: Check for existing tags
+  inputs:
+    targetType: 'inline'
+    script: |
+        $versionInfo = $(Get-Item .\GhSA\bin\x64\Release\GsaGH.dll).VersionInfo
+        echo $versionInfo
+        $fullVersion = [array]${versionInfo}.FileVersion.split('.')
+        $currentTime = $(Get-Date -Format "dddd MM/dd/yyyy HH:mm")
+        $majorVersion = [string]$fullVersion[0]
+        $minorVersion = [string]$fullVersion[1]
+        $spVersion = [string]$fullVersion[2]
+        $buildNumber = [string]$fullVersion[3]
+
+        $tag = [array]@($exeName,$majorVersion,$minorVersion,$spVersion,$buildNumber)
+        $tagNumbersOnly = [array]@($majorVersion,$minorVersion,$spVersion,$buildNumber)
+
+        $dotSeparatedTag = $majorVersion + "." + $minorVersion + "." + $spVersion + "-beta"
+        $underscoreSeparatedTag = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
+        $tagNumbersOnlyUnderscore = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
+        $tagNumbersOnlydot = $majorVersion + "." + $minorVersion + "." + $spVersion + "." + $buildNumber
+        
+        Write-Host ("##vso[task.setvariable variable=dotSeparatedTag]$dotSeparatedTag")
+        git rev-parse $dotSeparatedTag
+        if($lastExitCode -eq 0){Write-Host ("##vso[task.setvariable variable=TAG_EXISTS]true")}
+        if($lastExitCode -eq 0){
+          $tagExists = 'true'
+          echo $tagExists
+        }
+    errorActionPreference: 'continue'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    ignoreLASTEXITCODE: true
+
 - powershell: |
     cd GhSA\bin\x64
     curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
@@ -83,23 +116,39 @@ steps:
     $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
     Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
     ..\yak build --platform win
-    cd ..
-    ls Release\*.yak |% {.\yak push $_.FullName}
-  env:
-    YAK_TOKEN: $(YAK_TOKEN)
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables.isRelease, 'true'))
-  displayName: Deploy yak package 
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables.TAG_EXISTS, 'true'))
+  displayName: Package yak
 
-# copied from github, won´t work, see https://docs.microsoft.com/en-gb/azure/devops/pipelines/artifacts/nuget?view=azure-devops&tabs=yaml
-#- powershell: |
-#    nuget pack package -Version ${{ github.event.release.tag_name }}
-#  displayName: Create NuGet package
+- task: NuGetCommand@2
+  inputs:
+    command: 'pack'
+    packagesToPack: 'GhSA/*.csproj'
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'dotSeparatedTag'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables.TAG_EXISTS, 'true'))
+  displayName: Package NuGet
 
-#- powershell: |
-#    dotnet nuget update source oasys-software-libraries --username "unused" --password "${{ secrets.DEVOPS_TOKEN }}" --configfile nuget.config
-#    dotnet nuget push "*.nupkg" --api-key AzureDevOps
-#  displayName: Push NuGet package
-
+- task: GitHubRelease@1
+  inputs:
+    gitHubConnection: 'github.com_peterjgrainger'
+    repositoryName: 'arup-group/GSA-Grasshopper'
+    action: 'edit'
+    target: '$(Build.SourceVersion)'
+    tag: '$(dotSeparatedTag)'
+    title: 'GsaGH version $(dotSeparatedTag)'
+    releaseNotesSource: 'inline'
+    releaseNotesInline: |
+      Created from commit https://github.com/arup-group/GSA-Grasshopper/commit/$(Build.SourceVersion)
+    assets: |
+      $(System.DefaultWorkingDirectory)/**/*.yak
+      $(Build.ArtifactStagingDirectory)/**/*.nupkg
+      $(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg
+    assetUploadMode: 'replace'
+    isDraft: true
+    isPreRelease: true
+    addChangeLog: false
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables.TAG_EXISTS, 'true'))
+  displayName: 'Publishing assets to Github'
 
 - powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
