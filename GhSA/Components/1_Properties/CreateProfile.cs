@@ -841,22 +841,72 @@ namespace GsaGH.Components
                 return;
               }
 
-              Point3d origin = new Point3d(ctrl_pts[0]);
-              double x1 = ctrl_pts[ctrl_pts.Count - 2].X - origin.X;
-              double y1 = ctrl_pts[ctrl_pts.Count - 2].Y - origin.Y;
-              double z1 = ctrl_pts[ctrl_pts.Count - 2].Z - origin.Z;
-              Vector3d xDirection = new Vector3d(x1, y1, z1);
-              xDirection.Unitize();
+              bool localPlaneNotSet = true;
+              Plane plane = Plane.Unset;
+              if (DA.GetData(1, ref plane))
+                localPlaneNotSet = false;
 
-              double x2 = ctrl_pts[1].X - origin.X;
-              double y2 = ctrl_pts[1].Y - origin.Y;
-              double z2 = ctrl_pts[1].Z - origin.Z;
-              Vector3d yDirection = new Vector3d(x2, y2, z2);
-              yDirection.Unitize();
+              Point3d origin = new Point3d();
+              if (localPlaneNotSet)
+              {
+                foreach (Point3d p in ctrl_pts)
+                {
+                  origin.X += p.X;
+                  origin.Y += p.Y;
+                  origin.Z += p.Z;
+                }
+                origin.X = origin.X / ctrl_pts.Count;
+                origin.Y = origin.Y / ctrl_pts.Count;
+                origin.Z = origin.Z / ctrl_pts.Count;
 
-              Plane plane = new Plane(Point3d.Origin, xDirection, yDirection);
+                Plane.FitPlaneToPoints(ctrl_pts, out plane);
+
+                Vector3d xDirection = new Vector3d(
+                  Math.Abs(plane.XAxis.X),
+                  Math.Abs(plane.XAxis.Y),
+                  Math.Abs(plane.XAxis.Z));
+                xDirection.Unitize();
+                Vector3d yDirection = new Vector3d(
+                  Math.Abs(plane.YAxis.X),
+                  Math.Abs(plane.YAxis.Y),
+                  Math.Abs(plane.YAxis.Z));
+                xDirection.Unitize();
+
+                Vector3d normal = plane.Normal;
+                normal.Unitize();
+                if (normal.X == 1)
+                  plane = Plane.WorldYZ;
+                else if (normal.Y == 1)
+                  plane = Plane.WorldZX;
+                else if (normal.Z == 1)
+                  plane = Plane.WorldXY;
+                else
+                  plane = new Plane(Point3d.Origin, xDirection, yDirection);
+                plane.Origin = origin;
+
+                //double x1 = ctrl_pts[ctrl_pts.Count - 2].X - origin.X;
+                //double y1 = ctrl_pts[ctrl_pts.Count - 2].Y - origin.Y;
+                //double z1 = ctrl_pts[ctrl_pts.Count - 2].Z - origin.Z;
+                //Vector3d xDirection = new Vector3d(x1, y1, z1);
+                //xDirection.Unitize();
+
+                //double x2 = ctrl_pts[1].X - origin.X;
+                //double y2 = ctrl_pts[1].Y - origin.Y;
+                //double z2 = ctrl_pts[1].Z - origin.Z;
+                //Vector3d yDirection = new Vector3d(x2, y2, z2);
+                //yDirection.Unitize();
+
+                //plane = new Plane(Point3d.Origin, xDirection, yDirection);
+              }
+              else
+              {
+                origin = plane.Origin;
+              }
+
               Transform translation = Transform.Translation(-origin.X, -origin.Y, -origin.Z);
               Transform rotation = Transform.ChangeBasis(Vector3d.XAxis, Vector3d.YAxis, Vector3d.ZAxis, plane.XAxis, plane.YAxis, plane.ZAxis);
+              if (localPlaneNotSet)
+                rotation = Transform.ChangeBasis(Vector3d.XAxis, Vector3d.YAxis, Vector3d.ZAxis, plane.YAxis, plane.XAxis, plane.ZAxis);
 
               perimeter.geoType = Profile.GeoTypes.Perim;
 
@@ -984,12 +1034,12 @@ namespace GsaGH.Components
       Params.OnParametersChanged();
       ExpireSolution(true);
     }
-    private void SetNumberOfGenericInputs(int inputs, bool isSecantPile = false)
+    private void SetNumberOfGenericInputs(int inputs, bool isSecantPile = false, bool isPerimeter = false)
     {
       numberOfInputs = inputs;
 
       // if last input previously was a bool and we no longer need that
-      if (lastInputWasSecant || isSecantPile)
+      if (lastInputWasSecant || isSecantPile || isPerimeter)
       {
         if (Params.Input.Count > 0)
         {
@@ -1020,8 +1070,19 @@ namespace GsaGH.Components
         Params.RegisterInputParam(new Param_Boolean());
         lastInputWasSecant = true;
       }
+      else
+        lastInputWasSecant = false;
+
+      if (isPerimeter)
+      {
+        Params.RegisterInputParam(new Param_Plane());
+        lastInputWasPerimeter = true;
+      }
+      else
+        lastInputWasPerimeter = false;
     }
     private bool lastInputWasSecant;
+    private bool lastInputWasPerimeter;
     private int numberOfInputs;
     // temporary 
     //private Type typ = typeof(IRectangleProfile);
@@ -1181,7 +1242,8 @@ namespace GsaGH.Components
       // IPerimeterProfile
       else if (typ == "IPerimeterProfile") //(typ.Name.Equals(typeof(IPerimeterProfile).Name))
       {
-        SetNumberOfGenericInputs(1);
+        SetNumberOfGenericInputs(1, false, true);
+
         //dup = IPerimeterProfile.Create();
         //solidPolygon;
         //voidPolygons;
@@ -1687,7 +1749,7 @@ namespace GsaGH.Components
           i++;
           Params.Input[i].NickName = "B";
           Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "Width of the rectangle, in loca y-axis direction.";
+          Params.Input[i].Description = "Width of the rectangle, in local y-axis direction.";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
           //dup = IRectangleProfile.Create(rectangle.Depth, rectangle.Width);
@@ -1886,6 +1948,16 @@ namespace GsaGH.Components
           Params.Input[i].Description = "Planar Brep or closed planar curve.";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
+
+          if (Params.Input.Count == 1) // handle backwards compatability
+            Params.RegisterInputParam(new Param_Plane());
+          
+          i++;
+          Params.Input[i].NickName = "P";
+          Params.Input[i].Name = "Plane";
+          Params.Input[i].Description = "Optional plane in which to project boundary onto. Profile will get coordinates in this plane.";
+          Params.Input[i].Access = GH_ParamAccess.item;
+          Params.Input[i].Optional = true;
 
           //i++;
           //Params.Input[i].NickName = "V";
