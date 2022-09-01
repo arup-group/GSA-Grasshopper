@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Net;
 using System.Diagnostics;
 using GsaGH.Helpers;
+using System.Threading.Tasks;
 
 namespace GsaGH
 {
@@ -123,12 +124,11 @@ namespace GsaGH
       }
 
       // ### Queue up Main menu loader ###
-      UI.Menu.Loader menuLoad = new UI.Menu.Loader();
-      menuLoad.CreateMainMenuItem();
+      Grasshopper.Instances.CanvasCreated += UI.Menu.MenuLoad.OnStartup;
 
       // ### Create Ribbon Category name and icon ###
       Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
-      Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", GsaGH.Properties.Resources.GSALogo);
+      Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", Properties.Resources.GSALogo);
 
       // ### Setup units ###
       Units.SetupUnitsDuringLoad();
@@ -142,122 +142,7 @@ namespace GsaGH
     public static string PluginPath;
     public static string InstallPath = Util.Gsa.InstallationFolderPath.GetPath;
   }
-
-  public class InitiateGsaAPI
-  {
-    internal static void UseGsaAPI()
-    {
-      // create new GH-GSA model
-      try
-      {
-        GsaAPI.Model mTest = new GsaAPI.Model();
-      }
-      catch (Exception e)
-      {
-        Exception exception = new Exception("Error when creating new empty model using GsaAPI.dll" + System.Environment.NewLine + e.ToString());
-        GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Model error", exception);
-        Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-      }
-      GsaAPI.Model m = new GsaAPI.Model();
-
-
-      // get the GSA install path
-      string tempPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-      System.IO.Directory.CreateDirectory(tempPath + "\\Oasys\\");
-      tempPath = Path.Combine(tempPath, "Oasys");
-      System.IO.Directory.CreateDirectory(tempPath + "\\GsaGrasshopper\\");
-      tempPath = Path.Combine(tempPath, "GsaGrasshopper");
-
-      // open existing GSA model (steel design sample)
-      // model containing CAT section profiles which I
-      // think loads the SectLib.db3 SQL lite database
-
-      // try open stair sample file
-      try
-      {
-        GsaAPI.ReturnValue openTest = m.Open(tempPath + "\\Samples\\Env.gwb");
-      }
-      catch (Exception e)
-      {
-        Exception exception = new Exception("Error when trying to open example file using GsaAPI.dll" + System.Environment.NewLine + e.ToString());
-        GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Open error", exception);
-        Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-      }
-      GsaAPI.ReturnValue open = m.Open(tempPath + "\\Samples\\Env.gwb");
-
-      // check if success
-      if (open == GsaAPI.ReturnValue.GS_FILE_OPEN_ERROR)
-      {
-        // if not create new directory
-        System.IO.Directory.CreateDirectory(tempPath + "\\Samples\\");
-        // create webclient and download example file:
-        try
-        {
-          WebClient webClient = new WebClient();
-          webClient.DownloadFile("https://samples.oasys-software.com/gsa/10.1/General/Env.gwb", tempPath + "\\Samples\\Env.gwb");
-        }
-        catch (Exception e)
-        {
-          Exception exception = new Exception("Error when trying to download example file from https://samples.oasys-software.com/gsa/10.1/General/" + System.Environment.NewLine + e.ToString()
-              + System.Environment.NewLine + "You may manually place the file 'Env.gwb' in this folder to solve the issue: " + System.Environment.NewLine + tempPath + "\\Samples\\");
-          GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: ExampleFile missing", exception);
-          Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-        }
-
-        // try open the file again:
-        open = m.Open(tempPath + "\\Samples\\Env.gwb");
-
-        // if model is opened run it
-        if (open == GsaAPI.ReturnValue.GS_OK)
-        {
-          try
-          {
-            //m.Analyse(1);
-            ReadOnlyDictionary<int, GsaAPI.Section> sDict = m.Sections();
-            sDict.TryGetValue(1, out GsaAPI.Section apisection);
-            double area1 = apisection.Area;
-            string profile1 = apisection.Profile;
-            string profile = "CAT HE HE200.B";
-            GsaAPI.Section section = new GsaAPI.Section
-            {
-              Profile = profile
-            };
-            double area = section.Area * Math.Pow(10, 6);
-          }
-          catch (Exception e)
-          {
-            Exception exception = new Exception("Error when running analysis task on example file." + System.Environment.NewLine + e.ToString());
-            GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Analysis error", exception);
-            Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-          }
-        }
-      }
-      else
-      {
-        try
-        {
-          //m.Analyse(1);
-          ReadOnlyDictionary<int, GsaAPI.Section> sDict = m.Sections();
-          sDict.TryGetValue(1, out GsaAPI.Section apisection);
-          double area1 = apisection.Area;
-          string profile1 = apisection.Profile;
-          string profile = "CAT HE HE200.B";
-          GsaAPI.Section section = new GsaAPI.Section
-          {
-            Profile = profile
-          };
-          double area = section.Area * Math.Pow(10, 6);
-        }
-        catch (Exception e)
-        {
-          Exception exception = new Exception("Error when running analysis task on example file." + System.Environment.NewLine + e.ToString());
-          GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Analysis error", exception);
-          Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-        }
-      }
-      m.Dispose();
-    }
-  }
+  
   public class GsaGHInfo : GH_AssemblyInfo
   {
     internal static Guid GUID = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
