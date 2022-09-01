@@ -19,18 +19,18 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to retrieve non-geometric objects from a GSA model
   /// </summary>
-  public class GlobalResult : GH_OasysComponent, IGH_VariableParameterComponent
+  public class GlobalResult2_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
     // including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("00a195ef-b8f2-4b91-ac47-a8ae12d48b8e");
-    public GlobalResult()
+    public override Guid ComponentGuid => new Guid("14fc0d64-7e34-47e8-bb6d-129029732474");
+    public GlobalResult2_OBSOLETE()
       : base("Global Results", "GlobalResult", "Get Global Results from GSA model",
             Ribbon.CategoryName.Name(),
             Ribbon.SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
-    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
 
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ResultGlobal;
     #endregion
@@ -180,7 +180,6 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Modal Geometric Stiffness [" + forceperlengthUnitAbbreviation + "]", "MGS", "Modal Geometric Stiffness of selected LoadCase / mode", GH_ParamAccess.item);
       pManager.AddGenericParameter("Frequency [Hz]", "f", "Frequency of selected LoadCase / mode", GH_ParamAccess.item);
       pManager.AddNumberParameter("Load Factor", "LF", "Load Factor for selected LoadCase / mode", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Eigenvalue", "Eig", "Eigenvalue for selected LoadCase / mode", GH_ParamAccess.item);
     }
     #endregion
 
@@ -279,12 +278,6 @@ namespace GsaGH.Components
 
         DA.SetData(i++, new GH_UnitNumber(new Frequency(analysisCaseResult.Global.Frequency, FrequencyUnit.Hertz)));
         DA.SetData(i++, analysisCaseResult.Global.LoadFactor);
-
-        if (analysisCaseResult.Global.Frequency == 0 && analysisCaseResult.Global.LoadFactor == 0)
-        {
-          double eigen = analysisCaseResult.Global.ModalStiffness;
-          DA.SetData(i++, eigen);
-        }
       }
     }
     #region (de)serialization

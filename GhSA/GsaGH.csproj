@@ -137,6 +137,7 @@
     <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProp2d_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\EditSection_OBSOLETE.cs" />
+    <Compile Include="Components\GraveyardComp\GlobalResult2_OBSOLETE .cs" />
     <Compile Include="Components\GraveyardComp\Version_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\GetAnalysis_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
