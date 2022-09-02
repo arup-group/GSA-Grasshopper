@@ -703,6 +703,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap GlobalPerformance {
+            get {
+                object obj = ResourceManager.GetObject("GlobalPerformance", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap GravityLoad {
             get {
                 object obj = ResourceManager.GetObject("GravityLoad", resourceCulture);
@@ -1113,9 +1123,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap StrainEnergyDensity {
+        public static System.Drawing.Bitmap SpringReactionForces {
             get {
-                object obj = ResourceManager.GetObject("StrainEnergyDensity", resourceCulture);
+                object obj = ResourceManager.GetObject("SpringReactionForces", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1123,9 +1133,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap SpringReactionForces {
+        public static System.Drawing.Bitmap StrainEnergyDensity {
             get {
-                object obj = ResourceManager.GetObject("SpringReactionForces", resourceCulture);
+                object obj = ResourceManager.GetObject("StrainEnergyDensity", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1166,6 +1176,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap Titles {
             get {
                 object obj = ResourceManager.GetObject("Titles", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap TotalLoadAndReaction {
+            get {
+                object obj = ResourceManager.GetObject("TotalLoadAndReaction", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

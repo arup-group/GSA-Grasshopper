@@ -19,20 +19,20 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to retrieve non-geometric objects from a GSA model
   /// </summary>
-  public class GlobalResult : GH_OasysComponent, IGH_VariableParameterComponent
+  public class GlobalPerformanceResults : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
     // including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("00a195ef-b8f2-4b91-ac47-a8ae12d48b8e");
-    public GlobalResult()
-      : base("Global Results", "GlobalResult", "Get Global Results from GSA model",
+    public override Guid ComponentGuid => new Guid("9a0b6077-1cb6-405c-85d3-c24a533d6d43");
+    public GlobalPerformanceResults()
+      : base("Global Performance Results", "GlobalPerformance", "Get Global Performance (Dynamic, Model Stability, and Buckling) Results from a GSA model",
             Ribbon.CategoryName.Name(),
             Ribbon.SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
 
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ResultGlobal;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GlobalPerformance;
     #endregion
 
     #region Custom UI
@@ -43,15 +43,11 @@ namespace GsaGH.Components
       if (first)
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForceUnits);
-        dropdownitems.Add(Units.FilteredMomentUnits);
         dropdownitems.Add(Units.FilteredMassUnits);
         dropdownitems.Add(Units.FilteredAreaMomentOfInertiaUnits);
         dropdownitems.Add(Units.FilteredForcePerLengthUnits);
 
         selecteditems = new List<string>();
-        selecteditems.Add(Units.ForceUnit.ToString());
-        selecteditems.Add(Units.MomentUnit.ToString());
         selecteditems.Add(Units.MassUnit.ToString());
         if (Units.LengthUnitGeometry == LengthUnit.Foot | Units.LengthUnitGeometry == LengthUnit.Inch)
         {
@@ -77,18 +73,12 @@ namespace GsaGH.Components
       switch (i)
       {
         case 0:
-          forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[i]);
-          break;
-        case 1:
-          momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), selecteditems[i]);
-          break;
-        case 2:
           massUnit = (MassUnit)Enum.Parse(typeof(MassUnit), selecteditems[i]);
           break;
-        case 3:
+        case 1:
           inertiaUnit = (AreaMomentOfInertiaUnit)Enum.Parse(typeof(AreaMomentOfInertiaUnit), selecteditems[i]);
           break;
-        case 4:
+        case 2:
           forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[i]);
           break;
       }
@@ -99,11 +89,9 @@ namespace GsaGH.Components
     }
     private void UpdateUIFromSelectedItems()
     {
-      forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[0]);
-      momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), selecteditems[1]);
-      massUnit = (MassUnit)Enum.Parse(typeof(MassUnit), selecteditems[2]);
-      inertiaUnit = (AreaMomentOfInertiaUnit)Enum.Parse(typeof(AreaMomentOfInertiaUnit), selecteditems[3]);
-      forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[4]);
+      massUnit = (MassUnit)Enum.Parse(typeof(MassUnit), selecteditems[0]);
+      inertiaUnit = (AreaMomentOfInertiaUnit)Enum.Parse(typeof(AreaMomentOfInertiaUnit), selecteditems[1]);
+      forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[2]);
 
       CreateAttributes();
       ExpireSolution(true);
@@ -118,15 +106,11 @@ namespace GsaGH.Components
     // list of descriptions 
     List<string> spacerDescriptions = new List<string>(new string[]
     {
-            "Force Unit",
-            "Moment Unit",
             "Mass Unit",
             "Inertia Unit",
             "Stiffness Unit",
     });
 
-    private ForceUnit forceUnit = Units.ForceUnit;
-    private MomentUnit momentUnit = Units.MomentUnit;
     private MassUnit massUnit = Units.MassUnit;
     private AreaMomentOfInertiaUnit inertiaUnit = Units.SectionAreaMomentOfInertiaUnit;
     private ForcePerLengthUnit forcePerLengthUnit = Units.ForcePerLengthUnit;
@@ -140,32 +124,10 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      IQuantity force = new Force(0, forceUnit);
-      string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-      string momentunitAbbreviation = Oasys.Units.Moment.GetAbbreviation(momentUnit);
-      IQuantity mass = new Mass(0, massUnit);
-      string massUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-      IQuantity inertia = new AreaMomentOfInertia(0, inertiaUnit);
-      string inertiaUnitAbbreviation = string.Concat(inertia.ToString().Where(char.IsLetter));
-      IQuantity forceperlength = new ForcePerLength(0, forcePerLengthUnit);
-      string forceperlengthUnitAbbreviation = string.Concat(forceperlength.ToString().Where(char.IsLetter));
+      string massUnitAbbreviation = Mass.GetAbbreviation(massUnit);
+      string inertiaUnitAbbreviation = AreaMomentOfInertia.GetAbbreviation(inertiaUnit);
+      string forceperlengthUnitAbbreviation = ForcePerLength.GetAbbreviation(forcePerLengthUnit);
 
-      pManager.AddGenericParameter("Total Force X [" + forceUnitAbbreviation + "]", "ΣFx", "Sum of all Force Loads in GSA Model in X-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Force Y [" + forceUnitAbbreviation + "]", "ΣFy", "Sum of all Force Loads in GSA Model in Y-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Force Z [" + forceUnitAbbreviation + "]", "ΣFz", "Sum of all Force Loads in GSA Model in Z-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Force |XYZ| [" + forceUnitAbbreviation + "]", "Σ|F|", "Sum of all Force Loads in GSA Model", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Moment XX [" + momentunitAbbreviation + "]", "ΣMxx", "Sum of all Moment Loads in GSA Model around X-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Moment XX  [" + momentunitAbbreviation + "]", "ΣMyy", "Sum of all Moment Loads in GSA Model around Y-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Moment XX  [" + momentunitAbbreviation + "]", "ΣMzz", "Sum of all Moment Loads in GSA Model around Z-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Moment |XXYYZZ|  [" + momentunitAbbreviation + "]", "Σ|M|", "Sum of all Moment Loads in GSA Model", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction X [" + forceUnitAbbreviation + "]", "ΣRx", "Sum of all Reaction Forces in GSA Model in X-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction Y [" + forceUnitAbbreviation + "]", "ΣRy", "Sum of all Reaction Forces in GSA Model in Y-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction Z [" + forceUnitAbbreviation + "]", "ΣRz", "Sum of all Reaction Forces in GSA Model in Z-direction", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction |XYZ| [" + forceUnitAbbreviation + "]", "Σ|Rf|", "Sum of all Reaction Forces in GSA Model", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction XX [" + momentunitAbbreviation + "]", "ΣRxx", "Sum of all Reaction Moments in GSA Model around X-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction XX  [" + momentunitAbbreviation + "]", "ΣRyy", "Sum of all Reaction Moments in GSA Model around Y-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction XX  [" + momentunitAbbreviation + "]", "ΣRzz", "Sum of all Reaction Moments in GSA Model around Z-axis", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Total Reaction |XXYYZZ|  [" + momentunitAbbreviation + "]", "Σ|Rm|", "Sum of all Reaction Moments in GSA Model", GH_ParamAccess.item);
       pManager.AddGenericParameter("Effective Mass X [" + massUnitAbbreviation + "]", "Σmx", "Effective Mass in GSA Model in X-direction", GH_ParamAccess.item);
       pManager.AddGenericParameter("Effective Mass Y [" + massUnitAbbreviation + "]", "Σmy", "Effective Mass in GSA Model in Y-direction", GH_ParamAccess.item);
       pManager.AddGenericParameter("Effective Mass Z [" + massUnitAbbreviation + "]", "Σmz", "Effective Mass in GSA Model in Z-direction", GH_ParamAccess.item);
@@ -216,29 +178,6 @@ namespace GsaGH.Components
         AnalysisCaseResult analysisCaseResult = result.AnalysisCaseResult;
         #endregion
         int i = 0;
-        GsaResultQuantity f = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalLoad, forceUnit);
-        DA.SetData(i++, new GH_UnitNumber(f.X));
-        DA.SetData(i++, new GH_UnitNumber(f.Y));
-        DA.SetData(i++, new GH_UnitNumber(f.Z));
-        DA.SetData(i++, new GH_UnitNumber(f.XYZ));
-
-        GsaResultQuantity m = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalLoad, momentUnit);
-        DA.SetData(i++, new GH_UnitNumber(m.X));
-        DA.SetData(i++, new GH_UnitNumber(m.Y));
-        DA.SetData(i++, new GH_UnitNumber(m.Z));
-        DA.SetData(i++, new GH_UnitNumber(m.XYZ));
-
-        GsaResultQuantity rf = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalReaction, forceUnit);
-        DA.SetData(i++, new GH_UnitNumber(rf.X));
-        DA.SetData(i++, new GH_UnitNumber(rf.Y));
-        DA.SetData(i++, new GH_UnitNumber(rf.Z));
-        DA.SetData(i++, new GH_UnitNumber(rf.XYZ));
-
-        GsaResultQuantity rm = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalReaction, momentUnit);
-        DA.SetData(i++, new GH_UnitNumber(rm.X));
-        DA.SetData(i++, new GH_UnitNumber(rm.Y));
-        DA.SetData(i++, new GH_UnitNumber(rm.Z));
-        DA.SetData(i++, new GH_UnitNumber(rm.XYZ));
 
         GsaResultQuantity mass = ResultHelper.GetQuantityResult(analysisCaseResult.Global.EffectiveMass, massUnit);
         DA.SetData(i++, new GH_UnitNumber(mass.X));
@@ -262,9 +201,18 @@ namespace GsaGH.Components
           DA.SetData(i++, null);
         }
 
-        DA.SetData(i++, analysisCaseResult.Global.Mode);
-        IQuantity mmass = new Mass(analysisCaseResult.Global.ModalMass, MassUnit.Kilogram);
-        DA.SetData(i++, new GH_UnitNumber(mmass.ToUnit(massUnit)));
+        if (analysisCaseResult.Global.Mode != 0)
+          DA.SetData(i++, analysisCaseResult.Global.Mode);
+        else
+          DA.SetData(i++, null);
+
+        if (analysisCaseResult.Global.ModalMass != 0)
+        {
+          IQuantity mmass = new Mass(analysisCaseResult.Global.ModalMass, MassUnit.Kilogram);
+          DA.SetData(i++, new GH_UnitNumber(mmass.ToUnit(massUnit)));
+        }
+        else
+          DA.SetData(i++, null);
 
         if (!(analysisCaseResult.Global.Frequency == 0 && analysisCaseResult.Global.LoadFactor == 0))
         {
@@ -274,17 +222,28 @@ namespace GsaGH.Components
         else
           DA.SetData(i++, null);
 
-        IQuantity geostiff = new ForcePerLength(analysisCaseResult.Global.ModalGeometricStiffness, ForcePerLengthUnit.NewtonPerMeter);
-        DA.SetData(i++, new GH_UnitNumber(geostiff.ToUnit(forcePerLengthUnit)));
-
-        DA.SetData(i++, new GH_UnitNumber(new Frequency(analysisCaseResult.Global.Frequency, FrequencyUnit.Hertz)));
-        DA.SetData(i++, analysisCaseResult.Global.LoadFactor);
-
-        if (analysisCaseResult.Global.Frequency == 0 && analysisCaseResult.Global.LoadFactor == 0)
+        if (analysisCaseResult.Global.ModalGeometricStiffness != 0)
         {
-          double eigen = analysisCaseResult.Global.ModalStiffness;
-          DA.SetData(i++, eigen);
+          IQuantity geostiff = new ForcePerLength(analysisCaseResult.Global.ModalGeometricStiffness, ForcePerLengthUnit.NewtonPerMeter);
+          DA.SetData(i++, new GH_UnitNumber(geostiff.ToUnit(forcePerLengthUnit)));
         }
+        else
+          DA.SetData(i++, null);
+
+        if (analysisCaseResult.Global.Frequency != 0)
+          DA.SetData(i++, new GH_UnitNumber(new Frequency(analysisCaseResult.Global.Frequency, FrequencyUnit.Hertz)));
+        else
+          DA.SetData(i++, null);
+
+        if (analysisCaseResult.Global.LoadFactor != 0)
+          DA.SetData(i++, analysisCaseResult.Global.LoadFactor);
+        else
+          DA.SetData(i++, null);
+
+        if (analysisCaseResult.Global.Frequency == 0 && analysisCaseResult.Global.LoadFactor == 0 && analysisCaseResult.Global.ModalStiffness != 0)
+          DA.SetData(i++, analysisCaseResult.Global.ModalStiffness);
+        else
+          DA.SetData(i++, null);
       }
     }
     #region (de)serialization
@@ -322,35 +281,11 @@ namespace GsaGH.Components
     }
     void IGH_VariableParameterComponent.VariableParameterMaintenance()
     {
-      IQuantity force = new Force(0, forceUnit);
-      string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-      string momentunitAbbreviation = Oasys.Units.Moment.GetAbbreviation(momentUnit);
-      IQuantity mass = new Mass(0, massUnit);
-      string massUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-      IQuantity inertia = new AreaMomentOfInertia(0, inertiaUnit);
-      string inertiaUnitAbbreviation = string.Concat(inertia.ToString().Where(char.IsLetter));
-      IQuantity forceperlength = new ForcePerLength(0, forcePerLengthUnit);
-      string forceperlengthUnitAbbreviation = string.Concat(forceperlength.ToString().Where(char.IsLetter));
+      string massUnitAbbreviation = Mass.GetAbbreviation(massUnit);
+      string inertiaUnitAbbreviation = AreaMomentOfInertia.GetAbbreviation(inertiaUnit);
+      string forceperlengthUnitAbbreviation = ForcePerLength.GetAbbreviation(forcePerLengthUnit);
 
       int i = 0;
-      Params.Output[i++].Name = "Total Force X [" + forceUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Force Y [" + forceUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Force Z [" + forceUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Force |XYZ| [" + forceUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Moment XX [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Moment YY [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Moment ZZ [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
-
-      Params.Output[i++].Name = "Total Reaction X [" + forceUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Reaction Y [" + forceUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Reaction Z [" + forceUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Reaction |XYZ| [" + forceUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Reaction XX [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Reaction YY [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Reaction ZZ [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Total Reaction |XXYYZZ| [" + momentunitAbbreviation + "]";
-
       Params.Output[i++].Name = "Effective Mass X [" + massUnitAbbreviation + "]";
       Params.Output[i++].Name = "Effective Mass Y [" + massUnitAbbreviation + "]";
       Params.Output[i++].Name = "Effective Mass Z [" + massUnitAbbreviation + "]";
