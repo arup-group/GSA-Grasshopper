@@ -6,32 +6,20 @@ using System.Reflection;
 using System.Net;
 using System.Diagnostics;
 using GsaGH.Helpers;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GsaGH
 {
   public class AddReferencePriority : GH_AssemblyPriority
   {
+    public static string PluginPath;
+    public static string InstallPath = Util.Gsa.InstallationFolderPath.GetPath;
+
     public override GH_LoadingInstruction PriorityLoad()
     {
-      // ### Search for plugin path ###
-
-      // initially look in %appdata% folder where package manager will store the plugin
-      string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-      path = Path.Combine(path, "McNeel", "Rhinoceros", "Packages", Rhino.RhinoApp.ExeVersion + ".0", "GSA");
-
-      if (!File.Exists(Path.Combine(path, "GSA.gha"))) // if no plugin file is found there continue search
-      {
-        // look in all the other Grasshopper assembly (plugin) folders
-        foreach (GH_AssemblyFolderInfo pluginFolder in Grasshopper.Folders.AssemblyFolders)
-        {
-          if (File.Exists(Path.Combine(pluginFolder.Folder, "GSA.gha"))) // if the folder contains the plugin
-          {
-            path = pluginFolder.Folder;
-            break;
-          }
-        }
-      }
-      PluginPath = Path.GetDirectoryName(path);
+      if (!TryFindPluginPath("GSA.gha"))
+        return GH_LoadingInstruction.Abort;
 
       // ### Set system environment variables to allow user rights to read below dlls ###
       const string name = "PATH";
@@ -52,6 +40,7 @@ namespace GsaGH
           Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper require GSA 10.1.60 installed. Please upgrade GSA.");
           GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
           Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
+          PostHog.PluginLoaded(exception.Message);
           return GH_LoadingInstruction.Abort;
         }
       }
@@ -79,6 +68,7 @@ namespace GsaGH
         Exception exception = new Exception(message);
         GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI.dll loading", exception);
         Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
+        PostHog.PluginLoaded(message);
         return GH_LoadingInstruction.Abort;
       }
 
@@ -109,26 +99,16 @@ namespace GsaGH
         Exception exception = new Exception(message);
         GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: System.Data.SQLite.dll loading", exception);
         Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-        return GH_LoadingInstruction.Abort;
-      }
-
-      // ### Use GsaAPI to load referenced dlls ###
-      try
-      {
-        //InitiateGsaAPI.UseGsaAPI();
-      }
-      catch (Exception)
-      {
+        PostHog.PluginLoaded(message);
         return GH_LoadingInstruction.Abort;
       }
 
       // ### Queue up Main menu loader ###
-      UI.Menu.Loader menuLoad = new UI.Menu.Loader();
-      menuLoad.CreateMainMenuItem();
+      Grasshopper.Instances.CanvasCreated += UI.Menu.MenuLoad.OnStartup;
 
       // ### Create Ribbon Category name and icon ###
       Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
-      Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", GsaGH.Properties.Resources.GSALogo);
+      Grasshopper.Instances.ComponentServer.AddCategoryIcon("GSA", Properties.Resources.GSALogo);
 
       // ### Setup units ###
       Units.SetupUnitsDuringLoad();
@@ -138,126 +118,57 @@ namespace GsaGH
       return GH_LoadingInstruction.Proceed;
     }
 
-    //public static Assembly GsaAPI;
-    public static string PluginPath;
-    public static string InstallPath = Util.Gsa.InstallationFolderPath.GetPath;
-  }
-
-  public class InitiateGsaAPI
-  {
-    internal static void UseGsaAPI()
+    private bool TryFindPluginPath(string keyword)
     {
-      // create new GH-GSA model
-      try
-      {
-        GsaAPI.Model mTest = new GsaAPI.Model();
-      }
-      catch (Exception e)
-      {
-        Exception exception = new Exception("Error when creating new empty model using GsaAPI.dll" + System.Environment.NewLine + e.ToString());
-        GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Model error", exception);
-        Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-      }
-      GsaAPI.Model m = new GsaAPI.Model();
+      // ### Search for plugin path ###
 
+      // initially look in %appdata% folder where package manager will store the plugin
+      string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+      path = Path.Combine(path, "McNeel", "Rhinoceros", "Packages", Rhino.RhinoApp.ExeVersion + ".0", GsaGHInfo.ProductName);
 
-      // get the GSA install path
-      string tempPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-      System.IO.Directory.CreateDirectory(tempPath + "\\Oasys\\");
-      tempPath = Path.Combine(tempPath, "Oasys");
-      System.IO.Directory.CreateDirectory(tempPath + "\\GsaGrasshopper\\");
-      tempPath = Path.Combine(tempPath, "GsaGrasshopper");
-
-      // open existing GSA model (steel design sample)
-      // model containing CAT section profiles which I
-      // think loads the SectLib.db3 SQL lite database
-
-      // try open stair sample file
-      try
+      if (!File.Exists(Path.Combine(path, keyword))) // if no plugin file is found there continue search
       {
-        GsaAPI.ReturnValue openTest = m.Open(tempPath + "\\Samples\\Env.gwb");
-      }
-      catch (Exception e)
-      {
-        Exception exception = new Exception("Error when trying to open example file using GsaAPI.dll" + System.Environment.NewLine + e.ToString());
-        GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Open error", exception);
-        Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-      }
-      GsaAPI.ReturnValue open = m.Open(tempPath + "\\Samples\\Env.gwb");
+        // search grasshopper libraries folder
+        string sDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
+          "Libraries");
 
-      // check if success
-      if (open == GsaAPI.ReturnValue.GS_FILE_OPEN_ERROR)
-      {
-        // if not create new directory
-        System.IO.Directory.CreateDirectory(tempPath + "\\Samples\\");
-        // create webclient and download example file:
-        try
+        string[] files = Directory.GetFiles(sDir, keyword, SearchOption.AllDirectories);
+        if (files.Length > 0)
+          path = files[0].Replace(keyword, string.Empty);
+
+        if (!File.Exists(Path.Combine(path, keyword))) // if no plugin file is found there continue search
         {
-          WebClient webClient = new WebClient();
-          webClient.DownloadFile("https://samples.oasys-software.com/gsa/10.1/General/Env.gwb", tempPath + "\\Samples\\Env.gwb");
-        }
-        catch (Exception e)
-        {
-          Exception exception = new Exception("Error when trying to download example file from https://samples.oasys-software.com/gsa/10.1/General/" + System.Environment.NewLine + e.ToString()
-              + System.Environment.NewLine + "You may manually place the file 'Env.gwb' in this folder to solve the issue: " + System.Environment.NewLine + tempPath + "\\Samples\\");
-          GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: ExampleFile missing", exception);
-          Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-        }
-
-        // try open the file again:
-        open = m.Open(tempPath + "\\Samples\\Env.gwb");
-
-        // if model is opened run it
-        if (open == GsaAPI.ReturnValue.GS_OK)
-        {
-          try
+          // look in all the other Grasshopper assembly (plugin) folders
+          foreach (GH_AssemblyFolderInfo pluginFolder in Grasshopper.Folders.AssemblyFolders)
           {
-            //m.Analyse(1);
-            ReadOnlyDictionary<int, GsaAPI.Section> sDict = m.Sections();
-            sDict.TryGetValue(1, out GsaAPI.Section apisection);
-            double area1 = apisection.Area;
-            string profile1 = apisection.Profile;
-            string profile = "CAT HE HE200.B";
-            GsaAPI.Section section = new GsaAPI.Section
+            files = Directory.GetFiles(pluginFolder.Folder, keyword, SearchOption.AllDirectories);
+            if (files.Length > 0)
             {
-              Profile = profile
-            };
-            double area = section.Area * Math.Pow(10, 6);
+              path = files[0].Replace(keyword, string.Empty);
+              PluginPath = Path.GetDirectoryName(path);
+              return true;
+            }
           }
-          catch (Exception e)
-          {
-            Exception exception = new Exception("Error when running analysis task on example file." + System.Environment.NewLine + e.ToString());
-            GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Analysis error", exception);
-            Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-          }
-        }
-      }
-      else
-      {
-        try
-        {
-          //m.Analyse(1);
-          ReadOnlyDictionary<int, GsaAPI.Section> sDict = m.Sections();
-          sDict.TryGetValue(1, out GsaAPI.Section apisection);
-          double area1 = apisection.Area;
-          string profile1 = apisection.Profile;
-          string profile = "CAT HE HE200.B";
-          GsaAPI.Section section = new GsaAPI.Section
-          {
-            Profile = profile
-          };
-          double area = section.Area * Math.Pow(10, 6);
-        }
-        catch (Exception e)
-        {
-          Exception exception = new Exception("Error when running analysis task on example file." + System.Environment.NewLine + e.ToString());
-          GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI Analysis error", exception);
+          string message =
+            "Error loading the file " + keyword + " from any Grasshopper plugin folders - check if the file exist."
+            + Environment.NewLine + "The plugin cannot be loaded."
+            + Environment.NewLine + "Folders (including subfolder) that was searched:"
+            + Environment.NewLine + sDir;
+          foreach (GH_AssemblyFolderInfo pluginFolder in Grasshopper.Folders.AssemblyFolders)
+            message += Environment.NewLine + pluginFolder.Folder;
+
+          Exception exception = new Exception(message);
+          GH_LoadingException gH_LoadingException = new GH_LoadingException(GsaGHInfo.ProductName + ": " + keyword + " loading failed", exception);
           Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
+          PostHog.PluginLoaded(message);
+          return false;
         }
       }
-      m.Dispose();
+      PluginPath = Path.GetDirectoryName(path);
+      return true;
     }
   }
+  
   public class GsaGHInfo : GH_AssemblyInfo
   {
     internal static Guid GUID = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");

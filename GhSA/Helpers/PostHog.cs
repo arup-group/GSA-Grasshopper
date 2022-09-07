@@ -62,17 +62,18 @@ namespace GsaGH.Helpers
       _ = PostHog.SendToPostHog(eventName, properties);
     }
 
-    public static void PluginLoaded()
+    public static void PluginLoaded(string error = "")
     {
       string eventName = "PluginLoaded";
 
       Dictionary<string, object> properties = new Dictionary<string, object>()
-        {
-          { "rhinoVersion", Rhino.RhinoApp.Version.ToString().Split('.')
-             + "." + Rhino.RhinoApp.Version.ToString().Split('.')[1] },
-          { "rhinoMajorVersion", Rhino.RhinoApp.ExeVersion },
-          { "rhinoServiceRelease", Rhino.RhinoApp.ExeServiceRelease },
-        };
+      {
+        { "rhinoVersion", Rhino.RhinoApp.Version.ToString().Split('.')
+                          + "." + Rhino.RhinoApp.Version.ToString().Split('.')[1] },
+        { "rhinoMajorVersion", Rhino.RhinoApp.ExeVersion },
+        { "rhinoServiceRelease", Rhino.RhinoApp.ExeServiceRelease },
+        { "loadingError", error },
+      };
       _ = PostHog.SendToPostHog(eventName, properties);
     }
 
