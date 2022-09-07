@@ -131,12 +131,14 @@
     <Compile Include="Components\5_Results\NodeDisplacementResult.cs" />
     <Compile Include="Components\5_Results\NodeContourResults.cs" />
     <Compile Include="Components\5_Results\SelectResults.cs" />
-    <Compile Include="Components\5_Results\GlobalResult .cs" />
+    <Compile Include="Components\5_Results\GlobalPerformanceResults.cs" />
+    <Compile Include="Components\5_Results\TotalLoadsAndReactionResults.cs" />
     <Compile Include="Components\GH_OasysTaskCapableComponent.cs" />
     <Compile Include="Components\GraveyardComp\CreateOffset_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProp2d_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\EditSection_OBSOLETE.cs" />
+    <Compile Include="Components\GraveyardComp\GlobalResult2_OBSOLETE .cs" />
     <Compile Include="Components\GraveyardComp\Version_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\GetAnalysis_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
@@ -650,6 +652,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\LocalAxes.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\GlobalPerformance.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\TotalLoadAndReaction.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
