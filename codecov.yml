@@ -1,0 +1,10 @@
+#codecov:
+#    notify:
+#        after_n_builds: 2
+flags:
+  gsagh:
+    carryforward: false
+  integration:
+    carryforward: false
+ignore:
+  - "ComposGHTests"  # ignore folders and all its contents
