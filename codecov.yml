@@ -7,4 +7,4 @@ flags:
   integration:
     carryforward: false
 ignore:
-  - "ComposGHTests"  # ignore folders and all its contents
+  - "GsaGHTests"  # ignore folders and all its contents
