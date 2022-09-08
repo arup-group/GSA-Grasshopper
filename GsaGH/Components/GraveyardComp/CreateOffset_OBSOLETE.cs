@@ -9,10 +9,10 @@
 //using System.Windows.Forms;
 //using Grasshopper.Kernel.Types;
 //using GsaAPI;
-//using GhSA.Parameters;
+//using GsaGH.Parameters;
 //using System.Resources;
 
-//namespace GhSA.Components
+//namespace GsaGH.Components
 //{
 //    /// <summary>
 //    /// Component to create a new Offset
@@ -30,7 +30,7 @@
 //        { this.Hidden = true; } // sets the initial state of the component to hidden
 //        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
-//        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateOffset;
+//        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateOffset;
 //        #endregion
 
 //        #region Custom UI

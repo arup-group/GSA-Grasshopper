@@ -8,9 +8,9 @@
 //using Grasshopper.Kernel.Parameters;
 //using Rhino.Geometry;
 //using GsaAPI;
-//using GhSA.Parameters;
+//using GsaGH.Parameters;
 
-//namespace GhSA.Components
+//namespace GsaGH.Components
 //{
 //    public class CreateBeamLoads_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
 //    {
@@ -23,7 +23,7 @@
 //        public override Guid ComponentGuid => new Guid("a2bc3c66-eb22-43ec-9936-84d2944be414");
 //        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
-//        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.BeamLoad;
+//        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.BeamLoad;
 //        #endregion
 
 //        #region Custom UI

@@ -9,11 +9,11 @@
 //using System.Windows.Forms;
 //using Grasshopper.Kernel.Types;
 //using GsaAPI;
-//using GhSA.Parameters;
+//using GsaGH.Parameters;
 //using System.Resources;
 //using Grasshopper.Documentation;
 
-//namespace GhSA.Components
+//namespace GsaGH.Components
 //{
 //    public class EditGsaUnits_OBSOLETE : GH_OasysComponent
 //    {
@@ -28,7 +28,7 @@
 //        { this.Hidden = true; } // sets the initial state of the component to hidden
 //        public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
 
-//        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.EditUnits;
+//        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditUnits;
 //        #endregion
 
 //        #region Custom UI

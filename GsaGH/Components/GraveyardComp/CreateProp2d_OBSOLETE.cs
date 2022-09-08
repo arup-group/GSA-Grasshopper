@@ -11,11 +11,11 @@
 
 //using Grasshopper.Kernel.Parameters;
 //using GsaAPI;
-//using GhSA.Parameters;
+//using GsaGH.Parameters;
 //using System.Resources;
 //using UnitsNet;
 
-//namespace GhSA.Components
+//namespace GsaGH.Components
 //{
 //    /// <summary>
 //    /// Component to create a new Prop2d
@@ -33,7 +33,7 @@
 //        { this.Hidden = true; } // sets the initial state of the component to hidden
 //        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
-//        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.CreateProp2d;
+//        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateProp2d;
 //        #endregion
 
 //        #region Custom UI

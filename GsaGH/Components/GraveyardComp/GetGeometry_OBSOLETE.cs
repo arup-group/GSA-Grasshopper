@@ -9,11 +9,11 @@
 //using System.Windows.Forms;
 //using Grasshopper.Kernel.Types;
 //using GsaAPI;
-//using GhSA.Parameters;
+//using GsaGH.Parameters;
 //using Grasshopper.Kernel.Data;
 //using System.Collections.Concurrent;
 
-//namespace GhSA.Components
+//namespace GsaGH.Components
 //{
 //    /// <summary>
 //    /// Component to retrieve geometric objects from a GSA model
@@ -33,7 +33,7 @@
 
 //        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
-//        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GetGeometry;
+//        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GetGeometry;
 //        #endregion
 
 //        #region Custom UI

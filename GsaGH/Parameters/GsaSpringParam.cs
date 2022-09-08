@@ -7,11 +7,11 @@
 //using Grasshopper.Kernel.Types;
 //using Rhino.Geometry;
 //using Rhino;
-//using GhSA.Util.Gsa;
+//using GsaGH.Util.Gsa;
 //using Grasshopper.Documentation;
 //using Rhino.Collections;
 
-//namespace GhSA.Parameters
+//namespace GsaGH.Parameters
 //{
 //    /// <summary>
 //    /// Spring class, this class defines the basic properties and methods for any Gsa Spring
@@ -256,7 +256,7 @@
 //    public class GsaSpringParameter : GH_PersistentParam<GsaSpringGoo>
 //    {
 //        public GsaSpringParameter()
-//          : base(new GH_InstanceDescription("Spring", "PS", "GSA Spring (Type: General)", GhSA.Components.Ribbon.CategoryName.Name(), GhSA.Components.Ribbon.SubCategoryName.Cat9()))
+//          : base(new GH_InstanceDescription("Spring", "PS", "GSA Spring (Type: General)", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
 //        {
 //        }
 
@@ -264,7 +264,7 @@
 
 //        public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
 
-//        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaSpring;
+//        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GsaSpring;
 
 //        //We do not allow users to pick parameter, 
 //        //therefore the following 4 methods disable all this ui.

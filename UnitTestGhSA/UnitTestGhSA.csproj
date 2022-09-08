@@ -59,7 +59,7 @@
       <HintPath>..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="OasysUnits">
-      <HintPath>..\GhSA\lib\OasysUnits.dll</HintPath>
+      <HintPath>..\GsaGH\lib\OasysUnits.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.UI, Version=6.27.20176.5000, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.27.20176.5001\lib\net45\Rhino.UI.dll</HintPath>
@@ -99,7 +99,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GhSA\GsaGH.csproj">
+    <ProjectReference Include="..\GsaGH\GsaGH.csproj">
       <Project>{362f5ed1-ba80-4f21-881d-6bd8784612e4}</Project>
       <Name>GsaGH</Name>
     </ProjectReference>

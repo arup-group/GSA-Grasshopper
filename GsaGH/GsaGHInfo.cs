@@ -233,7 +233,7 @@ namespace GsaGH
       get
       {
         // TODO to be updated - not supported by yak currently
-        return "https://raw.githubusercontent.com/arup-group/GSA-Grasshopper/master/GhSA/Properties/Icons/icons/4x/GsaGhLogo%404x.png";
+        return "https://raw.githubusercontent.com/arup-group/GSA-Grasshopper/master/GsaGH/Properties/Icons/icons/4x/GsaGhLogo%404x.png";
       }
     }
 

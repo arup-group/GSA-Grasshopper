@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GhSA\GsaGH.csproj" />
+    <ProjectReference Include="..\GsaGH\GsaGH.csproj" />
   </ItemGroup>
 
   <ItemGroup>

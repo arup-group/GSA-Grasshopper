@@ -5,9 +5,9 @@
 //using Grasshopper.Kernel.Types;
 //using GsaAPI;
 //using Rhino.Geometry;
-//using GhSA.Parameters;
+//using GsaGH.Parameters;
 
-//namespace GhSA.Components
+//namespace GsaGH.Components
 //{
 //    public class CreateGridAreaLoad_OBSOLETE : GH_OasysComponent
 //    {
@@ -20,7 +20,7 @@
 //        public override Guid ComponentGuid => new Guid("9d775938-69fc-441f-b766-9cd1d8259e5a");
 //        public override GH_Exposure Exposure => GH_Exposure.hidden;
 
-//        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GridAreaLoad;
+//        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GridAreaLoad;
 //        #endregion
 
 //        #region Custom UI
