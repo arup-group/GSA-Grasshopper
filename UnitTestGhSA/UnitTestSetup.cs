@@ -20,29 +20,29 @@ public class SetUp
     // Executes once before any test run
 
     // load GsaAPI.dll and set process user-rights to GSA installation folder
-    UnitTestGsaGH.InitiateGsa.LoadRefs();
+    UnitTestGhSA.InitiateGsa.LoadRefs();
 
     // use GsaAPI once to open a model and force loading of sectlib.db3 SQL library
-    UnitTestGsaGH.InitiateGsa.UseGsaAPI();
+    UnitTestGhSA.InitiateGsa.UseGsaAPI();
 
     // set units used in the unit-test (kN-m). Avoids conflict with trying to read Rhino doc units
-    UnitTestGsaGH.InitiateGsa.SetUnits();
+    UnitTestGhSA.InitiateGsa.SetUnits();
 
     // add current project (for GSA.gha) to grasshopper folder:
     string rootfolder = AppDomain.CurrentDomain.BaseDirectory;
-    rootfolder = rootfolder.Split(new string[] { "UnitTestGsaGH" }, StringSplitOptions.None)[0];
+    rootfolder = rootfolder.Split(new string[] { "UnitTestGhSA" }, StringSplitOptions.None)[0];
 
     Grasshopper.Folders.CustomAssemblyFolders.Add(rootfolder);
 
     // setup Rhino7 (headless) and resolve assembly conflicts for RhinoCommon.dll and Grasshopper.dll
-    UnitTestGsaGH.InitiateRhinoGH.LoadRhino7GH();
+    UnitTestGhSA.InitiateRhinoGH.LoadRhino7GH();
   }
 
   [OneTimeTearDown]
   public void RunAfterAnyTests()
   {
     // Executes once after the test run. (Optional)
-    UnitTestGsaGH.InitiateRhinoGH.ExitInProcess();
+    UnitTestGhSA.InitiateRhinoGH.ExitInProcess();
   }
 }
 namespace ComponentsTest
@@ -65,7 +65,7 @@ namespace ComponentsTest
     }
   }
 }
-namespace UnitTestGsaGH
+namespace UnitTestGhSA
 {
   public class InitiateGsa
   {

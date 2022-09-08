@@ -9,8 +9,8 @@
     <ProjectGuid>{CE4EB299-EA12-48B1-BB13-0C5B83FF0B52}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UnitTestGsaGH</RootNamespace>
-    <AssemblyName>UnitTestGsaGH</AssemblyName>
+    <RootNamespace>UnitTestGhSA</RootNamespace>
+    <AssemblyName>UnitTestGhSA</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
