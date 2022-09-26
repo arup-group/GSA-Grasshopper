@@ -43,7 +43,7 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("3D Member", "M3D", "GSA 3D Member to Modify", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member3d Number", "ID", "Set Member Number. If ID is set it will replace any existing 3d Member in the model", GH_ParamAccess.item);
       pManager.AddGeometryParameter("Solid", "S", "Reposition Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
-      pManager.AddGenericParameter("3D Property", "P3", "Change 3D Property", GH_ParamAccess.item);
+      pManager.AddGenericParameter("3D Property", "PV", "Change 3D Property", GH_ParamAccess.item);
       Length ms = new Length(1, Units.LengthUnitGeometry);
       pManager.AddGenericParameter("Mesh Size [" + ms.ToString("a") + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
@@ -65,7 +65,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Member Number", "ID", "Get Member Number", GH_ParamAccess.item);
       pManager.AddMeshParameter("Solid Mesh", "M", "Member Solid Mesh", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddGenericParameter("3D Property", "P3", "Get 3D Property", GH_ParamAccess.item);
+      pManager.AddGenericParameter("3D Property", "PV", "Get 3D Property", GH_ParamAccess.item);
       pManager.AddNumberParameter("Mesh Size", "Ms", "Get Targe mesh size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
@@ -111,7 +111,7 @@ namespace GsaGH.Components
           }
         }
 
-        // 3 prop3d -- to be implemented GsaAPI
+        // 3 prop3d
         gh_typ = new GH_ObjectWrapper();
         if (DA.GetData(3, ref gh_typ))
         {
@@ -121,7 +121,10 @@ namespace GsaGH.Components
           else
           {
             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+            {
               prop3d.ID = idd;
+              mem.PropertyID = idd;
+            }
             else
             {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 3D Property of reference integer");

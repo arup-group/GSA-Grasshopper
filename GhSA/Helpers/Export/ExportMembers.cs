@@ -47,7 +47,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
         // add the topology ID next
         if (id > 0)
-        { 
+        {
           topo += id;
           prevID = id;
         }
@@ -66,7 +66,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
       return topo;
     }
-    
+
     #endregion
 
     #region member1d
