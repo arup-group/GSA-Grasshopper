@@ -651,7 +651,6 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)GSA.gha"
-Copy "$(ProjectDir)lib\OasysUnits.dll" "$(TargetDir)OasysUnits.dll"
 Copy "$(ProjectDir)\Properties\Icons\GSALogo64.png" "$(TargetDir)GsaIcon.png"
 </PostBuildEvent>
   </PropertyGroup>
