@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
-using UnitsNet;
-using System.Linq;
+using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
@@ -40,7 +41,7 @@ namespace GsaGH.Components
         selecteditems = new List<string>();
 
         // length
-        //dropdownitems.Add(Enum.GetNames(typeof(UnitsNet.Units.LengthUnit)).ToList());
+        //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
         dropdownitems.Add(Units.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
@@ -56,7 +57,7 @@ namespace GsaGH.Components
       // change selected item
       selecteditems[i] = dropdownitems[i][j];
 
-      lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[i]);
+      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
 
       // update name of inputs (to display unit on sliders)
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -66,7 +67,7 @@ namespace GsaGH.Components
     }
     private void UpdateUIFromSelectedItems()
     {
-      lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[0]);
+      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
 
       CreateAttributes();
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -84,7 +85,7 @@ namespace GsaGH.Components
             "Unit"
     });
     private bool first = true;
-    private UnitsNet.Units.LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
     string unitAbbreviation;
 
     #endregion
@@ -181,7 +182,7 @@ namespace GsaGH.Components
           // 4 mesh size
           if (this.Params.Input[4].SourceCount > 0)
           {
-            mem.MeshSize = GetInput.Length(this, DA, 4, lengthUnit, true);
+            mem.MeshSize = GetInput.GetLength(this, DA, 4, lengthUnit, true);
           }
 
           DA.SetData(0, new GsaMember2dGoo(mem));
@@ -206,7 +207,7 @@ namespace GsaGH.Components
         selecteditems = new List<string>();
 
         // set length to meters as this was the only option for old components
-        lengthUnit = UnitsNet.Units.LengthUnit.Meter;
+        lengthUnit = LengthUnit.Meter;
 
         dropdownitems.Add(Units.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());

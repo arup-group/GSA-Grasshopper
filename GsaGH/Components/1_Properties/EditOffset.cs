@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Grasshopper.Kernel;
 using GsaGH.Parameters;
-using UnitsNet;
-using System.Linq;
-using UnitsNet.GH;
+using OasysGH.Parameters;
+using OasysUnits;
 
 namespace GsaGH.Components
 {
@@ -70,16 +70,16 @@ namespace GsaGH.Components
         {
           int inp = 1;
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.X1 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.X1 = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
 
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.X2 = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.X2 = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
 
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.Y = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.Y = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
 
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.Z = GetInput.Length(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.Z = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
 
           //outputs
           int outp = 0;

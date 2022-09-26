@@ -4,7 +4,7 @@ using System.Linq;
 using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using UnitsNet;
+using OasysUnits;
 
 namespace GsaGH.Parameters
 {

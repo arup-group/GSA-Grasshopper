@@ -6,7 +6,7 @@ using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Parameters;
-using UnitsNet;
+using OasysUnits;
 using System.Linq;
 
 namespace GsaGH.Components

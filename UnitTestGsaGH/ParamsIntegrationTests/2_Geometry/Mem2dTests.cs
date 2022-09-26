@@ -7,8 +7,8 @@ using NUnit.Framework;
 using Rhino.Geometry;
 using GsaAPI;
 using System.Collections.Generic;
-using UnitsNet.Units;
-using UnitsNet;
+using OasysUnits.Units;
+using OasysUnits;
 
 namespace ParamsIntegrationTests
 {
@@ -150,7 +150,7 @@ namespace ParamsIntegrationTests
       // changes to class members
       original.Colour = System.Drawing.Color.Black;
       original.ID = 7;
-      original.MeshSize = UnitsNet.Length.Zero;
+      original.MeshSize = Length.Zero;
       original.Name = "Persepolis";
       original.IsDummy = true;
       original.Offset = new GsaOffset(0.12, 0, 0, 0, LengthUnit.Meter);

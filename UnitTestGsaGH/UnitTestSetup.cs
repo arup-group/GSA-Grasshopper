@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using NUnit.Framework;
-using NUnit;
 using GsaAPI;
 using GsaGH;
-using GsaGH.Parameters;
-using System.Runtime.InteropServices;
-using UnitsNet.Units;
-using Oasys.Units;
+using NUnit.Framework;
+using OasysUnits.Units;
 
 // A SetUpFixture outside of any namespace provides SetUp and TearDown for the entire assembly.
 [SetUpFixture]

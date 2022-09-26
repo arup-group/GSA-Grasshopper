@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
+using GsaAPI;
+using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Collections;
-using UnitsNet;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
@@ -167,7 +167,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        Length l = new Length(m_member.MeshSize, UnitsNet.Units.LengthUnit.Meter);
+        Length l = new Length(m_member.MeshSize, LengthUnit.Meter);
         return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
       }
       set

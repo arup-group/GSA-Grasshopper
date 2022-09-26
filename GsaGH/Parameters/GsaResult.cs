@@ -1,17 +1,15 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using GsaAPI;
+using System.Linq;
+using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using UnitsNet;
-using System.Collections.Concurrent;
-using Rhino.Geometry;
-using UnitsNet.Units;
-using Oasys.Units;
-using System.Linq;
+using GsaAPI;
 using GsaGH.Util.Gsa;
-using System.Threading.Tasks;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Parameters
 {

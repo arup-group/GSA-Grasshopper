@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using UnitsNet.Units;
-using UnitsNet;
-using System.Linq;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -242,12 +242,12 @@ namespace GsaGH.Components
           case "X":
           case "Y":
           case "Z":
-            load = GetInput.Force(this, DA, 4, forceUnit).Newtons;
+            load = GetInput.GetForce(this, DA, 4, forceUnit).Newtons;
             break;
           case "XX":
           case "YY":
           case "ZZ":
-            load = GetInput.Force(this, DA, 4, forceUnit).Newtons * new Length(1, lengthUnit).Meters;
+            load = GetInput.GetForce(this, DA, 4, forceUnit).Newtons * new Length(1, lengthUnit).Meters;
             break;
         }
       }
@@ -258,12 +258,12 @@ namespace GsaGH.Components
           case "X":
           case "Y":
           case "Z":
-            load = GetInput.Length(this, DA, 4, lengthUnit).Meters;
+            load = GetInput.GetLength(this, DA, 4, lengthUnit).Meters;
             break;
           case "XX":
           case "YY":
           case "ZZ":
-            load = GetInput.Angle(this, DA, 4, AngleUnit.Radian).Radians;
+            load = GetInput.GetAngle(this, DA, 4, AngleUnit.Radian).Radians;
             break;
         }
       }

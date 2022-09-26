@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Grasshopper" Version="7.5.21100.3001" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
-    <PackageReference Include="UnitsNet" Version="4.89.0" />
+    <PackageReference Include="OasysUnits" Version="1.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

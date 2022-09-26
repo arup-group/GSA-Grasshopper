@@ -1,15 +1,14 @@
-﻿using GsaAPI;
-using GsaGH.Parameters;
-using Oasys.Units;
-using Rhino.Geometry;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using UnitsNet;
-using UnitsNet.Units;
+using GsaAPI;
+using GsaGH.Parameters;
+using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Util.Gsa
 {

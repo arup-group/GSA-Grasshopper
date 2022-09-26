@@ -6,8 +6,8 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using Rhino.Geometry;
 using GsaGH.Parameters;
-using UnitsNet.Units;
-using UnitsNet;
+using OasysUnits.Units;
+using OasysUnits;
 
 namespace GsaGH.Components
 {

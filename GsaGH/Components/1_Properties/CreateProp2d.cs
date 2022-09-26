@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-
 using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using UnitsNet;
-using System.Linq;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -98,7 +98,7 @@ namespace GsaGH.Components
       }
       else
       {
-        lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[i]);
+        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
       }
 
         // update name of inputs (to display unit on sliders)
@@ -139,7 +139,7 @@ namespace GsaGH.Components
             "Unit"
     });
     private bool first = true;
-    private UnitsNet.Units.LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
     string unitAbbreviation;
     #endregion
 
@@ -227,7 +227,7 @@ namespace GsaGH.Components
           else
             prop.Material = new GsaMaterial(2);
 
-          prop.Thickness = GetInput.Length(this, DA, 1, lengthUnit);
+          prop.Thickness = GetInput.GetLength(this, DA, 1, lengthUnit);
         }
         else
           prop.Material = new GsaMaterial(8);
@@ -393,7 +393,7 @@ namespace GsaGH.Components
       {
         Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
         _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0].Replace(" ", string.Empty));
-        lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[1]);
+        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[1]);
       }
       catch (Exception)
       {
@@ -401,7 +401,7 @@ namespace GsaGH.Components
         selecteditems.Add(reader.GetString("select")); // same
 
         // set length to meters as this was the only option for old components
-        lengthUnit = UnitsNet.Units.LengthUnit.Meter;
+        lengthUnit = LengthUnit.Meter;
 
         dropdownitems = new List<List<string>>();
         selecteditems = new List<string>();

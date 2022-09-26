@@ -8,7 +8,7 @@ using Rhino.Geometry;
 using GsaAPI;
 using GsaGH.Parameters;
 using Rhino;
-using UnitsNet;
+using OasysUnits;
 
 namespace GsaGH.Components
 {
@@ -217,7 +217,7 @@ namespace GsaGH.Components
       // 4 Tolerance
       if (this.Params.Input[4].SourceCount != 0)
       {
-        gs.Tolerance = GetInput.Length(this, DA, 4, Units.LengthUnitGeometry, true).Millimeters;
+        gs.Tolerance = GetInput.GetLength(this, DA, 4, Units.LengthUnitGeometry, true).Millimeters;
         changeGS = true;
       }
 

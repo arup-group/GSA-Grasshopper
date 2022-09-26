@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
-using UnitsNet.Units;
+using OasysUnits.Units;
 
 namespace GsaGH.Util.Gsa.ToGSA
 {

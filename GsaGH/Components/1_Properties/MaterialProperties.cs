@@ -2,8 +2,9 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
-using UnitsNet;
-using UnitsNet.GH;
+using OasysGH.Parameters;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -70,7 +71,7 @@ namespace GsaGH.Components
 
         DA.SetData(1, gsaMaterial.AnalysisMaterial.PoissonsRatio);
 
-        Density density = new Density(gsaMaterial.AnalysisMaterial.Density, UnitsNet.Units.DensityUnit.KilogramPerCubicMeter);
+        Density density = new Density(gsaMaterial.AnalysisMaterial.Density, DensityUnit.KilogramPerCubicMeter);
         density = new Density(density.As(Units.DensityUnit), Units.DensityUnit);
         DA.SetData(2, new GH_UnitNumber(density));
 

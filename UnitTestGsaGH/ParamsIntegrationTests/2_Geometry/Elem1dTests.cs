@@ -6,7 +6,7 @@ using GsaGH.Parameters;
 using Rhino.Geometry;
 using GsaAPI;
 using System.Collections.Generic;
-using UnitsNet.Units;
+using OasysUnits.Units;
 
 namespace ParamsIntegrationTests
 {

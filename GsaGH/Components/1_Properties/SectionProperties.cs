@@ -2,7 +2,7 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
-using UnitsNet.GH;
+using OasysGH.Parameters;
 
 namespace GsaGH.Components
 {

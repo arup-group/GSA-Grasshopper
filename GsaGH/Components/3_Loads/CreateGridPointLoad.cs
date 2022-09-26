@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using Rhino.Geometry;
 using GsaGH.Parameters;
-using UnitsNet.Units;
-using System.Collections.Generic;
-using UnitsNet;
-using System.Linq;
+using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
@@ -209,7 +209,7 @@ namespace GsaGH.Components
       }
 
       // 6 load value
-      gridpointload.GridPointLoad.Value = GetInput.Force(this, DA, 6, forceUnit).Newtons;
+      gridpointload.GridPointLoad.Value = GetInput.GetForce(this, DA, 6, forceUnit).Newtons;
 
       // convert to goo
       GsaLoad gsaLoad = new GsaLoad(gridpointload);

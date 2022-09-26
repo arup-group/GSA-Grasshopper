@@ -10,9 +10,10 @@ using GsaGH.Util;
 using System.Linq;
 using System.IO;
 using System.Reflection;
-using UnitsNet;
+using OasysUnits;
 using GsaGH.Util.GH;
 using GsaGH.Util.Gsa;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -22,8 +23,7 @@ namespace GsaGH.Components
   public class CreateProfile : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("ea1741e5-905e-4ecb-8270-a584e3f99aa3");
     public CreateProfile()
       : base("Create Profile", "Profile", "Create Profile text-string for GSA Section",
@@ -309,7 +309,7 @@ namespace GsaGH.Components
         else
         {
           // change unit
-          lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[i]);
+          lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
 
           IQuantity quantity = new Length(0, lengthUnit);
           unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
@@ -416,7 +416,7 @@ namespace GsaGH.Components
         };
     Dictionary<string, FieldInfo> profileFields;
 
-    private UnitsNet.Units.LengthUnit lengthUnit = Units.LengthUnitSection;
+    private LengthUnit lengthUnit = Units.LengthUnitSection;
     string unitAbbreviation;
 
     #region catalogue sections
@@ -508,13 +508,13 @@ namespace GsaGH.Components
         if (typ == "IAngleProfile") //(typ.Name.Equals(typeof(IAngleProfile).Name))
         {
           profile += "A" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
 
           //profile = IAngleProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
           //    GetInput.Flange(this, DA, 1),
           //    GetInput.Web(this, DA, 2));
         }
@@ -523,13 +523,13 @@ namespace GsaGH.Components
         else if (typ == "IChannelProfile") //(typ.Name.Equals(typeof(IChannelProfile).Name))
         {
           profile += "CH" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
 
           //profile = IChannelProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
           //    GetInput.Flange(this, DA, 1),
           //    (IWebConstant)GetInput.Web(this, DA, 2));
         }
@@ -538,35 +538,35 @@ namespace GsaGH.Components
         else if (typ == "ICircleHollowProfile") //(typ.Name.Equals(typeof(ICircleHollowProfile).Name))
         {
           profile += "CHS" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString();
 
           //profile = ICircleHollowProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
-          //    GetInput.Length(this, DA, 1, lengthUnit));
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 1, lengthUnit));
         }
 
         // circle
         else if (typ == "ICircleProfile") //(typ.Name.Equals(typeof(ICircleProfile).Name))
         {
           profile += "C" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString();
 
           //profile = ICircleProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit));
+          //    GetInput.GetLength(this, DA, 0, lengthUnit));
         }
 
         // ICruciformSymmetricalProfile
         else if (typ == "ICruciformSymmetricalProfile") //(typ.Name.Equals(typeof(ICruciformSymmetricalProfile).Name))
         {
           profile += "X" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
 
           //profile = ICruciformSymmetricalProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
           //    GetInput.Flange(this, DA, 1),
           //    (IWebConstant)GetInput.Web(this, DA, 2));
         }
@@ -575,77 +575,77 @@ namespace GsaGH.Components
         else if (typ == "IEllipseHollowProfile") //(typ.Name.Equals(typeof(IEllipseHollowProfile).Name))
         {
           profile += "OVAL" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString();
 
           //profile = IEllipseHollowProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
-          //    GetInput.Length(this, DA, 1, lengthUnit),
-          //    GetInput.Length(this, DA, 2, lengthUnit));
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 1, lengthUnit),
+          //    GetInput.GetLength(this, DA, 2, lengthUnit));
         }
 
         // IEllipseProfile
         else if (typ == "IEllipseProfile") //(typ.Name.Equals(typeof(IEllipseProfile).Name))
         {
           profile += "E" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " 2";
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " 2";
 
           //profile = IEllipseProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
-          //    GetInput.Length(this, DA, 1, lengthUnit));
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 1, lengthUnit));
         }
 
         // IGeneralCProfile
         else if (typ == "IGeneralCProfile") //(typ.Name.Equals(typeof(IGeneralCProfile).Name))
         {
           profile += "GC" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
 
           //profile = IGeneralCProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
-          //    GetInput.Length(this, DA, 1, lengthUnit),
-          //    GetInput.Length(this, DA, 2, lengthUnit),
-          //    GetInput.Length(this, DA, 3, lengthUnit));
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 1, lengthUnit),
+          //    GetInput.GetLength(this, DA, 2, lengthUnit),
+          //    GetInput.GetLength(this, DA, 3, lengthUnit));
         }
 
         // IGeneralZProfile
         else if (typ == "IGeneralZProfile") //(typ.Name.Equals(typeof(IGeneralZProfile).Name))
         {
           profile += "GZ" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
 
           //profile = IGeneralZProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
-          //    GetInput.Length(this, DA, 1, lengthUnit),
-          //    GetInput.Length(this, DA, 2, lengthUnit),
-          //    GetInput.Length(this, DA, 3, lengthUnit),
-          //    GetInput.Length(this, DA, 4, lengthUnit),
-          //    GetInput.Length(this, DA, 5, lengthUnit));
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 1, lengthUnit),
+          //    GetInput.GetLength(this, DA, 2, lengthUnit),
+          //    GetInput.GetLength(this, DA, 3, lengthUnit),
+          //    GetInput.GetLength(this, DA, 4, lengthUnit),
+          //    GetInput.GetLength(this, DA, 5, lengthUnit));
         }
 
         // IIBeamAsymmetricalProfile
         else if (typ == "IIBeamAsymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamAsymmetricalProfile).Name))
         {
           profile += "GI" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
 
           //profile = IIBeamAsymmetricalProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
           //    GetInput.Flange(this, DA, 1),
           //    GetInput.Flange(this, DA, 2),
           //    GetInput.Web(this, DA, 3));
@@ -655,31 +655,31 @@ namespace GsaGH.Components
         else if (typ == "IIBeamCellularProfile") //(typ.Name.Equals(typeof(IIBeamCellularProfile).Name))
         {
           profile += "CB" + unit +
-             GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
+             GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
 
           //profile = IIBeamCellularProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
           //    GetInput.Flange(this, DA, 1),
           //    (IWebConstant)GetInput.Web(this, DA, 2),
-          //    GetInput.Length(this, DA, 3, lengthUnit));
+          //    GetInput.GetLength(this, DA, 3, lengthUnit));
         }
 
         // IIBeamSymmetricalProfile
         else if (typ == "IIBeamSymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamSymmetricalProfile).Name))
         {
           profile += "I" + unit +
-             GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+             GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
 
           //profile = IIBeamSymmetricalProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
           //    GetInput.Flange(this, DA, 1),
           //    (IWebConstant)GetInput.Web(this, DA, 2));
         }
@@ -688,13 +688,13 @@ namespace GsaGH.Components
         else if (typ == "IRectangleHollowProfile") //(typ.Name.Equals(typeof(IRectangleHollowProfile).Name))
         {
           profile += "RHS" + unit +
-             GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+             GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
 
           //profile = IRectangleHollowProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
           //    GetInput.Flange(this, DA, 1),
           //    (IWebConstant)GetInput.Web(this, DA, 2));
         }
@@ -703,28 +703,28 @@ namespace GsaGH.Components
         else if (typ == "IRectangleProfile") //(typ.Name.Equals(typeof(IRectangleProfile).Name))
         {
           profile += "R" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString();
 
           //profile = IRectangleProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
-          //    GetInput.Length(this, DA, 1, lengthUnit));
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 1, lengthUnit));
         }
 
         // IRectoEllipseProfile
         else if (typ == "IRectoEllipseProfile") //(typ.Name.Equals(typeof(IRectoEllipseProfile).Name))
         {
           profile += "RE" + unit +
-             GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " 2";
+             GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " 2";
 
           //profile = IRectoEllipseProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
-          //    GetInput.Length(this, DA, 1, lengthUnit),
-          //    GetInput.Length(this, DA, 2, lengthUnit),
-          //    GetInput.Length(this, DA, 3, lengthUnit));
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 1, lengthUnit),
+          //    GetInput.GetLength(this, DA, 2, lengthUnit),
+          //    GetInput.GetLength(this, DA, 3, lengthUnit));
         }
 
         // ISecantPileProfile
@@ -745,13 +745,13 @@ namespace GsaGH.Components
           }
 
           profile += (isWallNotSection ? "SP" : "SPW") + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
               pileCount.ToString();
 
           //profile = ISecantPileProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
-          //    GetInput.Length(this, DA, 1, lengthUnit),
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 1, lengthUnit),
           //    pileCount, isWallNotSection);
         }
 
@@ -759,59 +759,59 @@ namespace GsaGH.Components
         else if (typ == "ISheetPileProfile") //(typ.Name.Equals(typeof(ISheetPileProfile).Name))
         {
           profile += "SHT" + unit +
-             GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
+             GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
 
           //profile = ISheetPileProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
-          //    GetInput.Length(this, DA, 1, lengthUnit),
-          //    GetInput.Length(this, DA, 2, lengthUnit),
-          //    GetInput.Length(this, DA, 3, lengthUnit),
-          //    GetInput.Length(this, DA, 4, lengthUnit),
-          //    GetInput.Length(this, DA, 5, lengthUnit));
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 1, lengthUnit),
+          //    GetInput.GetLength(this, DA, 2, lengthUnit),
+          //    GetInput.GetLength(this, DA, 3, lengthUnit),
+          //    GetInput.GetLength(this, DA, 4, lengthUnit),
+          //    GetInput.GetLength(this, DA, 5, lengthUnit));
         }
 
         // IStadiumProfile
         else if (typ == "IStadiumProfile") //(typ.Name.Equals(typeof(IStadiumProfile).Name))
         {
           profile += "RC" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString();
 
           //profile = IStadiumProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
-          //    GetInput.Length(this, DA, 1, lengthUnit));
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 1, lengthUnit));
         }
 
         // ITrapezoidProfile
         else if (typ == "ITrapezoidProfile") //(typ.Name.Equals(typeof(ITrapezoidProfile).Name))
         {
           profile += "TR" + unit +
-              GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString();
+              GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+              GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString();
 
           //profile = ITrapezoidProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
-          //    GetInput.Length(this, DA, 1, lengthUnit),
-          //    GetInput.Length(this, DA, 2, lengthUnit));
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 1, lengthUnit),
+          //    GetInput.GetLength(this, DA, 2, lengthUnit));
         }
 
         // ITSectionProfile
         else if (typ == "ITSectionProfile") //(typ.Name.Equals(typeof(ITSectionProfile).Name))
         {
           profile += "T" + unit +
-             GetInput.Length(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             GetInput.Length(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+             GetInput.GetLength(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
+             GetInput.GetLength(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
 
           //profile = ITSectionProfile.Create(
-          //    GetInput.Length(this, DA, 0, lengthUnit),
+          //    GetInput.GetLength(this, DA, 0, lengthUnit),
           //    GetInput.Flange(this, DA, 1),
           //    GetInput.Web(this, DA, 2));
         }
@@ -956,19 +956,19 @@ namespace GsaGH.Components
           }
           switch (lengthUnit)
           {
-            case UnitsNet.Units.LengthUnit.Millimeter:
+            case LengthUnit.Millimeter:
               perimeter.sectUnit = Profile.SectUnitOptions.u_mm;
               break;
-            case UnitsNet.Units.LengthUnit.Centimeter:
+            case LengthUnit.Centimeter:
               perimeter.sectUnit = Profile.SectUnitOptions.u_cm;
               break;
-            case UnitsNet.Units.LengthUnit.Meter:
+            case LengthUnit.Meter:
               perimeter.sectUnit = Profile.SectUnitOptions.u_m;
               break;
-            case UnitsNet.Units.LengthUnit.Foot:
+            case LengthUnit.Foot:
               perimeter.sectUnit = Profile.SectUnitOptions.u_ft;
               break;
-            case UnitsNet.Units.LengthUnit.Inch:
+            case LengthUnit.Inch:
               perimeter.sectUnit = Profile.SectUnitOptions.u_in;
               break;
           }
@@ -1003,7 +1003,6 @@ namespace GsaGH.Components
       #endregion
 
     }
-
 
     #region menu override
     private enum FoldMode
@@ -1275,7 +1274,7 @@ namespace GsaGH.Components
       DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
 
       _mode = (FoldMode)Enum.Parse(typeof(FoldMode), reader.GetString("mode"));
-      lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), reader.GetString("lengthUnit"));
+      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("lengthUnit"));
 
       inclSS = reader.GetBoolean("inclSS");
       numberOfInputs = reader.GetInt32("NumberOfInputs");
@@ -1951,7 +1950,7 @@ namespace GsaGH.Components
 
           if (Params.Input.Count == 1) // handle backwards compatability
             Params.RegisterInputParam(new Param_Plane());
-          
+
           i++;
           Params.Input[i].NickName = "P";
           Params.Input[i].Name = "Plane";

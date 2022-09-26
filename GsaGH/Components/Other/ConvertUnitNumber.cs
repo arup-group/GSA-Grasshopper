@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using UnitsNet.GH;
+using OasysGH.Parameters;
+using OasysUnits;
 
 namespace GsaGH.Components
 {
@@ -118,7 +119,7 @@ namespace GsaGH.Components
           if (convertedUnitNumber == null || !convertedUnitNumber.Value.QuantityInfo.UnitType.Equals(inUnitNumber.Value.QuantityInfo.UnitType))
           {
             unitDict = new Dictionary<string, Enum>();
-            foreach (UnitsNet.UnitInfo unit in inUnitNumber.Value.QuantityInfo.UnitInfos)
+            foreach (UnitInfo unit in inUnitNumber.Value.QuantityInfo.UnitInfos)
             {
               unitDict.Add(unit.Name, unit.Value);
             }

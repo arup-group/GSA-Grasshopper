@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
-using UnitsNet;
-using System.Linq;
-using UnitsNet.GH;
+using OasysGH.Parameters;
+using OasysUnits;
 
 namespace GsaGH.Components
 {
@@ -111,7 +111,7 @@ namespace GsaGH.Components
 
       // 3 Thickness
       if (this.Params.Input[3].SourceCount > 0)
-        prop.Thickness = GetInput.Length(this, DA, 3, Units.LengthUnitSection, true);
+        prop.Thickness = GetInput.GetLength(this, DA, 3, Units.LengthUnitSection, true);
 
       // 4 Axis
       GH_Integer ghax = new GH_Integer();

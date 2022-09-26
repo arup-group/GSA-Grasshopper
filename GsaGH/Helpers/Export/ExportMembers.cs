@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using GsaGH.Parameters;
 using System.Linq;
-using UnitsNet.Units;
-using UnitsNet;
+using OasysUnits.Units;
+using OasysUnits;
 
 namespace GsaGH.Util.Gsa.ToGSA
 {

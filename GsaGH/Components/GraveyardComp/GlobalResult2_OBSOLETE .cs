@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using UnitsNet.Units;
-using UnitsNet;
-using System.Linq;
-using Oasys.Units;
 using GsaGH.Util.GH;
 using GsaGH.Util.Gsa;
-using UnitsNet.GH;
-using Grasshopper.Kernel.Parameters;
+using OasysGH.Parameters;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -142,7 +139,7 @@ namespace GsaGH.Components
     {
       IQuantity force = new Force(0, forceUnit);
       string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-      string momentunitAbbreviation = Oasys.Units.Moment.GetAbbreviation(momentUnit);
+      string momentunitAbbreviation = Moment.GetAbbreviation(momentUnit);
       IQuantity mass = new Mass(0, massUnit);
       string massUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
       IQuantity inertia = new AreaMomentOfInertia(0, inertiaUnit);
@@ -317,7 +314,7 @@ namespace GsaGH.Components
     {
       IQuantity force = new Force(0, forceUnit);
       string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-      string momentunitAbbreviation = Oasys.Units.Moment.GetAbbreviation(momentUnit);
+      string momentunitAbbreviation = Moment.GetAbbreviation(momentUnit);
       IQuantity mass = new Mass(0, massUnit);
       string massUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
       IQuantity inertia = new AreaMomentOfInertia(0, inertiaUnit);

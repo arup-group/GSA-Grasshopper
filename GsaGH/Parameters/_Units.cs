@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OasysUnits;
+using OasysUnits.Units;
 using Rhino;
-using UnitsNet;
-using UnitsNet.Units;
-using Oasys.Units;
 
 namespace GsaGH
 {
@@ -121,7 +120,7 @@ namespace GsaGH
       }
       // fallback:
       BaseUnits baseUnits = new BaseUnits(unit, SI.Mass, SI.Time, SI.Current, SI.Temperature, SI.Amount, SI.LuminousIntensity);
-      UnitsNet.UnitSystem unitSystem = new UnitsNet.UnitSystem(baseUnits);
+      OasysUnits.UnitSystem unitSystem = new OasysUnits.UnitSystem(baseUnits);
       return new AreaMomentOfInertia(1, unitSystem).Unit;
     }
 
@@ -143,7 +142,7 @@ namespace GsaGH
       }
       // fallback:
       BaseUnits baseUnits = new BaseUnits(unit, SI.Mass, SI.Time, SI.Current, SI.Temperature, SI.Amount, SI.LuminousIntensity);
-      UnitsNet.UnitSystem unitSystem = new UnitsNet.UnitSystem(baseUnits);
+      OasysUnits.UnitSystem unitSystem = new OasysUnits.UnitSystem(baseUnits);
       return new Area(1, unitSystem).Unit;
     }
 
@@ -176,7 +175,7 @@ namespace GsaGH
       }
       // fallback:
       BaseUnits baseUnits = new BaseUnits(unit, SI.Mass, SI.Time, SI.Current, SI.Temperature, SI.Amount, SI.LuminousIntensity);
-      UnitsNet.UnitSystem unitSystem = new UnitsNet.UnitSystem(baseUnits);
+      OasysUnits.UnitSystem unitSystem = new OasysUnits.UnitSystem(baseUnits);
       return new VolumePerLength(1, unitSystem).Unit;
     }
     public static LengthUnit LengthUnitResult
@@ -664,7 +663,7 @@ namespace GsaGH
 
     #endregion
 
-    private static BaseUnits SI = UnitsNet.UnitSystem.SI.BaseUnits;
+    private static BaseUnits SI = OasysUnits.UnitSystem.SI.BaseUnits;
 
     #region methods
     public static void SetupUnitsDuringLoad(bool headless = false)

@@ -5,8 +5,8 @@ using GsaGH.Parameters;
 using NUnit.Framework;
 using Rhino.Geometry;
 using GsaAPI;
-using UnitsNet;
-using UnitsNet.Units;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace ParamsIntegrationTests
 {
