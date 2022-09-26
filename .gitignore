@@ -344,8 +344,6 @@ dist/*
 !dist/manifest.yml
 !
 *.bak
-/UnitTestGhSA/bin
-/UnitTestGhSA/obj
 /GsaGH/bin
 /GsaGH/obj
 /GsaGHTests/bin
@@ -353,4 +351,5 @@ dist/*
 /IntegrationTests/bin
 /IntegrationTests/obj
 
-/GhSA/bin/x64/Release
+/UnitTestGsaGH/bin
+/UnitTestGsaGH/obj
