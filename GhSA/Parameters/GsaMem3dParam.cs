@@ -226,13 +226,13 @@ namespace GsaGH.Parameters
       if (this == null) { return null; }
       GsaMember3d dup = new GsaMember3d();
       dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
-      dup.m_member = m_member;
       dup.m_prop = m_prop.Duplicate();
       if (cloneApiMember)
         dup.CloneApiMember();
-      //dup.m_section = m_section;
+      else
+        dup.m_member = m_member;
       dup.m_id = m_id;
-
+      dup.UpdatePreview();
       return dup;
     }
     public GsaMember3d UpdateGeometry(Brep brep)
