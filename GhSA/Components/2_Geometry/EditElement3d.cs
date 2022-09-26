@@ -63,7 +63,7 @@ namespace GsaGH.Components
           + "This will export a list of solid meshes representing each 3D element." + System.Environment.NewLine
           + "To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddGenericParameter("3D Property", "PA", "Get 3D Property. Input either a GSA 3D Property or an Integer to use a Property already defined in model", GH_ParamAccess.list);
+      pManager.AddGenericParameter("3D Property", "PV", "Get 3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model", GH_ParamAccess.list);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
       pManager.AddTextParameter("Element Type", "eT", "Get Element 3D Type." + System.Environment.NewLine
           + "Type can not be set; it is either Tetra4, Pyramid5, Wedge6 or Brick8", GH_ParamAccess.list);
@@ -119,36 +119,34 @@ namespace GsaGH.Components
 
         List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
         // 2 Prop3d
-        //List<GsaProp2d> in_prop2Ds = new List<GsaProp2d>();
         if (DA.GetDataList(2, gh_types))
         {
+          List<GsaProp3d> prop3Ds = new List<GsaProp3d>();
           for (int i = 0; i < gh_types.Count; i++)
           {
-            //        if (i > elem.Elements.Count)
-            //            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "PA input List Length is longer than number of elements." + System.Environment.NewLine + "Excess PA's have been ignored");
+            if (i > elem.API_Elements.Count)
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "PA input List Length is longer than number of elements." + System.Environment.NewLine + "Excess PA's have been ignored");
             GH_ObjectWrapper gh_typ = gh_types[i];
-            //        GsaProp2d prop2d = new GsaProp2d();
-            //        if (gh_typ.Value is GsaProp2dGoo)
-            //        {
-            //            gh_typ.CastTo(ref prop2d);
-            //            in_prop2Ds.Add(prop2d);
-            //            elem.Elements[i].Property = 0;
-            //        }
-            //        else
-            //        {
-            if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+            GsaProp3d prop3d = new GsaProp3d();
+            if (gh_typ.Value is GsaProp3dGoo)
             {
-              elem.PropertyIDs[i] = idd;
-              //                elem.Elements[i].Property = idd;
-              //                elem.Properties[i] = null;
+              gh_typ.CastTo(ref prop3d);
+              prop3Ds.Add(prop3d);
             }
-            //            else
-            //            {
-            //                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
-            //                return;
-            //            }
-            //        }
+            else
+            {
+              if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+              {
+                prop3Ds.Add(new GsaProp3d(idd));
+              }
+              else
+              {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
+                return;
+              }
+            }
           }
+          elem.Properties = prop3Ds;
         }
 
         // 3 Group
@@ -248,6 +246,7 @@ namespace GsaGH.Components
         DA.SetData(0, new GsaElement3dGoo(elem));
         DA.SetDataList(1, elem.ID);
         DA.SetDataList(2, out_meshes);
+        DA.SetDataList(3, new List<GsaProp3dGoo>(elem.Properties.ConvertAll(prop3d => new GsaProp3dGoo(prop3d))));
         DA.SetDataList(4, elem.Groups);
         DA.SetDataList(5, elem.Types);
         DA.SetDataList(6, elem.Names);
