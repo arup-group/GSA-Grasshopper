@@ -196,7 +196,7 @@ namespace GsaGH.Components
               DA.SetData(2, "(" + gsaload.PointLoad.GridPointLoad.X + "," + gsaload.PointLoad.GridPointLoad.Y + ")");
               DA.SetData(3, gsaload.PointLoad.GridPointLoad.AxisProperty);
               DA.SetData(4, gsaload.PointLoad.GridPointLoad.Direction);
-              Force apiPointForce = new Force(gsaload.NodeLoad.NodeLoad.Value, ForceUnit.Newton);
+              Force apiPointForce = new Force(gsaload.PointLoad.GridPointLoad.Value, ForceUnit.Newton);
               Force outPointForce = new Force(apiPointForce.As(forceUnit), forceUnit);
               DA.SetData(6, new GH_UnitNumber(outPointForce));
               DA.SetData(10, new GsaGridPlaneSurfaceGoo(gsaload.PointLoad.GridPlaneSurface));
