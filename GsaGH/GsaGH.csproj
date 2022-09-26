@@ -134,12 +134,9 @@
     <Compile Include="Components\5_Results\GlobalPerformanceResults.cs" />
     <Compile Include="Components\5_Results\TotalLoadsAndReactionResults.cs" />
     <Compile Include="Components\GH_OasysTaskCapableComponent.cs" />
-    <Compile Include="Components\GraveyardComp\CreateOffset_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\CreateProp2d_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\EditSection_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\GlobalResult2_OBSOLETE .cs" />
-    <Compile Include="Components\GraveyardComp\Version_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\GetAnalysis_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
@@ -169,21 +166,16 @@
     <Compile Include="Components\1_Properties\EditProp2d.cs" />
     <Compile Include="Components\1_Properties\EditOffset.cs" />
     <Compile Include="Components\1_Properties\EditBool6.cs" />
-    <Compile Include="Components\GraveyardComp\EditSpring.cs" />
-    <Compile Include="Components\GraveyardComp\CreateSpring.cs" />
     <Compile Include="Components\1_Properties\CreateBool6.cs" />
     <Compile Include="Components\2_Geometry\CreateElement2d.cs" />
     <Compile Include="Components\2_Geometry\CreateMember2d.cs" />
     <Compile Include="Components\2_Geometry\CreateElement1d.cs" />
     <Compile Include="Components\2_Geometry\CreateMember1d.cs" />
     <Compile Include="Components\2_Geometry\EditElement1d.cs" />
-    <Compile Include="Components\GraveyardComp\EditUnits_OBSOLETE.cs" />
     <Compile Include="Components\2_Geometry\EditElement2d.cs" />
     <Compile Include="Components\2_Geometry\EditMember2d.cs" />
     <Compile Include="Components\2_Geometry\EditMember1d.cs" />
-    <Compile Include="Components\GraveyardComp\EditNode_OBSOLETE.cs" />
     <Compile Include="Components\2_Geometry\CreateSupport.cs" />
-    <Compile Include="Components\GraveyardComp\GetGeometry_OBSOLETE.cs" />
     <Compile Include="Components\3_Loads\CreateGridAreaLoad.cs" />
     <Compile Include="Components\3_Loads\CreateGridLineLoad.cs" />
     <Compile Include="Components\3_Loads\GridPlaneSurfaceProperties.cs" />
@@ -194,12 +186,6 @@
     <Compile Include="Components\3_Loads\CreateGridPointLoad.cs" />
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
-    <Compile Include="Components\GraveyardComp\CreateBeamLoads_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\CreateFaceLoads_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\CreateGridAreaLoad_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\CreateGridLineLoad_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\CreateGridPointLoad_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\CreateNodeLoads_OBSOLETE.cs" />
     <Compile Include="Components\Other\ConvertUnitNumber.cs" />
     <Compile Include="Components\Other\CreateUnitNumber.cs" />
     <Compile Include="Components\GH_OasysComponent.cs" />
@@ -251,7 +237,6 @@
     <Compile Include="Parameters\GsaModelParam.cs" />
     <Compile Include="Parameters\GsaNodeParam.cs" />
     <Compile Include="Helpers\_RhinoConversions.cs" />
-    <Compile Include="Parameters\GsaSpringParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

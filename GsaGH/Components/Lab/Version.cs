@@ -9,13 +9,13 @@ using Rhino.Geometry;
 using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GhSA.Parameters;
+using GsaGH.Parameters;
 using System.Resources;
 using Grasshopper.Documentation;
 using System.IO;
 
 
-namespace GhSA.Components
+namespace GsaGH.Components
 {
     public class GsaVersion : GH_OasysComponent
     {
@@ -31,7 +31,7 @@ namespace GhSA.Components
 
         public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
-        protected override System.Drawing.Bitmap Icon => GhSA.Properties.Resources.GsaVersion;
+        protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GsaVersion;
         #endregion
 
         #region Custom UI

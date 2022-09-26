@@ -175,7 +175,7 @@ namespace GsaGH
     internal const string Company = "Oasys";
     internal const string Copyright = "Copyright © Oasys 1985 - 2022";
     internal const string Contact = "https://www.oasys-software.com/";
-    internal const string Vers = "0.9.27";
+    internal const string Vers = "0.9.28";
     internal static bool isBeta = true;
     internal static string Disclaimer = PluginName + " is pre-release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using " + PluginName + " should not be relied upon without thorough and independent checking. ";
     internal const string ProductName = "GSA";
@@ -226,14 +226,6 @@ namespace GsaGH
       {
         //Return a string representing your preferred contact details.
         return Contact;
-      }
-    }
-    public string Icon_url
-    {
-      get
-      {
-        // TODO to be updated - not supported by yak currently
-        return "https://raw.githubusercontent.com/arup-group/GSA-Grasshopper/master/GhSA/Properties/Icons/icons/4x/GsaGhLogo%404x.png";
       }
     }
 
