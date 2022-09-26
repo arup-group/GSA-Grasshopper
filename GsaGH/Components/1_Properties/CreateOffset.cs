@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using GsaGH.Parameters;
-using UnitsNet;
+using OasysUnits;
 using System.Linq;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -36,7 +37,7 @@ namespace GsaGH.Components
         selecteditems = new List<string>();
 
         // length
-        //dropdownitems.Add(Enum.GetNames(typeof(UnitsNet.Units.LengthUnit)).ToList());
+        //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
         dropdownitems.Add(Units.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
@@ -53,7 +54,7 @@ namespace GsaGH.Components
       // change selected item
       selecteditems[i] = dropdownitems[i][j];
 
-      lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[i]);
+      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
 
       // update name of inputs (to display unit on sliders)
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -64,7 +65,7 @@ namespace GsaGH.Components
 
     private void UpdateUIFromSelectedItems()
     {
-      lengthUnit = (UnitsNet.Units.LengthUnit)Enum.Parse(typeof(UnitsNet.Units.LengthUnit), selecteditems[0]);
+      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
 
       CreateAttributes();
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -85,7 +86,7 @@ namespace GsaGH.Components
             "Measure"
     });
     private bool first = true;
-    private UnitsNet.Units.LengthUnit lengthUnit = GsaGH.Units.LengthUnitGeometry;
+    private LengthUnit lengthUnit = GsaGH.Units.LengthUnitGeometry;
     string unitAbbreviation;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
@@ -111,10 +112,10 @@ namespace GsaGH.Components
     {
       GsaOffset offset = new GsaOffset
       {
-        X1 = GetInput.Length(this, DA, 0, lengthUnit, true),
-        X2 = GetInput.Length(this, DA, 1, lengthUnit, true),
-        Y = GetInput.Length(this, DA, 2, lengthUnit, true),
-        Z = GetInput.Length(this, DA, 3, lengthUnit, true)
+        X1 = GetInput.GetLength(this, DA, 0, lengthUnit, true),
+        X2 = GetInput.GetLength(this, DA, 1, lengthUnit, true),
+        Y = GetInput.GetLength(this, DA, 2, lengthUnit, true),
+        Z = GetInput.GetLength(this, DA, 3, lengthUnit, true)
       };
 
       DA.SetData(0, new GsaOffsetGoo(offset));

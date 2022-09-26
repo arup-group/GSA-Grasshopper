@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
-using UnitsNet.GH;
-using UnitsNet;
+using OasysUnits;
+using OasysUnits.Units;
+using OasysGH.Parameters;
 
 namespace GsaGH.Components
 {
@@ -40,7 +41,7 @@ namespace GsaGH.Components
         selecteditems.Add(dropdownitems[0][0]);
 
         // first type
-        dropdownitems.Add(Enum.GetNames(typeof(UnitsNet.Units.LengthUnit)).ToList());
+        dropdownitems.Add(Enum.GetNames(typeof(OasysUnits.Units.LengthUnit)).ToList());
         selecteditems.Add(Units.LengthUnitGeometry.ToString());
 
         // set selected unit to
@@ -95,46 +96,46 @@ namespace GsaGH.Components
       switch (unit)
       {
         case Units.GsaUnits.Length:
-          quantity = new Length(val, (UnitsNet.Units.LengthUnit)selectedMeasure);
+          quantity = new Length(val, (OasysUnits.Units.LengthUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Area:
-          quantity = new Area(val, (UnitsNet.Units.AreaUnit)selectedMeasure);
+          quantity = new Area(val, (OasysUnits.Units.AreaUnit)selectedMeasure);
           break;
         case Units.GsaUnits.AreaMomentOfInertia:
-          quantity = new AreaMomentOfInertia(val, (UnitsNet.Units.AreaMomentOfInertiaUnit)selectedMeasure);
+          quantity = new AreaMomentOfInertia(val, (OasysUnits.Units.AreaMomentOfInertiaUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Force:
-          quantity = new Force(val, (UnitsNet.Units.ForceUnit)selectedMeasure);
+          quantity = new Force(val, (OasysUnits.Units.ForceUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Moment:
-          quantity = new Oasys.Units.Moment(val, (Oasys.Units.MomentUnit)selectedMeasure);
+          quantity = new Moment(val, (MomentUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Stress:
-          quantity = new Pressure(val, (UnitsNet.Units.PressureUnit)selectedMeasure);
+          quantity = new Pressure(val, (OasysUnits.Units.PressureUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Strain:
-          quantity = new Oasys.Units.Strain(val, (Oasys.Units.StrainUnit)selectedMeasure);
+          quantity = new Strain(val, (StrainUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Mass:
-          quantity = new Mass(val, (UnitsNet.Units.MassUnit)selectedMeasure);
+          quantity = new Mass(val, (OasysUnits.Units.MassUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Density:
-          quantity = new Density(val, (UnitsNet.Units.DensityUnit)selectedMeasure);
+          quantity = new Density(val, (OasysUnits.Units.DensityUnit)selectedMeasure);
           break;
         case Units.GsaUnits.LinearDensity:
-          quantity = new LinearDensity(val, (UnitsNet.Units.LinearDensityUnit)selectedMeasure);
+          quantity = new LinearDensity(val, (OasysUnits.Units.LinearDensityUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Temperature:
-          quantity = new Temperature(val, (UnitsNet.Units.TemperatureUnit)selectedMeasure);
+          quantity = new Temperature(val, (OasysUnits.Units.TemperatureUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Velocity:
-          quantity = new Speed(val, (UnitsNet.Units.SpeedUnit)selectedMeasure);
+          quantity = new Speed(val, (OasysUnits.Units.SpeedUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Acceleration:
-          quantity = new Acceleration(val, (UnitsNet.Units.AccelerationUnit)selectedMeasure);
+          quantity = new Acceleration(val, (OasysUnits.Units.AccelerationUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Ratio:
-          quantity = new Ratio(val, (UnitsNet.Units.RatioUnit)selectedMeasure);
+          quantity = new Ratio(val, (OasysUnits.Units.RatioUnit)selectedMeasure);
           break;
       }
     }
@@ -157,13 +158,13 @@ namespace GsaGH.Components
           quantity = new Force(val, Units.ForceUnit);
           break;
         case Units.GsaUnits.Moment:
-          quantity = new Oasys.Units.Moment(val, Units.MomentUnit);
+          quantity = new Moment(val, Units.MomentUnit);
           break;
         case Units.GsaUnits.Stress:
           quantity = new Pressure(val, Units.StressUnit);
           break;
         case Units.GsaUnits.Strain:
-          quantity = new Oasys.Units.Strain(val, Units.StrainUnit);
+          quantity = new Strain(val, Units.StrainUnit);
           break;
         case Units.GsaUnits.Mass:
           quantity = new Mass(val, Units.MassUnit);
@@ -184,7 +185,7 @@ namespace GsaGH.Components
           quantity = new Acceleration(val, Units.AccelerationUnit);
           break;
         case Units.GsaUnits.Ratio:
-          quantity = new Ratio(val, UnitsNet.Units.RatioUnit.Percent);
+          quantity = new Ratio(val, OasysUnits.Units.RatioUnit.Percent);
           break;
         default:
           quantity = new Length(val, Units.LengthUnitGeometry);
@@ -263,46 +264,46 @@ namespace GsaGH.Components
         switch (unit)
         {
           case Units.GsaUnits.Length:
-            quantity = new Length(val, (UnitsNet.Units.LengthUnit)selectedMeasure);
+            quantity = new Length(val, (OasysUnits.Units.LengthUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Area:
-            quantity = new Area(val, (UnitsNet.Units.AreaUnit)selectedMeasure);
+            quantity = new Area(val, (OasysUnits.Units.AreaUnit)selectedMeasure);
             break;
           case Units.GsaUnits.AreaMomentOfInertia:
-            quantity = new AreaMomentOfInertia(val, (UnitsNet.Units.AreaMomentOfInertiaUnit)selectedMeasure);
+            quantity = new AreaMomentOfInertia(val, (OasysUnits.Units.AreaMomentOfInertiaUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Force:
-            quantity = new Force(val, (UnitsNet.Units.ForceUnit)selectedMeasure);
+            quantity = new Force(val, (OasysUnits.Units.ForceUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Moment:
-            quantity = new Oasys.Units.Moment(val, (Oasys.Units.MomentUnit)selectedMeasure);
+            quantity = new Moment(val, (MomentUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Stress:
-            quantity = new Pressure(val, (UnitsNet.Units.PressureUnit)selectedMeasure);
+            quantity = new Pressure(val, (OasysUnits.Units.PressureUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Strain:
-            quantity = new Oasys.Units.Strain(val, (Oasys.Units.StrainUnit)selectedMeasure);
+            quantity = new Strain(val, (StrainUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Mass:
-            quantity = new Mass(val, (UnitsNet.Units.MassUnit)selectedMeasure);
+            quantity = new Mass(val, (OasysUnits.Units.MassUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Density:
-            quantity = new Density(val, (UnitsNet.Units.DensityUnit)selectedMeasure);
+            quantity = new Density(val, (OasysUnits.Units.DensityUnit)selectedMeasure);
             break;
           case Units.GsaUnits.LinearDensity:
-            quantity = new LinearDensity(val, (UnitsNet.Units.LinearDensityUnit)selectedMeasure);
+            quantity = new LinearDensity(val, (OasysUnits.Units.LinearDensityUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Temperature:
-            quantity = new Temperature(val, (UnitsNet.Units.TemperatureUnit)selectedMeasure);
+            quantity = new Temperature(val, (OasysUnits.Units.TemperatureUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Velocity:
-            quantity = new Speed(val, (UnitsNet.Units.SpeedUnit)selectedMeasure);
+            quantity = new Speed(val, (OasysUnits.Units.SpeedUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Acceleration:
-            quantity = new Acceleration(val, (UnitsNet.Units.AccelerationUnit)selectedMeasure);
+            quantity = new Acceleration(val, (OasysUnits.Units.AccelerationUnit)selectedMeasure);
             break;
           case Units.GsaUnits.Ratio:
-            quantity = new Ratio(val, (UnitsNet.Units.RatioUnit)selectedMeasure);
+            quantity = new Ratio(val, (OasysUnits.Units.RatioUnit)selectedMeasure);
             break;
         }
 
@@ -366,13 +367,13 @@ namespace GsaGH.Components
           unitAbbreviation = ((Force)quantity).ToString("a");
           break;
         case Units.GsaUnits.Moment:
-          unitAbbreviation = Oasys.Units.Moment.GetAbbreviation((Oasys.Units.MomentUnit)selectedMeasure);
+          unitAbbreviation = Moment.GetAbbreviation((MomentUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Stress:
           unitAbbreviation = ((Pressure)quantity).ToString("a");
           break;
         case Units.GsaUnits.Strain:
-          unitAbbreviation = Oasys.Units.Strain.GetAbbreviation((Oasys.Units.StrainUnit)selectedMeasure);
+          unitAbbreviation = Strain.GetAbbreviation((StrainUnit)selectedMeasure);
           break;
         case Units.GsaUnits.Mass:
           unitAbbreviation = ((Mass)quantity).ToString("a");

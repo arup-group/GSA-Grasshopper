@@ -6,8 +6,8 @@ using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Parameters;
-using UnitsNet;
-using UnitsNet.Units;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -245,7 +245,7 @@ namespace GsaGH.Components
       beamLoad.BeamLoad.IsProjected = prj;
 
       // 6 value (1)
-      ForcePerLength load1 = GetInput.ForcePerLength(this, DA, 6, forcePerLengthUnit);
+      ForcePerLength load1 = GetInput.GetForcePerLength(this, DA, 6, forcePerLengthUnit);
 
       switch (_mode)
       {
@@ -280,7 +280,7 @@ namespace GsaGH.Components
             beamLoad.BeamLoad.Type = BeamLoadType.LINEAR;
 
             // 7 value (2)
-            ForcePerLength load2 = GetInput.ForcePerLength(this, DA, 7, forcePerLengthUnit);
+            ForcePerLength load2 = GetInput.GetForcePerLength(this, DA, 7, forcePerLengthUnit);
 
             // set value
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
@@ -304,7 +304,7 @@ namespace GsaGH.Components
               pos2 *= -1;
 
             // 8 value (2)
-            ForcePerLength load2 = GetInput.ForcePerLength(this, DA, 8, forcePerLengthUnit);
+            ForcePerLength load2 = GetInput.GetForcePerLength(this, DA, 8, forcePerLengthUnit);
 
             // set value
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
@@ -330,7 +330,7 @@ namespace GsaGH.Components
               pos2 *= -1;
 
             // 8 value (2)
-            ForcePerLength load2 = GetInput.ForcePerLength(this, DA, 8, forcePerLengthUnit);
+            ForcePerLength load2 = GetInput.GetForcePerLength(this, DA, 8, forcePerLengthUnit);
 
             // set value
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);

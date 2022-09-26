@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using UnitsNet.Units;
-using UnitsNet;
-using System.Linq;
-using Oasys.Units;
 using GsaGH.Util.GH;
 using GsaGH.Util.Gsa;
-using UnitsNet.GH;
-using Grasshopper.Kernel.Parameters;
+using OasysGH.Parameters;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {

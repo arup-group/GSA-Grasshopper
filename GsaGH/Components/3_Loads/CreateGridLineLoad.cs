@@ -4,10 +4,10 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using Rhino.Geometry;
 using GsaGH.Parameters;
-using UnitsNet;
-using UnitsNet.Units;
+using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
@@ -284,13 +284,13 @@ namespace GsaGH.Components
       }
 
       // 7 load value
-      double load1 = GetInput.ForcePerLength(this, DA, 7, forcePerLengthUnit).NewtonsPerMeter;
+      double load1 = GetInput.GetForcePerLength(this, DA, 7, forcePerLengthUnit).NewtonsPerMeter;
       gridlineload.GridLineLoad.ValueAtStart = load1;
 
       // 8 load value
       double load2 = load1;
       if (DA.GetData(8, ref load2))
-        load2 = GetInput.ForcePerLength(this, DA, 6, forcePerLengthUnit, true).NewtonsPerMeter;
+        load2 = GetInput.GetForcePerLength(this, DA, 6, forcePerLengthUnit, true).NewtonsPerMeter;
       gridlineload.GridLineLoad.ValueAtEnd = load2;
 
       // convert to goo

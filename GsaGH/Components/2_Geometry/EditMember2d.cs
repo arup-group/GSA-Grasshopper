@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using System.Linq;
+using OasysGH.Parameters;
+using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Collections;
-using UnitsNet.GH;
-using UnitsNet;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
@@ -234,8 +235,8 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[10].Sources.Count > 0)
         {
-          mem.MeshSize = GetInput.Length(this, DA, 10, Units.LengthUnitGeometry, true);
-          if (Units.LengthUnitGeometry != UnitsNet.Units.LengthUnit.Meter)
+          mem.MeshSize = GetInput.GetLength(this, DA, 10, Units.LengthUnitGeometry, true);
+          if (Units.LengthUnitGeometry != LengthUnit.Meter)
             AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
                 + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }

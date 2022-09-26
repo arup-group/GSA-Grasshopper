@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Parameters;
-using UnitsNet;
-using UnitsNet.GH;
-using UnitsNet.Units;
+using OasysGH.Parameters;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {

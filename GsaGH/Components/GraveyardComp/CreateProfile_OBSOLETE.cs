@@ -10,7 +10,7 @@ using System.Linq;
 using GsaGH.Util;
 using GsaGH.Util.Gsa;
 using System.IO;
-using UnitsNet;
+using OasysUnits;
 
 namespace GsaGH.Components
 {

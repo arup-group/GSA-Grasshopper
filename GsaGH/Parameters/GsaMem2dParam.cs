@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
+using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Geometry;
-using UnitsNet;
 
 namespace GsaGH.Parameters
 {
@@ -148,7 +148,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        Length l = new Length(m_member.MeshSize, UnitsNet.Units.LengthUnit.Meter);
+        Length l = new Length(m_member.MeshSize, LengthUnit.Meter);
         return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
       }
       set
@@ -378,7 +378,7 @@ namespace GsaGH.Parameters
       m_inclPts = includePoints;
 
       m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs, 
-        new Length(0.25, UnitsNet.Units.LengthUnit.Meter).As(Units.LengthUnitGeometry)); // use relative high tolerance as if the member worked in GSA we want to import it even if warped
+        new Length(0.25, LengthUnit.Meter).As(Units.LengthUnitGeometry)); // use relative high tolerance as if the member worked in GSA we want to import it even if warped
       //if (m_brep == null)
       //{
       //  string error = " Error with Mem2D ID: " + id + ". Unable to build Brep, please verify input geometry is valid and tolerance is set to something reasonable." +

@@ -1,23 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using Grasshopper.Kernel.Types;
-using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using System.Linq;
-using Grasshopper.Kernel.Data;
-using Oasys.Units;
-using UnitsNet.Units;
-using UnitsNet;
-using GsaGH.Util.Gsa;
-using System.Drawing;
-using System.Windows.Forms;
+using OasysGH.Parameters;
+using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Display;
-using UnitsNet.GH;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {

@@ -7,8 +7,8 @@ using NUnit.Framework;
 using Rhino.Geometry;
 using GsaAPI;
 using System.Collections.Generic;
-using UnitsNet.Units;
-using UnitsNet;
+using OasysUnits.Units;
+using OasysUnits;
 
 namespace ParamsIntegrationTests
 {

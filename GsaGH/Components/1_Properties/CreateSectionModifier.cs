@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using GsaGH.Parameters;
-using UnitsNet;
+using OasysUnits;
 using System.Linq;
-using UnitsNet.Units;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -215,19 +215,19 @@ namespace GsaGH.Components
         AreaMomentOfInertiaUnit inertiaUnit = Units.GetAreaMomentOfInertiaUnit(lengthUnit);
         VolumePerLengthUnit volUnit = Units.GetVolumePerLengthUnit(lengthUnit);
         if (this.Params.Input[0].SourceCount > 0)
-          modifier.AreaModifier = GetInput.Area(this, DA, 0, areaUnit, true);
+          modifier.AreaModifier = GetInput.GetArea(this, DA, 0, areaUnit, true);
         if (this.Params.Input[1].SourceCount > 0)
-          modifier.I11Modifier = GetInput.AreaMomentOfInertia(this, DA, 1, inertiaUnit, true);
+          modifier.I11Modifier = GetInput.GetAreaMomentOfInertia(this, DA, 1, inertiaUnit, true);
         if (this.Params.Input[2].SourceCount > 0)
-          modifier.I22Modifier = GetInput.AreaMomentOfInertia(this, DA, 2, inertiaUnit, true);
+          modifier.I22Modifier = GetInput.GetAreaMomentOfInertia(this, DA, 2, inertiaUnit, true);
         if (this.Params.Input[3].SourceCount > 0)
-          modifier.JModifier = GetInput.AreaMomentOfInertia(this, DA, 3, inertiaUnit, true);
+          modifier.JModifier = GetInput.GetAreaMomentOfInertia(this, DA, 3, inertiaUnit, true);
         if (this.Params.Input[4].SourceCount > 0)
           modifier.K11Modifier = GetInput.RatioInDecimalFractionToDecimalFraction(this, DA, 4);
         if (this.Params.Input[5].SourceCount > 0)
           modifier.K22Modifier = GetInput.RatioInDecimalFractionToDecimalFraction(this, DA, 5);
         if (this.Params.Input[6].SourceCount > 0)
-          modifier.VolumeModifier = GetInput.VolumePerLength(this, DA, 6, volUnit, true);
+          modifier.VolumeModifier = GetInput.GetVolumePerLength(this, DA, 6, volUnit, true);
       }
       else
       {
@@ -240,7 +240,7 @@ namespace GsaGH.Components
         modifier.VolumeModifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 6);
       }
 
-      modifier.AdditionalMass = GetInput.LinearDensity(this, DA, 7, densityUnit, true);
+      modifier.AdditionalMass = GetInput.GetLinearDensity(this, DA, 7, densityUnit, true);
       
       bool ax = false;
       if (DA.GetData(8, ref ax))

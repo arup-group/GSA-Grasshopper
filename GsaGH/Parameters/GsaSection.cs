@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using GsaAPI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using UnitsNet;
+using GsaAPI;
+using OasysUnits;
 
 namespace GsaGH.Parameters
 {
@@ -28,7 +27,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        Area area = new Area(m_section.Area, UnitsNet.UnitSystem.SI);
+        Area area = new Area(m_section.Area, UnitSystem.SI);
         return new Area(area.As(Units.SectionAreaUnit), Units.SectionAreaUnit);
       }
     }
@@ -36,7 +35,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Iyy, UnitsNet.UnitSystem.SI);
+        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Iyy, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
       }
     }
@@ -44,7 +43,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Iyz, UnitsNet.UnitSystem.SI);
+        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Iyz, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
       }
     }
@@ -52,7 +51,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Izz, UnitsNet.UnitSystem.SI);
+        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Izz, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
       }
     }
@@ -60,7 +59,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.J, UnitsNet.UnitSystem.SI);
+        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.J, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(Units.SectionAreaMomentOfInertiaUnit), Units.SectionAreaMomentOfInertiaUnit);
       }
     }
@@ -76,7 +75,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        Area area = new Area(m_section.SurfaceAreaPerLength, UnitsNet.UnitSystem.SI);
+        Area area = new Area(m_section.SurfaceAreaPerLength, UnitSystem.SI);
         Length len = new Length(1, Units.LengthUnitSection);
         Area unitArea = len * len;
         Area areaOut = new Area(area.As(unitArea.Unit), unitArea.Unit);
@@ -85,7 +84,7 @@ namespace GsaGH.Parameters
     }
     public VolumePerLength VolumePerLength
     {
-      get { return new VolumePerLength(m_section.VolumePerLength, UnitsNet.UnitSystem.SI); }
+      get { return new VolumePerLength(m_section.VolumePerLength, UnitSystem.SI); }
     }
     #endregion
     public int ID

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using UnitsNet;
-using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Parameters;
-using System.Linq;
-using UnitsNet.Units;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -67,13 +66,13 @@ namespace GsaGH.Components
         switch (i)
         {
           case 1:
-            stressUnit = (UnitsNet.Units.PressureUnit)Enum.Parse(typeof(UnitsNet.Units.PressureUnit), selecteditems[1]);
+            stressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[1]);
             break;
           case 2:
-            densityUnit = (UnitsNet.Units.DensityUnit)Enum.Parse(typeof(UnitsNet.Units.DensityUnit), selecteditems[2]);
+            densityUnit = (DensityUnit)Enum.Parse(typeof(DensityUnit), selecteditems[2]);
             break;
           case 3:
-            temperatureUnit = (UnitsNet.Units.TemperatureUnit)Enum.Parse(typeof(UnitsNet.Units.TemperatureUnit), selecteditems[3]);
+            temperatureUnit = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), selecteditems[3]);
             break;
 
         }
@@ -121,9 +120,9 @@ namespace GsaGH.Components
             "Temperature Unit"
     });
 
-    private UnitsNet.Units.DensityUnit densityUnit = Units.DensityUnit;
-    private UnitsNet.Units.PressureUnit stressUnit = Units.StressUnit;
-    private UnitsNet.Units.TemperatureUnit temperatureUnit = Units.TemperatureUnit;
+    private DensityUnit densityUnit = Units.DensityUnit;
+    private PressureUnit stressUnit = Units.StressUnit;
+    private TemperatureUnit temperatureUnit = Units.TemperatureUnit;
     string densityUnitAbbreviation;
     string stressUnitAbbreviation;
     string temperatureUnitAbbreviation;
@@ -191,10 +190,10 @@ namespace GsaGH.Components
 
       material.AnalysisMaterial = new AnalysisMaterial()
       {
-        ElasticModulus = GetInput.Stress(this, DA, 1, stressUnit).As(UnitsNet.Units.PressureUnit.Pascal),
+        ElasticModulus = GetInput.Stress(this, DA, 1, stressUnit).As(PressureUnit.Pascal),
         PoissonsRatio = poisson,
-        Density = GetInput.Density(this, DA, 3, densityUnit).As(UnitsNet.Units.DensityUnit.KilogramPerCubicMeter),
-        CoefficientOfThermalExpansion = GetInput.CoefficientOfThermalExpansion(this, DA, 4, thermalExpansionUnit, true).As(UnitsNet.Units.CoefficientOfThermalExpansionUnit.InverseDegreeCelsius)
+        Density = GetInput.GetDensity(this, DA, 3, densityUnit).As(DensityUnit.KilogramPerCubicMeter),
+        CoefficientOfThermalExpansion = GetInput.GetCoefficientOfThermalExpansion(this, DA, 4, thermalExpansionUnit, true).As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius)
       };
 
       material.GradeProperty = 0; //will be ignored
@@ -239,15 +238,16 @@ namespace GsaGH.Components
 
       return base.Write(writer);
     }
+
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
 
       _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
 
-      stressUnit = (UnitsNet.Units.PressureUnit)Enum.Parse(typeof(UnitsNet.Units.PressureUnit), selecteditems[1]);
-      densityUnit = (UnitsNet.Units.DensityUnit)Enum.Parse(typeof(UnitsNet.Units.DensityUnit), selecteditems[2]);
-      temperatureUnit = (UnitsNet.Units.TemperatureUnit)Enum.Parse(typeof(UnitsNet.Units.TemperatureUnit), selecteditems[3]);
+      stressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[1]);
+      densityUnit = (DensityUnit)Enum.Parse(typeof(DensityUnit), selecteditems[2]);
+      temperatureUnit = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), selecteditems[3]);
 
       UpdateUIFromSelectedItems();
       first = false;

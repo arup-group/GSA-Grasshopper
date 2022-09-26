@@ -61,9 +61,11 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OasysUnits, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\OasysUnits.dll</HintPath>
+    <Reference Include="OasysGH, Version=0.3.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\OasysGH.0.3.0-beta\lib\net48\OasysGH.dll</HintPath>
+    </Reference>
+    <Reference Include="OasysUnits, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f8601875a1f041da, processorArchitecture=MSIL">
+      <HintPath>..\packages\OasysUnits.1.0.0\lib\net47\OasysUnits.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.UI, Version=6.27.20176.5000, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.27.20176.5001\lib\net45\Rhino.UI.dll</HintPath>
@@ -94,10 +96,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="UnitsNet, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f8601875a1f041da, processorArchitecture=MSIL">
-      <HintPath>..\packages\UnitsNet.4.89.0\lib\net40\UnitsNet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
@@ -209,7 +207,6 @@
     <Compile Include="GsaGHInfo.cs" />
     <Compile Include="Helpers\LoadMainMenu.cs" />
     <Compile Include="Helpers\_SqlReader.cs" />
-    <Compile Include="Parameters\GH_UnitNumber.cs" />
     <Compile Include="Parameters\GsaSectionModifierParam.cs" />
     <Compile Include="Parameters\GsaResult.cs" />
     <Compile Include="Parameters\GsaCombinationCase.cs" />

@@ -1,22 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel;
-using Rhino.Geometry;
-using Grasshopper.Kernel.Types;
-using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using System.Linq;
-using Oasys.Units;
-using UnitsNet.Units;
-using UnitsNet;
 using GsaGH.Util.Gsa;
-using UnitsNet.GH;
-using System.Windows.Forms;
+using OasysGH.Parameters;
+using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Display;
-using System.Drawing;
-using Rhino;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
@@ -730,7 +728,7 @@ namespace GsaGH.Components
         }
         else
         {
-          string momentunitAbbreviation = Oasys.Units.Moment.GetAbbreviation(Units.MomentUnit);
+          string momentunitAbbreviation = Moment.GetAbbreviation(Units.MomentUnit);
           Params.Output[2].Name = "Values [" + momentunitAbbreviation + "]";
         }
       }

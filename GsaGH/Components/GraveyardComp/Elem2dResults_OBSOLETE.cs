@@ -1,26 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using Grasshopper.Kernel;
-using Grasshopper;
-using Rhino.Geometry;
-using Grasshopper.Kernel.Types;
-using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Grasshopper;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using System.Linq;
-using Grasshopper.Kernel.Data;
-using Oasys.Units;
-using UnitsNet.Units;
-using UnitsNet;
 using GsaGH.Util.Gsa;
+using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get Element2d results
-    /// </summary>
-    public class Elem2DResults_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
+  /// <summary>
+  /// Component to get Element2d results
+  /// </summary>
+  public class Elem2DResults_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
     {
         #region Name and Ribbon Layout
         // This region handles how the component in displayed on the ribbon
@@ -1137,7 +1136,7 @@ namespace GsaGH.Components
         #region IGH_VariableParameterComponent null implementation
         void IGH_VariableParameterComponent.VariableParameterMaintenance()
         {
-            string momentunitAbbreviation = Oasys.Units.Moment.GetAbbreviation(momentUnit);
+            string momentunitAbbreviation = Moment.GetAbbreviation(momentUnit);
             IQuantity force = new Force(0, forceUnit);
             string forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
             IQuantity length = new Length(0, resultLengthUnit);
