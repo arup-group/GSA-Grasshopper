@@ -228,14 +228,6 @@ namespace GsaGH
         return Contact;
       }
     }
-    public string Icon_url
-    {
-      get
-      {
-        // TODO to be updated - not supported by yak currently
-        return "https://raw.githubusercontent.com/arup-group/GSA-Grasshopper/master/GhSA/Properties/Icons/icons/4x/GsaGhLogo%404x.png";
-      }
-    }
 
     public override string Version
     {

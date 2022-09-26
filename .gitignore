@@ -354,3 +354,5 @@ dist/*
 /IntegrationTests/obj
 
 /GhSA/bin/x64/Release
+/GsaGH/bin/x64/Debug/GPUCache
+/GsaGH/bin/x64/Debug
