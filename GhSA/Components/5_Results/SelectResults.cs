@@ -240,6 +240,7 @@ namespace GsaGH.Components
         }
 
         // Get case type
+        bool caseSetByInput = false;
         GH_String gh_Type = new GH_String();
         if (DA.GetData(1, ref gh_Type))
         {
@@ -298,8 +299,9 @@ namespace GsaGH.Components
               }
             }
           }
+          caseSetByInput = true;
         }
-
+        
         // Get analysis case 
         GH_Integer gh_aCase = new GH_Integer();
         if (DA.GetData(2, ref gh_aCase))
@@ -316,6 +318,7 @@ namespace GsaGH.Components
               selecteditems[1] = (ResultType == GsaResult.ResultType.AnalysisCase) ? "A" + analCase : "C" + analCase;
 
             updateCases = false;
+            caseSetByInput = true;
           }
         }
 
@@ -386,9 +389,20 @@ namespace GsaGH.Components
           }
           goto GetResults;
         }
+        if (caseSetByInput &&
+          ((ResultType == GsaResult.ResultType.AnalysisCase && analysisCaseResults == null) ||
+          (ResultType == GsaResult.ResultType.Combination && combinationCaseResults == null)))
+        {
+          if (ResultType == GsaResult.ResultType.AnalysisCase)
+            analysisCaseResults = gsaModel.Model.Results();
+          else
+            combinationCaseResults = gsaModel.Model.CombinationCaseResults();
+        }
 
         // 'reflect' model results and create dropdown lists
-        if (updateCases | analysisCaseResults == null)
+        if (updateCases || 
+          (ResultType == GsaResult.ResultType.AnalysisCase && analysisCaseResults == null) || 
+          (ResultType == GsaResult.ResultType.Combination && combinationCaseResults == null))
         {
           switch (ResultType)
           {
