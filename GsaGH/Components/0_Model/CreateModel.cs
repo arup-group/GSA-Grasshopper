@@ -5,6 +5,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -16,17 +18,18 @@ namespace GsaGH.Components
   public class CreateModel : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("326aa021-10b3-45a0-8286-eefb3dc3e2e1");
-    public CreateModel()
-      : base("Create Model", "Model", "Assemble a GSA Model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat0())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateModel;
+
+    public CreateModel() : base("Create Model",
+      "Model",
+      "Assemble a GSA Model",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat0())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI

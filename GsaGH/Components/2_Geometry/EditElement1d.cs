@@ -1,10 +1,12 @@
-﻿using GsaGH.Parameters;
+﻿using System;
+using System.Collections.ObjectModel;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Rhino.Geometry;
-using System;
 using GsaAPI;
-using System.Collections.ObjectModel;
+using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
@@ -14,19 +16,18 @@ namespace GsaGH.Components
   public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("aeb5f765-8721-41fc-a1b4-cfd78e05ce67");
-    public EditElement1d()
-      : base("Edit 1D Element", "Elem1dEdit", "Modify GSA 1D Element",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat2())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditElem1d;
+
+    public EditElement1d() : base("Edit 1D Element",
+      "Elem1dEdit",
+      "Modify GSA 1D Element",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat2())
+    { }
     #endregion
 
     #region Custom UI
@@ -182,14 +183,14 @@ namespace GsaGH.Components
         GsaBool6 start = new GsaBool6();
         if (DA.GetData(7, ref start))
         {
-          elem.ReleaseStart = start; 
+          elem.ReleaseStart = start;
         }
 
         // 8 end release
         GsaBool6 end = new GsaBool6();
         if (DA.GetData(8, ref end))
         {
-          elem.ReleaseEnd = end; 
+          elem.ReleaseEnd = end;
         }
 
         // 9 orientation angle
@@ -197,7 +198,7 @@ namespace GsaGH.Components
         if (DA.GetData(9, ref ghangle))
         {
           if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
-            elem.OrientationAngle = angle; 
+            elem.OrientationAngle = angle;
         }
 
         // 10 orientation node
@@ -221,7 +222,7 @@ namespace GsaGH.Components
         if (DA.GetData(11, ref ghnm))
         {
           if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
-            elem.Name = name; 
+            elem.Name = name;
         }
 
         // 12 Colour
@@ -229,7 +230,7 @@ namespace GsaGH.Components
         if (DA.GetData(12, ref ghcol))
         {
           if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
-            elem.Colour = col; 
+            elem.Colour = col;
         }
 
         // 13 Dummy
@@ -237,7 +238,7 @@ namespace GsaGH.Components
         if (DA.GetData(13, ref ghdum))
         {
           if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
-            elem.IsDummy = dum; 
+            elem.IsDummy = dum;
         }
 
         // #### outputs ####

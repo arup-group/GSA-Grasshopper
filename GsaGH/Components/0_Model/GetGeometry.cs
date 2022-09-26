@@ -9,6 +9,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -21,8 +22,7 @@ namespace GsaGH.Components
   public class GetGeometry : GH_OasysTaskCapableComponent<GetGeometry.SolveResults>, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
     public GetGeometry()
       : base("Get Model Geometry", "GetGeo", "Get nodes, elements and members from GSA model",
@@ -32,7 +32,6 @@ namespace GsaGH.Components
     }
 
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GetGeometry;
     #endregion
 

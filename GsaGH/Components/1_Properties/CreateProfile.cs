@@ -1,19 +1,20 @@
-﻿using System;
+﻿using Grasshopper.Kernel;
+using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel;
-using Rhino.Geometry;
-using Grasshopper.Kernel.Types;
-using System.Text.RegularExpressions;
-
-using Grasshopper.Kernel.Parameters;
-using GsaGH.Util;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using OasysUnits;
+using System.Text.RegularExpressions;
+using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Types;
+using GsaGH.Util;
 using GsaGH.Util.GH;
 using GsaGH.Util.Gsa;
+using OasysGH;
+using OasysGH.Components;
+using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
@@ -25,21 +26,21 @@ namespace GsaGH.Components
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("ea1741e5-905e-4ecb-8270-a584e3f99aa3");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateProfile;
+
     public CreateProfile()
       : base("Create Profile", "Profile", "Create Profile text-string for GSA Section",
             Ribbon.CategoryName.Name(),
             Ribbon.SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
 
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
-
     protected override string HtmlHelp_Source()
     {
       string help = "GOTO:https://arup-group.github.io/oasys-combined/adsec-api/api/Oasys.Profiles.html";
       return help;
     }
-
-    protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateProfile;
     #endregion
 
     #region Custom UI

@@ -6,6 +6,8 @@ using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Util.GH;
 using GsaGH.Util.Gsa;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -18,17 +20,18 @@ namespace GsaGH.Components
   public class GlobalPerformanceResults : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("9a0b6077-1cb6-405c-85d3-c24a533d6d43");
-    public GlobalPerformanceResults()
-      : base("Global Performance Results", "GlobalPerformance", "Get Global Performance (Dynamic, Model Stability, and Buckling) Results from a GSA model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GlobalPerformance;
+
+    public GlobalPerformanceResults() : base("Global Performance Results",
+      "GlobalPerformance",
+      "Get Global Performance (Dynamic, Model Stability, and Buckling) Results from a GSA model",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat5())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -251,7 +254,7 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      
+
       first = false;
       UpdateUIFromSelectedItems();
       return base.Read(reader);

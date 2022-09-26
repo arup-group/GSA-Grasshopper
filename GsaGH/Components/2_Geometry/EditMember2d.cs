@@ -5,6 +5,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -19,19 +21,17 @@ namespace GsaGH.Components
   public class EditMember2d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("955e572d-1293-4ac6-b436-54135f7714f6");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem2d;
+
     public EditMember2d()
       : base("Edit 2D Member", "Mem2dEdit", "Modify GSA 2D Member",
             Ribbon.CategoryName.Name(),
             Ribbon.SubCategoryName.Cat2())
-    {
-    }
-
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
-
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem2d;
+    { }
     #endregion
 
     #region Custom UI

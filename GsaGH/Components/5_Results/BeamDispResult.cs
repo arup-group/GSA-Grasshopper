@@ -8,6 +8,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -20,17 +22,18 @@ namespace GsaGH.Components
   public class BeamDisplacement : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("21ec9005-1b2f-4eb8-8171-b2c0190a4a54");
-    public BeamDisplacement()
-      : base("Beam Displacements", "BeamDisp", "Element1D Translation and Rotation result values",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.BeamDisplacement;
+
+    public BeamDisplacement() : base("Beam Displacements",
+      "BeamDisp",
+      "Element1D Translation and Rotation result values",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat5())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -168,7 +171,7 @@ namespace GsaGH.Components
           }
 
           List<GsaResultsValues> vals = result.Element1DDisplacementValues(elementlist, positionsCount, lengthUnit);
-          
+
           List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
 
           // loop through all permutations (analysis case will just have one)

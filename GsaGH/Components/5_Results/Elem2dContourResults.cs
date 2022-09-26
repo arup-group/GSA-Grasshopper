@@ -9,6 +9,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -23,19 +25,18 @@ namespace GsaGH.Components
   public class Elem2dContourResults : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("935d359a-9394-42fc-a76e-ea08ccb84135");
-    public Elem2dContourResults()
-      : base("2D Contour Results", "ContourElem2d", "Displays GSA 2D Element Results as Contour",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => GsaGH.Properties.Resources.Result2D;
+
+    public Elem2dContourResults() : base("2D Contour Results",
+      "ContourElem2d",
+      "Displays GSA 2D Element Results as Contour",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat5())
+    { }
     #endregion
 
     #region Custom UI
@@ -559,7 +560,7 @@ namespace GsaGH.Components
 
           for (int i = 0; i < vals.Count - 1; i++) // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
           {
-                    //normalised value between -1 and 1
+            //normalised value between -1 and 1
             double tnorm = 2 * (vals[i] - dmin) / (dmax - dmin) - 1;
             Color col = (double.IsNaN(tnorm)) ? Color.Transparent : gH_Gradient.ColourAt(tnorm);
             tempmesh.VertexColors.Add(col);
@@ -584,7 +585,7 @@ namespace GsaGH.Components
           }
           if (vals.Count == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
           {
-                    //normalised value between -1 and 1
+            //normalised value between -1 and 1
             double tnorm = 2 * (vals[0] - dmin) / (dmax - dmin) - 1;
             Color col = (double.IsNaN(tnorm)) ? Color.Transparent : gH_Gradient.ColourAt(tnorm);
             for (int i = 0; i < tempmesh.Vertices.Count; i++)
@@ -592,7 +593,7 @@ namespace GsaGH.Components
           }
           meshes[key] = tempmesh;
           values[key] = vals;
-                  #endregion
+          #endregion
         });
         #endregion
         resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList());

@@ -1,7 +1,8 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 
 namespace GsaGH.Components
 {
@@ -11,17 +12,18 @@ namespace GsaGH.Components
   public class TaperProfile : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("fd6dd254-c16f-4970-a447-a9b258d116ef");
-    public TaperProfile()
-      : base("Taper Profile", "Taper", "Create a Profile that tapers along its length from start and end profiles",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.TaperProfile;
+
+    public TaperProfile() : base("Taper Profile",
+      "Taper",
+      "Create a Profile that tapers along its length from start and end profiles",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat1())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -46,12 +48,12 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      //start
+      // start
       GH_String gh_profile = new GH_String();
       DA.GetData(0, ref gh_profile);
       GH_Convert.ToString(gh_profile, out string start, GH_Conversion.Both);
 
-      //end
+      // end
       gh_profile = new GH_String();
       DA.GetData(1, ref gh_profile);
       GH_Convert.ToString(gh_profile, out string end, GH_Conversion.Both);

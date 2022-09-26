@@ -7,6 +7,8 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -18,17 +20,18 @@ namespace GsaGH.Components
   public class GH_Analyse : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("78fe156d-6ab4-4683-96a4-2d40eb5cce8f");
-    public GH_Analyse()
-      : base("Analyse Model", "Analyse", "Assemble and Analyse a GSA Model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat4())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.primary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Analyse;
+
+    public GH_Analyse() : base("Analyse Model",
+      "Analyse",
+      "Assemble and Analyse a GSA Model",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat4())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI

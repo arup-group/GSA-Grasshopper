@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -14,15 +16,17 @@ namespace GsaGH.Components
   public class CreateBeamLoads : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public CreateBeamLoads()
-        : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat3())
+    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.BeamLoad;
+
+    public CreateBeamLoads() : base("Create Beam Load",
+      "BeamLoad",
+      "Create GSA Beam Load",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat3())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.BeamLoad;
     #endregion
 
     #region Custom UI

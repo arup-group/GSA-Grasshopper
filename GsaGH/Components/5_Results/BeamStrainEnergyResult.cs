@@ -8,6 +8,8 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -20,17 +22,18 @@ namespace GsaGH.Components
   public class BeamStrainEnergy : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("c1a927cb-ad0e-4a69-94ce-9ad079047d21");
-    public BeamStrainEnergy()
-      : base("Beam Strain Energy Density", "StrainEnergy", "Element1D Strain Energy Density result values",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.StrainEnergyDensity;
+
+    public BeamStrainEnergy() : base("Beam Strain Energy Density",
+      "StrainEnergy",
+      "Element1D Strain Energy Density result values",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat5())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -121,7 +124,7 @@ namespace GsaGH.Components
           "Element list should take the form:" + System.Environment.NewLine +
           " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-      
+
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -151,7 +154,7 @@ namespace GsaGH.Components
       if (!Average)
       {
         GH_Integer gh_Div = new GH_Integer();
-        if( DA.GetData(2, ref gh_Div))
+        if (DA.GetData(2, ref gh_Div))
           GH_Convert.ToInt32(gh_Div, out positionsCount, GH_Conversion.Both);
         else
           positionsCount = 3;

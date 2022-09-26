@@ -184,9 +184,6 @@
     <Compile Include="Components\3_Loads\CreateGridPointLoad.cs" />
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
-    <Compile Include="Components\Other\ConvertUnitNumber.cs" />
-    <Compile Include="Components\Other\CreateUnitNumber.cs" />
-    <Compile Include="Components\GH_OasysComponent.cs" />
     <Compile Include="Helpers\Export\ConvertMembers.cs" />
     <Compile Include="Helpers\PostHog.cs" />
     <Compile Include="Helpers\_DeSerialization.cs" />

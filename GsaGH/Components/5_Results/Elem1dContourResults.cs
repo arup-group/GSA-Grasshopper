@@ -12,6 +12,8 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Util.Gsa;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -26,19 +28,18 @@ namespace GsaGH.Components
   public class Elem1dContourResults : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("dee5c513-197e-4659-998f-09225df9beaa");
-    public Elem1dContourResults()
-      : base("1D Contour Results", "ContourElem1d", "Displays GSA 1D Element Results as Contour",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Result1D;
+
+    public Elem1dContourResults() : base("1D Contour Results",
+      "ContourElem1d",
+      "Displays GSA 1D Element Results as Contour",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat5())
+    { }
     #endregion
 
     #region Custom UI
@@ -181,45 +182,45 @@ namespace GsaGH.Components
     bool first = true;
     List<string> spacerDescriptions = new List<string>(new string[]
     {
-            "Result Type",
-            "Component",
-            "Geometry Unit",
-            "Deform Shape"
+      "Result Type",
+      "Component",
+      "Geometry Unit",
+      "Deform Shape"
     });
     readonly List<string> dropdowntopitems = new List<string>(new string[]
     {
-            "Displacement",
-            "Force",
-            "Strain Energy"
+      "Displacement",
+      "Force",
+      "Strain Energy"
     });
 
     readonly List<string> dropdowndisplacement = new List<string>(new string[]
     {
-            "Translation Ux",
-            "Translation Uy",
-            "Translation Uz",
-            "Resolved |U|",
-            "Rotation Rxx",
-            "Rotation Ryy",
-            "Rotation Rzz",
-            "Resolved |R|"
+      "Translation Ux",
+      "Translation Uy",
+      "Translation Uz",
+      "Resolved |U|",
+      "Rotation Rxx",
+      "Rotation Ryy",
+      "Rotation Rzz",
+      "Resolved |R|"
     });
 
     readonly List<string> dropdownforce = new List<string>(new string[]
     {
-            "Axial Force Fx",
-            "Shear Force Fy",
-            "Shear Force Fz",
-            "Res. Shear |Fyz|",
-            "Torsion Mxx",
-            "Moment Myy",
-            "Moment Mzz",
-            "Res. Moment |Myz|",
+      "Axial Force Fx",
+      "Shear Force Fy",
+      "Shear Force Fz",
+      "Res. Shear |Fyz|",
+      "Torsion Mxx",
+      "Moment Myy",
+      "Moment Mzz",
+      "Res. Moment |Myz|",
     });
     readonly List<string> dropdownstrainenergy = new List<string>(new string[]
     {
-            "Intermediate Pts",
-            "Average"
+      "Intermediate Pts",
+      "Average"
     });
 
     private LengthUnit lengthUnit = Units.LengthUnitGeometry;

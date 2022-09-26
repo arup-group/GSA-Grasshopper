@@ -7,6 +7,8 @@ using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Util.GH;
 using GsaGH.Util.Gsa;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -28,7 +30,7 @@ namespace GsaGH.Components
             Ribbon.SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.hidden;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ResultGlobal;
     #endregion
 
@@ -286,7 +288,7 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      
+
       first = false;
       UpdateUIFromSelectedItems();
       return base.Read(reader);

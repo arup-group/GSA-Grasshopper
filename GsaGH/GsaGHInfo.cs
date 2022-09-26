@@ -8,6 +8,7 @@ using System.Diagnostics;
 using GsaGH.Helpers;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OasysGH;
 
 namespace GsaGH
 {
@@ -168,7 +169,23 @@ namespace GsaGH
       return true;
     }
   }
-  
+
+  internal sealed class PluginInfo
+  {
+    private static readonly Lazy<OasysPluginInfo> lazy =
+      new Lazy<OasysPluginInfo>(() => new OasysPluginInfo(
+        GsaGHInfo.ProductName,
+        GsaGHInfo.PluginName,
+        GsaGHInfo.Vers,
+        GsaGHInfo.isBeta,
+        "phc_alOp3OccDM3D18xJTWDoW44Y1cJvbEScm5LJSX8qnhs"
+        ));
+
+    public static OasysPluginInfo Instance { get { return lazy.Value; } }
+
+    private PluginInfo() { }
+  }
+
   public class GsaGHInfo : GH_AssemblyInfo
   {
     internal static Guid GUID = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");

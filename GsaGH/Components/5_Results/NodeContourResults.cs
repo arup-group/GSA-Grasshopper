@@ -10,6 +10,8 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Util.Gsa;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -24,19 +26,18 @@ namespace GsaGH.Components
   public class NodeContourResults : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("47053884-2c22-4f2c-b092-8531fa5751e1");
-    public NodeContourResults()
-      : base("Node Contour Results", "ContourNode", "Diplays GSA Node Results as Contours",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Result0D;
+
+    public NodeContourResults() : base("Node Contour Results",
+      "ContourNode",
+      "Diplays GSA Node Results as Contours",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat5())
+    { }
     #endregion
 
     #region Custom UI

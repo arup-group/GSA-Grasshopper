@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Parameters;
-
+using OasysGH;
+using OasysGH.Components;
 
 namespace GsaGH.Components
 {
@@ -17,17 +13,18 @@ namespace GsaGH.Components
   public class AnalysisCaseInfo : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("6f5f7379-4469-4ce8-9a1a-85adc3c2126a");
-    public AnalysisCaseInfo()
-      : base("Analysis Case Info", "CaseInfo", "Get information about the properties of a GSA Analysis Case (Load Case or Combination)",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat4())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisCaseInfo;
+
+    public AnalysisCaseInfo() : base("Analysis Case Info",
+      "CaseInfo",
+      "Get information about the properties of a GSA Analysis Case (Load Case or Combination)",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat4())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI

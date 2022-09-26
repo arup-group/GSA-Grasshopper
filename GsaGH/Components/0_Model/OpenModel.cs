@@ -6,6 +6,8 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Helpers;
+using OasysGH;
+using OasysGH.Components;
 
 namespace GsaGH.Components
 {
@@ -15,18 +17,18 @@ namespace GsaGH.Components
   public class OpenModel : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
-    public OpenModel()
-      : base("Open Model", "Open", "Open an existing GSA model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat0())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
-
     public override GH_Exposure Exposure => GH_Exposure.primary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => GsaGH.Properties.Resources.OpenModel;
+
+    public OpenModel() : base("Open Model",
+      "Open",
+      "Open an existing GSA model",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat0())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI

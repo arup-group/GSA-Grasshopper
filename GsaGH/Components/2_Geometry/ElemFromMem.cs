@@ -6,6 +6,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -17,19 +19,18 @@ namespace GsaGH.Components
   public class ElemFromMem : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
-    public ElemFromMem()
-      : base("Elements from Members", "ElemFromMem", "Create Elements from Members",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat2())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateElemsFromMems;
+
+    public ElemFromMem() : base("Elements from Members",
+      "ElemFromMem",
+      "Create Elements from Members",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat2())
+    { }
     #endregion
 
     #region Custom UI
@@ -251,9 +252,9 @@ namespace GsaGH.Components
               lengthUnit);
 
       // post process materials (as they currently have a bug when running parallel!)
-      
+
       ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials());
-      
+
       if (elementTuple.Item1 != null)
       {
         foreach (GsaElement1dGoo element in elementTuple.Item1)

@@ -6,6 +6,8 @@ using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Util.GH;
 using GsaGH.Util.Gsa;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -18,17 +20,18 @@ namespace GsaGH.Components
   public class TotalLoadsAndReactionResults : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("00a195ef-b8f2-4b91-ac47-a8ae12d48b8e");
-    public TotalLoadsAndReactionResults()
-      : base("Total Loads & Reactions", "TotalResults", "Get Total Loads and Reaction Results from a GSA model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.TotalLoadAndReaction;
+
+    public TotalLoadsAndReactionResults() : base("Total Loads & Reactions",
+      "TotalResults",
+      "Get Total Loads and Reaction Results from a GSA model",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat5())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -64,7 +67,7 @@ namespace GsaGH.Components
         case 1:
           momentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), selecteditems[i]);
           break;
-        
+
       }
         (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
@@ -193,7 +196,7 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      
+
       first = false;
       UpdateUIFromSelectedItems();
       return base.Read(reader);

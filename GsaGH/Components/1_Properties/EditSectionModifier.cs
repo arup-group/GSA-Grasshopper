@@ -2,6 +2,8 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -14,17 +16,18 @@ namespace GsaGH.Components
   public class EditSectionModifier : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("7c78c61b-f01c-4a0e-9399-712fc853e23b");
-    public EditSectionModifier()
-      : base("Edit Section Modifier", "ModifierEdit", "Modify GSA Section Modifier",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditSectionModifier;
+
+    public EditSectionModifier() : base("Edit Section Modifier",
+      "ModifierEdit",
+      "Modify GSA Section Modifier",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat1())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -38,11 +41,11 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddGenericParameter("Section Modifier", "Mo", "Set GSA Section Modifier", GH_ParamAccess.item);
-      
+
       pManager.AddGenericParameter("Area Modifier", "A", "Modify the effective Area using either:" + System.Environment.NewLine + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)" + System.Environment.NewLine + "TO using an Area UnitNumber", GH_ParamAccess.item);
-      
+
       pManager.AddGenericParameter("I11 Modifier", "I11", "Modify the effective Iyy/Iuu using either:" + System.Environment.NewLine + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)" + System.Environment.NewLine + "TO using an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
-      
+
       pManager.AddGenericParameter("I22 Modifier", "I22", "Modify the effective Izz/Ivv using either:" + System.Environment.NewLine + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)" + System.Environment.NewLine + "TO using an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
 
       pManager.AddGenericParameter("J Modifier", "J", "Modify the effective J using either:" + System.Environment.NewLine + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)" + System.Environment.NewLine + "TO using an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
@@ -176,7 +179,7 @@ namespace GsaGH.Components
             return;
           }
         }
-        
+
         if (this.Params.Input[8].SourceCount > 0)
         {
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -211,7 +214,7 @@ namespace GsaGH.Components
           }
         }
 
-        
+
         bool ax = false;
         if (DA.GetData(9, ref ax))
           modifier.isBendingAxesPrincipal = ax;

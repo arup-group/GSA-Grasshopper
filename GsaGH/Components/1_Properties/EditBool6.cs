@@ -1,6 +1,8 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 
 namespace GsaGH.Components
 {
@@ -10,17 +12,18 @@ namespace GsaGH.Components
   public class EditBool6 : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("dad5064c-6648-45a5-8d98-afaae861e3b9");
-    public EditBool6()
-      : base("Edit Bool6", "Bool6Edit", "Modify GSA Bool6 or just get information about existing",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditBool6;
+
+    public EditBool6() : base("Edit Bool6",
+      "Bool6Edit",
+      "Modify GSA Bool6 or just get information about existing",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat1())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
