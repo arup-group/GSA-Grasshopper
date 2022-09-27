@@ -251,15 +251,8 @@
     <Compile Include="Helpers\_Colour.cs" />
     <Compile Include="UI\Comp_Profile.cs" />
     <Compile Include="UI\Comp_MultiDropDowns.cs" />
-    <Compile Include="UI\UnitSettingsBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\UnitSettingsBox.Designer.cs">
-      <DependentUpon>UnitSettingsBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\WidthFix.cs" />
     <Compile Include="UI\GraphicButtons.cs" />
-    <Compile Include="UI\Comp_Bool6.cs" />
     <Compile Include="UI\Comp_DropDown.cs" />
     <Compile Include="UI\Comp_Releases.cs" />
     <Compile Include="UI\Comp_Support.cs" />
@@ -281,9 +274,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\UnitSettingsBox.resx">
-      <DependentUpon>UnitSettingsBox.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.UI;
 
 namespace GsaGH.Components
 {
@@ -31,7 +32,7 @@ namespace GsaGH.Components
     //This region overrides the typical component layout
     public override void CreateAttributes()
     {
-      m_attributes = new UI.Bool6ComponentUI(this, SetBool, "Set 6 DOF", x, y, z, xx, yy, zz);
+      m_attributes = new Bool6ComponentAttributes(this, SetBool, "Set 6 DOF", x, y, z, xx, yy, zz);
     }
 
     public void SetBool(bool resx, bool resy, bool resz, bool resxx, bool resyy, bool reszz)
