@@ -522,7 +522,7 @@ namespace GsaGH.Parameters
   }
 
   /// <summary>
-  /// GsaLoad Goo wrapper class, makes sure GsaLoad can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaLoad"/> can be used in Grasshopper.
   /// </summary>
   public class GsaLoadGoo : GH_Goo<GsaLoad>
   {

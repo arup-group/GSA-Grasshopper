@@ -46,7 +46,7 @@ namespace GsaGH.Parameters
   }
 
   /// <summary>
-  /// GsaSection Goo wrapper class, makes sure GsaSection can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaAnalysisCase"/> can be used in Grasshopper.
   /// </summary>
   public class GsaAnalysisCaseGoo : GH_Goo<GsaAnalysisCase>
   {

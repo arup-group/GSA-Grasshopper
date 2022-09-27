@@ -5,6 +5,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
@@ -386,7 +387,7 @@ namespace GsaGH.Parameters
   }
 
   /// <summary>
-  /// GsaMember Goo wrapper class, makes sure GsaMember can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaElement1d"/> can be used in Grasshopper.
   /// </summary>
   public class GsaElement1dGoo : GH_GeometricGoo<GsaElement1d>, IGH_PreviewData
   {

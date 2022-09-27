@@ -64,7 +64,7 @@ namespace GsaGH.Parameters
   }
 
   /// <summary>
-  /// GsaOffset Goo wrapper class, makes sure GsaOffset can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaOffset"/> can be used in Grasshopper.
   /// </summary>
   public class GsaOffsetGoo : GH_Goo<GsaOffset>
   {

@@ -104,7 +104,7 @@ namespace GsaGH.Parameters
   }
 
   /// <summary>
-  /// GsaMember Goo wrapper class, makes sure GsaMember can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaModel"/> can be used in Grasshopper.
   /// </summary>
   public class GsaModelGoo : GH_Goo<GsaModel>
   {

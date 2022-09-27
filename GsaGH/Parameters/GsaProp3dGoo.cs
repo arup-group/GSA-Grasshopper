@@ -185,7 +185,7 @@ namespace GsaGH.Parameters
   }
 
   /// <summary>
-  /// GsaProp2d Goo wrapper class, makes sure GsaProp2d can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaProp3d"/> can be used in Grasshopper.
   /// </summary>
   public class GsaProp3dGoo : GH_Goo<GsaProp3d>
   {

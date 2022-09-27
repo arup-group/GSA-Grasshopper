@@ -328,7 +328,7 @@ namespace GsaGH.Parameters
   }
 
   /// <summary>
-  /// GsaNode Goo wrapper class, makes sure GsaNode can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaNode"/> can be used in Grasshopper.
   /// </summary>
   public class GsaNodeGoo : GH_GeometricGoo<GsaNode>, IGH_PreviewData
   {

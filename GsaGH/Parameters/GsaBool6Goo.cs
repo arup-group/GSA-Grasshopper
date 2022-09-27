@@ -106,7 +106,7 @@ namespace GsaGH.Parameters
   }
 
   /// <summary>
-  /// GsaBool6 Goo wrapper class, makes sure GsaBool6 can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaBool6"/> can be used in Grasshopper.
   /// </summary>
   public class GsaBool6Goo : GH_Goo<GsaBool6>
   {

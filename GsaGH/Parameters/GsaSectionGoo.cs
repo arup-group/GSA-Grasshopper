@@ -280,7 +280,7 @@ namespace GsaGH.Parameters
   }
 
   /// <summary>
-  /// GsaSection Goo wrapper class, makes sure GsaSection can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaSection"/> can be used in Grasshopper.
   /// </summary>
   public class GsaSectionGoo : GH_Goo<GsaSection>
   {

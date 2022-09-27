@@ -107,7 +107,7 @@ namespace GsaGH.Parameters
   }
 
   /// <summary>
-  /// GsaSection Goo wrapper class, makes sure GsaSection can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaAnalysisTask"/> can be used in Grasshopper.
   /// </summary>
   public class GsaAnalysisTaskGoo : GH_Goo<GsaAnalysisTask>
   {

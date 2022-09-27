@@ -282,7 +282,7 @@ namespace GsaGH.Parameters
   }
 
   /// <summary>
-  /// GsaMember Goo wrapper class, makes sure GsaMember can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaMember3d"/> can be used in Grasshopper.
   /// </summary>
   public class GsaMember3dGoo : GH_GeometricGoo<GsaMember3d>, IGH_PreviewData
   {

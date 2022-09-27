@@ -7,6 +7,9 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
+  /// <summary>
+  /// Goo wrapper class, makes sure <see cref="Line"/> can be used in Grasshopper.
+  /// </summary>
   public class ResultLineGoo : GH_GeometricGoo<Line>, IGH_PreviewData
   {
     public ResultLineGoo(Line line, double result1, double result2, Color colour1, Color colour2, float size1, float size2) : base(line)
