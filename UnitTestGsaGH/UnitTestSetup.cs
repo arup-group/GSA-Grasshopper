@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using GsaAPI;
 using GsaGH;
 using NUnit.Framework;
+using OasysGH.Units;
 using OasysUnits.Units;
 
 // A SetUpFixture outside of any namespace provides SetUp and TearDown for the entire assembly.
@@ -94,13 +95,13 @@ namespace UnitTestGsaGH
 
     public static void SetUnits()
     {
-      Units.LengthUnitGeometry = LengthUnit.Meter;
-      Units.LengthUnitSection = LengthUnit.Millimeter;
-      Units.LengthUnitResult = LengthUnit.Millimeter;
-      Units.StressUnit = PressureUnit.Megapascal;
-      Units.ForceUnit = ForceUnit.Kilonewton;
-      Units.MomentUnit = MomentUnit.KilonewtonMeter;
-      Units.MassUnit = MassUnit.Tonne;
+      DefaultUnits.LengthUnitGeometry = LengthUnit.Meter;
+      DefaultUnits.LengthUnitSection = LengthUnit.Millimeter;
+      DefaultUnits.LengthUnitResult = LengthUnit.Millimeter;
+      DefaultUnits.StressUnitResult = PressureUnit.Megapascal;
+      DefaultUnits.ForceUnit = ForceUnit.Kilonewton;
+      DefaultUnits.MomentUnit = MomentUnit.KilonewtonMeter;
+      DefaultUnits.MassUnit = MassUnit.Tonne;
     }
   }
   public class InitiateRhinoGH
