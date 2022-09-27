@@ -20,9 +20,9 @@ namespace GsaGH.Components
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateBool6;
 
-    public CreateBool6() : base("Create Bool6",
-      "Bool6",
-      "Create GSA Bool6 to set releases and restraints",
+    public CreateBool6() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
+      GsaBool6Goo.NickName.Replace(" ", string.Empty),
+      "Create a " + GsaBool6Goo.Description,
       Ribbon.CategoryName.Name(),
       Ribbon.SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden

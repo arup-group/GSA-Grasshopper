@@ -18,9 +18,9 @@ namespace GsaGH.Components
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateAnalysisCase;
 
-    public CreateAnalysisCase()      : base("Create Analysis Case", 
-      "CreateCase", 
-      "Create a new GSA Analysis Case (Load Case or Combination)",
+    public CreateAnalysisCase() : base("Create " + GsaAnalysisCaseGoo.Name.Replace(" ", string.Empty),
+      GsaAnalysisCaseGoo.NickName.Replace(" ", string.Empty),
+      "Create a " + GsaAnalysisCaseGoo.Description,
       Ribbon.CategoryName.Name(),
       Ribbon.SubCategoryName.Cat4())
     { this.Hidden = true; } // sets the initial state of the component to hidden

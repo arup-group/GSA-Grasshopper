@@ -4,6 +4,8 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
+using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
@@ -109,114 +111,54 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaAnalysisTask"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaAnalysisTaskGoo : GH_Goo<GsaAnalysisTask>
+  public class GsaAnalysisTaskGoo : GH_OasysGoo<GsaAnalysisTask>
   {
-    #region constructors
-    public GsaAnalysisTaskGoo()
-    {
-      this.Value = new GsaAnalysisTask();
-    }
-    public GsaAnalysisTaskGoo(GsaAnalysisTask anal)
-    {
-      if (anal == null)
-        anal = new GsaAnalysisTask();
-      this.Value = anal; //section.Duplicate();
-    }
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaAnalysisTask();
-    }
-    public GsaAnalysisTaskGoo DuplicateGsaAnalysisTask()
-    {
-      return new GsaAnalysisTaskGoo(Value == null ? new GsaAnalysisTask() : Value.Duplicate());
-    }
-    #endregion
+    public static string Name => "Analysis Task";
+    public static string NickName => "CreateTask";
+    public static string Description => "GSA Analysis Task";
+    public override IGH_Goo Duplicate() => new GsaAnalysisTaskGoo(this.Value);
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Analysis Task";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("GSA Analysis Task"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA Analysis Task"); }
-    }
+    public GsaAnalysisTaskGoo(GsaAnalysisTask item) : base(item) { }
 
-
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance into some other type Q.            
-
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
+      if (Value != null)
       {
-        if (Value == null)
-          target = default;
-        else
+        if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
         {
           GH_Integer ghint = new GH_Integer();
           if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
             target = (Q)(object)ghint;
           else
             target = default;
+          return true;
         }
-        return true;
       }
-
-      target = default;
-      return false;
+      return base.CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaSection.
-
-
-      if (source == null) { return false; }
-
-      //Cast from string
-      if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
+      if (source != null)
       {
-        Value = new GsaAnalysisTask();
-        Value.Name = name;
-        try
+        // Cast from string
+        if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
         {
-          Value.Type = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType), name);
+          Value = new GsaAnalysisTask();
+          Value.Name = name;
+          try
+          {
+            Value.Type = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType), name);
+          }
+          catch (Exception)
+          {
+            return false;
+          }
+          return true;
         }
-        catch (Exception) { }
-        return true;
       }
-
-      return false;
+      return base.CastFrom(source);
     }
-    #endregion
-
   }
 }

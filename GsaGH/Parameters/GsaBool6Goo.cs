@@ -1,6 +1,8 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
+using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
@@ -108,218 +110,151 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaBool6"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaBool6Goo : GH_Goo<GsaBool6>
+  public class GsaBool6Goo : GH_OasysGoo<GsaBool6>
   {
-    #region constructors
-    public GsaBool6Goo()
-    {
-      this.Value = new GsaBool6();
-    }
-    public GsaBool6Goo(GsaBool6 bool6)
-    {
-      if (bool6 == null)
-        bool6 = new GsaBool6();
-      this.Value = bool6; //bool6.Duplicate();
-    }
+    public static string Name => "Bool6";
+    public static string NickName => "Bool6";
+    public static string Description => "GSA Bool6 to set releases and restraints";
+    public override IGH_Goo Duplicate() => new GsaBool6Goo(this.Value);
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaBool6();
-    }
-    public GsaBool6Goo DuplicateGsaBool6()
-    {
-      return new GsaBool6Goo(Value ?? new GsaBool6()); // same as => return new GsaBool6Goo(Value == null ? new GsaBool6() : Value);
-    }
-    #endregion
+    public GsaBool6Goo(GsaBool6 item) : base(item) { }
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Bool6";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("GSA Bool6"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA Bool6 to set releases and restraints"); }
-    }
-
-
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaBool6 into some other type Q.            
-
-
-      if (typeof(Q).IsAssignableFrom(typeof(GsaBool6)))
+      if (Value != null)
       {
-        if (Value == null)
-          target = default;
-        else
+        if (typeof(Q).IsAssignableFrom(typeof(GsaBool6)))
+        {
           target = (Q)(object)Value.Duplicate();
-        return true;
-      }
-
-      if (typeof(Q).IsAssignableFrom(typeof(Bool6)))
-      {
-        if (Value == null)
-          target = default;
-        else
+          return true;
+        }
+        else if (typeof(Q).IsAssignableFrom(typeof(Bool6)))
+        {
           target = (Q)(object)Value;
-        return true;
+          return true;
+        }
       }
-
-
-      target = default;
-      return false;
+      return base.CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaBool6.
-
-
-      if (source == null) { return false; }
-
-      //Cast from GsaBool6
-      if (typeof(GsaBool6).IsAssignableFrom(source.GetType()))
+      if (source != null)
       {
-        Value = (GsaBool6)source;
-        return true;
-      }
-
-
-      //Cast from Bool
-      if (GH_Convert.ToBoolean(source, out bool mybool, GH_Conversion.Both))
-      {
-        Value.X = mybool;
-        Value.Y = mybool;
-        Value.Z = mybool;
-        Value.XX = mybool;
-        Value.YY = mybool;
-        Value.ZZ = mybool;
-        return true;
-      }
-
-      //Cast from string
-      if (GH_Convert.ToString(source, out string mystring, GH_Conversion.Both))
-      {
-        mystring = mystring.Trim();
-        mystring = mystring.ToLower();
-
-        if (mystring == "free")
+        // Cast from GsaBool6
+        if (typeof(GsaBool6).IsAssignableFrom(source.GetType()))
         {
-          Value.X = false;
-          Value.Y = false;
-          Value.Z = false;
-          Value.XX = false;
-          Value.YY = false;
-          Value.ZZ = false;
+          Value = (GsaBool6)source;
           return true;
         }
-        if (mystring == "pin" | mystring == "pinned")
+
+        // Cast from Bool
+        else if (GH_Convert.ToBoolean(source, out bool mybool, GH_Conversion.Both))
         {
-          Value.X = true;
-          Value.Y = true;
-          Value.Z = true;
-          Value.XX = false;
-          Value.YY = false;
-          Value.ZZ = false;
+          Value.X = mybool;
+          Value.Y = mybool;
+          Value.Z = mybool;
+          Value.XX = mybool;
+          Value.YY = mybool;
+          Value.ZZ = mybool;
           return true;
         }
-        if (mystring == "fix" | mystring == "fixed")
+
+        // Cast from string
+        else if (GH_Convert.ToString(source, out string mystring, GH_Conversion.Both))
         {
-          Value.X = true;
-          Value.Y = true;
-          Value.Z = true;
-          Value.XX = true;
-          Value.YY = true;
-          Value.ZZ = true;
-          return true;
-        }
-        if (mystring == "release" | mystring == "released" | mystring == "hinge" | mystring == "hinged" | mystring == "charnier")
-        {
-          Value.X = false;
-          Value.Y = false;
-          Value.Z = false;
-          Value.XX = false;
-          Value.YY = true;
-          Value.ZZ = true;
-          return true;
-        }
-        if ((mystring.Length == 6))
-        {
-          if (mystring[0] == 'f')
+          mystring = mystring.Trim();
+          mystring = mystring.ToLower();
+
+          if (mystring == "free")
+          {
             Value.X = false;
-          else if (mystring[0] == 'r')
-            Value.X = true;
-          else
-            return false;
-
-          if (mystring[1] == 'f')
             Value.Y = false;
-          else if (mystring[1] == 'r')
-            Value.Y = true;
-          else
-            return false;
-
-          if (mystring[2] == 'f')
             Value.Z = false;
-          else if (mystring[2] == 'r')
-            Value.Z = true;
-          else
-            return false;
-
-          if (mystring[3] == 'f')
             Value.XX = false;
-          else if (mystring[3] == 'r')
-            Value.XX = true;
-          else
-            return false;
-
-          if (mystring[4] == 'f')
             Value.YY = false;
-          else if (mystring[4] == 'r')
-            Value.YY = true;
-          else
-            return false;
-
-          if (mystring[5] == 'f')
             Value.ZZ = false;
-          else if (mystring[5] == 'r')
+            return true;
+          }
+          else if (mystring == "pin" | mystring == "pinned")
+          {
+            Value.X = true;
+            Value.Y = true;
+            Value.Z = true;
+            Value.XX = false;
+            Value.YY = false;
+            Value.ZZ = false;
+            return true;
+          }
+          else if (mystring == "fix" | mystring == "fixed")
+          {
+            Value.X = true;
+            Value.Y = true;
+            Value.Z = true;
+            Value.XX = true;
+            Value.YY = true;
             Value.ZZ = true;
-          else
-            return false;
+            return true;
+          }
+          else if (mystring == "release" | mystring == "released" | mystring == "hinge" | mystring == "hinged" | mystring == "charnier")
+          {
+            Value.X = false;
+            Value.Y = false;
+            Value.Z = false;
+            Value.XX = false;
+            Value.YY = true;
+            Value.ZZ = true;
+            return true;
+          }
+          else if ((mystring.Length == 6))
+          {
+            if (mystring[0] == 'f')
+              Value.X = false;
+            else if (mystring[0] == 'r')
+              Value.X = true;
+            else
+              return false;
+
+            if (mystring[1] == 'f')
+              Value.Y = false;
+            else if (mystring[1] == 'r')
+              Value.Y = true;
+            else
+              return false;
+
+            if (mystring[2] == 'f')
+              Value.Z = false;
+            else if (mystring[2] == 'r')
+              Value.Z = true;
+            else
+              return false;
+
+            if (mystring[3] == 'f')
+              Value.XX = false;
+            else if (mystring[3] == 'r')
+              Value.XX = true;
+            else
+              return false;
+
+            if (mystring[4] == 'f')
+              Value.YY = false;
+            else if (mystring[4] == 'r')
+              Value.YY = true;
+            else
+              return false;
+
+            if (mystring[5] == 'f')
+              Value.ZZ = false;
+            else if (mystring[5] == 'r')
+              Value.ZZ = true;
+            else
+              return false;
+          }
+          return false;
         }
-        return false;
       }
-      return false;
+      return base.CastFrom(source);
     }
-    #endregion
   }
 }

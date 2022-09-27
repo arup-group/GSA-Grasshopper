@@ -1,5 +1,7 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using OasysGH;
+using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
@@ -48,117 +50,53 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaAnalysisCase"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaAnalysisCaseGoo : GH_Goo<GsaAnalysisCase>
+  public class GsaAnalysisCaseGoo : GH_OasysGoo<GsaAnalysisCase>
   {
-    #region constructors
-    public GsaAnalysisCaseGoo()
-    {
-      this.Value = new GsaAnalysisCase();
-    }
-    public GsaAnalysisCaseGoo(GsaAnalysisCase anal)
-    {
-      if (anal == null)
-        anal = new GsaAnalysisCase();
-      this.Value = anal; //section.Duplicate();
-    }
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaAnalysisCase();
-    }
-    public GsaAnalysisCaseGoo DuplicateGsaAnalysisCase()
-    {
-      return new GsaAnalysisCaseGoo(Value == null ? new GsaAnalysisCase() : Value.Duplicate());
-    }
-    #endregion
+    public static string Name => "Analysis Case";
+    public static string NickName => "CreateCase";
+    public static string Description => "GSA Analysis Case (Load Case or Combination)";
+    public override IGH_Goo Duplicate() => new GsaAnalysisCaseGoo(this.Value);
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Analysis Case";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("GSA Analysis Case"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA Analysis Case"); }
-    }
+    public GsaAnalysisCaseGoo(GsaAnalysisCase item) : base(item) { }
 
-
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance into some other type Q.            
-
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
+      if (Value != null)
       {
-        if (Value == null)
-          target = default;
-        else
+        if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
         {
           GH_Integer ghint = new GH_Integer();
           if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
             target = (Q)(object)ghint;
           else
             target = default;
+          return true;
         }
-        return true;
       }
-
-      target = default;
-      return false;
+      return base.CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaSection.
-
-
-      if (source == null) { return false; }
-
-      //Cast from string
-      if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
+      if (source != null)
       {
-        Value = new GsaAnalysisCase();
-        Value.Name = name;
-        return true;
+        // Cast from string
+        if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
+        {
+          Value = new GsaAnalysisCase();
+          Value.Name = name;
+          return true;
+        }
+        // Cast from int
+        else if (GH_Convert.ToInt32(source, out int id, GH_Conversion.Both))
+        {
+          Value = new GsaAnalysisCase();
+          Value.ID = id;
+          return true;
+        }
       }
-
-      //Cast from string
-      if (GH_Convert.ToInt32(source, out int id, GH_Conversion.Both))
-      {
-        Value = new GsaAnalysisCase();
-        Value.ID = id;
-        return true;
-      }
-
-      return false;
+      return base.CastFrom(source);
     }
-    #endregion
-
   }
 }

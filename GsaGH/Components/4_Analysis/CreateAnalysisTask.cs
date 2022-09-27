@@ -20,9 +20,9 @@ namespace GsaGH.Components
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateAnalysisTask;
 
-    public CreateAnalysisTask() : base("Create Analysis Task",
-      "CreateTask",
-      "Create a GSA Analysis Task",
+    public CreateAnalysisTask() : base("Create " + GsaAnalysisTaskGoo.Name.Replace(" ", string.Empty),
+      GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty),
+      "Create a " + GsaAnalysisTaskGoo.Description,
       Ribbon.CategoryName.Name(),
       Ribbon.SubCategoryName.Cat4())
     { this.Hidden = true; } // sets the initial state of the component to hidden
