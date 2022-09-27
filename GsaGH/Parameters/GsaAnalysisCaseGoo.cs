@@ -10,19 +10,23 @@ namespace GsaGH.Parameters
     public string Name { get; set; }
     public string Description { get; set; }
     internal int ID { get; set; } = 0;
+
     public GsaAnalysisCase()
     { }
+
     internal GsaAnalysisCase(int id, string name, string description)
     {
       this.ID = id;
       this.Name = name;
       this.Description = description;
     }
+
     public GsaAnalysisCase(string name, string description)
     {
       this.Name = name;
       this.Description = description;
     }
+
     public GsaAnalysisCase Duplicate()
     {
       return new GsaAnalysisCase(ID, Name, Description);

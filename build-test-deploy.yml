@@ -54,31 +54,31 @@ steps:
   env:
     MSBUILDDISABLENODEREUSE: 1
 
-#- powershell: |
-#    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\3.1.0\build --results-directory .\results\gsagh .\AdSecGHTests\bin\x64\Release\net48\AdSecGHTests.dll
-#    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\3.1.0\build --results-directory .\results\integration .\AdSecGHTests\bin\x64\Release\net48\IntegrationTests.dll
-#  displayName: dotnet tests
+- powershell: |
+    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\3.1.2\build --results-directory .\results\gsagh .\AdSecGHTests\bin\x64\Release\net48\AdSecGHTests.dll
+#    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\3.1.2\build --results-directory .\results\integration .\AdSecGHTests\bin\x64\Release\net48\IntegrationTests.dll
+  displayName: dotnet tests
 
-#- task: PublishCodeCoverageResults@1
-#  inputs:
-#    codeCoverageTool: 'cobertura'
-#    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
-#    pathToSources: '$(System.DefaultWorkingDirectory)'
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)'
 
-#- powershell: |
-#    $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
-#    echo $coverage_file_gsagh
+- powershell: |
+    $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
+    echo $coverage_file_gsagh
 #    $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
 #    echo $coverage_file_integration
-#    Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+    Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
 #    Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-#    ls $(System.DefaultWorkingDirectory)\results\
-#    codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
+    ls $(System.DefaultWorkingDirectory)\results\
+    codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
 #    codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
-#  env:
-#    CODECOV_TOKEN: $(CODECOV_TOKEN)
-#  displayName: Upload Code Coverage to codecovio
-#  failOnStderr: true
+  env:
+    CODECOV_TOKEN: $(CODECOV_TOKEN)
+  displayName: Upload Code Coverage to codecovio
+  failOnStderr: true
 
 - task: PowerShell@2
   displayName: Check for existing tags
