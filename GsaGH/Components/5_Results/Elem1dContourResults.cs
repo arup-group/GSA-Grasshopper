@@ -479,11 +479,11 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         // Loop through segmented lines and set result colour into ResultLine format
-        DataTree<ResultLine> resultLines = new DataTree<ResultLine>();
+        DataTree<ResultLineGoo> resultLines = new DataTree<ResultLineGoo>();
 
         Parallel.ForEach(elems, element =>
         {
-          ConcurrentDictionary<int, ResultLine> resLns = new ConcurrentDictionary<int, ResultLine>();
+          ConcurrentDictionary<int, ResultLineGoo> resLns = new ConcurrentDictionary<int, ResultLineGoo>();
 
           // list for element geometry and info
           if (element.Value.IsDummy) { return; }
@@ -644,7 +644,7 @@ namespace GsaGH.Components
               lock (resultLines)
               {
                 resultLines.Add(
-                        new ResultLine(segmentline, t1, t2, valcol1, valcol2, size1, size2),
+                        new ResultLineGoo(segmentline, t1, t2, valcol1, valcol2, size1, size2),
                         new GH_Path(key));
               }
             }

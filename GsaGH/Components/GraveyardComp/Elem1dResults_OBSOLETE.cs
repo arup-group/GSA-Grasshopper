@@ -611,14 +611,14 @@ namespace GsaGH.Components
         dmin = rounded[1];
 
         // Loop through segmented lines and set result colour into ResultLine format
-        ConcurrentDictionary<int, ConcurrentDictionary<int, ResultLine>> resultLines = new ConcurrentDictionary<int, ConcurrentDictionary<int, ResultLine>>();
-        DataTree<ResultLine> lines_out = new DataTree<ResultLine>();
+        ConcurrentDictionary<int, ConcurrentDictionary<int, ResultLineGoo>> resultLines = new ConcurrentDictionary<int, ConcurrentDictionary<int, ResultLineGoo>>();
+        DataTree<ResultLineGoo> lines_out = new DataTree<ResultLineGoo>();
         DataTree<System.Drawing.Color> col_out = new DataTree<System.Drawing.Color>();
 
         Parallel.ForEach(lineResults.Keys, key =>
         {
           GH_Path path = new GH_Path(key);
-          ConcurrentDictionary<int, ResultLine> resLns = new ConcurrentDictionary<int, ResultLine>();
+          ConcurrentDictionary<int, ResultLineGoo> resLns = new ConcurrentDictionary<int, ResultLineGoo>();
           ConcurrentDictionary<int, System.Drawing.Color> resCol = new ConcurrentDictionary<int, System.Drawing.Color>();
 
           ConcurrentDictionary<int, Line> lineRes = lineResults[key];
@@ -711,7 +711,7 @@ namespace GsaGH.Components
                 size2 = 1;
 
               // add our special resultline to the list of lines
-              resLns[j] = new ResultLine(segmentline, t1, t2, valcol1, valcol2, size1, size2);
+              resLns[j] = new ResultLineGoo(segmentline, t1, t2, valcol1, valcol2, size1, size2);
 
               // add the colour to the colours list
               resCol[j] = valcol1;

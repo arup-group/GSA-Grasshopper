@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Collections.ObjectModel;
-using GsaAPI;
+using System.Linq;
+using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
+using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Geometry;
-using Grasshopper;
 
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// Element3d class, this class defines the basic properties and methods for any Gsa Element 3d
+  /// Element2d class, this class defines the basic properties and methods for any Gsa Element 2d
   /// </summary>
-  public class GsaElement3d
+  public class GsaElement2d
   {
     internal List<Element> API_Elements
     {
@@ -40,26 +42,13 @@ namespace GsaGH.Parameters
     {
       get { return m_elements.Count; }
     }
-    public Mesh NgonMesh
+    public Mesh Mesh
     {
       get { return m_mesh; }
     }
-    public Mesh DisplayMesh
-    {
-      get
-      {
-        if (m_displayMesh == null)
-        {
-          UpdatePreview();
-        }
-        return m_displayMesh;
-      }
-    }
-
     public List<Point3d> Topology
     {
       get { return m_topo; }
-      set { m_topo = value; }
     }
     public List<int> ID
     {
@@ -69,29 +58,20 @@ namespace GsaGH.Parameters
     public List<List<int>> TopoInt
     {
       get { return m_topoInt; }
-      set { m_topoInt = value; }
     }
-    public List<List<int>> FaceInt
-    {
-      get { return m_faceInt; }
-      set { m_faceInt = value; }
-    }
-    public List<GsaProp3d> Properties
+    public List<GsaProp2d> Properties
     {
       get { return m_props; }
       set { m_props = value; }
     }
-    public DataTree<int> TopologyIDs
+    public List<int> ParentMembers
     {
       get
       {
-        DataTree<int> topos = new DataTree<int>();
+        List<int> pMems = new List<int>();
         for (int i = 0; i < m_elements.Count; i++)
-        {
-          if (m_elements[i] != null)
-            topos.AddRange(m_elements[i].Topology.ToList(), new Grasshopper.Kernel.Data.GH_Path(i));
-        }
-        return topos;
+          try { pMems.Add(m_elements[i].ParentMember.Member); } catch (Exception) { pMems.Add(0); }
+        return pMems;
       }
     }
     #region GsaAPI.Element members
@@ -108,13 +88,21 @@ namespace GsaGH.Parameters
           }
           cols.Add((System.Drawing.Color)m_elements[i].Colour);
 
-          NgonMesh.VertexColors.SetColor(i, (System.Drawing.Color)m_elements[i].Colour);
+          Mesh.VertexColors.SetColor(i, (System.Drawing.Color)m_elements[i].Colour);
         }
         return cols;
       }
       set
       {
         CloneApiElements(apiObjectMember.colour, null, null, null, null, null, null, null, value);
+        //for (int i = 0; i < m_elements.Count; i++)
+        //{
+        //    if (value[i] != null)
+        //    {
+        //        m_elements[i].Colour = value[i];
+        //        Mesh.VertexColors.SetColor(i, (System.Drawing.Color)m_elements[i].Colour);
+        //    }
+        //}
       }
     }
     public List<int> Groups
@@ -165,7 +153,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiElements(apiObjectMember.dummy, null, null, value);
+        CloneApiElements(apiObjectMember.name, null, null, value);
       }
     }
     public List<double> OrientationAngles
@@ -182,7 +170,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiElements(apiObjectMember.dummy, null, null, null, value);
+        CloneApiElements(apiObjectMember.orientationAngle, null, null, null, value);
       }
     }
     public List<GsaOffset> Offsets
@@ -206,26 +194,10 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiElements(apiObjectMember.dummy, null, null, null, null, value);
+        CloneApiElements(apiObjectMember.offset, null, null, null, null, value);
       }
     }
-    public List<int> PropertyIDs
-    {
-      get
-      {
-        List<int> propids = new List<int>();
-        for (int i = 0; i < m_elements.Count; i++)
-        {
-          if (m_elements[i] != null)
-            propids.Add(m_elements[i].Property);
-        }
-        return propids;
-      }
-      set
-      {
-        CloneApiElements(apiObjectMember.dummy, null, null, null, null, null, value);
-      }
-    }
+
     public List<ElementType> Types
     {
       get
@@ -240,19 +212,24 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiElements(apiObjectMember.dummy, null, null, null, null, null, null, value);
+        CloneApiElements(apiObjectMember.type, null, null, null, null, null, null, value);
       }
     }
-    public List<int> ParentMembers
+
+    public DataTree<int> TopologyIDs
     {
       get
       {
-        List<int> pMems = new List<int>();
+        DataTree<int> topos = new DataTree<int>();
         for (int i = 0; i < m_elements.Count; i++)
-          try { pMems.Add(m_elements[i].ParentMember.Member); } catch (Exception) { pMems.Add(0); }
-        return pMems;
+        {
+          if (m_elements[i] != null)
+            topos.AddRange(m_elements[i].Topology.ToList(), new Grasshopper.Kernel.Data.GH_Path(i));
+        }
+        return topos;
       }
     }
+
     private void CloneApiElements(apiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null,
         List<double> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<System.Drawing.Color> col = null)
     {
@@ -272,6 +249,9 @@ namespace GsaGH.Parameters
           Topology = new ReadOnlyCollection<int>(m_elements[i].Topology.ToList()),
           Type = m_elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
         });
+
+        //if ((System.Drawing.Color)m_elements[i].Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        //    elems[i].Colour = m_elements[i].Colour;
 
         if (memType == apiObjectMember.all)
           continue;
@@ -359,113 +339,90 @@ namespace GsaGH.Parameters
       colour
     }
     #endregion
-    #region preview
-    private Mesh m_displayMesh;
-    internal void UpdatePreview()
-    {
-      m_displayMesh = new Mesh();
-      Mesh x = NgonMesh;
 
-      m_displayMesh.Vertices.AddVertices(x.Vertices.ToList());
-      List<MeshNgon> ngons = x.GetNgonAndFacesEnumerable().ToList();
-
-      for (int i = 0; i < ngons.Count; i++)
-      {
-        List<int> faceindex = ngons[i].FaceIndexList().Select(u => (int)u).ToList();
-        for (int j = 0; j < faceindex.Count; j++)
-        {
-          m_displayMesh.Faces.AddFace(x.Faces[faceindex[j]]);
-        }
-      }
-      m_displayMesh.RebuildNormals();
-    }
-    #endregion
     #region fields
     private List<Element> m_elements;
     private Mesh m_mesh;
     private List<List<int>> m_topoInt; // list of topology integers referring to the topo list of points
-    private List<List<int>> m_faceInt; // list of face integers included in each solid mesh referring to the mesh face list
     private List<Point3d> m_topo; // list of topology points for visualisation
     private List<int> m_id;
-    private List<GsaProp3d> m_props;
+    private List<GsaProp2d> m_props;
     #endregion
 
     #region constructors
-    public GsaElement3d()
+    public GsaElement2d()
     {
       m_elements = new List<Element>();
       m_mesh = new Mesh();
-      //m_props = new List<GsaProp2d>();
+      m_props = new List<GsaProp2d>();
     }
-    public GsaElement3d(Mesh mesh, int prop = 0)
+
+    public GsaElement2d(Mesh mesh, int prop = 0)
     {
       m_elements = new List<Element>();
       m_mesh = mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(mesh, 0);
+      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(m_mesh, prop);
       m_elements = convertMesh.Item1;
       m_topo = convertMesh.Item2;
       m_topoInt = convertMesh.Item3;
-      m_faceInt = convertMesh.Item4;
 
       m_id = new List<int>(new int[m_mesh.Faces.Count()]);
 
-      m_props = new List<GsaProp3d>();
+      m_props = new List<GsaProp2d>();
       for (int i = 0; i < m_mesh.Faces.Count(); i++)
       {
-        m_props.Add(new GsaProp3d());
+        m_props.Add(new GsaProp2d());
       }
-      UpdatePreview();
     }
-    internal GsaElement3d(List<Element> elements, List<int> ids, Mesh mesh, List<GsaProp3d> prop3ds)
+    internal GsaElement2d(List<Element> elements, List<int> IDs, Mesh mesh, List<GsaProp2d> prop2ds)
     {
-      m_elements = elements;
       m_mesh = mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(mesh, 0);
+      m_topo = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+      m_topoInt = Util.GH.Convert.ConvertMeshToElem2d(m_mesh);
+      m_elements = elements;
+      m_id = IDs;
+      m_props = prop2ds;
+    }
+    public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, Length meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit, int prop = 0)
+    {
+      m_elements = new List<Element>();
+      m_mesh = Util.GH.Convert.ConvertBrepToMesh(brep, curves, points, meshSize, unit, mem1ds, nodes);
+      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(m_mesh, prop, true);
+      m_elements = convertMesh.Item1;
       m_topo = convertMesh.Item2;
       m_topoInt = convertMesh.Item3;
-      m_faceInt = convertMesh.Item4;
 
-      m_id = ids;
+      m_id = new List<int>(new int[m_mesh.Faces.Count()]);
 
-      m_props = prop3ds;
-      UpdatePreview();
+      m_props = new List<GsaProp2d>();
     }
-    public GsaElement3d Duplicate(bool cloneApiElements = false)
+    public GsaElement2d Duplicate(bool cloneApiElements = false)
     {
       if (this == null) { return null; }
       if (m_mesh == null) { return null; }
-
-      GsaElement3d dup = new GsaElement3d();
-      dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
-      dup.m_topo = m_topo;
-      dup.m_topoInt = m_topoInt;
-      dup.m_faceInt = m_faceInt;
+      GsaElement2d dup = new GsaElement2d();
       dup.m_elements = m_elements;
       if (cloneApiElements)
         dup.CloneApiElements();
       dup.m_id = m_id.ToList();
+      dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
       dup.m_props = m_props.ConvertAll(x => x.Duplicate());
-      dup.UpdatePreview();
+      dup.m_topo = m_topo;
+      dup.m_topoInt = m_topoInt;
       return dup;
     }
-    /// <summary>
-    /// This method will return a copy of the existing element3d with an updated mesh
-    /// </summary>
-    /// <param name="updated_mesh"></param>
-    /// <returns></returns>
-    public GsaElement3d UpdateGeometry(Mesh updated_mesh)
+    public GsaElement2d UpdateGeometry(Mesh newMesh)
     {
       if (this == null) { return null; }
       if (m_mesh == null) { return null; }
-      //if (m_mesh.Faces.Count != m_elements.Count) { return null; } // the logic below assumes the number of elements is equal to number of faces
+      if (m_mesh.Faces.Count != m_elements.Count) { return null; } // the logic below assumes the number of elements is equal to number of faces
 
-      GsaElement3d dup = this.Duplicate(true);
-      m_mesh = updated_mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(m_mesh, 0);
+      GsaElement2d dup = this.Duplicate(true);
+      m_mesh = newMesh;
+      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(m_mesh, 0);
       m_elements = convertMesh.Item1;
       m_topo = convertMesh.Item2;
       m_topoInt = convertMesh.Item3;
-      m_faceInt = convertMesh.Item4;
       return dup;
     }
     #endregion
@@ -486,7 +443,7 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       string valid = (this.IsValid) ? "" : "Invalid ";
-      return valid + "GSA 3D Element(s)";
+      return valid + "GSA 2D Element(s)";
     }
     #endregion
   }
@@ -494,27 +451,27 @@ namespace GsaGH.Parameters
   /// <summary>
   /// GsaMember Goo wrapper class, makes sure GsaMember can be used in Grasshopper.
   /// </summary>
-  public class GsaElement3dGoo : GH_GeometricGoo<GsaElement3d>, IGH_PreviewData
+  public class GsaElement2dGoo : GH_GeometricGoo<GsaElement2d>, IGH_PreviewData
   {
     #region constructors
-    public GsaElement3dGoo()
+    public GsaElement2dGoo()
     {
-      this.Value = new GsaElement3d();
+      this.Value = new GsaElement2d();
     }
-    public GsaElement3dGoo(GsaElement3d element)
+    public GsaElement2dGoo(GsaElement2d element)
     {
       if (element == null)
-        element = new GsaElement3d();
+        element = new GsaElement2d();
       this.Value = element; //element.Duplicate();
     }
 
     public override IGH_GeometricGoo DuplicateGeometry()
     {
-      return DuplicateGsaElement3d();
+      return DuplicateGsaElement2d();
     }
-    public GsaElement3dGoo DuplicateGsaElement3d()
+    public GsaElement2dGoo DuplicateGsaElement2d()
     {
-      return new GsaElement3dGoo(Value == null ? new GsaElement3d() : Value); //Value.Duplicate());
+      return new GsaElement2dGoo(Value == null ? new GsaElement2d() : Value); //Value.Duplicate());
     }
     #endregion
 
@@ -524,7 +481,7 @@ namespace GsaGH.Parameters
       get
       {
         if (Value == null) { return false; }
-        if (Value.NgonMesh == null) { return false; }
+        if (Value.Mesh == null) { return false; }
         return true;
       }
     }
@@ -540,17 +497,17 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       if (Value == null)
-        return "Null Element3D";
+        return "Null Element2D";
       else
         return Value.ToString();
     }
     public override string TypeName
     {
-      get { return ("Element 3D"); }
+      get { return ("Element 2D"); }
     }
     public override string TypeDescription
     {
-      get { return ("GSA 3D Element"); }
+      get { return ("GSA 2D Element"); }
     }
 
     public override BoundingBox Boundingbox
@@ -558,15 +515,15 @@ namespace GsaGH.Parameters
       get
       {
         if (Value == null) { return BoundingBox.Empty; }
-        if (Value.DisplayMesh == null) { return BoundingBox.Empty; }
-        return Value.DisplayMesh.GetBoundingBox(false);
+        if (Value.Mesh == null) { return BoundingBox.Empty; }
+        return Value.Mesh.GetBoundingBox(false);
       }
     }
     public override BoundingBox GetBoundingBox(Transform xform)
     {
       if (Value == null) { return BoundingBox.Empty; }
-      if (Value.DisplayMesh == null) { return BoundingBox.Empty; }
-      return Value.DisplayMesh.GetBoundingBox(xform);
+      if (Value.Mesh == null) { return BoundingBox.Empty; }
+      return Value.Mesh.GetBoundingBox(xform);
     }
     #endregion
 
@@ -574,10 +531,10 @@ namespace GsaGH.Parameters
     public override bool CastTo<Q>(out Q target)
     {
       // This function is called when Grasshopper needs to convert this 
-      // instance of GsaElement3D into some other type Q.            
+      // instance of GsaElement2D into some other type Q.            
 
 
-      if (typeof(Q).IsAssignableFrom(typeof(GsaElement3d)))
+      if (typeof(Q).IsAssignableFrom(typeof(GsaElement2d)))
       {
         if (Value == null)
           target = default;
@@ -601,7 +558,7 @@ namespace GsaGH.Parameters
         if (Value == null)
           target = default;
         else
-          target = (Q)(object)Value.DisplayMesh;
+          target = (Q)(object)Value.Mesh;
         return true;
       }
 
@@ -611,7 +568,7 @@ namespace GsaGH.Parameters
           target = default;
         else
         {
-          target = (Q)(object)new GH_Mesh(Value.DisplayMesh);
+          target = (Q)(object)new GH_Mesh(Value.Mesh);
         }
 
         return true;
@@ -636,6 +593,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
+
       target = default;
       return false;
     }
@@ -648,34 +606,37 @@ namespace GsaGH.Parameters
       if (source == null) { return false; }
 
       //Cast from GsaElement
-      if (typeof(GsaElement3d).IsAssignableFrom(source.GetType()))
+      if (typeof(GsaElement2d).IsAssignableFrom(source.GetType()))
       {
-        Value = (GsaElement3d)source;
+        Value = (GsaElement2d)source;
         return true;
       }
 
-      ////Cast from GsaAPI Member
+      //Cast from GsaAPI Member
+      // we shouldnt provide auto-convertion from GsaAPI.Element
+      // as this cannot alone be used to create a line....
       //if (typeof(List<Element>).IsAssignableFrom(source.GetType()))
       //{
-      //    Value.API_Elements = (List<Element>)source;
+      //    Value.Elements = (List<Element>)source;
       //    return true;
       //}
 
-      //if (typeof(Element).IsAssignableFrom(source.GetType()))
-      //{
-      //    Value.Elements[0] = (Element)source; //If someone should want to just test if they can convert a Mesh face
-      //    return true;
-      //}
+      if (typeof(Element).IsAssignableFrom(source.GetType()))
+      {
+        if (Value.API_Elements.Count > 1) { return false; } // we cannot convert a list on the fly
+        Value.API_Elements[0] = (Element)source; //If someone should want to just test if they can convert a Mesh face
+        return true;
+      }
 
       //Cast from Mesh
-      //Mesh mesh = new Mesh();
+      Mesh mesh = new Mesh();
 
-      //if (GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both))
-      //{
-      //    GsaElement3d elem = new GsaElement3d(mesh);
-      //    this.Value = elem;
-      //    return true;
-      //}
+      if (GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both))
+      {
+        GsaElement2d elem = new GsaElement2d(mesh);
+        this.Value = elem;
+        return true;
+      }
 
       return false;
     }
@@ -685,25 +646,25 @@ namespace GsaGH.Parameters
     public override IGH_GeometricGoo Transform(Transform xform)
     {
       if (Value == null) { return null; }
-      if (Value.NgonMesh == null) { return null; }
+      if (Value.Mesh == null) { return null; }
 
-      GsaElement3d dup = Value.Duplicate();
-      dup.ID = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
-      Mesh xMs = dup.NgonMesh.DuplicateMesh();
+      GsaElement2d dup = Value.Duplicate(true);
+      dup.ID = new List<int>(new int[dup.Mesh.Faces.Count()]);
+      Mesh xMs = dup.Mesh.DuplicateMesh();
       xMs.Transform(xform);
-      return new GsaElement3dGoo(dup.UpdateGeometry(xMs));
+      return new GsaElement2dGoo(dup.UpdateGeometry(xMs));
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
       if (Value == null) { return null; }
-      if (Value.NgonMesh == null) { return null; }
+      if (Value.Mesh == null) { return null; }
 
-      GsaElement3d dup = Value.Duplicate();
-      dup.ID = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
-      Mesh xMs = dup.NgonMesh.DuplicateMesh();
+      GsaElement2d dup = Value.Duplicate(true);
+      dup.ID = new List<int>(new int[dup.Mesh.Faces.Count()]);
+      Mesh xMs = dup.Mesh.DuplicateMesh();
       xmorph.Morph(xMs);
-      return new GsaElement3dGoo(dup.UpdateGeometry(xMs));
+      return new GsaElement2dGoo(dup.UpdateGeometry(xMs));
     }
 
     #endregion
@@ -718,10 +679,10 @@ namespace GsaGH.Parameters
       //Draw shape.
       if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
       {
-        args.Pipeline.DrawMeshShaded(Value.DisplayMesh, UI.Colour.Element3dFace);
+        args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
       }
       else
-        args.Pipeline.DrawMeshShaded(Value.DisplayMesh, UI.Colour.Element2dFaceSelected);
+        args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFaceSelected);
     }
     public void DrawViewportWires(GH_PreviewWireArgs args)
     {
@@ -729,96 +690,18 @@ namespace GsaGH.Parameters
       if (Grasshopper.CentralSettings.PreviewMeshEdges == false) { return; }
 
       //Draw lines
-      if (Value.NgonMesh != null)
+      if (Value.Mesh != null)
       {
         if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
         {
-          args.Pipeline.DrawMeshWires(Value.DisplayMesh, UI.Colour.Element2dEdge, 1);
+          args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdge, 1);
         }
         else
         {
-          args.Pipeline.DrawMeshWires(Value.DisplayMesh, UI.Colour.Element2dEdgeSelected, 2);
+          args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdgeSelected, 2);
         }
       }
     }
     #endregion
   }
-
-  /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaElement2d type.
-  /// </summary>
-  public class GsaElement3dParameter : GH_PersistentGeometryParam<GsaElement3dGoo>, IGH_PreviewObject
-  {
-    public GsaElement3dParameter()
-      : base(new GH_InstanceDescription("3D Element", "E3D", "Maintains a collection of GSA 3D Element data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-    {
-    }
-
-    public override Guid ComponentGuid => new Guid("e7326f8e-c8e5-40d9-b8e4-6912ccf80b92");
-
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
-
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Elem3dParam;
-
-    //We do not allow users to pick parameter, 
-    //therefore the following 4 methods disable all this ui.
-    protected override GH_GetterResult Prompt_Plural(ref List<GsaElement3dGoo> values)
-    {
-      return GH_GetterResult.cancel;
-    }
-    protected override GH_GetterResult Prompt_Singular(ref GsaElement3dGoo value)
-    {
-      return GH_GetterResult.cancel;
-    }
-    protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
-    {
-      System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
-      {
-        Text = "Not available",
-        Visible = false
-      };
-      return item;
-    }
-    protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
-    {
-      System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
-      {
-        Text = "Not available",
-        Visible = false
-      };
-      return item;
-    }
-
-    #region preview methods
-    public BoundingBox ClippingBox
-    {
-      get
-      {
-        return Preview_ComputeClippingBox();
-      }
-    }
-    public void DrawViewportMeshes(IGH_PreviewArgs args)
-    {
-      //Use a standard method to draw gunk, you don't have to specifically implement this.
-      Preview_DrawMeshes(args);
-    }
-    public void DrawViewportWires(IGH_PreviewArgs args)
-    {
-      //Use a standard method to draw gunk, you don't have to specifically implement this.
-      Preview_DrawWires(args);
-    }
-
-    private bool m_hidden = false;
-    public bool Hidden
-    {
-      get { return m_hidden; }
-      set { m_hidden = value; }
-    }
-    public bool IsPreviewCapable
-    {
-      get { return true; }
-    }
-    #endregion
-  }
-
 }

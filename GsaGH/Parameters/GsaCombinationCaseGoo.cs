@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using GsaAPI;
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-using OasysUnits;
+﻿using Grasshopper.Kernel.Types;
 
 namespace GsaGH.Parameters
 {

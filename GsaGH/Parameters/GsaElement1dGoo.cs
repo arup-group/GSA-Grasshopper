@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Collections.ObjectModel;
-
-using GsaAPI;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
@@ -678,82 +677,4 @@ namespace GsaGH.Parameters
     }
     #endregion
   }
-
-  /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaElement1d type.
-  /// </summary>
-  public class GsaElement1dParameter : GH_PersistentGeometryParam<GsaElement1dGoo>, IGH_PreviewObject
-  {
-    public GsaElement1dParameter()
-      : base(new GH_InstanceDescription("1D Element", "E1D", "Maintains a collection of GSA 1D Element data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-    {
-    }
-
-    public override Guid ComponentGuid => new Guid("9c045214-cab6-47d9-a158-ae1f4f494b66");
-
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
-
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Elem1dParam;
-
-    //We do not allow users to pick parameter, 
-    //therefore the following 4 methods disable all this ui.
-    protected override GH_GetterResult Prompt_Plural(ref List<GsaElement1dGoo> values)
-    {
-      return GH_GetterResult.cancel;
-    }
-    protected override GH_GetterResult Prompt_Singular(ref GsaElement1dGoo value)
-    {
-      return GH_GetterResult.cancel;
-    }
-    protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
-    {
-      System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
-      {
-        Text = "Not available",
-        Visible = false
-      };
-      return item;
-    }
-    protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
-    {
-      System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
-      {
-        Text = "Not available",
-        Visible = false
-      };
-      return item;
-    }
-
-    #region preview methods
-    public BoundingBox ClippingBox
-    {
-      get
-      {
-        return Preview_ComputeClippingBox();
-      }
-    }
-    public void DrawViewportMeshes(IGH_PreviewArgs args)
-    {
-      //Use a standard method to draw gunk, you don't have to specifically implement this.
-      Preview_DrawMeshes(args);
-    }
-    public void DrawViewportWires(IGH_PreviewArgs args)
-    {
-      //Use a standard method to draw gunk, you don't have to specifically implement this.
-      Preview_DrawWires(args);
-    }
-
-    private bool m_hidden = false;
-    public bool Hidden
-    {
-      get { return m_hidden; }
-      set { m_hidden = value; }
-    }
-    public bool IsPreviewCapable
-    {
-      get { return true; }
-    }
-    #endregion
-  }
-
 }
