@@ -7,6 +7,9 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -37,10 +40,10 @@ namespace GsaGH.Components
       if (first)
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForcePerAreaUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForcePerAreaUnits);
 
         selecteditems = new List<string>();
-        PressureUnit pressureUnit = (Force.From(1, Units.ForceUnit) / (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry))).Unit;
+        PressureUnit pressureUnit = (Force.From(1, DefaultUnits.ForceUnit) / (Length.From(1, DefaultUnits.LengthUnitGeometry) * Length.From(1, DefaultUnits.LengthUnitGeometry))).Unit;
         selecteditems.Add(pressureUnit.ToString());
 
         first = false;
@@ -85,7 +88,7 @@ namespace GsaGH.Components
             "Unit",
     });
     bool first = true;
-    private PressureUnit forceAreaUnit = (Force.From(1, Units.ForceUnit) / (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry))).Unit;
+    private PressureUnit forceAreaUnit = (Force.From(1, DefaultUnits.ForceUnit) / (Length.From(1, DefaultUnits.LengthUnitGeometry) * Length.From(1, DefaultUnits.LengthUnitGeometry))).Unit;
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
@@ -233,7 +236,7 @@ namespace GsaGH.Components
             desc += "(" + temppt.X + "," + temppt.Y + ")";
           }
           // add units to the end
-          desc += "(" + Units.LengthUnitGeometry + ")";
+          desc += "(" + DefaultUnits.LengthUnitGeometry + ")";
 
           // set polyline in grid line load
           gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
@@ -295,7 +298,7 @@ namespace GsaGH.Components
       }
 
       // 7 load value
-      gridareaload.GridAreaLoad.Value = GetInput.Stress(this, DA, 7, forceAreaUnit).NewtonsPerSquareMeter;
+      gridareaload.GridAreaLoad.Value = ((Pressure)Input.UnitNumber(this, DA, 7, forceAreaUnit)).NewtonsPerSquareMeter;
 
       // convert to goo
       GsaLoad gsaLoad = new GsaLoad(gridareaload);
@@ -316,7 +319,7 @@ namespace GsaGH.Components
       catch (Exception) // we set the stored values like first initation of component
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredStressUnits);
+        dropdownitems.Add(FilteredUnits.FilteredStressUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(PressureUnit.KilonewtonPerSquareMeter.ToString());
@@ -353,6 +356,5 @@ namespace GsaGH.Components
       Params.Input[7].Name = "Value [" + unitAbbreviation + "]";
     }
     #endregion
-
   }
 }

@@ -11,6 +11,8 @@ using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -46,7 +48,7 @@ namespace GsaGH.Components
         selecteditems = new List<string>();
 
         // energy
-        dropdownitems.Add(Units.FilteredEnergyUnits);
+        dropdownitems.Add(FilteredUnits.FilteredEnergyUnits);
         selecteditems.Add(energyUnit.ToString());
 
         first = false;
@@ -114,7 +116,7 @@ namespace GsaGH.Components
       "Settings"
     });
     private bool first = true;
-    private EnergyUnit energyUnit = Units.EnergyUnit;
+    private EnergyUnit energyUnit = DefaultUnits.EnergyUnit;
     #endregion
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)

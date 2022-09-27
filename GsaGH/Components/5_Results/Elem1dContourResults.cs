@@ -15,6 +15,8 @@ using GsaGH.Util.Gsa;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
@@ -51,11 +53,11 @@ namespace GsaGH.Components
         dropdownitems = new List<List<string>>();
         dropdownitems.Add(dropdowntopitems);
         dropdownitems.Add(dropdowndisplacement);
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems = new List<string>();
         selecteditems.Add(dropdownitems[0][0]);
         selecteditems.Add(dropdownitems[1][3]);
-        selecteditems.Add(Units.LengthUnitGeometry.ToString());
+        selecteditems.Add(DefaultUnits.LengthUnitGeometry.ToString());
         first = false;
       }
       m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdownitems, selecteditems, slider, SetVal, SetMaxMin, DefScale, MaxValue, MinValue, noDigits, spacerDescriptions);
@@ -223,9 +225,9 @@ namespace GsaGH.Components
       "Average"
     });
 
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
-    private LengthUnit lengthResultUnit = Units.LengthUnitResult;
-    private EnergyUnit energyResultUnit = Units.EnergyUnit;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private LengthUnit lengthResultUnit = DefaultUnits.LengthUnitResult;
+    private EnergyUnit energyResultUnit = DefaultUnits.EnergyUnit;
     string _case = "";
     #endregion
 
@@ -330,7 +332,7 @@ namespace GsaGH.Components
 
           case FoldMode.Force:
             res = result.Element1DForceValues(elementlist, positionsCount,
-                Units.ForceUnit, Units.MomentUnit)[0];
+                DefaultUnits.ForceUnit, DefaultUnits.MomentUnit)[0];
             break;
           case FoldMode.StrainEnergy:
             if (_disp == DisplayValue.X)
@@ -359,11 +361,11 @@ namespace GsaGH.Components
         Enum xxyyzzunit = AngleUnit.Radian;
         if (_mode == FoldMode.Force)
         {
-          xyzunit = Units.ForceUnit;
-          xxyyzzunit = Units.MomentUnit;
+          xyzunit = DefaultUnits.ForceUnit;
+          xxyyzzunit = DefaultUnits.MomentUnit;
         }
         else if (_mode == FoldMode.StrainEnergy)
-          xyzunit = Units.EnergyUnit;
+          xyzunit = DefaultUnits.EnergyUnit;
 
         double dmax_x = res.dmax_x.As(xyzunit);
         double dmax_y = _mode == FoldMode.StrainEnergy ? 0 : res.dmax_y.As(xyzunit);
@@ -569,49 +571,49 @@ namespace GsaGH.Components
                   switch (_disp)
                   {
                     case (DisplayValue.X):
-                      t1 = xyzResults[key][i].X.As(Units.ForceUnit);
-                      t2 = xyzResults[key][i + 1].X.As(Units.ForceUnit);
+                      t1 = xyzResults[key][i].X.As(DefaultUnits.ForceUnit);
+                      t2 = xyzResults[key][i + 1].X.As(DefaultUnits.ForceUnit);
                       break;
                     case (DisplayValue.Y):
-                      t1 = xyzResults[key][i].Y.As(Units.ForceUnit);
-                      t2 = xyzResults[key][i + 1].Y.As(Units.ForceUnit);
+                      t1 = xyzResults[key][i].Y.As(DefaultUnits.ForceUnit);
+                      t2 = xyzResults[key][i + 1].Y.As(DefaultUnits.ForceUnit);
                       break;
                     case (DisplayValue.Z):
-                      t1 = xyzResults[key][i].Z.As(Units.ForceUnit);
-                      t2 = xyzResults[key][i + 1].Z.As(Units.ForceUnit);
+                      t1 = xyzResults[key][i].Z.As(DefaultUnits.ForceUnit);
+                      t2 = xyzResults[key][i + 1].Z.As(DefaultUnits.ForceUnit);
                       break;
                     case (DisplayValue.resXYZ):
-                      t1 = xyzResults[key][i].XYZ.As(Units.ForceUnit);
-                      t2 = xyzResults[key][i + 1].XYZ.As(Units.ForceUnit);
+                      t1 = xyzResults[key][i].XYZ.As(DefaultUnits.ForceUnit);
+                      t2 = xyzResults[key][i + 1].XYZ.As(DefaultUnits.ForceUnit);
                       break;
                     case (DisplayValue.XX):
-                      t1 = xxyyzzResults[key][i].X.As(Units.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].X.As(Units.MomentUnit);
+                      t1 = xxyyzzResults[key][i].X.As(DefaultUnits.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].X.As(DefaultUnits.MomentUnit);
                       break;
                     case (DisplayValue.YY):
-                      t1 = xxyyzzResults[key][i].Y.As(Units.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].Y.As(Units.MomentUnit);
+                      t1 = xxyyzzResults[key][i].Y.As(DefaultUnits.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].Y.As(DefaultUnits.MomentUnit);
                       break;
                     case (DisplayValue.ZZ):
-                      t1 = xxyyzzResults[key][i].Z.As(Units.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].Z.As(Units.MomentUnit);
+                      t1 = xxyyzzResults[key][i].Z.As(DefaultUnits.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].Z.As(DefaultUnits.MomentUnit);
                       break;
                     case (DisplayValue.resXXYYZZ):
-                      t1 = xxyyzzResults[key][i].XYZ.As(Units.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].XYZ.As(Units.MomentUnit);
+                      t1 = xxyyzzResults[key][i].XYZ.As(DefaultUnits.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].XYZ.As(DefaultUnits.MomentUnit);
                       break;
                   }
                   break;
                 case FoldMode.StrainEnergy:
                   if (_disp == DisplayValue.X)
                   {
-                    t1 = xyzResults[key][i].X.As(Units.EnergyUnit);
-                    t2 = xyzResults[key][i + 1].X.As(Units.EnergyUnit);
+                    t1 = xyzResults[key][i].X.As(DefaultUnits.EnergyUnit);
+                    t2 = xyzResults[key][i + 1].X.As(DefaultUnits.EnergyUnit);
                   }
                   else
                   {
-                    t1 = xyzResults[key][i].X.As(Units.EnergyUnit);
-                    t2 = xyzResults[key][i].X.As(Units.EnergyUnit);
+                    t1 = xyzResults[key][i].X.As(DefaultUnits.EnergyUnit);
+                    t2 = xyzResults[key][i].X.As(DefaultUnits.EnergyUnit);
                   }
                   break;
               }
@@ -699,20 +701,20 @@ namespace GsaGH.Components
           {
             if ((int)_disp < 4)
             {
-              Force force = new Force(t, Units.ForceUnit);
+              Force force = new Force(t, DefaultUnits.ForceUnit);
               legendValues.Add(force.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(force));
             }
             else
             {
-              Moment moment = new Moment(t, Units.MomentUnit);
-              legendValues.Add(t.ToString("F" + significantDigits) + " " + Moment.GetAbbreviation(Units.MomentUnit));
+              Moment moment = new Moment(t, DefaultUnits.MomentUnit);
+              legendValues.Add(t.ToString("F" + significantDigits) + " " + Moment.GetAbbreviation(DefaultUnits.MomentUnit));
               ts.Add(new GH_UnitNumber(moment));
             }
           }
           else
           {
-            Energy energy = new Energy(t, Units.EnergyUnit);
+            Energy energy = new Energy(t, DefaultUnits.EnergyUnit);
             legendValues.Add(energy.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(energy));
           }
@@ -890,9 +892,9 @@ namespace GsaGH.Components
       if (_mode == FoldMode.Force)
       {
         if ((int)_disp < 4)
-          Params.Output[2].Name = "Legend Values [" + Units.ForceUnit + "]";
+          Params.Output[2].Name = "Legend Values [" + DefaultUnits.ForceUnit + "]";
         else
-          Params.Output[2].Name = "Legend Values [" + Units.MomentUnit + "]";
+          Params.Output[2].Name = "Legend Values [" + DefaultUnits.MomentUnit + "]";
       }
     }
     #endregion

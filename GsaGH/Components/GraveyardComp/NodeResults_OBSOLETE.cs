@@ -10,6 +10,8 @@ using GsaGH.Parameters;
 using GsaGH.Util.Gsa;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -46,13 +48,13 @@ namespace GsaGH.Components
         dropdowncontents = new List<List<string>>();
         dropdowncontents.Add(dropdownitems);
         dropdowncontents.Add(dropdowndisplacement);
-        dropdowncontents.Add(Units.FilteredLengthUnits);
-        dropdowncontents.Add(Units.FilteredLengthUnits);
+        dropdowncontents.Add(FilteredUnits.FilteredLengthUnits);
+        dropdowncontents.Add(FilteredUnits.FilteredLengthUnits);
         selections = new List<string>();
         selections.Add(dropdowncontents[0][0]);
         selections.Add(dropdowncontents[1][3]);
-        selections.Add(Units.LengthUnitResult.ToString());
-        selections.Add(Units.LengthUnitGeometry.ToString());
+        selections.Add(DefaultUnits.LengthUnitResult.ToString());
+        selections.Add(DefaultUnits.LengthUnitGeometry.ToString());
         first = false;
       }
       m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, DefScale, MaxValue, MinValue, noDigits, spacertext);
@@ -83,7 +85,7 @@ namespace GsaGH.Components
           if (dropdowncontents[1] != dropdowndisplacement)
           {
             dropdowncontents[1] = dropdowndisplacement;
-            dropdowncontents[2] = Units.FilteredLengthUnits;
+            dropdowncontents[2] = FilteredUnits.FilteredLengthUnits;
             selections[0] = dropdowncontents[0][0];
             selections[1] = dropdowncontents[1][3];
             selections[2] = resultLengthUnit.ToString();
@@ -123,12 +125,12 @@ namespace GsaGH.Components
         {
           if ((int)_disp > 3 && selectedidd < 4)
           {
-            dropdowncontents[2] = Units.FilteredForceUnits;
+            dropdowncontents[2] = FilteredUnits.FilteredForceUnits;
             selections[2] = forceUnit.ToString();
           }
           if ((int)_disp < 4 && selectedidd > 3)
           {
-            dropdowncontents[2] = Units.FilteredMomentUnits;
+            dropdowncontents[2] = FilteredUnits.FilteredMomentUnits;
             selections[2] = momentUnit.ToString();
           }
         }
@@ -214,10 +216,10 @@ namespace GsaGH.Components
             "Resolved |M|",
     });
 
-    private MomentUnit momentUnit = Units.MomentUnit;
-    private ForceUnit forceUnit = Units.ForceUnit;
-    private LengthUnit resultLengthUnit = Units.LengthUnitResult;
-    private LengthUnit geometryLengthUnit = Units.LengthUnitGeometry;
+    private MomentUnit momentUnit = DefaultUnits.MomentUnit;
+    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
+    private LengthUnit resultLengthUnit = DefaultUnits.LengthUnitResult;
+    private LengthUnit geometryLengthUnit = DefaultUnits.LengthUnitGeometry;
     #endregion
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OasysUnits.Units;
 using OasysUnits;
+using OasysGH.Units;
 
 namespace GsaGH.Util.Gsa.ToGSA
 {
@@ -144,7 +145,7 @@ namespace GsaGH.Util.Gsa.ToGSA
     /// <returns></returns>
     public static int GetExistingNodeID(IReadOnlyDictionary<int, Node> existNodes, Node testNode)
     {
-      double tolerance = Units.Tolerance.Meters;
+      double tolerance = DefaultUnits.Tolerance.Meters;
       int existingNodeID = 0;
 
       Parallel.ForEach(existNodes.Keys, (key, state) =>
@@ -182,7 +183,7 @@ namespace GsaGH.Util.Gsa.ToGSA
               new Length(testPoint.Z, unit).Meters
               );
 
-      double tolerance = Units.Tolerance.Meters; // this method assumes everything is in meters
+      double tolerance = DefaultUnits.Tolerance.Meters; // this method assumes everything is in meters
       foreach (int key in existNodes.Keys)
       {
         if (existNodes.TryGetValue(key, out Node gsaNode))
@@ -220,7 +221,7 @@ namespace GsaGH.Util.Gsa.ToGSA
     /// <returns></returns>
     public static int GetExistingAxisID(IReadOnlyDictionary<int, Axis> existAxes, Axis testAxis)
     {
-      double tolerance = Units.Tolerance.Meters;
+      double tolerance = DefaultUnits.Tolerance.Meters;
       foreach (int key in existAxes.Keys)
       {
         if (existAxes.TryGetValue(key, out Axis gsaAxis))

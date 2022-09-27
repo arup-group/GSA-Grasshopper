@@ -9,6 +9,8 @@ using GsaGH.Util.Gsa;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -42,12 +44,12 @@ namespace GsaGH.Components
       if (first)
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForceUnits);
-        dropdownitems.Add(Units.FilteredMomentUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredMomentUnits);
 
         selecteditems = new List<string>();
-        selecteditems.Add(Units.ForceUnit.ToString());
-        selecteditems.Add(Units.MomentUnit.ToString());
+        selecteditems.Add(DefaultUnits.ForceUnit.ToString());
+        selecteditems.Add(DefaultUnits.MomentUnit.ToString());
 
         first = false;
       }
@@ -96,8 +98,8 @@ namespace GsaGH.Components
             "Moment Unit",
     });
 
-    private ForceUnit forceUnit = Units.ForceUnit;
-    private MomentUnit momentUnit = Units.MomentUnit;
+    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
+    private MomentUnit momentUnit = DefaultUnits.MomentUnit;
     bool first = true;
     #region Input and output
 

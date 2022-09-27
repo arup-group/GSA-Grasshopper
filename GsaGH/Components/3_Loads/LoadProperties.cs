@@ -7,6 +7,8 @@ using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -35,12 +37,12 @@ namespace GsaGH.Components
       if (first)
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForceUnits);
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
 
         selecteditems = new List<string>();
-        selecteditems.Add(Units.ForceUnit.ToString());
-        selecteditems.Add(Units.LengthUnitGeometry.ToString());
+        selecteditems.Add(DefaultUnits.ForceUnit.ToString());
+        selecteditems.Add(DefaultUnits.LengthUnitGeometry.ToString());
 
         first = false;
       }
@@ -96,8 +98,8 @@ namespace GsaGH.Components
     });
 
     private ForcePerLengthUnit forcePerLengthUnit;
-    private ForceUnit forceUnit = Units.ForceUnit;
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
     bool first = true;
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -254,8 +256,8 @@ namespace GsaGH.Components
       catch (Exception) // we set the stored values like first initation of component
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForceUnits);
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(ForceUnit.Kilonewton.ToString());

@@ -6,6 +6,7 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Units;
 using OasysUnits;
 
 namespace GsaGH.Components
@@ -185,7 +186,7 @@ namespace GsaGH.Components
             {
               if (GH_Convert.ToDouble(gh_typ.Value, out double z, GH_Conversion.Both))
               {
-                offset.Z = new Length(z, Units.LengthUnitGeometry);
+                offset.Z = new Length(z, DefaultUnits.LengthUnitGeometry);
                 string unitAbbreviation = string.Concat(offset.Z.ToString().Where(char.IsLetter));
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Offset input converted to Z-offset in [" + unitAbbreviation + "]"
                     + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");

@@ -8,6 +8,8 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
 using OasysUnits;
 using Rhino;
 using Rhino.Geometry;
@@ -79,7 +81,7 @@ namespace GsaGH.Components
       if (_useDegrees)
         angleUnit = "deg";
 
-      IQuantity length = new Length(0, Units.LengthUnitGeometry);
+      IQuantity length = new Length(0, DefaultUnits.LengthUnitGeometry);
       string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
@@ -221,7 +223,7 @@ namespace GsaGH.Components
       // 4 Tolerance
       if (this.Params.Input[4].SourceCount != 0)
       {
-        gs.Tolerance = GetInput.GetLength(this, DA, 4, Units.LengthUnitGeometry, true).Millimeters;
+        gs.Tolerance = ((Length)Input.LengthOrRatio(this, DA, 4, DefaultUnits.LengthUnitGeometry, true)).Millimeters;
         changeGS = true;
       }
 

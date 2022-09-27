@@ -7,7 +7,9 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Parameters;
+using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Collections;
@@ -99,7 +101,7 @@ namespace GsaGH.Components
           "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm", GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
-      Length ms = new Length(1, Units.LengthUnitGeometry);
+      Length ms = new Length(1, DefaultUnits.LengthUnitGeometry);
       pManager.AddGenericParameter("Mesh Size [" + ms.ToString("a") + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
 
@@ -235,8 +237,8 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[10].Sources.Count > 0)
         {
-          mem.MeshSize = GetInput.GetLength(this, DA, 10, Units.LengthUnitGeometry, true);
-          if (Units.LengthUnitGeometry != LengthUnit.Meter)
+          mem.MeshSize = (Length) Input.UnitNumber(this, DA, 10, DefaultUnits.LengthUnitGeometry, true);
+          if (DefaultUnits.LengthUnitGeometry != LengthUnit.Meter)
             AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
                 + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }

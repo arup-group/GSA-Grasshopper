@@ -1,10 +1,13 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Parameters;
+using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -30,14 +33,7 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-
-
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddGenericParameter("Section Modifier", "Mo", "Set GSA Section Modifier", GH_ParamAccess.item);
@@ -113,7 +109,7 @@ namespace GsaGH.Components
         {
           try
           {
-            modifier.AreaModifier = GetInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 1, true).Value;
+            modifier.AreaModifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 1, true).Value;
           }
           catch (Exception e)
           {
@@ -126,7 +122,7 @@ namespace GsaGH.Components
         {
           try
           {
-            modifier.I11Modifier = GetInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 2, true).Value;
+            modifier.I11Modifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 2, true).Value;
           }
           catch (Exception e)
           {
@@ -139,7 +135,7 @@ namespace GsaGH.Components
         {
           try
           {
-            modifier.I22Modifier = GetInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 3, true).Value;
+            modifier.I22Modifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 3, true).Value;
           }
           catch (Exception e)
           {
@@ -152,7 +148,7 @@ namespace GsaGH.Components
         {
           try
           {
-            modifier.JModifier = GetInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 4, true).Value;
+            modifier.JModifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 4, true).Value;
           }
           catch (Exception e)
           {
@@ -162,16 +158,16 @@ namespace GsaGH.Components
         }
 
         if (this.Params.Input[5].SourceCount > 0)
-          modifier.K11Modifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 5);
+          modifier.K11Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 5);
 
         if (this.Params.Input[6].SourceCount > 0)
-          modifier.K22Modifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 6);
+          modifier.K22Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 6);
 
         if (this.Params.Input[7].SourceCount > 0)
         {
           try
           {
-            modifier.VolumeModifier = GetInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 7, true).Value;
+            modifier.VolumeModifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 7, true).Value;
           }
           catch (Exception e)
           {
@@ -203,8 +199,8 @@ namespace GsaGH.Components
             else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
             {
               // create new quantity from default units
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Input " + this.Params.Input[8].NickName + " was automatically converted to " + Units.LinearDensityUnit.ToString() + ". Be aware that sharing this file or changing your unit settings will change this value!");
-              modifier.AdditionalMass = new LinearDensity(val, Units.LinearDensityUnit);
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Input " + this.Params.Input[8].NickName + " was automatically converted to " + DefaultUnits.LinearDensityUnit.ToString() + ". Be aware that sharing this file or changing your unit settings will change this value!");
+              modifier.AdditionalMass = new LinearDensity(val, DefaultUnits.LinearDensityUnit);
             }
             else
             {

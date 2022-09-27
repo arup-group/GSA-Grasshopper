@@ -8,6 +8,9 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -37,11 +40,11 @@ namespace GsaGH.Components
       {
         dropdownitems = new List<List<string>>();
         dropdownitems.Add(loadTypeOptions);
-        dropdownitems.Add(Units.FilteredForcePerLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForcePerLengthUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(_mode.ToString());
-        selecteditems.Add(Units.ForcePerLengthUnit.ToString());
+        selecteditems.Add(DefaultUnits.ForcePerLengthUnit.ToString());
 
         first = false;
       }
@@ -119,7 +122,7 @@ namespace GsaGH.Components
             "Unit",
     });
 
-    private ForcePerLengthUnit forcePerLengthUnit = Units.ForcePerLengthUnit;
+    private ForcePerLengthUnit forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
 
     #endregion
 
@@ -249,7 +252,7 @@ namespace GsaGH.Components
       beamLoad.BeamLoad.IsProjected = prj;
 
       // 6 value (1)
-      ForcePerLength load1 = GetInput.GetForcePerLength(this, DA, 6, forcePerLengthUnit);
+      ForcePerLength load1 = (ForcePerLength) Input.UnitNumber(this, DA, 6, forcePerLengthUnit);
 
       switch (_mode)
       {
@@ -284,7 +287,7 @@ namespace GsaGH.Components
             beamLoad.BeamLoad.Type = BeamLoadType.LINEAR;
 
             // 7 value (2)
-            ForcePerLength load2 = GetInput.GetForcePerLength(this, DA, 7, forcePerLengthUnit);
+            ForcePerLength load2 = (ForcePerLength) Input.UnitNumber(this, DA, 7, forcePerLengthUnit);
 
             // set value
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
@@ -308,7 +311,7 @@ namespace GsaGH.Components
               pos2 *= -1;
 
             // 8 value (2)
-            ForcePerLength load2 = GetInput.GetForcePerLength(this, DA, 8, forcePerLengthUnit);
+            ForcePerLength load2 = (ForcePerLength) Input.UnitNumber(this, DA, 8, forcePerLengthUnit);
 
             // set value
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
@@ -334,7 +337,7 @@ namespace GsaGH.Components
               pos2 *= -1;
 
             // 8 value (2)
-            ForcePerLength load2 = GetInput.GetForcePerLength(this, DA, 8, forcePerLengthUnit);
+            ForcePerLength load2 = (ForcePerLength) Input.UnitNumber(this, DA, 8, forcePerLengthUnit);
 
             // set value
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
@@ -480,8 +483,8 @@ namespace GsaGH.Components
 
         dropdownitems = new List<List<string>>();
         dropdownitems.Add(loadTypeOptions);
-        dropdownitems.Add(Units.FilteredForceUnits);
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(reader.GetString("select"));

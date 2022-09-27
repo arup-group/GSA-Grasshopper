@@ -5,6 +5,9 @@ using Grasshopper.Kernel;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -22,7 +25,7 @@ namespace GsaGH.Components
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateOffset;
 
-    public CreateOffset()      : base("Create Offset",
+    public CreateOffset() : base("Create Offset",
       "Offset",
       "Create GSA Offset",
       Ribbon.CategoryName.Name(),
@@ -41,7 +44,7 @@ namespace GsaGH.Components
 
         // length
         //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);
@@ -89,7 +92,7 @@ namespace GsaGH.Components
             "Measure"
     });
     private bool first = true;
-    private LengthUnit lengthUnit = GsaGH.Units.LengthUnitGeometry;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
     string unitAbbreviation;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
@@ -115,10 +118,10 @@ namespace GsaGH.Components
     {
       GsaOffset offset = new GsaOffset
       {
-        X1 = GetInput.GetLength(this, DA, 0, lengthUnit, true),
-        X2 = GetInput.GetLength(this, DA, 1, lengthUnit, true),
-        Y = GetInput.GetLength(this, DA, 2, lengthUnit, true),
-        Z = GetInput.GetLength(this, DA, 3, lengthUnit, true)
+        X1 = (Length)Input.LengthOrRatio(this, DA, 0, lengthUnit, true),
+        X2 = (Length)Input.LengthOrRatio(this, DA, 1, lengthUnit, true),
+        Y = (Length)Input.LengthOrRatio(this, DA, 2, lengthUnit, true),
+        Z = (Length)Input.LengthOrRatio(this, DA, 3, lengthUnit, true)
       };
 
       DA.SetData(0, new GsaOffsetGoo(offset));

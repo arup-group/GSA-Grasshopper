@@ -7,6 +7,9 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -36,10 +39,10 @@ namespace GsaGH.Components
       if (first)
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
 
         selecteditems = new List<string>();
-        selecteditems.Add(Units.ForceUnit.ToString());
+        selecteditems.Add(DefaultUnits.ForceUnit.ToString());
 
         first = false;
       }
@@ -82,7 +85,7 @@ namespace GsaGH.Components
             "Unit",
     });
 
-    private ForceUnit forceUnit = Units.ForceUnit;
+    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
     bool first = true;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
@@ -213,7 +216,7 @@ namespace GsaGH.Components
       }
 
       // 6 load value
-      gridpointload.GridPointLoad.Value = GetInput.GetForce(this, DA, 6, forceUnit).Newtons;
+      gridpointload.GridPointLoad.Value = ((Force)Input.UnitNumber(this, DA, 6, forceUnit)).Newtons;
 
       // convert to goo
       GsaLoad gsaLoad = new GsaLoad(gridpointload);
@@ -234,7 +237,7 @@ namespace GsaGH.Components
       catch (Exception) // we set the stored values like first initation of component
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(ForceUnit.Kilonewton.ToString());

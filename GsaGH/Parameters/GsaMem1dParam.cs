@@ -4,6 +4,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Collections;
@@ -168,7 +169,7 @@ namespace GsaGH.Parameters
       get
       {
         Length l = new Length(m_member.MeshSize, LengthUnit.Meter);
-        return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
+        return new Length(l.As(DefaultUnits.LengthUnitGeometry), DefaultUnits.LengthUnitGeometry);
       }
       set
       {
@@ -637,7 +638,7 @@ namespace GsaGH.Parameters
           target = default;
         else
         {
-          target = (Q)(object)Value.PolyCurve.ToPolyline(Units.Tolerance.As(Units.LengthUnitGeometry), 2, 0, 0);
+          target = (Q)(object)Value.PolyCurve.ToPolyline(DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry), 2, 0, 0);
           if (Value.PolyCurve == null)
             return false;
         }

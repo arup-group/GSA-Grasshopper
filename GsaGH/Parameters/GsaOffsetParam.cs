@@ -7,6 +7,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysUnits;
 using OasysUnits.Units;
+using OasysGH.Units.Helpers;
+using OasysGH.Units;
 
 namespace GsaGH.Parameters
 {
@@ -52,14 +54,14 @@ namespace GsaGH.Parameters
     #region methods
     public override string ToString()
     {
-      IQuantity quantity = new Length(0, Units.LengthUnitGeometry);
+      IQuantity quantity = new Length(0, DefaultUnits.LengthUnitGeometry);
       string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
       return "Offset" + " {X1: "
-          + Math.Round(X1.As(Units.LengthUnitGeometry), 4) + ", X2: "
-          + Math.Round(X2.As(Units.LengthUnitGeometry), 4) + ", Y: "
-          + Math.Round(Y.As(Units.LengthUnitGeometry), 4) + ", Z: "
-          + Math.Round(Z.As(Units.LengthUnitGeometry), 4) + " [" + unitAbbreviation + "]}";
+          + Math.Round(X1.As(DefaultUnits.LengthUnitGeometry), 4) + ", X2: "
+          + Math.Round(X2.As(DefaultUnits.LengthUnitGeometry), 4) + ", Y: "
+          + Math.Round(Y.As(DefaultUnits.LengthUnitGeometry), 4) + ", Z: "
+          + Math.Round(Z.As(DefaultUnits.LengthUnitGeometry), 4) + " [" + unitAbbreviation + "]}";
     }
     #endregion
   }
@@ -100,6 +102,7 @@ namespace GsaGH.Parameters
         return true;
       }
     }
+
     public override string IsValidWhyNot
     {
       get
@@ -109,6 +112,7 @@ namespace GsaGH.Parameters
         return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
       }
     }
+
     public override string ToString()
     {
       if (Value == null)
@@ -116,16 +120,16 @@ namespace GsaGH.Parameters
       else
         return Value.ToString();
     }
+
     public override string TypeName
     {
       get { return ("GSA Offset"); }
     }
+
     public override string TypeDescription
     {
       get { return ("GSA Offset"); }
     }
-
-
     #endregion
 
     #region casting methods
@@ -153,16 +157,12 @@ namespace GsaGH.Parameters
         return true;
       }
 
-
       target = default;
       return false;
     }
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaOffset.
-
-
+      // This function is called when Grasshopper needs to convert other data into GsaOffset.
       if (source == null) { return false; }
 
       //Cast from GsaOffset
@@ -172,11 +172,10 @@ namespace GsaGH.Parameters
         return true;
       }
 
-
-      //Cast from double
+      // Cast from double
       if (GH_Convert.ToDouble(source, out double myval, GH_Conversion.Both))
       {
-        Value.Z = new Length(myval, Units.LengthUnitGeometry);
+        Value.Z = new Length(myval, DefaultUnits.LengthUnitGeometry);
         // if input to parameter is a single number convert it to the most common Z-offset
         return true;
       }
@@ -184,8 +183,6 @@ namespace GsaGH.Parameters
       return false;
     }
     #endregion
-
-
   }
 
   /// <summary>
@@ -204,8 +201,8 @@ namespace GsaGH.Parameters
 
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.OffsetParam;
 
-    //We do not allow users to pick parameter, 
-    //therefore the following 4 methods disable all this ui.
+    // We do not allow users to pick parameter, 
+    // therefore the following 4 methods disable all this ui.
     protected override GH_GetterResult Prompt_Plural(ref List<GsaOffsetGoo> values)
     {
       return GH_GetterResult.cancel;

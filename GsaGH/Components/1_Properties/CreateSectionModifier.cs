@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -42,7 +46,7 @@ namespace GsaGH.Components
         dropdownitems.Add(optionTypes);
         selecteditems.Add(optionTypes[0]);
 
-        dropdownitems.Add(Units.FilteredLinearDensityUnitUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLinearDensityUnits);
         selecteditems.Add(densityUnit.ToString());
 
         dropdownitems.Add(stressOptions);
@@ -53,6 +57,7 @@ namespace GsaGH.Components
 
       m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
     }
+
     public void SetSelected(int i, int j)
     {
       // change selected item
@@ -74,7 +79,7 @@ namespace GsaGH.Components
         {
           if (toMode == false)
           {
-            dropdownitems.Insert(1, Units.FilteredLengthUnits);
+            dropdownitems.Insert(1, FilteredUnits.FilteredLengthUnits);
             selecteditems.Insert(1, lengthUnit.ToString());
             spacerDescriptions.Insert(1, "Length unit");
           }
@@ -181,8 +186,8 @@ namespace GsaGH.Components
     private bool toMode = false;
     private bool first = true;
     private GsaSectionModifier.StressOptionType stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-    private LinearDensityUnit densityUnit = Units.LinearDensityUnit;
-    private LengthUnit lengthUnit = Units.LengthUnitSection;
+    private LinearDensityUnit densityUnit = DefaultUnits.LinearDensityUnit;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitSection;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       IQuantity quantity = new LinearDensity(0, densityUnit);
@@ -214,36 +219,37 @@ namespace GsaGH.Components
       GsaSectionModifier modifier = new GsaSectionModifier();
       if (toMode)
       {
-        AreaUnit areaUnit = Units.GetAreaUnit(lengthUnit);
-        AreaMomentOfInertiaUnit inertiaUnit = Units.GetAreaMomentOfInertiaUnit(lengthUnit);
-        VolumePerLengthUnit volUnit = Units.GetVolumePerLengthUnit(lengthUnit);
+        AreaUnit areaUnit = UnitsHelper.GetAreaUnit(lengthUnit);
+        AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(lengthUnit);
+        VolumePerLengthUnit volUnit = UnitsHelper.GetVolumePerLengthUnit(lengthUnit);
+
         if (this.Params.Input[0].SourceCount > 0)
-          modifier.AreaModifier = GetInput.GetArea(this, DA, 0, areaUnit, true);
+          modifier.AreaModifier = Input.UnitNumber(this, DA, 0, areaUnit, true);
         if (this.Params.Input[1].SourceCount > 0)
-          modifier.I11Modifier = GetInput.GetAreaMomentOfInertia(this, DA, 1, inertiaUnit, true);
+          modifier.I11Modifier = Input.UnitNumber(this, DA, 1, inertiaUnit, true);
         if (this.Params.Input[2].SourceCount > 0)
-          modifier.I22Modifier = GetInput.GetAreaMomentOfInertia(this, DA, 2, inertiaUnit, true);
+          modifier.I22Modifier = Input.UnitNumber(this, DA, 2, inertiaUnit, true);
         if (this.Params.Input[3].SourceCount > 0)
-          modifier.JModifier = GetInput.GetAreaMomentOfInertia(this, DA, 3, inertiaUnit, true);
+          modifier.JModifier = Input.UnitNumber(this, DA, 3, inertiaUnit, true);
         if (this.Params.Input[4].SourceCount > 0)
-          modifier.K11Modifier = GetInput.RatioInDecimalFractionToDecimalFraction(this, DA, 4);
+          modifier.K11Modifier = CustomInput.RatioInDecimalFractionToDecimalFraction(this, DA, 4);
         if (this.Params.Input[5].SourceCount > 0)
-          modifier.K22Modifier = GetInput.RatioInDecimalFractionToDecimalFraction(this, DA, 5);
+          modifier.K22Modifier = CustomInput.RatioInDecimalFractionToDecimalFraction(this, DA, 5);
         if (this.Params.Input[6].SourceCount > 0)
-          modifier.VolumeModifier = GetInput.GetVolumePerLength(this, DA, 6, volUnit, true);
+          modifier.VolumeModifier = Input.UnitNumber(this, DA, 6, volUnit, true);
       }
       else
       {
-        modifier.AreaModifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 0);
-        modifier.I11Modifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 1);
-        modifier.I22Modifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 2);
-        modifier.JModifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 3);
-        modifier.K11Modifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 4);
-        modifier.K22Modifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 5);
-        modifier.VolumeModifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 6);
+        modifier.AreaModifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 0);
+        modifier.I11Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 1);
+        modifier.I22Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 2);
+        modifier.JModifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 3);
+        modifier.K11Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 4);
+        modifier.K22Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 5);
+        modifier.VolumeModifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 6);
       }
 
-      modifier.AdditionalMass = GetInput.GetLinearDensity(this, DA, 7, densityUnit, true);
+      modifier.AdditionalMass = (LinearDensity)Input.UnitNumber(this, DA, 7, densityUnit, true);
       
       bool ax = false;
       if (DA.GetData(8, ref ax))
@@ -301,7 +307,7 @@ namespace GsaGH.Components
         IQuantity len = new Length(0, lengthUnit);
         string unit = string.Concat(len.ToString().Where(char.IsLetter));
 
-        VolumePerLength vol = new VolumePerLength(0, Units.GetVolumePerLengthUnit(lengthUnit));
+        VolumePerLength vol = new VolumePerLength(0, UnitsHelper.GetVolumePerLengthUnit(lengthUnit));
         string volUnit = vol.ToString("a");
 
         Params.Input[0].Name = "Area Modifier [" + unit + "\u00B2]";

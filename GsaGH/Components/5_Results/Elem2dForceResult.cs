@@ -11,6 +11,8 @@ using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -46,11 +48,11 @@ namespace GsaGH.Components
         selecteditems = new List<string>();
 
         // force
-        dropdownitems.Add(Units.FilteredForcePerLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForcePerLengthUnits);
         selecteditems.Add(forceUnit.ToString());
 
         // moment
-        dropdownitems.Add(Units.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
         selecteditems.Add(momentUnit.ToString());
 
 
@@ -95,8 +97,8 @@ namespace GsaGH.Components
             "Moment / length Unit"
     });
     private bool first = true;
-    private ForcePerLengthUnit forceUnit = Units.ForcePerLengthUnit;
-    private ForceUnit momentUnit = Units.ForceUnit;
+    private ForcePerLengthUnit forceUnit = DefaultUnits.ForcePerLengthUnit;
+    private ForceUnit momentUnit = DefaultUnits.ForceUnit;
     string forceunitAbbreviation;
     string momentunitAbbreviation;
     #endregion

@@ -54,12 +54,6 @@ namespace GsaGH.UI.Menu
           UseShellExecute = true
         });
       });
-      // add units
-      menuItem.DropDown.Items.Add("GSA Units", Properties.Resources.Units, (s, a) =>
-      {
-        UnitSettingsBox unitBox = new UnitSettingsBox();
-        unitBox.ShowDialog();
-      });
       // add info
       menuItem.DropDown.Items.Add("GSA Info", Properties.Resources.GSAInfo, (s, a) =>
       {

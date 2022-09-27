@@ -16,6 +16,8 @@ using OasysUnits;
 using GsaGH.Util.Gsa;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 
 namespace GsaGH.Components
 {
@@ -49,13 +51,13 @@ namespace GsaGH.Components
         dropdowncontents = new List<List<string>>();
         dropdowncontents.Add(dropdownitems);
         dropdowncontents.Add(dropdowndisplacement);
-        dropdowncontents.Add(Units.FilteredLengthUnits);
-        dropdowncontents.Add(Units.FilteredLengthUnits);
+        dropdowncontents.Add(FilteredUnits.FilteredLengthUnits);
+        dropdowncontents.Add(FilteredUnits.FilteredLengthUnits);
         selections = new List<string>();
         selections.Add(dropdowncontents[0][0]);
         selections.Add(dropdowncontents[1][3]);
-        selections.Add(Units.LengthUnitResult.ToString());
-        selections.Add(Units.LengthUnitGeometry.ToString());
+        selections.Add(DefaultUnits.LengthUnitResult.ToString());
+        selections.Add(DefaultUnits.LengthUnitGeometry.ToString());
         first = false;
       }
       m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdowncontents, selections, slider, SetVal, SetMaxMin, DefScale, MaxValue, MinValue, noDigits, spacertext);
@@ -84,7 +86,7 @@ namespace GsaGH.Components
           if (dropdowncontents[1] != dropdowndisplacement)
           {
             dropdowncontents[1] = dropdowndisplacement;
-            dropdowncontents[2] = Units.FilteredLengthUnits;
+            dropdowncontents[2] = FilteredUnits.FilteredLengthUnits;
             selections[0] = dropdowncontents[0][0];
             selections[1] = dropdowncontents[1][3];
             selections[2] = resultLengthUnit.ToString(); // displacement
@@ -99,7 +101,7 @@ namespace GsaGH.Components
           if (dropdowncontents[1] != dropdownstress)
           {
             dropdowncontents[1] = dropdownstress;
-            dropdowncontents[2] = Units.FilteredStressUnits;
+            dropdowncontents[2] = FilteredUnits.FilteredStressUnits;
             selections[0] = dropdowncontents[0][1];
             selections[1] = dropdowncontents[1][0];
             selections[2] = stressUnit.ToString(); // stress
@@ -195,9 +197,9 @@ namespace GsaGH.Components
             "Stress zx",
     });
 
-    private LengthUnit resultLengthUnit = Units.LengthUnitResult;
-    private LengthUnit geometryLengthUnit = Units.LengthUnitGeometry;
-    private PressureUnit stressUnit = Units.StressUnit;
+    private LengthUnit resultLengthUnit = DefaultUnits.LengthUnitResult;
+    private LengthUnit geometryLengthUnit = DefaultUnits.LengthUnitGeometry;
+    private PressureUnit stressUnit = DefaultUnits.StressUnitResult;
     #endregion
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -223,7 +225,7 @@ namespace GsaGH.Components
       //pManager.AddVectorParameter("Stress", "σ\u0305", "XX, YY, ZZ stress values(" + Units.Stress + ")", GH_ParamAccess.tree);
       pManager.AddGenericParameter("Mesh", "M", "Mesh with result values", GH_ParamAccess.item);
       pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Values", "LT", "Legend Values (" + Units.LengthUnitResult + ")", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Values", "LT", "Legend Values (" + DefaultUnits.LengthUnitResult + ")", GH_ParamAccess.list);
     }
 
     #region fields

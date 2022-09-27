@@ -6,6 +6,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysUnits;
 using OasysUnits.Units;
+using OasysGH.Units;
 
 namespace GsaGH.Parameters
 {
@@ -71,7 +72,7 @@ namespace GsaGH.Parameters
           return new Ratio(this.API_SectionModifier.AreaModifier.Value,
             RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
         else
-          return new Area(this.API_SectionModifier.AreaModifier.Value, AreaUnit.SquareMeter).ToUnit(Units.SectionAreaUnit);
+          return new Area(this.API_SectionModifier.AreaModifier.Value, AreaUnit.SquareMeter).ToUnit(DefaultUnits.SectionAreaUnit);
       }
       set
       {
@@ -102,7 +103,7 @@ namespace GsaGH.Parameters
             RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
         else
           return new AreaMomentOfInertia(this.API_SectionModifier.I11Modifier.Value,
-            AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(Units.SectionAreaMomentOfInertiaUnit);
+            AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
       set
       {
@@ -132,7 +133,7 @@ namespace GsaGH.Parameters
             RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
         else
           return new AreaMomentOfInertia(this.API_SectionModifier.I22Modifier.Value,
-            AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(Units.SectionAreaMomentOfInertiaUnit);
+            AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
       set
       {
@@ -163,7 +164,7 @@ namespace GsaGH.Parameters
             RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
         else
           return new AreaMomentOfInertia(this.API_SectionModifier.JModifier.Value,
-            AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(Units.SectionAreaMomentOfInertiaUnit);
+            AreaMomentOfInertiaUnit.MeterToTheFourth).ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
       set
       {
@@ -193,7 +194,7 @@ namespace GsaGH.Parameters
             RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent);
         else
           return new VolumePerLength(this.API_SectionModifier.VolumeModifier.Value,
-            VolumePerLengthUnit.CubicMeterPerMeter).ToUnit(Units.VolumePerLengthUnit);
+            VolumePerLengthUnit.CubicMeterPerMeter).ToUnit(DefaultUnits.VolumePerLengthUnit);
       }
       set
       {

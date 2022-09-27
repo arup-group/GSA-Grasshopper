@@ -11,6 +11,8 @@ using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -46,7 +48,7 @@ namespace GsaGH.Components
         selecteditems = new List<string>();
 
         // Stress
-        dropdownitems.Add(Units.FilteredStressUnits);
+        dropdownitems.Add(FilteredUnits.FilteredStressUnits);
         selecteditems.Add(stresshUnit.ToString());
 
         first = false;
@@ -86,7 +88,7 @@ namespace GsaGH.Components
             "Unit"
     });
     private bool first = true;
-    private PressureUnit stresshUnit = Units.StressUnit;
+    private PressureUnit stresshUnit = DefaultUnits.StressUnitResult;
     string unitAbbreviation;
     #endregion
 

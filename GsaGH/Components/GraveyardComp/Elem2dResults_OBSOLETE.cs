@@ -12,6 +12,8 @@ using GsaGH.Parameters;
 using GsaGH.Util.Gsa;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -48,13 +50,13 @@ namespace GsaGH.Components
         dropdowncontents = new List<List<string>>();
         dropdowncontents.Add(dropdownitems);
         dropdowncontents.Add(dropdowndisplacement);
-        dropdowncontents.Add(Units.FilteredLengthUnits);
-        dropdowncontents.Add(Units.FilteredLengthUnits);
+        dropdowncontents.Add(FilteredUnits.FilteredLengthUnits);
+        dropdowncontents.Add(FilteredUnits.FilteredLengthUnits);
         selections = new List<string>();
         selections.Add(dropdowncontents[0][0]);
         selections.Add(dropdowncontents[1][3]);
-        selections.Add(Units.LengthUnitResult.ToString());
-        selections.Add(Units.LengthUnitGeometry.ToString());
+        selections.Add(DefaultUnits.LengthUnitResult.ToString());
+        selections.Add(DefaultUnits.LengthUnitGeometry.ToString());
         spacertext = spacertextOther;
         first = false;
       }
@@ -91,7 +93,7 @@ namespace GsaGH.Components
             }
 
             dropdowncontents[1] = dropdowndisplacement;
-            dropdowncontents[2] = Units.FilteredLengthUnits;
+            dropdowncontents[2] = FilteredUnits.FilteredLengthUnits;
 
             selections[0] = dropdowncontents[0][0];
             selections[1] = dropdowncontents[1][3];
@@ -115,7 +117,7 @@ namespace GsaGH.Components
             }
 
             dropdowncontents[1] = dropdownforce;
-            dropdowncontents[2] = Units.FilteredForceUnits;
+            dropdowncontents[2] = FilteredUnits.FilteredForceUnits;
 
             selections[0] = dropdowncontents[0][1];
             selections[1] = dropdowncontents[1][0];
@@ -139,7 +141,7 @@ namespace GsaGH.Components
             }
 
             dropdowncontents[1] = dropdownshear;
-            dropdowncontents[2] = Units.FilteredForceUnits;
+            dropdowncontents[2] = FilteredUnits.FilteredForceUnits;
 
             selections[0] = dropdowncontents[0][2];
             selections[1] = dropdowncontents[1][0];
@@ -162,7 +164,7 @@ namespace GsaGH.Components
             }
 
             dropdowncontents[1] = dropdownstress;
-            dropdowncontents[3] = Units.FilteredStressUnits;
+            dropdowncontents[3] = FilteredUnits.FilteredStressUnits;
 
             selections[0] = dropdowncontents[0][3];
             selections[1] = dropdowncontents[1][0];
@@ -320,11 +322,11 @@ namespace GsaGH.Components
             "Middle",
             "Bottom"
     });
-    private MomentUnit momentUnit = Units.MomentUnit;
-    private ForceUnit forceUnit = Units.ForceUnit;
-    private LengthUnit resultLengthUnit = Units.LengthUnitResult;
-    private LengthUnit geometryLengthUnit = Units.LengthUnitGeometry;
-    private PressureUnit stressUnit = Units.StressUnit;
+    private MomentUnit momentUnit = DefaultUnits.MomentUnit;
+    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
+    private LengthUnit resultLengthUnit = DefaultUnits.LengthUnitResult;
+    private LengthUnit geometryLengthUnit = DefaultUnits.LengthUnitGeometry;
+    private PressureUnit stressUnit = DefaultUnits.StressUnitResult;
     #endregion
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)

@@ -188,12 +188,12 @@
     <Compile Include="Helpers\PostHog.cs" />
     <Compile Include="Helpers\_DeSerialization.cs" />
     <Compile Include="Helpers\_Display.cs" />
-    <Compile Include="Helpers\_GetInput.cs" />
     <Compile Include="Helpers\Export\_GsaExportLoads.cs" />
     <Compile Include="Helpers\Export\_GsaExportProperties.cs" />
     <Compile Include="Helpers\Export\_GsaExportElements.cs" />
     <Compile Include="Helpers\Export\_GsaExportNodes.cs" />
     <Compile Include="Helpers\Export\_GsaExport.cs" />
+    <Compile Include="Helpers\CustomInput.cs" />
     <Compile Include="Helpers\_GsaPath.cs" />
     <Compile Include="Helpers\Export\ExportMembers.cs" />
     <Compile Include="Helpers\_GsaImport.cs" />
@@ -219,7 +219,6 @@
     <Compile Include="Parameters\_ResultLine.cs" />
     <Compile Include="Parameters\_ResultPoint.cs" />
     <Compile Include="Parameters\_Titles.cs" />
-    <Compile Include="Parameters\_Units.cs" />
     <Compile Include="Parameters\GsaProp2d.cs" />
     <Compile Include="Parameters\GsaSection.cs" />
     <Compile Include="Parameters\GsaOffsetParam.cs" />

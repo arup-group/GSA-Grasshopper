@@ -7,6 +7,9 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -36,10 +39,10 @@ namespace GsaGH.Components
       if (first)
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForcePerLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForcePerLengthUnits);
 
         selecteditems = new List<string>();
-        selecteditems.Add(Units.ForcePerLengthUnit.ToString());
+        selecteditems.Add(DefaultUnits.ForcePerLengthUnit.ToString());
 
         first = false;
       }
@@ -82,9 +85,9 @@ namespace GsaGH.Components
             "Unit",
     });
 
-    private ForcePerLengthUnit forcePerLengthUnit = Units.ForcePerLengthUnit;
-    private ForceUnit forceUnit = Units.ForceUnit;
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private ForcePerLengthUnit forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
+    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
     bool first = true;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
@@ -226,7 +229,7 @@ namespace GsaGH.Components
             desc += "(" + temppt.X + "," + temppt.Y + ")";
           }
           // add units to the end
-          desc += "(" + Units.LengthUnitGeometry + ")";
+          desc += "(" + DefaultUnits.LengthUnitGeometry + ")";
 
           // set polyline in grid line load
           gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
@@ -288,13 +291,13 @@ namespace GsaGH.Components
       }
 
       // 7 load value
-      double load1 = GetInput.GetForcePerLength(this, DA, 7, forcePerLengthUnit).NewtonsPerMeter;
+      double load1 = ((ForcePerLength)Input.UnitNumber(this, DA, 7, forcePerLengthUnit)).NewtonsPerMeter;
       gridlineload.GridLineLoad.ValueAtStart = load1;
 
       // 8 load value
       double load2 = load1;
       if (DA.GetData(8, ref load2))
-        load2 = GetInput.GetForcePerLength(this, DA, 6, forcePerLengthUnit, true).NewtonsPerMeter;
+        load2 = ((ForcePerLength)Input.UnitNumber(this, DA, 6, forcePerLengthUnit, true)).NewtonsPerMeter;
       gridlineload.GridLineLoad.ValueAtEnd = load2;
 
       // convert to goo
@@ -316,8 +319,8 @@ namespace GsaGH.Components
       catch (Exception) // we set the stored values like first initation of component
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForceUnits);
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(ForceUnit.Kilonewton.ToString());

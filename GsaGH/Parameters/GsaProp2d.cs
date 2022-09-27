@@ -6,6 +6,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysUnits;
 using OasysUnits.Units;
+using OasysGH.Units;
 
 namespace GsaGH.Parameters
 {
@@ -363,7 +364,7 @@ namespace GsaGH.Parameters
       //Cast from double
       if (GH_Convert.ToDouble(source, out double thk, GH_Conversion.Both))
       {
-        Value = new GsaProp2d(new Length(thk, Units.LengthUnitSection));
+        Value = new GsaProp2d(new Length(thk, DefaultUnits.LengthUnitSection));
       }
       return false;
     }

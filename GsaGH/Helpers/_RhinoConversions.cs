@@ -10,6 +10,8 @@ using System.Collections.Concurrent;
 using OasysUnits;
 using GsaGH.Parameters;
 using OasysUnits.Units;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 
 namespace GsaGH.Util.GH
 {
@@ -52,7 +54,7 @@ namespace GsaGH.Util.GH
       pln.Origin = pln.ClosestPoint(new Point3d(0, 0, 0));
 
       // find significant digits for rounding
-      int dig = Units.SignificantDigits;
+      int dig = UnitsHelper.SignificantDigits;
 
       // unitise the plane normal so we can evaluate if it is XY-type plane
       pln.Normal.Unitize();
@@ -165,7 +167,7 @@ namespace GsaGH.Util.GH
           m_crv = new PolyCurve();
 
           if (tolerance < 0)
-            tolerance = Units.Tolerance.As(Units.LengthUnitGeometry); // use the user set unit
+            tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry); // use the user set unit
 
           if (!crv.IsPolyline())
             crv = crv.ToPolyline(tolerance, 2, 0, 0);
@@ -203,7 +205,7 @@ namespace GsaGH.Util.GH
     public static Tuple<PolyCurve, List<Point3d>, List<string>> ConvertMem2dCrv(Curve crv, double tolerance = -1)
     {
       if (tolerance < 0)
-        tolerance = Units.Tolerance.As(Units.LengthUnitGeometry); // use the user set unit
+        tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry); // use the user set unit
 
       PolyCurve m_crv = crv.ToArcsAndLines(tolerance, 2, 0, 0);
       Curve[] segments;
@@ -418,7 +420,7 @@ namespace GsaGH.Util.GH
       {
         for (int i = 0; i < inclCrvs.Count; i++)
         {
-          if (inclCrvs[i].IsInPlane(plane, Units.Tolerance.As(Units.LengthUnitGeometry)))
+          if (inclCrvs[i].IsInPlane(plane, DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry)))
             inclCrvs[i] = Curve.ProjectToPlane(inclCrvs[i], plane);
           else
           {
@@ -438,7 +440,7 @@ namespace GsaGH.Util.GH
         for (int i = 0; i < inclPts.Count; i++)
         {
           Point3d tempPt = plane.ClosestPoint(inclPts[i]);
-          if (inclPts[i].DistanceTo(tempPt) <= Units.Tolerance.As(Units.LengthUnitGeometry))
+          if (inclPts[i].DistanceTo(tempPt) <= DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))
             inclPtsWithinTolerance.Add(tempPt);
         }
         inclPts = inclPtsWithinTolerance;
@@ -456,7 +458,7 @@ namespace GsaGH.Util.GH
     public static Brep BuildBrep(PolyCurve externalEdge, List<PolyCurve> voidCurves = null, double tolerance = -1)
     {
       if (tolerance < 0)
-        tolerance = Units.Tolerance.As(Units.LengthUnitGeometry); // use the user set units
+        tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry); // use the user set units
 
       CurveList curves = new CurveList
             {
@@ -768,7 +770,7 @@ namespace GsaGH.Util.GH
 
       unroller.AddFollowingGeometry(points);
       unroller.AddFollowingGeometry(curves);
-      unroller.RelativeTolerance = Units.Tolerance.As(unit);
+      unroller.RelativeTolerance = DefaultUnits.Tolerance.As(unit);
       //unroller.AbsoluteTolerance = double.PositiveInfinity;
       //unroller.ExplodeOutput = false;
 
@@ -841,7 +843,7 @@ namespace GsaGH.Util.GH
       }
 
       mesh.Faces.ConvertNonPlanarQuadsToTriangles(
-          Units.Tolerance.As(Units.LengthUnitGeometry), Rhino.RhinoMath.DefaultAngleTolerance, 0);
+          DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry), Rhino.RhinoMath.DefaultAngleTolerance, 0);
 
       return mesh;
     }
@@ -897,7 +899,7 @@ namespace GsaGH.Util.GH
       // triangulate all faces
       m.Faces.ConvertQuadsToTriangles();
 
-      m.CollapseFacesByEdgeLength(false, Units.Tolerance.As(Units.LengthUnitGeometry));
+      m.CollapseFacesByEdgeLength(false, DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry));
 
       return m;
     }

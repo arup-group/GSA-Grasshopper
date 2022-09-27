@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -112,7 +113,7 @@ namespace GsaGH.Parameters
       get
       {
         Length l = new Length(m_member.MeshSize, LengthUnit.Meter);
-        return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
+        return new Length(l.As(DefaultUnits.LengthUnitGeometry), DefaultUnits.LengthUnitGeometry);
       }
       set
       {

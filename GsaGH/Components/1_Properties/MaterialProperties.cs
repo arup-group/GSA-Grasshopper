@@ -5,6 +5,7 @@ using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -69,17 +70,17 @@ namespace GsaGH.Components
         }
 
         Pressure eModulus = new Pressure(gsaMaterial.AnalysisMaterial.ElasticModulus, UnitSystem.SI);
-        eModulus = new Pressure(eModulus.As(Units.StressUnit), Units.StressUnit);
+        eModulus = new Pressure(eModulus.As(DefaultUnits.StressUnitResult), DefaultUnits.StressUnitResult);
         DA.SetData(0, new GH_UnitNumber(eModulus));
 
         DA.SetData(1, gsaMaterial.AnalysisMaterial.PoissonsRatio);
 
         Density density = new Density(gsaMaterial.AnalysisMaterial.Density, DensityUnit.KilogramPerCubicMeter);
-        density = new Density(density.As(Units.DensityUnit), Units.DensityUnit);
+        density = new Density(density.As(DefaultUnits.DensityUnit), DefaultUnits.DensityUnit);
         DA.SetData(2, new GH_UnitNumber(density));
 
         CoefficientOfThermalExpansion deltaT = new CoefficientOfThermalExpansion(gsaMaterial.AnalysisMaterial.CoefficientOfThermalExpansion, UnitSystem.SI);
-        deltaT = new CoefficientOfThermalExpansion(deltaT.As(Units.CoefficientOfThermalExpansionUnit), Units.CoefficientOfThermalExpansionUnit);
+        deltaT = new CoefficientOfThermalExpansion(deltaT.As(DefaultUnits.CoefficientOfThermalExpansionUnit), DefaultUnits.CoefficientOfThermalExpansionUnit);
         DA.SetData(3, new GH_UnitNumber(deltaT));
       }
     }

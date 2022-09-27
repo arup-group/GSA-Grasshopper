@@ -4,7 +4,9 @@ using Grasshopper.Kernel;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Parameters;
+using OasysGH.Units;
 using OasysUnits;
 
 namespace GsaGH.Components
@@ -38,7 +40,7 @@ namespace GsaGH.Components
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity quantity = new Length(0, Units.LengthUnitGeometry);
+      IQuantity quantity = new Length(0, DefaultUnits.LengthUnitGeometry);
       string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("Offset", "Of", "GSA Offset", GH_ParamAccess.item);
@@ -52,7 +54,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      IQuantity quantity = new Length(0, Units.LengthUnitGeometry);
+      IQuantity quantity = new Length(0, DefaultUnits.LengthUnitGeometry);
       string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("Offset", "Of", "GSA Offset", GH_ParamAccess.item);
@@ -73,16 +75,16 @@ namespace GsaGH.Components
         {
           int inp = 1;
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.X1 = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.X1 = (Length)Input.LengthOrRatio(this, DA, inp++, DefaultUnits.LengthUnitGeometry, true);
 
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.X2 = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.X2 = (Length)Input.LengthOrRatio(this, DA, inp++, DefaultUnits.LengthUnitGeometry, true);
 
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.Y = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.Y = (Length)Input.LengthOrRatio(this, DA, inp++, DefaultUnits.LengthUnitGeometry, true);
 
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.Z = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.Z = (Length)Input.LengthOrRatio(this, DA, inp++, DefaultUnits.LengthUnitGeometry, true);
 
           //outputs
           int outp = 0;

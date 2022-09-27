@@ -4,6 +4,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -149,7 +150,7 @@ namespace GsaGH.Parameters
       get
       {
         Length l = new Length(m_member.MeshSize, LengthUnit.Meter);
-        return new Length(l.As(Units.LengthUnitGeometry), Units.LengthUnitGeometry);
+        return new Length(l.As(DefaultUnits.LengthUnitGeometry), DefaultUnits.LengthUnitGeometry);
       }
       set
       {
@@ -378,7 +379,7 @@ namespace GsaGH.Parameters
       m_inclPts = includePoints;
 
       m_brep = Util.GH.Convert.BuildBrep(m_edgeCrv, m_voidCrvs, 
-        new Length(0.25, LengthUnit.Meter).As(Units.LengthUnitGeometry)); // use relative high tolerance as if the member worked in GSA we want to import it even if warped
+        new Length(0.25, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry)); // use relative high tolerance as if the member worked in GSA we want to import it even if warped
       //if (m_brep == null)
       //{
       //  string error = " Error with Mem2D ID: " + id + ". Unable to build Brep, please verify input geometry is valid and tolerance is set to something reasonable." +
@@ -738,7 +739,7 @@ namespace GsaGH.Parameters
           target = default;
         else
         {
-          target = (Q)(object)Value.PolyCurve.ToPolyline(GsaGH.Units.Tolerance.As(Units.LengthUnitGeometry), 2, 0, 0);
+          target = (Q)(object)Value.PolyCurve.ToPolyline(DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry), 2, 0, 0);
           if (Value.PolyCurve == null)
             return false;
         }

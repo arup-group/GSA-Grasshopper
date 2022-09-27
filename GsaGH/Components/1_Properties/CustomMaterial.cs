@@ -7,6 +7,9 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -40,15 +43,15 @@ namespace GsaGH.Components
       {
         dropdownitems = new List<List<string>>();
         dropdownitems.Add(topLevelDropdownItems);
-        dropdownitems.Add(Units.FilteredStressUnits);
-        dropdownitems.Add(Units.FilteredDensityUnits);
-        dropdownitems.Add(Units.FilteredTemperatureUnits);
+        dropdownitems.Add(FilteredUnits.FilteredStressUnits);
+        dropdownitems.Add(FilteredUnits.FilteredDensityUnits);
+        dropdownitems.Add(FilteredUnits.FilteredTemperatureUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(_mode.ToString());
-        selecteditems.Add(Units.StressUnit.ToString());
-        selecteditems.Add(Units.DensityUnit.ToString());
-        selecteditems.Add(Units.TemperatureUnit.ToString());
+        selecteditems.Add(DefaultUnits.StressUnitResult.ToString());
+        selecteditems.Add(DefaultUnits.DensityUnit.ToString());
+        selecteditems.Add(DefaultUnits.TemperatureUnit.ToString());
         first = false;
       }
 
@@ -123,9 +126,9 @@ namespace GsaGH.Components
             "Temperature Unit"
     });
 
-    private DensityUnit densityUnit = Units.DensityUnit;
-    private PressureUnit stressUnit = Units.StressUnit;
-    private TemperatureUnit temperatureUnit = Units.TemperatureUnit;
+    private DensityUnit densityUnit = DefaultUnits.DensityUnit;
+    private PressureUnit stressUnit = DefaultUnits.StressUnitResult;
+    private TemperatureUnit temperatureUnit = DefaultUnits.TemperatureUnit;
     string densityUnitAbbreviation;
     string stressUnitAbbreviation;
     string temperatureUnitAbbreviation;
@@ -193,10 +196,10 @@ namespace GsaGH.Components
 
       material.AnalysisMaterial = new AnalysisMaterial()
       {
-        ElasticModulus = GetInput.Stress(this, DA, 1, stressUnit).As(PressureUnit.Pascal),
+        ElasticModulus = Input.UnitNumber(this, DA, 1, stressUnit).As(PressureUnit.Pascal),
         PoissonsRatio = poisson,
-        Density = GetInput.GetDensity(this, DA, 3, densityUnit).As(DensityUnit.KilogramPerCubicMeter),
-        CoefficientOfThermalExpansion = GetInput.GetCoefficientOfThermalExpansion(this, DA, 4, thermalExpansionUnit, true).As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius)
+        Density = Input.UnitNumber(this, DA, 3, densityUnit).As(DensityUnit.KilogramPerCubicMeter),
+        CoefficientOfThermalExpansion = Input.UnitNumber(this, DA, 4, thermalExpansionUnit, true).As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius)
       };
 
       material.GradeProperty = 0; //will be ignored

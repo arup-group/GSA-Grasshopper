@@ -5,7 +5,9 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Parameters;
+using OasysGH.Units;
 using OasysUnits;
 
 namespace GsaGH.Components
@@ -40,7 +42,7 @@ namespace GsaGH.Components
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity quantity = new Length(0, Units.LengthUnitSection);
+      IQuantity quantity = new Length(0, DefaultUnits.LengthUnitSection);
       string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property to get or set information for", GH_ParamAccess.item);
@@ -114,7 +116,7 @@ namespace GsaGH.Components
 
       // 3 Thickness
       if (this.Params.Input[3].SourceCount > 0)
-        prop.Thickness = GetInput.GetLength(this, DA, 3, Units.LengthUnitSection, true);
+        prop.Thickness = (Length)Input.LengthOrRatio(this, DA, 3, DefaultUnits.LengthUnitSection, true);
 
       // 4 Axis
       GH_Integer ghax = new GH_Integer();

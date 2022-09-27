@@ -4,6 +4,7 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
@@ -144,7 +145,7 @@ namespace GsaGH.Components
         if (GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both))
         {
           GsaMember1d mem = new GsaMember1d(crv);
-          if (mem.PolyCurve.GetLength() < Units.Tolerance.As(Units.LengthUnitGeometry))
+          if (mem.PolyCurve.GetLength() < DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "One or more input curves have relatively short length and may convert into a zero-length line in GSA thus creating invalid topology that cannot be analysed.");
 
           GsaBool6 rel1 = new GsaBool6
