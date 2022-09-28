@@ -14,7 +14,7 @@ namespace ComposGHTests.Parameters
     [Theory]
     [InlineData(typeof(GsaAnalysisCaseGoo), typeof(GsaAnalysisCase))]
     [InlineData(typeof(GsaAnalysisTaskGoo), typeof(GsaAnalysisTask))]
-    [InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
+    //[InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
     public void GenericGH_OasysGooTest(Type gooType, Type wrapType)
     {
       // Create the actual API object
