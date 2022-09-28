@@ -2,6 +2,7 @@
 using System.Reflection;
 using ComposGHTests.Helpers;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Parameters;
 using Xunit;
 
@@ -12,6 +13,8 @@ namespace ComposGHTests.Parameters
   {
     [Theory]
     [InlineData(typeof(GsaAnalysisCaseGoo), typeof(GsaAnalysisCase))]
+    [InlineData(typeof(GsaAnalysisTaskGoo), typeof(GsaAnalysisTask))]
+    [InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
     public void GenericGH_OasysGooTest(Type gooType, Type wrapType)
     {
       // Create the actual API object
@@ -62,7 +65,7 @@ namespace ComposGHTests.Parameters
         if (gooProperty.Name == "TypeName")
         {
           string typeName = (string)gooProperty.GetValue(objectGoo, null);
-          Assert.StartsWith("Compos " + typeName + " {", objectGoo.ToString());
+          Assert.StartsWith("GSA " + typeName + " {", objectGoo.ToString());
           hasToString = true;
         }
 
@@ -78,7 +81,7 @@ namespace ComposGHTests.Parameters
         if (gooProperty.Name == "NickName")
         {
           string nickName = (string)gooProperty.GetValue(objectGoo, null);
-          // require a nickname not longer than 3 characters excluding dots (".coa" being the exception)
+          // require a nickname not longer than 3 characters excluding dots
           nickName = nickName.Replace(".", string.Empty);
           Assert.True(nickName.Length < 4);
           Assert.True(nickName.Length > 0);
@@ -87,8 +90,8 @@ namespace ComposGHTests.Parameters
         if (gooProperty.Name == "Description")
         {
           string description = (string)gooProperty.GetValue(objectGoo, null);
-          // require a description to start with "Compos"
-          Assert.StartsWith("Compos ", description);
+          // require a description to start with "GSA"
+          Assert.StartsWith("GSA ", description);
           Assert.True(description.Length > 10);
           hasDescription = true;
         }

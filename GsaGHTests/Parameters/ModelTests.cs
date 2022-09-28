@@ -1,15 +1,14 @@
-﻿using System;
-using NUnit.Framework;
-using GsaGH;
+﻿using GsaAPI;
 using GsaGH.Parameters;
-using Rhino.Geometry;
-using GsaAPI;
+using System;
+using Xunit;
 
 namespace ParamsIntegrationTests
 {
+  [Collection("GrasshopperFixture collection")]
   public class ModelTests
   {
-    [TestCase]
+    [Fact]
     public void TestOpenModel()
     {
       // create new GH-GSA model 
@@ -22,10 +21,10 @@ namespace ParamsIntegrationTests
       // open existing GSA model (steel design sample)
       ReturnValue returnValue = m.Model.Open(file);
 
-      Assert.AreSame(ReturnValue.GS_OK.ToString(), returnValue.ToString());
+      Assert.Same(ReturnValue.GS_OK.ToString(), returnValue.ToString());
     }
 
-    [TestCase]
+    [Fact]
     public void TestSaveModel()
     {
       // create new GH-GSA model 
@@ -41,10 +40,10 @@ namespace ParamsIntegrationTests
       string tempfilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Oasys") + "GSA-Grasshopper_temp.gwb";
       ReturnValue returnValue = m.Model.SaveAs(tempfilename);
 
-      Assert.AreSame(ReturnValue.GS_OK.ToString(), returnValue.ToString());
+      Assert.Same(ReturnValue.GS_OK.ToString(), returnValue.ToString());
     }
 
-    [TestCase]
+    [Fact]
     public void TestDuplicateModel()
     {
       // create new GH-GSA model 
@@ -64,14 +63,14 @@ namespace ParamsIntegrationTests
 
       // get clone GUID
       Guid cloneGUID = clone.GUID;
-      Assert.AreNotEqual(cloneGUID, originalGUID);
+      Assert.NotEqual(cloneGUID, originalGUID);
 
       // duplicate model
       GsaModel dup = m.Duplicate();
 
       // get duplicate GUID
       Guid dupGUID = dup.GUID;
-      Assert.AreEqual(dupGUID, originalGUID);
+      Assert.Equal(dupGUID, originalGUID);
     }
   }
 }

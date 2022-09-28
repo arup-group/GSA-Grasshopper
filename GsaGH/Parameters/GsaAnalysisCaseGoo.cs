@@ -1,7 +1,10 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysGH;
+using OasysGH.Helpers;
 using OasysGH.Parameters;
+using System;
+using System.Text.RegularExpressions;
 
 namespace GsaGH.Parameters
 {
@@ -14,7 +17,7 @@ namespace GsaGH.Parameters
     public GsaAnalysisCase()
     { }
 
-    internal GsaAnalysisCase(int id, string name, string description)
+    internal GsaAnalysisCase(int id, string name, string description = "")
     {
       this.ID = id;
       this.Name = name;
@@ -45,7 +48,12 @@ namespace GsaGH.Parameters
     #region methods
     public override string ToString()
     {
-      return "GSA Analysis Case '" + Name.ToString() + "' {" + Description.ToString() + "}";
+      string s = "GSA Analysis Case";
+      if (Name != null)
+        s += " '" + Name.ToString() + "'";
+      if (Description != null)
+        s += " { " + Description.ToString() + " }";
+      return s;
     }
 
     #endregion
@@ -57,14 +65,14 @@ namespace GsaGH.Parameters
   public class GsaAnalysisCaseGoo : GH_OasysGoo<GsaAnalysisCase>
   {
     public static string Name => "Analysis Case";
-    public static string NickName => "CreateCase";
+    public static string NickName => "AC";
     public static string Description => "GSA Analysis Case (Load Case or Combination)";
     public override IGH_Goo Duplicate() => new GsaAnalysisCaseGoo(this.Value);
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaAnalysisCaseGoo(GsaAnalysisCase item) : base(item) { }
 
-    public override bool CastTo<Q>(ref Q target)
+    public new bool CastTo<Q>(ref Q target)
     {
       if (Value != null)
       {
@@ -81,22 +89,26 @@ namespace GsaGH.Parameters
       return base.CastTo(ref target);
     }
 
-    public override bool CastFrom(object source)
+    public new bool CastFrom(object source)
     {
       if (source != null)
       {
         // Cast from string
-        if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
+        if (GH_Convert.ToString(source, out string input, GH_Conversion.Both))
         {
-          Value = new GsaAnalysisCase();
-          Value.Name = name;
+          Regex re = new Regex(@"([a-zA-Z]+)(\d+)");
+          Match result = re.Match(input);
+
+          string name = result.Groups[1].Value;
+          Int32.TryParse(result.Groups[2].Value, out int id);
+
+          Value = new GsaAnalysisCase(id, name);
           return true;
         }
         // Cast from int
         else if (GH_Convert.ToInt32(source, out int id, GH_Conversion.Both))
         {
-          Value = new GsaAnalysisCase();
-          Value.ID = id;
+          Value = new GsaAnalysisCase(id, id.ToString());
           return true;
         }
       }

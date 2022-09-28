@@ -1,15 +1,11 @@
-﻿using System;
-using GsaAPI;
-using GsaGH;
-using GsaGH.Parameters;
-using NUnit.Framework;
-using Rhino.Geometry;
+﻿using GsaGH.Parameters;
+using Xunit;
 
 namespace ParamsIntegrationTests
 {
   public class Bool6Tests
   {
-    [TestCase]
+    [Fact]
     public void TestCreateBool6()
     {
       // create new bool6
@@ -21,12 +17,12 @@ namespace ParamsIntegrationTests
       b6.YY = true;
       b6.ZZ = true;
 
-      Assert.IsTrue(b6.X);
-      Assert.IsTrue(b6.Y);
-      Assert.IsTrue(b6.Z);
-      Assert.IsTrue(b6.XX);
-      Assert.IsTrue(b6.YY);
-      Assert.IsTrue(b6.ZZ);
+      Assert.True(b6.X);
+      Assert.True(b6.Y);
+      Assert.True(b6.Z);
+      Assert.True(b6.XX);
+      Assert.True(b6.YY);
+      Assert.True(b6.ZZ);
 
       b6.X = false;
       b6.Y = false;
@@ -35,15 +31,15 @@ namespace ParamsIntegrationTests
       b6.YY = false;
       b6.ZZ = false;
 
-      Assert.IsFalse(b6.X);
-      Assert.IsFalse(b6.Y);
-      Assert.IsFalse(b6.Z);
-      Assert.IsFalse(b6.XX);
-      Assert.IsFalse(b6.YY);
-      Assert.IsFalse(b6.ZZ);
+      Assert.False(b6.X);
+      Assert.False(b6.Y);
+      Assert.False(b6.Z);
+      Assert.False(b6.XX);
+      Assert.False(b6.YY);
+      Assert.False(b6.ZZ);
     }
 
-    [TestCase]
+    [Fact]
     public void TestDuplicateBool6()
     {
       // create new bool6
@@ -66,19 +62,19 @@ namespace ParamsIntegrationTests
       origB6.YY = false;
       origB6.ZZ = true;
 
-      Assert.IsTrue(dup.X);
-      Assert.IsFalse(dup.Y);
-      Assert.IsTrue(dup.Z);
-      Assert.IsFalse(dup.XX);
-      Assert.IsTrue(dup.YY);
-      Assert.IsFalse(dup.ZZ);
+      Assert.True(dup.X);
+      Assert.False(dup.Y);
+      Assert.True(dup.Z);
+      Assert.False(dup.XX);
+      Assert.True(dup.YY);
+      Assert.False(dup.ZZ);
 
-      Assert.IsFalse(origB6.X);
-      Assert.IsTrue(origB6.Y);
-      Assert.IsFalse(origB6.Z);
-      Assert.IsTrue(origB6.XX);
-      Assert.IsFalse(origB6.YY);
-      Assert.IsTrue(origB6.ZZ);
+      Assert.False(origB6.X);
+      Assert.True(origB6.Y);
+      Assert.False(origB6.Z);
+      Assert.True(origB6.XX);
+      Assert.False(origB6.YY);
+      Assert.True(origB6.ZZ);
     }
   }
 }

@@ -113,7 +113,7 @@ namespace GsaGH.Parameters
   public class GsaBool6Goo : GH_OasysGoo<GsaBool6>
   {
     public static string Name => "Bool6";
-    public static string NickName => "Bool6";
+    public static string NickName => "B6";
     public static string Description => "GSA Bool6 to set releases and restraints";
     public override IGH_Goo Duplicate() => new GsaBool6Goo(this.Value);
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

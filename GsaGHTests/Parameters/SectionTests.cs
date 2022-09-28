@@ -1,18 +1,15 @@
 ﻿using System;
 using GsaAPI;
-using GsaGH;
 using GsaGH.Parameters;
-using NUnit.Framework;
-using Rhino.Geometry;
-using GsaAPI;
 using OasysUnits;
 using OasysUnits.Units;
+using Xunit;
 
 namespace ParamsIntegrationTests
 {
   public class SectionTests
   {
-    [TestCase]
+    [Fact]
     public void TestCreateSection()
     {
       // string defining the profile
@@ -26,7 +23,7 @@ namespace ParamsIntegrationTests
       // create new section
       GsaSection sect = new GsaSection(profile);
 
-      Assert.AreEqual(area_expected, sect.Area);
+      Assert.Equal(area_expected, sect.Area);
 
       // set other properties in section
 
@@ -36,15 +33,15 @@ namespace ParamsIntegrationTests
       sect.Name = "mariam";
       sect.Pool = 4;
 
-      Assert.AreEqual(1, sect.Material.AnalysisProperty);
-      Assert.AreEqual(2, sect.Material.GradeProperty);
-      Assert.AreEqual(MaterialType.CONCRETE.ToString(),
+      Assert.Equal(1, sect.Material.AnalysisProperty);
+      Assert.Equal(2, sect.Material.GradeProperty);
+      Assert.Equal(MaterialType.CONCRETE.ToString(),
           sect.Material.MaterialType.ToString());
-      Assert.AreEqual("mariam", sect.Name);
-      Assert.AreEqual(4, sect.Pool);
+      Assert.Equal("mariam", sect.Name);
+      Assert.Equal(4, sect.Pool);
     }
 
-    [TestCase]
+    [Fact]
     public void TestCreateSectionProfile()
     {
       // string defining the profile
@@ -55,21 +52,21 @@ namespace ParamsIntegrationTests
       // create new section with profile and ID
       GsaSection sect = new GsaSection(profile, 15);
 
-      Assert.AreEqual(area_expected, sect.Area);
-      Assert.AreEqual(15, sect.ID);
+      Assert.Equal(area_expected, sect.Area);
+      Assert.Equal(15, sect.ID);
     }
 
-    [TestCase]
+    [Fact]
     public void TestCreateGsaSectionCat()
     {
       string profile = "CAT HE HE200.B";
       GsaSection section = new GsaSection(profile);
 
       Area area_expected = new Area(7808.121, AreaUnit.SquareMillimeter);
-      Assert.AreEqual(area_expected, section.Area);
+      Assert.Equal(area_expected, section.Area);
     }
 
-    [TestCase]
+    [Fact]
     public void TestDuplicateSection()
     {
       string profile = "CAT HE HE200.B";
@@ -97,34 +94,34 @@ namespace ParamsIntegrationTests
       orig.Name = "kris";
       orig.Pool = 99;
 
-      Assert.AreEqual("STD R 15 20", orig.Profile);
-      Assert.AreEqual(area_expected, orig.Area);
+      Assert.Equal("STD R 15 20", orig.Profile);
+      Assert.Equal(area_expected, orig.Area);
 
-      Assert.AreEqual(profile, dup.Profile);
-      Assert.AreEqual(area_expected, dup.Area);
+      Assert.Equal(profile, dup.Profile);
+      Assert.Equal(area_expected, dup.Area);
 
-      Assert.AreEqual(1, dup.Material.AnalysisProperty);
-      Assert.AreEqual(2, dup.Material.GradeProperty);
-      Assert.AreEqual(MaterialType.STEEL.ToString(),
+      Assert.Equal(1, dup.Material.AnalysisProperty);
+      Assert.Equal(2, dup.Material.GradeProperty);
+      Assert.Equal(MaterialType.STEEL.ToString(),
           dup.Material.MaterialType.ToString());
-      Assert.AreEqual("mariam", dup.Name);
-      Assert.AreEqual(12, dup.Pool);
+      Assert.Equal("mariam", dup.Name);
+      Assert.Equal(12, dup.Pool);
 
-      Assert.AreEqual(4, orig.Material.AnalysisProperty);
-      Assert.AreEqual(6, orig.Material.GradeProperty);
-      Assert.AreEqual(MaterialType.TIMBER.ToString(),
+      Assert.Equal(4, orig.Material.AnalysisProperty);
+      Assert.Equal(6, orig.Material.GradeProperty);
+      Assert.Equal(MaterialType.TIMBER.ToString(),
           orig.Material.MaterialType.ToString());
-      Assert.AreEqual("kris", orig.Name);
-      Assert.AreEqual(99, orig.Pool);
+      Assert.Equal("kris", orig.Name);
+      Assert.Equal(99, orig.Pool);
     }
 
-    [TestCase]
+    [Fact]
     public void TestDuplicateEmptySection()
     {
       GsaSection section = new GsaSection();
 
       GsaSection dup = section.Duplicate();
-      Assert.IsNotNull(dup);
+      Assert.NotNull(dup);
     }
   }
 }

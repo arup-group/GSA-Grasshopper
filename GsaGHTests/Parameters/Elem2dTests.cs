@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using GsaAPI;
-using GsaGH;
 using GsaGH.Parameters;
-using NUnit.Framework;
-using Rhino.Geometry;
-using GsaAPI;
-using System.Collections.Generic;
-using OasysUnits.Units;
 using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
+using Xunit;
 
 namespace ParamsIntegrationTests
 {
   public class Elem2dTests
   {
-    [TestCase]
+    [Fact]
     public void TestCreateGsaElem2dFromMesh()
     {
       // create a list of corner points
@@ -56,9 +52,9 @@ namespace ParamsIntegrationTests
       // check that topology responds to mesh verticies
       for (int i = 0; i < elem.Topology.Count; i++)
       {
-        Assert.AreEqual(mesh.Vertices[i].X, elem.Topology[i].X);
-        Assert.AreEqual(mesh.Vertices[i].Y, elem.Topology[i].Y);
-        Assert.AreEqual(mesh.Vertices[i].Z, elem.Topology[i].Z);
+        Assert.Equal(mesh.Vertices[i].X, elem.Topology[i].X);
+        Assert.Equal(mesh.Vertices[i].Y, elem.Topology[i].Y);
+        Assert.Equal(mesh.Vertices[i].Z, elem.Topology[i].Z);
       }
 
       // loop through all elements and make checks
@@ -68,49 +64,49 @@ namespace ParamsIntegrationTests
       {
         // check that element is tri or quad corrosponding to mesh face
         if (mesh.Faces[i].IsTriangle)
-          Assert.IsTrue(elem.Types[i] == ElementType.TRI3);
+          Assert.True(elem.Types[i] == ElementType.TRI3);
         if (mesh.Faces[i].IsQuad)
-          Assert.IsTrue(elem.Types[i] == ElementType.QUAD4);
+          Assert.True(elem.Types[i] == ElementType.QUAD4);
 
         // check topology int indexing references the right topology points
         Point3d mPt = mesh.Vertices[mesh.Faces[i].A]; // face corner A pt
         Point3d ePt = elem.Topology[elem.TopoInt[i][0]]; // topology first pt
-        Assert.AreEqual(mPt.X, ePt.X);
-        Assert.AreEqual(mPt.Y, ePt.Y);
-        Assert.AreEqual(mPt.Z, ePt.Z);
+        Assert.Equal(mPt.X, ePt.X);
+        Assert.Equal(mPt.Y, ePt.Y);
+        Assert.Equal(mPt.Z, ePt.Z);
 
         mPt = mesh.Vertices[mesh.Faces[i].B]; // face corner B pt
         ePt = elem.Topology[elem.TopoInt[i][1]]; // topology second pt
-        Assert.AreEqual(mPt.X, ePt.X);
-        Assert.AreEqual(mPt.Y, ePt.Y);
-        Assert.AreEqual(mPt.Z, ePt.Z);
+        Assert.Equal(mPt.X, ePt.X);
+        Assert.Equal(mPt.Y, ePt.Y);
+        Assert.Equal(mPt.Z, ePt.Z);
 
         mPt = mesh.Vertices[mesh.Faces[i].C]; // face corner C pt
         ePt = elem.Topology[elem.TopoInt[i][2]]; // topology third pt
-        Assert.AreEqual(mPt.X, ePt.X);
-        Assert.AreEqual(mPt.Y, ePt.Y);
-        Assert.AreEqual(mPt.Z, ePt.Z);
+        Assert.Equal(mPt.X, ePt.X);
+        Assert.Equal(mPt.Y, ePt.Y);
+        Assert.Equal(mPt.Z, ePt.Z);
 
         if (elem.Types[i] == ElementType.QUAD4)
         {
           mPt = mesh.Vertices[mesh.Faces[i].D]; // face corner D pt
           ePt = elem.Topology[elem.TopoInt[i][3]]; // topology fourth pt
-          Assert.AreEqual(mPt.X, ePt.X);
-          Assert.AreEqual(mPt.Y, ePt.Y);
-          Assert.AreEqual(mPt.Z, ePt.Z);
+          Assert.Equal(mPt.X, ePt.X);
+          Assert.Equal(mPt.Y, ePt.Y);
+          Assert.Equal(mPt.Z, ePt.Z);
         }
 
         // check other members are valid
-        Assert.AreEqual(chelid++, elem.ID[i]);
-        Assert.AreEqual(chsecid++, elem.Properties[i].ID);
-        Assert.AreEqual(22, elem.Groups[i]);
-        Assert.IsTrue(elem.isDummies[i]);
-        Assert.AreEqual("Shahin", elem.Names[i]);
-        Assert.AreEqual(0.1, elem.Offsets[i].Z);
+        Assert.Equal(chelid++, elem.ID[i]);
+        Assert.Equal(chsecid++, elem.Properties[i].ID);
+        Assert.Equal(22, elem.Groups[i]);
+        Assert.True(elem.isDummies[i]);
+        Assert.Equal("Shahin", elem.Names[i]);
+        Assert.Equal(0.1, elem.Offsets[i].Z.Value);
       }
     }
 
-    [TestCase]
+    [Fact]
     public void TestDuplicateElem2d()
     {
       // create a list of corner points
@@ -157,9 +153,9 @@ namespace ParamsIntegrationTests
       // check that topology responds to duplicated mesh verticies
       for (int i = 0; i < dup.Topology.Count; i++)
       {
-        Assert.AreEqual(mesh.Vertices[i].X, dup.Topology[i].X);
-        Assert.AreEqual(mesh.Vertices[i].Y, dup.Topology[i].Y);
-        Assert.AreEqual(mesh.Vertices[i].Z, origi.Topology[i].Z);
+        Assert.Equal(mesh.Vertices[i].X, dup.Topology[i].X);
+        Assert.Equal(mesh.Vertices[i].Y, dup.Topology[i].Y);
+        Assert.Equal(mesh.Vertices[i].Z, origi.Topology[i].Z);
       }
 
       // loop through all elements and make on duplicated geometry
@@ -167,36 +163,36 @@ namespace ParamsIntegrationTests
       {
         // check that element is tri or quad corrosponding to mesh face
         if (mesh.Faces[i].IsTriangle)
-          Assert.IsTrue(dup.Types[i] == ElementType.TRI3);
+          Assert.True(dup.Types[i] == ElementType.TRI3);
         if (mesh.Faces[i].IsQuad)
-          Assert.IsTrue(dup.Types[i] == ElementType.QUAD4);
+          Assert.True(dup.Types[i] == ElementType.QUAD4);
 
         // check topology int indexing references the right topology points
         Point3d mPt = mesh.Vertices[mesh.Faces[i].A]; // face corner A pt
         Point3d ePt = dup.Topology[dup.TopoInt[i][0]]; // topology first pt
-        Assert.AreEqual(mPt.X, ePt.X);
-        Assert.AreEqual(mPt.Y, ePt.Y);
-        Assert.AreEqual(mPt.Z, ePt.Z);
+        Assert.Equal(mPt.X, ePt.X);
+        Assert.Equal(mPt.Y, ePt.Y);
+        Assert.Equal(mPt.Z, ePt.Z);
 
         mPt = mesh.Vertices[mesh.Faces[i].B]; // face corner B pt
         ePt = dup.Topology[dup.TopoInt[i][1]]; // topology second pt
-        Assert.AreEqual(mPt.X, ePt.X);
-        Assert.AreEqual(mPt.Y, ePt.Y);
-        Assert.AreEqual(mPt.Z, ePt.Z);
+        Assert.Equal(mPt.X, ePt.X);
+        Assert.Equal(mPt.Y, ePt.Y);
+        Assert.Equal(mPt.Z, ePt.Z);
 
         mPt = mesh.Vertices[mesh.Faces[i].C]; // face corner C pt
         ePt = dup.Topology[dup.TopoInt[i][2]]; // topology third pt
-        Assert.AreEqual(mPt.X, ePt.X);
-        Assert.AreEqual(mPt.Y, ePt.Y);
-        Assert.AreEqual(mPt.Z, ePt.Z);
+        Assert.Equal(mPt.X, ePt.X);
+        Assert.Equal(mPt.Y, ePt.Y);
+        Assert.Equal(mPt.Z, ePt.Z);
 
         if (dup.Types[i] == ElementType.QUAD4)
         {
           mPt = mesh.Vertices[mesh.Faces[i].D]; // face corner D pt
           ePt = dup.Topology[dup.TopoInt[i][3]]; // topology fourth pt
-          Assert.AreEqual(mPt.X, ePt.X);
-          Assert.AreEqual(mPt.Y, ePt.Y);
-          Assert.AreEqual(mPt.Z, ePt.Z);
+          Assert.Equal(mPt.X, ePt.X);
+          Assert.Equal(mPt.Y, ePt.Y);
+          Assert.Equal(mPt.Z, ePt.Z);
         }
       }
 
@@ -231,12 +227,12 @@ namespace ParamsIntegrationTests
       for (int i = 0; i < dup.Count; i++)
       {
         // check other members are valid
-        Assert.AreEqual(chelid++, dup.ID[i]);
-        Assert.AreEqual(chsecid++, dup.Properties[i].ID);
-        Assert.AreEqual(2, dup.Groups[i]);
-        Assert.IsFalse(dup.isDummies[i]);
-        Assert.AreEqual("Esmaeil", dup.Names[i]);
-        Assert.AreEqual(-0.15, dup.Offsets[i].Z);
+        Assert.Equal(chelid++, dup.ID[i]);
+        Assert.Equal(chsecid++, dup.Properties[i].ID);
+        Assert.Equal(2, dup.Groups[i]);
+        Assert.False(dup.isDummies[i]);
+        Assert.Equal("Esmaeil", dup.Names[i]);
+        Assert.Equal(-0.15, dup.Offsets[i].Z.Value);
       }
 
       // check that values in original are changed
@@ -245,12 +241,12 @@ namespace ParamsIntegrationTests
       for (int i = 0; i < origi.Count; i++)
       {
         // check other members are valid
-        Assert.AreEqual(chelid++, origi.ID[i]);
-        Assert.AreEqual(chsecid++, origi.Properties[i].ID);
-        Assert.AreEqual(4, origi.Groups[i]);
-        Assert.IsTrue(origi.isDummies[i]);
-        Assert.AreEqual("Mani", origi.Names[i]);
-        Assert.AreEqual(-0.17, origi.Offsets[i].Z);
+        Assert.Equal(chelid++, origi.ID[i]);
+        Assert.Equal(chsecid++, origi.Properties[i].ID);
+        Assert.Equal(4, origi.Groups[i]);
+        Assert.True(origi.isDummies[i]);
+        Assert.Equal("Mani", origi.Names[i]);
+        Assert.Equal(-0.17, origi.Offsets[i].Z.Value);
       }
     }
   }

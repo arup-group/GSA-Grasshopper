@@ -1,15 +1,12 @@
-﻿using System;
-using NUnit.Framework;
-using GsaGH;
+﻿using GsaAPI;
 using GsaGH.Parameters;
-using Rhino.Geometry;
-using GsaAPI;
+using Xunit;
 
 namespace ParamsIntegrationTests
 {
   public class Prop2dTests
   {
-    [TestCase]
+    [Fact]
     public void TestCreateProp2d()
     {
       // create new api property
@@ -39,19 +36,19 @@ namespace ParamsIntegrationTests
       };
       prop.Material = mat;
 
-      Assert.AreEqual(-1, prop.AxisProperty);
-      Assert.AreEqual(4, prop.Material.GradeProperty);
-      Assert.AreEqual(42, prop.Material.AnalysisProperty);
-      Assert.AreEqual(MaterialType.GENERIC.ToString(),
+      Assert.Equal(-1, prop.AxisProperty);
+      Assert.Equal(4, prop.Material.GradeProperty);
+      Assert.Equal(42, prop.Material.AnalysisProperty);
+      Assert.Equal(MaterialType.GENERIC.ToString(),
           prop.Material.MaterialType.ToString());
-      Assert.AreEqual("mariam", prop.Name);
-      Assert.AreEqual("awesome property", prop.Description);
-      Assert.AreEqual(Property2D_Type.LOAD.ToString(),
+      Assert.Equal("mariam", prop.Name);
+      Assert.Equal("awesome property", prop.Description);
+      Assert.Equal(Property2D_Type.LOAD.ToString(),
           prop.Type.ToString());
-      Assert.AreEqual(0, prop.ID);
+      Assert.Equal(0, prop.ID);
     }
 
-    [TestCase]
+    [Fact]
     public void TestDuplicateProp2d()
     {
       Prop2D apiPropOriginal = new Prop2D
@@ -80,7 +77,6 @@ namespace ParamsIntegrationTests
       };
       orig.Material = mat;
 
-
       // duplicate prop
       GsaProp2d dup = orig.Duplicate();
 
@@ -95,27 +91,27 @@ namespace ParamsIntegrationTests
       orig.Description = "less cool property";
       orig.Type = Property2D_Type.CURVED_SHELL;
 
-      Assert.AreEqual(0, dup.AxisProperty);
-      Assert.AreEqual(2, dup.Material.GradeProperty);
-      Assert.AreEqual(13, dup.Material.AnalysisProperty);
-      Assert.AreEqual(MaterialType.UNDEF.ToString(),
+      Assert.Equal(0, dup.AxisProperty);
+      Assert.Equal(2, dup.Material.GradeProperty);
+      Assert.Equal(13, dup.Material.AnalysisProperty);
+      Assert.Equal(MaterialType.UNDEF.ToString(),
           dup.Material.MaterialType.ToString());
-      Assert.AreEqual("mariam", dup.Name);
-      Assert.AreEqual("awesome property", dup.Description);
-      Assert.AreEqual(Property2D_Type.SHELL.ToString(),
+      Assert.Equal("mariam", dup.Name);
+      Assert.Equal("awesome property", dup.Description);
+      Assert.Equal(Property2D_Type.SHELL.ToString(),
           dup.Type.ToString());
-      Assert.AreEqual(14, dup.ID);
+      Assert.Equal(14, dup.ID);
 
-      Assert.AreEqual(-1, orig.AxisProperty);
-      Assert.AreEqual(4, orig.Material.GradeProperty);
-      Assert.AreEqual(42, orig.Material.AnalysisProperty);
-      Assert.AreEqual(MaterialType.FABRIC.ToString(),
+      Assert.Equal(-1, orig.AxisProperty);
+      Assert.Equal(4, orig.Material.GradeProperty);
+      Assert.Equal(42, orig.Material.AnalysisProperty);
+      Assert.Equal(MaterialType.FABRIC.ToString(),
           orig.Material.MaterialType.ToString());
-      Assert.AreEqual("kris", orig.Name);
-      Assert.AreEqual("less cool property", orig.Description);
-      Assert.AreEqual(Property2D_Type.CURVED_SHELL.ToString(),
+      Assert.Equal("kris", orig.Name);
+      Assert.Equal("less cool property", orig.Description);
+      Assert.Equal(Property2D_Type.CURVED_SHELL.ToString(),
           orig.Type.ToString());
-      Assert.AreEqual(4, orig.ID);
+      Assert.Equal(4, orig.ID);
     }
   }
 }
