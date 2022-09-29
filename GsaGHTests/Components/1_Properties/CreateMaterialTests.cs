@@ -1,12 +1,11 @@
-﻿using Xunit;
-using ComposGHTests.Helpers;
-using OasysGH.Components;
+﻿using ComposGHTests.Helpers;
 using GsaGH.Components;
 using GsaGH.Parameters;
+using OasysGH.Components;
+using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
-using OasysGH.Helpers;
 
-namespace ComposGHTests.Slab
+namespace GsaGHTests.Slab
 {
   [Collection("GrasshopperFixture collection")]
   public class CreateMaterialTestss
