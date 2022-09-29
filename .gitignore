@@ -354,3 +354,4 @@ dist/*
 /IntegrationTests/obj
 
 /GhSA/bin/x64/Release
+/UnitTestGsaGH/bin/x64/Debug
