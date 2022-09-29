@@ -122,8 +122,8 @@ namespace GsaGH.Parameters
 
     internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null)
     {
-      if (section == null) { return; }
-      if (section.API_Section == null) { return; }
+      if (section == null || section.API_Section == null)
+        return;
       if (section.Material != null)
       {
         if (analysisMaterial == null && section.Material.AnalysisMaterial != null)
@@ -136,8 +136,8 @@ namespace GsaGH.Parameters
     }
     internal GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null)
     {
-      if (prop == null) { return; }
-      if (prop.API_Prop2d == null) { return; }
+      if (prop == null || prop.API_Prop2d == null)
+        return;
       if (prop.Material != null)
       {
         if (analysisMaterial == null && prop.Material.AnalysisMaterial != null)
@@ -150,8 +150,8 @@ namespace GsaGH.Parameters
     }
     internal GsaMaterial(GsaProp3d prop, AnalysisMaterial analysisMaterial = null)
     {
-      if (prop == null) { return; }
-      if (prop.API_Prop3d == null) { return; }
+      if (prop == null || prop.API_Prop3d == null)
+        return;
 
       if (prop.Material != null)
       {

@@ -10,22 +10,19 @@ using GsaGH.Parameters;
 namespace GsaGH.Components
 {
   /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
+  /// Component to create a GSA model from GWA string
   /// </summary>
   public class GwaModel : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("6f701c53-1531-45ef-9842-9356da59b590");
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GwaModel;
     public GwaModel()
        : base("Create GWA Model", "GWA", "Create a model from a GWA string.",
             Ribbon.CategoryName.Name(),
             Ribbon.SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
-
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GwaModel;
     #endregion
 
     #region Input and output
