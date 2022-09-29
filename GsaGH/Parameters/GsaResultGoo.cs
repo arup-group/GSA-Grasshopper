@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Util.Gsa;
+using OasysGH;
+using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -981,88 +983,15 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaResult"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaResultGoo : GH_Goo<GsaResult>
+  public class GsaResultGoo : GH_OasysGoo<GsaResult>
   {
-    #region constructors
-    public GsaResultGoo()
-    {
-      this.Value = new GsaResult();
-    }
-    public GsaResultGoo(GsaResult anal)
-    {
-      if (anal == null)
-        anal = new GsaResult();
-      this.Value = anal; //section.Duplicate();
-    }
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaAnalysisCase();
-    }
-    public GsaResultGoo DuplicateGsaAnalysisCase()
-    {
-      return new GsaResultGoo(Value == null ? new GsaResult() : Value);
-    }
-    #endregion
+    public static string Name => "Result";
+    public static string NickName => "Res";
+    public static string Description => "GSA Result";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Result";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("GSA Result"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA Result"); }
-    }
+    public GsaResultGoo(GsaResult item) : base(item) { }
 
-
-    #endregion
-
-    #region casting methods
-    public override bool CastTo<Q>(ref Q target)
-    {
-      // This function is called when Grasshopper needs to convert this 
-      // instance into some other type Q.            
-
-
-      target = default;
-      return false;
-    }
-    public override bool CastFrom(object source)
-    {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaSection.
-
-
-      if (source == null) { return false; }
-
-
-      return false;
-    }
-    #endregion
-
+    public override IGH_Goo Duplicate() => new GsaResultGoo(this.Value);
   }
 }

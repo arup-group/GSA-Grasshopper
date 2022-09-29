@@ -68,16 +68,13 @@ namespace UnitTestGsaGH
   {
     public static void LoadRefs()
     {
-      // set folder to latest GSA version.
-      Assembly ass1 = Assembly.LoadFile(GsaGH.Util.Gsa.InstallationFolderPath.GetPath + "\\GsaAPI.dll");
-      Assembly ass2 = Assembly.LoadFile(GsaGH.Util.Gsa.InstallationFolderPath.GetPath + "\\System.Data.SQLite.dll");
-
       const string name = "PATH";
       string pathvar = System.Environment.GetEnvironmentVariable(name);
       var value = pathvar + ";" + GsaGH.Util.Gsa.InstallationFolderPath.GetPath + "\\";
       var target = EnvironmentVariableTarget.Process;
       System.Environment.SetEnvironmentVariable(name, value, target);
     }
+
     public static void UseGsaAPI()
     {
       // create new GH-GSA model 
@@ -104,6 +101,7 @@ namespace UnitTestGsaGH
       DefaultUnits.MassUnit = MassUnit.Tonne;
     }
   }
+
   public class InitiateRhinoGH
   {
     public static void LoadRhino7GH()

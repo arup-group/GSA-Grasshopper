@@ -7,6 +7,8 @@ using Grasshopper.Kernel.Types;
 using OasysUnits;
 using OasysUnits.Units;
 using OasysGH.Units;
+using OasysGH;
+using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
@@ -537,74 +539,19 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaSectionModifier"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaSectionModifierGoo : GH_Goo<GsaSectionModifier>
+  public class GsaSectionModifierGoo : GH_OasysGoo<GsaSectionModifier>
   {
-    #region constructors
-    public GsaSectionModifierGoo()
-    {
-      this.Value = new GsaSectionModifier();
-    }
-    public GsaSectionModifierGoo(GsaSectionModifier offset)
-    {
-      if (offset == null)
-        offset = new GsaSectionModifier();
-      this.Value = offset; //offset.Duplicate();
-    }
+    public static string Name => "Section Modifier";
+    public static string NickName => "SM";
+    public static string Description => "GSA Section Modifier";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaOffset();
-    }
-    public GsaSectionModifierGoo DuplicateGsaOffset()
-    {
-      return new GsaSectionModifierGoo(Value == null ? new GsaSectionModifier() : Value); //Value.Duplicate());
-    }
-    #endregion
+    public GsaSectionModifierGoo(GsaSectionModifier item) : base(item) { }
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaOffset instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Section Modifier";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("GSA Section Modifier"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA Section Modifier"); }
-    }
+    public override IGH_Goo Duplicate() => new GsaSectionModifierGoo(this.Value);
 
-
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaOffset into some other type Q.            
-
-
       if (typeof(Q).IsAssignableFrom(typeof(GsaSectionModifier)))
       {
         if (Value == null)
@@ -614,7 +561,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(SectionModifier)))
+      else if (typeof(Q).IsAssignableFrom(typeof(SectionModifier)))
       {
         if (Value == null)
           target = default;
@@ -623,29 +570,22 @@ namespace GsaGH.Parameters
         return true;
       }
 
-
-      target = default;
-      return false;
+      return base.CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaOffset.
+      if (source == null)
+        return false;
 
-
-      if (source == null) { return false; }
-
-      //Cast from other Section Modifier
-      if (typeof(GsaSectionModifier).IsAssignableFrom(source.GetType()))
+      // Cast from other Section Modifier
+      else if (typeof(GsaSectionModifier).IsAssignableFrom(source.GetType()))
       {
         Value = (GsaSectionModifier)source;
         return true;
       }
 
-      return false;
+      return base.CastFrom(source);
     }
-    #endregion
-
-
   }
 }

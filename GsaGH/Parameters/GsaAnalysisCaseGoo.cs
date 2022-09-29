@@ -67,51 +67,56 @@ namespace GsaGH.Parameters
     public static string Name => "Analysis Case";
     public static string NickName => "AC";
     public static string Description => "GSA Analysis Case (Load Case or Combination)";
-    public override IGH_Goo Duplicate() => new GsaAnalysisCaseGoo(this.Value);
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaAnalysisCaseGoo(GsaAnalysisCase item) : base(item) { }
 
-    public new bool CastTo<Q>(ref Q target)
+    public override IGH_Goo Duplicate() => new GsaAnalysisCaseGoo(this.Value);
+
+    public override bool CastTo<Q>(ref Q target)
     {
-      if (Value != null)
+      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
       {
-        if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
+        if (Value == null)
+          target = default;
+        else
         {
           GH_Integer ghint = new GH_Integer();
           if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
             target = (Q)(object)ghint;
           else
             target = default;
-          return true;
         }
+        return true;
       }
       return base.CastTo(ref target);
     }
 
-    public new bool CastFrom(object source)
+    public override bool CastFrom(object source)
     {
-      if (source != null)
+      if (source == null)
+        return false;
+
+      // Cast from string
+      if (GH_Convert.ToString(source, out string input, GH_Conversion.Both))
       {
-        // Cast from string
-        if (GH_Convert.ToString(source, out string input, GH_Conversion.Both))
-        {
-          Regex re = new Regex(@"([a-zA-Z]+)(\d+)");
-          Match result = re.Match(input);
+        Regex re = new Regex(@"([a-zA-Z]+)(\d+)");
+        Match result = re.Match(input);
 
-          string name = result.Groups[1].Value;
-          Int32.TryParse(result.Groups[2].Value, out int id);
+        string name = result.Groups[1].Value;
+        Int32.TryParse(result.Groups[2].Value, out int id);
 
-          Value = new GsaAnalysisCase(id, name);
-          return true;
-        }
-        // Cast from int
-        else if (GH_Convert.ToInt32(source, out int id, GH_Conversion.Both))
-        {
-          Value = new GsaAnalysisCase(id, id.ToString());
-          return true;
-        }
+        Value = new GsaAnalysisCase(id, name);
+        return true;
       }
+
+      // Cast from int
+      else if (GH_Convert.ToInt32(source, out int id, GH_Conversion.Both))
+      {
+        Value = new GsaAnalysisCase(id, id.ToString());
+        return true;
+      }
+
       return base.CastFrom(source);
     }
   }

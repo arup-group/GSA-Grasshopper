@@ -3,6 +3,8 @@ using System.ComponentModel;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
+using OasysGH.Parameters;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
@@ -524,72 +526,19 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaLoad"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaLoadGoo : GH_Goo<GsaLoad>
+  public class GsaLoadGoo : GH_OasysGoo<GsaLoad>
   {
-    #region constructors
-    public GsaLoadGoo()
-    {
-      this.Value = null; // new GsaLoad();
-    }
-    public GsaLoadGoo(GsaLoad load)
-    {
-      this.Value = load; //load.Duplicate();
-    }
+    public static string Name => "Load";
+    public static string NickName => "L";
+    public static string Description => "GSA Load";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaLoad();
-    }
-    public GsaLoadGoo DuplicateGsaLoad()
-    {
-      return new GsaLoadGoo(Value == null ? null : Value);//Value.Duplicate());
-    }
-    #endregion
+    public GsaLoadGoo(GsaLoad item) : base(item) { }
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Load";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("GSA Load"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA Load containing different load types"); }
-    }
+    public override IGH_Goo Duplicate() => new GsaLoadGoo(this.Value);
 
-
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaLoad into some other type Q.            
-
-
       if (typeof(Q).IsAssignableFrom(typeof(GsaLoad)))
       {
         if (Value == null)
@@ -599,7 +548,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(GsaGridPlaneSurfaceGoo)))
+      else if (typeof(Q).IsAssignableFrom(typeof(GsaGridPlaneSurfaceGoo)))
       {
         if (Value == null)
           target = default;
@@ -630,7 +579,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Plane)))
+      else if (typeof(Q).IsAssignableFrom(typeof(GH_Plane)))
       {
         if (Value == null)
           target = default;
@@ -660,7 +609,8 @@ namespace GsaGH.Parameters
         }
         return false;
       }
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Point)))
+
+      else if (typeof(Q).IsAssignableFrom(typeof(GH_Point)))
       {
         if (Value == null)
           target = default;
@@ -682,7 +632,8 @@ namespace GsaGH.Parameters
         }
         return false;
       }
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Curve)))
+
+      else if (typeof(Q).IsAssignableFrom(typeof(GH_Curve)))
       {
         if (Value == null)
           target = default;
@@ -700,27 +651,22 @@ namespace GsaGH.Parameters
         return false;
       }
 
-      target = default;
-      return false;
+      return base.CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaLoad.
+      if (source == null)
+        return false;
 
-
-      if (source == null) { return false; }
-
-      //Cast from GsaLoad
+      // Cast from GsaLoad
       if (typeof(GsaLoad).IsAssignableFrom(source.GetType()))
       {
         Value = (GsaLoad)source;
         return true;
       }
 
-
-      return false;
+      return base.CastFrom(source);
     }
-    #endregion
   }
 }

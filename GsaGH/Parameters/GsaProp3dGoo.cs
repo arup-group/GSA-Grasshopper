@@ -2,6 +2,8 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
+using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
@@ -187,73 +189,19 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaProp3d"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaProp3dGoo : GH_Goo<GsaProp3d>
+  public class GsaProp3dGoo : GH_OasysGoo<GsaProp3d>
   {
-    #region constructors
-    public GsaProp3dGoo()
-    {
-      this.Value = new GsaProp3d();
-    }
-    public GsaProp3dGoo(GsaProp3d prop)
-    {
-      if (prop == null)
-        prop = new GsaProp3d();
-      this.Value = prop; //prop.Duplicate();
-    }
+    public static string Name => "3D Property";
+    public static string NickName => "3dP";
+    public static string Description => "GSA 3D Property";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaProp2d();
-    }
-    public GsaProp3dGoo DuplicateGsaProp2d()
-    {
-      return new GsaProp3dGoo(Value == null ? new GsaProp3d() : Value); //Value.Duplicate());
-    }
-    #endregion
+    public GsaProp3dGoo(GsaProp3d item) : base(item) { }
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Prop3d";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("GSA 3D Property"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA 3D Property"); }
-    }
+    public override IGH_Goo Duplicate() => new GsaProp3dGoo(this.Value);
 
-
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaProp2d into some other type Q.            
-
       if (typeof(Q).IsAssignableFrom(typeof(GsaProp3d)))
       {
         if (Value == null)
@@ -263,7 +211,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(Prop3D)))
+      else if (typeof(Q).IsAssignableFrom(typeof(Prop3D)))
       {
         if (Value == null)
           target = default;
@@ -272,7 +220,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
+      else if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
       {
         if (Value == null)
           target = default;
@@ -287,33 +235,30 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      target = default;
-      return false;
+      return base.CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaProp2d.
+      if (source == null)
+        return false;
 
-      if (source == null) { return false; }
-
-      //Cast from GsaProp2d
+      // Cast from GsaProp2d
       if (typeof(GsaProp3d).IsAssignableFrom(source.GetType()))
       {
         Value = (GsaProp3d)source;
         return true;
       }
 
-      //Cast from GsaAPI Prop2d
-      if (typeof(Prop3D).IsAssignableFrom(source.GetType()))
+      // Cast from GsaAPI Prop2d
+      else if (typeof(Prop3D).IsAssignableFrom(source.GetType()))
       {
         Value = new GsaProp3d();
         Value.API_Prop3d = (Prop3D)source;
         return true;
       }
 
-      return false;
+      return base.CastFrom(source);
     }
-    #endregion
   }
 }

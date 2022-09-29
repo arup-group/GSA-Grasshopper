@@ -3,6 +3,8 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
+using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
@@ -66,76 +68,19 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaOffset"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaOffsetGoo : GH_Goo<GsaOffset>
+  public class GsaOffsetGoo : GH_OasysGoo<GsaOffset>
   {
-    #region constructors
-    public GsaOffsetGoo()
-    {
-      this.Value = new GsaOffset();
-    }
-    public GsaOffsetGoo(GsaOffset offset)
-    {
-      if (offset == null)
-        offset = new GsaOffset();
-      this.Value = offset; //offset.Duplicate();
-    }
+    public static string Name => "Offset";
+    public static string NickName => "Off";
+    public static string Description => "GSA Offset";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaOffset();
-    }
-    public GsaOffsetGoo DuplicateGsaOffset()
-    {
-      return new GsaOffsetGoo(Value == null ? new GsaOffset() : Value); //Value.Duplicate());
-    }
-    #endregion
+    public GsaOffsetGoo(GsaOffset item) : base(item) { }
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
+    public override IGH_Goo Duplicate() => new GsaOffsetGoo(this.Value);
 
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaOffset instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Offset";
-      else
-        return Value.ToString();
-    }
-
-    public override string TypeName
-    {
-      get { return ("GSA Offset"); }
-    }
-
-    public override string TypeDescription
-    {
-      get { return ("GSA Offset"); }
-    }
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaOffset into some other type Q.            
-
-
       if (typeof(Q).IsAssignableFrom(typeof(GsaOffset)))
       {
         if (Value == null)
@@ -145,7 +90,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(Offset)))
+      else if (typeof(Q).IsAssignableFrom(typeof(Offset)))
       {
         if (Value == null)
           target = default;
@@ -154,15 +99,15 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      target = default;
-      return false;
+      return base.CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data into GsaOffset.
-      if (source == null) { return false; }
+      if (source == null)
+        return false;
 
-      //Cast from GsaOffset
+      // Cast from GsaOffset
       if (typeof(GsaOffset).IsAssignableFrom(source.GetType()))
       {
         Value = (GsaOffset)source;
@@ -177,8 +122,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      return false;
+      return base.CastFrom(source);
     }
-    #endregion
   }
 }

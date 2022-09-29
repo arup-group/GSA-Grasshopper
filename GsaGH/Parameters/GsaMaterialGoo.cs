@@ -2,6 +2,8 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
+using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
@@ -216,68 +218,19 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaMaterial"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaMaterialGoo : GH_Goo<GsaMaterial>
+  public class GsaMaterialGoo : GH_OasysGoo<GsaMaterial>
   {
-    #region constructors
-    public GsaMaterialGoo()
-    {
-      this.Value = new GsaMaterial();
-    }
-    public GsaMaterialGoo(GsaMaterial material)
-    {
-      if (material == null)
-        material = new GsaMaterial();
-      this.Value = material; //material.Duplicate();
-    }
+    public static string Name => "Material";
+    public static string NickName => "M";
+    public static string Description => "GSA Material";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaSection();
-    }
-    public GsaMaterialGoo DuplicateGsaSection()
-    {
-      return new GsaMaterialGoo(Value == null ? new GsaMaterial() : Value); //Value.Duplicate());
-    }
-    #endregion
+    public GsaMaterialGoo(GsaMaterial item) : base(item) { }
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null";
-      else
-        return "GSA " + TypeName + " {" + Value.ToString() + "}";
-    }
-    public override string TypeName => "Material";
-    public override string TypeDescription => "GSA " + this.TypeName + " Parameter";
+    public override IGH_Goo Duplicate() => new GsaMaterialGoo(this.Value);
 
-
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaMaterial into some other type Q.            
-
-
       if (typeof(Q).IsAssignableFrom(typeof(GsaMaterial)))
       {
         if (Value == null)
@@ -286,25 +239,22 @@ namespace GsaGH.Parameters
           target = (Q)(object)Value;
         return true;
       }
-
-      target = default;
-      return false;
+      return base.CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaMaterial.
+      if (source == null) 
+        return false; 
 
-      if (source == null) { return false; }
-
-      //Cast from GsaMaterial
+      // Cast from GsaMaterial
       if (typeof(GsaMaterial).IsAssignableFrom(source.GetType()))
       {
         Value = (GsaMaterial)source;
         return true;
       }
 
-      //Cast from string
+      // Cast from string
       if (GH_Convert.ToString(source, out string mat, GH_Conversion.Both))
       {
         if (mat.ToUpper() == "STEEL")
@@ -312,59 +262,51 @@ namespace GsaGH.Parameters
           Value.MaterialType = GsaMaterial.MatType.STEEL;
           return true;
         }
-
-        if (mat.ToUpper() == "CONCRETE")
+        else if (mat.ToUpper() == "CONCRETE")
         {
           Value.MaterialType = GsaMaterial.MatType.CONCRETE;
           return true;
         }
-
-        if (mat.ToUpper() == "FRP")
+        else if (mat.ToUpper() == "FRP")
         {
           Value.MaterialType = GsaMaterial.MatType.FRP;
           return true;
         }
-
-        if (mat.ToUpper() == "ALUMINIUM")
+        else if (mat.ToUpper() == "ALUMINIUM")
         {
           Value.MaterialType = GsaMaterial.MatType.ALUMINIUM;
           return true;
         }
-
-        if (mat.ToUpper() == "TIMBER")
+        else if (mat.ToUpper() == "TIMBER")
         {
           Value.MaterialType = GsaMaterial.MatType.TIMBER;
           return true;
         }
-
-        if (mat.ToUpper() == "GLASS")
+        else if (mat.ToUpper() == "GLASS")
         {
           Value.MaterialType = GsaMaterial.MatType.GLASS;
           return true;
         }
-
-        if (mat.ToUpper() == "FABRIC")
+        else if (mat.ToUpper() == "FABRIC")
         {
           Value.MaterialType = GsaMaterial.MatType.FABRIC;
           return true;
         }
-
-        if (mat.ToUpper() == "GENERIC")
+        else if (mat.ToUpper() == "GENERIC")
         {
           Value.MaterialType = GsaMaterial.MatType.GENERIC;
           return true;
         }
-
         return false;
       }
 
-      //Cast from integer
-      if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both))
+      // Cast from integer
+      else if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both))
       {
         Value.AnalysisProperty = idd;
       }
-      return false;
+
+      return base.CastFrom(source);
     }
-    #endregion
   }
 }

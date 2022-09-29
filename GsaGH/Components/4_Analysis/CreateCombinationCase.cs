@@ -18,8 +18,8 @@ namespace GsaGH.Components
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateCombinationCase;
 
-    public CreateCombinationCase()      : base("Create Combination Case",
-      "CreateCombination", 
+    public CreateCombinationCase() : base("Create Combination Case",
+      "CreateCombination",
       "Create a new GSA Combination Case",
       Ribbon.CategoryName.Name(),
       Ribbon.SubCategoryName.Cat4())

@@ -1,4 +1,7 @@
 ﻿using Grasshopper.Kernel.Types;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
@@ -47,72 +50,19 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaCombinationCase"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaCombinationCaseGoo : GH_Goo<GsaCombinationCase>
+  public class GsaCombinationCaseGoo : GH_OasysGoo<GsaCombinationCase>
   {
-    #region constructors
-    public GsaCombinationCaseGoo()
-    {
-      this.Value = new GsaCombinationCase();
-    }
-    public GsaCombinationCaseGoo(GsaCombinationCase anal)
-    {
-      if (anal == null)
-        anal = new GsaCombinationCase();
-      this.Value = anal; //section.Duplicate();
-    }
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaAnalysisCase();
-    }
-    public GsaCombinationCaseGoo DuplicateGsaAnalysisCase()
-    {
-      return new GsaCombinationCaseGoo(Value == null ? new GsaCombinationCase() : Value.Duplicate());
-    }
-    #endregion
+    public static string Name => "Combination Case";
+    public static string NickName => "CC";
+    public static string Description => "GSA Combination Case";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Combination Case";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("GSA Combination Case"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA Combination Case"); }
-    }
+    public GsaCombinationCaseGoo(GsaCombinationCase item) : base(item) { }
 
+    public override IGH_Goo Duplicate() => new GsaCombinationCaseGoo(this.Value);
 
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance into some other type Q.            
-
       //if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
       //{
       //    if (Value == null)
@@ -127,18 +77,10 @@ namespace GsaGH.Parameters
       //    }
       //    return true;
       //}
-
-      target = default;
-      return false;
+      return base.CastTo<Q>(ref target);
     }
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaSection.
-
-
-      if (source == null) { return false; }
-
       //Cast from string
       //if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
       //{
@@ -154,68 +96,7 @@ namespace GsaGH.Parameters
       //    Value.ID = id;
       //    return true;
       //}
-
-      return false;
+      return base.CastFrom(source);
     }
-    #endregion
-
   }
-
-  /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaSection type.
-  /// </summary>
-  //public class GsaAnalysisCaseParameter : GH_PersistentParam<GsaAnalysisCaseGoo>
-  //{
-  //    public GsaAnalysisCaseParameter()
-  //      : base(new GH_InstanceDescription("AnalysisCase", "ΣC", "GSA Analysis Case", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-  //    {
-  //    }
-
-  //    public override Guid ComponentGuid => new Guid("6b99a192-bdbd-41bf-8efa-1bc146d3c224");
-
-  //    public override GH_Exposure Exposure => GH_Exposure.secondary;
-
-  //    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisCaseParam;
-
-  //    protected override GH_GetterResult Prompt_Plural(ref List<GsaAnalysisCaseGoo> values)
-  //    {
-  //        return GH_GetterResult.cancel;
-  //    }
-  //    protected override GH_GetterResult Prompt_Singular(ref GsaAnalysisCaseGoo value)
-  //    {
-  //        return GH_GetterResult.cancel;
-  //    }
-  //    protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
-  //    {
-  //        System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
-  //        {
-  //            Text = "Not available",
-  //            Visible = false
-  //        };
-  //        return item;
-  //    }
-  //    protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
-  //    {
-  //        System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
-  //        {
-  //            Text = "Not available",
-  //            Visible = false
-  //        };
-  //        return item;
-  //    }
-
-  //    #region preview methods
-
-  //    public bool Hidden
-  //    {
-  //        get { return true; }
-  //        //set { m_hidden = value; }
-  //    }
-  //    public bool IsPreviewCapable
-  //    {
-  //        get { return false; }
-  //    }
-  //    #endregion
-  //}
-
 }

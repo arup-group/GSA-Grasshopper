@@ -3,6 +3,8 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
+using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
@@ -235,73 +237,19 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaProp2d"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaProp2dGoo : GH_Goo<GsaProp2d>
+  public class GsaProp2dGoo : GH_OasysGoo<GsaProp2d>
   {
-    #region constructors
-    public GsaProp2dGoo()
-    {
-      this.Value = new GsaProp2d();
-    }
-    public GsaProp2dGoo(GsaProp2d prop)
-    {
-      if (prop == null)
-        prop = new GsaProp2d();
-      this.Value = prop; //prop.Duplicate();
-    }
+    public static string Name => "2D Property";
+    public static string NickName => "2dP";
+    public static string Description => "GSA 2D Property";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaProp2d();
-    }
-    public GsaProp2dGoo DuplicateGsaProp2d()
-    {
-      return new GsaProp2dGoo(Value == null ? new GsaProp2d() : Value); //Value.Duplicate());
-    }
-    #endregion
+    public GsaProp2dGoo(GsaProp2d item) : base(item) { }
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Prop2d";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("GSA 2D Property"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA 2D Property"); }
-    }
+    public override IGH_Goo Duplicate() => new GsaProp2dGoo(this.Value);
 
-
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaProp2d into some other type Q.            
-
       if (typeof(Q).IsAssignableFrom(typeof(GsaProp2d)))
       {
         if (Value == null)
@@ -311,7 +259,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(Prop2D)))
+      else if (typeof(Q).IsAssignableFrom(typeof(Prop2D)))
       {
         if (Value == null)
           target = default;
@@ -320,7 +268,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
+      else if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
       {
         if (Value == null)
           target = default;
@@ -335,38 +283,35 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      target = default;
-      return false;
+      return base.CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaProp2d.
+      if (source == null)
+        return false;
 
-      if (source == null) { return false; }
-
-      //Cast from GsaProp2d
+      // Cast from GsaProp2d
       if (typeof(GsaProp2d).IsAssignableFrom(source.GetType()))
       {
         Value = (GsaProp2d)source;
         return true;
       }
 
-      //Cast from GsaAPI Prop2d
-      if (typeof(Prop2D).IsAssignableFrom(source.GetType()))
+      // Cast from GsaAPI Prop2d
+      else if (typeof(Prop2D).IsAssignableFrom(source.GetType()))
       {
         Value = new GsaProp2d();
         Value.API_Prop2d = (Prop2D)source;
         return true;
       }
 
-      //Cast from double
-      if (GH_Convert.ToDouble(source, out double thk, GH_Conversion.Both))
+      // Cast from double
+      else if (GH_Convert.ToDouble(source, out double thk, GH_Conversion.Both))
       {
         Value = new GsaProp2d(new Length(thk, DefaultUnits.LengthUnitSection));
       }
-      return false;
+      return base.CastFrom(source);
     }
-    #endregion
   }
 }

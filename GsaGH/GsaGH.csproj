@@ -208,6 +208,7 @@
     <Compile Include="Parameters\GsaAnalysisTaskGoo.cs" />
     <Compile Include="Parameters\GsaAnalysisTaskParameter.cs" />
     <Compile Include="Parameters\GsaBool6Goo.cs" />
+    <Compile Include="Parameters\GsaCombinationCaseParameter.cs" />
     <Compile Include="Parameters\GsaCombinationCaseGoo.cs" />
     <Compile Include="Parameters\GsaElement1dGoo.cs" />
     <Compile Include="Parameters\GsaElement2dGoo.cs" />

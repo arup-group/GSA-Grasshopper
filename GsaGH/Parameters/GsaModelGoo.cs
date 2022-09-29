@@ -2,6 +2,8 @@
 using System.IO;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
+using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
@@ -106,73 +108,19 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaModel"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaModelGoo : GH_Goo<GsaModel>
+  public class GsaModelGoo : GH_OasysGoo<GsaModel>
   {
-    #region constructors
-    public GsaModelGoo()
-    {
-      this.Value = new GsaModel();
-    }
-    public GsaModelGoo(GsaModel model)
-    {
-      if (model == null)
-        model = new GsaModel();
-      this.Value = model; //model.Duplicate();
-    }
+    public static string Name => "Model";
+    public static string NickName => "M";
+    public static string Description => "GSA Model";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaModel();
-    }
-    public GsaModelGoo DuplicateGsaModel()
-    {
-      return new GsaModelGoo(Value == null ? new GsaModel() : Value); //Value.Duplicate());
-    }
-    #endregion
+    public GsaModelGoo(GsaModel item) : base(item) { }
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value.Model == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Model";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("GSA Model"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA Model"); }
-    }
+    public override IGH_Goo Duplicate() => new GsaModelGoo(this.Value);
 
-
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaModel into some other type Q.            
-
       if (typeof(Q).IsAssignableFrom(typeof(GsaModel)))
       {
         if (Value == null)
@@ -182,7 +130,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(Model)))
+      else if (typeof(Q).IsAssignableFrom(typeof(Model)))
       {
         if (Value == null)
           target = default;
@@ -191,19 +139,15 @@ namespace GsaGH.Parameters
         return true;
       }
 
-
-      target = default;
-      return false;
+      return CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaModel.
+      if (source == null)
+        return false;
 
-
-      if (source == null) { return false; }
-
-      //Cast from GsaModel
+      // Cast from GsaModel
       if (typeof(GsaModel).IsAssignableFrom(source.GetType()))
       {
         Value = (GsaModel)source;
@@ -216,9 +160,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-
-      return false;
+      return base.CastFrom(source);
     }
-    #endregion
   }
 }

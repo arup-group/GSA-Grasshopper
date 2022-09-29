@@ -2,6 +2,8 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
+using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysUnits;
 
@@ -203,7 +205,7 @@ namespace GsaGH.Parameters
     #region fields
     Section m_section;
     int m_idd = 0;
-    GsaMaterial m_material; 
+    GsaMaterial m_material;
     GsaSectionModifier m_modifier;
     private Guid m_guid;
     #endregion
@@ -282,73 +284,19 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaSection"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaSectionGoo : GH_Goo<GsaSection>
+  public class GsaSectionGoo : GH_OasysGoo<GsaSection>
   {
-    #region constructors
-    public GsaSectionGoo()
-    {
-      this.Value = new GsaSection();
-    }
-    public GsaSectionGoo(GsaSection section)
-    {
-      if (section == null)
-        section = new GsaSection();
-      this.Value = section; //section.Duplicate();
-    }
-    public override IGH_Goo Duplicate()
-    {
-      return DuplicateGsaSection();
-    }
-    public GsaSectionGoo DuplicateGsaSection()
-    {
-      return new GsaSectionGoo(Value == null ? new GsaSection() : Value); //Value.Duplicate());
-    }
-    #endregion
+    public static string Name => "Section";
+    public static string NickName => "Sec";
+    public static string Description => "GSA Section";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GSA Section";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("GSA Section"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA Section"); }
-    }
+    public GsaSectionGoo(GsaSection item) : base(item) { }
 
+    public override IGH_Goo Duplicate() => new GsaSectionGoo(this.Value);
 
-    #endregion
-
-    #region casting methods
     public override bool CastTo<Q>(ref Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaSection into some other type Q.            
-
-
       if (typeof(Q).IsAssignableFrom(typeof(GsaSection)))
       {
         if (Value == null)
@@ -358,7 +306,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(Section)))
+      else if (typeof(Q).IsAssignableFrom(typeof(Section)))
       {
         if (Value == null)
           target = default;
@@ -367,7 +315,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
+      else if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
       {
         if (Value == null)
           target = default;
@@ -382,46 +330,43 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      target = default;
-      return false;
+      return base.CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaSection.
+      if (source == null)
+        return false;
 
-
-      if (source == null) { return false; }
-
-      //Cast from GsaSection
-      if (typeof(GsaSection).IsAssignableFrom(source.GetType()))
+      // Cast from GsaSection
+      else if (typeof(GsaSection).IsAssignableFrom(source.GetType()))
       {
         Value = (GsaSection)source;
         return true;
       }
 
-      //Cast from GsaAPI Prop2d
-      if (typeof(Section).IsAssignableFrom(source.GetType()))
+      // Cast from GsaAPI Prop2d
+      else if (typeof(Section).IsAssignableFrom(source.GetType()))
       {
         Value = new GsaSection();
         Value.API_Section = (Section)source;
         return true;
       }
 
-      //Cast from string
-      if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
+      // Cast from string
+      else if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
       {
         Value = new GsaSection(name);
         return true;
       }
 
-      //Cast from integer
-      if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both))
+      // Cast from integer
+      else if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both))
       {
         Value.ID = idd;
       }
-      return false;
+
+      return base.CastFrom(source);
     }
-    #endregion
   }
 }
