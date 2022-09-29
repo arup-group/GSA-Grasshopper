@@ -4,7 +4,7 @@ using Xunit;
 
 namespace GsaGHTests
 {
-  [Collection("ComposAPI Fixture collection")]
+  [Collection("GrasshopperFixture collection")]
   public class ObjectExtensionTests
   {
     [Fact]
@@ -20,6 +20,7 @@ namespace GsaGHTests
     public void GsaMaterialEqualsTest()
     {
       GsaMaterial original = new GsaMaterial();
+      original.MaterialType = GsaMaterial.MatType.ALUMINIUM;
       GsaMaterial duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
