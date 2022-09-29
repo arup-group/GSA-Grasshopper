@@ -14,13 +14,13 @@ namespace GsaGH.Components
   public class CreateMaterial : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("72bfce91-9204-4fe4-b81d-0036babf0c6d");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMaterial;
 
-    public CreateMaterial()      : base("Create Material", 
+    public CreateMaterial() : base(
+      "Create Material",
       "Material",
       "Create GSA Material by reference to existing type and grade",
       Ribbon.CategoryName.Name(),
@@ -88,7 +88,6 @@ namespace GsaGH.Components
     });
 
     string selecteditem;
-
     #endregion
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -96,6 +95,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Analysis Property Number", "ID", "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
       pManager.AddIntegerParameter("Grade", "Gr", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
     }
+
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
       pManager.AddGenericParameter("Material", "Ma", "GSA Material", GH_ParamAccess.item);
