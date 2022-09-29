@@ -350,6 +350,3 @@ dist/*
 /GsaGHTests/obj
 /IntegrationTests/bin
 /IntegrationTests/obj
-
-/UnitTestGsaGH/bin
-/UnitTestGsaGH/obj
