@@ -4,7 +4,7 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 
-namespace ComposGHTests.Helpers
+namespace GsaGHTests.Helpers
 {
   public class ComponentTestHelper
   {

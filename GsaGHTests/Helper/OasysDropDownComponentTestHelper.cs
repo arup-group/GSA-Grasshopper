@@ -4,7 +4,7 @@ using Grasshopper.Kernel;
 using OasysGH.Components;
 using Xunit;
 
-namespace ComposGHTests.Helpers
+namespace GsaGHTests.Helpers
 {
   public class OasysDropDownComponentTestHelper
   {
