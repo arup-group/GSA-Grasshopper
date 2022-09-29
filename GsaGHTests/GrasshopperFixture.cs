@@ -34,23 +34,6 @@ namespace ComposGHTests
 
       InitializeCore();
 
-      // load GsaAPI.dll and set process user-rights to GSA installation folder
-      //GrasshopperFixture.LoadRefs();
-
-      // use GsaAPI once to open a model and force loading of sectlib.db3 SQL library
-      //GrasshopperFixture.UseGsaAPI();
-
-      // add current project (for GSA.gha) to grasshopper folder:
-      //string rootfolder = AppDomain.CurrentDomain.BaseDirectory;
-      //rootfolder = rootfolder.Split(new string[] { "GsaGHTests" }, StringSplitOptions.None)[0];
-
-      //Grasshopper.Folders.CustomAssemblyFolders.Add(rootfolder);
-
-
-
-
-      // ### Reference GSA API and SQLite dlls ###
-      // set folder to latest GSA version.
       GrasshopperFixture.LoadRefs();
       Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
 
@@ -62,7 +45,7 @@ namespace ComposGHTests
     {
       const string name = "PATH";
       string pathvar = System.Environment.GetEnvironmentVariable(name);
-      var value = pathvar + ";" + GsaGH.Util.Gsa.InstallationFolderPath.GetPath + "\\";
+      var value = pathvar + ";" + InstallPath + "\\";
       var target = EnvironmentVariableTarget.Process;
       System.Environment.SetEnvironmentVariable(name, value, target);
     }
