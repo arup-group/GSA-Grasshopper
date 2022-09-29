@@ -11,7 +11,7 @@ namespace ComposGHTests.Slab
   [Collection("GrasshopperFixture collection")]
   public class CreateMaterialTestss
   {
-    public static GH_OasysComponent ComponentMother()
+    public static GH_OasysDropDownComponent ComponentMother()
     {
       var comp = new CreateMaterial();
       comp.CreateAttributes();
@@ -23,10 +23,12 @@ namespace ComposGHTests.Slab
     {
       var comp = ComponentMother();
 
+      comp.SetSelected(0, 3); // set dropdown to "Timber"
+
       GsaMaterialGoo output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(0, output.Value.AnalysisProperty);
       Assert.Equal(1, output.Value.GradeProperty);
-      Assert.Equal(MatType.UNDEF, output.Value.MaterialType);
+      Assert.Equal(MatType.TIMBER, output.Value.MaterialType);
     }
 
     [Fact]

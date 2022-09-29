@@ -13,7 +13,6 @@ namespace GsaGH.Components
   public class CreateSection : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("1167c4aa-b98b-47a7-ae85-1a3c976a1973");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -62,7 +61,7 @@ namespace GsaGH.Components
     {
       GsaSection gsaSection = new GsaSection();
 
-      //profile
+      // profile
       GH_String gh_profile = new GH_String();
       if (DA.GetData(0, ref gh_profile))
       {
@@ -100,4 +99,3 @@ namespace GsaGH.Components
     }
   }
 }
-

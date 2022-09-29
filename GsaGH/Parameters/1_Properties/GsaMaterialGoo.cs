@@ -83,6 +83,7 @@ namespace GsaGH.Parameters
     {
       MaterialType = MatType.UNDEF;
     }
+
     private MatType getType(MaterialType materialType)
     {
       MatType m_type = MatType.UNDEF; // custom material
@@ -105,6 +106,7 @@ namespace GsaGH.Parameters
         m_type = MatType.FABRIC;
       return m_type;
     }
+
     /// <summary>
     /// 0 : Generic
     /// 1 : Steel
