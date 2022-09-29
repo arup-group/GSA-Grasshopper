@@ -412,6 +412,7 @@ namespace GsaGH.Parameters
         return crv.GetBoundingBox(false);
       }
     }
+
     public override BoundingBox GetBoundingBox(Transform xform)
     {
       if (Value == null) { return BoundingBox.Empty; }

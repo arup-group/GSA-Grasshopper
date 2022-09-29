@@ -4,6 +4,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
@@ -481,33 +482,16 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaMember1d"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaMember1dGoo : GH_GeometricGoo<GsaMember1d>, IGH_PreviewData
+  public class GsaMember1dGoo : GH_OasysGeometricGoo<GsaMember1d>, IGH_PreviewData
   {
     public static string Name => "1D Member";
     public static string NickName => "M1D";
     public static string Description => "GSA 1D Member";
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    #region constructors
-    public GsaMember1dGoo()
-    {
-      this.Value = new GsaMember1d();
-    }
-    public GsaMember1dGoo(GsaMember1d member)
-    {
-      if (member == null)
-        member = new GsaMember1d();
-      this.Value = member; //member.Duplicate();
-    }
+    public GsaMember1dGoo(GsaMember1d item) : base(item) { }
 
-    public override IGH_GeometricGoo DuplicateGeometry()
-    {
-      return DuplicateGsaMember1d();
-    }
-    public GsaMember1dGoo DuplicateGsaMember1d()
-    {
-      return new GsaMember1dGoo(Value == null ? new GsaMember1d() : Value); //Value.Duplicate());
-    }
-    #endregion
+    public override IGH_Goo Duplicate() => new GsaMember1dGoo(this.Value);
 
     #region properties
     public override bool IsValid
@@ -723,6 +707,7 @@ namespace GsaGH.Parameters
     {
       get { return Boundingbox; }
     }
+
     public void DrawViewportMeshes(GH_PreviewMeshArgs args)
     {
       // no meshes to be drawn
@@ -795,6 +780,13 @@ namespace GsaGH.Parameters
             args.Pipeline.DrawLine(ln2, UI.Colour.Release);
         }
       }
+    }
+
+    public override GeometryBase GetGeometry()
+    {
+      if (this.Value == null)
+        return null;
+      return this.Value.PolyCurve;
     }
     #endregion
   }

@@ -240,6 +240,7 @@
     <Compile Include="Parameters\5_Results\_ResultMesh.cs" />
     <Compile Include="Parameters\5_Results\ResultLineGoo.cs" />
     <Compile Include="Parameters\5_Results\_ResultPoint.cs" />
+    <Compile Include="Parameters\GH_OasysGeometricGoo.cs" />
     <Compile Include="Parameters\_Titles.cs" />
     <Compile Include="Parameters\1_Properties\GsaProp2dGoo.cs" />
     <Compile Include="Parameters\1_Properties\GsaOffsetParameter.cs" />

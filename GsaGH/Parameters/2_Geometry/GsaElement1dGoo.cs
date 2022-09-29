@@ -298,7 +298,7 @@ namespace GsaGH.Parameters
       }
     }
     #endregion
-    
+
     #region constructors
     public GsaElement1d()
     {
@@ -389,92 +389,28 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaElement1d"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaElement1dGoo : GH_GeometricGoo<GsaElement1d>, IGH_PreviewData
+  public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1d>, IGH_PreviewData
   {
     public static string Name => "1D Element";
     public static string NickName => "E1D";
     public static string Description => "GSA 1D Element";
-    
-    #region constructors
-    public GsaElement1dGoo()
-    {
-      this.Value = new GsaElement1d();
-    }
-    public GsaElement1dGoo(GsaElement1d element)
-    {
-      if (element == null)
-        element = new GsaElement1d();
-      this.Value = element; //element.Duplicat();
-    }
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public override IGH_GeometricGoo DuplicateGeometry()
-    {
-      return DuplicateGsaElement1d();
-    }
-    public GsaElement1dGoo DuplicateGsaElement1d()
-    {
-      return new GsaElement1dGoo(Value == null ? new GsaElement1d() : Value); //Value.Duplicate());
-    }
-    #endregion
+    public GsaElement1dGoo(GsaElement1d item) : base(item) { }
 
-    #region properties
+    public override IGH_Goo Duplicate() => new GsaElement1dGoo(this.Value);
+
     public override bool IsValid
     {
       get
       {
-        if (Value == null) { return false; }
-        if (Value.Line == null) { return false; }
-        return true;
+        if (Value != null && Value.Line == null)
+          return true;
+        return false;
       }
     }
 
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null Element1D";
-      else
-        return Value.ToString();
-    }
-
-    public override string TypeName
-    {
-      get { return ("Element 1D"); }
-    }
-
-    public override string TypeDescription
-    {
-      get { return ("GSA 1D Element"); }
-    }
-
-    public override BoundingBox Boundingbox
-    {
-      get
-      {
-        if (Value == null) { return BoundingBox.Empty; }
-        if (Value.Line == null) { return BoundingBox.Empty; }
-        return Value.Line.GetBoundingBox(false);
-      }
-    }
-
-    public override BoundingBox GetBoundingBox(Transform xform)
-    {
-      if (Value == null) { return BoundingBox.Empty; }
-      if (Value.Line == null) { return BoundingBox.Empty; }
-      return Value.Line.GetBoundingBox(xform);
-    }
-    #endregion
-
-    #region casting methods
-    public override bool CastTo<Q>(out Q target)
+    public override bool CastTo<Q>(ref Q target)
     {
       if (typeof(Q).IsAssignableFrom(typeof(GsaElement1d)))
       {
@@ -485,7 +421,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(Element)))
+      else if (typeof(Q).IsAssignableFrom(typeof(Element)))
       {
         if (Value == null)
           target = default;
@@ -494,8 +430,8 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      //Cast to Curve
-      if (typeof(Q).IsAssignableFrom(typeof(Line)))
+      // Cast to Curve
+      else if (typeof(Q).IsAssignableFrom(typeof(Line)))
       {
         if (Value == null)
           target = default;
@@ -503,7 +439,8 @@ namespace GsaGH.Parameters
           target = (Q)(object)Value.Line;
         return true;
       }
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Line)))
+
+      else if (typeof(Q).IsAssignableFrom(typeof(GH_Line)))
       {
         if (Value == null)
           target = default;
@@ -513,10 +450,10 @@ namespace GsaGH.Parameters
           GH_Convert.ToGHLine(Value.Line, GH_Conversion.Both, ref ghLine);
           target = (Q)(object)ghLine;
         }
-
         return true;
       }
-      if (typeof(Q).IsAssignableFrom(typeof(Curve)))
+
+      else if (typeof(Q).IsAssignableFrom(typeof(Curve)))
       {
         if (Value == null)
           target = default;
@@ -524,7 +461,8 @@ namespace GsaGH.Parameters
           target = (Q)(object)Value.Line;
         return true;
       }
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Curve)))
+
+      else if (typeof(Q).IsAssignableFrom(typeof(GH_Curve)))
       {
         if (Value == null)
           target = default;
@@ -535,7 +473,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
+      else if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
       {
         if (Value == null)
           target = default;
@@ -550,36 +488,32 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      target = default;
-      return false;
+      return base.CastTo(ref target);
     }
+
     public override bool CastFrom(object source)
     {
-      // This function is called when Grasshopper needs to convert other data 
-      // into GsaElement.
+      if (source == null)
+        return false;
 
-
-      if (source == null) { return false; }
-
-      //Cast from GsaElement
-      if (typeof(GsaElement1d).IsAssignableFrom(source.GetType()))
+      // Cast from GsaElement
+      else if (typeof(GsaElement1d).IsAssignableFrom(source.GetType()))
       {
         Value = (GsaElement1d)source;
         return true;
       }
 
-      //Cast from GsaAPI Member
+      // Cast from GsaAPI Member
       // we shouldnt provide auto-convertion from GsaAPI.Element
       // as this cannot alone be used to create a line....
-      //if (typeof(Element).IsAssignableFrom(source.GetType()))
+      //else if (typeof(Element).IsAssignableFrom(source.GetType()))
       //{
       //    Value.Element = (Element)source;
       //    return true;
       //}
 
-      //Cast from Curve
+      // Cast from Curve
       Line ln = new Line();
-
       if (GH_Convert.ToLine(source, ref ln, GH_Conversion.Both))
       {
         LineCurve crv = new LineCurve(ln);
@@ -588,9 +522,8 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      return false;
+      return base.CastFrom(source);
     }
-    #endregion
 
     #region transformation methods
     public override IGH_GeometricGoo Transform(Transform xform)
@@ -679,6 +612,13 @@ namespace GsaGH.Parameters
             args.Pipeline.DrawLine(ln2, UI.Colour.Release);
         }
       }
+    }
+
+    public override GeometryBase GetGeometry()
+    {
+      if (this.Value == null)
+        return null;
+      return this.Value.Line;
     }
     #endregion
   }
