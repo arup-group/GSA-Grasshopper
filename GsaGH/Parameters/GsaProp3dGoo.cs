@@ -192,7 +192,7 @@ namespace GsaGH.Parameters
   public class GsaProp3dGoo : GH_OasysGoo<GsaProp3d>
   {
     public static string Name => "3D Property";
-    public static string NickName => "3dP";
+    public static string NickName => "P3D";
     public static string Description => "GSA 3D Property";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

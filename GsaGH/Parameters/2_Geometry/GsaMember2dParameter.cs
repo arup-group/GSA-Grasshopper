@@ -6,28 +6,32 @@ using Rhino.Geometry;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaElement1d type.
+  /// This class provides a parameter interface for the <see cref="GsaMember2dGoo"/> type.
   /// </summary>
-  public class GsaElement1dParameter : GH_PersistentGeometryParam<GsaElement1dGoo>, IGH_PreviewObject
+  public class GsaMember2dParameter : GH_PersistentGeometryParam<GsaMember2dGoo>, IGH_PreviewObject
   {
-    public GsaElement1dParameter()
-      : base(new GH_InstanceDescription("1D Element", "E1D", "Maintains a collection of GSA 1D Element data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-    {
-    }
-
-    public override Guid ComponentGuid => new Guid("9c045214-cab6-47d9-a158-ae1f4f494b66");
-
+    public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaMember2dGoo.Name + " parameter" : base.InstanceDescription;
+    public override string TypeName => this.SourceCount == 0 ? GsaMember2dGoo.Name : base.TypeName;
+    public override Guid ComponentGuid => new Guid("fa512c2d-4767-49f1-a574-32bf66a66568");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Mem2dParam;
 
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Elem1dParam;
+    public GsaMember2dParameter() : base(new GH_InstanceDescription(
+      GsaMember2dGoo.Name,
+      GsaMember2dGoo.NickName,
+      GsaMember2dGoo.Description + " parameter",
+      GsaGH.Components.Ribbon.CategoryName.Name(),
+      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+    { }
 
     //We do not allow users to pick parameter, 
     //therefore the following 4 methods disable all this ui.
-    protected override GH_GetterResult Prompt_Plural(ref List<GsaElement1dGoo> values)
+    protected override GH_GetterResult Prompt_Plural(ref List<GsaMember2dGoo> values)
     {
       return GH_GetterResult.cancel;
     }
-    protected override GH_GetterResult Prompt_Singular(ref GsaElement1dGoo value)
+
+    protected override GH_GetterResult Prompt_Singular(ref GsaMember2dGoo value)
     {
       return GH_GetterResult.cancel;
     }
@@ -81,5 +85,4 @@ namespace GsaGH.Parameters
     }
     #endregion
   }
-
 }

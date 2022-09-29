@@ -286,6 +286,10 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaMember3dGoo : GH_GeometricGoo<GsaMember3d>, IGH_PreviewData
   {
+    public static string Name => "3D Member";
+    public static string NickName => "M3D";
+    public static string Description => "GSA 3D Member";
+
     #region constructors
     public GsaMember3dGoo()
     {

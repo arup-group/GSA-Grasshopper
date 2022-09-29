@@ -332,6 +332,10 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaNodeGoo : GH_GeometricGoo<GsaNode>, IGH_PreviewData
   {
+    public static string Name => "Node";
+    public static string NickName => "Nd";
+    public static string Description => "GSA Node";
+
     #region constructors
     public GsaNodeGoo()
     {

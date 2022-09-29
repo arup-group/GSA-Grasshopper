@@ -5,26 +5,30 @@ using Grasshopper.Kernel;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaSection type.
+  /// This class provides a parameter interface for the <see cref="GsaMaterialGoo"/> type.
   /// </summary>
-  public class GsaAnalysisTaskParameter : GH_PersistentParam<GsaAnalysisTaskGoo>
+  public class GsaMaterialParameter : GH_PersistentParam<GsaMaterialGoo>
   {
-    public GsaAnalysisTaskParameter()
-      : base(new GH_InstanceDescription("AnalysisTask", "ΣT", "GSA Analysis Task", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-    {
-    }
-
-    public override Guid ComponentGuid => new Guid("51048d67-3652-45d0-9eec-0f9ef339c1a5");
-
+    public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaMaterialGoo.Name + " parameter" : base.InstanceDescription;
+    public override string TypeName => this.SourceCount == 0 ? GsaMaterialGoo.Name : base.TypeName;
+    public override Guid ComponentGuid => new Guid("f13d079b-f7d1-4d8a-be7c-3b7e1e59c5ab");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.MaterialParam;
 
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisTaskParam;
+    public GsaMaterialParameter() : base(new GH_InstanceDescription(
+      GsaMaterialGoo.Name,
+      GsaMaterialGoo.NickName,
+      GsaMaterialGoo.Description + " parameter",
+      GsaGH.Components.Ribbon.CategoryName.Name(),
+      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+    { }
 
-    protected override GH_GetterResult Prompt_Plural(ref List<GsaAnalysisTaskGoo> values)
+    protected override GH_GetterResult Prompt_Plural(ref List<GsaMaterialGoo> values)
     {
       return GH_GetterResult.cancel;
     }
-    protected override GH_GetterResult Prompt_Singular(ref GsaAnalysisTaskGoo value)
+
+    protected override GH_GetterResult Prompt_Singular(ref GsaMaterialGoo value)
     {
       return GH_GetterResult.cancel;
     }
@@ -54,11 +58,11 @@ namespace GsaGH.Parameters
       get { return true; }
       //set { m_hidden = value; }
     }
+
     public bool IsPreviewCapable
     {
       get { return false; }
     }
     #endregion
   }
-
 }

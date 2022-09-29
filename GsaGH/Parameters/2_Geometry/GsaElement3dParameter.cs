@@ -6,20 +6,23 @@ using Rhino.Geometry;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaElement2d type.
+  /// This class provides a parameter interface for the <see cref="GsaElement3dGoo"/> type.
   /// </summary>
   public class GsaElement3dParameter : GH_PersistentGeometryParam<GsaElement3dGoo>, IGH_PreviewObject
   {
-    public GsaElement3dParameter()
-      : base(new GH_InstanceDescription("3D Element", "E3D", "Maintains a collection of GSA 3D Element data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-    {
-    }
-
+    public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaElement3dGoo.Name + " parameter" : base.InstanceDescription;
+    public override string TypeName => this.SourceCount == 0 ? GsaElement3dGoo.Name : base.TypeName;
     public override Guid ComponentGuid => new Guid("e7326f8e-c8e5-40d9-b8e4-6912ccf80b92");
-
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
-
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Elem3dParam;
+
+    public GsaElement3dParameter() : base(new GH_InstanceDescription(
+      GsaElement3dGoo.Name,
+      GsaElement3dGoo.NickName,
+      GsaElement3dGoo.Description + " parameter",
+      GsaGH.Components.Ribbon.CategoryName.Name(),
+      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+    { }
 
     //We do not allow users to pick parameter, 
     //therefore the following 4 methods disable all this ui.
@@ -81,5 +84,4 @@ namespace GsaGH.Parameters
     }
     #endregion
   }
-
 }

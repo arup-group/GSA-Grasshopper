@@ -233,11 +233,16 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaGridPlaneSurfaceGoo : GH_GeometricGoo<GsaGridPlaneSurface>, IGH_PreviewData
   {
+    public static string Name => "Grid Plane";
+    public static string NickName => "GrP";
+    public static string Description => "GSA Grid Plane";
+
     #region constructors
     public GsaGridPlaneSurfaceGoo()
     {
       this.Value = new GsaGridPlaneSurface();
     }
+
     public GsaGridPlaneSurfaceGoo(GsaGridPlaneSurface gridplane)
     {
       if (gridplane == null)
@@ -250,6 +255,7 @@ namespace GsaGH.Parameters
     {
       return DuplicateGsaNode();
     }
+
     public GsaGridPlaneSurfaceGoo DuplicateGsaNode()
     {
       return new GsaGridPlaneSurfaceGoo(Value == null ? new GsaGridPlaneSurface() : Value); //Value.Duplicate());
@@ -265,6 +271,7 @@ namespace GsaGH.Parameters
         return Value.IsValid;
       }
     }
+
     public override string IsValidWhyNot
     {
       get
@@ -273,6 +280,7 @@ namespace GsaGH.Parameters
         return Value.Plane.IsValid.ToString(); //Todo: beef this up to be more informative.
       }
     }
+
     public override string ToString()
     {
       if (Value == null)
@@ -280,10 +288,12 @@ namespace GsaGH.Parameters
       else
         return Value.ToString();
     }
+
     public override string TypeName
     {
       get { return ("GridPlane"); }
     }
+
     public override string TypeDescription
     {
       get { return ("GSA Grid Plane"); }

@@ -5,20 +5,23 @@ using Grasshopper.Kernel;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaModel type.
+  /// This class provides a parameter interface for the <see cref="GsaModelGoo"/> type.
   /// </summary>
   public class GsaModelParameter : GH_PersistentParam<GsaModelGoo>
   {
-    public GsaModelParameter()
-      : base(new GH_InstanceDescription("GSA Model", "GSA", "A GSA Model", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-    {
-    }
-
+    public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaModelGoo.Name + " parameter" : base.InstanceDescription;
+    public override string TypeName => this.SourceCount == 0 ? GsaModelGoo.Name : base.TypeName;
     public override Guid ComponentGuid => new Guid("43eb8fb6-d469-4c3b-ab3c-e8d6ad378d9a");
-
     public override GH_Exposure Exposure => GH_Exposure.primary;
-
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ModelParam;
+
+    public GsaModelParameter() : base(new GH_InstanceDescription(
+      GsaModelGoo.Name,
+      GsaModelGoo.NickName,
+      GsaModelGoo.Description + " parameter",
+      GsaGH.Components.Ribbon.CategoryName.Name(),
+      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+    { }
 
     //We do not allow users to pick parameter, 
     //therefore the following 4 methods disable all this ui.
@@ -26,10 +29,12 @@ namespace GsaGH.Parameters
     {
       return GH_GetterResult.cancel;
     }
+
     protected override GH_GetterResult Prompt_Singular(ref GsaModelGoo value)
     {
       return GH_GetterResult.cancel;
     }
+
     protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
     {
       System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
@@ -39,6 +44,7 @@ namespace GsaGH.Parameters
       };
       return item;
     }
+
     protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
     {
       System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
@@ -50,17 +56,16 @@ namespace GsaGH.Parameters
     }
 
     #region preview methods
-
     public bool Hidden
     {
       get { return true; }
       //set { m_hidden = value; }
     }
+
     public bool IsPreviewCapable
     {
       get { return false; }
     }
     #endregion
   }
-
 }

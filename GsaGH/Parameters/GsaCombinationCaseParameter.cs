@@ -6,7 +6,7 @@ using OasysGH.Parameters;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaSection type.
+  /// This class provides a parameter interface for the <see cref="GsaAnalysisCaseGoo"/> type.
   /// </summary>
   //public class GsaAnalysisCaseParameter : GH_PersistentParam<GsaAnalysisCaseGoo>
   //{

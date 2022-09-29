@@ -240,7 +240,7 @@ namespace GsaGH.Parameters
   public class GsaProp2dGoo : GH_OasysGoo<GsaProp2d>
   {
     public static string Name => "2D Property";
-    public static string NickName => "2dP";
+    public static string NickName => "P2D";
     public static string Description => "GSA 2D Property";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

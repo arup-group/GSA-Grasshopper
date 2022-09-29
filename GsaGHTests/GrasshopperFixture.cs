@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GsaAPI;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -9,6 +10,7 @@ namespace ComposGHTests
   public class GrasshopperFixture : IDisposable
   {
     public static string InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
+
     private object _Core = null;
     private object _GHPlugin = null;
     private object _DocIO { get; set; }
@@ -16,7 +18,6 @@ namespace ComposGHTests
     private bool _isDisposed;
     private static string _linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper", "Libraries");
     private static string _linkFileName = "GsaGhTests.ghlink";
-
 
     static GrasshopperFixture()
     {
@@ -33,13 +34,52 @@ namespace ComposGHTests
 
       InitializeCore();
 
+      // load GsaAPI.dll and set process user-rights to GSA installation folder
+      //GrasshopperFixture.LoadRefs();
+
+      // use GsaAPI once to open a model and force loading of sectlib.db3 SQL library
+      //GrasshopperFixture.UseGsaAPI();
+
+      // add current project (for GSA.gha) to grasshopper folder:
+      //string rootfolder = AppDomain.CurrentDomain.BaseDirectory;
+      //rootfolder = rootfolder.Split(new string[] { "GsaGHTests" }, StringSplitOptions.None)[0];
+
+      //Grasshopper.Folders.CustomAssemblyFolders.Add(rootfolder);
+
+
+
+
       // ### Reference GSA API and SQLite dlls ###
       // set folder to latest GSA version.
-      //Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-
+      GrasshopperFixture.LoadRefs();
+      Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
 
       // setup headless units
       OasysGH.Units.Utility.SetupUnitsDuringLoad(true);
+    }
+
+    public static void LoadRefs()
+    {
+      const string name = "PATH";
+      string pathvar = System.Environment.GetEnvironmentVariable(name);
+      var value = pathvar + ";" + GsaGH.Util.Gsa.InstallationFolderPath.GetPath + "\\";
+      var target = EnvironmentVariableTarget.Process;
+      System.Environment.SetEnvironmentVariable(name, value, target);
+    }
+
+    public static void UseGsaAPI()
+    {
+      // create new GH-GSA model 
+      Model m = new Model();
+
+      string tempPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+      tempPath = System.IO.Path.Combine(tempPath, "Oasys", "GsaGrasshopper");
+      string file = tempPath + "\\Samples\\Env.gwb";
+
+      // open existing GSA model (steel design sample)
+      // model containing CAT section profiles which I
+      // think loads the SectLib.db3 SQL lite database
+      m.Open(file);
     }
 
     public void AddPluginToGH()

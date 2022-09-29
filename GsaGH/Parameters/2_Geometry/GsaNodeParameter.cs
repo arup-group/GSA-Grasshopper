@@ -6,20 +6,23 @@ using Rhino.Geometry;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaNode type.
+  /// This class provides a parameter interface for the <see cref="GsaNodeGoo"/> type.
   /// </summary>
   public class GsaNodeParameter : GH_PersistentGeometryParam<GsaNodeGoo>, IGH_PreviewObject
   {
-    public GsaNodeParameter()
-      : base(new GH_InstanceDescription("Node", "No", "Maintains a collection of GSA Node data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-    {
-    }
-
+    public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaNodeGoo.Name + " parameter" : base.InstanceDescription;
+    public override string TypeName => this.SourceCount == 0 ? GsaNodeGoo.Name : base.TypeName;
     public override Guid ComponentGuid => new Guid("8ebdc693-e882-494d-8177-b0bd9c3d84a3");
-
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
-
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.NodeParam;
+
+    public GsaNodeParameter() : base(new GH_InstanceDescription(
+      GsaNodeGoo.Name,
+      GsaNodeGoo.NickName,
+      GsaNodeGoo.Description + " parameter",
+      GsaGH.Components.Ribbon.CategoryName.Name(),
+      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+    { }
 
     //We do not allow users to pick parameter, 
     //therefore the following 4 methods disable all this ui.
@@ -27,10 +30,12 @@ namespace GsaGH.Parameters
     {
       return GH_GetterResult.cancel;
     }
+
     protected override GH_GetterResult Prompt_Singular(ref GsaNodeGoo value)
     {
       return GH_GetterResult.cancel;
     }
+
     protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
     {
       System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
@@ -80,5 +85,4 @@ namespace GsaGH.Parameters
     }
     #endregion
   }
-
 }

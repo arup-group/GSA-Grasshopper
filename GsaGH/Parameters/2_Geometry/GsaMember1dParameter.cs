@@ -6,28 +6,31 @@ using Rhino.Geometry;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaMember2d type.
+  /// This class provides a parameter interface for the <see cref="GsaMember1dGoo"/> type.
   /// </summary>
-  public class GsaMember2dParameter : GH_PersistentGeometryParam<GsaMember2dGoo>, IGH_PreviewObject
+  public class GsaMember1dParameter : GH_PersistentGeometryParam<GsaMember1dGoo>, IGH_PreviewObject
   {
-    public GsaMember2dParameter()
-      : base(new GH_InstanceDescription("2D Member", "M2D", "Maintains a collection of GSA 2D Member data.", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-    {
-    }
-
-    public override Guid ComponentGuid => new Guid("fa512c2d-4767-49f1-a574-32bf66a66568");
-
+    public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaMember1dGoo.Name + " parameter" : base.InstanceDescription;
+    public override string TypeName => this.SourceCount == 0 ? GsaMember1dGoo.Name : base.TypeName;
+    public override Guid ComponentGuid => new Guid("0392a5a0-7762-4214-8c30-fb395365056e");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Mem1dParam;
 
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Mem2dParam;
+    public GsaMember1dParameter() : base(new GH_InstanceDescription(
+      GsaMember1dGoo.Name,
+      GsaMember1dGoo.NickName,
+      GsaMember1dGoo.Description + " parameter",
+      GsaGH.Components.Ribbon.CategoryName.Name(),
+      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+    { }
 
     //We do not allow users to pick parameter, 
     //therefore the following 4 methods disable all this ui.
-    protected override GH_GetterResult Prompt_Plural(ref List<GsaMember2dGoo> values)
+    protected override GH_GetterResult Prompt_Plural(ref List<GsaMember1dGoo> values)
     {
       return GH_GetterResult.cancel;
     }
-    protected override GH_GetterResult Prompt_Singular(ref GsaMember2dGoo value)
+    protected override GH_GetterResult Prompt_Singular(ref GsaMember1dGoo value)
     {
       return GH_GetterResult.cancel;
     }
@@ -58,6 +61,7 @@ namespace GsaGH.Parameters
         return Preview_ComputeClippingBox();
       }
     }
+
     public void DrawViewportMeshes(IGH_PreviewArgs args)
     {
       //Use a standard method to draw gunk, you don't have to specifically implement this.

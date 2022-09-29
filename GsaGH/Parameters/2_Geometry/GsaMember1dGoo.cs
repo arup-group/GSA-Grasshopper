@@ -483,6 +483,10 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaMember1dGoo : GH_GeometricGoo<GsaMember1d>, IGH_PreviewData
   {
+    public static string Name => "1D Member";
+    public static string NickName => "M1D";
+    public static string Description => "GSA 1D Member";
+
     #region constructors
     public GsaMember1dGoo()
     {

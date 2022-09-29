@@ -5,29 +5,34 @@ using Grasshopper.Kernel;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaSection type.
+  /// This class provides a parameter interface for the <see cref="GsaAnalysisTaskGoo"/> type.
   /// </summary>
-  public class GsaAnalysisCaseParameter : GH_PersistentParam<GsaAnalysisCaseGoo>
+  public class GsaAnalysisTaskParameter : GH_PersistentParam<GsaAnalysisTaskGoo>
   {
-    public GsaAnalysisCaseParameter()
-      : base(new GH_InstanceDescription("AnalysisCase", "ΣA", "GSA Analysis Case", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-    {
-    }
-
-    public override Guid ComponentGuid => new Guid("6b99a192-bdbd-41bf-8efa-1bc146d3c224");
-
+    public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaAnalysisTaskGoo.Name + " parameter" : base.InstanceDescription;
+    public override string TypeName => this.SourceCount == 0 ? GsaAnalysisTaskGoo.Name : base.TypeName;
+    public override Guid ComponentGuid => new Guid("51048d67-3652-45d0-9eec-0f9ef339c1a5");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisTaskParam;
 
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisCaseParam;
+    public GsaAnalysisTaskParameter() : base(new GH_InstanceDescription(
+      GsaAnalysisTaskGoo.Name,
+      GsaAnalysisTaskGoo.NickName,
+      GsaAnalysisTaskGoo.Description + " parameter",
+      GsaGH.Components.Ribbon.CategoryName.Name(),
+      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+    { }
 
-    protected override GH_GetterResult Prompt_Plural(ref List<GsaAnalysisCaseGoo> values)
+    protected override GH_GetterResult Prompt_Plural(ref List<GsaAnalysisTaskGoo> values)
     {
       return GH_GetterResult.cancel;
     }
-    protected override GH_GetterResult Prompt_Singular(ref GsaAnalysisCaseGoo value)
+
+    protected override GH_GetterResult Prompt_Singular(ref GsaAnalysisTaskGoo value)
     {
       return GH_GetterResult.cancel;
     }
+
     protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
     {
       System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
@@ -48,7 +53,6 @@ namespace GsaGH.Parameters
     }
 
     #region preview methods
-
     public bool Hidden
     {
       get { return true; }
@@ -60,5 +64,4 @@ namespace GsaGH.Parameters
     }
     #endregion
   }
-
 }

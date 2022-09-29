@@ -5,10 +5,14 @@ using Grasshopper.Kernel;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// This class provides a Parameter interface for the Data_GsaOffset type.
+  /// This class provides a parameter interface for the <see cref="GsaOffsetGoo"/> type.
   /// </summary>
   public class GsaOffsetParameter : GH_PersistentParam<GsaOffsetGoo>
   {
+    public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaOffsetGoo.Name + " parameter" : base.InstanceDescription;
+    public override string TypeName => this.SourceCount == 0 ? GsaOffsetGoo.Name : base.TypeName;
+
+
     public GsaOffsetParameter()
       : base(new GH_InstanceDescription("Offset", "Of", "GSA Offset", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
     {

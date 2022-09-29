@@ -391,6 +391,10 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaElement1dGoo : GH_GeometricGoo<GsaElement1d>, IGH_PreviewData
   {
+    public static string Name => "1D Element";
+    public static string NickName => "E1D";
+    public static string Description => "GSA 1D Element";
+    
     #region constructors
     public GsaElement1dGoo()
     {
@@ -423,6 +427,7 @@ namespace GsaGH.Parameters
         return true;
       }
     }
+
     public override string IsValidWhyNot
     {
       get
@@ -439,10 +444,12 @@ namespace GsaGH.Parameters
       else
         return Value.ToString();
     }
+
     public override string TypeName
     {
       get { return ("Element 1D"); }
     }
+
     public override string TypeDescription
     {
       get { return ("GSA 1D Element"); }
@@ -457,6 +464,7 @@ namespace GsaGH.Parameters
         return Value.Line.GetBoundingBox(false);
       }
     }
+
     public override BoundingBox GetBoundingBox(Transform xform)
     {
       if (Value == null) { return BoundingBox.Empty; }
@@ -468,10 +476,6 @@ namespace GsaGH.Parameters
     #region casting methods
     public override bool CastTo<Q>(out Q target)
     {
-      // This function is called when Grasshopper needs to convert this 
-      // instance of GsaElement into some other type Q.            
-
-
       if (typeof(Q).IsAssignableFrom(typeof(GsaElement1d)))
       {
         if (Value == null)
