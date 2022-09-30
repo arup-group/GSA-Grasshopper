@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Reflection;
-using ComposGHTests.Helpers;
+using GsaGHTests.Helpers;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using Xunit;
 
-namespace ComposGHTests.Parameters
+namespace GsaGHTests.Parameters
 {
   [Collection("GrasshopperFixture collection")]
   public class GH_OasysGooTest

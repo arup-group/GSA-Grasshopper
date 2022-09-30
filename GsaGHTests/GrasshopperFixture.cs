@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using Xunit;
 
-namespace ComposGHTests
+namespace GsaGHTests
 {
   public class GrasshopperFixture : IDisposable
   {
@@ -32,37 +32,22 @@ namespace ComposGHTests
     {
       AddPluginToGH();
 
-      InitializeCore();
-
-      GrasshopperFixture.LoadRefs();
+      LoadRefs();
       Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
+      
+      InitializeCore();
 
       // setup headless units
       OasysGH.Units.Utility.SetupUnitsDuringLoad(true);
     }
 
-    public static void LoadRefs()
+    public void LoadRefs()
     {
       const string name = "PATH";
       string pathvar = System.Environment.GetEnvironmentVariable(name);
       var value = pathvar + ";" + InstallPath + "\\";
       var target = EnvironmentVariableTarget.Process;
       System.Environment.SetEnvironmentVariable(name, value, target);
-    }
-
-    public static void UseGsaAPI()
-    {
-      // create new GH-GSA model 
-      Model m = new Model();
-
-      string tempPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-      tempPath = System.IO.Path.Combine(tempPath, "Oasys", "GsaGrasshopper");
-      string file = tempPath + "\\Samples\\Env.gwb";
-
-      // open existing GSA model (steel design sample)
-      // model containing CAT section profiles which I
-      // think loads the SectLib.db3 SQL lite database
-      m.Open(file);
     }
 
     public void AddPluginToGH()

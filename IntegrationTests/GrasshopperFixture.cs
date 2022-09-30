@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using Xunit;
 
 namespace Rhino.Test
 {
   public class GrasshopperFixture : IDisposable
   {
+    public static string InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.1");
+
     private object _Core = null;
     private object _GHPlugin = null;
     private object _DocIO { get; set; }
@@ -26,10 +29,22 @@ namespace Rhino.Test
     {
       AddPluginToGH();
 
+      LoadRefs();
+      Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
+      
       InitializeCore();
 
       // setup headless units
       OasysGH.Units.Utility.SetupUnitsDuringLoad(true);
+    }
+
+    public void LoadRefs()
+    {
+      const string name = "PATH";
+      string pathvar = System.Environment.GetEnvironmentVariable(name);
+      var value = pathvar + ";" + InstallPath + "\\";
+      var target = EnvironmentVariableTarget.Process;
+      System.Environment.SetEnvironmentVariable(name, value, target);
     }
 
     public void AddPluginToGH()

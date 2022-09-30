@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 
-namespace ComposGHTests.Helpers
+namespace GsaGHTests.Helpers
 {
   public class Duplicates
   {

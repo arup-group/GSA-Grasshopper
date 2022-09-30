@@ -1,4 +1,4 @@
-﻿using ComposGHTests.Helpers;
+﻿using GsaGHTests.Helpers;
 using GsaGH.Parameters;
 using Xunit;
 
