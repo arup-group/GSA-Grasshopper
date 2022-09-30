@@ -6,9 +6,9 @@ using Rhino.Display;
 
 namespace GsaGH.Parameters
 {
-  public class ResultPoint : GH_GeometricGoo<Point3d>, IGH_PreviewData
+  public class ResultPointGoo : GH_GeometricGoo<Point3d>, IGH_PreviewData
   {
-    public ResultPoint(Point3d point, double result, Color colour, float size)
+    public ResultPointGoo(Point3d point, double result, Color colour, float size)
     : base(point)
     {
       m_result = result;
@@ -35,7 +35,7 @@ namespace GsaGH.Parameters
 
     public override IGH_GeometricGoo DuplicateGeometry()
     {
-      return new ResultPoint(Value, m_result, m_colour, m_size);
+      return new ResultPointGoo(Value, m_result, m_colour, m_size);
     }
     public override BoundingBox Boundingbox
     {
@@ -58,12 +58,12 @@ namespace GsaGH.Parameters
     {
       Point3d point = Value;
       point.Transform(xform);
-      return new ResultPoint(point, m_result, m_colour, m_size);
+      return new ResultPointGoo(point, m_result, m_colour, m_size);
     }
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
       Point3d point = xmorph.MorphPoint(Value);
-      return new ResultPoint(point, m_result, m_colour, m_size);
+      return new ResultPointGoo(point, m_result, m_colour, m_size);
     }
 
     public override object ScriptVariable()

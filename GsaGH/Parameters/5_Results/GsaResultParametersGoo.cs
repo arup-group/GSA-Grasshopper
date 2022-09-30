@@ -7,7 +7,7 @@ namespace GsaGH.Parameters
   /// <summary>
   /// This class provides a parameter interface for the <see cref="GsaResultGoo"/> type.
   /// </summary>
-  public class GsaResultsParameter : GH_PersistentParam<GsaResultGoo>
+  public class GsaResultsParameterGoo : GH_PersistentParam<GsaResultGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaResultGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaResultGoo.Name : base.TypeName;
@@ -15,7 +15,7 @@ namespace GsaGH.Parameters
     public override GH_Exposure Exposure => GH_Exposure.primary;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ResultParam;
 
-    public GsaResultsParameter() : base(new GH_InstanceDescription(
+    public GsaResultsParameterGoo() : base(new GH_InstanceDescription(
       GsaResultGoo.Name,
       GsaResultGoo.NickName,
       GsaResultGoo.Description + " parameter",

@@ -519,7 +519,7 @@ namespace GsaGH.Components
 
         List<int> elemID = new List<int>();
         List<int> parentMember = new List<int>();
-        ResultMesh resultMeshes = new ResultMesh(new Mesh(), new List<List<double>>());
+        ResultMeshGoo resultMeshes = new ResultMeshGoo(new Mesh(), new List<List<double>>());
         //List<Mesh> meshes = new List<Mesh>();
         ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
         meshes.AsParallel().AsOrdered();

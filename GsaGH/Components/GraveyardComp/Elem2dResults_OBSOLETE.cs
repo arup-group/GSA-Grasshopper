@@ -359,7 +359,7 @@ namespace GsaGH.Components
     // new lists of vectors to output results in:
     ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>> xyzResults = new ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>>();
     ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>> xxyyzzResults = new ConcurrentDictionary<int, ConcurrentDictionary<int, Vector3d>>();
-    List<ResultMesh> resultMeshes = new List<ResultMesh>();
+    List<ResultMeshGoo> resultMeshes = new List<ResultMeshGoo>();
     double dmax_x;
     double dmax_y;
     double dmax_z;
@@ -756,7 +756,7 @@ namespace GsaGH.Components
         IReadOnlyDictionary<int, Element> elems = gsaModel.Model.Elements(elemList);
         IReadOnlyDictionary<int, Node> nodes = gsaModel.Model.Nodes();
 
-        ResultMesh resultMeshes = new ResultMesh(new Mesh(), new List<List<double>>());
+        ResultMeshGoo resultMeshes = new ResultMeshGoo(new Mesh(), new List<List<double>>());
         //List<Mesh> meshes = new List<Mesh>();
         ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
         meshes.AsParallel().AsOrdered();

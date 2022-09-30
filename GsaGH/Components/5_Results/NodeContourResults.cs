@@ -403,7 +403,7 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         // Loop through nodes and set result colour into ResultPoint format
-        ConcurrentDictionary<int, ResultPoint> pts = new ConcurrentDictionary<int, ResultPoint>();
+        ConcurrentDictionary<int, ResultPointGoo> pts = new ConcurrentDictionary<int, ResultPointGoo>();
 
         Parallel.ForEach(gsanodes, node =>
         {
@@ -502,7 +502,7 @@ namespace GsaGH.Components
                     Math.Max(2, (float)(Math.Abs(t) / Math.Abs(dmin) * scale));
 
                 // add our special resultpoint to the list of points
-                pts[nodeID] = new ResultPoint(def, t, valcol, size);
+                pts[nodeID] = new ResultPointGoo(def, t, valcol, size);
               }
             }
           }

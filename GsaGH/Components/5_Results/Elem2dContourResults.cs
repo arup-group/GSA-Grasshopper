@@ -501,7 +501,7 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         #region create mesh
-        ResultMesh resultMeshes = new ResultMesh(new Mesh(), new List<List<double>>());
+        ResultMeshGoo resultMeshes = new ResultMeshGoo(new Mesh(), new List<List<double>>());
         ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
         meshes.AsParallel().AsOrdered();
         ConcurrentDictionary<int, List<double>> values = new ConcurrentDictionary<int, List<double>>();

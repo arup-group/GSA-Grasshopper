@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
-using Rhino.Geometry;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using System.Linq;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
-  public class ResultMesh : GH_GeometricGoo<Mesh>, IGH_PreviewData
+  public class ResultMeshGoo : GH_GeometricGoo<Mesh>, IGH_PreviewData
   {
-    public ResultMesh(Mesh mesh, List<List<double>> results)
+    public ResultMeshGoo(Mesh mesh, List<List<double>> results)
     : base(mesh)
     {
       m_results = results;
@@ -84,7 +84,7 @@ namespace GsaGH.Parameters
 
     public override IGH_GeometricGoo DuplicateGeometry()
     {
-      return new ResultMesh(Value, m_results);
+      return new ResultMeshGoo(Value, m_results);
     }
     public override BoundingBox Boundingbox
     {
@@ -103,13 +103,13 @@ namespace GsaGH.Parameters
     {
       Mesh m = Value.DuplicateMesh();
       m.Transform(xform);
-      return new ResultMesh(m, m_results);
+      return new ResultMeshGoo(m, m_results);
     }
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
       Mesh m = Value.DuplicateMesh();
       xmorph.Morph(m);
-      return new ResultMesh(m, m_results);
+      return new ResultMeshGoo(m, m_results);
     }
 
     public override object ScriptVariable()

@@ -549,7 +549,7 @@ namespace GsaGH.Components
         dmin = rounded[1];
 
         // Loop through nodes and set result colour into ResultPoint format
-        ConcurrentDictionary<int, ResultPoint> pts = new ConcurrentDictionary<int, ResultPoint>();
+        ConcurrentDictionary<int, ResultPointGoo> pts = new ConcurrentDictionary<int, ResultPointGoo>();
         ConcurrentDictionary<int, System.Drawing.Color> col = new ConcurrentDictionary<int, System.Drawing.Color>();
 
         Parallel.ForEach(gsanodes, node =>
@@ -614,7 +614,7 @@ namespace GsaGH.Components
                 def.Transform(Transform.Translation(translation));
 
                 // add our special resultpoint to the list of points
-                pts[nodeID] = new ResultPoint(def, t, valcol, size);
+                pts[nodeID] = new ResultPointGoo(def, t, valcol, size);
 
                 // add the colour to the colours list
                 col[nodeID] = valcol;
