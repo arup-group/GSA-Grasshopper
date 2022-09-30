@@ -8,7 +8,7 @@ using static GsaGH.Parameters.GsaMaterial;
 namespace GsaGHTests.Slab
 {
   [Collection("GrasshopperFixture collection")]
-  public class CreateMaterialTestss
+  public class CreateMaterialTests
   {
     public static GH_OasysDropDownComponent ComponentMother()
     {

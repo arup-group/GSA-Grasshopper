@@ -131,12 +131,14 @@ namespace GsaGH.Parameters
       m_guid = Guid.Empty;
       m_idd = 0;
     }
+
     public GsaProp3d(int id)
     {
       m_prop3d = null;
       m_guid = Guid.Empty;
       m_idd = id;
     }
+
     public GsaProp3d(GsaMaterial material)
     {
       m_prop3d = new Prop3D();
@@ -144,7 +146,6 @@ namespace GsaGH.Parameters
       m_idd = 0;
       this.Material = material;
     }
-
 
     public GsaProp3d Duplicate()
     {

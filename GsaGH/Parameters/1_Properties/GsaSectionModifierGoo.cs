@@ -362,7 +362,7 @@ namespace GsaGH.Parameters
     #region constructors
     public GsaSectionModifier()
     {
-      // empty constructor will create internal null API object
+      // empty constructor
     }
 
     internal GsaSectionModifier(SectionModifier apiMod)

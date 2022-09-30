@@ -1,4 +1,4 @@
-﻿using System;
+﻿dusing System;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -22,7 +22,10 @@ namespace GsaGH.Parameters
     public Length Z { get; set; } = Length.Zero;
 
     #region constructors
-    public GsaOffset() { }
+    public GsaOffset()
+    {
+      // empty constructor
+    }
 
     public GsaOffset(double x1, double x2, double y, double z, LengthUnit unit = LengthUnit.Meter)
     {

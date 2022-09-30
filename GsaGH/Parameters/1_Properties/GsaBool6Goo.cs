@@ -56,6 +56,7 @@ namespace GsaGH.Parameters
     {
       API_Bool6 = new Bool6(X, Y, Z, XX, YY, ZZ);
     }
+
     internal GsaBool6(Bool6 bool6)
     {
       API_Bool6 = bool6;

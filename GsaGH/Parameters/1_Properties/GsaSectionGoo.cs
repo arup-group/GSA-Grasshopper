@@ -217,12 +217,14 @@ namespace GsaGH.Parameters
       m_guid = Guid.Empty;
       m_idd = 0;
     }
+
     public GsaSection(int id)
     {
       m_section = null;
       m_guid = Guid.Empty;
       m_idd = id;
     }
+
     public GsaSection(string profile)
     {
       m_section = new Section
@@ -232,6 +234,7 @@ namespace GsaGH.Parameters
       m_material = new GsaMaterial();
       m_guid = Guid.NewGuid();
     }
+
     public GsaSection(string profile, int ID = 0)
     {
       m_section = new Section
@@ -242,6 +245,7 @@ namespace GsaGH.Parameters
       m_material = new GsaMaterial();
       m_guid = Guid.NewGuid();
     }
+
     public GsaSection Duplicate()
     {
       if (this == null) { return null; }

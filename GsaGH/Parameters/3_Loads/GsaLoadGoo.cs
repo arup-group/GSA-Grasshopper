@@ -400,41 +400,53 @@ namespace GsaGH.Parameters
     #endregion
 
     #region constructors
+    public GsaLoad()
+    {
+      // empty constructor
+    }
+
     public GsaLoad(GsaGravityLoad gravityload)
     {
       GravityLoad = gravityload;
       LoadType = LoadTypes.Gravity;
     }
+
     public GsaLoad(GsaNodeLoad nodeload)
     {
       NodeLoad = nodeload;
       LoadType = LoadTypes.Node;
     }
+
     public GsaLoad(GsaBeamLoad beamload)
     {
       BeamLoad = beamload;
       LoadType = LoadTypes.Beam;
     }
+
     public GsaLoad(GsaFaceLoad faceload)
     {
       FaceLoad = faceload;
       LoadType = LoadTypes.Face;
     }
+
     public GsaLoad(GsaGridPointLoad gridpointload)
     {
       PointLoad = gridpointload;
       LoadType = LoadTypes.GridPoint;
     }
+
     public GsaLoad(GsaGridLineLoad gridlineload)
     {
       LineLoad = gridlineload;
       LoadType = LoadTypes.GridLine;
     }
+
     public GsaLoad(GsaGridAreaLoad gridareaload)
     {
       AreaLoad = gridareaload;
       LoadType = LoadTypes.GridArea;
     }
+
     public GsaLoad Duplicate()
     {
       if (this == null) { return null; }
