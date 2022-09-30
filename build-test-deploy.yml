@@ -1,6 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
 trigger:
@@ -12,7 +9,7 @@ variables:
   - name: configuration
     value: Release
   - name: latest_released_gsa_version
-    value: GSA/10.1/10.1.60/10.1.60.42/2022-07-01/36296/Arup_GSA_x64_10.1.60.42
+    value: GSA/10.1/10.1.61/10.1.61.0/2022-07-20/36997/Arup_GSA_x64_10.1.61.0
 
 pool: 'rhino-compute'
 

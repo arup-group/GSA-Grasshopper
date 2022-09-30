@@ -397,6 +397,7 @@ namespace GsaGH.Parameters
       m_mesh = new Mesh();
       //m_props = new List<GsaProp2d>();
     }
+
     public GsaElement3d(Mesh mesh, int prop = 0)
     {
       m_elements = new List<Element>();
@@ -416,6 +417,7 @@ namespace GsaGH.Parameters
       }
       UpdatePreview();
     }
+
     internal GsaElement3d(List<Element> elements, List<int> ids, Mesh mesh, List<GsaProp3d> prop3ds)
     {
       m_elements = elements;
@@ -430,24 +432,26 @@ namespace GsaGH.Parameters
       m_props = prop3ds;
       UpdatePreview();
     }
+
     public GsaElement3d Duplicate(bool cloneApiElements = false)
     {
-      if (this == null) { return null; }
-      if (m_mesh == null) { return null; }
+      if (m_mesh == null)  
+        return null; 
 
       GsaElement3d dup = new GsaElement3d();
-      dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
-      dup.m_topo = m_topo;
-      dup.m_topoInt = m_topoInt;
-      dup.m_faceInt = m_faceInt;
-      dup.m_elements = m_elements;
+      dup.m_mesh = (Mesh)this.m_mesh.DuplicateShallow();
+      dup.m_topo = this.m_topo;
+      dup.m_topoInt = this.m_topoInt;
+      dup.m_faceInt = this.m_faceInt;
+      dup.m_elements = this.m_elements;
       if (cloneApiElements)
         dup.CloneApiElements();
-      dup.m_id = m_id.ToList();
-      dup.m_props = m_props.ConvertAll(x => x.Duplicate());
+      dup.m_id = this.m_id.ToList();
+      dup.m_props = this.m_props.ConvertAll(x => x.Duplicate());
       dup.UpdatePreview();
       return dup;
     }
+
     /// <summary>
     /// This method will return a copy of the existing element3d with an updated mesh
     /// </summary>

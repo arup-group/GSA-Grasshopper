@@ -374,6 +374,7 @@ namespace GsaGH.Parameters
         m_props.Add(new GsaProp2d());
       }
     }
+
     internal GsaElement2d(List<Element> elements, List<int> IDs, Mesh mesh, List<GsaProp2d> prop2ds)
     {
       m_mesh = mesh;
@@ -383,6 +384,7 @@ namespace GsaGH.Parameters
       m_id = IDs;
       m_props = prop2ds;
     }
+
     public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, Length meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit, int prop = 0)
     {
       m_elements = new List<Element>();
@@ -396,33 +398,36 @@ namespace GsaGH.Parameters
 
       m_props = new List<GsaProp2d>();
     }
+
     public GsaElement2d Duplicate(bool cloneApiElements = false)
     {
-      if (this == null) { return null; }
-      if (m_mesh == null) { return null; }
+      if (m_mesh == null)
+        return null;
       GsaElement2d dup = new GsaElement2d();
-      dup.m_elements = m_elements;
+      dup.m_elements = this.m_elements;
       if (cloneApiElements)
         dup.CloneApiElements();
-      dup.m_id = m_id.ToList();
-      dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
-      dup.m_props = m_props.ConvertAll(x => x.Duplicate());
-      dup.m_topo = m_topo;
-      dup.m_topoInt = m_topoInt;
+      dup.m_id = this.m_id.ToList();
+      dup.m_mesh = (Mesh)this.m_mesh.DuplicateShallow();
+      dup.m_props = this.m_props.ConvertAll(x => x.Duplicate());
+      dup.m_topo = this.m_topo;
+      dup.m_topoInt = this.m_topoInt;
       return dup;
     }
+
     public GsaElement2d UpdateGeometry(Mesh newMesh)
     {
-      if (this == null) { return null; }
-      if (m_mesh == null) { return null; }
-      if (m_mesh.Faces.Count != m_elements.Count) { return null; } // the logic below assumes the number of elements is equal to number of faces
+      if (this.m_mesh == null)
+        return null;
+      if (this.m_mesh.Faces.Count != this.m_elements.Count)
+        return null; // the logic below assumes the number of elements is equal to number of faces
 
       GsaElement2d dup = this.Duplicate(true);
       m_mesh = newMesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(m_mesh, 0);
-      m_elements = convertMesh.Item1;
-      m_topo = convertMesh.Item2;
-      m_topoInt = convertMesh.Item3;
+      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(this.m_mesh, 0);
+      this.m_elements = convertMesh.Item1;
+      this.m_topo = convertMesh.Item2;
+      this.m_topoInt = convertMesh.Item3;
       return dup;
     }
     #endregion

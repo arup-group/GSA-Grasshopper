@@ -127,6 +127,7 @@ namespace GsaGH.Parameters
     #region constructors
     public GsaProp3d()
     {
+      // is this a good idea?
       m_prop3d = null;
       m_guid = Guid.Empty;
       m_idd = 0;
@@ -134,6 +135,7 @@ namespace GsaGH.Parameters
 
     public GsaProp3d(int id)
     {
+      // is this a good idea?
       m_prop3d = null;
       m_guid = Guid.Empty;
       m_idd = id;
@@ -149,13 +151,12 @@ namespace GsaGH.Parameters
 
     public GsaProp3d Duplicate()
     {
-      if (this == null) { return null; }
       GsaProp3d dup = new GsaProp3d();
-      if (m_prop3d != null)
-        dup.m_prop3d = m_prop3d;
-      dup.m_idd = m_idd;
+      if (this.m_prop3d != null)
+        dup.m_prop3d = this.m_prop3d;
+      dup.m_idd = this.m_idd;
       if (m_material != null)
-        dup.m_material = m_material.Duplicate();
+        dup.m_material = this.m_material.Duplicate();
       dup.m_guid = new Guid(m_guid.ToString());
       return dup;
     }

@@ -20,6 +20,7 @@ namespace GsaGH.Parameters
       get { return m_member; }
       set { m_member = value; }
     }
+
     internal Member GetAPI_MemberClone()
     {
       Member mem = new Member
@@ -27,7 +28,7 @@ namespace GsaGH.Parameters
         Group = m_member.Group,
         IsDummy = m_member.IsDummy,
         MeshSize = m_member.MeshSize,
-        Name = m_member.Name.ToString(),
+        Name = m_member.Name,
         Offset = m_member.Offset,
         OrientationAngle = m_member.OrientationAngle,
         OrientationNode = m_member.OrientationNode,
@@ -42,6 +43,7 @@ namespace GsaGH.Parameters
 
       return mem;
     }
+
     public Mesh SolidMesh
     {
       get { return m_mesh; }
@@ -51,6 +53,7 @@ namespace GsaGH.Parameters
         UpdatePreview();
       }
     }
+
     public int ID
     {
       get { return m_id; }
@@ -172,6 +175,7 @@ namespace GsaGH.Parameters
       m_mesh = new Mesh();
       m_prop = new GsaProp3d();
     }
+
     internal GsaMember3d(Member member, int id, Mesh mesh)
     {
       m_member = member;
@@ -180,6 +184,7 @@ namespace GsaGH.Parameters
       m_prop = new GsaProp3d();
       UpdatePreview();
     }
+
     internal GsaMember3d(Member member, int id, Mesh mesh, GsaProp3d prop)
     {
       m_member = member;
@@ -188,6 +193,7 @@ namespace GsaGH.Parameters
       m_prop = prop.Duplicate();
       UpdatePreview();
     }
+
     public GsaMember3d(Mesh mesh)
     {
       m_member = new Member
@@ -205,6 +211,7 @@ namespace GsaGH.Parameters
         UpdatePreview();
       }
     }
+
     public GsaMember3d(Brep brep)
     {
       m_member = new Member
@@ -222,20 +229,21 @@ namespace GsaGH.Parameters
         UpdatePreview();
       }
     }
+
     public GsaMember3d Duplicate(bool cloneApiMember = false)
     {
-      if (this == null) { return null; }
       GsaMember3d dup = new GsaMember3d();
-      dup.m_mesh = (Mesh)m_mesh.DuplicateShallow();
-      dup.m_prop = m_prop.Duplicate();
+      dup.m_mesh = (Mesh)this.m_mesh.DuplicateShallow();
+      dup.m_prop = this.m_prop.Duplicate();
       if (cloneApiMember)
         dup.CloneApiMember();
       else
-        dup.m_member = m_member;
-      dup.m_id = m_id;
+        dup.m_member = this.m_member;
+      dup.m_id = this.m_id;
       dup.UpdatePreview();
       return dup;
     }
+
     public GsaMember3d UpdateGeometry(Brep brep)
     {
       if (this == null) { return null; }
@@ -244,6 +252,7 @@ namespace GsaGH.Parameters
       dup.UpdatePreview();
       return dup;
     }
+
     public GsaMember3d UpdateGeometry(Mesh mesh)
     {
       if (this == null) { return null; }
@@ -277,7 +286,6 @@ namespace GsaGH.Parameters
       string valid = (this.IsValid) ? "" : "Invalid ";
       return valid + typeTxt;
     }
-
     #endregion
   }
 

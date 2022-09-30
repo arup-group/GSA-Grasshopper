@@ -59,6 +59,7 @@ namespace GsaGH.Parameters
         UpdatePreview();
       }
     }
+
     public GsaSection Section
     {
       get { return m_section; }
@@ -71,6 +72,7 @@ namespace GsaGH.Parameters
       get { return m_element; }
       set { m_element = value; }
     }
+
     internal Element GetAPI_ElementClone()
     {
       Element elem = new Element()
@@ -92,6 +94,7 @@ namespace GsaGH.Parameters
         elem.Colour = m_element.Colour;
       return elem;
     }
+
     public System.Drawing.Color Colour
     {
       get
@@ -104,6 +107,7 @@ namespace GsaGH.Parameters
         m_element.Colour = value;
       }
     }
+
     public int Group
     {
       get { return m_element.Group; }
@@ -113,6 +117,7 @@ namespace GsaGH.Parameters
         m_element.Group = value;
       }
     }
+
     public bool IsDummy
     {
       get { return m_element.IsDummy; }
@@ -122,6 +127,7 @@ namespace GsaGH.Parameters
         m_element.IsDummy = value;
       }
     }
+
     public string Name
     {
       get { return m_element.Name; }
@@ -150,6 +156,7 @@ namespace GsaGH.Parameters
         m_element.Offset.Z = value.Z.Meters;
       }
     }
+
     public double OrientationAngle
     {
       get { return m_element.OrientationAngle; }
@@ -159,6 +166,7 @@ namespace GsaGH.Parameters
         m_element.OrientationAngle = value;
       }
     }
+
     public GsaNode OrientationNode
     {
       get { return m_orientationNode; }
@@ -168,10 +176,12 @@ namespace GsaGH.Parameters
         m_orientationNode = value;
       }
     }
+
     public int ParentMember
     {
       get { return m_element.ParentMember.Member; }
     }
+
     public ElementType Type
     {
       get { return m_element.Type; }
@@ -181,12 +191,13 @@ namespace GsaGH.Parameters
         m_element.Type = value;
       }
     }
+
     internal void CloneApiElement()
     {
       m_element = this.GetAPI_ElementClone();
     }
-
     #endregion
+
     #region preview
     internal Point3d previewPointStart;
     internal Point3d previewPointEnd;
@@ -306,54 +317,50 @@ namespace GsaGH.Parameters
       m_line = new LineCurve();
       m_section = new GsaSection();
     }
+
     public GsaElement1d(LineCurve line, int prop = 0, int ID = 0, GsaNode orientationNode = null)
     {
-      m_element = new Element
+      this.m_element = new Element
       {
         Type = ElementType.BEAM,
       };
 
-      m_line = line;
-      m_section = new GsaSection();
-      m_id = ID;
-      m_section.ID = prop;
-      if (orientationNode != null)
-        m_orientationNode = orientationNode;
+      this.m_line = line;
+      this.m_section = new GsaSection();
+      this.m_id = ID;
+      this.m_section.ID = prop;
+      this.m_orientationNode = orientationNode;
       UpdatePreview();
     }
+
     internal GsaElement1d(Element elem, LineCurve line, int ID, GsaSection section, GsaNode orientationNode)
     {
-      m_element = elem;
-      m_line = line;
-
-      m_rel1 = new GsaBool6(m_element.GetEndRelease(0).Releases);
-      m_rel2 = new GsaBool6(m_element.GetEndRelease(1).Releases);
-
-      m_id = ID;
-
-      m_section = section;
-
-      if (orientationNode != null)
-        m_orientationNode = orientationNode;
+      this.m_element = elem;
+      this.m_line = line;
+      this.m_rel1 = new GsaBool6(m_element.GetEndRelease(0).Releases);
+      this.m_rel2 = new GsaBool6(m_element.GetEndRelease(1).Releases);
+      this.m_id = ID;
+      this.m_section = section;
+      this.m_orientationNode = orientationNode;
 
       UpdatePreview();
     }
+
     public GsaElement1d Duplicate(bool cloneApiElement = false)
     {
-      if (this == null) { return null; }
       GsaElement1d dup = new GsaElement1d();
-      dup.m_id = m_id;
-      dup.m_element = m_element;
+      dup.m_id = this.m_id;
+      dup.m_element = this.m_element;
       if (cloneApiElement)
         dup.CloneApiElement();
-      dup.m_line = (LineCurve)m_line.DuplicateShallow();
+      dup.m_line = (LineCurve)this.m_line.DuplicateShallow();
       if (m_rel1 != null)
-        dup.m_rel1 = m_rel1.Duplicate();
+        dup.m_rel1 = this.m_rel1.Duplicate();
       if (m_rel2 != null)
-        dup.m_rel2 = m_rel2.Duplicate();
-      dup.m_section = m_section.Duplicate();
-      if (m_orientationNode != null)
-        dup.m_orientationNode = m_orientationNode.Duplicate();
+        dup.m_rel2 = this.m_rel2.Duplicate();
+      dup.m_section = this.m_section.Duplicate();
+      if (this.m_orientationNode != null)
+        dup.m_orientationNode = this.m_orientationNode.Duplicate();
       UpdatePreview();
       return dup;
     }

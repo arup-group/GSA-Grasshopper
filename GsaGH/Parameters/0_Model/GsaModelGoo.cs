@@ -37,6 +37,7 @@ namespace GsaGH.Parameters
     #endregion
 
     #region constructors
+
     public GsaModel()
     {
       m_model = new Model();

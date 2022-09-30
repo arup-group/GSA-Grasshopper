@@ -451,7 +451,7 @@ namespace GsaGH.Parameters
     {
       if (this == null) { return null; }
       GsaLoad dup;
-      switch (LoadType)
+      switch (this.LoadType)
       {
         case LoadTypes.Gravity:
           dup = new GsaLoad(m_gravity.Duplicate());

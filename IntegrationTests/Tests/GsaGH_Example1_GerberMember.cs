@@ -1,12 +1,8 @@
-﻿using GsaGHTests.Helpers;
+﻿using System.IO;
+using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using System.IO;
-using System.Reflection;
-using System.Runtime.Remoting.Messaging;
 using Xunit;
-using OasysUnits.Units;
-using OasysUnits;
 
 namespace IntegrationTests
 {
