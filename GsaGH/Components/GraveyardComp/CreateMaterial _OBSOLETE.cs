@@ -19,18 +19,18 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Material
   /// </summary>
-  public class CreateMaterial : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CreateMaterial_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
     // including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("40641747-cfb1-4dab-b060-b9dd344d3ac3");
-    public CreateMaterial()
-      : base("Create Material", "Material", "Create GSA Material by reference to existing Type and Grade",
+    public override Guid ComponentGuid => new Guid("72bfce91-9204-4fe4-b81d-0036babf0c6d");
+    public CreateMaterial_OBSOLETE()
+      : base("Create Material", "Material", "Create GSA Material by reference to existing type and grade",
             Ribbon.CategoryName.Name(),
             Ribbon.SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
 
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMaterial;
     #endregion
@@ -84,14 +84,14 @@ namespace GsaGH.Components
     #region Input and output
     readonly List<string> dropdownitems = new List<string>(new string[]
     {
-      "Generic",
-      "Steel",
-      "Concrete",
-      "Timber",
-      "Aluminium",
-      "FRP",
-      "Glass",
-      "Fabric"
+            "Generic",
+            "Steel",
+            "Concrete",
+            "Timber",
+            "Aluminium",
+            "FRP",
+            "Glass",
+            "Fabric"
     });
 
     string selecteditem;
@@ -100,19 +100,28 @@ namespace GsaGH.Components
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
+      pManager.AddIntegerParameter("Analysis Property Number", "ID", "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
       pManager.AddIntegerParameter("Grade", "Gr", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddParameter(new GsaMaterialParameter());
+      pManager.AddGenericParameter("Material", "Ma", "GSA Material", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
       GsaMaterial material = new GsaMaterial();
 
+      GH_Integer gh_anal = new GH_Integer();
+      if (DA.GetData(0, ref gh_anal))
+      {
+        int anal = 0;
+        GH_Convert.ToInt32(gh_anal, out anal, GH_Conversion.Both);
+        material.AnalysisProperty = anal;
+      }
+
       GH_Integer gh_grade = new GH_Integer();
-      if (DA.GetData(0, ref gh_grade))
+      if (DA.GetData(1, ref gh_grade))
       {
         int grade = 1;
         GH_Convert.ToInt32(gh_grade, out grade, GH_Conversion.Both);
@@ -153,6 +162,7 @@ namespace GsaGH.Components
     }
     private bool first = true;
     private FoldMode _mode = FoldMode.Timber;
+
 
     private void Mode1Clicked()
     {
