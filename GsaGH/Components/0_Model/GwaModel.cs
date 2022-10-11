@@ -48,7 +48,7 @@ namespace GsaGH.Components
       Interop.Gsa_10_1.ComAuto m = new Interop.Gsa_10_1.ComAuto();
       string temp = Path.GetTempPath() + Guid.NewGuid().ToString() + ".gwb";
       
-      GsaModelGoo model = new GsaModelGoo();
+      GsaModelGoo model = null;
       if (DA.GetData(1, ref model))
       {
         model.Value.Model.SaveAs(temp);
