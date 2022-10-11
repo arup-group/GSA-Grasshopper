@@ -6,6 +6,9 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -26,7 +29,7 @@ namespace GsaGH.Components
             Ribbon.SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.hidden;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateProp2d;
     #endregion
 
@@ -41,7 +44,7 @@ namespace GsaGH.Components
 
         // length
         dropdownitems.Add(dropdownTopList);
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
 
         selecteditems.Add(dropdownTopList[3]);
         selecteditems.Add(lengthUnit.ToString());
@@ -66,7 +69,7 @@ namespace GsaGH.Components
         {
           case "Plane Stress":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode1Clicked();
             break;
           case "Fabric":
@@ -76,17 +79,17 @@ namespace GsaGH.Components
             break;
           case "Flat Plate":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode3Clicked();
             break;
           case "Shell":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode4Clicked();
             break;
           case "Curved Shell":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode5Clicked();
             break;
           case "Load Panel":
@@ -139,7 +142,7 @@ namespace GsaGH.Components
             "Unit"
     });
     private bool first = true;
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private LengthUnit lengthUnit = OasysGH.Units.DefaultUnits.LengthUnitGeometry;
     string unitAbbreviation;
     #endregion
 
@@ -227,7 +230,7 @@ namespace GsaGH.Components
           else
             prop.Material = new GsaMaterial(2);
 
-          prop.Thickness = GetInput.GetLength(this, DA, 1, lengthUnit);
+          prop.Thickness = (Length)Input.UnitNumber(this, DA, 1, lengthUnit);
         }
         else
           prop.Material = new GsaMaterial(8);
@@ -408,7 +411,7 @@ namespace GsaGH.Components
 
         // length
         dropdownitems.Add(dropdownTopList);
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
 
         selecteditems.Add(lengthUnit.ToString());
 

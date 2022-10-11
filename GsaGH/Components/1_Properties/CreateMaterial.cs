@@ -16,14 +16,7 @@ namespace GsaGH.Components
   public class CreateMaterial : GH_OasysDropDownComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("72bfce91-9204-4fe4-b81d-0036babf0c6d");
-    public CreateMaterial()
-      : base("Create Material", "Material", "Create GSA Material by reference to existing Type and Grade",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMaterial;
