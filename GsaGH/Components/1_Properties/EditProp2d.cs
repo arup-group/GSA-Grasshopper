@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -9,7 +11,9 @@ using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.Parameters;
 using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -33,17 +37,10 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-
-
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      string unitAbbreviation = Length.GetAbbreviations(this.LengthUnit);
+      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
 
       pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property to get or set information for", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Prop2d Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
@@ -63,7 +60,7 @@ namespace GsaGH.Components
           + System.Environment.NewLine + "Curved Shell : 7"
           + System.Environment.NewLine + "Torsion : 8"
           + System.Environment.NewLine + "Wall : 9"
-          + System.Environment.NewLine + "Load : 10", 
+          + System.Environment.NewLine + "Load : 10",
           GH_ParamAccess.item);
       for (int i = 1; i < pManager.ParamCount; i++)
         pManager[i].Optional = true;
@@ -186,6 +183,46 @@ namespace GsaGH.Components
       if (prop.API_Prop2d == null)
         str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
       DA.SetData(7, str);
+      
+      this.Message = Length.GetAbbreviation(this.LengthUnit);
     }
+
+    #region Custom UI
+    LengthUnit LengthUnit = DefaultUnits.LengthUnitSection;
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+    {
+      Menu_AppendSeparator(menu);
+
+      ToolStripMenuItem unitsMenu = new ToolStripMenuItem("Select unit", Properties.Resources.Units);
+      unitsMenu.Enabled = true;
+      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length))
+      {
+        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); });
+        toolStripMenuItem.Checked = unit == Length.GetAbbreviation(this.LengthUnit);
+        toolStripMenuItem.Enabled = true;
+        unitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+      menu.Items.Add(unitsMenu);
+      
+      Menu_AppendSeparator(menu);
+    }
+    private void Update(string unit)
+    {
+      this.LengthUnit = Length.ParseUnit(unit);
+      this.Message = unit;
+      ExpireSolution(true);
+    }
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    {
+      writer.SetString("LengthUnit", this.LengthUnit.ToString());
+      return base.Write(writer);
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      this.LengthUnit = Length.ParseUnit(reader.GetString("LengthUnit"));
+      return base.Read(reader);
+    }
+    #endregion
   }
 }
