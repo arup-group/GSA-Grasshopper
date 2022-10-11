@@ -387,7 +387,7 @@ namespace GsaGH.Parameters
   public class GsaMaterialParameter : GH_PersistentParam<GsaMaterialGoo>
   {
     public GsaMaterialParameter()
-      : base(new GH_InstanceDescription("Material", "Ma", "GSA Material", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+      : base(new GH_InstanceDescription("Material", "Mat", "GSA Material", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
     {
     }
 

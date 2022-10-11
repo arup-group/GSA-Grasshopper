@@ -12,18 +12,18 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a Prop2d and ouput the information
   /// </summary>
-  public class EditProp2d : GH_OasysComponent, IGH_PreviewObject
+  public class EditProp2d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
     // including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("ab8af109-7ebc-4e49-9f5d-d4cb8ee45557");
-    public EditProp2d()
+    public override Guid ComponentGuid => new Guid("4cfdee19-451b-4ee3-878b-93a86767ffef");
+    public EditProp2d_OBSOLETE()
       : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
             Ribbon.CategoryName.Name(),
             Ribbon.SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
 
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditProp2d;
     #endregion
@@ -48,19 +48,6 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Axis", "Ax", "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
       pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour", "Co", "Set 2D Property Colour", GH_ParamAccess.item);
-      pManager.AddTextParameter("Type", "Ty", "Set 2D Property Type." + System.Environment.NewLine +
-          "Input either text string or integer:"
-          + System.Environment.NewLine + "Plane Stress : 1"
-          + System.Environment.NewLine + "Plane Strain : 2"
-          + System.Environment.NewLine + "Axis Symmetric : 3"
-          + System.Environment.NewLine + "Fabric : 4"
-          + System.Environment.NewLine + "Plate : 5"
-          + System.Environment.NewLine + "Shell : 6"
-          + System.Environment.NewLine + "Curved Shell : 7"
-          + System.Environment.NewLine + "Torsion : 8"
-          + System.Environment.NewLine + "Wall : 9"
-          + System.Environment.NewLine + "Load : 10", 
-          GH_ParamAccess.item);
       for (int i = 1; i < pManager.ParamCount; i++)
         pManager[i].Optional = true;
     }
@@ -150,16 +137,6 @@ namespace GsaGH.Components
       {
         if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
           prop.Colour = col;
-      }
-
-      // 7 type
-      GH_ObjectWrapper ghType = new GH_ObjectWrapper();
-      if (DA.GetData(7, ref ghType))
-      {
-        if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both))
-          prop.Type = (Property2D_Type)number;
-        else if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both))
-          prop.Type = GsaProp2d.PropTypeFromString(type);
       }
 
       //#### outputs ####
