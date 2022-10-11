@@ -6,11 +6,6 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using OasysGH;
-using OasysGH.Components;
-using OasysGH.Helpers;
-using OasysGH.Units;
-using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -19,21 +14,20 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Prop2d
   /// </summary>
-  public class CreateProp2d : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CreateProp2d_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("d693b4ad-7aaf-450e-a436-afbb9d2061fc");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateProp2d;
-
-    public CreateProp2d() : base("Create 2D Property",
-      "Prop2d",
-      "Create GSA 2D Property",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+    // This region handles how the component in displayed on the ribbon
+    // including name, exposure level and icon
+    public override Guid ComponentGuid => new Guid("3fd61492-b5ff-47ea-8c7c-89cf639b32dc");
+    public CreateProp2d_OBSOLETE()
+      : base("Create 2D Property", "Prop2d", "Create GSA 2D Property",
+            Ribbon.CategoryName.Name(),
+            Ribbon.SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateProp2d;
     #endregion
 
     #region Custom UI
@@ -47,7 +41,7 @@ namespace GsaGH.Components
 
         // length
         dropdownitems.Add(dropdownTopList);
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
+        dropdownitems.Add(Units.FilteredLengthUnits);
 
         selecteditems.Add(dropdownTopList[3]);
         selecteditems.Add(lengthUnit.ToString());
@@ -72,7 +66,7 @@ namespace GsaGH.Components
         {
           case "Plane Stress":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
             Mode1Clicked();
             break;
           case "Fabric":
@@ -82,17 +76,17 @@ namespace GsaGH.Components
             break;
           case "Flat Plate":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
             Mode3Clicked();
             break;
           case "Shell":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
             Mode4Clicked();
             break;
           case "Curved Shell":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
             Mode5Clicked();
             break;
           case "Load Panel":
@@ -107,8 +101,8 @@ namespace GsaGH.Components
         lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
       }
 
-      // update name of inputs (to display unit on sliders)
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        // update name of inputs (to display unit on sliders)
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
       Params.OnParametersChanged();
       this.OnDisplayExpired(true);
@@ -126,12 +120,12 @@ namespace GsaGH.Components
     #region Input and output
     readonly List<string> dropdownTopList = new List<string>(new string[]
     {
-      "Plane Stress",
-      "Fabric",
-      "Flat Plate",
-      "Shell",
-      "Curved Shell",
-      "Load Panel"
+            "Plane Stress",
+            "Fabric",
+            "Flat Plate",
+            "Shell",
+            "Curved Shell",
+            "Load Panel"
     });
 
     // list of lists with all dropdown lists conctent
@@ -141,23 +135,27 @@ namespace GsaGH.Components
     // list of descriptions 
     List<string> spacerDescriptions = new List<string>(new string[]
     {
-      "Element Type",
-      "Unit"
+            "Element Type",
+            "Unit"
     });
     private bool first = true;
-    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
     string unitAbbreviation;
     #endregion
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      unitAbbreviation = Length.GetAbbreviation(lengthUnit);
-      pManager.AddGenericParameter("Thickness [" + unitAbbreviation + "]", "Thk", "Section thickness", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaMaterialParameter());
+      //register input parameter
+      Params.RegisterInputParam(new Param_GenericObject());
+      Params.RegisterInputParam(new Param_Number());
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      Params.OnParametersChanged();
+      ExpireSolution(true);
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddParameter(new GsaProp2dParameter());
+      pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess DA)
@@ -165,6 +163,7 @@ namespace GsaGH.Components
       GsaProp2d prop = new GsaProp2d();
 
       // element type (picked in dropdown)
+
       switch (_mode)
       {
         case FoldMode.PlaneStress:
@@ -202,12 +201,9 @@ namespace GsaGH.Components
 
         if (_mode != FoldMode.Fabric)
         {
-          // 0 Thickness
-          prop.Thickness = GetInput.GetLength(this, DA, 0, lengthUnit);
-
-          // 1 Material
+          // 0 Material
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-          if (DA.GetData(1, ref gh_typ))
+          if (DA.GetData(0, ref gh_typ))
           {
             GsaMaterial material = new GsaMaterial();
             if (gh_typ.Value is GsaMaterialGoo)
@@ -230,12 +226,15 @@ namespace GsaGH.Components
           }
           else
             prop.Material = new GsaMaterial(2);
+
+          prop.Thickness = GetInput.GetLength(this, DA, 1, lengthUnit);
         }
         else
           prop.Material = new GsaMaterial(8);
       }
 
       DA.SetData(0, new GsaProp2dGoo(prop));
+
     }
     #region menu override
     private enum FoldMode
@@ -248,6 +247,7 @@ namespace GsaGH.Components
       LoadPanel
     }
     private FoldMode _mode = FoldMode.Shell;
+
 
     private void Mode1Clicked()
     {
@@ -262,8 +262,9 @@ namespace GsaGH.Components
           Params.UnregisterInputParameter(Params.Input[0], true);
 
         //register input parameter
+        //Params.RegisterInputParam(new Param_Integer());
         Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
+        Params.RegisterInputParam(new Param_GenericObject());
       }
       _mode = FoldMode.PlaneStress;
 
@@ -284,6 +285,7 @@ namespace GsaGH.Components
         Params.UnregisterInputParameter(Params.Input[0], true);
 
       //register input parameter
+      //Params.RegisterInputParam(new Param_Integer());
       Params.RegisterInputParam(new Param_GenericObject());
 
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -303,8 +305,9 @@ namespace GsaGH.Components
           Params.UnregisterInputParameter(Params.Input[0], true);
 
         //register input parameter
+        //Params.RegisterInputParam(new Param_Integer());
         Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
+        Params.RegisterInputParam(new Param_GenericObject());
       }
       _mode = FoldMode.FlatPlate;
 
@@ -326,8 +329,9 @@ namespace GsaGH.Components
           Params.UnregisterInputParameter(Params.Input[0], true);
 
         //register input parameter
+        //Params.RegisterInputParam(new Param_Integer());
         Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
+        Params.RegisterInputParam(new Param_GenericObject());
       }
       _mode = FoldMode.Shell;
 
@@ -349,8 +353,9 @@ namespace GsaGH.Components
           Params.UnregisterInputParameter(Params.Input[0], true);
 
         //register input parameter
+        //Params.RegisterInputParam(new Param_Integer());
         Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new GsaMaterialParameter());
+        Params.RegisterInputParam(new Param_GenericObject());
       }
       _mode = FoldMode.CurvedShell;
 
@@ -403,7 +408,7 @@ namespace GsaGH.Components
 
         // length
         dropdownitems.Add(dropdownTopList);
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
+        dropdownitems.Add(Units.FilteredLengthUnits);
 
         selecteditems.Add(lengthUnit.ToString());
 
@@ -438,19 +443,30 @@ namespace GsaGH.Components
     {
       if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric)
       {
-        unitAbbreviation = Length.GetAbbreviation(lengthUnit);
+        IQuantity length = new Length(0, lengthUnit);
+        unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
         int i = 0;
+        Params.Input[i].NickName = "Mat";
+        Params.Input[i].Name = "Material";
+        Params.Input[i].Description = "GsaMaterial or Number referring to a Material already in Existing GSA Model." + System.Environment.NewLine
+            + "Accepted inputs are: " + System.Environment.NewLine
+            + "0 : Generic" + System.Environment.NewLine
+            + "1 : Steel" + System.Environment.NewLine
+            + "2 : Concrete (default)" + System.Environment.NewLine
+            + "3 : Aluminium" + System.Environment.NewLine
+            + "4 : Glass" + System.Environment.NewLine
+            + "5 : FRP" + System.Environment.NewLine
+            + "7 : Timber" + System.Environment.NewLine
+            + "8 : Fabric";
+
+        Params.Input[i].Access = GH_ParamAccess.item;
+        Params.Input[i].Optional = true;
+
+        i++;
         Params.Input[i].NickName = "Thk";
         Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]"; // "Thickness [m]";
         Params.Input[i].Description = "Section thickness";
-        Params.Input[i].Access = GH_ParamAccess.item;
-        Params.Input[i].Optional = true;
-        i++;
-        Params.Input[i].NickName = "Mat";
-        Params.Input[i].Name = "Material";
-        Params.Input[i].Description = "GSA Material";
-
         Params.Input[i].Access = GH_ParamAccess.item;
         Params.Input[i].Optional = true;
       }
@@ -460,7 +476,7 @@ namespace GsaGH.Components
         int i = 0;
         Params.Input[i].NickName = "Mat";
         Params.Input[i].Name = "Material";
-        Params.Input[i].Description = "GSA Material";
+        Params.Input[i].Description = "GsaMaterial or Reference ID for Material Property in Existing GSA Model";
         Params.Input[i].Access = GH_ParamAccess.item;
         Params.Input[i].Optional = true;
       }

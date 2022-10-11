@@ -4,11 +4,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using OasysGH;
-using OasysGH.Components;
-using OasysGH.Helpers;
 using OasysGH.Parameters;
-using OasysGH.Units;
 using OasysUnits;
 
 namespace GsaGH.Components
@@ -16,21 +12,20 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a Prop2d and ouput the information
   /// </summary>
-  public class EditProp2d : GH_OasysComponent, IGH_PreviewObject
+  public class EditProp2d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("ab8af109-7ebc-4e49-9f5d-d4cb8ee45557");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditProp2d;
-
-    public EditProp2d() : base("Edit 2D Property",
-      "Prop2dEdit",
-      "Modify GSA 2D Property",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+    // This region handles how the component in displayed on the ribbon
+    // including name, exposure level and icon
+    public override Guid ComponentGuid => new Guid("4cfdee19-451b-4ee3-878b-93a86767ffef");
+    public EditProp2d_OBSOLETE()
+      : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
+            Ribbon.CategoryName.Name(),
+            Ribbon.SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
+
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditProp2d;
     #endregion
 
     #region Custom UI
@@ -43,7 +38,8 @@ namespace GsaGH.Components
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      string unitAbbreviation = Length.GetAbbreviations(this.LengthUnit);
+      IQuantity quantity = new Length(0, Units.LengthUnitSection);
+      string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property to get or set information for", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Prop2d Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
@@ -52,19 +48,6 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Axis", "Ax", "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
       pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour", "Co", "Set 2D Property Colour", GH_ParamAccess.item);
-      pManager.AddTextParameter("Type", "Ty", "Set 2D Property Type." + System.Environment.NewLine +
-          "Input either text string or integer:"
-          + System.Environment.NewLine + "Plane Stress : 1"
-          + System.Environment.NewLine + "Plane Strain : 2"
-          + System.Environment.NewLine + "Axis Symmetric : 3"
-          + System.Environment.NewLine + "Fabric : 4"
-          + System.Environment.NewLine + "Plate : 5"
-          + System.Environment.NewLine + "Shell : 6"
-          + System.Environment.NewLine + "Curved Shell : 7"
-          + System.Environment.NewLine + "Torsion : 8"
-          + System.Environment.NewLine + "Wall : 9"
-          + System.Environment.NewLine + "Load : 10", 
-          GH_ParamAccess.item);
       for (int i = 1; i < pManager.ParamCount; i++)
         pManager[i].Optional = true;
     }
@@ -78,7 +61,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Axis", "Ax", "Get Axis: Global (0) or Topological (1)", GH_ParamAccess.item);
       pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
-      pManager.AddTextParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
     }
     #endregion
 
@@ -128,7 +111,7 @@ namespace GsaGH.Components
 
       // 3 Thickness
       if (this.Params.Input[3].SourceCount > 0)
-        prop.Thickness = (Length)Input.LengthOrRatio(this, DA, 3, DefaultUnits.LengthUnitSection, true);
+        prop.Thickness = GetInput.GetLength(this, DA, 3, Units.LengthUnitSection, true);
 
       // 4 Axis
       GH_Integer ghax = new GH_Integer();
@@ -156,16 +139,6 @@ namespace GsaGH.Components
           prop.Colour = col;
       }
 
-      // 7 type
-      GH_ObjectWrapper ghType = new GH_ObjectWrapper();
-      if (DA.GetData(7, ref ghType))
-      {
-        if (GH_Convert.ToInt32(ghType, out int number, GH_Conversion.Both))
-          prop.Type = (Property2D_Type)number;
-        else if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both))
-          prop.Type = GsaProp2d.PropTypeFromString(type);
-      }
-
       //#### outputs ####
       int ax = (prop.API_Prop2d == null) ? 0 : prop.AxisProperty;
       string nm = (prop.API_Prop2d == null) ? "--" : prop.Name;
@@ -189,3 +162,4 @@ namespace GsaGH.Components
     }
   }
 }
+
