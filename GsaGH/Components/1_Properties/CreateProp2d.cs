@@ -444,12 +444,11 @@ namespace GsaGH.Components
         Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]"; // "Thickness [m]";
         Params.Input[i].Description = "Section thickness";
         Params.Input[i].Access = GH_ParamAccess.item;
-        Params.Input[i].Optional = true;
+        Params.Input[i].Optional = false;
         i++;
         Params.Input[i].NickName = "Mat";
         Params.Input[i].Name = "Material";
         Params.Input[i].Description = "GSA Material";
-
         Params.Input[i].Access = GH_ParamAccess.item;
         Params.Input[i].Optional = true;
       }

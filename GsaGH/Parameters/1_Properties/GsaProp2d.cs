@@ -82,6 +82,8 @@ namespace GsaGH.Parameters
       }
       get
       {
+        if (m_prop2d.Description.Length == 0)
+          return Length.Zero;
         if (m_prop2d.Description.Last() == ')')
         {
           // thickness could be written as "30.33(in)"
