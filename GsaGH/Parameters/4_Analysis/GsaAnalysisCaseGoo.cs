@@ -13,7 +13,7 @@ namespace GsaGH.Parameters
   public class GsaAnalysisCaseGoo : GH_OasysGoo<GsaAnalysisCase>
   {
     public static string Name => "Analysis Case";
-    public static string NickName => "AC";
+    public static string NickName => "ΣC";
     public static string Description => "GSA Analysis Case (Load Case or Combination)";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

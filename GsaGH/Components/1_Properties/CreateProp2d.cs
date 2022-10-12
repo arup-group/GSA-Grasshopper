@@ -51,9 +51,6 @@ namespace GsaGH.Components
         selecteditems.Add(dropdownTopList[3]);
         selecteditems.Add(this.LengthUnit.ToString());
 
-        IQuantity quantity = new Length(0, this.LengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
         first = false;
       }
 
@@ -145,13 +142,11 @@ namespace GsaGH.Components
     });
     private bool first = true;
     private LengthUnit LengthUnit = DefaultUnits.LengthUnitSection;
-    string unitAbbreviation;
     #endregion
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
-      pManager.AddGenericParameter("Thickness [" + unitAbbreviation + "]", "Thk", "Section thickness", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Thk", "Section thickness", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -383,33 +378,10 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      try// if users has an old version of this component then dropdown menu wont read
-      {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0].Replace(" ", string.Empty));
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[1]);
-      }
-      catch (Exception)
-      {
-        _mode = (FoldMode)reader.GetInt32("Mode"); //old version would have this set
-        selecteditems.Add(reader.GetString("select")); // same
+      Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0].Replace(" ", string.Empty));
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[1]);
 
-        // set length to meters as this was the only option for old components
-        this.LengthUnit = LengthUnit.Meter;
-
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // length
-        dropdownitems.Add(dropdownTopList);
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-
-        selecteditems.Add(this.LengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, this.LengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-      }
       UpdateUIFromSelectedItems();
       first = false;
       return base.Read(reader);
@@ -437,11 +409,9 @@ namespace GsaGH.Components
     {
       if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric)
       {
-        unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
-
         int i = 0;
         Params.Input[i].NickName = "Thk";
-        Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]"; // "Thickness [m]";
+        Params.Input[i].Name = "Thickness [" + Length.GetAbbreviation(this.LengthUnit) + "]"; // "Thickness [m]";
         Params.Input[i].Description = "Section thickness";
         Params.Input[i].Access = GH_ParamAccess.item;
         Params.Input[i].Optional = false;

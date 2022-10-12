@@ -1,64 +1,29 @@
-﻿using Grasshopper.Kernel.Types;
-using OasysGH;
-using OasysGH.Components;
-using OasysGH.Parameters;
+﻿using System;
+using System.Collections.Generic;
+using Grasshopper.Kernel;
 
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// This class provides a parameter interface for the <see cref="GsaAnalysisCaseGoo"/> type.
+  /// This class provides a parameter interface for the <see cref="GsaCombinationCaseGoo"/> type.
   /// </summary>
-  //public class GsaAnalysisCaseParameter : GH_PersistentParam<GsaAnalysisCaseGoo>
-  //{
-  //    public GsaAnalysisCaseParameter()
-  //      : base(new GH_InstanceDescription("AnalysisCase", "ΣC", "GSA Analysis Case", GsaGH.Components.Ribbon.CategoryName.Name(), GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
-  //    {
-  //    }
+  public class GsaCombinationCaseParameter : GH_OasysPersistentParam<GsaCombinationCaseGoo>
+  {
+    public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaCombinationCaseGoo.Name + " parameter" : base.InstanceDescription;
+    public override string TypeName => this.SourceCount == 0 ? GsaCombinationCaseGoo.Name : base.TypeName;
 
-  //    public override Guid ComponentGuid => new Guid("6b99a192-bdbd-41bf-8efa-1bc146d3c224");
+    public override Guid ComponentGuid => new Guid("f8d0651f-b235-473f-ba71-30c97b9497cd");
 
-  //    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
 
-  //    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AnalysisCaseParam;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CombinationCaseParam;
 
-  //    protected override GH_GetterResult Prompt_Plural(ref List<GsaAnalysisCaseGoo> values)
-  //    {
-  //        return GH_GetterResult.cancel;
-  //    }
-  //    protected override GH_GetterResult Prompt_Singular(ref GsaAnalysisCaseGoo value)
-  //    {
-  //        return GH_GetterResult.cancel;
-  //    }
-  //    protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
-  //    {
-  //        System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
-  //        {
-  //            Text = "Not available",
-  //            Visible = false
-  //        };
-  //        return item;
-  //    }
-  //    protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
-  //    {
-  //        System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem
-  //        {
-  //            Text = "Not available",
-  //            Visible = false
-  //        };
-  //        return item;
-  //    }
-
-  //    #region preview methods
-
-  //    public bool Hidden
-  //    {
-  //        get { return true; }
-  //        //set { m_hidden = value; }
-  //    }
-  //    public bool IsPreviewCapable
-  //    {
-  //        get { return false; }
-  //    }
-  //    #endregion
-  //}
+    public GsaCombinationCaseParameter() : base(new GH_InstanceDescription(
+     GsaCombinationCaseGoo.Name,
+     GsaCombinationCaseGoo.NickName,
+     GsaCombinationCaseGoo.Description + " parameter",
+     GsaGH.Components.Ribbon.CategoryName.Name(),
+     GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+    { }
+  }
 }

@@ -14,7 +14,7 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaMember2dGoo : GH_GeometricGoo<GsaMember2d>, IGH_PreviewData
   {
-    public static string Name => "2D Member";
+    public static string Name => "Member2D";
     public static string NickName => "M2D";
     public static string Description => "GSA 2D Member";
 

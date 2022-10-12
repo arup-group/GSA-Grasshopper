@@ -17,7 +17,7 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaElement2dGoo : GH_GeometricGoo<GsaElement2d>, IGH_PreviewData
   {
-    public static string Name => "2D Element";
+    public static string Name => "Element2D";
     public static string NickName => "E2D";
     public static string Description => "GSA 2D Element";
 

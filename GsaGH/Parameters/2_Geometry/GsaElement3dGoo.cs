@@ -13,7 +13,7 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaElement3dGoo : GH_GeometricGoo<GsaElement3d>, IGH_PreviewData
   {
-    public static string Name => "3D Element";
+    public static string Name => "Element3D";
     public static string NickName => "E3D";
     public static string Description => "GSA 3D Element";
 

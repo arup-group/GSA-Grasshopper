@@ -14,7 +14,7 @@ namespace GsaGH.Parameters
   public class GsaLoadGoo : GH_OasysGoo<GsaLoad>
   {
     public static string Name => "Load";
-    public static string NickName => "L";
+    public static string NickName => "Ld";
     public static string Description => "GSA Load";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

@@ -40,8 +40,8 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Analysis Tasks", "ΣT", "List of Analysis Tasks in model", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Analysis Cases", "ΣA", "List of Analysis Cases in model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaAnalysisTaskParameter(), "Analysis Tasks", "ΣT", "List of Analysis Tasks in model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaAnalysisCaseParameter(), "Analysis Cases", "ΣA", "List of Analysis Cases in model", GH_ParamAccess.list);
     }
     #endregion
 

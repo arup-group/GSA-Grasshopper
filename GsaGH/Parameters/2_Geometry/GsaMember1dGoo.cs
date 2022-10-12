@@ -14,7 +14,7 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaMember1dGoo : GH_OasysGeometricGoo<GsaMember1d>, IGH_PreviewData
   {
-    public static string Name => "1D Member";
+    public static string Name => "Member1D";
     public static string NickName => "M1D";
     public static string Description => "GSA 1D Member";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

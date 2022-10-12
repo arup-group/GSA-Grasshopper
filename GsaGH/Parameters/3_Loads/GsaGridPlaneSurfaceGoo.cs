@@ -10,9 +10,9 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaGridPlaneSurfaceGoo : GH_GeometricGoo<GsaGridPlaneSurface>, IGH_PreviewData
   {
-    public static string Name => "Grid Plane";
-    public static string NickName => "GrP";
-    public static string Description => "GSA Grid Plane";
+    public static string Name => "GridPlaneSurface";
+    public static string NickName => "GPS";
+    public static string Description => "GSA Grid Plane Surface";
 
     #region constructors
     public GsaGridPlaneSurfaceGoo()
