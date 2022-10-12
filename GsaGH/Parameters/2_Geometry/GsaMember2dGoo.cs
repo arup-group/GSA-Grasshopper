@@ -4,6 +4,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
 using OasysGH.Units;
 using Rhino.Geometry;
 
@@ -12,87 +13,15 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaMember2d"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaMember2dGoo : GH_GeometricGoo<GsaMember2d>, IGH_PreviewData
+  public class GsaMember2dGoo : GH_OasysGeometricGoo<GsaMember2d>, IGH_PreviewData
   {
     public static string Name => "Member2D";
     public static string NickName => "M2D";
     public static string Description => "GSA 2D Member";
-
-    #region constructors
-    public GsaMember2dGoo()
-    {
-      this.Value = new GsaMember2d();
-    }
-    public GsaMember2dGoo(GsaMember2d member)
-    {
-      if (member == null)
-        member = new GsaMember2d();
-      this.Value = member; //member.Duplicate();
-    }
-
-    public override IGH_GeometricGoo DuplicateGeometry()
-    {
-      return DuplicateGsaMember2d();
-    }
-    public GsaMember2dGoo DuplicateGsaMember2d()
-    {
-      return new GsaMember2dGoo(Value == null ? new GsaMember2d() : Value); //Value.Duplicate());
-    }
-    #endregion
-
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        if (Value.Brep == null & Value.PolyCurve == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null Member2D";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("Member 2D"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA 2D Member"); }
-    }
-
-    public override BoundingBox Boundingbox
-    {
-      get
-      {
-        if (Value == null) { return BoundingBox.Empty; }
-        if (Value.Brep == null & Value.PolyCurve == null) { return BoundingBox.Empty; }
-        if (Value.Brep != null) { return Value.Brep.GetBoundingBox(false); }
-        return Value.PolyCurve.GetBoundingBox(false);
-      }
-    }
-    public override BoundingBox GetBoundingBox(Transform xform)
-    {
-      if (Value == null) { return BoundingBox.Empty; }
-      if (Value.Brep == null & Value.PolyCurve == null) { return BoundingBox.Empty; }
-      if (Value.Brep != null) { return Value.Brep.GetBoundingBox(xform); }
-      return Value.PolyCurve.GetBoundingBox(xform);
-    }
-    #endregion
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public GsaMember2dGoo(GsaMember2d item) : base(item) { }
+    public override IGH_GeometricGoo Duplicate() => new GsaMember2dGoo(this.Value);
+    public override GeometryBase GetGeometry() => this.Value.PolyCurve;
 
     #region casting methods
     public override bool CastTo<Q>(out Q target)
@@ -298,11 +227,7 @@ namespace GsaGH.Parameters
     #endregion
 
     #region drawing methods
-    public BoundingBox ClippingBox
-    {
-      get { return Boundingbox; }
-    }
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args)
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
     {
       //Draw shape.
       if (Value.Brep != null)
@@ -321,7 +246,7 @@ namespace GsaGH.Parameters
         }
       }
     }
-    public void DrawViewportWires(GH_PreviewWireArgs args)
+    public override void DrawViewportWires(GH_PreviewWireArgs args)
     {
       if (Value == null) { return; }
 

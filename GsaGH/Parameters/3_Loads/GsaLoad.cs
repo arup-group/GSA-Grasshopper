@@ -498,7 +498,7 @@ namespace GsaGH.Parameters
     #region methods
     public override string ToString()
     {
-      if (this == null) { return "Null Load"; }
+      if (LoadType == LoadTypes.Gravity && this.GravityLoad == null) { return "Null Load"; }
       string name = "";
       switch (LoadType)
       {

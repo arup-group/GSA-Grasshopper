@@ -1,6 +1,7 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
@@ -8,100 +9,25 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaNode"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaNodeGoo : GH_GeometricGoo<GsaNode>, IGH_PreviewData
+  public class GsaNodeGoo : GH_OasysGeometricGoo<GsaNode>, IGH_PreviewData
   {
     public static string Name => "Node";
     public static string NickName => "No";
     public static string Description => "GSA Node";
-
-    #region constructors
-    public GsaNodeGoo()
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public GsaNodeGoo(GsaNode item) : base(item) { }
+    public override IGH_GeometricGoo Duplicate() => new GsaNodeGoo(this.Value);
+    public override GeometryBase GetGeometry()
     {
-      this.Value = new GsaNode();
+      if (Value == null) { return null; }
+      if (Value.Point == null) { return null; }
+      Point3d pt1 = Value.Point;
+      pt1.Z += OasysGH.Units.DefaultUnits.Tolerance.As(OasysGH.Units.DefaultUnits.LengthUnitGeometry) / 2;
+      Point3d pt2 = Value.Point;
+      pt2.Z += OasysGH.Units.DefaultUnits.Tolerance.As(OasysGH.Units.DefaultUnits.LengthUnitGeometry) / -2;
+      Line ln = new Line(pt1, pt2);
+      return new LineCurve(ln);
     }
-    public GsaNodeGoo(GsaNode node)
-    {
-      if (node == null)
-        node = null;
-      else
-      {
-        if (node.API_Node == null)
-          node = null;
-      }
-      this.Value = node; //node.Duplicate();
-    }
-
-    public override IGH_GeometricGoo DuplicateGeometry()
-    {
-      return DuplicateGsaNode();
-    }
-    public GsaNodeGoo DuplicateGsaNode()
-    {
-      return new GsaNodeGoo(Value == null ? new GsaNode() : Value); //Value.Duplicate());
-    }
-    #endregion
-
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return Value.IsValid;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal BoatShell instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.Point.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null Node";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("Node"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA Node"); }
-    }
-
-    public override BoundingBox Boundingbox
-    {
-      get
-      {
-        if (Value == null) { return BoundingBox.Empty; }
-        if (Value.Point == null) { return BoundingBox.Empty; }
-        Point3d pt1 = Value.Point;
-        pt1.Z += 0.25;
-        Point3d pt2 = Value.Point;
-        pt2.Z += -0.25;
-        Line ln = new Line(pt1, pt2);
-        LineCurve crv = new LineCurve(ln);
-        return crv.GetBoundingBox(false);
-      }
-    }
-
-    public override BoundingBox GetBoundingBox(Transform xform)
-    {
-      if (Value == null) { return BoundingBox.Empty; }
-      if (Value.Point == null) { return BoundingBox.Empty; }
-      Point3d pt = new Point3d(Value.Point);
-      pt.Z += 0.001;
-      Line ln = new Line(Value.Point, pt);
-      LineCurve crv = new LineCurve(ln);
-      return crv.GetBoundingBox(xform); //BoundingBox.Empty; //Value.point.GetBoundingBox(xform);
-    }
-    #endregion
 
     #region casting methods
     public override bool CastTo<Q>(out Q target)
@@ -241,15 +167,11 @@ namespace GsaGH.Parameters
     #endregion
 
     #region drawing methods
-    public BoundingBox ClippingBox
-    {
-      get { return Boundingbox; }
-    }
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args)
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
     {
       //No meshes are drawn.   
     }
-    public void DrawViewportWires(GH_PreviewWireArgs args)
+    public override void DrawViewportWires(GH_PreviewWireArgs args)
     {
       if (Value == null) { return; }
 
@@ -290,7 +212,6 @@ namespace GsaGH.Parameters
         }
       }
     }
-
     #endregion
   }
 }

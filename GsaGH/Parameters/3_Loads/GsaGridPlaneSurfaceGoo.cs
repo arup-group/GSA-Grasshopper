@@ -1,6 +1,7 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using OasysGH;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
@@ -8,108 +9,30 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaGridPlaneSurface"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaGridPlaneSurfaceGoo : GH_GeometricGoo<GsaGridPlaneSurface>, IGH_PreviewData
+  public class GsaGridPlaneSurfaceGoo : GH_OasysGeometricGoo<GsaGridPlaneSurface>, IGH_PreviewData
   {
     public static string Name => "GridPlaneSurface";
     public static string NickName => "GPS";
     public static string Description => "GSA Grid Plane Surface";
-
-    #region constructors
-    public GsaGridPlaneSurfaceGoo()
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    public GsaGridPlaneSurfaceGoo(GsaGridPlaneSurface item) : base(item) { }
+    public override IGH_GeometricGoo Duplicate() => new GsaGridPlaneSurfaceGoo(this.Value);
+    public override GeometryBase GetGeometry()
     {
-      this.Value = new GsaGridPlaneSurface();
+      if (Value == null) { return null; }
+      if (Value.Plane.Origin == null) { return null; }
+      Point3d pt1 = Value.Plane.Origin;
+      pt1.Z += OasysGH.Units.DefaultUnits.Tolerance.As(OasysGH.Units.DefaultUnits.LengthUnitGeometry) / 2;
+      Point3d pt2 = Value.Plane.Origin;
+      pt2.Z += OasysGH.Units.DefaultUnits.Tolerance.As(OasysGH.Units.DefaultUnits.LengthUnitGeometry) / -2;
+      Line ln = new Line(pt1, pt2);
+      return new LineCurve(ln);
     }
-
-    public GsaGridPlaneSurfaceGoo(GsaGridPlaneSurface gridplane)
-    {
-      if (gridplane == null)
-        this.Value = null;
-      else
-        this.Value = gridplane; //gridplane.Duplicate();
-    }
-
-    public override IGH_GeometricGoo DuplicateGeometry()
-    {
-      return DuplicateGsaNode();
-    }
-
-    public GsaGridPlaneSurfaceGoo DuplicateGsaNode()
-    {
-      return new GsaGridPlaneSurfaceGoo(Value == null ? new GsaGridPlaneSurface() : Value); //Value.Duplicate());
-    }
-    #endregion
-
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        return Value.IsValid;
-      }
-    }
-
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        if (Value.IsValid) { return string.Empty; }
-        return Value.Plane.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null GridPlane";
-      else
-        return Value.ToString();
-    }
-
-    public override string TypeName
-    {
-      get { return ("GridPlane"); }
-    }
-
-    public override string TypeDescription
-    {
-      get { return ("GSA Grid Plane"); }
-    }
-
-    public override BoundingBox Boundingbox
-    {
-      get
-      {
-        if (Value == null) { return BoundingBox.Empty; }
-        if (Value.Plane == null) { return BoundingBox.Empty; }
-        Point3d pt1 = Value.Plane.Origin;
-        pt1.Z += 10;
-        Point3d pt2 = Value.Plane.Origin;
-        pt2.Z += -10;
-        Line ln = new Line(pt1, pt2);
-        LineCurve crv = new LineCurve(ln);
-        return crv.GetBoundingBox(false);
-      }
-    }
-    public override BoundingBox GetBoundingBox(Transform xform)
-    {
-      if (Value == null) { return BoundingBox.Empty; }
-      if (Value.Plane.Origin == null) { return BoundingBox.Empty; }
-      Point3d pt = Value.Plane.Origin;
-      pt.Z += 0.001;
-      Line ln = new Line(Value.Plane.Origin, pt);
-      LineCurve crv = new LineCurve(ln);
-      return crv.GetBoundingBox(xform); //BoundingBox.Empty; //Value.point.GetBoundingBox(xform);
-    }
-    #endregion
 
     #region casting methods
     public override bool CastTo<Q>(out Q target)
     {
       // This function is called when Grasshopper needs to convert this 
-      // instance of GsaGridPlane into some other type Q.            
-
-
       if (typeof(Q).IsAssignableFrom(typeof(GsaGridPlaneSurface)))
       {
         if (Value == null)
@@ -139,8 +62,6 @@ namespace GsaGH.Parameters
     {
       // This function is called when Grasshopper needs to convert other data 
       // into GsaGridPlane.
-
-
       if (source == null) { return false; }
 
       //Cast from GsaGridPlane
@@ -186,22 +107,16 @@ namespace GsaGH.Parameters
       GsaGridPlaneSurface gridplane = new GsaGridPlaneSurface(pln);
       return new GsaGridPlaneSurfaceGoo(gridplane);
     }
-
     #endregion
 
     #region drawing methods
-    public BoundingBox ClippingBox
-    {
-      get { return Boundingbox; }
-    }
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args)
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
     {
       //No meshes are drawn.   
     }
-    public void DrawViewportWires(GH_PreviewWireArgs args)
+    public override void DrawViewportWires(GH_PreviewWireArgs args)
     {
       if (Value == null) { return; }
-
 
       if (Value.Plane.IsValid)
       {

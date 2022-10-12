@@ -222,7 +222,7 @@ namespace GsaGH.Parameters
       if (GridPlane == null && GridSurface == null) { return "Null GridPlaneSurface"; }
       string gp = GridPlane == null ? "" : GridPlane.Name + " ";
       string gs = GridSurface == null ? "" : GridSurface.Name;
-      return "GridPlaneSurface " + gp + gs;
+      return "GSA Grid Plane Surface " + gp + gs;
     }
 
     #endregion

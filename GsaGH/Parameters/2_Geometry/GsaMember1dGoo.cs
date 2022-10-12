@@ -12,68 +12,15 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaMember1d"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaMember1dGoo : GH_OasysGeometricGoo<GsaMember1d>, IGH_PreviewData
+  public class GsaMember1dGoo : GH_OasysGeometricGoo<GsaMember1d>
   {
     public static string Name => "Member1D";
     public static string NickName => "M1D";
     public static string Description => "GSA 1D Member";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-
     public GsaMember1dGoo(GsaMember1d item) : base(item) { }
-
-    public override IGH_Goo Duplicate() => new GsaMember1dGoo(this.Value);
-
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        if (Value.PolyCurve == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null Member1D";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("Member 1D"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA 1D Member"); }
-    }
-
-    public override BoundingBox Boundingbox
-    {
-      get
-      {
-        if (Value == null) { return BoundingBox.Empty; }
-        if (Value.PolyCurve == null) { return BoundingBox.Empty; }
-        return Value.PolyCurve.GetBoundingBox(false);
-      }
-    }
-    public override BoundingBox GetBoundingBox(Transform xform)
-    {
-      if (Value == null) { return BoundingBox.Empty; }
-      if (Value.PolyCurve == null) { return BoundingBox.Empty; }
-      return Value.PolyCurve.GetBoundingBox(xform);
-    }
-    #endregion
+    public override IGH_GeometricGoo Duplicate() => new GsaMember1dGoo(this.Value);
+    public override GeometryBase GetGeometry() => this.Value.PolyCurve;
 
     #region casting methods
     public override bool CastTo<Q>(out Q target)
@@ -233,16 +180,13 @@ namespace GsaGH.Parameters
     #endregion
 
     #region drawing methods
-    public BoundingBox ClippingBox
-    {
-      get { return Boundingbox; }
-    }
+    
 
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args)
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
     {
       // no meshes to be drawn
     }
-    public void DrawViewportWires(GH_PreviewWireArgs args)
+    public override void DrawViewportWires(GH_PreviewWireArgs args)
     {
       if (Value == null) { return; }
 
@@ -310,13 +254,6 @@ namespace GsaGH.Parameters
             args.Pipeline.DrawLine(ln2, UI.Colour.Release);
         }
       }
-    }
-
-    public override GeometryBase GetGeometry()
-    {
-      if (this.Value == null)
-        return null;
-      return this.Value.PolyCurve;
     }
     #endregion
   }
