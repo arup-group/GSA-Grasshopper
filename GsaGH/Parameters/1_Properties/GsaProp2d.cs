@@ -14,10 +14,10 @@ namespace GsaGH.Parameters
   public class GsaProp2d
   {
     #region fields
-    int m_idd;
-    GsaMaterial m_material = null;
-    Prop2D m_prop2d;
-    private Guid m_guid;
+    private int m_idd = 0;
+    private GsaMaterial m_material = new GsaMaterial();
+    private Prop2D m_prop2d = new Prop2D();
+    private Guid m_guid = Guid.NewGuid();
     #endregion
 
     #region properties
@@ -55,10 +55,7 @@ namespace GsaGH.Parameters
       set
       {
         this.m_material = value;
-        if (this.m_prop2d == null)
-          this.m_prop2d = new Prop2D();
-        else
-          CloneProperty();
+        CloneProperty();
         this.m_prop2d.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
         this.m_prop2d.MaterialAnalysisProperty = this.m_material.AnalysisProperty;
         this.m_prop2d.MaterialGradeProperty = this.m_material.GradeProperty;
@@ -67,8 +64,9 @@ namespace GsaGH.Parameters
     #region GsaAPI members
     public string Name
     {
-      get { 
-        return this.m_prop2d.Name; 
+      get
+      {
+        return this.m_prop2d.Name;
       }
       set
       {
@@ -188,26 +186,17 @@ namespace GsaGH.Parameters
     #region constructors
     public GsaProp2d()
     {
-      this.m_prop2d = null;
-      this.m_guid = Guid.Empty;
-      this.m_idd = 0;
-      this.m_material = new GsaMaterial();
     }
 
     public GsaProp2d(int id)
     {
-      this.m_prop2d = null;
-      this.m_guid = Guid.Empty;
       this.m_idd = id;
     }
 
-    public GsaProp2d(Length thickness, int ID = 0)
+    public GsaProp2d(Length thickness, int id = 0)
     {
-      this.m_prop2d = new Prop2D();
-      this.m_material = new GsaMaterial();
       this.Thickness = thickness;
-      this.m_idd = ID;
-      this.m_guid = Guid.NewGuid();
+      this.m_idd = id;
     }
     #endregion
 
@@ -224,38 +213,24 @@ namespace GsaGH.Parameters
 
     public GsaProp2d Duplicate()
     {
-      if (this == null)
-        return null;
       GsaProp2d dup = new GsaProp2d();
-      if (this.m_prop2d != null)
-        dup.m_prop2d = this.m_prop2d;
+      dup.m_prop2d = this.m_prop2d;
       dup.m_idd = this.m_idd;
-      if (this.m_material != null)
-        dup.m_material = this.m_material.Duplicate();
+      dup.m_material = this.m_material.Duplicate();
       dup.m_guid = new Guid(this.m_guid.ToString());
       return dup;
     }
 
     public override string ToString()
     {
-      string str = "";
-      if (this.m_prop2d != null)
-      {
-        str = this.m_prop2d.Type.ToString();
-        str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
-      }
+      string str = this.m_prop2d.Type.ToString();
+      str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
       string pa = (this.ID > 0) ? "PA" + this.ID + " " : "";
       return "GSA 2D Property " + ((this.ID > 0) ? pa : "") + ((this.m_prop2d == null) ? "" : str);
     }
 
     private void CloneProperty()
     {
-      if (this.m_prop2d == null)
-      {
-        this.m_prop2d = new Prop2D();
-        this.m_guid = Guid.NewGuid();
-        return;
-      }
       Prop2D prop = new Prop2D
       {
         MaterialAnalysisProperty = this.m_prop2d.MaterialAnalysisProperty,
