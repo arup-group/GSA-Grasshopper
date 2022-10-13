@@ -115,7 +115,7 @@ namespace GsaGH.Components
               in_ids.Add(id);
             }
           }
-          elem.ID = in_ids;
+          elem.Id = in_ids;
         }
 
         // 2 section
@@ -254,12 +254,12 @@ namespace GsaGH.Components
             if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both))
               in_dummies.Add(dum);
           }
-          elem.isDummies = in_dummies;
+          elem.IsDummies = in_dummies;
         }
 
         // #### outputs ####
         DA.SetData(0, new GsaElement2dGoo(elem));
-        DA.SetDataList(1, elem.ID);
+        DA.SetDataList(1, elem.Id);
         DA.SetData(2, elem.Mesh);
         DA.SetDataList(3, new List<GsaProp2dGoo>(elem.Properties.ConvertAll(prop2d => new GsaProp2dGoo(prop2d))));
         DA.SetDataList(4, elem.Groups);
@@ -267,7 +267,7 @@ namespace GsaGH.Components
         DA.SetDataList(6, new List<GsaOffsetGoo>(elem.Offsets.ConvertAll(offset => new GsaOffsetGoo(offset))));
         DA.SetDataList(7, elem.Names);
         DA.SetDataList(8, elem.Colours);
-        DA.SetDataList(9, elem.isDummies);
+        DA.SetDataList(9, elem.IsDummies);
         DA.SetDataList(10, elem.ParentMembers);
         DA.SetDataTree(11, elem.TopologyIDs);
       }

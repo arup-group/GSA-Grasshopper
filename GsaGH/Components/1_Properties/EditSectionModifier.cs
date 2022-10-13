@@ -213,11 +213,11 @@ namespace GsaGH.Components
 
         bool ax = false;
         if (DA.GetData(9, ref ax))
-          modifier.isBendingAxesPrincipal = ax;
+          modifier.IsBendingAxesPrincipal = ax;
 
         bool pt = false;
         if (DA.GetData(10, ref pt))
-          modifier.isReferencePointCentroid = pt;
+          modifier.IsReferencePointCentroid = pt;
 
         int stress = 0;
         if (DA.GetData(11, ref stress))
@@ -244,8 +244,8 @@ namespace GsaGH.Components
         DA.SetData(6, new GH_UnitNumber(modifier.K22Modifier));
         DA.SetData(7, new GH_UnitNumber(modifier.VolumeModifier));
         DA.SetData(8, new GH_UnitNumber(modifier.AdditionalMass));
-        DA.SetData(9, modifier.isBendingAxesPrincipal);
-        DA.SetData(10, modifier.isReferencePointCentroid);
+        DA.SetData(9, modifier.IsBendingAxesPrincipal);
+        DA.SetData(10, modifier.IsReferencePointCentroid);
 
         if (modifier.StressOption == GsaSectionModifier.StressOptionType.NoCalculation)
           stress = 0;

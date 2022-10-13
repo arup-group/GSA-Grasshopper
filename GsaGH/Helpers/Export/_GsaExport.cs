@@ -57,7 +57,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       // convert from Goo-type
       List<GsaNode> nodes = goonodes.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      nodes.Select(c => { c.ID = 0; return c; }).ToList();
+      nodes.Select(c => { c.Id = 0; return c; }).ToList();
 
       // get elements
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
@@ -65,17 +65,17 @@ namespace GsaGH.Util.Gsa.ToGSA
       // convert from Goo-type
       List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      elem1ds.Select(c => { c.ID = 0; return c; }).ToList();
+      elem1ds.Select(c => { c.Id = 0; return c; }).ToList();
       // convert from Goo-type
       List<GsaElement2d> elem2ds = elementTuple.Item2.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
       foreach (var elem2d in elem2ds)
-        elem2d.ID.Select(c => { c = 0; return c; }).ToList();
+        elem2d.Id.Select(c => { c = 0; return c; }).ToList();
       // convert from Goo-type
       List<GsaElement3d> elem3ds = elementTuple.Item3.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
       foreach (var elem3d in elem3ds)
-        elem3d.ID.Select(c => { c = 0; return c; }).ToList();
+        elem3d.Id.Select(c => { c = 0; return c; }).ToList();
 
       // get members
       Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
@@ -83,11 +83,11 @@ namespace GsaGH.Util.Gsa.ToGSA
       // convert from Goo-type
       List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      mem1ds.Select(c => { c.ID = 0; return c; }).ToList();
+      mem1ds.Select(c => { c.Id = 0; return c; }).ToList();
       // convert from Goo-type
       List<GsaMember2d> mem2ds = memberTuple.Item2.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      mem2ds.Select(c => { c.ID = 0; return c; }).ToList();
+      mem2ds.Select(c => { c.Id = 0; return c; }).ToList();
 
       // get properties
       List<GsaSectionGoo> goosections = FromGSA.GetSections(sDict, model.AnalysisMaterials(), model.SectionModifiers());
@@ -99,12 +99,12 @@ namespace GsaGH.Util.Gsa.ToGSA
       // convert from Goo-type
       List<GsaProp2d> prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      prop2Ds.Select(c => { c.ID = 0; return c; }).ToList();
+      prop2Ds.Select(c => { c.Id = 0; return c; }).ToList();
       List<GsaProp3dGoo> gooprop3Ds = FromGSA.GetProp3ds(p3Dict, model.AnalysisMaterials());
       // convert from Goo-type
       List<GsaProp3d> prop3Ds = gooprop3Ds.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      prop3Ds.Select(c => { c.ID = 0; return c; }).ToList();
+      prop3Ds.Select(c => { c.Id = 0; return c; }).ToList();
 
       // get loads
       List<GsaLoadGoo> gooloads = new List<GsaLoadGoo>();
@@ -293,7 +293,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (elem1ds.Count > 0)
         {
-          int existingElem1dMaxID = elem1ds.Max(x => x.ID); // max ID in new Elem1ds
+          int existingElem1dMaxID = elem1ds.Max(x => x.Id); // max ID in new Elem1ds
           if (existingElem1dMaxID > newElementID)
             newElementID = existingElem1dMaxID + 1;
         }
@@ -302,7 +302,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (elem2ds.Count > 0)
         {
-          int existingElem2dMaxID = elem2ds.Max(x => x.ID.Max()); // max ID in new Elem2ds
+          int existingElem2dMaxID = elem2ds.Max(x => x.Id.Max()); // max ID in new Elem2ds
           if (existingElem2dMaxID > newElementID)
             newElementID = existingElem2dMaxID + 1;
         }
@@ -335,7 +335,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (mem1ds.Count > 0)
         {
-          int existingMem1dMaxID = mem1ds.Max(x => x.ID); // max ID in new Elem1ds
+          int existingMem1dMaxID = mem1ds.Max(x => x.Id); // max ID in new Elem1ds
           if (existingMem1dMaxID > newMemberID)
             newMemberID = existingMem1dMaxID + 1;
         }
@@ -345,7 +345,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (mem2ds.Count > 0)
         {
-          int existingMem2dMaxID = mem2ds.Max(x => x.ID); // max ID in new Elem2ds
+          int existingMem2dMaxID = mem2ds.Max(x => x.Id); // max ID in new Elem2ds
           if (existingMem2dMaxID > newMemberID)
             newMemberID = existingMem2dMaxID + 1;
         }
@@ -355,7 +355,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (mem3ds.Count > 0)
         {
-          int existingMem3dMaxID = mem3ds.Max(x => x.ID); // max ID in new Elem2ds
+          int existingMem3dMaxID = mem3ds.Max(x => x.Id); // max ID in new Elem2ds
           if (existingMem3dMaxID > newMemberID)
             newMemberID = existingMem3dMaxID + 1;
         }

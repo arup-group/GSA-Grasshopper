@@ -1,8 +1,4 @@
-﻿using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-using GsaAPI;
-using OasysGH;
-using OasysGH.Parameters;
+﻿using GsaAPI;
 
 namespace GsaGH.Parameters
 {
@@ -11,68 +7,107 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaBool6
   {
+    #region fields
+    internal Bool6 _bool6;
+    #endregion
+
+    #region properties
     public bool X
     {
-      get { return API_Bool6.X; }
-      set { API_Bool6 = new Bool6(value, Y, Z, XX, YY, ZZ); }
+      get
+      {
+        return this._bool6.X;
+      }
+      set
+      {
+        this._bool6 = new Bool6(value, Y, Z, XX, YY, ZZ);
+      }
     }
     public bool Y
     {
-      get { return API_Bool6.Y; }
-      set { API_Bool6 = new Bool6(X, value, Z, XX, YY, ZZ); }
+      get
+      {
+        return this._bool6.Y;
+      }
+      set
+      {
+        this._bool6 = new Bool6(X, value, Z, XX, YY, ZZ);
+      }
     }
     public bool Z
     {
-      get { return API_Bool6.Z; }
-      set { API_Bool6 = new Bool6(X, Y, value, XX, YY, ZZ); }
+      get
+      {
+        return this._bool6.Z;
+      }
+      set
+      {
+        this._bool6 = new Bool6(X, Y, value, XX, YY, ZZ);
+      }
     }
     public bool XX
     {
-      get { return API_Bool6.XX; }
-      set { API_Bool6 = new Bool6(X, Y, Z, value, YY, ZZ); }
+      get
+      {
+        return this._bool6.XX;
+      }
+      set
+      {
+        this._bool6 = new Bool6(X, Y, Z, value, YY, ZZ);
+      }
     }
     public bool YY
     {
-      get { return API_Bool6.YY; }
-      set { API_Bool6 = new Bool6(X, Y, Z, XX, value, ZZ); }
+      get
+      {
+        return this._bool6.YY;
+      }
+      set
+      {
+        this._bool6 = new Bool6(X, Y, Z, XX, value, ZZ);
+      }
     }
     public bool ZZ
     {
-      get { return API_Bool6.ZZ; }
-      set { API_Bool6 = new Bool6(X, Y, Z, XX, YY, value); }
+      get
+      {
+        return this._bool6.ZZ;
+      }
+      set
+      {
+        this._bool6 = new Bool6(X, Y, Z, XX, YY, value);
+      }
     }
-    internal Bool6 API_Bool6;
+    #endregion
 
     #region constructors
     public GsaBool6()
     {
-      API_Bool6 = new Bool6(false, false, false, false, false, false);
+      this._bool6 = new Bool6(false, false, false, false, false, false);
     }
 
     public GsaBool6(bool X, bool Y, bool Z, bool XX, bool YY, bool ZZ)
     {
-      API_Bool6 = new Bool6(X, Y, Z, XX, YY, ZZ);
+      this._bool6 = new Bool6(X, Y, Z, XX, YY, ZZ);
     }
 
     internal GsaBool6(Bool6 bool6)
     {
-      API_Bool6 = bool6;
-    }
-
-    public GsaBool6 Duplicate()
-    {
-      if (this == null) { return null; }
-      // create shallow copy
-      GsaBool6 dup = new GsaBool6
-      {
-        API_Bool6 = this.API_Bool6
-      };
-      return dup;
+      this._bool6 = bool6;
     }
     #endregion
 
-
     #region methods
+    public GsaBool6 Duplicate()
+    {
+      // create shallow copy
+      GsaBool6 dup = new GsaBool6
+      {
+        _bool6 = this._bool6
+      };
+      return dup;
+    }
+
     public override string ToString()
     {
       string sx = (X) ? "\u2713" : "\u2610";
@@ -90,7 +125,6 @@ namespace GsaGH.Parameters
 
       return sx + sy + sz + sxx + syy + szz;
     }
-
     #endregion
   }
 }

@@ -16,7 +16,11 @@ namespace GsaGH.Parameters
     public static string NickName => "E1D";
     public static string Description => "GSA 1D Element";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    public GsaElement1dGoo(GsaElement1d item) : base(item) { }
+
+    public GsaElement1dGoo(GsaElement1d item) : base(item)
+    {
+    }
+
     public override IGH_GeometricGoo Duplicate() => new GsaElement1dGoo(this.Value);
     public override GeometryBase GetGeometry() => this.Value.Line;
 
@@ -91,7 +95,7 @@ namespace GsaGH.Parameters
         else
         {
           GH_Integer ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
+          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
             target = (Q)(object)ghint;
           else
             target = default;
@@ -144,7 +148,7 @@ namespace GsaGH.Parameters
       if (Value.Line == null) { return null; }
 
       GsaElement1d elem = Value.Duplicate(true);
-      elem.ID = 0;
+      elem.Id = 0;
       LineCurve xLn = elem.Line;
       xLn.Transform(xform);
       elem.Line = xLn;

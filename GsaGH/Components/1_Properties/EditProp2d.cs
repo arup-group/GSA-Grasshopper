@@ -96,7 +96,7 @@ namespace GsaGH.Components
       if (DA.GetData(1, ref ghID))
       {
         if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-          prop.ID = id;
+          prop.Id = id;
       }
 
       // 2 Material
@@ -167,7 +167,7 @@ namespace GsaGH.Components
       ValueType colour = (prop.API_Prop2d == null) ? null : prop.API_Prop2d.Colour;
 
       DA.SetData(0, new GsaProp2dGoo(prop));
-      DA.SetData(1, prop.ID);
+      DA.SetData(1, prop.Id);
       DA.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
       if (prop.API_Prop2d.Description == "")
         DA.SetData(3, new GH_UnitNumber(Length.Zero));

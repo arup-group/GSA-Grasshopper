@@ -19,7 +19,11 @@ namespace GsaGH.Parameters
     public static string NickName => "M1D";
     public static string Description => "GSA 1D Member";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    public GsaMember1dGoo(GsaMember1d item) : base(item) { }
+    
+    public GsaMember1dGoo(GsaMember1d item) : base(item)
+    {
+    }
+    
     public override IGH_GeometricGoo Duplicate() => new GsaMember1dGoo(this.Value);
     public override GeometryBase GetGeometry() => this.Value.PolyCurve;
 
@@ -119,7 +123,7 @@ namespace GsaGH.Parameters
         else
         {
           GH_Integer ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
+          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
             target = (Q)(object)ghint;
           else
             target = default;

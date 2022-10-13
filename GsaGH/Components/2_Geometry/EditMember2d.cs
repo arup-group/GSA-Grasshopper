@@ -127,7 +127,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            mem.ID = id;
+            mem.Id = id;
         }
 
         // 2/3/4 Brep, incl.pts and incl.lns
@@ -281,7 +281,7 @@ namespace GsaGH.Components
         // #### outputs ####
 
         DA.SetData(0, new GsaMember2dGoo(mem));
-        DA.SetData(1, mem.ID);
+        DA.SetData(1, mem.Id);
         DA.SetData(2, mem.Brep);
         DA.SetDataList(3, mem.InclusionPoints);
         DA.SetDataList(4, mem.InclusionLines);

@@ -131,7 +131,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            mem.ID = id;
+            mem.Id = id;
         }
 
         // 2 curve
@@ -291,7 +291,7 @@ namespace GsaGH.Components
 
         // #### outputs ####
         DA.SetData(0, new GsaMember1dGoo(mem));
-        DA.SetData(1, mem.ID);
+        DA.SetData(1, mem.Id);
         DA.SetData(2, mem.PolyCurve);
         DA.SetData(3, new GsaSectionGoo(mem.Section));
         DA.SetData(4, mem.Group);

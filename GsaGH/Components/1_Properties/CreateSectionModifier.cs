@@ -253,11 +253,11 @@ namespace GsaGH.Components
       
       bool ax = false;
       if (DA.GetData(8, ref ax))
-        modifier.isBendingAxesPrincipal = ax;
+        modifier.IsBendingAxesPrincipal = ax;
 
       bool pt = false;
       if (DA.GetData(9, ref pt))
-        modifier.isReferencePointCentroid = pt;
+        modifier.IsReferencePointCentroid = pt;
 
       modifier.StressOption = stressOption;
 

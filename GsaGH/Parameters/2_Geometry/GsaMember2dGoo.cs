@@ -19,7 +19,11 @@ namespace GsaGH.Parameters
     public static string NickName => "M2D";
     public static string Description => "GSA 2D Member";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    public GsaMember2dGoo(GsaMember2d item) : base(item) { }
+
+    public GsaMember2dGoo(GsaMember2d item) : base(item)
+    {
+    }
+
     public override IGH_GeometricGoo Duplicate() => new GsaMember2dGoo(this.Value);
     public override GeometryBase GetGeometry() => this.Value.Brep;
 
@@ -163,7 +167,7 @@ namespace GsaGH.Parameters
         else
         {
           GH_Integer ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
+          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
             target = (Q)(object)ghint;
           else
             target = default;

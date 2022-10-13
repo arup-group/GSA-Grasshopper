@@ -1,9 +1,6 @@
 ﻿using System;
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
+using System.Drawing;
 using GsaAPI;
-using OasysGH;
-using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysUnits;
 
@@ -14,14 +11,26 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaSection
   {
+    #region fields
+    private int _idd = 0;
+    private Guid _guid;
+    private GsaMaterial _material = new GsaMaterial();
+    private GsaSectionModifier _modifier = new GsaSectionModifier();
+    private Section _section = new Section();
+    #endregion
+
+    #region properties
     internal Section API_Section
     {
-      get { return m_section; }
+      get
+      {
+        return this._section;
+      }
       set
       {
-        m_guid = Guid.NewGuid();
-        m_section = value;
-        m_material = new GsaMaterial(this);
+        this._guid = Guid.NewGuid();
+        this._section = value;
+        this._material = new GsaMaterial(this);
       }
     }
     #region section properties
@@ -29,7 +38,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        Area area = new Area(m_section.Area, UnitSystem.SI);
+        Area area = new Area(this._section.Area, UnitSystem.SI);
         return new Area(area.As(DefaultUnits.SectionAreaUnit), DefaultUnits.SectionAreaUnit);
       }
     }
@@ -37,7 +46,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Iyy, UnitSystem.SI);
+        AreaMomentOfInertia inertia = new AreaMomentOfInertia(this._section.Iyy, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
@@ -45,7 +54,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Iyz, UnitSystem.SI);
+        AreaMomentOfInertia inertia = new AreaMomentOfInertia(this._section.Iyz, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
@@ -53,7 +62,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.Izz, UnitSystem.SI);
+        AreaMomentOfInertia inertia = new AreaMomentOfInertia(this._section.Izz, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
@@ -61,23 +70,29 @@ namespace GsaGH.Parameters
     {
       get
       {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(m_section.J, UnitSystem.SI);
+        AreaMomentOfInertia inertia = new AreaMomentOfInertia(this._section.J, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
     public double Ky
     {
-      get { return m_section.Ky; }
+      get
+      {
+        return this._section.Ky;
+      }
     }
     public double Kz
     {
-      get { return m_section.Kz; }
+      get
+      {
+        return this._section.Kz;
+      }
     }
     public IQuantity SurfaceAreaPerLength
     {
       get
       {
-        Area area = new Area(m_section.SurfaceAreaPerLength, UnitSystem.SI);
+        Area area = new Area(this._section.SurfaceAreaPerLength, UnitSystem.SI);
         Length len = new Length(1, DefaultUnits.LengthUnitSection);
         Area unitArea = len * len;
         Area areaOut = new Area(area.As(unitArea.Unit), unitArea.Unit);
@@ -86,183 +101,141 @@ namespace GsaGH.Parameters
     }
     public VolumePerLength VolumePerLength
     {
-      get { return new VolumePerLength(m_section.VolumePerLength, UnitSystem.SI); }
+      get
+      {
+        return new VolumePerLength(this._section.VolumePerLength, UnitSystem.SI);
+      }
     }
     #endregion
     public int ID
     {
-      get { return m_idd; }
+      get
+      {
+        return this._idd;
+      }
       set
       {
-        m_guid = Guid.NewGuid();
-        m_idd = value;
+        this._guid = Guid.NewGuid();
+        this._idd = value;
       }
     }
     public GsaMaterial Material
     {
-      get { return m_material; }
+      get
+      {
+        return this._material;
+      }
       set
       {
-        m_material = value;
-        if (m_section == null)
-          m_section = new Section();
-        else
-          CloneSection();
-        m_section.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(m_material);
-        m_section.MaterialAnalysisProperty = m_material.AnalysisProperty;
-        m_section.MaterialGradeProperty = m_material.GradeProperty;
+        this.CloneSection();
+        this._section.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(_material);
+        this._section.MaterialAnalysisProperty = _material.AnalysisProperty;
+        this._section.MaterialGradeProperty = _material.GradeProperty;
       }
     }
-
     public GsaSectionModifier Modifier
     {
-      get { return m_modifier; }
-      set { m_modifier = value; }
+      get
+      {
+        return this._modifier;
+      }
+      set
+      {
+        this._modifier = value;
+      }
     }
-
     #region GsaAPI members
     public string Name
     {
-      get { return m_section.Name; }
+      get
+      {
+        return _section.Name;
+      }
       set
       {
-        m_guid = Guid.NewGuid();
-        CloneSection();
-        m_section.Name = value;
+        this._guid = Guid.NewGuid();
+        this.CloneSection();
+        this._section.Name = value;
       }
     }
     public int Pool
     {
-      get { return m_section.Pool; }
+      get
+      {
+        return this._section.Pool;
+      }
       set
       {
-        m_guid = Guid.NewGuid();
-        CloneSection();
-        m_section.Pool = value;
+        this._guid = Guid.NewGuid();
+        this.CloneSection();
+        this._section.Pool = value;
       }
     }
     public int MaterialID
     {
-      get { return m_section.MaterialAnalysisProperty; }
+      get
+      {
+        return this._section.MaterialAnalysisProperty;
+      }
       set
       {
-        m_guid = Guid.NewGuid();
-        CloneSection();
-        m_section.MaterialAnalysisProperty = value;
-        m_material.AnalysisProperty = m_section.MaterialAnalysisProperty;
+        this._guid = Guid.NewGuid();
+        this.CloneSection();
+        this._section.MaterialAnalysisProperty = value;
+        this._material.AnalysisProperty = this._section.MaterialAnalysisProperty;
       }
     }
     public string Profile
     {
-      get { return m_section.Profile.Replace("%", " "); }
+      get
+      {
+        return this._section.Profile.Replace("%", " ");
+      }
       set
       {
-        m_guid = Guid.NewGuid();
-        CloneSection();
-        m_section.Profile = value;
+        this._guid = Guid.NewGuid();
+        this.CloneSection();
+        this._section.Profile = value;
       }
     }
-    public System.Drawing.Color Colour
+    public Color Colour
     {
-      get { return (System.Drawing.Color)m_section.Colour; }
+      get
+      {
+        return (Color)this._section.Colour;
+      }
       set
       {
-        m_guid = Guid.NewGuid();
-        CloneSection();
-        m_section.Colour = value;
+        this._guid = Guid.NewGuid();
+        this.CloneSection();
+        this._section.Colour = value;
       }
     }
     private void CloneSection()
     {
-      if (m_section == null)
-      {
-        m_section = new Section();
-        m_guid = Guid.NewGuid();
-        return;
-      }
-
       Section sec = new Section()
       {
-        MaterialAnalysisProperty = m_section.MaterialAnalysisProperty,
-        MaterialGradeProperty = m_section.MaterialGradeProperty,
-        MaterialType = m_section.MaterialType,
-        Name = m_section.Name.ToString(),
-        Pool = m_section.Pool,
-        Profile = m_section.Profile.ToString()
+        MaterialAnalysisProperty = this._section.MaterialAnalysisProperty,
+        MaterialGradeProperty = this._section.MaterialGradeProperty,
+        MaterialType = this._section.MaterialType,
+        Name = this._section.Name.ToString(),
+        Pool = this._section.Pool,
+        Profile = this._section.Profile.ToString()
       };
-      if ((System.Drawing.Color)m_section.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        sec.Colour = m_section.Colour;
+      if ((Color)_section.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        sec.Colour = this._section.Colour;
 
-      m_section = sec;
-      m_guid = Guid.NewGuid();
+      this._section = sec;
+      this._guid = Guid.NewGuid();
     }
     #endregion
     public Guid GUID
     {
-      get { return m_guid; }
-    }
-
-    #region fields
-    Section m_section;
-    int m_idd = 0;
-    GsaMaterial m_material;
-    GsaSectionModifier m_modifier;
-    private Guid m_guid;
-    #endregion
-
-    #region constructors
-    public GsaSection()
-    {
-      m_section = null;
-      m_guid = Guid.Empty;
-      m_idd = 0;
-    }
-
-    public GsaSection(int id)
-    {
-      m_section = null;
-      m_guid = Guid.Empty;
-      m_idd = id;
-    }
-
-    public GsaSection(string profile)
-    {
-      m_section = new Section
+      get
       {
-        Profile = profile
-      };
-      m_material = new GsaMaterial();
-      m_guid = Guid.NewGuid();
+        return this._guid;
+      }
     }
-
-    public GsaSection(string profile, int ID = 0)
-    {
-      m_section = new Section
-      {
-        Profile = profile
-      };
-      m_idd = ID;
-      m_material = new GsaMaterial();
-      m_guid = Guid.NewGuid();
-    }
-
-    public GsaSection Duplicate()
-    {
-      if (this == null) { return null; }
-      GsaSection dup = new GsaSection();
-      if (m_section != null)
-        dup.m_section = m_section;
-      dup.m_idd = m_idd;
-      if (m_material != null)
-        dup.m_material = m_material.Duplicate();
-      if (m_modifier != null)
-        dup.m_modifier = m_modifier.Duplicate();
-      dup.m_guid = new Guid(m_guid.ToString());
-      return dup;
-    }
-    #endregion
-
-    #region properties
     public bool IsValid
     {
       get
@@ -272,16 +245,46 @@ namespace GsaGH.Parameters
     }
     #endregion
 
-    #region methods
-    public override string ToString()
+    #region constructors
+    public GsaSection()
     {
-      string prof = "";
-      if (m_section != null)
-        prof = m_section.Profile;
-      string pb = "PB" + ID + " ";
-      return "GSA Section " + ((ID > 0) ? pb : "") + ((m_section == null) ? "" : prof.Replace("%", " "));
     }
 
+    public GsaSection(int id)
+    {
+      this._idd = id;
+    }
+
+    public GsaSection(string profile)
+    {
+      this._section.Profile = profile;
+    }
+
+    public GsaSection(string profile, int id = 0)
+    {
+      this._section.Profile = profile;
+      this._idd = id;
+    }
+    #endregion
+
+    #region methods
+    public GsaSection Duplicate()
+    {
+      GsaSection dup = new GsaSection();
+      dup._section = this._section;
+      dup._idd = this._idd;
+      dup._material = this._material.Duplicate();
+      dup._modifier = this._modifier.Duplicate();
+      dup._guid = new Guid(_guid.ToString());
+      return dup;
+    }
+
+    public override string ToString()
+    {
+      string prof = this._section.Profile;
+      string pb = "PB" + this.ID + " ";
+      return "GSA Section " + ((this.ID > 0) ? pb : "") + ((this._section == null) ? "" : prof.Replace("%", " "));
+    }
     #endregion
   }
 }

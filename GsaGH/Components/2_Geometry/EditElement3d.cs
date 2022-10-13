@@ -113,7 +113,7 @@ namespace GsaGH.Components
               in_ids.Add(id);
             }
           }
-          elem.ID = in_ids;
+          elem.Id = in_ids;
         }
 
 
@@ -244,7 +244,7 @@ namespace GsaGH.Components
         }
 
         DA.SetData(0, new GsaElement3dGoo(elem));
-        DA.SetDataList(1, elem.ID);
+        DA.SetDataList(1, elem.Id);
         DA.SetDataList(2, out_meshes);
         DA.SetDataList(3, new List<GsaProp3dGoo>(elem.Properties.ConvertAll(prop3d => new GsaProp3dGoo(prop3d))));
         DA.SetDataList(4, elem.Groups);

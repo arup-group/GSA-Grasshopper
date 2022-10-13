@@ -11,10 +11,6 @@ namespace GsaGH.Util.Gsa.ToGSA
     public static MaterialType ConvertType(GsaMaterial material)
     {
       MaterialType matType = GsaAPI.MaterialType.NONE;
-      
-      if (material == null) 
-        return matType;
-
       int typ = (int)material.MaterialType;
       if (typ == 1)
         matType = MaterialType.STEEL;
@@ -47,9 +43,9 @@ namespace GsaGH.Util.Gsa.ToGSA
       int outID = material.AnalysisProperty;
 
       // test if material has already bee added to the dictionary
-      if (materials_guid.ContainsKey(material.GUID))
+      if (materials_guid.ContainsKey(material.Guid))
       {
-        materials_guid.TryGetValue(material.GUID, out int sID);
+        materials_guid.TryGetValue(material.Guid, out int sID);
         // if guid exist in our dictionary it has been added to the model 
         return sID;
       }
@@ -76,7 +72,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       }
 
       // set guid in dictionary
-      materials_guid.Add(material.GUID, outID);
+      materials_guid.Add(material.Guid, outID);
 
       return outID;
     }
@@ -135,9 +131,9 @@ namespace GsaGH.Util.Gsa.ToGSA
       if (section.Modifier != null && section.Modifier.IsModified)
       {
         if (existingSectionModifiers.ContainsKey(outID))
-          existingSectionModifiers[outID] = section.Modifier.API_SectionModifier;
+          existingSectionModifiers[outID] = section.Modifier._sectionModifier;
         else
-          existingSectionModifiers.Add(outID, section.Modifier.API_SectionModifier);
+          existingSectionModifiers.Add(outID, section.Modifier._sectionModifier);
       }
 
       return outID;
@@ -171,9 +167,9 @@ namespace GsaGH.Util.Gsa.ToGSA
               if (section.Modifier != null && section.Modifier.IsModified)
               {
                 if (apimodifiers.ContainsKey(i))
-                  apimodifiers[i] = section.Modifier.API_SectionModifier;
+                  apimodifiers[i] = section.Modifier._sectionModifier;
                 else
-                  apimodifiers.Add(i, section.Modifier.API_SectionModifier);
+                  apimodifiers.Add(i, section.Modifier._sectionModifier);
               }
 
               // set material
@@ -214,7 +210,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {
       if (prop2d == null) { return 0; }
-      if (prop2d.API_Prop2d == null) { return prop2d.ID; }
+      if (prop2d.API_Prop2d == null) { return prop2d.Id; }
       if (prop2d_guid.ContainsKey(prop2d.GUID))
       {
         prop2d_guid.TryGetValue(prop2d.GUID, out int sID);
@@ -222,7 +218,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         return sID;
       }
 
-      int outID = prop2d.ID;
+      int outID = prop2d.Id;
 
       // set material
       if (prop2d.API_Prop2d.MaterialAnalysisProperty != 0 && prop2d.Material != null && prop2d.Material.AnalysisMaterial != null)
@@ -230,10 +226,10 @@ namespace GsaGH.Util.Gsa.ToGSA
 
 
       // section
-      if (prop2d.ID > 0)
+      if (prop2d.Id > 0)
       {
         if (prop2d.API_Prop2d != null) // section can refer to an ID only, meaning that the section must already exist in the model. Else we set it in the model:
-          existingProp2Ds[prop2d.ID] = prop2d.API_Prop2d;
+          existingProp2Ds[prop2d.Id] = prop2d.API_Prop2d;
         else
           return outID; // return without setting the GUID in the dictionary
       }
@@ -269,7 +265,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         if (prop2Ds.Count != 0)
         {
           // update counter if new prop2ds have set ID higher than existing max
-          int existingProp2dMaxID = prop2Ds.Max(x => x.ID); // max ID in new 
+          int existingProp2dMaxID = prop2Ds.Max(x => x.Id); // max ID in new 
           if (existingProp2dMaxID > prop2didcounter)
             prop2didcounter = existingProp2dMaxID + 1;
 
@@ -292,11 +288,11 @@ namespace GsaGH.Util.Gsa.ToGSA
                 continue;
               }
 
-              if (prop2d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+              if (prop2d.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
               {
-                existingProp2Ds[prop2d.ID] = apiProp2d;
+                existingProp2Ds[prop2d.Id] = apiProp2d;
                 // set guid in dictionary
-                prop2d_guid.Add(prop2d.GUID, prop2d.ID);
+                prop2d_guid.Add(prop2d.GUID, prop2d.Id);
               }
               else
               {
@@ -318,7 +314,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {
       if (prop3d == null) { return 0; }
-      if (prop3d.API_Prop3d == null) { return prop3d.ID; }
+      if (prop3d.API_Prop3d == null) { return prop3d.Id; }
       if (prop3d_guid.ContainsKey(prop3d.GUID))
       {
         prop3d_guid.TryGetValue(prop3d.GUID, out int sID);
@@ -326,7 +322,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         return sID;
       }
 
-      int outID = prop3d.ID;
+      int outID = prop3d.Id;
 
       // set material
       if (prop3d.API_Prop3d.MaterialAnalysisProperty != 0 && prop3d.Material != null && prop3d.Material.AnalysisMaterial != null)
@@ -334,10 +330,10 @@ namespace GsaGH.Util.Gsa.ToGSA
 
 
       // section
-      if (prop3d.ID > 0)
+      if (prop3d.Id > 0)
       {
         if (prop3d.API_Prop3d != null) // section can refer to an ID only, meaning that the section must already exist in the model. Else we set it in the model:
-          existingProp3Ds[prop3d.ID] = prop3d.API_Prop3d;
+          existingProp3Ds[prop3d.Id] = prop3d.API_Prop3d;
         else
           return outID; // return without setting the GUID in the dictionary
       }
@@ -373,7 +369,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         if (prop3Ds.Count != 0)
         {
           // update counter if new prop2ds have set ID higher than existing max
-          int existingProp2dMaxID = prop3Ds.Max(x => x.ID); // max ID in new 
+          int existingProp2dMaxID = prop3Ds.Max(x => x.Id); // max ID in new 
           if (existingProp2dMaxID > prop3didcounter)
             prop3didcounter = existingProp2dMaxID + 1;
 
@@ -396,11 +392,11 @@ namespace GsaGH.Util.Gsa.ToGSA
                 continue;
               }
 
-              if (prop3d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+              if (prop3d.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
               {
-                existingProp3Ds[prop3d.ID] = apiProp3d;
+                existingProp3Ds[prop3d.Id] = apiProp3d;
                 // set guid in dictionary
-                prop3d_guid.Add(prop3d.GUID, prop3d.ID);
+                prop3d_guid.Add(prop3d.GUID, prop3d.Id);
               }
               else
               {

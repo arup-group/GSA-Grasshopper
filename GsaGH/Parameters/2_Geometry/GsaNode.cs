@@ -27,7 +27,7 @@ namespace GsaGH.Parameters
     //    get { return m_spring; }
     //    set { m_spring = value; }
     //}
-    public int ID
+    public int Id
     {
       get { return m_id; }
       set { m_id = value; }
@@ -283,8 +283,8 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       if (API_Node == null) { return "Null Node"; }
-      string idd = " " + ID.ToString() + " ";
-      if (ID == 0) { idd = " "; }
+      string idd = " " + Id.ToString() + " ";
+      if (Id == 0) { idd = " "; }
       GH_Point gH_Point = new GH_Point(Point);
       string nodeTxt = "GSA Node" + idd + gH_Point.ToString();
 

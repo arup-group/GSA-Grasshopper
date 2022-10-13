@@ -54,7 +54,7 @@ namespace GsaGH.Parameters
       }
     }
 
-    public int ID
+    public int Id
     {
       get { return m_id; }
       set { m_id = value; }
@@ -278,8 +278,8 @@ namespace GsaGH.Parameters
     #region methods
     public override string ToString()
     {
-      string idd = " " + ID.ToString();
-      if (ID == 0) { idd = ""; }
+      string idd = " " + Id.ToString();
+      if (Id == 0) { idd = ""; }
       string mes = m_member.Type.ToString();
       string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
       typeTxt = typeTxt.Replace("3d", "3D");

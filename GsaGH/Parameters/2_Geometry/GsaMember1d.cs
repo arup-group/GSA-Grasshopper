@@ -30,7 +30,7 @@ namespace GsaGH.Parameters
         UpdatePreview();
       }
     }
-    public int ID
+    public int Id
     {
       get { return m_id; }
       set { m_id = value; }
@@ -57,7 +57,7 @@ namespace GsaGH.Parameters
         m_rel1 = value;
         if (m_rel1 == null) { m_rel1 = new GsaBool6(); }
         CloneApiMember();
-        m_member.SetEndRelease(0, new EndRelease(m_rel1.API_Bool6));
+        m_member.SetEndRelease(0, new EndRelease(m_rel1._bool6));
         UpdatePreview();
       }
     }
@@ -72,7 +72,7 @@ namespace GsaGH.Parameters
         m_rel2 = value;
         if (m_rel2 == null) { m_rel2 = new GsaBool6(); }
         CloneApiMember();
-        m_member.SetEndRelease(1, new EndRelease(m_rel2.API_Bool6));
+        m_member.SetEndRelease(1, new EndRelease(m_rel2._bool6));
         UpdatePreview();
       }
     }
@@ -413,7 +413,7 @@ namespace GsaGH.Parameters
       if (this == null) { return null; }
 
       GsaMember1d dup = this.Duplicate(true);
-      dup.ID = 0;
+      dup.Id = 0;
 
       List<Point3d> pts = m_topo.ToList();
       Point3dList xpts = new Point3dList(pts);
@@ -434,7 +434,7 @@ namespace GsaGH.Parameters
       if (this == null) { return null; }
 
       GsaMember1d dup = this.Duplicate(true);
-      dup.ID = 0;
+      dup.Id = 0;
 
       List<Point3d> pts = m_topo.ToList();
       for (int i = 0; i < pts.Count; i++)
@@ -467,8 +467,8 @@ namespace GsaGH.Parameters
     #region methods
     public override string ToString()
     {
-      string idd = " " + ID.ToString();
-      if (ID == 0) { idd = ""; }
+      string idd = " " + Id.ToString();
+      if (Id == 0) { idd = ""; }
       string mes = m_member.Type.ToString();
       string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
       typeTxt = typeTxt.Replace("1d", "1D");
