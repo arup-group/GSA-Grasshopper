@@ -1,21 +1,22 @@
-﻿using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-using OasysGH;
-using OasysGH.Helpers;
-using OasysGH.Parameters;
-using System;
-using System.Text.RegularExpressions;
-
-namespace GsaGH.Parameters
+﻿namespace GsaGH.Parameters
 {
   public class GsaAnalysisCase
   {
+    internal int ID { get; set; } = 0;
     public string Name { get; set; }
     public string Description { get; set; }
-    internal int ID { get; set; } = 0;
+
+    public bool IsValid
+    {
+      get
+      {
+        return true;
+      }
+    }
 
     public GsaAnalysisCase()
-    { }
+    {
+    }
 
     internal GsaAnalysisCase(int id, string name, string description = "")
     {
@@ -30,32 +31,21 @@ namespace GsaGH.Parameters
       this.Description = description;
     }
 
+    #region methods
     public GsaAnalysisCase Duplicate()
     {
-      return new GsaAnalysisCase(ID, Name, Description);
+      return new GsaAnalysisCase(ID, this.Name, this.Description);
     }
 
-    #region properties
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
-    #endregion
-
-    #region methods
     public override string ToString()
     {
       string s = "GSA Analysis Case";
-      if (Name != null)
-        s += " '" + Name.ToString() + "'";
-      if (Description != null)
-        s += " { " + Description.ToString() + " }";
+      if (this.Name != null)
+        s += " '" + this.Name.ToString() + "'";
+      if (this.Description != null)
+        s += " { " + this.Description.ToString() + " }";
       return s;
     }
-
     #endregion
   }
 }

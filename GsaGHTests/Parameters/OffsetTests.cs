@@ -3,7 +3,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
 
-namespace ParamsIntegrationTests
+namespace GsaGHTests
 {
   public class OffsetTests
   {

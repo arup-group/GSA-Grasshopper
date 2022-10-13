@@ -1,9 +1,5 @@
 ﻿using System;
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
-using OasysGH;
-using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
@@ -38,12 +34,15 @@ namespace GsaGH.Parameters
       BARMAT = 65280
     }
 
+    public MatType MaterialType { get; set; } = MatType.UNDEF;
     public int GradeProperty
     {
-      get { return m_grade; }
+      get {
+        return m_grade;
+      }
       set
       {
-        m_grade = value;
+        this.m_grade = value;
       }
     }
     public int AnalysisProperty
@@ -51,26 +50,28 @@ namespace GsaGH.Parameters
       get { return m_analProp; }
       set
       {
-        m_analProp = value;
-        if (m_analProp != 0)
-          m_guid = Guid.NewGuid();
+        this.m_analProp = value;
+        if (this.m_analProp != 0)
+          this.m_guid = Guid.NewGuid();
       }
     }
     public Guid GUID
     {
-      get { return m_guid; }
+      get { 
+        return this.m_guid;
+      }
     }
     internal AnalysisMaterial AnalysisMaterial
     {
       get { return m_AnalysisMaterial; }
       set
       {
-        m_AnalysisMaterial = value;
-        m_guid = Guid.NewGuid();
+        this.m_AnalysisMaterial = value;
+        this.m_guid = Guid.NewGuid();
       }
     }
+
     #region fields
-    public MatType MaterialType { get; set; } = MatType.UNDEF;
     private AnalysisMaterial m_AnalysisMaterial;
     //int m_idd = 0;
     int m_grade = 1;
@@ -83,7 +84,68 @@ namespace GsaGH.Parameters
     {
     }
 
-    private MatType getType(MaterialType materialType)
+    /// <summary>
+    /// 0 : Generic
+    /// 1 : Steel
+    /// 2 : Concrete
+    /// 3 : Aluminium
+    /// 4 : Glass
+    /// 5 : FRP
+    /// 7 : Timber
+    /// 8 : Fabric
+    /// </summary>
+    /// <param name="material_id"></param>
+    public GsaMaterial(int material_id)
+    {
+      this.MaterialType = (MatType)material_id;
+    }
+
+    internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null)
+    {
+      if (section == null || section.API_Section == null)
+        return;
+      if (section.Material != null)
+      {
+        if (analysisMaterial == null && section.Material.AnalysisMaterial != null)
+          analysisMaterial = section.Material.AnalysisMaterial;
+        else if (section.API_Section.MaterialAnalysisProperty > 0 && section.Material != null && analysisMaterial == null)
+          analysisMaterial = section.Material.AnalysisMaterial;
+      }
+
+      this.CreateFromAPI(section.API_Section.MaterialType, section.API_Section.MaterialAnalysisProperty, section.API_Section.MaterialGradeProperty, analysisMaterial);
+    }
+
+    internal GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null)
+    {
+      if (prop == null || prop.API_Prop2d == null)
+        return;
+      if (prop.Material != null)
+      {
+        if (analysisMaterial == null && prop.Material.AnalysisMaterial != null)
+          analysisMaterial = prop.Material.AnalysisMaterial;
+        else if (prop.API_Prop2d.MaterialAnalysisProperty > 0 && analysisMaterial == null)
+          analysisMaterial = prop.Material.AnalysisMaterial;
+      }
+
+      this.CreateFromAPI(prop.API_Prop2d.MaterialType, prop.API_Prop2d.MaterialAnalysisProperty, prop.API_Prop2d.MaterialGradeProperty, analysisMaterial);
+    }
+
+    internal GsaMaterial(GsaProp3d prop, AnalysisMaterial analysisMaterial = null)
+    {
+      if (prop == null || prop.API_Prop3d == null)
+        return;
+
+      if (prop.Material != null)
+      {
+        if (analysisMaterial == null && prop.Material.AnalysisMaterial != null)
+          analysisMaterial = prop.Material.AnalysisMaterial;
+        else if (prop.API_Prop3d.MaterialAnalysisProperty > 0 && analysisMaterial == null)
+          analysisMaterial = prop.Material.AnalysisMaterial;
+      }
+      this.CreateFromAPI(prop.API_Prop3d.MaterialType, prop.API_Prop3d.MaterialAnalysisProperty, prop.API_Prop3d.MaterialGradeProperty, analysisMaterial);
+    }
+
+    private MatType GetType(MaterialType materialType)
     {
       MatType m_type = MatType.UNDEF; // custom material
 
@@ -106,76 +168,15 @@ namespace GsaGH.Parameters
       return m_type;
     }
 
-    /// <summary>
-    /// 0 : Generic
-    /// 1 : Steel
-    /// 2 : Concrete
-    /// 3 : Aluminium
-    /// 4 : Glass
-    /// 5 : FRP
-    /// 7 : Timber
-    /// 8 : Fabric
-    /// </summary>
-    /// <param name="material_id"></param>
-    public GsaMaterial(int material_id)
-    {
-      MaterialType = (MatType)material_id;
-    }
-
-    internal GsaMaterial(GsaSection section, AnalysisMaterial analysisMaterial = null)
-    {
-      if (section == null || section.API_Section == null)
-        return;
-      if (section.Material != null)
-      {
-        if (analysisMaterial == null && section.Material.AnalysisMaterial != null)
-          analysisMaterial = section.Material.AnalysisMaterial;
-        else if (section.API_Section.MaterialAnalysisProperty > 0 && section.Material != null && analysisMaterial == null)
-          analysisMaterial = section.Material.AnalysisMaterial;
-      }
-        
-      CreateFromAPI(section.API_Section.MaterialType, section.API_Section.MaterialAnalysisProperty, section.API_Section.MaterialGradeProperty, analysisMaterial);
-    }
-
-    internal GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null)
-    {
-      if (prop == null || prop.API_Prop2d == null)
-        return;
-      if (prop.Material != null)
-      {
-        if (analysisMaterial == null && prop.Material.AnalysisMaterial != null)
-          analysisMaterial = prop.Material.AnalysisMaterial;
-        else if (prop.API_Prop2d.MaterialAnalysisProperty > 0 && analysisMaterial == null)
-          analysisMaterial = prop.Material.AnalysisMaterial;
-      }
-      
-      CreateFromAPI(prop.API_Prop2d.MaterialType, prop.API_Prop2d.MaterialAnalysisProperty, prop.API_Prop2d.MaterialGradeProperty, analysisMaterial);
-    }
-
-    internal GsaMaterial(GsaProp3d prop, AnalysisMaterial analysisMaterial = null)
-    {
-      if (prop == null || prop.API_Prop3d == null)
-        return;
-
-      if (prop.Material != null)
-      {
-        if (analysisMaterial == null && prop.Material.AnalysisMaterial != null)
-          analysisMaterial = prop.Material.AnalysisMaterial;
-        else if (prop.API_Prop3d.MaterialAnalysisProperty > 0 && analysisMaterial == null)
-          analysisMaterial = prop.Material.AnalysisMaterial;
-      }
-      CreateFromAPI(prop.API_Prop3d.MaterialType, prop.API_Prop3d.MaterialAnalysisProperty, prop.API_Prop3d.MaterialGradeProperty, analysisMaterial);
-    }
-
     private void CreateFromAPI(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial)
     {
-      MaterialType = getType(materialType);
-      GradeProperty = gradeProp;
-      AnalysisProperty = analysisProp;
-      if (AnalysisProperty != 0 & analysisMaterial != null)
+      this.MaterialType = GetType(materialType);
+      this.GradeProperty = gradeProp;
+      this.AnalysisProperty = analysisProp;
+      if (this.AnalysisProperty != 0 & analysisMaterial != null)
       {
-        m_guid = Guid.NewGuid();
-        m_AnalysisMaterial = new AnalysisMaterial()
+        this.m_guid = Guid.NewGuid();
+        this.m_AnalysisMaterial = new AnalysisMaterial()
         {
           CoefficientOfThermalExpansion = analysisMaterial.CoefficientOfThermalExpansion,
           Density = analysisMaterial.Density,
@@ -188,18 +189,18 @@ namespace GsaGH.Parameters
     public GsaMaterial Duplicate()
     {
       GsaMaterial dup = new GsaMaterial();
-      dup.MaterialType = MaterialType;
-      dup.GradeProperty = m_grade;
-      dup.AnalysisProperty = m_analProp;
-      if (m_analProp != 0)
+      dup.MaterialType = this.MaterialType;
+      dup.GradeProperty = this.m_grade;
+      dup.AnalysisProperty = this.m_analProp;
+      if (this.m_analProp != 0)
       {
         dup.m_guid = Guid.NewGuid();
         dup.AnalysisMaterial = new AnalysisMaterial()
         {
-          CoefficientOfThermalExpansion = AnalysisMaterial.CoefficientOfThermalExpansion,
-          Density = AnalysisMaterial.Density,
-          ElasticModulus = AnalysisMaterial.ElasticModulus,
-          PoissonsRatio = AnalysisMaterial.PoissonsRatio
+          CoefficientOfThermalExpansion = this.AnalysisMaterial.CoefficientOfThermalExpansion,
+          Density = this.AnalysisMaterial.Density,
+          ElasticModulus = this.AnalysisMaterial.ElasticModulus,
+          PoissonsRatio = this.AnalysisMaterial.PoissonsRatio
         };
       }
       return dup;
@@ -209,11 +210,11 @@ namespace GsaGH.Parameters
     #region methods
     public override string ToString()
     {
-      if (MaterialType == MatType.UNDEF)
+      if (this.MaterialType == MatType.UNDEF)
       {
         return "Custom Elastic Isotropic";
       }
-      string mate = MaterialType.ToString();
+      string mate = this.MaterialType.ToString();
       return Char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
     }
     #endregion
