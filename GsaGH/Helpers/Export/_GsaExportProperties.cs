@@ -11,6 +11,10 @@ namespace GsaGH.Util.Gsa.ToGSA
     public static MaterialType ConvertType(GsaMaterial material)
     {
       MaterialType matType = GsaAPI.MaterialType.NONE;
+      
+      if (material == null) 
+        return matType;
+
       int typ = (int)material.MaterialType;
       if (typ == 1)
         matType = MaterialType.STEEL;

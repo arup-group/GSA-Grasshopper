@@ -1,10 +1,9 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using OasysGH;
 using Rhino.Geometry;
-using System;
+using OasysGH;
 
-namespace OasysGH.Parameters
+namespace GsaGH.Parameters
 {
   public abstract class GH_OasysGeometricGoo<T> : GH_GeometricGoo<T>, IGH_PreviewData
   {
