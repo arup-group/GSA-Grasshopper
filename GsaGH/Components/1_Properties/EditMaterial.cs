@@ -39,7 +39,7 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
 
-      pManager.AddGenericParameter("Material", "Ma", "GSA Material to get or set information for", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter(), "Material", "Mat", "GSA Material to get or set information for", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Analysis Property", "An", "Set Material Analysis Property Number (0 -> 'from Grade'", GH_ParamAccess.item);
       pManager.AddTextParameter("Material Type", "mT", "Set Material Type" + System.Environment.NewLine +
           "Input either text string or integer:"
@@ -51,7 +51,7 @@ namespace GsaGH.Components
           + System.Environment.NewLine + "FRP : 5"
           + System.Environment.NewLine + "Timber : 7"
           + System.Environment.NewLine + "Fabric : 8", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Material Grade", "Gr", "Set Material Grade", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Material Grade", "Grd", "Set Material Grade", GH_ParamAccess.item);
 
       for (int i = 0; i < pManager.ParamCount; i++)
         pManager[i].Optional = true;
@@ -59,10 +59,11 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Material", "Ma", "GSA Material with changes", GH_ParamAccess.item);
+
+      pManager.AddParameter(new GsaMaterialParameter(), "Material", "Mat", "GSA Material with changes", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Analysis Property", "An", "Get Material Analysis Property (0 -> 'from Grade')", GH_ParamAccess.item);
       pManager.AddTextParameter("Material Type", "mT", "Get Material Type", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Material Grade", "Gr", "Get Material Grade", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Material Grade", "Grd", "Get Material Grade", GH_ParamAccess.item);
     }
     #endregion
 

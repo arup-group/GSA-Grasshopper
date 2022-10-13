@@ -13,7 +13,7 @@ namespace GsaGH.Parameters
   public class GsaAnalysisTaskGoo : GH_OasysGoo<GsaAnalysisTask>
   {
     public static string Name => "Analysis Task";
-    public static string NickName => "AT";
+    public static string NickName => "ΣT";
     public static string Description => "GSA Analysis Task";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

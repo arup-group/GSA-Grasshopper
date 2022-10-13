@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-    <PackageReference Include="OasysGH" Version="0.3.2-beta" />
+    <PackageReference Include="OasysGH" Version="0.3.5-beta" />
     <PackageReference Include="OasysUnits" Version="1.0.0" />
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
     <PackageReference Include="xunit" Version="2.4.2" />

@@ -13,7 +13,7 @@ namespace GsaGH.Parameters
   public class GsaMaterialGoo : GH_OasysGoo<GsaMaterial>
   {
     public static string Name => "Material";
-    public static string NickName => "M";
+    public static string NickName => "Mat";
     public static string Description => "GSA Material";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

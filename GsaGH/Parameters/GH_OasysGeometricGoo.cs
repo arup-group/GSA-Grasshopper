@@ -1,16 +1,92 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using OasysGH;
 using Rhino.Geometry;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GsaGH.Parameters
 {
-  public abstract class GH_OasysGeometricGoo<T> : GH_GeometricGoo<T>
+  public abstract class GH_OasysGeometricGoo<T> : GH_GeometricGoo<T>, IGH_PreviewData
   {
+    abstract public OasysPluginInfo PluginInfo { get; }
+
+    public override string TypeName => typeof(T).Name.TrimStart('I').TrimStart('G', 's', 'a').TrimStart('A', 'd', 'S', 'e', 'c');
+    public override string TypeDescription => PluginInfo.ProductName + " " + this.TypeName + " Parameter";
+    public override bool IsValid => (this.Value == null) ? false : true;
+    public override string IsValidWhyNot
+    {
+      get
+      {
+        if (IsValid)
+          return string.Empty;
+        else
+          return IsValid.ToString();
+      }
+    }
+
+    public GH_OasysGeometricGoo(T item)
+    {
+      if (item == null)
+        this.Value = item;
+      else
+        this.Value = (T)item.Duplicate();
+    }
+
+    public override string ToString()
+    {
+      if (this.Value == null)
+        return "Null";
+      else
+        return this.PluginInfo.ProductName + " " + this.TypeName + " {" + this.Value.ToString() + "}";
+    }
+
+    #region casting methods
+    public override bool CastTo<Q>(ref Q target)
+    {
+      // This function is called when Grasshopper needs to convert this 
+      // instance of our custom class into some other type Q.            
+
+      if (typeof(Q).IsAssignableFrom(typeof(T)))
+      {
+        if (Value == null)
+          target = default;
+        else
+          target = (Q)(object)Value;
+        return true;
+      }
+
+      target = default;
+      return false;
+    }
+
+    public override bool CastFrom(object source)
+    {
+      // This function is called when Grasshopper needs to convert other data 
+      // into our custom class.
+
+      if (source == null)
+        return false;
+
+      //Cast from this type
+      if (typeof(T).IsAssignableFrom(source.GetType()))
+      {
+        Value = (T)source;
+        return true;
+      }
+
+      return false;
+    }
+    #endregion
+
+    #region geometry
+    public override IGH_GeometricGoo DuplicateGeometry()
+    {
+      return this.Duplicate();
+    }
+    public abstract new IGH_GeometricGoo Duplicate();
+
+    public abstract GeometryBase GetGeometry();
+
     public override BoundingBox Boundingbox
     {
       get
@@ -23,100 +99,29 @@ namespace GsaGH.Parameters
       }
     }
     private BoundingBox m_BoundingBox;
-
-    public abstract OasysPluginInfo PluginInfo { get; }
-
-    public override string TypeName => typeof(T).Name.TrimStart('I');
-
-    public override string TypeDescription => PluginInfo.ProductName + " " + TypeName + " Parameter";
-
-    public override bool IsValid
-    {
-      get
-      {
-        if (this.Value != null)
-          return true;
-        return false;
-      }
-    }
-
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        if (this.IsValid)
-          return string.Empty;
-        return this.IsValid.ToString();
-      }
-    }
-
-    public GH_OasysGeometricGoo(T item)
-    {
-      if (item == null)
-        this.Value = item;
-      else
-        this.Value = (T)item.Duplicate();
-    }
-
-    public abstract GeometryBase GetGeometry();
-
-    public override string ToString()
-    {
-      if (this.Value == null)
-        return "Null";
-      return PluginInfo.ProductName + " " + this.TypeName + " {" + this.Value.ToString() + "}";
-    }
-
-    public override bool CastTo<Q>(ref Q target)
-    {
-      if (typeof(Q).IsAssignableFrom(typeof(T)))
-      {
-        if (this.Value == null)
-          target = default;
-        else
-          target = (Q)(object)this.Value;
-        return true;
-      }
-      target = default;
-      return false;
-    }
-
-    public override bool CastFrom(object source)
-    {
-      if (source == null)
-        return false;
-      if (typeof(T).IsAssignableFrom(source.GetType()))
-      {
-        this.Value = (T)source;
-        return true;
-      }
-      return false;
-    }
-
-    public override IGH_GeometricGoo DuplicateGeometry()
-    {
-      throw new NotImplementedException();
-    }
-
     public override BoundingBox GetBoundingBox(Transform xform)
     {
-
-      Transform transform = new Transform();
-
       GeometryBase geom = this.GetGeometry();
       if (geom == null)
         return BoundingBox.Empty;
       return geom.GetBoundingBox(Rhino.Geometry.Transform.ZeroTransformation);
     }
+    #endregion
 
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-    {
-      throw new NotImplementedException();
-    }
+    #region transformation methods
+    public abstract override IGH_GeometricGoo Morph(SpaceMorph xmorph);
 
-    public override IGH_GeometricGoo Transform(Transform xform)
+    public abstract override IGH_GeometricGoo Transform(Transform xform);
+    #endregion
+
+    #region drawing methods
+    public virtual BoundingBox ClippingBox
     {
-      throw new NotImplementedException();
+      get { return Boundingbox; }
     }
+    public abstract void DrawViewportMeshes(GH_PreviewMeshArgs args);
+
+    public abstract void DrawViewportWires(GH_PreviewWireArgs args);
+    #endregion
   }
 }

@@ -16,7 +16,7 @@ namespace GsaGH.Components
   public class CreateMaterial : GH_OasysDropDownComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("72bfce91-9204-4fe4-b81d-0036babf0c6d");
+    public override Guid ComponentGuid => new Guid("40641747-cfb1-4dab-b060-b9dd344d3ac3");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMaterial;
@@ -35,13 +35,12 @@ namespace GsaGH.Components
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddIntegerParameter("Analysis Property Number", "ID", "Analysis Property Number (default = 0 -> 'from Grade')", GH_ParamAccess.item, 0);
-      pManager.AddIntegerParameter("Grade", "Gr", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
+      pManager.AddIntegerParameter("Grade", "Grd", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Material", "Ma", "GSA Material", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter());
     }
     #endregion
 
@@ -49,16 +48,8 @@ namespace GsaGH.Components
     {
       GsaMaterial material = new GsaMaterial();
 
-      GH_Integer gh_anal = new GH_Integer();
-      if (DA.GetData(0, ref gh_anal))
-      {
-        int anal = 0;
-        GH_Convert.ToInt32(gh_anal, out anal, GH_Conversion.Both);
-        material.AnalysisProperty = anal;
-      }
-
       GH_Integer gh_grade = new GH_Integer();
-      if (DA.GetData(1, ref gh_grade))
+      if (DA.GetData(0, ref gh_grade))
       {
         int grade = 1;
         GH_Convert.ToInt32(gh_grade, out grade, GH_Conversion.Both);

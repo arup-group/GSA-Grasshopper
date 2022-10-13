@@ -18,7 +18,7 @@ namespace GsaGH.Parameters
   public class GsaSectionModifierGoo : GH_OasysGoo<GsaSectionModifier>
   {
     public static string Name => "Section Modifier";
-    public static string NickName => "SM";
+    public static string NickName => "PBM";
     public static string Description => "GSA Section Modifier";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

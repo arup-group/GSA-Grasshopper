@@ -70,7 +70,7 @@ namespace GsaGH.Parameters
       }
     }
     #region fields
-    public MatType MaterialType;
+    public MatType MaterialType { get; set; } = MatType.UNDEF;
     private AnalysisMaterial m_AnalysisMaterial;
     //int m_idd = 0;
     int m_grade = 1;
@@ -81,7 +81,6 @@ namespace GsaGH.Parameters
     #region constructors
     public GsaMaterial()
     {
-      MaterialType = MatType.UNDEF;
     }
 
     private MatType getType(MaterialType materialType)

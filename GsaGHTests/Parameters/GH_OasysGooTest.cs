@@ -5,6 +5,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using Xunit;
+using OasysGH.Parameters;
 
 namespace GsaGHTests.Parameters
 {
@@ -12,9 +13,27 @@ namespace GsaGHTests.Parameters
   public class GH_OasysGooTest
   {
     [Theory]
+    [InlineData(typeof(GsaModelGoo), typeof(GsaModel))]
+    [InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
+    [InlineData(typeof(GsaMaterialGoo), typeof(GsaMaterial))]
+    [InlineData(typeof(GsaOffsetGoo), typeof(GsaOffset))]
+    [InlineData(typeof(GsaProp2dGoo), typeof(GsaProp2d))]
+    [InlineData(typeof(GsaProp3dGoo), typeof(GsaProp3d))]
+    [InlineData(typeof(GsaSectionGoo), typeof(GsaSection))]
+    [InlineData(typeof(GsaSectionModifierGoo), typeof(GsaSectionModifier))]
+    [InlineData(typeof(GsaElement1dGoo), typeof(GsaElement1d))]
+    [InlineData(typeof(GsaElement2dGoo), typeof(GsaElement2d))]
+    [InlineData(typeof(GsaElement3dGoo), typeof(GsaElement3d))]
+    [InlineData(typeof(GsaMember1dGoo), typeof(GsaMember1d))]
+    [InlineData(typeof(GsaMember2dGoo), typeof(GsaMember2d))]
+    [InlineData(typeof(GsaMember3dGoo), typeof(GsaMember3d))]
+    [InlineData(typeof(GsaNodeGoo), typeof(GsaNode))]
+    [InlineData(typeof(GsaGridPlaneSurfaceGoo), typeof(GsaGridPlaneSurface))]
+    [InlineData(typeof(GsaLoadGoo), typeof(GsaLoad))]
     [InlineData(typeof(GsaAnalysisCaseGoo), typeof(GsaAnalysisCase))]
     [InlineData(typeof(GsaAnalysisTaskGoo), typeof(GsaAnalysisTask))]
-    //[InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
+    [InlineData(typeof(GsaCombinationCaseGoo), typeof(GsaCombinationCase))]
+    [InlineData(typeof(GsaResultGoo), typeof(GsaResult))]
     public void GenericGH_OasysGooTest(Type gooType, Type wrapType)
     {
       // Create the actual API object
@@ -51,14 +70,6 @@ namespace GsaGHTests.Parameters
           Assert.NotEqual(value, gooValue);
 
           hasValue = true;
-
-          // this could be used to test the content of the wrapped object, if they share any members/fields
-          //Type typeSource = gooValue.GetType();
-          //PropertyInfo[] wrappedPropertyInfo = typeSource.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-          //foreach (PropertyInfo wrapProperty in wrappedPropertyInfo)
-          //{
-
-          //}
         }
 
         // check the grasshopper tostring method (when you hover over the input/output)
@@ -92,7 +103,7 @@ namespace GsaGHTests.Parameters
           string description = (string)gooProperty.GetValue(objectGoo, null);
           // require a description to start with "GSA"
           Assert.StartsWith("GSA ", description);
-          Assert.True(description.Length > 10);
+          Assert.True(description.Length > 7);
           hasDescription = true;
         }
       }

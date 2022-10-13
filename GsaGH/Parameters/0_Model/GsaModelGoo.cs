@@ -13,7 +13,7 @@ namespace GsaGH.Parameters
   public class GsaModelGoo : GH_OasysGoo<GsaModel>
   {
     public static string Name => "Model";
-    public static string NickName => "M";
+    public static string NickName => "GSA";
     public static string Description => "GSA Model";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

@@ -8,6 +8,7 @@ using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
+using GsaGH.Util.Gsa.ToGSA;
 
 namespace GsaGH.Parameters
 {
@@ -81,6 +82,8 @@ namespace GsaGH.Parameters
       }
       get
       {
+        if (m_prop2d.Description.Length == 0)
+          return Length.Zero;
         if (m_prop2d.Description.Last() == ')')
         {
           // thickness could be written as "30.33(in)"
@@ -159,6 +162,15 @@ namespace GsaGH.Parameters
 
       m_prop2d = prop;
       m_guid = Guid.NewGuid();
+    }
+    internal static Property2D_Type PropTypeFromString(string type)
+    {
+      type = type.Trim().Replace(" ", "_").ToUpper();
+      type = type.Replace("PLANE", "PL");
+      type = type.Replace("NUMBER", "NUM");
+      type = type.Replace("AXIS_SYMMETRIC", "AXISYMMETRIC");
+      type = type.Replace("LOAD_PANEL", "LOAD");
+      return (Property2D_Type)Enum.Parse(typeof(Property2D_Type), type);
     }
     #endregion
     public Guid GUID

@@ -4,6 +4,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using OasysGH;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
@@ -11,85 +12,19 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaElement3d"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaElement3dGoo : GH_GeometricGoo<GsaElement3d>, IGH_PreviewData
+  public class GsaElement3dGoo : GH_OasysGeometricGoo<GsaElement3d>, IGH_PreviewData
   {
-    public static string Name => "3D Element";
+    public static string Name => "Element3D";
     public static string NickName => "E3D";
-    public static string Description => "GSA 3D Element";
+    public static string Description => "GSA 3D Element(s)";
 
-    #region constructors
-    public GsaElement3dGoo()
-    {
-      this.Value = new GsaElement3d();
-    }
-    public GsaElement3dGoo(GsaElement3d element)
-    {
-      if (element == null)
-        element = new GsaElement3d();
-      this.Value = element; //element.Duplicate();
-    }
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public override IGH_GeometricGoo DuplicateGeometry()
-    {
-      return DuplicateGsaElement3d();
-    }
-    public GsaElement3dGoo DuplicateGsaElement3d()
-    {
-      return new GsaElement3dGoo(Value == null ? new GsaElement3d() : Value); //Value.Duplicate());
-    }
-    #endregion
+    public GsaElement3dGoo(GsaElement3d item) : base(item) { }
 
-    #region properties
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value == null) { return false; }
-        if (Value.NgonMesh == null) { return false; }
-        return true;
-      }
-    }
-    public override string IsValidWhyNot
-    {
-      get
-      {
-        //if (Value == null) { return "No internal GsaMember instance"; }
-        if (Value.IsValid) { return string.Empty; }
-        return Value.IsValid.ToString(); //Todo: beef this up to be more informative.
-      }
-    }
-    public override string ToString()
-    {
-      if (Value == null)
-        return "Null Element3D";
-      else
-        return Value.ToString();
-    }
-    public override string TypeName
-    {
-      get { return ("Element 3D"); }
-    }
-    public override string TypeDescription
-    {
-      get { return ("GSA 3D Element"); }
-    }
+    public override IGH_GeometricGoo Duplicate() => new GsaElement3dGoo(this.Value);
 
-    public override BoundingBox Boundingbox
-    {
-      get
-      {
-        if (Value == null) { return BoundingBox.Empty; }
-        if (Value.DisplayMesh == null) { return BoundingBox.Empty; }
-        return Value.DisplayMesh.GetBoundingBox(false);
-      }
-    }
-    public override BoundingBox GetBoundingBox(Transform xform)
-    {
-      if (Value == null) { return BoundingBox.Empty; }
-      if (Value.DisplayMesh == null) { return BoundingBox.Empty; }
-      return Value.DisplayMesh.GetBoundingBox(xform);
-    }
-    #endregion
+    public override GeometryBase GetGeometry() => this.Value.DisplayMesh;
 
     #region casting methods
     public override bool CastTo<Q>(out Q target)
@@ -230,11 +165,7 @@ namespace GsaGH.Parameters
     #endregion
 
     #region drawing methods
-    public BoundingBox ClippingBox
-    {
-      get { return Boundingbox; }
-    }
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args)
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
     {
       //Draw shape.
       if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
@@ -244,7 +175,7 @@ namespace GsaGH.Parameters
       else
         args.Pipeline.DrawMeshShaded(Value.DisplayMesh, UI.Colour.Element2dFaceSelected);
     }
-    public void DrawViewportWires(GH_PreviewWireArgs args)
+    public override void DrawViewportWires(GH_PreviewWireArgs args)
     {
       if (Value == null) { return; }
       if (Grasshopper.CentralSettings.PreviewMeshEdges == false) { return; }

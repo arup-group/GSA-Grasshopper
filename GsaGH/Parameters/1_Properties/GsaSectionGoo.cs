@@ -15,8 +15,8 @@ namespace GsaGH.Parameters
   public class GsaSectionGoo : GH_OasysGoo<GsaSection>
   {
     public static string Name => "Section";
-    public static string NickName => "Sec";
-    public static string Description => "GSA Section";
+    public static string NickName => "PB";
+    public static string Description => "GSA Beam Property";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaSectionGoo(GsaSection item) : base(item) { }

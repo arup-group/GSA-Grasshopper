@@ -84,7 +84,7 @@ namespace GsaGH.Components
               }
             }
           }
-
+          elem.Duplicate(false);
           DA.SetData(0, new GsaElement1dGoo(elem));
         }
       }

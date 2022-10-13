@@ -13,27 +13,17 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaElement1d"/> can be used in Grasshopper.
   /// </summary>
-  public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1d>, IGH_PreviewData
+  public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1d>
   {
-    public static string Name => "1D Element";
+    public static string Name => "Element1D";
     public static string NickName => "E1D";
     public static string Description => "GSA 1D Element";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-
     public GsaElement1dGoo(GsaElement1d item) : base(item) { }
+    public override IGH_GeometricGoo Duplicate() => new GsaElement1dGoo(this.Value);
+    public override GeometryBase GetGeometry() => this.Value.Line;
 
-    public override IGH_Goo Duplicate() => new GsaElement1dGoo(this.Value);
-
-    public override bool IsValid
-    {
-      get
-      {
-        if (Value != null && Value.Line == null)
-          return true;
-        return false;
-      }
-    }
-
+    #region casting
     public override bool CastTo<Q>(ref Q target)
     {
       if (typeof(Q).IsAssignableFrom(typeof(GsaElement1d)))
@@ -148,6 +138,7 @@ namespace GsaGH.Parameters
 
       return base.CastFrom(source);
     }
+    #endregion
 
     #region transformation methods
     public override IGH_GeometricGoo Transform(Transform xform)
@@ -176,20 +167,15 @@ namespace GsaGH.Parameters
 
       return new GsaElement1dGoo(elem);
     }
-
     #endregion
 
     #region drawing methods
-    public BoundingBox ClippingBox
-    {
-      get { return Boundingbox; }
-    }
-    public void DrawViewportMeshes(GH_PreviewMeshArgs args)
+    public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
     {
       //Draw shape.
       //no meshes to be drawn
     }
-    public void DrawViewportWires(GH_PreviewWireArgs args)
+    public override void DrawViewportWires(GH_PreviewWireArgs args)
     {
       if (Value == null) { return; }
 
@@ -236,13 +222,6 @@ namespace GsaGH.Parameters
             args.Pipeline.DrawLine(ln2, UI.Colour.Release);
         }
       }
-    }
-
-    public override GeometryBase GetGeometry()
-    {
-      if (this.Value == null)
-        return null;
-      return this.Value.Line;
     }
     #endregion
   }
