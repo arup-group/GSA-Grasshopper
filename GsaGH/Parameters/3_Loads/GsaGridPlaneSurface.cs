@@ -1,6 +1,4 @@
 ﻿using System;
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
 using Rhino.Geometry;
 
@@ -29,7 +27,9 @@ namespace GsaGH.Parameters
     #region properties
     public Axis Axis
     {
-      get { return _axis; }
+      get { 
+        return _axis;
+      }
       set
       {
         _axis = value;
@@ -56,7 +56,9 @@ namespace GsaGH.Parameters
 
     public int AxisID
     {
-      get { return _axisID; }
+      get {
+        return _axisID; 
+      }
       set
       {
         _gridPlnGuid = Guid.NewGuid();
@@ -66,7 +68,9 @@ namespace GsaGH.Parameters
 
     public GridSurface GridSurface
     {
-      get { return _gridSrf; }
+      get { 
+        return _gridSrf;
+      }
       set
       {
         _gridSrfGuid = Guid.NewGuid();
@@ -76,7 +80,9 @@ namespace GsaGH.Parameters
 
     public int GridSurfaceID
     {
-      get { return _gridSrfID; }
+      get { 
+        return _gridSrfID; 
+      }
       set
       {
         _gridSrfGuid = Guid.NewGuid();
@@ -85,12 +91,16 @@ namespace GsaGH.Parameters
     }
     public Guid GridSurfaceGUID
     {
-      get { return _gridSrfGuid; }
+      get { 
+        return _gridSrfGuid;
+      }
     }
 
     public GridPlane GridPlane
     {
-      get { return _gridPln; }
+      get {
+        return _gridPln; 
+      }
       set
       {
         _gridPlnGuid = Guid.NewGuid();
@@ -100,7 +110,8 @@ namespace GsaGH.Parameters
 
     public int GridPlaneID
     {
-      get { return _gridPlnID; }
+      get { return _gridPlnID; 
+      }
       set
       {
         _gridPlnGuid = Guid.NewGuid();
@@ -110,12 +121,16 @@ namespace GsaGH.Parameters
 
     public Guid GridPlaneGUID
     {
-      get { return _gridPlnGuid; }
+      get { 
+        return _gridPlnGuid; 
+      }
     }
 
     public Plane Plane
     {
-      get { return _pln; }
+      get { 
+        return _pln; 
+      }
       set
       {
         _gridPlnGuid = Guid.NewGuid();
@@ -166,7 +181,6 @@ namespace GsaGH.Parameters
 
     public GsaGridPlaneSurface Duplicate()
     {
-      if (this == null) { return null; }
       GsaGridPlaneSurface dup = new GsaGridPlaneSurface
       {
         Plane = (_gridPln == null) ? Plane.WorldXY : this._pln.Clone(),
@@ -205,15 +219,14 @@ namespace GsaGH.Parameters
       dup._gridPlnGuid = new Guid(_gridPlnGuid.ToString());
       return dup;
     }
-
-
     #endregion
 
     #region methods
     public override string ToString()
     {
-      if (this == null) { return "Null GridPlaneSurface"; }
-      if (GridPlane == null && GridSurface == null) { return "Null GridPlaneSurface"; }
+      if (GridPlane == null && GridSurface == null) { 
+        return "Null GridPlaneSurface";
+      }
       string gp = GridPlane == null ? "" : GridPlane.Name + " ";
       string gs = GridSurface == null ? "" : GridSurface.Name;
       return "GSA Grid Plane Surface " + gp + gs;
