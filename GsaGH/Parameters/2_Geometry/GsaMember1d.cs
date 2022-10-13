@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
-using OasysGH;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
@@ -18,240 +16,21 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaMember1d
   {
-    public PolyCurve PolyCurve
-    {
-      get { return m_crv; }
-      set
-      {
-        Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Util.GH.Convert.ConvertMem1dCrv(value);
-        m_crv = convertCrv.Item1;
-        m_topo = convertCrv.Item2;
-        m_topoType = convertCrv.Item3;
-        UpdatePreview();
-      }
-    }
-    public int Id
-    {
-      get { return m_id; }
-      set { m_id = value; }
-    }
+    #region fields
+    internal List<Line> previewGreenLines;
+    internal List<Line> previewRedLines;
 
-    public List<Point3d> Topology
-    {
-      get { return m_topo; }
-    }
+    private int _id = 0;
+    private Member _member = new Member();
+    private GsaSection _section = new GsaSection();
 
-    public List<string> TopologyType
-    {
-      get { return m_topoType; }
-    }
+    private PolyCurve _crv = new PolyCurve(); // Polyline for visualisation /member1d/member2d
+    private List<Point3d> _topo; // list of topology points for visualisation /member1d/member2d
+    private List<string> _topoType; //list of polyline curve type (arch or line) for member1d/2d
+    private GsaBool6 _rel1;
+    private GsaBool6 _rel2;
+    private GsaNode _orientationNode;
 
-    public GsaBool6 ReleaseStart
-    {
-      get
-      {
-        return new GsaBool6(m_member.GetEndRelease(0).Releases);
-      }
-      set
-      {
-        m_rel1 = value;
-        if (m_rel1 == null) { m_rel1 = new GsaBool6(); }
-        CloneApiMember();
-        m_member.SetEndRelease(0, new EndRelease(m_rel1._bool6));
-        UpdatePreview();
-      }
-    }
-    public GsaBool6 ReleaseEnd
-    {
-      get
-      {
-        return new GsaBool6(m_member.GetEndRelease(1).Releases);
-      }
-      set
-      {
-        m_rel2 = value;
-        if (m_rel2 == null) { m_rel2 = new GsaBool6(); }
-        CloneApiMember();
-        m_member.SetEndRelease(1, new EndRelease(m_rel2._bool6));
-        UpdatePreview();
-      }
-    }
-    internal Tuple<Vector3d, Vector3d, Vector3d> LocalAxes
-    {
-      get
-      {
-        return UI.Display.GetLocalPlane(m_crv, m_crv.GetLength() / 2, m_member.OrientationAngle * Math.PI / 180.0);
-      }
-    }
-    public GsaSection Section
-    {
-      get { return m_section; }
-      set { m_section = value; }
-    }
-    #region GsaAPI.Member members
-    internal Member API_Member
-    {
-      get { return m_member; }
-      set { m_member = value; }
-    }
-    internal Member GetAPI_MemberClone()
-    {
-      Member mem = new Member
-      {
-        Group = m_member.Group,
-        IsDummy = m_member.IsDummy,
-        IsIntersector = m_member.IsIntersector,
-        LateralTorsionalBucklingFactor = m_member.LateralTorsionalBucklingFactor,
-        MeshSize = m_member.MeshSize,
-        MomentAmplificationFactorStrongAxis = m_member.MomentAmplificationFactorStrongAxis,
-        MomentAmplificationFactorWeakAxis = m_member.MomentAmplificationFactorWeakAxis,
-        Name = m_member.Name.ToString(),
-        Offset = m_member.Offset,
-        OrientationAngle = m_member.OrientationAngle,
-        OrientationNode = m_member.OrientationNode,
-        Property = m_member.Property,
-        Type = m_member.Type,
-        Type1D = m_member.Type1D
-      };
-      if (m_member.Topology != String.Empty)
-        mem.Topology = m_member.Topology;
-      
-      mem.SetEndRelease(0, m_member.GetEndRelease(0));
-      mem.SetEndRelease(1, m_member.GetEndRelease(1));
-
-      if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        mem.Colour = m_member.Colour;
-
-      return mem;
-    }
-    public System.Drawing.Color Colour
-    {
-      get
-      {
-        return (System.Drawing.Color)m_member.Colour;
-      }
-      set
-      {
-        CloneApiMember();
-        m_member.Colour = value;
-        UpdatePreview();
-      }
-    }
-    public int Group
-    {
-      get { return m_member.Group; }
-      set
-      {
-        CloneApiMember();
-        m_member.Group = value;
-      }
-    }
-    public bool IsDummy
-    {
-      get { return m_member.IsDummy; }
-      set
-      {
-        CloneApiMember();
-        m_member.IsDummy = value;
-        UpdatePreview();
-      }
-    }
-    public string Name
-    {
-      get { return m_member.Name; }
-      set
-      {
-        CloneApiMember();
-        m_member.Name = value;
-      }
-    }
-    public Length MeshSize
-    {
-      get
-      {
-        Length l = new Length(m_member.MeshSize, LengthUnit.Meter);
-        return new Length(l.As(DefaultUnits.LengthUnitGeometry), DefaultUnits.LengthUnitGeometry);
-      }
-      set
-      {
-        CloneApiMember();
-        m_member.MeshSize = value.Meters;
-      }
-    }
-    public bool MeshWithOthers
-    {
-      get
-      {
-        return m_member.IsIntersector;
-      }
-      set
-      {
-        CloneApiMember();
-        m_member.IsIntersector = value;
-      }
-    }
-    public GsaOffset Offset
-    {
-      get
-      {
-        return new GsaOffset(
-            m_member.Offset.X1,
-            m_member.Offset.X2,
-            m_member.Offset.Y,
-            m_member.Offset.Z);
-      }
-      set
-      {
-        CloneApiMember();
-        m_member.Offset.X1 = value.X1.Meters;
-        m_member.Offset.X2 = value.X2.Meters;
-        m_member.Offset.Y = value.Y.Meters;
-        m_member.Offset.Z = value.Z.Meters;
-      }
-    }
-    public double OrientationAngle
-    {
-      get { return m_member.OrientationAngle; }
-      set
-      {
-        CloneApiMember();
-        m_member.OrientationAngle = value;
-      }
-    }
-    public GsaNode OrientationNode
-    {
-      get { return m_orientationNode; }
-      set
-      {
-        CloneApiMember();
-        m_orientationNode = value;
-      }
-    }
-    public MemberType Type
-    {
-      get { return m_member.Type; }
-      set
-      {
-        CloneApiMember();
-        m_member.Type = value;
-      }
-    }
-    public ElementType Type1D
-    {
-      get { return m_member.Type1D; }
-      set
-      {
-        CloneApiMember();
-        m_member.Type1D = value;
-      }
-    }
-    internal void CloneApiMember()
-    {
-      m_member = this.GetAPI_MemberClone();
-    }
-    #endregion
-    #region preview
-    #region preview lines
     private Line previewSX1;
     private Line previewSX2;
     private Line previewSY1;
@@ -282,200 +61,458 @@ namespace GsaGH.Parameters
     private Line previewEYY2;
     private Line previewEZZ1;
     private Line previewEZZ2;
-
-    internal List<Line> previewGreenLines;
-    internal List<Line> previewRedLines;
     #endregion
-    private void UpdatePreview()
+
+    #region properties
+    public PolyCurve PolyCurve
     {
-      if (m_rel1 != null & m_rel2 != null)
+      get
       {
-        if (m_rel1.X || m_rel1.Y || m_rel1.Z || m_rel1.XX || m_rel1.YY || m_rel1.ZZ ||
-        m_rel2.X || m_rel2.Y || m_rel2.Z || m_rel2.XX || m_rel2.YY || m_rel2.ZZ)
+        return this._crv;
+      }
+      set
+      {
+        Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Util.GH.Convert.ConvertMem1dCrv(value);
+        this._crv = convertCrv.Item1;
+        this._topo = convertCrv.Item2;
+        this._topoType = convertCrv.Item3;
+        this.UpdatePreview();
+      }
+    }
+    public int Id
+    {
+      get
+      {
+        return this._id;
+      }
+      set
+      {
+        this._id = value;
+      }
+    }
+    public List<Point3d> Topology
+    {
+      get
+      {
+        return this._topo;
+      }
+    }
+    public List<string> TopologyType
+    {
+      get
+      {
+        return this._topoType;
+      }
+    }
+    public GsaBool6 ReleaseStart
+    {
+      get
+      {
+        return new GsaBool6(this._member.GetEndRelease(0).Releases);
+      }
+      set
+      {
+        this._rel1 = value;
+        if (this._rel1 == null)
         {
-          #region add lines
-          previewGreenLines = new List<Line>();
-          previewGreenLines.Add(previewSX1);
-          previewGreenLines.Add(previewSX2);
-          previewGreenLines.Add(previewSY1);
-          previewGreenLines.Add(previewSY2);
-          previewGreenLines.Add(previewSY3);
-          previewGreenLines.Add(previewSY4);
-          previewGreenLines.Add(previewSZ1);
-          previewGreenLines.Add(previewSZ2);
-          previewGreenLines.Add(previewSZ3);
-          previewGreenLines.Add(previewSZ4);
-          previewGreenLines.Add(previewEX1);
-          previewGreenLines.Add(previewEX2);
-          previewGreenLines.Add(previewEY1);
-          previewGreenLines.Add(previewEY2);
-          previewGreenLines.Add(previewEY3);
-          previewGreenLines.Add(previewEY4);
-          previewGreenLines.Add(previewEZ1);
-          previewGreenLines.Add(previewEZ2);
-          previewGreenLines.Add(previewEZ3);
-          previewGreenLines.Add(previewEZ4);
-          previewRedLines = new List<Line>();
-          previewRedLines.Add(previewSXX);
-          previewRedLines.Add(previewSYY1);
-          previewRedLines.Add(previewSYY2);
-          previewRedLines.Add(previewSZZ1);
-          previewRedLines.Add(previewSZZ2);
-          previewRedLines.Add(previewEXX);
-          previewRedLines.Add(previewEYY1);
-          previewRedLines.Add(previewEYY2);
-          previewRedLines.Add(previewEZZ1);
-          previewRedLines.Add(previewEZZ2);
-          #endregion
-          GsaGH.UI.Display.Preview1D(m_crv, m_member.OrientationAngle * Math.PI / 180.0, m_rel1, m_rel2,
-          ref previewGreenLines, ref previewRedLines);
+          this._rel1 = new GsaBool6();
         }
-        else
-          previewGreenLines = null;
+        this.CloneApiMember();
+        this._member.SetEndRelease(0, new EndRelease(this._rel1._bool6));
+        this.UpdatePreview();
+      }
+    }
+    public GsaBool6 ReleaseEnd
+    {
+      get
+      {
+        return new GsaBool6(this._member.GetEndRelease(1).Releases);
+      }
+      set
+      {
+        this._rel2 = value;
+        if (this._rel2 == null)
+        {
+          this._rel2 = new GsaBool6();
+        }
+        this.CloneApiMember();
+        this._member.SetEndRelease(1, new EndRelease(this._rel2._bool6));
+        this.UpdatePreview();
+      }
+    }
+    internal Tuple<Vector3d, Vector3d, Vector3d> LocalAxes
+    {
+      get
+      {
+        return UI.Display.GetLocalPlane(this._crv, this._crv.GetLength() / 2, this._member.OrientationAngle * Math.PI / 180.0);
+      }
+    }
+    public GsaSection Section
+    {
+      get
+      {
+        return this._section;
+      }
+      set
+      {
+        this._section = value;
+      }
+    }
+    #region GsaAPI.Member members
+    internal Member API_Member
+    {
+      get
+      {
+        return this._member;
+      }
+      set
+      {
+        this._member = value;
+      }
+    }
+    internal Member GetAPI_MemberClone()
+    {
+      Member mem = new Member
+      {
+        Group = this._member.Group,
+        IsDummy = this._member.IsDummy,
+        IsIntersector = this._member.IsIntersector,
+        LateralTorsionalBucklingFactor = this._member.LateralTorsionalBucklingFactor,
+        MeshSize = this._member.MeshSize,
+        MomentAmplificationFactorStrongAxis = this._member.MomentAmplificationFactorStrongAxis,
+        MomentAmplificationFactorWeakAxis = this._member.MomentAmplificationFactorWeakAxis,
+        Name = this._member.Name.ToString(),
+        Offset = this._member.Offset,
+        OrientationAngle = this._member.OrientationAngle,
+        OrientationNode = this._member.OrientationNode,
+        Property = this._member.Property,
+        Type = this._member.Type,
+        Type1D = this._member.Type1D
+      };
+      if (this._member.Topology != String.Empty)
+        mem.Topology = this._member.Topology;
+
+      mem.SetEndRelease(0, this._member.GetEndRelease(0));
+      mem.SetEndRelease(1, this._member.GetEndRelease(1));
+
+      if ((Color)this._member.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+        mem.Colour = this._member.Colour;
+
+      return mem;
+    }
+    public Color Colour
+    {
+      get
+      {
+        return (Color)this._member.Colour;
+      }
+      set
+      {
+        this.CloneApiMember();
+        this._member.Colour = value;
+        this.UpdatePreview();
+      }
+    }
+    public int Group
+    {
+      get
+      {
+        return this._member.Group;
+      }
+      set
+      {
+        this.CloneApiMember();
+        this._member.Group = value;
+      }
+    }
+    public bool IsDummy
+    {
+      get
+      {
+        return this._member.IsDummy;
+      }
+      set
+      {
+        this.CloneApiMember();
+        this._member.IsDummy = value;
+        this.UpdatePreview();
+      }
+    }
+    public string Name
+    {
+      get
+      {
+        return this._member.Name;
+      }
+      set
+      {
+        this.CloneApiMember();
+        this._member.Name = value;
+      }
+    }
+    public Length MeshSize
+    {
+      get
+      {
+        Length l = new Length(this._member.MeshSize, LengthUnit.Meter);
+        return new Length(l.As(DefaultUnits.LengthUnitGeometry), DefaultUnits.LengthUnitGeometry);
+      }
+      set
+      {
+        this.CloneApiMember();
+        this._member.MeshSize = value.Meters;
+      }
+    }
+    public bool MeshWithOthers
+    {
+      get
+      {
+        return this._member.IsIntersector;
+      }
+      set
+      {
+        this.CloneApiMember();
+        this._member.IsIntersector = value;
+      }
+    }
+    public GsaOffset Offset
+    {
+      get
+      {
+        return new GsaOffset(this._member.Offset.X1, this._member.Offset.X2, this._member.Offset.Y, this._member.Offset.Z);
+      }
+      set
+      {
+        this.CloneApiMember();
+        this._member.Offset.X1 = value.X1.Meters;
+        this._member.Offset.X2 = value.X2.Meters;
+        this._member.Offset.Y = value.Y.Meters;
+        this._member.Offset.Z = value.Z.Meters;
+      }
+    }
+    public double OrientationAngle
+    {
+      get
+      {
+        return this._member.OrientationAngle;
+      }
+      set
+      {
+        this.CloneApiMember();
+        this._member.OrientationAngle = value;
+      }
+    }
+    public GsaNode OrientationNode
+    {
+      get
+      {
+        return this._orientationNode;
+      }
+      set
+      {
+        this.CloneApiMember();
+        this._orientationNode = value;
+      }
+    }
+    public MemberType Type
+    {
+      get
+      {
+        return this._member.Type;
+      }
+      set
+      {
+        this.CloneApiMember();
+        this._member.Type = value;
+      }
+    }
+    public ElementType Type1D
+    {
+      get
+      {
+        return this._member.Type1D;
+      }
+      set
+      {
+        this.CloneApiMember();
+        this._member.Type1D = value;
+      }
+    }
+    public bool IsValid
+    {
+      get
+      {
+        return true;
       }
     }
     #endregion
-    #region fields
-    private Member m_member;
-    private int m_id = 0;
-
-    private PolyCurve m_crv; //Polyline for visualisation /member1d/member2d
-    private List<Point3d> m_topo; // list of topology points for visualisation /member1d/member2d
-    private List<string> m_topoType; //list of polyline curve type (arch or line) for member1d/2d
-    private GsaBool6 m_rel1;
-    private GsaBool6 m_rel2;
-    private GsaSection m_section;
-    private GsaNode m_orientationNode;
     #endregion
 
     #region constructors
     public GsaMember1d()
     {
-      m_member = new Member();
-      m_crv = new PolyCurve();
-      m_section = new GsaSection();
     }
 
     internal GsaMember1d(Member member, int id, List<Point3d> topology, List<string> topo_type, GsaSection section, GsaNode orientationNode)
     {
-      m_member = member;
-      m_id = id;
-      m_crv = Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
-      m_topo = topology;
-      m_topoType = topo_type;
-      m_section = section;
-      m_rel1 = new GsaBool6(m_member.GetEndRelease(0).Releases);
-      m_rel2 = new GsaBool6(m_member.GetEndRelease(1).Releases);
+      this._member = member;
+      this._id = id;
+      this._crv = Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
+      this._topo = topology;
+      this._topoType = topo_type;
+      this._section = section;
+      this._rel1 = new GsaBool6(this._member.GetEndRelease(0).Releases);
+      this._rel2 = new GsaBool6(this._member.GetEndRelease(1).Releases);
       if (orientationNode != null)
-        m_orientationNode = orientationNode;
-      UpdatePreview();
+        this._orientationNode = orientationNode;
+      this.UpdatePreview();
     }
 
     public GsaMember1d(Curve crv, int prop = 0)
     {
-      m_member = new Member
+      this._member = new Member
       {
         Type = MemberType.GENERIC_1D,
         Property = prop
       };
       Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Util.GH.Convert.ConvertMem1dCrv(crv);
-      m_crv = convertCrv.Item1;
-      m_topo = convertCrv.Item2;
-      m_topoType = convertCrv.Item3;
+      this._crv = convertCrv.Item1;
+      this._topo = convertCrv.Item2;
+      this._topoType = convertCrv.Item3;
 
-      m_section = new GsaSection();
-      UpdatePreview();
-    }
-    public GsaMember1d Duplicate(bool cloneApiMember = false)
-    {
-      if (this == null) { return null; }
-
-      GsaMember1d dup = new GsaMember1d();
-      dup.m_id = m_id;
-      dup.m_member = m_member;
-      if (cloneApiMember)
-        dup.CloneApiMember();
-      dup.m_crv = (PolyCurve)m_crv.DuplicateShallow();
-      if (m_rel1 != null)
-        dup.m_rel1 = m_rel1.Duplicate();
-      if (m_rel2 != null)
-        dup.m_rel2 = m_rel2.Duplicate();
-      dup.m_section = m_section.Duplicate();
-      dup.m_topo = m_topo;
-      dup.m_topoType = m_topoType;
-      if (m_orientationNode != null)
-        dup.m_orientationNode = m_orientationNode.Duplicate(cloneApiMember);
-      dup.UpdatePreview();
-      return dup;
-    }
-    public GsaMember1d Transform(Transform xform)
-    {
-      if (this == null) { return null; }
-
-      GsaMember1d dup = this.Duplicate(true);
-      dup.Id = 0;
-
-      List<Point3d> pts = m_topo.ToList();
-      Point3dList xpts = new Point3dList(pts);
-      xpts.Transform(xform);
-      dup.m_topo = xpts.ToList();
-
-      if (m_crv != null)
-      {
-        PolyCurve crv = m_crv.DuplicatePolyCurve();
-        crv.Transform(xform);
-        dup.m_crv = crv;
-      }
-      dup.UpdatePreview();
-      return dup;
-    }
-    public GsaMember1d Morph(SpaceMorph xmorph)
-    {
-      if (this == null) { return null; }
-
-      GsaMember1d dup = this.Duplicate(true);
-      dup.Id = 0;
-
-      List<Point3d> pts = m_topo.ToList();
-      for (int i = 0; i < pts.Count; i++)
-        pts[i] = xmorph.MorphPoint(pts[i]);
-      dup.m_topo = pts;
-
-      if (m_crv != null)
-      {
-        PolyCurve crv = m_crv.DuplicatePolyCurve();
-        xmorph.Morph(crv);
-        dup.m_crv = crv;
-      }
-      dup.UpdatePreview();
-      return dup;
-    }
-    #endregion
-
-    #region properties
-    public bool IsValid
-    {
-      get
-      {
-        if (m_crv == null)
-          return false;
-        return true;
-      }
+      this.UpdatePreview();
     }
     #endregion
 
     #region methods
+    public GsaMember1d Duplicate(bool cloneApiMember = false)
+    {
+      GsaMember1d dup = new GsaMember1d();
+      dup._id = this._id;
+      dup._member = this._member;
+      if (cloneApiMember)
+        dup.CloneApiMember();
+      dup._crv = (PolyCurve)this._crv.DuplicateShallow();
+      if (this._rel1 != null)
+        dup._rel1 = this._rel1.Duplicate();
+      if (this._rel2 != null)
+        dup._rel2 = this._rel2.Duplicate();
+      dup._section = this._section.Duplicate();
+      dup._topo = this._topo;
+      dup._topoType = this._topoType;
+      if (this._orientationNode != null)
+        dup._orientationNode = this._orientationNode.Duplicate(cloneApiMember);
+      dup.UpdatePreview();
+      return dup;
+    }
+
+    public GsaMember1d Transform(Transform xform)
+    {
+      GsaMember1d dup = this.Duplicate(true);
+      dup.Id = 0;
+
+      List<Point3d> pts = this._topo.ToList();
+      Point3dList xpts = new Point3dList(pts);
+      xpts.Transform(xform);
+      dup._topo = xpts.ToList();
+
+      if (this._crv != null)
+      {
+        PolyCurve crv = this._crv.DuplicatePolyCurve();
+        crv.Transform(xform);
+        dup._crv = crv;
+      }
+      dup.UpdatePreview();
+      return dup;
+    }
+
+    public GsaMember1d Morph(SpaceMorph xmorph)
+    {
+      GsaMember1d dup = this.Duplicate(true);
+      dup.Id = 0;
+
+      List<Point3d> pts = this._topo.ToList();
+      for (int i = 0; i < pts.Count; i++)
+        pts[i] = xmorph.MorphPoint(pts[i]);
+      dup._topo = pts;
+
+      if (this._crv != null)
+      {
+        PolyCurve crv = this._crv.DuplicatePolyCurve();
+        xmorph.Morph(crv);
+        dup._crv = crv;
+      }
+      dup.UpdatePreview();
+      return dup;
+    }
+
     public override string ToString()
     {
       string idd = " " + Id.ToString();
-      if (Id == 0) { idd = ""; }
-      string mes = m_member.Type.ToString();
+      if (Id == 0) {
+        idd = ""; 
+      }
+      string mes = this._member.Type.ToString();
       string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
       typeTxt = typeTxt.Replace("1d", "1D");
       string valid = (this.IsValid) ? "" : "Invalid ";
       return valid + typeTxt;
     }
 
+    internal void CloneApiMember()
+    {
+      this._member = this.GetAPI_MemberClone();
+    }
+
+    private void UpdatePreview()
+    {
+      if (this._rel1 != null & this._rel2 != null)
+      {
+        if (this._rel1.X || this._rel1.Y || this._rel1.Z || this._rel1.XX || this._rel1.YY || this._rel1.ZZ || this._rel2.X || this._rel2.Y || this._rel2.Z || this._rel2.XX || this._rel2.YY || this._rel2.ZZ)
+        {
+          previewGreenLines = new List<Line>
+          {
+            previewSX1,
+            previewSX2,
+            previewSY1,
+            previewSY2,
+            previewSY3,
+            previewSY4,
+            previewSZ1,
+            previewSZ2,
+            previewSZ3,
+            previewSZ4,
+            previewEX1,
+            previewEX2,
+            previewEY1,
+            previewEY2,
+            previewEY3,
+            previewEY4,
+            previewEZ1,
+            previewEZ2,
+            previewEZ3,
+            previewEZ4
+          };
+          previewRedLines = new List<Line>
+          {
+            previewSXX,
+            previewSYY1,
+            previewSYY2,
+            previewSZZ1,
+            previewSZZ2,
+            previewEXX,
+            previewEYY1,
+            previewEYY2,
+            previewEZZ1,
+            previewEZZ2
+          };
+          GsaGH.UI.Display.Preview1D(this._crv, this._member.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2,
+          ref previewGreenLines, ref previewRedLines);
+        }
+        else
+          previewGreenLines = null;
+      }
+    }
     #endregion
   }
 }

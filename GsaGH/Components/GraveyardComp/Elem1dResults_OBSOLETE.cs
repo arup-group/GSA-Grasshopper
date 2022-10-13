@@ -308,7 +308,7 @@ namespace GsaGH.Components
           gh_typ.CastTo(ref in_Model);
           if (gsaModel != null)
           {
-            if (in_Model.GUID != gsaModel.GUID) // only get results if GUID is not similar
+            if (in_Model.Guid != gsaModel.Guid) // only get results if GUID is not similar
             {
               gsaModel = in_Model;
               getresults = true;

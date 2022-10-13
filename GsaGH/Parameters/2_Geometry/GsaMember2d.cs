@@ -384,8 +384,9 @@ namespace GsaGH.Parameters
 
       if (voidTopology != null)
       {
-        if (this._voidCrvs == null) {
-          this._voidCrvs = new List<PolyCurve>(); 
+        if (this._voidCrvs == null)
+        {
+          this._voidCrvs = new List<PolyCurve>();
         }
         for (int i = 0; i < voidTopology.Count; i++)
         {
@@ -406,7 +407,8 @@ namespace GsaGH.Parameters
 
       if (inlcusionLinesTopology != null)
       {
-        if (this._inclCrvs == null) {
+        if (this._inclCrvs == null)
+        {
           this._inclCrvs = new List<PolyCurve>();
         }
         for (int i = 0; i < inlcusionLinesTopology.Count; i++)
@@ -422,8 +424,7 @@ namespace GsaGH.Parameters
 
       this._inclPts = includePoints;
 
-      this._brep = Util.GH.Convert.BuildBrep(this._edgeCrv, this._voidCrvs,
-        new Length(0.25, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry)); // use relative high tolerance as if the member worked in GSA we want to import it even if warped
+      this._brep = Util.GH.Convert.BuildBrep(this._edgeCrv, this._voidCrvs, new Length(0.25, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry)); // use relative high tolerance as if the member worked in GSA we want to import it even if warped
       //if (m_brep == null)
       //{
       //  string error = " Error with Mem2D ID: " + id + ". Unable to build Brep, please verify input geometry is valid and tolerance is set to something reasonable." +

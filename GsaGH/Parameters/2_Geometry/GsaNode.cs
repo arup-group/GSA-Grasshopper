@@ -1,4 +1,5 @@
-﻿using Grasshopper.Kernel;
+﻿using System.Drawing;
+using GH_IO.Serialization;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using OasysUnits;
@@ -13,12 +14,23 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaNode
   {
+    #region fields
+    internal Line previewXaxis;
+    internal Line previewYaxis;
+    internal Line previewZaxis;
+    internal Brep previewSupportSymbol;
+    internal Text3d previewText;
+
+    private int _id;
+    private Plane _plane;
+    private Node _node = new Node();
+    #endregion
+
     #region properties
     public bool IsValid
     {
       get
       {
-        if (API_Node == null) { return false; }
         return true;
       }
     }
@@ -29,79 +41,89 @@ namespace GsaGH.Parameters
     //}
     public int Id
     {
-      get { return m_id; }
-      set { m_id = value; }
+      get
+      {
+        return _id;
+      }
+      set
+      {
+        _id = value;
+      }
     }
     public Plane LocalAxis
     {
-      get { return m_plane; }
+      get
+      {
+        return _plane;
+      }
       set
       {
-        m_plane = value;
-        UpdatePreview();
+        _plane = value;
+        this.UpdatePreview();
       }
     }
-    public bool isSupport
+    public bool IsSupport
     {
       get
       {
-        return m_node.Restraint.X || m_node.Restraint.Y || m_node.Restraint.Z ||
-              m_node.Restraint.XX || m_node.Restraint.YY || m_node.Restraint.ZZ;
+        return _node.Restraint.X || _node.Restraint.Y || _node.Restraint.Z || _node.Restraint.XX || _node.Restraint.YY || _node.Restraint.ZZ;
       }
     }
     public Point3d Point
     {
       get
       {
-        if (m_node == null) { return Point3d.Unset; }
-        return new Point3d(m_node.Position.X, m_node.Position.Y, m_node.Position.Z);
+        if (_node == null)
+        {
+          return Point3d.Unset;
+        }
+        return new Point3d(_node.Position.X, _node.Position.Y, _node.Position.Z);
       }
       set
       {
         CloneApiNode();
-        m_id = 0;
-        m_node.Position.X = value.X;
-        m_node.Position.Y = value.Y;
-        m_node.Position.Z = value.Z;
-        UpdatePreview();
+        _id = 0;
+        _node.Position.X = value.X;
+        _node.Position.Y = value.Y;
+        _node.Position.Z = value.Z;
+        this.UpdatePreview();
       }
     }
-
-    #endregion
-
     #region GsaAPI.Node members
     internal Node API_Node
     {
-      get { return m_node; }
+      get
+      {
+        return _node;
+      }
       set
       {
-        m_node = value;
-        UpdatePreview();
+        _node = value;
+        this.UpdatePreview();
       }
     }
-    public System.Drawing.Color Colour
+    public Color Colour
     {
       get
       {
-        return (System.Drawing.Color)m_node.Colour;
+        return (Color)_node.Colour;
       }
       set
       {
         CloneApiNode();
-        m_node.Colour = value;
+        _node.Colour = value;
       }
     }
     public GsaBool6 Restraint
     {
       get
       {
-        return new GsaBool6(m_node.Restraint.X, m_node.Restraint.Y, m_node.Restraint.Z,
-            m_node.Restraint.XX, m_node.Restraint.YY, m_node.Restraint.ZZ);
+        return new GsaBool6(_node.Restraint.X, _node.Restraint.Y, _node.Restraint.Z, _node.Restraint.XX, _node.Restraint.YY, _node.Restraint.ZZ);
       }
       set
       {
         CloneApiNode();
-        m_node.Restraint = new NodalRestraint
+        _node.Restraint = new NodalRestraint
         {
           X = value.X,
           Y = value.Y,
@@ -110,176 +132,66 @@ namespace GsaGH.Parameters
           YY = value.YY,
           ZZ = value.ZZ,
         };
-        UpdatePreview();
+        this.UpdatePreview();
       }
     }
     public string Name
     {
-      get { return m_node.Name; }
+      get
+      {
+        return _node.Name;
+      }
       set
       {
         CloneApiNode();
-        m_node.Name = value;
-      }
-    }
-    internal void CloneApiNode()
-    {
-      Node node = new Node
-      {
-        AxisProperty = m_node.AxisProperty,
-        DamperProperty = m_node.DamperProperty,
-        MassProperty = m_node.MassProperty,
-        Name = m_node.Name.ToString(),
-        Restraint = new NodalRestraint
-        {
-          X = m_node.Restraint.X,
-          Y = m_node.Restraint.Y,
-          Z = m_node.Restraint.Z,
-          XX = m_node.Restraint.XX,
-          YY = m_node.Restraint.YY,
-          ZZ = m_node.Restraint.ZZ,
-        },
-        SpringProperty = m_node.SpringProperty,
-        Position = new Vector3
-        {
-          X = m_node.Position.X,
-          Y = m_node.Position.Y,
-          Z = m_node.Position.Z
-        }
-      };
-
-      if ((System.Drawing.Color)m_node.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        node.Colour = m_node.Colour;
-
-      m_node = node;
-    }
-    internal Node GetApiNodeToUnit(LengthUnit unit = LengthUnit.Meter)
-    {
-      Node node = new Node
-      {
-        AxisProperty = m_node.AxisProperty,
-        DamperProperty = m_node.DamperProperty,
-        MassProperty = m_node.MassProperty,
-        Name = m_node.Name.ToString(),
-        Restraint = new NodalRestraint
-        {
-          X = m_node.Restraint.X,
-          Y = m_node.Restraint.Y,
-          Z = m_node.Restraint.Z,
-          XX = m_node.Restraint.XX,
-          YY = m_node.Restraint.YY,
-          ZZ = m_node.Restraint.ZZ,
-        },
-        SpringProperty = m_node.SpringProperty,
-        Position = new Vector3
-        {
-          X = (unit == LengthUnit.Meter) ? m_node.Position.X : new Length(m_node.Position.X, unit).Meters,
-          Y = (unit == LengthUnit.Meter) ? m_node.Position.Y : new Length(m_node.Position.Y, unit).Meters,
-          Z = (unit == LengthUnit.Meter) ? m_node.Position.Z : new Length(m_node.Position.Z, unit).Meters
-        }
-      };
-
-      if ((System.Drawing.Color)m_node.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        node.Colour = m_node.Colour;
-
-      return node;
-    }
-    #endregion
-
-    #region preview
-    internal Line previewXaxis;
-    internal Line previewYaxis;
-    internal Line previewZaxis;
-    internal Brep previewSupportSymbol;
-    internal Text3d previewText;
-
-    internal void UpdatePreview()
-    {
-      if (m_node.Restraint.X || m_node.Restraint.Y || m_node.Restraint.Z ||
-          m_node.Restraint.XX || m_node.Restraint.YY || m_node.Restraint.ZZ)
-      {
-        GsaGH.UI.Display.PreviewRestraint(Restraint, m_plane, Point,
-            ref previewSupportSymbol, ref previewText);
-      }
-      else
-      {
-        previewSupportSymbol = null;
-        previewText = null;
-      }
-
-      if (m_plane != null)
-      {
-        if (m_plane != Plane.WorldXY & m_plane != new Plane())
-        {
-          Plane local = m_plane.Clone();
-          local.Origin = Point;
-
-          previewXaxis = new Line(Point, local.XAxis, 0.5);
-          previewYaxis = new Line(Point, local.YAxis, 0.5);
-          previewZaxis = new Line(Point, local.ZAxis, 0.5);
-        }
+        _node.Name = value;
       }
     }
     #endregion
-    #region fields
-    private Plane m_plane;
-    private int m_id;
-    private Node m_node;
     #endregion
 
     #region constructors
     public GsaNode()
     {
-      m_node = new Node();
     }
 
-    internal GsaNode(Node node, int ID, LengthUnit unit, Plane localAxis = new Plane())
+    internal GsaNode(Node node, int id, LengthUnit unit, Plane localAxis = new Plane())
     {
-      m_node = node;
+      _node = node;
       CloneApiNode();
       if (unit != LengthUnit.Meter)
       {
-        m_node.Position.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
-        m_node.Position.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
-        m_node.Position.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
+        _node.Position.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
+        _node.Position.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
+        _node.Position.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
       }
-      m_id = ID;
-      m_plane = localAxis;
-      UpdatePreview();
+      _id = id;
+      _plane = localAxis;
+      this.UpdatePreview();
     }
-    public GsaNode(Point3d position, int ID = 0)
+
+    public GsaNode(Point3d position, int id = 0)
     {
-      m_node = new Node();
       Point = position;
-      m_id = ID;
-      UpdatePreview();
-    }
-    public GsaNode Duplicate(bool cloneApiNode = false)
-    {
-      if (m_node == null) { return null; }
-      GsaNode dup = new GsaNode();
-      dup.m_id = m_id;
-      dup.m_node = m_node;
-      if (cloneApiNode)
-        dup.CloneApiNode();
-      dup.m_plane = m_plane;
-      //dup.m_spring = m_spring;
-      dup.UpdatePreview();
-      return dup;
+      _id = id;
+      this.UpdatePreview();
     }
     #endregion
 
     #region methods
-    public void UpdateUnit(LengthUnit unit)
+    public GsaNode Duplicate(bool cloneApiNode = false)
     {
-      if (unit != LengthUnit.Meter) // convert from meter to input unit if not meter
-      {
-        Vector3 pos = new Vector3();
-        this.API_Node.Position.X = new Length(this.API_Node.Position.X, LengthUnit.Meter).As(unit);
-        this.API_Node.Position.Y = new Length(this.API_Node.Position.Y, LengthUnit.Meter).As(unit);
-        this.API_Node.Position.Z = new Length(this.API_Node.Position.Z, LengthUnit.Meter).As(unit);
-      }
+      GsaNode dup = new GsaNode();
+      dup._id = _id;
+      dup._node = _node;
+      if (cloneApiNode)
+        dup.CloneApiNode();
+      dup._plane = _plane;
+      //dup.m_spring = m_spring;
+      dup.UpdatePreview();
+      return dup;
     }
+
     public override string ToString()
     {
       if (API_Node == null) { return "Null Node"; }
@@ -323,6 +235,107 @@ namespace GsaGH.Parameters
       }
 
       return nodeTxt + sptTxt + localTxt;
+    }
+
+    internal void CloneApiNode()
+    {
+      Node node = new Node
+      {
+        AxisProperty = _node.AxisProperty,
+        DamperProperty = _node.DamperProperty,
+        MassProperty = _node.MassProperty,
+        Name = _node.Name.ToString(),
+        Restraint = new NodalRestraint
+        {
+          X = _node.Restraint.X,
+          Y = _node.Restraint.Y,
+          Z = _node.Restraint.Z,
+          XX = _node.Restraint.XX,
+          YY = _node.Restraint.YY,
+          ZZ = _node.Restraint.ZZ,
+        },
+        SpringProperty = _node.SpringProperty,
+        Position = new Vector3
+        {
+          X = _node.Position.X,
+          Y = _node.Position.Y,
+          Z = _node.Position.Z
+        }
+      };
+
+      if ((Color)_node.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+        node.Colour = _node.Colour;
+
+      _node = node;
+    }
+
+    internal Node GetApiNodeToUnit(LengthUnit unit = LengthUnit.Meter)
+    {
+      Node node = new Node
+      {
+        AxisProperty = _node.AxisProperty,
+        DamperProperty = _node.DamperProperty,
+        MassProperty = _node.MassProperty,
+        Name = _node.Name.ToString(),
+        Restraint = new NodalRestraint
+        {
+          X = _node.Restraint.X,
+          Y = _node.Restraint.Y,
+          Z = _node.Restraint.Z,
+          XX = _node.Restraint.XX,
+          YY = _node.Restraint.YY,
+          ZZ = _node.Restraint.ZZ,
+        },
+        SpringProperty = _node.SpringProperty,
+        Position = new Vector3
+        {
+          X = (unit == LengthUnit.Meter) ? _node.Position.X : new Length(_node.Position.X, unit).Meters,
+          Y = (unit == LengthUnit.Meter) ? _node.Position.Y : new Length(_node.Position.Y, unit).Meters,
+          Z = (unit == LengthUnit.Meter) ? _node.Position.Z : new Length(_node.Position.Z, unit).Meters
+        }
+      };
+
+      if ((Color)_node.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+        node.Colour = _node.Colour;
+
+      return node;
+    }
+
+    public void UpdateUnit(LengthUnit unit)
+    {
+      if (unit != LengthUnit.Meter) // convert from meter to input unit if not meter
+      {
+        Vector3 pos = new Vector3();
+        this.API_Node.Position.X = new Length(this.API_Node.Position.X, LengthUnit.Meter).As(unit);
+        this.API_Node.Position.Y = new Length(this.API_Node.Position.Y, LengthUnit.Meter).As(unit);
+        this.API_Node.Position.Z = new Length(this.API_Node.Position.Z, LengthUnit.Meter).As(unit);
+      }
+    }
+
+    internal void UpdatePreview()
+    {
+      if (_node.Restraint.X || _node.Restraint.Y || _node.Restraint.Z || _node.Restraint.XX || _node.Restraint.YY || _node.Restraint.ZZ)
+      {
+        GsaGH.UI.Display.PreviewRestraint(Restraint, _plane, Point, ref this.previewSupportSymbol, ref this.previewText);
+      }
+      else
+      {
+        this.previewSupportSymbol = null;
+        this.previewText = null;
+      }
+
+      if (_plane != null)
+      {
+        if (_plane != Plane.WorldXY & _plane != new Plane())
+        {
+          Plane local = _plane.Clone();
+          local.Origin = Point;
+
+          this.previewXaxis = new Line(Point, local.XAxis, 0.5);
+          this.previewYaxis = new Line(Point, local.YAxis, 0.5);
+          this.previewZaxis = new Line(Point, local.ZAxis, 0.5);
+        }
+      }
     }
     #endregion
   }

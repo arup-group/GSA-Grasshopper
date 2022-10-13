@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
+using System.Drawing;
 using GsaAPI;
 using OasysGH.Units;
 using OasysUnits;
@@ -15,276 +14,277 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaMember3d
   {
+    #region fields
+    internal List<Polyline> previewHiddenLines;
+    internal List<Line> previewEdgeLines;
+    internal List<Point3d> previewPts;
+
+    private int _id = 0;
+    private Member _member = new Member();
+    private Mesh _mesh = new Mesh();
+    private GsaProp3d _prop = new GsaProp3d();
+    #endregion
+
+    #region properties
     internal Member API_Member
-    {
-      get { return m_member; }
-      set { m_member = value; }
-    }
-
-    internal Member GetAPI_MemberClone()
-    {
-      Member mem = new Member
-      {
-        Group = m_member.Group,
-        IsDummy = m_member.IsDummy,
-        MeshSize = m_member.MeshSize,
-        Name = m_member.Name,
-        Offset = m_member.Offset,
-        OrientationAngle = m_member.OrientationAngle,
-        OrientationNode = m_member.OrientationNode,
-        Property = m_member.Property,
-        Type = m_member.Type,
-      };
-      if (m_member.Topology != String.Empty)
-        mem.Topology = m_member.Topology;
-
-      if ((System.Drawing.Color)m_member.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        mem.Colour = m_member.Colour;
-
-      return mem;
-    }
-
-    public Mesh SolidMesh
-    {
-      get { return m_mesh; }
-      set
-      {
-        m_mesh = Util.GH.Convert.ConvertMeshToTriMeshSolid(value);
-        UpdatePreview();
-      }
-    }
-
-    public int Id
-    {
-      get { return m_id; }
-      set { m_id = value; }
-    }
-
-    public GsaProp3d Property
-    {
-      get { return m_prop; }
-      set
-      {
-        if (m_prop == null)
-          PropertyID = 0;
-        m_prop = value;
-      }
-    }
-
-    #region GsaAPI.Member members
-    public System.Drawing.Color Colour
     {
       get
       {
-        return (System.Drawing.Color)m_member.Colour;
+        return this._member;
+      }
+      set
+      {
+        this._member = value;
+      }
+    }
+    public Mesh SolidMesh
+    {
+      get
+      {
+        return this._mesh;
+      }
+      set
+      {
+        this._mesh = Util.GH.Convert.ConvertMeshToTriMeshSolid(value);
+        this.UpdatePreview();
+      }
+    }
+    public int Id
+    {
+      get
+      {
+        return this._id;
+      }
+      set
+      {
+        this._id = value;
+      }
+    }
+    public GsaProp3d Property
+    {
+      get
+      {
+        return this._prop;
+      }
+      set
+      {
+        this._prop = value;
+      }
+    }
+    #region GsaAPI.Member members
+    public Color Colour
+    {
+      get
+      {
+        return (Color)this._member.Colour;
       }
       set
       {
         CloneApiMember();
-        m_member.Colour = value;
+        this._member.Colour = value;
       }
     }
     public int Group
     {
-      get { return m_member.Group; }
+      get
+      {
+        return this._member.Group;
+      }
       set
       {
         CloneApiMember();
-        m_member.Group = value;
+        this._member.Group = value;
       }
     }
     public bool IsDummy
     {
-      get { return m_member.IsDummy; }
+      get
+      {
+        return this._member.IsDummy;
+      }
       set
       {
         CloneApiMember();
-        m_member.IsDummy = value;
+        this._member.IsDummy = value;
       }
     }
     public string Name
     {
-      get { return m_member.Name; }
+      get
+      {
+        return this._member.Name;
+      }
       set
       {
         CloneApiMember();
-        m_member.Name = value;
+        this._member.Name = value;
       }
     }
     public Length MeshSize
     {
       get
       {
-        Length l = new Length(m_member.MeshSize, LengthUnit.Meter);
+        Length l = new Length(this._member.MeshSize, LengthUnit.Meter);
         return new Length(l.As(DefaultUnits.LengthUnitGeometry), DefaultUnits.LengthUnitGeometry);
       }
       set
       {
         CloneApiMember();
-        m_member.MeshSize = value.Meters;
+        this._member.MeshSize = value.Meters;
       }
     }
     public bool MeshWithOthers
     {
       get
       {
-        return m_member.IsIntersector;
+        return this._member.IsIntersector;
       }
       set
       {
         CloneApiMember();
-        m_member.IsIntersector = value;
+        this._member.IsIntersector = value;
       }
     }
     public int PropertyID
     {
-      get { return m_member.Property; }
+      get
+      {
+        return this._member.Property;
+      }
       set
       {
         CloneApiMember();
-        m_member.Property = value;
+        this._member.Property = value;
       }
     }
-    internal void CloneApiMember()
+    public bool IsValid
     {
-      m_member = GetAPI_MemberClone();
+      get
+      {
+        return true;
+      }
     }
     #endregion
-    #region preview
-    internal List<Polyline> previewHiddenLines;
-    internal List<Line> previewEdgeLines;
-    internal List<Point3d> previewPts;
-    private void UpdatePreview()
-    {
-      GsaGH.UI.Display.PreviewMem3d(ref m_mesh, ref previewHiddenLines, ref previewEdgeLines, ref previewPts);
-    }
-    #endregion
-    #region fields
-    private Member m_member;
-    private int m_id = 0;
-
-    private Mesh m_mesh;
-    private GsaProp3d m_prop;
     #endregion
 
     #region constructors
     public GsaMember3d()
     {
-      m_member = new Member();
-      m_member.Type = MemberType.GENERIC_3D;
-      m_mesh = new Mesh();
-      m_prop = new GsaProp3d();
+      this._member.Type = MemberType.GENERIC_3D;
     }
 
     internal GsaMember3d(Member member, int id, Mesh mesh)
     {
-      m_member = member;
-      m_id = id;
-      m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
-      m_prop = new GsaProp3d();
-      UpdatePreview();
+      this._member = member;
+      this._id = id;
+      this._mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+      this.UpdatePreview();
     }
 
     internal GsaMember3d(Member member, int id, Mesh mesh, GsaProp3d prop)
     {
-      m_member = member;
-      m_id = id;
-      m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
-      m_prop = prop.Duplicate();
-      UpdatePreview();
+      this._member = member;
+      this._id = id;
+      this._mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+      this._prop = prop.Duplicate();
+      this.UpdatePreview();
     }
 
     public GsaMember3d(Mesh mesh)
     {
-      m_member = new Member
+      this._member = new Member
       {
         Type = MemberType.GENERIC_3D
       };
-      m_prop = new GsaProp3d();
-      m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
-      if (m_mesh == null)
-      {
-        throw new Exception("Unable to convert Mesh to solid mesh");
-      }
-      else
-      {
-        UpdatePreview();
-      }
+      this._mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+      this.UpdatePreview();
     }
 
     public GsaMember3d(Brep brep)
     {
-      m_member = new Member
+      this._member = new Member
       {
         Type = MemberType.GENERIC_3D
       };
-      m_prop = new GsaProp3d();
-      m_mesh = GsaGH.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
-      if (m_mesh == null)
-      {
-        throw new Exception("Unable to convert Brep to solid mesh");
-      }
-      else
-      {
-        UpdatePreview();
-      }
+      this._prop = new GsaProp3d();
+      this._mesh = GsaGH.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
+      this.UpdatePreview();
     }
+    #endregion
 
+    #region methods
     public GsaMember3d Duplicate(bool cloneApiMember = false)
     {
       GsaMember3d dup = new GsaMember3d();
-      dup.m_mesh = (Mesh)this.m_mesh.DuplicateShallow();
-      dup.m_prop = this.m_prop.Duplicate();
+      dup._mesh = (Mesh)this._mesh.DuplicateShallow();
+      dup._prop = this._prop.Duplicate();
       if (cloneApiMember)
         dup.CloneApiMember();
       else
-        dup.m_member = this.m_member;
-      dup.m_id = this.m_id;
+        dup._member = this._member;
+      dup._id = this._id;
       dup.UpdatePreview();
       return dup;
     }
 
     public GsaMember3d UpdateGeometry(Brep brep)
     {
-      if (this == null) { return null; }
       GsaMember3d dup = this.Duplicate();
-      dup.m_mesh = GsaGH.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
+      dup._mesh = GsaGH.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
       dup.UpdatePreview();
       return dup;
     }
 
     public GsaMember3d UpdateGeometry(Mesh mesh)
     {
-      if (this == null) { return null; }
       GsaMember3d dup = this.Duplicate();
-      dup.m_mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+      dup._mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
       dup.UpdatePreview();
       return dup;
     }
-    #endregion
 
-    #region properties
-    public bool IsValid
-    {
-      get
-      {
-        if (m_mesh == null)
-          return false;
-        return true;
-      }
-    }
-    #endregion
-
-    #region methods
     public override string ToString()
     {
       string idd = " " + Id.ToString();
       if (Id == 0) { idd = ""; }
-      string mes = m_member.Type.ToString();
+      string mes = this._member.Type.ToString();
       string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
       typeTxt = typeTxt.Replace("3d", "3D");
       string valid = (this.IsValid) ? "" : "Invalid ";
       return valid + typeTxt;
+    }
+
+    internal void CloneApiMember()
+    {
+      this._member = GetAPI_MemberClone();
+    }
+
+    internal Member GetAPI_MemberClone()
+    {
+      Member mem = new Member
+      {
+        Group = this._member.Group,
+        IsDummy = this._member.IsDummy,
+        MeshSize = this._member.MeshSize,
+        Name = this._member.Name,
+        Offset = this._member.Offset,
+        OrientationAngle = this._member.OrientationAngle,
+        OrientationNode = this._member.OrientationNode,
+        Property = this._member.Property,
+        Type = this._member.Type,
+      };
+      if (this._member.Topology != String.Empty)
+        mem.Topology = this._member.Topology;
+
+      if ((Color)this._member.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+        mem.Colour = this._member.Colour;
+
+      return mem;
+    }
+
+    private void UpdatePreview()
+    {
+      GsaGH.UI.Display.PreviewMem3d(ref this._mesh, ref this.previewHiddenLines, ref this.previewEdgeLines, ref this.previewPts);
     }
     #endregion
   }

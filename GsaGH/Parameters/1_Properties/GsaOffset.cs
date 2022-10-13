@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-using GsaAPI;
-using OasysGH;
-using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
@@ -16,40 +11,36 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaOffset
   {
+    #region properties
     public Length X1 { get; set; } = Length.Zero;
     public Length X2 { get; set; } = Length.Zero;
     public Length Y { get; set; } = Length.Zero;
     public Length Z { get; set; } = Length.Zero;
-
-    #region constructors
-    public GsaOffset()
-    {
-      // empty constructor
-    }
-
-    public GsaOffset(double x1, double x2, double y, double z, LengthUnit unit = LengthUnit.Meter)
-    {
-      X1 = new Length(x1, unit);
-      X2 = new Length(x2, unit);
-      Y = new Length(y, unit);
-      Z = new Length(z, unit);
-    }
-
-    public GsaOffset Duplicate()
-    {
-      if (this == null) { return null; }
-      return (GsaOffset)this.MemberwiseClone(); // all members are structs
-    }
-    #endregion
-
-    #region properties
     public bool IsValid
     {
       get
       {
-        if (this == null) { return false; }
         return true;
       }
+    }
+    #endregion
+
+    #region constructors
+    public GsaOffset()
+    {
+    }
+
+    public GsaOffset(double x1, double x2, double y, double z, LengthUnit unit = LengthUnit.Meter)
+    {
+      this.X1 = new Length(x1, unit);
+      this.X2 = new Length(x2, unit);
+      this.Y = new Length(y, unit);
+      this.Z = new Length(z, unit);
+    }
+
+    public GsaOffset Duplicate()
+    {
+      return (GsaOffset)this.MemberwiseClone(); // all members are structs
     }
     #endregion
 

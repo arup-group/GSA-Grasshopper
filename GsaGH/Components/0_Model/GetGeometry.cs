@@ -215,7 +215,7 @@ namespace GsaGH.Components
           {
             // create nodes
             results.Nodes = Util.Gsa.FromGSA.GetNodes(nDict, lengthUnit, axDict);
-            results.displaySupports = new ConcurrentBag<GsaNodeGoo>(results.Nodes.AsParallel().Where(n => n.Value.isSupport));
+            results.displaySupports = new ConcurrentBag<GsaNodeGoo>(results.Nodes.AsParallel().Where(n => n.Value.IsSupport));
           }
 
           if (i == 1)

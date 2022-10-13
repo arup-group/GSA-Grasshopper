@@ -218,7 +218,7 @@ namespace GsaGH.Components
             if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both))
               in_dummies.Add(dum);
           }
-          elem.isDummies = in_dummies;
+          elem.IsDummies = in_dummies;
         }
 
         // #### outputs ####
@@ -251,7 +251,7 @@ namespace GsaGH.Components
         DA.SetDataList(5, elem.Types);
         DA.SetDataList(6, elem.Names);
         DA.SetDataList(7, elem.Colours);
-        DA.SetDataList(8, elem.isDummies);
+        DA.SetDataList(8, elem.IsDummies);
         DA.SetDataList(9, elem.ParentMembers);
         DA.SetDataTree(10, elem.TopologyIDs);
       }

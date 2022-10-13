@@ -42,6 +42,7 @@ namespace GsaGH.UI
 
       return new Tuple<Vector3d, Vector3d, Vector3d>(outX, outY, outZ);
     }
+
     public static void Preview1D(PolyCurve crv, double angle_radian, GsaBool6 start, GsaBool6 end,
         ref List<Line> greenLines20, ref List<Line> redLines10)
     {
@@ -624,6 +625,7 @@ namespace GsaGH.UI
       }
       #endregion
     }
+
     public static void PreviewRestraint(GsaBool6 restraint, Plane localAxis, Point3d pt, ref Brep support, ref Text3d text)
     {
       // pin
@@ -668,6 +670,7 @@ namespace GsaGH.UI
         text.VerticalAlignment = Rhino.DocObjects.TextVerticalAlignment.Top;
       }
     }
+
     public static void PreviewMem3d(ref Mesh solidMesh, ref List<Polyline> hiddenLines, ref List<Line> edgeLines, ref List<Point3d> pts)
     {
       Rhino.Geometry.Collections.MeshTopologyEdgeList alledges = solidMesh.TopologyEdges;

@@ -13,36 +13,26 @@ namespace GsaGH.Parameters
   [Serializable]
   public class GsaModel
   {
-    public Model Model
+    #region properties
+    public Model Model { get; set; } = new Model();
+    public string FileName { get; set; }
+    public Guid Guid { get; set; } = Guid.NewGuid();
+    public bool IsValid
     {
-      get { return m_model; }
-      set { m_model = value; }
+      get
+      {
+        return true;
+      }
     }
-
-    public string FileName
-    {
-      get { return m_filename; }
-      set { m_filename = value; }
-    }
-    public Guid GUID
-    {
-      get { return m_guid; }
-    }
-
-    #region fields
-    private Model m_model;
-    private string m_filename = "";
-    private Guid m_guid = Guid.NewGuid();
-
     #endregion
 
     #region constructors
-
     public GsaModel()
     {
-      m_model = new Model();
     }
+    #endregion
 
+    #region methods
     /// <summary>
     /// Clones this model so we can make changes safely
     /// </summary>
@@ -50,59 +40,37 @@ namespace GsaGH.Parameters
     public GsaModel Clone()
     {
       GsaModel clone = new GsaModel();
-      clone.Model = m_model.Clone();
-      clone.FileName = m_filename;
-      clone.m_guid = Guid.NewGuid();
+      clone.Model = this.Model.Clone();
+      clone.FileName = this.FileName;
+      clone.Guid = Guid.NewGuid();
       return clone;
     }
 
     public GsaModel Duplicate()
     {
-      //duplicate the incoming model ### 
-      if (m_model != null)
-      {
-        GsaModel dup = new GsaModel();
-        dup.Model = m_model;
-        dup.FileName = m_filename.ToString();
-        dup.m_guid = new Guid(m_guid.ToString());
-        return dup;
-      }
-      return null;
-    }
-    #endregion
-
-    #region properties
-    public bool IsValid
-    {
-      get
-      {
-        if (m_model == null)
-          return false;
-        return true;
-      }
+      // duplicate the incoming model
+      GsaModel dup = new GsaModel();
+      dup.Model = this.Model;
+      dup.FileName = this.FileName.ToString();
+      dup.Guid = new Guid(this.Guid.ToString());
+      return dup;
     }
 
-
-    #endregion
-
-    #region methods
     public override string ToString()
     {
-      //Could add detailed description of model content here
+      // Could add detailed description of model content here
       string s = "";
-      if (FileName != null)
+      if (this.FileName != null)
       {
-        if (FileName != "" && FileName.Length > 4)
+        if (this.FileName != "" && this.FileName.Length > 4)
         {
-          s = Path.GetFileName(FileName);
+          s = Path.GetFileName(this.FileName);
           s = s.Substring(0, s.Length - 4);
           s = " (" + s + ")";
         }
       }
-
       return "GSA Model" + s;
     }
-
     #endregion
   }
 }

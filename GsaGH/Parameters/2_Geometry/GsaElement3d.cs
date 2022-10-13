@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using Grasshopper;
 using GsaAPI;
@@ -32,8 +33,8 @@ namespace GsaGH.Parameters
     private List<List<int>> _topoInt; // list of topology integers referring to the topo list of points
     private List<List<int>> _faceInt; // list of face integers included in each solid mesh referring to the mesh face list
     private List<Point3d> _topo; // list of topology points for visualisation
-    private List<int> _ids;
-    private List<GsaProp3d> _props;
+    private List<int> _ids = new List<int>();
+    private List<GsaProp3d> _props = new List<GsaProp3d>();
 
     private Mesh _displayMesh;
     #endregion
@@ -161,20 +162,20 @@ namespace GsaGH.Parameters
       }
     }
     #region GsaAPI.Element members
-    public List<System.Drawing.Color> Colours
+    public List<Color> Colours
     {
       get
       {
-        List<System.Drawing.Color> cols = new List<System.Drawing.Color>();
+        List<Color> cols = new List<Color>();
         for (int i = 0; i < this._elements.Count; i++)
         {
-          if ((System.Drawing.Color)this._elements[i].Colour == System.Drawing.Color.FromArgb(0, 0, 0))
+          if ((Color)this._elements[i].Colour == Color.FromArgb(0, 0, 0))
           {
-            this._elements[i].Colour = System.Drawing.Color.FromArgb(50, 150, 150, 150);
+            this._elements[i].Colour = Color.FromArgb(50, 150, 150, 150);
           }
-          cols.Add((System.Drawing.Color)this._elements[i].Colour);
+          cols.Add((Color)this._elements[i].Colour);
 
-          NgonMesh.VertexColors.SetColor(i, (System.Drawing.Color)this._elements[i].Colour);
+          NgonMesh.VertexColors.SetColor(i, (Color)this._elements[i].Colour);
         }
         return cols;
       }
@@ -200,7 +201,7 @@ namespace GsaGH.Parameters
         this.CloneApiElements(ApiObjectMember.group, value);
       }
     }
-    public List<bool> isDummies
+    public List<bool> IsDummies
     {
       get
       {
@@ -335,7 +336,7 @@ namespace GsaGH.Parameters
     #region constructors
     public GsaElement3d()
     {
-      //mthis._props = new List<GsaProp2d>();
+      //this._props = new List<GsaProp2d>();
     }
 
     public GsaElement3d(Mesh mesh, int prop = 0)
@@ -403,8 +404,6 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     public GsaElement3d UpdateGeometry(Mesh updatedMesh)
     {
-      if (this == null) { return null; }
-      if (this._mesh == null) { return null; }
       //if (mthis._mesh.Faces.Count != mthis._elements.Count) { return null; } // the logic below assumes the number of elements is equal to number of faces
 
       GsaElement3d dup = this.Duplicate(true);
@@ -422,7 +421,7 @@ namespace GsaGH.Parameters
       this.CloneApiElements(ApiObjectMember.all);
     }
 
-    private void CloneApiElements(ApiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null, List<double> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<System.Drawing.Color> col = null)
+    private void CloneApiElements(ApiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null, List<double> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<Color> col = null)
     {
       List<Element> elems = new List<Element>();
       for (int i = 0; i < this._elements.Count; i++)
@@ -504,7 +503,7 @@ namespace GsaGH.Parameters
             else
               elems[i].Colour = col.Last();
 
-            this._mesh.VertexColors.SetColor(i, (System.Drawing.Color)elems[i].Colour);
+            this._mesh.VertexColors.SetColor(i, (Color)elems[i].Colour);
             break;
         }
       }
