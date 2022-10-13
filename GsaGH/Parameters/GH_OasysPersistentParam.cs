@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GsaGH.Parameters
+namespace OasysGH.Parameters
 {
   public abstract class GH_OasysPersistentParam<T> : GH_PersistentParam<T> where T : class, IGH_Goo
   {

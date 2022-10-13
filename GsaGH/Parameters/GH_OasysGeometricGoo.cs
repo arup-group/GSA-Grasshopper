@@ -4,7 +4,7 @@ using OasysGH;
 using Rhino.Geometry;
 using System;
 
-namespace GsaGH.Parameters
+namespace OasysGH.Parameters
 {
   public abstract class GH_OasysGeometricGoo<T> : GH_GeometricGoo<T>, IGH_PreviewData
   {

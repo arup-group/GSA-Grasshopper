@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
+using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
   /// <summary>
   /// This class provides a parameter interface for the <see cref="GsaResultGoo"/> type.
   /// </summary>
-  public class GsaResultsParameterGoo : GH_OasysPersistentParam<GsaResultGoo>
+  public class GsaResultsParameter : GH_OasysPersistentParam<GsaResultGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaResultGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaResultGoo.Name : base.TypeName;
@@ -15,7 +16,7 @@ namespace GsaGH.Parameters
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ResultParam;
 
-    public GsaResultsParameterGoo() : base(new GH_InstanceDescription(
+    public GsaResultsParameter() : base(new GH_InstanceDescription(
       GsaResultGoo.Name,
       GsaResultGoo.NickName,
       GsaResultGoo.Description + " parameter",

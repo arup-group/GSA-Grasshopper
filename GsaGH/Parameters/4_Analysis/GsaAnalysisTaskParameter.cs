@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
+using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {

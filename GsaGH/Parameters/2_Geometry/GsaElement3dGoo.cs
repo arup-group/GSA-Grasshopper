@@ -5,6 +5,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using OasysGH;
+using OasysGH.Parameters;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters

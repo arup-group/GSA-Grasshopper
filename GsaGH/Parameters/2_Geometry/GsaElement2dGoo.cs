@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using OasysGH;
-using OasysUnits;
-using OasysUnits.Units;
+using OasysGH.Parameters;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters

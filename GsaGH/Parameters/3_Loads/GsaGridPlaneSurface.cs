@@ -13,16 +13,7 @@ namespace GsaGH.Parameters
 
   {
     #region fields
-    private Plane m_plane;  // plane at display point (Axis + elevation) 
-                            //remember to substract elevation when creating an axis from this plane!
-    private GridPlane m_gridplane;
-    private GridSurface m_gridsrf;
-    private Axis m_axis;
-    private int m_gridplnID = 0;
-    private int m_gridsrfID = 0;
-    private int m_axisID = 0;
-    private Guid m_gp_guid;
-    private Guid m_gs_guid;
+    
     #endregion
     public Plane Plane
     {
@@ -33,6 +24,8 @@ namespace GsaGH.Parameters
         m_plane = value;
       }
     }
+    private Plane m_plane = Plane.Unset;  // plane at display point (Axis + elevation) 
+
     public GridPlane GridPlane
     {
       get { return m_gridplane; }
@@ -42,6 +35,8 @@ namespace GsaGH.Parameters
         m_gridplane = value;
       }
     }
+    private GridPlane m_gridplane = new GridPlane();
+
     public int GridPlaneID
     {
       get { return m_gridplnID; }
@@ -51,6 +46,7 @@ namespace GsaGH.Parameters
         m_gridplnID = value;
       }
     }
+    private int m_gridplnID = 0;
 
     public GridSurface GridSurface
     {
@@ -61,6 +57,8 @@ namespace GsaGH.Parameters
         m_gridsrf = value;
       }
     }
+    private GridSurface m_gridsrf = new GridSurface();
+
     public int GridSurfaceID
     {
       get { return m_gridsrfID; }
@@ -70,6 +68,8 @@ namespace GsaGH.Parameters
         m_gridsrfID = value;
       }
     }
+    private int m_gridsrfID = 0;
+
     public Axis Axis
     {
       get { return m_axis; }
@@ -96,6 +96,8 @@ namespace GsaGH.Parameters
         }
       }
     }
+    private Axis m_axis = new Axis();
+
     public int AxisID
     {
       get { return m_axisID; }
@@ -105,6 +107,8 @@ namespace GsaGH.Parameters
         m_axisID = value;
       }
     }
+    private int m_axisID = 0;
+
     public Guid GridPlaneGUID
     {
       get { return m_gp_guid; }
@@ -113,6 +117,9 @@ namespace GsaGH.Parameters
     {
       get { return m_gs_guid; }
     }
+    private Guid m_gp_guid = Guid.NewGuid();
+    private Guid m_gs_guid = Guid.NewGuid();
+
     #region constructors
     public GsaGridPlaneSurface()
     {
@@ -164,28 +171,28 @@ namespace GsaGH.Parameters
       if (this == null) { return null; }
       GsaGridPlaneSurface dup = new GsaGridPlaneSurface
       {
-        Plane = m_gridplane == null ? Plane.Unset : m_plane.Clone(),
-        GridPlane = m_gridplane == null ? null : new GridPlane
+        Plane = (this.m_plane == Plane.Unset || m_gridplane == null) ? Plane.Unset : this.m_plane.Clone(),
+        GridPlane = this.m_gridplane == null ? null : new GridPlane
         {
-          AxisProperty = m_gridplane.AxisProperty,
-          Elevation = m_gridplane.Elevation,
-          IsStoreyType = m_gridplane.IsStoreyType,
-          Name = m_gridplane.Name.ToString(),
-          ToleranceAbove = m_gridplane.ToleranceAbove,
-          ToleranceBelow = m_gridplane.ToleranceBelow
+          AxisProperty = this.m_gridplane.AxisProperty,
+          Elevation = this.m_gridplane.Elevation,
+          IsStoreyType = this.m_gridplane.IsStoreyType,
+          Name = this.m_gridplane.Name.ToString(),
+          ToleranceAbove = this.m_gridplane.ToleranceAbove,
+          ToleranceBelow = this.m_gridplane.ToleranceBelow
         },
         GridSurface = new GridSurface
         {
-          Direction = m_gridsrf.Direction,
-          Elements = m_gridsrf.Elements.ToString(),
-          ElementType = m_gridsrf.ElementType,
-          ExpansionType = m_gridsrf.ExpansionType,
-          GridPlane = m_gridsrf.GridPlane,
-          Name = m_gridsrf.Name.ToString(),
-          SpanType = m_gridsrf.SpanType,
-          Tolerance = m_gridsrf.Tolerance
+          Direction = this.m_gridsrf.Direction,
+          Elements = this.m_gridsrf.Elements.ToString(),
+          ElementType = this.m_gridsrf.ElementType,
+          ExpansionType = this.m_gridsrf.ExpansionType,
+          GridPlane = this.m_gridsrf.GridPlane,
+          Name = this.m_gridsrf.Name.ToString(),
+          SpanType = this.m_gridsrf.SpanType,
+          Tolerance = this.m_gridsrf.Tolerance
         },
-        Axis = m_gridplane == null ? null : new Axis
+        Axis = this.m_gridplane == null ? null : new Axis
         {
           Name = m_axis.Name.ToString(),
           Origin = new Vector3 { X = m_axis.Origin.X, Y = m_axis.Origin.Y, Z = m_axis.Origin.Z },
@@ -204,17 +211,6 @@ namespace GsaGH.Parameters
 
     #endregion
 
-    #region properties
-    public bool IsValid
-    {
-      get
-      {
-        if (Plane == null) { return false; }
-        return true;
-      }
-    }
-    #endregion
-
     #region methods
     public override string ToString()
     {
@@ -224,7 +220,6 @@ namespace GsaGH.Parameters
       string gs = GridSurface == null ? "" : GridSurface.Name;
       return "GSA Grid Plane Surface " + gp + gs;
     }
-
     #endregion
   }
 }

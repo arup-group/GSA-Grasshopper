@@ -4,6 +4,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using OasysGH;
+using OasysGH.Parameters;
 using OasysGH.Units;
 using Rhino.Geometry;
 
@@ -180,8 +181,6 @@ namespace GsaGH.Parameters
     #endregion
 
     #region drawing methods
-    
-
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
     {
       // no meshes to be drawn

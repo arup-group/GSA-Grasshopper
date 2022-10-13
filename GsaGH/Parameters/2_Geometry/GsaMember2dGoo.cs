@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using OasysGH;
+using OasysGH.Parameters;
 using OasysGH.Units;
 using Rhino.Geometry;
 
@@ -21,7 +21,7 @@ namespace GsaGH.Parameters
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     public GsaMember2dGoo(GsaMember2d item) : base(item) { }
     public override IGH_GeometricGoo Duplicate() => new GsaMember2dGoo(this.Value);
-    public override GeometryBase GetGeometry() => this.Value.PolyCurve;
+    public override GeometryBase GetGeometry() => this.Value.Brep;
 
     #region casting methods
     public override bool CastTo<Q>(out Q target)
