@@ -9,13 +9,13 @@ using Xunit;
 namespace GsaGHTests
 {
   [Collection("GrasshopperFixture collection")]
-  public class ObjectExtensionTests
+  public class NoObjectExtensionTests
   {
     [Fact]
     public void GsaModelEqualsTest()
     {
       GsaModel original = new GsaModel();
-      GsaModel duplicate = (GsaModel)OasysGH.ObjectExtension.Duplicate(original);
+      GsaModel duplicate = original.Duplicate();
       Duplicates.AreEqual(original, duplicate);
     }
 
@@ -23,7 +23,7 @@ namespace GsaGHTests
     public void GsaBool6EqualsTest()
     {
       GsaBool6 original = new GsaBool6();
-      GsaBool6 duplicate = (GsaBool6)OasysGH.ObjectExtension.Duplicate(original);
+      GsaBool6 duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -33,7 +33,7 @@ namespace GsaGHTests
     {
       GsaMaterial original = new GsaMaterial();
       original.MaterialType = GsaMaterial.MatType.ALUMINIUM;
-      GsaMaterial duplicate = (GsaMaterial)OasysGH.ObjectExtension.Duplicate(original);
+      GsaMaterial duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -44,7 +44,7 @@ namespace GsaGHTests
       GsaProp2d original = new GsaProp2d();
       original.Name = "Name";
       original.Thickness = new OasysUnits.Length(200, LengthUnit.Millimeter);
-      GsaProp2d duplicate = (GsaProp2d)OasysGH.ObjectExtension.Duplicate(original);
+      GsaProp2d duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -54,7 +54,7 @@ namespace GsaGHTests
     {
       GsaProp3d original = new GsaProp3d(new GsaMaterial());
       original.Name = "Name";
-      GsaProp3d duplicate = (GsaProp3d)OasysGH.ObjectExtension.Duplicate(original);
+      GsaProp3d duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -64,7 +64,7 @@ namespace GsaGHTests
     {
       GsaSection original = new GsaSection();
       original.Name = "Name";
-      GsaSection duplicate = (GsaSection)OasysGH.ObjectExtension.Duplicate(original);
+      GsaSection duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -74,7 +74,7 @@ namespace GsaGHTests
     {
       GsaSectionModifier original = new GsaSectionModifier();
       original.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-      GsaSectionModifier duplicate = (GsaSectionModifier)OasysGH.ObjectExtension.Duplicate(original);
+      GsaSectionModifier duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -86,7 +86,7 @@ namespace GsaGHTests
       section.Name = "Name";
       GsaElement1d original = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode());
       original.Name = "Name";
-      GsaElement1d duplicate = (GsaElement1d)OasysGH.ObjectExtension.Duplicate(original);
+      GsaElement1d duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -95,7 +95,7 @@ namespace GsaGHTests
     public void GsaElement2dEqualsTest()
     {
       GsaElement2d original = new GsaElement2d(new Mesh());
-      GsaElement2d duplicate = (GsaElement2d)OasysGH.ObjectExtension.Duplicate(original);
+      GsaElement2d duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -104,7 +104,7 @@ namespace GsaGHTests
     public void GsaElement3dEqualsTest()
     {
       GsaElement3d original = new GsaElement3d(new Mesh());
-      GsaElement3d duplicate = (GsaElement3d)OasysGH.ObjectExtension.Duplicate(original);
+      GsaElement3d duplicate = original.Duplicate();
       Duplicates.AreEqual(original, duplicate);
     }
 
@@ -115,7 +115,7 @@ namespace GsaGHTests
       section.Name = "Name";
       GsaMember1d original = new GsaMember1d(new Member(), 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
       original.Name = "Name";
-      GsaMember1d duplicate = (GsaMember1d)OasysGH.ObjectExtension.Duplicate(original);
+      GsaMember1d duplicate = original.Duplicate();
       Duplicates.AreEqual(original, duplicate);
     }
 
@@ -126,7 +126,7 @@ namespace GsaGHTests
       prop.Name = "Name";
       GsaMember3d original = new GsaMember3d(new Member(), 1, new Mesh(), prop);
       original.Name = "Name";
-      GsaMember3d duplicate = (GsaMember3d)OasysGH.ObjectExtension.Duplicate(original);
+      GsaMember3d duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -135,7 +135,7 @@ namespace GsaGHTests
     public void GsaNodeEqualsTest()
     {
       GsaNode original = new GsaNode();
-      GsaNode duplicate = (GsaNode)OasysGH.ObjectExtension.Duplicate(original);
+      GsaNode duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -144,7 +144,7 @@ namespace GsaGHTests
     public void GsaGridPlaneSurfaceEqualsTest()
     {
       GsaGridPlaneSurface original = new GsaGridPlaneSurface();
-      GsaGridPlaneSurface duplicate = (GsaGridPlaneSurface)OasysGH.ObjectExtension.Duplicate(original);
+      GsaGridPlaneSurface duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
@@ -153,7 +153,7 @@ namespace GsaGHTests
     public void GsaLoadEqualsTest()
     {
       GsaLoad original = new GsaLoad(new GsaBeamLoad());
-      GsaLoad duplicate = (GsaLoad)OasysGH.ObjectExtension.Duplicate(original);
+      GsaLoad duplicate = original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
     }
