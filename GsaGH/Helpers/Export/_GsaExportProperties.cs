@@ -128,7 +128,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       sections_guid.Add(section.GUID, outID);
 
       // set modifier
-      if (section.Modifier != null && section.Modifier.isModified)
+      if (section.Modifier != null && section.Modifier.IsModified)
       {
         if (existingSectionModifiers.ContainsKey(outID))
           existingSectionModifiers[outID] = section.Modifier.API_SectionModifier;
@@ -164,7 +164,7 @@ namespace GsaGH.Util.Gsa.ToGSA
               Section apiSection = section.API_Section;
 
               // set modifier
-              if (section.Modifier != null && section.Modifier.isModified)
+              if (section.Modifier != null && section.Modifier.IsModified)
               {
                 if (apimodifiers.ContainsKey(i))
                   apimodifiers[i] = section.Modifier.API_SectionModifier;

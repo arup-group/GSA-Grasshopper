@@ -23,26 +23,27 @@ namespace GsaGH.Parameters
       UseModified,
       UseUnmodified
     }
+
     internal SectionModifier API_SectionModifier;
 
-    public bool isModified
+    public bool IsModified
     {
       get
       {
         if (API_SectionModifier == null) return false;
-        if (isAttributeModified(this.API_SectionModifier.AreaModifier))
+        if (IsAttributeModified(this.API_SectionModifier.AreaModifier))
           return true;
-        if (isAttributeModified(this.API_SectionModifier.I11Modifier))
+        if (IsAttributeModified(this.API_SectionModifier.I11Modifier))
           return true;
-        if (isAttributeModified(this.API_SectionModifier.I22Modifier))
+        if (IsAttributeModified(this.API_SectionModifier.I22Modifier))
           return true;
-        if (isAttributeModified(this.API_SectionModifier.JModifier))
+        if (IsAttributeModified(this.API_SectionModifier.JModifier))
           return true;
-        if (isAttributeModified(this.API_SectionModifier.K11Modifier))
+        if (IsAttributeModified(this.API_SectionModifier.K11Modifier))
           return true;
-        if (isAttributeModified(this.API_SectionModifier.K22Modifier))
+        if (IsAttributeModified(this.API_SectionModifier.K22Modifier))
           return true;
-        if (isAttributeModified(this.API_SectionModifier.VolumeModifier))
+        if (IsAttributeModified(this.API_SectionModifier.VolumeModifier))
           return true;
         if (isBendingAxesPrincipal)
           return true;
@@ -55,7 +56,7 @@ namespace GsaGH.Parameters
         return false;
       }
     }
-    private bool isAttributeModified(SectionModifierAttribute attribute)
+    private bool IsAttributeModified(SectionModifierAttribute attribute)
     {
       if (attribute.Option == SectionModifierOptionType.TO)
         return true;
@@ -392,7 +393,7 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      if (!this.isModified)
+      if (!this.IsModified)
       {
         return "Section Modifier {Unmodified}";
       }
