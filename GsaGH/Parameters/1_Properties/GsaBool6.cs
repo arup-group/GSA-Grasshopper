@@ -41,10 +41,7 @@ namespace GsaGH.Parameters
       get { return API_Bool6.ZZ; }
       set { API_Bool6 = new Bool6(X, Y, Z, XX, YY, value); }
     }
-
-    #region fields
     internal Bool6 API_Bool6;
-    #endregion
 
     #region constructors
     public GsaBool6()
@@ -74,23 +71,12 @@ namespace GsaGH.Parameters
     }
     #endregion
 
-    #region properties
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
-
-
-    #endregion
 
     #region methods
     public override string ToString()
     {
       string sx = (X) ? "\u2713" : "\u2610";
-      sx = "{X" + sx;
+      sx = "X" + sx;
       string sy = (Y) ? "\u2713" : "\u2610";
       sy = ", Y" + sy;
       string sz = (Z) ? "\u2713" : "\u2610";
@@ -100,9 +86,9 @@ namespace GsaGH.Parameters
       string syy = (YY) ? "\u2713" : "\u2610";
       syy = ", YY" + syy;
       string szz = (ZZ) ? "\u2713" : "\u2610";
-      szz = ", ZZ" + szz + "}";
+      szz = ", ZZ" + szz;
 
-      return "GSA Bool 6" + sx + sy + sz + sxx + syy + szz;
+      return sx + sy + sz + sxx + syy + szz;
     }
 
     #endregion

@@ -204,16 +204,6 @@ namespace GsaGH.Parameters
     }
     #endregion
 
-    #region properties
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
-    #endregion
-
     #region methods
     public override string ToString()
     {
