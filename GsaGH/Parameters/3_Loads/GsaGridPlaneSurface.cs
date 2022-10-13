@@ -10,137 +10,135 @@ namespace GsaGH.Parameters
   /// Grid Plane Surface class, this class defines the basic properties and methods for any Gsa Grid Plane Surface
   /// </summary>
   public class GsaGridPlaneSurface
-
   {
     #region fields
+    private int _axisID = 0;
+    private Axis _axis = new Axis();
+
+    private int _gridSrfID = 0;
+    private Guid _gridSrfGuid = Guid.NewGuid();
+    private GridSurface _gridSrf = new GridSurface();
     
+    private int _gridPlnID = 0;
+    private Guid _gridPlnGuid = Guid.NewGuid();
+    private GridPlane _gridPln = new GridPlane();
+
+    private Plane _pln = Plane.WorldXY;  // plane at display point (Axis + elevation) 
     #endregion
-    public Plane Plane
-    {
-      get { return m_plane; }
-      set
-      {
-        m_gp_guid = Guid.NewGuid();
-        m_plane = value;
-      }
-    }
-    private Plane m_plane = Plane.Unset;  // plane at display point (Axis + elevation) 
 
-    public GridPlane GridPlane
-    {
-      get { return m_gridplane; }
-      set
-      {
-        m_gp_guid = Guid.NewGuid();
-        m_gridplane = value;
-      }
-    }
-    private GridPlane m_gridplane = new GridPlane();
-
-    public int GridPlaneID
-    {
-      get { return m_gridplnID; }
-      set
-      {
-        m_gp_guid = Guid.NewGuid();
-        m_gridplnID = value;
-      }
-    }
-    private int m_gridplnID = 0;
-
-    public GridSurface GridSurface
-    {
-      get { return m_gridsrf; }
-      set
-      {
-        m_gs_guid = Guid.NewGuid();
-        m_gridsrf = value;
-      }
-    }
-    private GridSurface m_gridsrf = new GridSurface();
-
-    public int GridSurfaceID
-    {
-      get { return m_gridsrfID; }
-      set
-      {
-        m_gs_guid = Guid.NewGuid();
-        m_gridsrfID = value;
-      }
-    }
-    private int m_gridsrfID = 0;
-
+    #region properties
     public Axis Axis
     {
-      get { return m_axis; }
+      get { return _axis; }
       set
       {
-        m_axis = value;
-        m_gp_guid = Guid.NewGuid();
+        _axis = value;
+        _gridPlnGuid = Guid.NewGuid();
         if (value != null)
         {
-          m_plane.OriginX = m_axis.Origin.X;
-          m_plane.OriginY = m_axis.Origin.Y;
-          if (m_gridplane != null)
+          _pln.OriginX = _axis.Origin.X;
+          _pln.OriginY = _axis.Origin.Y;
+          if (_gridPln != null)
           {
-            if (m_gridplane.Elevation != 0)
-              m_plane.OriginZ = m_axis.Origin.Z + m_gridplane.Elevation;
+            if (_gridPln.Elevation != 0)
+              _pln.OriginZ = _axis.Origin.Z + _gridPln.Elevation;
           }
           else
-            m_plane.OriginZ = m_axis.Origin.Z;
+            _pln.OriginZ = _axis.Origin.Z;
 
-          m_plane = new Plane(m_plane.Origin,
-              new Vector3d(m_axis.XVector.X, m_axis.XVector.Y, m_axis.XVector.Z),
-              new Vector3d(m_axis.XYPlane.X, m_axis.XYPlane.Y, m_axis.XYPlane.Z)
+          _pln = new Plane(_pln.Origin,
+              new Vector3d(_axis.XVector.X, _axis.XVector.Y, _axis.XVector.Z),
+              new Vector3d(_axis.XYPlane.X, _axis.XYPlane.Y, _axis.XYPlane.Z)
               );
         }
       }
     }
-    private Axis m_axis = new Axis();
 
     public int AxisID
     {
-      get { return m_axisID; }
+      get { return _axisID; }
       set
       {
-        m_gp_guid = Guid.NewGuid();
-        m_axisID = value;
+        _gridPlnGuid = Guid.NewGuid();
+        _axisID = value;
       }
     }
-    private int m_axisID = 0;
 
-    public Guid GridPlaneGUID
+    public GridSurface GridSurface
     {
-      get { return m_gp_guid; }
+      get { return _gridSrf; }
+      set
+      {
+        _gridSrfGuid = Guid.NewGuid();
+        _gridSrf = value;
+      }
+    }
+
+    public int GridSurfaceID
+    {
+      get { return _gridSrfID; }
+      set
+      {
+        _gridSrfGuid = Guid.NewGuid();
+        _gridSrfID = value;
+      }
     }
     public Guid GridSurfaceGUID
     {
-      get { return m_gs_guid; }
+      get { return _gridSrfGuid; }
     }
-    private Guid m_gp_guid = Guid.NewGuid();
-    private Guid m_gs_guid = Guid.NewGuid();
+
+    public GridPlane GridPlane
+    {
+      get { return _gridPln; }
+      set
+      {
+        _gridPlnGuid = Guid.NewGuid();
+        _gridPln = value;
+      }
+    }
+
+    public int GridPlaneID
+    {
+      get { return _gridPlnID; }
+      set
+      {
+        _gridPlnGuid = Guid.NewGuid();
+        _gridPlnID = value;
+      }
+    }
+
+    public Guid GridPlaneGUID
+    {
+      get { return _gridPlnGuid; }
+    }
+
+    public Plane Plane
+    {
+      get { return _pln; }
+      set
+      {
+        _gridPlnGuid = Guid.NewGuid();
+        _pln = value;
+      }
+    }
+    #endregion
 
     #region constructors
     public GsaGridPlaneSurface()
     {
-      m_plane = Plane.Unset;
-      m_gridplane = new GridPlane();
-      m_gp_guid = Guid.NewGuid();
-      m_gridsrf = new GridSurface();
-      m_gs_guid = Guid.NewGuid();
-      m_axis = new Axis();
     }
 
     public GsaGridPlaneSurface(Plane plane, bool tryUseExisting = false)
     {
-      m_plane = plane;
-      m_gridplane = new GridPlane();
+      _pln = plane;
+      _gridPln = new GridPlane();
       if (tryUseExisting)
-        m_gp_guid = new Guid(); // will create 0000-00000-00000-00000
+        _gridPlnGuid = new Guid(); // will create 0000-00000-00000-00000
       else
-        m_gp_guid = Guid.NewGuid(); // will create random guid
+        _gridPlnGuid = Guid.NewGuid(); // will create random guid
 
-      m_gridsrf = new GridSurface
+      _gridSrf = new GridSurface
       {
         Direction = 0,
         Elements = "all",
@@ -149,21 +147,21 @@ namespace GsaGH.Parameters
         SpanType = GridSurface.Span_Type.ONE_WAY
       };
       if (tryUseExisting)
-        m_gs_guid = new Guid(); // will create 0000-00000-00000-00000
+        _gridSrfGuid = new Guid(); // will create 0000-00000-00000-00000
       else
-        m_gs_guid = Guid.NewGuid(); // will create random guid
+        _gridSrfGuid = Guid.NewGuid(); // will create random guid
 
-      m_axis = new Axis();
-      m_axis.Origin.X = plane.OriginX;
-      m_axis.Origin.Y = plane.OriginY;
-      m_axis.Origin.Z = plane.OriginZ;
+      _axis = new Axis();
+      _axis.Origin.X = plane.OriginX;
+      _axis.Origin.Y = plane.OriginY;
+      _axis.Origin.Z = plane.OriginZ;
 
-      m_axis.XVector.X = plane.XAxis.X;
-      m_axis.XVector.Y = plane.XAxis.Y;
-      m_axis.XVector.Z = plane.XAxis.Z;
-      m_axis.XYPlane.X = plane.YAxis.X;
-      m_axis.XYPlane.Y = plane.YAxis.Y;
-      m_axis.XYPlane.Z = plane.YAxis.Z;
+      _axis.XVector.X = plane.XAxis.X;
+      _axis.XVector.Y = plane.XAxis.Y;
+      _axis.XVector.Z = plane.XAxis.Z;
+      _axis.XYPlane.X = plane.YAxis.X;
+      _axis.XYPlane.Y = plane.YAxis.Y;
+      _axis.XYPlane.Z = plane.YAxis.Z;
     }
 
     public GsaGridPlaneSurface Duplicate()
@@ -171,40 +169,40 @@ namespace GsaGH.Parameters
       if (this == null) { return null; }
       GsaGridPlaneSurface dup = new GsaGridPlaneSurface
       {
-        Plane = (this.m_plane == Plane.Unset || m_gridplane == null) ? Plane.Unset : this.m_plane.Clone(),
-        GridPlane = this.m_gridplane == null ? null : new GridPlane
+        Plane = (_gridPln == null) ? Plane.WorldXY : this._pln.Clone(),
+        GridPlane = this._gridPln == null ? null : new GridPlane
         {
-          AxisProperty = this.m_gridplane.AxisProperty,
-          Elevation = this.m_gridplane.Elevation,
-          IsStoreyType = this.m_gridplane.IsStoreyType,
-          Name = this.m_gridplane.Name.ToString(),
-          ToleranceAbove = this.m_gridplane.ToleranceAbove,
-          ToleranceBelow = this.m_gridplane.ToleranceBelow
+          AxisProperty = this._gridPln.AxisProperty,
+          Elevation = this._gridPln.Elevation,
+          IsStoreyType = this._gridPln.IsStoreyType,
+          Name = this._gridPln.Name.ToString(),
+          ToleranceAbove = this._gridPln.ToleranceAbove,
+          ToleranceBelow = this._gridPln.ToleranceBelow
         },
         GridSurface = new GridSurface
         {
-          Direction = this.m_gridsrf.Direction,
-          Elements = this.m_gridsrf.Elements.ToString(),
-          ElementType = this.m_gridsrf.ElementType,
-          ExpansionType = this.m_gridsrf.ExpansionType,
-          GridPlane = this.m_gridsrf.GridPlane,
-          Name = this.m_gridsrf.Name.ToString(),
-          SpanType = this.m_gridsrf.SpanType,
-          Tolerance = this.m_gridsrf.Tolerance
+          Direction = this._gridSrf.Direction,
+          Elements = this._gridSrf.Elements.ToString(),
+          ElementType = this._gridSrf.ElementType,
+          ExpansionType = this._gridSrf.ExpansionType,
+          GridPlane = this._gridSrf.GridPlane,
+          Name = this._gridSrf.Name.ToString(),
+          SpanType = this._gridSrf.SpanType,
+          Tolerance = this._gridSrf.Tolerance
         },
-        Axis = this.m_gridplane == null ? null : new Axis
+        Axis = this._gridPln == null ? null : new Axis
         {
-          Name = m_axis.Name.ToString(),
-          Origin = new Vector3 { X = m_axis.Origin.X, Y = m_axis.Origin.Y, Z = m_axis.Origin.Z },
-          Type = m_axis.Type,
-          XVector = new Vector3 { X = m_axis.XVector.X, Y = m_axis.XVector.Y, Z = m_axis.XVector.Z },
-          XYPlane = new Vector3 { X = m_axis.XYPlane.X, Y = m_axis.XYPlane.Y, Z = m_axis.XYPlane.Z }
+          Name = _axis.Name.ToString(),
+          Origin = new Vector3 { X = _axis.Origin.X, Y = _axis.Origin.Y, Z = _axis.Origin.Z },
+          Type = _axis.Type,
+          XVector = new Vector3 { X = _axis.XVector.X, Y = _axis.XVector.Y, Z = _axis.XVector.Z },
+          XYPlane = new Vector3 { X = _axis.XYPlane.X, Y = _axis.XYPlane.Y, Z = _axis.XYPlane.Z }
         },
-        GridPlaneID = m_gridplnID,
-        GridSurfaceID = m_gridsrfID
+        GridPlaneID = _gridPlnID,
+        GridSurfaceID = _gridSrfID
       };
-      dup.m_gs_guid = new Guid(m_gs_guid.ToString());
-      dup.m_gp_guid = new Guid(m_gp_guid.ToString());
+      dup._gridSrfGuid = new Guid(_gridSrfGuid.ToString());
+      dup._gridPlnGuid = new Guid(_gridPlnGuid.ToString());
       return dup;
     }
 
