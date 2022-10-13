@@ -137,6 +137,7 @@ namespace GsaGH.Parameters
         
       CreateFromAPI(section.API_Section.MaterialType, section.API_Section.MaterialAnalysisProperty, section.API_Section.MaterialGradeProperty, analysisMaterial);
     }
+
     internal GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null)
     {
       if (prop == null || prop.API_Prop2d == null)
@@ -151,6 +152,7 @@ namespace GsaGH.Parameters
       
       CreateFromAPI(prop.API_Prop2d.MaterialType, prop.API_Prop2d.MaterialAnalysisProperty, prop.API_Prop2d.MaterialGradeProperty, analysisMaterial);
     }
+
     internal GsaMaterial(GsaProp3d prop, AnalysisMaterial analysisMaterial = null)
     {
       if (prop == null || prop.API_Prop3d == null)
@@ -165,6 +167,7 @@ namespace GsaGH.Parameters
       }
       CreateFromAPI(prop.API_Prop3d.MaterialType, prop.API_Prop3d.MaterialAnalysisProperty, prop.API_Prop3d.MaterialGradeProperty, analysisMaterial);
     }
+
     private void CreateFromAPI(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial)
     {
       MaterialType = getType(materialType);
@@ -185,7 +188,6 @@ namespace GsaGH.Parameters
 
     public GsaMaterial Duplicate()
     {
-      if (this == null) { return null; }
       GsaMaterial dup = new GsaMaterial();
       dup.MaterialType = MaterialType;
       dup.GradeProperty = m_grade;
@@ -225,7 +227,6 @@ namespace GsaGH.Parameters
       string mate = MaterialType.ToString();
       return Char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
     }
-
     #endregion
   }
 }
