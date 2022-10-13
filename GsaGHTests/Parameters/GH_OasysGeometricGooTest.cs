@@ -21,7 +21,7 @@ namespace GsaGHTests.Parameters
     [InlineData(typeof(GsaMember3dGoo), typeof(GsaMember3d))]
     [InlineData(typeof(GsaNodeGoo), typeof(GsaNode))]
     [InlineData(typeof(GsaGridPlaneSurfaceGoo), typeof(GsaGridPlaneSurface))]
-    public void GenericGH_OasysGooTest(Type gooType, Type wrapType)
+    public void GenericGH_OasysGeometricGooTest(Type gooType, Type wrapType)
     {
       // Create the actual API object
       Object value = Activator.CreateInstance(wrapType);
