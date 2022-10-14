@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using GsaAPI;
 
 namespace GsaGH.Parameters
@@ -30,7 +31,7 @@ namespace GsaGH.Parameters
         this._material = new GsaMaterial(this);
       }
     }
-    public int Id
+    public int ID
     {
       get
       {
@@ -117,13 +118,6 @@ namespace GsaGH.Parameters
         return this._guid;
       }
     }
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     #endregion
 
     #region constructors
@@ -155,10 +149,9 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string str = this._prop3d.MaterialType.ToString();
-      str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
-      string pa = (Id > 0) ? "PV" + Id + " " : "";
-      return "GSA 3D Property " + ((Id > 0) ? pa : "") + ((this._prop3d == null) ? "" : str);
+      string type = Helpers.Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key;
+      string pa = (this.ID > 0) ? "PV" + this.ID + " " : "";
+      return pa + type;
     }
 
     private void CloneProperty()

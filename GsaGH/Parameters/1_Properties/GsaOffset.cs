@@ -16,13 +16,6 @@ namespace GsaGH.Parameters
     public Length X2 { get; set; } = Length.Zero;
     public Length Y { get; set; } = Length.Zero;
     public Length Z { get; set; } = Length.Zero;
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     #endregion
 
     #region constructors
@@ -50,11 +43,11 @@ namespace GsaGH.Parameters
       IQuantity quantity = new Length(0, DefaultUnits.LengthUnitGeometry);
       string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
-      return "Offset" + " {X1: "
-          + Math.Round(X1.As(DefaultUnits.LengthUnitGeometry), 4) + ", X2: "
-          + Math.Round(X2.As(DefaultUnits.LengthUnitGeometry), 4) + ", Y: "
-          + Math.Round(Y.As(DefaultUnits.LengthUnitGeometry), 4) + ", Z: "
-          + Math.Round(Z.As(DefaultUnits.LengthUnitGeometry), 4) + " [" + unitAbbreviation + "]}";
+      return "X1:"
+          + Math.Round(X1.As(DefaultUnits.LengthUnitGeometry), 4) + ", X2:"
+          + Math.Round(X2.As(DefaultUnits.LengthUnitGeometry), 4) + ", Y:"
+          + Math.Round(Y.As(DefaultUnits.LengthUnitGeometry), 4) + ", Z:"
+          + Math.Round(Z.As(DefaultUnits.LengthUnitGeometry), 4) + " [" + unitAbbreviation + "]";
     }
     #endregion
   }

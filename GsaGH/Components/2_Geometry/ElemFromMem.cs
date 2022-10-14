@@ -314,10 +314,10 @@ namespace GsaGH.Components
       GsaModel outModel = new GsaModel();
       outModel.Model = gsa;
 
-      DA.SetDataList(0, nodes.OrderBy(item => item.Value.Id));
-      DA.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.Id));
-      DA.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.Id.First()));
-      DA.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.Id.First()));
+      DA.SetDataList(0, nodes.OrderBy(item => item.Value.ID));
+      DA.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.ID));
+      DA.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.IDs.First()));
+      DA.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.IDs.First()));
       DA.SetData(4, new GsaModelGoo(outModel));
 
       // custom display settings for element2d mesh

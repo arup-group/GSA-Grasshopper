@@ -95,7 +95,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            mem.Id = id;
+            mem.ID = id;
         }
 
         // 2 geometry
@@ -126,7 +126,7 @@ namespace GsaGH.Components
           {
             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
             {
-              prop3d.Id = idd;
+              prop3d.ID = idd;
               mem.PropertyID = idd;
             }
             else
@@ -194,7 +194,7 @@ namespace GsaGH.Components
         // #### outputs ####
 
         DA.SetData(0, new GsaMember3dGoo(mem));
-        DA.SetData(1, mem.Id);
+        DA.SetData(1, mem.ID);
         DA.SetData(2, mem.SolidMesh);
 
         DA.SetData(3, mem.PropertyID);

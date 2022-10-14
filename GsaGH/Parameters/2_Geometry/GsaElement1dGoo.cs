@@ -95,7 +95,7 @@ namespace GsaGH.Parameters
         else
         {
           GH_Integer ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
+          if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
             target = (Q)(object)ghint;
           else
             target = default;
@@ -148,7 +148,7 @@ namespace GsaGH.Parameters
       if (Value.Line == null) { return null; }
 
       GsaElement1d elem = Value.Duplicate(true);
-      elem.Id = 0;
+      elem.ID = 0;
       LineCurve xLn = elem.Line;
       xLn.Transform(xform);
       elem.Line = xLn;

@@ -125,9 +125,9 @@ namespace GsaGH.Util.Gsa.ToGSA
       apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections, ref sections_guid, ref existingSectionModifiers, ref existingMaterials, ref materials_guid);
 
       // set apimember in dictionary
-      if (member1d.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+      if (member1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
       {
-        existingMembers[member1d.Id] = apiMember;
+        existingMembers[member1d.ID] = apiMember;
       }
       else
       {
@@ -251,9 +251,9 @@ namespace GsaGH.Util.Gsa.ToGSA
       apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref existingProp2Ds, ref prop2d_guid, ref existingMaterials, ref materials_guid);
 
       // set apimember in dictionary
-      if (member2d.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+      if (member2d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
       {
-        existingMembers[member2d.Id] = apiMember;
+        existingMembers[member2d.ID] = apiMember;
       }
       else
       {
@@ -364,9 +364,9 @@ namespace GsaGH.Util.Gsa.ToGSA
         // to be done
 
         // set apimember in dictionary
-        if (member3d.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+        if (member3d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
         {
-          existingMembers[member3d.Id] = apiMember;
+          existingMembers[member3d.ID] = apiMember;
         }
         else
         {

@@ -300,13 +300,6 @@ namespace GsaGH.Parameters
       dup.IsReferencePointCentroid = this._sectionModifier.IsReferencePointCentroid;
       this._sectionModifier = dup;
     }
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     #endregion
 
     #region constructors
@@ -330,9 +323,8 @@ namespace GsaGH.Parameters
     {
       if (!this.IsModified)
       {
-        return "Section Modifier {Unmodified}";
+        return "Unmodified";
       }
-      string str = "Section Modifier ";
       string A = "A(";
       string I11 = "I11(";
       string I22 = "I22(";
@@ -467,7 +459,7 @@ namespace GsaGH.Parameters
         refPt = "AnalysisRefPt(UseCentroid)";
 
       string innerDesc = string.Join(", ", A, I11, I22, J, K11, K22, V, mass, stress, axis, refPt).Replace("X, ", string.Empty).TrimStart(',').TrimStart(' ').TrimEnd('X').TrimEnd(' ').TrimEnd(',');
-      return str + "{" + innerDesc + "}";
+      return innerDesc;
     }
     #endregion
   }

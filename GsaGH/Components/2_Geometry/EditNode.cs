@@ -119,7 +119,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghInt))
         {
           if (GH_Convert.ToInt32(ghInt, out int id, GH_Conversion.Both))
-            node.Id = id;
+            node.ID = id;
         }
 
         // 3 plane
@@ -159,7 +159,7 @@ namespace GsaGH.Components
 
         // #### outputs ####
         DA.SetData(0, new GsaNodeGoo(node));
-        DA.SetData(1, node.Id);
+        DA.SetData(1, node.ID);
         DA.SetData(2, node.Point);
         DA.SetData(3, new GH_Plane(node.LocalAxis));
         DA.SetData(4, node.Restraint);

@@ -104,7 +104,7 @@ namespace GsaGH.Parameters
         this._topo = value;
       }
     }
-    public List<int> Id
+    public List<int> IDs
     {
       get
       {
@@ -393,8 +393,9 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string valid = (this.IsValid) ? "" : "Invalid ";
-      return valid + "GSA 3D Element(s)";
+      string type = Helpers.Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
+      string info = "N:" + this.NgonMesh.Vertices.Count + " E:" + this.API_Elements.Count;
+      return type + info;
     }
 
     /// <summary>

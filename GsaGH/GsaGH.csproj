@@ -193,6 +193,7 @@
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
     <Compile Include="Helpers\Export\ConvertMembers.cs" />
+    <Compile Include="Helpers\Mappings.cs" />
     <Compile Include="Helpers\PostHog.cs" />
     <Compile Include="Helpers\_DeSerialization.cs" />
     <Compile Include="Helpers\_Display.cs" />

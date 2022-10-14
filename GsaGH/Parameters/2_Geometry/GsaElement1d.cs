@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using Rhino.Geometry;
+using Grasshopper.Kernel.Types;
 
 namespace GsaGH.Parameters
 {
@@ -72,7 +73,7 @@ namespace GsaGH.Parameters
         this.UpdatePreview();
       }
     }
-    public int Id
+    public int ID
     {
       get
       {
@@ -247,13 +248,6 @@ namespace GsaGH.Parameters
         this._element.Type = value;
       }
     }
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     internal Tuple<Vector3d, Vector3d, Vector3d> LocalAxes
     {
       get
@@ -318,20 +312,9 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string idd = " " + Id.ToString();
-      if (this.Id == 0)
-      {
-        idd = "";
-      }
-      string valid = (this.IsValid) ? "" : "Invalid ";
-      if (this.Line != null)
-      {
-        if (this.Line.GetLength() == 0)
-        {
-          valid = "Invalid ";
-        }
-      }
-      return valid + "GSA 1D Element" + idd;
+      string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
+      string type = Helpers.Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
+      return idd + type + new GH_Curve(this.Line).ToString();
     }
 
     internal void CloneApiElement()

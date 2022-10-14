@@ -115,7 +115,7 @@ namespace GsaGH.Components
               in_ids.Add(id);
             }
           }
-          elem.Id = in_ids;
+          elem.IDs = in_ids;
         }
 
         // 2 section
@@ -259,7 +259,7 @@ namespace GsaGH.Components
 
         // #### outputs ####
         DA.SetData(0, new GsaElement2dGoo(elem));
-        DA.SetDataList(1, elem.Id);
+        DA.SetDataList(1, elem.IDs);
         DA.SetData(2, elem.Mesh);
         DA.SetDataList(3, new List<GsaProp2dGoo>(elem.Properties.ConvertAll(prop2d => new GsaProp2dGoo(prop2d))));
         DA.SetDataList(4, elem.Groups);

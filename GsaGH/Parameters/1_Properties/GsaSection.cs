@@ -12,7 +12,7 @@ namespace GsaGH.Parameters
   public class GsaSection
   {
     #region fields
-    private int _idd = 0;
+    private int _id = 0;
     private Guid _guid;
     private GsaMaterial _material = new GsaMaterial();
     private GsaSectionModifier _modifier = new GsaSectionModifier();
@@ -111,12 +111,12 @@ namespace GsaGH.Parameters
     {
       get
       {
-        return this._idd;
+        return this._id;
       }
       set
       {
         this._guid = Guid.NewGuid();
-        this._idd = value;
+        this._id = value;
       }
     }
     public GsaMaterial Material
@@ -236,13 +236,6 @@ namespace GsaGH.Parameters
         return this._guid;
       }
     }
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     #endregion
 
     #region constructors
@@ -252,7 +245,7 @@ namespace GsaGH.Parameters
 
     public GsaSection(int id)
     {
-      this._idd = id;
+      this._id = id;
     }
 
     public GsaSection(string profile)
@@ -263,7 +256,7 @@ namespace GsaGH.Parameters
     public GsaSection(string profile, int id = 0)
     {
       this._section.Profile = profile;
-      this._idd = id;
+      this._id = id;
     }
     #endregion
 
@@ -272,7 +265,7 @@ namespace GsaGH.Parameters
     {
       GsaSection dup = new GsaSection();
       dup._section = this._section;
-      dup._idd = this._idd;
+      dup._id = this._id;
       dup._material = this._material.Duplicate();
       dup._modifier = this._modifier.Duplicate();
       dup._guid = new Guid(_guid.ToString());
@@ -281,9 +274,10 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string prof = this._section.Profile;
+      string prof = this._section.Profile.Replace("%", " ");
       string pb = "PB" + this.ID + " ";
-      return "GSA Section " + ((this.ID > 0) ? pb : "") + ((this._section == null) ? "" : prof.Replace("%", " "));
+      string mod = this._modifier.IsModified ? " modified" : "";
+      return pb + prof + mod;
     }
     #endregion
   }

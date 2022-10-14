@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using GsaAPI;
 using OasysGH.Units;
 using OasysUnits;
@@ -49,7 +50,7 @@ namespace GsaGH.Parameters
         this.UpdatePreview();
       }
     }
-    public int Id
+    public int ID
     {
       get
       {
@@ -245,13 +246,9 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string idd = " " + Id.ToString();
-      if (Id == 0) { idd = ""; }
-      string mes = this._member.Type.ToString();
-      string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
-      typeTxt = typeTxt.Replace("3d", "3D");
-      string valid = (this.IsValid) ? "" : "Invalid ";
-      return valid + typeTxt;
+      string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
+      string type = Helpers.Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == this.API_Member.Type).Key;
+      return idd + type;
     }
 
     internal void CloneApiMember()

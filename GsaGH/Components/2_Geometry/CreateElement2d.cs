@@ -74,7 +74,7 @@ namespace GsaGH.Components
             {
               if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
               {
-                prop2d.Id = idd;
+                prop2d.ID = idd;
               }
               else
               {

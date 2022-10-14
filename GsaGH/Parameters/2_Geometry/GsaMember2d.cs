@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using OasysGH.Units;
 using OasysUnits;
@@ -58,7 +59,7 @@ namespace GsaGH.Parameters
         return this._edgeCrv;
       }
     }
-    public int Id
+    public int ID
     {
       get
       {
@@ -413,18 +414,7 @@ namespace GsaGH.Parameters
 
       this._inclPts = includePoints;
 
-      this._brep = Util.GH.Convert.BuildBrep(this._edgeCrv, this._voidCrvs, new Length(0.25, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry)); // use relative high tolerance as if the member worked in GSA we want to import it even if warped
-      //if (m_brep == null)
-      //{
-      //  string error = " Error with Mem2D ID: " + id + ". Unable to build Brep, please verify input geometry is valid and tolerance is set to something reasonable." +
-      //      System.Environment.NewLine + "It may be that the topology list is invalid, please check your input. Member " + id + " has not been imported!";
-      //  if (owner == null)
-      //  {
-      //    throw new Exception(error);
-      //  }
-      //  else
-      //    owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, error);
-      //}
+      this._brep = Util.GH.Convert.BuildBrep(this._edgeCrv, this._voidCrvs, new Length(0.25, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry)); 
 
       this._prop = prop;
     }
@@ -512,7 +502,7 @@ namespace GsaGH.Parameters
     public GsaMember2d Transform(Transform xform)
     {
       GsaMember2d dup = this.Duplicate(true);
-      dup.Id = 0;
+      dup.ID = 0;
 
       // Brep
       if (dup._brep != null)
@@ -547,7 +537,7 @@ namespace GsaGH.Parameters
     public GsaMember2d Morph(SpaceMorph xmorph)
     {
       GsaMember2d dup = this.Duplicate(true);
-      dup.Id = 0;
+      dup.ID = 0;
 
       // Brep
       if (dup._brep != null)
@@ -586,41 +576,24 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string idd = " " + Id.ToString();
-      if (this.Id == 0)
-      {
-        idd = "";
-      }
-      string mes = _member.Type.ToString();
-      string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
-      typeTxt = typeTxt.Replace("2d", "2D");
       string incl = "";
-      if (!(this._inclCrvs == null & this._inclPts == null))
-        if (this._inclCrvs.Count > 0 | this._inclPts.Count > 0)
-          incl = " {Contains ";
       if (this._inclCrvs != null)
       {
         if (this._inclCrvs.Count > 0)
-          incl = incl + this._inclCrvs.Count + " inclusion line";
-        if (this._inclCrvs.Count > 1)
-          incl += "s";
+          incl = " Incl.Crv:" + this._inclCrvs.Count;
       }
-
-      if (this._inclCrvs != null & this._inclPts != null)
-        if (this._inclCrvs.Count > 0 & this._inclPts.Count > 0)
-          incl += " and ";
 
       if (this._inclPts != null)
       {
+        if (this._inclCrvs != null && this._inclCrvs.Count > 0)
+          incl += " &";
         if (this._inclPts.Count > 0)
-          incl = incl + this._inclPts.Count + " inclusion point";
-        if (this._inclPts.Count > 1)
-          incl += "s";
+          incl += " Incl.Pt:" + this._inclPts.Count;
       }
-      if (incl != "")
-        incl += "}";
-      string valid = (this.IsValid) ? "" : "Invalid ";
-      return valid + typeTxt + incl;
+
+      string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
+      string type = Helpers.Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
+      return idd + type + incl;
     }
     #endregion
   }

@@ -111,7 +111,7 @@ namespace GsaGH.Parameters
           Value.ZZ = true;
           return true;
         }
-        else if ((mystring.Length == 6))
+        else if (mystring.Length == 6)
         {
           if (mystring[0] == 'f')
             Value.X = false;

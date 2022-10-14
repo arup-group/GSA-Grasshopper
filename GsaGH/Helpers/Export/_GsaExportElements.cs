@@ -70,9 +70,9 @@ namespace GsaGH.Util.Gsa.ToGSA
           ref existingMaterials, ref materials_guid);
 
       // set apielement in dictionary
-      if (element1d.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+      if (element1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
       {
-        existingElements[element1d.Id] = apiElement;
+        existingElements[element1d.ID] = apiElement;
       }
       else
       {
@@ -150,9 +150,9 @@ namespace GsaGH.Util.Gsa.ToGSA
         apiMeshElement.Property = Prop2ds.ConvertProp2d(prop, ref existingProp2Ds, ref prop2d_guid, ref existingMaterials, ref materials_guid);
 
         // set api element in dictionary
-        if (element2d.Id[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+        if (element2d.IDs[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
         {
-          existingElements[element2d.Id[i]] = apiMeshElement;
+          existingElements[element2d.IDs[i]] = apiMeshElement;
         }
         else
         {
@@ -230,9 +230,9 @@ namespace GsaGH.Util.Gsa.ToGSA
 
 
         // set api element in dictionary
-        if (element3d.Id[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+        if (element3d.IDs[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
         {
-          existingElements[element3d.Id[i]] = apiMeshElement;
+          existingElements[element3d.IDs[i]] = apiMeshElement;
         }
         else
         {

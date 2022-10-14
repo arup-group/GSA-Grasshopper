@@ -225,11 +225,11 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       if (GridPlane == null && GridSurface == null) { 
-        return "Null GridPlaneSurface";
+        return "Null";
       }
       string gp = GridPlane == null ? "" : GridPlane.Name + " ";
       string gs = GridSurface == null ? "" : GridSurface.Name;
-      return "GSA Grid Plane Surface " + gp + gs;
+      return (gp + gs).Trim();
     }
     #endregion
   }

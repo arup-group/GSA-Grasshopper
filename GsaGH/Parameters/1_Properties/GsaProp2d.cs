@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -14,10 +15,11 @@ namespace GsaGH.Parameters
   public class GsaProp2d
   {
     #region fields
-    private int _idd = 0;
+    private int _id = 0;
     private Guid _guid = Guid.NewGuid();
     private GsaMaterial _material = new GsaMaterial();
     private Prop2D _prop2d = new Prop2D();
+    
     #endregion
 
     #region properties
@@ -34,16 +36,16 @@ namespace GsaGH.Parameters
         this._material = new GsaMaterial(this);
       }
     }
-    public int Id
+    public int ID
     {
       get
       {
-        return this._idd;
+        return this._id;
       }
       set
       {
         this._guid = Guid.NewGuid();
-        this._idd = value;
+        this._id = value;
       }
     }
     public GsaMaterial Material
@@ -174,13 +176,6 @@ namespace GsaGH.Parameters
         return this._guid;
       }
     }
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     #endregion
 
     #region constructors
@@ -190,32 +185,37 @@ namespace GsaGH.Parameters
 
     public GsaProp2d(int id)
     {
-      this._idd = id;
+      this._id = id;
     }
 
     public GsaProp2d(Length thickness, int id = 0)
     {
       this.Thickness = thickness;
-      this._idd = id;
+      this._id = id;
     }
     #endregion
 
     #region methods
     internal static Property2D_Type PropTypeFromString(string type)
     {
-      type = type.Trim().Replace(" ", "_").ToUpper();
-      type = type.Replace("PLANE", "PL");
-      type = type.Replace("NUMBER", "NUM");
-      type = type.Replace("AXIS_SYMMETRIC", "AXISYMMETRIC");
-      type = type.Replace("LOAD_PANEL", "LOAD");
-      return (Property2D_Type)Enum.Parse(typeof(Property2D_Type), type);
+      if (Helpers.Mappings.prop2dTypeMapping.ContainsKey(type))
+        return Helpers.Mappings.prop2dTypeMapping[type];
+      else
+      {
+        type = type.Trim().Replace(" ", "_").ToUpper();
+        type = type.Replace("PLANE", "PL");
+        type = type.Replace("NUMBER", "NUM");
+        type = type.Replace("AXIS_SYMMETRIC", "AXISYMMETRIC");
+        type = type.Replace("LOAD_PANEL", "LOAD");
+        return (Property2D_Type)Enum.Parse(typeof(Property2D_Type), type);
+      }
     }
 
     public GsaProp2d Duplicate()
     {
       GsaProp2d dup = new GsaProp2d();
       dup._prop2d = this._prop2d;
-      dup._idd = this._idd;
+      dup._id = this._id;
       dup._material = this._material.Duplicate();
       dup._guid = new Guid(this._guid.ToString());
       return dup;
@@ -223,10 +223,10 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string str = this._prop2d.Type.ToString();
-      str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
-      string pa = (this.Id > 0) ? "PA" + this.Id + " " : "";
-      return "GSA 2D Property " + ((this.Id > 0) ? pa : "") + ((this._prop2d == null) ? "" : str);
+      string type = Helpers.Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == this._prop2d.Type).Key;
+      string desc = this.Description + " ";
+      string pa = (this.ID > 0) ? "PA" + this.ID + " " : "";
+      return pa + desc + type;
     }
 
     private void CloneProperty()

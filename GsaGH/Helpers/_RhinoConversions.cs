@@ -828,7 +828,7 @@ namespace GsaGH.Util.GH
               new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers()),
               unit);
 
-      List<GsaElement2dGoo> elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.Id).ToList();
+      List<GsaElement2dGoo> elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.IDs).ToList();
       Mesh mesh = elem2dgoo[0].Value.Mesh;
 
       Surface flat = flattened[0].Surfaces[0];

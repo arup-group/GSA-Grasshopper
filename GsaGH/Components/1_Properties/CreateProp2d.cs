@@ -137,7 +137,7 @@ namespace GsaGH.Components
     // list of descriptions 
     List<string> spacerDescriptions = new List<string>(new string[]
     {
-      "Element Type",
+      "Type",
       "Unit"
     });
     private bool first = true;

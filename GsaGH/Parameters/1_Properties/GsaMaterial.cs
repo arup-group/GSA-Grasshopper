@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using GH_IO.Serialization;
 using GsaAPI;
 
 namespace GsaGH.Parameters
@@ -23,8 +26,8 @@ namespace GsaGH.Parameters
       FABRIC = 8,
       SOIL = 9,
       NUM_MT = 10,
-      COMPOUND = 256,
-      BAR = 4096,
+      COMPOUND = 0x100,
+      BAR = 0x1000,
       TENDON = 4352,
       FRPBAR = 4608,
       CFRP = 4864,
@@ -35,9 +38,11 @@ namespace GsaGH.Parameters
     }
 
     #region fields
-    int _grade = 1;
+    
+
+    private int _grade = 1;
     private Guid _guid;
-    int _analProp = 0;
+    private int _analProp = 0;
     private AnalysisMaterial _analysisMaterial;
     #endregion
 
@@ -52,6 +57,8 @@ namespace GsaGH.Parameters
       set
       {
         this._grade = value;
+        this._analProp = 0;
+        this._guid = Guid.NewGuid();
       }
     }
     public int AnalysisProperty
@@ -64,7 +71,10 @@ namespace GsaGH.Parameters
       {
         this._analProp = value;
         if (this._analProp != 0)
+        {
           this._guid = Guid.NewGuid();
+          this._grade = 0;
+        }
       }
     }
     public Guid Guid
@@ -160,11 +170,10 @@ namespace GsaGH.Parameters
     {
       GsaMaterial dup = new GsaMaterial();
       dup.MaterialType = this.MaterialType;
-      dup.GradeProperty = this._grade;
-      dup.AnalysisProperty = this._analProp;
+      dup._grade = this._grade;
+      dup._analProp = this._analProp;
       if (this._analProp != 0)
       {
-        dup._guid = Guid.NewGuid();
         dup.AnalysisMaterial = new AnalysisMaterial()
         {
           CoefficientOfThermalExpansion = this.AnalysisMaterial.CoefficientOfThermalExpansion,
@@ -178,12 +187,14 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      if (this.MaterialType == MatType.UNDEF)
+      string type = Helpers.Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == this.MaterialType).Key;
+      if (this._analProp != 0)
+        return "ID:" + this._analProp + " Custom Elastic Isotropic " + type;
+      else
       {
-        return "Custom Elastic Isotropic";
+        string id = this.GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
+        return id + type;
       }
-      string mate = this.MaterialType.ToString();
-      return Char.ToUpper(mate[0]) + mate.Substring(1).ToLower().Replace("_", " ");
     }
 
     private void CreateFromAPI(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial)

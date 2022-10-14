@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using OasysGH.Units;
 using OasysUnits;
@@ -79,7 +80,7 @@ namespace GsaGH.Parameters
         this.UpdatePreview();
       }
     }
-    public int Id
+    public int ID
     {
       get
       {
@@ -409,7 +410,7 @@ namespace GsaGH.Parameters
     public GsaMember1d Transform(Transform xform)
     {
       GsaMember1d dup = this.Duplicate(true);
-      dup.Id = 0;
+      dup.ID = 0;
 
       List<Point3d> pts = this._topo.ToList();
       Point3dList xpts = new Point3dList(pts);
@@ -429,7 +430,7 @@ namespace GsaGH.Parameters
     public GsaMember1d Morph(SpaceMorph xmorph)
     {
       GsaMember1d dup = this.Duplicate(true);
-      dup.Id = 0;
+      dup.ID = 0;
 
       List<Point3d> pts = this._topo.ToList();
       for (int i = 0; i < pts.Count; i++)
@@ -448,15 +449,9 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string idd = " " + Id.ToString();
-      if (Id == 0) {
-        idd = ""; 
-      }
-      string mes = this._member.Type.ToString();
-      string typeTxt = "GSA " + Char.ToUpper(mes[0]) + mes.Substring(1).ToLower().Replace("_", " ") + " Member" + idd;
-      typeTxt = typeTxt.Replace("1d", "1D");
-      string valid = (this.IsValid) ? "" : "Invalid ";
-      return valid + typeTxt;
+      string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
+      string type = Helpers.Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
+      return idd + type + new GH_Curve(this.PolyCurve).ToString();
     }
 
     internal void CloneApiMember()

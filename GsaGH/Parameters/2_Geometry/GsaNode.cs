@@ -27,19 +27,12 @@ namespace GsaGH.Parameters
     #endregion
 
     #region properties
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     //public GsaSpring Spring
     //{
     //    get { return m_spring; }
     //    set { m_spring = value; }
     //}
-    public int Id
+    public int ID
     {
       get
       {
@@ -194,11 +187,28 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      if (API_Node == null) { return "Null Node"; }
-      string idd = " " + Id.ToString() + " ";
-      if (Id == 0) { idd = " "; }
-      GH_Point gH_Point = new GH_Point(Point);
-      string nodeTxt = "GSA Node" + idd + gH_Point.ToString();
+      if (API_Node == null) { return "Null"; }
+      string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
+
+      string sptTxt;
+      if (API_Node.Restraint.X == false && API_Node.Restraint.Y == false && API_Node.Restraint.Z == false &&
+          API_Node.Restraint.XX == false && API_Node.Restraint.YY == false && API_Node.Restraint.ZZ == false)
+        sptTxt = "";
+      else if (API_Node.Restraint.X & API_Node.Restraint.Y & API_Node.Restraint.Z &
+            !API_Node.Restraint.XX & !API_Node.Restraint.YY & !API_Node.Restraint.ZZ)
+        sptTxt = " Pinned";
+      else if (API_Node.Restraint.X & API_Node.Restraint.Y & API_Node.Restraint.Z &
+          API_Node.Restraint.XX & API_Node.Restraint.YY & API_Node.Restraint.ZZ)
+        sptTxt = " Fixed";
+      else
+      {
+        sptTxt = " " + "X:" + (API_Node.Restraint.X ? "\u2713" : "\u2610") +
+         " Y:" + (API_Node.Restraint.Y ? "\u2713" : "\u2610") +
+         " Z:" + (API_Node.Restraint.Z ? "\u2713" : "\u2610") +
+         " XX:" + (API_Node.Restraint.XX ? "\u2713" : "\u2610") +
+         " YY:" + (API_Node.Restraint.YY ? "\u2713" : "\u2610") +
+         " ZZ:" + (API_Node.Restraint.ZZ ? "\u2713" : "\u2610");
+      }
 
       string localTxt = "";
       Plane noPlane = new Plane() { Origin = new Point3d(0, 0, 0), XAxis = new Vector3d(0, 0, 0), YAxis = new Vector3d(0, 0, 0), ZAxis = new Vector3d(0, 0, 0) };
@@ -207,34 +217,11 @@ namespace GsaGH.Parameters
         if (LocalAxis != Plane.WorldXY)
         {
           GH_Plane gH_Plane = new GH_Plane(LocalAxis);
-          localTxt = " Local axis: {" + gH_Plane.ToString() + "}";
+          localTxt = " Local:{" + gH_Plane.ToString() + "}";
         }
       }
 
-      string sptTxt;
-      if (API_Node.Restraint.X == false && API_Node.Restraint.Y == false && API_Node.Restraint.Z == false &&
-          API_Node.Restraint.XX == false && API_Node.Restraint.YY == false && API_Node.Restraint.ZZ == false)
-        sptTxt = "";
-      else
-      {
-        sptTxt = " Restraint: " + "X: " + (API_Node.Restraint.X ? "\u2713" : "\u2610") +
-           ", Y: " + (API_Node.Restraint.Y ? "\u2713" : "\u2610") +
-           ", Z: " + (API_Node.Restraint.Z ? "\u2713" : "\u2610") +
-           ", XX: " + (API_Node.Restraint.XX ? "\u2713" : "\u2610") +
-           ", YY: " + (API_Node.Restraint.YY ? "\u2713" : "\u2610") +
-           ", ZZ: " + (API_Node.Restraint.ZZ ? "\u2713" : "\u2610");
-        if (!API_Node.Restraint.X & !API_Node.Restraint.Y & !API_Node.Restraint.Z &
-            !API_Node.Restraint.XX & !API_Node.Restraint.YY & !API_Node.Restraint.ZZ)
-          sptTxt = "";
-        if (API_Node.Restraint.X & API_Node.Restraint.Y & API_Node.Restraint.Z &
-            !API_Node.Restraint.XX & !API_Node.Restraint.YY & !API_Node.Restraint.ZZ)
-          sptTxt = " Restraint: Pinned";
-        if (API_Node.Restraint.X & API_Node.Restraint.Y & API_Node.Restraint.Z &
-            API_Node.Restraint.XX & API_Node.Restraint.YY & API_Node.Restraint.ZZ)
-          sptTxt = " Restraint: Fixed";
-      }
-
-      return nodeTxt + sptTxt + localTxt;
+      return idd + sptTxt + localTxt + " Pos:" + new GH_Point(this.Point).ToString();
     }
 
     internal void CloneApiNode()

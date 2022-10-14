@@ -15,6 +15,10 @@ namespace GsaGH.Parameters
 
     public GsaGravityLoad()
     {
+      this.GravityLoad.Factor = new Vector3() { X = 0, Y = 0, Z = -1 };
+      this.GravityLoad.Case = 1;
+      this.GravityLoad.Elements = "all";
+      this.GravityLoad.Nodes = "all";
     }
 
     public GsaGravityLoad Duplicate()
@@ -155,7 +159,7 @@ namespace GsaGH.Parameters
       {
         dup.FaceLoad.IsProjected = this.FaceLoad.IsProjected;
         dup.FaceLoad.SetValue(0, this.FaceLoad.Value(0));
-        dup.FaceLoad.Position = this.FaceLoad.Position; // 
+        dup.FaceLoad.Position = this.FaceLoad.Position; // todo
                                                         //note Vector2 currently only get in GsaAPI
                                                         // duplicate Position.X and Position.Y when fixed
       }
@@ -253,17 +257,17 @@ namespace GsaGH.Parameters
   {
     public enum LoadTypes
     {
-      [Description("Gravity Load")] Gravity,
-      [Description("Node Load")] Node,
-      [Description("Beam Load")] Beam,
-      [Description("Face Load")] Face,
-      [Description("Grid Point Load")] GridPoint,
-      [Description("Grid Line Load")] GridLine,
-      [Description("Grid Area Load")] GridArea,
+      Gravity,
+      Node,
+      Beam,
+      Face,
+      GridPoint,
+      GridLine,
+      GridArea,
     }
 
     #region fields
-    public LoadTypes LoadType;
+    public LoadTypes LoadType = LoadTypes.Gravity;
     #endregion
 
     #region properties
@@ -274,18 +278,13 @@ namespace GsaGH.Parameters
     public GsaGridPointLoad PointLoad { get; set; }
     public GsaGridLineLoad LineLoad { get; set; }
     public GsaGridAreaLoad AreaLoad { get; set; }
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     #endregion
 
     #region constructors
     public GsaLoad()
     {
+      this.GravityLoad = new GsaGravityLoad();
+      this.LoadType = LoadTypes.Gravity;
     }
 
     public GsaLoad(GsaGravityLoad gravityLoad)
@@ -372,7 +371,7 @@ namespace GsaGH.Parameters
     {
       if (this.LoadType == LoadTypes.Gravity && this.GravityLoad == null)
       {
-        return "Null Load";
+        return "Null";
       }
       string name = "";
       switch (this.LoadType)
@@ -399,12 +398,8 @@ namespace GsaGH.Parameters
           name = this.AreaLoad.GridAreaLoad.Name;
           break;
       }
-      if (name == "")
-        name = " Load";
-      else
-        name = " " + name;
 
-      return "GSA " + this.LoadType.ToString() + name;
+      return this.LoadType.ToString() + " " + name;
     }
     #endregion
   }

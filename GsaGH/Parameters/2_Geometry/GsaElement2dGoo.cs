@@ -77,10 +77,10 @@ namespace GsaGH.Parameters
         {
           List<GH_Integer> ints = new List<GH_Integer>();
 
-          for (int i = 0; i < Value.Id.Count; i++)
+          for (int i = 0; i < Value.IDs.Count; i++)
           {
             GH_Integer ghint = new GH_Integer();
-            if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
+            if (GH_Convert.ToGHInteger(Value.IDs, GH_Conversion.Both, ref ghint))
               ints.Add(ghint);
           }
           target = (Q)(object)ints;
@@ -144,7 +144,7 @@ namespace GsaGH.Parameters
       if (Value.Mesh == null) { return null; }
 
       GsaElement2d dup = Value.Duplicate(true);
-      dup.Id = new List<int>(new int[dup.Mesh.Faces.Count()]);
+      dup.IDs = new List<int>(new int[dup.Mesh.Faces.Count()]);
       Mesh xMs = dup.Mesh.DuplicateMesh();
       xMs.Transform(xform);
       return new GsaElement2dGoo(dup.UpdateGeometry(xMs));
@@ -156,7 +156,7 @@ namespace GsaGH.Parameters
       if (Value.Mesh == null) { return null; }
 
       GsaElement2d dup = Value.Duplicate(true);
-      dup.Id = new List<int>(new int[dup.Mesh.Faces.Count()]);
+      dup.IDs = new List<int>(new int[dup.Mesh.Faces.Count()]);
       Mesh xMs = dup.Mesh.DuplicateMesh();
       xmorph.Morph(xMs);
       return new GsaElement2dGoo(dup.UpdateGeometry(xMs));

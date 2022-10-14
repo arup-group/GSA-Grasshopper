@@ -8,6 +8,7 @@ using GsaAPI;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using Grasshopper.Kernel.Types;
 
 namespace GsaGH.Parameters
 {
@@ -87,7 +88,7 @@ namespace GsaGH.Parameters
         return this._topo;
       }
     }
-    public List<int> Id
+    public List<int> IDs
     {
       get
       {
@@ -369,8 +370,9 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string valid = (this.IsValid) ? "" : "Invalid ";
-      return valid + "GSA 2D Element(s)";
+      string type = Helpers.Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
+      string info = "N:" + this.Mesh.Vertices.Count + " E:" + this.API_Elements.Count;
+      return type + info;
     }
 
     private void CloneApiElements(ApiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null, List<double> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<System.Drawing.Color> col = null)

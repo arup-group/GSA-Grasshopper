@@ -1,4 +1,6 @@
-﻿namespace GsaGH.Parameters
+﻿using GH_IO.Serialization;
+
+namespace GsaGH.Parameters
 {
   public class GsaAnalysisCase
   {
@@ -39,12 +41,13 @@
 
     public override string ToString()
     {
-      string s = "GSA Analysis Case";
+      string id = this.ID == 0 ? "" : "ID:" + ID + " ";
+      string s = "";
       if (this.Name != null)
-        s += " '" + this.Name.ToString() + "'";
+        s += " '" + this.Name + "'";
       if (this.Description != null)
-        s += " { " + this.Description.ToString() + " }";
-      return s;
+        s += " " + this.Description;
+      return id + s;
     }
     #endregion
   }
