@@ -59,28 +59,23 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      // Could add detailed description of model content here
-      string s = "";
+      string s = "Invalid";
       if (this.Model != null && this.Titles != null)
       {
         s = Titles.Title;
-      }
-      else if (this.FileName != null)
-      {
-        if (this.FileName != "" && this.FileName.EndsWith(".gwb"))
+        if (s == "" && this.FileName != null)
         {
-          s = Path.GetFileName(this.FileName);
-          s = s.Substring(0, s.Length - 4);
-          s = " (" + s + ")";
+          if (this.FileName != "" && this.FileName.EndsWith(".gwb"))
+          {
+            s = Path.GetFileName(this.FileName);
+            s = s.Substring(0, s.Length - 4);
+            s = " (" + s + ")";
+          }
+          else
+          {
+            s = "Nameless";
+          }
         }
-        else
-        {
-          s = "Nameless model";
-        }
-      }
-      else
-      {
-        s = "Invalid Model";
       }
       return s;
     }
