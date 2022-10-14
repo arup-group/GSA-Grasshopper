@@ -57,7 +57,6 @@ namespace GsaGH.Parameters
       {
         return this._edgeCrv;
       }
-      //set { m_crv = Util.GH.Convert.ConvertCurveMem2d(value); }
     }
     public int Id
     {
@@ -83,7 +82,6 @@ namespace GsaGH.Parameters
       {
         return this._edgeCrvTopo;
       }
-      //set { m_topo = value; }
     }
     public List<string> TopologyType
     {
@@ -91,7 +89,6 @@ namespace GsaGH.Parameters
       {
         return this._edgeCrvTopoType;
       }
-      //set { m_topoType = value; }
     }
     public List<List<Point3d>> VoidTopology
     {
@@ -99,7 +96,6 @@ namespace GsaGH.Parameters
       {
         return this._voidCrvsTopo;
       }
-      //set { m_void_topo = value; }
     }
     public List<List<string>> VoidTopologyType
     {
@@ -107,7 +103,6 @@ namespace GsaGH.Parameters
       {
         return this._voidCrvsTopoType;
       }
-      //set { m_void_topoType = value; }
     }
     public List<PolyCurve> InclusionLines
     {
@@ -115,7 +110,6 @@ namespace GsaGH.Parameters
       {
         return this._inclCrvs;
       }
-      //set { m_incl_Lines = value; }
     }
     public List<List<Point3d>> IncLinesTopology
     {
@@ -123,7 +117,6 @@ namespace GsaGH.Parameters
       {
         return this._inclCrvsTopo;
       }
-      //set { m_incLines_topo = value; }
     }
     public List<List<string>> IncLinesTopologyType
     {
@@ -131,7 +124,6 @@ namespace GsaGH.Parameters
       {
         return this._inclCrvsTopoType;
       }
-      //set { m_inclLines_topoType = value; }
     }
     public List<Point3d> InclusionPoints
     {
@@ -139,7 +131,6 @@ namespace GsaGH.Parameters
       {
         return this._inclPts;
       }
-      //set { m_incl_pts = value; }
     }
     public GsaProp2d Property
     {
@@ -157,8 +148,6 @@ namespace GsaGH.Parameters
     {
       get
       {
-        //if ((System.Drawing.Color)m_member.Colour == System.Drawing.Color.FromArgb(0, 0, 0))
-        //    m_member.Colour = UI.Colour.Member1d;
         return (Color)this._member.Colour;
       }
       set
@@ -450,6 +439,9 @@ namespace GsaGH.Parameters
       if (cloneApiMember)
         dup.CloneApiMember();
       dup._prop = this._prop.Duplicate();
+
+      if (this._brep == null) 
+        return dup;
 
       dup._brep = (Brep)this._brep.DuplicateShallow();
 
