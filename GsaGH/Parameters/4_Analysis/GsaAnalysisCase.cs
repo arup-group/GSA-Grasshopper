@@ -8,14 +8,6 @@ namespace GsaGH.Parameters
     public string Name { get; set; }
     public string Description { get; set; }
 
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
-
     public GsaAnalysisCase()
     {
     }

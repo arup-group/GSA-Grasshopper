@@ -288,15 +288,6 @@ namespace GsaGH.Parameters
       this._member = this.GetAPI_MemberClone();
     }
     #endregion
-    public bool IsValid
-    {
-      get
-      {
-        if (this._brep == null | this._edgeCrv == null)
-          return false;
-        return true;
-      }
-    }
     #endregion
 
     #region constructors

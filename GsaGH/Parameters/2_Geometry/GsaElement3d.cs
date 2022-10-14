@@ -323,13 +323,6 @@ namespace GsaGH.Parameters
         return pMems;
       }
     }
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     #endregion
     #endregion
 

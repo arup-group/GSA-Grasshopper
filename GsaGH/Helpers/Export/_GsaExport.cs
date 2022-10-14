@@ -457,7 +457,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         foreach (GsaAnalysisTask task in analysisTasks)
         {
           if (!existingTasks.Keys.Contains(task.ID))
-            task.SetID(gsa.AddAnalysisTask());
+            task.ID = gsa.AddAnalysisTask();
 
           if (task.Cases == null)
             task.CreateDeafultCases(gsa);

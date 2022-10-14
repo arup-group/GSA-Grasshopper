@@ -46,16 +46,9 @@ namespace GsaGH.Parameters
       {
         return this.m_idd;
       }
-    }
-    internal void SetID(int id)
-    {
-      this.m_idd = id;
-    }
-    public bool IsValid
-    {
-      get
+      set
       {
-        return true;
+        this.m_idd = value;
       }
     }
     #endregion

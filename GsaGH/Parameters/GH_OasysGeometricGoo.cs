@@ -11,7 +11,7 @@ namespace GsaGH.Parameters
 
     public override string TypeName => typeof(T).Name.TrimStart('I').TrimStart('G', 's', 'a').TrimStart('A', 'd', 'S', 'e', 'c');
     public override string TypeDescription => PluginInfo.ProductName + " " + this.TypeName + " Parameter";
-    public override bool IsValid => (this.Value == null) ? false : true;
+    public override bool IsValid => (this.Value == null) ? false : this.GetGeometry().IsValid ? true : false;
     public override string IsValidWhyNot
     {
       get
@@ -19,7 +19,11 @@ namespace GsaGH.Parameters
         if (IsValid)
           return string.Empty;
         else
-          return IsValid.ToString();
+        {
+          string whyNot = "";
+          this.GetGeometry().IsValidWithLog(out whyNot);
+          return whyNot;
+        }
       }
     }
 
@@ -36,7 +40,7 @@ namespace GsaGH.Parameters
       if (this.Value == null)
         return "Null";
       else
-        return this.PluginInfo.ProductName + " " + this.TypeName + " {" + this.Value.ToString() + "}";
+        return this.PluginInfo.ProductName + " " + this.TypeName + " (" + this.Value.ToString() + ")";
     }
 
     #region casting methods

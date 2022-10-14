@@ -285,14 +285,6 @@ namespace GsaGH.Parameters
         return topos;
       }
     }
-
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     #endregion
     #endregion
 

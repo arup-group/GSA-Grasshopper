@@ -339,13 +339,6 @@ namespace GsaGH.Parameters
         this._member.Type1D = value;
       }
     }
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     #endregion
     #endregion
 

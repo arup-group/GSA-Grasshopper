@@ -173,48 +173,14 @@ namespace GsaGH.Parameters
       if (Value == null) { return; }
       if (Grasshopper.CentralSettings.PreviewMeshEdges == false) { return; }
 
-      //if (Value.IsValid)
-      //{
-      //Draw mesh edges
       if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-      {
         args.Pipeline.DrawMeshWires(Value, UI.Colour.Element2dEdge, 1);
-        //for (int i = 0; i < Value.TopologyEdges.Count; i++)
-        //    args.Pipeline.DrawLine(Value.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 1);
-      }
       else
-      {
         args.Pipeline.DrawMeshWires(Value, UI.Colour.Element2dEdgeSelected, 1);
-        //for (int i = 0; i < Value.TopologyEdges.Count; i++)
-        //    args.Pipeline.DrawLine(Value.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
-      }
-      //}
-      //else
-      //{
-      //    if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-      //    {
-      //        List<Line> lines = new List<Line>();
-      //        for (int i = 0; i < Value.TopologyEdges.Count; i++)
-      //        {
-      //            lines.Add(Value.TopologyEdges.EdgeLine(i));
-      //        }
-      //        args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdge, 1);
-      //    }
-      //    else
-      //    {
-      //        List<Line> lines = new List<Line>();
-      //        for (int i = 0; i < Value.TopologyEdges.Count; i++)
-      //        {
-      //            lines.Add(Value.TopologyEdges.EdgeLine(i));
-      //        }
-      //        args.Pipeline.DrawLines(lines, UI.Colour.Element2dEdgeSelected, 1);
-      //    }
-      //}
     }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args)
     {
-      // draw coloured mesh
       args.Pipeline.DrawMeshFalseColors(Value);
     }
   }

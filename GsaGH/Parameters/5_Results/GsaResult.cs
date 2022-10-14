@@ -354,16 +354,6 @@ namespace GsaGH.Parameters
       this.SelectedPermutationIDs = permutations.OrderBy(x => x).ToList();
     }
 
-    #region properties
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
-    #endregion
-
     #region output methods
     /// <summary>
     /// Get node displacement values 
@@ -954,6 +944,7 @@ namespace GsaGH.Parameters
       }
     }
     #endregion
+
     #region other methods
     public override string ToString()
     {

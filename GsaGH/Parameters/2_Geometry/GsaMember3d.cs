@@ -158,13 +158,6 @@ namespace GsaGH.Parameters
         this._member.Property = value;
       }
     }
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
     #endregion
     #endregion
 

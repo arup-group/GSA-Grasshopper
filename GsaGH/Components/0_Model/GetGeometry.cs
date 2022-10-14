@@ -550,7 +550,7 @@ namespace GsaGH.Components
         }
         if (results.Mem1ds != null)
         {
-          List<int> invalid1dmem = results.Mem1ds.Where(x => !x.Value.IsValid).Select(x => x.Value.ID).ToList();
+          List<int> invalid1dmem = results.Mem1ds.Where(x => !x.Value.PolyCurve.IsValid).Select(x => x.Value.ID).ToList();
           if (invalid1dmem.Count > 0)
           {
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member1D definition for Member IDs:");
@@ -568,7 +568,7 @@ namespace GsaGH.Components
         }
         if (results.Mem2ds != null)
         {
-          List<int> invalid2dmem = results.Mem2ds.Where(x => !x.Value.IsValid).Select(x => x.Value.ID).ToList();
+          List<int> invalid2dmem = results.Mem2ds.Where(x => !x.Value.Brep.IsValid).Select(x => x.Value.ID).ToList();
           if (invalid2dmem.Count > 0)
           {
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member2D definition for Member IDs:");
@@ -586,7 +586,7 @@ namespace GsaGH.Components
         }
         if (results.Mem3ds != null)
         {
-          List<int> invalid3dmem = results.Mem3ds.Where(x => !x.Value.IsValid).Select(x => x.Value.ID).ToList();
+          List<int> invalid3dmem = results.Mem3ds.Where(x => !x.Value.SolidMesh.IsValid).Select(x => x.Value.ID).ToList();
           if (invalid3dmem.Count > 0)
           {
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member3D definition for Member IDs:");

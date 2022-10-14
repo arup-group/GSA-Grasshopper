@@ -130,7 +130,7 @@ namespace GsaGH.Components
 
           int id = 0;
           if (DA.GetData(4, ref id))
-            gsaTask.SetID(id);
+            gsaTask.ID = id;
 
           DA.SetData(0, new GsaAnalysisTaskGoo(gsaTask));
           if (gsaTask.Type != GsaAnalysisTask.AnalysisType.Static)
