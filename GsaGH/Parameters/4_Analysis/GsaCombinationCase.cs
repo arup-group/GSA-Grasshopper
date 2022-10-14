@@ -5,14 +5,6 @@
     internal int ID { get; set; } = 0;
     public string Name { get; set; }
     public string Description { get; set; }
-    public bool IsValid
-    {
-      get
-      {
-        return true;
-      }
-    }
-
     public GsaCombinationCase()
     {
     }
@@ -38,12 +30,12 @@
 
     public override string ToString()
     {
-      string s = "GSA Combination Case";
+      string s = "";
       if (this.Name != null)
         s += " '" + this.Name.ToString() + "'";
       if (this.Description != null)
-        s += " { " + this.Description.ToString() + " }";
-      return s;
+        s += " " + this.Description.ToString();
+      return this.ID > 0 ? "ID:" + this.ID : "" + s;
     }
     #endregion
   }

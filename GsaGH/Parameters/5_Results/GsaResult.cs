@@ -966,12 +966,12 @@ namespace GsaGH.Parameters
         if (SelectedPermutationIDs.Count > 0)
         {
           if (SelectedPermutationIDs.Count > 1)
-            txt = txt + " " + SelectedPermutationIDs.Count + " permutations";
+            txt = txt + " P:" + SelectedPermutationIDs.Count;
           else
-            txt = txt + " P" + SelectedPermutationIDs[0];
+            txt = txt + " p" + SelectedPermutationIDs[0];
         }
       }
-      return "GSA Result {" + txt + "}";
+      return txt;
     }
 
     #endregion
