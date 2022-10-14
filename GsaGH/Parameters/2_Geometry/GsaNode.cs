@@ -180,7 +180,6 @@ namespace GsaGH.Parameters
       if (cloneApiNode)
         dup.CloneApiNode();
       dup._plane = _plane;
-      //dup.m_spring = m_spring;
       dup.UpdatePreview();
       return dup;
     }
@@ -196,10 +195,10 @@ namespace GsaGH.Parameters
         sptTxt = "";
       else if (API_Node.Restraint.X & API_Node.Restraint.Y & API_Node.Restraint.Z &
             !API_Node.Restraint.XX & !API_Node.Restraint.YY & !API_Node.Restraint.ZZ)
-        sptTxt = " Pinned";
+        sptTxt = " Pin";
       else if (API_Node.Restraint.X & API_Node.Restraint.Y & API_Node.Restraint.Z &
           API_Node.Restraint.XX & API_Node.Restraint.YY & API_Node.Restraint.ZZ)
-        sptTxt = " Fixed";
+        sptTxt = " Fix";
       else
       {
         sptTxt = " " + "X:" + (API_Node.Restraint.X ? "\u2713" : "\u2610") +
@@ -217,7 +216,7 @@ namespace GsaGH.Parameters
         if (LocalAxis != Plane.WorldXY)
         {
           GH_Plane gH_Plane = new GH_Plane(LocalAxis);
-          localTxt = " Local:{" + gH_Plane.ToString() + "}";
+          localTxt = " Axis:{" + gH_Plane.ToString() + "}";
         }
       }
 
