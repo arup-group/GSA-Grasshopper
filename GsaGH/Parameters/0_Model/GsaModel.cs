@@ -17,11 +17,12 @@ namespace GsaGH.Parameters
     public Model Model { get; set; } = new Model();
     public string FileName { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
-    public bool IsValid
+    
+    internal GsaAPI.Titles Titles
     {
       get
       {
-        return true;
+        return Model.Titles();
       }
     }
     #endregion
@@ -60,16 +61,28 @@ namespace GsaGH.Parameters
     {
       // Could add detailed description of model content here
       string s = "";
-      if (this.FileName != null)
+      if (this.Model != null && this.Titles != null)
       {
-        if (this.FileName != "" && this.FileName.Length > 4)
+        s = Titles.Title;
+      }
+      else if (this.FileName != null)
+      {
+        if (this.FileName != "" && this.FileName.EndsWith(".gwb"))
         {
           s = Path.GetFileName(this.FileName);
           s = s.Substring(0, s.Length - 4);
           s = " (" + s + ")";
         }
+        else
+        {
+          s = "Nameless model";
+        }
       }
-      return "GSA Model" + s;
+      else
+      {
+        s = "Invalid Model";
+      }
+      return s;
     }
     #endregion
   }
