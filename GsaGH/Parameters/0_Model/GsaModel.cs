@@ -70,7 +70,6 @@ namespace GsaGH.Parameters
           {
             s = Path.GetFileName(this.FileName);
             s = s.Substring(0, s.Length - 4);
-            s = " (" + s + ")";
           }
           else
           {

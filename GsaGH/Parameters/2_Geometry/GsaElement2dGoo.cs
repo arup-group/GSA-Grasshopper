@@ -23,31 +23,13 @@ namespace GsaGH.Parameters
     public override GeometryBase GetGeometry() => this.Value.Mesh;
 
     #region casting methods
-    public override bool CastTo<Q>(out Q target)
+    public override bool CastTo<Q>(ref Q target)
     {
       // This function is called when Grasshopper needs to convert this 
       // instance of GsaElement2D into some other type Q.            
-
-
-      if (typeof(Q).IsAssignableFrom(typeof(GsaElement2d)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Duplicate();
+      if (base.CastTo<Q>(ref target))
         return true;
-      }
 
-      if (typeof(Q).IsAssignableFrom(typeof(List<Element>)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.API_Elements;
-        return true;
-      }
-
-      //Cast to Mesh
       if (typeof(Q).IsAssignableFrom(typeof(Mesh)))
       {
         if (Value == null)
@@ -69,26 +51,6 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      if (typeof(Q).IsAssignableFrom(typeof(List<GH_Integer>)))
-      {
-        if (Value == null)
-          target = default;
-        else
-        {
-          List<GH_Integer> ints = new List<GH_Integer>();
-
-          for (int i = 0; i < Value.IDs.Count; i++)
-          {
-            GH_Integer ghint = new GH_Integer();
-            if (GH_Convert.ToGHInteger(Value.IDs, GH_Conversion.Both, ref ghint))
-              ints.Add(ghint);
-          }
-          target = (Q)(object)ints;
-        }
-        return true;
-      }
-
-
       target = default;
       return false;
     }
@@ -96,25 +58,10 @@ namespace GsaGH.Parameters
     {
       // This function is called when Grasshopper needs to convert other data 
       // into GsaElement.
-
-
       if (source == null) { return false; }
 
-      //Cast from GsaElement
-      if (typeof(GsaElement2d).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaElement2d)source;
+      if (base.CastFrom(source))
         return true;
-      }
-
-      //Cast from GsaAPI Member
-      // we shouldnt provide auto-convertion from GsaAPI.Element
-      // as this cannot alone be used to create a line....
-      //if (typeof(List<Element>).IsAssignableFrom(source.GetType()))
-      //{
-      //    Value.Elements = (List<Element>)source;
-      //    return true;
-      //}
 
       if (typeof(Element).IsAssignableFrom(source.GetType()))
       {
@@ -123,9 +70,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      //Cast from Mesh
       Mesh mesh = new Mesh();
-
       if (GH_Convert.ToMesh(source, ref mesh, GH_Conversion.Both))
       {
         GsaElement2d elem = new GsaElement2d(mesh);

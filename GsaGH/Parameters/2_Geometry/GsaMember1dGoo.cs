@@ -28,29 +28,12 @@ namespace GsaGH.Parameters
     public override GeometryBase GetGeometry() => this.Value.PolyCurve;
 
     #region casting methods
-    public override bool CastTo<Q>(out Q target)
+    public override bool CastTo<Q>(ref Q target)
     {
       // This function is called when Grasshopper needs to convert this 
       // instance of GsaMember into some other type Q.            
-
-
-      if (typeof(Q).IsAssignableFrom(typeof(GsaMember1d)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Duplicate();
+      if (base.CastTo<Q>(ref target))
         return true;
-      }
-
-      if (typeof(Q).IsAssignableFrom(typeof(Member)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.GetAPI_MemberClone();
-        return true;
-      }
 
       //Cast to Curve
       if (typeof(Q).IsAssignableFrom(typeof(Curve)))
@@ -138,34 +121,19 @@ namespace GsaGH.Parameters
     {
       // This function is called when Grasshopper needs to convert other data 
       // into GsaMember.
-
-
       if (source == null) { return false; }
 
-      //Cast from GsaMember
-      if (typeof(GsaMember1d).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaMember1d)source;
+      if (base.CastFrom(source))
         return true;
-      }
-
-      //Cast from GsaAPI Member
-      //if (typeof(Member).IsAssignableFrom(source.GetType()))
-      //{
-      //    Value.API_Member = (Member)source;
-      //    return true;
-      //}
 
       //Cast from Curve
       Curve crv = null;
-
       if (GH_Convert.ToCurve(source, ref crv, GH_Conversion.Both))
       {
         GsaMember1d member = new GsaMember1d(crv);
         this.Value = member;
         return true;
       }
-
 
       return false;
     }

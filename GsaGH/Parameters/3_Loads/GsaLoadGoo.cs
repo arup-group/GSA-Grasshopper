@@ -24,16 +24,10 @@ namespace GsaGH.Parameters
 
     public override bool CastTo<Q>(ref Q target)
     {
-      if (typeof(Q).IsAssignableFrom(typeof(GsaLoad)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Duplicate();
+      if (base.CastTo<Q>(ref target))
         return true;
-      }
 
-      else if (typeof(Q).IsAssignableFrom(typeof(GsaGridPlaneSurfaceGoo)))
+      if (typeof(Q).IsAssignableFrom(typeof(GsaGridPlaneSurfaceGoo)))
       {
         if (Value == null)
           target = default;
@@ -136,22 +130,8 @@ namespace GsaGH.Parameters
         return false;
       }
 
-      return base.CastTo(ref target);
-    }
-
-    public override bool CastFrom(object source)
-    {
-      if (source == null)
-        return false;
-
-      // Cast from GsaLoad
-      if (typeof(GsaLoad).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaLoad)source;
-        return true;
-      }
-
-      return base.CastFrom(source);
+      target = default;
+      return false;
     }
   }
 }

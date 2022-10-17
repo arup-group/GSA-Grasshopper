@@ -21,29 +21,12 @@ namespace GsaGH.Parameters
     public override GeometryBase GetGeometry() => this.Value.SolidMesh;
 
     #region casting methods
-    public override bool CastTo<Q>(out Q target)
+    public override bool CastTo<Q>(ref Q target)
     {
       // This function is called when Grasshopper needs to convert this 
       // instance of GsaMember into some other type Q.            
-
-
-      if (typeof(Q).IsAssignableFrom(typeof(GsaMember3d)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Duplicate();
+      if (base.CastTo<Q>(ref target))
         return true;
-      }
-
-      if (typeof(Q).IsAssignableFrom(typeof(Member)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.GetAPI_MemberClone();
-        return true;
-      }
 
       //Cast to Mesh
       if (typeof(Q).IsAssignableFrom(typeof(Mesh)))
@@ -90,23 +73,10 @@ namespace GsaGH.Parameters
     {
       // This function is called when Grasshopper needs to convert other data 
       // into GsaMember.
-
-
       if (source == null) { return false; }
 
-      //Cast from GsaMember
-      if (typeof(GsaMember3d).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaMember3d)source;
+      if (base.CastFrom(source))
         return true;
-      }
-
-      ////Cast from GsaAPI Member
-      //if (typeof(Member).IsAssignableFrom(source.GetType()))
-      //{
-      //    Value.Member = (Member)source;
-      //    return true;
-      //}
 
       //Cast from Brep
       Brep brep = new Brep();
