@@ -316,7 +316,10 @@ namespace GsaGH.Parameters
     #region methods
     public GsaSectionModifier Duplicate()
     {
-      return this;
+      GsaSectionModifier dup = new GsaSectionModifier();
+      dup._sectionModifier = this._sectionModifier;
+      dup.CloneAPIModifier();
+      return dup;
     }
 
     public override string ToString()

@@ -63,7 +63,7 @@ namespace GsaGHTests.Parameters
         if (gooProperty.Name == "TypeName")
         {
           string typeName = (string)gooProperty.GetValue(objectGoo, null);
-          Assert.StartsWith("GSA " + typeName + " {", objectGoo.ToString());
+          Assert.StartsWith("GSA " + typeName + " (", objectGoo.ToString());
           hasToString = true;
         }
 

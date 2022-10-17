@@ -11,10 +11,10 @@ namespace GsaGHTests.Parameters
   public class GH_OasysGooTest
   {
     [Theory]
-    //[InlineData(typeof(GsaModelGoo), typeof(GsaModel))]
-    //[InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
-    //[InlineData(typeof(GsaMaterialGoo), typeof(GsaMaterial))]
-    //[InlineData(typeof(GsaOffsetGoo), typeof(GsaOffset))]
+    [InlineData(typeof(GsaModelGoo), typeof(GsaModel))]
+    [InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
+    [InlineData(typeof(GsaMaterialGoo), typeof(GsaMaterial))]
+    [InlineData(typeof(GsaOffsetGoo), typeof(GsaOffset))]
     [InlineData(typeof(GsaProp2dGoo), typeof(GsaProp2d))]
     [InlineData(typeof(GsaProp3dGoo), typeof(GsaProp3d))]
     [InlineData(typeof(GsaSectionGoo), typeof(GsaSection))]
@@ -66,7 +66,7 @@ namespace GsaGHTests.Parameters
         if (gooProperty.Name == "TypeName")
         {
           string typeName = (string)gooProperty.GetValue(objectGoo, null);
-          Assert.StartsWith("GSA " + typeName + " {", objectGoo.ToString());
+          Assert.StartsWith("GSA " + typeName + " (", objectGoo.ToString());
           hasToString = true;
         }
 

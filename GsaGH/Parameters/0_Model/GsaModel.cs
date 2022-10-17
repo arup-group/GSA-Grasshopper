@@ -52,7 +52,8 @@ namespace GsaGH.Parameters
       // duplicate the incoming model
       GsaModel dup = new GsaModel();
       dup.Model = this.Model;
-      dup.FileName = this.FileName.ToString();
+      if (this.FileName != null)
+        dup.FileName = this.FileName.ToString();
       dup.Guid = new Guid(this.Guid.ToString());
       return dup;
     }

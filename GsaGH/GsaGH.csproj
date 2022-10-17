@@ -270,6 +270,7 @@
     <Compile Include="Parameters\5_Results\ResultMeshGoo.cs" />
     <Compile Include="Parameters\5_Results\ResultLineGoo.cs" />
     <Compile Include="Parameters\5_Results\ResultPointGoo.cs" />
+    <Compile Include="Parameters\GH_OasysGoo.cs" />
     <Compile Include="Parameters\GH_OasysPersistentParam.cs" />
     <Compile Include="Parameters\GH_OasysPersistentGeometryParam.cs" />
     <Compile Include="Parameters\GH_OasysGeometricGoo.cs" />
