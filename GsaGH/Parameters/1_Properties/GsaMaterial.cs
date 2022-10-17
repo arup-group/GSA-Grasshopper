@@ -172,7 +172,7 @@ namespace GsaGH.Parameters
       dup.MaterialType = this.MaterialType;
       dup._grade = this._grade;
       dup._analProp = this._analProp;
-      if (this._analProp != 0)
+      if (this._analProp != 0 && this._analysisMaterial != null)
       {
         dup.AnalysisMaterial = new AnalysisMaterial()
         {

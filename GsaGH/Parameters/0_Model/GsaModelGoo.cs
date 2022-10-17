@@ -28,7 +28,7 @@ namespace GsaGH.Parameters
         if (Value == null)
           target = default;
         else
-          target = (Q)(object)Value.Duplicate();
+          target = (Q)(object)Value;
         return true;
       }
 
@@ -41,7 +41,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      return CastTo(ref target);
+      return false;
     }
 
     public override bool CastFrom(object source)
