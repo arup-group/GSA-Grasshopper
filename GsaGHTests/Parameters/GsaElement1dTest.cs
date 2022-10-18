@@ -11,6 +11,23 @@ namespace GsaGHTests.Parameters
   public class GsaElement1dTest
   {
     [Fact]
+    public void CloneApiObjectTest()
+    {
+      // Arrange
+      GsaSection section = new GsaSection();
+      section.Name = "Name";
+      GsaElement1d element1d = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode());
+      element1d.Name = "Name";
+      Element original = element1d.API_Element;
+
+      // Act
+      Element duplicate = element1d.GetAPI_ElementClone();
+
+      // Assert
+      Duplicates.AreEqual(original, duplicate);
+    }
+
+    [Fact]
     public void DuplicateTest()
     {
       // Arrange

@@ -15,9 +15,13 @@ namespace GsaGHTests.Parameters
     [Fact]
     public void DuplicateTest()
     {
+      // Arrange
       GsaElement2d original = new GsaElement2d(new Mesh());
+
+      // Act
       GsaElement2d duplicate = original.Duplicate();
 
+      // Assert
       Duplicates.AreEqual(original, duplicate);
     }
 

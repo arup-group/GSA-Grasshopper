@@ -11,6 +11,23 @@ namespace GsaGHTests.Parameters
   public class GsaMember1dTest
   {
     [Fact]
+    public void CloneApiObjectTest()
+    {
+      // Arrange
+      GsaSection section = new GsaSection();
+      section.Name = "Name";
+      GsaMember1d member1d = new GsaMember1d(new Member(), 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
+      member1d.Name = "Name";
+      Member original = member1d.API_Member;
+
+      // Act
+      Member duplicate = member1d.GetAPI_MemberClone();
+
+      // Assert
+      Duplicates.AreEqual(original, duplicate);
+    }
+
+    [Fact]
     public void DuplicateTest()
     {
       // Arrange
