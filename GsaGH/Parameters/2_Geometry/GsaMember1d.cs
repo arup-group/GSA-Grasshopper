@@ -118,7 +118,7 @@ namespace GsaGH.Parameters
         {
           this._rel1 = new GsaBool6();
         }
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.SetEndRelease(0, new EndRelease(this._rel1._bool6));
         this.UpdatePreview();
       }
@@ -136,7 +136,7 @@ namespace GsaGH.Parameters
         {
           this._rel2 = new GsaBool6();
         }
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.SetEndRelease(1, new EndRelease(this._rel2._bool6));
         this.UpdatePreview();
       }
@@ -209,7 +209,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.Colour = value;
         this.UpdatePreview();
       }
@@ -222,7 +222,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.Group = value;
       }
     }
@@ -234,7 +234,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.IsDummy = value;
         this.UpdatePreview();
       }
@@ -247,7 +247,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.Name = value;
       }
     }
@@ -260,7 +260,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.MeshSize = value.Meters;
       }
     }
@@ -272,7 +272,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.IsIntersector = value;
       }
     }
@@ -284,7 +284,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.Offset.X1 = value.X1.Meters;
         this._member.Offset.X2 = value.X2.Meters;
         this._member.Offset.Y = value.Y.Meters;
@@ -299,7 +299,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.OrientationAngle = value;
       }
     }
@@ -311,7 +311,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._orientationNode = value;
       }
     }
@@ -323,7 +323,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.Type = value;
       }
     }
@@ -335,7 +335,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiMember();
+        this.CloneApiObject();
         this._member.Type1D = value;
       }
     }
@@ -385,7 +385,7 @@ namespace GsaGH.Parameters
       dup._id = this._id;
       dup._member = this._member;
       if (cloneApiMember)
-        dup.CloneApiMember();
+        dup.CloneApiObject();
       dup._crv = (PolyCurve)this._crv.DuplicateShallow();
       if (this._rel1 != null)
         dup._rel1 = this._rel1.Duplicate();
@@ -447,7 +447,7 @@ namespace GsaGH.Parameters
       return idd + type + new GH_Curve(this.PolyCurve).ToString();
     }
 
-    internal void CloneApiMember()
+    internal void CloneApiObject()
     {
       this._member = this.GetAPI_MemberClone();
     }

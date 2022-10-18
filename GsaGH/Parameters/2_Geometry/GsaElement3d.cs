@@ -51,7 +51,7 @@ namespace GsaGH.Parameters
         this._elements = value;
       }
     }
-    internal Element GetAPI_ElementClone(int i)
+    internal Element GetApiObjectClone(int i)
     {
       return new Element()
       {

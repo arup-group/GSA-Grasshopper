@@ -47,9 +47,12 @@ namespace GsaGH.Parameters
       return clone;
     }
 
-    public GsaModel Duplicate()
+    public GsaModel Duplicate(bool copy = false)
     {
-      // duplicate the incoming model
+      if (copy)
+        return this.Clone();
+
+      // create shallow copy
       GsaModel dup = new GsaModel();
       dup.Model = this.Model;
       if (this.FileName != null)

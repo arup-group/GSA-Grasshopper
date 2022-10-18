@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using GsaAPI;
 using OasysGH.Units;
 using OasysUnits;
@@ -131,7 +132,8 @@ namespace GsaGH.Parameters
         if (this._section == null)
           this._section = new Section();
         else
-          CloneSection();
+          this.CloneApiObject();
+
         this._section.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(_material);
         this._section.MaterialAnalysisProperty = _material.AnalysisProperty;
         this._section.MaterialGradeProperty = _material.GradeProperty;
@@ -158,7 +160,7 @@ namespace GsaGH.Parameters
       set
       {
         this._guid = Guid.NewGuid();
-        this.CloneSection();
+        this.CloneApiObject();
         this._section.Name = value;
       }
     }
@@ -171,7 +173,7 @@ namespace GsaGH.Parameters
       set
       {
         this._guid = Guid.NewGuid();
-        this.CloneSection();
+        this.CloneApiObject();
         this._section.Pool = value;
       }
     }
@@ -184,7 +186,7 @@ namespace GsaGH.Parameters
       set
       {
         this._guid = Guid.NewGuid();
-        this.CloneSection();
+        this.CloneApiObject();
         this._section.MaterialAnalysisProperty = value;
         this._material.AnalysisProperty = this._section.MaterialAnalysisProperty;
       }
@@ -198,7 +200,7 @@ namespace GsaGH.Parameters
       set
       {
         this._guid = Guid.NewGuid();
-        this.CloneSection();
+        this.CloneApiObject();
         this._section.Profile = value;
       }
     }
@@ -211,11 +213,11 @@ namespace GsaGH.Parameters
       set
       {
         this._guid = Guid.NewGuid();
-        this.CloneSection();
+        this.CloneApiObject();
         this._section.Colour = value;
       }
     }
-    private void CloneSection()
+    private void CloneApiObject()
     {
       Section sec = new Section()
       {
@@ -280,8 +282,9 @@ namespace GsaGH.Parameters
     {
       string prof = this._section.Profile.Replace("%", " ");
       string pb = this.ID > 0 ? "PB" + this.ID + " " : "";
+      string mat = Helpers.Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
       string mod = this._modifier.IsModified ? " modified" : "";
-      return pb + prof + mod;
+      return pb + prof + mat + mod;
     }
     #endregion
   }
