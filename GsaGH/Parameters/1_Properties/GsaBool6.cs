@@ -7,16 +7,7 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaBool6
   {
-    private enum State
-    {
-      Free,
-      Pin,
-      Hinge,
-      Fixed,
-      Other
-    }
     #region fields
-    private State _state;
     internal Bool6 _bool6;
     #endregion
 
@@ -87,14 +78,6 @@ namespace GsaGH.Parameters
         this._bool6 = new Bool6(X, Y, Z, XX, YY, value);
       }
     }
-    private State state
-    {
-      get 
-      {
-        this.UpdateState();
-        return this._state; 
-      }
-    }
     #endregion
 
     #region constructors
@@ -127,7 +110,44 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      if (this.state == State.Other)
+      string state = "Other";
+      if (
+        this.X == false &&
+        this.Y == false &&
+        this.Z == false &&
+        this.XX == false &&
+        this.YY == false &&
+        this.ZZ == false
+        )
+        state = "Free";
+      if (
+        this.X == true &&
+        this.Y == true &&
+        this.Z == true &&
+        this.XX == false &&
+        this.YY == false &&
+        this.ZZ == false
+        )
+        state = "Pin";
+      if (
+        this.X == false &&
+        this.Y == false &&
+        this.Z == false &&
+        this.XX == false &&
+        this.YY == true &&
+        this.ZZ == true
+        )
+        state = "Hinge";
+      if (
+        this.X == true &&
+        this.Y == true &&
+        this.Z == true &&
+        this.XX == true &&
+        this.YY == true &&
+        this.ZZ == true
+        )
+        state = "Fixed";
+      if (state == "Other")
       {
         string sx = (X) ? "\u2713" : "\u2610";
         sx = "X" + sx;
@@ -144,48 +164,7 @@ namespace GsaGH.Parameters
         return sx + sy + sz + sxx + syy + szz;
       }
       else
-        return this.state.ToString();
-    }
-
-    private void UpdateState()
-    {
-      this._state = State.Other;
-      if (
-        this.X == false &&
-        this.Y == false &&
-        this.Z == false &&
-        this.XX == false &&
-        this.YY == false &&
-        this.ZZ == false
-        )
-        this._state = State.Free;
-      if (
-        this.X == true &&
-        this.Y == true &&
-        this.Z == true &&
-        this.XX == false &&
-        this.YY == false &&
-        this.ZZ == false
-        )
-        this._state = State.Pin;
-      if (
-        this.X == false &&
-        this.Y == false &&
-        this.Z == false &&
-        this.XX == false &&
-        this.YY == true &&
-        this.ZZ == true
-        )
-        this._state = State.Hinge;
-      if (
-        this.X == true &&
-        this.Y == true &&
-        this.Z == true &&
-        this.XX == true &&
-        this.YY == true &&
-        this.ZZ == true
-        )
-        this._state = State.Fixed;
+        return state.ToString();
     }
     #endregion
   }
