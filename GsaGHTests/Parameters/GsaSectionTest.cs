@@ -30,16 +30,14 @@ namespace GsaGHTests.Parameters
     {
       // string defining the profile
       string profile = "STD CHS 200 10";
-      double myarea = Math.Round(
-          Math.PI / 4 * Math.Pow(200, 2)
-          - Math.PI / 4 * Math.Pow(200 - 2 * 10, 2),
-          10);
+      double myarea = Math.PI / 4 * Math.Pow(200, 2)
+          - Math.PI / 4 * Math.Pow(200 - 2 * 10, 2);
       Area area_expected = new Area(myarea, AreaUnit.SquareMillimeter);
 
       // create new section
       GsaSection sect = new GsaSection(profile);
 
-      Assert.Equal(area_expected, sect.Area);
+      Assert.Equal(area_expected.Value, sect.Area.SquareMillimeters, 10);
 
       // set other properties in section
 
@@ -79,7 +77,7 @@ namespace GsaGHTests.Parameters
       GsaSection section = new GsaSection(profile);
 
       Area area_expected = new Area(7808.121, AreaUnit.SquareMillimeter);
-      Assert.Equal(area_expected, section.Area);
+      Assert.Equal(area_expected.Value, section.Area.SquareMillimeters, 10);
     }
 
     [Fact]
