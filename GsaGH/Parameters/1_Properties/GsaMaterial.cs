@@ -7,7 +7,7 @@ using GsaAPI;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// Section class, this class defines the basic properties and methods for any Gsa Section
+  /// Material class, this class defines the basic properties and methods for any <see cref="GsaAPI.AnalysisMaterial"/>
   /// </summary>
   public class GsaMaterial
   {

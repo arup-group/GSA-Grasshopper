@@ -89,7 +89,7 @@ namespace GsaGH.Parameters
       if (Value.Mesh == null) { return null; }
 
       GsaElement2d dup = Value.Duplicate(true);
-      dup.IDs = new List<int>(new int[dup.Mesh.Faces.Count()]);
+      dup.Ids = new List<int>(new int[dup.Mesh.Faces.Count()]);
       Mesh xMs = dup.Mesh.DuplicateMesh();
       xMs.Transform(xform);
       return new GsaElement2dGoo(dup.UpdateGeometry(xMs));
@@ -101,7 +101,7 @@ namespace GsaGH.Parameters
       if (Value.Mesh == null) { return null; }
 
       GsaElement2d dup = Value.Duplicate(true);
-      dup.IDs = new List<int>(new int[dup.Mesh.Faces.Count()]);
+      dup.Ids = new List<int>(new int[dup.Mesh.Faces.Count()]);
       Mesh xMs = dup.Mesh.DuplicateMesh();
       xmorph.Morph(xMs);
       return new GsaElement2dGoo(dup.UpdateGeometry(xMs));

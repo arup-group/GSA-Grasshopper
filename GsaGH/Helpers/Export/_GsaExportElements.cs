@@ -150,9 +150,9 @@ namespace GsaGH.Util.Gsa.ToGSA
         apiMeshElement.Property = Prop2ds.ConvertProp2d(prop, ref existingProp2Ds, ref prop2d_guid, ref existingMaterials, ref materials_guid);
 
         // set api element in dictionary
-        if (element2d.IDs[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+        if (element2d.Ids[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
         {
-          existingElements[element2d.IDs[i]] = apiMeshElement;
+          existingElements[element2d.Ids[i]] = apiMeshElement;
         }
         else
         {

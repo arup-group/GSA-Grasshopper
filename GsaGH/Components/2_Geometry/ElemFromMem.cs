@@ -316,7 +316,7 @@ namespace GsaGH.Components
 
       DA.SetDataList(0, nodes.OrderBy(item => item.Value.ID));
       DA.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.ID));
-      DA.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.IDs.First()));
+      DA.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.Ids.First()));
       DA.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.IDs.First()));
       DA.SetData(4, new GsaModelGoo(outModel));
 

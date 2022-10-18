@@ -10,7 +10,7 @@ using OasysUnits.Units;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// Prop2d class, this class defines the basic properties and methods for any Gsa Prop2d
+  /// Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop2D"/>
   /// </summary>
   public class GsaProp2d
   {

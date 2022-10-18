@@ -6,7 +6,7 @@ using Xunit;
 namespace GsaGHTests.Parameters
 {
   [Collection("GrasshopperFixture collection")]
-  public class GsaGridPlaneSurfacedTest
+  public class GsaGridPlaneSurfaceTest
   {
     [Fact]
     public void DuplicateTest()

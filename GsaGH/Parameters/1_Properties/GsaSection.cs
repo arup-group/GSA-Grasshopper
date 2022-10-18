@@ -7,7 +7,7 @@ using OasysUnits;
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// Section class, this class defines the basic properties and methods for any Gsa Section
+  /// Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section"/>
   /// </summary>
   public class GsaSection
   {

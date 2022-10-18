@@ -481,7 +481,7 @@ namespace GsaGH.Components
         if (results.Elem2ds != null)
         {
           if (_mode == FoldMode.List)
-            data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.IDs.First()));
+            data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.Ids.First()));
           else
           {
             DataTree<GsaElement2dGoo> tree = new DataTree<GsaElement2dGoo>();

@@ -70,7 +70,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       List<GsaElement2d> elem2ds = elementTuple.Item2.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
       foreach (var elem2d in elem2ds)
-        elem2d.IDs.Select(c => { c = 0; return c; }).ToList();
+        elem2d.Ids.Select(c => { c = 0; return c; }).ToList();
       // convert from Goo-type
       List<GsaElement3d> elem3ds = elementTuple.Item3.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -302,7 +302,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (elem2ds.Count > 0)
         {
-          int existingElem2dMaxID = elem2ds.Max(x => x.IDs.Max()); // max ID in new Elem2ds
+          int existingElem2dMaxID = elem2ds.Max(x => x.Ids.Max()); // max ID in new Elem2ds
           if (existingElem2dMaxID > newElementID)
             newElementID = existingElem2dMaxID + 1;
         }

@@ -3,7 +3,7 @@
 namespace GsaGH.Parameters
 {
   /// <summary>
-  /// Bool6 class, this class defines the basic properties and methods for any Gsa Bool6
+  /// Bool6 class, this class defines the basic properties and methods for any <see cref="GsaAPI.Bool6"/>
   /// </summary>
   public class GsaBool6
   {

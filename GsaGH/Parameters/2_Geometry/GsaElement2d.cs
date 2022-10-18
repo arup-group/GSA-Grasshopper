@@ -88,7 +88,7 @@ namespace GsaGH.Parameters
         return this._topo;
       }
     }
-    public List<int> IDs
+    public List<int> Ids
     {
       get
       {
