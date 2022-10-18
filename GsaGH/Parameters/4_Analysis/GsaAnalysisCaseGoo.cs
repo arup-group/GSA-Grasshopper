@@ -23,6 +23,9 @@ namespace GsaGH.Parameters
 
     public override bool CastTo<Q>(ref Q target)
     {
+      if (base.CastTo<Q>(ref target))
+        return true;
+
       if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
       {
         if (Value == null)
@@ -37,13 +40,16 @@ namespace GsaGH.Parameters
         }
         return true;
       }
-      return base.CastTo(ref target);
+      return false;
     }
 
     public override bool CastFrom(object source)
     {
       if (source == null)
         return false;
+
+      if (base.CastFrom(source))
+        return true;
 
       // Cast from string
       if (GH_Convert.ToString(source, out string input, GH_Conversion.Both))
@@ -65,7 +71,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      return base.CastFrom(source);
+      return false;
     }
   }
 }

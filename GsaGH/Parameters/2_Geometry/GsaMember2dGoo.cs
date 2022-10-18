@@ -28,28 +28,12 @@ namespace GsaGH.Parameters
     public override GeometryBase GetGeometry() => this.Value.Brep;
 
     #region casting methods
-    public override bool CastTo<Q>(out Q target)
+    public override bool CastTo<Q>(ref Q target)
     {
       // This function is called when Grasshopper needs to convert this 
       // instance of GsaMember into some other type Q.            
-
-      if (typeof(Q).IsAssignableFrom(typeof(GsaMember2d)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Duplicate();
+      if (base.CastTo<Q>(ref target))
         return true;
-      }
-
-      if (typeof(Q).IsAssignableFrom(typeof(Member)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.GetAPI_MemberClone();
-        return true;
-      }
 
       //Cast to Curve
       if (typeof(Q).IsAssignableFrom(typeof(Curve)))
@@ -182,22 +166,10 @@ namespace GsaGH.Parameters
     {
       // This function is called when Grasshopper needs to convert other data 
       // into GsaMember.
-
       if (source == null) { return false; }
 
-      //Cast from GsaMember
-      if (typeof(GsaMember2d).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaMember2d)source;
+      if (base.CastFrom(source))
         return true;
-      }
-
-      //Cast from GsaAPI Member
-      //if (typeof(Member).IsAssignableFrom(source.GetType()))
-      //{
-      //    Value.Member = (Member)source;
-      //    return true;
-      //}
 
       //Cast from Brep
       Brep brep = new Brep();
@@ -206,9 +178,6 @@ namespace GsaGH.Parameters
         List<Point3d> pts = new List<Point3d>();
         List<Curve> crvs = new List<Curve>();
         GsaMember2d mem = new GsaMember2d(brep, crvs, pts);
-        //GsaProp2d prop2d = new GsaProp2d();
-        //prop2d.ID = 1;
-        //mem.Property = prop2d;
         this.Value = mem;
         return true;
       }

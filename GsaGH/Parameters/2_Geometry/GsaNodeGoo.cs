@@ -35,28 +35,12 @@ namespace GsaGH.Parameters
     }
 
     #region casting methods
-    public override bool CastTo<Q>(out Q target)
+    public override bool CastTo<Q>(ref Q target)
     {
       // This function is called when Grasshopper needs to convert this 
       // instance of GsaNode into some other type Q.            
-
-      if (typeof(Q).IsAssignableFrom(typeof(GsaNode)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Duplicate();
+      if (base.CastTo<Q>(ref target))
         return true;
-      }
-
-      if (typeof(Q).IsAssignableFrom(typeof(Node)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.API_Node;
-        return true;
-      }
 
       //Cast to Point3d
       if (typeof(Q).IsAssignableFrom(typeof(Point3d)))
@@ -107,18 +91,11 @@ namespace GsaGH.Parameters
     {
       // This function is called when Grasshopper needs to convert other data 
       // into GsaNode.
-
-
       if (source == null) { return false; }
 
-      //Cast from GsaNode
-      if (typeof(GsaNode).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaNode)source;
+      if (base.CastFrom(source))
         return true;
-      }
 
-      //Cast from GsaAPI Node
       if (typeof(Node).IsAssignableFrom(source.GetType()))
       {
         Value = new GsaNode();
@@ -126,7 +103,6 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      //Cast from Point3d
       Point3d pt = new Point3d();
       if (GH_Convert.ToPoint3d(source, ref pt, GH_Conversion.Both))
       {

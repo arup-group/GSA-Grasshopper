@@ -21,30 +21,13 @@ namespace GsaGH.Parameters
 
     public override IGH_Goo Duplicate() => new GsaMaterialGoo(this.Value);
 
-    public override bool CastTo<Q>(ref Q target)
-    {
-      if (typeof(Q).IsAssignableFrom(typeof(GsaMaterial)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value;
-        return true;
-      }
-      return base.CastTo(ref target);
-    }
-
     public override bool CastFrom(object source)
     {
       if (source == null) 
-        return false; 
+        return false;
 
-      // Cast from GsaMaterial
-      if (typeof(GsaMaterial).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaMaterial)source;
+      if (base.CastFrom(source))
         return true;
-      }
 
       // Cast from string
       if (GH_Convert.ToString(source, out string mat, GH_Conversion.Both))
@@ -95,10 +78,10 @@ namespace GsaGH.Parameters
       // Cast from integer
       else if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both))
       {
-        Value.AnalysisProperty = idd;
+        Value.GradeProperty = idd;
       }
 
-      return base.CastFrom(source);
+      return false;
     }
   }
 }

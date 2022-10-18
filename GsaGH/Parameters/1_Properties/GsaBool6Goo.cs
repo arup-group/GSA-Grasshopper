@@ -20,38 +20,13 @@ namespace GsaGH.Parameters
 
     public override IGH_Goo Duplicate() => new GsaBool6Goo(this.Value);
 
-    public override bool CastTo<Q>(ref Q target)
-    {
-      if (typeof(Q).IsAssignableFrom(typeof(GsaBool6)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Duplicate();
-        return true;
-      }
-      else if (typeof(Q).IsAssignableFrom(typeof(Bool6)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value;
-        return true;
-      }
-      return base.CastTo(ref target);
-    }
-
     public override bool CastFrom(object source)
     {
       if (source == null)
         return false;
 
-      // Cast from GsaBool6
-      if (typeof(GsaBool6).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaBool6)source;
+      if (base.CastFrom(source))
         return true;
-      }
 
       // Cast from Bool
       else if (GH_Convert.ToBoolean(source, out bool mybool, GH_Conversion.Both))
@@ -158,7 +133,7 @@ namespace GsaGH.Parameters
         return false;
       }
       
-      return base.CastFrom(source);
+      return false;
     }
   }
 }

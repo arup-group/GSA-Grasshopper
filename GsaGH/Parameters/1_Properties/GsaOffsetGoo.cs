@@ -25,40 +25,13 @@ namespace GsaGH.Parameters
 
     public override IGH_Goo Duplicate() => new GsaOffsetGoo(this.Value);
 
-    public override bool CastTo<Q>(ref Q target)
-    {
-      if (typeof(Q).IsAssignableFrom(typeof(GsaOffset)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Duplicate();
-        return true;
-      }
-
-      else if (typeof(Q).IsAssignableFrom(typeof(Offset)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value;
-        return true;
-      }
-
-      return base.CastTo(ref target);
-    }
-
     public override bool CastFrom(object source)
     {
       if (source == null)
         return false;
 
-      // Cast from GsaOffset
-      if (typeof(GsaOffset).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaOffset)source;
+      if (base.CastFrom(source))
         return true;
-      }
 
       // Cast from double
       if (GH_Convert.ToDouble(source, out double myval, GH_Conversion.Both))
@@ -68,7 +41,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      return base.CastFrom(source);
+      return false;
     }
   }
 }

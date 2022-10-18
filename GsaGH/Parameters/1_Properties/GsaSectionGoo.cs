@@ -25,23 +25,8 @@ namespace GsaGH.Parameters
 
     public override bool CastTo<Q>(ref Q target)
     {
-      if (typeof(Q).IsAssignableFrom(typeof(GsaSection)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value;
+      if (base.CastTo<Q>(ref target))
         return true;
-      }
-
-      else if (typeof(Q).IsAssignableFrom(typeof(Section)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value;
-        return true;
-      }
 
       else if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
       {
@@ -58,7 +43,8 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      return base.CastTo(ref target);
+      target = default;
+      return false;
     }
 
     public override bool CastFrom(object source)
@@ -66,20 +52,8 @@ namespace GsaGH.Parameters
       if (source == null)
         return false;
 
-      // Cast from GsaSection
-      else if (typeof(GsaSection).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaSection)source;
+      if (base.CastFrom(source))
         return true;
-      }
-
-      // Cast from GsaAPI Prop2d
-      else if (typeof(Section).IsAssignableFrom(source.GetType()))
-      {
-        Value = new GsaSection();
-        Value.API_Section = (Section)source;
-        return true;
-      }
 
       // Cast from string
       else if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
@@ -94,7 +68,7 @@ namespace GsaGH.Parameters
         Value.ID = idd;
       }
 
-      return base.CastFrom(source);
+      return false;
     }
   }
 }

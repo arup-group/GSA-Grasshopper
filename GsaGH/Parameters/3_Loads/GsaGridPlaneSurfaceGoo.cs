@@ -30,17 +30,11 @@ namespace GsaGH.Parameters
     }
 
     #region casting methods
-    public override bool CastTo<Q>(out Q target)
+    public override bool CastTo<Q>(ref Q target)
     {
       // This function is called when Grasshopper needs to convert this 
-      if (typeof(Q).IsAssignableFrom(typeof(GsaGridPlaneSurface)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Duplicate();
+      if (base.CastTo<Q>(ref target))
         return true;
-      }
 
       if (typeof(Q).IsAssignableFrom(typeof(GH_Plane)))
       {
@@ -73,7 +67,6 @@ namespace GsaGH.Parameters
 
       //Cast from Plane
       Plane pln = new Plane();
-
       if (GH_Convert.ToPlane(source, ref pln, GH_Conversion.Both))
       {
         GsaGridPlaneSurface gridplane = new GsaGridPlaneSurface(pln);

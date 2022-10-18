@@ -27,26 +27,11 @@ namespace GsaGH.Parameters
     #region casting
     public override bool CastTo<Q>(ref Q target)
     {
-      if (typeof(Q).IsAssignableFrom(typeof(GsaElement1d)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Duplicate();
+      if (base.CastTo<Q>(ref target))
         return true;
-      }
-
-      else if (typeof(Q).IsAssignableFrom(typeof(Element)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.GetAPI_ElementClone();
-        return true;
-      }
 
       // Cast to Curve
-      else if (typeof(Q).IsAssignableFrom(typeof(Line)))
+      if (typeof(Q).IsAssignableFrom(typeof(Line)))
       {
         if (Value == null)
           target = default;
@@ -103,7 +88,8 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      return base.CastTo(ref target);
+      target = default;
+      return false;
     }
 
     public override bool CastFrom(object source)
@@ -111,21 +97,8 @@ namespace GsaGH.Parameters
       if (source == null)
         return false;
 
-      // Cast from GsaElement
-      else if (typeof(GsaElement1d).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaElement1d)source;
+      if (base.CastFrom(source))
         return true;
-      }
-
-      // Cast from GsaAPI Member
-      // we shouldnt provide auto-convertion from GsaAPI.Element
-      // as this cannot alone be used to create a line....
-      //else if (typeof(Element).IsAssignableFrom(source.GetType()))
-      //{
-      //    Value.Element = (Element)source;
-      //    return true;
-      //}
 
       // Cast from Curve
       Line ln = new Line();
@@ -137,7 +110,7 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      return base.CastFrom(source);
+      return false;
     }
     #endregion
 

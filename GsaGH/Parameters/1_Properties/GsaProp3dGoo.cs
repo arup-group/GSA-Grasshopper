@@ -23,25 +23,10 @@ namespace GsaGH.Parameters
 
     public override bool CastTo<Q>(ref Q target)
     {
-      if (typeof(Q).IsAssignableFrom(typeof(GsaProp3d)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value.Duplicate();
+      if (base.CastTo<Q>(ref target))
         return true;
-      }
 
-      else if (typeof(Q).IsAssignableFrom(typeof(Prop3D)))
-      {
-        if (Value == null)
-          target = default;
-        else
-          target = (Q)(object)Value;
-        return true;
-      }
-
-      else if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
+      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)))
       {
         if (Value == null)
           target = default;
@@ -56,30 +41,8 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      return base.CastTo(ref target);
-    }
-
-    public override bool CastFrom(object source)
-    {
-      if (source == null)
-        return false;
-
-      // Cast from GsaProp2d
-      if (typeof(GsaProp3d).IsAssignableFrom(source.GetType()))
-      {
-        Value = (GsaProp3d)source;
-        return true;
-      }
-
-      // Cast from GsaAPI Prop2d
-      else if (typeof(Prop3D).IsAssignableFrom(source.GetType()))
-      {
-        Value = new GsaProp3d();
-        Value.API_Prop3d = (Prop3D)source;
-        return true;
-      }
-
-      return base.CastFrom(source);
+      target = default;
+      return false;
     }
   }
 }

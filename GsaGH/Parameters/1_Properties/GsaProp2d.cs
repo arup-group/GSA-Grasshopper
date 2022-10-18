@@ -224,7 +224,7 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       string type = Helpers.Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == this._prop2d.Type).Key;
-      string desc = this.Description + " ";
+      string desc = this.Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
       string pa = (this.ID > 0) ? "PA" + this.ID + " " : "";
       return pa + desc + type;
     }
