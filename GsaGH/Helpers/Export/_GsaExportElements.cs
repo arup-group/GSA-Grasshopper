@@ -124,7 +124,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       //Loop through all faces in mesh to update topology list to fit model nodes
       for (int i = 0; i < element2d.API_Elements.Count; i++)
       {
-        Element apiMeshElement = element2d.GetAPI_ElementClone(i);
+        Element apiMeshElement = element2d.GetApiObjectClone(i);
         List<int> meshVertexIndex = element2d.TopoInt[i];
 
         List<int> topo = new List<int>(); // temp topologylist
@@ -203,7 +203,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       //Loop through all faces in mesh to update topology list to fit model nodes
       for (int i = 0; i < element3d.API_Elements.Count; i++)
       {
-        Element apiMeshElement = element3d.GetAPI_ElementClone(i);
+        Element apiMeshElement = element3d.GetApiObjectClone(i);
         List<int> meshVertexIndex = element3d.TopoInt[i];
 
         List<int> topo = new List<int>(); // temp topologylist

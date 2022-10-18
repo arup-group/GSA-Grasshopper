@@ -57,7 +57,11 @@ namespace GsaGH.Parameters
       set
       {
         this._material = value;
-        CloneProperty();
+        if (this._prop2d == null)
+          this._prop2d = new Prop2D();
+        else
+          CloneApiObject();
+
         this._prop2d.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(_material);
         this._prop2d.MaterialAnalysisProperty = this._material.AnalysisProperty;
         this._prop2d.MaterialGradeProperty = this._material.GradeProperty;
@@ -72,7 +76,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneProperty();
+        this.CloneApiObject();
         this._prop2d.Name = value;
       }
     }
@@ -85,7 +89,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneProperty();
+        this.CloneApiObject();
         this._prop2d.MaterialAnalysisProperty = value;
         this._material.AnalysisProperty = this._prop2d.MaterialAnalysisProperty;
       }
@@ -94,7 +98,7 @@ namespace GsaGH.Parameters
     {
       set
       {
-        this.CloneProperty();
+        this.CloneApiObject();
         IQuantity length = new Length(0, value.Unit);
         string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
         this._prop2d.Description = value.Value.ToString() + "(" + unitAbbreviation + ")";
@@ -106,7 +110,6 @@ namespace GsaGH.Parameters
         if (this._prop2d.Description.Last() == ')')
         {
           // thickness could be written as "30.33(in)"
-
           string unitAbbreviation = this._prop2d.Description.Split('(', ')')[1];
           LengthUnit unit = UnitParser.Default.Parse<LengthUnit>(unitAbbreviation);
 
@@ -126,7 +129,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneProperty();
+        this.CloneApiObject();
         this._prop2d.Description = value;
       }
     }
@@ -138,7 +141,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneProperty();
+        this.CloneApiObject();
         value = Math.Min(1, value);
         value = Math.Max(0, value);
         this._prop2d.AxisProperty = value * -1;
@@ -152,7 +155,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneProperty();
+        this.CloneApiObject();
         this._prop2d.Type = value;
       }
     }
@@ -164,7 +167,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneProperty();
+        this.CloneApiObject();
         this._prop2d.Colour = value;
       }
     }
@@ -223,28 +226,16 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string type = Helpers.Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == this._prop2d.Type).Key;
+      string type = Helpers.Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == this._prop2d.Type).Key + " ";
       string desc = this.Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
+      string mat = Helpers.Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
       string pa = (this.ID > 0) ? "PA" + this.ID + " " : "";
-      return pa + desc + type;
+      return pa + type + desc + mat;
     }
 
-    private void CloneProperty()
+    private void CloneApiObject()
     {
-      Prop2D prop = new Prop2D
-      {
-        MaterialAnalysisProperty = this._prop2d.MaterialAnalysisProperty,
-        MaterialGradeProperty = this._prop2d.MaterialGradeProperty,
-        MaterialType = this._prop2d.MaterialType,
-        Name = this._prop2d.Name.ToString(),
-        Description = this._prop2d.Description.ToString(),
-        Type = this._prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
-        AxisProperty = this._prop2d.AxisProperty
-      };
-      if ((Color)this._prop2d.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        prop.Colour = this._prop2d.Colour;
-
-      this._prop2d = prop;
+      this._prop2d = (Prop2D)this._prop2d.Duplicate();
       this._guid = Guid.NewGuid();
     }
     #endregion

@@ -81,7 +81,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiMember();
+        this.CloneApiObject();
         this._member.Colour = value;
       }
     }
@@ -93,7 +93,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiMember();
+        this.CloneApiObject();
         this._member.Group = value;
       }
     }
@@ -105,7 +105,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiMember();
+        this.CloneApiObject();
         this._member.IsDummy = value;
       }
     }
@@ -117,7 +117,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiMember();
+        this.CloneApiObject();
         this._member.Name = value;
       }
     }
@@ -130,7 +130,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiMember();
+        this.CloneApiObject();
         this._member.MeshSize = value.Meters;
       }
     }
@@ -142,7 +142,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiMember();
+        this.CloneApiObject();
         this._member.IsIntersector = value;
       }
     }
@@ -154,7 +154,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiMember();
+        this.CloneApiObject();
         this._member.Property = value;
       }
     }
@@ -213,7 +213,7 @@ namespace GsaGH.Parameters
       dup._mesh = (Mesh)this._mesh.DuplicateShallow();
       dup._prop = this._prop.Duplicate();
       if (cloneApiMember)
-        dup.CloneApiMember();
+        dup.CloneApiObject();
       else
         dup._member = this._member;
       dup._id = this._id;
@@ -244,7 +244,7 @@ namespace GsaGH.Parameters
       return idd + type;
     }
 
-    internal void CloneApiMember()
+    internal void CloneApiObject()
     {
       this._member = GetAPI_MemberClone();
     }

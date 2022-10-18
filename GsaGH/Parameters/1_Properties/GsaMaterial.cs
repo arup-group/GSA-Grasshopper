@@ -132,7 +132,7 @@ namespace GsaGH.Parameters
           analysisMaterial = section.Material.AnalysisMaterial;
       }
 
-      this.CreateFromAPI(section.API_Section.MaterialType, section.API_Section.MaterialAnalysisProperty, section.API_Section.MaterialGradeProperty, analysisMaterial);
+      this.CreateFromApiObject(section.API_Section.MaterialType, section.API_Section.MaterialAnalysisProperty, section.API_Section.MaterialGradeProperty, analysisMaterial);
     }
 
     internal GsaMaterial(GsaProp2d prop, AnalysisMaterial analysisMaterial = null)
@@ -147,7 +147,7 @@ namespace GsaGH.Parameters
           analysisMaterial = prop.Material.AnalysisMaterial;
       }
 
-      this.CreateFromAPI(prop.API_Prop2d.MaterialType, prop.API_Prop2d.MaterialAnalysisProperty, prop.API_Prop2d.MaterialGradeProperty, analysisMaterial);
+      this.CreateFromApiObject(prop.API_Prop2d.MaterialType, prop.API_Prop2d.MaterialAnalysisProperty, prop.API_Prop2d.MaterialGradeProperty, analysisMaterial);
     }
 
     internal GsaMaterial(GsaProp3d prop, AnalysisMaterial analysisMaterial = null)
@@ -162,7 +162,7 @@ namespace GsaGH.Parameters
         else if (prop.API_Prop3d.MaterialAnalysisProperty > 0 && analysisMaterial == null)
           analysisMaterial = prop.Material.AnalysisMaterial;
       }
-      this.CreateFromAPI(prop.API_Prop3d.MaterialType, prop.API_Prop3d.MaterialAnalysisProperty, prop.API_Prop3d.MaterialGradeProperty, analysisMaterial);
+      this.CreateFromApiObject(prop.API_Prop3d.MaterialType, prop.API_Prop3d.MaterialAnalysisProperty, prop.API_Prop3d.MaterialGradeProperty, analysisMaterial);
     }
     #endregion
 
@@ -198,7 +198,7 @@ namespace GsaGH.Parameters
       }
     }
 
-    private void CreateFromAPI(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial)
+    private void CreateFromApiObject(MaterialType materialType, int analysisProp, int gradeProp, AnalysisMaterial analysisMaterial)
     {
       this.MaterialType = GetType(materialType);
       this.GradeProperty = gradeProp;

@@ -27,11 +27,6 @@ namespace GsaGH.Parameters
     #endregion
 
     #region properties
-    //public GsaSpring Spring
-    //{
-    //    get { return m_spring; }
-    //    set { m_spring = value; }
-    //}
     public int ID
     {
       get
@@ -74,7 +69,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiNode();
+        this.CloneApiObject();
         _id = 0;
         _node.Position.X = value.X;
         _node.Position.Y = value.Y;
@@ -103,7 +98,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiNode();
+        CloneApiObject();
         _node.Colour = value;
       }
     }
@@ -115,7 +110,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiNode();
+        CloneApiObject();
         _node.Restraint = new NodalRestraint
         {
           X = value.X,
@@ -136,7 +131,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneApiNode();
+        CloneApiObject();
         _node.Name = value;
       }
     }
@@ -151,7 +146,7 @@ namespace GsaGH.Parameters
     internal GsaNode(Node node, int id, LengthUnit unit, Plane localAxis = new Plane())
     {
       _node = node;
-      CloneApiNode();
+      CloneApiObject();
       if (unit != LengthUnit.Meter)
       {
         _node.Position.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
@@ -178,7 +173,7 @@ namespace GsaGH.Parameters
       dup._id = _id;
       dup._node = _node;
       if (cloneApiNode)
-        dup.CloneApiNode();
+        dup.CloneApiObject();
       dup._plane = _plane;
       dup.UpdatePreview();
       return dup;
@@ -223,7 +218,7 @@ namespace GsaGH.Parameters
       return idd + sptTxt + localTxt + " Pos:" + new GH_Point(this.Point).ToString();
     }
 
-    internal void CloneApiNode()
+    internal void CloneApiObject()
     {
       Node node = new Node
       {

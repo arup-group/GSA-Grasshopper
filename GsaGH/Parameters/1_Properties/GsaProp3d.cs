@@ -52,7 +52,11 @@ namespace GsaGH.Parameters
       set
       {
         this._material = value;
-        this.CloneProperty();
+        if (this._prop3d == null)
+          this._prop3d = new Prop3D();
+        else
+          this.CloneApiObject();
+
         this._prop3d.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(this._material);
         this._prop3d.MaterialAnalysisProperty = this._material.AnalysisProperty;
         this._prop3d.MaterialGradeProperty = this._material.GradeProperty;
@@ -67,7 +71,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneProperty();
+        this.CloneApiObject();
         this._prop3d.Name = value;
       }
     }
@@ -79,7 +83,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneProperty();
+        this.CloneApiObject();
         this._prop3d.MaterialAnalysisProperty = value;
         this._material.AnalysisProperty = this._prop3d.MaterialAnalysisProperty;
       }
@@ -92,7 +96,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneProperty();
+        this.CloneApiObject();
         value = Math.Min(1, value);
         value = Math.Max(0, value);
         this._prop3d.AxisProperty = value * -1;
@@ -106,7 +110,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneProperty();
+        this.CloneApiObject();
         this._prop3d.Colour = value;
       }
     }
@@ -154,7 +158,7 @@ namespace GsaGH.Parameters
       return pa + type;
     }
 
-    private void CloneProperty()
+    private void CloneApiObject()
     {
       Prop3D prop = new Prop3D
       {

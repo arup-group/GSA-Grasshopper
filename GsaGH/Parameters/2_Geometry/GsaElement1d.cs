@@ -97,7 +97,7 @@ namespace GsaGH.Parameters
         {
           this._rel1 = new GsaBool6();
         }
-        this.CloneApiElement();
+        this.CloneApiObject();
         this._element.SetEndRelease(0, new EndRelease(this._rel1._bool6));
         this.UpdatePreview();
       }
@@ -115,7 +115,7 @@ namespace GsaGH.Parameters
         {
           this._rel2 = new GsaBool6();
         }
-        this.CloneApiElement();
+        this.CloneApiObject();
         this._element.SetEndRelease(1, new EndRelease(this._rel2._bool6));
         this.UpdatePreview();
       }
@@ -150,7 +150,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiElement();
+        this.CloneApiObject();
         this._element.Colour = value;
       }
     }
@@ -162,7 +162,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiElement();
+        this.CloneApiObject();
         this._element.Group = value;
       }
     }
@@ -174,7 +174,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiElement();
+        this.CloneApiObject();
         this._element.IsDummy = value;
       }
     }
@@ -186,7 +186,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiElement();
+        this.CloneApiObject();
         this._element.Name = value;
       }
     }
@@ -198,7 +198,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiElement();
+        this.CloneApiObject();
         this._element.Offset.X1 = value.X1.Meters;
         this._element.Offset.X2 = value.X2.Meters;
         this._element.Offset.Y = value.Y.Meters;
@@ -213,7 +213,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiElement();
+        this.CloneApiObject();
         this._element.OrientationAngle = value;
       }
     }
@@ -225,7 +225,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiElement();
+        this.CloneApiObject();
         this._orientationNode = value;
       }
     }
@@ -244,7 +244,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiElement();
+        this.CloneApiObject();
         this._element.Type = value;
       }
     }
@@ -297,7 +297,7 @@ namespace GsaGH.Parameters
       dup._id = this._id;
       dup._element = this._element;
       if (cloneApiElement)
-        dup.CloneApiElement();
+        dup.CloneApiObject();
       dup._line = (LineCurve)this._line.DuplicateShallow();
       if (_rel1 != null)
         dup._rel1 = this._rel1.Duplicate();
@@ -317,7 +317,7 @@ namespace GsaGH.Parameters
       return idd + type + new GH_Curve(this.Line).ToString();
     }
 
-    internal void CloneApiElement()
+    internal void CloneApiObject()
     {
       this._element = this.GetAPI_ElementClone();
     }

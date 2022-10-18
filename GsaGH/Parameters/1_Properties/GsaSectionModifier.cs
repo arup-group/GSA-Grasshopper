@@ -74,7 +74,7 @@ namespace GsaGH.Parameters
           throw new ArgumentException("AreaModifier must be either Area or Ratio");
         else
         {
-          this.CloneAPIModifier();
+          this.CloneApiObject();
           if (value.QuantityInfo.UnitType == typeof(AreaUnit))
             this._sectionModifier.AreaModifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaUnit.SquareMeter));
           else
@@ -97,7 +97,7 @@ namespace GsaGH.Parameters
           throw new ArgumentException("I11Modifier must be either AreaMomentOfInertia or Ratio");
         else
         {
-          CloneAPIModifier();
+          CloneApiObject();
           if (value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit))
             this._sectionModifier.I11Modifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
           else
@@ -120,7 +120,7 @@ namespace GsaGH.Parameters
           throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
         else
         {
-          this.CloneAPIModifier();
+          this.CloneApiObject();
           if (value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit))
             this._sectionModifier.I22Modifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
           else
@@ -144,7 +144,7 @@ namespace GsaGH.Parameters
           throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
         else
         {
-          this.CloneAPIModifier();
+          this.CloneApiObject();
           if (value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit))
             this._sectionModifier.JModifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(AreaMomentOfInertiaUnit.MeterToTheFourth));
           else
@@ -167,7 +167,7 @@ namespace GsaGH.Parameters
           throw new ArgumentException("VolumeModifier must be either VolumePerLength or Ratio");
         else
         {
-          this.CloneAPIModifier();
+          this.CloneApiObject();
           if (value.QuantityInfo.UnitType == typeof(VolumePerLengthUnit))
             this._sectionModifier.VolumeModifier = new SectionModifierAttribute(SectionModifierOptionType.TO, value.As(VolumePerLengthUnit.CubicMeterPerMeter));
           else
@@ -187,7 +187,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneAPIModifier();
+        this.CloneApiObject();
         if (value.Unit == RatioUnit.Percent) // assume that percentage unit is modify BY option
           this._sectionModifier.K11Modifier = new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
         else // assume that all other than percentage unit is modify TO option
@@ -205,7 +205,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneAPIModifier();
+        CloneApiObject();
         if (value.Unit == RatioUnit.Percent) // assume that percentage unit is modify BY option
           this._sectionModifier.K22Modifier = new SectionModifierAttribute(SectionModifierOptionType.BY, value.As(RatioUnit.DecimalFraction));
         else // assume that all other than percentage unit is modify TO option
@@ -220,7 +220,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneAPIModifier();
+        this.CloneApiObject();
         this._sectionModifier.AdditionalMass = value.As(LinearDensityUnit.KilogramPerMeter);
       }
     }
@@ -242,7 +242,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneAPIModifier();
+        CloneApiObject();
         switch (value)
         {
           case StressOptionType.UseModified:
@@ -267,7 +267,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneAPIModifier();
+        CloneApiObject();
         this._sectionModifier.IsBendingAxesPrincipal = value;
       }
     }
@@ -279,12 +279,12 @@ namespace GsaGH.Parameters
       }
       set
       {
-        CloneAPIModifier();
+        CloneApiObject();
         this._sectionModifier.IsReferencePointCentroid = value;
       }
     }
 
-    private void CloneAPIModifier()
+    private void CloneApiObject()
     {
       SectionModifier dup = new SectionModifier();
       dup.AreaModifier = new SectionModifierAttribute(this._sectionModifier.AreaModifier.Option, this._sectionModifier.AreaModifier.Value);
@@ -318,7 +318,7 @@ namespace GsaGH.Parameters
     {
       GsaSectionModifier dup = new GsaSectionModifier();
       dup._sectionModifier = this._sectionModifier;
-      dup.CloneAPIModifier();
+      dup.CloneApiObject();
       return dup;
     }
 
