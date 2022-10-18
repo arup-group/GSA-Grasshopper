@@ -7,7 +7,7 @@ using Xunit;
 namespace IntegrationTests.Parameters
 {
   [Collection("GrasshopperFixture collection")]
-  public class GsaBool6Test
+  public class CreateBool6Test
   {
     public static GH_Document Document()
     {
@@ -32,7 +32,7 @@ namespace IntegrationTests.Parameters
     [InlineData("ZZ", false)]
     public void OutputTest(string groupIdentifier, bool expected)
     {
-      GH_Document doc = GsaBool6Test.Document();
+      GH_Document doc = CreateBool6Test.Document();
       GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, groupIdentifier);
       Assert.NotNull(param);
       param.CollectData();
@@ -41,9 +41,9 @@ namespace IntegrationTests.Parameters
     }
 
     [Fact]
-    public void NoRuntimeErrorsTest()
+    public void NoRuntimeErrorTest()
     {
-      Helper.TestNoRuntimeMessagesInDocument(GsaBool6Test.Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(CreateBool6Test.Document(), GH_RuntimeMessageLevel.Error);
     }
   }
 }
