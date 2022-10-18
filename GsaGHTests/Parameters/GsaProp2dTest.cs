@@ -27,30 +27,26 @@ namespace GsaGHTests.Parameters
     [Fact]
     public void TestCreateProp2d()
     {
-      // create new api property
-      Prop2D apiProp = new Prop2D
-      {
-        AxisProperty = 1,
-        MaterialGradeProperty = 4,
-        MaterialAnalysisProperty = 42,
-        MaterialType = MaterialType.GENERIC,
-        Name = "mariam",
-        Description = "awesome property",
-        Type = Property2D_Type.LOAD
-      };
+      int axisProperty = 1;
+      int materialGradeProperty = 4;
+      int materialAnalysisProperty = 42;
+      MaterialType materialType = MaterialType.GENERIC;
+      string name = "mariam";
+      string description = "awesome property";
+      Property2D_Type type = Property2D_Type.LOAD;
 
       // create new 2D property
       GsaProp2d prop = new GsaProp2d
       {
-        AxisProperty = apiProp.AxisProperty,
-        Name = apiProp.Name,
-        Description = apiProp.Description,
-        Type = apiProp.Type
+        AxisProperty = axisProperty,
+        Name = name,
+        Description = description,
+        Type = type
       };
-      GsaMaterial mat = new GsaMaterial((int)apiProp.MaterialType)
+      GsaMaterial mat = new GsaMaterial((int)materialType)
       {
-        AnalysisProperty = apiProp.MaterialAnalysisProperty,
-        GradeProperty = apiProp.MaterialGradeProperty,
+        AnalysisProperty = materialAnalysisProperty,
+        GradeProperty = materialGradeProperty,
       };
       prop.Material = mat;
 
@@ -69,29 +65,26 @@ namespace GsaGHTests.Parameters
     [Fact]
     public void TestDuplicateProp2d()
     {
-      Prop2D apiPropOriginal = new Prop2D
-      {
-        AxisProperty = 0,
-        MaterialGradeProperty = 2,
-        MaterialAnalysisProperty = 13,
-        MaterialType = MaterialType.UNDEF,
-        Name = "mariam",
-        Description = "awesome property",
-        Type = Property2D_Type.SHELL
-      };
+      int axisProperty = 0;
+      int materialGradeProperty = 2;
+      int materialAnalysisProperty = 13;
+      MaterialType materialType = MaterialType.UNDEF;
+      string name = "mariam";
+      string description = "awesome property";
+      Property2D_Type type = Property2D_Type.SHELL;
 
       // create new 2D property
       GsaProp2d orig = new GsaProp2d(14)
       {
-        AxisProperty = apiPropOriginal.AxisProperty,
-        Name = apiPropOriginal.Name,
-        Description = apiPropOriginal.Description,
-        Type = apiPropOriginal.Type
+        AxisProperty = axisProperty,
+        Name = name,
+        Description = description,
+        Type = type
       };
-      GsaMaterial mat = new GsaMaterial((int)apiPropOriginal.MaterialType)
+      GsaMaterial mat = new GsaMaterial((int)materialType)
       {
-        AnalysisProperty = apiPropOriginal.MaterialAnalysisProperty,
-        GradeProperty = apiPropOriginal.MaterialGradeProperty,
+        AnalysisProperty = materialAnalysisProperty,
+        GradeProperty = materialGradeProperty,
       };
       orig.Material = mat;
 
