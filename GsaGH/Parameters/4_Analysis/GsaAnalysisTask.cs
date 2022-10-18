@@ -74,15 +74,14 @@ namespace GsaGH.Parameters
       this.Type = (AnalysisType)task.Type;
       this.Name = task.Name;
     }
+    #endregion
 
+    #region methods
     internal void CreateDeafultCases(Model model)
     {
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Util.Gsa.FromGSA.GetAnalysisTasksAndCombinations(model);
       this.Cases = tuple.Item2.Select(x => x.Value).ToList();
     }
-    #endregion
-
-    #region methods
     internal void CreateDeafultCases(GsaModel gsaModel)
     {
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Util.Gsa.FromGSA.GetAnalysisTasksAndCombinations(gsaModel);
@@ -94,7 +93,7 @@ namespace GsaGH.Parameters
       if (this == null) { return null; }
       GsaAnalysisTask dup = new GsaAnalysisTask();
       dup.m_idd = this.m_idd;
-      dup.Cases = this.Cases;
+      dup.Cases = this.Cases.ToList();
       dup.Type = this.Type;
       dup.Name = this.Name;
       return dup;

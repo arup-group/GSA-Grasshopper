@@ -946,6 +946,10 @@ namespace GsaGH.Parameters
     #endregion
 
     #region other methods
+    public GsaResult Duplicate()
+    {
+      return this;
+    }
     public override string ToString()
     {
       string txt = "";
