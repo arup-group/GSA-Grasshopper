@@ -1,10 +1,9 @@
-﻿using GsaGHTests.Helpers;
-using GsaGH.Components;
+﻿using GsaGH.Components;
 using GsaGH.Parameters;
+using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
-using Rhino.NodeInCode;
 
 namespace GsaGHTests.Slab
 {

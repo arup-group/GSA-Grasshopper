@@ -1,7 +1,7 @@
 ﻿using GsaGH.Parameters;
 using Xunit;
 
-namespace ParamsIntegrationTests
+namespace GsaGHTests.Parameters
 {
   [Collection("GrasshopperFixture collection")]
   public class GsaBool6Test
