@@ -961,7 +961,7 @@ namespace GsaGH.Util.Gsa
                 //topoType.Add(topoType[0]);
                 string error = " Invalid topology Mem1D ID: " + key + ".";
                 if (owner != null)
-                  owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, error);
+                  owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, error);
                 return;
               }
 
