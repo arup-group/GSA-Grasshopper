@@ -29,7 +29,6 @@ namespace GsaGHTests.Parameters
     {
       int axisProperty = 1;
       int materialGradeProperty = 4;
-      int materialAnalysisProperty = 42;
       MaterialType materialType = MaterialType.GENERIC;
       string name = "mariam";
       string description = "awesome property";
@@ -45,14 +44,13 @@ namespace GsaGHTests.Parameters
       };
       GsaMaterial mat = new GsaMaterial((int)materialType)
       {
-        AnalysisProperty = materialAnalysisProperty,
-        GradeProperty = materialGradeProperty,
+        GradeProperty = materialGradeProperty
       };
       prop.Material = mat;
 
       Assert.Equal(-1, prop.AxisProperty);
       Assert.Equal(4, prop.Material.GradeProperty);
-      Assert.Equal(42, prop.Material.AnalysisProperty);
+      Assert.Equal(0, prop.Material.AnalysisProperty);
       Assert.Equal(MaterialType.GENERIC.ToString(),
           prop.Material.MaterialType.ToString());
       Assert.Equal("mariam", prop.Name);
@@ -66,7 +64,6 @@ namespace GsaGHTests.Parameters
     public void TestDuplicateProp2d()
     {
       int axisProperty = 0;
-      int materialGradeProperty = 2;
       int materialAnalysisProperty = 13;
       MaterialType materialType = MaterialType.UNDEF;
       string name = "mariam";
@@ -84,7 +81,6 @@ namespace GsaGHTests.Parameters
       GsaMaterial mat = new GsaMaterial((int)materialType)
       {
         AnalysisProperty = materialAnalysisProperty,
-        GradeProperty = materialGradeProperty,
       };
       orig.Material = mat;
 
@@ -103,7 +99,7 @@ namespace GsaGHTests.Parameters
       orig.Type = Property2D_Type.CURVED_SHELL;
 
       Assert.Equal(0, dup.AxisProperty);
-      Assert.Equal(2, dup.Material.GradeProperty);
+      Assert.Equal(0, dup.Material.GradeProperty);
       Assert.Equal(13, dup.Material.AnalysisProperty);
       Assert.Equal(MaterialType.UNDEF.ToString(),
           dup.Material.MaterialType.ToString());
@@ -114,7 +110,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal(14, dup.ID);
 
       Assert.Equal(-1, orig.AxisProperty);
-      Assert.Equal(4, orig.Material.GradeProperty);
+      Assert.Equal(0, orig.Material.GradeProperty);
       Assert.Equal(42, orig.Material.AnalysisProperty);
       Assert.Equal(MaterialType.FABRIC.ToString(),
           orig.Material.MaterialType.ToString());

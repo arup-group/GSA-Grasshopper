@@ -272,7 +272,7 @@ namespace GsaGH.Parameters
       };
       this._line = line;
       this._id = id;
-      this._section.ID = prop;
+      this._section.Id = prop;
       this._orientationNode = orientationNode;
       this.UpdatePreview();
     }

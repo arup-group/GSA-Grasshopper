@@ -23,7 +23,6 @@ namespace GsaGHTests.Parameters
     [InlineData(typeof(GsaAnalysisCaseGoo), typeof(GsaAnalysisCase))]
     [InlineData(typeof(GsaAnalysisTaskGoo), typeof(GsaAnalysisTask))]
     [InlineData(typeof(GsaCombinationCaseGoo), typeof(GsaCombinationCase))]
-    [InlineData(typeof(GsaResultGoo), typeof(GsaResult))]
     public void GenericGH_OasysGooTest(Type gooType, Type wrapType)
     {
       // Create the actual API object

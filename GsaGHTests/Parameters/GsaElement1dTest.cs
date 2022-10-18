@@ -55,7 +55,7 @@ namespace GsaGHTests.Parameters
       // set some element class members
       elem.ID = 66;
       elem.Section = new GsaSection();
-      elem.Section.ID = 2;
+      elem.Section.Id = 2;
       elem.Colour = System.Drawing.Color.Yellow;
       elem.Group = 4;
       elem.IsDummy = true;
@@ -63,7 +63,7 @@ namespace GsaGHTests.Parameters
       GsaOffset offset = new GsaOffset(0, 0, 14.3, 0);
       elem.Offset = offset;
       elem.OrientationAngle = 90;
-      elem.Section.ID = 3;
+      elem.Section.Id = 3;
 
       // check the line end points are correct
       Assert.Equal(1, elem.Line.PointAtStart.X);
@@ -75,14 +75,14 @@ namespace GsaGHTests.Parameters
 
       // check other members are valid
       Assert.Equal(66, elem.ID);
-      Assert.Equal(3, elem.Section.ID);
+      Assert.Equal(3, elem.Section.Id);
       Assert.Equal(System.Drawing.Color.FromArgb(255, 255, 255, 0), elem.Colour);
       Assert.Equal(4, elem.Group);
       Assert.True(elem.IsDummy);
       Assert.Equal("EltonJohn", elem.Name);
       Assert.Equal(14.3, elem.Offset.Y.Value);
       Assert.Equal(90, elem.OrientationAngle);
-      Assert.Equal(3, elem.Section.ID);
+      Assert.Equal(3, elem.Section.Id);
     }
 
     [Fact]
@@ -97,7 +97,7 @@ namespace GsaGHTests.Parameters
       // set some element class members
       orig.ID = 3;
       orig.Section = new GsaSection();
-      orig.Section.ID = 7;
+      orig.Section.Id = 7;
       orig.Colour = System.Drawing.Color.Aqua;
       orig.Group = 1;
       orig.IsDummy = false;
@@ -112,7 +112,7 @@ namespace GsaGHTests.Parameters
       // make some changes to original
       orig.Line = new LineCurve(new Line(new Point3d(1, 1, -4), new Point3d(1, 1, 0)));
       orig.ID = 5;
-      orig.Section.ID = 9;
+      orig.Section.Id = 9;
       orig.Colour = System.Drawing.Color.Red;
       orig.Group = 2;
       orig.IsDummy = true;
@@ -129,7 +129,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal(-1, dup.Line.PointAtEnd.Y, 1E-9);
       Assert.Equal(4, dup.Line.PointAtEnd.Z, 1E-9);
       Assert.Equal(3, dup.ID);
-      Assert.Equal(7, dup.Section.ID);
+      Assert.Equal(7, dup.Section.Id);
       Assert.Equal(System.Drawing.Color.FromArgb(255, 0, 255, 255), dup.Colour);
       Assert.Equal(1, dup.Group);
       Assert.False(dup.IsDummy);
@@ -145,7 +145,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal(1, orig.Line.PointAtEnd.Y, 1E-9);
       Assert.Equal(0, orig.Line.PointAtEnd.Z, 1E-9);
       Assert.Equal(5, orig.ID);
-      Assert.Equal(9, orig.Section.ID);
+      Assert.Equal(9, orig.Section.Id);
       Assert.Equal(System.Drawing.Color.FromArgb(255, 255, 0, 0), orig.Colour);
       Assert.Equal(2, orig.Group);
       Assert.True(orig.IsDummy);

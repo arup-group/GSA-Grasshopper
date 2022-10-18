@@ -56,7 +56,7 @@ namespace GsaGHTests.Parameters
 
       Assert.Equal(System.Drawing.Color.FromArgb(255, 255, 255, 255), mem.Colour);
       Assert.Equal(4, mem.ID);
-      Assert.Equal(0.56, mem.MeshSize.Value);
+      Assert.Equal(0.56, mem.MeshSize.Meters);
       Assert.Equal("meminem", mem.Name);
       Assert.True(mem.IsDummy);
       Assert.Equal(-0.45, mem.Offset.Z.Value);
@@ -122,7 +122,7 @@ namespace GsaGHTests.Parameters
 
       Assert.Equal(System.Drawing.Color.FromArgb(255, 0, 0, 255), dup.Colour);
       Assert.Equal(13, dup.ID);
-      Assert.Equal(1.56, dup.MeshSize.Value);
+      Assert.Equal(1.56, dup.MeshSize.Meters);
       Assert.Equal("ehbaba", dup.Name);
       Assert.False(dup.IsDummy);
       Assert.Equal(0.33, dup.Offset.X1.Value);

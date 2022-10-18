@@ -474,7 +474,7 @@ namespace GsaGH.Components
           {
             DataTree<GsaElement1dGoo> tree = new DataTree<GsaElement1dGoo>();
             foreach (GsaElement1dGoo element in results.Elem1ds)
-              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Section.ID));
+              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Section.Id));
             data.SetDataTree(1, tree);
           }
         }
@@ -562,7 +562,7 @@ namespace GsaGH.Components
           {
             DataTree<GsaMember1dGoo> tree = new DataTree<GsaMember1dGoo>();
             foreach (GsaMember1dGoo element in results.Mem1ds)
-              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Section.ID));
+              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Section.Id));
             data.SetDataTree(4, tree);
           }
         }

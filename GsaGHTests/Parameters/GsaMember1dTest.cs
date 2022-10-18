@@ -66,7 +66,7 @@ namespace GsaGHTests.Parameters
       mem.Name = "gemma";
       mem.IsDummy = true;
       mem.Offset = new GsaOffset(0, 0, 0, -0.45);
-      mem.Section.ID = 2;
+      mem.Section.Id = 2;
       mem.Type1D = ElementType.BEAM;
       mem.Type = MemberType.BEAM;
 
@@ -85,7 +85,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal("gemma", mem.Name);
       Assert.True(mem.IsDummy);
       Assert.Equal(-0.45, mem.Offset.Z.Value);
-      Assert.Equal(2, mem.Section.ID);
+      Assert.Equal(2, mem.Section.Id);
       Assert.Equal(ElementType.BEAM, mem.Type1D);
       Assert.Equal(MemberType.BEAM, mem.Type);
     }
@@ -111,7 +111,7 @@ namespace GsaGHTests.Parameters
       orig.IsDummy = false;
       orig.Offset = new GsaOffset(0, 0.1, 0, 0);
       orig.Section = new GsaSection();
-      orig.Section.ID = 4;
+      orig.Section.Id = 4;
       orig.Group = 99;
       orig.Type1D = ElementType.BAR;
       orig.Type = MemberType.COLUMN;
@@ -125,7 +125,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal("Sally", dup.Name);
       Assert.False(dup.IsDummy);
       Assert.Equal(0.1, dup.Offset.X2.Value);
-      Assert.Equal(4, dup.Section.ID);
+      Assert.Equal(4, dup.Section.Id);
       Assert.Equal(99, dup.Group);
       Assert.Equal(ElementType.BAR, dup.Type1D);
       Assert.Equal(MemberType.COLUMN, dup.Type);
@@ -136,7 +136,7 @@ namespace GsaGHTests.Parameters
       orig.Name = "Peter Peterson";
       orig.IsDummy = true;
       orig.Offset = new GsaOffset(0, 0.4, 0, 0);
-      orig.Section.ID = 1;
+      orig.Section.Id = 1;
       orig.Group = 4;
       orig.Type1D = ElementType.BEAM;
       orig.Type = MemberType.BEAM;
@@ -147,7 +147,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal("Sally", dup.Name);
       Assert.False(dup.IsDummy);
       Assert.Equal(0.1, dup.Offset.X2.Value);
-      Assert.Equal(4, dup.Section.ID);
+      Assert.Equal(4, dup.Section.Id);
       Assert.Equal(99, dup.Group);
       Assert.Equal(ElementType.BAR, dup.Type1D);
       Assert.Equal(MemberType.COLUMN, dup.Type);
@@ -158,7 +158,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal("Peter Peterson", orig.Name);
       Assert.True(orig.IsDummy);
       Assert.Equal(0.4, orig.Offset.X2.Value);
-      Assert.Equal(1, orig.Section.ID);
+      Assert.Equal(1, orig.Section.Id);
       Assert.Equal(4, orig.Group);
       Assert.Equal(ElementType.BEAM, orig.Type1D);
       Assert.Equal(MemberType.BEAM, orig.Type);

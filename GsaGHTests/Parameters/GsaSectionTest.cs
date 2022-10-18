@@ -41,13 +41,12 @@ namespace GsaGHTests.Parameters
 
       // set other properties in section
 
-      sect.Material.AnalysisProperty = 1;
       sect.Material.GradeProperty = 2;
       sect.Material.MaterialType = GsaMaterial.MatType.CONCRETE;
       sect.Name = "mariam";
       sect.Pool = 4;
 
-      Assert.Equal(1, sect.Material.AnalysisProperty);
+      Assert.Equal(0, sect.Material.AnalysisProperty);
       Assert.Equal(2, sect.Material.GradeProperty);
       Assert.Equal(MaterialType.CONCRETE.ToString(),
           sect.Material.MaterialType.ToString());
@@ -67,7 +66,7 @@ namespace GsaGHTests.Parameters
       GsaSection sect = new GsaSection(profile, 15);
 
       Assert.Equal(area_expected, sect.Area);
-      Assert.Equal(15, sect.ID);
+      Assert.Equal(15, sect.Id);
     }
 
     [Fact]
@@ -103,18 +102,17 @@ namespace GsaGHTests.Parameters
       Area area_expected = new Area(myarea2, AreaUnit.SquareMillimeter);
       orig.Profile = profile2;
       orig.Material.AnalysisProperty = 4;
-      orig.Material.GradeProperty = 6;
       orig.Material.MaterialType = GsaMaterial.MatType.TIMBER;
       orig.Name = "kris";
       orig.Pool = 99;
 
       Assert.Equal("STD R 15 20", orig.Profile);
-      Assert.Equal(area_expected, orig.Area);
+      Assert.Equal(area_expected.SquareMillimeters, orig.Area.SquareMillimeters);
 
       Assert.Equal(profile, dup.Profile);
-      Assert.Equal(area_expected, dup.Area);
+      Assert.Equal(myarea1, dup.Area.SquareMillimeters, 5);
 
-      Assert.Equal(1, dup.Material.AnalysisProperty);
+      Assert.Equal(0, dup.Material.AnalysisProperty);
       Assert.Equal(2, dup.Material.GradeProperty);
       Assert.Equal(MaterialType.STEEL.ToString(),
           dup.Material.MaterialType.ToString());
@@ -122,7 +120,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal(12, dup.Pool);
 
       Assert.Equal(4, orig.Material.AnalysisProperty);
-      Assert.Equal(6, orig.Material.GradeProperty);
+      Assert.Equal(0, orig.Material.GradeProperty);
       Assert.Equal(MaterialType.TIMBER.ToString(),
           orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.Name);

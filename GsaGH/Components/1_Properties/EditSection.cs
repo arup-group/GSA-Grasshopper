@@ -82,7 +82,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            gsaSection.ID = id;
+            gsaSection.Id = id;
         }
 
         // 2 profile
@@ -154,7 +154,7 @@ namespace GsaGH.Components
         ValueType colour = (gsaSection.API_Section == null) ? null : gsaSection.API_Section.Colour;
 
         DA.SetData(0, new GsaSectionGoo(gsaSection));
-        DA.SetData(1, gsaSection.ID);
+        DA.SetData(1, gsaSection.Id);
         DA.SetData(2, prof);
         DA.SetData(3, new GsaMaterialGoo(new GsaMaterial(gsaSection))); // to implemented GsaMaterial
         DA.SetData(4, new GsaSectionModifierGoo(gsaSection.Modifier));
