@@ -7,6 +7,21 @@
 //{
 //  public class Elem1dTests
 //  {
+
+
+//[Fact]
+//public void GsaElement1dEqualsTest()
+//{
+//  GsaSection section = new GsaSection();
+//  section.Name = "Name";
+//  GsaElement1d original = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode());
+//  original.Name = "Name";
+//  GsaElement1d duplicate = original.Duplicate();
+
+//  Duplicates.AreEqual(original, duplicate);
+//}
+
+
 //    [Fact]
 //    public void TestCreateGsaElem1dFromLn()
 //    {

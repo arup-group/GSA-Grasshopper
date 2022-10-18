@@ -10,6 +10,18 @@
 //{
 //  public class Elem2dTests
 //  {
+
+
+//[Fact]
+//public void GsaElement2dEqualsTest()
+//{
+//  GsaElement2d original = new GsaElement2d(new Mesh());
+//  GsaElement2d duplicate = original.Duplicate();
+
+//  Duplicates.AreEqual(original, duplicate);
+//}
+
+
 //    [Fact]
 //    public void TestCreateGsaElem2dFromMesh()
 //    {

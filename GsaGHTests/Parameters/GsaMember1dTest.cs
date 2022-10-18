@@ -8,6 +8,23 @@
 //{
 //  public class Mem1dTests
 //  {
+
+
+
+
+//[Fact]
+//public void GsaMember1dEqualsTest()
+//{
+//  GsaSection section = new GsaSection();
+//  section.Name = "Name";
+//  GsaMember1d original = new GsaMember1d(new Member(), 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
+//  original.Name = "Name";
+//  GsaMember1d duplicate = original.Duplicate();
+//  Duplicates.AreEqual(original, duplicate);
+//}
+
+
+
 //    [Fact]
 //    public void TestCreateGsaMem1dFromCrv()
 //    {

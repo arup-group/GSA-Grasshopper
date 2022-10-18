@@ -11,6 +11,20 @@
 
 //  public class SectionTests
 //  {
+
+
+
+//[Fact]
+//public void GsaSectionEqualsTest()
+//{
+//  GsaSection original = new GsaSection();
+//  original.Name = "Name";
+//  GsaSection duplicate = original.Duplicate();
+
+//  Duplicates.AreEqual(original, duplicate);
+//}
+
+
 //    [Fact]
 //    public void TestCreateSection()
 //    {

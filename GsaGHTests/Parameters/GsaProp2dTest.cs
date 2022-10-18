@@ -6,6 +6,23 @@
 //{
 //  public class Prop2dTests
 //  {
+
+
+
+//[Fact]
+//public void GsaProp2dEqualsTest()
+//{
+//  GsaProp2d original = new GsaProp2d();
+//  original.Name = "Name";
+//  original.Thickness = new OasysUnits.Length(200, LengthUnit.Millimeter);
+//  GsaProp2d duplicate = original.Duplicate();
+
+//  Duplicates.AreEqual(original, duplicate);
+//}
+
+
+
+
 //    [Fact]
 //    public void TestCreateProp2d()
 //    {

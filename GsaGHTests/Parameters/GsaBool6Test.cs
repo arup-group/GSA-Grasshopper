@@ -1,4 +1,5 @@
 ﻿using GsaGH.Parameters;
+using GsaGHTests.Helpers;
 using Xunit;
 
 namespace GsaGHTests.Parameters
@@ -11,9 +12,10 @@ namespace GsaGHTests.Parameters
     [InlineData(false, false, false, false, false, false)]
     public void ConstructorTest(bool x, bool y, bool z, bool xx, bool yy, bool zz)
     {
-      // create new bool6
+      // Act
       GsaBool6 b6 = new GsaBool6(x, y, z, xx, yy, zz);
 
+      // Assert
       Assert.Equal(x, b6.X);
       Assert.Equal(y, b6.Y);
       Assert.Equal(z, b6.Z);
@@ -27,18 +29,14 @@ namespace GsaGHTests.Parameters
     [InlineData(false, false, false, false, false, false)]
     public void DuplicateTest(bool x, bool y, bool z, bool xx, bool yy, bool zz)
     {
-      // create new bool6
+      // Arrange
       GsaBool6 original = new GsaBool6(x, y, z, xx, yy, zz);
 
-      // duplicate
+      // Act
       GsaBool6 duplicate = original.Duplicate();
 
-      Assert.Equal(x, duplicate.X);
-      Assert.Equal(y, duplicate.Y);
-      Assert.Equal(z, duplicate.Z);
-      Assert.Equal(xx, duplicate.XX);
-      Assert.Equal(yy, duplicate.YY);
-      Assert.Equal(zz, duplicate.ZZ);
+      // Assert
+      Duplicates.AreEqual(original, duplicate);
 
       // make some changes to duplicate
       duplicate.X = false;

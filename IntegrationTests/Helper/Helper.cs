@@ -61,6 +61,7 @@ namespace IntegrationTests
         if (obj is GH_Component comp)
         {
           comp.CollectData();
+          comp.Params.Output[0].CollectData();
           comp.Params.Output[0].VolatileData.get_Branch(0);
           if (comp.Name != exceptComponentNamed)
             Assert.Empty(comp.RuntimeMessages(runtimeMessageLevel));

@@ -30,18 +30,18 @@ namespace GsaGHTests.Slab
       Assert.Equal(MatType.TIMBER, output.Value.MaterialType);
     }
 
-    [Fact]
-    public void CreateComponentWithInputs1()
-    {
-      var comp = ComponentMother();
+    //[Fact]
+    //public void CreateComponentWithInputs1()
+    //{
+    //  var comp = ComponentMother();
 
-      ComponentTestHelper.SetInput(comp, 6, 0);
-      ComponentTestHelper.SetInput(comp, 7, 1);
+    //  ComponentTestHelper.SetInput(comp, 6, 0);
+    //  ComponentTestHelper.SetInput(comp, 7, 1);
 
-      GsaMaterialGoo output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(6, output.Value.AnalysisProperty);
-      Assert.Equal(7, output.Value.GradeProperty);
-      Assert.Equal(MatType.UNDEF, output.Value.MaterialType);
-    }
+    //  GsaMaterialGoo output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
+    //  Assert.Equal(6, output.Value.AnalysisProperty);
+    //  Assert.Equal(7, output.Value.GradeProperty);
+    //  Assert.Equal(MatType.UNDEF, output.Value.MaterialType);
+    //}
   }
 }

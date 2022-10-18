@@ -5,6 +5,21 @@
 //namespace ParamsIntegrationTests
 //{
 //  public class NodeTests
+
+
+
+
+//[Fact]
+//public void GsaNodeEqualsTest()
+//{
+//  GsaNode original = new GsaNode();
+//  GsaNode duplicate = original.Duplicate();
+
+//  Duplicates.AreEqual(original, duplicate);
+//}
+
+
+
 //  {
 //    [Fact]
 //    public void TestCreateGsaNodeFromPt()

@@ -8,6 +8,18 @@
 //  [Collection("GrasshopperFixture collection")]
 //  public class ModelTests
 //  {
+
+
+
+//[Fact]
+//public void GsaModelEqualsTest()
+//{
+//  GsaModel original = new GsaModel();
+//  GsaModel duplicate = original.Duplicate();
+//  Duplicates.AreEqual(original, duplicate);
+//}
+
+
 //    [Fact]
 //    public void TestOpenModel()
 //    {
