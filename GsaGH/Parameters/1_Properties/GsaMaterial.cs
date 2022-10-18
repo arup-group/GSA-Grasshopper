@@ -57,7 +57,8 @@ namespace GsaGH.Parameters
       set
       {
         this._grade = value;
-        this._analProp = 0;
+        if (this._grade > 0)
+          this._analProp = 0;
         this._guid = Guid.NewGuid();
       }
     }

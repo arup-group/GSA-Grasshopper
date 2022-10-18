@@ -127,7 +127,11 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneSection();
+        this._material = value;
+        if (this._section == null)
+          this._section = new Section();
+        else
+          CloneSection();
         this._section.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(_material);
         this._section.MaterialAnalysisProperty = _material.AnalysisProperty;
         this._section.MaterialGradeProperty = _material.GradeProperty;
@@ -275,7 +279,7 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       string prof = this._section.Profile.Replace("%", " ");
-      string pb = "PB" + this.ID + " ";
+      string pb = this.ID > 0 ? "PB" + this.ID + " " : "";
       string mod = this._modifier.IsModified ? " modified" : "";
       return pb + prof + mod;
     }

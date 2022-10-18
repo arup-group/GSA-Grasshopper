@@ -17,6 +17,6 @@ namespace GsaGH.Parameters
 
     public GsaResultGoo(GsaResult item) : base(item) { }
 
-    public override IGH_Goo Duplicate() => new GsaResultGoo(this.Value);
+    public override IGH_Goo Duplicate() => this;
   }
 }

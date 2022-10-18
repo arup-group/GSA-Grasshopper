@@ -84,9 +84,6 @@ namespace GsaGH.Util.Gsa.ToGSA
       if (section.API_Section.MaterialAnalysisProperty != 0 && section.Material != null && section.Material.AnalysisMaterial != null)
         section.API_Section.MaterialAnalysisProperty = Materials.ConvertCustomMaterial(section.Material, ref existingMaterials, ref materials_guid);
 
-      
-
-
       // section
       if (section.ID > 0)
       {
