@@ -459,6 +459,7 @@ namespace GsaGH.Components
         {
           data.SetDataList(0, results.Nodes.OrderBy(item => item.Value.ID));
           supportNodes = results.displaySupports;
+          this.BoundingBox = new BoundingBox(results.Nodes.Select(n => n.Value.Point).ToArray());
         }
         if (results.Elem1ds != null)
         {
@@ -605,6 +606,7 @@ namespace GsaGH.Components
       }
     }
 
+    BoundingBox BoundingBox;
     ConcurrentBag<GsaElement2dGoo> element2ds;
     ConcurrentBag<GsaElement3dGoo> element3ds;
     Mesh cachedDisplayMeshShaded;
@@ -612,7 +614,7 @@ namespace GsaGH.Components
     Mesh cachedDisplayNgonMeshShaded;
     Mesh cachedDisplayNgonMeshNotShaded;
     ConcurrentBag<GsaNodeGoo> supportNodes;
-
+    public override BoundingBox ClippingBox => this.BoundingBox;
     public override void DrawViewportWires(IGH_PreviewArgs args)
     {
       base.DrawViewportWires(args);
