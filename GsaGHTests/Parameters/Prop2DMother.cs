@@ -4,6 +4,8 @@ namespace GsaGHTests.Parameters
 {
   internal class Prop2DMother
   {
+
+    // this is wrong!
     internal static Prop2D exampleProp1 = new Prop2D
     {
       AxisProperty = 1,

@@ -105,7 +105,6 @@ namespace GsaGH.Components
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
       pManager.AddGenericParameter("Bool6", "B6", "GSA Bool6 to set releases or restraints", GH_ParamAccess.item);
-
     }
     #endregion
 
