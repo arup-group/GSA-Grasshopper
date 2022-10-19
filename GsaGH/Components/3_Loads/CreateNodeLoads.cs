@@ -5,6 +5,11 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -13,15 +18,17 @@ namespace GsaGH.Components
   public class CreateNodeLoad : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public CreateNodeLoad()
-        : base("Create Node Load", "NodeLoad", "Create GSA Node Load",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat3())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
     public override GH_Exposure Exposure => GH_Exposure.primary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.NodeLoad;
+
+    public CreateNodeLoad() : base("Create Node Load",
+      "NodeLoad",
+      "Create GSA Node Load",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat3())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -32,13 +39,13 @@ namespace GsaGH.Components
       {
         dropdownitems = new List<List<string>>();
         dropdownitems.Add(loadTypeOptions);
-        dropdownitems.Add(Units.FilteredForceUnits);
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(_mode.ToString());
-        selecteditems.Add(Units.ForceUnit.ToString());
-        selecteditems.Add(Units.LengthUnitGeometry.ToString());
+        selecteditems.Add(DefaultUnits.ForceUnit.ToString());
+        selecteditems.Add(DefaultUnits.LengthUnitGeometry.ToString());
 
         first = false;
       }
@@ -118,8 +125,8 @@ namespace GsaGH.Components
             "Length Unit"
     });
 
-    private ForceUnit forceUnit = Units.ForceUnit;
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     #endregion
 
@@ -242,12 +249,12 @@ namespace GsaGH.Components
           case "X":
           case "Y":
           case "Z":
-            load = GetInput.GetForce(this, DA, 4, forceUnit).Newtons;
+            load = ((Force)Input.UnitNumber(this, DA, 4, forceUnit)).Newtons;
             break;
           case "XX":
           case "YY":
           case "ZZ":
-            load = GetInput.GetForce(this, DA, 4, forceUnit).Newtons * new Length(1, lengthUnit).Meters;
+            load = ((Force)Input.UnitNumber(this, DA, 4, forceUnit)).Newtons * new Length(1, lengthUnit).Meters;
             break;
         }
       }
@@ -258,12 +265,12 @@ namespace GsaGH.Components
           case "X":
           case "Y":
           case "Z":
-            load = GetInput.GetLength(this, DA, 4, lengthUnit).Meters;
+            load = ((Length)Input.UnitNumber(this, DA, 4, lengthUnit)).Meters;
             break;
           case "XX":
           case "YY":
           case "ZZ":
-            load = GetInput.GetAngle(this, DA, 4, AngleUnit.Radian).Radians;
+            load = ((Angle)Input.UnitNumber(this, DA, 4, AngleUnit.Radian)).Radians;
             break;
         }
       }
@@ -291,6 +298,7 @@ namespace GsaGH.Components
       Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
       return base.Write(writer);
     }
+
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       try // this will fail if user has an old version of the component
@@ -303,8 +311,8 @@ namespace GsaGH.Components
 
         dropdownitems = new List<List<string>>();
         dropdownitems.Add(loadTypeOptions);
-        dropdownitems.Add(Units.FilteredForceUnits);
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(reader.GetString("select"));

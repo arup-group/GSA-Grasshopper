@@ -9,6 +9,9 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -21,8 +24,7 @@ namespace GsaGH.Components
   public class GetGeometry : GH_OasysTaskCapableComponent<GetGeometry.SolveResults>, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
     public GetGeometry()
       : base("Get Model Geometry", "GetGeo", "Get nodes, elements and members from GSA model",
@@ -32,7 +34,6 @@ namespace GsaGH.Components
     }
 
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GetGeometry;
     #endregion
 
@@ -47,7 +48,7 @@ namespace GsaGH.Components
 
         // length
         //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);
@@ -89,7 +90,7 @@ namespace GsaGH.Components
             "Unit"
     });
     private bool first = true;
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
     string unitAbbreviation;
     #region menu override
     private enum FoldMode
@@ -214,7 +215,7 @@ namespace GsaGH.Components
           {
             // create nodes
             results.Nodes = Util.Gsa.FromGSA.GetNodes(nDict, lengthUnit, axDict);
-            results.displaySupports = new ConcurrentBag<GsaNodeGoo>(results.Nodes.AsParallel().Where(n => n.Value.isSupport));
+            results.displaySupports = new ConcurrentBag<GsaNodeGoo>(results.Nodes.AsParallel().Where(n => n.Value.IsSupport));
           }
 
           if (i == 1)
@@ -345,7 +346,7 @@ namespace GsaGH.Components
           }
         }
       }
-
+      this.ClearRuntimeMessages();
       return results;
     }
 
@@ -458,10 +459,11 @@ namespace GsaGH.Components
         {
           data.SetDataList(0, results.Nodes.OrderBy(item => item.Value.ID));
           supportNodes = results.displaySupports;
+          this.BoundingBox = new BoundingBox(results.Nodes.Select(n => n.Value.Point).ToArray());
         }
         if (results.Elem1ds != null)
         {
-          List<int> invalid1delem = results.Elem1ds.Where(x => !x.Value.IsValid).Select(x => x.Value.ID).ToList();
+          List<int> invalid1delem = results.Elem1ds.Where(x => !x.IsValid).Select(x => x.Value.ID).ToList();
           if (invalid1delem.Count > 0)
           {
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Element1D definition for Element IDs:");
@@ -473,14 +475,14 @@ namespace GsaGH.Components
           {
             DataTree<GsaElement1dGoo> tree = new DataTree<GsaElement1dGoo>();
             foreach (GsaElement1dGoo element in results.Elem1ds)
-              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Section.ID));
+              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Section.Id));
             data.SetDataTree(1, tree);
           }
         }
         if (results.Elem2ds != null)
         {
           if (_mode == FoldMode.List)
-            data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.ID.First()));
+            data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.Ids.First()));
           else
           {
             DataTree<GsaElement2dGoo> tree = new DataTree<GsaElement2dGoo>();
@@ -516,7 +518,7 @@ namespace GsaGH.Components
         {
 
           if (_mode == FoldMode.List)
-            data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.ID.First()));
+            data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.IDs.First()));
           else
           {
             DataTree<GsaElement3dGoo> tree = new DataTree<GsaElement3dGoo>();
@@ -549,7 +551,7 @@ namespace GsaGH.Components
         }
         if (results.Mem1ds != null)
         {
-          List<int> invalid1dmem = results.Mem1ds.Where(x => !x.Value.IsValid).Select(x => x.Value.ID).ToList();
+          List<int> invalid1dmem = results.Mem1ds.Where(x => !x.IsValid).Select(x => x.Value.ID).ToList();
           if (invalid1dmem.Count > 0)
           {
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member1D definition for Member IDs:");
@@ -561,13 +563,13 @@ namespace GsaGH.Components
           {
             DataTree<GsaMember1dGoo> tree = new DataTree<GsaMember1dGoo>();
             foreach (GsaMember1dGoo element in results.Mem1ds)
-              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Section.ID));
+              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Section.Id));
             data.SetDataTree(4, tree);
           }
         }
         if (results.Mem2ds != null)
         {
-          List<int> invalid2dmem = results.Mem2ds.Where(x => !x.Value.IsValid).Select(x => x.Value.ID).ToList();
+          List<int> invalid2dmem = results.Mem2ds.Where(x => !x.IsValid).Select(x => x.Value.ID).ToList();
           if (invalid2dmem.Count > 0)
           {
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member2D definition for Member IDs:");
@@ -585,7 +587,7 @@ namespace GsaGH.Components
         }
         if (results.Mem3ds != null)
         {
-          List<int> invalid3dmem = results.Mem3ds.Where(x => !x.Value.IsValid).Select(x => x.Value.ID).ToList();
+          List<int> invalid3dmem = results.Mem3ds.Where(x => !x.IsValid).Select(x => x.Value.ID).ToList();
           if (invalid3dmem.Count > 0)
           {
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member3D definition for Member IDs:");
@@ -604,6 +606,7 @@ namespace GsaGH.Components
       }
     }
 
+    BoundingBox BoundingBox;
     ConcurrentBag<GsaElement2dGoo> element2ds;
     ConcurrentBag<GsaElement3dGoo> element3ds;
     Mesh cachedDisplayMeshShaded;
@@ -611,7 +614,7 @@ namespace GsaGH.Components
     Mesh cachedDisplayNgonMeshShaded;
     Mesh cachedDisplayNgonMeshNotShaded;
     ConcurrentBag<GsaNodeGoo> supportNodes;
-
+    public override BoundingBox ClippingBox => this.BoundingBox;
     public override void DrawViewportWires(IGH_PreviewArgs args)
     {
       base.DrawViewportWires(args);
@@ -712,7 +715,7 @@ namespace GsaGH.Components
         // set length to meters as this was the only option for old components
         lengthUnit = LengthUnit.Meter;
 
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);

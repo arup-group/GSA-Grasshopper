@@ -2,6 +2,9 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.UI;
 
 namespace GsaGH.Components
 {
@@ -11,24 +14,25 @@ namespace GsaGH.Components
   public class CreateBool6 : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("f5909576-6796-4d6e-90d8-31a9b7ee6fb6");
-    public CreateBool6()
-      : base("Create Bool6", "Bool6", "Create GSA Bool6 to set releases and restraints",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateBool6;
+
+    public CreateBool6() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
+      GsaBool6Goo.NickName.Replace(" ", string.Empty),
+      "Create a " + GsaBool6Goo.Description,
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat1())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
     //This region overrides the typical component layout
     public override void CreateAttributes()
     {
-      m_attributes = new UI.Bool6ComponentUI(this, SetBool, "Set 6 DOF", x, y, z, xx, yy, zz);
+      m_attributes = new Bool6ComponentAttributes(this, SetBool, "Set 6 DOF", x, y, z, xx, yy, zz);
     }
 
     public void SetBool(bool resx, bool resy, bool resz, bool resxx, bool resyy, bool reszz)

@@ -5,6 +5,11 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -14,15 +19,17 @@ namespace GsaGH.Components
   public class CreateGridPointLoad : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public CreateGridPointLoad()
-        : base("Create Grid Point Load", "PointLoad", "Create GSA Grid Point Load",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat3())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override Guid ComponentGuid => new Guid("076f03c6-67ba-49d3-9462-cd4a4b5aff92");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.PointLoad;
+
+    public CreateGridPointLoad() : base("Create Grid Point Load",
+      "PointLoad",
+      "Create GSA Grid Point Load",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat3())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -32,10 +39,10 @@ namespace GsaGH.Components
       if (first)
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
 
         selecteditems = new List<string>();
-        selecteditems.Add(Units.ForceUnit.ToString());
+        selecteditems.Add(DefaultUnits.ForceUnit.ToString());
 
         first = false;
       }
@@ -78,7 +85,7 @@ namespace GsaGH.Components
             "Unit",
     });
 
-    private ForceUnit forceUnit = Units.ForceUnit;
+    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
     bool first = true;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
@@ -209,7 +216,7 @@ namespace GsaGH.Components
       }
 
       // 6 load value
-      gridpointload.GridPointLoad.Value = GetInput.GetForce(this, DA, 6, forceUnit).Newtons;
+      gridpointload.GridPointLoad.Value = ((Force)Input.UnitNumber(this, DA, 6, forceUnit)).Newtons;
 
       // convert to goo
       GsaLoad gsaLoad = new GsaLoad(gridpointload);
@@ -230,7 +237,7 @@ namespace GsaGH.Components
       catch (Exception) // we set the stored values like first initation of component
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(ForceUnit.Kilonewton.ToString());

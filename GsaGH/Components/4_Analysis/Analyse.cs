@@ -7,6 +7,10 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -18,17 +22,18 @@ namespace GsaGH.Components
   public class GH_Analyse : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("78fe156d-6ab4-4683-96a4-2d40eb5cce8f");
-    public GH_Analyse()
-      : base("Analyse Model", "Analyse", "Assemble and Analyse a GSA Model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat4())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.primary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Analyse;
+
+    public GH_Analyse() : base("Analyse Model",
+      "Analyse",
+      "Assemble and Analyse a GSA Model",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat4())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -42,11 +47,8 @@ namespace GsaGH.Components
 
         // length
         //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
-        dropdownitems.Add(Units.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
+        selecteditems.Add(LengthUnit.ToString());
 
         first = false;
       }
@@ -57,7 +59,7 @@ namespace GsaGH.Components
       // change selected item
       selecteditems[i] = dropdownitems[i][j];
 
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
+      LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
 
       // update name of inputs (to display unit on sliders)
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -77,7 +79,7 @@ namespace GsaGH.Components
     }
     private void UpdateUIFromSelectedItems()
     {
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
+      LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
 
       CreateAttributes();
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -96,23 +98,20 @@ namespace GsaGH.Components
             "Settings"
     });
     private bool first = true;
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
-    string unitAbbreviation;
+    private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
     #endregion
 
     #region input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity length = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-
-      pManager.AddGenericParameter("Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
-          "If you input more than one model they will be merged" + System.Environment.NewLine + "with first model in list taking priority for IDs", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaModelParameter(), "Model(s)", "GSA", "Existing GSA Model(s) to append to" + System.Environment.NewLine +
+          "If you input more than one model they will be merged" + System.Environment.NewLine + "with first model in list taking priority for IDs"
+          , GH_ParamAccess.list);
       pManager.AddGenericParameter("Properties", "Pro", "GSA Sections (PB), Prop2Ds (PA) and Prop3Ds (PV) to add/set in the model" + System.Environment.NewLine +
           "Properties already added to Elements or Members" + System.Environment.NewLine + "will automatically be added with Geometry input", GH_ParamAccess.list);
-      pManager.AddGenericParameter("GSA Geometry in [" + unitAbbreviation + "]", "Geo", "GSA Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Loads", "Ld", "GSA Loads to add to the model" + System.Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
+      pManager.AddGenericParameter("GSA Geometry in [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Geo", "GSA Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaLoadParameter(), "Load", "Ld", "Loads to add to the model" + System.Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
       pManager.AddGenericParameter("Analysis Tasks & Combinations", "ΣT", "GSA Analysis Tasks and Combination Cases to add to the model", GH_ParamAccess.list);
       for (int i = 0; i < pManager.ParamCount; i++)
         pManager[i].Optional = true;
@@ -435,7 +434,7 @@ namespace GsaGH.Components
         OutModel = new GsaModel();
 
       // Assemble model
-      Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Prop3Ds, Loads, GridPlaneSurfaces, AnalysisTasks, CombinationCases, lengthUnit);
+      Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(analysisModel, Nodes, Elem1ds, Elem2ds, Elem3ds, Mem1ds, Mem2ds, Mem3ds, Sections, Prop2Ds, Prop3Ds, Loads, GridPlaneSurfaces, AnalysisTasks, CombinationCases, LengthUnit);
 
       #region meshing
       // Create elements from members
@@ -453,7 +452,7 @@ namespace GsaGH.Components
         if (gsaTasks.Count < 1)
         {
           GsaAnalysisTask task = new GsaAnalysisTask();
-          task.SetID(gsa.AddAnalysisTask());
+          task.ID = gsa.AddAnalysisTask();
           task.CreateDeafultCases(gsa);
           if (task.Cases == null || task.Cases.Count == 0)
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Model contains no loads and has not been analysed, but has been assembled.");
@@ -538,13 +537,10 @@ namespace GsaGH.Components
           selecteditems = new List<string>();
 
           // set length to meters as this was the only option for old components
-          lengthUnit = LengthUnit.Meter;
+          LengthUnit = LengthUnit.Meter;
 
-          dropdownitems.Add(Units.FilteredLengthUnits);
-          selecteditems.Add(lengthUnit.ToString());
-
-          IQuantity quantity = new Length(0, lengthUnit);
-          unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+          dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
+          selecteditems.Add(LengthUnit.ToString());
 
           first = false;
         }
@@ -558,13 +554,10 @@ namespace GsaGH.Components
         selecteditems = new List<string>();
 
         // set length to meters as this was the only option for old components
-        lengthUnit = LengthUnit.Meter;
+        LengthUnit = LengthUnit.Meter;
 
-        dropdownitems.Add(Units.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
+        selecteditems.Add(LengthUnit.ToString());
 
         first = false;
       }
@@ -600,10 +593,7 @@ namespace GsaGH.Components
     }
     void IGH_VariableParameterComponent.VariableParameterMaintenance()
     {
-      IQuantity length = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-
-      Params.Input[2].Name = "GSA Geometry in [" + unitAbbreviation + "]";
+      Params.Input[2].Name = "GSA Geometry in [" + Length.GetAbbreviation(this.LengthUnit) + "]";
     }
     #endregion
   }

@@ -70,12 +70,12 @@ namespace GsaGH.Util.Gsa.ToGSA
       List<GsaElement2d> elem2ds = elementTuple.Item2.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
       foreach (var elem2d in elem2ds)
-        elem2d.ID.Select(c => { c = 0; return c; }).ToList();
+        elem2d.Ids.Select(c => { c = 0; return c; }).ToList();
       // convert from Goo-type
       List<GsaElement3d> elem3ds = elementTuple.Item3.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
       foreach (var elem3d in elem3ds)
-        elem3d.ID.Select(c => { c = 0; return c; }).ToList();
+        elem3d.IDs.Select(c => { c = 0; return c; }).ToList();
 
       // get members
       Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
@@ -94,7 +94,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       // convert from Goo-type
       List<GsaSection> sections = goosections.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      sections.Select(c => { c.ID = 0; return c; }).ToList();
+      sections.Select(c => { c.Id = 0; return c; }).ToList();
       List<GsaProp2dGoo> gooprop2Ds = FromGSA.GetProp2ds(pDict, model.AnalysisMaterials());
       // convert from Goo-type
       List<GsaProp2d> prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
@@ -302,7 +302,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (elem2ds.Count > 0)
         {
-          int existingElem2dMaxID = elem2ds.Max(x => x.ID.Max()); // max ID in new Elem2ds
+          int existingElem2dMaxID = elem2ds.Max(x => x.Ids.Max()); // max ID in new Elem2ds
           if (existingElem2dMaxID > newElementID)
             newElementID = existingElem2dMaxID + 1;
         }
@@ -457,7 +457,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         foreach (GsaAnalysisTask task in analysisTasks)
         {
           if (!existingTasks.Keys.Contains(task.ID))
-            task.SetID(gsa.AddAnalysisTask());
+            task.ID = gsa.AddAnalysisTask();
 
           if (task.Cases == null)
             task.CreateDeafultCases(gsa);

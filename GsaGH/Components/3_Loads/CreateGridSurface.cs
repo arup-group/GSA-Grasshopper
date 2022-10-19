@@ -2,28 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Parameters;
-using Rhino.Geometry;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using Rhino;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
 using OasysUnits;
+using Rhino;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
   public class CreateGridSurface : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public CreateGridSurface()
-        : base("Create Grid Surface", "GridSurface", "Create GSA Grid Surface",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat3())
-    { } // sets the initial state of the component to hidden
     public override Guid ComponentGuid => new Guid("1052955c-cf97-4378-81d3-8491e0defad0");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GridSurface;
+
+    public CreateGridSurface() : base("Create Grid Surface",
+      "GridSurface",
+      "Create GSA Grid Surface",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat3())
+    { } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -75,7 +81,7 @@ namespace GsaGH.Components
       if (_useDegrees)
         angleUnit = "deg";
 
-      IQuantity length = new Length(0, Units.LengthUnitGeometry);
+      IQuantity length = new Length(0, DefaultUnits.LengthUnitGeometry);
       string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
@@ -217,7 +223,7 @@ namespace GsaGH.Components
       // 4 Tolerance
       if (this.Params.Input[4].SourceCount != 0)
       {
-        gs.Tolerance = GetInput.GetLength(this, DA, 4, Units.LengthUnitGeometry, true).Millimeters;
+        gs.Tolerance = ((Length)Input.LengthOrRatio(this, DA, 4, DefaultUnits.LengthUnitGeometry, true)).Millimeters;
         changeGS = true;
       }
 

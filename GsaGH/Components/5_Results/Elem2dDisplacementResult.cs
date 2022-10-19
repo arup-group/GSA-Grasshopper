@@ -8,7 +8,11 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -20,17 +24,18 @@ namespace GsaGH.Components
   public class Elem2dDisplacement : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("22f87d33-4f9a-49d6-9f3d-b366e446a75f");
-    public Elem2dDisplacement()
-      : base("2D Displacements", "Disp2D", "2D Translation and Rotation result values",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.quinary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Displacement2D;
+
+    public Elem2dDisplacement() : base("2D Displacements",
+      "Disp2D",
+      "2D Translation and Rotation result values",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat5())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -44,7 +49,7 @@ namespace GsaGH.Components
 
         // length
         //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);
@@ -87,7 +92,7 @@ namespace GsaGH.Components
             "Unit"
     });
     private bool first = true;
-    private LengthUnit lengthUnit = Units.LengthUnitResult;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitResult;
     string unitAbbreviation;
     #endregion
 

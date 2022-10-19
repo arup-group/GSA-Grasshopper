@@ -10,7 +10,11 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Util.Gsa;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
@@ -24,19 +28,18 @@ namespace GsaGH.Components
   public class NodeContourResults : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("47053884-2c22-4f2c-b092-8531fa5751e1");
-    public NodeContourResults()
-      : base("Node Contour Results", "ContourNode", "Diplays GSA Node Results as Contours",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Result0D;
+
+    public NodeContourResults() : base("Node Contour Results",
+      "ContourNode",
+      "Diplays GSA Node Results as Contours",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat5())
+    { }
     #endregion
 
     #region Custom UI
@@ -48,11 +51,11 @@ namespace GsaGH.Components
         dropdownitems = new List<List<string>>();
         dropdownitems.Add(topleveldropdown); // 0 type of result (displacement, force)
         dropdownitems.Add(dropdowndisplacement); // 1 component to display (x, y, z etc)
-        dropdownitems.Add(Units.FilteredLengthUnits); // geometry unit
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // geometry unit
         selecteditems = new List<string>();
         selecteditems.Add(dropdownitems[0][0]);
         selecteditems.Add(dropdownitems[1][3]);
-        selecteditems.Add(Units.LengthUnitGeometry.ToString());
+        selecteditems.Add(DefaultUnits.LengthUnitGeometry.ToString());
         first = false;
       }
       m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdownitems, selecteditems, slider, SetVal, SetMaxMin, DefScale, MaxValue, MinValue, noDigits, spacerDescriptions);
@@ -180,8 +183,8 @@ namespace GsaGH.Components
             "Resolved |M|",
     });
 
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
-    private LengthUnit lengthResultUnit = Units.LengthUnitResult;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private LengthUnit lengthResultUnit = DefaultUnits.LengthUnitResult;
     string _case = "";
     #endregion
 
@@ -280,7 +283,7 @@ namespace GsaGH.Components
             break;
 
           case FoldMode.Reaction:
-            Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, Units.ForceUnit, Units.MomentUnit);
+            Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, DefaultUnits.ForceUnit, DefaultUnits.MomentUnit);
             res = resultgetter.Item1[0];
             nodeList = string.Join(" ", resultgetter.Item2);
             break;
@@ -296,8 +299,8 @@ namespace GsaGH.Components
         Enum xxyyzzunit = AngleUnit.Radian;
         if (_mode == FoldMode.Reaction)
         {
-          xyzunit = Units.ForceUnit;
-          xxyyzzunit = Units.MomentUnit;
+          xyzunit = DefaultUnits.ForceUnit;
+          xxyyzzunit = DefaultUnits.MomentUnit;
         }
 
         double dmax_x = res.dmax_x.As(xyzunit);
@@ -400,7 +403,7 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         // Loop through nodes and set result colour into ResultPoint format
-        ConcurrentDictionary<int, ResultPoint> pts = new ConcurrentDictionary<int, ResultPoint>();
+        ConcurrentDictionary<int, ResultPointGoo> pts = new ConcurrentDictionary<int, ResultPointGoo>();
 
         Parallel.ForEach(gsanodes, node =>
         {
@@ -460,28 +463,28 @@ namespace GsaGH.Components
                     switch (_disp)
                     {
                       case (DisplayValue.X):
-                        t = xyzResults[nodeID][0].X.As(Units.ForceUnit);
+                        t = xyzResults[nodeID][0].X.As(DefaultUnits.ForceUnit);
                         break;
                       case (DisplayValue.Y):
-                        t = xyzResults[nodeID][0].Y.As(Units.ForceUnit);
+                        t = xyzResults[nodeID][0].Y.As(DefaultUnits.ForceUnit);
                         break;
                       case (DisplayValue.Z):
-                        t = xyzResults[nodeID][0].Z.As(Units.ForceUnit);
+                        t = xyzResults[nodeID][0].Z.As(DefaultUnits.ForceUnit);
                         break;
                       case (DisplayValue.resXYZ):
-                        t = xyzResults[nodeID][0].XYZ.As(Units.ForceUnit);
+                        t = xyzResults[nodeID][0].XYZ.As(DefaultUnits.ForceUnit);
                         break;
                       case (DisplayValue.XX):
-                        t = xxyyzzResults[nodeID][0].X.As(Units.MomentUnit);
+                        t = xxyyzzResults[nodeID][0].X.As(DefaultUnits.MomentUnit);
                         break;
                       case (DisplayValue.YY):
-                        t = xxyyzzResults[nodeID][0].Y.As(Units.MomentUnit);
+                        t = xxyyzzResults[nodeID][0].Y.As(DefaultUnits.MomentUnit);
                         break;
                       case (DisplayValue.ZZ):
-                        t = xxyyzzResults[nodeID][0].Z.As(Units.MomentUnit);
+                        t = xxyyzzResults[nodeID][0].Z.As(DefaultUnits.MomentUnit);
                         break;
                       case (DisplayValue.resXXYYZZ):
-                        t = xxyyzzResults[nodeID][0].XYZ.As(Units.MomentUnit);
+                        t = xxyyzzResults[nodeID][0].XYZ.As(DefaultUnits.MomentUnit);
                         break;
                     }
                     break;
@@ -499,7 +502,7 @@ namespace GsaGH.Components
                     Math.Max(2, (float)(Math.Abs(t) / Math.Abs(dmin) * scale));
 
                 // add our special resultpoint to the list of points
-                pts[nodeID] = new ResultPoint(def, t, valcol, size);
+                pts[nodeID] = new ResultPointGoo(def, t, valcol, size);
               }
             }
           }
@@ -552,14 +555,14 @@ namespace GsaGH.Components
           {
             if ((int)_disp < 4)
             {
-              Force reactionForce = new Force(t, Units.ForceUnit);
+              Force reactionForce = new Force(t, DefaultUnits.ForceUnit);
               legendValues.Add(reactionForce.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(reactionForce));
             }
             else
             {
-              Moment reactionMoment = new Moment(t, Units.MomentUnit);
-              legendValues.Add(t.ToString("F" + significantDigits) + " " + Moment.GetAbbreviation(Units.MomentUnit));
+              Moment reactionMoment = new Moment(t, DefaultUnits.MomentUnit);
+              legendValues.Add(t.ToString("F" + significantDigits) + " " + Moment.GetAbbreviation(DefaultUnits.MomentUnit));
               ts.Add(new GH_UnitNumber(reactionMoment));
             }
           }
@@ -722,13 +725,13 @@ namespace GsaGH.Components
       {
         if ((int)_disp < 4)
         {
-          IQuantity force = new Force(0, Units.ForceUnit);
+          IQuantity force = new Force(0, DefaultUnits.ForceUnit);
           string forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
           Params.Output[2].Name = "Values [" + forceunitAbbreviation + "]";
         }
         else
         {
-          string momentunitAbbreviation = Moment.GetAbbreviation(Units.MomentUnit);
+          string momentunitAbbreviation = Moment.GetAbbreviation(DefaultUnits.MomentUnit);
           Params.Output[2].Name = "Values [" + momentunitAbbreviation + "]";
         }
       }

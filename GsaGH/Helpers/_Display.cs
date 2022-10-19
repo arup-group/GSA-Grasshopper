@@ -42,6 +42,7 @@ namespace GsaGH.UI
 
       return new Tuple<Vector3d, Vector3d, Vector3d>(outX, outY, outZ);
     }
+
     public static void Preview1D(PolyCurve crv, double angle_radian, GsaBool6 start, GsaBool6 end,
         ref List<Line> greenLines20, ref List<Line> redLines10)
     {
@@ -624,11 +625,12 @@ namespace GsaGH.UI
       }
       #endregion
     }
+
     public static void PreviewRestraint(GsaBool6 restraint, Plane localAxis, Point3d pt, ref Brep support, ref Text3d text)
     {
       // pin
-      if (restraint.X == true & restraint.Y == true & restraint.Z == true &
-          restraint.XX == false & restraint.YY == false & restraint.ZZ == false)
+      if (restraint.X & restraint.Y & restraint.Z &
+          !restraint.XX & !restraint.YY & !restraint.ZZ)
       {
         Plane plane = localAxis.Clone();
         if (!plane.IsValid) { plane = Plane.WorldXY; }
@@ -636,8 +638,8 @@ namespace GsaGH.UI
         Cone pin = new Cone(plane, -0.4, 0.4);
         support = pin.ToBrep(true);
       }
-      else if (restraint.X == true & restraint.Y == true & restraint.Z == true &
-              restraint.XX == true & restraint.YY == true & restraint.ZZ == true)
+      else if (restraint.X & restraint.Y & restraint.Z &
+              restraint.XX & restraint.YY & restraint.ZZ)
       {
         Plane plane = localAxis.Clone();
         if (!plane.IsValid) { plane = Plane.WorldXY; }
@@ -651,23 +653,24 @@ namespace GsaGH.UI
         if (!plane.IsValid) { plane = Plane.WorldXY; }
         plane.Origin = pt;
         string rest = "";
-        if (restraint.X == true)
+        if (restraint.X)
           rest += "X";
-        if (restraint.Y == true)
+        if (restraint.Y)
           rest += "Y";
-        if (restraint.Z == true)
+        if (restraint.Z)
           rest += "Z";
-        if (restraint.XX == true)
+        if (restraint.XX)
           rest += "XX";
-        if (restraint.YY == true)
+        if (restraint.YY)
           rest += "YY";
-        if (restraint.ZZ == true)
+        if (restraint.ZZ)
           rest += "ZZ";
         text = new Text3d(rest, plane, 0.3);
         text.HorizontalAlignment = Rhino.DocObjects.TextHorizontalAlignment.Left;
         text.VerticalAlignment = Rhino.DocObjects.TextVerticalAlignment.Top;
       }
     }
+
     public static void PreviewMem3d(ref Mesh solidMesh, ref List<Polyline> hiddenLines, ref List<Line> edgeLines, ref List<Point3d> pts)
     {
       Rhino.Geometry.Collections.MeshTopologyEdgeList alledges = solidMesh.TopologyEdges;

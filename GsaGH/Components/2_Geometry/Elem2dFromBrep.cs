@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -15,18 +19,18 @@ namespace GsaGH.Components
   public class Elem2dFromBrep : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("4fa7ccd9-530e-4036-b2bf-203017b55611");
-    public Elem2dFromBrep()
-      : base("Element2d from Brep", "Elem2dFromBrep", "Mesh a non-planar Brep",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat2())
-    {
-    }
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateElemsFromBreps;
+
+    public Elem2dFromBrep() : base("Element2d from Brep",
+      "Elem2dFromBrep",
+      "Mesh a non-planar Brep",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat2())
+    { }
     #endregion
 
     #region Custom UI
@@ -39,7 +43,7 @@ namespace GsaGH.Components
         selecteditems = new List<string>();
 
         // length
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
         first = false;
@@ -79,7 +83,7 @@ namespace GsaGH.Components
       "Unit"
     });
     private bool first = true;
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
     #endregion
 
     #region Input and output
@@ -238,7 +242,7 @@ namespace GsaGH.Components
         // set length to meters as this was the only option for old components
         lengthUnit = LengthUnit.Meter;
 
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
         first = false;
@@ -279,7 +283,7 @@ namespace GsaGH.Components
       Params.Input[i++].Name = "Incl. Curves or 1D Members [in " + unitAbbreviation + "]";
       i++;
       Params.Input[i++].Name = "Mesh Size [" + unitAbbreviation + "]";
-      
+
     }
     #endregion
   }

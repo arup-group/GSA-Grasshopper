@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
-using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysUnits.Units;
-
 
 namespace GsaGH.Components
 {
@@ -20,10 +19,13 @@ namespace GsaGH.Components
     public override Guid ComponentGuid => new Guid("6f701c53-1531-45ef-9842-9356da59b590");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GwaModel;
-    public GwaModel()
-       : base("Create GWA Model", "GWA", "Create a model from a GWA string.",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat0())
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+
+    public GwaModel() : base(
+      "Create GWA Model",
+      "GWA", "Create a model from a GWA string.",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -46,7 +48,7 @@ namespace GsaGH.Components
       Interop.Gsa_10_1.ComAuto m = new Interop.Gsa_10_1.ComAuto();
       string temp = Path.GetTempPath() + Guid.NewGuid().ToString() + ".gwb";
       
-      GsaModelGoo model = new GsaModelGoo();
+      GsaModelGoo model = null;
       if (DA.GetData(1, ref model))
       {
         model.Value.Model.SaveAs(temp);
@@ -60,7 +62,7 @@ namespace GsaGH.Components
       if (DA.GetDataList(0, strings))
         foreach (string s in strings)
           gwa += s + "\n";
-      
+
       m.GwaCommand(gwa);
       m.SaveAs(temp);
       GsaModel gsaGH = new GsaModel();

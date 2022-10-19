@@ -4,6 +4,9 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Parameters;
 using OasysUnits;
 
@@ -24,7 +27,7 @@ namespace GsaGH.Components
             Ribbon.SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.hidden;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditProp2d;
     #endregion
 
@@ -38,7 +41,7 @@ namespace GsaGH.Components
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity quantity = new Length(0, Units.LengthUnitSection);
+      IQuantity quantity = new Length(0, OasysGH.Units.DefaultUnits.LengthUnitSection);
       string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property to get or set information for", GH_ParamAccess.item);
@@ -111,7 +114,7 @@ namespace GsaGH.Components
 
       // 3 Thickness
       if (this.Params.Input[3].SourceCount > 0)
-        prop.Thickness = GetInput.GetLength(this, DA, 3, Units.LengthUnitSection, true);
+        prop.Thickness = (Length)Input.UnitNumber(this, DA, 3, OasysGH.Units.DefaultUnits.LengthUnitSection, true);
 
       // 4 Axis
       GH_Integer ghax = new GH_Integer();

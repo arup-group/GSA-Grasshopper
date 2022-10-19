@@ -1,33 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
-using System.Linq;
-using Grasshopper;
+using OasysGH;
+using OasysGH.Components;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
   /// <summary>
-  /// Component to edit a 2D Element
+  /// Component to edit a 3D Element
   /// </summary>
   public class EditElement3d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("040f2915-543d-41ef-9a64-0c4055e47a63");
-    public EditElement3d()
-      : base("Edit 3D Element", "Elem3dEdit", "Modify GSA 3D Element",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat2())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditElem3d;
+
+    public EditElement3d() : base("Edit 3D Element",
+      "Elem3dEdit",
+      "Modify GSA 3D Element",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat2())
+    { }
     #endregion
 
     #region Custom UI
@@ -113,7 +113,7 @@ namespace GsaGH.Components
               in_ids.Add(id);
             }
           }
-          elem.ID = in_ids;
+          elem.IDs = in_ids;
         }
 
 
@@ -218,7 +218,7 @@ namespace GsaGH.Components
             if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both))
               in_dummies.Add(dum);
           }
-          elem.isDummies = in_dummies;
+          elem.IsDummies = in_dummies;
         }
 
         // #### outputs ####
@@ -244,14 +244,14 @@ namespace GsaGH.Components
         }
 
         DA.SetData(0, new GsaElement3dGoo(elem));
-        DA.SetDataList(1, elem.ID);
+        DA.SetDataList(1, elem.IDs);
         DA.SetDataList(2, out_meshes);
         DA.SetDataList(3, new List<GsaProp3dGoo>(elem.Properties.ConvertAll(prop3d => new GsaProp3dGoo(prop3d))));
         DA.SetDataList(4, elem.Groups);
         DA.SetDataList(5, elem.Types);
         DA.SetDataList(6, elem.Names);
         DA.SetDataList(7, elem.Colours);
-        DA.SetDataList(8, elem.isDummies);
+        DA.SetDataList(8, elem.IsDummies);
         DA.SetDataList(9, elem.ParentMembers);
         DA.SetDataTree(10, elem.TopologyIDs);
       }

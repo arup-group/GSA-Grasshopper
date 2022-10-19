@@ -4,25 +4,32 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using Rhino.Geometry;
 using GsaGH.Parameters;
-using OasysUnits.Units;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
   public class CreateGridAreaLoad : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public CreateGridAreaLoad()
-        : base("Create Grid Area Load", "AreaLoad", "Create GSA Grid Area Load",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat3())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override Guid ComponentGuid => new Guid("146f1bf8-8d2b-468f-bdb8-0237bee75262");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.AreaLoad;
+
+    public CreateGridAreaLoad() : base("Create Grid Area Load",
+      "AreaLoad",
+      "Create GSA Grid Area Load",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat3())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -33,10 +40,10 @@ namespace GsaGH.Components
       if (first)
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForcePerAreaUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForcePerAreaUnits);
 
         selecteditems = new List<string>();
-        PressureUnit pressureUnit = (Force.From(1, Units.ForceUnit) / (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry))).Unit;
+        PressureUnit pressureUnit = (Force.From(1, DefaultUnits.ForceUnit) / (Length.From(1, DefaultUnits.LengthUnitGeometry) * Length.From(1, DefaultUnits.LengthUnitGeometry))).Unit;
         selecteditems.Add(pressureUnit.ToString());
 
         first = false;
@@ -81,7 +88,7 @@ namespace GsaGH.Components
             "Unit",
     });
     bool first = true;
-    private PressureUnit forceAreaUnit = (Force.From(1, Units.ForceUnit) / (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry))).Unit;
+    private PressureUnit forceAreaUnit = (Force.From(1, DefaultUnits.ForceUnit) / (Length.From(1, DefaultUnits.LengthUnitGeometry) * Length.From(1, DefaultUnits.LengthUnitGeometry))).Unit;
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
@@ -229,7 +236,7 @@ namespace GsaGH.Components
             desc += "(" + temppt.X + "," + temppt.Y + ")";
           }
           // add units to the end
-          desc += "(" + Units.LengthUnitGeometry + ")";
+          desc += "(" + DefaultUnits.LengthUnitGeometry + ")";
 
           // set polyline in grid line load
           gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
@@ -291,7 +298,7 @@ namespace GsaGH.Components
       }
 
       // 7 load value
-      gridareaload.GridAreaLoad.Value = GetInput.Stress(this, DA, 7, forceAreaUnit).NewtonsPerSquareMeter;
+      gridareaload.GridAreaLoad.Value = ((Pressure)Input.UnitNumber(this, DA, 7, forceAreaUnit)).NewtonsPerSquareMeter;
 
       // convert to goo
       GsaLoad gsaLoad = new GsaLoad(gridareaload);
@@ -312,7 +319,7 @@ namespace GsaGH.Components
       catch (Exception) // we set the stored values like first initation of component
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredStressUnits);
+        dropdownitems.Add(FilteredUnits.FilteredStressUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(PressureUnit.KilonewtonPerSquareMeter.ToString());
@@ -349,6 +356,5 @@ namespace GsaGH.Components
       Params.Input[7].Name = "Value [" + unitAbbreviation + "]";
     }
     #endregion
-
   }
 }

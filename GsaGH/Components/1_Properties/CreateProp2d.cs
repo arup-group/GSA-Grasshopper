@@ -6,6 +6,11 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -17,17 +22,17 @@ namespace GsaGH.Components
   public class CreateProp2d : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("d693b4ad-7aaf-450e-a436-afbb9d2061fc");
-    public CreateProp2d()
-      : base("Create 2D Property", "Prop2d", "Create GSA 2D Property",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.primary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateProp2d;
+
+    public CreateProp2d() : base("Create 2D Property",
+      "Prop2d",
+      "Create GSA 2D Property",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat1())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -41,13 +46,10 @@ namespace GsaGH.Components
 
         // length
         dropdownitems.Add(dropdownTopList);
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
 
         selecteditems.Add(dropdownTopList[3]);
-        selecteditems.Add(lengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+        selecteditems.Add(this.LengthUnit.ToString());
 
         first = false;
       }
@@ -66,7 +68,7 @@ namespace GsaGH.Components
         {
           case "Plane Stress":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode1Clicked();
             break;
           case "Fabric":
@@ -76,17 +78,17 @@ namespace GsaGH.Components
             break;
           case "Flat Plate":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode3Clicked();
             break;
           case "Shell":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode4Clicked();
             break;
           case "Curved Shell":
             if (dropdownitems.Count < 2)
-              dropdownitems.Add(Units.FilteredLengthUnits); // add length unit dropdown
+              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode5Clicked();
             break;
           case "Load Panel":
@@ -98,7 +100,7 @@ namespace GsaGH.Components
       }
       else
       {
-        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
+        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
       }
 
       // update name of inputs (to display unit on sliders)
@@ -135,18 +137,16 @@ namespace GsaGH.Components
     // list of descriptions 
     List<string> spacerDescriptions = new List<string>(new string[]
     {
-      "Element Type",
+      "Type",
       "Unit"
     });
     private bool first = true;
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
-    string unitAbbreviation;
+    private LengthUnit LengthUnit = DefaultUnits.LengthUnitSection;
     #endregion
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      unitAbbreviation = Length.GetAbbreviation(lengthUnit);
-      pManager.AddGenericParameter("Thickness [" + unitAbbreviation + "]", "Thk", "Section thickness", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Thk", "Section thickness", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -197,7 +197,7 @@ namespace GsaGH.Components
         if (_mode != FoldMode.Fabric)
         {
           // 0 Thickness
-          prop.Thickness = GetInput.GetLength(this, DA, 0, lengthUnit);
+          prop.Thickness = (Length)Input.UnitNumber(this, DA, 0, this.LengthUnit);
 
           // 1 Material
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -378,33 +378,10 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      try// if users has an old version of this component then dropdown menu wont read
-      {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0].Replace(" ", string.Empty));
-        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[1]);
-      }
-      catch (Exception)
-      {
-        _mode = (FoldMode)reader.GetInt32("Mode"); //old version would have this set
-        selecteditems.Add(reader.GetString("select")); // same
+      Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0].Replace(" ", string.Empty));
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[1]);
 
-        // set length to meters as this was the only option for old components
-        lengthUnit = LengthUnit.Meter;
-
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // length
-        dropdownitems.Add(dropdownTopList);
-        dropdownitems.Add(Units.FilteredLengthUnits);
-
-        selecteditems.Add(lengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-      }
       UpdateUIFromSelectedItems();
       first = false;
       return base.Read(reader);
@@ -432,19 +409,16 @@ namespace GsaGH.Components
     {
       if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric)
       {
-        unitAbbreviation = Length.GetAbbreviation(lengthUnit);
-
         int i = 0;
         Params.Input[i].NickName = "Thk";
-        Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]"; // "Thickness [m]";
+        Params.Input[i].Name = "Thickness [" + Length.GetAbbreviation(this.LengthUnit) + "]"; // "Thickness [m]";
         Params.Input[i].Description = "Section thickness";
         Params.Input[i].Access = GH_ParamAccess.item;
-        Params.Input[i].Optional = true;
+        Params.Input[i].Optional = false;
         i++;
         Params.Input[i].NickName = "Mat";
         Params.Input[i].Name = "Material";
         Params.Input[i].Description = "GSA Material";
-
         Params.Input[i].Access = GH_ParamAccess.item;
         Params.Input[i].Optional = true;
       }

@@ -7,7 +7,11 @@ using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Util.GH;
 using GsaGH.Util.Gsa;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -28,7 +32,7 @@ namespace GsaGH.Components
             Ribbon.SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.hidden;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ResultGlobal;
     #endregion
 
@@ -40,17 +44,17 @@ namespace GsaGH.Components
       if (first)
       {
         dropdownitems = new List<List<string>>();
-        dropdownitems.Add(Units.FilteredForceUnits);
-        dropdownitems.Add(Units.FilteredMomentUnits);
-        dropdownitems.Add(Units.FilteredMassUnits);
-        dropdownitems.Add(Units.FilteredAreaMomentOfInertiaUnits);
-        dropdownitems.Add(Units.FilteredForcePerLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
+        dropdownitems.Add(FilteredUnits.FilteredMomentUnits);
+        dropdownitems.Add(FilteredUnits.FilteredMassUnits);
+        dropdownitems.Add(FilteredUnits.FilteredAreaMomentOfInertiaUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForcePerLengthUnits);
 
         selecteditems = new List<string>();
-        selecteditems.Add(Units.ForceUnit.ToString());
-        selecteditems.Add(Units.MomentUnit.ToString());
-        selecteditems.Add(Units.MassUnit.ToString());
-        if (Units.LengthUnitGeometry == LengthUnit.Foot | Units.LengthUnitGeometry == LengthUnit.Inch)
+        selecteditems.Add(DefaultUnits.ForceUnit.ToString());
+        selecteditems.Add(DefaultUnits.MomentUnit.ToString());
+        selecteditems.Add(DefaultUnits.MassUnit.ToString());
+        if (DefaultUnits.LengthUnitGeometry == LengthUnit.Foot | DefaultUnits.LengthUnitGeometry == LengthUnit.Inch)
         {
           selecteditems.Add(AreaMomentOfInertiaUnit.FootToTheFourth.ToString());
           selecteditems.Add(ForcePerLengthUnit.KilopoundForcePerFoot.ToString());
@@ -122,11 +126,11 @@ namespace GsaGH.Components
             "Stiffness Unit",
     });
 
-    private ForceUnit forceUnit = Units.ForceUnit;
-    private MomentUnit momentUnit = Units.MomentUnit;
-    private MassUnit massUnit = Units.MassUnit;
-    private AreaMomentOfInertiaUnit inertiaUnit = Units.SectionAreaMomentOfInertiaUnit;
-    private ForcePerLengthUnit forcePerLengthUnit = Units.ForcePerLengthUnit;
+    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
+    private MomentUnit momentUnit = DefaultUnits.MomentUnit;
+    private MassUnit massUnit = DefaultUnits.MassUnit;
+    private AreaMomentOfInertiaUnit inertiaUnit = DefaultUnits.SectionAreaMomentOfInertiaUnit;
+    private ForcePerLengthUnit forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
     bool first = true;
     #region Input and output
 
@@ -286,7 +290,7 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      
+
       first = false;
       UpdateUIFromSelectedItems();
       return base.Read(reader);

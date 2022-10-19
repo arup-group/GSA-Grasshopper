@@ -6,6 +6,10 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -17,19 +21,18 @@ namespace GsaGH.Components
   public class ElemFromMem : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
-    public ElemFromMem()
-      : base("Elements from Members", "ElemFromMem", "Create Elements from Members",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat2())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateElemsFromMems;
+
+    public ElemFromMem() : base("Elements from Members",
+      "ElemFromMem",
+      "Create Elements from Members",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat2())
+    { }
     #endregion
 
     #region Custom UI
@@ -42,7 +45,7 @@ namespace GsaGH.Components
         selecteditems = new List<string>();
 
         // length
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
         first = false;
@@ -82,7 +85,7 @@ namespace GsaGH.Components
             "Unit"
     });
     private bool first = true;
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
     string unitAbbreviation;
     #endregion
 
@@ -251,9 +254,9 @@ namespace GsaGH.Components
               lengthUnit);
 
       // post process materials (as they currently have a bug when running parallel!)
-      
+
       ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials());
-      
+
       if (elementTuple.Item1 != null)
       {
         foreach (GsaElement1dGoo element in elementTuple.Item1)
@@ -313,8 +316,8 @@ namespace GsaGH.Components
 
       DA.SetDataList(0, nodes.OrderBy(item => item.Value.ID));
       DA.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.ID));
-      DA.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.ID.First()));
-      DA.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.ID.First()));
+      DA.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.Ids.First()));
+      DA.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.IDs.First()));
       DA.SetData(4, new GsaModelGoo(outModel));
 
       // custom display settings for element2d mesh
@@ -403,7 +406,7 @@ namespace GsaGH.Components
         // set length to meters as this was the only option for old components
         lengthUnit = LengthUnit.Meter;
 
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);

@@ -13,6 +13,8 @@ using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Parameters;
 using System.Resources;
+using OasysGH.Components;
+using OasysGH;
 
 namespace GsaGH.Components
 {
@@ -31,7 +33,7 @@ namespace GsaGH.Components
             Ribbon.SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.hidden;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMaterial;
     #endregion
 

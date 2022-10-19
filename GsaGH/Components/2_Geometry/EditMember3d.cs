@@ -3,6 +3,10 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -15,19 +19,18 @@ namespace GsaGH.Components
   public class EditMember3d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("955e573d-7608-4ac6-b436-54135f7714f6");
-    public EditMember3d()
-      : base("Edit 3D Member", "Mem3dEdit", "Modify GSA 3D Member",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat2())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem3d;
+
+    public EditMember3d() : base("Edit 3D Member",
+      "Mem3dEdit",
+      "Modify GSA 3D Member",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat2())
+    { }
     #endregion
 
     #region Custom UI
@@ -45,7 +48,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Member3d Number", "ID", "Set Member Number. If ID is set it will replace any existing 3d Member in the model", GH_ParamAccess.item);
       pManager.AddGeometryParameter("Solid", "S", "Reposition Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
       pManager.AddGenericParameter("3D Property", "PV", "Change 3D Property", GH_ParamAccess.item);
-      Length ms = new Length(1, Units.LengthUnitGeometry);
+      Length ms = new Length(1, DefaultUnits.LengthUnitGeometry);
       pManager.AddGenericParameter("Mesh Size [" + ms.ToString("a") + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
       pManager.AddTextParameter("Member3d Name", "Na", "Set Name of Member3d", GH_ParamAccess.item);
@@ -139,8 +142,8 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[4].Sources.Count > 0)
         {
-          mem.MeshSize = GetInput.GetLength(this, DA, 4, Units.LengthUnitGeometry, true);
-          if (Units.LengthUnitGeometry != LengthUnit.Meter)
+          mem.MeshSize = (Length)Input.LengthOrRatio(this, DA, 4, DefaultUnits.LengthUnitGeometry, true);
+          if (DefaultUnits.LengthUnitGeometry != LengthUnit.Meter)
             AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
                 + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }

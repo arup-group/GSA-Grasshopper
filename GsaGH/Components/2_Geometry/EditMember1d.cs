@@ -4,7 +4,11 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Parameters;
+using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -17,19 +21,18 @@ namespace GsaGH.Components
   public class EditMember1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("2a121578-f9ff-4d80-ae90-2982faa425a6");
-    public EditMember1d()
-      : base("Edit 1D Member", "Mem1dEdit", "Modify GSA 1D Member",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat2())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem1d;
+
+    public EditMember1d() : base("Edit 1D Member",
+      "Mem1dEdit",
+      "Modify GSA 1D Member",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat2())
+    { }
     #endregion
 
     #region Custom UI
@@ -73,7 +76,7 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("End release", "⭲", "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
       pManager.AddNumberParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle in degrees", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Member Orientation Node", GH_ParamAccess.item);
-      Length ms = new Length(1, Units.LengthUnitGeometry);
+      Length ms = new Length(1, DefaultUnits.LengthUnitGeometry);
       pManager.AddGenericParameter("Mesh Size [" + ms.ToString("a") + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
 
@@ -245,8 +248,8 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[12].Sources.Count > 0)
         {
-          mem.MeshSize = GetInput.GetLength(this, DA, 12, Units.LengthUnitGeometry, true);
-          if (Units.LengthUnitGeometry != LengthUnit.Meter)
+          mem.MeshSize = (Length)Input.LengthOrRatio(this, DA, 12, DefaultUnits.LengthUnitGeometry, true);
+          if (DefaultUnits.LengthUnitGeometry != LengthUnit.Meter)
             AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
                 + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }

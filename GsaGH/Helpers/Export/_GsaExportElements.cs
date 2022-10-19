@@ -124,7 +124,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       //Loop through all faces in mesh to update topology list to fit model nodes
       for (int i = 0; i < element2d.API_Elements.Count; i++)
       {
-        Element apiMeshElement = element2d.GetAPI_ElementClone(i);
+        Element apiMeshElement = element2d.GetApiObjectClone(i);
         List<int> meshVertexIndex = element2d.TopoInt[i];
 
         List<int> topo = new List<int>(); // temp topologylist
@@ -150,9 +150,9 @@ namespace GsaGH.Util.Gsa.ToGSA
         apiMeshElement.Property = Prop2ds.ConvertProp2d(prop, ref existingProp2Ds, ref prop2d_guid, ref existingMaterials, ref materials_guid);
 
         // set api element in dictionary
-        if (element2d.ID[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+        if (element2d.Ids[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
         {
-          existingElements[element2d.ID[i]] = apiMeshElement;
+          existingElements[element2d.Ids[i]] = apiMeshElement;
         }
         else
         {
@@ -203,7 +203,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       //Loop through all faces in mesh to update topology list to fit model nodes
       for (int i = 0; i < element3d.API_Elements.Count; i++)
       {
-        Element apiMeshElement = element3d.GetAPI_ElementClone(i);
+        Element apiMeshElement = element3d.GetApiObjectClone(i);
         List<int> meshVertexIndex = element3d.TopoInt[i];
 
         List<int> topo = new List<int>(); // temp topologylist
@@ -230,9 +230,9 @@ namespace GsaGH.Util.Gsa.ToGSA
 
 
         // set api element in dictionary
-        if (element3d.ID[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+        if (element3d.IDs[i] > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
         {
-          existingElements[element3d.ID[i]] = apiMeshElement;
+          existingElements[element3d.IDs[i]] = apiMeshElement;
         }
         else
         {

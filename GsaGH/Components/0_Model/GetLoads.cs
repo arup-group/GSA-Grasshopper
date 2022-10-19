@@ -4,6 +4,10 @@ using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -15,17 +19,18 @@ namespace GsaGH.Components
   public class GetLoads : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("87ff28e5-a1a6-4d78-ba71-e930e01dca13");
-    public GetLoads()
-      : base("Get Model Loads", "GetLoads", "Get Loads and Grid Planes/Surfaces from GSA model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat0())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GetLoads;
+
+    public GetLoads() : base("Get Model Loads",
+      "GetLoads",
+      "Get Loads and Grid Planes/Surfaces from GSA model",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat0())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -39,7 +44,7 @@ namespace GsaGH.Components
 
         // length
         //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);
@@ -82,7 +87,7 @@ namespace GsaGH.Components
             "Unit"
     });
     private bool first = true;
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
     string unitAbbreviation;
     #endregion
 
@@ -166,7 +171,7 @@ namespace GsaGH.Components
         // set length to meters as this was the only option for old components
         lengthUnit = LengthUnit.Meter;
 
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);

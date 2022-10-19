@@ -9,7 +9,11 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
@@ -23,19 +27,18 @@ namespace GsaGH.Components
   public class Elem2dContourResults : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("935d359a-9394-42fc-a76e-ea08ccb84135");
-    public Elem2dContourResults()
-      : base("2D Contour Results", "ContourElem2d", "Displays GSA 2D Element Results as Contour",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => GsaGH.Properties.Resources.Result2D;
+
+    public Elem2dContourResults() : base("2D Contour Results",
+      "ContourElem2d",
+      "Displays GSA 2D Element Results as Contour",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat5())
+    { }
     #endregion
 
     #region Custom UI
@@ -47,11 +50,11 @@ namespace GsaGH.Components
         dropdownitems = new List<List<string>>();
         dropdownitems.Add(dropdowntopitems);
         dropdownitems.Add(dropdowndisplacement);
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems = new List<string>();
         selecteditems.Add(dropdownitems[0][0]);
         selecteditems.Add(dropdownitems[1][3]);
-        selecteditems.Add(Units.LengthUnitGeometry.ToString());
+        selecteditems.Add(DefaultUnits.LengthUnitGeometry.ToString());
         first = false;
       }
       m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdownitems, selecteditems, slider, SetVal, SetMaxMin, DefScale, MaxValue, MinValue, noDigits, spacerDescriptions);
@@ -87,7 +90,7 @@ namespace GsaGH.Components
             }
 
             dropdownitems[1] = dropdowndisplacement;
-            dropdownitems[2] = Units.FilteredLengthUnits;
+            dropdownitems[2] = FilteredUnits.FilteredLengthUnits;
 
             selecteditems[0] = dropdownitems[0][0]; // displacement
             selecteditems[1] = dropdownitems[1][3]; // Resolved XYZ
@@ -278,8 +281,8 @@ namespace GsaGH.Components
             "Middle",
             "Bottom"
     });
-    private LengthUnit lengthUnit = Units.LengthUnitGeometry;
-    private LengthUnit lengthResultUnit = Units.LengthUnitResult;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private LengthUnit lengthResultUnit = DefaultUnits.LengthUnitResult;
     string _case = "";
     bool isShear;
     int flayer = 0;
@@ -369,12 +372,12 @@ namespace GsaGH.Components
 
           case FoldMode.Force:
             res = result.Element2DForceValues(elementlist,
-                Units.ForcePerLengthUnit, Units.ForceUnit)[0];
-            resShear = result.Element2DShearValues(elementlist, Units.ForcePerLengthUnit)[0];
+                DefaultUnits.ForcePerLengthUnit, DefaultUnits.ForceUnit)[0];
+            resShear = result.Element2DShearValues(elementlist, DefaultUnits.ForcePerLengthUnit)[0];
             break;
           case FoldMode.Stress:
             res = result.Element2DStressValues(elementlist,
-                flayer, Units.StressUnit)[0];
+                flayer, DefaultUnits.StressUnitResult)[0];
             break;
         }
 
@@ -389,13 +392,13 @@ namespace GsaGH.Components
         Enum xxyyzzunit = AngleUnit.Radian;
         if (_mode == FoldMode.Force)
         {
-          xyzunit = Units.ForcePerLengthUnit;
-          xxyyzzunit = Units.ForceUnit;
+          xyzunit = DefaultUnits.ForcePerLengthUnit;
+          xxyyzzunit = DefaultUnits.ForceUnit;
         }
         else if (_mode == FoldMode.Stress)
         {
-          xyzunit = Units.StressUnit;
-          xxyyzzunit = Units.StressUnit;
+          xyzunit = DefaultUnits.StressUnitResult;
+          xxyyzzunit = DefaultUnits.StressUnitResult;
         }
 
         double dmax_x = (isShear) ? resShear.dmax_x.As(xyzunit) : res.dmax_x.As(xyzunit);
@@ -498,7 +501,7 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         #region create mesh
-        ResultMesh resultMeshes = new ResultMesh(new Mesh(), new List<List<double>>());
+        ResultMeshGoo resultMeshes = new ResultMeshGoo(new Mesh(), new List<List<double>>());
         ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
         meshes.AsParallel().AsOrdered();
         ConcurrentDictionary<int, List<double>> values = new ConcurrentDictionary<int, List<double>>();
@@ -559,7 +562,7 @@ namespace GsaGH.Components
 
           for (int i = 0; i < vals.Count - 1; i++) // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
           {
-                    //normalised value between -1 and 1
+            //normalised value between -1 and 1
             double tnorm = 2 * (vals[i] - dmin) / (dmax - dmin) - 1;
             Color col = (double.IsNaN(tnorm)) ? Color.Transparent : gH_Gradient.ColourAt(tnorm);
             tempmesh.VertexColors.Add(col);
@@ -584,7 +587,7 @@ namespace GsaGH.Components
           }
           if (vals.Count == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
           {
-                    //normalised value between -1 and 1
+            //normalised value between -1 and 1
             double tnorm = 2 * (vals[0] - dmin) / (dmax - dmin) - 1;
             Color col = (double.IsNaN(tnorm)) ? Color.Transparent : gH_Gradient.ColourAt(tnorm);
             for (int i = 0; i < tempmesh.Vertices.Count; i++)
@@ -592,7 +595,7 @@ namespace GsaGH.Components
           }
           meshes[key] = tempmesh;
           values[key] = vals;
-                  #endregion
+          #endregion
         });
         #endregion
         resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList());
@@ -645,7 +648,7 @@ namespace GsaGH.Components
           {
             if ((int)_disp < 4 | isShear)
             {
-              ForcePerLength forcePerLength = new ForcePerLength(t, Units.ForcePerLengthUnit);
+              ForcePerLength forcePerLength = new ForcePerLength(t, DefaultUnits.ForcePerLengthUnit);
               legendValues.Add(forcePerLength.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(forcePerLength));
             }
@@ -653,14 +656,14 @@ namespace GsaGH.Components
             {
               IQuantity length = new Length(0, lengthUnit);
               string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-              legendValues.Add(new Force(t, Units.ForceUnit).ToString("s" + significantDigits) + lengthunitAbbreviation + "/" + lengthunitAbbreviation);
-              Moment moment = new Moment(t, Units.MomentUnit); // this is technically moment per length
+              legendValues.Add(new Force(t, DefaultUnits.ForceUnit).ToString("s" + significantDigits) + lengthunitAbbreviation + "/" + lengthunitAbbreviation);
+              Moment moment = new Moment(t, DefaultUnits.MomentUnit); // this is technically moment per length
               ts.Add(new GH_UnitNumber(moment));
             }
           }
           if (_mode == FoldMode.Stress)
           {
-            Pressure stress = new Pressure(t, Units.StressUnit);
+            Pressure stress = new Pressure(t, DefaultUnits.StressUnitResult);
             legendValues.Add(stress.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(stress));
           }
@@ -841,14 +844,14 @@ namespace GsaGH.Components
       if (_mode == FoldMode.Force)
       {
         if ((int)_disp < 4 | isShear)
-          Params.Output[2].Name = "Legend Values [" + Units.ForcePerLengthUnit + "/" + lengthunitAbbreviation + "]";
+          Params.Output[2].Name = "Legend Values [" + DefaultUnits.ForcePerLengthUnit + "/" + lengthunitAbbreviation + "]";
         else
-          Params.Output[2].Name = "Legend Values [" + Units.ForceUnit + "·" + lengthunitAbbreviation + "/" + lengthunitAbbreviation + "]";
+          Params.Output[2].Name = "Legend Values [" + DefaultUnits.ForceUnit + "·" + lengthunitAbbreviation + "/" + lengthunitAbbreviation + "]";
       }
 
       if (_mode == FoldMode.Stress)
       {
-        Params.Output[2].Name = "Legend Values [" + Units.StressUnit + "]";
+        Params.Output[2].Name = "Legend Values [" + DefaultUnits.StressUnitResult + "]";
       }
     }
     #endregion

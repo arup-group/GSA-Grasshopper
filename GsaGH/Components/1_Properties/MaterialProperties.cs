@@ -2,7 +2,10 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
 using OasysGH.Parameters;
+using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -14,17 +17,18 @@ namespace GsaGH.Components
   public class GetMaterialProperties : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("7504a99f-a4e2-4e30-8251-de31ea83e8cb");
-    public GetMaterialProperties()
-      : base("Material Properties", "MatProp", "Get GSA Material Properties for Elastic Isotropic material type",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.MaterialProperties;
+
+    public GetMaterialProperties() : base("Material Properties",
+      "MatProp",
+      "Get GSA Material Properties for Elastic Isotropic material type",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat1())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -66,17 +70,17 @@ namespace GsaGH.Components
         }
 
         Pressure eModulus = new Pressure(gsaMaterial.AnalysisMaterial.ElasticModulus, UnitSystem.SI);
-        eModulus = new Pressure(eModulus.As(Units.StressUnit), Units.StressUnit);
+        eModulus = new Pressure(eModulus.As(DefaultUnits.StressUnitResult), DefaultUnits.StressUnitResult);
         DA.SetData(0, new GH_UnitNumber(eModulus));
 
         DA.SetData(1, gsaMaterial.AnalysisMaterial.PoissonsRatio);
 
         Density density = new Density(gsaMaterial.AnalysisMaterial.Density, DensityUnit.KilogramPerCubicMeter);
-        density = new Density(density.As(Units.DensityUnit), Units.DensityUnit);
+        density = new Density(density.As(DefaultUnits.DensityUnit), DefaultUnits.DensityUnit);
         DA.SetData(2, new GH_UnitNumber(density));
 
         CoefficientOfThermalExpansion deltaT = new CoefficientOfThermalExpansion(gsaMaterial.AnalysisMaterial.CoefficientOfThermalExpansion, UnitSystem.SI);
-        deltaT = new CoefficientOfThermalExpansion(deltaT.As(Units.CoefficientOfThermalExpansionUnit), Units.CoefficientOfThermalExpansionUnit);
+        deltaT = new CoefficientOfThermalExpansion(deltaT.As(DefaultUnits.CoefficientOfThermalExpansionUnit), DefaultUnits.CoefficientOfThermalExpansionUnit);
         DA.SetData(3, new GH_UnitNumber(deltaT));
       }
     }

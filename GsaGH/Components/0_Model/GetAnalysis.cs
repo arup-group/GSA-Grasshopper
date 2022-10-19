@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Grasshopper;
 using Grasshopper.Kernel;
-using GsaAPI;
 using GsaGH.Parameters;
-
+using OasysGH;
+using OasysGH.Components;
 
 namespace GsaGH.Components
 {
@@ -16,17 +13,18 @@ namespace GsaGH.Components
   public class GetAnalysis : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("566a94d2-a022-4f12-a645-0366deb1476c");
-    public GetAnalysis()
-      : base("Get Model Analysis Tasks", "GetAnalysisTasks", "Get Analysis Tasks and their Cases from GSA model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat0())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GetAnalysisTask;
+
+    public GetAnalysis() : base("Get Model Analysis Tasks",
+      "GetAnalysisTasks",
+      "Get Analysis Tasks and their Cases from GSA model",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat0())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -42,8 +40,8 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Analysis Tasks", "ΣT", "List of Analysis Tasks in model", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Analysis Cases", "ΣA", "List of Analysis Cases in model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaAnalysisTaskParameter(), "Analysis Tasks", "ΣT", "List of Analysis Tasks in model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaAnalysisCaseParameter(), "Analysis Cases", "ΣA", "List of Analysis Cases in model", GH_ParamAccess.list);
     }
     #endregion
 

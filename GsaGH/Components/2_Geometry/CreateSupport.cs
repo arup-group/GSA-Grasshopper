@@ -3,6 +3,8 @@ using Grasshopper.Kernel;
 using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using OasysGH.Components;
+using OasysGH;
 
 namespace GsaGH.Components
 {
@@ -12,19 +14,18 @@ namespace GsaGH.Components
   public class CreateSupport : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon/ including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("d808e81f-6ae1-49d9-a8a5-2424a1763a69");
-    public CreateSupport()
-      : base("Create Support", "Support", "Create GSA Node Support",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat2())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.primary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateSupport;
+
+    public CreateSupport() : base("Create Support",
+      "Support",
+      "Create GSA Node Support",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat2())
+    { }
     #endregion
 
     #region Custom UI

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-
-using Grasshopper.Kernel.Parameters;
-using GsaAPI;
 using GsaGH.Parameters;
-using OasysUnits;
-using System.Linq;
+using OasysGH;
+using OasysGH.Components;
 
 namespace GsaGH.Components
 {
@@ -17,17 +13,18 @@ namespace GsaGH.Components
   public class CreateProp3d : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("4919553a-8d96-4170-a357-74cfbe930897");
-    public CreateProp3d()
-      : base("Create 3D Property", "Prop3d", "Create GSA 3D Property",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateProp3d;
+
+    public CreateProp3d() : base("Create 3D Property",
+      "Prop3d",
+      "Create GSA 3D Property",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat1())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI

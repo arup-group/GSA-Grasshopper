@@ -7,7 +7,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-
+using OasysGH;
+using OasysGH.Components;
 
 namespace GsaGH.Components
 {
@@ -17,17 +18,18 @@ namespace GsaGH.Components
   public class EditAnalysisTask : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("efc2aae5-7ebf-4032-89d5-8fec8830989d");
-    public EditAnalysisTask()
-      : base("Edit Analysis Task", "EditTask", "Modify GSA Analysis Tasks",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat4())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditAnalysisTask;
+
+    public EditAnalysisTask() : base("Edit Analysis Task",
+      "EditTask",
+      "Modify GSA Analysis Tasks",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat4())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -128,7 +130,7 @@ namespace GsaGH.Components
 
           int id = 0;
           if (DA.GetData(4, ref id))
-            gsaTask.SetID(id);
+            gsaTask.ID = id;
 
           DA.SetData(0, new GsaAnalysisTaskGoo(gsaTask));
           if (gsaTask.Type != GsaAnalysisTask.AnalysisType.Static)

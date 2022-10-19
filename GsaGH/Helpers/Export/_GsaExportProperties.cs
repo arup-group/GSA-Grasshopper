@@ -11,25 +11,9 @@ namespace GsaGH.Util.Gsa.ToGSA
     public static MaterialType ConvertType(GsaMaterial material)
     {
       MaterialType matType = GsaAPI.MaterialType.NONE;
-      int typ = (int)material.MaterialType;
-      if (typ == 1)
-        matType = MaterialType.STEEL;
-      if (typ == 2)
-        matType = MaterialType.CONCRETE;
-      if (typ == 5)
-        matType = MaterialType.FRP;
-      if (typ == 3)
-        matType = MaterialType.ALUMINIUM;
-      if (typ == 7)
-        matType = MaterialType.TIMBER;
-      if (typ == 4)
-        matType = MaterialType.GLASS;
-      if (typ == 8)
-        matType = MaterialType.FABRIC;
-      if (typ == 0)
-        matType = MaterialType.GENERIC;
-      if (typ == -2)
-        matType = MaterialType.UNDEF;
+      
+      if (material != null)
+        matType = (MaterialType)(int)material.MaterialType;
 
       return matType;
     }
@@ -43,9 +27,9 @@ namespace GsaGH.Util.Gsa.ToGSA
       int outID = material.AnalysisProperty;
 
       // test if material has already bee added to the dictionary
-      if (materials_guid.ContainsKey(material.GUID))
+      if (materials_guid.ContainsKey(material.Guid))
       {
-        materials_guid.TryGetValue(material.GUID, out int sID);
+        materials_guid.TryGetValue(material.Guid, out int sID);
         // if guid exist in our dictionary it has been added to the model 
         return sID;
       }
@@ -72,7 +56,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       }
 
       // set guid in dictionary
-      materials_guid.Add(material.GUID, outID);
+      materials_guid.Add(material.Guid, outID);
 
       return outID;
     }
@@ -85,7 +69,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {
       if (section == null) { return 0; }
-      if (section.API_Section == null) { return section.ID; }
+      if (section.API_Section == null) { return section.Id; }
 
       if (sections_guid.ContainsKey(section.GUID))
       {
@@ -94,20 +78,17 @@ namespace GsaGH.Util.Gsa.ToGSA
         return sID;
       }
 
-      int outID = section.ID;
+      int outID = section.Id;
 
       // set material
       if (section.API_Section.MaterialAnalysisProperty != 0 && section.Material != null && section.Material.AnalysisMaterial != null)
         section.API_Section.MaterialAnalysisProperty = Materials.ConvertCustomMaterial(section.Material, ref existingMaterials, ref materials_guid);
 
-      
-
-
       // section
-      if (section.ID > 0)
+      if (section.Id > 0)
       {
         if (section.API_Section != null) // section can refer to an ID only, meaning that the section must already exist in the model. Else we set it in the model:
-          existingSections[section.ID] = section.API_Section;
+          existingSections[section.Id] = section.API_Section;
         else
           return outID; // return without setting the GUID in the dictionary
       }
@@ -128,12 +109,12 @@ namespace GsaGH.Util.Gsa.ToGSA
       sections_guid.Add(section.GUID, outID);
 
       // set modifier
-      if (section.Modifier != null && section.Modifier.isModified)
+      if (section.Modifier != null && section.Modifier.IsModified)
       {
         if (existingSectionModifiers.ContainsKey(outID))
-          existingSectionModifiers[outID] = section.Modifier.API_SectionModifier;
+          existingSectionModifiers[outID] = section.Modifier._sectionModifier;
         else
-          existingSectionModifiers.Add(outID, section.Modifier.API_SectionModifier);
+          existingSectionModifiers.Add(outID, section.Modifier._sectionModifier);
       }
 
       return outID;
@@ -152,7 +133,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         if (sections.Count != 0)
         {
           // update counter if new sections have set ID higher than existing max
-          int existingSectionsMaxID = sections.Max(x => x.ID); // max ID in new 
+          int existingSectionsMaxID = sections.Max(x => x.Id); // max ID in new 
           if (existingSectionsMaxID > sectionidcounter)
             sectionidcounter = existingSectionsMaxID + 1;
 
@@ -164,12 +145,12 @@ namespace GsaGH.Util.Gsa.ToGSA
               Section apiSection = section.API_Section;
 
               // set modifier
-              if (section.Modifier != null && section.Modifier.isModified)
+              if (section.Modifier != null && section.Modifier.IsModified)
               {
                 if (apimodifiers.ContainsKey(i))
-                  apimodifiers[i] = section.Modifier.API_SectionModifier;
+                  apimodifiers[i] = section.Modifier._sectionModifier;
                 else
-                  apimodifiers.Add(i, section.Modifier.API_SectionModifier);
+                  apimodifiers.Add(i, section.Modifier._sectionModifier);
               }
 
               // set material
@@ -183,11 +164,11 @@ namespace GsaGH.Util.Gsa.ToGSA
                 continue;
               }
 
-              if (section.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+              if (section.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
               {
-                existingSections[section.ID] = apiSection;
+                existingSections[section.Id] = apiSection;
                 // set guid in dictionary
-                sections_guid.Add(section.GUID, section.ID);
+                sections_guid.Add(section.GUID, section.Id);
               }
               else
               {

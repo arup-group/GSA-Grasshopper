@@ -2,7 +2,11 @@
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Parameters;
+using OasysGH.Units;
 using OasysUnits;
 
 namespace GsaGH.Components
@@ -13,17 +17,18 @@ namespace GsaGH.Components
   public class EditOffset : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("1e094fcd-8f5f-4047-983c-e0e57a83ae52");
-    public EditOffset()
-      : base("Edit Offset", "OffsetEdit", "Modify GSA Offset or just get information about existing",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditOffset;
+
+    public EditOffset() : base("Edit Offset",
+      "OffsetEdit",
+      "Modify GSA Offset or just get information about existing",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat1())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -35,7 +40,7 @@ namespace GsaGH.Components
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity quantity = new Length(0, Units.LengthUnitGeometry);
+      IQuantity quantity = new Length(0, DefaultUnits.LengthUnitGeometry);
       string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("Offset", "Of", "GSA Offset", GH_ParamAccess.item);
@@ -49,7 +54,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      IQuantity quantity = new Length(0, Units.LengthUnitGeometry);
+      IQuantity quantity = new Length(0, DefaultUnits.LengthUnitGeometry);
       string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("Offset", "Of", "GSA Offset", GH_ParamAccess.item);
@@ -70,16 +75,16 @@ namespace GsaGH.Components
         {
           int inp = 1;
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.X1 = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.X1 = (Length)Input.LengthOrRatio(this, DA, inp++, DefaultUnits.LengthUnitGeometry, true);
 
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.X2 = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.X2 = (Length)Input.LengthOrRatio(this, DA, inp++, DefaultUnits.LengthUnitGeometry, true);
 
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.Y = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.Y = (Length)Input.LengthOrRatio(this, DA, inp++, DefaultUnits.LengthUnitGeometry, true);
 
           if (this.Params.Input[inp].SourceCount != 0)
-            offset.Z = GetInput.GetLength(this, DA, inp++, Units.LengthUnitGeometry, true);
+            offset.Z = (Length)Input.LengthOrRatio(this, DA, inp++, DefaultUnits.LengthUnitGeometry, true);
 
           //outputs
           int outp = 0;

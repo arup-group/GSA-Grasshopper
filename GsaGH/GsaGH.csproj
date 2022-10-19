@@ -65,8 +65,8 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OasysGH, Version=0.3.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\OasysGH.0.3.0-beta\lib\net48\OasysGH.dll</HintPath>
+    <Reference Include="OasysGH, Version=0.3.5.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\OasysGH.0.3.5-beta\lib\net48\OasysGH.dll</HintPath>
     </Reference>
     <Reference Include="OasysUnits, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f8601875a1f041da, processorArchitecture=MSIL">
       <HintPath>..\packages\OasysUnits.1.0.0\lib\net47\OasysUnits.dll</HintPath>
@@ -192,19 +192,17 @@
     <Compile Include="Components\3_Loads\CreateGridPointLoad.cs" />
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
-    <Compile Include="Components\Other\ConvertUnitNumber.cs" />
-    <Compile Include="Components\Other\CreateUnitNumber.cs" />
-    <Compile Include="Components\GH_OasysComponent.cs" />
     <Compile Include="Helpers\Export\ConvertMembers.cs" />
+    <Compile Include="Helpers\Mappings.cs" />
     <Compile Include="Helpers\PostHog.cs" />
     <Compile Include="Helpers\_DeSerialization.cs" />
     <Compile Include="Helpers\_Display.cs" />
-    <Compile Include="Helpers\_GetInput.cs" />
     <Compile Include="Helpers\Export\_GsaExportLoads.cs" />
     <Compile Include="Helpers\Export\_GsaExportProperties.cs" />
     <Compile Include="Helpers\Export\_GsaExportElements.cs" />
     <Compile Include="Helpers\Export\_GsaExportNodes.cs" />
     <Compile Include="Helpers\Export\_GsaExport.cs" />
+    <Compile Include="Helpers\CustomInput.cs" />
     <Compile Include="Helpers\_GsaPath.cs" />
     <Compile Include="Helpers\Export\ExportMembers.cs" />
     <Compile Include="Helpers\_GsaImport.cs" />
@@ -215,32 +213,78 @@
     <Compile Include="GsaGHInfo.cs" />
     <Compile Include="Helpers\LoadMainMenu.cs" />
     <Compile Include="Helpers\_SqlReader.cs" />
-    <Compile Include="Parameters\GsaSectionModifierParam.cs" />
-    <Compile Include="Parameters\GsaResult.cs" />
-    <Compile Include="Parameters\GsaCombinationCase.cs" />
-    <Compile Include="Parameters\GsaAnalysisCase.cs" />
-    <Compile Include="Parameters\GsaElem3dParam.cs" />
-    <Compile Include="Parameters\GsaLoadParam.cs" />
-    <Compile Include="Parameters\GsaGridPlaneSurfaceParam.cs" />
-    <Compile Include="Parameters\GsaMem3dParam.cs" />
-    <Compile Include="Parameters\GsaMaterial.cs" />
-    <Compile Include="Parameters\GsaProp3d.cs" />
-    <Compile Include="Parameters\GsaAnalysisTask.cs" />
-    <Compile Include="Parameters\_ResultMesh.cs" />
-    <Compile Include="Parameters\_ResultLine.cs" />
-    <Compile Include="Parameters\_ResultPoint.cs" />
+    <Compile Include="Parameters\0_Model\GsaModel.cs" />
+    <Compile Include="Parameters\1_Properties\GsaBool6.cs" />
+    <Compile Include="Parameters\1_Properties\GsaMaterial.cs" />
+    <Compile Include="Parameters\1_Properties\GsaOffset.cs" />
+    <Compile Include="Parameters\1_Properties\GsaProp2d.cs" />
+    <Compile Include="Parameters\1_Properties\GsaProp3d.cs" />
+    <Compile Include="Parameters\1_Properties\GsaSection.cs" />
+    <Compile Include="Parameters\1_Properties\GsaSectionModifier.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaElement1d.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaElement2d.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaElement3d.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaMember1d.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaMember2d.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaMember3d.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaNode.cs" />
+    <Compile Include="Parameters\3_Loads\GsaGridPlaneSurface.cs" />
+    <Compile Include="Parameters\3_Loads\GsaLoad.cs" />
+    <Compile Include="Parameters\4_Analysis\GsaAnalysisCase.cs" />
+    <Compile Include="Parameters\4_Analysis\GsaAnalysisCaseGoo.cs" />
+    <Compile Include="Parameters\4_Analysis\GsaAnalysisTask.cs" />
+    <Compile Include="Parameters\4_Analysis\GsaAnalysisTaskGoo.cs" />
+    <Compile Include="Parameters\4_Analysis\GsaAnalysisTaskParameter.cs" />
+    <Compile Include="Parameters\1_Properties\GsaBool6Goo.cs" />
+    <Compile Include="Parameters\4_Analysis\GsaCombinationCase.cs" />
+    <Compile Include="Parameters\4_Analysis\GsaCombinationCaseParameter.cs" />
+    <Compile Include="Parameters\4_Analysis\GsaCombinationCaseGoo.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaElement1dGoo.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaElement2dGoo.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaElement3dGoo.cs" />
+    <Compile Include="Parameters\3_Loads\GsaGridPlaneSurfaceGoo.cs" />
+    <Compile Include="Parameters\3_Loads\GsaLoadGoo.cs" />
+    <Compile Include="Parameters\1_Properties\GsaMaterialParameter.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaMember1dParameter.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaMember2dParameter.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaMember3dGoo.cs" />
+    <Compile Include="Parameters\0_Model\GsaModelGoo.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaNodeGoo.cs" />
+    <Compile Include="Parameters\1_Properties\GsaOffsetGoo.cs" />
+    <Compile Include="Parameters\1_Properties\GsaProp2dParameter.cs" />
+    <Compile Include="Parameters\1_Properties\GsaProp3dGoo.cs" />
+    <Compile Include="Parameters\5_Results\GsaResult.cs" />
+    <Compile Include="Parameters\5_Results\GsaResultGoo.cs" />
+    <Compile Include="Parameters\1_Properties\GsaSectionGoo.cs" />
+    <Compile Include="Parameters\1_Properties\GsaSectionModifierGoo.cs" />
+    <Compile Include="Parameters\1_Properties\GsaSectionParameter.cs" />
+    <Compile Include="Parameters\1_Properties\GsaSectionModifierParameter.cs" />
+    <Compile Include="Parameters\5_Results\GsaResultParameters.cs" />
+    <Compile Include="Parameters\4_Analysis\GsaAnalysisCaseParameter.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaElement3dParameter.cs" />
+    <Compile Include="Parameters\3_Loads\GsaLoadParameter.cs" />
+    <Compile Include="Parameters\3_Loads\GsaGridPlaneSurfaceParameter.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaMember3dParameter.cs" />
+    <Compile Include="Parameters\1_Properties\GsaMaterialGoo.cs" />
+    <Compile Include="Parameters\1_Properties\GsaProp3dParameter.cs" />
+    <Compile Include="Parameters\5_Results\ResultMeshGoo.cs" />
+    <Compile Include="Parameters\5_Results\ResultLineGoo.cs" />
+    <Compile Include="Parameters\5_Results\ResultPointGoo.cs" />
+    <Compile Include="Parameters\GH_OasysGoo.cs" />
+    <Compile Include="Parameters\GH_OasysPersistentParam.cs" />
+    <Compile Include="Parameters\GH_OasysPersistentGeometryParam.cs" />
+    <Compile Include="Parameters\GH_OasysGeometricGoo.cs" />
+    <Compile Include="Parameters\ObjectExtension.cs" />
     <Compile Include="Parameters\_Titles.cs" />
-    <Compile Include="Parameters\_Units.cs" />
-    <Compile Include="Parameters\GsaProp2d.cs" />
-    <Compile Include="Parameters\GsaSection.cs" />
-    <Compile Include="Parameters\GsaOffsetParam.cs" />
-    <Compile Include="Parameters\GsaBool6Param.cs" />
-    <Compile Include="Parameters\GsaElem2dParam.cs" />
-    <Compile Include="Parameters\GsaElem1dParam.cs" />
-    <Compile Include="Parameters\GsaMem1dParam.cs" />
-    <Compile Include="Parameters\GsaMem2dParam.cs" />
-    <Compile Include="Parameters\GsaModelParam.cs" />
-    <Compile Include="Parameters\GsaNodeParam.cs" />
+    <Compile Include="Parameters\1_Properties\GsaProp2dGoo.cs" />
+    <Compile Include="Parameters\1_Properties\GsaOffsetParameter.cs" />
+    <Compile Include="Parameters\1_Properties\GsaBool6Parameter.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaElement2dParameter.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaElement1dParameter.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaMember1dGoo.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaMember2dGoo.cs" />
+    <Compile Include="Parameters\0_Model\GsaModelParameter.cs" />
+    <Compile Include="Parameters\2_Geometry\GsaNodeParameter.cs" />
     <Compile Include="Helpers\_RhinoConversions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -263,15 +307,8 @@
     <Compile Include="Helpers\_Colour.cs" />
     <Compile Include="UI\Comp_Profile.cs" />
     <Compile Include="UI\Comp_MultiDropDowns.cs" />
-    <Compile Include="UI\UnitSettingsBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\UnitSettingsBox.Designer.cs">
-      <DependentUpon>UnitSettingsBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\WidthFix.cs" />
     <Compile Include="UI\GraphicButtons.cs" />
-    <Compile Include="UI\Comp_Bool6.cs" />
     <Compile Include="UI\Comp_DropDown.cs" />
     <Compile Include="UI\Comp_Releases.cs" />
     <Compile Include="UI\Comp_Support.cs" />
@@ -293,9 +330,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\UnitSettingsBox.resx">
-      <DependentUpon>UnitSettingsBox.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -651,6 +685,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\GwaModel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Icons\CombinationCaseParam.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

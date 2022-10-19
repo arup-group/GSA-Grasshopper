@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
-using System.Linq;
 using OasysUnits.Units;
 
 namespace GsaGH.Components
@@ -14,17 +19,18 @@ namespace GsaGH.Components
   public class CreateOffset : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("ba73abd3-cd48-4dd2-9cd1-d89c921dd108");
-    public CreateOffset()
-      : base("Create Offset", "Offset", "Create GSA Offset",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.secondary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateOffset;
+
+    public CreateOffset() : base("Create Offset",
+      "Offset",
+      "Create GSA Offset",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat1())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -38,7 +44,7 @@ namespace GsaGH.Components
 
         // length
         //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
-        dropdownitems.Add(Units.FilteredLengthUnits);
+        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
         selecteditems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);
@@ -86,7 +92,7 @@ namespace GsaGH.Components
             "Measure"
     });
     private bool first = true;
-    private LengthUnit lengthUnit = GsaGH.Units.LengthUnitGeometry;
+    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
     string unitAbbreviation;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
@@ -112,10 +118,10 @@ namespace GsaGH.Components
     {
       GsaOffset offset = new GsaOffset
       {
-        X1 = GetInput.GetLength(this, DA, 0, lengthUnit, true),
-        X2 = GetInput.GetLength(this, DA, 1, lengthUnit, true),
-        Y = GetInput.GetLength(this, DA, 2, lengthUnit, true),
-        Z = GetInput.GetLength(this, DA, 3, lengthUnit, true)
+        X1 = (Length)Input.LengthOrRatio(this, DA, 0, lengthUnit, true),
+        X2 = (Length)Input.LengthOrRatio(this, DA, 1, lengthUnit, true),
+        Y = (Length)Input.LengthOrRatio(this, DA, 2, lengthUnit, true),
+        Z = (Length)Input.LengthOrRatio(this, DA, 3, lengthUnit, true)
       };
 
       DA.SetData(0, new GsaOffsetGoo(offset));

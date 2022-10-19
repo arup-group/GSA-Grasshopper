@@ -1,10 +1,10 @@
 ﻿using System;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
-using System.Windows.Forms;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
-using Grasshopper.Kernel.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
@@ -14,19 +14,18 @@ namespace GsaGH.Components
   public class LocalAxis : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("4a322b8e-031a-4c90-b8df-b32d162a3274");
-    public LocalAxis()
-      : base("Local Axis", "Axis", "Get Element1D or Member1D local axes",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat2())
-    {
-    }
-
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.LocalAxes;
+
+    public LocalAxis() : base("Local Axis",
+      "Axis",
+      "Get Element1D or Member1D local axes",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat2())
+    { }
     #endregion
 
     #region Custom UI

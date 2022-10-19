@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using GsaGH;
 
@@ -34,3 +35,5 @@ using GsaGH;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion(GsaGHInfo.Vers)]
 [assembly: AssemblyFileVersion(GsaGHInfo.Vers + ".0")]
+
+[assembly: InternalsVisibleTo("GsaGHTests")]

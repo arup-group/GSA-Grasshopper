@@ -2,27 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using OasysUnits.Units;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
   public class CreateFaceLoads : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public CreateFaceLoads()
-        : base("Create Face Load", "FaceLoad", "Create GSA Face Load",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat3())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
     public override GH_Exposure Exposure => GH_Exposure.primary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.FaceLoad;
+
+    public CreateFaceLoads() : base("Create Face Load",
+      "FaceLoad",
+      "Create GSA Face Load",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat3())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -33,12 +40,12 @@ namespace GsaGH.Components
       {
         dropdownitems = new List<List<string>>();
         dropdownitems.Add(loadTypeOptions);
-        dropdownitems.Add(Units.FilteredForcePerAreaUnits);
+        dropdownitems.Add(FilteredUnits.FilteredForcePerAreaUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(_mode.ToString());
 
-        PressureUnit pressureUnit = (Force.From(1, Units.ForceUnit) / (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry))).Unit;
+        PressureUnit pressureUnit = (Force.From(1, DefaultUnits.ForceUnit) / (Length.From(1, DefaultUnits.LengthUnitGeometry) * Length.From(1, DefaultUnits.LengthUnitGeometry))).Unit;
         selecteditems.Add(pressureUnit.ToString());
 
         first = false;
@@ -96,10 +103,10 @@ namespace GsaGH.Components
     #region Input and output
     readonly List<string> loadTypeOptions = new List<string>(new string[]
     {
-            "Uniform",
-            "Variable",
-            "Point",
-            "Edge"
+      "Uniform",
+      "Variable",
+      "Point",
+      "Edge"
     });
 
     // list of lists with all dropdown lists conctent
@@ -109,11 +116,11 @@ namespace GsaGH.Components
     // list of descriptions 
     List<string> spacerDescriptions = new List<string>(new string[]
     {
-            "Load Type",
-            "Unit",
+      "Load Type",
+      "Unit",
     });
 
-    private PressureUnit forceAreaUnit = (Force.From(1, Units.ForceUnit) / (Length.From(1, Units.LengthUnitGeometry) * Length.From(1, Units.LengthUnitGeometry))).Unit;
+    private PressureUnit forceAreaUnit = (Force.From(1, DefaultUnits.ForceUnit) / (Length.From(1, DefaultUnits.LengthUnitGeometry) * Length.From(1, DefaultUnits.LengthUnitGeometry))).Unit;
     #endregion
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -238,7 +245,7 @@ namespace GsaGH.Components
               GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
             faceLoad.FaceLoad.IsProjected = prj;
 
-            Pressure load1 = GetInput.Stress(this, DA, 6, forceAreaUnit);
+            Pressure load1 = (Pressure)Input.UnitNumber(this, DA, 6, forceAreaUnit);
 
             // set position and value
             faceLoad.FaceLoad.SetValue(0, load1.NewtonsPerSquareMeter);
@@ -258,10 +265,10 @@ namespace GsaGH.Components
             faceLoad.FaceLoad.IsProjected = prj;
 
             // set value
-            faceLoad.FaceLoad.SetValue(0, GetInput.Stress(this, DA, 6, forceAreaUnit, true).NewtonsPerSquareMeter);
-            faceLoad.FaceLoad.SetValue(1, GetInput.Stress(this, DA, 7, forceAreaUnit, true).NewtonsPerSquareMeter);
-            faceLoad.FaceLoad.SetValue(2, GetInput.Stress(this, DA, 8, forceAreaUnit, true).NewtonsPerSquareMeter);
-            faceLoad.FaceLoad.SetValue(3, GetInput.Stress(this, DA, 9, forceAreaUnit, true).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(0, ((Pressure)Input.UnitNumber(this, DA, 6, forceAreaUnit, true)).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(1, ((Pressure)Input.UnitNumber(this, DA, 7, forceAreaUnit, true)).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(2, ((Pressure)Input.UnitNumber(this, DA, 8, forceAreaUnit, true)).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(3, ((Pressure)Input.UnitNumber(this, DA, 9, forceAreaUnit, true)).NewtonsPerSquareMeter);
           }
           break;
 
@@ -284,7 +291,7 @@ namespace GsaGH.Components
             DA.GetData(8, ref s);
 
             // set position and value
-            faceLoad.FaceLoad.SetValue(0, GetInput.Stress(this, DA, 6, forceAreaUnit).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(0, ((Pressure)Input.UnitNumber(this, DA, 6, forceAreaUnit)).NewtonsPerSquareMeter);
             //faceLoad.Position.X = r; //note Vector2 currently only get in GsaAPI
             //faceLoad.Position.Y = s;
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning: the position cannot be set in GsaAPI at the moment");
@@ -300,9 +307,9 @@ namespace GsaGH.Components
             int edge = 1;
             DA.GetData(5, ref edge);
 
-            faceLoad.FaceLoad.SetValue(0, GetInput.Stress(this, DA, 6, forceAreaUnit).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(0, ((Pressure)Input.UnitNumber(this, DA, 6, forceAreaUnit)).NewtonsPerSquareMeter);
             if (this.Params.Input[7].SourceCount != 0)
-              faceLoad.FaceLoad.SetValue(1, GetInput.Stress(this, DA, 7, forceAreaUnit).NewtonsPerSquareMeter);
+              faceLoad.FaceLoad.SetValue(1, ((Pressure)Input.UnitNumber(this, DA, 7, forceAreaUnit)).NewtonsPerSquareMeter);
             else
               faceLoad.FaceLoad.SetValue(1, faceLoad.FaceLoad.Value(0));
 
@@ -466,7 +473,7 @@ namespace GsaGH.Components
 
         dropdownitems = new List<List<string>>();
         dropdownitems.Add(loadTypeOptions);
-        dropdownitems.Add(Units.FilteredStressUnits);
+        dropdownitems.Add(FilteredUnits.FilteredStressUnits);
 
         selecteditems = new List<string>();
         selecteditems.Add(reader.GetString("select"));

@@ -1,8 +1,13 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Parameters;
+using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -14,35 +19,29 @@ namespace GsaGH.Components
   public class EditSectionModifier : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("7c78c61b-f01c-4a0e-9399-712fc853e23b");
-    public EditSectionModifier()
-      : base("Edit Section Modifier", "ModifierEdit", "Modify GSA Section Modifier",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditSectionModifier;
-    #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-
-
+    public EditSectionModifier() : base("Edit Section Modifier",
+      "ModifierEdit",
+      "Modify GSA Section Modifier",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat1())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddGenericParameter("Section Modifier", "Mo", "Set GSA Section Modifier", GH_ParamAccess.item);
-      
+
       pManager.AddGenericParameter("Area Modifier", "A", "Modify the effective Area using either:" + System.Environment.NewLine + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)" + System.Environment.NewLine + "TO using an Area UnitNumber", GH_ParamAccess.item);
-      
+
       pManager.AddGenericParameter("I11 Modifier", "I11", "Modify the effective Iyy/Iuu using either:" + System.Environment.NewLine + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)" + System.Environment.NewLine + "TO using an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
-      
+
       pManager.AddGenericParameter("I22 Modifier", "I22", "Modify the effective Izz/Ivv using either:" + System.Environment.NewLine + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)" + System.Environment.NewLine + "TO using an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
 
       pManager.AddGenericParameter("J Modifier", "J", "Modify the effective J using either:" + System.Environment.NewLine + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)" + System.Environment.NewLine + "TO using an AreaMomentOfInertia UnitNumber", GH_ParamAccess.item);
@@ -110,7 +109,7 @@ namespace GsaGH.Components
         {
           try
           {
-            modifier.AreaModifier = GetInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 1, true).Value;
+            modifier.AreaModifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 1, true).Value;
           }
           catch (Exception e)
           {
@@ -123,7 +122,7 @@ namespace GsaGH.Components
         {
           try
           {
-            modifier.I11Modifier = GetInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 2, true).Value;
+            modifier.I11Modifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 2, true).Value;
           }
           catch (Exception e)
           {
@@ -136,7 +135,7 @@ namespace GsaGH.Components
         {
           try
           {
-            modifier.I22Modifier = GetInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 3, true).Value;
+            modifier.I22Modifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 3, true).Value;
           }
           catch (Exception e)
           {
@@ -149,7 +148,7 @@ namespace GsaGH.Components
         {
           try
           {
-            modifier.JModifier = GetInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 4, true).Value;
+            modifier.JModifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 4, true).Value;
           }
           catch (Exception e)
           {
@@ -159,16 +158,16 @@ namespace GsaGH.Components
         }
 
         if (this.Params.Input[5].SourceCount > 0)
-          modifier.K11Modifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 5);
+          modifier.K11Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 5);
 
         if (this.Params.Input[6].SourceCount > 0)
-          modifier.K22Modifier = GetInput.RatioInDecimalFractionToPercentage(this, DA, 6);
+          modifier.K22Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 6);
 
         if (this.Params.Input[7].SourceCount > 0)
         {
           try
           {
-            modifier.VolumeModifier = GetInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 7, true).Value;
+            modifier.VolumeModifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 7, true).Value;
           }
           catch (Exception e)
           {
@@ -176,7 +175,7 @@ namespace GsaGH.Components
             return;
           }
         }
-        
+
         if (this.Params.Input[8].SourceCount > 0)
         {
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -200,8 +199,8 @@ namespace GsaGH.Components
             else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
             {
               // create new quantity from default units
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Input " + this.Params.Input[8].NickName + " was automatically converted to " + Units.LinearDensityUnit.ToString() + ". Be aware that sharing this file or changing your unit settings will change this value!");
-              modifier.AdditionalMass = new LinearDensity(val, Units.LinearDensityUnit);
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Input " + this.Params.Input[8].NickName + " was automatically converted to " + DefaultUnits.LinearDensityUnit.ToString() + ". Be aware that sharing this file or changing your unit settings will change this value!");
+              modifier.AdditionalMass = new LinearDensity(val, DefaultUnits.LinearDensityUnit);
             }
             else
             {
@@ -211,14 +210,14 @@ namespace GsaGH.Components
           }
         }
 
-        
+
         bool ax = false;
         if (DA.GetData(9, ref ax))
-          modifier.isBendingAxesPrincipal = ax;
+          modifier.IsBendingAxesPrincipal = ax;
 
         bool pt = false;
         if (DA.GetData(10, ref pt))
-          modifier.isReferencePointCentroid = pt;
+          modifier.IsReferencePointCentroid = pt;
 
         int stress = 0;
         if (DA.GetData(11, ref stress))
@@ -245,8 +244,8 @@ namespace GsaGH.Components
         DA.SetData(6, new GH_UnitNumber(modifier.K22Modifier));
         DA.SetData(7, new GH_UnitNumber(modifier.VolumeModifier));
         DA.SetData(8, new GH_UnitNumber(modifier.AdditionalMass));
-        DA.SetData(9, modifier.isBendingAxesPrincipal);
-        DA.SetData(10, modifier.isReferencePointCentroid);
+        DA.SetData(9, modifier.IsBendingAxesPrincipal);
+        DA.SetData(10, modifier.IsReferencePointCentroid);
 
         if (modifier.StressOption == GsaSectionModifier.StressOptionType.NoCalculation)
           stress = 0;

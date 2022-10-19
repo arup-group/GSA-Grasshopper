@@ -7,6 +7,8 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Util.GH;
+using OasysGH;
+using OasysGH.Components;
 using OasysUnits;
 
 namespace GsaGH.Components
@@ -17,17 +19,18 @@ namespace GsaGH.Components
   public class SelectResult : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon
-    // including name, exposure level and icon
+    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("c803bba4-a026-4f95-b588-9d76455a53fa");
-    public SelectResult()
-      : base("Select Results", "SelRes", "Select AnalysisCase or Combination Result from an analysed GSA model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.primary;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SelectResult;
+
+    public SelectResult() : base("Select Results",
+      "SelRes",
+      "Select AnalysisCase or Combination Result from an analysed GSA model",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat5())
+    { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
     #region Custom UI
@@ -210,7 +213,7 @@ namespace GsaGH.Components
           gh_typ.CastTo(ref in_Model);
           if (gsaModel != null)
           {
-            if (in_Model.GUID != gsaModel.GUID) // only get results if GUID is not similar
+            if (in_Model.Guid != gsaModel.Guid) // only get results if GUID is not similar
             {
               gsaModel = in_Model;
               updateCases = true;
@@ -296,7 +299,7 @@ namespace GsaGH.Components
           }
           caseSetByInput = true;
         }
-        
+
         // Get analysis case 
         GH_Integer gh_aCase = new GH_Integer();
         if (DA.GetData(2, ref gh_aCase))
@@ -395,8 +398,8 @@ namespace GsaGH.Components
         }
 
         // 'reflect' model results and create dropdown lists
-        if (updateCases || 
-          (ResultType == GsaResult.ResultType.AnalysisCase && analysisCaseResults == null) || 
+        if (updateCases ||
+          (ResultType == GsaResult.ResultType.AnalysisCase && analysisCaseResults == null) ||
           (ResultType == GsaResult.ResultType.Combination && combinationCaseResults == null))
         {
           switch (ResultType)
@@ -469,8 +472,8 @@ namespace GsaGH.Components
               return;
           }
         }
-        
-        if (ResultType == GsaResult.ResultType.Combination & updatePermutations | (CaseID > 0  & Permutations.Count > 0))
+
+        if (ResultType == GsaResult.ResultType.Combination & updatePermutations | (CaseID > 0 & Permutations.Count > 0))
         {
           // calc permutations
           if (combinationCaseResults == null)
@@ -585,7 +588,7 @@ namespace GsaGH.Components
                     int nP = tempNodeResult[tempNodeResult.Keys.First()].Count;
                     Permutations = Enumerable.Range(1, nP).ToList();
                   }
-                  
+
                   Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, key),
                       new GsaResult(gsaModel.Model, combinationCaseResults[key], key, Permutations));
                 }
@@ -606,7 +609,7 @@ namespace GsaGH.Components
           caseIDs.Sort();
           foreach (int id in caseIDs)
             results.Add(new GsaResultGoo(Result[new Tuple<GsaResult.ResultType, int>(ResultType, id)]));
-          
+
           DA.SetDataList(0, results);
         }
       }

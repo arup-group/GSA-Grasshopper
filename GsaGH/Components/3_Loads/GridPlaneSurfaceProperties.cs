@@ -1,23 +1,27 @@
 ﻿using System;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
   public class GridPlaneSurfaceProperties : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    public GridPlaneSurfaceProperties()
-        : base("Grid Plane Surface Properties", "GridPlaneSurfaceProp", "Get GSA Grid Plane Surface Properties",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat3())
-    { }
     public override Guid ComponentGuid => new Guid("cb5c1d72-e414-447b-b5db-ce18d76e2f4d");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
-
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GridPlaneProperties;
+
+    public GridPlaneSurfaceProperties() : base("Grid Plane Surface Properties",
+      "GridPlaneSurfaceProp",
+      "Get GSA Grid Plane Surface Properties",
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat3())
+    { }
     #endregion
 
     #region Custom UI
