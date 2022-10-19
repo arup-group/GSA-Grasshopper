@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
@@ -8,6 +10,17 @@ namespace IntegrationTests
 {
   internal class Helper
   {
+    public static GH_Document CreateDocument(string path)
+    {
+      GH_DocumentIO io = new GH_DocumentIO();
+
+      Assert.True(File.Exists(path));
+      Assert.True(io.Open(path));
+
+      io.Document.NewSolution(true);
+      return io.Document;
+    }
+
     public static GH_Component FindComponentInDocumentByGroup(GH_Document doc, string groupIdentifier)
     {
       foreach (var obj in doc.Objects)
@@ -45,7 +58,7 @@ namespace IntegrationTests
             {
               if (obj2.InstanceGuid == componentguid)
               {
-                return (GH_Param<T>)obj2;
+                return (GH_Param<T>)(object)obj2;
               }
             }
           }

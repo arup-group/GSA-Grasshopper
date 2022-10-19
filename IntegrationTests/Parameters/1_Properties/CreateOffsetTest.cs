@@ -2,12 +2,15 @@
 using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Parameters;
+using OasysUnits;
+using OasysUnits.Units;
 using Xunit;
 
 namespace IntegrationTests.Parameters
 {
   [Collection("GrasshopperFixture collection")]
-  public class CreateBool6Test
+  public class CreateOffsetTest
   {
     public static GH_Document Document()
     {
@@ -21,20 +24,19 @@ namespace IntegrationTests.Parameters
     }
 
     [Theory]
-    [InlineData("X", true)]
-    [InlineData("Y", false)]
-    [InlineData("Z", true)]
-    [InlineData("XX", false)]
-    [InlineData("YY", true)]
-    [InlineData("ZZ", false)]
-    public void OutputTest(string groupIdentifier, bool expected)
+    [InlineData("Of", 1, 2, 3, 4, LengthUnit.Meter)]
+    public void OutputTest(string groupIdentifier, double expectedX1, double expectedX2, double expectedY, double expectedZ, LengthUnit expectedUnit)
     {
       GH_Document doc = Document();
-      GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, groupIdentifier);
+      GH_Param<GsaOffsetGoo> param = Helper.FindComponentInDocumentByGroup<GsaOffsetGoo>(doc, groupIdentifier);
       Assert.NotNull(param);
       param.CollectData();
-      GH_Boolean output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
-      Assert.Equal(expected, output.Value);
+      GsaOffsetGoo output = (GsaOffsetGoo)param.VolatileData.get_Branch(0)[0];
+      GsaOffset offset = output.Value;
+      Assert.Equal(new Length(expectedX1, expectedUnit), offset.X1);
+      Assert.Equal(new Length(expectedX2, expectedUnit), offset.X2);
+      Assert.Equal(new Length(expectedY, expectedUnit), offset.Y);
+      Assert.Equal(new Length(expectedZ, expectedUnit), offset.Z);
     }
 
     [Fact]

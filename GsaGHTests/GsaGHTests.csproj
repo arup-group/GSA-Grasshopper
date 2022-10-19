@@ -47,6 +47,11 @@
     </None>
   </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Parameters\4_Analysis\" />
+      <Folder Include="Parameters\5_Results\" />
+    </ItemGroup>
+
   <Import Project="PreBuild.targets" />
 
 </Project>
