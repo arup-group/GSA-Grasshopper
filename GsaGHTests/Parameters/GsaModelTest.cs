@@ -23,22 +23,6 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestOpenModel()
-    {
-      // create new GH-GSA model 
-      GsaModel m = new GsaModel();
-
-      string tempPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-      tempPath = System.IO.Path.Combine(tempPath, "Oasys", "GsaGrasshopper");
-      string file = tempPath + "\\Samples\\Env.gwb";
-
-      // open existing GSA model (steel design sample)
-      ReturnValue returnValue = m.Model.Open(file);
-
-      Assert.Same(ReturnValue.GS_OK.ToString(), returnValue.ToString());
-    }
-
-    [Fact]
     public void TestSaveModel()
     {
       // create new GH-GSA model 
