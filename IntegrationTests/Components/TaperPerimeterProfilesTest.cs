@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using Grasshopper.Documentation;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Xunit;
+using static GH_IO.VersionNumber;
 
 namespace IntegrationTests.Components
 {
@@ -43,11 +45,16 @@ namespace IntegrationTests.Components
     public void IncorrectProfilesTest()
     {
       GH_Document doc = Document();
-      GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, "Test2");
-      Assert.NotNull(param);
-      param.CollectData();
-      GH_Boolean output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
-      Assert.True(output.Value);
+      GH_Component comp = Helper.FindComponentInDocumentByGroup(doc, "Test2");
+      Assert.NotNull(comp);
+      comp.Params.Output[0].CollectData();
+      var output = comp.Params.Output[0].VolatileData.get_Branch(0)[0];
+      Assert.Null(output);
+
+      Assert.Equal(GH_RuntimeMessageLevel.Error, comp.RuntimeMessageLevel);
+
+      string expected = "Start and End Profile must contain similar number of points";
+      Assert.Equal(expected, comp.RuntimeMessages(GH_RuntimeMessageLevel.Error)[0]);
     }
   }
 }
