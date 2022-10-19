@@ -11,7 +11,7 @@ namespace GsaGH.Parameters
 
     public override string TypeName => typeof(T).Name.TrimStart('I').Replace("Gsa", string.Empty).Replace("AdSec", string.Empty);
     public override string TypeDescription => PluginInfo.ProductName + " " + this.TypeName + " Parameter";
-    public override bool IsValid => (this.Value == null) ? false : this.GetGeometry().IsValid ? true : false;
+    public override bool IsValid => (this.GetGeometry() == null) ? false : this.GetGeometry().IsValid ? true : false;
     public override string IsValidWhyNot
     {
       get
