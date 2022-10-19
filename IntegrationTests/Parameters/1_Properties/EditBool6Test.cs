@@ -7,7 +7,7 @@ using Xunit;
 namespace IntegrationTests.Parameters
 {
   [Collection("GrasshopperFixture collection")]
-  public class CreateBool6Test
+  public class EditBool6Test
   {
     public static GH_Document Document()
     {
@@ -15,7 +15,7 @@ namespace IntegrationTests.Parameters
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
 
       string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(solutiondir, "ExampleFiles");
+      string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Parameters", "1_Properties" });
       GH_DocumentIO io = new GH_DocumentIO();
       Assert.True(File.Exists(Path.Combine(path, fileName)));
       Assert.True(io.Open(Path.Combine(path, fileName)));
@@ -24,15 +24,15 @@ namespace IntegrationTests.Parameters
     }
 
     [Theory]
-    [InlineData("X", true)]
-    [InlineData("Y", false)]
-    [InlineData("Z", true)]
-    [InlineData("XX", false)]
-    [InlineData("YY", true)]
-    [InlineData("ZZ", false)]
+    [InlineData("X", false)]
+    [InlineData("Y", true)]
+    [InlineData("Z", false)]
+    [InlineData("XX", true)]
+    [InlineData("YY", false)]
+    [InlineData("ZZ", true)]
     public void OutputTest(string groupIdentifier, bool expected)
     {
-      GH_Document doc = CreateBool6Test.Document();
+      GH_Document doc = Document();
       GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, groupIdentifier);
       Assert.NotNull(param);
       param.CollectData();
@@ -43,7 +43,7 @@ namespace IntegrationTests.Parameters
     [Fact]
     public void NoRuntimeErrorTest()
     {
-      Helper.TestNoRuntimeMessagesInDocument(CreateBool6Test.Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
     }
   }
 }
