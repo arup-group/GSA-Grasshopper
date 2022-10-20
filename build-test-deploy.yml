@@ -17,7 +17,6 @@ steps:
 - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
   displayName: 'Delete orphan .ghlink files'
 
-steps:
 - powershell: aws s3 cp s3://oasys-installer-store/$(latest_released_gsa_version).msi .\gsa.msi
   displayName: 'Download GSA'
   failOnStderr: true
