@@ -21,7 +21,7 @@ namespace IntegrationTests
       return io.Document;
     }
 
-    public static GH_Component FindComponentInDocumentByGroup(GH_Document doc, string groupIdentifier)
+    public static GH_Component FindComponent(GH_Document doc, string groupIdentifier)
     {
       foreach (var obj in doc.Objects)
       {
@@ -44,7 +44,7 @@ namespace IntegrationTests
       return null;
     }
 
-    public static GH_Param<T> FindComponentInDocumentByGroup<T>(GH_Document doc, string groupIdentifier) where T : class, IGH_Goo
+    public static IGH_Param FindParameter(GH_Document doc, string groupIdentifier)
     {
       foreach (var obj in doc.Objects)
       {
@@ -58,7 +58,7 @@ namespace IntegrationTests
             {
               if (obj2.InstanceGuid == componentguid)
               {
-                return (GH_Param<T>)(object)obj2;
+                return (IGH_Param)(object)obj2;
               }
             }
           }

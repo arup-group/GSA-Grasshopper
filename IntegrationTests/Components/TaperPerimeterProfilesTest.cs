@@ -32,7 +32,7 @@ namespace IntegrationTests.Components
     public void PerimeterProfilesTaperTest()
     {
       GH_Document doc = Document();
-      GH_Param<GH_String> param = Helper.FindComponentInDocumentByGroup<GH_String>(doc, "Test1");
+      IGH_Param param = Helper.FindParameter(doc, "Test1");
       Assert.NotNull(param);
       param.CollectData();
       GH_String output = (GH_String)param.VolatileData.get_Branch(0)[0];
@@ -45,7 +45,7 @@ namespace IntegrationTests.Components
     public void IncorrectProfilesTest()
     {
       GH_Document doc = Document();
-      GH_Component comp = Helper.FindComponentInDocumentByGroup(doc, "Test2");
+      GH_Component comp = Helper.FindComponent(doc, "Test2");
       Assert.NotNull(comp);
       comp.Params.Output[0].CollectData();
       var output = comp.Params.Output[0].VolatileData.get_Branch(0)[0];

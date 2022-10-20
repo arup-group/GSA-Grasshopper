@@ -28,7 +28,7 @@ namespace IntegrationTests.Parameters
     public void OutputTest(string groupIdentifier, double expectedX1, double expectedX2, double expectedY, double expectedZ, LengthUnit expectedUnit)
     {
       GH_Document doc = Document();
-      GH_Param<GsaOffsetGoo> param = Helper.FindComponentInDocumentByGroup<GsaOffsetGoo>(doc, groupIdentifier);
+      IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
       Assert.NotNull(param);
       param.CollectData();
       GsaOffsetGoo output = (GsaOffsetGoo)param.VolatileData.get_Branch(0)[0];

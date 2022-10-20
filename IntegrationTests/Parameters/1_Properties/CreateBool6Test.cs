@@ -30,7 +30,7 @@ namespace IntegrationTests.Parameters
     public void OutputTest(string groupIdentifier, bool expected)
     {
       GH_Document doc = Document();
-      GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, groupIdentifier);
+      IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
       Assert.NotNull(param);
       param.CollectData();
       GH_Boolean output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];

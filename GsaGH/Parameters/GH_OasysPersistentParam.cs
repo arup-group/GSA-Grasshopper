@@ -1,12 +1,6 @@
-﻿using Grasshopper.Kernel;
+﻿using System.Collections.Generic;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using OasysGH;
-using Rhino.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OasysGH.Parameters
 {

@@ -25,7 +25,7 @@ namespace IntegrationTests.ExampleFiles
     [Fact]
     public void MaxMyyAssert()
     {
-      GH_Param<GH_Number> param = Helper.FindComponentInDocumentByGroup<GH_Number>(Document(), "MaxMyy");
+      IGH_Param param = Helper.FindParameter(Document(), "MaxMyy");
       Assert.NotNull(param);
       param.CollectData();
       GH_Number output = (GH_Number)param.VolatileData.get_Branch(0)[0];
