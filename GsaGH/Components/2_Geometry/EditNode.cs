@@ -16,7 +16,6 @@ namespace GsaGH.Components
   public class EditNode : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("de176ec0-0516-4634-8f04-82017e502e1e");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -30,22 +29,15 @@ namespace GsaGH.Components
     { }
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-
-
-    #endregion
-
     #region Input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-
-      pManager.AddGenericParameter("Node", "No", "GSA Node to Edit. If no input a new node will be created.", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaNodeParameter(), GsaNodeGoo.Name, GsaNodeGoo.NickName, GsaNodeGoo.Description + " to get or set information for. Leave blank to create a new " + GsaNodeGoo.Name, GH_ParamAccess.item);
       pManager.AddIntegerParameter("Node number", "ID", "Set Node number (ID) - if Node ID is set it will replace any existing nodes in the model", GH_ParamAccess.item);
       pManager.AddPointParameter("Node Position", "Pt", "Set new Position (x, y, z) of Node", GH_ParamAccess.item);
       pManager.AddPlaneParameter("Node local axis", "Pl", "Set Local axis (Plane) of Node", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Node Restraints", "B6", "Set Restraints (Bool6) of Node", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), "Node Restraints", "B6", "Set Restraints (Bool6) of Node", GH_ParamAccess.item);
       pManager.AddTextParameter("Node Name", "Na", "Set Name of Node", GH_ParamAccess.item);
       pManager.AddColourParameter("Node Colour", "Co", "Set colour of node", GH_ParamAccess.item);
       pManager[1].Optional = true;
@@ -62,13 +54,13 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Node", "No", "Modified GSA Node", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaNodeParameter(), GsaNodeGoo.Name, GsaNodeGoo.NickName, GsaNodeGoo.Description + " with applied changes.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Node number", "ID", "Original Node number (ID) if Node ever belonged to a GSA Model", GH_ParamAccess.item);
       pManager.AddPointParameter("Node Position", "Pt", "Position (x, y, z) of Node. Setting a new position will clear any existing ID", GH_ParamAccess.item);
       pManager.HideParameter(2);
       pManager.AddPlaneParameter("Node local axis", "Pl", "Local axis (Plane) of Node", GH_ParamAccess.item);
       pManager.HideParameter(3);
-      pManager.AddGenericParameter("Node Restraints", "B6", "Restraints (Bool6) of Node", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), "Node Restraints", "B6", "Restraints (Bool6) of Node", GH_ParamAccess.item);
       pManager.AddTextParameter("Node Name", "Na", "Name of Node", GH_ParamAccess.item);
       pManager.AddColourParameter("Node Colour", "Co", "Get colour of node", GH_ParamAccess.item);
       if (_mode == FoldMode.GetConnected)
@@ -81,10 +73,10 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
+      GsaNode node = new GsaNode();
       GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(0, ref gh_typ))
       {
-        GsaNode node = new GsaNode();
         Point3d tempPt = new Point3d();
         if (gh_typ.Value is GsaNodeGoo)
         {
@@ -101,7 +93,14 @@ namespace GsaGH.Components
           AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert input to Node");
           return;
         }
+      }
+      else
+      {
+        node.Point = new Point3d(0, 0, 0);
+      }
 
+      if (node != null)
+      { 
         // #### inputs ####
         // 2 Point
         GH_Point ghPt = new GH_Point();
