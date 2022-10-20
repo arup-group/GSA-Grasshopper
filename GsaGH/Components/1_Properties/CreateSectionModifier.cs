@@ -211,7 +211,6 @@ namespace GsaGH.Components
         if (j == 2)
           this.StressOption = GsaSectionModifier.StressOptionType.UseModified;
       }
-
       base.UpdateUI();
     }
 
@@ -247,11 +246,8 @@ namespace GsaGH.Components
       Params.Input[7].Name = "Additional Mass [" + LinearDensity.GetAbbreviation(this.DensityUnit) + "]";
       if (_toMode)
       {
-        IQuantity len = new Length(0, LengthUnit);
-        string unit = string.Concat(len.ToString().Where(char.IsLetter));
-
-        VolumePerLength vol = new VolumePerLength(0, UnitsHelper.GetVolumePerLengthUnit(LengthUnit));
-        string volUnit = vol.ToString("a");
+        string unit = Length.GetAbbreviation(this.LengthUnit);
+        string volUnit = VolumePerLength.GetAbbreviation(UnitsHelper.GetVolumePerLengthUnit(LengthUnit));
 
         Params.Input[0].Name = "Area Modifier [" + unit + "\u00B2]";
         Params.Input[0].Description = "[Optional] Modify the effective Area TO this value";
@@ -291,19 +287,14 @@ namespace GsaGH.Components
     #region (de)serialization
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
     {
-      GsaGH.Util.GH.DeSerialization.writeDropDownComponents(ref writer, DropDownItems, SelectedItems, SpacerDescriptions);
       writer.SetBoolean("toMode", _toMode);
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      GsaGH.Util.GH.DeSerialization.readDropDownComponents(ref reader, ref DropDownItems, ref SelectedItems, ref SpacerDescriptions);
       _toMode = reader.GetBoolean("toMode");
-      UpdateUIFromSelectedItems();
-      first = false;
       return base.Read(reader);
     }
-    
+    #endregion
   }
 }
-
