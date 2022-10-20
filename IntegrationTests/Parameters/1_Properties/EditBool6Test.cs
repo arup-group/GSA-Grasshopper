@@ -29,27 +29,27 @@ namespace IntegrationTests.Parameters
       return document;
     }
 
-    //[Theory]
-    //[InlineData("X", false)]
-    //[InlineData("Y", true)]
-    //[InlineData("Z", false)]
-    //[InlineData("XX", true)]
-    //[InlineData("YY", false)]
-    //[InlineData("ZZ", true)]
-    //public void OutputTest(string groupIdentifier, bool expected)
-    //{
-    //  GH_Document doc = GetDocument();
-    //  GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, groupIdentifier);
-    //  Assert.NotNull(param);
-    //  param.CollectData();
-    //  GH_Boolean output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
-    //  Assert.Equal(expected, output.Value);
-    //}
+    [Theory]
+    [InlineData("X", false)]
+    [InlineData("Y", true)]
+    [InlineData("Z", false)]
+    [InlineData("XX", true)]
+    [InlineData("YY", false)]
+    [InlineData("ZZ", true)]
+    public void OutputTest(string groupIdentifier, bool expected)
+    {
+      GH_Document doc = GetDocument();
+      GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, groupIdentifier);
+      Assert.NotNull(param);
+      param.CollectData();
+      GH_Boolean output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
+      Assert.Equal(expected, output.Value);
+    }
 
-    //[Fact]
-    //public void NoRuntimeErrorTest()
-    //{
-    //  Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
-    //}
+    [Fact]
+    public void NoRuntimeErrorTest()
+    {
+      Helper.TestNoRuntimeMessagesInDocument(GetDocument(), GH_RuntimeMessageLevel.Error);
+    }
   }
 }
