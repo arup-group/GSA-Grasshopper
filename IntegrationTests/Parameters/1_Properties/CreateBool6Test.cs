@@ -35,10 +35,17 @@ namespace IntegrationTests.Parameters
     {
       GH_Document doc = Document();
       GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, "X");
-      Assert.NotNull(param);
       param.CollectData();
-      GH_Boolean output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
-      Assert.Equal(true, output.Value);
+      param.ComputeData();
+
+      Assert.Equal(1, param.VolatileData.DataCount);
+      var data = param.VolatileData.AllData(true).GetEnumerator();
+      data.Reset();
+      data.MoveNext();
+      GH_Boolean b = (GH_Boolean)data.Current;
+
+
+      Assert.True(b.Value);
     }
 
     //[Fact]
