@@ -31,7 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GsaGHTests\GsaGHTests.csproj" />
     <ProjectReference Include="..\GsaGH\GsaGH.csproj" />
   </ItemGroup>
 
