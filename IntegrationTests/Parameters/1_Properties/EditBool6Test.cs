@@ -40,10 +40,10 @@ namespace IntegrationTests.Parameters
     //  Assert.Equal(expected, output.Value);
     //}
 
-    [Fact]
-    public void NoRuntimeErrorTest()
-    {
-      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
-    }
+    //[Fact]
+    //public void NoRuntimeErrorTest()
+    //{
+    //  Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+    //}
   }
 }
