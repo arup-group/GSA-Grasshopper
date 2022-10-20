@@ -39,18 +39,15 @@ namespace IntegrationTests.Parameters
 
       foreach (var obj in (doc.Objects))
         if (obj is Grasshopper.Kernel.IGH_Component comp)
-          if (comp.NickName == "B6")
-          {
-            Console.WriteLine("Errors:");
-            foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Error))
-              Console.WriteLine(message);
-            Console.WriteLine("Warnings:");
-            foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
-              Console.WriteLine(message);
-            Console.WriteLine("Remarks:");
-            foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
-              Console.WriteLine(message);
-          }
+        {
+          Console.WriteLine("Component nickname: " + comp.NickName);
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+            Console.WriteLine("Error: " + message);
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+            Console.WriteLine("Warning: " + message);
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
+            Console.WriteLine("Remark: " + message);
+        }
 
       GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, "X");
       param.CollectData();
