@@ -9,7 +9,7 @@ using Xunit;
 namespace IntegrationTests.Parameters
 {
   [Collection("GrasshopperFixture collection")]
-  public class CreateOffsetTest
+  public class EditOffsetTest
   {
     public static GH_Document Document()
     {
@@ -23,7 +23,7 @@ namespace IntegrationTests.Parameters
     }
 
     [Theory]
-    [InlineData("Of", 1, 2, 3, 4, LengthUnit.Meter)]
+    [InlineData("Of", 4, 3, 2, 1, LengthUnit.Meter)]
     public void OutputTest(string groupIdentifier, double expectedX1, double expectedX2, double expectedY, double expectedZ, LengthUnit expectedUnit)
     {
       GH_Document doc = Document();
