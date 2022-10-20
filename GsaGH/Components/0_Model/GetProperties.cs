@@ -14,7 +14,6 @@ namespace GsaGH.Components
   public class GetProperties : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("f5926fb3-06e5-4b18-b037-6234fff16586");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -29,7 +28,6 @@ namespace GsaGH.Components
     #endregion
 
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model containing some properties", GH_ParamAccess.item);
@@ -61,4 +59,3 @@ namespace GsaGH.Components
     }
   }
 }
-
