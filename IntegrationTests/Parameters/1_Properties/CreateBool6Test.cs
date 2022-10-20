@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using Rhino.Geometry;
 using Xunit;
 
 namespace IntegrationTests.Parameters
@@ -34,6 +36,22 @@ namespace IntegrationTests.Parameters
     public void OutputTest()
     {
       GH_Document doc = Document();
+
+      foreach (var obj in (doc.Objects))
+        if (obj is Grasshopper.Kernel.IGH_Component comp)
+          if (comp.NickName == "B6")
+          {
+            Console.WriteLine("Errors:");
+            foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+              Console.WriteLine(message);
+            Console.WriteLine("Warnings:");
+            foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+              Console.WriteLine(message);
+            Console.WriteLine("Remarks:");
+            foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
+              Console.WriteLine(message);
+          }
+
       GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, "X");
       param.CollectData();
       param.ComputeData();
