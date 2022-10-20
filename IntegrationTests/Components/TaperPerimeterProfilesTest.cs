@@ -1,12 +1,9 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Reflection;
-using Grasshopper.Documentation;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Xunit;
-using static GH_IO.VersionNumber;
 
 namespace IntegrationTests.Components
 {

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using GsaGH.Parameters;
 using Xunit;
 
-namespace Rhino.Test
+namespace IntegrationTests
 {
   public class GrasshopperFixture : IDisposable
   {
@@ -31,7 +31,8 @@ namespace Rhino.Test
 
       LoadRefs();
       Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-      
+      //Assert.NotNull(new GsaBool6());
+
       InitializeCore();
 
       // setup headless units

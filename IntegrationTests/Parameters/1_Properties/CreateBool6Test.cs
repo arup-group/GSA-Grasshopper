@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -16,8 +17,42 @@ namespace IntegrationTests.Parameters
 
       string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
       string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Parameters", "1_Properties" });
+      GH_DocumentIO io = new GH_DocumentIO();
+      Assert.True(File.Exists(Path.Combine(path, fileName)));
+      Assert.True(io.Open(Path.Combine(path, fileName)));
+      io.Document.NewSolution(true);
 
-      return Helper.CreateDocument(Path.Combine(path, fileName));
+      GH_ProcessStep state = io.Document.SolutionState;
+      Assert.Equal(GH_ProcessStep.PostProcess, state);
+
+      foreach (var obj in (io.Document.Objects))
+      {
+        if (obj is Grasshopper.Kernel.IGH_Param p)
+        {
+          p.CollectData();
+          p.ComputeData();
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+            Console.WriteLine("Parameter " + p.NickName + ", Error: " + message);
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+            Console.WriteLine("Parameter " + p.NickName + ", Warning: " + message);
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
+            Console.WriteLine("Parameter " + p.NickName + ", Remark: " + message);
+        }
+      }
+      foreach (var obj in (io.Document.Objects))
+      {
+        if (obj is Grasshopper.Kernel.IGH_Component comp)
+        {
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+            Console.WriteLine("Component " + comp.NickName + ", Error: " + message);
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+            Console.WriteLine("Component \" + comp.NickName + \", Warning: " + message);
+          foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
+            Console.WriteLine("Component \" + comp.NickName + \", Remark: " + message);
+        }
+      }
+
+      return io.Document;
     }
 
     [Theory]
@@ -30,11 +65,18 @@ namespace IntegrationTests.Parameters
     public void OutputTest(string groupIdentifier, bool expected)
     {
       GH_Document doc = Document();
+
       IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
-      Assert.NotNull(param);
       param.CollectData();
-      GH_Boolean output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
-      Assert.Equal(expected, output.Value);
+      param.ComputeData();
+
+      Assert.Equal(1, param.VolatileData.DataCount);
+      var data = param.VolatileData.AllData(true).GetEnumerator();
+      data.Reset();
+      data.MoveNext();
+      GH_Boolean b = (GH_Boolean)data.Current;
+
+      Assert.Equal(expected, b.Value);
     }
 
     [Fact]
