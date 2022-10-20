@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
@@ -48,11 +48,5 @@
   </ItemGroup>
 
   <Import Project="PreBuild.targets" />
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="Copy &quot;$(TargetDir)GsaGH.dll&quot; &quot;$(TargetDir)GSA.gha&quot;" />
-    <Exec Command="Del &quot;$(TargetDir)GsaGH.dll&quot;" />
-  </Target>
-
 
 </Project>
