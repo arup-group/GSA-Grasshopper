@@ -22,6 +22,10 @@ namespace IntegrationTests.Parameters
       Assert.True(File.Exists(Path.Combine(path, fileName)));
       Assert.True(io.Open(Path.Combine(path, fileName)));
       io.Document.NewSolution(true);
+
+      GH_ProcessStep state = io.Document.SolutionState;
+      Assert.Equal(GH_ProcessStep.PostProcess, state);
+
       return io.Document;
     }
 
@@ -38,7 +42,24 @@ namespace IntegrationTests.Parameters
       GH_Document doc = Document();
 
       foreach (var obj in (doc.Objects))
-        if (obj is Grasshopper.Kernel.IGH_Component comp)
+      {
+        if (obj is Grasshopper.Kernel.IGH_Param p)
+        {
+          p.CollectData();
+          p.ComputeData();
+          Console.WriteLine("Parameter " + p.NickName);
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+            Console.WriteLine("Error: " + message);
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+            Console.WriteLine("Warning: " + message);
+          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
+            Console.WriteLine("Remark: " + message);
+        }
+      }
+
+      foreach (var obj in (doc.Objects))
+      {
+         if (obj is Grasshopper.Kernel.IGH_Component comp)
         {
           Console.WriteLine("Component " + comp.NickName);
           foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Error))
@@ -48,17 +69,7 @@ namespace IntegrationTests.Parameters
           foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
             Console.WriteLine("Remark: " + message);
         }
-        else if (obj is Grasshopper.Kernel.IGH_Param p)
-        {
-          Console.WriteLine("Parameter " + p.NickName);
-          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Error))
-            Console.WriteLine("Error: " + message);
-          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
-            Console.WriteLine("Warning: " + message);
-          foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
-            Console.WriteLine("Remark: " + message);
-        }
-
+      }
 
       GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, "X");
       param.CollectData();
