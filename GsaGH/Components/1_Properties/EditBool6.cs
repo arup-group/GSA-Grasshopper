@@ -12,7 +12,6 @@ namespace GsaGH.Components
   public class EditBool6 : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("dad5064c-6648-45a5-8d98-afaae861e3b9");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -26,16 +25,10 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddGenericParameter("Bool6", "B6", "GSA Bool6 to set or get releases or restraints for", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), GsaBool6Goo.Name, GsaBool6Goo.NickName, GsaBool6Goo.Description + " to get or set information for. Leave blank to create a new " + GsaBool6Goo.Name, GH_ParamAccess.item);
       pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
@@ -48,7 +41,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Bool6", "B6", "GSA Bool6 with changes", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaBool6Parameter(), GsaBool6Goo.Name, GsaBool6Goo.NickName, GsaBool6Goo.Description + " with applied changes.", GH_ParamAccess.item);
       pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Y", "Y", "Y", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Z", "Z", "Z", GH_ParamAccess.item);
@@ -62,10 +55,9 @@ namespace GsaGH.Components
     {
       GsaBool6 mybool = new GsaBool6();
       GsaBool6 gsabool = new GsaBool6();
-      if (DA.GetData(0, ref gsabool))
-      {
+      if (DA.GetData(0, ref mybool))
         mybool = gsabool.Duplicate();
-      }
+
       if (mybool != null)
       {
         //inputs
@@ -96,8 +88,9 @@ namespace GsaGH.Components
         DA.SetData(4, mybool.XX);
         DA.SetData(5, mybool.YY);
         DA.SetData(6, mybool.ZZ);
-
       }
+      else
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Bool6 is Null");
     }
   }
 }

@@ -13,7 +13,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Material
   /// </summary>
-  public class CreateMaterial : GH_OasysDropDownComponent, IGH_VariableParameterComponent
+  public class CreateMaterial : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("40641747-cfb1-4dab-b060-b9dd344d3ac3");
@@ -24,7 +24,7 @@ namespace GsaGH.Components
     public CreateMaterial() : base(
       "Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
       GsaMaterialGoo.Name.Replace(" ", string.Empty),
-      "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description, // "Create GSA Material by reference to existing type and grade"
+      "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
       Ribbon.CategoryName.Name(),
       Ribbon.SubCategoryName.Cat1())
     {
@@ -40,7 +40,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddParameter(new GsaMaterialParameter());
+      pManager.AddParameter(new GsaMaterialParameter(), "Material", "Mat", "GSA Standard Material (reference)", GH_ParamAccess.item);
     }
     #endregion
 
@@ -88,7 +88,7 @@ namespace GsaGH.Components
     }
 
     #region Custom UI
-    private static List<string> materialTypes = new List<string>() {
+    private static List<string> _materialTypes = new List<string>() {
       "Generic",
       "Steel",
       "Concrete",
@@ -106,17 +106,15 @@ namespace GsaGH.Components
       this.DropDownItems = new List<List<string>>();
       this.SelectedItems = new List<string>();
 
-      this.DropDownItems.Add(new List<string>(materialTypes));
-      this.SelectedItems.Add(materialTypes[3]);
+      this.DropDownItems.Add(new List<string>(_materialTypes));
+      this.SelectedItems.Add(_materialTypes[3]);
 
       this.IsInitialised = true;
     }
 
     public override void SetSelected(int i, int j)
     {
-      // change selected item
       this.SelectedItems[i] = this.DropDownItems[i][j];
-
       base.UpdateUI();
     }
     #endregion

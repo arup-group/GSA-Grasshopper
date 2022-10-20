@@ -26,34 +26,17 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddTextParameter("Profile", "Pf", "Cross-Section Profile", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Material", "Ma", "GsaMaterial or Number referring to a Material already in Existing GSA Model." + System.Environment.NewLine
-              + "Accepted inputs are: " + System.Environment.NewLine
-              + "0 : Generic" + System.Environment.NewLine
-              + "1 : Steel" + System.Environment.NewLine
-              + "2 : Concrete" + System.Environment.NewLine
-              + "3 : Aluminium" + System.Environment.NewLine
-              + "4 : Glass" + System.Environment.NewLine
-              + "5 : FRP" + System.Environment.NewLine
-              + "7 : Timber" + System.Environment.NewLine
-              + "8 : Fabric", GH_ParamAccess.item);
-
-      for (int i = 1; i < pManager.ParamCount; i++)
-        pManager[i].Optional = true;
+      pManager.AddTextParameter("Profile", "Pf", "Cross-Section Profile defined using the GSA Profile string syntax", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter());
+      pManager[1].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Section", "PB", "GSA Section", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSectionParameter());
     }
     #endregion
 
@@ -92,7 +75,6 @@ namespace GsaGH.Components
           }
           else
             gsaSection.Material = new GsaMaterial(7); // because Timber
-
         }
         DA.SetData(0, new GsaSectionGoo(gsaSection));
       }

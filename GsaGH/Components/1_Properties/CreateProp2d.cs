@@ -19,7 +19,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Prop2d
   /// </summary>
-  public class CreateProp2d : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CreateProp2d : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("d693b4ad-7aaf-450e-a436-afbb9d2061fc");
@@ -35,115 +35,7 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // length
-        dropdownitems.Add(dropdownTopList);
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-
-        selecteditems.Add(dropdownTopList[3]);
-        selecteditems.Add(this.LengthUnit.ToString());
-
-        first = false;
-      }
-
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      if (i == 0) // if change is made to the first list
-      {
-        switch (selecteditems[i])
-        {
-          case "Plane Stress":
-            if (dropdownitems.Count < 2)
-              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
-            Mode1Clicked();
-            break;
-          case "Fabric":
-            if (dropdownitems.Count > 1)
-              dropdownitems.RemoveAt(1); // remove length unit dropdown
-            Mode2Clicked();
-            break;
-          case "Flat Plate":
-            if (dropdownitems.Count < 2)
-              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
-            Mode3Clicked();
-            break;
-          case "Shell":
-            if (dropdownitems.Count < 2)
-              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
-            Mode4Clicked();
-            break;
-          case "Curved Shell":
-            if (dropdownitems.Count < 2)
-              dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
-            Mode5Clicked();
-            break;
-          case "Load Panel":
-            if (dropdownitems.Count > 1)
-              dropdownitems.RemoveAt(1); // remove length unit dropdown
-            Mode6Clicked();
-            break;
-        }
-      }
-      else
-      {
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
-      }
-
-      // update name of inputs (to display unit on sliders)
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      CreateAttributes();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    #endregion
-
     #region Input and output
-    readonly List<string> dropdownTopList = new List<string>(new string[]
-    {
-      "Plane Stress",
-      "Fabric",
-      "Flat Plate",
-      "Shell",
-      "Curved Shell",
-      "Load Panel"
-    });
-
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-      "Type",
-      "Unit"
-    });
-    private bool first = true;
-    private LengthUnit LengthUnit = DefaultUnits.LengthUnitSection;
-    #endregion
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Thk", "Section thickness", GH_ParamAccess.item);
@@ -153,6 +45,7 @@ namespace GsaGH.Components
     {
       pManager.AddParameter(new GsaProp2dParameter());
     }
+    #endregion
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
@@ -231,7 +124,94 @@ namespace GsaGH.Components
 
       DA.SetData(0, new GsaProp2dGoo(prop));
     }
-    #region menu override
+
+    #region Custom UI
+    private readonly List<string> _dropdownTopLevel = new List<string>(new string[]
+    {
+      "Plane Stress",
+      "Fabric",
+      "Flat Plate",
+      "Shell",
+      "Curved Shell",
+      "Load Panel"
+    });
+
+    private LengthUnit LengthUnit = DefaultUnits.LengthUnitSection;
+
+    public override void InitialiseDropdowns()
+    {
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Type", "Unit"
+        });
+
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // Type
+      this.DropDownItems.Add(this._dropdownTopLevel);
+      this.SelectedItems.Add(this._dropdownTopLevel[3]);
+
+      // Length
+      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+      this.SelectedItems.Add(this.LengthUnit.ToString());
+
+      this.IsInitialised = true;
+    }
+
+    public override void SetSelected(int i, int j)
+    {
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+
+      if (i == 0) // if change is made to the first list
+      {
+        switch (this.SelectedItems[i])
+        {
+          case "Plane Stress":
+            if (this.DropDownItems.Count < 2)
+              this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+            Mode1Clicked();
+            break;
+          case "Fabric":
+            if (this.DropDownItems.Count > 1)
+              this.DropDownItems.RemoveAt(1); // remove length unit dropdown
+            Mode2Clicked();
+            break;
+          case "Flat Plate":
+            if (this.DropDownItems.Count < 2)
+              this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+            Mode3Clicked();
+            break;
+          case "Shell":
+            if (this.DropDownItems.Count < 2)
+              this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+            Mode4Clicked();
+            break;
+          case "Curved Shell":
+            if (this.DropDownItems.Count < 2)
+              this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+            Mode5Clicked();
+            break;
+          case "Load Panel":
+            if (this.DropDownItems.Count > 1)
+              this.DropDownItems.RemoveAt(1); // remove length unit dropdown
+            Mode6Clicked();
+            break;
+        }
+      }
+      else
+        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+
+      base.UpdateUI();
+    }
+
+    public override void UpdateUIFromSelectedItems()
+    {
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[1]);
+      base.UpdateUIFromSelectedItems();
+    }
+
+    #region update inputs
     private enum FoldMode
     {
       PlaneStress,
@@ -260,10 +240,6 @@ namespace GsaGH.Components
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
       _mode = FoldMode.PlaneStress;
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
     }
     private void Mode2Clicked()
     {
@@ -279,10 +255,6 @@ namespace GsaGH.Components
 
       //register input parameter
       Params.RegisterInputParam(new Param_GenericObject());
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
     }
     private void Mode3Clicked()
     {
@@ -301,10 +273,6 @@ namespace GsaGH.Components
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
       _mode = FoldMode.FlatPlate;
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
     }
 
     private void Mode4Clicked()
@@ -324,10 +292,6 @@ namespace GsaGH.Components
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
       _mode = FoldMode.Shell;
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
     }
 
     private void Mode5Clicked()
@@ -347,10 +311,6 @@ namespace GsaGH.Components
         Params.RegisterInputParam(new GsaMaterialParameter());
       }
       _mode = FoldMode.CurvedShell;
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
     }
 
     private void Mode6Clicked()
@@ -364,48 +324,10 @@ namespace GsaGH.Components
       //remove input parameters
       while (Params.Input.Count > 0)
         Params.UnregisterInputParameter(Params.Input[0], true);
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
     }
     #endregion
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0].Replace(" ", string.Empty));
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[1]);
-
-      UpdateUIFromSelectedItems();
-      first = false;
-      return base.Read(reader);
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    #endregion
-    #region IGH_VariableParameterComponent null implementation
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
+    
+    public override void VariableParameterMaintenance()
     {
       if (_mode != FoldMode.LoadPanel && _mode != FoldMode.Fabric)
       {

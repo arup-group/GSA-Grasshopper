@@ -28,23 +28,18 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    #endregion
-
     #region Input and output
 
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddGenericParameter("GSA Model", "GSA", "GSA model containing some properties", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model containing some properties", GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Sections", "PB", "Section Properties from GSA Model", GH_ParamAccess.list);
-      pManager.AddGenericParameter("2D Properties", "PA", "2D Properties from GSA Model", GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Properties", "PV", "3D Properties from GSA Model", GH_ParamAccess.list);
-      //pManager.AddGenericParameter("Springs", "PS", "Spring Properties from GSA Model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaSectionParameter(), "Sections", "PB", "Section Properties from GSA Model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaProp2dParameter(), "2D Properties", "PA", "2D Properties from GSA Model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaProp3dParameter(), "3D Properties", "PV", "3D Properties from GSA Model", GH_ParamAccess.list);
     }
     #endregion
 

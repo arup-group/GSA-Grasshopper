@@ -39,27 +39,27 @@ namespace GsaGH.Components
     {
       if (first)
       {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
+        DropDownItems = new List<List<string>>();
+        SelectedItems = new List<string>();
 
         // length
-        //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
+        //DropDownItems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
+        DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+        SelectedItems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);
         unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
 
         first = false;
       }
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
+      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, DropDownItems, SelectedItems, SpacerDescriptions);
     }
     public void SetSelected(int i, int j)
     {
       // change selected item
-      selecteditems[i] = dropdownitems[i][j];
+      SelectedItems[i] = DropDownItems[i][j];
 
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
+      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[i]);
 
       // update name of inputs (to display unit on sliders)
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -69,7 +69,7 @@ namespace GsaGH.Components
     }
     private void UpdateUIFromSelectedItems()
     {
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
+      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[0]);
 
       CreateAttributes();
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -78,11 +78,11 @@ namespace GsaGH.Components
       this.OnDisplayExpired(true);
     }
     // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
+    List<List<string>> DropDownItems;
     // list of selected items
-    List<string> selecteditems;
+    List<string> SelectedItems;
     // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
+    List<string> SpacerDescriptions = new List<string>(new string[]
     {
             "Unit"
     });
@@ -154,25 +154,25 @@ namespace GsaGH.Components
     #region (de)serialization
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
     {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
+      Util.GH.DeSerialization.writeDropDownComponents(ref writer, DropDownItems, SelectedItems, SpacerDescriptions);
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       try // if users has an old versopm of this component then dropdown menu wont read
       {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref DropDownItems, ref SelectedItems, ref SpacerDescriptions);
       }
       catch (Exception) // we create the dropdown menu with our chosen default
       {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
+        DropDownItems = new List<List<string>>();
+        SelectedItems = new List<string>();
 
         // set length to meters as this was the only option for old components
         lengthUnit = LengthUnit.Meter;
 
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
+        DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+        SelectedItems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);
         unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
