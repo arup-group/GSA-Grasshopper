@@ -4,6 +4,7 @@ using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
+using Rhino.UI;
 using Xunit;
 
 namespace IntegrationTests.Parameters
@@ -26,52 +27,48 @@ namespace IntegrationTests.Parameters
       GH_ProcessStep state = io.Document.SolutionState;
       Assert.Equal(GH_ProcessStep.PostProcess, state);
 
-      return io.Document;
-    }
-
-    [Fact]
-    //[InlineData("X", true)]
-    //[InlineData("Y", false)]
-    //[InlineData("Z", true)]
-    //[InlineData("XX", false)]
-    //[InlineData("YY", true)]
-    //[InlineData("ZZ", false)]
-    //public void OutputTest(string groupIdentifier, bool expected)
-    public void OutputTest()
-    {
-      GH_Document doc = Document();
-
-      foreach (var obj in (doc.Objects))
+      foreach (var obj in (io.Document.Objects))
       {
         if (obj is Grasshopper.Kernel.IGH_Param p)
         {
           p.CollectData();
           p.ComputeData();
-          Console.WriteLine("Parameter " + p.NickName);
           foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Error))
-            Console.WriteLine("Error: " + message);
+            Console.WriteLine("Parameter " + p.NickName + ", Error: " + message);
           foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
-            Console.WriteLine("Warning: " + message);
+            Console.WriteLine("Parameter " + p.NickName + ", Warning: " + message);
           foreach (string message in p.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
-            Console.WriteLine("Remark: " + message);
+            Console.WriteLine("Parameter " + p.NickName + ", Remark: " + message);
         }
       }
-
-      foreach (var obj in (doc.Objects))
+      foreach (var obj in (io.Document.Objects))
       {
-         if (obj is Grasshopper.Kernel.IGH_Component comp)
+        if (obj is Grasshopper.Kernel.IGH_Component comp)
         {
-          Console.WriteLine("Component " + comp.NickName);
           foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Error))
-            Console.WriteLine("Error: " + message);
+            Console.WriteLine("Component " + comp.NickName + ", Error: " + message);
           foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
-            Console.WriteLine("Warning: " + message);
+            Console.WriteLine("Component \" + comp.NickName + \", Warning: " + message);
           foreach (string message in comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark))
-            Console.WriteLine("Remark: " + message);
+            Console.WriteLine("Component \" + comp.NickName + \", Remark: " + message);
         }
       }
 
-      GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, "X");
+      return io.Document;
+    }
+
+    [Theory]
+    [InlineData("X", true)]
+    [InlineData("Y", false)]
+    [InlineData("Z", true)]
+    [InlineData("XX", false)]
+    [InlineData("YY", true)]
+    [InlineData("ZZ", false)]
+    public void OutputTest(string groupIdentifier, bool expected)
+    {
+      GH_Document doc = Document();
+
+      GH_Param<GH_Boolean> param = Helper.FindComponentInDocumentByGroup<GH_Boolean>(doc, groupIdentifier);
       param.CollectData();
       param.ComputeData();
 
@@ -81,8 +78,7 @@ namespace IntegrationTests.Parameters
       data.MoveNext();
       GH_Boolean b = (GH_Boolean)data.Current;
 
-
-      Assert.True(b.Value);
+      Assert.Equal(expected, b.Value);
     }
 
     [Fact]
