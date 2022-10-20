@@ -3,11 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <Nullable>enable</Nullable>
-
     <IsPackable>false</IsPackable>
-
     <PlatformTarget>x64</PlatformTarget>
-
     <Platforms>x64</Platforms>
   </PropertyGroup>
 

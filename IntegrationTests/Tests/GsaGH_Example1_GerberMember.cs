@@ -25,20 +25,20 @@ namespace IntegrationTests.ExampleFiles
       return io.Document;
     }
 
-    //[Fact]
-    //public void MaxMyyAssert()
-    //{
-    //  GH_Param<GH_Number> param = Helper.FindComponentInDocumentByGroup<GH_Number>(Document(), "MaxMyy");
-    //  Assert.NotNull(param);
-    //  param.CollectData();
-    //  GH_Number output = (GH_Number)param.VolatileData.get_Branch(0)[0];
-    //  Assert.Equal(60.028894, output.Value, 6);
-    //}
+    [Fact]
+    public void MaxMyyAssert()
+    {
+      GH_Param<GH_Number> param = Helper.FindComponentInDocumentByGroup<GH_Number>(Document(), "MaxMyy");
+      Assert.NotNull(param);
+      param.CollectData();
+      GH_Number output = (GH_Number)param.VolatileData.get_Branch(0)[0];
+      Assert.Equal(60.028894, output.Value, 6);
+    }
 
-    //[Fact]
-    //public void NoRuntimeErrorsTest()
-    //{
-    //  Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
-    //}
+    [Fact]
+    public void NoRuntimeErrorsTest()
+    {
+      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+    }
   }
 }

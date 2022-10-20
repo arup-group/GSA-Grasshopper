@@ -85,10 +85,10 @@ namespace IntegrationTests.Parameters
       Assert.True(b.Value);
     }
 
-    //[Fact]
-    //public void NoRuntimeErrorTest()
-    //{
-    //  Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
-    //}
+    [Fact]
+    public void NoRuntimeErrorTest()
+    {
+      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+    }
   }
 }
