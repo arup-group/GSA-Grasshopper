@@ -32,9 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GsaGH\GsaGH.csproj">
-      <Private>False</Private>
-    </ProjectReference>
+    <ProjectReference Include="..\GsaGH\GsaGH.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,5 +48,10 @@
   </ItemGroup>
 
   <Import Project="PreBuild.targets" />
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="Copy &quot;$(TargetDir)GsaGH.dll&quot; &quot;$(TargetDir)GSA.gha&quot;" />
+    <Exec Command="Del &quot;$(TargetDir)GsaGH.dll&quot;" />
+  </Target>
 
 </Project>
