@@ -18,10 +18,9 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a Node
   /// </summary>
-  public class ElemFromMem : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+  public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -35,66 +34,10 @@ namespace GsaGH.Components
     { }
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // length
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
-
-        first = false;
-      }
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
-
-      // update name of inputs (to display unit on sliders)
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
-
-      CreateAttributes();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Unit"
-    });
-    private bool first = true;
-    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
-    string unitAbbreviation;
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity length = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
 
       pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]", "No", "Nodes to be included in meshing", GH_ParamAccess.list);
       pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]", "M1D", "1D Members to create 1D Elements from", GH_ParamAccess.list);
@@ -231,7 +174,7 @@ namespace GsaGH.Components
       #endregion
 
       // Assemble model
-      Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, lengthUnit);
+      Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, LengthUnit);
 
       #region meshing
       // Create elements from members
@@ -239,7 +182,7 @@ namespace GsaGH.Components
       #endregion
 
       // extract nodes from model
-      ConcurrentBag<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()), lengthUnit);
+      ConcurrentBag<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()), LengthUnit);
 
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
@@ -251,7 +194,7 @@ namespace GsaGH.Components
               new ConcurrentDictionary<int, Prop3D>(gsa.Prop3Ds()),
               new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials()),
               new ConcurrentDictionary<int, SectionModifier>(gsa.SectionModifiers()),
-              lengthUnit);
+              LengthUnit);
 
       // post process materials (as they currently have a bug when running parallel!)
 
@@ -386,71 +329,48 @@ namespace GsaGH.Components
         }
       }
     }
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+
+    #region Custom UI
+    private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+
+    public override void InitialiseDropdowns()
     {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Unit"
+        });
+
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // Length
+      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+      this.SelectedItems.Add(this.LengthUnit.ToString());
+
+      this.IsInitialised = true;
     }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+
+    public override void SetSelected(int i, int j)
     {
-      try // if users has an old versopm of this component then dropdown menu wont read
-      {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      }
-      catch (Exception) // we create the dropdown menu with our chosen default
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // set length to meters as this was the only option for old components
-        lengthUnit = LengthUnit.Meter;
-
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-        first = false;
-      }
-
-      UpdateUIFromSelectedItems();
-
-      first = false;
-
-      return base.Read(reader);
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+      base.UpdateUI();
     }
-    #endregion
-
-    #region IGH_VariableParameterComponent null implementation
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+    public override void UpdateUIFromSelectedItems()
     {
-      return false;
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[0]);
+      base.UpdateUIFromSelectedItems();
     }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+    
+    public override void VariableParameterMaintenance()
     {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      IQuantity length = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
 
       int i = 0;
       Params.Input[i++].Name = "Nodes [" + unitAbbreviation + "]";
       Params.Input[i++].Name = "1D Members [" + unitAbbreviation + "]";
       Params.Input[i++].Name = "2D Members [" + unitAbbreviation + "]";
       Params.Input[i++].Name = "3D Members [" + unitAbbreviation + "]";
-
     }
     #endregion
   }
