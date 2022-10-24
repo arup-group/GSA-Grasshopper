@@ -24,7 +24,6 @@ namespace GsaGH.Components
   public class SpringReactionForce : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("60f6a109-577d-4e90-8790-7f8cf110b230");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -242,4 +241,3 @@ namespace GsaGH.Components
     #endregion
   }
 }
-
