@@ -203,7 +203,8 @@ namespace GsaGH.Components
     }
     public override void CreateAttributes()
     {
-      
+      if (!IsInitialised)
+        InitialiseDropdowns();
       m_attributes = new OasysGH.UI.DropDownCheckBoxesComponentAttributes(this, this.SetSelected, this.DropDownItems, this.SelectedItems, SetAnalysis, this.InitialCheckState, this.CheckboxTexts, this.SpacerDescriptions);
     }
     public override void SetSelected(int i, int j)

@@ -530,6 +530,8 @@ namespace GsaGH.Components
     }
     public override void CreateAttributes()
     {
+      if (!IsInitialised)
+        InitialiseDropdowns();
       m_attributes = new OasysGH.UI.DropDownSliderComponentAttributes(this, SetSelected, this.DropDownItems, this.SelectedItems, this._slider, SetVal, SetMaxMin, this._defScale, this._maxValue, this._minValue, this._noDigits, this.SpacerDescriptions);
     }
 
