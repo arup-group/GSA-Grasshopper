@@ -19,12 +19,11 @@ using OasysUnits.Units;
 namespace GsaGH.Components
 {
   /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
+  /// Component to get GSA Beam strain energy density results
   /// </summary>
-  public class BeamStrainEnergy : GH_OasysComponent, IGH_VariableParameterComponent
+  public class BeamStrainEnergy : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("c1a927cb-ad0e-4a69-94ce-9ad079047d21");
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -38,107 +37,26 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // energy
-        dropdownitems.Add(FilteredUnits.FilteredEnergyUnits);
-        selecteditems.Add(energyUnit.ToString());
-
-        first = false;
-      }
-      m_attributes = new UI.MultiDropDownCheckBoxesComponentUI(this, SetSelected, dropdownitems, selecteditems, SetAnalysis, initialCheckState, checkboxText, spacerDescriptions);
-    }
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      energyUnit = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), selecteditems[i]);
-
-      // update name of inputs (to display unit on sliders)
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    public void SetAnalysis(List<bool> value)
-    {
-      Average = value[0];
-      UpdateInputs();
-    }
-    private void UpdateInputs()
-    {
-      RecordUndoEvent("Toggled Average");
-      if (Average)
-      {
-        //remove input parameters
-        while (Params.Input.Count > 2)
-          Params.UnregisterInputParameter(Params.Input[2], true);
-      }
-      else
-      {
-        //add input parameters
-        Params.RegisterInputParam(new Param_Integer());
-      }
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
-    }
-    List<string> checkboxText = new List<string>() { "Average" };
-    List<bool> initialCheckState = new List<bool>() { true };
-    bool Average = true;
-    private void UpdateUIFromSelectedItems()
-    {
-      energyUnit = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), selecteditems[0]);
-      UpdateInputs();
-      CreateAttributes();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-      "Energy Unit",
-      "Settings"
-    });
-    private bool first = true;
-    private EnergyUnit energyUnit = DefaultUnits.EnergyUnit;
-    #endregion
-
+    #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddGenericParameter("Result", "Res", "GSA Result", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.list);
       pManager.AddTextParameter("Element filter list", "El", "Filter results by list." + System.Environment.NewLine +
           "Element list should take the form:" + System.Environment.NewLine +
           " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      string unitAbbreviation = new Energy(0, energyUnit).ToString("a") + "/m\u00B3";
+      string unitAbbreviation = new Energy(0, EnergyUnit).ToString("a") + "/m\u00B3";
       string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
                     System.Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
           System.Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
 
       pManager.AddGenericParameter("Strain energy density [" + unitAbbreviation + "]", "E", "Strain energy density. The strain energy density for a beam is a measure of how hard the beam is working. The average strain energy density is the average density along the element or member." + note, GH_ParamAccess.tree);
     }
-
+    #endregion
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
@@ -186,8 +104,8 @@ namespace GsaGH.Components
           }
 
           List<GsaResultsValues> vals = Average ?
-            result.Element1DStrainEnergyDensityValues(elementlist, energyUnit) :
-            result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, energyUnit);
+            result.Element1DStrainEnergyDensityValues(elementlist, EnergyUnit) :
+            result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, EnergyUnit);
 
           List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
 
@@ -210,7 +128,7 @@ namespace GsaGH.Components
 
               GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-              out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(energyUnit))), p); // use ToUnit to capture changes in dropdown
+              out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(EnergyUnit))), p); // use ToUnit to capture changes in dropdown
             }
           }
         }
@@ -218,45 +136,73 @@ namespace GsaGH.Components
         DA.SetDataTree(0, out_transX);
       }
     }
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      writer.SetBoolean("checked", Average);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      Average = reader.GetBoolean("checked");
-      first = false;
-      UpdateUIFromSelectedItems();
 
-      return base.Read(reader);
-    }
-    #endregion
+    #region Custom UI
+    List<string> m_checkboxText = new List<string>() { "Average" };
+    List<bool> m_initialCheckState = new List<bool>() { true };
+    bool Average = true;
+    EnergyUnit EnergyUnit = DefaultUnits.EnergyUnit;
+    public override void InitialiseDropdowns()
+    {
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Energy Unit", "Settings"
+        });
 
-    #region IGH_VariableParameterComponent null implementation
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      string unitAbbreviation = new Energy(0, energyUnit).ToString("a") + "/m\u00B3";
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
 
+      // Energy
+      this.DropDownItems.Add(FilteredUnits.FilteredEnergyUnits);
+      this.SelectedItems.Add(this.EnergyUnit.ToString());
+
+      this.IsInitialised = true;
+    }
+    public override void CreateAttributes()
+    {
+      m_attributes = new OasysGH.UI.DropDownCheckBoxesComponentAttributes(this, SetSelected, this.DropDownItems, this.SelectedItems, SetAnalysis, this.m_initialCheckState, this.m_checkboxText, this.SpacerDescriptions);
+    }
+    public override void SetSelected(int i, int j)
+    {
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      this.EnergyUnit = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), this.SelectedItems[i]);
+      base.UpdateUI();
+    }
+    public override void UpdateUIFromSelectedItems()
+    {
+      this.EnergyUnit = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), SelectedItems[0]);
+      UpdateInputs();
+      base.UpdateUIFromSelectedItems();
+    }
+
+    public void SetAnalysis(List<bool> value)
+    {
+      this.Average = value[0];
+      UpdateInputs();
+    }
+    private void UpdateInputs()
+    {
+      RecordUndoEvent("Toggled Average");
+      if (Average)
+      {
+        //remove input parameters
+        while (Params.Input.Count > 2)
+          Params.UnregisterInputParameter(Params.Input[2], true);
+      }
+      else
+      {
+        //add input parameters
+        Params.RegisterInputParam(new Param_Integer());
+      }
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      Params.OnParametersChanged();
+      ExpireSolution(true);
+    }
+
+    public override void VariableParameterMaintenance()
+    {
+      string unitAbbreviation = Energy.GetAbbreviation(this.EnergyUnit) + "/m\u00B3";
       Params.Output[0].Name = "Strain energy density [" + unitAbbreviation + "]";
 
       if (!Average)
@@ -266,6 +212,19 @@ namespace GsaGH.Components
         Params.Input[2].Description = "Number of intermediate equidistant points (default 3)";
         Params.Input[2].Optional = true;
       }
+    }
+    #endregion
+
+    #region (de)serialization
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    {
+      writer.SetBoolean("checked", Average);
+      return base.Write(writer);
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      Average = reader.GetBoolean("checked");
+      return base.Read(reader);
     }
     #endregion
   }
