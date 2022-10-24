@@ -40,12 +40,9 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaBool6Parameter(), "Node Restraints", "B6", "Set Restraints (Bool6) of Node", GH_ParamAccess.item);
       pManager.AddTextParameter("Node Name", "Na", "Set Name of Node", GH_ParamAccess.item);
       pManager.AddColourParameter("Node Colour", "Co", "Set colour of node", GH_ParamAccess.item);
-      pManager[1].Optional = true;
-      pManager[2].Optional = true;
-      pManager[3].Optional = true;
-      pManager[4].Optional = true;
-      pManager[5].Optional = true;
-      pManager[6].Optional = true;
+      
+      for (int i = 0; i < pManager.ParamCount; i++)
+        pManager[i].Optional = true;
 
       pManager.HideParameter(0);
       pManager.HideParameter(2);
@@ -97,6 +94,8 @@ namespace GsaGH.Components
       else
       {
         node.Point = new Point3d(0, 0, 0);
+        if (Params.Input[2].SourceCount == 0)
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "New node created at {0, 0, 0}");
       }
 
       if (node != null)

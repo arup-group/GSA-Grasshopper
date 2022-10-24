@@ -7,12 +7,11 @@ using OasysGH.Components;
 namespace GsaGH.Components
 {
   /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
+  /// Component to create GSA Combination Case
   /// </summary>
   public class CreateCombinationCase : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("d8df767a-ef59-4e08-b592-2a39149efde1");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -26,12 +25,7 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddTextParameter("Name", "Na", "Case Name", GH_ParamAccess.item);
@@ -43,7 +37,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Combination Case", "ΣC", "GSA Combination Case", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaCombinationCaseParameter());
     }
     #endregion
 
@@ -59,4 +53,3 @@ namespace GsaGH.Components
     }
   }
 }
-
