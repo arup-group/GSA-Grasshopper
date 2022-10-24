@@ -47,13 +47,13 @@ namespace GsaGH.Components
         //first = false;
       }
 
-      m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Material Type");
+      m_attributes = new UI.DropDownComponentUI(this, SetSelected, new List<List<string>>() { DropDownItems }, new List<string>() { selecteditem }, new List<string>() { "Material Type" });
     }
 
-    public void SetSelected(string selected)
+    public void SetSelected(int i, int j)
     {
-      selecteditem = selected;
-      switch (selected)
+      selecteditem = DropDownItems[i];
+      switch (selecteditem)
       {
         case "Generic":
           Mode1Clicked();
@@ -84,7 +84,7 @@ namespace GsaGH.Components
     #endregion
 
     #region Input and output
-    readonly List<string> dropdownitems = new List<string>(new string[]
+    readonly List<string> DropDownItems = new List<string>(new string[]
     {
             "Generic",
             "Steel",
