@@ -172,13 +172,13 @@ namespace GsaGH.Components
       switch (_mode)
       {
         case FoldMode.Node:
-          nodeLoad.NodeLoadType = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
           break;
         case FoldMode.Applied_Displ:
-          nodeLoad.NodeLoadType = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;
           break;
         case FoldMode.Settlements:
-          nodeLoad.NodeLoadType = GsaNodeLoad.NodeLoadTypes.SETTLEMENT;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.SETTLEMENT;
           break;
       }
 

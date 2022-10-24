@@ -1,7 +1,4 @@
-﻿using Grasshopper.Kernel;
-using GsaGH.Parameters;
-using GsaGHTests.Helpers;
-using OasysUnits;
+﻿using GsaGH.Parameters;
 using Xunit;
 
 namespace GsaGHTests.Parameters

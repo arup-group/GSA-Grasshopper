@@ -1516,7 +1516,7 @@ namespace GsaGH.Util.Gsa
           {
             GsaNodeLoad myload = new GsaNodeLoad();
             myload.NodeLoad = gsaloads[i];
-            myload.NodeLoadType = ntyp;
+            myload.Type = ntyp;
             GsaLoad load = new GsaLoad(myload);
             loads.Add(new GsaLoadGoo(load));
           }

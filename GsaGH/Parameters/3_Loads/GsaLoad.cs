@@ -44,13 +44,13 @@ namespace GsaGH.Parameters
       NUM_TYPES = 4
     }
 
-    public NodeLoadTypes NodeLoadType;
+    public NodeLoadTypes Type;
 
     public NodeLoad NodeLoad { get; set; } = new NodeLoad();
 
     public GsaNodeLoad()
     {
-      NodeLoadType = NodeLoadTypes.NODE_LOAD;
+      this.Type = NodeLoadTypes.NODE_LOAD;
     }
 
     public GsaNodeLoad Duplicate()
@@ -62,7 +62,7 @@ namespace GsaGH.Parameters
       dup.NodeLoad.Nodes = this.NodeLoad.Nodes.ToString();
       dup.NodeLoad.Name = this.NodeLoad.Name.ToString();
       dup.NodeLoad.Value = this.NodeLoad.Value;
-      dup.NodeLoadType = NodeLoadType;
+      dup.Type = Type;
       return dup;
     }
   }
@@ -75,7 +75,7 @@ namespace GsaGH.Parameters
     {
       this.BeamLoad = new BeamLoad
       {
-        Type = GsaAPI.BeamLoadType.UNIFORM
+        Type = BeamLoadType.UNIFORM
       };
     }
 
