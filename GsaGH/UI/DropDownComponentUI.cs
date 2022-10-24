@@ -299,7 +299,7 @@ namespace GsaGH.UI
           // text
           graphics.DrawString(displayTexts[i], font, fontColour, TextBound[i], GH_TextRenderingConstants.NearCenter);
           // draw dropdown arrow
-          ButtonsUI.DropDownArrow.DrawDropDownButton(graphics, new PointF(ButtonBound[i].X + ButtonBound[i].Width / 2, ButtonBound[i].Y + ButtonBound[i].Height / 2), UI.Colour.GsaDarkBlue, 15);
+          DropDownArrow.DrawDropDownButton(graphics, new PointF(ButtonBound[i].X + ButtonBound[i].Width / 2, ButtonBound[i].Y + ButtonBound[i].Height / 2), UI.Colour.GsaDarkBlue, 15);
 
           // draw dropdown list
           font = new Font(GH_FontServer.FamilyStandard, 7);
@@ -557,6 +557,51 @@ namespace GsaGH.UI
              bounds2.Location.Y,
              bounds2.Width,
              bounds2.Height);
+      }
+    }
+    /// <summary>
+    /// Class holding custom UI graphical buttons/boxes
+    /// </summary>
+    public class ComponentUI
+    {
+      public static float MaxTextWidth(List<string> spacerTxts, Font font)
+      {
+        float sp = new float(); //width of spacer text
+
+        // adjust fontsize to high resolution displays
+        font = new Font(font.FontFamily, font.Size / GH_GraphicsUtil.UiScale, FontStyle.Regular);
+
+        for (int i = 0; i < spacerTxts.Count; i++)
+        {
+          if (GH_FontServer.StringWidth(spacerTxts[i], font) + 8 > sp)
+            sp = GH_FontServer.StringWidth(spacerTxts[i], font) + 8;
+        }
+        return sp;
+      }
+    }
+
+    /// <summary>
+    /// Method to draw a dropdown arrow
+    /// 
+    /// Call this method when overriding Render method
+    /// </summary>
+    public class DropDownArrow
+    {
+      public static void DrawDropDownButton(Graphics graphics, PointF center, Color colour, int rectanglesize)
+      {
+        Pen pen = new Pen(new SolidBrush(colour))
+        {
+          Width = rectanglesize / 8
+        };
+
+        graphics.DrawLines(
+            pen, new PointF[]
+            {
+                new PointF(center.X - rectanglesize / 4, center.Y - rectanglesize / 8),
+                new PointF(center.X, center.Y + rectanglesize / 6),
+                new PointF(center.X + rectanglesize / 4, center.Y - rectanglesize / 8)
+            });
+
       }
     }
   }
