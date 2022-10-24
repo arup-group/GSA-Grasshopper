@@ -98,7 +98,7 @@ namespace GsaGH.Helpers.Export
       {
         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
       }
-      return null;
+      return new Tuple<List<GsaSection>, List<GsaProp2d>, List<GsaProp3d>>(null, null, null);
     }
 
     internal static Tuple<List<GsaNode>, List<GsaElement1d>, List<GsaElement2d>, List<GsaElement3d>, List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>> GetGeometry(GH_Component owner, IGH_DataAccess DA, int inputid, bool isOptional = false)
@@ -192,7 +192,7 @@ namespace GsaGH.Helpers.Export
       {
         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
       }
-      return null;
+      return new Tuple<List<GsaNode>, List<GsaElement1d>, List<GsaElement2d>, List<GsaElement3d>, List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(null, null, null, null, null, null, null);
     }
 
     internal static Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>> GetMembers(GH_Component owner, IGH_DataAccess DA, int inputid, bool isOptional = false)
@@ -250,7 +250,7 @@ namespace GsaGH.Helpers.Export
       {
         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
       }
-      return null;
+      return new Tuple<List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(null, null, null);
     }
 
     internal static Tuple<List<GsaLoad>, List<GsaGridPlaneSurface>> GetLoading(GH_Component owner, IGH_DataAccess DA, int inputid, bool isOptional = false)
@@ -298,7 +298,7 @@ namespace GsaGH.Helpers.Export
       {
         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
       }
-      return null;
+      return new Tuple<List<GsaLoad>, List<GsaGridPlaneSurface>>(null, null);
     }
 
     internal static Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>> GetAnalysis(GH_Component owner, IGH_DataAccess DA, int inputid, bool isOptional = false)
@@ -342,7 +342,7 @@ namespace GsaGH.Helpers.Export
       {
         owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameter " + owner.Params.Input[inputid].NickName + " failed to collect data!");
       }
-      return null;
+      return new Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>>(null, null);
     }
   }
 }
