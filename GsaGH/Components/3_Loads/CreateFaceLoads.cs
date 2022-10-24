@@ -16,7 +16,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  public class CreateFaceLoads : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CreateFaceLoads : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
@@ -32,101 +32,10 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        dropdownitems.Add(loadTypeOptions);
-        dropdownitems.Add(FilteredUnits.FilteredForcePerAreaUnits);
-
-        selecteditems = new List<string>();
-        selecteditems.Add(_mode.ToString());
-
-        PressureUnit pressureUnit = (Force.From(1, DefaultUnits.ForceUnit) / (Length.From(1, DefaultUnits.LengthUnitGeometry) * Length.From(1, DefaultUnits.LengthUnitGeometry))).Unit;
-        selecteditems.Add(pressureUnit.ToString());
-
-        first = false;
-      }
-
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      if (i == 0) // change is made to the first dropdown list
-      {
-        switch (selecteditems[0])
-        {
-          case "Uniform":
-            Mode1Clicked();
-            break;
-          case "Variable":
-            Mode2Clicked();
-            break;
-          case "Point":
-            Mode3Clicked();
-            break;
-          case "Edge":
-            Mode4Clicked();
-            break;
-        }
-      }
-      else
-      {
-        forceAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[1]);
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      }
-
-      // update input params
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-
-    private void UpdateUIFromSelectedItems()
-    {
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
-      forceAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[1]);
-
-      CreateAttributes();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    #endregion
-
     #region Input and output
-    readonly List<string> loadTypeOptions = new List<string>(new string[]
-    {
-      "Uniform",
-      "Variable",
-      "Point",
-      "Edge"
-    });
-
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-      "Load Type",
-      "Unit",
-    });
-
-    private PressureUnit forceAreaUnit = (Force.From(1, DefaultUnits.ForceUnit) / (Length.From(1, DefaultUnits.LengthUnitGeometry) * Length.From(1, DefaultUnits.LengthUnitGeometry))).Unit;
-    #endregion
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity force = new Pressure(0, forceAreaUnit);
-      string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+      string unitAbbreviation = Pressure.GetAbbreviation(this.ForcePerAreaUnit);
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
       pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to." + System.Environment.NewLine +
@@ -151,13 +60,12 @@ namespace GsaGH.Components
       pManager[3].Optional = true;
       pManager[4].Optional = true;
       pManager[5].Optional = true;
-
-      _mode = FoldMode.Uniform;
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Face Load", "Ld", "GSA Face Load", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaLoadParameter(), "Face Load", "Ld", "GSA Face Load", GH_ParamAccess.item);
     }
+    #endregion
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
@@ -245,7 +153,7 @@ namespace GsaGH.Components
               GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
             faceLoad.FaceLoad.IsProjected = prj;
 
-            Pressure load1 = (Pressure)Input.UnitNumber(this, DA, 6, forceAreaUnit);
+            Pressure load1 = (Pressure)Input.UnitNumber(this, DA, 6, ForcePerAreaUnit);
 
             // set position and value
             faceLoad.FaceLoad.SetValue(0, load1.NewtonsPerSquareMeter);
@@ -265,10 +173,10 @@ namespace GsaGH.Components
             faceLoad.FaceLoad.IsProjected = prj;
 
             // set value
-            faceLoad.FaceLoad.SetValue(0, ((Pressure)Input.UnitNumber(this, DA, 6, forceAreaUnit, true)).NewtonsPerSquareMeter);
-            faceLoad.FaceLoad.SetValue(1, ((Pressure)Input.UnitNumber(this, DA, 7, forceAreaUnit, true)).NewtonsPerSquareMeter);
-            faceLoad.FaceLoad.SetValue(2, ((Pressure)Input.UnitNumber(this, DA, 8, forceAreaUnit, true)).NewtonsPerSquareMeter);
-            faceLoad.FaceLoad.SetValue(3, ((Pressure)Input.UnitNumber(this, DA, 9, forceAreaUnit, true)).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(0, ((Pressure)Input.UnitNumber(this, DA, 6, ForcePerAreaUnit, true)).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(1, ((Pressure)Input.UnitNumber(this, DA, 7, ForcePerAreaUnit, true)).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(2, ((Pressure)Input.UnitNumber(this, DA, 8, ForcePerAreaUnit, true)).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(3, ((Pressure)Input.UnitNumber(this, DA, 9, ForcePerAreaUnit, true)).NewtonsPerSquareMeter);
           }
           break;
 
@@ -291,7 +199,7 @@ namespace GsaGH.Components
             DA.GetData(8, ref s);
 
             // set position and value
-            faceLoad.FaceLoad.SetValue(0, ((Pressure)Input.UnitNumber(this, DA, 6, forceAreaUnit)).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(0, ((Pressure)Input.UnitNumber(this, DA, 6, ForcePerAreaUnit)).NewtonsPerSquareMeter);
             //faceLoad.Position.X = r; //note Vector2 currently only get in GsaAPI
             //faceLoad.Position.Y = s;
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning: the position cannot be set in GsaAPI at the moment");
@@ -307,9 +215,9 @@ namespace GsaGH.Components
             int edge = 1;
             DA.GetData(5, ref edge);
 
-            faceLoad.FaceLoad.SetValue(0, ((Pressure)Input.UnitNumber(this, DA, 6, forceAreaUnit)).NewtonsPerSquareMeter);
+            faceLoad.FaceLoad.SetValue(0, ((Pressure)Input.UnitNumber(this, DA, 6, ForcePerAreaUnit)).NewtonsPerSquareMeter);
             if (this.Params.Input[7].SourceCount != 0)
-              faceLoad.FaceLoad.SetValue(1, ((Pressure)Input.UnitNumber(this, DA, 7, forceAreaUnit)).NewtonsPerSquareMeter);
+              faceLoad.FaceLoad.SetValue(1, ((Pressure)Input.UnitNumber(this, DA, 7, ForcePerAreaUnit)).NewtonsPerSquareMeter);
             else
               faceLoad.FaceLoad.SetValue(1, faceLoad.FaceLoad.Value(0));
 
@@ -327,7 +235,7 @@ namespace GsaGH.Components
       DA.SetData(0, new GsaLoadGoo(gsaLoad));
     }
 
-    #region menu override
+    #region Custom UI
     private enum FoldMode
     {
       Uniform,
@@ -336,177 +244,75 @@ namespace GsaGH.Components
       Edge
     }
 
+    readonly List<string> _loadTypeOptions = new List<string>(new string[]
+    {
+      "Uniform",
+      "Variable",
+      "Point",
+      "Edge"
+    });
+
     private FoldMode _mode = FoldMode.Uniform;
-    private bool first = true;
-    private void Mode1Clicked()
+    PressureUnit ForcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
+    public override void InitialiseDropdowns()
     {
-      if (_mode == FoldMode.Uniform)
-        return;
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Type", "Unit"
+        });
 
-      RecordUndoEvent("Uniform Parameters");
-      //remove input parameters
-      if (_mode == FoldMode.Edge)
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // Type
+      DropDownItems.Add(_loadTypeOptions);
+      SelectedItems.Add(_mode.ToString());
+
+      // ForcePerArea
+      DropDownItems.Add(FilteredUnits.FilteredForcePerAreaUnits);
+      this.SelectedItems.Add(this.ForcePerAreaUnit.ToString());
+
+      this.IsInitialised = true;
+    }
+
+    public override void SetSelected(int i, int j)
+    {
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+
+      if (i == 0) // change is made to the first dropdown list
       {
-        while (Params.Input.Count > 5)
-          Params.UnregisterInputParameter(Params.Input[5], true);
-        //add input parameters
-        Params.RegisterInputParam(new Param_Boolean());
-        Params.RegisterInputParam(new Param_Number());
+        switch (SelectedItems[0])
+        {
+          case "Uniform":
+            Mode1Clicked();
+            break;
+          case "Variable":
+            Mode2Clicked();
+            break;
+          case "Point":
+            Mode3Clicked();
+            break;
+          case "Edge":
+            Mode4Clicked();
+            break;
+        }
       }
       else
-      {
-        while (Params.Input.Count > 6)
-          Params.UnregisterInputParameter(Params.Input[6], true);
-        //add input parameters
-        Params.RegisterInputParam(new Param_Number());
-      }
-      _mode = FoldMode.Uniform;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
-    }
-    private void Mode2Clicked()
-    {
-      if (_mode == FoldMode.Variable)
-        return;
+        this.ForcePerAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[1]);
 
-      RecordUndoEvent("Variable Parameters");
-      //remove input parameters
-      if (_mode == FoldMode.Edge)
-      {
-        while (Params.Input.Count > 5)
-          Params.UnregisterInputParameter(Params.Input[5], true);
-        //add input parameters
-        Params.RegisterInputParam(new Param_Boolean());
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_Number());
-      }
-      else
-      {
-        while (Params.Input.Count > 6)
-          Params.UnregisterInputParameter(Params.Input[6], true);
-        //add input parameters
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_Number());
-      }
-      _mode = FoldMode.Variable;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
+      base.UpdateUI();
     }
 
-    private void Mode3Clicked()
+    public override void UpdateUIFromSelectedItems()
     {
-      if (_mode == FoldMode.Point)
-        return;
-
-      RecordUndoEvent("Point Parameters");
-      //remove input parameters
-      if (_mode == FoldMode.Edge)
-      {
-        while (Params.Input.Count > 5)
-          Params.UnregisterInputParameter(Params.Input[5], true);
-        //add input parameters
-        Params.RegisterInputParam(new Param_Boolean());
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_Number());
-      }
-      else
-      {
-        while (Params.Input.Count > 6)
-          Params.UnregisterInputParameter(Params.Input[6], true);
-        //add input parameters
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_Number());
-      }
-      _mode = FoldMode.Point;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
-    }
-    private void Mode4Clicked()
-    {
-      if (_mode == FoldMode.Edge)
-        return;
-
-      RecordUndoEvent("Edge Parameters");
-
-      //remove input parameters
-      while (Params.Input.Count > 5)
-        Params.UnregisterInputParameter(Params.Input[5], true);
-
-      //add input parameters
-      Params.RegisterInputParam(new Param_Number());
-      Params.RegisterInputParam(new Param_Number());
-      Params.RegisterInputParam(new Param_Number());
-
-
-      _mode = FoldMode.Edge;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
+      this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
+      this.ForcePerAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[1]);
+      base.UpdateUIFromSelectedItems();
     }
 
-    #endregion
-
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    public override void VariableParameterMaintenance()
     {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      try // this will fail if user has an old version of the component
-      {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      }
-      catch (Exception) // we set the stored values like first initation of component
-      {
-        _mode = (FoldMode)reader.GetInt32("Mode");
-
-        dropdownitems = new List<List<string>>();
-        dropdownitems.Add(loadTypeOptions);
-        dropdownitems.Add(FilteredUnits.FilteredStressUnits);
-
-        selecteditems = new List<string>();
-        selecteditems.Add(reader.GetString("select"));
-        selecteditems.Add(PressureUnit.KilonewtonPerSquareMeter.ToString());
-      }
-      first = false;
-
-      UpdateUIFromSelectedItems();
-      return base.Read(reader);
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    #endregion
-    #region IGH_VariableParameterComponent null implementation
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      IQuantity force = new Pressure(0, forceAreaUnit);
-      string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+      string unitAbbreviation = Pressure.GetAbbreviation(this.ForcePerAreaUnit);
 
       if (_mode == FoldMode.Uniform)
       {
@@ -609,6 +415,112 @@ namespace GsaGH.Components
         Params.Input[7].Access = GH_ParamAccess.item;
         Params.Input[7].Optional = false;
       }
+    }
+    #endregion
+
+    #region menu override
+    private void Mode1Clicked()
+    {
+      if (_mode == FoldMode.Uniform)
+        return;
+
+      RecordUndoEvent("Uniform Parameters");
+      _mode = FoldMode.Uniform;
+
+      //remove input parameters
+      if (_mode == FoldMode.Edge)
+      {
+        while (Params.Input.Count > 5)
+          Params.UnregisterInputParameter(Params.Input[5], true);
+        //add input parameters
+        Params.RegisterInputParam(new Param_Boolean());
+        Params.RegisterInputParam(new Param_Number());
+      }
+      else
+      {
+        while (Params.Input.Count > 6)
+          Params.UnregisterInputParameter(Params.Input[6], true);
+        //add input parameters
+        Params.RegisterInputParam(new Param_Number());
+      }
+    }
+    private void Mode2Clicked()
+    {
+      if (_mode == FoldMode.Variable)
+        return;
+
+      RecordUndoEvent("Variable Parameters");
+      _mode = FoldMode.Variable;
+
+      //remove input parameters
+      if (_mode == FoldMode.Edge)
+      {
+        while (Params.Input.Count > 5)
+          Params.UnregisterInputParameter(Params.Input[5], true);
+        //add input parameters
+        Params.RegisterInputParam(new Param_Boolean());
+        Params.RegisterInputParam(new Param_Number());
+        Params.RegisterInputParam(new Param_Number());
+        Params.RegisterInputParam(new Param_Number());
+        Params.RegisterInputParam(new Param_Number());
+      }
+      else
+      {
+        while (Params.Input.Count > 6)
+          Params.UnregisterInputParameter(Params.Input[6], true);
+        //add input parameters
+        Params.RegisterInputParam(new Param_Number());
+        Params.RegisterInputParam(new Param_Number());
+        Params.RegisterInputParam(new Param_Number());
+        Params.RegisterInputParam(new Param_Number());
+      }
+    }
+
+    private void Mode3Clicked()
+    {
+      if (_mode == FoldMode.Point)
+        return;
+
+      RecordUndoEvent("Point Parameters");
+      _mode = FoldMode.Point;
+
+      //remove input parameters
+      if (_mode == FoldMode.Edge)
+      {
+        while (Params.Input.Count > 5)
+          Params.UnregisterInputParameter(Params.Input[5], true);
+        //add input parameters
+        Params.RegisterInputParam(new Param_Boolean());
+        Params.RegisterInputParam(new Param_Number());
+        Params.RegisterInputParam(new Param_Number());
+        Params.RegisterInputParam(new Param_Number());
+      }
+      else
+      {
+        while (Params.Input.Count > 6)
+          Params.UnregisterInputParameter(Params.Input[6], true);
+        //add input parameters
+        Params.RegisterInputParam(new Param_Number());
+        Params.RegisterInputParam(new Param_Number());
+        Params.RegisterInputParam(new Param_Number());
+      }
+    }
+    private void Mode4Clicked()
+    {
+      if (_mode == FoldMode.Edge)
+        return;
+
+      RecordUndoEvent("Edge Parameters");
+      _mode = FoldMode.Edge;
+
+      //remove input parameters
+      while (Params.Input.Count > 5)
+        Params.UnregisterInputParameter(Params.Input[5], true);
+
+      //add input parameters
+      Params.RegisterInputParam(new Param_Number());
+      Params.RegisterInputParam(new Param_Number());
+      Params.RegisterInputParam(new Param_Number());
     }
     #endregion
   }

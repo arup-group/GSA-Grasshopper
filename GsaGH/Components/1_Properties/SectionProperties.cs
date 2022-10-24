@@ -84,6 +84,7 @@ namespace GsaGH.Components
         DA.SetData(8, new GH_UnitNumber(gsaSection.VolumePerLength));
       }
     }
+
     #region Custom UI
     protected override void BeforeSolveInstance()
     {
