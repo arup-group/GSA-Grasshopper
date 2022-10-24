@@ -145,7 +145,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        return UI.Display.GetLocalPlane(this._crv, this._crv.GetLength() / 2, this.OrientationAngle.Radians);
+        return UI.Display.GetLocalPlane(this._crv, this._crv.GetLength() / 2.0, this.OrientationAngle.Radians);
       }
     }
     public GsaSection Section
