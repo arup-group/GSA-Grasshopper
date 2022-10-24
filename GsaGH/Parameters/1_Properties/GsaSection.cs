@@ -89,7 +89,7 @@ namespace GsaGH.Parameters
         return this._section.Kz;
       }
     }
-    public IQuantity SurfaceAreaPerLength
+    public Area SurfaceAreaPerLength
     {
       get
       {
