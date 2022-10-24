@@ -6,6 +6,8 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
@@ -198,7 +200,7 @@ namespace GsaGH.Components
         if (DA.GetData(9, ref ghangle))
         {
           if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
-            elem.OrientationAngle = angle;
+            elem.OrientationAngle = new Angle(angle, AngleUnit.Radian);
         }
 
         // 10 orientation node

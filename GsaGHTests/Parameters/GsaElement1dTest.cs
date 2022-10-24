@@ -1,6 +1,7 @@
 ﻿using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
+using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
@@ -62,7 +63,7 @@ namespace GsaGHTests.Parameters
       elem.Name = "EltonJohn";
       GsaOffset offset = new GsaOffset(0, 0, 14.3, 0);
       elem.Offset = offset;
-      elem.OrientationAngle = 90;
+      elem.OrientationAngle = new Angle(90, AngleUnit.Degree);
       elem.Section.Id = 3;
 
       // check the line end points are correct
@@ -81,7 +82,7 @@ namespace GsaGHTests.Parameters
       Assert.True(elem.IsDummy);
       Assert.Equal("EltonJohn", elem.Name);
       Assert.Equal(14.3, elem.Offset.Y.Value);
-      Assert.Equal(90, elem.OrientationAngle);
+      Assert.Equal(90, elem.OrientationAngle.Degrees);
       Assert.Equal(3, elem.Section.Id);
     }
 
@@ -104,7 +105,7 @@ namespace GsaGHTests.Parameters
       orig.Name = "Tilman";
       GsaOffset offset = new GsaOffset(0, 0, 2.9, 0);
       orig.Offset = offset;
-      orig.OrientationAngle = -0.14;
+      orig.OrientationAngle = new Angle(-0.14, AngleUnit.Radian);
 
       // duplicate original
       GsaElement1d dup = orig.Duplicate();
@@ -119,7 +120,7 @@ namespace GsaGHTests.Parameters
       orig.Name = "Hugh";
       GsaOffset offset2 = new GsaOffset(0, 0, -0.991, 0, LengthUnit.Meter);
       orig.Offset = offset2;
-      orig.OrientationAngle = 0;
+      orig.OrientationAngle = new Angle(0, AngleUnit.Radian);
 
       // check that values in duplicate are not changed
       Assert.Equal(2, dup.Line.PointAtStart.X, 1E-9);
@@ -135,7 +136,7 @@ namespace GsaGHTests.Parameters
       Assert.False(dup.IsDummy);
       Assert.Equal("Tilman", dup.Name);
       Assert.Equal(2.9, dup.Offset.Y.Meters, 1E-9);
-      Assert.Equal(-0.14, dup.OrientationAngle, 1E-9);
+      Assert.Equal(-0.14, dup.OrientationAngle.Radians, 1E-9);
 
       // check that original has changed values
       Assert.Equal(1, orig.Line.PointAtStart.X, 1E-9);
@@ -151,7 +152,7 @@ namespace GsaGHTests.Parameters
       Assert.True(orig.IsDummy);
       Assert.Equal("Hugh", orig.Name);
       Assert.Equal(-0.991, orig.Offset.Y.Meters, 1E-9);
-      Assert.Equal(0, orig.OrientationAngle, 1E-9);
+      Assert.Equal(0, orig.OrientationAngle.Radians, 1E-9);
     }
 
     [Fact]
