@@ -71,6 +71,9 @@
     <Reference Include="OasysUnits, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f8601875a1f041da, processorArchitecture=MSIL">
       <HintPath>..\packages\OasysUnits.1.0.0\lib\net47\OasysUnits.dll</HintPath>
     </Reference>
+    <Reference Include="OasysUnits.Serialization.JsonNet, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f8601875a1f041da, processorArchitecture=MSIL">
+      <HintPath>..\packages\OasysUnits.Serialization.JsonNet.1.0.0\lib\netstandard2.0\OasysUnits.Serialization.JsonNet.dll</HintPath>
+    </Reference>
     <Reference Include="Rhino.UI, Version=6.27.20176.5000, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.27.20176.5001\lib\net45\Rhino.UI.dll</HintPath>
       <Private>False</Private>
@@ -142,7 +145,6 @@
     <Compile Include="Components\GH_OasysTaskCapableComponent.cs" />
     <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\EditSection_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\GlobalResult2_OBSOLETE .cs" />
     <Compile Include="Components\GraveyardComp\GetAnalysis_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
@@ -156,11 +158,7 @@
     <Compile Include="Components\3_Loads\LoadProperties.cs" />
     <Compile Include="Components\0_Model\CreateModel.cs" />
     <Compile Include="Components\4_Analysis\Analyse.cs" />
-    <Compile Include="Components\GraveyardComp\Elem3dResults_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\Elem2dResults_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\GlobalResult_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\Elem1dResults_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\NodeResults_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\EditTitles_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\GetLoads.cs" />
     <Compile Include="Components\0_Model\GetProperties.cs" />
@@ -192,7 +190,9 @@
     <Compile Include="Components\3_Loads\CreateGridPointLoad.cs" />
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
+    <Compile Include="UI\DropDownComponentUI.cs" />
     <Compile Include="Helpers\Export\ConvertMembers.cs" />
+    <Compile Include="Helpers\Export\ModelAssembly.cs" />
     <Compile Include="Helpers\Mappings.cs" />
     <Compile Include="Helpers\PostHog.cs" />
     <Compile Include="Helpers\_DeSerialization.cs" />
@@ -298,20 +298,7 @@
     <Compile Include="UI\AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Comp_MultiDropDownsCheckBoxes.cs" />
-    <Compile Include="UI\Comp_MultiDropDownsSlider.cs" />
-    <Compile Include="UI\Comp_CheckBox.cs" />
-    <Compile Include="UI\Comp_Slider.cs" />
-    <Compile Include="UI\Comp_TripleButton.cs" />
-    <Compile Include="UI\Comp_Button.cs" />
     <Compile Include="Helpers\_Colour.cs" />
-    <Compile Include="UI\Comp_Profile.cs" />
-    <Compile Include="UI\Comp_MultiDropDowns.cs" />
-    <Compile Include="UI\WidthFix.cs" />
-    <Compile Include="UI\GraphicButtons.cs" />
-    <Compile Include="UI\Comp_DropDown.cs" />
-    <Compile Include="UI\Comp_Releases.cs" />
-    <Compile Include="UI\Comp_Support.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components\Lab\" />
