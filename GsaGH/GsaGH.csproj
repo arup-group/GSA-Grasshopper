@@ -143,7 +143,6 @@
     <Compile Include="Components\5_Results\GlobalPerformanceResults.cs" />
     <Compile Include="Components\5_Results\TotalLoadsAndReactionResults.cs" />
     <Compile Include="Components\GH_OasysTaskCapableComponent.cs" />
-    <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\EditSection_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\GetAnalysis_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
