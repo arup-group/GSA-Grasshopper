@@ -225,7 +225,7 @@ namespace GsaGH.Components
         if (DA.GetData(10, ref ghangle))
         {
           if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
-            mem.OrientationAngle = angle;
+            mem.OrientationAngle = new Angle(angle, AngleUnit.Radian);
         }
 
         // 11 orientation node
@@ -238,7 +238,7 @@ namespace GsaGH.Components
             gh_typ.CastTo(ref node);
             mem.OrientationNode = node;
           }
-          else
+          else 
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert Orientation Node input to GsaNode");
           }
