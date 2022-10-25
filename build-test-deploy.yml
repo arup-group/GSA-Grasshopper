@@ -9,7 +9,7 @@ variables:
   - name: configuration
     value: Release
   - name: latest_released_gsa_version
-    value: GSA/10.1/10.1.61/10.1.61.0/2022-07-20/36997/Arup_GSA_x64_10.1.61.0
+    value: GSA/10.1/10.1.61/10.1.61.0/2022-07-20/36997/Arup_GSA_x64_10.1.62.90
 
 pool: 'rhino-compute'
 
