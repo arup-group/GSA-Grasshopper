@@ -85,6 +85,18 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
+    public void FaceLoadConstructorTest()
+    {
+      // Act
+      GsaFaceLoad faceLoad = new GsaFaceLoad();
+      GsaLoad load = new GsaLoad(faceLoad);
+
+      // Assert
+      Assert.Equal(LoadTypes.Face, load.LoadType);
+      Assert.Equal(FaceLoadType.CONSTANT, load.FaceLoad.FaceLoad.Type);
+    }
+
+    [Fact]
     public void DuplicateTest()
     {
       // Arrange
@@ -191,6 +203,79 @@ namespace GsaGHTests.Parameters
       Assert.Equal(97.5, original.NodeLoad.NodeLoad.Value);
     }
 
+    [Fact]
+    public void dest()
+    {
+      // Arrange
+      GsaBeamLoad beamLoad = new GsaBeamLoad();
+      beamLoad.BeamLoad.Type = BeamLoadType.POINT;
+      beamLoad.BeamLoad.AxisProperty = 5;
+      beamLoad.BeamLoad.Case = 6;
+      beamLoad.BeamLoad.Direction = Direction.ZZ;
+      beamLoad.BeamLoad.Elements = "elements";
+      beamLoad.BeamLoad.Name = "name";
+      beamLoad.BeamLoad.IsProjected = true;
+      beamLoad.BeamLoad.IsProjected = true;
+      GsaLoad original = new GsaLoad(beamLoad);
+
+      // Act
+      GsaLoad duplicate = original.Duplicate();
+
+      // Assert
+      Duplicates.AreEqual(original, duplicate);
+
+      // make some changes to duplicate
+      duplicate.BeamLoad.BeamLoad.Type = BeamLoadType.UNDEF;
+      duplicate.BeamLoad.BeamLoad.AxisProperty = 1;
+      duplicate.BeamLoad.BeamLoad.Case = 1;
+      duplicate.BeamLoad.BeamLoad.Direction = Direction.XX;
+      duplicate.BeamLoad.BeamLoad.Elements = "none";
+      duplicate.BeamLoad.BeamLoad.Name = "";
+      duplicate.BeamLoad.BeamLoad.IsProjected = false;
+      duplicate.BeamLoad.BeamLoad.SetPosition(0, 99);
+      duplicate.BeamLoad.BeamLoad.SetValue(0, 99);
+      duplicate.BeamLoad.BeamLoad.SetPosition(1, 99);
+      duplicate.BeamLoad.BeamLoad.SetValue(1, 99);
+
+      // Assert
+      Assert.Equal(LoadTypes.Beam, original.LoadType);
+      Assert.Equal(BeamLoadType.POINT, original.BeamLoad.BeamLoad.Type);
+      Assert.Equal(5, original.BeamLoad.BeamLoad.AxisProperty);
+      Assert.Equal(6, original.BeamLoad.BeamLoad.Case);
+      Assert.Equal(Direction.ZZ, original.BeamLoad.BeamLoad.Direction);
+      Assert.Equal("elements", original.BeamLoad.BeamLoad.Elements);
+      Assert.Equal("name", original.BeamLoad.BeamLoad.Name);
+      Assert.True(original.BeamLoad.BeamLoad.IsProjected);
+      if (original.BeamLoad.BeamLoad.Type == BeamLoadType.POINT)
+      {
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
+      }
+      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.UNIFORM)
+      {
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
+      }
+      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.LINEAR)
+      {
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
+        Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
+      }
+      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.PATCH)
+      {
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
+        Assert.Equal(1, original.BeamLoad.BeamLoad.Position(1));
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
+        Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
+      }
+      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.TRILINEAR)
+      {
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
+        Assert.Equal(1, original.BeamLoad.BeamLoad.Position(1));
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
+        Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
+      }
+    }
+
     [Theory]
     [InlineData(BeamLoadType.UNDEF, BeamLoadType.UNIFORM)]
     [InlineData(BeamLoadType.POINT, BeamLoadType.UNDEF)]
@@ -226,7 +311,11 @@ namespace GsaGHTests.Parameters
       duplicate.BeamLoad.BeamLoad.Elements = "none";
       duplicate.BeamLoad.BeamLoad.Name = "";
       duplicate.BeamLoad.BeamLoad.IsProjected = false;
-      
+      duplicate.BeamLoad.BeamLoad.SetPosition(0, 99);
+      duplicate.BeamLoad.BeamLoad.SetValue(0, 99);
+      duplicate.BeamLoad.BeamLoad.SetPosition(1, 99);
+      duplicate.BeamLoad.BeamLoad.SetValue(1, 99);
+
       // Assert
       Assert.Equal(LoadTypes.Beam, original.LoadType);
       Assert.Equal(originalType, original.BeamLoad.BeamLoad.Type);
@@ -241,28 +330,96 @@ namespace GsaGHTests.Parameters
         Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
         Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
       }
-      if (original.BeamLoad.BeamLoad.Type == BeamLoadType.UNIFORM)
+      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.UNIFORM)
       {
         Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
       }
-      if (original.BeamLoad.BeamLoad.Type == BeamLoadType.LINEAR)
+      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.LINEAR)
       {
         Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
         Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
       }
-      if (original.BeamLoad.BeamLoad.Type == BeamLoadType.PATCH)
+      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.PATCH)
+      {
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
+        Assert.Equal(1, original.BeamLoad.BeamLoad.Position(1));
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
+        Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
+      }
+      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.TRILINEAR)
       {
         Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
         Assert.Equal(1, original.BeamLoad.BeamLoad.Position(1));
         Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
         Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
       }
-      if (original.BeamLoad.BeamLoad.Type == BeamLoadType.TRILINEAR)
+    }
+
+    [Theory]
+    [InlineData(FaceLoadType.UNDEF, FaceLoadType.CONSTANT)]
+    [InlineData(FaceLoadType.CONSTANT, FaceLoadType.UNDEF)]
+    [InlineData(FaceLoadType.GENERAL, FaceLoadType.UNDEF)]
+    [InlineData(FaceLoadType.POINT, FaceLoadType.UNDEF)]
+    public void FaceLoadDuplicateTest(FaceLoadType originalType, FaceLoadType duplicateType)
+    {
+      // Arrange
+      GsaFaceLoad faceLoad = new GsaFaceLoad();
+      faceLoad.FaceLoad.AxisProperty = 5;
+      faceLoad.FaceLoad.Case = 6;
+      faceLoad.FaceLoad.Direction = Direction.ZZ;
+      faceLoad.FaceLoad.Elements = "elements";
+      faceLoad.FaceLoad.Name = "name";
+      faceLoad.FaceLoad.Type = originalType;
+      GsaLoad original = new GsaLoad(faceLoad);
+
+      // Act
+      GsaLoad duplicate = original.Duplicate();
+
+      // Assert
+      Duplicates.AreEqual(original, duplicate);
+
+      // make some changes to duplicate
+      duplicate.FaceLoad.FaceLoad.Type = duplicateType;
+      duplicate.FaceLoad.FaceLoad.AxisProperty = 1;
+      duplicate.FaceLoad.FaceLoad.Case = 1;
+      duplicate.FaceLoad.FaceLoad.Direction = Direction.XX;
+      duplicate.FaceLoad.FaceLoad.Elements = "none";
+      duplicate.FaceLoad.FaceLoad.IsProjected = true;
+      duplicate.FaceLoad.FaceLoad.SetValue(0, 99);
+      duplicate.FaceLoad.FaceLoad.SetValue(1, 99);
+      duplicate.FaceLoad.FaceLoad.SetValue(2, 99);
+      duplicate.FaceLoad.FaceLoad.SetValue(3, 99);
+      //duplicate.FaceLoad.FaceLoad.Position = new Vector2(); // not yet implemented in Gsa API
+
+      // Assert
+      Assert.Equal(LoadTypes.Face, original.LoadType);
+      Assert.Equal(originalType, original.FaceLoad.FaceLoad.Type);
+      Assert.Equal(5, original.BeamLoad.BeamLoad.AxisProperty);
+      Assert.Equal(6, original.BeamLoad.BeamLoad.Case);
+      Assert.Equal(Direction.ZZ, original.BeamLoad.BeamLoad.Direction);
+      Assert.Equal("elements", original.BeamLoad.BeamLoad.Elements);
+      Assert.Equal("name", original.BeamLoad.BeamLoad.Name);
+
+
+      if (original.FaceLoad.FaceLoad.Type == FaceLoadType.CONSTANT)
       {
-        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Position(1));
-        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
+        Assert.False(original.FaceLoad.FaceLoad.IsProjected);
+        Assert.Equal(0, original.FaceLoad.FaceLoad.Value(0));
+      }
+      else if (original.FaceLoad.FaceLoad.Type == FaceLoadType.GENERAL)
+      {
+        Assert.False(original.FaceLoad.FaceLoad.IsProjected);
+        Assert.Equal(0, original.FaceLoad.FaceLoad.Value(0));
+        Assert.Equal(1, original.FaceLoad.FaceLoad.Value(1));
+        Assert.Equal(2, original.FaceLoad.FaceLoad.Value(2));
+        Assert.Equal(3, original.FaceLoad.FaceLoad.Value(3));
+      }
+      else if (original.FaceLoad.FaceLoad.Type == FaceLoadType.POINT)
+      {
+        Assert.False(original.FaceLoad.FaceLoad.IsProjected);
+        Assert.Equal(0, original.FaceLoad.FaceLoad.Value(0));
+        Assert.Equal(1, original.FaceLoad.FaceLoad.Position.X);
+        Assert.Equal(1, original.FaceLoad.FaceLoad.Position.Y);
       }
     }
   }
