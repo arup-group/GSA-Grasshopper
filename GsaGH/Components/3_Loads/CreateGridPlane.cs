@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Eto.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
@@ -37,7 +38,7 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Plane", "P", "Plane for Axis and Grid Plane definition. Note that an XY-plane will be created with an axis origin Z = 0 " +
           "and the height location will be controlled by Grid Plane elevation. For all none-XY plane inputs, the Grid Plane elevation will be 0", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Grid Plane ID", "ID", "GSA Grid Plane ID. Setting this will replace any existing Grid Planes in GSA model", GH_ParamAccess.item, 0);
-      pManager.AddGenericParameter("Grid Elevation", "Ev", "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Grid Elevation [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ev", "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Grid Plane Name", GH_ParamAccess.item);
 
       pManager[0].Optional = true;
@@ -112,7 +113,6 @@ namespace GsaGH.Components
         if (this.Params.Input[4].SourceCount > 0)
           gps.GridPlane.ToleranceAbove = Input.UnitNumber(this, DA, 4, this.LengthUnit, true).As(LengthUnit.Meter);
 
-
         // 5 tolerance below
         if (this.Params.Input[5].SourceCount > 0)
           gps.GridPlane.ToleranceBelow = Input.UnitNumber(this, DA, 5, this.LengthUnit, true).As(LengthUnit.Meter);
@@ -138,7 +138,7 @@ namespace GsaGH.Components
     {
       this.SpacerDescriptions = new List<string>(new string[]
         {
-          "Type"
+          "Type", "Unit"
         });
 
       this.DropDownItems = new List<List<string>>();
@@ -147,6 +147,10 @@ namespace GsaGH.Components
       // Type
       this.DropDownItems.Add(_type);
       this.SelectedItems.Add(this._mode.ToString());
+
+      // Length
+      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+      this.SelectedItems.Add(this.LengthUnit.ToString());
 
       this.IsInitialised = true;
     }
@@ -159,19 +163,9 @@ namespace GsaGH.Components
         {
           case "General":
             Mode1Clicked();
-            if (this.DropDownItems.Count > 1)
-            {
-              this.DropDownItems.RemoveAt(1);
-              this.SelectedItems.RemoveAt(1);
-            }
             break;
           case "Storey":
             Mode2Clicked();
-            if (this.DropDownItems.Count < 2)
-            {
-              this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-              this.SelectedItems.Add(this.LengthUnit.ToString());
-            }
             break;
         }
       }
@@ -189,6 +183,8 @@ namespace GsaGH.Components
 
     public override void VariableParameterMaintenance()
     {
+      Params.Input[2].Name = "Grid Elevation[" + Length.GetAbbreviation(this.LengthUnit) + "]";
+
       if (_mode == FoldMode.Storey)
       {
         Params.Input[4].NickName = "tA";
@@ -237,11 +233,6 @@ namespace GsaGH.Components
       {
         _mode = (FoldMode)reader.GetInt32("Mode");
         this.InitialiseDropdowns();
-        if (_mode == FoldMode.Storey)
-        {
-          this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-          this.SelectedItems.Add(this.LengthUnit.ToString());
-        }
       }
 
       return base.Read(reader);
