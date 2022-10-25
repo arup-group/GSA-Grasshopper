@@ -1,8 +1,11 @@
-﻿using GsaAPI;
+﻿using System;
+using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Util.Gsa.ToGSA;
 using GsaGHTests.Helpers;
+using Rhino.Geometry;
 using Xunit;
+using static GsaAPI.GridLineLoad;
 using static GsaGH.Parameters.GsaLoad;
 using static GsaGH.Parameters.GsaNodeLoad;
 
@@ -97,6 +100,41 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
+    public void GridPointLoadConstructorTest()
+    {
+      // Act
+      GsaGridPointLoad gridPointLoad = new GsaGridPointLoad();
+      GsaLoad load = new GsaLoad(gridPointLoad);
+
+      // Assert
+      Assert.Equal(LoadTypes.GridPoint, load.LoadType);
+    }
+
+    [Fact]
+    public void GridLineLoadConstructorTest()
+    {
+      // Act
+      GsaGridLineLoad gridLineLoad = new GsaGridLineLoad();
+      GsaLoad load = new GsaLoad(gridLineLoad);
+
+      // Assert
+      Assert.Equal(LoadTypes.GridLine, load.LoadType);
+      Assert.Equal(0, load.LineLoad.GridLineLoad.PolyLineReference);
+    }
+
+    [Fact]
+    public void GridAreaLoadConstructorTest()
+    {
+      // Act
+      GsaGridAreaLoad gridAreaLoad = new GsaGridAreaLoad();
+      GsaLoad load = new GsaLoad(gridAreaLoad);
+
+      // Assert
+      Assert.Equal(LoadTypes.GridArea, load.LoadType);
+      Assert.Equal(GridAreaPolyLineType.PLANE, load.AreaLoad.GridAreaLoad.Type);
+    }
+
+    [Fact]
     public void DuplicateTest()
     {
       // Arrange
@@ -112,8 +150,8 @@ namespace GsaGHTests.Parameters
       duplicate.LoadType = LoadTypes.GridLine;
       duplicate.GravityLoad.GravityLoad.Factor = new Vector3() { X = 1, Y = 1, Z = 1 };
       duplicate.GravityLoad.GravityLoad.Case = 3;
-      duplicate.GravityLoad.GravityLoad.Elements = "not_all";
-      duplicate.GravityLoad.GravityLoad.Nodes = "some";
+      duplicate.GravityLoad.GravityLoad.Elements = "";
+      duplicate.GravityLoad.GravityLoad.Nodes = "";
 
       // Assert
       Assert.Equal(LoadTypes.Gravity, original.LoadType);
@@ -143,8 +181,8 @@ namespace GsaGHTests.Parameters
       duplicate.LoadType = LoadTypes.GridLine;
       duplicate.GravityLoad.GravityLoad.Factor = new Vector3() { X = 1, Y = 1, Z = 1 };
       duplicate.GravityLoad.GravityLoad.Case = 3;
-      duplicate.GravityLoad.GravityLoad.Elements = "not_all";
-      duplicate.GravityLoad.GravityLoad.Nodes = "some";
+      duplicate.GravityLoad.GravityLoad.Elements = "";
+      duplicate.GravityLoad.GravityLoad.Nodes = "";
       duplicate.GravityLoad.GravityLoad.Name = "";
 
       // Assert
@@ -188,8 +226,8 @@ namespace GsaGHTests.Parameters
       duplicate.NodeLoad.NodeLoad.AxisProperty = 3;
       duplicate.NodeLoad.NodeLoad.Case = 99;
       duplicate.NodeLoad.NodeLoad.Direction = Direction.YY;
-      duplicate.NodeLoad.NodeLoad.Nodes = "some";
-      duplicate.NodeLoad.NodeLoad.Name = "none";
+      duplicate.NodeLoad.NodeLoad.Nodes = "";
+      duplicate.NodeLoad.NodeLoad.Name = "";
       duplicate.NodeLoad.NodeLoad.Value = -3.3;
 
       // Assert
@@ -203,95 +241,25 @@ namespace GsaGHTests.Parameters
       Assert.Equal(97.5, original.NodeLoad.NodeLoad.Value);
     }
 
-    [Fact]
-    public void dest()
-    {
-      // Arrange
-      GsaBeamLoad beamLoad = new GsaBeamLoad();
-      beamLoad.BeamLoad.Type = BeamLoadType.POINT;
-      beamLoad.BeamLoad.AxisProperty = 5;
-      beamLoad.BeamLoad.Case = 6;
-      beamLoad.BeamLoad.Direction = Direction.ZZ;
-      beamLoad.BeamLoad.Elements = "elements";
-      beamLoad.BeamLoad.Name = "name";
-      beamLoad.BeamLoad.IsProjected = true;
-      beamLoad.BeamLoad.IsProjected = true;
-      GsaLoad original = new GsaLoad(beamLoad);
-
-      // Act
-      GsaLoad duplicate = original.Duplicate();
-
-      // Assert
-      Duplicates.AreEqual(original, duplicate);
-
-      // make some changes to duplicate
-      duplicate.BeamLoad.BeamLoad.Type = BeamLoadType.UNDEF;
-      duplicate.BeamLoad.BeamLoad.AxisProperty = 1;
-      duplicate.BeamLoad.BeamLoad.Case = 1;
-      duplicate.BeamLoad.BeamLoad.Direction = Direction.XX;
-      duplicate.BeamLoad.BeamLoad.Elements = "none";
-      duplicate.BeamLoad.BeamLoad.Name = "";
-      duplicate.BeamLoad.BeamLoad.IsProjected = false;
-      duplicate.BeamLoad.BeamLoad.SetPosition(0, 99);
-      duplicate.BeamLoad.BeamLoad.SetValue(0, 99);
-      duplicate.BeamLoad.BeamLoad.SetPosition(1, 99);
-      duplicate.BeamLoad.BeamLoad.SetValue(1, 99);
-
-      // Assert
-      Assert.Equal(LoadTypes.Beam, original.LoadType);
-      Assert.Equal(BeamLoadType.POINT, original.BeamLoad.BeamLoad.Type);
-      Assert.Equal(5, original.BeamLoad.BeamLoad.AxisProperty);
-      Assert.Equal(6, original.BeamLoad.BeamLoad.Case);
-      Assert.Equal(Direction.ZZ, original.BeamLoad.BeamLoad.Direction);
-      Assert.Equal("elements", original.BeamLoad.BeamLoad.Elements);
-      Assert.Equal("name", original.BeamLoad.BeamLoad.Name);
-      Assert.True(original.BeamLoad.BeamLoad.IsProjected);
-      if (original.BeamLoad.BeamLoad.Type == BeamLoadType.POINT)
-      {
-        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
-        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
-      }
-      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.UNIFORM)
-      {
-        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
-      }
-      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.LINEAR)
-      {
-        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
-      }
-      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.PATCH)
-      {
-        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Position(1));
-        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
-      }
-      else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.TRILINEAR)
-      {
-        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Position(1));
-        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
-      }
-    }
-
     [Theory]
-    [InlineData(BeamLoadType.UNDEF, BeamLoadType.UNIFORM)]
-    [InlineData(BeamLoadType.POINT, BeamLoadType.UNDEF)]
-    [InlineData(BeamLoadType.UNIFORM, BeamLoadType.UNDEF)]
-    [InlineData(BeamLoadType.LINEAR, BeamLoadType.UNDEF)]
-    [InlineData(BeamLoadType.PATCH, BeamLoadType.UNDEF)]
-    [InlineData(BeamLoadType.TRILINEAR, BeamLoadType.UNDEF)]
-    public void BeamLoadDuplicateTest(BeamLoadType originalType, BeamLoadType duplicateType)
+    [InlineData("UNDEF", "UNIFORM")]
+    [InlineData("POINT", "UNDEF")]
+    [InlineData("UNIFORM", "UNDEF")]
+    [InlineData("LINEAR", "UNDEF")]
+    [InlineData("PATCH", "UNDEF")]
+    [InlineData("TRILINEAR", "UNDEF")]
+    public void BeamLoadDuplicateTest(string originalTypeString, string duplicateTypeString)
     {
       // Arrange
+      BeamLoadType originalType = (BeamLoadType)Enum.Parse(typeof(BeamLoadType), originalTypeString);
+      BeamLoadType duplicateType = (BeamLoadType)Enum.Parse(typeof(BeamLoadType), duplicateTypeString);
+
       GsaBeamLoad beamLoad = new GsaBeamLoad();
       beamLoad.BeamLoad.Type = originalType;
       beamLoad.BeamLoad.AxisProperty = 5;
       beamLoad.BeamLoad.Case = 6;
       beamLoad.BeamLoad.Direction = Direction.ZZ;
-      beamLoad.BeamLoad.Elements = "elements";
+      beamLoad.BeamLoad.Elements = "all";
       beamLoad.BeamLoad.Name = "name";
       beamLoad.BeamLoad.IsProjected = true;
       beamLoad.BeamLoad.IsProjected = true;
@@ -308,7 +276,7 @@ namespace GsaGHTests.Parameters
       duplicate.BeamLoad.BeamLoad.AxisProperty = 1;
       duplicate.BeamLoad.BeamLoad.Case = 1;
       duplicate.BeamLoad.BeamLoad.Direction = Direction.XX;
-      duplicate.BeamLoad.BeamLoad.Elements = "none";
+      duplicate.BeamLoad.BeamLoad.Elements = "";
       duplicate.BeamLoad.BeamLoad.Name = "";
       duplicate.BeamLoad.BeamLoad.IsProjected = false;
       duplicate.BeamLoad.BeamLoad.SetPosition(0, 99);
@@ -322,7 +290,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal(5, original.BeamLoad.BeamLoad.AxisProperty);
       Assert.Equal(6, original.BeamLoad.BeamLoad.Case);
       Assert.Equal(Direction.ZZ, original.BeamLoad.BeamLoad.Direction);
-      Assert.Equal("elements", original.BeamLoad.BeamLoad.Elements);
+      Assert.Equal("all", original.BeamLoad.BeamLoad.Elements);
       Assert.Equal("name", original.BeamLoad.BeamLoad.Name);
       Assert.True(original.BeamLoad.BeamLoad.IsProjected);
       if (original.BeamLoad.BeamLoad.Type == BeamLoadType.POINT)
@@ -337,37 +305,40 @@ namespace GsaGHTests.Parameters
       else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.LINEAR)
       {
         Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(1));
       }
       else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.PATCH)
       {
         Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Position(1));
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(1));
         Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(1));
       }
       else if (original.BeamLoad.BeamLoad.Type == BeamLoadType.TRILINEAR)
       {
         Assert.Equal(0, original.BeamLoad.BeamLoad.Position(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Position(1));
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Position(1));
         Assert.Equal(0, original.BeamLoad.BeamLoad.Value(0));
-        Assert.Equal(1, original.BeamLoad.BeamLoad.Value(1));
+        Assert.Equal(0, original.BeamLoad.BeamLoad.Value(1));
       }
     }
 
     [Theory]
-    [InlineData(FaceLoadType.UNDEF, FaceLoadType.CONSTANT)]
-    [InlineData(FaceLoadType.CONSTANT, FaceLoadType.UNDEF)]
-    [InlineData(FaceLoadType.GENERAL, FaceLoadType.UNDEF)]
-    [InlineData(FaceLoadType.POINT, FaceLoadType.UNDEF)]
-    public void FaceLoadDuplicateTest(FaceLoadType originalType, FaceLoadType duplicateType)
+    [InlineData("UNDEF", "CONSTANT")]
+    [InlineData("CONSTANT", "UNDEF")]
+    [InlineData("GENERAL", "UNDEF")]
+    [InlineData("POINT", "UNDEF")]
+    public void FaceLoadDuplicateTest(string originalTypeString, string duplicateTypeString)
     {
       // Arrange
+      FaceLoadType originalType = (FaceLoadType)Enum.Parse(typeof(FaceLoadType), originalTypeString);
+      FaceLoadType duplicateType = (FaceLoadType)Enum.Parse(typeof(FaceLoadType), duplicateTypeString);
+
       GsaFaceLoad faceLoad = new GsaFaceLoad();
       faceLoad.FaceLoad.AxisProperty = 5;
       faceLoad.FaceLoad.Case = 6;
       faceLoad.FaceLoad.Direction = Direction.ZZ;
-      faceLoad.FaceLoad.Elements = "elements";
+      faceLoad.FaceLoad.Elements = "all";
       faceLoad.FaceLoad.Name = "name";
       faceLoad.FaceLoad.Type = originalType;
       GsaLoad original = new GsaLoad(faceLoad);
@@ -383,7 +354,8 @@ namespace GsaGHTests.Parameters
       duplicate.FaceLoad.FaceLoad.AxisProperty = 1;
       duplicate.FaceLoad.FaceLoad.Case = 1;
       duplicate.FaceLoad.FaceLoad.Direction = Direction.XX;
-      duplicate.FaceLoad.FaceLoad.Elements = "none";
+      duplicate.FaceLoad.FaceLoad.Elements = "";
+      duplicate.FaceLoad.FaceLoad.Name = "";
       duplicate.FaceLoad.FaceLoad.IsProjected = true;
       duplicate.FaceLoad.FaceLoad.SetValue(0, 99);
       duplicate.FaceLoad.FaceLoad.SetValue(1, 99);
@@ -394,12 +366,11 @@ namespace GsaGHTests.Parameters
       // Assert
       Assert.Equal(LoadTypes.Face, original.LoadType);
       Assert.Equal(originalType, original.FaceLoad.FaceLoad.Type);
-      Assert.Equal(5, original.BeamLoad.BeamLoad.AxisProperty);
-      Assert.Equal(6, original.BeamLoad.BeamLoad.Case);
-      Assert.Equal(Direction.ZZ, original.BeamLoad.BeamLoad.Direction);
-      Assert.Equal("elements", original.BeamLoad.BeamLoad.Elements);
-      Assert.Equal("name", original.BeamLoad.BeamLoad.Name);
-
+      Assert.Equal(5, original.FaceLoad.FaceLoad.AxisProperty);
+      Assert.Equal(6, original.FaceLoad.FaceLoad.Case);
+      Assert.Equal(Direction.ZZ, original.FaceLoad.FaceLoad.Direction);
+      Assert.Equal("all", original.FaceLoad.FaceLoad.Elements);
+      Assert.Equal("name", original.FaceLoad.FaceLoad.Name);
 
       if (original.FaceLoad.FaceLoad.Type == FaceLoadType.CONSTANT)
       {
@@ -410,17 +381,174 @@ namespace GsaGHTests.Parameters
       {
         Assert.False(original.FaceLoad.FaceLoad.IsProjected);
         Assert.Equal(0, original.FaceLoad.FaceLoad.Value(0));
-        Assert.Equal(1, original.FaceLoad.FaceLoad.Value(1));
-        Assert.Equal(2, original.FaceLoad.FaceLoad.Value(2));
-        Assert.Equal(3, original.FaceLoad.FaceLoad.Value(3));
+        Assert.Equal(0, original.FaceLoad.FaceLoad.Value(1));
+        Assert.Equal(0, original.FaceLoad.FaceLoad.Value(2));
+        Assert.Equal(0, original.FaceLoad.FaceLoad.Value(3));
       }
       else if (original.FaceLoad.FaceLoad.Type == FaceLoadType.POINT)
       {
         Assert.False(original.FaceLoad.FaceLoad.IsProjected);
         Assert.Equal(0, original.FaceLoad.FaceLoad.Value(0));
-        Assert.Equal(1, original.FaceLoad.FaceLoad.Position.X);
-        Assert.Equal(1, original.FaceLoad.FaceLoad.Position.Y);
+        Assert.Equal(0, original.FaceLoad.FaceLoad.Position.X);
+        Assert.Equal(0, original.FaceLoad.FaceLoad.Position.Y);
       }
+    }
+
+    [Fact]
+    public void GridPointLoadDuplicateTest()
+    {
+      // Arrange
+      GsaGridPointLoad gridPointLoad = new GsaGridPointLoad();
+      gridPointLoad.GridPointLoad.AxisProperty = 5;
+      gridPointLoad.GridPointLoad.Case = 6;
+      gridPointLoad.GridPointLoad.Direction = Direction.ZZ;
+      gridPointLoad.GridPointLoad.GridSurface = 7;
+      gridPointLoad.GridPointLoad.Name = "name";
+      gridPointLoad.GridPointLoad.X = 5;
+      gridPointLoad.GridPointLoad.Y = 6;
+      gridPointLoad.GridPointLoad.Value = 10;
+      GsaLoad original = new GsaLoad(gridPointLoad);
+
+      // Act
+      GsaLoad duplicate = original.Duplicate();
+
+      // Assert
+      Duplicates.AreEqual(original, duplicate);
+
+      // make some changes to duplicate
+      duplicate.PointLoad.GridPointLoad.AxisProperty = 1;
+      duplicate.PointLoad.GridPointLoad.Case = 1;
+      duplicate.PointLoad.GridPointLoad.Direction = Direction.XX;
+      duplicate.PointLoad.GridPointLoad.GridSurface = 1;
+      duplicate.PointLoad.GridPointLoad.Name = "";
+      duplicate.PointLoad.GridPointLoad.X = 0;
+      duplicate.PointLoad.GridPointLoad.Y = 0;
+      duplicate.PointLoad.GridPointLoad.Value = 0;
+
+      // Assert
+      Assert.Equal(LoadTypes.GridPoint, original.LoadType);
+      Assert.Equal(5, original.PointLoad.GridPointLoad.AxisProperty);
+      Assert.Equal(6, original.PointLoad.GridPointLoad.Case);
+      Assert.Equal(Direction.ZZ, original.PointLoad.GridPointLoad.Direction);
+      Assert.Equal(7, original.PointLoad.GridPointLoad.GridSurface);
+      Assert.Equal("name", original.PointLoad.GridPointLoad.Name);
+      Assert.Equal(5, original.PointLoad.GridPointLoad.X);
+      Assert.Equal(6, original.PointLoad.GridPointLoad.Y);
+      Assert.Equal(10, original.PointLoad.GridPointLoad.Value);
+    }
+
+    [Theory]
+    [InlineData("EXPLICIT_POLYLINE")]
+    [InlineData("POLYLINE_REFERENCE")]
+    public void GridLineLoadDuplicateTest(string polyLineTypeString)
+    {
+      // Arrange
+      PolyLineType type = (PolyLineType)Enum.Parse(typeof(PolyLineType), polyLineTypeString);
+
+      GsaGridLineLoad gridLineLoad = new GsaGridLineLoad();
+      gridLineLoad.GridLineLoad.AxisProperty = 5;
+      gridLineLoad.GridLineLoad.Case = 6;
+      gridLineLoad.GridLineLoad.Direction = Direction.ZZ;
+      gridLineLoad.GridLineLoad.GridSurface = 7;
+      gridLineLoad.GridLineLoad.IsProjected = true;
+      gridLineLoad.GridLineLoad.Name = "name";
+      gridLineLoad.GridLineLoad.PolyLineDefinition = ""; // insert valid definition here
+      gridLineLoad.GridLineLoad.PolyLineReference = 1;
+      gridLineLoad.GridLineLoad.Type = type;
+      gridLineLoad.GridLineLoad.ValueAtStart = 10;
+      gridLineLoad.GridLineLoad.ValueAtEnd = 20;
+      GsaLoad original = new GsaLoad(gridLineLoad);
+
+      // Act
+      GsaLoad duplicate = original.Duplicate();
+
+      // Assert
+      Duplicates.AreEqual(original, duplicate);
+
+      // make some changes to duplicate
+      duplicate.LineLoad.GridLineLoad.AxisProperty = 1;
+      duplicate.LineLoad.GridLineLoad.Case = 1;
+      duplicate.LineLoad.GridLineLoad.Direction = Direction.XX;
+      duplicate.LineLoad.GridLineLoad.GridSurface = 1;
+      duplicate.LineLoad.GridLineLoad.IsProjected = false;
+      duplicate.LineLoad.GridLineLoad.Name = "";
+      duplicate.LineLoad.GridLineLoad.PolyLineDefinition = "";
+      duplicate.LineLoad.GridLineLoad.PolyLineReference = 0;
+      duplicate.LineLoad.GridLineLoad.Type = PolyLineType.EXPLICIT_POLYLINE;
+      duplicate.LineLoad.GridLineLoad.ValueAtStart = 0;
+      duplicate.LineLoad.GridLineLoad.ValueAtEnd = 0;
+
+      // Assert
+      Assert.Equal(LoadTypes.GridLine, original.LoadType);
+      Assert.Equal(5, original.LineLoad.GridLineLoad.AxisProperty);
+      Assert.Equal(6, original.LineLoad.GridLineLoad.Case);
+      Assert.Equal(Direction.ZZ, original.LineLoad.GridLineLoad.Direction);
+      Assert.Equal(7, original.LineLoad.GridLineLoad.GridSurface);
+      Assert.True(original.LineLoad.GridLineLoad.IsProjected);
+      Assert.Equal("name", original.LineLoad.GridLineLoad.Name);
+      Assert.Equal("", original.LineLoad.GridLineLoad.PolyLineDefinition);
+      Assert.Equal(1, original.LineLoad.GridLineLoad.PolyLineReference);
+      Assert.Equal(type, original.LineLoad.GridLineLoad.Type);
+      Assert.Equal(10, original.LineLoad.GridLineLoad.ValueAtStart);
+      Assert.Equal(20, original.LineLoad.GridLineLoad.ValueAtEnd);
+    }
+
+    [Theory]
+    [InlineData("PLANE")]
+    [InlineData("POLYREF")]
+    [InlineData("POLYGON")]
+    public void GridAreaLoadDuplicateTest(string gridAreaPolyLineTypeString)
+    {
+      // Arrange
+      GridAreaPolyLineType type = (GridAreaPolyLineType)Enum.Parse(typeof(GridAreaPolyLineType), gridAreaPolyLineTypeString);
+
+      GsaGridAreaLoad gridAreaLoad = new GsaGridAreaLoad();
+      gridAreaLoad.GridAreaLoad.AxisProperty = 5;
+      gridAreaLoad.GridAreaLoad.Case = 6;
+      gridAreaLoad.GridAreaLoad.Direction = Direction.ZZ;
+      gridAreaLoad.GridAreaLoad.GridSurface = 7;
+      gridAreaLoad.GridAreaLoad.IsProjected = true;
+      gridAreaLoad.GridAreaLoad.Name = "name";
+      gridAreaLoad.GridAreaLoad.PolyLineDefinition = ""; // insert valid definition here
+      gridAreaLoad.GridAreaLoad.PolyLineReference = 1;
+      gridAreaLoad.GridAreaLoad.Type = type;
+      gridAreaLoad.GridAreaLoad.Value = 10;
+      GsaGridPlaneSurface originalGridPlaneSurface = new GsaGridPlaneSurface();
+      gridAreaLoad.GridPlaneSurface = originalGridPlaneSurface;
+      GsaLoad original = new GsaLoad(gridAreaLoad);
+
+      // Act
+      GsaLoad duplicate = original.Duplicate();
+
+      // Assert
+      Duplicates.AreEqual(original, duplicate);
+
+      // make some changes to duplicate
+      duplicate.AreaLoad.GridAreaLoad.AxisProperty = 1;
+      duplicate.AreaLoad.GridAreaLoad.Case = 1;
+      duplicate.AreaLoad.GridAreaLoad.Direction = Direction.XX;
+      duplicate.AreaLoad.GridAreaLoad.GridSurface = 1;
+      duplicate.AreaLoad.GridAreaLoad.IsProjected = false;
+      duplicate.AreaLoad.GridAreaLoad.Name = "";
+      duplicate.AreaLoad.GridAreaLoad.PolyLineDefinition = "";
+      duplicate.AreaLoad.GridAreaLoad.PolyLineReference = 0;
+      duplicate.AreaLoad.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
+      duplicate.AreaLoad.GridAreaLoad.Value = 0;
+      duplicate.AreaLoad.GridPlaneSurface = new GsaGridPlaneSurface(new Plane());
+
+      // Assert
+      Assert.Equal(LoadTypes.GridArea, original.LoadType);
+      Assert.Equal(5, original.AreaLoad.GridAreaLoad.AxisProperty);
+      Assert.Equal(6, original.AreaLoad.GridAreaLoad.Case);
+      Assert.Equal(Direction.ZZ, original.AreaLoad.GridAreaLoad.Direction);
+      Assert.Equal(7, original.AreaLoad.GridAreaLoad.GridSurface);
+      Assert.True(original.AreaLoad.GridAreaLoad.IsProjected);
+      Assert.Equal("name", original.AreaLoad.GridAreaLoad.Name);
+      Assert.Equal("", original.AreaLoad.GridAreaLoad.PolyLineDefinition);
+      Assert.Equal(1, original.AreaLoad.GridAreaLoad.PolyLineReference);
+      Assert.Equal(type, original.AreaLoad.GridAreaLoad.Type);
+      Assert.Equal(10, original.AreaLoad.GridAreaLoad.Value);
+      Assert.Equal(originalGridPlaneSurface, original.AreaLoad.GridPlaneSurface);
     }
   }
 }

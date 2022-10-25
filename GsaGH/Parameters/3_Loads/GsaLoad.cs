@@ -228,7 +228,7 @@ namespace GsaGH.Parameters
 
     public GsaGridAreaLoad()
     {
-      GridAreaLoad.Type = GsaAPI.GridAreaPolyLineType.PLANE;
+      GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
     }
 
     public GsaGridAreaLoad Duplicate()
