@@ -230,7 +230,7 @@ namespace GsaGH.Components
 
       // Type
       this.DropDownItems.Add(this._type);
-      this.SelectedItems.Add(this._mode.ToString());
+      this.SelectedItems.Add(this._mode.ToString().Replace('_', ' '));
 
       // Force
       this.DropDownItems.Add(FilteredUnits.FilteredForceUnits);
@@ -245,29 +245,27 @@ namespace GsaGH.Components
 
       if (i == 0) // change is made to the first dropdown list
       {
-        this.DropDownItems = new List<List<string>>();
-        this.SelectedItems = new List<string>();
         switch (SelectedItems[0])
         {
           case "Node Force":
             this._mode = FoldMode.Node_Force;
-            this.DropDownItems.Add(FilteredUnits.FilteredForceUnits);
-            this.SelectedItems.Add(this.ForceUnit.ToString());
+            this.DropDownItems[1] = FilteredUnits.FilteredForceUnits;
+            this.SelectedItems[1] = this.ForceUnit.ToString();
             break;
           case "Node Moment":
             this._mode = FoldMode.Node_Moment;
-            this.DropDownItems.Add(FilteredUnits.FilteredMomentUnits);
-            this.SelectedItems.Add(this.MomentUnit.ToString());
+            this.DropDownItems[1] = FilteredUnits.FilteredMomentUnits;
+            this.SelectedItems[1] = this.MomentUnit.ToString();
             break;
           case "Applied Displ":
             this._mode = FoldMode.Applied_Displ;
-            this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-            this.SelectedItems.Add(this.LengthUnit.ToString());
+            this.DropDownItems[1] = FilteredUnits.FilteredLengthUnits;
+            this.SelectedItems[1] = this.LengthUnit.ToString();
             break;
           case "Settlement":
             this._mode = FoldMode.Settlements;
-            this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-            this.SelectedItems.Add(this.LengthUnit.ToString());
+            this.DropDownItems[1] = FilteredUnits.FilteredLengthUnits;
+            this.SelectedItems[1] = this.LengthUnit.ToString();
             break;
         }
       }
@@ -292,7 +290,7 @@ namespace GsaGH.Components
     }
     public override void UpdateUIFromSelectedItems()
     {
-      this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0]);
+      this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].Replace(' ', '_'));
       switch (this._mode)
       {
         case FoldMode.Node_Force:
