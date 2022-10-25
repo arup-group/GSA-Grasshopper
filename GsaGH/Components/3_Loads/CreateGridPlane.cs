@@ -183,7 +183,7 @@ namespace GsaGH.Components
 
     public override void VariableParameterMaintenance()
     {
-      Params.Input[2].Name = "Grid Elevation[" + Length.GetAbbreviation(this.LengthUnit) + "]";
+      Params.Input[2].Name = "Grid Elevation [" + Length.GetAbbreviation(this.LengthUnit) + "]";
 
       if (_mode == FoldMode.Storey)
       {

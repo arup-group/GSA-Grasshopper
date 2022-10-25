@@ -1,5 +1,9 @@
 ﻿using System;
+using GH_IO.Types;
 using GsaAPI;
+using OasysGH.Units;
+using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
@@ -16,7 +20,7 @@ namespace GsaGH.Parameters
     private int _gridSrfID = 0;
     private Guid _gridSrfGuid = Guid.NewGuid();
     private GridSurface _gridSrf = new GridSurface();
-    
+
     private int _gridPlnID = 0;
     private Guid _gridPlnGuid = Guid.NewGuid();
     private GridPlane _gridPln = new GridPlane();
@@ -27,7 +31,8 @@ namespace GsaGH.Parameters
     #region properties
     public Axis Axis
     {
-      get { 
+      get
+      {
         return _axis;
       }
       set
@@ -56,8 +61,9 @@ namespace GsaGH.Parameters
 
     public int AxisID
     {
-      get {
-        return _axisID; 
+      get
+      {
+        return _axisID;
       }
       set
       {
@@ -68,7 +74,8 @@ namespace GsaGH.Parameters
 
     public GridSurface GridSurface
     {
-      get { 
+      get
+      {
         return _gridSrf;
       }
       set
@@ -80,8 +87,9 @@ namespace GsaGH.Parameters
 
     public int GridSurfaceID
     {
-      get { 
-        return _gridSrfID; 
+      get
+      {
+        return _gridSrfID;
       }
       set
       {
@@ -91,15 +99,17 @@ namespace GsaGH.Parameters
     }
     public Guid GridSurfaceGUID
     {
-      get { 
+      get
+      {
         return _gridSrfGuid;
       }
     }
 
     public GridPlane GridPlane
     {
-      get {
-        return _gridPln; 
+      get
+      {
+        return _gridPln;
       }
       set
       {
@@ -110,7 +120,9 @@ namespace GsaGH.Parameters
 
     public int GridPlaneID
     {
-      get { return _gridPlnID; 
+      get
+      {
+        return _gridPlnID;
       }
       set
       {
@@ -121,15 +133,17 @@ namespace GsaGH.Parameters
 
     public Guid GridPlaneGUID
     {
-      get { 
-        return _gridPlnGuid; 
+      get
+      {
+        return _gridPlnGuid;
       }
     }
 
     public Plane Plane
     {
-      get { 
-        return _pln; 
+      get
+      {
+        return _pln;
       }
       set
       {
@@ -224,12 +238,49 @@ namespace GsaGH.Parameters
     #region methods
     public override string ToString()
     {
-      if (GridPlane == null && GridSurface == null) { 
+      if (GridPlane == null && GridSurface == null)
+      {
         return "Null";
       }
-      string gp = GridPlane == null ? "" : GridPlane.Name + " ";
-      string gs = GridSurface == null ? "" : GridSurface.Name;
-      return (gp + gs).Trim();
+      string ax = (this.AxisID == 0) ? "" : "Ax:" + this.AxisID.ToString() + " ";
+      bool global = false;
+      if (this.Axis.Origin.X == 0 && this.Axis.Origin.Y == 0 && this.Axis.Origin.Z == 0)
+        if (this.Axis.XVector.X == 1 && this.Axis.XVector.Y == 0 && this.Axis.XVector.Z == 0)
+          if (this.Axis.XYPlane.X == 0 && this.Axis.XYPlane.Y == 1 && this.Axis.XYPlane.Z == 0)
+            global = true;
+
+      string gp = (this.GridPlaneID == 0) ? "" : "GPln:" + this.GridPlaneID.ToString() + " ";
+      string gpName = this.GridPlane == null ? "" : this.GridPlane.Name;
+      gp += gpName == "" ? "" : "'" + gpName + "' ";
+
+      if (global)
+        gp += "Global grid ";
+      else
+        gp += $"O:{this._pln.Origin}, X:{this._pln.XAxis}, Y:{this._pln.YAxis}";
+      if (this.GridPlane.Elevation != 0)
+        gp += "E:" + new Length(this.GridPlane.Elevation, LengthUnit.Meter).ToUnit(DefaultUnits.LengthUnitGeometry).ToString("g").Replace(" ", string.Empty) + " ";
+      if (this.GridPlane.IsStoreyType)
+        gp += "Storey ";
+
+      string gs = (this.GridSurfaceID == 0) ? "" : "GSrf:" + this.GridSurfaceID.ToString() + " ";
+      string gsName = this.GridSurface == null ? "" : this.GridSurface.Name;
+      gs += gsName == "" ? "" : "'" + gsName + "' ";
+      if (this.GridSurface.SpanType == GridSurface.Span_Type.ONE_WAY)
+      {
+        if (this.GridSurface.SpanType == GridSurface.Span_Type.ONE_WAY)
+          gs += "1D, One-way ";
+        else
+          gs += "1D, Two-way ";
+        if (this.GridSurface.SpanType == GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS)
+          gs += "simplified ";
+      }
+      else
+        gs += "2D ";
+      if (this.GridSurface.Direction != 0)
+        gs += new Angle(this.GridSurface.Direction, AngleUnit.Degree).ToString("g").Replace(" ", string.Empty) + " ";
+      gs += this.GridSurface.Elements == "all" ? "" : this.GridSurface.Elements;
+
+      return (ax + gp + gs).Replace("''", string.Empty).Trim();
     }
     #endregion
   }

@@ -195,12 +195,11 @@ namespace GsaGH.Components
           double dir = 0.0;
           if (DA.GetData(5, ref dir))
           {
-            if (!_useDegrees)
-              dir = RhinoMath.ToDegrees(dir);
+            Angle direction = new Angle(dir, this.AngleUnit);
 
-            if (dir > 180 || dir < -180)
+            if (direction.Degrees > 180 || direction.Degrees < -180)
               AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
-            gs.Direction = dir;
+            gs.Direction = direction.Degrees;
             if (dir != 0.0)
               changeGS = true;
           }
@@ -261,13 +260,12 @@ namespace GsaGH.Components
     });
     AngleUnit AngleUnit = AngleUnit.Radian;
     LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-    private bool _useDegrees = false;
     private FoldMode _mode = FoldMode.One_Dimensional_One_Way;
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
         {
-          "Type"
+          "Type", "Unit"
         });
 
       this.DropDownItems = new List<List<string>>();
@@ -330,11 +328,8 @@ namespace GsaGH.Components
     {
       if (_mode == FoldMode.One_Dimensional_One_Way)
       {
-        string angleUnit = "rad";
-        if (_useDegrees)
-          angleUnit = "deg";
         Params.Input[5].NickName = "Dir";
-        Params.Input[5].Name = "Span Direction [" + angleUnit + "]";
+        Params.Input[5].Name = "Span Direction [" + Angle.GetAbbreviation(this.AngleUnit) + "]";
         Params.Input[5].Description = "Span Direction between -180 and 180 degrees";
         Params.Input[5].Access = GH_ParamAccess.item;
         Params.Input[5].Optional = true;

@@ -49,7 +49,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      string unitAbbreviation = new Energy(0, EnergyUnit).ToString("a") + "/m\u00B3";
+      string unitAbbreviation = Energy.GetAbbreviation(this.EnergyUnit) + "/m\u00B3";
       string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
                     System.Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
           System.Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
