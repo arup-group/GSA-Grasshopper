@@ -192,7 +192,6 @@
     <Compile Include="Components\3_Loads\CreateGridPointLoad.cs" />
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
-    <Compile Include="UI\DropDownComponentUI.cs" />
     <Compile Include="Helpers\Export\ConvertMembers.cs" />
     <Compile Include="Helpers\Export\ModelAssembly.cs" />
     <Compile Include="Helpers\Mappings.cs" />

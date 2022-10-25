@@ -611,7 +611,7 @@ namespace GsaGH.Components
       if (!IsInitialised)
         InitialiseDropdowns();
 
-      m_attributes = new UI.DropDownComponentUI(this, SetSelected, DropDownItems, SelectedItems, SpacerDescriptions);
+      m_attributes = new OasysGH.UI.DropDownComponentAttributes(this, SetSelected, DropDownItems, SelectedItems, SpacerDescriptions);
     }
 
     public void InitialiseDropdowns() 

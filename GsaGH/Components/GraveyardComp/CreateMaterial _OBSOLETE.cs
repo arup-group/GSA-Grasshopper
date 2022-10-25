@@ -47,7 +47,7 @@ namespace GsaGH.Components
         //first = false;
       }
 
-      m_attributes = new UI.DropDownComponentUI(this, SetSelected, new List<List<string>>() { DropDownItems }, new List<string>() { selecteditem }, new List<string>() { "Material Type" });
+      m_attributes = new OasysGH.UI.DropDownComponentAttributes(this, SetSelected, new List<List<string>>() { DropDownItems }, new List<string>() { selecteditem }, new List<string>() { "Material Type" });
     }
 
     public void SetSelected(int i, int j)

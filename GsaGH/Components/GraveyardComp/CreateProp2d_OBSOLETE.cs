@@ -55,7 +55,7 @@ namespace GsaGH.Components
         first = false;
       }
 
-      m_attributes = new UI.DropDownComponentUI(this, SetSelected, DropDownItems, SelectedItems, SpacerDescriptions);
+      m_attributes = new OasysGH.UI.DropDownComponentAttributes(this, SetSelected, DropDownItems, SelectedItems, SpacerDescriptions);
     }
 
     public void SetSelected(int i, int j)
