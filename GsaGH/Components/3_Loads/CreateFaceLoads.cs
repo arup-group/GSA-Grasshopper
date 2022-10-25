@@ -241,7 +241,7 @@ namespace GsaGH.Components
       Uniform,
       Variable,
       Point,
-      Edge
+      Edge //note implementation of edge-load is not yet supported in GsaAPI
     }
 
     readonly List<string> _loadTypeOptions = new List<string>(new string[]
@@ -249,7 +249,7 @@ namespace GsaGH.Components
       "Uniform",
       "Variable",
       "Point",
-      "Edge"
+      //"Edge" note implementation of edge-load is not yet supported in GsaAPI
     });
 
     private FoldMode _mode = FoldMode.Uniform;
