@@ -55,7 +55,7 @@ namespace GsaGH.Components
     {
       GsaBool6 mybool = new GsaBool6();
       GsaBool6 gsabool = new GsaBool6();
-      if (DA.GetData(0, ref mybool))
+      if (DA.GetData(0, ref gsabool))
         mybool = gsabool.Duplicate();
 
       if (mybool != null)

@@ -14,7 +14,7 @@ namespace GsaGH.Components
   public class CreateBool6 : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("f5909576-6796-4d6e-90d8-31a9b7ee6fb6");
+    public override Guid ComponentGuid => new Guid("1d5f7b92-57a2-4c53-a8c7-419f066a7430");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateBool6;
@@ -53,33 +53,58 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      GH_Boolean ghBolX = new GH_Boolean();
-      if (DA.GetData(0, ref ghBolX))
-        GH_Convert.ToBoolean(ghBolX, out _x, GH_Conversion.Both); //use Grasshopper to convert, these methods covers many cases and are consistent
-      GH_Boolean ghBolY = new GH_Boolean();
-      if (DA.GetData(1, ref ghBolY))
-        GH_Convert.ToBoolean(ghBolY, out _y, GH_Conversion.Both);
-      GH_Boolean ghBolZ = new GH_Boolean();
-      if (DA.GetData(2, ref ghBolZ))
-        GH_Convert.ToBoolean(ghBolZ, out _z, GH_Conversion.Both);
-      GH_Boolean ghBolXX = new GH_Boolean();
-      if (DA.GetData(3, ref ghBolXX))
-        GH_Convert.ToBoolean(ghBolXX, out _xx, GH_Conversion.Both);
-      GH_Boolean ghBolYY = new GH_Boolean();
-      if (DA.GetData(4, ref ghBolYY))
-        GH_Convert.ToBoolean(ghBolYY, out _yy, GH_Conversion.Both);
-      GH_Boolean ghBolZZ = new GH_Boolean();
-      if (DA.GetData(5, ref ghBolZZ))
-        GH_Convert.ToBoolean(ghBolZZ, out _zz, GH_Conversion.Both);
-      GsaBool6 bool6 = new GsaBool6
+      GsaBool6 uiSet = new GsaBool6(_x, _y, _z, _xx, _yy, _zz);
+      GsaBool6 bool6 = uiSet.Duplicate();
+      
+      bool input = false;
+      if (DA.GetData(0, ref input))
+        bool6.X = input;
+      if (DA.GetData(1, ref input))
+        bool6.Y = input;
+      if (DA.GetData(2, ref input))
+        bool6.Z = input;
+      if (DA.GetData(3, ref input))
+        bool6.XX = input;
+      if (DA.GetData(4, ref input))
+        bool6.YY = input;
+      if (DA.GetData(5, ref input))
+        bool6.ZZ = input;
+
+      bool update = false;
+      if (bool6.X != uiSet.X)
       {
-        X = _x,
-        Y = _y,
-        Z = _z,
-        XX = _xx,
-        YY = _yy,
-        ZZ = _zz
-      };
+        _x = bool6.X;
+        update = true;
+      }
+      if (bool6.Y != uiSet.Y)
+      {
+        _y = bool6.Y;
+        update = true;
+      }
+      if (bool6.Z != uiSet.Z)
+      {
+        _z = bool6.Z;
+        update = true;
+      }
+      if (bool6.XX != uiSet.XX)
+      {
+        _xx = bool6.XX;
+        update = true;
+      }
+      if (bool6.YY != uiSet.YY)
+      {
+        _yy = bool6.YY;
+        update = true;
+      }
+      if (bool6.ZZ != uiSet.ZZ)
+      {
+        _zz = bool6.ZZ;
+        update = true;
+      }
+
+      if (update)
+        this.ReDrawComponent();
+
       DA.SetData(0, new GsaBool6Goo(bool6));
     }
 
@@ -105,6 +130,15 @@ namespace GsaGH.Components
       _xx = resxx;
       _yy = resyy;
       _zz = reszz;
+    }
+
+    private void ReDrawComponent()
+    {
+      System.Drawing.PointF pivot = new System.Drawing.PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);
+      this.CreateAttributes();
+      this.Attributes.Pivot = pivot;
+      this.Attributes.ExpireLayout();
+      this.Attributes.PerformLayout();
     }
     #endregion
 
