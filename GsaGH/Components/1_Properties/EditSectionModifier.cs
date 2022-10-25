@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers;
@@ -8,6 +9,7 @@ using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.Parameters;
 using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -19,7 +21,6 @@ namespace GsaGH.Components
   public class EditSectionModifier : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("7c78c61b-f01c-4a0e-9399-712fc853e23b");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -36,7 +37,7 @@ namespace GsaGH.Components
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddGenericParameter("Section Modifier", "Mo", "Set GSA Section Modifier", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name, GsaSectionModifierGoo.NickName, GsaSectionModifierGoo.Description + " to get or set information for. Leave blank to create a new " + GsaSectionModifierGoo.Name, GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Area Modifier", "A", "Modify the effective Area using either:" + System.Environment.NewLine + "BY using a Percentage UnitNumber (tweaking the existing value BY this percentage)" + System.Environment.NewLine + "TO using an Area UnitNumber", GH_ParamAccess.item);
 
@@ -64,13 +65,13 @@ namespace GsaGH.Components
         + System.Environment.NewLine + "2: Use unmodified section properties",
         GH_ParamAccess.item);
 
-      for (int i = 1; i < pManager.ParamCount; i++)
+      for (int i = 0; i < pManager.ParamCount; i++)
         pManager[i].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Section Modifier", "Mo", "Set GSA Section Modifier", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name, GsaSectionModifierGoo.NickName, GsaSectionModifierGoo.Description + " with applied changes.", GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Area Modifier", "A", "Modified effective Area in either:" + System.Environment.NewLine + "BY as a Percentage UnitNumber" + System.Environment.NewLine + "TO as an Area UnitNumber", GH_ParamAccess.item);
 
@@ -103,7 +104,13 @@ namespace GsaGH.Components
     protected override void SolveInstance(IGH_DataAccess DA)
     {
       GsaSectionModifier modifier = new GsaSectionModifier();
-      if (DA.GetData(0, ref modifier))
+      GsaSectionModifier gsaModifier = new GsaSectionModifier();
+      if (DA.GetData(0, ref gsaModifier))
+      {
+        modifier = gsaModifier.Duplicate();
+      }
+
+      if (modifier != null)
       {
         if (this.Params.Input[1].SourceCount > 0)
         {
@@ -258,4 +265,3 @@ namespace GsaGH.Components
     }
   }
 }
-

@@ -16,7 +16,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridPointLoad : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CreateGridPointLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("076f03c6-67ba-49d3-9462-cd4a4b5aff92");
@@ -32,65 +32,10 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
-
-        selecteditems = new List<string>();
-        selecteditems.Add(DefaultUnits.ForceUnit.ToString());
-
-        first = false;
-      }
-
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[0]);
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-
-      // update input params
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[0]);
-
-      CreateAttributes();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    #endregion
-
     #region Input and output
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Unit",
-    });
-
-    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
-    bool first = true;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity force = new Force(0, forceUnit);
-      string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+      string unitAbbreviation = Force.GetAbbreviation(this.ForceUnit);
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
       pManager.AddPointParameter("Point", "Pt", "Point. If you input grid plane below only x and y coordinates will be used from this point, but if not a new Grid Plane Surface (xy-plane) will be created at the z-elevation of this point.", GH_ParamAccess.item);
@@ -105,7 +50,7 @@ namespace GsaGH.Components
               System.Environment.NewLine + "0 : Global" +
               System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Value [" + forceUnitAbbreviation + "]", "V", "Load Value", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Value [" + unitAbbreviation + "]", "V", "Load Value", GH_ParamAccess.item);
 
       pManager[0].Optional = true;
       pManager[2].Optional = true;
@@ -115,7 +60,7 @@ namespace GsaGH.Components
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Grid Point Load", "Ld", "GSA Grid Point Load", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaLoadParameter(), "Grid Point Load", "Ld", "GSA Grid Point Load", GH_ParamAccess.item);
     }
     #endregion
     protected override void SolveInstance(IGH_DataAccess DA)
@@ -216,61 +161,48 @@ namespace GsaGH.Components
       }
 
       // 6 load value
-      gridpointload.GridPointLoad.Value = ((Force)Input.UnitNumber(this, DA, 6, forceUnit)).Newtons;
+      gridpointload.GridPointLoad.Value = ((Force)Input.UnitNumber(this, DA, 6, this.ForceUnit)).Newtons;
 
       // convert to goo
       GsaLoad gsaLoad = new GsaLoad(gridpointload);
       DA.SetData(0, new GsaLoadGoo(gsaLoad));
     }
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      try // this will fail if user has an old version of the component
-      {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      }
-      catch (Exception) // we set the stored values like first initation of component
-      {
-        dropdownitems = new List<List<string>>();
-        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
 
-        selecteditems = new List<string>();
-        selecteditems.Add(ForceUnit.Kilonewton.ToString());
-      }
-      first = false;
+    #region Custom UI
+    ForceUnit ForceUnit = DefaultUnits.ForceUnit;
 
-      UpdateUIFromSelectedItems();
-      return base.Read(reader);
+    public override void InitialiseDropdowns()
+    {
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Unit"
+        });
+
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // Force
+      this.DropDownItems.Add(FilteredUnits.FilteredForceUnits);
+      this.SelectedItems.Add(this.ForceUnit.ToString());
+
+      this.IsInitialised = true;
+    }
+    public override void SetSelected(int i, int j)
+    {
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[i]);
+      base.UpdateUI();
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+    public override void UpdateUIFromSelectedItems()
     {
-      return false;
+      this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[0]);
+      base.UpdateUIFromSelectedItems();
     }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+    public override void VariableParameterMaintenance()
     {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    #endregion
-    #region IGH_VariableParameterComponent null implementation
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      IQuantity force = new Force(0, forceUnit);
-      string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-      Params.Input[6].Name = "Value [" + forceUnitAbbreviation + "]";
+      string unitAbbreviation = Force.GetAbbreviation(this.ForceUnit);
+      Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
     }
     #endregion
   }

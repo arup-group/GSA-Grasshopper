@@ -21,10 +21,9 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to retrieve non-geometric objects from a GSA model
   /// </summary>
-  public class Elem3dStress : GH_OasysComponent, IGH_VariableParameterComponent
+  public class Elem3dStress : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("c9bdab98-0fe2-4852-b99c-c626515b3781");
     public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -38,63 +37,10 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // Stress
-        dropdownitems.Add(FilteredUnits.FilteredStressUnits);
-        selecteditems.Add(stresshUnit.ToString());
-
-        first = false;
-      }
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      stresshUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[i]);
-
-      // update name of inputs (to display unit on sliders)
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      stresshUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[0]);
-
-      CreateAttributes();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Unit"
-    });
-    private bool first = true;
-    private PressureUnit stresshUnit = DefaultUnits.StressUnitResult;
-    string unitAbbreviation;
-    #endregion
-
+    #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddGenericParameter("Result", "Res", "GSA Result", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.list);
       pManager.AddTextParameter("Element filter list", "El", "Filter results by list." + System.Environment.NewLine +
           "Element list should take the form:" + System.Environment.NewLine +
           " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
@@ -103,8 +49,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      IQuantity quantity = new Pressure(0, stresshUnit);
-      unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+      string unitAbbreviation = Pressure.GetAbbreviation(this.StresshUnit);
 
       string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
                     System.Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
@@ -119,6 +64,7 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Stress YZ [" + unitAbbreviation + "]", "yz", "Stress in YZ-direction in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Stress ZX [" + unitAbbreviation + "]", "zx", "Stress in ZX-direction in Global Axis." + note, GH_ParamAccess.tree);
     }
+    #endregion
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
@@ -158,7 +104,7 @@ namespace GsaGH.Components
             return;
           }
 
-          List<GsaResultsValues> vals = result.Element3DStressValues(elementlist, stresshUnit);
+          List<GsaResultsValues> vals = result.Element3DStressValues(elementlist, StresshUnit);
 
           List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
 
@@ -187,9 +133,9 @@ namespace GsaGH.Components
 
                   GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(stresshUnit))), p); // use ToUnit to capture changes in dropdown
-                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(stresshUnit))), p);
-                  out_ZZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(stresshUnit))), p);
+                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(StresshUnit))), p); // use ToUnit to capture changes in dropdown
+                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(StresshUnit))), p);
+                  out_ZZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(StresshUnit))), p);
                 }
               }
               if (thread == 1)
@@ -222,45 +168,41 @@ namespace GsaGH.Components
         DA.SetDataTree(5, out_ZX);
       }
     }
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
 
-      first = false;
-      UpdateUIFromSelectedItems();
+    #region Custom UI
+    private PressureUnit StresshUnit = DefaultUnits.StressUnitResult;
+    public override void InitialiseDropdowns()
+    {
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Unit",
+        });
 
-      return base.Read(reader);
-    }
-    #endregion
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
 
-    #region IGH_VariableParameterComponent null implementation
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      IQuantity quantity = new Pressure(0, stresshUnit);
-      unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+      // Stress
+      this.DropDownItems.Add(FilteredUnits.FilteredStressUnits);
+      this.SelectedItems.Add(this.StresshUnit.ToString());
 
+      this.IsInitialised = true;
+    }
+
+    public override void SetSelected(int i, int j)
+    {
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      this.StresshUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[i]);
+      base.UpdateUI();
+    }
+    public override void UpdateUIFromSelectedItems()
+    {
+      this.StresshUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), SelectedItems[0]);
+      base.UpdateUIFromSelectedItems();
+    }
+
+    public override void VariableParameterMaintenance()
+    {
+      string unitAbbreviation = Pressure.GetAbbreviation(this.StresshUnit);
       int i = 0;
       Params.Output[i++].Name = "Stress XX [" + unitAbbreviation + "]";
       Params.Output[i++].Name = "Stress YY [" + unitAbbreviation + "]";

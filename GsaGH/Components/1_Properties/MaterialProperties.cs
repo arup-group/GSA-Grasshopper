@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
@@ -6,6 +7,7 @@ using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -14,7 +16,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to get geometric properties of a section
   /// </summary>
-  public class GetMaterialProperties : GH_OasysComponent
+  public class GetMaterialProperties : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -31,24 +33,19 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddGenericParameter("Material", "Mat", "GSA Material of Elastic Isotropic type", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter(), "Material", "Mat", "GSA Custom Material", GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Elastic Modulus", "E", "Elastic Modulus of the elastic isotropic material", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Elastic Modulus [" + Pressure.GetAbbreviation(this.StressUnit) + "]", "E", "Elastic Modulus of the elastic isotropic material", GH_ParamAccess.item);
       pManager.AddNumberParameter("Poisson's Ratio", "ν", "Poisson's Ratio of the elastic isotropic material", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Density", "ρ", "Density of the elastic isotropic material", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Thermal Expansion", "α", "Thermal Expansion Coefficient of the elastic isotropic material", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Density [" + Density.GetAbbreviation(this.DensityUnit) + "]", "ρ", "Density of the elastic isotropic material", GH_ParamAccess.item);
+      CoefficientOfThermalExpansionUnit temp = UnitsHelper.GetCoefficientOfThermalExpansionUnit(this.TemperatureUnit);
+      pManager.AddGenericParameter("Thermal Expansion [" + CoefficientOfThermalExpansion.GetAbbreviation(temp) + "]", "α", "Thermal Expansion Coefficient of the elastic isotropic material", GH_ParamAccess.item);
     }
     #endregion
 
@@ -69,21 +66,145 @@ namespace GsaGH.Components
           return;
         }
 
-        Pressure eModulus = new Pressure(gsaMaterial.AnalysisMaterial.ElasticModulus, UnitSystem.SI);
-        eModulus = new Pressure(eModulus.As(DefaultUnits.StressUnitResult), DefaultUnits.StressUnitResult);
+        Pressure eModulus = new Pressure(gsaMaterial.AnalysisMaterial.ElasticModulus, UnitSystem.SI); //create unit from SI as API is in SI units
+        eModulus = new Pressure(eModulus.As(this.StressUnit), this.StressUnit);
         DA.SetData(0, new GH_UnitNumber(eModulus));
 
         DA.SetData(1, gsaMaterial.AnalysisMaterial.PoissonsRatio);
 
-        Density density = new Density(gsaMaterial.AnalysisMaterial.Density, DensityUnit.KilogramPerCubicMeter);
-        density = new Density(density.As(DefaultUnits.DensityUnit), DefaultUnits.DensityUnit);
+        Density density = new Density(gsaMaterial.AnalysisMaterial.Density, UnitSystem.SI);//create unit from SI as API is in SI units
+        density = new Density(density.As(this.DensityUnit), this.DensityUnit);
         DA.SetData(2, new GH_UnitNumber(density));
 
-        CoefficientOfThermalExpansion deltaT = new CoefficientOfThermalExpansion(gsaMaterial.AnalysisMaterial.CoefficientOfThermalExpansion, UnitSystem.SI);
-        deltaT = new CoefficientOfThermalExpansion(deltaT.As(DefaultUnits.CoefficientOfThermalExpansionUnit), DefaultUnits.CoefficientOfThermalExpansionUnit);
+        CoefficientOfThermalExpansion deltaT = new CoefficientOfThermalExpansion(gsaMaterial.AnalysisMaterial.CoefficientOfThermalExpansion, UnitSystem.SI);//create unit from SI as API is in SI units
+        CoefficientOfThermalExpansionUnit temp = UnitsHelper.GetCoefficientOfThermalExpansionUnit(this.TemperatureUnit);
+        deltaT = new CoefficientOfThermalExpansion(deltaT.As(temp), temp);
         DA.SetData(3, new GH_UnitNumber(deltaT));
       }
     }
+
+    #region Custom UI
+    private PressureUnit StressUnit = DefaultUnits.StressUnitResult;
+    private DensityUnit DensityUnit = DefaultUnits.DensityUnit;
+    private TemperatureUnit TemperatureUnit = DefaultUnits.TemperatureUnit;
+    protected override void BeforeSolveInstance()
+    {
+      UpdateMessage();
+    }
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+    {
+      Menu_AppendSeparator(menu);
+
+      ToolStripMenuItem stressUnitsMenu = new ToolStripMenuItem("Select Stress unit", Properties.Resources.Units);
+      stressUnitsMenu.Enabled = true;
+      stressUnitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress))
+      {
+        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateStress(unit); });
+        toolStripMenuItem.Checked = unit == Pressure.GetAbbreviation(this.StressUnit);
+        toolStripMenuItem.Enabled = true;
+        stressUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+      menu.Items.Add(stressUnitsMenu);
+
+      ToolStripMenuItem densityUnitsMenu = new ToolStripMenuItem("Select Stress unit", Properties.Resources.Units);
+      densityUnitsMenu.Enabled = true;
+      densityUnitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Density))
+      {
+        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateDensity(unit); });
+        toolStripMenuItem.Checked = unit == Pressure.GetAbbreviation(this.StressUnit);
+        toolStripMenuItem.Enabled = true;
+        densityUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+      menu.Items.Add(densityUnitsMenu);
+
+      ToolStripMenuItem temperatureUnitsMenu = new ToolStripMenuItem("Select Stress unit", Properties.Resources.Units);
+      temperatureUnitsMenu.Enabled = true;
+      temperatureUnitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Temperature))
+      {
+        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateTemperature(unit); });
+        toolStripMenuItem.Checked = unit == Pressure.GetAbbreviation(this.StressUnit);
+        toolStripMenuItem.Enabled = true;
+        temperatureUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+      menu.Items.Add(temperatureUnitsMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+    
+    private void UpdateStress(string unit)
+    {
+      this.StressUnit = Pressure.ParseUnit(unit);
+      Update();
+    }
+    private void UpdateDensity(string unit)
+    {
+      this.DensityUnit = Density.ParseUnit(unit);
+      Update();
+    }
+    private void UpdateTemperature(string unit)
+    {
+      this.TemperatureUnit = Temperature.ParseUnit(unit);
+      Update();
+    }
+    private void Update()
+    {
+      UpdateMessage();
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      ExpireSolution(true);
+    }
+    private void UpdateMessage()
+    {
+      CoefficientOfThermalExpansionUnit temp = UnitsHelper.GetCoefficientOfThermalExpansionUnit(this.TemperatureUnit);
+      this.Message =
+        Pressure.GetAbbreviation(this.StressUnit) + ", " +
+        Density.GetAbbreviation(this.DensityUnit) + ", " +
+        CoefficientOfThermalExpansion.GetAbbreviation(temp);
+    }
+
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    {
+      writer.SetString("StressUnit", this.StressUnit.ToString());
+      writer.SetString("DensityUnit", this.DensityUnit.ToString());
+      writer.SetString("TemperatureUnit", this.TemperatureUnit.ToString());
+      return base.Write(writer);
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      try
+      {
+        this.StressUnit = Pressure.ParseUnit(reader.GetString("StressUnit"));
+        this.DensityUnit = Density.ParseUnit(reader.GetString("DensityUnit"));
+        this.TemperatureUnit = Temperature.ParseUnit(reader.GetString("TemperatureUnit"));
+      }
+      catch (Exception)
+      {
+        this.StressUnit = DefaultUnits.StressUnitResult;
+        this.DensityUnit = DefaultUnits.DensityUnit;
+        this.TemperatureUnit = DefaultUnits.TemperatureUnit;
+      }
+      return base.Read(reader);
+    }
+
+    #region IGH_VariableParameterComponent null implementation
+    public virtual void VariableParameterMaintenance()
+    {
+      this.Params.Output[0].Name = "Elastic Modulus [" + Pressure.GetAbbreviation(this.StressUnit) + "]";
+      this.Params.Output[2].Name = "Density [" + Density.GetAbbreviation(this.DensityUnit) + "]";
+      CoefficientOfThermalExpansionUnit temp = UnitsHelper.GetCoefficientOfThermalExpansionUnit(this.TemperatureUnit);
+      this.Params.Output[3].Name = "Thermal Expansion [" + CoefficientOfThermalExpansion.GetAbbreviation(temp) + "]";
+    }
+
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+    #endregion
+    #endregion
   }
 }
-

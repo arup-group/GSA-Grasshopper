@@ -14,7 +14,6 @@ namespace GsaGH.Components
   public class CreateElement1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("88c58aae-4cd8-4d37-b63f-d828571e6941");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -28,26 +27,18 @@ namespace GsaGH.Components
     { }
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddCurveParameter("Line", "L", "Line to create GSA Element", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Section", "PB", "GSA Section Property. Input either a GSA Section or an Integer to use a Section already defined in model", GH_ParamAccess.item);
-
+      pManager.AddLineParameter("Line", "L", "Line to create GSA Element", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSectionParameter());
       pManager[1].Optional = true;
       pManager.HideParameter(0);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("1D Element", "E1D", "GSA 1D Element", GH_ParamAccess.item);
-
+      pManager.AddParameter(new GsaElement1dParameter());
     }
     #endregion
 
@@ -62,7 +53,6 @@ namespace GsaGH.Components
         {
           GsaElement1d elem = new GsaElement1d(new LineCurve(ln));
 
-          // 1 section
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
           GsaSection section = new GsaSection();
           if (DA.GetData(1, ref gh_typ))
@@ -72,7 +62,6 @@ namespace GsaGH.Components
               gh_typ.CastTo(ref section);
               elem.Section = section;
             }
-
             else
             {
               if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
@@ -84,11 +73,10 @@ namespace GsaGH.Components
               }
             }
           }
-          elem.Duplicate(false);
+
           DA.SetData(0, new GsaElement1dGoo(elem));
         }
       }
     }
   }
 }
-

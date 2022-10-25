@@ -15,7 +15,6 @@ namespace GsaGH.Components
   public class CreateElement2d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("8f83d32a-c2df-4f47-9cfc-d2d4253703e1");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -29,26 +28,18 @@ namespace GsaGH.Components
     { }
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-
-
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddMeshParameter("Mesh", "M", "Mesh to create GSA Element", GH_ParamAccess.item);
-      pManager.AddGenericParameter("2D Property", "PA", "GSA 2D Property. Input either a GSA 2D Property or an Integer to use a Section already defined in model", GH_ParamAccess.item);
-
+      pManager.AddParameter(new GsaProp2dParameter());
       pManager[1].Optional = true;
       pManager.HideParameter(0);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("2D Element", "E2D", "GSA 2D Element", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaElement2dParameter());
     }
     #endregion
 
@@ -63,31 +54,25 @@ namespace GsaGH.Components
         {
           GsaElement2d elem = new GsaElement2d(mesh);
 
-          // 1 section
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
           GsaProp2d prop2d = new GsaProp2d();
           if (DA.GetData(1, ref gh_typ))
           {
             if (gh_typ.Value is GsaProp2dGoo)
               gh_typ.CastTo(ref prop2d);
+            else if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+              prop2d.ID = idd;
             else
             {
-              if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-              {
-                prop2d.ID = idd;
-              }
-              else
-              {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
-                return;
-              }
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property or reference integer");
+              return;
             }
-          }
 
-          List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
-          for (int i = 0; i < elem.API_Elements.Count; i++)
-            prop2Ds.Add(prop2d);
-          elem.Properties = prop2Ds;
+            List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
+            for (int i = 0; i < elem.API_Elements.Count; i++)
+              prop2Ds.Add(prop2d);
+            elem.Properties = prop2Ds;
+          }
 
           DA.SetData(0, new GsaElement2dGoo(elem));
         }
@@ -95,4 +80,3 @@ namespace GsaGH.Components
     }
   }
 }
-

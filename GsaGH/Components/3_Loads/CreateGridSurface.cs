@@ -10,13 +10,15 @@ using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
+using OasysUnits.Units;
 using Rhino;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridSurface : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CreateGridSurface : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("1052955c-cf97-4378-81d3-8491e0defad0");
@@ -32,55 +34,9 @@ namespace GsaGH.Components
     { } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      //if (first)
-      //{
-      //    selecteditem = "1D, One-way span";
-      //    
-      //}
-
-      m_attributes = new UI.DropDownComponentUI(this, SetSelected, dropdownitems, selecteditem, "Type");
-    }
-
-    public void SetSelected(string selected)
-    {
-      selecteditem = selected;
-      switch (selected)
-      {
-        case "1D, One-way span":
-          Mode1Clicked();
-          break;
-        case "1D, Two-way span":
-          Mode2Clicked();
-          break;
-        case "2D":
-          Mode3Clicked();
-          break;
-      }
-    }
-    #endregion
-
     #region Input and output
-    readonly List<string> dropdownitems = new List<string>(new string[]
-    {
-            "1D, One-way span",
-            "1D, Two-way span",
-            "2D"
-    });
-
-    string selecteditem = "1D, One-way span";
-    private bool _useDegrees = false;
-    #endregion
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      string angleUnit = "rad";
-      if (_useDegrees)
-        angleUnit = "deg";
-
       IQuantity length = new Length(0, DefaultUnits.LengthUnitGeometry);
       string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
@@ -91,37 +47,39 @@ namespace GsaGH.Components
          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Tolerance [" + unitAbbreviation + "]", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item, 0.01);
+      pManager.AddGenericParameter("Tolerance [" + unitAbbreviation + "]", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
+      pManager.AddAngleParameter("Span Direction", "Di", "Span Direction between -180 and 180 degrees", GH_ParamAccess.item, 0);
+      pManager[5].Optional = true;
+      angleInputParam = this.Params.Input[5];
 
       pManager[0].Optional = true;
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
       pManager[4].Optional = true;
-
-      if (first)
-      {
-        _mode = FoldMode.One_Dimensional_One_Way;
-        pManager.AddAngleParameter("Span Direction [" + angleUnit + "]", "Di", "Span Direction between -180 and 180 degrees", GH_ParamAccess.item, 0);
-        pManager[5].Optional = true;
-        first = false;
-        angleInputParam = this.Params.Input[5];
-      }
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Grid Surface", "GPS", "GSA Grid Surface", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaGridPlaneParameter(), "Grid Surface", "GPS", "GSA Grid Surface", GH_ParamAccess.item);
     }
+
     protected override void BeforeSolveInstance()
     {
+      base.BeforeSolveInstance();
       if (_mode == FoldMode.One_Dimensional_One_Way)
       {
-        _useDegrees = false;
         Param_Number angleParameter = Params.Input[5] as Param_Number;
         if (angleParameter != null)
-          _useDegrees = angleParameter.UseDegrees;
+        {
+          if (angleParameter.UseDegrees)
+            this.AngleUnit = AngleUnit.Degree;
+          else
+            this.AngleUnit = AngleUnit.Radian;
+        }
       }
     }
+    #endregion
+
     protected override void SolveInstance(IGH_DataAccess DA)
     {
       // 0 Plane
@@ -223,7 +181,7 @@ namespace GsaGH.Components
       // 4 Tolerance
       if (this.Params.Input[4].SourceCount != 0)
       {
-        gs.Tolerance = ((Length)Input.LengthOrRatio(this, DA, 4, DefaultUnits.LengthUnitGeometry, true)).Millimeters;
+        gs.Tolerance = ((Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true)).Millimeters;
         changeGS = true;
       }
 
@@ -237,12 +195,11 @@ namespace GsaGH.Components
           double dir = 0.0;
           if (DA.GetData(5, ref dir))
           {
-            if (!_useDegrees)
-              dir = RhinoMath.ToDegrees(dir);
+            Angle direction = new Angle(dir, this.AngleUnit);
 
-            if (dir > 180 || dir < -180)
+            if (direction.Degrees > 180 || direction.Degrees < -180)
               AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
-            gs.Direction = dir;
+            gs.Direction = direction.Degrees;
             if (dir != 0.0)
               changeGS = true;
           }
@@ -287,106 +244,92 @@ namespace GsaGH.Components
       DA.SetData(0, new GsaGridPlaneSurfaceGoo(gps));
     }
 
-    #region menu override
+
+    #region Custom UI
     private enum FoldMode
     {
       One_Dimensional_One_Way,
       One_Dimensional_Two_Way,
       Two_Dimensional
     }
-    private bool first = true;
+    readonly List<string> _type = new List<string>(new string[]
+    {
+      "1D, One-way span",
+      "1D, Two-way span",
+      "2D"
+    });
+    AngleUnit AngleUnit = AngleUnit.Radian;
+    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.One_Dimensional_One_Way;
-    private IGH_Param angleInputParam;
-
-    private void Mode1Clicked()
+    public override void InitialiseDropdowns()
     {
-      if (_mode == FoldMode.One_Dimensional_One_Way)
-        return;
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Type", "Unit"
+        });
 
-      RecordUndoEvent("1D, one-way Parameters");
-      _mode = FoldMode.One_Dimensional_One_Way;
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
 
-      //remove input parameters
-      while (Params.Input.Count > 5)
-        Params.UnregisterInputParameter(Params.Input[5], true);
+      // Type
+      this.DropDownItems.Add(this._type);
+      this.SelectedItems.Add(this._type[0].ToString());
 
-      //add input parameters
-      Params.RegisterInputParam(angleInputParam);
+      // Length
+      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+      this.SelectedItems.Add(this.LengthUnit.ToString());
 
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
-    }
-    private void Mode2Clicked()
-    {
-      if (_mode == FoldMode.One_Dimensional_Two_Way)
-        return;
-      if (_mode == FoldMode.One_Dimensional_One_Way)
-        angleInputParam = Params.Input[5];
-
-      RecordUndoEvent("1D, two-way Parameters");
-      _mode = FoldMode.One_Dimensional_Two_Way;
-
-      //remove input parameters
-      while (Params.Input.Count > 5)
-        Params.UnregisterInputParameter(Params.Input[5], true);
-
-      //add input parameters
-      Params.RegisterInputParam(new Param_Integer());
-      Params.RegisterInputParam(new Param_Boolean());
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
-    }
-    private void Mode3Clicked()
-    {
-      if (_mode == FoldMode.Two_Dimensional)
-        return;
-      if (_mode == FoldMode.One_Dimensional_One_Way)
-        angleInputParam = Params.Input[5];
-
-      RecordUndoEvent("2D Parameters");
-      _mode = FoldMode.Two_Dimensional;
-
-      //remove input parameters
-      while (Params.Input.Count > 5)
-        Params.UnregisterInputParameter(Params.Input[5], true);
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
+      this.IsInitialised = true;
     }
 
-    #endregion
-
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    public override void SetSelected(int i, int j)
     {
-      writer.SetInt32("Mode", (int)_mode);
-      writer.SetString("select", selecteditem);
-      return base.Write(writer);
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      if (i == 0)
+      {
+        switch (this.SelectedItems[i])
+        {
+          case "1D, One-way span":
+            Mode1Clicked();
+            break;
+          case "1D, Two-way span":
+            Mode2Clicked();
+            break;
+          case "2D":
+            Mode3Clicked();
+            break;
+        }
+      }
+      else
+        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+
+      base.UpdateUI();
     }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    public override void UpdateUIFromSelectedItems()
     {
-      _mode = (FoldMode)reader.GetInt32("Mode");
-      first = false;
-      selecteditem = reader.GetString("select");
-      this.CreateAttributes();
-      return base.Read(reader);
+      switch (this.SelectedItems[0])
+      {
+        case "1D, One-way span":
+          this._mode = FoldMode.One_Dimensional_One_Way;
+          break;
+        case "1D, Two-way span":
+          this._mode = FoldMode.One_Dimensional_Two_Way;
+          break;
+        case "2D":
+          this._mode = FoldMode.Two_Dimensional;
+          break;
+      }
+      if (this.SelectedItems.Count > 1)
+        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+      base.UpdateUIFromSelectedItems();
     }
 
-    #endregion
-    #region IGH_VariableParameterComponent null implementation
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
+    public override void VariableParameterMaintenance()
     {
       if (_mode == FoldMode.One_Dimensional_One_Way)
       {
-        string angleUnit = "rad";
-        if (_useDegrees)
-          angleUnit = "deg";
         Params.Input[5].NickName = "Dir";
-        Params.Input[5].Name = "Span Direction [" + angleUnit + "]";
+        Params.Input[5].Name = "Span Direction [" + Angle.GetAbbreviation(this.AngleUnit) + "]";
         Params.Input[5].Description = "Span Direction between -180 and 180 degrees";
         Params.Input[5].Access = GH_ParamAccess.item;
         Params.Input[5].Optional = true;
@@ -410,24 +353,87 @@ namespace GsaGH.Components
         Params.Input[6].Optional = true;
       }
     }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
     #endregion
 
+    #region menu override
+    private IGH_Param angleInputParam;
+    private void Mode1Clicked()
+    {
+      if (_mode == FoldMode.One_Dimensional_One_Way)
+        return;
+
+      RecordUndoEvent("1D, one-way Parameters");
+      _mode = FoldMode.One_Dimensional_One_Way;
+
+      //remove input parameters
+      while (Params.Input.Count > 5)
+        Params.UnregisterInputParameter(Params.Input[5], true);
+
+      //add input parameters
+      Params.RegisterInputParam(angleInputParam);
+    }
+    private void Mode2Clicked()
+    {
+      if (_mode == FoldMode.One_Dimensional_Two_Way)
+        return;
+      if (_mode == FoldMode.One_Dimensional_One_Way)
+        angleInputParam = Params.Input[5];
+
+      RecordUndoEvent("1D, two-way Parameters");
+      _mode = FoldMode.One_Dimensional_Two_Way;
+
+      //remove input parameters
+      while (Params.Input.Count > 5)
+        Params.UnregisterInputParameter(Params.Input[5], true);
+
+      //add input parameters
+      Params.RegisterInputParam(new Param_Integer());
+      Params.RegisterInputParam(new Param_Boolean());
+    }
+    private void Mode3Clicked()
+    {
+      if (_mode == FoldMode.Two_Dimensional)
+        return;
+      if (_mode == FoldMode.One_Dimensional_One_Way)
+        angleInputParam = Params.Input[5];
+
+      RecordUndoEvent("2D Parameters");
+      _mode = FoldMode.Two_Dimensional;
+
+      //remove input parameters
+      while (Params.Input.Count > 5)
+        Params.UnregisterInputParameter(Params.Input[5], true);
+    }
+
+    #endregion
+
+    #region (de)serialization
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      if (reader.ItemExists("Mode"))
+      {
+        _mode = (FoldMode)reader.GetInt32("Mode");
+        
+        this.InitialiseDropdowns();
+
+        this.SelectedItems = new List<string>();
+        switch (_mode)
+        {
+          case FoldMode.One_Dimensional_One_Way:
+            this.SelectedItems.Add("1D, One-way span");
+            break;
+          case FoldMode.One_Dimensional_Two_Way:
+            this.SelectedItems.Add("1D, Two-way span");
+            break;
+          case FoldMode.Two_Dimensional:
+            this.SelectedItems.Add("2D");
+            break;
+        }
+        this.SelectedItems.Add(this.LengthUnit.ToString());
+      }
+      
+      return base.Read(reader);
+    }
+    #endregion
   }
 }

@@ -4,15 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GH_IO.Serialization;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using OasysGH;
+using GsaGH.Util.GH;
+using Newtonsoft.Json;
+using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
+using OasysUnits.Serialization.JsonNet;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
@@ -24,7 +28,6 @@ namespace GsaGH.Components
   public class GetGeometry : GH_OasysTaskCapableComponent<GetGeometry.SolveResults>, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
     public GetGeometry()
       : base("Get Model Geometry", "GetGeo", "Get nodes, elements and members from GSA model",
@@ -37,113 +40,10 @@ namespace GsaGH.Components
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GetGeometry;
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // length
-        //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-        first = false;
-      }
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
-
-      // update name of inputs (to display unit on sliders)
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
-
-      CreateAttributes();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Unit"
-    });
-    private bool first = true;
-    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
-    string unitAbbreviation;
-    #region menu override
-    private enum FoldMode
-    {
-      Graft,
-      List
-    }
-
-    private FoldMode _mode = FoldMode.List;
-
-    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
-    {
-      Menu_AppendItem(menu, "Graft by Property", GraftModeClicked, true, _mode == FoldMode.Graft);
-      Menu_AppendItem(menu, "List", ListModeClicked, true, _mode == FoldMode.List);
-
-    }
-    private void GraftModeClicked(object sender, EventArgs e)
-    {
-      if (_mode == FoldMode.Graft)
-        return;
-
-      RecordUndoEvent("Graft by Property");
-      _mode = FoldMode.Graft;
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      Message = "Graft by Property";
-      ExpireSolution(true);
-    }
-
-    private void ListModeClicked(object sender, EventArgs e)
-    {
-      if (_mode == FoldMode.List)
-        return;
-
-      RecordUndoEvent("List");
-      _mode = FoldMode.List;
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      Message = "Import as List";
-      ExpireSolution(true);
-    }
-
-    #endregion
-
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddGenericParameter("GSA Model", "GSA", "GSA model containing some geometry", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model containing some geometry", GH_ParamAccess.item);
       pManager.AddTextParameter("Node filter list", "No", "Filter import by list." + System.Environment.NewLine +
           "Node list should take the form:" + System.Environment.NewLine +
           " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
@@ -159,15 +59,11 @@ namespace GsaGH.Components
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
-
-      //_mode = FoldMode.Graft;
-      //Message = "Graft by Property" + System.Environment.NewLine + "Right-click to change";
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      IQuantity length = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
 
       pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]", "No", "Nodes from GSA Model", GH_ParamAccess.list);
       pManager.HideParameter(0);
@@ -182,6 +78,7 @@ namespace GsaGH.Components
     }
     #endregion
 
+    #region solve
     public class SolveResults
     {
       internal ConcurrentBag<GsaNodeGoo> Nodes { get; set; }
@@ -193,7 +90,9 @@ namespace GsaGH.Components
       internal ConcurrentBag<GsaMember2dGoo> Mem2ds { get; set; }
       internal ConcurrentBag<GsaMember3dGoo> Mem3ds { get; set; }
     }
-    SolveResults Compute(ConcurrentDictionary<int, Node> allnDict, ConcurrentDictionary<int, Axis> axDict,
+    SolveResults Compute(
+        ConcurrentDictionary<int, Node> allnDict, 
+        ConcurrentDictionary<int, Axis> axDict,
         ConcurrentDictionary<int, Node> nDict,
         ConcurrentDictionary<int, Element> eDict,
         ConcurrentDictionary<int, Member> mDict,
@@ -214,7 +113,7 @@ namespace GsaGH.Components
           if (i == 0)
           {
             // create nodes
-            results.Nodes = Util.Gsa.FromGSA.GetNodes(nDict, lengthUnit, axDict);
+            results.Nodes = Util.Gsa.FromGSA.GetNodes(nDict, LengthUnit, axDict);
             results.displaySupports = new ConcurrentBag<GsaNodeGoo>(results.Nodes.AsParallel().Where(n => n.Value.IsSupport));
           }
 
@@ -222,7 +121,7 @@ namespace GsaGH.Components
           {
             // create elements
             Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-                = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, modDict, lengthUnit);
+                = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, modDict, LengthUnit);
 
             results.Elem1ds = elementTuple.Item1;
             results.Elem2ds = elementTuple.Item2;
@@ -233,7 +132,7 @@ namespace GsaGH.Components
           {
             // create members
             Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-                = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, lengthUnit, sDict, pDict, p3Dict, this);
+                = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, LengthUnit, sDict, pDict, p3Dict, this);
 
             results.Mem1ds = memberTuple.Item1;
             results.Mem2ds = memberTuple.Item2;
@@ -605,7 +504,9 @@ namespace GsaGH.Components
         }
       }
     }
+    #endregion
 
+    #region custom preview
     BoundingBox BoundingBox;
     ConcurrentBag<GsaElement2dGoo> element2ds;
     ConcurrentBag<GsaElement3dGoo> element3ds;
@@ -692,66 +593,69 @@ namespace GsaGH.Components
           }
       }
     }
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    #endregion
+
+    #region custom UI
+    public List<List<string>> DropDownItems;
+
+    public List<string> SelectedItems;
+
+    public List<string> SpacerDescriptions;
+
+    public bool IsInitialised;
+    
+    private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+
+    public override void CreateAttributes()
     {
-      writer.SetInt32("Mode", (int)_mode);
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      _mode = (FoldMode)reader.GetInt32("Mode");
+      if (!IsInitialised)
+        InitialiseDropdowns();
 
-      try // if users has an old versopm of this component then dropdown menu wont read
-      {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      }
-      catch (Exception) // we create the dropdown menu with our chosen default
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // set length to meters as this was the only option for old components
-        lengthUnit = LengthUnit.Meter;
-
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-        first = false;
-      }
-
-      UpdateUIFromSelectedItems();
-
-      first = false;
-
-      return base.Read(reader);
+      m_attributes = new OasysGH.UI.DropDownComponentAttributes(this, SetSelected, DropDownItems, SelectedItems, SpacerDescriptions);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+    public void InitialiseDropdowns() 
     {
-      return false;
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Unit",
+        });
+
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // Length
+      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+      this.SelectedItems.Add(this.LengthUnit.ToString());
+
+      this.IsInitialised = true;
     }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+
+    public void SetSelected(int i, int j)
     {
-      return false;
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+      this.UpdateUI();
     }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+
+    public void UpdateUIFromSelectedItems()
     {
-      return null;
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[0]);
+      this.CreateAttributes();
+      this.UpdateUI();
     }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+
+    public virtual void UpdateUI()
     {
-      return false;
+      ((IGH_VariableParameterComponent)this).VariableParameterMaintenance();
+      ExpireSolution(recompute: true);
+      base.Params.OnParametersChanged();
+      OnDisplayExpired(redraw: true);
     }
 
     void IGH_VariableParameterComponent.VariableParameterMaintenance()
     {
-      IQuantity length = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
 
       int i = 0;
       Params.Output[i++].Name = "Nodes [" + unitAbbreviation + "]";
@@ -770,10 +674,193 @@ namespace GsaGH.Components
         else
           Params.Output[i].Access = GH_ParamAccess.tree;
       }
+    }
+    #endregion
 
+    #region right-click menu item
+    private enum FoldMode
+    {
+      Graft,
+      List
     }
 
+    private FoldMode _mode = FoldMode.List;
+
+    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
+    {
+      Menu_AppendItem(menu, "Graft by Property", GraftModeClicked, true, _mode == FoldMode.Graft);
+      Menu_AppendItem(menu, "List", ListModeClicked, true, _mode == FoldMode.List);
+
+    }
+    private void GraftModeClicked(object sender, EventArgs e)
+    {
+      if (_mode == FoldMode.Graft)
+        return;
+
+      RecordUndoEvent("Graft by Property");
+      _mode = FoldMode.Graft;
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      Params.OnParametersChanged();
+      Message = "Graft by Property";
+      ExpireSolution(true);
+    }
+
+    private void ListModeClicked(object sender, EventArgs e)
+    {
+      if (_mode == FoldMode.List)
+        return;
+
+      RecordUndoEvent("List");
+      _mode = FoldMode.List;
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      Params.OnParametersChanged();
+      Message = "Import as List";
+      ExpireSolution(true);
+    }
+    #endregion
+
+    #region expire downstream
+    private static readonly OasysUnitsIQuantityJsonConverter Converter = new OasysUnitsIQuantityJsonConverter();
+
+    public bool AlwaysExpireDownStream;
+
+    public Dictionary<int, List<string>> ExistingOutputsSerialized = new Dictionary<int, List<string>>();
+
+    private bool ExpireDownStream = true;
+
+    private Dictionary<int, List<bool>> OutputsAreExpired = new Dictionary<int, List<bool>>();
+
+    private Dictionary<int, bool> OutputIsExpired = new Dictionary<int, bool>();
+
+    protected override void ExpireDownStreamObjects()
+    {
+      if (AlwaysExpireDownStream)
+      {
+        base.ExpireDownStreamObjects();
+        return;
+      }
+
+      SetExpireDownStream();
+      if (OutputIsExpired.Count > 0)
+      {
+        for (int i = 0; i < base.Params.Output.Count; i++)
+        {
+          if (OutputIsExpired[i])
+          {
+            base.Params.Output[i].ExpireSolution(recompute: false);
+          }
+        }
+      }
+      else
+      {
+        base.ExpireDownStreamObjects();
+      }
+    }
+
+    private void SetExpireDownStream()
+    {
+      if (OutputsAreExpired == null || OutputsAreExpired.Count <= 0)
+      {
+        return;
+      }
+
+      OutputIsExpired = new Dictionary<int, bool>();
+      for (int i = 0; i < base.Params.Output.Count; i++)
+      {
+        if (OutputsAreExpired.ContainsKey(i))
+        {
+          OutputIsExpired.Add(i, OutputsAreExpired[i].Any((bool c) => c));
+        }
+        else
+        {
+          OutputIsExpired.Add(i, value: true);
+        }
+      }
+    }
+
+    public void OutputChanged<T>(T data, int outputIndex, int index) where T : IGH_Goo
+    {
+      if (!ExistingOutputsSerialized.ContainsKey(outputIndex))
+      {
+        ExistingOutputsSerialized.Add(outputIndex, new List<string>());
+        OutputsAreExpired.Add(outputIndex, new List<bool>());
+      }
+
+      string text = "";
+      if (data.GetType() == typeof(GH_UnitNumber))
+      {
+        text = JsonConvert.SerializeObject(((GH_UnitNumber)(object)data).Value, Converter);
+      }
+      else
+      {
+        object value = ((T)(object)data).ScriptVariable();
+        try
+        {
+          text = JsonConvert.SerializeObject(value);
+        }
+        catch (Exception)
+        {
+          text = data.GetHashCode().ToString();
+        }
+      }
+
+      if (ExistingOutputsSerialized[outputIndex].Count == index)
+      {
+        ExistingOutputsSerialized[outputIndex].Add(text);
+        OutputsAreExpired[outputIndex].Add(item: true);
+      }
+      else if (ExistingOutputsSerialized[outputIndex][index] != text)
+      {
+        ExistingOutputsSerialized[outputIndex][index] = text;
+        OutputsAreExpired[outputIndex][index] = true;
+      }
+      else
+      {
+        OutputsAreExpired[outputIndex][index] = false;
+      }
+    }
+    #endregion
+
+    #region deserialization
+    public override bool Write(GH_IWriter writer)
+    {
+      writer.SetInt32("Mode", (int)_mode);
+      DeSerialization.writeDropDownComponents(ref writer, this.DropDownItems, this.SelectedItems, this.SpacerDescriptions);
+      return base.Write(writer);
+    }
+
+    public override bool Read(GH_IReader reader)
+    {
+      _mode = (FoldMode)reader.GetInt32("Mode");
+      Util.GH.DeSerialization.readDropDownComponents(ref reader, ref this.DropDownItems, ref this.SelectedItems, ref this.SpacerDescriptions);
+      IsInitialised = true;
+      UpdateUIFromSelectedItems();
+      return base.Read(reader);
+    }
+    #endregion
+
+    #region variable component null implementation
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+    {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+    {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+    {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+    {
+      return false;
+    }
     #endregion
   }
 }
-

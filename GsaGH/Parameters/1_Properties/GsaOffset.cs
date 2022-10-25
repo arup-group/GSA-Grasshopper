@@ -40,13 +40,13 @@ namespace GsaGH.Parameters
     #region methods
     public override string ToString()
     {
-      IQuantity quantity = new Length(0, DefaultUnits.LengthUnitGeometry);
-      string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+      LengthUnit unit = this.Z.Unit;
+      string unitAbbreviation = Length.GetAbbreviation(unit);
 
-      return "X1:" + Math.Round(X1.As(DefaultUnits.LengthUnitGeometry), 4) + 
-        ", X2:" + Math.Round(X2.As(DefaultUnits.LengthUnitGeometry), 4) + 
-        ", Y:" + Math.Round(Y.As(DefaultUnits.LengthUnitGeometry), 4) + 
-        ", Z:" + Math.Round(Z.As(DefaultUnits.LengthUnitGeometry), 4) + 
+      return "X1:" + X1.As(unit).ToString("g") + 
+        ", X2:" + X2.As(unit).ToString("g") + 
+        ", Y:" + Y.As(unit).ToString("g") + 
+        ", Z:" + Z.As(unit).ToString("g") + 
         " [" + unitAbbreviation + "]";
     }
     #endregion

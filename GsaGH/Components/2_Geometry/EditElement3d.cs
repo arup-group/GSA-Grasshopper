@@ -16,7 +16,6 @@ namespace GsaGH.Components
   public class EditElement3d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("040f2915-543d-41ef-9a64-0c4055e47a63");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -30,20 +29,11 @@ namespace GsaGH.Components
     { }
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-
-
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-
-      pManager.AddGenericParameter("3D Element", "E3D", "GSA 3d Element to Modify", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Element3d Number", "ID", "Set Element Number. If ID is set it will replace any existing 3d Element in the model", GH_ParamAccess.list);
-      pManager.AddGenericParameter("3D Property", "PV", "Change 3D Property. Input either a GSA 3D Property or an Integer to use a Property already defined in model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaElement3dParameter(), GsaElement3dGoo.Name, GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " to get or set information for.", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV", "Change 3D Property. Input either a GSA 3D Property or an Integer to use a Property already defined in model", GH_ParamAccess.list);
       pManager.AddIntegerParameter("Element3d Group", "Gr", "Set Element Group", GH_ParamAccess.list);
       pManager.AddTextParameter("Element3d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
       pManager.AddColourParameter("Element3d Colour", "Co", "Set Element Colour", GH_ParamAccess.list);
@@ -57,13 +47,13 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("3D Element", "E3D", "Modified GSA 3D Element", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaElement3dParameter(), GsaElement3dGoo.Name, GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " with applied changes.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
       pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh. " + System.Environment.NewLine
           + "This will export a list of solid meshes representing each 3D element." + System.Environment.NewLine
           + "To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddGenericParameter("3D Property", "PV", "Get 3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaProp2dParameter(), "3D Property", "PV", "Get 3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model", GH_ParamAccess.list);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
       pManager.AddTextParameter("Element Type", "eT", "Get Element 3D Type." + System.Environment.NewLine
           + "Type can not be set; it is either Tetra4, Pyramid5, Wedge6 or Brick8", GH_ParamAccess.list);
@@ -258,4 +248,3 @@ namespace GsaGH.Components
     }
   }
 }
-
