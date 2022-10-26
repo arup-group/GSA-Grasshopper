@@ -44,5 +44,26 @@ namespace GsaGH.Parameters
       target = default;
       return false;
     }
+    public override bool CastFrom(object source)
+    {
+      if (source == null)
+        return false;
+
+      if (base.CastFrom(source))
+        return true;
+
+      if (source.GetType().IsAssignableFrom(typeof(GsaMaterial)))
+      {
+        Value = new GsaProp3d((GsaMaterial)source);
+        return true;
+      }
+      if (source.GetType().IsAssignableFrom(typeof(GsaMaterialGoo)))
+      {
+        Value = new GsaProp3d(((GsaMaterialGoo)source).Value);
+        return true;
+      }
+
+      return false;
+    }
   }
 }

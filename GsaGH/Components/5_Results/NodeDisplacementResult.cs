@@ -19,12 +19,11 @@ using OasysUnits.Units;
 namespace GsaGH.Components
 {
   /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
+  /// Component to get GSA node displacement values
   /// </summary>
-  public class NodeDisplacement : GH_OasysComponent, IGH_VariableParameterComponent
+  public class NodeDisplacement : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("83844063-3da9-4d96-95d3-ea39f96f3e2a");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -38,67 +37,10 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // length
-        //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-        first = false;
-      }
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
-
-      // update name of inputs (to display unit on sliders)
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
-
-      CreateAttributes();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Unit"
-    });
-    private bool first = true;
-    private LengthUnit lengthUnit = DefaultUnits.LengthUnitResult;
-    string unitAbbreviation;
-    #endregion
-
+    #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddGenericParameter("Result", "Res", "GSA Result", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.list);
       pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + System.Environment.NewLine +
           "Node list should take the form:" + System.Environment.NewLine +
           " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
@@ -108,8 +50,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      IQuantity quantity = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
 
       string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation } " +
                     System.Environment.NewLine + "fx. {1;2} is Case 1, Permutation 2, where each branch " +
@@ -125,6 +66,7 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|", "Combined |XXYYZZ| Rotations in Global Axis" + note, GH_ParamAccess.tree);
       pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value", GH_ParamAccess.tree);
     }
+    #endregion
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
@@ -167,7 +109,7 @@ namespace GsaGH.Components
             return;
           }
 
-          Tuple<List<GsaResultsValues>, List<int>> nodedisp = result.NodeDisplacementValues(nodeList, lengthUnit);
+          Tuple<List<GsaResultsValues>, List<int>> nodedisp = result.NodeDisplacementValues(nodeList, LengthUnit);
           List<GsaResultsValues> vals = nodedisp.Item1;
           List<int> sortedIDs = nodedisp.Item2;
 
@@ -197,10 +139,10 @@ namespace GsaGH.Components
                   ids.Add(ID);
                   ConcurrentDictionary<int, GsaResultQuantity> res = vals[index].xyzResults[ID];
                   GsaResultQuantity values = res[0]; // there is only one result per node
-                  transX.Add(new GH_UnitNumber(values.X.ToUnit(lengthUnit))); // use ToUnit to capture changes in dropdown
-                  transY.Add(new GH_UnitNumber(values.Y.ToUnit(lengthUnit)));
-                  transZ.Add(new GH_UnitNumber(values.Z.ToUnit(lengthUnit)));
-                  transXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(lengthUnit)));
+                  transX.Add(new GH_UnitNumber(values.X.ToUnit(LengthUnit))); // use ToUnit to capture changes in dropdown
+                  transY.Add(new GH_UnitNumber(values.Y.ToUnit(LengthUnit)));
+                  transZ.Add(new GH_UnitNumber(values.Z.ToUnit(LengthUnit)));
+                  transXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(LengthUnit)));
                 }
               }
               if (item == 1)
@@ -242,51 +184,46 @@ namespace GsaGH.Components
 
       }
     }
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
 
-      first = false;
-      UpdateUIFromSelectedItems();
+    #region Custom UI
+    private LengthUnit LengthUnit = DefaultUnits.LengthUnitResult;
+    public override void InitialiseDropdowns()
+    {
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Unit",
+        });
 
-      return base.Read(reader);
-    }
-    #endregion
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
 
-    #region IGH_VariableParameterComponent null implementation
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      IQuantity quantity = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+      // Length
+      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+      this.SelectedItems.Add(this.LengthUnit.ToString());
 
+      this.IsInitialised = true;
+    }
+
+    public override void SetSelected(int i, int j)
+    {
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+      base.UpdateUI();
+    }
+    public override void UpdateUIFromSelectedItems()
+    {
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[0]);
+      base.UpdateUIFromSelectedItems();
+    }
+
+    public override void VariableParameterMaintenance()
+    {
+      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
       int i = 0;
       Params.Output[i++].Name = "Translations X [" + unitAbbreviation + "]";
       Params.Output[i++].Name = "Translations Y [" + unitAbbreviation + "]";
       Params.Output[i++].Name = "Translations Z [" + unitAbbreviation + "]";
       Params.Output[i++].Name = "Translations |XYZ| [" + unitAbbreviation + "]";
-
     }
     #endregion
   }

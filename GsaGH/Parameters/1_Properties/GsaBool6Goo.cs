@@ -13,7 +13,7 @@ namespace GsaGH.Parameters
   {
     public static string Name => "Bool6";
     public static string NickName => "B6";
-    public static string Description => "GSA Bool6 to set releases and restraints";
+    public static string Description => "GSA Bool6 (to set releases and restraints)";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaBool6Goo(GsaBool6 item) : base(item) { }

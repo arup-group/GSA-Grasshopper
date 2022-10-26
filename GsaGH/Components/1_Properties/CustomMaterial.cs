@@ -18,10 +18,9 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Material
   /// </summary>
-  public class CustomMaterial : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CustomMaterial : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("83bfce91-9204-4fe4-b81d-0036babf0c6d");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -35,113 +34,12 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        dropdownitems.Add(topLevelDropdownItems);
-        dropdownitems.Add(FilteredUnits.FilteredStressUnits);
-        dropdownitems.Add(FilteredUnits.FilteredDensityUnits);
-        dropdownitems.Add(FilteredUnits.FilteredTemperatureUnits);
-
-        selecteditems = new List<string>();
-        selecteditems.Add(_mode.ToString());
-        selecteditems.Add(DefaultUnits.StressUnitResult.ToString());
-        selecteditems.Add(DefaultUnits.DensityUnit.ToString());
-        selecteditems.Add(DefaultUnits.TemperatureUnit.ToString());
-        first = false;
-      }
-
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      if (i == 0) // change is made to the first dropdown list
-      {
-        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
-      }
-      else
-      {
-        switch (i)
-        {
-          case 1:
-            stressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[1]);
-            break;
-          case 2:
-            densityUnit = (DensityUnit)Enum.Parse(typeof(DensityUnit), selecteditems[2]);
-            break;
-          case 3:
-            temperatureUnit = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), selecteditems[3]);
-            break;
-
-        }
-        Params.OnParametersChanged();
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      }
-
-      // update input params
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      CreateAttributes();
-      Params.OnParametersChanged();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    #endregion
-
     #region Input and output
-    readonly List<string> topLevelDropdownItems = new List<string>(new string[]
-    {
-            "Steel",
-            "Concrete",
-            "Timber",
-            "Aluminium",
-            "FRP",
-            "Glass",
-            "Undefined"
-    });
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Material Type",
-            "Stress Unit",
-            "Density Unit",
-            "Temperature Unit"
-    });
-
-    private DensityUnit densityUnit = DefaultUnits.DensityUnit;
-    private PressureUnit stressUnit = DefaultUnits.StressUnitResult;
-    private TemperatureUnit temperatureUnit = DefaultUnits.TemperatureUnit;
-    string densityUnitAbbreviation;
-    string stressUnitAbbreviation;
-    string temperatureUnitAbbreviation;
-    #endregion
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity stress = new Pressure(0, stressUnit);
-      stressUnitAbbreviation = string.Concat(stress.ToString().Where(char.IsLetter));
-      IQuantity density = new Density(0, densityUnit);
-      densityUnitAbbreviation = string.Concat(density.ToString().Where(char.IsLetter));
-      IQuantity temperature = new Temperature(0, temperatureUnit);
-      temperatureUnitAbbreviation = string.Concat(temperature.ToString().Where(char.IsLetter));
+      string stressUnitAbbreviation = Pressure.GetAbbreviation(this.StressUnit);
+      string densityUnitAbbreviation = Density.GetAbbreviation(this.DensityUnit);
+      string temperatureUnitAbbreviation = Temperature.GetAbbreviation(this.TemperatureUnit);
 
       pManager.AddIntegerParameter("Analysis Property Number", "ID", "Analysis Property Number (do not use 0 -> 'from Grade')", GH_ParamAccess.item);
       pManager.AddGenericParameter("Elastic Modulus [" + stressUnitAbbreviation + "]", "E", "Elastic Modulus of the elastic isotropic material", GH_ParamAccess.item);
@@ -155,8 +53,9 @@ namespace GsaGH.Components
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Material", "Ma", "GSA Material", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter(), "Material", "Mat", "GSA Custom Material", GH_ParamAccess.item);
     }
+    #endregion
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
@@ -184,7 +83,7 @@ namespace GsaGH.Components
       DA.GetData(2, ref poisson);
 
       CoefficientOfThermalExpansionUnit thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseDegreeCelsius;
-      switch (temperatureUnit)
+      switch (TemperatureUnit)
       {
         case TemperatureUnit.DegreeFahrenheit:
           thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseDegreeFahrenheit;
@@ -196,9 +95,9 @@ namespace GsaGH.Components
 
       material.AnalysisMaterial = new AnalysisMaterial()
       {
-        ElasticModulus = Input.UnitNumber(this, DA, 1, stressUnit).As(PressureUnit.Pascal),
+        ElasticModulus = Input.UnitNumber(this, DA, 1, StressUnit).As(PressureUnit.Pascal),
         PoissonsRatio = poisson,
-        Density = Input.UnitNumber(this, DA, 3, densityUnit).As(DensityUnit.KilogramPerCubicMeter),
+        Density = Input.UnitNumber(this, DA, 3, DensityUnit).As(DensityUnit.KilogramPerCubicMeter),
         CoefficientOfThermalExpansion = Input.UnitNumber(this, DA, 4, thermalExpansionUnit, true).As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius)
       };
 
@@ -222,7 +121,8 @@ namespace GsaGH.Components
 
       DA.SetData(0, new GsaMaterialGoo(material));
     }
-    #region menu override
+
+    #region Custom UI
     private enum FoldMode
     {
       Steel,
@@ -233,59 +133,95 @@ namespace GsaGH.Components
       Glass,
       Undefined
     }
-    private bool first = true;
     private FoldMode _mode = FoldMode.Timber;
 
-    #endregion
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
+    private DensityUnit DensityUnit = DefaultUnits.DensityUnit;
+    private PressureUnit StressUnit = DefaultUnits.StressUnitResult;
+    private TemperatureUnit TemperatureUnit = DefaultUnits.TemperatureUnit;
 
-      return base.Write(writer);
+    private readonly List<string> _topLevelDropDownItems = new List<string>(new string[]
+    {
+      "Steel",
+      "Concrete",
+      "Timber",
+      "Aluminium",
+      "FRP",
+      "Glass",
+      "Undefined"
+    });
+
+    public override void InitialiseDropdowns()
+    {
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Material Type",
+          "Stress Unit",
+          "Density Unit",
+          "Temperature Unit"
+        });
+
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // Type
+      this.DropDownItems.Add(this._topLevelDropDownItems);
+      this.SelectedItems.Add(this._mode.ToString());
+
+      // Stress unit
+      this.DropDownItems.Add(FilteredUnits.FilteredStressUnits);
+      this.SelectedItems.Add(this.StressUnit.ToString());
+
+      // Density unit
+      this.DropDownItems.Add(FilteredUnits.FilteredDensityUnits);
+      this.SelectedItems.Add(this.DensityUnit.ToString());
+
+      // Temperature unit
+      this.DropDownItems.Add(FilteredUnits.FilteredTemperatureUnits);
+      this.SelectedItems.Add(this.TemperatureUnit.ToString());
+
+      this.IsInitialised = true;
     }
 
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    public override void SetSelected(int i, int j)
     {
-      Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+      SelectedItems[i] = DropDownItems[i][j];
 
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
+      if (i == 0) // change is made to the first dropdown list
+      {
+        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
+      }
+      else
+      {
+        switch (i)
+        {
+          case 1:
+            this.StressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[1]);
+            break;
+          case 2:
+            this.DensityUnit = (DensityUnit)Enum.Parse(typeof(DensityUnit), this.SelectedItems[2]);
+            break;
+          case 3:
+            this.TemperatureUnit = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), this.SelectedItems[3]);
+            break;
+        }
+      }
 
-      stressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), selecteditems[1]);
-      densityUnit = (DensityUnit)Enum.Parse(typeof(DensityUnit), selecteditems[2]);
-      temperatureUnit = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), selecteditems[3]);
-
-      UpdateUIFromSelectedItems();
-      first = false;
-      return base.Read(reader);
+      base.UpdateUI();
+    }
+    public override void UpdateUIFromSelectedItems()
+    {
+      this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
+      this.StressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[1]);
+      this.DensityUnit = (DensityUnit)Enum.Parse(typeof(DensityUnit), this.SelectedItems[2]);
+      this.TemperatureUnit = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), this.SelectedItems[3]);
+      base.UpdateUIFromSelectedItems();
     }
 
-    #endregion
-    #region IGH_VariableParameterComponent null implementation
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+    public override void VariableParameterMaintenance()
     {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      IQuantity stress = new Pressure(0, stressUnit);
-      stressUnitAbbreviation = string.Concat(stress.ToString().Where(char.IsLetter));
-      IQuantity density = new Density(0, densityUnit);
-      densityUnitAbbreviation = string.Concat(density.ToString().Where(char.IsLetter));
-      IQuantity temperature = new Temperature(0, temperatureUnit);
-      temperatureUnitAbbreviation = string.Concat(temperature.ToString().Where(char.IsLetter));
+      string stressUnitAbbreviation = Pressure.GetAbbreviation(this.StressUnit);
+      string densityUnitAbbreviation = Density.GetAbbreviation(this.DensityUnit);
+      string temperatureUnitAbbreviation = Temperature.GetAbbreviation(this.TemperatureUnit);
 
       int i = 1;
       Params.Input[i].Name = "Elastic Modulus [" + stressUnitAbbreviation + "]";

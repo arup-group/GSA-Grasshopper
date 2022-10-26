@@ -14,10 +14,9 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to open an existing GSA model
   /// </summary>
-  public class OpenModel : GH_OasysComponent, IGH_VariableParameterComponent
+  public class OpenModel : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -30,72 +29,9 @@ namespace GsaGH.Components
       Ribbon.SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
-
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      m_attributes = new UI.ButtonComponentUI(this, "Open", OpenFile, "Open GSA file");
-    }
-    public void OpenFile()
-    {
-      var fdi = new Rhino.UI.OpenFileDialog { Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*" }; //"GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*"
-      var res = fdi.ShowOpenDialog();
-      if (res) // == DialogResult.OK)
-      {
-        fileName = fdi.FileName;
-
-        // instantiate  new panel
-        var panel = new Grasshopper.Kernel.Special.GH_Panel();
-        panel.CreateAttributes();
-
-        // set the location relative to the open component on the canvas
-        panel.Attributes.Pivot = new PointF((float)Attributes.DocObject.Attributes.Bounds.Left -
-            panel.Attributes.Bounds.Width - 30, (float)Params.Input[0].Attributes.Pivot.Y - panel.Attributes.Bounds.Height / 2);
-
-        // check for existing input
-        while (Params.Input[0].Sources.Count > 0)
-        {
-          var input = Params.Input[0].Sources[0];
-          // check if input is the one we automatically create below
-          if (Params.Input[0].Sources[0].InstanceGuid == panelGUID)
-          {
-            // update the UserText in existing panel
-            //RecordUndoEvent("Changed OpenGSA Component input");
-            panel = input as Grasshopper.Kernel.Special.GH_Panel;
-            panel.UserText = fileName;
-            panel.ExpireSolution(true); // update the display of the panel
-          }
-
-          // remove input
-          Params.Input[0].RemoveSource(input);
-        }
-
-        //populate panel with our own content
-        panel.UserText = fileName;
-
-        // record the panel's GUID if new, so that we can update it on change
-        panelGUID = panel.InstanceGuid;
-
-        //Until now, the panel is a hypothetical object.
-        // This command makes it 'real' and adds it to the canvas.
-        Grasshopper.Instances.ActiveCanvas.Document.AddObject(panel, false);
-
-        //Connect the new slider to this component
-        Params.Input[0].AddSource(panel);
-
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        Params.OnParametersChanged();
-
-        ExpireSolution(true);
-      }
-    }
-    #endregion
-
+    
     #region Input and output
-    // This region handles input and output parameters
-
-    string fileName = null;
+    string FileName = null;
     Guid panelGUID = Guid.NewGuid();
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
@@ -105,56 +41,7 @@ namespace GsaGH.Components
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("GSA Model", "GSA", "GSA Model", GH_ParamAccess.item);
-    }
-    #region IGH_VariableParameterComponent null implementation
-    //This sub region handles any changes to the component after it has been placed on the canvas
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      Params.Input[0].Optional = fileName != null; //filename can have input from user input
-      Params.Input[0].ClearRuntimeMessages(); // this needs to be called to avoid having a runtime warning message after changed to optional
-
-      //    Params.Output[i].NickName = "P";
-      //    Params.Output[i].Name = "Points";
-      //    Params.Output[i].Description = "Points imported from GSA";
-      //    Params.Output[i].Access = GH_ParamAccess.list;
-
-    }
-    #endregion
-    #endregion
-
-    #region (de)serialization
-    //This region handles serialisation and deserialisation, meaning that 
-    // component states will be remembered when reopening GH script
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      //writer.SetInt32("Mode", (int)_mode);
-      writer.SetString("File", (string)fileName);
-      //writer.SetBoolean("Advanced", (bool)advanced);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      //_mode = (FoldMode)reader.GetInt32("Mode");
-      fileName = (string)reader.GetString("File");
-      //advanced = (bool)reader.GetBoolean("Advanced");
-      return base.Read(reader);
+      pManager.AddParameter(new GsaModelParameter());
     }
     #endregion
 
@@ -169,29 +56,29 @@ namespace GsaGH.Components
         {
           string tempfile = "";
           if (GH_Convert.ToString(gh_typ, out tempfile, GH_Conversion.Both))
-            fileName = tempfile;
+            FileName = tempfile;
 
-          if (!fileName.EndsWith(".gwb"))
-            fileName = fileName + ".gwb";
+          if (!FileName.EndsWith(".gwb"))
+            FileName = FileName + ".gwb";
 
-          ReturnValue status = model.Open(fileName);
+          ReturnValue status = model.Open(FileName);
 
           if (status == 0)
           {
             GsaModel gsaModel = new GsaModel
             {
               Model = model,
-              FileName = fileName
+              FileName = FileName
             };
 
             Titles.GetTitlesFromGSA(model);
 
-            string mes = Path.GetFileName(fileName);
+            string mes = Path.GetFileName(FileName);
             mes = mes.Substring(0, mes.Length - 4);
             Message = mes;
             DA.SetData(0, new GsaModelGoo(gsaModel));
 
-            PostHog.ModelIO("openGWB", (int)(new FileInfo(fileName).Length / 1024));
+            PostHog.ModelIO("openGWB", (int)(new FileInfo(FileName).Length / 1024));
 
             return;
           }
@@ -220,19 +107,19 @@ namespace GsaGH.Components
       }
       else
       {
-        ReturnValue status = model.Open(fileName);
+        ReturnValue status = model.Open(FileName);
 
         if (status == 0)
         {
           GsaModel gsaModel = new GsaModel
           {
             Model = model,
-            FileName = fileName
+            FileName = FileName
           };
 
           Titles.GetTitlesFromGSA(model);
 
-          string mes = Path.GetFileName(fileName);
+          string mes = Path.GetFileName(FileName);
           mes = mes.Substring(0, mes.Length - 4);
           Message = mes;
           DA.SetData(0, new GsaModelGoo(gsaModel));
@@ -245,6 +132,88 @@ namespace GsaGH.Components
         }
       }
     }
+
+    #region Custom UI
+    public override void SetSelected(int i, int j) { }
+    public override void InitialiseDropdowns() { }
+
+    public override void CreateAttributes()
+    {
+      m_attributes = new OasysGH.UI.ButtonComponentAttributes(this, "Open", OpenFile, "Open GSA file");
+    }
+
+    public override void VariableParameterMaintenance()
+    {
+      Params.Input[0].Optional = FileName != null; //filename can have input from user input
+      Params.Input[0].ClearRuntimeMessages(); // this needs to be called to avoid having a runtime warning message after changed to optional
+    }
+    public void OpenFile()
+    {
+      var fdi = new Rhino.UI.OpenFileDialog { Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*" }; //"GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*"
+      var res = fdi.ShowOpenDialog();
+      if (res) // == DialogResult.OK)
+      {
+        FileName = fdi.FileName;
+
+        // instantiate  new panel
+        var panel = new Grasshopper.Kernel.Special.GH_Panel();
+        panel.CreateAttributes();
+
+        // set the location relative to the open component on the canvas
+        panel.Attributes.Pivot = new PointF((float)Attributes.DocObject.Attributes.Bounds.Left -
+            panel.Attributes.Bounds.Width - 30, (float)Params.Input[0].Attributes.Pivot.Y - panel.Attributes.Bounds.Height / 2);
+
+        // check for existing input
+        while (Params.Input[0].Sources.Count > 0)
+        {
+          var input = Params.Input[0].Sources[0];
+          // check if input is the one we automatically create below
+          if (Params.Input[0].Sources[0].InstanceGuid == panelGUID)
+          {
+            // update the UserText in existing panel
+            //RecordUndoEvent("Changed OpenGSA Component input");
+            panel = input as Grasshopper.Kernel.Special.GH_Panel;
+            panel.UserText = FileName;
+            panel.ExpireSolution(true); // update the display of the panel
+          }
+
+          // remove input
+          Params.Input[0].RemoveSource(input);
+        }
+
+        //populate panel with our own content
+        panel.UserText = FileName;
+
+        // record the panel's GUID if new, so that we can update it on change
+        panelGUID = panel.InstanceGuid;
+
+        //Until now, the panel is a hypothetical object.
+        // This command makes it 'real' and adds it to the canvas.
+        Grasshopper.Instances.ActiveCanvas.Document.AddObject(panel, false);
+
+        //Connect the new slider to this component
+        Params.Input[0].AddSource(panel);
+
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        Params.OnParametersChanged();
+
+        ExpireSolution(true);
+      }
+    }
+    #endregion
+
+    #region (de)serialization
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    {
+      writer.SetString("File", this.FileName);
+      return base.Write(writer);
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      this.FileName = reader.GetString("File");
+      return base.Read(reader);
+    }
+    #endregion
   }
 }
 

@@ -13,7 +13,6 @@ namespace GsaGH.Components
   public class CreateProp3d : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("4919553a-8d96-4170-a357-74cfbe930897");
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -27,29 +26,14 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    #endregion
-
     #region Input and output
-
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddGenericParameter("Material", "Ma", "GsaMaterial or Number referring to a Material already in Existing GSA Model." + System.Environment.NewLine
-              + "Accepted inputs are: " + System.Environment.NewLine
-              + "0 : Generic" + System.Environment.NewLine
-              + "1 : Steel" + System.Environment.NewLine
-              + "2 : Concrete" + System.Environment.NewLine
-              + "3 : Aluminium" + System.Environment.NewLine
-              + "4 : Glass" + System.Environment.NewLine
-              + "5 : FRP" + System.Environment.NewLine
-              + "7 : Timber (default - because your Carbon Emissions matter!)" + System.Environment.NewLine
-              + "8 : Fabric", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter());
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("3D Property", "PV", "GSA 3D Property", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProp3dParameter());
     }
     #endregion
 

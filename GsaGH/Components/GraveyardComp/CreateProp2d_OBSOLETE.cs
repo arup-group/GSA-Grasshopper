@@ -39,15 +39,15 @@ namespace GsaGH.Components
     {
       if (first)
       {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
+        DropDownItems = new List<List<string>>();
+        SelectedItems = new List<string>();
 
         // length
-        dropdownitems.Add(dropdownTopList);
-        dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
+        DropDownItems.Add(dropdownTopList);
+        DropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
 
-        selecteditems.Add(dropdownTopList[3]);
-        selecteditems.Add(lengthUnit.ToString());
+        SelectedItems.Add(dropdownTopList[3]);
+        SelectedItems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);
         unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
@@ -55,53 +55,53 @@ namespace GsaGH.Components
         first = false;
       }
 
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
+      m_attributes = new OasysGH.UI.DropDownComponentAttributes(this, SetSelected, DropDownItems, SelectedItems, SpacerDescriptions);
     }
 
     public void SetSelected(int i, int j)
     {
       // change selected item
-      selecteditems[i] = dropdownitems[i][j];
+      SelectedItems[i] = DropDownItems[i][j];
 
       if (i == 0) // if change is made to the first list
       {
-        switch (selecteditems[i])
+        switch (SelectedItems[i])
         {
           case "Plane Stress":
-            if (dropdownitems.Count < 2)
-              dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+            if (DropDownItems.Count < 2)
+              DropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode1Clicked();
             break;
           case "Fabric":
-            if (dropdownitems.Count > 1)
-              dropdownitems.RemoveAt(1); // remove length unit dropdown
+            if (DropDownItems.Count > 1)
+              DropDownItems.RemoveAt(1); // remove length unit dropdown
             Mode2Clicked();
             break;
           case "Flat Plate":
-            if (dropdownitems.Count < 2)
-              dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+            if (DropDownItems.Count < 2)
+              DropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode3Clicked();
             break;
           case "Shell":
-            if (dropdownitems.Count < 2)
-              dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+            if (DropDownItems.Count < 2)
+              DropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode4Clicked();
             break;
           case "Curved Shell":
-            if (dropdownitems.Count < 2)
-              dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+            if (DropDownItems.Count < 2)
+              DropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits); // add length unit dropdown
             Mode5Clicked();
             break;
           case "Load Panel":
-            if (dropdownitems.Count > 1)
-              dropdownitems.RemoveAt(1); // remove length unit dropdown
+            if (DropDownItems.Count > 1)
+              DropDownItems.RemoveAt(1); // remove length unit dropdown
             Mode6Clicked();
             break;
         }
       }
       else
       {
-        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
+        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[i]);
       }
 
         // update name of inputs (to display unit on sliders)
@@ -132,11 +132,11 @@ namespace GsaGH.Components
     });
 
     // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
+    List<List<string>> DropDownItems;
     // list of selected items
-    List<string> selecteditems;
+    List<string> SelectedItems;
     // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
+    List<string> SpacerDescriptions = new List<string>(new string[]
     {
             "Element Type",
             "Unit"
@@ -387,33 +387,33 @@ namespace GsaGH.Components
     #region (de)serialization
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
     {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
+      Util.GH.DeSerialization.writeDropDownComponents(ref writer, DropDownItems, SelectedItems, SpacerDescriptions);
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       try// if users has an old version of this component then dropdown menu wont read
       {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0].Replace(" ", string.Empty));
-        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[1]);
+        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref DropDownItems, ref SelectedItems, ref SpacerDescriptions);
+        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].Replace(" ", string.Empty));
+        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[1]);
       }
       catch (Exception)
       {
         _mode = (FoldMode)reader.GetInt32("Mode"); //old version would have this set
-        selecteditems.Add(reader.GetString("select")); // same
+        SelectedItems.Add(reader.GetString("select")); // same
 
         // set length to meters as this was the only option for old components
         lengthUnit = LengthUnit.Meter;
 
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
+        DropDownItems = new List<List<string>>();
+        SelectedItems = new List<string>();
 
         // length
-        dropdownitems.Add(dropdownTopList);
-        dropdownitems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
+        DropDownItems.Add(dropdownTopList);
+        DropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
 
-        selecteditems.Add(lengthUnit.ToString());
+        SelectedItems.Add(lengthUnit.ToString());
 
         IQuantity quantity = new Length(0, lengthUnit);
         unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));

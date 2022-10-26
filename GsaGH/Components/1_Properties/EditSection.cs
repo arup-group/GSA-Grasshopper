@@ -10,7 +10,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a Section and ouput the information
   /// </summary>
-  public class EditSection : GH_OasysComponent, IGH_PreviewObject
+  public class EditSection : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -27,20 +27,13 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-
-
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddGenericParameter("Section", "PB", "GSA Section to get or set information for", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSectionParameter(), GsaSectionGoo.Name, GsaSectionGoo.NickName, GsaSectionGoo.Description + " to get or set information for. Leave blank to create a new " + GsaSectionGoo.Name, GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Number", "ID", "Set Section Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Profile", "Pf", "Profile name following GSA naming convention (eg 'STD I 1000 500 15 25')", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Material", "Ma", "Set GSA Material or reference existing material by ID", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddGenericParameter("Section Modifier", "Mo", "Set GSA Section Modifier", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Pool", "Po", "Set Section pool", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Name", "Na", "Set Section name", GH_ParamAccess.item);
@@ -52,10 +45,10 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Section", "PB", "GSA Section with changes", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSectionParameter(), GsaSectionGoo.Name, GsaSectionGoo.NickName, GsaSectionGoo.Description + " with applied changes.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Number", "ID", "Original Section number (ID) if Section ever belonged to a GSA Model", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Profile", "Pf", "Profile describtion", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Material", "Ma", "GSA Material", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddGenericParameter("Section Modifier", "Mo", "GSA Section Modifier", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Pool", "Po", "Section pool", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Name", "Na", "Section name", GH_ParamAccess.item);
