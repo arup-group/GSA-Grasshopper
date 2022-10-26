@@ -84,7 +84,7 @@ namespace GsaGH.Components
       {
         case FoldMode.Node_Force:
         case FoldMode.Node_Moment:
-          nodeLoad.NodeLoadType = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
           break;
         case FoldMode.Applied_Displ:
           nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;

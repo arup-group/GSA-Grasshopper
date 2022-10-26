@@ -23,7 +23,7 @@ namespace IntegrationTests.Parameters
     }
 
     [Theory]
-    [InlineData("Of", 4, 3, 2, 1, LengthUnit.Millimeter)]
+    [InlineData("Of", 4, 3, 2, 1, LengthUnit.Centimeter)]
     public void OutputTest(string groupIdentifier, double expectedX1, double expectedX2, double expectedY, double expectedZ, LengthUnit expectedUnit)
     {
       GH_Document doc = Document();
