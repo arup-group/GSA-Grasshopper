@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
@@ -21,15 +20,15 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a 1D Member
   /// </summary>
-  public class EditMember1d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+  public class EditMember1d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("094f676f-c384-4d49-9d7f-64515004bf4b");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override Guid ComponentGuid => new Guid("2a121578-f9ff-4d80-ae90-2982faa425a6");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem1d;
 
-    public EditMember1d() : base("Edit 1D Member",
+    public EditMember1d_OBSOLETE() : base("Edit 1D Member",
       "Mem1dEdit",
       "Modify GSA 1D Member",
       Ribbon.CategoryName.Name(),
@@ -68,11 +67,11 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰", "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
-      pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle in degrees", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle in degrees", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Member Orientation Node", GH_ParamAccess.item);
       pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBucklingLengthFactorsParameter(), "Set " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName, GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
+
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
       pManager.AddColourParameter("Member1d Colour", "Co", "Set Member 1D Colour", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Dummy Member", "Dm", "Set Member to Dummy", GH_ParamAccess.item);
@@ -97,11 +96,11 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰", "Get Release (Bool6) at Start of Member", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Get Release (Bool6) at End of Member", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Member Orientation Angle", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Member Orientation Angle in degrees", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Get Member Orientation Node", GH_ParamAccess.item);
       pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBucklingLengthFactorsParameter(), "Get " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName, GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
+
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);
 
       pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
@@ -222,7 +221,7 @@ namespace GsaGH.Components
         if (DA.GetData(10, ref ghangle))
         {
           if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
-            mem.OrientationAngle = new Angle(angle, this.AngleUnit);
+            mem.OrientationAngle = new Angle(angle, AngleUnit.Degree);
         }
 
         // 11 orientation node
@@ -259,43 +258,25 @@ namespace GsaGH.Components
           }
         }
 
-        // 14 buckling length factors
-        gh_typ = new GH_ObjectWrapper();
-        if (DA.GetData(14, ref gh_typ))
-        {
-          GsaBucklingLengthFactors fls = new GsaBucklingLengthFactors();
-          if (gh_typ.Value is GsaBucklingLengthFactorsGoo)
-          {
-            gh_typ.CastTo(ref fls);
-            mem.API_Member.MomentAmplificationFactorStrongAxis = fls.MomentAmplificationFactorStrongAxis;
-            mem.API_Member.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
-            mem.API_Member.LateralTorsionalBucklingFactor = fls.LateralTorsionalBucklingFactor;
-          }
-          else
-          {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert Orientation Node input to GsaNode");
-          }
-        }
-
-        // 15 name
+        // 14 name
         GH_String ghnm = new GH_String();
-        if (DA.GetData(15, ref ghnm))
+        if (DA.GetData(14, ref ghnm))
         {
           if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
             mem.Name = name;
         }
 
-        // 16 Colour
+        // 15 Colour
         GH_Colour ghcol = new GH_Colour();
-        if (DA.GetData(16, ref ghcol))
+        if (DA.GetData(15, ref ghcol))
         {
           if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
             mem.Colour = col;
         }
 
-        // 17 Dummy
+        // 16 Dummy
         GH_Boolean ghdum = new GH_Boolean();
-        if (DA.GetData(17, ref ghdum))
+        if (DA.GetData(16, ref ghdum))
         {
           if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
             mem.IsDummy = dum;
@@ -312,46 +293,28 @@ namespace GsaGH.Components
 
         DA.SetData(7, new GsaOffsetGoo(mem.Offset));
 
-        DA.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
-        DA.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
+        DA.SetData(8, mem.ReleaseStart);
+        DA.SetData(9, mem.ReleaseEnd);
 
-        DA.SetData(10, mem.OrientationAngle.As(AngleUnit.Degree));
+        DA.SetData(10, mem.OrientationAngle.Degrees);
         DA.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
         DA.SetData(12, new GH_UnitNumber(mem.MeshSize.ToUnit(this.LengthUnit)));
         DA.SetData(13, mem.MeshWithOthers);
-        
-        DA.SetData(14, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem, this.LengthUnit)));
 
-        DA.SetData(15, mem.Name);
+        DA.SetData(14, mem.Name);
 
-        DA.SetData(16, mem.Colour);
-        DA.SetData(17, mem.IsDummy);
-        DA.SetData(18, mem.API_Member.Topology.ToString());
+        DA.SetData(15, mem.Colour);
+        DA.SetData(16, mem.IsDummy);
+        DA.SetData(17, mem.API_Member.Topology.ToString());
       }
     }
 
     #region Custom UI
     protected override void BeforeSolveInstance()
     {
-      base.BeforeSolveInstance();
-      Param_Number angleParameter = Params.Input[10] as Param_Number;
-      if (angleParameter != null)
-      {
-        if (!angleParameter.AngleParameter)
-        {
-          angleParameter.AngleParameter = true;
-          angleParameter.UseDegrees = true;
-          this.AngleUnit = AngleUnit.Degree;
-        }
-        else if (angleParameter.UseDegrees)
-          this.AngleUnit = AngleUnit.Degree;
-        else
-          this.AngleUnit = AngleUnit.Radian;
-      }
       this.Message = Length.GetAbbreviation(this.LengthUnit);
     }
-    AngleUnit AngleUnit = AngleUnit.Radian;
 
     LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
@@ -386,19 +349,24 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      else
-        this.LengthUnit = DefaultUnits.LengthUnitGeometry;
+      try
+      {
+        this.LengthUnit = Length.ParseUnit(reader.GetString("LengthUnit"));
+      }
+      catch (Exception)
+      {
+        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitGeometry;
+      }
       return base.Read(reader);
     }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
+
+    #region IGH_VariableParameterComponent null implementation
+    public virtual void VariableParameterMaintenance()
     {
       this.Params.Input[12].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
       this.Params.Output[12].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
     }
 
-    #region IGH_VariableParameterComponent null implementation
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
 
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
@@ -410,4 +378,3 @@ namespace GsaGH.Components
     #endregion
   }
 }
-

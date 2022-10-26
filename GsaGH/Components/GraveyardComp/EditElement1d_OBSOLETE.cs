@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
@@ -16,16 +14,16 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a 1D Element
   /// </summary>
-  public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
+  public class EditElement1d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("5aa4635c-b60e-4812-ab45-6af9437255e4");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override Guid ComponentGuid => new Guid("aeb5f765-8721-41fc-a1b4-cfd78e05ce67");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditElem1d;
 
-    public EditElement1d() : base("Edit 1D Element",
+    public EditElement1d_OBSOLETE() : base("Edit 1D Element",
       "Elem1dEdit",
       "Modify GSA 1D Element",
       Ribbon.CategoryName.Name(),
@@ -59,7 +57,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰", "Set Release (Bool6) at Start of Element", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Set Release (Bool6) at End of Element", GH_ParamAccess.item);
 
-      pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Element Orientation Angle", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Orientation Angle", "⭮A", "Set Element Orientation Angle in degrees", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Element Orientation Node", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.item);
@@ -87,7 +85,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰", "Get Release (Bool6) at Start of Element", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Get Release (Bool6) at End of Element", GH_ParamAccess.item);
 
-      pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Element Orientation Angle", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Element Orientation Angle in degrees", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Get Element Orientation Node", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Name", "Na", "Get Element Name", GH_ParamAccess.item);
@@ -97,20 +95,6 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Topology", "Tp", "Get the Element's original topology list referencing node IDs in Model that Element was created from", GH_ParamAccess.list);
     }
     #endregion
-
-    protected override void BeforeSolveInstance()
-    {
-      base.BeforeSolveInstance();
-      Param_Number angleParameter = Params.Input[9] as Param_Number;
-      if (angleParameter != null)
-      {
-        if (angleParameter.UseDegrees)
-          this.AngleUnit = AngleUnit.Degree;
-        else
-          this.AngleUnit = AngleUnit.Radian;
-      }
-    }
-    AngleUnit AngleUnit = AngleUnit.Radian;
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
@@ -123,7 +107,7 @@ namespace GsaGH.Components
       }
 
       if (elem != null)
-      { 
+      {
         // #### inputs ####
         // 1 ID
         GH_Integer ghID = new GH_Integer();
@@ -211,7 +195,7 @@ namespace GsaGH.Components
         if (DA.GetData(9, ref ghangle))
         {
           if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
-            elem.OrientationAngle = new Angle(angle, this.AngleUnit);
+            elem.OrientationAngle = new Angle(angle, OasysUnits.Units.AngleUnit.Degree);
         }
 
         // 10 orientation node
@@ -257,14 +241,14 @@ namespace GsaGH.Components
         // #### outputs ####
         DA.SetData(0, new GsaElement1dGoo(elem));
         DA.SetData(1, elem.ID);
-        DA.SetData(2, new GH_Line(elem.Line.Line));
+        DA.SetData(2, elem.Line);
         DA.SetData(3, new GsaSectionGoo(elem.Section));
         DA.SetData(4, elem.Group);
         DA.SetData(5, elem.Type);
         DA.SetData(6, new GsaOffsetGoo(elem.Offset));
         DA.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
         DA.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
-        DA.SetData(9, elem.OrientationAngle.As(AngleUnit.Degree));
+        DA.SetData(9, elem.OrientationAngle.Degrees);
         DA.SetData(10, new GsaNodeGoo(elem.OrientationNode));
         DA.SetData(11, elem.Name);
         DA.SetData(12, elem.Colour);
