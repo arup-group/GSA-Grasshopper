@@ -24,7 +24,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create AdSec profile
   /// </summary>
-  public class CreateProfile : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CreateProfile : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -34,7 +34,7 @@ namespace GsaGH.Components
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateProfile;
 
     public CreateProfile()
-      : base("Create Profile", "Profile", "Create Profile text-string for GSA Section",
+      : base("Create Profile", "Profile", "Create Profile text-string for a GSA Section",
             Ribbon.CategoryName.Name(),
             Ribbon.SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
@@ -46,423 +46,20 @@ namespace GsaGH.Components
     }
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        if (selecteditems == null)
-        {
-          // create a new list of selected items and add the first material type
-          selecteditems = new List<string>();
-          selecteditems.Add("Rectangle");
-        }
-        if (dropdownitems == null)
-        {
-          // create a new list of selected items and add the first material type
-          dropdownitems = new List<List<string>>();
-          dropdownitems.Add(profileTypes.Keys.ToList());
-        }
-
-        // length
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
-      }
-
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-
-    public void SetSelected(int i, int j)
-    {
-      // input -1 to force update of catalogue sections to include/exclude superseeded
-      bool updateCat = false;
-      if (i == -1)
-      {
-        selecteditems[0] = "Catalogue";
-        updateCat = true;
-        i = 0;
-      }
-      else
-      {
-        // change selected item
-        selecteditems[i] = dropdownitems[i][j];
-      }
-
-      if (selecteditems[0] == "Catalogue")
-      {
-        // update spacer description to match catalogue dropdowns
-        spacerDescriptions[1] = "Catalogue";
-
-        // if FoldMode is not currently catalogue state, then we update all lists
-        if (_mode != FoldMode.Catalogue | updateCat)
-        {
-          // remove any existing selections
-          while (selecteditems.Count > 1)
-            selecteditems.RemoveAt(1);
-
-          // set catalogue selection to all
-          catalogueIndex = -1;
-
-          catalogueNames = cataloguedata.Item1;
-          catalogueNumbers = cataloguedata.Item2;
-
-          // set types to all
-          typeIndex = -1;
-          // update typelist with all catalogues
-          typedata = SqlReader.GetTypesDataFromSQLite(catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
-          typeNames = typedata.Item1;
-          typeNumbers = typedata.Item2;
-
-          // update section list to all types
-          sectionList = SqlReader.GetSectionsDataFromSQLite(typeNumbers, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
-
-          // filter by search pattern
-          filteredlist = new List<string>();
-          if (search == "")
-          {
-            filteredlist = sectionList;
-          }
-          else
-          {
-            for (int k = 0; k < sectionList.Count; k++)
-            {
-              if (sectionList[k].ToLower().Contains(search))
-              {
-                filteredlist.Add(sectionList[k]);
-              }
-              if (!search.Any(char.IsDigit))
-              {
-                string test = sectionList[k].ToString();
-                test = Regex.Replace(test, "[0-9]", string.Empty);
-                test = test.Replace(".", string.Empty);
-                test = test.Replace("-", string.Empty);
-                test = test.ToLower();
-                if (test.Contains(search))
-                {
-                  filteredlist.Add(sectionList[k]);
-                }
-              }
-            }
-          }
-
-          // update displayed selections to all
-          selecteditems.Add(catalogueNames[0]);
-          selecteditems.Add(typeNames[0]);
-          selecteditems.Add(filteredlist[0]);
-
-          // call graphics update
-          Mode1Clicked();
-        }
-
-        // update dropdown lists
-        while (dropdownitems.Count > 1)
-          dropdownitems.RemoveAt(1);
-
-        // add catalogues (they will always be the same so no need to rerun sql call)
-        dropdownitems.Add(catalogueNames);
-
-        // type list
-        // if second list (i.e. catalogue list) is changed, update types list to account for that catalogue
-        if (i == 1)
-        {
-          // update catalogue index with the selected catalogue
-          catalogueIndex = catalogueNumbers[j];
-          selecteditems[1] = catalogueNames[j];
-
-          // update typelist with selected input catalogue
-          typedata = SqlReader.GetTypesDataFromSQLite(catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
-          typeNames = typedata.Item1;
-          typeNumbers = typedata.Item2;
-
-          // update section list from new types (all new types in catalogue)
-          List<int> types = typeNumbers.ToList();
-          types.RemoveAt(0); // remove -1 from beginning of list
-          sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
-
-          // filter by search pattern
-          filteredlist = new List<string>();
-          if (search == "")
-          {
-            filteredlist = sectionList;
-          }
-          else
-          {
-            for (int k = 0; k < sectionList.Count; k++)
-            {
-              if (sectionList[k].ToLower().Contains(search))
-              {
-                filteredlist.Add(sectionList[k]);
-              }
-              if (!search.Any(char.IsDigit))
-              {
-                string test = sectionList[k].ToString();
-                test = Regex.Replace(test, "[0-9]", string.Empty);
-                test = test.Replace(".", string.Empty);
-                test = test.Replace("-", string.Empty);
-                test = test.ToLower();
-                if (test.Contains(search))
-                {
-                  filteredlist.Add(sectionList[k]);
-                }
-              }
-            }
-          }
-
-          // update selections to display first item in new list
-          selecteditems[2] = typeNames[0];
-          selecteditems[3] = filteredlist[0];
-        }
-        dropdownitems.Add(typeNames);
-
-        // section list
-        // if third list (i.e. types list) is changed, update sections list to account for these section types
-
-        if (i == 2)
-        {
-          // update catalogue index with the selected catalogue
-          typeIndex = typeNumbers[j];
-          selecteditems[2] = typeNames[j];
-
-          // create type list
-          List<int> types = new List<int>();
-          if (typeIndex == -1) // if all
-          {
-            types = typeNumbers.ToList(); // use current selected list of type numbers
-            types.RemoveAt(0); // remove -1 from beginning of list
-          }
-          else
-            types = new List<int> { typeIndex }; // create empty list and add the single selected type 
-
-
-          // section list with selected types (only types in selected type)
-          sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
-
-          // filter by search pattern
-          filteredlist = new List<string>();
-          if (search == "")
-          {
-            filteredlist = sectionList;
-          }
-          else
-          {
-            for (int k = 0; k < sectionList.Count; k++)
-            {
-              if (sectionList[k].ToLower().Contains(search))
-              {
-                filteredlist.Add(sectionList[k]);
-              }
-              if (!search.Any(char.IsDigit))
-              {
-                string test = sectionList[k].ToString();
-                test = Regex.Replace(test, "[0-9]", string.Empty);
-                test = test.Replace(".", string.Empty);
-                test = test.Replace("-", string.Empty);
-                test = test.ToLower();
-                if (test.Contains(search))
-                {
-                  filteredlist.Add(sectionList[k]);
-                }
-              }
-            }
-          }
-
-          // update selected section to be all
-          selecteditems[3] = filteredlist[0];
-        }
-        dropdownitems.Add(filteredlist);
-
-        // selected profile
-        // if fourth list (i.e. section list) is changed, updated the sections list to only be that single profile
-        if (i == 3)
-        {
-          // update displayed selected
-          selecteditems[3] = filteredlist[j];
-        }
-        profileString = selecteditems[3];
-
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        ExpireSolution(true);
-        Params.OnParametersChanged();
-        this.OnDisplayExpired(true);
-      }
-      else
-      {
-        // update spacer description to match none-catalogue dropdowns
-        spacerDescriptions[1] = "Measure";// = new List<string>(new string[]
-
-        if (_mode != FoldMode.Other)
-        {
-          // remove all catalogue dropdowns
-          while (dropdownitems.Count > 1)
-            dropdownitems.RemoveAt(1);
-
-          // add length measure dropdown list
-          dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-
-          // set selected length
-          selecteditems[1] = lengthUnit.ToString();
-        }
-
-        if (i == 0)
-        {
-          // update profile type if change is made to first dropdown menu
-          typ = profileTypes[selecteditems[0]];
-          Mode2Clicked();
-        }
-        else
-        {
-          // change unit
-          lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
-
-          IQuantity quantity = new Length(0, lengthUnit);
-          unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-          // update name of inputs (to display unit on sliders)
-          (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-          ExpireSolution(true);
-          Params.OnParametersChanged();
-          this.OnDisplayExpired(true);
-        }
-
-      }
-    }
-
-    private void UpdateUIFromSelectedItems()
-    {
-
-      if (selecteditems[0] == "Catalogue")
-      {
-        // update spacer description to match catalogue dropdowns
-        spacerDescriptions = new List<string>(new string[]
-        {
-                    "Profile type", "Catalogue", "Type", "Profile"
-        });
-
-        catalogueNames = cataloguedata.Item1;
-        catalogueNumbers = cataloguedata.Item2;
-        typedata = SqlReader.GetTypesDataFromSQLite(catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), inclSS);
-        typeNames = typedata.Item1;
-        typeNumbers = typedata.Item2;
-
-        // call graphics update
-        comingFromSave = true;
-        Mode1Clicked();
-        comingFromSave = false;
-
-        profileString = selecteditems[3];
-      }
-      else
-      {
-        // update spacer description to match none-catalogue dropdowns
-        spacerDescriptions = new List<string>(new string[]
-        {
-                    "Profile type", "Measure", "Type", "Profile"
-        });
-
-        typ = profileTypes[selecteditems[0]];
-        Mode2Clicked();
-      }
-
-      IQuantity quantity = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-      CreateAttributes();
-      ExpireSolution(true);
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    #endregion
-
-
     #region Input and output
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Profile type", "Measure", "Type", "Profile"
-    });
-    List<string> excludedInterfaces = new List<string>(new string[]
-    {
-        "IProfile", "IPoint", "IPolygon", "IFlange", "IWeb", "IWebConstant", "IWebTapered", "ITrapezoidProfileAbstractInterface", "IIBeamProfile"
-    });
-
-    // temporary manual implementation of profile types (to be replaced by reflection of Oasys.Profiles)
-    //Dictionary<string, Type> profileTypes;
-    Dictionary<string, string> profileTypes = new Dictionary<string, string>
-        {
-            { "Angle", "IAngleProfile" },
-            { "Catalogue", "ICatalogueProfile" },
-            { "Channel", "IChannelProfile" },
-            { "Circle Hollow", "ICircleHollowProfile" },
-            { "Circle", "ICircleProfile" },
-            { "Cruciform Symmetrical", "ICruciformSymmetricalProfile" },
-            { "Ellipse Hollow", "IEllipseHollowProfile" },
-            { "Ellipse", "IEllipseProfile" },
-            { "General C", "IGeneralCProfile" },
-            { "General Z", "IGeneralZProfile" },
-            { "I Beam Asymmetrical", "IIBeamAsymmetricalProfile" },
-            { "I Beam Cellular", "IIBeamCellularProfile" },
-            { "I Beam Symmetrical", "IIBeamSymmetricalProfile" },
-            { "Perimeter", "IPerimeterProfile" },
-            { "Rectangle Hollow", "IRectangleHollowProfile" },
-            { "Rectangle", "IRectangleProfile" },
-            { "Recto Ellipse", "IRectoEllipseProfile" },
-            { "Recto Circle", "IStadiumProfile" },
-            { "Secant Pile", "ISecantPileProfile" },
-            { "Sheet Pile", "ISheetPileProfile" },
-            { "Trapezoid", "ITrapezoidProfile" },
-            { "T Section", "ITSectionProfile" },
-        };
-    Dictionary<string, FieldInfo> profileFields;
-
-    private LengthUnit lengthUnit = DefaultUnits.LengthUnitSection;
-    string unitAbbreviation;
-
-    #region catalogue sections
-    // for catalogue selection
-    // Catalogues
-    readonly Tuple<List<string>, List<int>> cataloguedata = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
-    List<int> catalogueNumbers = new List<int>(); // internal db catalogue numbers
-    List<string> catalogueNames = new List<string>(); // list of displayed catalogues
-    bool inclSS;
-
-    // Types
-    Tuple<List<string>, List<int>> typedata = SqlReader.GetTypesDataFromSQLite(-1, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
-    List<int> typeNumbers = new List<int>(); //  internal db type numbers
-    List<string> typeNames = new List<string>(); // list of displayed types
-
-    // Sections
-    // list of displayed sections
-    List<string> sectionList = SqlReader.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
-    List<string> filteredlist = new List<string>();
-    int catalogueIndex = -1; //-1 is all
-    int typeIndex = -1;
-    // displayed selections
-    string typeName = "All";
-    string sectionName = "All";
-    // list of sections as outcome from selections
-    string profileString = "HE HE200.B";
-    string search = "";
-    #endregion
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity quantity = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
 
       pManager.AddGenericParameter("Width [" + unitAbbreviation + "]", "B", "Profile width", GH_ParamAccess.item);
       pManager.AddGenericParameter("Depth [" + unitAbbreviation + "]", "H", "Profile depth", GH_ParamAccess.item);
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Profile", "Pf", "Profile for GSA Section", GH_ParamAccess.item);
+      pManager.AddTextParameter("Profile", "Pf", "Profile for a GSA Section", GH_ParamAccess.item);
     }
     #endregion
+
     protected override void SolveInstance(IGH_DataAccess DA)
     {
       this.ClearRuntimeMessages();
@@ -477,7 +74,7 @@ namespace GsaGH.Components
         bool incl = false;
         if (DA.GetData(1, ref incl))
         {
-          if (inclSS != incl)
+          if (_inclSS != incl)
           {
             SetSelected(-1, 0);
             this.ExpireSolution(true);
@@ -491,9 +88,9 @@ namespace GsaGH.Components
           inSearch = inSearch.ToLower();
 
         }
-        if (!inSearch.Equals(search))
+        if (!inSearch.Equals(_search))
         {
-          search = inSearch.ToString();
+          _search = inSearch.ToString();
           SetSelected(-1, 0);
           this.ExpireSolution(true);
         }
@@ -502,20 +99,22 @@ namespace GsaGH.Components
 
         return;
       }
+      #endregion
 
+      #region std
       if (_mode == FoldMode.Other)
       {
         //IProfile profile = null;
-        string unit = "(" + unitAbbreviation + ") ";
+        string unit = "(" + Length.GetAbbreviation(this.LengthUnit) + ") ";
         string profile = "STD ";
         // angle
         if (typ == "IAngleProfile") //(typ.Name.Equals(typeof(IAngleProfile).Name))
         {
           profile += "A" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString();
 
           //profile = IAngleProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -527,10 +126,10 @@ namespace GsaGH.Components
         else if (typ == "IChannelProfile") //(typ.Name.Equals(typeof(IChannelProfile).Name))
         {
           profile += "CH" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString();
 
           //profile = IChannelProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -542,8 +141,8 @@ namespace GsaGH.Components
         else if (typ == "ICircleHollowProfile") //(typ.Name.Equals(typeof(ICircleHollowProfile).Name))
         {
           profile += "CHS" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString();
 
           //profile = ICircleHollowProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -554,7 +153,7 @@ namespace GsaGH.Components
         else if (typ == "ICircleProfile") //(typ.Name.Equals(typeof(ICircleProfile).Name))
         {
           profile += "C" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString();
 
           //profile = ICircleProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit));
@@ -564,10 +163,10 @@ namespace GsaGH.Components
         else if (typ == "ICruciformSymmetricalProfile") //(typ.Name.Equals(typeof(ICruciformSymmetricalProfile).Name))
         {
           profile += "X" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString();
 
           //profile = ICruciformSymmetricalProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -579,9 +178,9 @@ namespace GsaGH.Components
         else if (typ == "IEllipseHollowProfile") //(typ.Name.Equals(typeof(IEllipseHollowProfile).Name))
         {
           profile += "OVAL" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString();
 
           //profile = IEllipseHollowProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -593,8 +192,8 @@ namespace GsaGH.Components
         else if (typ == "IEllipseProfile") //(typ.Name.Equals(typeof(IEllipseProfile).Name))
         {
           profile += "E" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " 2";
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " 2";
 
           //profile = IEllipseProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -605,10 +204,10 @@ namespace GsaGH.Components
         else if (typ == "IGeneralCProfile") //(typ.Name.Equals(typeof(IGeneralCProfile).Name))
         {
           profile += "GC" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString();
 
           //profile = IGeneralCProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -621,12 +220,12 @@ namespace GsaGH.Components
         else if (typ == "IGeneralZProfile") //(typ.Name.Equals(typeof(IGeneralZProfile).Name))
         {
           profile += "GZ" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 4, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 5, LengthUnit).As(LengthUnit).ToString();
 
           //profile = IGeneralZProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -641,12 +240,12 @@ namespace GsaGH.Components
         else if (typ == "IIBeamAsymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamAsymmetricalProfile).Name))
         {
           profile += "GI" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 4, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 5, LengthUnit).As(LengthUnit).ToString();
 
           //profile = IIBeamAsymmetricalProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -659,12 +258,12 @@ namespace GsaGH.Components
         else if (typ == "IIBeamCellularProfile") //(typ.Name.Equals(typeof(IIBeamCellularProfile).Name))
         {
           profile += "CB" + unit +
-             Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
+             Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 4, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 5, LengthUnit).As(LengthUnit).ToString();
 
           //profile = IIBeamCellularProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -677,10 +276,10 @@ namespace GsaGH.Components
         else if (typ == "IIBeamSymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamSymmetricalProfile).Name))
         {
           profile += "I" + unit +
-             Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+             Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString();
 
           //profile = IIBeamSymmetricalProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -692,10 +291,10 @@ namespace GsaGH.Components
         else if (typ == "IRectangleHollowProfile") //(typ.Name.Equals(typeof(IRectangleHollowProfile).Name))
         {
           profile += "RHS" + unit +
-             Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+             Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString();
 
           //profile = IRectangleHollowProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -707,8 +306,8 @@ namespace GsaGH.Components
         else if (typ == "IRectangleProfile") //(typ.Name.Equals(typeof(IRectangleProfile).Name))
         {
           profile += "R" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString();
 
           //profile = IRectangleProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -719,10 +318,10 @@ namespace GsaGH.Components
         else if (typ == "IRectoEllipseProfile") //(typ.Name.Equals(typeof(IRectoEllipseProfile).Name))
         {
           profile += "RE" + unit +
-             Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " 2";
+             Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString() + " 2";
 
           //profile = IRectoEllipseProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -749,8 +348,8 @@ namespace GsaGH.Components
           }
 
           profile += (isWallNotSection ? "SP" : "SPW") + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
               pileCount.ToString();
 
           //profile = ISecantPileProfile.Create(
@@ -763,12 +362,12 @@ namespace GsaGH.Components
         else if (typ == "ISheetPileProfile") //(typ.Name.Equals(typeof(ISheetPileProfile).Name))
         {
           profile += "SHT" + unit +
-             Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 4, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 5, lengthUnit).As(lengthUnit).ToString();
+             Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 4, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 5, LengthUnit).As(LengthUnit).ToString();
 
           //profile = ISheetPileProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -783,8 +382,8 @@ namespace GsaGH.Components
         else if (typ == "IStadiumProfile") //(typ.Name.Equals(typeof(IStadiumProfile).Name))
         {
           profile += "RC" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString();
 
           //profile = IStadiumProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -795,9 +394,9 @@ namespace GsaGH.Components
         else if (typ == "ITrapezoidProfile") //(typ.Name.Equals(typeof(ITrapezoidProfile).Name))
         {
           profile += "TR" + unit +
-              Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-              Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString();
+              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+              Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString();
 
           //profile = ITrapezoidProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -809,10 +408,10 @@ namespace GsaGH.Components
         else if (typ == "ITSectionProfile") //(typ.Name.Equals(typeof(ITSectionProfile).Name))
         {
           profile += "T" + unit +
-             Input.LengthOrRatio(this, DA, 0, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 1, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 2, lengthUnit).As(lengthUnit).ToString() + " " +
-             Input.LengthOrRatio(this, DA, 3, lengthUnit).As(lengthUnit).ToString();
+             Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 1, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 2, LengthUnit).As(LengthUnit).ToString() + " " +
+             Input.LengthOrRatio(this, DA, 3, LengthUnit).As(LengthUnit).ToString();
 
           //profile = ITSectionProfile.Create(
           //    Input.LengthOrRatio(this, DA, 0, lengthUnit),
@@ -958,7 +557,7 @@ namespace GsaGH.Components
               }
             }
           }
-          switch (lengthUnit)
+          switch (LengthUnit)
           {
             case LengthUnit.Millimeter:
               perimeter.sectUnit = Profile.SectUnitOptions.u_mm;
@@ -1005,7 +604,6 @@ namespace GsaGH.Components
       }
 
       #endregion
-
     }
 
     #region menu override
@@ -1014,15 +612,10 @@ namespace GsaGH.Components
       Catalogue,
       Other
     }
-    private bool first = true;
     private FoldMode _mode = FoldMode.Other;
-
 
     private void Mode1Clicked()
     {
-      if (_mode == FoldMode.Catalogue)
-        if (!comingFromSave) { return; }
-
       //remove input parameters
       while (Params.Input.Count > 0)
         Params.UnregisterInputParameter(Params.Input[0], true);
@@ -1033,13 +626,11 @@ namespace GsaGH.Components
 
       _mode = FoldMode.Catalogue;
 
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
+      base.UpdateUI();
     }
     private void SetNumberOfGenericInputs(int inputs, bool isSecantPile = false, bool isPerimeter = false)
     {
-      numberOfInputs = inputs;
+      this._numberOfInputs = inputs;
 
       // if last input previously was a bool and we no longer need that
       if (lastInputWasSecant || isSecantPile || isPerimeter)
@@ -1086,7 +677,7 @@ namespace GsaGH.Components
     }
     private bool lastInputWasSecant;
     private bool lastInputWasPerimeter;
-    private int numberOfInputs;
+    private int _numberOfInputs;
     // temporary 
     //private Type typ = typeof(IRectangleProfile);
     private string typ = "IRectangleProfile";
@@ -1258,60 +849,372 @@ namespace GsaGH.Components
     }
 
     #endregion
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      writer.SetString("mode", _mode.ToString());
-      writer.SetString("lengthUnit", lengthUnit.ToString());
-      writer.SetBoolean("inclSS", inclSS);
-      writer.SetInt32("NumberOfInputs", numberOfInputs);
-      writer.SetInt32("catalogueIndex", catalogueIndex);
-      writer.SetInt32("typeIndex", typeIndex);
-      writer.SetString("search", search);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      first = false;
 
-      DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
+    #region Custom UI
+    
+    //List<string> excludedInterfaces = new List<string>(new string[]
+    //{
+    //    "IProfile", "IPoint", "IPolygon", "IFlange", "IWeb", "IWebConstant", "IWebTapered", "ITrapezoidProfileAbstractInterface", "IIBeamProfile"
+    //});
 
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), reader.GetString("mode"));
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("lengthUnit"));
+    // temporary manual implementation of profile types (to be replaced by reflection of Oasys.Profiles)
+    //Dictionary<string, Type> profileTypes;
+    private static Dictionary<string, string> _profileTypes = new Dictionary<string, string>
+        {
+            { "Angle", "IAngleProfile" },
+            { "Catalogue", "ICatalogueProfile" },
+            { "Channel", "IChannelProfile" },
+            { "Circle Hollow", "ICircleHollowProfile" },
+            { "Circle", "ICircleProfile" },
+            { "Cruciform Symmetrical", "ICruciformSymmetricalProfile" },
+            { "Ellipse Hollow", "IEllipseHollowProfile" },
+            { "Ellipse", "IEllipseProfile" },
+            { "General C", "IGeneralCProfile" },
+            { "General Z", "IGeneralZProfile" },
+            { "I Beam Asymmetrical", "IIBeamAsymmetricalProfile" },
+            { "I Beam Cellular", "IIBeamCellularProfile" },
+            { "I Beam Symmetrical", "IIBeamSymmetricalProfile" },
+            { "Perimeter", "IPerimeterProfile" },
+            { "Rectangle Hollow", "IRectangleHollowProfile" },
+            { "Rectangle", "IRectangleProfile" },
+            { "Recto Ellipse", "IRectoEllipseProfile" },
+            { "Recto Circle", "IStadiumProfile" },
+            { "Secant Pile", "ISecantPileProfile" },
+            { "Sheet Pile", "ISheetPileProfile" },
+            { "Trapezoid", "ITrapezoidProfile" },
+            { "T Section", "ITSectionProfile" },
+        };
 
-      inclSS = reader.GetBoolean("inclSS");
-      numberOfInputs = reader.GetInt32("NumberOfInputs");
+    private LengthUnit LengthUnit = DefaultUnits.LengthUnitSection;
 
-      catalogueIndex = reader.GetInt32("catalogueIndex");
-      typeIndex = reader.GetInt32("typeIndex");
-      search = reader.GetString("search");
+    // for catalogue selection
+    // Catalogues
+    private readonly Tuple<List<string>, List<int>> _cataloguedata = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+    private List<int> _catalogueNumbers = new List<int>(); // internal db catalogue numbers
+    private List<string> _catalogueNames = new List<string>(); // list of displayed catalogues
+    bool _inclSS;
 
-      UpdateUIFromSelectedItems();
+    // Types
+    private Tuple<List<string>, List<int>> _typedata = SqlReader.GetTypesDataFromSQLite(-1, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
+    private List<int> _typeNumbers = new List<int>(); //  internal db type numbers
+    private List<string> _typeNames = new List<string>(); // list of displayed types
 
-      return base.Read(reader);
-    }
-    bool comingFromSave = false;
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+    // Sections
+    // list of displayed sections
+    private List<string> _sectionList = SqlReader.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
+    private List<string> _filteredlist = new List<string>();
+    int _catalogueIndex = -1; //-1 is all
+    int _typeIndex = -1;
+    // displayed selections
+    string typeName = "All";
+    string sectionName = "All";
+    // list of sections as outcome from selections
+    string profileString = "HE HE200.B";
+    string _search = "";
+
+    public override void InitialiseDropdowns()
     {
-      return false;
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Profile type", "Measure", "Type", "Profile"
+        });
+
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // Profile type
+      this.DropDownItems.Add(_profileTypes.Keys.ToList());
+      this.SelectedItems.Add("Rectangle");
+
+      // Length
+      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+      this.SelectedItems.Add(this.LengthUnit.ToString());
+
+      this.IsInitialised = true;
     }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+
+    public override void SetSelected(int i, int j)
     {
-      return false;
+      // input -1 to force update of catalogue sections to include/exclude superseeded
+      bool updateCat = false;
+      if (i == -1)
+      {
+        SelectedItems[0] = "Catalogue";
+        updateCat = true;
+        i = 0;
+      }
+      else
+      {
+        // change selected item
+        SelectedItems[i] = DropDownItems[i][j];
+      }
+
+      if (SelectedItems[0] == "Catalogue")
+      {
+        // update spacer description to match catalogue dropdowns
+        SpacerDescriptions[1] = "Catalogue";
+
+        // if FoldMode is not currently catalogue state, then we update all lists
+        if (_mode != FoldMode.Catalogue | updateCat)
+        {
+          // remove any existing selections
+          while (SelectedItems.Count > 1)
+            SelectedItems.RemoveAt(1);
+
+          // set catalogue selection to all
+          _catalogueIndex = -1;
+
+          _catalogueNames = _cataloguedata.Item1;
+          _catalogueNumbers = _cataloguedata.Item2;
+
+          // set types to all
+          _typeIndex = -1;
+          // update typelist with all catalogues
+          _typedata = SqlReader.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+          _typeNames = _typedata.Item1;
+          _typeNumbers = _typedata.Item2;
+
+          // update section list to all types
+          _sectionList = SqlReader.GetSectionsDataFromSQLite(_typeNumbers, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+
+          // filter by search pattern
+          _filteredlist = new List<string>();
+          if (_search == "")
+          {
+            _filteredlist = _sectionList;
+          }
+          else
+          {
+            for (int k = 0; k < _sectionList.Count; k++)
+            {
+              if (_sectionList[k].ToLower().Contains(_search))
+              {
+                _filteredlist.Add(_sectionList[k]);
+              }
+              if (!_search.Any(char.IsDigit))
+              {
+                string test = _sectionList[k].ToString();
+                test = Regex.Replace(test, "[0-9]", string.Empty);
+                test = test.Replace(".", string.Empty);
+                test = test.Replace("-", string.Empty);
+                test = test.ToLower();
+                if (test.Contains(_search))
+                {
+                  _filteredlist.Add(_sectionList[k]);
+                }
+              }
+            }
+          }
+
+          // update displayed selections to all
+          SelectedItems.Add(_catalogueNames[0]);
+          SelectedItems.Add(_typeNames[0]);
+          SelectedItems.Add(_filteredlist[0]);
+
+          // call graphics update
+          Mode1Clicked();
+        }
+
+        // update dropdown lists
+        while (DropDownItems.Count > 1)
+          DropDownItems.RemoveAt(1);
+
+        // add catalogues (they will always be the same so no need to rerun sql call)
+        DropDownItems.Add(_catalogueNames);
+
+        // type list
+        // if second list (i.e. catalogue list) is changed, update types list to account for that catalogue
+        if (i == 1)
+        {
+          // update catalogue index with the selected catalogue
+          _catalogueIndex = _catalogueNumbers[j];
+          SelectedItems[1] = _catalogueNames[j];
+
+          // update typelist with selected input catalogue
+          _typedata = SqlReader.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+          _typeNames = _typedata.Item1;
+          _typeNumbers = _typedata.Item2;
+
+          // update section list from new types (all new types in catalogue)
+          List<int> types = _typeNumbers.ToList();
+          types.RemoveAt(0); // remove -1 from beginning of list
+          _sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+
+          // filter by search pattern
+          _filteredlist = new List<string>();
+          if (_search == "")
+          {
+            _filteredlist = _sectionList;
+          }
+          else
+          {
+            for (int k = 0; k < _sectionList.Count; k++)
+            {
+              if (_sectionList[k].ToLower().Contains(_search))
+              {
+                _filteredlist.Add(_sectionList[k]);
+              }
+              if (!_search.Any(char.IsDigit))
+              {
+                string test = _sectionList[k].ToString();
+                test = Regex.Replace(test, "[0-9]", string.Empty);
+                test = test.Replace(".", string.Empty);
+                test = test.Replace("-", string.Empty);
+                test = test.ToLower();
+                if (test.Contains(_search))
+                {
+                  _filteredlist.Add(_sectionList[k]);
+                }
+              }
+            }
+          }
+
+          // update selections to display first item in new list
+          SelectedItems[2] = _typeNames[0];
+          SelectedItems[3] = _filteredlist[0];
+        }
+        DropDownItems.Add(_typeNames);
+
+        // section list
+        // if third list (i.e. types list) is changed, update sections list to account for these section types
+
+        if (i == 2)
+        {
+          // update catalogue index with the selected catalogue
+          _typeIndex = _typeNumbers[j];
+          SelectedItems[2] = _typeNames[j];
+
+          // create type list
+          List<int> types = new List<int>();
+          if (_typeIndex == -1) // if all
+          {
+            types = _typeNumbers.ToList(); // use current selected list of type numbers
+            types.RemoveAt(0); // remove -1 from beginning of list
+          }
+          else
+            types = new List<int> { _typeIndex }; // create empty list and add the single selected type 
+
+
+          // section list with selected types (only types in selected type)
+          _sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+
+          // filter by search pattern
+          _filteredlist = new List<string>();
+          if (_search == "")
+          {
+            _filteredlist = _sectionList;
+          }
+          else
+          {
+            for (int k = 0; k < _sectionList.Count; k++)
+            {
+              if (_sectionList[k].ToLower().Contains(_search))
+              {
+                _filteredlist.Add(_sectionList[k]);
+              }
+              if (!_search.Any(char.IsDigit))
+              {
+                string test = _sectionList[k].ToString();
+                test = Regex.Replace(test, "[0-9]", string.Empty);
+                test = test.Replace(".", string.Empty);
+                test = test.Replace("-", string.Empty);
+                test = test.ToLower();
+                if (test.Contains(_search))
+                {
+                  _filteredlist.Add(_sectionList[k]);
+                }
+              }
+            }
+          }
+
+          // update selected section to be all
+          SelectedItems[3] = _filteredlist[0];
+        }
+        DropDownItems.Add(_filteredlist);
+
+        // selected profile
+        // if fourth list (i.e. section list) is changed, updated the sections list to only be that single profile
+        if (i == 3)
+        {
+          // update displayed selected
+          SelectedItems[3] = _filteredlist[j];
+        }
+        profileString = SelectedItems[3];
+
+        base.UpdateUI();
+      }
+      else
+      {
+        // update spacer description to match none-catalogue dropdowns
+        SpacerDescriptions[1] = "Measure";// = new List<string>(new string[]
+
+        if (_mode != FoldMode.Other)
+        {
+          // remove all catalogue dropdowns
+          while (DropDownItems.Count > 1)
+            DropDownItems.RemoveAt(1);
+
+          // add length measure dropdown list
+          DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+
+          // set selected length
+          SelectedItems[1] = LengthUnit.ToString();
+        }
+
+        if (i == 0)
+        {
+          // update profile type if change is made to first dropdown menu
+          typ = _profileTypes[SelectedItems[0]];
+          Mode2Clicked();
+        }
+        else
+        {
+          // change unit
+          this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[i]);
+
+          base.UpdateUI();
+        }
+      }
     }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+
+    public override void UpdateUIFromSelectedItems()
     {
-      return null;
+      if (SelectedItems[0] == "Catalogue")
+      {
+        // update spacer description to match catalogue dropdowns
+        SpacerDescriptions = new List<string>(new string[]
+        {
+          "Profile type", "Catalogue", "Type", "Profile"
+        });
+
+        _catalogueNames = _cataloguedata.Item1;
+        _catalogueNumbers = _cataloguedata.Item2;
+        _typedata = SqlReader.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+        _typeNames = _typedata.Item1;
+        _typeNumbers = _typedata.Item2;
+
+        Mode1Clicked();
+
+        profileString = SelectedItems[3];
+      }
+      else
+      {
+        // update spacer description to match none-catalogue dropdowns
+        SpacerDescriptions = new List<string>(new string[]
+        {
+          "Profile type", "Measure", "Type", "Profile"
+        });
+
+        typ = _profileTypes[SelectedItems[0]];
+        Mode2Clicked();
+      }
+
+      base.UpdateUIFromSelectedItems();
     }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+
+    public override void VariableParameterMaintenance()
     {
-      return false;
-    }
-    #endregion
-    #region IGH_VariableParameterComponent null implementation
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
+      
       if (_mode == FoldMode.Catalogue)
       {
         int i = 0;
@@ -1330,8 +1233,7 @@ namespace GsaGH.Components
       }
       else
       {
-        IQuantity quantity = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+        string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
 
         int i = 0;
         // angle
@@ -1970,6 +1872,33 @@ namespace GsaGH.Components
           //Params.Input[i].Optional = true;
         }
       }
+    }
+    #endregion
+
+    #region (de)serialization
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    {
+      writer.SetString("mode", _mode.ToString());
+      writer.SetString("lengthUnit", LengthUnit.ToString());
+      writer.SetBoolean("inclSS", _inclSS);
+      writer.SetInt32("NumberOfInputs", _numberOfInputs);
+      writer.SetInt32("catalogueIndex", _catalogueIndex);
+      writer.SetInt32("typeIndex", _typeIndex);
+      writer.SetString("search", _search);
+      return base.Write(writer);
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), reader.GetString("mode"));
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("lengthUnit"));
+
+      this._inclSS = reader.GetBoolean("inclSS");
+      this._numberOfInputs = reader.GetInt32("NumberOfInputs");
+      this._catalogueIndex = reader.GetInt32("catalogueIndex");
+      this._typeIndex = reader.GetInt32("typeIndex");
+      this._search = reader.GetString("search");
+
+      return base.Read(reader);
     }
     #endregion
   }

@@ -17,16 +17,16 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Offset
   /// </summary>
-  public class CreateSectionModifier : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CreateSectionModifier : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("e65d2554-75a9-4fac-9f12-1400e84aeee9");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateSectionModifier;
 
-    public CreateSectionModifier()      : base("Create Section Modifier", 
+    public CreateSectionModifier() 
+      : base("Create Section Modifier", 
       "SectionModifier", 
       "Create GSA Section Modifier",
       Ribbon.CategoryName.Name(),
@@ -34,164 +34,10 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        dropdownitems.Add(optionTypes);
-        selecteditems.Add(optionTypes[0]);
-
-        dropdownitems.Add(FilteredUnits.FilteredLinearDensityUnits);
-        selecteditems.Add(densityUnit.ToString());
-
-        dropdownitems.Add(stressOptions);
-        selecteditems.Add(stressOptions[0]);
-
-        first = false;
-      }
-
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      if (i == 0)
-      {
-        if (j == 0)
-        {
-          if (toMode == true)
-          {
-            dropdownitems.RemoveAt(1);
-            selecteditems.RemoveAt(1);
-            spacerDescriptions.RemoveAt(1);
-          }
-          toMode = false;
-        }
-        else
-        {
-          if (toMode == false)
-          {
-            dropdownitems.Insert(1, FilteredUnits.FilteredLengthUnits);
-            selecteditems.Insert(1, lengthUnit.ToString());
-            spacerDescriptions.Insert(1, "Length unit");
-          }
-          toMode = true;
-        }
-      }
-
-      if (i == 1)
-      {
-        if (toMode == false)
-          densityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), selecteditems[i]);
-        else
-          lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
-      }
-
-      if (i == 2)
-      {
-        if (toMode == false)
-        {
-          if (j == 0)
-            stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-          if (j == 1)
-            stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-          if (j == 2)
-            stressOption = GsaSectionModifier.StressOptionType.UseModified;
-        }
-        else
-          densityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), selecteditems[i]);
-      }
-
-      if (i == 3)
-      {
-        if (j == 0)
-          stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-        if (j == 1)
-          stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-        if (j == 2)
-          stressOption = GsaSectionModifier.StressOptionType.UseModified;
-      }
-
-      // update name of inputs (to display unit on sliders)
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-
-    private void UpdateUIFromSelectedItems()
-    {
-      if (toMode)
-      {
-
-        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[1]);
-        densityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), selecteditems[2]);
-        if (selecteditems[3] == stressOptions[0])
-          stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-        if (selecteditems[3] == stressOptions[1])
-          stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-        if (selecteditems[3] == stressOptions[2])
-          stressOption = GsaSectionModifier.StressOptionType.UseModified;
-      }
-      else
-      {
-        densityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), selecteditems[1]);
-        if (selecteditems[2] == stressOptions[0])
-          stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-        if (selecteditems[2] == stressOptions[1])
-          stressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
-        if (selecteditems[2] == stressOptions[2])
-          stressOption = GsaSectionModifier.StressOptionType.UseModified;
-      }
-
-      CreateAttributes();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    #endregion
-
     #region Input and output
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-      "Modify type",
-      "Density unit",
-      "Stress calc."
-    });
-    List<string> optionTypes = new List<string>(new string[]
-    {
-      "Modify by",
-      "Modify to"
-    });
-    List<string> stressOptions = new List<string>(new string[]
-    {
-      "Don't calculate",
-      "Use unmodified",
-      "Use modified",
-    });
-    private bool toMode = false;
-    private bool first = true;
-    private GsaSectionModifier.StressOptionType stressOption = GsaSectionModifier.StressOptionType.NoCalculation;
-    private LinearDensityUnit densityUnit = DefaultUnits.LinearDensityUnit;
-    private LengthUnit lengthUnit = DefaultUnits.LengthUnitSection;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity quantity = new LinearDensity(0, densityUnit);
-      string unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
+      string unitAbbreviation = LinearDensity.GetAbbreviation(this.DensityUnit);
 
       pManager.AddGenericParameter("Area Modifier", "A", "[Optional] Modify the effective Area BY this decimal fraction value (Default = 1.0 -> 100%)", GH_ParamAccess.item);
       pManager.AddGenericParameter("I11 Modifier", "I11", "[Optional] Modify the effective Iyy/Iuu BY this decimal fraction value (Default = 1.0 -> 100%)", GH_ParamAccess.item);
@@ -217,11 +63,11 @@ namespace GsaGH.Components
     protected override void SolveInstance(IGH_DataAccess DA)
     {
       GsaSectionModifier modifier = new GsaSectionModifier();
-      if (toMode)
+      if (this._toMode)
       {
-        AreaUnit areaUnit = UnitsHelper.GetAreaUnit(lengthUnit);
-        AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(lengthUnit);
-        VolumePerLengthUnit volUnit = UnitsHelper.GetVolumePerLengthUnit(lengthUnit);
+        AreaUnit areaUnit = UnitsHelper.GetAreaUnit(this.LengthUnit);
+        AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(this.LengthUnit);
+        VolumePerLengthUnit volUnit = UnitsHelper.GetVolumePerLengthUnit(this.LengthUnit);
 
         if (this.Params.Input[0].SourceCount > 0)
           modifier.AreaModifier = Input.UnitNumber(this, DA, 0, areaUnit, true);
@@ -249,7 +95,7 @@ namespace GsaGH.Components
         modifier.VolumeModifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 6);
       }
 
-      modifier.AdditionalMass = (LinearDensity)Input.UnitNumber(this, DA, 7, densityUnit, true);
+      modifier.AdditionalMass = (LinearDensity)Input.UnitNumber(this, DA, 7, DensityUnit, true);
       
       bool ax = false;
       if (DA.GetData(8, ref ax))
@@ -259,56 +105,149 @@ namespace GsaGH.Components
       if (DA.GetData(9, ref pt))
         modifier.IsReferencePointCentroid = pt;
 
-      modifier.StressOption = stressOption;
+      modifier.StressOption = this.StressOption;
 
       DA.SetData(0, new GsaSectionModifierGoo(modifier));
     }
 
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    #region Custom UI
+    List<string> _optionTypes = new List<string>(new string[]
     {
-      GsaGH.Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      writer.SetBoolean("toMode", toMode);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+      "Modify by",
+      "Modify to"
+    });
+    List<string> _stressOptions = new List<string>(new string[]
     {
-      GsaGH.Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      toMode = reader.GetBoolean("toMode");
-      UpdateUIFromSelectedItems();
-      first = false;
-      return base.Read(reader);
-    }
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+      "Don't calculate",
+      "Use unmodified",
+      "Use modified",
+    });
+    private bool _toMode = false;
+    private GsaSectionModifier.StressOptionType StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+    private LinearDensityUnit DensityUnit = DefaultUnits.LinearDensityUnit;
+    private LengthUnit LengthUnit = DefaultUnits.LengthUnitSection;
+    public override void InitialiseDropdowns()
     {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    #endregion
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Modify type", "Density unit", "Stress calc."
+        });
 
-    #region IGH_VariableParameterComponent null implementation
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // Types
+      this.DropDownItems.Add(_optionTypes);
+      this.SelectedItems.Add(_optionTypes[0]);
+
+      // Density
+      this.DropDownItems.Add(FilteredUnits.FilteredLinearDensityUnits);
+      this.SelectedItems.Add(this.DensityUnit.ToString());
+
+      // Stress option
+      this.DropDownItems.Add(this._stressOptions);
+      this.SelectedItems.Add(this._stressOptions[0]);
+
+      this.IsInitialised = true;
+    }
+
+    public override void SetSelected(int i, int j)
     {
-      LinearDensity quantity = new LinearDensity(0, densityUnit);
-      Params.Input[7].Name = "Additional Mass [" + quantity.ToString("a") + "]";
-      if (toMode)
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+
+      if (i == 0)
       {
-        IQuantity len = new Length(0, lengthUnit);
-        string unit = string.Concat(len.ToString().Where(char.IsLetter));
+        if (j == 0)
+        {
+          if (this._toMode == true)
+          {
+            this.DropDownItems.RemoveAt(1);
+            this.SelectedItems.RemoveAt(1);
+            this.SpacerDescriptions.RemoveAt(1);
+          }
+          this._toMode = false;
+        }
+        else
+        {
+          if (_toMode == false)
+          {
+            this.DropDownItems.Insert(1, FilteredUnits.FilteredLengthUnits);
+            this.SelectedItems.Insert(1, this.LengthUnit.ToString());
+            this.SpacerDescriptions.Insert(1, "Length unit");
+          }
+          this._toMode = true;
+        }
+      }
 
-        VolumePerLength vol = new VolumePerLength(0, UnitsHelper.GetVolumePerLengthUnit(lengthUnit));
-        string volUnit = vol.ToString("a");
+      if (i == 1)
+      {
+        if (this._toMode == false)
+          this.DensityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), this.SelectedItems[i]);
+        else
+          this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+      }
+
+      if (i == 2)
+      {
+        if (this._toMode == false)
+        {
+          if (j == 0)
+            this.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+          if (j == 1)
+            this.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+          if (j == 2)
+            this.StressOption = GsaSectionModifier.StressOptionType.UseModified;
+        }
+        else
+          this.DensityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), this.SelectedItems[i]);
+      }
+
+      if (i == 3)
+      {
+        if (j == 0)
+          this.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+        if (j == 1)
+          this.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+        if (j == 2)
+          this.StressOption = GsaSectionModifier.StressOptionType.UseModified;
+      }
+      base.UpdateUI();
+    }
+
+    public override void UpdateUIFromSelectedItems()
+    {
+      if (this._toMode)
+      {
+        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+        this.DensityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), this.SelectedItems[2]);
+        if (this.SelectedItems[3] == this._stressOptions[0])
+          this.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+        if (this.SelectedItems[3] == this._stressOptions[1])
+          this.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+        if (this.SelectedItems[3] == this._stressOptions[2])
+          this.StressOption = GsaSectionModifier.StressOptionType.UseModified;
+      }
+      else
+      {
+        this.DensityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), this.SelectedItems[1]);
+        if (this.SelectedItems[2] == _stressOptions[0])
+          this.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
+        if (this.SelectedItems[2] == _stressOptions[1])
+          this.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
+        if (this.SelectedItems[2] == _stressOptions[2])
+          this.StressOption = GsaSectionModifier.StressOptionType.UseModified;
+      }
+
+      base.UpdateUIFromSelectedItems();
+    }
+
+    public override void VariableParameterMaintenance()
+    {
+      Params.Input[7].Name = "Additional Mass [" + LinearDensity.GetAbbreviation(this.DensityUnit) + "]";
+      if (_toMode)
+      {
+        string unit = Length.GetAbbreviation(this.LengthUnit);
+        string volUnit = VolumePerLength.GetAbbreviation(UnitsHelper.GetVolumePerLengthUnit(LengthUnit));
 
         Params.Input[0].Name = "Area Modifier [" + unit + "\u00B2]";
         Params.Input[0].Description = "[Optional] Modify the effective Area TO this value";
@@ -344,6 +283,18 @@ namespace GsaGH.Components
       }
     }
     #endregion
+
+    #region (de)serialization
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    {
+      writer.SetBoolean("toMode", _toMode);
+      return base.Write(writer);
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      _toMode = reader.GetBoolean("toMode");
+      return base.Read(reader);
+    }
+    #endregion
   }
 }
-

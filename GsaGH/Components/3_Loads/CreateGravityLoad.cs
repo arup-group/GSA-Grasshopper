@@ -25,10 +25,6 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    #endregion
-
     #region input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
@@ -46,12 +42,11 @@ namespace GsaGH.Components
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Gravity load", "Ld", "GSA Gravity Load", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaLoadParameter(), "Gravity load", "Ld", "GSA Gravity Load", GH_ParamAccess.item);
     }
     #endregion
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-
       GsaGravityLoad gravityLoad = new GsaGravityLoad();
 
       //Load case

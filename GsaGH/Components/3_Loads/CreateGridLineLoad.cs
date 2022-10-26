@@ -16,7 +16,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridLineLoad : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CreateGridLineLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e1f22e6f-8550-4078-8613-ea5ed2ede2b9");
@@ -32,67 +32,10 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        dropdownitems.Add(FilteredUnits.FilteredForcePerLengthUnits);
-
-        selecteditems = new List<string>();
-        selecteditems.Add(DefaultUnits.ForcePerLengthUnit.ToString());
-
-        first = false;
-      }
-
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[0]);
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-
-      // update input params
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      forcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), selecteditems[0]);
-
-      CreateAttributes();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    #endregion
-
     #region Input and output
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Unit",
-    });
-
-    private ForcePerLengthUnit forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
-    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
-    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
-    bool first = true;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity force = new ForcePerLength(0, forcePerLengthUnit);
-      string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+      string unitAbbreviation = ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit);
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
       pManager.AddCurveParameter("PolyLine", "L", "PolyLine. If you input grid plane below only x and y coordinate positions will be used from this polyline, but if not a new Grid Plane Surface (best-fit plane) will be created from PolyLine control points.", GH_ParamAccess.item);
@@ -121,7 +64,7 @@ namespace GsaGH.Components
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Grid Line Load", "Ld", "GSA Grid Line Load", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaLoadParameter(), "Grid Line Load", "Ld", "GSA Grid Line Load", GH_ParamAccess.item);
     }
     #endregion
     protected override void SolveInstance(IGH_DataAccess DA)
@@ -291,70 +234,54 @@ namespace GsaGH.Components
       }
 
       // 7 load value
-      double load1 = ((ForcePerLength)Input.UnitNumber(this, DA, 7, forcePerLengthUnit)).NewtonsPerMeter;
+      double load1 = ((ForcePerLength)Input.UnitNumber(this, DA, 7, this.ForcePerLengthUnit)).NewtonsPerMeter;
       gridlineload.GridLineLoad.ValueAtStart = load1;
 
       // 8 load value
       double load2 = load1;
       if (DA.GetData(8, ref load2))
-        load2 = ((ForcePerLength)Input.UnitNumber(this, DA, 6, forcePerLengthUnit, true)).NewtonsPerMeter;
+        load2 = ((ForcePerLength)Input.UnitNumber(this, DA, 6, this.ForcePerLengthUnit, true)).NewtonsPerMeter;
       gridlineload.GridLineLoad.ValueAtEnd = load2;
 
       // convert to goo
       GsaLoad gsaLoad = new GsaLoad(gridlineload);
       DA.SetData(0, new GsaLoadGoo(gsaLoad));
     }
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      try // this will fail if user has an old version of the component
-      {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      }
-      catch (Exception) // we set the stored values like first initation of component
-      {
-        dropdownitems = new List<List<string>>();
-        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
 
-        selecteditems = new List<string>();
-        selecteditems.Add(ForceUnit.Kilonewton.ToString());
-        selecteditems.Add(LengthUnit.Meter.ToString());
-      }
-      first = false;
+    #region Custom UI
+    ForcePerLengthUnit ForcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
 
-      UpdateUIFromSelectedItems();
-      return base.Read(reader);
+    public override void InitialiseDropdowns()
+    {
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Unit"
+        });
+
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // ForcePerLength
+      this.DropDownItems.Add(FilteredUnits.FilteredForcePerLengthUnits);
+      this.SelectedItems.Add(this.ForcePerLengthUnit.ToString());
+
+      this.IsInitialised = true;
+    }
+    public override void SetSelected(int i, int j)
+    {
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      this.ForcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[i]);
+      base.UpdateUI();
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+    public override void UpdateUIFromSelectedItems()
     {
-      return false;
+      this.ForcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[0]);
+      base.UpdateUIFromSelectedItems();
     }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+    public override void VariableParameterMaintenance()
     {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    #endregion
-    #region IGH_VariableParameterComponent null implementation
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      IQuantity force = new ForcePerLength(0, forcePerLengthUnit);
-      string unitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-
+      string unitAbbreviation = ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit);
       Params.Input[7].Name = "Value Start [" + unitAbbreviation + "]";
       Params.Input[8].Name = "Value End [" + unitAbbreviation + "]";
     }

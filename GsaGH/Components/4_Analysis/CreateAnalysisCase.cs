@@ -7,12 +7,11 @@ using OasysGH.Components;
 namespace GsaGH.Components
 {
   /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
+  /// Component to create a GSA Analysis Case
   /// </summary>
   public class CreateAnalysisCase : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("75bf9454-92c4-4a3c-8abf-75f1d449bb85");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -26,12 +25,7 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddTextParameter("Name", "Na", "Case Name", GH_ParamAccess.item);
@@ -43,7 +37,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Analysis Case", "ΣA", "GSA Analysis Case", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaAnalysisCaseParameter());
     }
     #endregion
 
@@ -59,4 +53,3 @@ namespace GsaGH.Components
     }
   }
 }
-

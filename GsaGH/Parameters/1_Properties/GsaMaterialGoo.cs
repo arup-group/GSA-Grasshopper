@@ -21,6 +21,35 @@ namespace GsaGH.Parameters
 
     public override IGH_Goo Duplicate() => new GsaMaterialGoo(this.Value);
 
+    public override bool CastTo<Q>(ref Q target)
+    {
+      if (base.CastTo<Q>(ref target))
+        return true;
+
+      if (typeof(Q).IsAssignableFrom(typeof(GsaProp3d)))
+      {
+        if (Value == null)
+          target = default;
+        else
+        {
+          target = (Q)(object)new GsaProp3d(Value);
+        }
+        return true;
+      }
+      if (typeof(Q).IsAssignableFrom(typeof(GsaProp3dGoo)))
+      {
+        if (Value == null)
+          target = default;
+        else
+        {
+          target = (Q)(object)new GsaProp3dGoo(new GsaProp3d(Value));
+        }
+        return true;
+      }
+
+      return false;
+    }
+
     public override bool CastFrom(object source)
     {
       if (source == null) 
