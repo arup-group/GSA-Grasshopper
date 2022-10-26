@@ -5,16 +5,16 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Units.Helpers;
 
 namespace GsaGH.Components
 {
   /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
+  /// Component to create a GSA Analysis Task
   /// </summary>
-  public class CreateAnalysisTask : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CreateAnalysisTask : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("6ef86d0b-892c-4b6f-950e-b4477e9f0910");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -28,62 +28,7 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // analysis types
-        //dropdownitems.Add(Enum.GetValues(typeof(GsaAnalysisTask.AnalysisType)).Cast<GsaAnalysisTask.AnalysisType>().Select(x => x.ToString()).ToList());
-        dropdownitems.Add(new List<string>() { GsaAnalysisTask.AnalysisType.Static.ToString() }); // temp workaround, we cannot set type back into model at present
-        selecteditems.Add(analtype.ToString());
-
-        first = false;
-      }
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      analtype = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType), selecteditems[i]);
-
-      // update name of inputs (to display unit on sliders)
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      analtype = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType), selecteditems[0]);
-
-      CreateAttributes();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Solver type"
-    });
-    private bool first = true;
-    private GsaAnalysisTask.AnalysisType analtype = GsaAnalysisTask.AnalysisType.Static;
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddTextParameter("Name", "Na", "Task Name", GH_ParamAccess.item);
@@ -94,13 +39,13 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Analysis Task", "ΣT", "GSA Analysis Task", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaAnalysisTaskParameter());
     }
     #endregion
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      string name = analtype.ToString();
+      string name = _analtype.ToString();
       DA.GetData(0, ref name);
 
       List<GsaAnalysisCase> cases = null;
@@ -132,54 +77,47 @@ namespace GsaGH.Components
       if (cases == null)
         AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Default Task has been created; it will by default contain all cases found in model");
 
-      if (analtype != GsaAnalysisTask.AnalysisType.Static)
+      if (_analtype != GsaAnalysisTask.AnalysisType.Static)
         AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "It is currently not possible to adjust the solver settings. " +
             System.Environment.NewLine + "Please verify the solver settings in GSA ('Task and Cases' -> 'Analysis Tasks')");
 
       GsaAnalysisTask task = new GsaAnalysisTask();
       task.Name = name;
       task.Cases = cases;
-      task.Type = analtype;
+      task.Type = _analtype;
       DA.SetData(0, new GsaAnalysisTaskGoo(task));
     }
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
 
-      UpdateUIFromSelectedItems();
+    #region Custom UI
+    private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;
 
-      first = false;
+    public override void InitialiseDropdowns()
+    {
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Solver"
+        });
 
-      return base.Read(reader);
-    }
-    #endregion
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
 
-    #region IGH_VariableParameterComponent null implementation
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
+      // Type
+      this.DropDownItems.Add(new List<string>() { GsaAnalysisTask.AnalysisType.Static.ToString() });
+      this.SelectedItems.Add(this._analtype.ToString());
 
+      this.IsInitialised = true;
+    }
+
+    public override void SetSelected(int i, int j)
+    {
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      this._analtype = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType), this.SelectedItems[i]);
+      base.UpdateUI();
+    }
+    public override void UpdateUIFromSelectedItems()
+    {
+      this._analtype = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType), this.SelectedItems[0]);
+      base.UpdateUIFromSelectedItems();
     }
     #endregion
   }

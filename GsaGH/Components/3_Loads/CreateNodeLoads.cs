@@ -15,7 +15,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  public class CreateNodeLoad : GH_OasysComponent, IGH_VariableParameterComponent
+  public class CreateNodeLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
@@ -31,112 +31,23 @@ namespace GsaGH.Components
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        dropdownitems.Add(loadTypeOptions);
-        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-
-        selecteditems = new List<string>();
-        selecteditems.Add(_mode.ToString());
-        selecteditems.Add(DefaultUnits.ForceUnit.ToString());
-        selecteditems.Add(DefaultUnits.LengthUnitGeometry.ToString());
-
-        first = false;
-      }
-
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      if (i == 0) // change is made to the first dropdown list
-      {
-        switch (selecteditems[0])
-        {
-          case "Node":
-            _mode = FoldMode.Node;
-            break;
-          case "Applied Displ":
-            _mode = FoldMode.Applied_Displ;
-            break;
-          case "Settlement":
-            _mode = FoldMode.Settlements;
-            break;
-        }
-      }
-      else
-      {
-        switch (i)
-        {
-          case 1:
-            forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
-            break;
-          case 2:
-            lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
-            break;
-        }
-
-          (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      }
-
-      // update input params
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), selecteditems[0]);
-      forceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), selecteditems[1]);
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
-
-      CreateAttributes();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    #endregion
-
     #region Input and output
-    readonly List<string> loadTypeOptions = new List<string>(new string[]
-    {
-            "Node",
-            "Applied Displ",
-            "Settlement"
-    });
-
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Load Type",
-            "Force Unit",
-            "Length Unit"
-    });
-
-    private ForceUnit forceUnit = DefaultUnits.ForceUnit;
-    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
-
-    #endregion
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity force = new Force(0, forceUnit);
-      string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-      IQuantity length = new Length(0, lengthUnit);
-      string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-      string funit = forceUnitAbbreviation + ", " + forceUnitAbbreviation + lengthUnitAbbreviation;
+      string funit = " ";
+      switch (this._mode)
+      {
+        case FoldMode.Node_Force:
+          funit = "Value [" + Force.GetAbbreviation(this.ForceUnit) + "]";
+          break;
+        case FoldMode.Node_Moment:
+          funit = "Value [" + Moment.GetAbbreviation(this.MomentUnit) + "]";
+          break;
+        case FoldMode.Applied_Displ:
+        case FoldMode.Settlements:
+          funit = "Value [" + Length.GetAbbreviation(this.LengthUnit) + "]";
+          break;
+      }
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
       pManager.AddTextParameter("Node list", "No", "List of Nodes to apply load to." + System.Environment.NewLine +
@@ -160,18 +71,19 @@ namespace GsaGH.Components
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Node Load", "Ld", "GSA Node Load", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaLoadParameter(), "Node Load", "Ld", "GSA Node Load", GH_ParamAccess.item);
     }
+    #endregion
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-
       GsaNodeLoad nodeLoad = new GsaNodeLoad();
 
       // Node load type
       switch (_mode)
       {
-        case FoldMode.Node:
+        case FoldMode.Node_Force:
+        case FoldMode.Node_Moment:
           nodeLoad.NodeLoadType = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
           break;
         case FoldMode.Applied_Displ:
@@ -242,19 +154,23 @@ namespace GsaGH.Components
       nodeLoad.NodeLoad.Direction = direc;
 
       double load = 0;
-      if (_mode == FoldMode.Node)
+      if (_mode == FoldMode.Node_Force || _mode == FoldMode.Node_Moment)
       {
         switch (dir)
         {
           case "X":
           case "Y":
           case "Z":
-            load = ((Force)Input.UnitNumber(this, DA, 4, forceUnit)).Newtons;
+            load = ((Force)Input.UnitNumber(this, DA, 4, ForceUnit)).Newtons;
+            if (_mode != FoldMode.Node_Force)
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Direction input set to imply a 'Force' but type is set to 'Moment'. The output Node Load has been created to be of type 'Force'.");
             break;
           case "XX":
           case "YY":
           case "ZZ":
-            load = ((Force)Input.UnitNumber(this, DA, 4, forceUnit)).Newtons * new Length(1, lengthUnit).Meters;
+            load = ((Moment)Input.UnitNumber(this, DA, 4, MomentUnit)).NewtonMeters;
+            if (_mode != FoldMode.Node_Moment)
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Direction input set to imply a 'Moment' force but type is set to 'Force'. The output Node Load has been created to be of type 'Moment'.");
             break;
         }
       }
@@ -265,12 +181,13 @@ namespace GsaGH.Components
           case "X":
           case "Y":
           case "Z":
-            load = ((Length)Input.UnitNumber(this, DA, 4, lengthUnit)).Meters;
+            load = ((Length)Input.UnitNumber(this, DA, 4, LengthUnit)).Meters;
             break;
           case "XX":
           case "YY":
           case "ZZ":
             load = ((Angle)Input.UnitNumber(this, DA, 4, AngleUnit.Radian)).Radians;
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Direction input is set to be rotational type, the output load has been set to as a rotation in Radian unit.");
             break;
         }
       }
@@ -281,84 +198,129 @@ namespace GsaGH.Components
       DA.SetData(0, new GsaLoadGoo(gsaLoad));
     }
 
-    #region menu override
+
+    #region Custom UI
     private enum FoldMode
     {
-      Node,
+      Node_Force,
+      Node_Moment,
       Applied_Displ,
       Settlements
     }
-    private bool first = true;
-    private FoldMode _mode = FoldMode.Node;
-    #endregion
-
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    readonly List<string> _type = new List<string>(new string[]
     {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
+      "Node Force",
+      "Node Moment",
+      "Applied Displ",
+      "Settlement"
+    });
+    private FoldMode _mode = FoldMode.Node_Force;
+    private ForceUnit ForceUnit = DefaultUnits.ForceUnit;
+    private MomentUnit MomentUnit = DefaultUnits.MomentUnit;
+    private LengthUnit LengthUnit = DefaultUnits.LengthUnitResult;
+    public override void InitialiseDropdowns()
+    {
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Type", "Unit"
+        });
+
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // Type
+      this.DropDownItems.Add(this._type);
+      this.SelectedItems.Add(this._mode.ToString().Replace('_', ' '));
+
+      // Force
+      this.DropDownItems.Add(FilteredUnits.FilteredForceUnits);
+      this.SelectedItems.Add(this.ForceUnit.ToString());
+
+      this.IsInitialised = true;
     }
 
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    public override void SetSelected(int i, int j)
     {
-      try // this will fail if user has an old version of the component
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+
+      if (i == 0) // change is made to the first dropdown list
       {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      }
-      catch (Exception) // we set the stored values like first initation of component
-      {
-        _mode = (FoldMode)reader.GetInt32("Mode");
-
-        dropdownitems = new List<List<string>>();
-        dropdownitems.Add(loadTypeOptions);
-        dropdownitems.Add(FilteredUnits.FilteredForceUnits);
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-
-        selecteditems = new List<string>();
-        selecteditems.Add(reader.GetString("select"));
-        selecteditems.Add(ForceUnit.Kilonewton.ToString());
-        selecteditems.Add(LengthUnit.Meter.ToString());
-      }
-      first = false;
-
-      UpdateUIFromSelectedItems();
-      return base.Read(reader);
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    #endregion
-    #region IGH_VariableParameterComponent null implementation
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      IQuantity force = new Force(0, forceUnit);
-      string forceUnitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-      IQuantity length = new Length(0, lengthUnit);
-      string lengthUnitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-      string funit = forceUnitAbbreviation + ", " + forceUnitAbbreviation + lengthUnitAbbreviation;
-      string lunit = lengthUnitAbbreviation + ", rad";
-
-      if (_mode == FoldMode.Node)
-      {
-        Params.Input[4].Name = "Value [" + funit + "]";
+        switch (SelectedItems[0])
+        {
+          case "Node Force":
+            this._mode = FoldMode.Node_Force;
+            this.DropDownItems[1] = FilteredUnits.FilteredForceUnits;
+            this.SelectedItems[1] = this.ForceUnit.ToString();
+            break;
+          case "Node Moment":
+            this._mode = FoldMode.Node_Moment;
+            this.DropDownItems[1] = FilteredUnits.FilteredMomentUnits;
+            this.SelectedItems[1] = this.MomentUnit.ToString();
+            break;
+          case "Applied Displ":
+            this._mode = FoldMode.Applied_Displ;
+            this.DropDownItems[1] = FilteredUnits.FilteredLengthUnits;
+            this.SelectedItems[1] = this.LengthUnit.ToString();
+            break;
+          case "Settlement":
+            this._mode = FoldMode.Settlements;
+            this.DropDownItems[1] = FilteredUnits.FilteredLengthUnits;
+            this.SelectedItems[1] = this.LengthUnit.ToString();
+            break;
+        }
       }
       else
       {
-        Params.Input[4].Name = "Value [" + lunit + "]";
+        switch (this._mode)
+        {
+          case FoldMode.Node_Force:
+            this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[1]);
+            break;
+          case FoldMode.Node_Moment:
+            this.MomentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), this.SelectedItems[1]);
+            break;
+          case FoldMode.Applied_Displ:
+          case FoldMode.Settlements:
+            this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+            break;
+        }
+      }
+
+      base.UpdateUI();
+    }
+    public override void UpdateUIFromSelectedItems()
+    {
+      this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].Replace(' ', '_'));
+      switch (this._mode)
+      {
+        case FoldMode.Node_Force:
+          this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[1]);
+          break;
+        case FoldMode.Node_Moment:
+          this.MomentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), this.SelectedItems[1]);
+          break;
+        case FoldMode.Applied_Displ:
+        case FoldMode.Settlements:
+          this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+          break;
+      }
+      base.UpdateUIFromSelectedItems();
+    }
+
+    public override void VariableParameterMaintenance()
+    {
+      switch (this._mode)
+      {
+        case FoldMode.Node_Force:
+          Params.Input[4].Name = "Value [" + Force.GetAbbreviation(this.ForceUnit) + "]";
+          break;
+        case FoldMode.Node_Moment:
+          Params.Input[4].Name = "Value [" + Moment.GetAbbreviation(this.MomentUnit) + "]";
+          break;
+        case FoldMode.Applied_Displ:
+        case FoldMode.Settlements:
+          Params.Input[4].Name = "Value [" + Length.GetAbbreviation(this.LengthUnit) + "]";
+          break;
       }
     }
     #endregion

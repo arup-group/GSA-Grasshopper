@@ -23,12 +23,11 @@ using Rhino.Geometry;
 namespace GsaGH.Components
 {
   /// <summary>
-  /// Component to create a new Prop2d
+  /// Component to display GSA node result contours
   /// </summary>
-  public class NodeContourResults : GH_OasysComponent, IGH_VariableParameterComponent
+  public class NodeContourResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("47053884-2c22-4f2c-b092-8531fa5751e1");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -42,155 +41,10 @@ namespace GsaGH.Components
     { }
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        dropdownitems.Add(topleveldropdown); // 0 type of result (displacement, force)
-        dropdownitems.Add(dropdowndisplacement); // 1 component to display (x, y, z etc)
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits); // geometry unit
-        selecteditems = new List<string>();
-        selecteditems.Add(dropdownitems[0][0]);
-        selecteditems.Add(dropdownitems[1][3]);
-        selecteditems.Add(DefaultUnits.LengthUnitGeometry.ToString());
-        first = false;
-      }
-      m_attributes = new UI.MultiDropDownSliderComponentUI(this, SetSelected, dropdownitems, selecteditems, slider, SetVal, SetMaxMin, DefScale, MaxValue, MinValue, noDigits, spacerDescriptions);
-    }
-
-    double MinValue = 0;
-    double MaxValue = 1000;
-    double DefScale = 250;
-    int noDigits = 0;
-    bool slider = true;
-
-    public void SetVal(double value)
-    {
-      DefScale = value;
-    }
-    public void SetMaxMin(double max, double min)
-    {
-      MaxValue = max;
-      MinValue = min;
-    }
-
-    public void SetSelected(int dropdownlistidd, int selectedidd)
-    {
-      if (dropdownlistidd == 0) // if change is made to first list
-      {
-        if (selectedidd == 0)
-        {
-          if (dropdownitems[1] != dropdowndisplacement)
-          {
-            dropdownitems[1] = dropdowndisplacement;
-            selecteditems[0] = dropdownitems[0][0];
-            selecteditems[1] = dropdownitems[1][3];
-            Mode1Clicked();
-          }
-
-        }
-        if (selectedidd == 1)
-        {
-          if (dropdownitems[1] != dropdownreaction)
-          {
-            dropdownitems[1] = dropdownreaction;
-            selecteditems[0] = dropdownitems[0][1];
-            selecteditems[1] = dropdownitems[1][3];
-            Mode2Clicked();
-          }
-
-        }
-      }
-      else if (dropdownlistidd == 1)
-      {
-        _disp = (DisplayValue)selectedidd;
-        selecteditems[1] = dropdownitems[1][selectedidd];
-
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        Params.OnParametersChanged();
-        ExpireSolution(true);
-      }
-      else // change is made to the unit
-      {
-        lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
-      }
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[2]);
-
-      CreateAttributes();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    #endregion
-
     #region Input and output
-    List<List<string>> dropdownitems; // list that holds all dropdown contents
-    List<string> selecteditems;
-    bool first = true;
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Result Type",
-            "Component",
-            "Geometry Unit",
-            "Deform Shape"
-    });
-    readonly List<string> topleveldropdown = new List<string>(new string[]
-    {
-            "Displacement",
-            "Reaction"
-    });
-
-    readonly List<string> dropdowndisplacement = new List<string>(new string[]
-    {
-            "Translation Ux",
-            "Translation Uy",
-            "Translation Uz",
-            "Resolved |U|",
-            "Rotation Rxx",
-            "Rotation Ryy",
-            "Rotation Rzz",
-            "Resolved |R|"
-    });
-
-    readonly List<string> dropdownreaction = new List<string>(new string[]
-    {
-            "Reaction Fx",
-            "Reaction Fy",
-            "Reaction Fz",
-            "Resolved |F|",
-            "Reaction Mxx",
-            "Reaction Myy",
-            "Reaction Mzz",
-            "Resolved |M|",
-    });
-
-    readonly List<string> dropdownforce = new List<string>(new string[]
-    {
-            "Force Fx",
-            "Force Fy",
-            "Force Fz",
-            "Resolved |F|",
-            "Moment Mxx",
-            "Moment Myy",
-            "Moment Mzz",
-            "Resolved |M|",
-    });
-
-    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private LengthUnit lengthResultUnit = DefaultUnits.LengthUnitResult;
-    string _case = "";
-    #endregion
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddGenericParameter("Result", "Res", "GSA Result", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
       pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + System.Environment.NewLine +
           "Node list should take the form:" + System.Environment.NewLine +
           " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
@@ -204,14 +58,14 @@ namespace GsaGH.Components
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      IQuantity length = new Length(0, lengthResultUnit);
+      IQuantity length = new Length(0, LengthResultUnit);
       string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("Point", "P", "Contoured Points with result values", GH_ParamAccess.list);
       pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
       pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values", GH_ParamAccess.list);
     }
-
+    #endregion
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
@@ -278,7 +132,7 @@ namespace GsaGH.Components
         switch (_mode)
         {
           case FoldMode.Displacement:
-            Tuple<List<GsaResultsValues>, List<int>> nodedisp = result.NodeDisplacementValues(nodeList, lengthUnit);
+            Tuple<List<GsaResultsValues>, List<int>> nodedisp = result.NodeDisplacementValues(nodeList, LengthUnit);
             res = nodedisp.Item1[0];
             break;
 
@@ -295,7 +149,7 @@ namespace GsaGH.Components
         ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.xyzResults;
         ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
 
-        Enum xyzunit = lengthUnit;
+        Enum xyzunit = LengthUnit;
         Enum xxyyzzunit = AngleUnit.Radian;
         if (_mode == FoldMode.Reaction)
         {
@@ -324,7 +178,7 @@ namespace GsaGH.Components
         // ### Coloured Result Points ###
 
         // Get nodes for point location and restraint check in case of reaction force
-        ConcurrentDictionary<int, GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodeDictionary(nodes, lengthUnit);
+        ConcurrentDictionary<int, GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodeDictionary(nodes, LengthUnit);
 
         // round max and min to reasonable numbers
         double dmax = 0;
@@ -426,22 +280,22 @@ namespace GsaGH.Components
                     switch (_disp)
                     {
                       case (DisplayValue.X):
-                        t = xyzResults[nodeID][0].X.As(lengthUnit);
-                        translation.X = t * DefScale;
+                        t = xyzResults[nodeID][0].X.As(LengthUnit);
+                        translation.X = t * _defScale;
                         break;
                       case (DisplayValue.Y):
-                        t = xyzResults[nodeID][0].Y.As(lengthUnit);
-                        translation.Y = t * DefScale;
+                        t = xyzResults[nodeID][0].Y.As(LengthUnit);
+                        translation.Y = t * _defScale;
                         break;
                       case (DisplayValue.Z):
-                        t = xyzResults[nodeID][0].Z.As(lengthUnit);
-                        translation.Z = t * DefScale;
+                        t = xyzResults[nodeID][0].Z.As(LengthUnit);
+                        translation.Z = t * _defScale;
                         break;
                       case (DisplayValue.resXYZ):
-                        t = xyzResults[nodeID][0].XYZ.As(lengthUnit);
-                        translation.X = xyzResults[nodeID][0].X.As(lengthUnit) * DefScale;
-                        translation.Y = xyzResults[nodeID][0].Y.As(lengthUnit) * DefScale;
-                        translation.Z = xyzResults[nodeID][0].Z.As(lengthUnit) * DefScale;
+                        t = xyzResults[nodeID][0].XYZ.As(LengthUnit);
+                        translation.X = xyzResults[nodeID][0].X.As(LengthUnit) * _defScale;
+                        translation.Y = xyzResults[nodeID][0].Y.As(LengthUnit) * _defScale;
+                        translation.Z = xyzResults[nodeID][0].Z.As(LengthUnit) * _defScale;
                         break;
                       case (DisplayValue.XX):
                         t = xxyyzzResults[nodeID][0].X.As(AngleUnit.Radian);
@@ -540,7 +394,7 @@ namespace GsaGH.Components
           {
             if ((int)_disp < 4)
             {
-              Length displacement = new Length(t, lengthUnit).ToUnit(lengthResultUnit);
+              Length displacement = new Length(t, LengthUnit).ToUnit(LengthResultUnit);
               legendValues.Add(displacement.ToString("f" + significantDigits));
               ts.Add(new GH_UnitNumber(displacement));
             }
@@ -579,13 +433,12 @@ namespace GsaGH.Components
       }
     }
 
-    #region menu override
+    #region Custom UI
     private enum FoldMode
     {
       Displacement,
       Reaction
     }
-    private FoldMode _mode = FoldMode.Displacement;
 
     private enum DisplayValue
     {
@@ -598,114 +451,141 @@ namespace GsaGH.Components
       ZZ,
       resXXYYZZ
     }
-    private DisplayValue _disp = DisplayValue.resXYZ;
-
-    private void ReDrawComponent()
+    readonly List<string> _type = new List<string>(new string[]
     {
-      System.Drawing.PointF pivot = new System.Drawing.PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);
-      this.CreateAttributes();
-      this.Attributes.Pivot = pivot;
-      this.Attributes.ExpireLayout();
-      this.Attributes.PerformLayout();
+            "Displacement",
+            "Reaction"
+    });
+
+    readonly List<string> _displacement = new List<string>(new string[]
+    {
+            "Translation Ux",
+            "Translation Uy",
+            "Translation Uz",
+            "Resolved |U|",
+            "Rotation Rxx",
+            "Rotation Ryy",
+            "Rotation Rzz",
+            "Resolved |R|"
+    });
+
+    readonly List<string> _reaction = new List<string>(new string[]
+    {
+            "Reaction Fx",
+            "Reaction Fy",
+            "Reaction Fz",
+            "Resolved |F|",
+            "Reaction Mxx",
+            "Reaction Myy",
+            "Reaction Mzz",
+            "Resolved |M|",
+    });
+
+    readonly List<string> _force = new List<string>(new string[]
+    {
+            "Force Fx",
+            "Force Fy",
+            "Force Fz",
+            "Resolved |F|",
+            "Moment Mxx",
+            "Moment Myy",
+            "Moment Mzz",
+            "Resolved |M|",
+    });
+
+    double _minValue = 0;
+    double _maxValue = 1000;
+    double _defScale = 250;
+    int _noDigits = 0;
+    bool _slider = true;
+    string _case = "";
+    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+    LengthUnit LengthResultUnit = DefaultUnits.LengthUnitResult;
+    FoldMode _mode = FoldMode.Displacement;
+    DisplayValue _disp = DisplayValue.resXYZ;
+
+    public override void InitialiseDropdowns()
+    {
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Result Type", "Component", "Geometry Unit", "Deform Shape"
+        });
+
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // type
+      this.DropDownItems.Add(this._type);
+      this.SelectedItems.Add(this.DropDownItems[0][0]);
+
+      // component
+      this.DropDownItems.Add(this._displacement);
+      this.SelectedItems.Add(this.DropDownItems[1][3]);
+
+      // Length
+      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+      this.SelectedItems.Add(this.LengthUnit.ToString());
+
+      this.IsInitialised = true;
     }
-    private void Mode1Clicked()
+    public override void CreateAttributes()
     {
-      if (_mode == FoldMode.Displacement)
-        return;
-
-      RecordUndoEvent(_mode.ToString() + " Parameters");
-      _mode = FoldMode.Displacement;
-
-      slider = true;
-      DefScale = 100;
-
-      ReDrawComponent();
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
-    }
-    private void Mode2Clicked()
-    {
-      if (_mode == FoldMode.Reaction)
-        return;
-
-      RecordUndoEvent(_mode.ToString() + " Parameters");
-      _mode = FoldMode.Reaction;
-      slider = false;
-      DefScale = 0;
-
-      ReDrawComponent();
-
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
-    }
-
-    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
-    {
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, showLegend);
-    }
-    bool showLegend = true;
-    private void ShowLegend(object sender, EventArgs e)
-    {
-      showLegend = !showLegend;
-      this.ExpirePreview(true);
-    }
-
-    #endregion
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      writer.SetInt32("Mode", (int)_mode);
-      writer.SetInt32("Display", (int)_disp);
-      writer.SetBoolean("slider", slider);
-      writer.SetInt32("noDec", noDigits);
-      writer.SetDouble("valMax", MaxValue);
-      writer.SetDouble("valMin", MinValue);
-      writer.SetDouble("val", DefScale);
-      writer.SetBoolean("legend", showLegend);
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      _mode = (FoldMode)reader.GetInt32("Mode");
-      _disp = (DisplayValue)reader.GetInt32("Display");
-
-      slider = reader.GetBoolean("slider");
-      noDigits = reader.GetInt32("noDec");
-      MaxValue = reader.GetDouble("valMax");
-      MinValue = reader.GetDouble("valMin");
-      DefScale = reader.GetDouble("val");
-      showLegend = reader.GetBoolean("legend");
-      Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-
-      first = false;
-      UpdateUIFromSelectedItems();
-
-      return base.Read(reader);
+      if (!IsInitialised)
+        InitialiseDropdowns();
+      m_attributes = new OasysGH.UI.DropDownSliderComponentAttributes(this, SetSelected, this.DropDownItems, this.SelectedItems, this._slider, SetVal, SetMaxMin, this._defScale, this._maxValue, this._minValue, this._noDigits, this.SpacerDescriptions);
     }
 
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+    public override void SetSelected(int dropdownlistidd, int selectedidd)
     {
-      return false;
+      if (dropdownlistidd == 0) // if change is made to first list
+      {
+        if (selectedidd == 0)
+        {
+          if (DropDownItems[1] != _displacement)
+          {
+            DropDownItems[1] = _displacement;
+            SelectedItems[0] = DropDownItems[0][0];
+            SelectedItems[1] = DropDownItems[1][3];
+            Mode1Clicked();
+          }
+        }
+        if (selectedidd == 1)
+        {
+          if (DropDownItems[1] != _reaction)
+          {
+            DropDownItems[1] = _reaction;
+            SelectedItems[0] = DropDownItems[0][1];
+            SelectedItems[1] = DropDownItems[1][3];
+            Mode2Clicked();
+          }
+        }
+      }
+      else if (dropdownlistidd == 1)
+      {
+        _disp = (DisplayValue)selectedidd;
+        SelectedItems[1] = DropDownItems[1][selectedidd];
+      }
+      else // change is made to the unit
+      {
+        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[2]);
+      }
+      base.UpdateUI();
     }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+    public void SetVal(double value)
     {
-      return false;
+      _defScale = value;
     }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
+    public void SetMaxMin(double max, double min)
     {
-      return null;
+      _maxValue = max;
+      _minValue = min;
     }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
+    public override void UpdateUIFromSelectedItems()
     {
-      return false;
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[2]);
+      base.UpdateUIFromSelectedItems();
     }
-    #endregion
-    #region IGH_VariableParameterComponent null implementation
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
+    public override void VariableParameterMaintenance()
     {
 
       if (_mode == FoldMode.Displacement)
@@ -713,7 +593,7 @@ namespace GsaGH.Components
 
         if ((int)_disp < 4)
         {
-          IQuantity length = new Length(0, lengthUnit);
+          IQuantity length = new Length(0, LengthUnit);
           string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
           Params.Output[2].Name = "Values [" + lengthunitAbbreviation + "]";
         }
@@ -738,8 +618,54 @@ namespace GsaGH.Components
     }
     #endregion
 
-    #region draw legend
+    #region menu override
+    private void ReDrawComponent()
+    {
+      System.Drawing.PointF pivot = new System.Drawing.PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);
+      this.CreateAttributes();
+      this.Attributes.Pivot = pivot;
+      this.Attributes.ExpireLayout();
+      this.Attributes.PerformLayout();
+    }
+    private void Mode1Clicked()
+    {
+      if (_mode == FoldMode.Displacement)
+        return;
 
+      RecordUndoEvent(_mode.ToString() + " Parameters");
+      _mode = FoldMode.Displacement;
+
+      _slider = true;
+      _defScale = 100;
+
+      ReDrawComponent();
+    }
+    private void Mode2Clicked()
+    {
+      if (_mode == FoldMode.Reaction)
+        return;
+
+      RecordUndoEvent(_mode.ToString() + " Parameters");
+      _mode = FoldMode.Reaction;
+      _slider = false;
+      _defScale = 0;
+
+      ReDrawComponent();
+    }
+
+    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
+    {
+      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
+    }
+    bool _showLegend = true;
+    private void ShowLegend(object sender, EventArgs e)
+    {
+      _showLegend = !_showLegend;
+      this.ExpirePreview(true);
+    }
+    #endregion
+
+    #region draw legend
     Bitmap legend = new Bitmap(15, 120);
     List<string> legendValues;
     List<int> legendValuesPosY;
@@ -747,7 +673,7 @@ namespace GsaGH.Components
     public override void DrawViewportWires(IGH_PreviewArgs args)
     {
       base.DrawViewportWires(args);
-      if (legendValues != null & showLegend)
+      if (legendValues != null & _showLegend)
       {
         args.Display.DrawBitmap(new DisplayBitmap(legend), args.Viewport.Bounds.Right - 110, 20);
         for (int i = 0; i < legendValues.Count; i++)
@@ -755,6 +681,33 @@ namespace GsaGH.Components
         args.Display.Draw2dText(resType, Color.Black, new Point2d(args.Viewport.Bounds.Right - 110, 7), false);
         args.Display.Draw2dText(_case, Color.Black, new Point2d(args.Viewport.Bounds.Right - 110, 145), false);
       }
+    }
+    #endregion
+
+    #region (de)serialization
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    {
+      writer.SetInt32("Mode", (int)_mode);
+      writer.SetInt32("Display", (int)_disp);
+      writer.SetBoolean("slider", _slider);
+      writer.SetInt32("noDec", _noDigits);
+      writer.SetDouble("valMax", _maxValue);
+      writer.SetDouble("valMin", _minValue);
+      writer.SetDouble("val", _defScale);
+      writer.SetBoolean("legend", _showLegend);
+      return base.Write(writer);
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      _mode = (FoldMode)reader.GetInt32("Mode");
+      _disp = (DisplayValue)reader.GetInt32("Display");
+      _slider = reader.GetBoolean("slider");
+      _noDigits = reader.GetInt32("noDec");
+      _maxValue = reader.GetDouble("valMax");
+      _minValue = reader.GetDouble("valMin");
+      _defScale = reader.GetDouble("val");
+      _showLegend = reader.GetBoolean("legend");
+      return base.Read(reader);
     }
     #endregion
   }

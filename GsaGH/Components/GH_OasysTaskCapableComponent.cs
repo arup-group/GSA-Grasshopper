@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using GsaGH.Helpers;
+using OasysGH.Components;
 
 namespace GsaGH.Components
 {

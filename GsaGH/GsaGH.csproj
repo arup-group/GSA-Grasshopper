@@ -62,14 +62,18 @@
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\Interop.Gsa_10_1.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OasysGH, Version=0.3.5.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\OasysGH.0.3.5-beta\lib\net48\OasysGH.dll</HintPath>
+    <Reference Include="OasysGH, Version=0.3.13.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\OasysGH.0.3.13-beta\lib\net48\OasysGH.dll</HintPath>
     </Reference>
     <Reference Include="OasysUnits, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f8601875a1f041da, processorArchitecture=MSIL">
       <HintPath>..\packages\OasysUnits.1.0.0\lib\net47\OasysUnits.dll</HintPath>
+    </Reference>
+    <Reference Include="OasysUnits.Serialization.JsonNet, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f8601875a1f041da, processorArchitecture=MSIL">
+      <HintPath>..\packages\OasysUnits.Serialization.JsonNet.1.0.0\lib\netstandard2.0\OasysUnits.Serialization.JsonNet.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.UI, Version=6.27.20176.5000, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.27.20176.5001\lib\net45\Rhino.UI.dll</HintPath>
@@ -82,6 +86,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.SQLite">
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\System.Data.SQLite.dll</HintPath>
       <Private>False</Private>
@@ -104,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
     <Compile Include="Components\0_Model\GwaModel.cs" />
+    <Compile Include="Components\GraveyardComp\CreateBool6_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateMaterial _OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\CreateProp2d_OBSOLETE.cs" />
     <Compile Include="Components\1_Properties\CreateSectionModifier.cs" />
@@ -140,9 +146,7 @@
     <Compile Include="Components\5_Results\GlobalPerformanceResults.cs" />
     <Compile Include="Components\5_Results\TotalLoadsAndReactionResults.cs" />
     <Compile Include="Components\GH_OasysTaskCapableComponent.cs" />
-    <Compile Include="Components\GraveyardComp\CreateProfile_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\EditSection_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\GlobalResult2_OBSOLETE .cs" />
     <Compile Include="Components\GraveyardComp\GetAnalysis_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\SaveModel.cs" />
     <Compile Include="Components\1_Properties\CreateProfile.cs" />
@@ -156,11 +160,7 @@
     <Compile Include="Components\3_Loads\LoadProperties.cs" />
     <Compile Include="Components\0_Model\CreateModel.cs" />
     <Compile Include="Components\4_Analysis\Analyse.cs" />
-    <Compile Include="Components\GraveyardComp\Elem3dResults_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\Elem2dResults_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\GlobalResult_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\Elem1dResults_OBSOLETE.cs" />
-    <Compile Include="Components\GraveyardComp\NodeResults_OBSOLETE.cs" />
     <Compile Include="Components\GraveyardComp\EditTitles_OBSOLETE.cs" />
     <Compile Include="Components\0_Model\GetLoads.cs" />
     <Compile Include="Components\0_Model\GetProperties.cs" />
@@ -193,6 +193,7 @@
     <Compile Include="Components\3_Loads\CreateGravityLoad.cs" />
     <Compile Include="Components\3_Loads\CreateNodeLoads.cs" />
     <Compile Include="Helpers\Export\ConvertMembers.cs" />
+    <Compile Include="Helpers\Export\ModelAssembly.cs" />
     <Compile Include="Helpers\Mappings.cs" />
     <Compile Include="Helpers\PostHog.cs" />
     <Compile Include="Helpers\_DeSerialization.cs" />
@@ -298,20 +299,7 @@
     <Compile Include="UI\AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Comp_MultiDropDownsCheckBoxes.cs" />
-    <Compile Include="UI\Comp_MultiDropDownsSlider.cs" />
-    <Compile Include="UI\Comp_CheckBox.cs" />
-    <Compile Include="UI\Comp_Slider.cs" />
-    <Compile Include="UI\Comp_TripleButton.cs" />
-    <Compile Include="UI\Comp_Button.cs" />
     <Compile Include="Helpers\_Colour.cs" />
-    <Compile Include="UI\Comp_Profile.cs" />
-    <Compile Include="UI\Comp_MultiDropDowns.cs" />
-    <Compile Include="UI\WidthFix.cs" />
-    <Compile Include="UI\GraphicButtons.cs" />
-    <Compile Include="UI\Comp_DropDown.cs" />
-    <Compile Include="UI\Comp_Releases.cs" />
-    <Compile Include="UI\Comp_Support.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components\Lab\" />

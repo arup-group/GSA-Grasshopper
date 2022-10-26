@@ -18,10 +18,9 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create new 3d Member
   /// </summary>
-  public class CreateMember3d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+  public class CreateMember3d : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("df0c7608-9e46-4500-ab63-0c4162a580d4");
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -35,74 +34,13 @@ namespace GsaGH.Components
     { }
     #endregion
 
-    #region Custom UI
-    //This region overrides the typical component layout
-    public override void CreateAttributes()
-    {
-      if (first)
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // length
-        //dropdownitems.Add(Enum.GetNames(typeof(Units.LengthUnit)).ToList());
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
-        first = false;
-      }
-      m_attributes = new UI.MultiDropDownComponentUI(this, SetSelected, dropdownitems, selecteditems, spacerDescriptions);
-    }
-    public void SetSelected(int i, int j)
-    {
-      // change selected item
-      selecteditems[i] = dropdownitems[i][j];
-
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[i]);
-
-      // update name of inputs (to display unit on sliders)
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    private void UpdateUIFromSelectedItems()
-    {
-      lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), selecteditems[0]);
-
-      CreateAttributes();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-      Params.OnParametersChanged();
-      this.OnDisplayExpired(true);
-    }
-    // list of lists with all dropdown lists conctent
-    List<List<string>> dropdownitems;
-    // list of selected items
-    List<string> selecteditems;
-    // list of descriptions 
-    List<string> spacerDescriptions = new List<string>(new string[]
-    {
-            "Unit"
-    });
-    private bool first = true;
-    private LengthUnit lengthUnit = DefaultUnits.LengthUnitGeometry;
-    string unitAbbreviation;
-
-    #endregion
-
     #region Input and output
-
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity length = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
 
       pManager.AddGeometryParameter("Solid", "S", "Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
-      pManager.AddGenericParameter("3D Prop", "PV", "GSA 3D Property. Input either a GSA 3D Property, a GSA Material or an Integer to use a 3D Property already defined in model", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaProp3dParameter());
       pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Targe mesh size", GH_ParamAccess.item);
 
       pManager[1].Optional = true;
@@ -111,7 +49,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("3D Member", "M3D", "GSA 3D Member", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaMember3dParameter());
     }
     #endregion
 
@@ -173,70 +111,46 @@ namespace GsaGH.Components
 
         // 2 mesh size
         if (this.Params.Input[2].SourceCount > 0)
-        {
-          mem.MeshSize = (Length) Input.LengthOrRatio(this, DA, 2, lengthUnit, true);
-        }
+          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 2, this.LengthUnit, true);
 
         DA.SetData(0, new GsaMember3dGoo(mem));
       }
     }
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+
+    #region Custom UI
+    private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+
+    public override void InitialiseDropdowns()
     {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, dropdownitems, selecteditems, spacerDescriptions);
-      return base.Write(writer);
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Unit"
+        });
+
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // Length
+      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+      this.SelectedItems.Add(this.LengthUnit.ToString());
+
+      this.IsInitialised = true;
     }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+
+    public override void SetSelected(int i, int j)
     {
-      try // if users has an old versopm of this component then dropdown menu wont read
-      {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref dropdownitems, ref selecteditems, ref spacerDescriptions);
-      }
-      catch (Exception) // we create the dropdown menu with our chosen default
-      {
-        dropdownitems = new List<List<string>>();
-        selecteditems = new List<string>();
-
-        // set length to meters as this was the only option for old components
-        lengthUnit = LengthUnit.Meter;
-
-        dropdownitems.Add(FilteredUnits.FilteredLengthUnits);
-        selecteditems.Add(lengthUnit.ToString());
-
-        IQuantity quantity = new Length(0, lengthUnit);
-        unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-      }
-
-      UpdateUIFromSelectedItems();
-
-      first = false;
-
-      return base.Read(reader);
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+      base.UpdateUI();
     }
-    #endregion
-
-    #region IGH_VariableParameterComponent null implementation
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index)
+    public override void UpdateUIFromSelectedItems()
     {
-      return false;
+      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[0]);
+      base.UpdateUIFromSelectedItems();
     }
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index)
+    public override void VariableParameterMaintenance()
     {
-      return false;
-    }
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index)
-    {
-      return null;
-    }
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index)
-    {
-      return false;
-    }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      IQuantity length = new Length(0, lengthUnit);
-      unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-      Params.Input[2].Name = "Mesh Size [" + unitAbbreviation + "]";
+      Params.Input[2].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
     }
     #endregion
   }
