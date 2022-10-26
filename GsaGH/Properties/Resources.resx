@@ -472,4 +472,13 @@
   <data name="CombinationCaseParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CombinationCaseParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="BucklingFactorsParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\BucklingFactorsParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateBucklingLengthFactors" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateBucklingLengthFactors.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditBucklingLengthFactors" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EditBucklingLengthFactors.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

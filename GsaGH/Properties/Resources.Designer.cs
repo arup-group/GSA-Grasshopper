@@ -153,6 +153,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap BucklingFactorsParam {
+            get {
+                object obj = ResourceManager.GetObject("BucklingFactorsParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap CombinationCaseParam {
             get {
                 object obj = ResourceManager.GetObject("CombinationCaseParam", resourceCulture);
@@ -196,6 +206,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap CreateBool6 {
             get {
                 object obj = ResourceManager.GetObject("CreateBool6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CreateBucklingLengthFactors {
+            get {
+                object obj = ResourceManager.GetObject("CreateBucklingLengthFactors", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -466,6 +486,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap EditBool6 {
             get {
                 object obj = ResourceManager.GetObject("EditBool6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap EditBucklingLengthFactors {
+            get {
+                object obj = ResourceManager.GetObject("EditBucklingLengthFactors", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
