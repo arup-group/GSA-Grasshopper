@@ -216,15 +216,15 @@ namespace GsaGH.Parameters
         this.CloneApiElements(ApiObjectMember.name, null, null, value);
       }
     }
-    public List<double> OrientationAngles
+    public List<Angle> OrientationAngles
     {
       get
       {
-        List<double> angles = new List<double>();
+        List<Angle> angles = new List<Angle>();
         for (int i = 0; i < this._elements.Count; i++)
         {
           if (this._elements[i] != null)
-            angles.Add(this._elements[i].OrientationAngle);
+            angles.Add(new Angle(this._elements[i].OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian));
         }
         return angles;
       }
@@ -369,7 +369,7 @@ namespace GsaGH.Parameters
       return type + info;
     }
 
-    private void CloneApiElements(ApiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null, List<double> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<System.Drawing.Color> col = null)
+    private void CloneApiElements(ApiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null, List<Angle> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<System.Drawing.Color> col = null)
     {
       List<Element> elems = new List<Element>();
       for (int i = 0; i < this._elements.Count; i++)
@@ -416,9 +416,9 @@ namespace GsaGH.Parameters
             break;
           case ApiObjectMember.orientationAngle:
             if (oriA.Count > i)
-              elems[i].OrientationAngle = oriA[i];
+              elems[i].OrientationAngle = oriA[i].Degrees;
             else
-              elems[i].OrientationAngle = oriA.Last();
+              elems[i].OrientationAngle = oriA.Last().Degrees;
             break;
           case ApiObjectMember.offset:
             if (off.Count > i)

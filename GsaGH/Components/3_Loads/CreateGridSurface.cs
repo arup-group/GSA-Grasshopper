@@ -329,7 +329,7 @@ namespace GsaGH.Components
       if (_mode == FoldMode.One_Dimensional_One_Way)
       {
         Params.Input[5].NickName = "Dir";
-        Params.Input[5].Name = "Span Direction [" + Angle.GetAbbreviation(this.AngleUnit) + "]";
+        Params.Input[5].Name = "Span Direction";
         Params.Input[5].Description = "Span Direction between -180 and 180 degrees";
         Params.Input[5].Access = GH_ParamAccess.item;
         Params.Input[5].Optional = true;

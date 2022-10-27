@@ -54,7 +54,11 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaMember1dGoo)
         {
           gh_typ.CastTo(ref mem);
-          if (mem == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is null"); return; }
+          if (mem == null)
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is null");
+            return;
+          }
           axes = mem.LocalAxes;
           midPt = mem.PolyCurve.PointAtNormalizedLength(0.5);
           size = mem.PolyCurve.GetLength() * 0.05;
@@ -62,7 +66,11 @@ namespace GsaGH.Components
         else if (gh_typ.Value is GsaElement1dGoo)
         {
           gh_typ.CastTo(ref elem);
-          if (elem == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is null"); return; }
+          if (elem == null)
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is null");
+            return;
+          }
           axes = elem.LocalAxes;
           midPt = elem.Line.PointAtNormalizedLength(0.5);
           size = elem.Line.GetLength() * 0.05;

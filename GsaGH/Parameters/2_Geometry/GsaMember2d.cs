@@ -233,16 +233,16 @@ namespace GsaGH.Parameters
         this._member.Offset.Z = value.Z.Meters;
       }
     }
-    public double OrientationAngle
+    public Angle OrientationAngle
     {
       get
       {
-        return this._member.OrientationAngle;
+        return new Angle(this._member.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian);
       }
       set
       {
         this.CloneApiObject();
-        this._member.OrientationAngle = value;
+        this._member.OrientationAngle = value.Degrees;
       }
     }
     public int OrientationNode
