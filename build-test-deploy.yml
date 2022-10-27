@@ -66,6 +66,8 @@ steps:
     pathToSources: '$(System.DefaultWorkingDirectory)'
 
 - powershell: |
+    $ProgressPreference = 'SilentlyContinue'
+    Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
     echo $coverage_file_gsagh
     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
