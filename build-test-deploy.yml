@@ -70,7 +70,7 @@ steps:
     echo $coverage_file_gsagh
     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
     echo $coverage_file_integration
-    Copy-Item $coverage_file_composgh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+    Copy-Item $coverage_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
     Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
     ls $(System.DefaultWorkingDirectory)\results\
     codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
