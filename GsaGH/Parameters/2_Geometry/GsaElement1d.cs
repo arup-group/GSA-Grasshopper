@@ -6,6 +6,8 @@ using System.Linq;
 using GsaAPI;
 using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
+using OasysUnits.Units;
+using OasysUnits;
 
 namespace GsaGH.Parameters
 {
@@ -205,16 +207,16 @@ namespace GsaGH.Parameters
         this._element.Offset.Z = value.Z.Meters;
       }
     }
-    public double OrientationAngle
+    public Angle OrientationAngle
     {
       get
       {
-        return this._element.OrientationAngle;
+        return new Angle(this._element.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian);
       }
       set
       {
         this.CloneApiObject();
-        this._element.OrientationAngle = value;
+        this._element.OrientationAngle = value.Degrees;
       }
     }
     public GsaNode OrientationNode

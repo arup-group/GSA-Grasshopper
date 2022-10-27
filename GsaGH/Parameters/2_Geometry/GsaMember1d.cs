@@ -145,7 +145,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        return UI.Display.GetLocalPlane(this._crv, this._crv.GetLength() / 2, this._member.OrientationAngle * Math.PI / 180.0);
+        return UI.Display.GetLocalPlane(this._crv, this._crv.GetLength() / 2.0, this.OrientationAngle.Radians);
       }
     }
     public GsaSection Section
@@ -291,16 +291,16 @@ namespace GsaGH.Parameters
         this._member.Offset.Z = value.Z.Meters;
       }
     }
-    public double OrientationAngle
+    public Angle OrientationAngle
     {
       get
       {
-        return this._member.OrientationAngle;
+        return new Angle(this._member.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian);
       }
       set
       {
         this.CloneApiObject();
-        this._member.OrientationAngle = value;
+        this._member.OrientationAngle = value.Degrees;
       }
     }
     public GsaNode OrientationNode

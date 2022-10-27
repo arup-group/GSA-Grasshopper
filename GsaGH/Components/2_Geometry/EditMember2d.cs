@@ -335,14 +335,10 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      try
-      {
-        this.LengthUnit = Length.ParseUnit(reader.GetString("LengthUnit"));
-      }
-      catch (Exception)
-      {
+      if (reader.ItemExists("LengthUnit"))
+        this.LengthUnit = this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+      else
         this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitGeometry;
-      }
       return base.Read(reader);
     }
 
