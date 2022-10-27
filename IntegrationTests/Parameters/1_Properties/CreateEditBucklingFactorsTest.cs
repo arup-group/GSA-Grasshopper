@@ -17,11 +17,8 @@ namespace IntegrationTests.Parameters
 
       string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
       string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Parameters", "1_Properties" });
-      GH_DocumentIO io = new GH_DocumentIO();
-      Assert.True(File.Exists(Path.Combine(path, fileName)));
-      Assert.True(io.Open(Path.Combine(path, fileName)));
-      io.Document.NewSolution(true);
-      return io.Document;
+      
+      return Helper.CreateDocument(Path.Combine(path, fileName));
     }
 
     [Fact]
