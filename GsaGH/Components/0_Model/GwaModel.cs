@@ -68,6 +68,8 @@ namespace GsaGH.Components
       GsaModel gsaGH = new GsaModel();
       gsaGH.Model.Open(temp);
       DA.SetData(0, new GsaModelGoo(gsaGH));
+      m.Close();
+      m = null;
     }
   }
 }
