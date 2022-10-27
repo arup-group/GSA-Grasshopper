@@ -12,10 +12,10 @@ namespace GsaGHTests.Parameters
     public void DuplicateTest()
     {
       // Arrange
-      GsaLoad original = new GsaLoad(new GsaBeamLoad());
+      GsaElement3d original = new GsaElement3d(new Mesh());
 
       // Act
-      GsaLoad duplicate = original.Duplicate();
+      GsaElement3d duplicate = original.Duplicate();
 
       // Assert
       Duplicates.AreEqual(original, duplicate);

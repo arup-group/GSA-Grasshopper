@@ -8,7 +8,7 @@ using Xunit;
 namespace IntegrationTests.ExampleFiles
 {
   [Collection("GrasshopperFixture collection")]
-  public class Example1_GerberMember_Test
+  public class Example2_Reciprocal_Test
   {
     public static GH_Document Document()
     {
@@ -29,7 +29,17 @@ namespace IntegrationTests.ExampleFiles
       Assert.NotNull(param);
       param.CollectData();
       GH_Number output = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      Assert.Equal(60.028894, output.Value, 6);
+      Assert.Equal(-157.193672, output.Value, 6);
+    }
+
+    [Fact]
+    public void SumLoadForceAssert()
+    {
+      IGH_Param param = Helper.FindParameter(Document(), "SumLoadForce");
+      Assert.NotNull(param);
+      param.CollectData();
+      GH_Boolean output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
+      Assert.True(output.Value);
     }
 
     [Fact]

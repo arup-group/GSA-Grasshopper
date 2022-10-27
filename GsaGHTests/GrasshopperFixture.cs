@@ -1,8 +1,7 @@
-﻿using GsaAPI;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
 using System.Reflection;
+using GsaGH.Parameters;
 using Xunit;
 
 namespace GsaGHTests
@@ -34,6 +33,7 @@ namespace GsaGHTests
 
       LoadRefs();
       Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
+      //Assert.NotNull(new GsaBool6());
       
       InitializeCore();
 

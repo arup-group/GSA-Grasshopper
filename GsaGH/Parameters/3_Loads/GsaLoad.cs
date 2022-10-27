@@ -44,13 +44,13 @@ namespace GsaGH.Parameters
       NUM_TYPES = 4
     }
 
-    public NodeLoadTypes NodeLoadType;
+    public NodeLoadTypes Type;
 
     public NodeLoad NodeLoad { get; set; } = new NodeLoad();
 
     public GsaNodeLoad()
     {
-      NodeLoadType = NodeLoadTypes.NODE_LOAD;
+      this.Type = NodeLoadTypes.NODE_LOAD;
     }
 
     public GsaNodeLoad Duplicate()
@@ -62,7 +62,7 @@ namespace GsaGH.Parameters
       dup.NodeLoad.Nodes = this.NodeLoad.Nodes.ToString();
       dup.NodeLoad.Name = this.NodeLoad.Name.ToString();
       dup.NodeLoad.Value = this.NodeLoad.Value;
-      dup.NodeLoadType = NodeLoadType;
+      dup.Type = Type;
       return dup;
     }
   }
@@ -75,7 +75,7 @@ namespace GsaGH.Parameters
     {
       this.BeamLoad = new BeamLoad
       {
-        Type = GsaAPI.BeamLoadType.UNIFORM
+        Type = BeamLoadType.UNIFORM
       };
     }
 
@@ -94,23 +94,23 @@ namespace GsaGH.Parameters
         dup.BeamLoad.SetPosition(0, this.BeamLoad.Position(0));
         dup.BeamLoad.SetValue(0, this.BeamLoad.Value(0));
       }
-      if (BeamLoad.Type == BeamLoadType.UNIFORM)
+      else if (BeamLoad.Type == BeamLoadType.UNIFORM)
       {
         dup.BeamLoad.SetValue(0, this.BeamLoad.Value(0));
       }
-      if (BeamLoad.Type == BeamLoadType.LINEAR)
+      else if (BeamLoad.Type == BeamLoadType.LINEAR)
       {
         dup.BeamLoad.SetValue(0, this.BeamLoad.Value(0));
         dup.BeamLoad.SetValue(1, this.BeamLoad.Value(1));
       }
-      if (BeamLoad.Type == BeamLoadType.PATCH)
+      else if (BeamLoad.Type == BeamLoadType.PATCH)
       {
         dup.BeamLoad.SetPosition(0, this.BeamLoad.Position(0));
         dup.BeamLoad.SetPosition(1, this.BeamLoad.Position(1));
         dup.BeamLoad.SetValue(0, this.BeamLoad.Value(0));
         dup.BeamLoad.SetValue(1, this.BeamLoad.Value(1));
       }
-      if (BeamLoad.Type == BeamLoadType.TRILINEAR)
+      else if (BeamLoad.Type == BeamLoadType.TRILINEAR)
       {
         dup.BeamLoad.SetPosition(0, this.BeamLoad.Position(0));
         dup.BeamLoad.SetPosition(1, this.BeamLoad.Position(1));
@@ -147,7 +147,7 @@ namespace GsaGH.Parameters
         dup.FaceLoad.IsProjected = this.FaceLoad.IsProjected;
         dup.FaceLoad.SetValue(0, this.FaceLoad.Value(0));
       }
-      if (this.FaceLoad.Type == FaceLoadType.GENERAL)
+      else if (this.FaceLoad.Type == FaceLoadType.GENERAL)
       {
         dup.FaceLoad.IsProjected = this.FaceLoad.IsProjected;
         dup.FaceLoad.SetValue(0, this.FaceLoad.Value(0));
@@ -155,7 +155,7 @@ namespace GsaGH.Parameters
         dup.FaceLoad.SetValue(2, this.FaceLoad.Value(2));
         dup.FaceLoad.SetValue(3, this.FaceLoad.Value(3));
       }
-      if (this.FaceLoad.Type == FaceLoadType.POINT)
+      else if (this.FaceLoad.Type == FaceLoadType.POINT)
       {
         dup.FaceLoad.IsProjected = this.FaceLoad.IsProjected;
         dup.FaceLoad.SetValue(0, this.FaceLoad.Value(0));
@@ -228,7 +228,7 @@ namespace GsaGH.Parameters
 
     public GsaGridAreaLoad()
     {
-      GridAreaLoad.Type = GsaAPI.GridAreaPolyLineType.PLANE;
+      GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
     }
 
     public GsaGridAreaLoad Duplicate()

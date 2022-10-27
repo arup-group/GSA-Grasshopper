@@ -141,11 +141,11 @@ namespace GsaGH.Util.Gsa.ToGSA
           break;
 
         case GsaLoad.LoadTypes.Node:
-          if (load.NodeLoad.NodeLoadType == GsaNodeLoad.NodeLoadTypes.APPLIED_DISP)
+          if (load.NodeLoad.Type == GsaNodeLoad.NodeLoadTypes.APPLIED_DISP)
             nodeLoads_displ.Add(load.NodeLoad.NodeLoad);
-          if (load.NodeLoad.NodeLoadType == GsaNodeLoad.NodeLoadTypes.NODE_LOAD)
+          if (load.NodeLoad.Type == GsaNodeLoad.NodeLoadTypes.NODE_LOAD)
             nodeLoads_node.Add(load.NodeLoad.NodeLoad);
-          if (load.NodeLoad.NodeLoadType == GsaNodeLoad.NodeLoadTypes.SETTLEMENT)
+          if (load.NodeLoad.Type == GsaNodeLoad.NodeLoadTypes.SETTLEMENT)
             nodeLoads_settle.Add(load.NodeLoad.NodeLoad);
           break;
 

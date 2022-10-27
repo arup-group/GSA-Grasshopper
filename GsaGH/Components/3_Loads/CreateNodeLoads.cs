@@ -84,13 +84,13 @@ namespace GsaGH.Components
       {
         case FoldMode.Node_Force:
         case FoldMode.Node_Moment:
-          nodeLoad.NodeLoadType = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
           break;
         case FoldMode.Applied_Displ:
-          nodeLoad.NodeLoadType = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;
           break;
         case FoldMode.Settlements:
-          nodeLoad.NodeLoadType = GsaNodeLoad.NodeLoadTypes.SETTLEMENT;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.SETTLEMENT;
           break;
       }
 
