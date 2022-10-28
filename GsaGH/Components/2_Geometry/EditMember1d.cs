@@ -68,7 +68,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰", "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
-      pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle in degrees", GH_ParamAccess.item);
+      pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Member Orientation Node", GH_ParamAccess.item);
       pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
@@ -97,7 +97,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰", "Get Release (Bool6) at Start of Member", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Get Release (Bool6) at End of Member", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Member Orientation Angle", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Member Orientation Angle in radians", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Get Member Orientation Node", GH_ParamAccess.item);
       pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
@@ -315,7 +315,7 @@ namespace GsaGH.Components
         DA.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
         DA.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
 
-        DA.SetData(10, mem.OrientationAngle.As(AngleUnit.Degree));
+        DA.SetData(10, mem.OrientationAngle.As(AngleUnit.Radian));
         DA.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
         DA.SetData(12, new GH_UnitNumber(mem.MeshSize.ToUnit(this.LengthUnit)));
@@ -338,13 +338,7 @@ namespace GsaGH.Components
       Param_Number angleParameter = Params.Input[10] as Param_Number;
       if (angleParameter != null)
       {
-        if (!angleParameter.AngleParameter)
-        {
-          angleParameter.AngleParameter = true;
-          angleParameter.UseDegrees = true;
-          this.AngleUnit = AngleUnit.Degree;
-        }
-        else if (angleParameter.UseDegrees)
+        if (angleParameter.UseDegrees)
           this.AngleUnit = AngleUnit.Degree;
         else
           this.AngleUnit = AngleUnit.Radian;
