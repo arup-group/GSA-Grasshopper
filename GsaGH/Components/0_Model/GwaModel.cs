@@ -48,7 +48,7 @@ namespace GsaGH.Components
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
       pManager.AddParameter(new GsaModelParameter());
-      pManager.AddGenericParameter("Returned result", "R", "The 'variant' return value from executing a GWA command issued to GSA. \r\nThe syntax of the command is based on GWA syntax and the units follow the GWA unit syntax; –\r\nRefer to the “GSA Keywords” document for details.\r\nNote that locale is set to use '.' as decimal separator.\r\nRight-click -> Help for further infor on GWA Commands.", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Returned result", "R", "The 'variant' return value from executing a GWA command issued to GSA. \r\nThe syntax of the command is based on GWA syntax and the units follow the GWA unit syntax; –\r\nRefer to the “GSA Keywords” document for details.\r\nNote that locale is set to use '.' as decimal separator.", GH_ParamAccess.item);
     }
     #endregion
 
@@ -58,7 +58,7 @@ namespace GsaGH.Components
       string temp = Path.GetTempPath() + Guid.NewGuid().ToString() + ".gwb";
       
       GsaModelGoo model = null;
-      if (DA.GetData(1, ref model))
+      if (DA.GetData(0, ref model))
       {
         model.Value.Model.SaveAs(temp);
         m.Open(temp);
@@ -70,7 +70,7 @@ namespace GsaGH.Components
 
       string gwa = "";
       List<string> strings = new List<string>();
-      if (DA.GetDataList(0, strings))
+      if (DA.GetDataList(1, strings))
         foreach (string s in strings)
           gwa += s + "\n";
 
