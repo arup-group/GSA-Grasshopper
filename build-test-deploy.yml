@@ -64,6 +64,12 @@ steps:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
     pathToSources: '$(System.DefaultWorkingDirectory)'
 
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/integration/**/coverage.cobertura.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)'
+
 - powershell: |
     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
     echo $coverage_file_integration
