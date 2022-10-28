@@ -55,7 +55,7 @@ namespace GsaGH.UI.Menu
         });
       });
       // add example files
-      menuItem.DropDown.Items.Add("Example files", Properties.Resources.ExampleFiles, (s, a) =>
+      menuItem.DropDown.Items.Add("GsaGH Example files", Properties.Resources.ExampleFiles, (s, a) =>
       {
         Process.Start(new ProcessStartInfo
         {
