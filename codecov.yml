@@ -6,5 +6,5 @@ flags:
     carryforward: false
   integration:
     carryforward: false
-ignore:
-  - "GsaGHTests"  # ignore folders and all its contents
+#ignore:
+#  - "GsaGHTests"  # ignore folders and all its contents
