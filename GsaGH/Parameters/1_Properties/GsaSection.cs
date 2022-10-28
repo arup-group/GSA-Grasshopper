@@ -280,11 +280,11 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string prof = this._section.Profile.Replace("%", " ");
       string pb = this.Id > 0 ? "PB" + this.Id + " " : "";
+      string prof = this._section.Profile.Replace("%", " ") + " ";
       string mat = Helpers.Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
       string mod = this._modifier.IsModified ? " modified" : "";
-      return pb + prof + mat + mod;
+      return (pb + prof + mat + mod).Trim();
     }
     #endregion
   }
