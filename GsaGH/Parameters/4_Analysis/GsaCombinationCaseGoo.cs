@@ -10,7 +10,7 @@ namespace GsaGH.Parameters
   public class GsaCombinationCaseGoo : GH_OasysGoo<GsaCombinationCase>
   {
     public static string Name => "Combination Case";
-    public static string NickName => "CC";
+    public static string NickName => "ΣC";
     public static string Description => "GSA Combination Case";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     public GsaCombinationCaseGoo(GsaCombinationCase item) : base(item) { }
