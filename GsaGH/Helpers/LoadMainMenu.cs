@@ -54,6 +54,15 @@ namespace GsaGH.UI.Menu
           UseShellExecute = true
         });
       });
+      // add example files
+      menuItem.DropDown.Items.Add("Example files", Properties.Resources.ExampleFiles, (s, a) =>
+      {
+        Process.Start(new ProcessStartInfo
+        {
+          FileName = "https://github.com/arup-group/GSA-Grasshopper/tree/main/ExampleFiles",
+          UseShellExecute = true
+        });
+      });
       // add info
       menuItem.DropDown.Items.Add("GSA Info", Properties.Resources.GSAInfo, (s, a) =>
       {
