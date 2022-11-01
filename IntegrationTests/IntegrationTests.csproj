@@ -42,6 +42,7 @@
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="Copy &quot;$(TargetDir)GsaGH.dll&quot; &quot;$(TargetDir)GSA.gha&quot;" />
+    <Exec Command="Del &quot;$(TargetDir)GsaGH.dll&quot;" />
   </Target>
 
 </Project>
