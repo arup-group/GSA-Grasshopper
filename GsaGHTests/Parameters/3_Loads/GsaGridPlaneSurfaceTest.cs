@@ -47,6 +47,8 @@ namespace GsaGHTests.Parameters
 
     [Theory]
     [InlineData(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)]
+    [InlineData(1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0)]
+    [InlineData(-1, -1, -1, -1, 0, 0, 0, -1, 0, 0, 0, -1)]
     public void ConstructorTest(double originX, double originY, double originZ, double xAxisX, double xAxisY, double xAxisZ, double yAxisX, double yAxisY, double yAxisZ, double zAxisX, double zAxisY, double zAxisZ)
     {
       // Act
@@ -85,15 +87,15 @@ namespace GsaGHTests.Parameters
       Assert.Equal(Span_Type.ONE_WAY, gps.GridSurface.SpanType);
       Assert.Equal(0.01, gps.GridSurface.Tolerance);
       Assert.Equal("", gps.Axis.Name);
-      Assert.Equal(0, gps.Axis.Origin.X);
-      Assert.Equal(0, gps.Axis.Origin.Y);
-      Assert.Equal(0, gps.Axis.Origin.Z);
-      Assert.Equal(1, gps.Axis.XVector.X);
-      Assert.Equal(0, gps.Axis.XVector.Y);
-      Assert.Equal(0, gps.Axis.XVector.Z);
-      Assert.Equal(0, gps.Axis.XYPlane.X);
-      Assert.Equal(1, gps.Axis.XYPlane.Y);
-      Assert.Equal(0, gps.Axis.XYPlane.Z);
+      Assert.Equal(originX, gps.Axis.Origin.X);
+      Assert.Equal(originY, gps.Axis.Origin.Y);
+      Assert.Equal(originZ, gps.Axis.Origin.Z);
+      Assert.Equal(xAxisX, gps.Axis.XVector.X);
+      Assert.Equal(xAxisY, gps.Axis.XVector.Y);
+      Assert.Equal(xAxisZ, gps.Axis.XVector.Z);
+      Assert.Equal(yAxisX, gps.Axis.XYPlane.X);
+      Assert.Equal(yAxisY, gps.Axis.XYPlane.Y);
+      Assert.Equal(yAxisZ, gps.Axis.XYPlane.Z);
       Assert.Equal(0, gps.GridSurfaceID);
       Assert.Equal(0, gps.GridPlaneID);
     }
