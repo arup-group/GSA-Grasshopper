@@ -443,7 +443,7 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
-      string type = Helpers.Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key;
+      string type = Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
       string pb = this._section.Id > 0 ? "PB" + this._section.Id : this._section.Profile;
       return idd + type + pb;
     }
