@@ -56,7 +56,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Section Modifier", "Mo", "GSA Section Modifier", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSectionModifierParameter());
     }
     #endregion
 
