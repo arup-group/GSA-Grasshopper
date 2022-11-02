@@ -195,9 +195,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        string prfl = this._section.Profile.Replace("%", " ");
-        string[] pfs = prfl.Split(' ');
-        return string.Join(" ", pfs[0], pfs[1], pfs[2]);
+        return this._section.Profile.Replace("%", " ");
       }
       set
       {
@@ -224,8 +222,8 @@ namespace GsaGH.Parameters
       // temp profile clone 
       string prfl = this._section.Profile.Replace("%", " ");
       string[] pfs = prfl.Split(' ');
-      prfl = string.Join(" ", pfs[0], pfs[1], pfs[2]);
-
+      if (pfs.Last() == "S/S")
+        prfl = string.Join(" ", pfs[0], pfs[1], pfs[2]);
 
       Section sec = new Section()
       {
@@ -235,7 +233,7 @@ namespace GsaGH.Parameters
         Name = this._section.Name.ToString(),
         Pool = this._section.Pool,
         Profile = prfl
-        //Profile = this._section.Profile.ToString()
+        //Profile = this._section.Profile
       };
       if ((Color)_section.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         sec.Colour = this._section.Colour;
