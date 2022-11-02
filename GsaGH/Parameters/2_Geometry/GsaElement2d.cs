@@ -280,7 +280,7 @@ namespace GsaGH.Parameters
         for (int i = 0; i < this._elements.Count; i++)
         {
           if (this._elements[i] != null)
-            topos.AddRange(this._elements[i].Topology.ToList(), new Grasshopper.Kernel.Data.GH_Path(i));
+            topos.AddRange(this._elements[i].Topology.ToList(), new Grasshopper.Kernel.Data.GH_Path(this.Ids[i]));
         }
         return topos;
       }
