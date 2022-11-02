@@ -195,7 +195,9 @@ namespace GsaGH.Parameters
     {
       get
       {
-        return this._section.Profile.Replace("%", " ");
+        string prfl = this._section.Profile.Replace("%", " ");
+        string[] pfs = prfl.Split(' ');
+        return string.Join(" ", pfs[0], pfs[1], pfs[2]);
       }
       set
       {
@@ -219,6 +221,12 @@ namespace GsaGH.Parameters
     }
     private void CloneApiObject()
     {
+      // temp profile clone 
+      string prfl = this._section.Profile.Replace("%", " ");
+      string[] pfs = prfl.Split(' ');
+      prfl = string.Join(" ", pfs[0], pfs[1], pfs[2]);
+
+
       Section sec = new Section()
       {
         MaterialAnalysisProperty = this._section.MaterialAnalysisProperty,
@@ -226,7 +234,8 @@ namespace GsaGH.Parameters
         MaterialType = this._section.MaterialType,
         Name = this._section.Name.ToString(),
         Pool = this._section.Pool,
-        Profile = this._section.Profile.ToString()
+        Profile = prfl
+        //Profile = this._section.Profile.ToString()
       };
       if ((Color)_section.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         sec.Colour = this._section.Colour;
