@@ -1,12 +1,12 @@
-﻿using GsaAPI;
-using GsaGH.Parameters;
+﻿using OasysUnits.Units;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GsaAPI;
+using GsaGH.Parameters;
 using OasysUnits;
-using OasysUnits.Units;
 
 namespace GsaGH.Util.Gsa.ToGSA
 {
@@ -22,17 +22,14 @@ namespace GsaGH.Util.Gsa.ToGSA
           models.Reverse();
           for (int i = 0; i < models.Count - 1; i++)
           {
-            model = MergeModel(model, models[i].Clone());
+            model = Models.MergeModel(model, models[i].Clone());
           }
           GsaModel clone = models[models.Count - 1].Clone();
-          clone = MergeModel(clone, model);
+          clone = Models.MergeModel(clone, model);
           return clone;
         }
-        else
-        {
-          if (models.Count > 0)
-            return models[0].Clone();
-        }
+        else if (models.Count > 0)
+          return models[0].Clone();
       }
       return null;
     }
@@ -134,6 +131,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       return mainModel;
     }
   }
+
   public class Assemble
   {
     /// <summary>
@@ -190,7 +188,7 @@ namespace GsaGH.Util.Gsa.ToGSA
     }
 
     /// <summary>
-    /// Method to assemble full GSA model 
+    /// 
     /// </summary>
     /// <param name="model">Existing models to be merged</param>
     /// <param name="nodes">List of nodes with properties like support conditions</param>
@@ -202,10 +200,12 @@ namespace GsaGH.Util.Gsa.ToGSA
     /// <param name="mem3ds">List of 3D members. Topology nodes will automatically be added to the model, using existing nodes in model within tolerance</param>
     /// <param name="sections">List of Sections</param>
     /// <param name="prop2Ds">List of 2D Properties</param>
+    /// <param name="prop3Ds"></param>
     /// <param name="loads">List of Loads. For Grid loads the Axis, GridPlane and GridSurface will automatically be added to the model using existing objects where possible within tolerance.</param>
     /// <param name="gridPlaneSurfaces">List of GridPlaneSurfaces</param>
-    /// <param name="workerInstance">Optional input for AsyncComponents</param>
-    /// <param name="ReportProgress">Optional input for AsyncComponents</param>
+    /// <param name="analysisTasks"></param>
+    /// <param name="combinations"></param>
+    /// <param name="lengthUnit"></param>
     /// <returns></returns>
     public static Model AssembleModel(GsaModel model, List<GsaNode> nodes,
         List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,

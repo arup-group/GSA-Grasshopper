@@ -1,13 +1,13 @@
-﻿using GsaAPI;
-using Rhino.Geometry;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using GsaGH.Parameters;
 using System.Linq;
 using System.Threading.Tasks;
-using OasysUnits.Units;
-using OasysUnits;
+using GsaAPI;
+using GsaGH.Parameters;
 using OasysGH.Units;
+using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Util.Gsa.ToGSA
 {
@@ -24,9 +24,8 @@ namespace GsaGH.Util.Gsa.ToGSA
     /// <param name="existingNodes">Dictionary of existing GsaAPI nodes to add nodes to [in meters]</param>
     /// <param name="existingAxes">Dictionary of existing GsaAPI axes to add local axis to [in meters]</param>
     /// <param name="nodeidcounter">node id counter for </param>
-    /// /// <param name="unit">UnitsNet LengthUnit of GsaNode node input</param>
-    public static void ConvertNode(GsaNode node, ref Dictionary<int, Node> existingNodes,
-        ref Dictionary<int, Axis> existingAxes, ref int nodeidcounter, LengthUnit unit)
+    /// <param name="unit">UnitsNet LengthUnit of GsaNode node input</param>
+    public static void ConvertNode(GsaNode node, ref Dictionary<int, Node> existingNodes, ref Dictionary<int, Axis> existingAxes, ref int nodeidcounter, LengthUnit unit)
     {
       Node apiNode = node.GetApiNodeToUnit(unit);
 
@@ -69,12 +68,11 @@ namespace GsaGH.Util.Gsa.ToGSA
       else
       {
         // get existing node id if any:
-        int id = GetExistingNodeID(existingNodes, apiNode);
+        int id = Nodes.GetExistingNodeID(existingNodes, apiNode);
         if (id > 0) // if within tolerance of existing node
         {
           // get GSA node
-          Node gsaNode = new Node();
-          existingNodes.TryGetValue(id, out gsaNode);
+          existingNodes.TryGetValue(id, out Node gsaNode);
 
           // combine restraints always picking true
           if (gsaNode.Restraint.X)
@@ -129,7 +127,7 @@ namespace GsaGH.Util.Gsa.ToGSA
               GsaNode node = nodes[i];
 
               // Add / Set node in dictionary
-              ConvertNode(node, ref existingNodes, ref existingAxes, ref nodeidcounter, lengthUnit);
+              Nodes.ConvertNode(node, ref existingNodes, ref existingAxes, ref nodeidcounter, lengthUnit);
             }
           }
         }
@@ -210,6 +208,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       return gsaNode;
     }
   }
+
   class Axes
   {
     /// <summary>
