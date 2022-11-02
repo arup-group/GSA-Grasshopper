@@ -35,6 +35,7 @@ namespace GsaGH.Parameters
       this.MomentAmplificationFactorStrongAxis = member.API_Member.MomentAmplificationFactorStrongAxis;
       this.MomentAmplificationFactorWeakAxis = member.API_Member.MomentAmplificationFactorWeakAxis;
     }
+
     internal GsaBucklingLengthFactors(GsaMember1d member, LengthUnit lengthUnit)
     {
       this.LateralTorsionalBucklingFactor = member.API_Member.LateralTorsionalBucklingFactor;
