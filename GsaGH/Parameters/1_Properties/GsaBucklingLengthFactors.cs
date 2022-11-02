@@ -57,7 +57,8 @@ namespace GsaGH.Parameters
       string y = this.MomentAmplificationFactorStrongAxis == null ? "" : "fLsy:" + this.MomentAmplificationFactorStrongAxis;
       string z = this.MomentAmplificationFactorWeakAxis == null ? "" : "fLsz:" + this.MomentAmplificationFactorWeakAxis;
       string lt = this.LateralTorsionalBucklingFactor == null ? "" : "fLtb:" + this.LateralTorsionalBucklingFactor;
-      return string.Join(" ", y, z, lt).Trim();
+      string output = string.Join(" ", y, z, lt).Trim();
+      return output == "" ? "Automatic" : output;
     }
     #endregion
   }
