@@ -46,7 +46,7 @@ namespace GsaGH.UI.Menu
     private static void PopulateSub(ToolStripMenuItem menuItem)
     {
       // add documentation
-      menuItem.DropDown.Items.Add("GSA Documentation", Properties.Resources.Documentation, (s, a) =>
+      menuItem.DropDown.Items.Add("GsaGH Documentation", Properties.Resources.Documentation, (s, a) =>
       {
         Process.Start(new ProcessStartInfo
         {
@@ -64,7 +64,7 @@ namespace GsaGH.UI.Menu
         });
       });
       // add info
-      menuItem.DropDown.Items.Add("GSA Info", Properties.Resources.GSAInfo, (s, a) =>
+      menuItem.DropDown.Items.Add("GsaGH Info", Properties.Resources.GSAInfo, (s, a) =>
       {
         AboutBox aboutBox = new AboutBox();
         aboutBox.ShowDialog();
