@@ -188,7 +188,7 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string type = Helpers.Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == this.MaterialType).Key;
+      string type = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.MaterialType).Key;
       if (this._analProp != 0)
         return "ID:" + this._analProp + " Custom Elastic Isotropic " + type;
       else
