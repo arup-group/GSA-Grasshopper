@@ -261,15 +261,15 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // ForcePerArea
-      this.DropDownItems.Add(FilteredUnits.FilteredForcePerAreaUnits);
-      this.SelectedItems.Add(this.ForcePerAreaUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
+      this.SelectedItems.Add(Pressure.GetAbbreviation(this.ForcePerAreaUnit));
 
       this.IsInitialised = true;
     }
     public override void SetSelected(int i, int j)
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.ForcePerAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[i]);
+      this.ForcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), this.SelectedItems[i]);
       base.UpdateUI();
     }
 

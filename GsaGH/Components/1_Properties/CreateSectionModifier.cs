@@ -141,8 +141,8 @@ namespace GsaGH.Components
       this.SelectedItems.Add(_optionTypes[0]);
 
       // Density
-      this.DropDownItems.Add(FilteredUnits.FilteredLinearDensityUnits);
-      this.SelectedItems.Add(this.DensityUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.LinearDensity)));
+      this.SelectedItems.Add(LinearDensity.GetAbbreviation(this.DensityUnit));
 
       // Stress option
       this.DropDownItems.Add(this._stressOptions);
@@ -182,7 +182,7 @@ namespace GsaGH.Components
       if (i == 1)
       {
         if (this._toMode == false)
-          this.DensityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), this.SelectedItems[i]);
+          this.DensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), this.SelectedItems[i]);
         else
           this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
       }
@@ -199,7 +199,7 @@ namespace GsaGH.Components
             this.StressOption = GsaSectionModifier.StressOptionType.UseModified;
         }
         else
-          this.DensityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), this.SelectedItems[i]);
+          this.DensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), this.SelectedItems[i]);
       }
 
       if (i == 3)
@@ -219,7 +219,7 @@ namespace GsaGH.Components
       if (this._toMode)
       {
         this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
-        this.DensityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), this.SelectedItems[2]);
+        this.DensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), this.SelectedItems[2]);
         if (this.SelectedItems[3] == this._stressOptions[0])
           this.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
         if (this.SelectedItems[3] == this._stressOptions[1])
@@ -229,7 +229,7 @@ namespace GsaGH.Components
       }
       else
       {
-        this.DensityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), this.SelectedItems[1]);
+        this.DensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), this.SelectedItems[1]);
         if (this.SelectedItems[2] == _stressOptions[0])
           this.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
         if (this.SelectedItems[2] == _stressOptions[1])

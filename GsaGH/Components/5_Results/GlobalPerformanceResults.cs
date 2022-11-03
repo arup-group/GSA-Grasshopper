@@ -169,6 +169,7 @@ namespace GsaGH.Components
     MassUnit MassUnit = DefaultUnits.MassUnit;
     AreaMomentOfInertiaUnit InertiaUnit = AreaMomentOfInertiaUnit.MeterToTheFourth;
     ForcePerLengthUnit ForcePerLengthUnit = ForcePerLengthUnit.KilonewtonPerMeter;
+
     public override void InitialiseDropdowns()
     {
       if (DefaultUnits.LengthUnitGeometry == LengthUnit.Foot | DefaultUnits.LengthUnitGeometry == LengthUnit.Inch)
@@ -185,14 +186,14 @@ namespace GsaGH.Components
       this.DropDownItems = new List<List<string>>();
       this.SelectedItems = new List<string>();
 
-      DropDownItems.Add(FilteredUnits.FilteredMassUnits);
-      SelectedItems.Add(this.MassUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.Mass)));
+      this.SelectedItems.Add(Mass.GetAbbreviation(this.MassUnit));
 
-      DropDownItems.Add(FilteredUnits.FilteredAreaMomentOfInertiaUnits);
-      SelectedItems.Add(this.InertiaUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.AreaMomentOfInertia)));
+      this.SelectedItems.Add(AreaMomentOfInertia.GetAbbreviation((this.InertiaUnit)));
 
-      DropDownItems.Add(FilteredUnits.FilteredForcePerLengthUnits);
-      SelectedItems.Add(this.ForcePerLengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerLength)));
+      this.SelectedItems.Add(ForcePerLength.GetAbbreviation((this.ForcePerLengthUnit)));
 
       this.IsInitialised = true;
     }
@@ -203,22 +204,22 @@ namespace GsaGH.Components
       switch (i)
       {
         case 0:
-          MassUnit = (MassUnit)Enum.Parse(typeof(MassUnit), SelectedItems[i]);
+          this.MassUnit = (MassUnit)UnitsHelper.Parse(typeof(MassUnit), SelectedItems[i]);
           break;
         case 1:
-          InertiaUnit = (AreaMomentOfInertiaUnit)Enum.Parse(typeof(AreaMomentOfInertiaUnit), SelectedItems[i]);
+          this.InertiaUnit = (AreaMomentOfInertiaUnit)UnitsHelper.Parse(typeof(AreaMomentOfInertiaUnit), SelectedItems[i]);
           break;
         case 2:
-          ForcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), SelectedItems[i]);
+          this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[i]);
           break;
       }
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()
     {
-      MassUnit = (MassUnit)Enum.Parse(typeof(MassUnit), SelectedItems[0]);
-      InertiaUnit = (AreaMomentOfInertiaUnit)Enum.Parse(typeof(AreaMomentOfInertiaUnit), SelectedItems[1]);
-      ForcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), SelectedItems[2]);
+      this.MassUnit = (MassUnit)UnitsHelper.Parse(typeof(MassUnit), SelectedItems[0]);
+      this.InertiaUnit = (AreaMomentOfInertiaUnit)UnitsHelper.Parse(typeof(AreaMomentOfInertiaUnit), SelectedItems[1]);
+      this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[2]);
       base.UpdateUIFromSelectedItems();
     }
 
