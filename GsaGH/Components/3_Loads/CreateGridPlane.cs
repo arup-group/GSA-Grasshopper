@@ -149,8 +149,8 @@ namespace GsaGH.Components
       this.SelectedItems.Add(this._mode.ToString());
 
       // Length
-      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-      this.SelectedItems.Add(this.LengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -170,14 +170,14 @@ namespace GsaGH.Components
         }
       }
       else
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
 
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

@@ -233,8 +233,8 @@ namespace GsaGH.Components
       this.SelectedItems.Add(this._mode.ToString().Replace('_', ' '));
 
       // Force
-      this.DropDownItems.Add(FilteredUnits.FilteredForceUnits);
-      this.SelectedItems.Add(this.ForceUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      this.SelectedItems.Add(Force.GetAbbreviation(this.ForceUnit));
 
       this.IsInitialised = true;
     }
@@ -250,22 +250,22 @@ namespace GsaGH.Components
           case "Node Force":
             this._mode = FoldMode.Node_Force;
             this.DropDownItems[1] = FilteredUnits.FilteredForceUnits;
-            this.SelectedItems[1] = this.ForceUnit.ToString();
+            this.SelectedItems[1] = Force.GetAbbreviation(this.ForceUnit);
             break;
           case "Node Moment":
             this._mode = FoldMode.Node_Moment;
             this.DropDownItems[1] = FilteredUnits.FilteredMomentUnits;
-            this.SelectedItems[1] = this.MomentUnit.ToString();
+            this.SelectedItems[1] = Moment.GetAbbreviation(this.MomentUnit);
             break;
           case "Applied Displ":
             this._mode = FoldMode.Applied_Displ;
             this.DropDownItems[1] = FilteredUnits.FilteredLengthUnits;
-            this.SelectedItems[1] = this.LengthUnit.ToString();
+            this.SelectedItems[1] = Length.GetAbbreviation(this.LengthUnit);
             break;
           case "Settlement":
             this._mode = FoldMode.Settlements;
             this.DropDownItems[1] = FilteredUnits.FilteredLengthUnits;
-            this.SelectedItems[1] = this.LengthUnit.ToString();
+            this.SelectedItems[1] = Length.GetAbbreviation(this.LengthUnit);
             break;
         }
       }
@@ -274,14 +274,14 @@ namespace GsaGH.Components
         switch (this._mode)
         {
           case FoldMode.Node_Force:
-            this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[1]);
+            this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[1]);
             break;
           case FoldMode.Node_Moment:
-            this.MomentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), this.SelectedItems[1]);
+            this.MomentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), this.SelectedItems[1]);
             break;
           case FoldMode.Applied_Displ:
           case FoldMode.Settlements:
-            this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+            this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
             break;
         }
       }
@@ -294,14 +294,14 @@ namespace GsaGH.Components
       switch (this._mode)
       {
         case FoldMode.Node_Force:
-          this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[1]);
+          this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[1]);
           break;
         case FoldMode.Node_Moment:
-          this.MomentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), this.SelectedItems[1]);
+          this.MomentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), this.SelectedItems[1]);
           break;
         case FoldMode.Applied_Displ:
         case FoldMode.Settlements:
-          this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+          this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
           break;
       }
       base.UpdateUIFromSelectedItems();

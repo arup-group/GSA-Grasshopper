@@ -182,21 +182,21 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // Force
-      this.DropDownItems.Add(FilteredUnits.FilteredForceUnits);
-      this.SelectedItems.Add(this.ForceUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      this.SelectedItems.Add(Force.GetAbbreviation(this.ForceUnit));
 
       this.IsInitialised = true;
     }
     public override void SetSelected(int i, int j)
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[i]);
+      this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[i]);
       base.UpdateUI();
     }
 
     public override void UpdateUIFromSelectedItems()
     {
-      this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[0]);
+      this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
     public override void VariableParameterMaintenance()

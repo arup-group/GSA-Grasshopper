@@ -168,16 +168,16 @@ namespace GsaGH.Components
       this.SelectedItems.Add(this._mode.ToString());
 
       // Stress unit
-      this.DropDownItems.Add(FilteredUnits.FilteredStressUnits);
-      this.SelectedItems.Add(this.StressUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
+      this.SelectedItems.Add(Pressure.GetAbbreviation(this.StressUnit));
 
       // Density unit
-      this.DropDownItems.Add(FilteredUnits.FilteredDensityUnits);
-      this.SelectedItems.Add(this.DensityUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Density));
+      this.SelectedItems.Add(Density.GetAbbreviation(this.DensityUnit));
 
       // Temperature unit
-      this.DropDownItems.Add(FilteredUnits.FilteredTemperatureUnits);
-      this.SelectedItems.Add(this.TemperatureUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Temperature));
+      this.SelectedItems.Add(Temperature.GetAbbreviation(this.TemperatureUnit));
 
       this.IsInitialised = true;
     }

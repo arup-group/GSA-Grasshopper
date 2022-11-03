@@ -196,8 +196,8 @@ namespace GsaGH.Components
       SelectedItems = new List<string>();
 
       // length
-      DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-      SelectedItems.Add(LengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -211,7 +211,7 @@ namespace GsaGH.Components
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
 
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
 
       base.UpdateUI();
     }
@@ -223,7 +223,7 @@ namespace GsaGH.Components
     
     public override void UpdateUIFromSelectedItems()
     {
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[0]);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
 
       base.UpdateUIFromSelectedItems();
     }

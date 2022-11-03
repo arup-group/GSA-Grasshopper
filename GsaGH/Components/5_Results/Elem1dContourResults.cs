@@ -632,8 +632,8 @@ namespace GsaGH.Components
       this.SelectedItems.Add(this.DropDownItems[1][3]);
 
       // Length
-      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-      this.SelectedItems.Add(this.LengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -725,7 +725,7 @@ namespace GsaGH.Components
       }
       else // change is made to the unit
       {
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[2]);
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[2]);
       }
       base.UpdateUI();
     }
@@ -741,7 +741,7 @@ namespace GsaGH.Components
 
     public override void UpdateUIFromSelectedItems()
     {
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[2]);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[2]);
       base.UpdateUIFromSelectedItems();
     }
 
