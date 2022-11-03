@@ -56,6 +56,7 @@ namespace GsaGH.Components
       pManager[2].Optional = true;
       pManager[3].Optional = true;
     }
+
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
       IQuantity length = new Length(0, LengthResultUnit);
@@ -523,8 +524,8 @@ namespace GsaGH.Components
       this.SelectedItems.Add(this.DropDownItems[1][3]);
 
       // Length
-      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-      this.SelectedItems.Add(this.LengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -567,24 +568,28 @@ namespace GsaGH.Components
       }
       else // change is made to the unit
       {
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[2]);
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[2]);
       }
       base.UpdateUI();
     }
+
     public void SetVal(double value)
     {
       _defScale = value;
     }
+
     public void SetMaxMin(double max, double min)
     {
       _maxValue = max;
       _minValue = min;
     }
+
     public override void UpdateUIFromSelectedItems()
     {
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[2]);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[2]);
       base.UpdateUIFromSelectedItems();
     }
+
     public override void VariableParameterMaintenance()
     {
 
@@ -593,7 +598,7 @@ namespace GsaGH.Components
 
         if ((int)_disp < 4)
         {
-          IQuantity length = new Length(0, LengthUnit);
+          IQuantity length = new Length(0, this.LengthUnit);
           string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
           Params.Output[2].Name = "Values [" + lengthunitAbbreviation + "]";
         }
@@ -627,6 +632,7 @@ namespace GsaGH.Components
       this.Attributes.ExpireLayout();
       this.Attributes.PerformLayout();
     }
+
     private void Mode1Clicked()
     {
       if (_mode == FoldMode.Displacement)
@@ -640,6 +646,7 @@ namespace GsaGH.Components
 
       ReDrawComponent();
     }
+
     private void Mode2Clicked()
     {
       if (_mode == FoldMode.Reaction)
@@ -657,6 +664,7 @@ namespace GsaGH.Components
     {
       Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
     }
+
     bool _showLegend = true;
     private void ShowLegend(object sender, EventArgs e)
     {
@@ -697,6 +705,7 @@ namespace GsaGH.Components
       writer.SetBoolean("legend", _showLegend);
       return base.Write(writer);
     }
+    
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       _mode = (FoldMode)reader.GetInt32("Mode");

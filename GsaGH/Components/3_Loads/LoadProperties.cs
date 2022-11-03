@@ -182,12 +182,12 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // Force
-      this.DropDownItems.Add(FilteredUnits.FilteredForceUnits);
-      this.SelectedItems.Add(this.ForceUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      this.SelectedItems.Add(Force.GetAbbreviation(this.ForceUnit));
 
       // Length
-      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-      this.SelectedItems.Add(this.LengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -198,10 +198,10 @@ namespace GsaGH.Components
       switch (i)
       {
         case 0:
-          this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[0]);
+          this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[0]);
           break;
         case 1:
-          this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+          this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
           break;
       }
       base.UpdateUI();
@@ -209,16 +209,17 @@ namespace GsaGH.Components
 
     public override void UpdateUIFromSelectedItems()
     {
-      this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[1]);
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[2]);
+      this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[0]);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
+
     public override void VariableParameterMaintenance()
     {
       string forceUnitAbbreviation = Force.GetAbbreviation(this.ForceUnit);
       string forcePerLengthUnit = ForcePerLength.GetAbbreviation(UnitsHelper.GetForcePerLengthUnit(this.ForceUnit, this.LengthUnit));
       string forcePerAreaUnit = Pressure.GetAbbreviation(UnitsHelper.GetForcePerAreaUnit(this.ForceUnit, this.LengthUnit));
-      string unitAbbreviation = string.Join(", ", new string[] {forceUnitAbbreviation, forcePerLengthUnit, forcePerAreaUnit});
+      string unitAbbreviation = string.Join(", ", new string[] { forceUnitAbbreviation, forcePerLengthUnit, forcePerAreaUnit });
 
       Params.Output[6].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
       Params.Output[7].Name = "Load Value or Factor X [" + unitAbbreviation + "]";

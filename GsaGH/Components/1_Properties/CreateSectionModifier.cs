@@ -184,7 +184,7 @@ namespace GsaGH.Components
         if (this._toMode == false)
           this.DensityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), this.SelectedItems[i]);
         else
-          this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+          this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
       }
 
       if (i == 2)
@@ -218,7 +218,7 @@ namespace GsaGH.Components
     {
       if (this._toMode)
       {
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
         this.DensityUnit = (LinearDensityUnit)Enum.Parse(typeof(LinearDensityUnit), this.SelectedItems[2]);
         if (this.SelectedItems[3] == this._stressOptions[0])
           this.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;

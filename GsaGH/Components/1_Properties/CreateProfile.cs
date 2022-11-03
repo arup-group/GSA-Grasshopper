@@ -927,8 +927,8 @@ namespace GsaGH.Components
       this.SelectedItems.Add("Rectangle");
 
       // Length
-      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-      this.SelectedItems.Add(this.LengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -1155,7 +1155,7 @@ namespace GsaGH.Components
             DropDownItems.RemoveAt(1);
 
           // add length measure dropdown list
-          DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
+          this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
 
           // set selected length
           SelectedItems[1] = LengthUnit.ToString();
@@ -1170,7 +1170,7 @@ namespace GsaGH.Components
         else
         {
           // change unit
-          this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[i]);
+          this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
 
           base.UpdateUI();
         }
@@ -1890,7 +1890,7 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), reader.GetString("mode"));
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("lengthUnit"));
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("lengthUnit"));
 
       this._inclSS = reader.GetBoolean("inclSS");
       this._numberOfInputs = reader.GetInt32("NumberOfInputs");

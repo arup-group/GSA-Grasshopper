@@ -208,12 +208,12 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // force
-      this.DropDownItems.Add(FilteredUnits.FilteredForcePerLengthUnits);
-      this.SelectedItems.Add(this.ForceUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength));
+      this.SelectedItems.Add(ForcePerLength.GetAbbreviation(this.ForceUnit));
 
       // moment
-      this.DropDownItems.Add(FilteredUnits.FilteredForceUnits);
-      this.SelectedItems.Add(this.MomentUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      this.SelectedItems.Add(Force.GetAbbreviation(this.MomentUnit));
 
       this.IsInitialised = true;
     }
