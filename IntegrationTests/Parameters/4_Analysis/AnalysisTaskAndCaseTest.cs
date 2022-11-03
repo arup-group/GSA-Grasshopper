@@ -147,8 +147,6 @@ namespace IntegrationTests.Parameters
     IGH_Param TestHelper(string groupIdentifier)
     {
       IGH_Param param = Helper.FindParameter(Document(), groupIdentifier);
-      Assert.NotNull(param);
-      param.CollectData();
       return param;
     }
   }

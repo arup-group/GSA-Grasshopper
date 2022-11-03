@@ -26,8 +26,6 @@ namespace IntegrationTests.ExampleFiles
     public void MaxDeflectionTest()
     {
       IGH_Param param = Helper.FindParameter(Document(), "RH_OUT:deflection");
-      Assert.NotNull(param);
-      param.CollectData();
       GH_Number output = (GH_Number)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(5.563437, output.Value, 6);
     }

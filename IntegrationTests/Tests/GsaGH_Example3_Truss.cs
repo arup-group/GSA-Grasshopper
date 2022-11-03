@@ -26,8 +26,6 @@ namespace IntegrationTests.ExampleFiles
     public void MaxDeformationAssert()
     {
       IGH_Param param = Helper.FindParameter(Document(), "MaxU");
-      Assert.NotNull(param);
-      param.CollectData();
       GH_Number output = (GH_Number)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(6.914599, output.Value, 6);
     }

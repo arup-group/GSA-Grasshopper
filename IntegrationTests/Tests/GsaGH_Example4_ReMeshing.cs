@@ -26,8 +26,6 @@ namespace IntegrationTests.ExampleFiles
     public void CountElementsTest()
     {
       IGH_Param param = Helper.FindParameter(Document(), "Elements");
-      Assert.NotNull(param);
-      param.CollectData();
       GH_Integer output = (GH_Integer)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(48, output.Value);
     }
@@ -36,14 +34,10 @@ namespace IntegrationTests.ExampleFiles
     public void CountMeshTest()
     {
       IGH_Param param = Helper.FindParameter(Document(), "Vertices");
-      Assert.NotNull(param);
-      param.CollectData();
       GH_Integer output = (GH_Integer)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(561, output.Value);
 
       IGH_Param param2 = Helper.FindParameter(Document(), "Faces");
-      Assert.NotNull(param2);
-      param2.CollectData();
       GH_Integer output2 = (GH_Integer)param2.VolatileData.get_Branch(0)[0];
       Assert.Equal(150, output2.Value);
     }
