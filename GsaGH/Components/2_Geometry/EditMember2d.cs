@@ -110,12 +110,15 @@ namespace GsaGH.Components
       GsaMember2d mem = new GsaMember2d();
       if (DA.GetData(0, ref gsaMember2d))
       {
-        if (gsaMember2d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input is null"); }
+        if (gsaMember2d == null)
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input is null");
+        }
         mem = gsaMember2d.Duplicate();
       }
 
       if (mem != null)
-      { 
+      {
         // #### inputs ####
         // 1 ID
         GH_Integer ghID = new GH_Integer();
@@ -128,7 +131,7 @@ namespace GsaGH.Components
         // 2/3/4 Brep, incl.pts and incl.lns
         Brep brep = mem.Brep; //existing brep
         GH_Brep ghbrep = new GH_Brep();
-        CurveList crvlist = new CurveList(mem.InclusionLines);
+        CurveList crvlist = new CurveList(mem.InclusionLines == null ? new List<PolyCurve>() : mem.InclusionLines);
         List<Curve> crvs = crvlist.ToList();
         List<GH_Curve> ghcrvs = new List<GH_Curve>();
         List<GH_Point> ghpts = new List<GH_Point>();
@@ -232,7 +235,7 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[10].Sources.Count > 0)
         {
-          mem.MeshSize = (Length) Input.UnitNumber(this, DA, 10, this.LengthUnit, true);
+          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 10, this.LengthUnit, true);
         }
 
         // 11 mesh with others
