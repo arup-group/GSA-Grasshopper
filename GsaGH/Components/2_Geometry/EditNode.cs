@@ -160,9 +160,7 @@ namespace GsaGH.Components
         DA.SetData(1, node.ID);
         DA.SetData(2, node.Point);
         DA.SetData(3, new GH_Plane(node.LocalAxis));
-
-        // this isn´t working?!
-        DA.SetData(4, node.Restraint);
+        DA.SetData(4, new GsaBool6Goo(node.Restraint));
         DA.SetData(5, node.API_Node.Name.ToString());
         DA.SetData(6, node.Colour);
 
