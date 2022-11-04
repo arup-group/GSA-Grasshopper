@@ -40,7 +40,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaBool6Parameter(), "Node Restraints", "B6", "Set Restraints (Bool6) of Node", GH_ParamAccess.item);
       pManager.AddTextParameter("Node Name", "Na", "Set Name of Node", GH_ParamAccess.item);
       pManager.AddColourParameter("Node Colour", "Co", "Set colour of node", GH_ParamAccess.item);
-      
+
       for (int i = 0; i < pManager.ParamCount; i++)
         pManager[i].Optional = true;
 
@@ -99,7 +99,7 @@ namespace GsaGH.Components
       }
 
       if (node != null)
-      { 
+      {
         // #### inputs ####
         // 2 Point
         GH_Point ghPt = new GH_Point();
@@ -160,6 +160,8 @@ namespace GsaGH.Components
         DA.SetData(1, node.ID);
         DA.SetData(2, node.Point);
         DA.SetData(3, new GH_Plane(node.LocalAxis));
+
+        // this isn´t working?!
         DA.SetData(4, node.Restraint);
         DA.SetData(5, node.API_Node.Name.ToString());
         DA.SetData(6, node.Colour);
@@ -167,8 +169,17 @@ namespace GsaGH.Components
         // only get connected elements/members if enabled (computationally expensive)
         if (_mode == FoldMode.GetConnected)
         {
-          try { DA.SetDataList(7, node.API_Node.ConnectedElements); } catch (Exception) { }
-          try { DA.SetDataList(8, node.API_Node.ConnectedMembers); } catch (Exception) { }
+          try
+          {
+            DA.SetDataList(7, node.API_Node.ConnectedElements);
+          }
+          catch (Exception) { }
+
+          try
+          {
+            DA.SetDataList(8, node.API_Node.ConnectedMembers);
+          }
+          catch (Exception) { }
         }
       }
     }
@@ -186,6 +197,7 @@ namespace GsaGH.Components
     {
       Menu_AppendItem(menu, "Try get connected Element & Members", FlipMode, true, _mode == FoldMode.GetConnected);
     }
+
     private void FlipMode(object sender, EventArgs e)
     {
       RecordUndoEvent("GetConnected Parameters");
