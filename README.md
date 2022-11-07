@@ -9,7 +9,8 @@ Head over to our GSA documentation site for:
 - [Installation of the plugin in Grasshopper](https://docs.oasys-software.com/structural/gsa/tutorials/gsagh-installing-grasshopper-plugin.html)
 - [Parameters overview](https://docs.oasys-software.com/structural/gsa/explanations/gsagh-parameters.html)
 - [Components overview](https://docs.oasys-software.com/structural/gsa/explanations/gsagh-components.html)
-Tutorials and example files to come shortly!
+
+Tutorials and more example files to come shortly!
 
 ## Example Files
 
