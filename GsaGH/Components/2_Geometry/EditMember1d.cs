@@ -401,7 +401,7 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       else
         this.LengthUnit = DefaultUnits.LengthUnitGeometry;
       return base.Read(reader);

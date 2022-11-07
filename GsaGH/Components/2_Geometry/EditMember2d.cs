@@ -110,12 +110,15 @@ namespace GsaGH.Components
       GsaMember2d mem = new GsaMember2d();
       if (DA.GetData(0, ref gsaMember2d))
       {
-        if (gsaMember2d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input is null"); }
+        if (gsaMember2d == null)
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input is null");
+        }
         mem = gsaMember2d.Duplicate();
       }
 
       if (mem != null)
-      { 
+      {
         // #### inputs ####
         // 1 ID
         GH_Integer ghID = new GH_Integer();
@@ -246,7 +249,7 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[10].Sources.Count > 0)
         {
-          mem.MeshSize = (Length) Input.UnitNumber(this, DA, 10, this.LengthUnit, true);
+          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 10, this.LengthUnit, true);
         }
 
         // 11 mesh with others
@@ -350,7 +353,7 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        this.LengthUnit = this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       else
         this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitGeometry;
       return base.Read(reader);

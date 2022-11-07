@@ -521,24 +521,24 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // type
-      DropDownItems.Add(this._type);
-      SelectedItems.Add(this.DropDownItems[0][0]);
+      this.DropDownItems.Add(this._type);
+      this.SelectedItems.Add(this.DropDownItems[0][0]);
 
       // component
-      DropDownItems.Add(this._displacement);
-      SelectedItems.Add(this.DropDownItems[1][3]);
+      this.DropDownItems.Add(this._displacement);
+      this.SelectedItems.Add(this.DropDownItems[1][3]);
 
       // Length
-      DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-      SelectedItems.Add(this.LengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
     public override void CreateAttributes()
     {
-      if (!IsInitialised)
-        InitialiseDropdowns();
-      m_attributes = new OasysGH.UI.DropDownSliderComponentAttributes(this, SetSelected, this.DropDownItems, this.SelectedItems, this._slider, SetVal, SetMaxMin, this._defScale, this._maxValue, this._minValue, this._noDigits, this.SpacerDescriptions);
+      if (!this.IsInitialised)
+        this.InitialiseDropdowns();
+      this.m_attributes = new OasysGH.UI.DropDownSliderComponentAttributes(this, SetSelected, this.DropDownItems, this.SelectedItems, this._slider, SetVal, SetMaxMin, this._defScale, this._maxValue, this._minValue, this._noDigits, this.SpacerDescriptions);
     }
 
     public override void SetSelected(int dropdownlistidd, int selectedidd)
@@ -561,7 +561,7 @@ namespace GsaGH.Components
 
             SelectedItems[0] = DropDownItems[0][0]; // displacement
             SelectedItems[1] = DropDownItems[1][3]; // Resolved XYZ
-            SelectedItems[2] = LengthUnit.ToString();
+            SelectedItems[2] = Length.GetAbbreviation(this.LengthUnit);
 
             _disp = (DisplayValue)3;
             _isShear = false;
@@ -584,7 +584,7 @@ namespace GsaGH.Components
 
             SelectedItems[0] = DropDownItems[0][1];
             SelectedItems[1] = DropDownItems[1][0];
-            SelectedItems[2] = LengthUnit.ToString();
+            SelectedItems[2] = Length.GetAbbreviation(this.LengthUnit);
 
             _disp = 0;
             _isShear = false;
@@ -612,7 +612,7 @@ namespace GsaGH.Components
             else
               SelectedItems[2] = DropDownItems[2][1];
 
-            SelectedItems[3] = LengthUnit.ToString();
+            SelectedItems[3] = Length.GetAbbreviation(this.LengthUnit);
 
             _disp = 0;
             _isShear = false;
@@ -674,7 +674,7 @@ namespace GsaGH.Components
       }
       else
       {
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[2]);
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[2]);
       }
       base.UpdateUI();
     }
@@ -689,7 +689,7 @@ namespace GsaGH.Components
     }
     public override void UpdateUIFromSelectedItems()
     {
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[2]);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[2]);
       base.UpdateUIFromSelectedItems();
     }
     public override void VariableParameterMaintenance()

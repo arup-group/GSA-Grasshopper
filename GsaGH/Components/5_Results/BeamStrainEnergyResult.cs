@@ -153,26 +153,29 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // Energy
-      this.DropDownItems.Add(FilteredUnits.FilteredEnergyUnits);
-      this.SelectedItems.Add(this.EnergyUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.Energy)));
+      this.SelectedItems.Add(Energy.GetAbbreviation(this.EnergyUnit));
 
       this.IsInitialised = true;
     }
+
     public override void CreateAttributes()
     {
       if (!IsInitialised)
         InitialiseDropdowns();
       m_attributes = new OasysGH.UI.DropDownCheckBoxesComponentAttributes(this, SetSelected, this.DropDownItems, this.SelectedItems, SetAnalysis, this.m_initialCheckState, this.m_checkboxText, this.SpacerDescriptions);
     }
+
     public override void SetSelected(int i, int j)
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.EnergyUnit = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), this.SelectedItems[i]);
+      this.EnergyUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), this.SelectedItems[i]);
       base.UpdateUI();
     }
+
     public override void UpdateUIFromSelectedItems()
     {
-      this.EnergyUnit = (EnergyUnit)Enum.Parse(typeof(EnergyUnit), SelectedItems[0]);
+      this.EnergyUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), SelectedItems[0]);
       UpdateInputs();
       base.UpdateUIFromSelectedItems();
     }
@@ -182,6 +185,7 @@ namespace GsaGH.Components
       this.Average = value[0];
       UpdateInputs();
     }
+
     private void UpdateInputs()
     {
       RecordUndoEvent("Toggled Average");
