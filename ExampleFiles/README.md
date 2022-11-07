@@ -16,7 +16,7 @@ GsaGH is based on GsaAPI, feel free to copy the code from this repo or check out
 
 ## Documentation
 
-If you have landed on this page because you are in the process of learning GsaGH, maybe you will also be interested in the documentation pages found here:
+If you have landed on this page because you are in the process of learning GsaGH, maybe you are also interested in the documentation pages found here:
 - [Introduction](https://docs.oasys-software.com/structural/gsa/explanations/gsagh-introduction.html)
 - [Installation of the plugin in Grasshopper](https://docs.oasys-software.com/structural/gsa/tutorials/gsagh-installing-grasshopper-plugin.html)
 - [Parameters overview](https://docs.oasys-software.com/structural/gsa/explanations/gsagh-parameters.html)
