@@ -66,6 +66,7 @@ namespace GsaGH.Parameters
       else if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both))
       {
         Value.Id = idd;
+        return true;
       }
 
       return false;

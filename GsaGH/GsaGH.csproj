@@ -121,7 +121,7 @@
     <Compile Include="Components\GraveyardComp\EditProp2d_OBSOLETE.cs" />
     <Compile Include="Components\1_Properties\EditSectionModifier.cs" />
     <Compile Include="Components\1_Properties\TaperProfile.cs" />
-    <Compile Include="Components\1_Properties\CustomMaterial.cs" />
+    <Compile Include="Components\1_Properties\CreateCustomMaterial.cs" />
     <Compile Include="Components\1_Properties\EditProp3d.cs" />
     <Compile Include="Components\1_Properties\MaterialProperties.cs" />
     <Compile Include="Components\0_Model\GetGeometry.cs" />

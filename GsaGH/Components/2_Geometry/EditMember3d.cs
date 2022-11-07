@@ -189,7 +189,7 @@ namespace GsaGH.Components
         DA.SetData(0, new GsaMember3dGoo(mem));
         DA.SetData(1, mem.ID);
         DA.SetData(2, mem.SolidMesh);
-        DA.SetData(3, mem.PropertyID);
+        DA.SetData(3, new GsaProp3dGoo(mem.Property));
         DA.SetData(4, new GH_UnitNumber(mem.MeshSize.ToUnit(this.LengthUnit)));
         DA.SetData(5, mem.MeshWithOthers);
         DA.SetData(6, mem.Name);

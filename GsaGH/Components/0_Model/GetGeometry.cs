@@ -827,7 +827,7 @@ namespace GsaGH.Components
     public override bool Write(GH_IWriter writer)
     {
       writer.SetInt32("Mode", (int)_mode);
-      DeSerialization.writeDropDownComponents(ref writer, this.DropDownItems, this.SelectedItems, this.SpacerDescriptions);
+      Util.GH.DeSerialization.writeDropDownComponents(ref writer, this.DropDownItems, this.SelectedItems, this.SpacerDescriptions);
       return base.Write(writer);
     }
 
