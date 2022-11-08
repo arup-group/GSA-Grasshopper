@@ -1,0 +1,48 @@
+﻿using GsaGH.Components;
+using GsaGH.Parameters;
+using GsaGHTests.Helpers;
+using OasysGH.Components;
+using OasysUnits;
+using OasysUnits.Units;
+using Xunit;
+using static GsaGH.Parameters.GsaMaterial;
+
+namespace GsaGHTests.Components
+{
+  [Collection("GrasshopperFixture collection")]
+  public class CreateCustomMaterialTests
+  {
+    public static GH_OasysDropDownComponent ComponentMother()
+    {
+      var comp = new CreateCustomMaterial();
+      comp.CreateAttributes();
+      return comp;
+    }
+
+    [Fact]
+    public void CreateComponent()
+    {
+      var comp = ComponentMother();
+
+      comp.SetSelected(0, 3); // set material type to "Timber"
+      comp.SetSelected(1, 3); // set stress unit to "GPa"
+      comp.SetSelected(2, 5); // set density unit to "kg/m^3"
+      comp.SetSelected(3, 1); // set temperature unit to "K"
+
+      ComponentTestHelper.SetInput(comp, 1, 0);
+      ComponentTestHelper.SetInput(comp, 1, 1);
+      ComponentTestHelper.SetInput(comp, 2, 2);
+      ComponentTestHelper.SetInput(comp, 3, 3);
+      ComponentTestHelper.SetInput(comp, 4, 4);
+
+      GsaMaterialGoo output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(1, output.Value.AnalysisProperty);
+      Assert.Equal(0, output.Value.GradeProperty);
+      Assert.Equal(MatType.TIMBER, output.Value.MaterialType);
+      Assert.Equal(new Pressure(1, PressureUnit.Gigapascal).As(PressureUnit.Pascal), output.Value.AnalysisMaterial.ElasticModulus);
+      Assert.Equal(2, output.Value.AnalysisMaterial.PoissonsRatio);
+      Assert.Equal(new Density(3, DensityUnit.KilogramPerCubicMeter).As(DensityUnit.KilogramPerCubicMeter), output.Value.AnalysisMaterial.Density);
+      Assert.Equal( new CoefficientOfThermalExpansion(4, CoefficientOfThermalExpansionUnit.InverseKelvin).As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius), output.Value.AnalysisMaterial.CoefficientOfThermalExpansion);
+    }
+  }
+}

@@ -5,7 +5,7 @@ using OasysGH.Components;
 using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
-namespace GsaGHTests.Slab
+namespace GsaGHTests.Components
 {
   [Collection("GrasshopperFixture collection")]
   public class CreateMaterialTests

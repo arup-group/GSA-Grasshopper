@@ -16,6 +16,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Parameters\4_Analysis\**" />
+    <EmbeddedResource Remove="Parameters\4_Analysis\**" />
+    <None Remove="Parameters\4_Analysis\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="OasysGH" Version="0.3.15-beta" />
     <PackageReference Include="OasysUnits" Version="1.0.0" />
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
@@ -48,7 +54,6 @@
   </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Parameters\4_Analysis\" />
       <Folder Include="Parameters\5_Results\" />
     </ItemGroup>
 
