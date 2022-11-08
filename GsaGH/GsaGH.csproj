@@ -108,7 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\0_Model\GetAnalysis.cs" />
-    <Compile Include="Components\0_Model\GwaModel.cs" />
+    <Compile Include="Components\0_Model\GwaCommand.cs" />
     <Compile Include="Components\1_Properties\CreateBucklingFactors.cs" />
     <Compile Include="Components\1_Properties\EditBucklingFactors.cs" />
     <Compile Include="Components\GraveyardComp\CreateBool6_OBSOLETE.cs" />
