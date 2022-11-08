@@ -15,7 +15,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a GSA model from GWA string
   /// </summary>
-  public class GwaModel : GH_OasysComponent
+  public class GwaCommand : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("6f701c53-1531-45ef-9842-9356da59b590");
@@ -28,9 +28,9 @@ namespace GsaGH.Components
       return help;
     }
 
-    public GwaModel() : base(
-      "Create GWA Model",
-      "GWA", "Create a model from a GWA string.",
+    public GwaCommand() : base(
+      "GWA Command",
+      "GWA", "Create a model from a GWA string, inject data into a model using GWA command, or retrieve model data or results through a GWA command.",
       Ribbon.CategoryName.Name(),
       Ribbon.SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
