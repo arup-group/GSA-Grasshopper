@@ -34,7 +34,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Section Number", "ID", "Set Section Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Profile", "Pf", "Profile name following GSA naming convention (eg 'STD I 1000 500 15 25')", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name, GsaMaterialGoo.NickName, "Set " + GsaMaterialGoo.Name, GH_ParamAccess.item);
-      pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionGoo.Name, GsaSectionGoo.NickName, "Set " + GsaSectionGoo.Name, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name, GsaSectionModifierGoo.NickName, "Set " + GsaSectionModifierGoo.Name, GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Pool", "Po", "Set Section pool", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Name", "Na", "Set Section name", GH_ParamAccess.item);
       pManager.AddColourParameter("Section Colour", "Co", "Set Section colour", GH_ParamAccess.item);
@@ -49,7 +49,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Section Number", "ID", "Original Section number (ID) if the Section ever belonged to a GSA Model", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Profile", "Pf", "Profile describtion", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name, GsaMaterialGoo.NickName, "Get " + GsaMaterialGoo.Name, GH_ParamAccess.item);
-      pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionGoo.Name, GsaSectionGoo.NickName, "Set " + GsaSectionGoo.Name, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name, GsaSectionModifierGoo.NickName, "Set " + GsaSectionModifierGoo .Name, GH_ParamAccess.item);
       pManager.AddIntegerParameter("Section Pool", "Po", "Get Section pool", GH_ParamAccess.item);
       pManager.AddTextParameter("Section Name", "Na", "Get Section name", GH_ParamAccess.item);
       pManager.AddColourParameter("Section Colour", "Co", "Get Section colour", GH_ParamAccess.item);

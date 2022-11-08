@@ -62,7 +62,7 @@ namespace IntegrationTests
         for (int i = 0; i < ((double[])expected).Length; i++)
         {
           GH_Number valOut = (GH_Number)param.VolatileData.get_Branch(0)[i];
-          Assert.Equal(((double[])expected)[i], valOut.Value);
+          Assert.Equal(((double[])expected)[i], valOut.Value, 6);
         }
       }
       else

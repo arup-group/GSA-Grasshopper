@@ -190,7 +190,7 @@ namespace GsaGH.Parameters
     {
       string type = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.MaterialType).Key;
       if (this._analProp != 0)
-        return "ID:" + this._analProp + " Custom Elastic Isotropic " + type;
+        return "ID:" + this._analProp + " Custom " + type + " Material";
       else
       {
         string id = this.GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
