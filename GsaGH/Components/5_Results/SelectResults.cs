@@ -220,8 +220,7 @@ namespace GsaGH.Components
           updateCases = false;
 
         // skip 'reflection' if inputs have been set
-        if (ResultType == GsaResult.ResultType.AnalysisCase && this.Params.Input[1].SourceCount > 0
-          && this.Params.Input[2].SourceCount > 0)
+        if (ResultType == GsaResult.ResultType.AnalysisCase && this.Params.Input[2].SourceCount > 0)
         {
           _analysisCaseResults = _gsaModel.Model.Results();
           if (_analysisCaseResults == null || _analysisCaseResults.Count == 0 || !_analysisCaseResults.ContainsKey(_caseID))
@@ -231,8 +230,7 @@ namespace GsaGH.Components
           }
           goto GetResults;
         }
-        if (ResultType == GsaResult.ResultType.Combination && this.Params.Input[1].SourceCount > 0
-          && this.Params.Input[2].SourceCount > 0 && this.Params.Input[3].SourceCount > 0)
+        if (ResultType == GsaResult.ResultType.Combination && this.Params.Input[2].SourceCount > 0)
         {
           _combinationCaseResults = _gsaModel.Model.CombinationCaseResults();
           if (_combinationCaseResults == null || _combinationCaseResults.Count == 0 || !_combinationCaseResults.ContainsKey(_caseID))

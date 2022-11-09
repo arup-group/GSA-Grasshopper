@@ -247,7 +247,7 @@ namespace GsaGH.Components
       if (_toMode)
       {
         string unit = Length.GetAbbreviation(this.LengthUnit);
-        string volUnit = VolumePerLength.GetAbbreviation(UnitsHelper.GetVolumePerLengthUnit(LengthUnit));
+        string volUnit = VolumePerLength.GetAbbreviation(UnitsHelper.GetVolumePerLengthUnit(this.LengthUnit));
 
         Params.Input[0].Name = "Area Modifier [" + unit + "\u00B2]";
         Params.Input[0].Description = "[Optional] Modify the effective Area TO this value";
