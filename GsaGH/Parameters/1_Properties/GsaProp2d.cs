@@ -6,6 +6,7 @@ using System.Linq;
 using GsaAPI;
 using OasysUnits;
 using OasysUnits.Units;
+using OasysGH;
 
 namespace GsaGH.Parameters
 {
