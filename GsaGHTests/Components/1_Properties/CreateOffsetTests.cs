@@ -1,6 +1,7 @@
 ﻿using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
+using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
@@ -14,30 +15,27 @@ namespace GsaGHTests.Components
     {
       var comp = new GsaGH.Components.CreateOffset();
       comp.CreateAttributes();
+
+      ComponentTestHelper.SetInput(comp, new Length(0.5, LengthUnit.Kilometer));
+      ComponentTestHelper.SetInput(comp, new Length(-0.75, LengthUnit.Meter), 1);
+      ComponentTestHelper.SetInput(comp, new Length(1.99, LengthUnit.Meter), 2);
+      ComponentTestHelper.SetInput(comp, new Length(0.99, LengthUnit.Meter), 3);
+
       return comp;
     }
 
     [Fact]
     public void CreateComponent()
     {
+      // Arrange & Act
       var comp = ComponentMother();
 
-      ComponentTestHelper.SetInput(comp, new Length(0.5, LengthUnit.Meter));
-      ComponentTestHelper.SetInput(comp, new Length(-0.75, LengthUnit.Meter), 1);
-      ComponentTestHelper.SetInput(comp, new Length(1.99, LengthUnit.Meter), 2);
-      ComponentTestHelper.SetInput(comp, new Length(0.99, LengthUnit.Meter), 3);
-
-      // set output data to Gsa-goo type
+      // Assert
       GsaOffsetGoo output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp);
-
-      // cast from -goo to Gsa-GH data type
-      GsaOffset offset = new GsaOffset();
-      output.CastTo(ref offset);
-
-      Assert.Equal(0.5, offset.X1.Value);
-      Assert.Equal(-0.75, offset.X2.Value);
-      Assert.Equal(1.99, offset.Y.Value);
-      Assert.Equal(0.99, offset.Z.Value);
+      Assert.Equal(500, output.Value.X1.Value);
+      Assert.Equal(-0.75, output.Value.X2.Value);
+      Assert.Equal(1.99, output.Value.Y.Value);
+      Assert.Equal(0.99, output.Value.Z.Value);
     }
   }
 }

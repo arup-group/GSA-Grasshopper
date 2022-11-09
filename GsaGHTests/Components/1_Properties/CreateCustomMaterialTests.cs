@@ -16,13 +16,6 @@ namespace GsaGHTests.Components
     {
       var comp = new CreateCustomMaterial();
       comp.CreateAttributes();
-      return comp;
-    }
-
-    [Fact]
-    public void CreateComponent()
-    {
-      var comp = ComponentMother();
 
       comp.SetSelected(0, 3); // set material type to "Timber"
       comp.SetSelected(1, 3); // set stress unit to "GPa"
@@ -35,6 +28,16 @@ namespace GsaGHTests.Components
       ComponentTestHelper.SetInput(comp, 3, 3);
       ComponentTestHelper.SetInput(comp, 4, 4);
 
+      return comp;
+    }
+
+    [Fact]
+    public void CreateComponent()
+    {
+      // Arrange & Act
+      var comp = ComponentMother();
+
+      // Assert
       GsaMaterialGoo output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(1, output.Value.AnalysisProperty);
       Assert.Equal(0, output.Value.GradeProperty);

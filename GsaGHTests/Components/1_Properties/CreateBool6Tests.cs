@@ -13,13 +13,6 @@ namespace GsaGHTests.Components
     {
       var comp = new CreateBool6();
       comp.CreateAttributes();
-      return comp;
-    }
-
-    [Fact]
-    public void CreateComponent()
-    {
-      var comp = ComponentMother();
 
       ComponentTestHelper.SetInput(comp, true, 0);
       ComponentTestHelper.SetInput(comp, true, 1);
@@ -28,6 +21,16 @@ namespace GsaGHTests.Components
       ComponentTestHelper.SetInput(comp, true, 4);
       ComponentTestHelper.SetInput(comp, true, 5);
 
+      return comp;
+    }
+
+    [Fact]
+    public void CreateComponent()
+    {
+      // Arrange & Act
+      var comp = ComponentMother();
+
+      // Assert
       GsaBool6Goo output = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp);
       Assert.True(output.Value.X);
       Assert.True(output.Value.Y);
