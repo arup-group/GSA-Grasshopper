@@ -26,6 +26,14 @@ namespace GsaGH.Helpers
           owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Note: Input " + owner.Params.Input[inputid].NickName + " was automatically converted from DecimalFraction (" + val + ") to Percentage (" + rat.ToString("f0") + ")");
           return new GH_UnitNumber(rat);
         }
+        // try cast to string
+        else if (GH_Convert.ToString(gh_typ.Value, out string txt, GH_Conversion.Both))
+        {
+          if (Ratio.TryParse(txt, out Ratio res))
+            return new GH_UnitNumber(res);
+          else
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to Ratio");
+        }
         else
         {
           owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
@@ -65,6 +73,14 @@ namespace GsaGH.Helpers
           owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Note: Input " + owner.Params.Input[inputid].NickName + " was automatically converted from DecimalFraction (" + val + ") to Percentage (" + rat.ToString("f0") + ")");
           return rat;
         }
+        // try cast to string
+        else if (GH_Convert.ToString(gh_typ.Value, out string txt, GH_Conversion.Both))
+        {
+          if (Ratio.TryParse(txt, out Ratio res))
+            return res;
+          else
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to Ratio");
+        }
         else
         {
           owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
@@ -96,6 +112,14 @@ namespace GsaGH.Helpers
         {
           owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Note: Input " + owner.Params.Input[inputid].NickName + " was not automatically converted to percentage");
           return new Ratio(val, RatioUnit.DecimalFraction);
+        }
+        // try cast to string
+        else if (GH_Convert.ToString(gh_typ.Value, out string txt, GH_Conversion.Both))
+        {
+          if (Ratio.TryParse(txt, out Ratio res))
+            return res;
+          else
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to Ratio");
         }
         else
         {

@@ -407,12 +407,17 @@ namespace GsaGH.Util.Gsa
       Parallel.ForEach(elements, elem =>
       {
         // get parent member
-        int parent = elem.Value.ParentMember.Member;
+        int parent = -elem.Value.ParentMember.Member;
+
+        // if no parent member then split by property
+        if (parent == 0)
+          parent = elem.Value.Property;
 
         if (!sortedElements.ContainsKey(parent))
         {
           sortedElements.TryAdd(parent, new ConcurrentDictionary<int, Element>());
         }
+
         // add elements to parent member
         sortedElements[parent][elem.Key] = elem.Value;
       });
@@ -613,7 +618,11 @@ namespace GsaGH.Util.Gsa
       Parallel.ForEach(elements, elem =>
       {
         // get parent member
-        int parent = elem.Value.ParentMember.Member;
+        int parent = -elem.Value.ParentMember.Member;
+
+        // if no parent member then split by property
+        if (parent == 0)
+          parent = elem.Value.Property;
 
         if (!sortedElements.ContainsKey(parent))
         {

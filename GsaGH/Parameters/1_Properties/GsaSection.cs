@@ -219,6 +219,12 @@ namespace GsaGH.Parameters
     }
     private void CloneApiObject()
     {
+      // temp profile clone 
+      string prfl = this._section.Profile.Replace("%", " ");
+      string[] pfs = prfl.Split(' ');
+      if (pfs.Last() == "S/S")
+        prfl = string.Join(" ", pfs[0], pfs[1], pfs[2]);
+
       Section sec = new Section()
       {
         MaterialAnalysisProperty = this._section.MaterialAnalysisProperty,
@@ -226,7 +232,8 @@ namespace GsaGH.Parameters
         MaterialType = this._section.MaterialType,
         Name = this._section.Name.ToString(),
         Pool = this._section.Pool,
-        Profile = this._section.Profile.ToString()
+        Profile = prfl
+        //Profile = this._section.Profile
       };
       if ((Color)_section.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         sec.Colour = this._section.Colour;
@@ -280,11 +287,11 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string prof = this._section.Profile.Replace("%", " ");
       string pb = this.Id > 0 ? "PB" + this.Id + " " : "";
-      string mat = Helpers.Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
+      string prof = this._section.Profile.Replace("%", " ") + " ";
+      string mat = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
       string mod = this._modifier.IsModified ? " modified" : "";
-      return pb + prof + mat + mod;
+      return (pb + prof + mat + mod).Trim();
     }
     #endregion
   }

@@ -44,9 +44,9 @@ namespace GsaGH.Parameters
       string unitAbbreviation = Length.GetAbbreviation(unit);
 
       return "X1:" + X1.As(unit).ToString("g") + 
-        ", X2:" + X2.As(unit).ToString("g") + 
-        ", Y:" + Y.As(unit).ToString("g") + 
-        ", Z:" + Z.As(unit).ToString("g") + 
+        " X2:" + X2.As(unit).ToString("g") + 
+        " Y:" + Y.As(unit).ToString("g") + 
+        " Z:" + Z.As(unit).ToString("g") + 
         " [" + unitAbbreviation + "]";
     }
     #endregion
