@@ -280,7 +280,7 @@ namespace GsaGH.Parameters
         for (int i = 0; i < this._elements.Count; i++)
         {
           if (this._elements[i] != null)
-            topos.AddRange(this._elements[i].Topology.ToList(), new Grasshopper.Kernel.Data.GH_Path(i));
+            topos.AddRange(this._elements[i].Topology.ToList(), new Grasshopper.Kernel.Data.GH_Path(this.Ids[i]));
         }
         return topos;
       }
@@ -364,7 +364,7 @@ namespace GsaGH.Parameters
     {
       if (!this._mesh.IsValid)
         return "Null";
-      string type = Helpers.Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
+      string type = Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
       string info = "N:" + this.Mesh.Vertices.Count + " E:" + this.API_Elements.Count;
       return type + info;
     }

@@ -27,20 +27,14 @@ namespace IntegrationTests.Parameters
       GH_Document doc = CreateEditBucklingFactorsTest.Document();
 
       IGH_Param y = Helper.FindParameter(doc, "TestLsy");
-      Assert.NotNull(y);
-      y.CollectData();
       GH_Number outputY = (GH_Number)y.VolatileData.get_Branch(0)[0];
       Assert.Equal(10, outputY.Value);
 
       IGH_Param z = Helper.FindParameter(doc, "TestLsz");
-      Assert.NotNull(z);
-      z.CollectData();
       GH_Number outputZ = (GH_Number)z.VolatileData.get_Branch(0)[0];
       Assert.Equal(15, outputZ.Value);
 
       IGH_Param lt = Helper.FindParameter(doc, "TestLtb");
-      Assert.NotNull(lt);
-      lt.CollectData();
       GH_Number outputLTB = (GH_Number)lt.VolatileData.get_Branch(0)[0];
       Assert.Equal(20, outputLTB.Value);
     }
