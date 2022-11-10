@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/arup-group/GSA-Grasshopper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>GsaLogo64.png</PackageIcon>
+    <PackageIcon>AdSecLogo128.png</PackageIcon>
     <Version>0.9.30-beta</Version>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">
@@ -24,6 +24,16 @@
   </ItemGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <Company>Oasys</Company>
+    <Description>Official Oasys GSA Grasshopper Plugin
+
+GsaGH is pre-release and under active development, including further testing to be undertaken. It is provided "as-is" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.
+
+The plugin requires a licensed version of Gsa to load.
+
+Contact oasys@arup.com to request a free trial version.
+
+Copyright © Oasys 1985 - 2022</Description>
   </PropertyGroup>
     <ItemGroup>
     <PackageReference Include="Grasshopper" Version="6.27.20176.5001" />
@@ -62,6 +72,10 @@
     <Folder Include="Components\Lab\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\AdSec-Grasshopper\AdSecGH\Properties\Icons\AdSecLogo128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\..\Compos-Grasshopper\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
