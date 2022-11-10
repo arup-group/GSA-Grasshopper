@@ -67,8 +67,6 @@ namespace IntegrationTests.Parameters
       GH_Document doc = Document();
 
       IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
-      param.CollectData();
-      param.ComputeData();
 
       Assert.Equal(1, param.VolatileData.DataCount);
       var data = param.VolatileData.AllData(true).GetEnumerator();

@@ -175,10 +175,7 @@ namespace GsaGH.Components
         DA.SetData(5, nm);
         DA.SetData(6, colour);
 
-        string str = (prop.API_Prop2d == null) ? "--" : prop.Type.ToString();
-        if (prop.API_Prop2d == null)
-          str = Char.ToUpper(str[0]) + str.Substring(1).ToLower().Replace("_", " ");
-        DA.SetData(7, str);
+        DA.SetData(7, Helpers.Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
       }
       else
         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Prop2d is Null");
@@ -224,7 +221,7 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       else
         this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitSection;
       return base.Read(reader);

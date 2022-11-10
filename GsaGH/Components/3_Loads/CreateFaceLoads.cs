@@ -265,12 +265,12 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // Type
-      DropDownItems.Add(_loadTypeOptions);
-      SelectedItems.Add(_mode.ToString());
+      this.DropDownItems.Add(_loadTypeOptions);
+      this.SelectedItems.Add(_mode.ToString());
 
       // ForcePerArea
-      DropDownItems.Add(FilteredUnits.FilteredForcePerAreaUnits);
-      this.SelectedItems.Add(this.ForcePerAreaUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
+      this.SelectedItems.Add(Pressure.GetAbbreviation((this.ForcePerAreaUnit)));
 
       this.IsInitialised = true;
     }
@@ -298,7 +298,7 @@ namespace GsaGH.Components
         }
       }
       else
-        this.ForcePerAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[1]);
+        this.ForcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), this.SelectedItems[1]);
 
       base.UpdateUI();
     }
@@ -306,7 +306,7 @@ namespace GsaGH.Components
     public override void UpdateUIFromSelectedItems()
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
-      this.ForcePerAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[1]);
+      this.ForcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

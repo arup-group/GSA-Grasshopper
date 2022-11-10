@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
@@ -41,7 +42,7 @@ namespace GsaGH.Components
       pManager.AddLineParameter("Line", "L", "Reposition Element Line", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Set new Section Property", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Group", "Gr", "Set Element Group", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Type", "eT", "Set Element Type" + System.Environment.NewLine +
+      pManager.AddTextParameter("Type", "eT", "Set Element Type" + System.Environment.NewLine +
           "Accepted inputs are:" + System.Environment.NewLine +
           "1: Bar" + System.Environment.NewLine +
           "2: Beam" + System.Environment.NewLine +
@@ -80,7 +81,7 @@ namespace GsaGH.Components
       pManager.HideParameter(2);
       pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Get Section Property", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Type", "eT", "Get Element Type", GH_ParamAccess.item);
+      pManager.AddTextParameter("Type", "eT", "Get Element Type", GH_ParamAccess.item);
 
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Element Offset", GH_ParamAccess.item);
 
@@ -178,11 +179,18 @@ namespace GsaGH.Components
         }
 
         // 5 type
-        GH_Integer ghinteg = new GH_Integer();
-        if (DA.GetData(5, ref ghinteg))
+        GH_String ghstring = new GH_String();
+        if (DA.GetData(5, ref ghstring))
         {
-          if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both))
-            elem.Type = (ElementType)type; //elem.Element.Type = (ElementType)type; // Util.Gsa.GsaToModel.Element1dType(type);
+          if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
+            elem.Type = (ElementType)typeInt;
+          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          {
+            if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
+              elem.Type = Helpers.Mappings.ElementTypeMapping[typestring];
+            else
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element Type");
+          }
         }
 
         // 6 offset
@@ -260,7 +268,7 @@ namespace GsaGH.Components
         DA.SetData(2, new GH_Line(elem.Line.Line));
         DA.SetData(3, new GsaSectionGoo(elem.Section));
         DA.SetData(4, elem.Group);
-        DA.SetData(5, elem.Type);
+        DA.SetData(5, Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
         DA.SetData(6, new GsaOffsetGoo(elem.Offset));
         DA.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
         DA.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));

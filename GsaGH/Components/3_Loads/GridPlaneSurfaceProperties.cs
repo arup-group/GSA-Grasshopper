@@ -130,6 +130,7 @@ namespace GsaGH.Components
 
       Menu_AppendSeparator(menu);
     }
+    
     private void Update(string unit)
     {
       this.LengthUnit = Length.ParseUnit(unit);
@@ -137,15 +138,17 @@ namespace GsaGH.Components
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
     }
+
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
     {
       writer.SetString("LengthUnit", this.LengthUnit.ToString());
       return base.Write(writer);
     }
+
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       else
         this.LengthUnit = LengthUnit.Meter;
       return base.Read(reader);

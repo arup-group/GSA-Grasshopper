@@ -10,7 +10,7 @@ namespace GsaGH.Helpers
 {
   internal class Mappings
   {
-    internal static readonly Dictionary<string, MatType> materialTypeMapping = new Dictionary<string, MatType>()
+    internal static readonly Dictionary<string, MatType> MaterialTypeMapping = new Dictionary<string, MatType>()
     {
       { "Undefined", MatType.UNDEF },
       { "None", MatType.NONE },
@@ -36,7 +36,7 @@ namespace GsaGH.Helpers
       { "Bar Material", MatType.BARMAT }
     };
 
-    internal static readonly Dictionary<string, Property2D_Type> prop2dTypeMapping = new Dictionary<string, Property2D_Type>()
+    internal static readonly Dictionary<string, Property2D_Type> Prop2dTypeMapping = new Dictionary<string, Property2D_Type>()
     {
       { "Undefined", Property2D_Type.UNDEF },
       { "Plane Stress", Property2D_Type.PL_STRESS },
@@ -52,7 +52,7 @@ namespace GsaGH.Helpers
       { "Num Type", Property2D_Type.NUM_TYPE }
     };
 
-    internal static readonly Dictionary<string, ElementType> elementTypeMapping = new Dictionary<string, ElementType>()
+    internal static readonly Dictionary<string, ElementType> ElementTypeMapping = new Dictionary<string, ElementType>()
     {
       { "New", ElementType.NEW },
       { "Undefined", ElementType.UNDEF },
@@ -83,14 +83,14 @@ namespace GsaGH.Helpers
       { "2D Load", ElementType.TWO_D_LOAD }
     };
 
-    internal static readonly Dictionary<string, AnalysisOrder> analysisOrderMapping = new Dictionary<string, AnalysisOrder>()
+    internal static readonly Dictionary<string, AnalysisOrder> AnalysisOrderMapping = new Dictionary<string, AnalysisOrder>()
     {
       { "Linear", AnalysisOrder.LINEAR },
       { "Quadratic", AnalysisOrder.QUADRATIC },
       { "Rigid Diaphragm", AnalysisOrder.RIGID_DIAPHRAGM }
     };
 
-    internal static readonly Dictionary<string, MemberType> memberTypeMapping = new Dictionary<string, MemberType>()
+    internal static readonly Dictionary<string, MemberType> MemberTypeMapping = new Dictionary<string, MemberType>()
     {
       { "Undefined", MemberType.UNDEF },
       { "Generic 1D", MemberType.GENERIC_1D },

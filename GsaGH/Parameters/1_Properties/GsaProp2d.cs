@@ -6,6 +6,7 @@ using System.Linq;
 using GsaAPI;
 using OasysUnits;
 using OasysUnits.Units;
+using OasysGH;
 
 namespace GsaGH.Parameters
 {
@@ -201,8 +202,8 @@ namespace GsaGH.Parameters
     #region methods
     internal static Property2D_Type PropTypeFromString(string type)
     {
-      if (Helpers.Mappings.prop2dTypeMapping.ContainsKey(type))
-        return Helpers.Mappings.prop2dTypeMapping[type];
+      if (Helpers.Mappings.Prop2dTypeMapping.ContainsKey(type))
+        return Helpers.Mappings.Prop2dTypeMapping[type];
       else
       {
         type = type.Trim().Replace(" ", "_").ToUpper();
@@ -226,9 +227,9 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string type = Helpers.Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == this._prop2d.Type).Key + " ";
+      string type = Helpers.Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == this._prop2d.Type).Key + " ";
       string desc = this.Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
-      string mat = Helpers.Mappings.materialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
+      string mat = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
       string pa = (this.ID > 0) ? "PA" + this.ID + " " : "";
       return pa + type + desc + mat;
     }

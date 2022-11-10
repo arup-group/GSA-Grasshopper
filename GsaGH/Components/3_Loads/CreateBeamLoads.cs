@@ -295,8 +295,8 @@ namespace GsaGH.Components
       this.SelectedItems.Add(this._mode.ToString());
 
       // ForcePerLength
-      this.DropDownItems.Add(FilteredUnits.FilteredForcePerLengthUnits);
-      this.SelectedItems.Add(this.ForcePerLengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength));
+      this.SelectedItems.Add(ForcePerLength.GetAbbreviation((this.ForcePerLengthUnit)));
 
       this.IsInitialised = true;
     }
@@ -333,7 +333,7 @@ namespace GsaGH.Components
     public override void UpdateUIFromSelectedItems()
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
-      this.ForcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[1]);
+      this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
     public override void VariableParameterMaintenance()

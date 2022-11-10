@@ -28,8 +28,6 @@ namespace IntegrationTests.Parameters
     {
       GH_Document doc = Document();
       IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
-      Assert.NotNull(param);
-      param.CollectData();
       GsaOffsetGoo output = (GsaOffsetGoo)param.VolatileData.get_Branch(0)[0];
       GsaOffset offset = output.Value;
       Assert.Equal(new Length(expectedX1, expectedUnit), offset.X1);

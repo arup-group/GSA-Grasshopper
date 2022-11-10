@@ -276,8 +276,8 @@ namespace GsaGH.Components
       this.SelectedItems.Add(this._type[0].ToString());
 
       // Length
-      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-      this.SelectedItems.Add(this.LengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -301,7 +301,7 @@ namespace GsaGH.Components
         }
       }
       else
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
 
       base.UpdateUI();
     }
@@ -320,7 +320,7 @@ namespace GsaGH.Components
           break;
       }
       if (this.SelectedItems.Count > 1)
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 
@@ -429,7 +429,7 @@ namespace GsaGH.Components
             this.SelectedItems.Add("2D");
             break;
         }
-        this.SelectedItems.Add(this.LengthUnit.ToString());
+        this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
       }
       
       return base.Read(reader);

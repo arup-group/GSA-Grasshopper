@@ -14,7 +14,7 @@ namespace GsaGH.Parameters
     public override string TypeName => this.SourceCount == 0 ? GsaBucklingLengthFactorsGoo.Name : base.TypeName;
     public override Guid ComponentGuid => new Guid("e2349b4f-1ebb-4661-99d9-07c6a3ef22b9");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Bool6Param;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.BucklingFactorsParam;
 
     public GsaBucklingLengthFactorsParameter() : base(new GH_InstanceDescription(
       GsaBucklingLengthFactorsGoo.Name,
