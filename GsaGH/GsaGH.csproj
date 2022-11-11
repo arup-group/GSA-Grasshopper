@@ -72,7 +72,7 @@ Copyright © Oasys 1985 - 2022</Description>
     <Folder Include="Components\Lab\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Compos-Grasshopper\README.md">
+    <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
