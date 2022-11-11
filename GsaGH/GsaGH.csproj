@@ -69,9 +69,6 @@ Copyright © Oasys 1985 - 2022</Description>
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Components\Lab\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\..\Compos-Grasshopper\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

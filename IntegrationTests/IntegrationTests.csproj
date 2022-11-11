@@ -16,28 +16,21 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\GsaGHTests\GsaGHTests.csproj" />
-    <ProjectReference Include="..\GsaGH\GsaGH.csproj" />
+    <ProjectReference Include="..\GsaGH\GsaGH.csproj">
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="GsaAPI">
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="xunit.runner.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
   <Import Project="PreBuild.targets" />
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="Copy &quot;$(TargetDir)GsaGH.dll&quot; &quot;$(TargetDir)GSA.gha&quot;" />
-  </Target>
-
 </Project>
