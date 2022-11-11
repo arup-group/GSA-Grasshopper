@@ -53,9 +53,12 @@ namespace IntegrationTests
       Directory.CreateDirectory(_linkFilePath);
       StreamWriter writer = File.CreateText(Path.Combine(_linkFilePath, _linkFileName));
       writer.Write(Environment.CurrentDirectory + Environment.NewLine);
+#if DEBUG
       writer.Write(Path.GetFullPath(@"..\..\..\..\..\GsaGH\bin\x64\Debug\net48") + Environment.NewLine);
-
-       writer.Close();
+#else
+      writer.Write(Path.GetFullPath(@"..\..\..\..\..\GsaGH\bin\x64\Release\net48") + Environment.NewLine);
+#endif
+      writer.Close();
     }
 
     protected virtual void Dispose(bool disposing)
