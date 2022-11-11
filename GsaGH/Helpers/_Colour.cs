@@ -373,7 +373,7 @@ namespace GsaGH.UI
 
       Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = new Grasshopper.GUI.Gradient.GH_Gradient();
 
-      if (colours.Count < 2 || colours == null)
+      if (colours == null || colours.Count < 2)
       {
         gH_Gradient.AddGrip(-1, System.Drawing.Color.FromArgb(0, 0, 206));
         gH_Gradient.AddGrip(-0.666, System.Drawing.Color.FromArgb(0, 127, 229));
