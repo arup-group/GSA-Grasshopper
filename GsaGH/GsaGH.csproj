@@ -448,4 +448,5 @@ Copyright © Oasys 1985 - 2022</Description>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="Copy &quot;$(TargetPath)&quot; &quot;$(TargetDir)GSA.gha&quot;&#xD;&#xA;Copy &quot;Properties\Icons\GSALogo64.png&quot; &quot;$(TargetDir)GsaIcon.png&quot;" />
   </Target>
+  <Import Project="PreBuild.targets" />
 </Project>
