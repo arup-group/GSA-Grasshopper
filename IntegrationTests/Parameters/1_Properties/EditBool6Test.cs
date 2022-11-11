@@ -9,7 +9,7 @@ namespace IntegrationTests.Parameters
   [Collection("GrasshopperFixture collection")]
   public class EditBool6Test
   {
-    public static GH_Document? Document;
+    public static GH_Document Document;
 
     public static GH_Document GetDocument()
     {
