@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/arup-group/GSA-Grasshopper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>AdSecLogo128.png</PackageIcon>
+    <PackageIcon>GsaLogo128.png</PackageIcon>
     <Version>0.9.30-beta</Version>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">
@@ -72,7 +72,7 @@ Copyright © Oasys 1985 - 2022</Description>
     <Folder Include="Components\Lab\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\AdSec-Grasshopper\AdSecGH\Properties\Icons\AdSecLogo128.png">
+    <None Include="..\..\AdSec-Grasshopper\AdSecGH\Properties\Icons\GsaLogo128.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
