@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Grasshopper;
+using Grasshopper.GUI.Gradient;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
@@ -815,13 +816,41 @@ namespace GsaGH.Components
     }
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
     {
+      Menu_AppendSeparator(menu);
       Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
+
+      Grasshopper.Kernel.Special.GH_GradientControl gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
+      gradient.CreateAttributes();
+      ToolStripMenuItem extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => { CreateGradient(); });
+      menu.Items.Add(extract);
+      Menu_AppendSeparator(menu);
     }
     bool _showLegend = true;
     private void ShowLegend(object sender, EventArgs e)
     {
       _showLegend = !_showLegend;
       this.ExpirePreview(true);
+    }
+    private void CreateGradient()
+    {
+      Grasshopper.Kernel.Special.GH_GradientControl gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
+      gradient.CreateAttributes();
+
+      gradient.Gradient = UI.Colour.Stress_Gradient(null);
+      gradient.Gradient.NormalizeGrips();
+      gradient.Params.Input[0].AddVolatileData(new GH_Path(0), 0, -1);
+      gradient.Params.Input[1].AddVolatileData(new GH_Path(0), 0, 1);
+      gradient.Params.Input[2].AddVolatileDataList(
+        new GH_Path(0),
+        new List<double>() { -1, -0.666, -0.333, 0, 0.333, 0.666, 1 });
+
+      gradient.Attributes.Pivot = new PointF(this.Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50, this.Params.Input[3].Attributes.Bounds.Y - gradient.Attributes.Bounds.Height / 4 - 6);
+
+      Grasshopper.Instances.ActiveCanvas.Document.AddObject(gradient, false);
+      this.Params.Input[3].RemoveAllSources();
+      this.Params.Input[3].AddSource(gradient.Params.Output[0]);
+
+      this.UpdateUI();
     }
     #endregion
 
