@@ -72,10 +72,6 @@ Copyright © Oasys 1985 - 2022</Description>
     <Folder Include="Components\Lab\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\AdSec-Grasshopper\AdSecGH\Properties\Icons\GsaLogo128.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
     <None Include="..\..\Compos-Grasshopper\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
