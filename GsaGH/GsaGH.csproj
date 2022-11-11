@@ -37,7 +37,7 @@ Contact oasys@arup.com to request a free trial version.
 Copyright © Oasys 1985 - 2022</Description>
   </PropertyGroup>
     <ItemGroup>
-    <PackageReference Include="Grasshopper" Version="6.27.20176.5001" />
+    <PackageReference Include="Grasshopper" Version="7.23.22282.13001" IncludeAssets="compile;build" />
     <PackageReference Include="OasysGH" Version="0.4.0-beta" />
   </ItemGroup>
   <ItemGroup>
