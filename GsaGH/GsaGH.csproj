@@ -41,9 +41,14 @@ Copyright © Oasys 1985 - 2022</Description>
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Grasshopper" Version="6.27.20176.5001" IncludeAssets="compile;build" />
+    <PackageReference Include="Grasshopper" Version="6.27.20176.5001" IncludeAssets="compile;build">
+      <PrivateAssets>true</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="OasysGH" Version="0.4.2-beta" />
-    <PackageReference Include="RhinoCommon" Version="6.27.20176.5001" />
+    <PackageReference Include="RhinoCommon" Version="6.27.20176.5001">
+      <PrivateAssets>true</PrivateAssets>
+      <IncludeAssets>compile;build</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   
   <ItemGroup>
