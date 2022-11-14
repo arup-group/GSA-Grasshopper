@@ -19,6 +19,11 @@
     <StartAction>Program</StartAction>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Components\Lab\**" />
+    <EmbeddedResource Remove="Components\Lab\**" />
+    <None Remove="Components\Lab\**" />
+  </ItemGroup>
+  <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>GsaGHTests</_Parameter1>
     </AssemblyAttribute>
@@ -39,6 +44,7 @@ Copyright © Oasys 1985 - 2022</Description>
     <ItemGroup>
     <PackageReference Include="Grasshopper" Version="6.27.20176.5001" IncludeAssets="compile;build" />
     <PackageReference Include="OasysGH" Version="0.4.2-beta" />
+    <PackageReference Include="RhinoCommon" Version="6.27.20176.5001" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="GsaAPI">
@@ -68,9 +74,6 @@ Copyright © Oasys 1985 - 2022</Description>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\Lab\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md">
@@ -303,7 +306,7 @@ Copyright © Oasys 1985 - 2022</Description>
     <None Include="Properties\Icons\Units.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\Icons\GSALogo128.png" Pack="true" PackagePath=""/>
+    <None Include="Properties\Icons\GSALogo128.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Icons\GetLoads.png" />
