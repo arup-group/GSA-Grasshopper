@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProductVersion>8.0.30703</ProductVersion>
     <TargetFramework>net48</TargetFramework>
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
     <Title>GsaGH</Title>
+	<Company>Oasys</Company>
     <Copyright>Copyright © Oasys 1985 - 2022</Copyright>
     <PackageProjectUrl>https://github.com/arup-group/GSA-Grasshopper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
@@ -12,25 +12,7 @@
     <PackageIcon>GSALogo128.png</PackageIcon>
     <Version>0.9.32-beta</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-  </PropertyGroup>
-  <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">
-    <StartProgram>C:\Program Files\Rhino 7\System\Rhino.exe</StartProgram>
-    <StartArguments></StartArguments>
-    <StartAction>Program</StartAction>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Components\Lab\**" />
-    <EmbeddedResource Remove="Components\Lab\**" />
-    <None Remove="Components\Lab\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>GsaGHTests</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
-  <PropertyGroup>
-    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
-    <Company>Oasys</Company>
+	<AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <Description>Official Oasys GSA Grasshopper Plugin
 
 GsaGH is pre-release and under active development, including further testing to be undertaken. It is provided "as-is" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.
@@ -41,11 +23,29 @@ Contact oasys@arup.com to request a free trial version.
 
 Copyright © Oasys 1985 - 2022</Description>
   </PropertyGroup>
-    <ItemGroup>
+  
+  <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">
+    <StartProgram>C:\Program Files\Rhino 7\System\Rhino.exe</StartProgram>
+    <StartArguments></StartArguments>
+    <StartAction>Program</StartAction>
+  </PropertyGroup>
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="Copy &quot;$(TargetPath)&quot; &quot;$(TargetDir)GSA.gha&quot;&#xD;&#xA;Copy &quot;Properties\Icons\GSALogo64.png&quot; &quot;$(TargetDir)GsaIcon.png&quot;" />
+  </Target>
+  
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>GsaGHTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+  
+  <ItemGroup>
     <PackageReference Include="Grasshopper" Version="6.27.20176.5001" IncludeAssets="compile;build" />
     <PackageReference Include="OasysGH" Version="0.4.2-beta" />
     <PackageReference Include="RhinoCommon" Version="6.27.20176.5001" />
   </ItemGroup>
+  
   <ItemGroup>
     <Reference Include="GsaAPI">
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>
@@ -75,6 +75,7 @@ Copyright © Oasys 1985 - 2022</Description>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
+  
   <ItemGroup>
     <None Include="..\README.md">
       <Pack>True</Pack>
@@ -83,376 +84,16 @@ Copyright © Oasys 1985 - 2022</Description>
     <None Include="licenses\Newtonsoft" />
     <None Include="licenses\UnitsNet" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Analyse.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\AreaLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\BeamLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Bool6Param.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateAnalysisTask.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateBool6.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateElem1d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateElem2d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateElem3d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateElemsFromBreps.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateElemsFromMems.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateMaterial.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateMem1d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateMem2d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateMem3d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateModel.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateOffset.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateProfile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateProp2d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateSection.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateSpring.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateSupport.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditBool6.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditElem1d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditElem2d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditElem3d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditMaterial.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditMem1d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditMem2d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditMem3d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditNode.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditOffset.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditProp2d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditSection.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditSpring.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Elem1dParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Elem2dParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Elem3dParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\FaceLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GetAnalysisTask.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GetGeometry.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GetSection.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GravityLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GridPlane.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GridPlaneParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GridPlaneProperties.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GridSurface.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GSAInfo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GSALogo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\LineLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\LoadInfo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\LoadParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\MaterialParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Mem1dParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Mem2dParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Mem3dParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\ModelParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\NodeLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\NodeParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\OffsetParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\OpenModel.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\path1220.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\PointLoad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Prop2dParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Result0D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Result1D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Result2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Result3D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\SaveModel.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\SectionParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\SectionProperties.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\SpringParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Titles.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Units.png" />
-  </ItemGroup>
+  
   <ItemGroup>
     <None Include="Properties\Icons\GSALogo128.png" Pack="true" PackagePath="" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GetLoads.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\UnitParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\ConvertUnitNumber.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateUnitNumber.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\MaterialProperties.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\ResultGlobal.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CustomMaterial.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateProp3d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditProp3d.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Prop3dParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\AnalysisCaseInfo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\AnalysisCaseParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\AnalysisTaskParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateAnalysisCase.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditAnalysisTask.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateCombinationCase.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateCombination.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\SelectResult.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\TaperProfile.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\BeamDisplacement.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\BeamForces.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Displacement2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Displacement3D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Forces2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Forces3D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\NodeDisplacement.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\ReactionForces.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Stress2D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Stress3D.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\ResultParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateSectionModifier.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditSectionModifier.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\SectionModifierParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\unused.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\Documentation.png" />
-  </ItemGroup>
+  
   <ItemGroup>
     <None Include="Properties\Icons\GsaLogo64.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\StrainEnergyDensity.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\SpringReactionForces.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\StrainEnergyDensity.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\LocalAxes.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GlobalPerformance.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\TotalLoadAndReaction.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\GwaModel.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CombinationCaseParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\BucklingFactorsParam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\CreateBucklingLengthFactors.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Icons\EditBucklingLengthFactors.png" />
-  </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="Copy &quot;$(TargetPath)&quot; &quot;$(TargetDir)GSA.gha&quot;&#xD;&#xA;Copy &quot;Properties\Icons\GSALogo64.png&quot; &quot;$(TargetDir)GsaIcon.png&quot;" />
-  </Target>
+  
 </Project>
