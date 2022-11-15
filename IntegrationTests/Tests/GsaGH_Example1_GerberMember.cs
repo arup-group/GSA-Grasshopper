@@ -26,8 +26,6 @@ namespace IntegrationTests.ExampleFiles
     public void MaxMyyAssert()
     {
       IGH_Param param = Helper.FindParameter(Document(), "MaxMyy");
-      Assert.NotNull(param);
-      param.CollectData();
       GH_Number output = (GH_Number)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(60.028894, output.Value, 6);
     }

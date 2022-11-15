@@ -9,7 +9,7 @@ namespace IntegrationTests.Parameters
   [Collection("GrasshopperFixture collection")]
   public class EditBool6Test
   {
-    public static GH_Document? Document;
+    public static GH_Document Document;
 
     public static GH_Document GetDocument()
     {
@@ -37,8 +37,6 @@ namespace IntegrationTests.Parameters
     {
       GH_Document doc = GetDocument();
       IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
-      Assert.NotNull(param);
-      param.CollectData();
       GH_Boolean output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(expected, output.Value);
     }

@@ -47,13 +47,13 @@ namespace GsaGH.Components
       pManager.AddCurveParameter("Incl. Curves", "(C)", "Add inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp2dParameter(), "2D Property", "PA", "Set new 2D Property.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member2d Group", "Gr", "Set Member 2d Group", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Member Type", "mT", "Set 2D Member Type" + System.Environment.NewLine
+      pManager.AddTextParameter("Member Type", "mT", "Set 2D Member Type" + System.Environment.NewLine
           + "Default is 1: Generic 2D - Accepted inputs are:" + System.Environment.NewLine +
           "4: Slab" + System.Environment.NewLine +
           "5: Wall" + System.Environment.NewLine +
           "7: Ribbed Slab" + System.Environment.NewLine +
           "12: Void-cutter", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("2D Element Type", "aT", "Set Member 2D Analysis Element Type" + System.Environment.NewLine +
+      pManager.AddTextParameter("2D Element Type", "aT", "Set Member 2D Analysis Element Type" + System.Environment.NewLine +
           "Accepted inputs are:" + System.Environment.NewLine +
           "0: Linear - Tri3/Quad4 Elements (default)" + System.Environment.NewLine +
           "1: Quadratic - Tri6/Quad8 Elements" + System.Environment.NewLine +
@@ -89,8 +89,8 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaProp2dParameter(), "2D Property", "PA", "Get 2D Section Property", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
 
-      pManager.AddIntegerParameter("Member Type", "mT", "Get 2D Member Type", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("2D Element Type", "eT", "Get Member 2D Analysis Element Type" + System.Environment.NewLine +
+      pManager.AddTextParameter("Member Type", "mT", "Get 2D Member Type", GH_ParamAccess.item);
+      pManager.AddTextParameter("2D Element Type", "eT", "Get Member 2D Analysis Element Type" + System.Environment.NewLine +
           "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm", GH_ParamAccess.item);
 
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
@@ -209,19 +209,33 @@ namespace GsaGH.Components
         }
 
         // 7 type
-        GH_Integer ghint = new GH_Integer();
-        if (DA.GetData(7, ref ghint))
+        GH_String ghstring = new GH_String();
+        if (DA.GetData(7, ref ghstring))
         {
-          if (GH_Convert.ToInt32(ghint, out int type, GH_Conversion.Both))
-            mem.Type = (MemberType)type;//Util.Gsa.GsaToModel.Member2dType(type);
+          if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
+            mem.Type = (MemberType)typeInt;
+          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          {
+            if (Helpers.Mappings.MemberTypeMapping.ContainsKey(typestring))
+              mem.Type = Helpers.Mappings.MemberTypeMapping[typestring];
+            else
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Member Type");
+          }
         }
 
         // 8 element type / analysis order
-        GH_Integer ghinteg = new GH_Integer();
-        if (DA.GetData(8, ref ghinteg))
+        ghstring = new GH_String();
+        if (DA.GetData(8, ref ghstring))
         {
-          if (GH_Convert.ToInt32(ghinteg, out int type, GH_Conversion.Both))
-            mem.Type2D = (AnalysisOrder)type; //Util.Gsa.GsaToModel.AnalysisOrder(type);
+          if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
+            mem.Type2D = (AnalysisOrder)typeInt;
+          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          {
+            if (Helpers.Mappings.AnalysisOrderMapping.ContainsKey(typestring))
+              mem.Type2D = Helpers.Mappings.AnalysisOrderMapping[typestring];
+            else
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Analysis Element Type");
+          }
         }
 
         // 9 offset
@@ -284,8 +298,8 @@ namespace GsaGH.Components
         DA.SetData(5, new GsaProp2dGoo(mem.Property));
         DA.SetData(6, mem.Group);
 
-        DA.SetData(7, mem.Type);
-        DA.SetData(8, mem.Type2D);
+        DA.SetData(7, Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+        DA.SetData(8, Helpers.Mappings.AnalysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);
 
         DA.SetData(9, new GsaOffsetGoo(mem.Offset));
 
