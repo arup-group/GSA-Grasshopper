@@ -18,7 +18,7 @@ namespace GsaGHTests.Components
 
       comp.SetSelected(0, 0); // set modify type to "Modify by"
       comp.SetSelected(1, 1); // set density unit to "g/cm"
-      comp.SetSelected(1, 1); // set stress calc. to "Use unmodified"
+      comp.SetSelected(2, 1); // set stress calc. to "Use unmodified"
 
       ComponentTestHelper.SetInput(comp, 0.1, 0);
       ComponentTestHelper.SetInput(comp, 0.2, 1);
