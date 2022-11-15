@@ -30,6 +30,11 @@ namespace GsaGH.Parameters
         GsaSection section = new GsaSection(id);
         return new GsaSectionGoo(section);
       }
+      if (GH_Convert.ToString(data, out string profile, GH_Conversion.Both))
+      {
+        GsaSection section = new GsaSection(profile);
+        return new GsaSectionGoo(section);
+      }
       return base.PreferredCast(data);
     }
   }
