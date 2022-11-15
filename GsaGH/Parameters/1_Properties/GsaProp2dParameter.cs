@@ -25,6 +25,9 @@ namespace GsaGH.Parameters
 
     protected override GsaProp2dGoo PreferredCast(object data)
     {
+      if (data.GetType() == typeof(GsaProp2d))
+        return new GsaProp2dGoo((GsaProp2d)data);
+
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both))
       {
         GsaProp2d prop = new GsaProp2d(id);

@@ -17,7 +17,7 @@ namespace GsaGH.Components
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("6f701c53-1531-45ef-9842-9356da59b590");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GwaModel;
     public GwaModel_OBSOLETE()

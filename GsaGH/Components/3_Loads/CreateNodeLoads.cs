@@ -249,22 +249,22 @@ namespace GsaGH.Components
         {
           case "Node Force":
             this._mode = FoldMode.Node_Force;
-            this.DropDownItems[1] = FilteredUnits.FilteredForceUnits;
+            this.DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force);
             this.SelectedItems[1] = Force.GetAbbreviation(this.ForceUnit);
             break;
           case "Node Moment":
             this._mode = FoldMode.Node_Moment;
-            this.DropDownItems[1] = FilteredUnits.FilteredMomentUnits;
+            this.DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment);
             this.SelectedItems[1] = Moment.GetAbbreviation(this.MomentUnit);
             break;
           case "Applied Displ":
             this._mode = FoldMode.Applied_Displ;
-            this.DropDownItems[1] = FilteredUnits.FilteredLengthUnits;
+            this.DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length);
             this.SelectedItems[1] = Length.GetAbbreviation(this.LengthUnit);
             break;
           case "Settlement":
             this._mode = FoldMode.Settlements;
-            this.DropDownItems[1] = FilteredUnits.FilteredLengthUnits;
+            this.DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length);
             this.SelectedItems[1] = Length.GetAbbreviation(this.LengthUnit);
             break;
         }
@@ -290,7 +290,12 @@ namespace GsaGH.Components
     }
     public override void UpdateUIFromSelectedItems()
     {
-      this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].Replace(' ', '_'));
+      string md = SelectedItems[0].Replace(' ', '_');
+      if (md.ToLower() == "node")
+        this._mode = FoldMode.Node_Force;
+      else
+        this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].Replace(' ', '_'));
+      
       switch (this._mode)
       {
         case FoldMode.Node_Force:

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -429,15 +431,23 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      try
+      if (reader.ItemExists("LengthUnit"))
       {
         this.LengthUnit = Length.ParseUnit(reader.GetString("LengthUnit"));
         this.LinearDensityUnit = LinearDensity.ParseUnit(reader.GetString("DensityUnit"));
       }
-      catch (Exception)
+      else
       {
-        this.LengthUnit = DefaultUnits.LengthUnitSection;
+        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitSection;
         this.LinearDensityUnit = DefaultUnits.LinearDensityUnit;
+        List<IGH_Param> inputs = this.Params.Input.ToList();
+        List<IGH_Param> outputs = this.Params.Output.ToList();
+        bool flag = base.Read(reader);
+        foreach (IGH_Param param in inputs)
+          this.Params.RegisterInputParam(param);
+        foreach (IGH_Param param in outputs)
+          this.Params.RegisterOutputParam(param);
+        return flag;
       }
       return base.Read(reader);
     }

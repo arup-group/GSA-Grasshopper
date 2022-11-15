@@ -187,6 +187,13 @@ namespace GsaGH.Components
 
       if (_mode == FoldMode.Storey)
       {
+        if (Params.Input.Count < 5)
+        {
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_GenericObject());
+
+        }
+
         Params.Input[4].NickName = "tA";
         Params.Input[4].Name = "Tolerance Above [" + Length.GetAbbreviation(this.LengthUnit) + "]";
         Params.Input[4].Description = "Tolerance Above Grid Plane";
@@ -233,6 +240,12 @@ namespace GsaGH.Components
       {
         _mode = (FoldMode)reader.GetInt32("Mode");
         this.InitialiseDropdowns();
+      }
+
+      if (_mode == FoldMode.Storey && this.Params.Input.Count < 5)
+      {
+        Params.RegisterInputParam(new Param_GenericObject());
+        Params.RegisterInputParam(new Param_GenericObject());
       }
 
       return base.Read(reader);
