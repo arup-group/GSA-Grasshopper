@@ -88,10 +88,10 @@ namespace GsaGH.Components
         int outp = 0;
         DA.SetData(outp++, new GsaOffsetGoo(offset));
 
-        DA.SetData(outp++, new GH_UnitNumber(offset.X1));
-        DA.SetData(outp++, new GH_UnitNumber(offset.X2));
-        DA.SetData(outp++, new GH_UnitNumber(offset.Y));
-        DA.SetData(outp++, new GH_UnitNumber(offset.Z));
+        DA.SetData(outp++, new GH_UnitNumber(offset.X1.ToUnit(this.LengthUnit)));
+        DA.SetData(outp++, new GH_UnitNumber(offset.X2.ToUnit(this.LengthUnit)));
+        DA.SetData(outp++, new GH_UnitNumber(offset.Y.ToUnit(this.LengthUnit)));
+        DA.SetData(outp++, new GH_UnitNumber(offset.Z.ToUnit(this.LengthUnit)));
       }
     }
 
