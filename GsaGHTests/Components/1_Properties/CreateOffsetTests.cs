@@ -32,10 +32,10 @@ namespace GsaGHTests.Components
 
       // Assert
       GsaOffsetGoo output = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(500, output.Value.X1.Value);
-      Assert.Equal(-0.75, output.Value.X2.Value);
-      Assert.Equal(1.99, output.Value.Y.Value);
-      Assert.Equal(0.99, output.Value.Z.Value);
+      Assert.Equal(500, output.Value.X1.As(LengthUnit.Meter));
+      Assert.Equal(-0.75, output.Value.X2.As(LengthUnit.Meter));
+      Assert.Equal(1.99, output.Value.Y.As(LengthUnit.Meter));
+      Assert.Equal(0.99, output.Value.Z.As(LengthUnit.Meter));
     }
   }
 }
