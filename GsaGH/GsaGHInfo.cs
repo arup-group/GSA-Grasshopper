@@ -9,6 +9,7 @@ using GsaGH.Helpers;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using OasysGH;
+using OasysGH.Helpers;
 
 namespace GsaGH
 {
@@ -41,7 +42,7 @@ namespace GsaGH
           Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper require GSA 10.1.60 installed. Please upgrade GSA.");
           GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
           Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-          PostHog.PluginLoaded(exception.Message);
+          PostHog.PluginLoaded(GsaGH.PluginInfo.Instance, exception.Message);
           return GH_LoadingInstruction.Abort;
         }
       }
@@ -69,7 +70,7 @@ namespace GsaGH
         Exception exception = new Exception(message);
         GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI.dll loading", exception);
         Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-        PostHog.PluginLoaded(message);
+        PostHog.PluginLoaded(GsaGH.PluginInfo.Instance, message);
         return GH_LoadingInstruction.Abort;
       }
 
@@ -100,7 +101,7 @@ namespace GsaGH
         Exception exception = new Exception(message);
         GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: System.Data.SQLite.dll loading", exception);
         Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-        PostHog.PluginLoaded(message);
+        PostHog.PluginLoaded(GsaGH.PluginInfo.Instance, message);
         return GH_LoadingInstruction.Abort;
       }
 
@@ -114,7 +115,7 @@ namespace GsaGH
       // ### Setup OasysGH and shared Units ###
       Utility.InitialiseMainMenuAndDefaultUnits();
 
-      PostHog.PluginLoaded();
+      PostHog.PluginLoaded(GsaGH.PluginInfo.Instance);
 
       return GH_LoadingInstruction.Proceed;
     }
@@ -161,7 +162,7 @@ namespace GsaGH
           Exception exception = new Exception(message);
           GH_LoadingException gH_LoadingException = new GH_LoadingException(GsaGHInfo.ProductName + ": " + keyword + " loading failed", exception);
           Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-          PostHog.PluginLoaded(message);
+          PostHog.PluginLoaded(GsaGH.PluginInfo.Instance, message);
           return false;
         }
       }

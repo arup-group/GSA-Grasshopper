@@ -1,14 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Net.Sockets;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Eto.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
+using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Geometry;
+using Rhino.PlugIns;
+using Rhino.Runtime;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace GsaGH.Components
 {
@@ -56,7 +67,7 @@ namespace GsaGH.Components
     {
       Interop.Gsa_10_1.ComAuto m = new Interop.Gsa_10_1.ComAuto();
       string temp = Path.GetTempPath() + Guid.NewGuid().ToString() + ".gwb";
-      
+
       GsaModelGoo model = null;
       if (DA.GetData(0, ref model))
       {
@@ -73,7 +84,6 @@ namespace GsaGH.Components
       if (DA.GetDataList(1, strings))
         foreach (string s in strings)
           gwa += s + "\n";
-
       DA.SetData(1, m.GwaCommand(gwa));
       m.SaveAs(temp);
       GsaModel gsaGH = new GsaModel();
@@ -81,6 +91,25 @@ namespace GsaGH.Components
       DA.SetData(0, new GsaModelGoo(gsaGH));
       m.Close();
       m = null;
+      PostHogGWA(gwa);
+    }
+
+    private void PostHogGWA(string gwa)
+    {
+      string[] commands = gwa.Split('\n');
+      foreach (string command in commands)
+      {
+        if (command == "") { continue; }
+        string key = command.Split('.')[0].Split(',')[0].Split('\t')[0].Split(' ')[0];
+        if (key == "") { continue; }
+        string eventName = "GwaCommand";
+        Dictionary<string, object> properties = new Dictionary<string, object>()
+        {
+          { key, command },
+          { "existingModel", this.Params.Input.Count > 0 },
+        };
+        _ = PostHog.SendToPostHog(GsaGH.PluginInfo.Instance, eventName, properties);
+      }
     }
   }
 }
