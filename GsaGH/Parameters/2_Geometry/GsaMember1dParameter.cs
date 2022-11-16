@@ -24,6 +24,15 @@ namespace GsaGH.Parameters
       GsaGH.Components.Ribbon.CategoryName.Name(),
       GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
     { }
+
+    protected override GsaMember1dGoo PreferredCast(object data)
+    {
+      if (data.GetType() == typeof(GsaMember1d))
+        return new GsaMember1dGoo((GsaMember1d)data);
+
+      return base.PreferredCast(data);
+    }
+
     public override void DrawViewportMeshes(IGH_PreviewArgs args)
     {
       // Meshes aren't drawn for lines/curves.

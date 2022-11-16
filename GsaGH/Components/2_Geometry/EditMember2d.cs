@@ -316,6 +316,7 @@ namespace GsaGH.Components
     #region Custom UI
     protected override void BeforeSolveInstance()
     {
+      base.BeforeSolveInstance();
       this.Message = Length.GetAbbreviation(this.LengthUnit);
     }
 
@@ -355,7 +356,17 @@ namespace GsaGH.Components
       if (reader.ItemExists("LengthUnit"))
         this.LengthUnit = this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       else
+      {
         this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitGeometry;
+        List<IGH_Param> inputs = this.Params.Input.ToList();
+        List<IGH_Param> outputs = this.Params.Output.ToList();
+        bool flag = base.Read(reader);
+        foreach (IGH_Param param in inputs)
+          this.Params.RegisterInputParam(param);
+        foreach (IGH_Param param in outputs)
+          this.Params.RegisterOutputParam(param);
+        return flag;
+      }
       return base.Read(reader);
     }
 

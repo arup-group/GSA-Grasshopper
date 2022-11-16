@@ -23,5 +23,12 @@ namespace GsaGH.Parameters
       GsaGH.Components.Ribbon.CategoryName.Name(),
       GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
     { }
+
+    protected override GsaModelGoo PreferredCast(object data)
+    {
+      if (data.GetType() == typeof(GsaModel))
+        return new GsaModelGoo((GsaModel)data);
+      return base.PreferredCast(data);
+    }
   }
 }
