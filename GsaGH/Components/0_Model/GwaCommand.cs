@@ -100,7 +100,7 @@ namespace GsaGH.Components
       foreach (string command in commands)
       {
         if (command == "") { continue; }
-        string key = command.Split('.')[0].Split(',')[0];
+        string key = command.Split('.')[0].Split(',')[0].Split('\t')[0].Split(' ')[0];
         if (key == "") { continue; }
         string eventName = "GwaCommand";
         Dictionary<string, object> properties = new Dictionary<string, object>()
