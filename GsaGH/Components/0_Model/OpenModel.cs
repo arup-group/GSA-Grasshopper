@@ -8,6 +8,7 @@ using GsaGH.Parameters;
 using GsaGH.Helpers;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 
 namespace GsaGH.Components
 {
@@ -78,7 +79,7 @@ namespace GsaGH.Components
             Message = mes;
             DA.SetData(0, new GsaModelGoo(gsaModel));
 
-            PostHog.ModelIO("openGWB", (int)(new FileInfo(FileName).Length / 1024));
+            PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB", (int)(new FileInfo(FileName).Length / 1024));
 
             return;
           }
