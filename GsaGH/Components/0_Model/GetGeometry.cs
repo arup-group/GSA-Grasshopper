@@ -248,10 +248,10 @@ namespace GsaGH.Components
       this.ClearRuntimeMessages();
       return results;
     }
-
+    ConcurrentDictionary<int, Member> mDict = null;
     protected override void SolveInstance(IGH_DataAccess data)
     {
-      ConcurrentDictionary<int, Member> mDict = null;
+      
       if (InPreSolve)
       {
         // First pass; collect data and construct tasks
@@ -397,8 +397,8 @@ namespace GsaGH.Components
           {
             try
             {
-              if (elem.Value.API_Elements[0].ParentMember.Member > 0
-                                                && mDict.ContainsKey(elem.Value.API_Elements[0].ParentMember.Member))
+              if (elem.Value.API_Elements[0].ParentMember.Member > 0 
+              && mDict.ContainsKey(elem.Value.API_Elements[0].ParentMember.Member))
                 element2dsShaded.Add(elem);
               else
                 element2dsNotShaded.Add(elem);
@@ -433,7 +433,7 @@ namespace GsaGH.Components
             try
             {
               if (elem.Value.API_Elements[0].ParentMember.Member > 0
-                        && mDict.ContainsKey(elem.Value.API_Elements[0].ParentMember.Member))
+              && mDict.ContainsKey(elem.Value.API_Elements[0].ParentMember.Member))
                 element3dsShaded.Add(elem);
               else
                 element3dsNotShaded.Add(elem);
@@ -507,7 +507,7 @@ namespace GsaGH.Components
     #endregion
 
     #region custom preview
-    BoundingBox BoundingBox;
+    BoundingBox BoundingBox = BoundingBox.Empty;
     ConcurrentBag<GsaElement2dGoo> element2ds;
     ConcurrentBag<GsaElement3dGoo> element3ds;
     Mesh cachedDisplayMeshShaded;
