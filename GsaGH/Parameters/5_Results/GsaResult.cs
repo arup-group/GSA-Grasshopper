@@ -335,23 +335,26 @@ namespace GsaGH.Parameters
     }
     internal ResultType Type { get; set; }
     internal Model Model { get; set; }
+    internal LengthUnit ModelGeometryUnit { get; set; } = LengthUnit.Undefined;
     public GsaResult()
     { }
-    internal GsaResult(Model model, AnalysisCaseResult result, int caseID)
+    internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseID)
     {
-      this.Model = model;
+      this.Model = model.Model;
       this.AnalysisCaseResult = result;
       this.Type = ResultType.AnalysisCase;
       this.CaseID = caseID;
-      this.CaseName = model.AnalysisCaseName(this.CaseID);
+      this.CaseName = model.Model.AnalysisCaseName(this.CaseID);
+      this.ModelGeometryUnit = model.ModelGeometryUnit;
     }
-    internal GsaResult(Model model, CombinationCaseResult result, int caseID, List<int> permutations)
+    internal GsaResult(GsaModel model, CombinationCaseResult result, int caseID, List<int> permutations)
     {
-      this.Model = model;
+      this.Model = model.Model;
       this.CombinationCaseResult = result;
       this.Type = ResultType.Combination;
       this.CaseID = caseID;
       this.SelectedPermutationIDs = permutations.OrderBy(x => x).ToList();
+      this.ModelGeometryUnit = model.ModelGeometryUnit;
     }
 
     #region output methods

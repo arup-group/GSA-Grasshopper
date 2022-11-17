@@ -4,6 +4,8 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using OasysGH;
 using OasysGH.Parameters;
+using OasysUnits.Units;
+using OasysUnits;
 
 namespace GsaGH.Parameters
 {
@@ -17,6 +19,7 @@ namespace GsaGH.Parameters
     public Model Model { get; set; } = new Model();
     public string FileName { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
+    public LengthUnit ModelGeometryUnit { get; set; } = LengthUnit.Undefined;
     
     internal GsaAPI.Titles Titles
     {
@@ -43,6 +46,7 @@ namespace GsaGH.Parameters
       GsaModel clone = new GsaModel();
       clone.Model = this.Model.Clone();
       clone.FileName = this.FileName;
+      clone.ModelGeometryUnit = this.ModelGeometryUnit;
       clone.Guid = Guid.NewGuid();
       return clone;
     }
@@ -58,6 +62,7 @@ namespace GsaGH.Parameters
       if (this.FileName != null)
         dup.FileName = this.FileName.ToString();
       dup.Guid = new Guid(this.Guid.ToString());
+      dup.ModelGeometryUnit = this.ModelGeometryUnit;
       return dup;
     }
 
@@ -80,6 +85,8 @@ namespace GsaGH.Parameters
           }
         }
       }
+      if (this.ModelGeometryUnit != LengthUnit.Undefined)
+        s += " [" + Length.GetAbbreviation(this.ModelGeometryUnit) + "]";
       return s;
     }
     #endregion
