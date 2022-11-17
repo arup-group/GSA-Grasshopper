@@ -215,7 +215,7 @@ namespace GsaGH.Parameters
         }
       }
 
-      return idd + sptTxt + localTxt + " Pos:" + new GH_Point(this.Point).ToString();
+      return string.Join(" ", idd.Trim(), sptTxt.Trim(), localTxt.Trim(), ("Pos:" + new GH_Point(this.Point).ToString()).Trim()).Trim().Replace("  ", " ");
     }
 
     internal void CloneApiObject()

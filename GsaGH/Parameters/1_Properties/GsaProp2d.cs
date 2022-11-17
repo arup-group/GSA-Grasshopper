@@ -231,7 +231,7 @@ namespace GsaGH.Parameters
       string desc = this.Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
       string mat = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
       string pa = (this.ID > 0) ? "PA" + this.ID + " " : "";
-      return pa + type + desc + mat;
+      return string.Join(" ", pa.Trim(), type.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
     }
 
     private void CloneApiObject()

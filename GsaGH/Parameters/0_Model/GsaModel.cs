@@ -79,6 +79,8 @@ namespace GsaGH.Parameters
             s = "Nameless";
           }
         }
+        else
+          s = "New GsaGH Model";
       }
       return s;
     }

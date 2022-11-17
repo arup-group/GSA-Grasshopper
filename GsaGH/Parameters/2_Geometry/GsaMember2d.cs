@@ -586,7 +586,7 @@ namespace GsaGH.Parameters
 
       string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
       string type = Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
-      return idd + type + incl;
+      return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
     }
     #endregion
   }

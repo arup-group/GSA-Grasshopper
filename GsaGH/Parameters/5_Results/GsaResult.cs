@@ -966,7 +966,7 @@ namespace GsaGH.Parameters
             txt = txt + " p" + SelectedPermutationIDs[0];
         }
       }
-      return txt;
+      return txt.Trim().Replace("  ", " ");
     }
 
     #endregion
