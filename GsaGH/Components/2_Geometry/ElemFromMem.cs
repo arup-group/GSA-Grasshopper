@@ -257,7 +257,7 @@ namespace GsaGH.Components
       GsaModel outModel = new GsaModel();
       outModel.Model = gsa;
 
-      outModel.ModelGeometryUnit = this.LengthUnit;
+      outModel.ModelUnit = this.LengthUnit;
 
       DA.SetDataList(0, nodes.OrderBy(item => item.Value.ID));
       DA.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.ID));
