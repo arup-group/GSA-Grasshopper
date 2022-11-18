@@ -399,7 +399,7 @@ namespace GsaGH.Parameters
           break;
       }
 
-      return this.LoadType.ToString() + " " + name;
+      return string.Join(" ", this.LoadType.ToString().Trim(), name.Trim()).Trim().Replace("  ", " ");
     }
     #endregion
   }

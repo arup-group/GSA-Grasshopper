@@ -241,7 +241,7 @@ namespace GsaGH.Parameters
     {
       string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
       string type = Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.API_Member.Type).Key;
-      return idd + type;
+      return string.Join(" ", idd.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }
 
     internal void CloneApiObject()

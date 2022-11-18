@@ -280,7 +280,7 @@ namespace GsaGH.Parameters
         gs += new Angle(this.GridSurface.Direction, AngleUnit.Degree).ToString("g").Replace(" ", string.Empty) + " ";
       gs += this.GridSurface.Elements == "all" ? "" : this.GridSurface.Elements;
 
-      return (ax + gp + gs).Replace("''", string.Empty).Trim();
+      return string.Join(" ", ax.Trim(), gp.Trim(), gs.Trim()).Replace("''", string.Empty).Trim().Replace("  ", " ");
     }
     #endregion
   }

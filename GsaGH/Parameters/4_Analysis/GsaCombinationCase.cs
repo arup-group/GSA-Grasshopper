@@ -36,7 +36,7 @@
         s += " '" + this.Name.ToString() + "'";
       if (this.Description != null)
         s += " " + this.Description.ToString();
-      return this.ID > 0 ? "ID:" + this.ID : "" + s;
+      return string.Join(" ", (this.ID > 0 ? "ID:" + this.ID : "").Trim(), s.Trim()).Trim().Replace("  ", " ");
     }
     #endregion
   }
