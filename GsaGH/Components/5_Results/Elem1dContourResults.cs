@@ -142,7 +142,6 @@ namespace GsaGH.Components
         {
           case FoldMode.Displacement:
             res = result.Element1DDisplacementValues(elementlist, positionsCount, this.LengthResultUnit)[0];
-
             break;
 
           case FoldMode.Force:
@@ -166,8 +165,8 @@ namespace GsaGH.Components
         if (elementlist.ToLower() == "all")
           elementlist = String.Join(" ", elementIDs);
 
-        ConcurrentDictionary<int, Element> elems = new ConcurrentDictionary<int, Element>(result.Model.Elements(elementlist));
-        ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(result.Model.Nodes());
+        ConcurrentDictionary<int, Element> elems = new ConcurrentDictionary<int, Element>(result.Model.Model.Elements(elementlist));
+        ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(result.Model.Model.Nodes());
 
         ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.xyzResults;
         ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
@@ -181,6 +180,12 @@ namespace GsaGH.Components
         }
         else if (_mode == FoldMode.StrainEnergy)
           xyzunit = DefaultUnits.EnergyUnit;
+
+        if (res.dmax_x == null)
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Result does not contain any values for 1D Elements");
+          return;
+        }
 
         double dmax_x = res.dmax_x.As(xyzunit);
         double dmax_y = _mode == FoldMode.StrainEnergy ? 0 : res.dmax_y.As(xyzunit);
@@ -295,7 +300,15 @@ namespace GsaGH.Components
 
         // Loop through segmented lines and set result colour into ResultLine format
         DataTree<ResultLineGoo> resultLines = new DataTree<ResultLineGoo>();
-        LengthUnit lengthUnit = result.ModelGeometryUnit;
+        LengthUnit lengthUnit = result.Model.ModelUnit;
+        this.undefinedModelLengthUnit = false;
+        if (lengthUnit == LengthUnit.Undefined)
+        {
+          lengthUnit = this.LengthUnit;
+          this.undefinedModelLengthUnit = true;
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in " + lengthUnit.ToString() + ". This can be changed by right-clicking the component -> 'Select Units'");
+        }
+
         Parallel.ForEach(elems, element =>
         {
           ConcurrentDictionary<int, ResultLineGoo> resLns = new ConcurrentDictionary<int, ResultLineGoo>();
@@ -524,7 +537,7 @@ namespace GsaGH.Components
             else
             {
               Moment moment = new Moment(t, this.MomentUnit);
-              legendValues.Add(t.ToString("F" + significantDigits) + " " + Moment.GetAbbreviation(this.MomentUnit));
+              legendValues.Add(moment.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(moment));
               this.Message = Moment.GetAbbreviation(this.MomentUnit);
             }
@@ -613,6 +626,8 @@ namespace GsaGH.Components
     string _case = "";
     
     LengthUnit LengthResultUnit = DefaultUnits.LengthUnitResult;
+    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+    bool undefinedModelLengthUnit = false;
     EnergyUnit EnergyResultUnit = DefaultUnits.EnergyUnit;
     ForceUnit ForceUnit = DefaultUnits.ForceUnit;
     MomentUnit MomentUnit = DefaultUnits.MomentUnit;
@@ -737,12 +752,6 @@ namespace GsaGH.Components
       _minValue = min;
     }
 
-    public override void UpdateUIFromSelectedItems()
-    {
-      this.LengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[2]);
-      base.UpdateUIFromSelectedItems();
-    }
-
     public override void VariableParameterMaintenance()
     {
       if (_mode == FoldMode.Displacement)
@@ -852,7 +861,7 @@ namespace GsaGH.Components
       }
 
       ToolStripMenuItem energyUnitsMenu = new ToolStripMenuItem("Energy");
-      momentUnitsMenu.Enabled = true;
+      energyUnitsMenu.Enabled = true;
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Energy))
       {
         ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateEnergy(unit); });
@@ -862,12 +871,35 @@ namespace GsaGH.Components
       }
 
       ToolStripMenuItem unitsMenu = new ToolStripMenuItem("Select Units", Properties.Resources.Units);
-      unitsMenu.DropDownItems.AddRange(new ToolStripItem[] { lengthUnitsMenu, forceUnitsMenu, momentUnitsMenu, energyUnitsMenu });
+
+      if (undefinedModelLengthUnit)
+      {
+        ToolStripMenuItem modelUnitsMenu = new ToolStripMenuItem("Model geometry");
+        modelUnitsMenu.Enabled = true;
+        foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length))
+        {
+          ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateModel(unit); });
+          toolStripMenuItem.Checked = unit == Length.GetAbbreviation(this.LengthUnit);
+          toolStripMenuItem.Enabled = true;
+          modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+        }
+        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] { modelUnitsMenu, lengthUnitsMenu, forceUnitsMenu, momentUnitsMenu, energyUnitsMenu });
+      }
+      else
+      {
+        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] { lengthUnitsMenu, forceUnitsMenu, momentUnitsMenu, energyUnitsMenu });
+      }
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
 
       menu.Items.Add(unitsMenu);
 
       Menu_AppendSeparator(menu);
+    }
+    private void UpdateModel(string unit)
+    {
+      this.LengthUnit = Length.ParseUnit(unit);
+      this.ExpirePreview(true);
+      base.UpdateUI();
     }
     private void UpdateLength(string unit)
     {
@@ -953,6 +985,7 @@ namespace GsaGH.Components
       writer.SetDouble("valMax", _maxValue);
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
+      writer.SetString("model", Length.GetAbbreviation(this.LengthUnit));
       writer.SetString("length", Length.GetAbbreviation(this.LengthResultUnit));
       writer.SetString("force", Force.GetAbbreviation(this.ForceUnit));
       writer.SetString("moment", Moment.GetAbbreviation(this.MomentUnit));
@@ -969,6 +1002,7 @@ namespace GsaGH.Components
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       this.LengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
       this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
       this.MomentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
