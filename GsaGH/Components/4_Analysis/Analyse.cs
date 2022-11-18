@@ -174,7 +174,7 @@ namespace GsaGH.Components
         }
       }
       #endregion
-
+      model.ModelUnit = this.LengthUnit;
       DA.SetData(0, new GsaModelGoo(model));
     }
 
