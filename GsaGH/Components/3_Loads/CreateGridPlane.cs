@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Eto.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
-using OasysGH.Units;
-using OasysGH.Units.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
@@ -38,7 +32,7 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Plane", "P", "Plane for Axis and Grid Plane definition. Note that an XY-plane will be created with an axis origin Z = 0 " +
           "and the height location will be controlled by Grid Plane elevation. For all none-XY plane inputs, the Grid Plane elevation will be 0", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Grid Plane ID", "ID", "GSA Grid Plane ID. Setting this will replace any existing Grid Planes in GSA model", GH_ParamAccess.item, 0);
-      pManager.AddGenericParameter("Grid Elevation [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ev", "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Grid Elevation in model units", "Ev", "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Grid Plane Name", GH_ParamAccess.item);
 
       pManager[0].Optional = true;
@@ -63,10 +57,6 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gh_pln))
         GH_Convert.ToPlane(gh_pln, ref pln, GH_Conversion.Both);
 
-      // scale plane from selected length unit to meters
-      double factor = new Length(1, this.LengthUnit).As(LengthUnit.Meter);
-      pln.Transform(Transform.Scale(pln.Origin, factor));
-
       // create gsa gridplanesurface from plane
       GsaGridPlaneSurface gps = new GsaGridPlaneSurface(pln);
 
@@ -80,17 +70,17 @@ namespace GsaGH.Components
       }
 
       // 2 Grid elevation
-      if (this.Params.Input[2].SourceCount > 0)
+      double elevation = 0;
+      if (DA.GetData(2, ref elevation))
       {
-        double elev = Input.UnitNumber(this, DA, 2, this.LengthUnit, true).As(LengthUnit.Meter);
-        gps.GridPlane.Elevation = elev;
+        gps.GridPlane.ToleranceAbove = elevation;
 
         // if elevation is set we want to move the plane in it's normal direction
         Vector3d vec = pln.Normal;
         vec.Unitize();
-        vec.X *= elev;
-        vec.Y *= elev;
-        vec.Z *= elev;
+        vec.X *= elevation;
+        vec.Y *= elevation;
+        vec.Z *= elevation;
         Transform xform = Transform.Translation(vec);
         pln.Transform(xform);
         gps.Plane = pln;
@@ -114,12 +104,14 @@ namespace GsaGH.Components
         gps.GridPlane.IsStoreyType = true;
 
         // 4 tolerance above
-        if (this.Params.Input[4].SourceCount > 0)
-          gps.GridPlane.ToleranceAbove = Input.UnitNumber(this, DA, 4, this.LengthUnit, true).As(LengthUnit.Meter);
+        double toleranceAbove = 0;
+        if (DA.GetData(4, ref toleranceAbove))
+          gps.GridPlane.ToleranceAbove = toleranceAbove;
 
         // 5 tolerance below
-        if (this.Params.Input[5].SourceCount > 0)
-          gps.GridPlane.ToleranceBelow = Input.UnitNumber(this, DA, 5, this.LengthUnit, true).As(LengthUnit.Meter);
+        double toleranceBelow = 0;
+        if (DA.GetData(5, ref toleranceBelow))
+          gps.GridPlane.ToleranceBelow = toleranceBelow;
       }
 
       DA.SetData(0, new GsaGridPlaneSurfaceGoo(gps));
@@ -137,12 +129,12 @@ namespace GsaGH.Components
       "Storey"
     });
     FoldMode _mode = FoldMode.General;
-    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
         {
-          "Type", "Unit"
+          "Type"
         });
 
       this.DropDownItems = new List<List<string>>();
@@ -152,12 +144,9 @@ namespace GsaGH.Components
       this.DropDownItems.Add(_type);
       this.SelectedItems.Add(this._mode.ToString());
 
-      // Length
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
-
       this.IsInitialised = true;
     }
+
     public override void SetSelected(int i, int j)
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
@@ -173,21 +162,18 @@ namespace GsaGH.Components
             break;
         }
       }
-      else
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
 
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 
     public override void VariableParameterMaintenance()
     {
-      Params.Input[2].Name = "Grid Elevation [" + Length.GetAbbreviation(this.LengthUnit) + "]";
+      Params.Input[2].Name = "Grid Elevation in model units";
 
       if (_mode == FoldMode.Storey)
       {
@@ -199,18 +185,19 @@ namespace GsaGH.Components
         }
 
         Params.Input[4].NickName = "tA";
-        Params.Input[4].Name = "Tolerance Above [" + Length.GetAbbreviation(this.LengthUnit) + "]";
+        Params.Input[4].Name = "Tolerance Above in model units";
         Params.Input[4].Description = "Tolerance Above Grid Plane";
         Params.Input[4].Access = GH_ParamAccess.item;
         Params.Input[4].Optional = true;
 
         Params.Input[5].NickName = "tB";
-        Params.Input[5].Name = "Tolerance Below [" + Length.GetAbbreviation(this.LengthUnit) + "]";
+        Params.Input[5].Name = "Tolerance Below in model units";
         Params.Input[5].Description = "Tolerance Below Grid Plane";
         Params.Input[5].Access = GH_ParamAccess.item;
         Params.Input[5].Optional = true;
       }
     }
+
     private void Mode1Clicked()
     {
       if (_mode == FoldMode.General)
@@ -232,8 +219,8 @@ namespace GsaGH.Components
       _mode = FoldMode.Storey;
 
       //add input parameters
-      Params.RegisterInputParam(new Param_GenericObject());
-      Params.RegisterInputParam(new Param_GenericObject());
+      Params.RegisterInputParam(new Param_Number());
+      Params.RegisterInputParam(new Param_Number());
     }
     #endregion
 

@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
-using OasysGH.Parameters;
-using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
@@ -61,7 +57,7 @@ namespace GsaGH.Components
 
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ms", "Set target mesh size", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Set target mesh size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
       pManager.AddTextParameter("Member2d Name", "Na", "Set Name of Member2d", GH_ParamAccess.item);
       pManager.AddColourParameter("Member2d Colour", "Co", "Set Member 2d Colour", GH_ParamAccess.item);
@@ -94,7 +90,7 @@ namespace GsaGH.Components
           "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm", GH_ParamAccess.item);
 
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
@@ -125,7 +121,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            mem.ID = id;
+            mem.Id = id;
         }
 
         // 2/3/4 Brep, incl.pts and incl.lns
@@ -246,10 +242,10 @@ namespace GsaGH.Components
         }
 
         // 10 mesh size
-        GH_Number ghmsz = new GH_Number();
-        if (Params.Input[10].Sources.Count > 0)
+        double meshSize = 0;
+        if (DA.GetData(10, ref meshSize))
         {
-          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 10, this.LengthUnit, true);
+          mem.MeshSize = meshSize;
         }
 
         // 11 mesh with others
@@ -290,7 +286,7 @@ namespace GsaGH.Components
         // #### outputs ####
 
         DA.SetData(0, new GsaMember2dGoo(mem));
-        DA.SetData(1, mem.ID);
+        DA.SetData(1, mem.Id);
         DA.SetData(2, mem.Brep);
         DA.SetDataList(3, mem.InclusionPoints);
         DA.SetDataList(4, mem.InclusionLines);
@@ -303,79 +299,18 @@ namespace GsaGH.Components
 
         DA.SetData(9, new GsaOffsetGoo(mem.Offset));
 
-        DA.SetData(10, new GH_UnitNumber(mem.MeshSize.ToUnit(this.LengthUnit)));
+        DA.SetData(10, mem.MeshSize);
         DA.SetData(11, mem.MeshWithOthers);
 
         DA.SetData(12, mem.Name);
         DA.SetData(13, mem.Colour);
         DA.SetData(14, mem.IsDummy);
-        DA.SetData(15, mem.API_Member.Topology.ToString());
+        DA.SetData(15, mem.ApiMember.Topology.ToString());
       }
-    }
-
-    #region Custom UI
-    protected override void BeforeSolveInstance()
-    {
-      base.BeforeSolveInstance();
-      this.Message = Length.GetAbbreviation(this.LengthUnit);
-    }
-
-    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
-    {
-      Menu_AppendSeparator(menu);
-
-      ToolStripMenuItem unitsMenu = new ToolStripMenuItem("Select unit", Properties.Resources.Units);
-      unitsMenu.Enabled = true;
-      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length))
-      {
-        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); });
-        toolStripMenuItem.Checked = unit == Length.GetAbbreviation(this.LengthUnit);
-        toolStripMenuItem.Enabled = true;
-        unitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-      menu.Items.Add(unitsMenu);
-
-      Menu_AppendSeparator(menu);
-    }
-    private void Update(string unit)
-    {
-      this.LengthUnit = Length.ParseUnit(unit);
-      this.Message = unit;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-    }
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      writer.SetString("LengthUnit", this.LengthUnit.ToString());
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      else
-      {
-        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitGeometry;
-        List<IGH_Param> inputs = this.Params.Input.ToList();
-        List<IGH_Param> outputs = this.Params.Output.ToList();
-        bool flag = base.Read(reader);
-        foreach (IGH_Param param in inputs)
-          this.Params.RegisterInputParam(param);
-        foreach (IGH_Param param in outputs)
-          this.Params.RegisterOutputParam(param);
-        return flag;
-      }
-      return base.Read(reader);
     }
 
     #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance()
-    {
-      this.Params.Input[10].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-      this.Params.Output[10].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-    }
+    public virtual void VariableParameterMaintenance() { }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
 
@@ -384,7 +319,6 @@ namespace GsaGH.Components
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
 
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-    #endregion
     #endregion
   }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using GsaAPI;
 using GsaGH.Parameters;
-using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
@@ -34,8 +33,8 @@ namespace GsaGHTests.Parameters
 
       // set some members
       mem.Colour = System.Drawing.Color.White;
-      mem.ID = 4;
-      mem.MeshSize = new Length(0.56, LengthUnit.Meter);
+      mem.Id = 4;
+      mem.MeshSize = 0.56;
       mem.Name = "meminem";
       mem.IsDummy = true;
       mem.Offset = new GsaOffset(0, 0, 0, -0.45);
@@ -55,8 +54,8 @@ namespace GsaGHTests.Parameters
       Assert.Equal(mem.Brep.Vertices[0].Location.Y, mem.Topology[4].Y);
 
       Assert.Equal(System.Drawing.Color.FromArgb(255, 255, 255, 255), mem.Colour);
-      Assert.Equal(4, mem.ID);
-      Assert.Equal(0.56, mem.MeshSize.Meters);
+      Assert.Equal(4, mem.Id);
+      Assert.Equal(0.56, mem.MeshSize);
       Assert.Equal("meminem", mem.Name);
       Assert.True(mem.IsDummy);
       Assert.Equal(-0.45, mem.Offset.Z.Value);
@@ -91,8 +90,8 @@ namespace GsaGHTests.Parameters
 
       // set some members
       original.Colour = System.Drawing.Color.Blue;
-      original.ID = 13;
-      original.MeshSize = new Length(1.56, LengthUnit.Meter);
+      original.Id = 13;
+      original.MeshSize = 1.56;
       original.Name = "ehbaba";
       original.IsDummy = false;
       original.Offset = new GsaOffset(0.33, 0, 0, 0, LengthUnit.Meter);
@@ -121,8 +120,8 @@ namespace GsaGHTests.Parameters
       Assert.Equal(1, dup.InclusionPoints[0].Y);
 
       Assert.Equal(System.Drawing.Color.FromArgb(255, 0, 0, 255), dup.Colour);
-      Assert.Equal(13, dup.ID);
-      Assert.Equal(1.56, dup.MeshSize.Meters);
+      Assert.Equal(13, dup.Id);
+      Assert.Equal(1.56, dup.MeshSize);
       Assert.Equal("ehbaba", dup.Name);
       Assert.False(dup.IsDummy);
       Assert.Equal(0.33, dup.Offset.X1.Value);
@@ -146,8 +145,8 @@ namespace GsaGHTests.Parameters
       original = original.UpdateGeometry(brep2);
       // changes to class members
       original.Colour = System.Drawing.Color.Black;
-      original.ID = 7;
-      original.MeshSize = Length.Zero;
+      original.Id = 7;
+      original.MeshSize = 0;
       original.Name = "Persepolis";
       original.IsDummy = true;
       original.Offset = new GsaOffset(0.12, 0, 0, 0, LengthUnit.Meter);
@@ -169,8 +168,8 @@ namespace GsaGHTests.Parameters
 
       // check that duplicate keeps it's member values
       Assert.Equal(System.Drawing.Color.FromArgb(255, 0, 0, 255), dup.Colour);
-      Assert.Equal(13, dup.ID);
-      Assert.Equal(1.56, dup.MeshSize.Meters);
+      Assert.Equal(13, dup.Id);
+      Assert.Equal(1.56, dup.MeshSize);
       Assert.Equal("ehbaba", dup.Name);
       Assert.False(dup.IsDummy);
       Assert.Equal(0.33, dup.Offset.X1.Meters);
@@ -180,8 +179,8 @@ namespace GsaGHTests.Parameters
 
       // check that changes are made to original
       Assert.Equal(System.Drawing.Color.FromArgb(255, 0, 0, 0), original.Colour);
-      Assert.Equal(7, original.ID);
-      Assert.Equal(0, original.MeshSize.Value);
+      Assert.Equal(7, original.Id);
+      Assert.Equal(0, original.MeshSize);
       Assert.Equal("Persepolis", original.Name);
       Assert.True(original.IsDummy);
       Assert.Equal(0.12, original.Offset.X1.Value);

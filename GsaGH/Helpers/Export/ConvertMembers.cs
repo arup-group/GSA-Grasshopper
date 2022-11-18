@@ -1,11 +1,8 @@
-﻿using GsaAPI;
-using Rhino.Geometry;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using GsaAPI;
 using GsaGH.Parameters;
-using System.Linq;
 using OasysUnits.Units;
-using OasysUnits;
+using Rhino.Geometry;
 
 namespace GsaGH.Util.Gsa.ToGSA
 {
@@ -94,7 +91,6 @@ namespace GsaGH.Util.Gsa.ToGSA
       #endregion
     }
 
-    
     #endregion
 
     #region member2d
@@ -104,7 +100,7 @@ namespace GsaGH.Util.Gsa.ToGSA
     /// <param name="member2d"></param>
     /// <param name="nodes"></param>
     /// <param name="nodeidcounter"></param>
-    /// <param name="unit"></param>
+    /// <param name="unit">Model unit</param>
     /// <returns></returns>
     public static Member ConvertMember2D(GsaMember2d member2d, ref List<Node> nodes, ref int nodeidcounter, LengthUnit unit)
     {
@@ -268,7 +264,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       return mems;
     }
 
-   #endregion
+    #endregion
 
     #region member3d
     /// <summary>
@@ -324,7 +320,6 @@ namespace GsaGH.Util.Gsa.ToGSA
       return apimember;
     }
 
-    
     /// <summary>
     /// Method to create a list of API members without bothering to find and using existing points.
     /// </summary>

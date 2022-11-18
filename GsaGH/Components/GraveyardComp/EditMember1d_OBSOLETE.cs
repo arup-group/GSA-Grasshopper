@@ -250,7 +250,7 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[12].Sources.Count > 0)
         {
-          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 12, DefaultUnits.LengthUnitGeometry, true);
+          mem.MeshSize = Input.UnitNumber(this, DA, 12, DefaultUnits.LengthUnitGeometry, true).Value;
           if (DefaultUnits.LengthUnitGeometry != OasysUnits.Units.LengthUnit.Meter)
             AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
                 + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
@@ -308,7 +308,7 @@ namespace GsaGH.Components
         DA.SetData(10, mem.OrientationAngle);
         DA.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
-        DA.SetData(12, new GH_UnitNumber(mem.MeshSize));
+        DA.SetData(12, new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter)));
         DA.SetData(13, mem.MeshWithOthers);
 
         DA.SetData(14, mem.Name);

@@ -1,10 +1,10 @@
-﻿using GsaAPI;
-using GsaGH.Parameters;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GsaAPI;
+using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -87,7 +87,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       // convert from Goo-type
       List<GsaMember2d> mem2ds = memberTuple.Item2.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      mem2ds.Select(c => { c.ID = 0; return c; }).ToList();
+      mem2ds.Select(c => { c.Id = 0; return c; }).ToList();
 
       // get properties
       List<GsaSectionGoo> goosections = FromGSA.GetSections(sDict, model.AnalysisMaterials(), model.SectionModifiers());
@@ -345,7 +345,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (mem2ds.Count > 0)
         {
-          int existingMem2dMaxID = mem2ds.Max(x => x.ID); // max ID in new Elem2ds
+          int existingMem2dMaxID = mem2ds.Max(x => x.Id); // max ID in new Elem2ds
           if (existingMem2dMaxID > newMemberID)
             newMemberID = existingMem2dMaxID + 1;
         }

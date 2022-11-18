@@ -9,7 +9,6 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
 using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
@@ -263,10 +262,10 @@ namespace GsaGH.Components
         }
 
         // 12 mesh size
-        GH_Number ghmsz = new GH_Number();
-        if (Params.Input[12].Sources.Count > 0)
+        double meshSize = 0;
+        if (DA.GetData(12, ref meshSize))
         {
-          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 12, this.LengthUnit, true);
+          mem.MeshSize = meshSize;
         }
 
         // 13 mesh with others
@@ -339,9 +338,9 @@ namespace GsaGH.Components
         DA.SetData(10, mem.OrientationAngle.As(AngleUnit.Radian));
         DA.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
-        DA.SetData(12, new GH_UnitNumber(mem.MeshSize.ToUnit(this.LengthUnit)));
+        DA.SetData(12, mem.MeshSize);
         DA.SetData(13, mem.MeshWithOthers);
-        
+
         DA.SetData(14, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem, this.LengthUnit)));
 
         DA.SetData(15, mem.Name);

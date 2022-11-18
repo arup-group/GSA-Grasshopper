@@ -2,6 +2,7 @@
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
+using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 
@@ -16,7 +17,7 @@ namespace GsaGHTests.Parameters
       // Arrange
       GsaSection section = new GsaSection();
       section.Name = "Name";
-      GsaMember1d member1d = new GsaMember1d(new Member(), 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
+      GsaMember1d member1d = new GsaMember1d(new Member(), LengthUnit.Yard, 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
       member1d.Name = "Name";
       Member original = member1d.API_Member;
 
@@ -33,7 +34,7 @@ namespace GsaGHTests.Parameters
       // Arrange
       GsaSection section = new GsaSection();
       section.Name = "Name";
-      GsaMember1d original = new GsaMember1d(new Member(), 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
+      GsaMember1d original = new GsaMember1d(new Member(), LengthUnit.PrinterPoint, 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
       original.Name = "Name";
 
       // Act

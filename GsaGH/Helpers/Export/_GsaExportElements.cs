@@ -1,12 +1,12 @@
-﻿using GsaAPI;
-using Rhino.Geometry;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using GsaGH.Parameters;
-using System.Linq;
 using System.Collections.ObjectModel;
-using OasysUnits.Units;
+using System.Linq;
+using GsaAPI;
+using GsaGH.Parameters;
 using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Util.Gsa.ToGSA
 {

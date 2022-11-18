@@ -996,9 +996,7 @@ namespace GsaGH.Util.Gsa
               }
 
               // create the element from list of points and type description
-              GsaMember1d mem1d = new GsaMember1d(mem, key, topopts.ToList(), topoType.ToList(), section, orient);
-
-              // releases to be implemented here - GsaAPI bug
+              GsaMember1d mem1d = new GsaMember1d(mem, unit, key, topopts.ToList(), topoType.ToList(), section, orient);
 
               // add member to output list
               mem1ds.Add(new GsaMember1dGoo(mem1d));
@@ -1017,7 +1015,7 @@ namespace GsaGH.Util.Gsa
               }
 
               // create member from topology lists
-              GsaMember2d mem2d = new GsaMember2d(mem, key,
+              GsaMember2d mem2d = new GsaMember2d(mem, unit, key,
                         topopts.ToList(),
                         topoType.ToList(),
                         void_topo.ToList(),

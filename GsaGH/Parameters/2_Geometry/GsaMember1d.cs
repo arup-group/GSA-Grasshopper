@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
-using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Collections;
@@ -251,19 +249,7 @@ namespace GsaGH.Parameters
         this._member.Name = value;
       }
     }
-    public Length MeshSize
-    {
-      get
-      {
-        Length l = new Length(this._member.MeshSize, LengthUnit.Meter);
-        return new Length(l.As(DefaultUnits.LengthUnitGeometry), DefaultUnits.LengthUnitGeometry);
-      }
-      set
-      {
-        this.CloneApiObject();
-        this._member.MeshSize = value.Meters;
-      }
-    }
+    public double MeshSize { get; set; } = 0;
     public bool MeshWithOthers
     {
       get
@@ -347,9 +333,11 @@ namespace GsaGH.Parameters
     {
     }
 
-    internal GsaMember1d(Member member, int id, List<Point3d> topology, List<string> topo_type, GsaSection section, GsaNode orientationNode)
+    internal GsaMember1d(Member member, LengthUnit modelUnit, int id, List<Point3d> topology, List<string> topo_type, GsaSection section, GsaNode orientationNode)
     {
       this._member = member;
+      // scale mesh size to model units
+      this.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
       this._id = id;
       this._crv = Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
       this._topo = topology;
@@ -357,6 +345,7 @@ namespace GsaGH.Parameters
       this._section = section;
       this._rel1 = new GsaBool6(this._member.GetEndRelease(0).Releases);
       this._rel2 = new GsaBool6(this._member.GetEndRelease(1).Releases);
+      // is this check necessary?
       if (orientationNode != null)
         this._orientationNode = orientationNode;
       this.UpdatePreview();

@@ -468,14 +468,14 @@ namespace GsaGH.Components
         }
         if (results.Mem2ds != null)
         {
-          List<int> invalid2dmem = results.Mem2ds.Where(x => !x.IsValid).Select(x => x.Value.ID).ToList();
+          List<int> invalid2dmem = results.Mem2ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
           if (invalid2dmem.Count > 0)
           {
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member2D definition for Member IDs:");
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, string.Join(" ", invalid2dmem.OrderBy(x => x)));
           }
           if (_mode == FoldMode.List)
-            data.SetDataList(5, results.Mem2ds.OrderBy(item => item.Value.ID));
+            data.SetDataList(5, results.Mem2ds.OrderBy(item => item.Value.Id));
           else
           {
             DataTree<GsaMember2dGoo> tree = new DataTree<GsaMember2dGoo>();

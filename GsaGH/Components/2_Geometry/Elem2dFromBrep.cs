@@ -126,13 +126,8 @@ namespace GsaGH.Components
           }
 
           // 4 mesh size
-          GH_Number ghmsz = new GH_Number();
-          Length meshSize = Length.Zero;
-          if (DA.GetData(4, ref ghmsz))
-          {
-            GH_Convert.ToDouble(ghmsz, out double m_size, GH_Conversion.Both);
-            meshSize = new Length(m_size, LengthUnit);
-          }
+          double meshSize = 0;
+          DA.GetData(4, ref meshSize);
 
           // build new element2d with brep, crv and pts
           GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize, mem1ds, nodes, LengthUnit);
