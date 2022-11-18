@@ -1,8 +1,8 @@
-﻿using Grasshopper.Kernel;
+﻿using System;
+using System.Collections.Generic;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
-using System;
-using System.Collections.Generic;
 
 namespace GsaGH.Helpers.Export
 {
@@ -209,7 +209,7 @@ namespace GsaGH.Helpers.Export
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
           gh_typ = gh_types[i];
           if (gh_typ == null) { owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Geometry input (index: " + i + ") is null and has been ignored"); continue; }
-          
+
           if (gh_typ.Value is GsaMember1dGoo)
           {
             GsaMember1d gsamem1 = new GsaMember1d();

@@ -76,13 +76,11 @@ namespace GsaGH.Components
         Plane axis = new Plane();
         if (gps.GridPlane != null)
         {
-          axis = new Plane(new Point3d(gps.Axis.Origin.X, gps.Axis.Origin.Y, gps.Axis.Origin.Z),
-          new Vector3d(gps.Axis.XVector.X, gps.Axis.XVector.Y, gps.Axis.XVector.Z),
-          new Vector3d(gps.Axis.XYPlane.X, gps.Axis.XYPlane.Y, gps.Axis.XYPlane.Z)
-          );
+          axis = new Plane(gps.Plane);
+          axis.OriginZ -= gps.Elevation;
         }
         DA.SetData(4, gps.GridPlane == null ? Plane.Unset : axis);
-        DA.SetData(5, gps.AxisID);
+        DA.SetData(5, gps.AxisId);
         DA.SetData(6, new GH_UnitNumber(new Length(gps.GridPlane == null ? 0 : gps.GridPlane.Elevation, this.LengthUnit)));
         DA.SetData(7, new GH_UnitNumber(new Length(gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceAbove, this.LengthUnit)));
         DA.SetData(8, new GH_UnitNumber(new Length(gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceBelow, this.LengthUnit)));
@@ -130,7 +128,7 @@ namespace GsaGH.Components
 
       Menu_AppendSeparator(menu);
     }
-    
+
     private void Update(string unit)
     {
       this.LengthUnit = Length.ParseUnit(unit);

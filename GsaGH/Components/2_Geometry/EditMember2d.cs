@@ -21,7 +21,7 @@ namespace GsaGH.Components
   public class EditMember2d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("955e572d-1293-4ac6-b436-54135f7714f6");
+    public override Guid ComponentGuid => new Guid("7ea4f63d-d398-4ca3-b8c8-5d9f3cdf2d41");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem2d;

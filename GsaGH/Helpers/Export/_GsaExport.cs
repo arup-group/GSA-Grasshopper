@@ -397,8 +397,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       Dictionary<Guid, int> gs_guid = new Dictionary<Guid, int>();
 
       // Set / add Grid plane surfaces - do this first to set any GridPlane and GridSurfaces with IDs.
-      Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces,
-          ref gp_guid, ref gs_guid, lengthUnit);
+      Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, lengthUnit);
 
       // Set / add loads to lists
       Loads.ConvertLoad(loads, ref gravityLoads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle,

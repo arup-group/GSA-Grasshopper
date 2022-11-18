@@ -1063,21 +1063,21 @@ namespace GsaGH.Util.Gsa
                       new Length(node.Position.Y, LengthUnit.Meter).As(unit),
                       new Length(node.Position.Z, LengthUnit.Meter).As(unit));
     }
-    internal static Point3d Point3dFromXYZUnit(double xMeter, double yMeter, double zMeter, LengthUnit unit)
+    internal static Point3d Point3dFromXYZUnit(double x, double y, double z, LengthUnit modelUnit)
     {
-      return (unit == LengthUnit.Meter) ?
-          new Point3d(xMeter, yMeter, zMeter) : // skip unitsnet conversion, gsa api node always in meters
-          new Point3d(new Length(xMeter, LengthUnit.Meter).As(unit),
-                      new Length(yMeter, LengthUnit.Meter).As(unit),
-                      new Length(zMeter, LengthUnit.Meter).As(unit));
+      return (modelUnit == LengthUnit.Meter) ?
+          new Point3d(x, y, z) : // skip unitsnet conversion, gsa api node always in meters
+          new Point3d(new Length(x, LengthUnit.Meter).As(modelUnit),
+                      new Length(y, LengthUnit.Meter).As(modelUnit),
+                      new Length(z, LengthUnit.Meter).As(modelUnit));
     }
-    internal static Vector3d Vector3dFromXYZUnit(double xMeter, double yMeter, double zMeter, LengthUnit unit)
+    internal static Vector3d Vector3dFromXYZUnit(double x, double y, double z, LengthUnit modelUnit)
     {
-      return (unit == LengthUnit.Meter) ?
-          new Vector3d(xMeter, yMeter, zMeter) : // skip unitsnet conversion, gsa api node always in meters
-          new Vector3d(new Length(xMeter, LengthUnit.Meter).As(unit),
-                      new Length(yMeter, LengthUnit.Meter).As(unit),
-                      new Length(zMeter, LengthUnit.Meter).As(unit));
+      return (modelUnit == LengthUnit.Meter) ?
+          new Vector3d(x, y, z) : // skip unitsnet conversion, gsa api node always in meters
+          new Vector3d(new Length(x, LengthUnit.Meter).As(modelUnit),
+                      new Length(y, LengthUnit.Meter).As(modelUnit),
+                      new Length(z, LengthUnit.Meter).As(modelUnit));
     }
     internal static Node UpdateNodePositionUnit(Node node, LengthUnit unit)
     {
@@ -1690,10 +1690,10 @@ namespace GsaGH.Util.Gsa
     /// <param name="srfDict">Grid Surface Dictionary</param>
     /// <param name="plnDict">Grid Plane Dictionary</param>
     /// <param name="axDict">Axes Dictionary</param>
-    /// <param name="gridsrf_ID">ID/Key/number of Grid Surface in GSA model to convert</param>
+    /// <param name="gridSrfId">ID/Key/number of Grid Surface in GSA model to convert</param>
     /// <returns></returns>
     public static GsaGridPlaneSurface GetGridPlaneSurface(IReadOnlyDictionary<int, GridSurface> srfDict,
-        IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, int gridsrf_ID, LengthUnit unit)
+        IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict, int gridSrfId, LengthUnit unit)
     {
       // GridPlaneSurface
       GsaGridPlaneSurface gps = new GsaGridPlaneSurface();
@@ -1701,42 +1701,30 @@ namespace GsaGH.Util.Gsa
       // Get Grid Surface
       if (srfDict.Count > 0)
       {
-        srfDict.TryGetValue(gridsrf_ID, out GridSurface gs);
+        srfDict.TryGetValue(gridSrfId, out GridSurface gs);
         gps.GridSurface = gs;
-        gps.GridSurfaceID = gridsrf_ID;
+        gps.GridSurfaceID = gridSrfId;
 
         // Get Grid Plane
         plnDict.TryGetValue(gs.GridPlane, out GridPlane gp);
         gps.GridPlane = gp;
         gps.GridPlaneID = gs.GridPlane;
+        gps.Elevation = gp.Elevation;
 
         // Get Axis
         axDict.TryGetValue(gp.AxisProperty, out Axis ax);
-        if (ax == null)
-        {
-          ax = new Axis();
-          ax.Origin.X = 0;
-          ax.Origin.Y = 0;
-          ax.Origin.Z = 0;
-          ax.XVector.X = 1;
-          ax.XVector.Y = 0;
-          ax.XVector.Y = 0;
-          ax.XYPlane.X = 0;
-          ax.XYPlane.Y = 1;
-          ax.XYPlane.Z = 0;
-        }
-        gps.Axis = ax;
-        gps.AxisID = gp.AxisProperty;
 
+        gps.AxisId = gp.AxisProperty;
 
         // Construct Plane from Axis
-        Plane pln = new Plane();
+        Plane pln;
         if (ax != null)
         {
-          pln = new Plane(
-          Point3dFromXYZUnit(ax.Origin.X, ax.Origin.Y, ax.Origin.Z + gp.Elevation, unit), // for new origin Z-coordinate we add axis origin and grid plane elevation
-          Vector3dFromXYZUnit(ax.XVector.X, ax.XVector.Y, ax.XVector.Z, unit),
-          Vector3dFromXYZUnit(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z, unit));
+          // for new origin Z-coordinate we add axis origin and grid plane elevation
+          pln = new Plane(Point3dFromXYZUnit(ax.Origin.X, ax.Origin.Y, ax.Origin.Z + gp.Elevation, unit),
+            Vector3dFromXYZUnit(ax.XVector.X, ax.XVector.Y, ax.XVector.Z, unit),
+            Vector3dFromXYZUnit(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z, unit)
+            );
         }
         else
         {

@@ -13,7 +13,7 @@ namespace GsaGH.Components
   public class CreateGridPlane : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("675fd47a-890d-45b8-bdde-fb2e8c1d9cca");
+    public override Guid ComponentGuid => new Guid("95c9281a-739b-4480-a2d0-8b04ab0250bd");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GridPlane;
@@ -73,7 +73,7 @@ namespace GsaGH.Components
       double elevation = 0;
       if (DA.GetData(2, ref elevation))
       {
-        gps.GridPlane.ToleranceAbove = elevation;
+        gps.Elevation = elevation;
 
         // if elevation is set we want to move the plane in it's normal direction
         Vector3d vec = pln.Normal;
