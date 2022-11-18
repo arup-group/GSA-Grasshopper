@@ -63,6 +63,10 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gh_pln))
         GH_Convert.ToPlane(gh_pln, ref pln, GH_Conversion.Both);
 
+      // scale plane from selected length unit to meters
+      double factor = new Length(1, this.LengthUnit).As(LengthUnit.Meter);
+      pln.Transform(Transform.Scale(pln.Origin, factor));
+
       // create gsa gridplanesurface from plane
       GsaGridPlaneSurface gps = new GsaGridPlaneSurface(pln);
 
