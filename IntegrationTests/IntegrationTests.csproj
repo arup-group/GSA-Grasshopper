@@ -18,7 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GsaGHTests\GsaGHTests.csproj" />
+    <ProjectReference Include="..\GsaGHTests\GsaGHTests.csproj">
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\GsaGH\GsaGH.csproj" />
   </ItemGroup>
 
