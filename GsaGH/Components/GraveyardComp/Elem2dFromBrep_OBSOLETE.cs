@@ -131,7 +131,7 @@ namespace GsaGH.Components
           if (DA.GetData(4, ref ghmsz))
           {
             GH_Convert.ToDouble(ghmsz, out double m_size, GH_Conversion.Both);
-            meshSize = new Length(m_size, LengthUnit);
+            meshSize = new Length(m_size, LengthUnit).ToUnit(LengthUnit.Meter);
           }
 
           // build new element2d with brep, crv and pts
