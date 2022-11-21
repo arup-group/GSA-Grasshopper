@@ -112,7 +112,7 @@ namespace GsaGH.Components
     }
     private void Update(string unit)
     {
-      this.LengthUnit = Length.ParseUnit(unit);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
@@ -127,7 +127,7 @@ namespace GsaGH.Components
       if (reader.ItemExists("LengthUnit"))
         this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       else
-        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitSection;
+        this.LengthUnit = DefaultUnits.LengthUnitSection;
       return base.Read(reader);
     }
 

@@ -136,17 +136,17 @@ namespace GsaGH.Components
     
     private void UpdateStress(string unit)
     {
-      this.StressUnit = Pressure.ParseUnit(unit);
+      this.StressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
       Update();
     }
     private void UpdateDensity(string unit)
     {
-      this.DensityUnit = Density.ParseUnit(unit);
+      this.DensityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), unit);
       Update();
     }
     private void UpdateTemperature(string unit)
     {
-      this.TemperatureUnit = Temperature.ParseUnit(unit);
+      this.TemperatureUnit = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), unit);
       Update();
     }
     private void Update()
@@ -175,9 +175,9 @@ namespace GsaGH.Components
     {
       try
       {
-        this.StressUnit = Pressure.ParseUnit(reader.GetString("StressUnit"));
-        this.DensityUnit = Density.ParseUnit(reader.GetString("DensityUnit"));
-        this.TemperatureUnit = Temperature.ParseUnit(reader.GetString("TemperatureUnit"));
+        this.StressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("StressUnit"));
+        this.DensityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), reader.GetString("DensityUnit"));
+        this.TemperatureUnit = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), reader.GetString("TemperatureUnit"));
       }
       catch (Exception)
       {
