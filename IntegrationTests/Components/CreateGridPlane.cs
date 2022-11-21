@@ -4,12 +4,13 @@ using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using GsaGHTests.Helpers;
 using Xunit;
 
 namespace IntegrationTests.Components
 {
   [Collection("GrasshopperFixture collection")]
-  public class GridPlaneSurfaceTests
+  public class CreateGridPlaneTests
   {
     public static GH_Document Document()
     {
@@ -27,8 +28,9 @@ namespace IntegrationTests.Components
     public void GridPlaneSurfaceTest()
     {
       GH_Document doc = Document();
-      IGH_Param param = Helper.FindParameter(doc, "gps");
-      GsaGridPlaneSurfaceGoo output = (GsaGridPlaneSurfaceGoo)param.VolatileData.get_Branch(0)[0];
+      GH_Component comp = Helper.FindComponent(doc, "gps");
+      Assert.NotNull(comp);
+      GsaGridPlaneSurfaceGoo output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
       GsaGridPlaneSurface gps = output.Value;
       Assert.Equal(42, gps.GridSurfaceID);
     }
