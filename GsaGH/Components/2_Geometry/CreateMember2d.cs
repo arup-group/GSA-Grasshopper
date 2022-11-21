@@ -12,7 +12,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create new 2D Member
   /// </summary>
-  public class CreateMember2d : GH_OasysDropDownComponent, IGH_PreviewObject
+  public class CreateMember2d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("01450bfc-7ac1-4c51-97a2-42d81d6476b6");
@@ -123,14 +123,6 @@ namespace GsaGH.Components
           DA.SetData(0, new GsaMember2dGoo(mem));
         }
       }
-    }
-
-    public override void InitialiseDropdowns()
-    {
-    }
-
-    public override void SetSelected(int i, int j)
-    {
     }
   }
 }

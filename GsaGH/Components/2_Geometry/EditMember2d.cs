@@ -7,9 +7,6 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Collections;
 using Rhino.Geometry;
 

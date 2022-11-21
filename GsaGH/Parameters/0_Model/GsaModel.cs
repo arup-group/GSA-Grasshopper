@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
-using OasysGH;
-using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {

@@ -17,6 +17,7 @@ namespace GsaGH.Parameters
   public class GsaMember2d
   {
     #region fields
+    private double _meshSize = 0;
     private Brep _brep; // brep for visualisation /member2d
 
     private PolyCurve _edgeCrv; // Polyline for visualisation /member1d/member2d
@@ -38,13 +39,25 @@ namespace GsaGH.Parameters
     public int Id { get; set; } = 0;
     internal Member ApiMember { get; set; } = new Member();
     public GsaProp2d Property { get; set; } = new GsaProp2d();
-    public double MeshSize { get; set; } = 0;
     public PolyCurve PolyCurve => this._edgeCrv;
     public Brep Brep => this._brep;
     public List<Point3d> Topology => this._edgeCrvTopo;
     public List<string> TopologyType => this._edgeCrvTopoType;
     public List<List<Point3d>> VoidTopology => this._voidCrvsTopo;
     public List<List<string>> VoidTopologyType => this._voidCrvsTopoType;
+    public double MeshSize
+    {
+      get
+      {
+        return _meshSize;
+      }
+      set
+      {
+        this.CloneApiObject();
+        this._meshSize = value;
+        this.ApiMember.MeshSize = ;
+      }
+    }
     public List<PolyCurve> InclusionLines
     {
       get
