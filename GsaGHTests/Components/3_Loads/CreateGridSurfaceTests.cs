@@ -2,12 +2,10 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using OasysUnits;
-using OasysUnits.Units;
 using Xunit;
 using static GsaAPI.GridSurface;
 
-namespace ComponentsTest
+namespace GsaGHTests.Components.Loads
 {
   [Collection("GrasshopperFixture collection")]
   public class GridSurfaceTests

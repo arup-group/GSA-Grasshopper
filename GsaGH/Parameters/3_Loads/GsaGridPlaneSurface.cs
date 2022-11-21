@@ -29,8 +29,9 @@ namespace GsaGH.Parameters
 
     #region properties
     public double Elevation { get; set; } = 0;
-    public string Name { get; set; } = "";
-
+    public string Name => _gridPln.Name;
+    public Guid GridSurfaceGUID => _gridSrfGuid;
+    public Guid GridPlaneGUID => _gridPlnGuid;
     public int AxisId
     {
       get
@@ -69,14 +70,6 @@ namespace GsaGH.Parameters
         _gridSrfID = value;
       }
     }
-    public Guid GridSurfaceGUID
-    {
-      get
-      {
-        return _gridSrfGuid;
-      }
-    }
-
     public GridPlane GridPlane
     {
       get
@@ -89,7 +82,6 @@ namespace GsaGH.Parameters
         _gridPln = value;
       }
     }
-
     public int GridPlaneID
     {
       get
@@ -102,15 +94,6 @@ namespace GsaGH.Parameters
         _gridPlnID = value;
       }
     }
-
-    public Guid GridPlaneGUID
-    {
-      get
-      {
-        return _gridPlnGuid;
-      }
-    }
-
     public Plane Plane
     {
       get
@@ -133,7 +116,6 @@ namespace GsaGH.Parameters
     public GsaGridPlaneSurface(Plane plane, bool tryUseExisting = false)
     {
       _pln = plane;
-      _gridPln = new GridPlane();
       if (tryUseExisting)
         _gridPlnGuid = new Guid(); // will create 0000-00000-00000-00000
       else
@@ -161,7 +143,6 @@ namespace GsaGH.Parameters
         GridPlane = this._gridPln == null ? null : new GridPlane
         {
           AxisProperty = this._gridPln.AxisProperty,
-          Elevation = this._gridPln.Elevation,
           IsStoreyType = this._gridPln.IsStoreyType,
           Name = this._gridPln.Name.ToString(),
           ToleranceAbove = this._gridPln.ToleranceAbove,
@@ -178,15 +159,7 @@ namespace GsaGH.Parameters
           SpanType = this._gridSrf.SpanType,
           Tolerance = this._gridSrf.Tolerance
         },
-        Name = this.Name,
-        //Axis = this._gridPln == null ? null : new Axis
-        //{
-        //  Name = _axis.Name.ToString(),
-        //  Origin = new Vector3 { X = _axis.Origin.X, Y = _axis.Origin.Y, Z = _axis.Origin.Z },
-        //  Type = _axis.Type,
-        //  XVector = new Vector3 { X = _axis.XVector.X, Y = _axis.XVector.Y, Z = _axis.XVector.Z },
-        //  XYPlane = new Vector3 { X = _axis.XYPlane.X, Y = _axis.XYPlane.Y, Z = _axis.XYPlane.Z }
-        //},
+        Elevation = this.Elevation,
         GridPlaneID = _gridPlnID,
         GridSurfaceID = _gridSrfID
       };
@@ -218,8 +191,8 @@ namespace GsaGH.Parameters
         gp += "Global grid ";
       else
         gp += $"O:{this._pln.Origin}, X:{this._pln.XAxis}, Y:{this._pln.YAxis}";
-      if (this.GridPlane.Elevation != 0)
-        gp += "E:" + new Length(this.GridPlane.Elevation, LengthUnit.Meter).ToUnit(DefaultUnits.LengthUnitGeometry).ToString("g").Replace(" ", string.Empty) + " ";
+      if (this.Elevation != 0)
+        gp += "E:" + new Length(this.Elevation, LengthUnit.Meter).ToUnit(DefaultUnits.LengthUnitGeometry).ToString("g").Replace(" ", string.Empty) + " ";
       if (this.GridPlane.IsStoreyType)
         gp += "Storey ";
 

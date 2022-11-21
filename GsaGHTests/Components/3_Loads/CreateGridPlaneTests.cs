@@ -2,11 +2,9 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using OasysUnits;
-using OasysUnits.Units;
 using Xunit;
 
-namespace ComponentsTest
+namespace GsaGHTests.Components.Loads
 {
   [Collection("GrasshopperFixture collection")]
   public class CreateGridPlaneTests
@@ -16,7 +14,6 @@ namespace ComponentsTest
       var comp = new CreateGridPlane();
       comp.CreateAttributes();
 
-      comp.SetSelected(1, 4); // set unit dropdown to "ft"
       return comp;
     }
 
@@ -35,8 +32,8 @@ namespace ComponentsTest
       output.CastTo(ref gridPlane);
 
       Assert.Equal(42, gridPlane.GridPlaneID);
-      //Assert.Equal(10, gridPlane.Elevation);
-      //Assert.Equal("test", gridPlane.Name);
+      Assert.Equal(10, gridPlane.Elevation);
+      Assert.Equal("test", gridPlane.Name);
     }
   }
 }
