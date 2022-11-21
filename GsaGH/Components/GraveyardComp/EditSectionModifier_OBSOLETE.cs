@@ -22,15 +22,15 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a Material and ouput the information
   /// </summary>
-  public class EditSectionModifier : GH_OasysComponent, IGH_VariableParameterComponent
+  public class EditSectionModifier_OBSOLETE : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("db2046cc-236d-44a5-aa88-1394dbc4558f");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override Guid ComponentGuid => new Guid("7c78c61b-f01c-4a0e-9399-712fc853e23b");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditSectionModifier;
 
-    public EditSectionModifier() : base("Edit Section Modifier",
+    public EditSectionModifier_OBSOLETE() : base("Edit Section Modifier",
       "ModifierEdit",
       "Modify GSA Section Modifier",
       Ribbon.CategoryName.Name(),
@@ -413,7 +413,6 @@ namespace GsaGH.Components
     private void Update()
     {
       UpdateMessage();
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
     }
     private void UpdateMessage()
@@ -431,30 +430,18 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      this.LengthUnit = Length.ParseUnit(reader.GetString("LengthUnit"));
-      this.LinearDensityUnit = LinearDensity.ParseUnit(reader.GetString("DensityUnit"));
-
+      if (reader.ItemExists("LengthUnit"))
+      {
+        this.LengthUnit = Length.ParseUnit(reader.GetString("LengthUnit"));
+        this.LinearDensityUnit = LinearDensity.ParseUnit(reader.GetString("DensityUnit"));
+      }
+      else
+      {
+        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitSection;
+        this.LinearDensityUnit = DefaultUnits.LinearDensityUnit;
+      }
       return base.Read(reader);
     }
-
-    #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance()
-    {
-      string unit = Length.GetAbbreviation(this.LengthUnit);
-      string volUnit = VolumePerLength.GetAbbreviation(UnitsHelper.GetVolumePerLengthUnit(this.LengthUnit));
-      Params.Output[1].Name = "Area Modifier [" + unit + "\u00B2]";
-      Params.Output[2].Name = "I11 Modifier [" + unit + "\u2074]";
-      Params.Output[3].Name = "I22 Modifier [" + unit + "\u2074]";
-      Params.Output[7].Name = "Volume Modifier [" + volUnit + "]";
-      string unitAbbreviation = LinearDensity.GetAbbreviation(this.LinearDensityUnit);
-      Params.Output[8].Name = "Additional Mass [" + unitAbbreviation + "]";
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-    #endregion
     #endregion
   }
 }
