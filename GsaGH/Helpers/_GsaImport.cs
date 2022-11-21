@@ -879,6 +879,7 @@ namespace GsaGH.Util.Gsa
 
             // create 3D member from mesh
             GsaMember3d mem3d = new GsaMember3d(mem, key, m, prop);
+            mem3d.MeshSize = new Length(mem.MeshSize, LengthUnit.Meter).As(unit);
 
             // add member to list
             mem3ds.Add(new GsaMember3dGoo(mem3d));
@@ -997,6 +998,7 @@ namespace GsaGH.Util.Gsa
 
               // create the element from list of points and type description
               GsaMember1d mem1d = new GsaMember1d(mem, unit, key, topopts.ToList(), topoType.ToList(), section, orient);
+              mem1d.MeshSize = new Length(mem.MeshSize, LengthUnit.Meter).As(unit);
 
               // add member to output list
               mem1ds.Add(new GsaMember1dGoo(mem1d));
@@ -1024,6 +1026,7 @@ namespace GsaGH.Util.Gsa
                         inclLines_topoType.ToList(),
                         incl_pts.ToList(),
                         prop2d, owner);
+              mem2d.MeshSize = new Length(mem.MeshSize, LengthUnit.Meter).As(unit);
 
               // add member to output list
               mem2ds.Add(new GsaMember2dGoo(mem2d));

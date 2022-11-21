@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
-using OasysGH.Units;
-using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
@@ -18,7 +12,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create new 3d Member
   /// </summary>
-  public class CreateMember3d : GH_OasysDropDownComponent, IGH_PreviewObject
+  public class CreateMember3d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("df0c7608-9e46-4500-ab63-0c4162a580d4");
@@ -37,11 +31,9 @@ namespace GsaGH.Components
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
-
       pManager.AddGeometryParameter("Solid", "S", "Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp3dParameter());
-      pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Targe mesh size", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Targe mesh size", GH_ParamAccess.item);
 
       pManager[1].Optional = true;
       pManager[2].Optional = true;
@@ -110,49 +102,14 @@ namespace GsaGH.Components
         }
 
         // 2 mesh size
-        if (this.Params.Input[2].SourceCount > 0)
-          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 2, this.LengthUnit, true);
+        double meshSize = 0;
+        if (DA.GetData(2, ref meshSize))
+        {
+          mem.MeshSize = meshSize;
+        }
 
         DA.SetData(0, new GsaMember3dGoo(mem));
       }
     }
-
-    #region Custom UI
-    private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[]
-        {
-          "Unit"
-        });
-
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
-
-      // Length
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
-
-      this.IsInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
-      base.UpdateUI();
-    }
-    public override void UpdateUIFromSelectedItems()
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
-      base.UpdateUIFromSelectedItems();
-    }
-    public override void VariableParameterMaintenance()
-    {
-      Params.Input[2].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-    }
-    #endregion
   }
 }
-

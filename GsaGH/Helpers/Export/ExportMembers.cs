@@ -1,11 +1,11 @@
-﻿using GsaAPI;
-using Rhino.Geometry;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using GsaGH.Parameters;
 using System.Linq;
-using OasysUnits.Units;
+using GsaAPI;
+using GsaGH.Parameters;
 using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Util.Gsa.ToGSA
 {
@@ -90,9 +90,10 @@ namespace GsaGH.Util.Gsa.ToGSA
         ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
         ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
         ref Dictionary<int, SectionModifier> existingSectionModifiers,
-        ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
+        ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid, LengthUnit modelUnit)
     {
       Member apiMember = member1d.GetAPI_MemberClone();
+      apiMember.MeshSize = new Length(member1d.MeshSize, modelUnit).Meters;
 
       string topo = CreateTopology(member1d.Topology, member1d.TopologyType, ref existingNodes, ref nodeidcounter, unit);
 
@@ -125,9 +126,9 @@ namespace GsaGH.Util.Gsa.ToGSA
       apiMember.Property = Sections.ConvertSection(member1d.Section, ref existingSections, ref sections_guid, ref existingSectionModifiers, ref existingMaterials, ref materials_guid);
 
       // set apimember in dictionary
-      if (member1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+      if (member1d.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
       {
-        existingMembers[member1d.ID] = apiMember;
+        existingMembers[member1d.Id] = apiMember;
       }
       else
       {
@@ -153,7 +154,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         ref Dictionary<int, Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
         ref Dictionary<int, SectionModifier> existingSectionModifiers,
-        ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
+        ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid, LengthUnit modelUnit)
     {
       int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
 
@@ -166,7 +167,7 @@ namespace GsaGH.Util.Gsa.ToGSA
           {
             GsaMember1d member1d = member1ds[i];
 
-            ConvertMember1D(member1d, ref existingMembers, ref memberidcounter, ref existingNodes, ref nodeidcounter, unit, ref existingSections, ref sections_guid, ref existingSectionModifiers, ref existingMaterials, ref materials_guid);
+            ConvertMember1D(member1d, ref existingMembers, ref memberidcounter, ref existingNodes, ref nodeidcounter, unit, ref existingSections, ref sections_guid, ref existingSectionModifiers, ref existingMaterials, ref materials_guid, modelUnit);
           }
         }
       }
@@ -195,7 +196,6 @@ namespace GsaGH.Util.Gsa.ToGSA
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid, LengthUnit modelUnit)
     {
       Member apiMember = member2d.GetAPI_MemberClone();
-
       apiMember.MeshSize = new Length(member2d.MeshSize, modelUnit).Meters;
 
       // update topology list to fit model nodes
@@ -316,9 +316,10 @@ namespace GsaGH.Util.Gsa.ToGSA
     /// <param name="unit"></param>
     public static void ConvertMember3D(GsaMember3d member3d,
         ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-        ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit)
+        ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit modelUnit)
     {
       Member apiMember = member3d.GetAPI_MemberClone();
+      apiMember.MeshSize = new Length(member3d.MeshSize, modelUnit).Meters;
 
       // update topology list to fit model nodes
       string topo = "";
@@ -344,12 +345,12 @@ namespace GsaGH.Util.Gsa.ToGSA
             topo += " ";
 
           // check point against existing nodes in model
-          int id = Nodes.GetExistingNodeID(existingNodes, pt, unit);
+          int id = Nodes.GetExistingNodeID(existingNodes, pt, modelUnit);
           if (id > 0)
             topo += id;
           else
           {
-            existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt, unit));
+            existingNodes.Add(nodeidcounter, Nodes.NodeFromPoint(pt, modelUnit));
             topo += nodeidcounter;
             nodeidcounter++;
           }
@@ -366,9 +367,9 @@ namespace GsaGH.Util.Gsa.ToGSA
         // to be done
 
         // set apimember in dictionary
-        if (member3d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+        if (member3d.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
         {
-          existingMembers[member3d.ID] = apiMember;
+          existingMembers[member3d.Id] = apiMember;
         }
         else
         {

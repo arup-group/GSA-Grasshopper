@@ -19,17 +19,19 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GsaGHTests\GsaGHTests.csproj">
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\GsaGH\GsaGH.csproj" />
+    <ProjectReference Include="..\GsaGH\GsaGH.csproj">
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="GsaAPI">
+      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="xunit.runner.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -39,8 +41,7 @@
   <Import Project="PreBuild.targets" />
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="Copy &quot;$(TargetDir)GsaGH.dll&quot; &quot;$(TargetDir)GSA.gha&quot;" />
-    <Exec Command="Del &quot;$(TargetDir)GsaGH.dll&quot;" />
+    <Exec Command="Copy &quot;$(TargetDir)GsaGH.dll&quot; &quot;$(TargetDir)GSA.dll&quot;" />
   </Target>
 
 </Project>

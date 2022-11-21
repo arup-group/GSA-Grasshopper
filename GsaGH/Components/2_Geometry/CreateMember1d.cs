@@ -33,7 +33,9 @@ namespace GsaGH.Components
     {
       pManager.AddCurveParameter("Curve", "C", "Curve (a NURBS curve will automatically be converted in to a Polyline of Arc and Line segments)", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionParameter());
+      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Target mesh size", GH_ParamAccess.item);
       pManager[1].Optional = true;
+      pManager[2].Optional = true;
       pManager.HideParameter(0);
     }
 
@@ -100,6 +102,14 @@ namespace GsaGH.Components
               }
             }
           }
+
+          // 2 mesh size
+          double meshSize = 0;
+          if (DA.GetData(2, ref meshSize))
+          {
+            mem.MeshSize = meshSize;
+          }
+
           DA.SetData(0, new GsaMember1dGoo(mem));
         }
       }

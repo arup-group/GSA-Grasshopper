@@ -31,9 +31,11 @@ namespace IntegrationTests.Components
       Assert.NotNull(comp);
       // Todo fix: referencing GsaGH directly causes tests to fail
       // Not only this one but tests that otherwise work
-      //GsaGridPlaneSurfaceGoo output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
-      //GsaGridPlaneSurface gps = output.Value;
-      //Assert.Equal(42, gps.GridSurfaceId);
+      GsaGridPlaneSurfaceGoo output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
+      GsaGridPlaneSurface gps = output.Value;
+      Assert.Equal(42, gps.GridPlaneId);
+      Assert.Equal(10, gps.Elevation);
+      Assert.Equal("test", gps.GridPlane.Name);
     }
   }
 }

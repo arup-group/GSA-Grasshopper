@@ -450,14 +450,14 @@ namespace GsaGH.Components
         }
         if (results.Mem1ds != null)
         {
-          List<int> invalid1dmem = results.Mem1ds.Where(x => !x.IsValid).Select(x => x.Value.ID).ToList();
+          List<int> invalid1dmem = results.Mem1ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
           if (invalid1dmem.Count > 0)
           {
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member1D definition for Member IDs:");
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, string.Join(" ", invalid1dmem.OrderBy(x => x)));
           }
           if (_mode == FoldMode.List)
-            data.SetDataList(4, results.Mem1ds.OrderBy(item => item.Value.ID));
+            data.SetDataList(4, results.Mem1ds.OrderBy(item => item.Value.Id));
           else
           {
             DataTree<GsaMember1dGoo> tree = new DataTree<GsaMember1dGoo>();
@@ -486,14 +486,14 @@ namespace GsaGH.Components
         }
         if (results.Mem3ds != null)
         {
-          List<int> invalid3dmem = results.Mem3ds.Where(x => !x.IsValid).Select(x => x.Value.ID).ToList();
+          List<int> invalid3dmem = results.Mem3ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
           if (invalid3dmem.Count > 0)
           {
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member3D definition for Member IDs:");
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, string.Join(" ", invalid3dmem.OrderBy(x => x)));
           }
           if (_mode == FoldMode.List)
-            data.SetDataList(6, results.Mem3ds.OrderBy(item => item.Value.ID));
+            data.SetDataList(6, results.Mem3ds.OrderBy(item => item.Value.Id));
           else
           {
             DataTree<GsaMember3dGoo> tree = new DataTree<GsaMember3dGoo>();

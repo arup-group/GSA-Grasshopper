@@ -87,7 +87,7 @@ namespace GsaGH.Components
           "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm", GH_ParamAccess.item);
 
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);

@@ -9,7 +9,6 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
@@ -70,7 +69,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
       pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Member Orientation Node", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBucklingLengthFactorsParameter(), "Set " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName, GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
@@ -99,7 +98,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Get Release (Bool6) at End of Member", GH_ParamAccess.item);
       pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Member Orientation Angle in radians", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Get Member Orientation Node", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBucklingLengthFactorsParameter(), "Get " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName, GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);
@@ -116,7 +115,9 @@ namespace GsaGH.Components
       GsaMember1d mem = new GsaMember1d();
       if (DA.GetData(0, ref gsaMember1d))
       {
-        if (gsaMember1d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input is null"); }
+        if (gsaMember1d == null) { 
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input is null");
+        }
         mem = gsaMember1d.Duplicate();
       }
 
@@ -128,7 +129,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            mem.ID = id;
+            mem.Id = id;
         }
 
         // 2 curve
@@ -287,9 +288,9 @@ namespace GsaGH.Components
           if (gh_typ.Value is GsaBucklingLengthFactorsGoo)
           {
             gh_typ.CastTo(ref fls);
-            mem.API_Member.MomentAmplificationFactorStrongAxis = fls.MomentAmplificationFactorStrongAxis;
-            mem.API_Member.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
-            mem.API_Member.LateralTorsionalBucklingFactor = fls.LateralTorsionalBucklingFactor;
+            mem.ApiMember.MomentAmplificationFactorStrongAxis = fls.MomentAmplificationFactorStrongAxis;
+            mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
+            mem.ApiMember.LateralTorsionalBucklingFactor = fls.LateralTorsionalBucklingFactor;
           }
           else
           {
@@ -323,7 +324,7 @@ namespace GsaGH.Components
 
         // #### outputs ####
         DA.SetData(0, new GsaMember1dGoo(mem));
-        DA.SetData(1, mem.ID);
+        DA.SetData(1, mem.Id);
         DA.SetData(2, mem.PolyCurve);
         DA.SetData(3, new GsaSectionGoo(mem.Section));
         DA.SetData(4, mem.Group);
@@ -347,7 +348,7 @@ namespace GsaGH.Components
 
         DA.SetData(16, mem.Colour);
         DA.SetData(17, mem.IsDummy);
-        DA.SetData(18, mem.API_Member.Topology.ToString());
+        DA.SetData(18, mem.ApiMember.Topology.ToString());
       }
     }
 

@@ -83,7 +83,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       // convert from Goo-type
       List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      mem1ds.Select(c => { c.ID = 0; return c; }).ToList();
+      mem1ds.Select(c => { c.Id = 0; return c; }).ToList();
       // convert from Goo-type
       List<GsaMember2d> mem2ds = memberTuple.Item2.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -335,7 +335,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (mem1ds.Count > 0)
         {
-          int existingMem1dMaxID = mem1ds.Max(x => x.ID); // max ID in new Elem1ds
+          int existingMem1dMaxID = mem1ds.Max(x => x.Id); // max ID in new Elem1ds
           if (existingMem1dMaxID > newMemberID)
             newMemberID = existingMem1dMaxID + 1;
         }
@@ -355,14 +355,14 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (mem3ds.Count > 0)
         {
-          int existingMem3dMaxID = mem3ds.Max(x => x.ID); // max ID in new Elem2ds
+          int existingMem3dMaxID = mem3ds.Max(x => x.Id); // max ID in new Elem2ds
           if (existingMem3dMaxID > newMemberID)
             newMemberID = existingMem3dMaxID + 1;
         }
       }
 
       // Set / add 1D members to dictionary
-      Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, modelUnit, ref apisections, ref sections_guid, ref apimodifiers, ref apimaterials, ref materials_guid);
+      Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, modelUnit, ref apisections, ref sections_guid, ref apimodifiers, ref apimaterials, ref materials_guid, modelUnit);
 
       // Set / add 2D members to dictionary
       Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, modelUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid, modelUnit);

@@ -17,7 +17,6 @@ namespace GsaGH.Parameters
   public class GsaMember2d
   {
     #region fields
-    private double _meshSize = 0;
     private Brep _brep; // brep for visualisation /member2d
 
     private PolyCurve _edgeCrv; // Polyline for visualisation /member1d/member2d
@@ -38,6 +37,7 @@ namespace GsaGH.Parameters
     #region properties
     public int Id { get; set; } = 0;
     internal Member ApiMember { get; set; } = new Member();
+    // mesh size in Rhino/Grasshopper world, might be different to internal GSA mesh size
     public double MeshSize { get; set; } = 0;
     public GsaProp2d Property { get; set; } = new GsaProp2d();
     public PolyCurve PolyCurve => this._edgeCrv;

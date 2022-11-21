@@ -129,7 +129,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            mem.ID = id;
+            mem.Id = id;
         }
 
         // 2 curve
@@ -288,9 +288,9 @@ namespace GsaGH.Components
           if (gh_typ.Value is GsaBucklingLengthFactorsGoo)
           {
             gh_typ.CastTo(ref fls);
-            mem.API_Member.MomentAmplificationFactorStrongAxis = fls.MomentAmplificationFactorStrongAxis;
-            mem.API_Member.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
-            mem.API_Member.LateralTorsionalBucklingFactor = fls.LateralTorsionalBucklingFactor;
+            mem.ApiMember.MomentAmplificationFactorStrongAxis = fls.MomentAmplificationFactorStrongAxis;
+            mem.ApiMember.MomentAmplificationFactorWeakAxis = fls.MomentAmplificationFactorWeakAxis;
+            mem.ApiMember.LateralTorsionalBucklingFactor = fls.LateralTorsionalBucklingFactor;
           }
           else
           {
@@ -324,7 +324,7 @@ namespace GsaGH.Components
 
         // #### outputs ####
         DA.SetData(0, new GsaMember1dGoo(mem));
-        DA.SetData(1, mem.ID);
+        DA.SetData(1, mem.Id);
         DA.SetData(2, mem.PolyCurve);
         DA.SetData(3, new GsaSectionGoo(mem.Section));
         DA.SetData(4, mem.Group);
@@ -348,7 +348,7 @@ namespace GsaGH.Components
 
         DA.SetData(16, mem.Colour);
         DA.SetData(17, mem.IsDummy);
-        DA.SetData(18, mem.API_Member.Topology.ToString());
+        DA.SetData(18, mem.ApiMember.Topology.ToString());
       }
     }
 
