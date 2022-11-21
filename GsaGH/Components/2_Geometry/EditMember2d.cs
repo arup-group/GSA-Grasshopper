@@ -341,7 +341,7 @@ namespace GsaGH.Components
     }
     private void Update(string unit)
     {
-      this.LengthUnit = Length.ParseUnit(unit);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
