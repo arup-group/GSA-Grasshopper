@@ -240,7 +240,7 @@ namespace GsaGH.Components
       // 8 load value
       double load2 = load1;
       if (DA.GetData(8, ref load2))
-        load2 = ((ForcePerLength)Input.UnitNumber(this, DA, 6, this.ForcePerLengthUnit, true)).NewtonsPerMeter;
+        load2 = ((ForcePerLength)Input.UnitNumber(this, DA, 8, this.ForcePerLengthUnit, true)).NewtonsPerMeter;
       gridlineload.GridLineLoad.ValueAtEnd = load2;
 
       // convert to goo
