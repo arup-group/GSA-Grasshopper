@@ -249,7 +249,7 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[10].Sources.Count > 0)
         {
-          mem.MeshSize = Input.UnitNumber(this, DA, 10, this.LengthUnit, true).Value;
+          mem.MeshSize = ((Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true)).Meters;
         }
 
         // 11 mesh with others
@@ -303,7 +303,7 @@ namespace GsaGH.Components
 
         DA.SetData(9, new GsaOffsetGoo(mem.Offset));
 
-        DA.SetData(10, new GH_UnitNumber(new Length(mem.MeshSize, this.LengthUnit)));
+        DA.SetData(10, new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(this.LengthUnit)));
         DA.SetData(11, mem.MeshWithOthers);
 
         DA.SetData(12, mem.Name);

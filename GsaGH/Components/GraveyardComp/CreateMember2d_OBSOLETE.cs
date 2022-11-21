@@ -123,7 +123,7 @@ namespace GsaGH.Components
 
           // 4 mesh size
           if (this.Params.Input[4].SourceCount > 0)
-            mem.MeshSize = Input.UnitNumber(this, DA, 4, LengthUnit, true).Value;
+            mem.MeshSize = ((Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true)).Meters;
 
           DA.SetData(0, new GsaMember2dGoo(mem));
         }

@@ -7,6 +7,7 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
@@ -21,7 +22,7 @@ namespace GsaGH.Components
   public class EditMember3d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("955e573d-7608-4ac6-b436-54135f7714f6");
+    public override Guid ComponentGuid => new Guid("7139457b-6c27-497f-b503-b3e42d13e57a");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem3d;

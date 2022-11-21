@@ -15,7 +15,7 @@ namespace GsaGH.Components
   public class CreateMember3d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("df0c7608-9e46-4500-ab63-0c4162a580d4");
+    public override Guid ComponentGuid => new Guid("08a48fa5-8aaa-43fb-a095-9142794684f7");
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateMem3d;

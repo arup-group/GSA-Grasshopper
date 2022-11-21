@@ -22,7 +22,7 @@ namespace GsaGH.Components
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("df0c7608-9e46-4500-ab63-0c4162a580d4");
-    public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateMem3d;
 
@@ -111,7 +111,7 @@ namespace GsaGH.Components
 
         // 2 mesh size
         if (this.Params.Input[2].SourceCount > 0)
-          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 2, this.LengthUnit, true);
+          mem.MeshSize = ((Length)Input.UnitNumber(this, DA, 2, this.LengthUnit, true)).Meters;
 
         DA.SetData(0, new GsaMember3dGoo(mem));
       }

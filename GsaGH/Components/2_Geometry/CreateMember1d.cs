@@ -15,7 +15,7 @@ namespace GsaGH.Components
   public class CreateMember1d : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("5c5b9efa-cdae-4be5-af40-ff2b590801dd");
+    public override Guid ComponentGuid => new Guid("8278b67c-425a-4220-b759-79ecdd6aba55");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMem1d;

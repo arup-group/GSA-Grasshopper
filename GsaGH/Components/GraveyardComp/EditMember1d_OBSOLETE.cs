@@ -266,7 +266,7 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[12].Sources.Count > 0)
         {
-          mem.MeshSize = Input.UnitNumber(this, DA, 12, this.LengthUnit, true).Value;
+          mem.MeshSize = ((Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true)).Meters;
         }
 
         // 13 mesh with others
@@ -339,7 +339,7 @@ namespace GsaGH.Components
         DA.SetData(10, mem.OrientationAngle.As(AngleUnit.Radian));
         DA.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
-        DA.SetData(12, new GH_UnitNumber(new Length(mem.MeshSize, this.LengthUnit)));
+        DA.SetData(12, new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(this.LengthUnit)));
         DA.SetData(13, mem.MeshWithOthers);
 
         DA.SetData(14, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem, this.LengthUnit)));

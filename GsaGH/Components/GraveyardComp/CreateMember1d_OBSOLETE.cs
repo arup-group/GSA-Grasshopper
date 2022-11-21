@@ -16,7 +16,7 @@ namespace GsaGH.Components
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("5c5b9efa-cdae-4be5-af40-ff2b590801dd");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMem1d;
 
