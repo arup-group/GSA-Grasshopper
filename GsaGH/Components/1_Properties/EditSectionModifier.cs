@@ -288,7 +288,7 @@ namespace GsaGH.Components
         GH_ObjectWrapper obj = new GH_ObjectWrapper();
         if (DA.GetData(11, ref obj))
         {
-          if (GH_Convert.ToInt32(obj, out int stress, GH_Conversion.Both))
+          if (GH_Convert.ToInt32(obj.Value, out int stress, GH_Conversion.Both))
           {
             if (stress == 0)
               modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
@@ -302,7 +302,7 @@ namespace GsaGH.Components
               return;
             }
           }
-          else if (GH_Convert.ToString(obj, out string stressString, GH_Conversion.Both))
+          else if (GH_Convert.ToString(obj.Value, out string stressString, GH_Conversion.Both))
           {
             if (stressString.ToLower().Contains("no"))
               modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
@@ -433,7 +433,6 @@ namespace GsaGH.Components
     {
       this.LengthUnit = Length.ParseUnit(reader.GetString("LengthUnit"));
       this.LinearDensityUnit = LinearDensity.ParseUnit(reader.GetString("DensityUnit"));
-
       return base.Read(reader);
     }
 

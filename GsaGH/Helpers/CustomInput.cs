@@ -64,6 +64,7 @@ namespace GsaGH.Helpers
                 + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Ratio");
             return new Ratio(100, RatioUnit.Percent);
           }
+          return (Ratio)unitNumber.Value;
         }
         // try cast to double
         else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
