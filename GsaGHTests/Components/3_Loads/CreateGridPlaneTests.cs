@@ -14,6 +14,10 @@ namespace GsaGHTests.Components.Loads
       var comp = new CreateGridPlane();
       comp.CreateAttributes();
 
+      ComponentTestHelper.SetInput(comp, 42, 1);
+      ComponentTestHelper.SetInput(comp, 10, 2);
+      ComponentTestHelper.SetInput(comp, "test", 3);
+
       return comp;
     }
 
@@ -22,18 +26,14 @@ namespace GsaGHTests.Components.Loads
     {
       var comp = ComponentMother();
 
-      ComponentTestHelper.SetInput(comp, 42, 1);
-      ComponentTestHelper.SetInput(comp, 10, 2);
-      ComponentTestHelper.SetInput(comp, "test", 3);
-
       GsaGridPlaneSurfaceGoo output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
 
       GsaGridPlaneSurface gridPlane = null;
       output.CastTo(ref gridPlane);
 
-      Assert.Equal(42, gridPlane.GridPlaneID);
+      Assert.Equal(42, gridPlane.GridPlaneId);
       Assert.Equal(10, gridPlane.Elevation);
-      Assert.Equal("test", gridPlane.Name);
+      Assert.Equal("test", gridPlane.GridPlane.Name);
     }
   }
 }

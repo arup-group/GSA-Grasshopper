@@ -16,11 +16,11 @@ namespace GsaGH.Parameters
     #region fields
     private int _axisID = 0;
 
-    private int _gridSrfID = 0;
+    private int _gridSrfId = 0;
     private Guid _gridSrfGuid = Guid.NewGuid();
     private GridSurface _gridSrf = new GridSurface();
 
-    private int _gridPlnID = 0;
+    private int _gridPlnId = 0;
     private Guid _gridPlnGuid = Guid.NewGuid();
     private GridPlane _gridPln = new GridPlane();
 
@@ -29,7 +29,7 @@ namespace GsaGH.Parameters
 
     #region properties
     public double Elevation { get; set; } = 0;
-    public string Name => _gridPln.Name;
+    public string AxisName { get; set; } = "";
     public Guid GridSurfaceGUID => _gridSrfGuid;
     public Guid GridPlaneGUID => _gridPlnGuid;
     public int AxisId
@@ -58,16 +58,16 @@ namespace GsaGH.Parameters
       }
     }
 
-    public int GridSurfaceID
+    public int GridSurfaceId
     {
       get
       {
-        return _gridSrfID;
+        return _gridSrfId;
       }
       set
       {
         _gridSrfGuid = Guid.NewGuid();
-        _gridSrfID = value;
+        _gridSrfId = value;
       }
     }
     public GridPlane GridPlane
@@ -82,16 +82,16 @@ namespace GsaGH.Parameters
         _gridPln = value;
       }
     }
-    public int GridPlaneID
+    public int GridPlaneId
     {
       get
       {
-        return _gridPlnID;
+        return _gridPlnId;
       }
       set
       {
         _gridPlnGuid = Guid.NewGuid();
-        _gridPlnID = value;
+        _gridPlnId = value;
       }
     }
     public Plane Plane
@@ -160,8 +160,9 @@ namespace GsaGH.Parameters
           Tolerance = this._gridSrf.Tolerance
         },
         Elevation = this.Elevation,
-        GridPlaneID = _gridPlnID,
-        GridSurfaceID = _gridSrfID
+        AxisName = this.AxisName,
+        GridPlaneId = _gridPlnId,
+        GridSurfaceId = _gridSrfId
       };
       dup._gridSrfGuid = new Guid(_gridSrfGuid.ToString());
       dup._gridPlnGuid = new Guid(_gridPlnGuid.ToString());
@@ -183,7 +184,7 @@ namespace GsaGH.Parameters
           if (this.Plane.YAxis.X == 0 && this.Plane.YAxis.Y == 1 && this.Plane.YAxis.Z == 0)
             global = true;
 
-      string gp = (this.GridPlaneID == 0) ? "" : "GPln:" + this.GridPlaneID.ToString() + " ";
+      string gp = (this.GridPlaneId == 0) ? "" : "GPln:" + this.GridPlaneId.ToString() + " ";
       string gpName = this.GridPlane == null ? "" : this.GridPlane.Name;
       gp += gpName == "" ? "" : "'" + gpName + "' ";
 
@@ -196,7 +197,7 @@ namespace GsaGH.Parameters
       if (this.GridPlane.IsStoreyType)
         gp += "Storey ";
 
-      string gs = (this.GridSurfaceID == 0) ? "" : "GSrf:" + this.GridSurfaceID.ToString() + " ";
+      string gs = (this.GridSurfaceId == 0) ? "" : "GSrf:" + this.GridSurfaceId.ToString() + " ";
       string gsName = this.GridSurface == null ? "" : this.GridSurface.Name;
       gs += gsName == "" ? "" : "'" + gsName + "' ";
       if (this.GridSurface.SpanType == GridSurface.Span_Type.ONE_WAY)

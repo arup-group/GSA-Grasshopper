@@ -1703,12 +1703,12 @@ namespace GsaGH.Util.Gsa
       {
         srfDict.TryGetValue(gridSrfId, out GridSurface gs);
         gps.GridSurface = gs;
-        gps.GridSurfaceID = gridSrfId;
+        gps.GridSurfaceId = gridSrfId;
 
         // Get Grid Plane
         plnDict.TryGetValue(gs.GridPlane, out GridPlane gp);
         gps.GridPlane = gp;
-        gps.GridPlaneID = gs.GridPlane;
+        gps.GridPlaneId = gs.GridPlane;
         gps.Elevation = gp.Elevation;
 
         // Get Axis

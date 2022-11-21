@@ -28,24 +28,24 @@ namespace GsaGH.Util.Gsa.ToGSA
           switch (load.LoadType)
           {
             case GsaLoad.LoadTypes.GridArea:
-              if (load.AreaLoad.GridPlaneSurface.GridPlaneID > 0)
-                gridplaneidcounter = Math.Max(gridplaneidcounter, load.AreaLoad.GridPlaneSurface.GridPlaneID + 1);
-              if (load.AreaLoad.GridPlaneSurface.GridSurfaceID > 0)
-                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.AreaLoad.GridPlaneSurface.GridSurfaceID + 1);
+              if (load.AreaLoad.GridPlaneSurface.GridPlaneId > 0)
+                gridplaneidcounter = Math.Max(gridplaneidcounter, load.AreaLoad.GridPlaneSurface.GridPlaneId + 1);
+              if (load.AreaLoad.GridPlaneSurface.GridSurfaceId > 0)
+                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.AreaLoad.GridPlaneSurface.GridSurfaceId + 1);
               break;
 
             case GsaLoad.LoadTypes.GridLine:
-              if (load.LineLoad.GridPlaneSurface.GridPlaneID > 0)
-                gridplaneidcounter = Math.Max(gridplaneidcounter, load.LineLoad.GridPlaneSurface.GridPlaneID + 1);
-              if (load.LineLoad.GridPlaneSurface.GridSurfaceID > 0)
-                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.LineLoad.GridPlaneSurface.GridSurfaceID + 1);
+              if (load.LineLoad.GridPlaneSurface.GridPlaneId > 0)
+                gridplaneidcounter = Math.Max(gridplaneidcounter, load.LineLoad.GridPlaneSurface.GridPlaneId + 1);
+              if (load.LineLoad.GridPlaneSurface.GridSurfaceId > 0)
+                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.LineLoad.GridPlaneSurface.GridSurfaceId + 1);
               break;
 
             case GsaLoad.LoadTypes.GridPoint:
-              if (load.PointLoad.GridPlaneSurface.GridPlaneID > 0)
-                gridplaneidcounter = Math.Max(gridplaneidcounter, load.PointLoad.GridPlaneSurface.GridPlaneID + 1);
-              if (load.PointLoad.GridPlaneSurface.GridSurfaceID > 0)
-                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.PointLoad.GridPlaneSurface.GridSurfaceID + 1);
+              if (load.PointLoad.GridPlaneSurface.GridPlaneId > 0)
+                gridplaneidcounter = Math.Max(gridplaneidcounter, load.PointLoad.GridPlaneSurface.GridPlaneId + 1);
+              if (load.PointLoad.GridPlaneSurface.GridSurfaceId > 0)
+                gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, load.PointLoad.GridPlaneSurface.GridSurfaceId + 1);
               break;
           }
         }
@@ -332,12 +332,12 @@ namespace GsaGH.Util.Gsa.ToGSA
       if (gridplanesurface.GridPlane.Name == "")
         gridplanesurface.GridPlane.Name = "Grid plane " + gridplaneidcounter;
 
-      int gp_ID = gridplanesurface.GridPlaneID;
+      int gp_ID = gridplanesurface.GridPlaneId;
       // see if grid plane Id has been set by user
-      if (gridplanesurface.GridPlaneID > 0)
+      if (gridplanesurface.GridPlaneId > 0)
       {
         // assign the grid plane number set by user in the load's grid surface
-        gp_ID = gridplanesurface.GridPlaneID;
+        gp_ID = gridplanesurface.GridPlaneId;
         // set grid plane in model
         existingGridPlanes[gp_ID] = gridplanesurface.GridPlane;
       }
@@ -402,13 +402,13 @@ namespace GsaGH.Util.Gsa.ToGSA
       if (existingGridSurfaces.Count > 0)
         gridsurfaceidcounter = Math.Max(existingGridSurfaces.Keys.Max() + 1, gridsurfaceidcounter);
 
-      int gs_ID = gridplanesurface.GridSurfaceID;
+      int gs_ID = gridplanesurface.GridSurfaceId;
 
       if (gridplanesurface.GridSurface.Name == "")
         gridplanesurface.GridSurface.Name = "Grid surface " + gridsurfaceidcounter;
 
       // see if grid surface ID has been set by user
-      if (gridplanesurface.GridSurfaceID > 0)
+      if (gridplanesurface.GridSurfaceId > 0)
       {
         // set the grid surface in model
         existingGridSurfaces[gs_ID] = gridplanesurface.GridSurface;
@@ -481,10 +481,10 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         GsaGridPlaneSurface gps = gridPlaneSurfaces[i];
 
-        if (gps.GridPlaneID > 0)
-          gridplaneidcounter = Math.Max(gridplaneidcounter, gps.GridPlaneID + 1);
-        if (gps.GridSurfaceID > 0)
-          gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, gps.GridSurfaceID + 1);
+        if (gps.GridPlaneId > 0)
+          gridplaneidcounter = Math.Max(gridplaneidcounter, gps.GridPlaneId + 1);
+        if (gps.GridSurfaceId > 0)
+          gridsurfaceidcounter = Math.Max(gridsurfaceidcounter, gps.GridSurfaceId + 1);
       }
     }
 

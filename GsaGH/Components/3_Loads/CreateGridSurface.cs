@@ -136,11 +136,11 @@ namespace GsaGH.Components
       {
         int id = 0;
         GH_Convert.ToInt32(ghint, out id, GH_Conversion.Both);
-        gps.GridSurfaceID = id;
+        gps.GridSurfaceId = id;
       }
 
       // 2 Elements
-      // check that user has not inputted Gsa geometry elements here
+      // check that user has not input Gsa geometry elements here
       gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(2, ref gh_typ))
       {

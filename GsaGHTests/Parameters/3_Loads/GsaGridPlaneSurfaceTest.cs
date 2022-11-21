@@ -42,8 +42,8 @@ namespace GsaGHTests.Parameters
       Assert.Equal(0, axis.XYPlane.X);
       Assert.Equal(1, axis.XYPlane.Y);
       Assert.Equal(0, axis.XYPlane.Z);
-      Assert.Equal(0, gps.GridSurfaceID);
-      Assert.Equal(0, gps.GridPlaneID);
+      Assert.Equal(0, gps.GridSurfaceId);
+      Assert.Equal(0, gps.GridPlaneId);
     }
 
     [Theory]
@@ -97,8 +97,8 @@ namespace GsaGHTests.Parameters
       Assert.Equal(yAxisX, axis.XYPlane.X);
       Assert.Equal(yAxisY, axis.XYPlane.Y);
       Assert.Equal(yAxisZ, axis.XYPlane.Z);
-      Assert.Equal(0, gps.GridSurfaceID);
-      Assert.Equal(0, gps.GridPlaneID);
+      Assert.Equal(0, gps.GridSurfaceId);
+      Assert.Equal(0, gps.GridPlaneId);
     }
 
     [Fact]
@@ -128,8 +128,8 @@ namespace GsaGHTests.Parameters
       duplicate.GridSurface.Name = "name";
       duplicate.GridSurface.SpanType = Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;
       duplicate.GridSurface.Tolerance = 0.2;
-      duplicate.GridSurfaceID = 1;
-      duplicate.GridPlaneID = 1;
+      duplicate.GridSurfaceId = 1;
+      duplicate.GridPlaneId = 1;
 
       Assert.Equal(Plane.WorldXY, original.Plane);
       Assert.Equal(0, original.GridPlane.AxisProperty);
@@ -145,8 +145,8 @@ namespace GsaGHTests.Parameters
       Assert.Equal("", original.GridSurface.Name);
       Assert.Equal(Span_Type.TWO_WAY, original.GridSurface.SpanType);
       Assert.Equal(0.01, original.GridSurface.Tolerance);
-      Assert.Equal(0, original.GridSurfaceID);
-      Assert.Equal(0, original.GridPlaneID);
+      Assert.Equal(0, original.GridSurfaceId);
+      Assert.Equal(0, original.GridPlaneId);
     }
   }
 }

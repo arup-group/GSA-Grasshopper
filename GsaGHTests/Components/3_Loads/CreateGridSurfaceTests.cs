@@ -36,10 +36,10 @@ namespace GsaGHTests.Components.Loads
       GsaGridPlaneSurface gridSurface = null;
       output.CastTo(ref gridSurface);
 
-      Assert.Equal(42, gridSurface.GridPlaneID);
-      //Assert.Equal(10, gridSurface.Elevation);
+      Assert.Equal(42, gridSurface.GridPlaneId);
+      Assert.Equal(10, gridSurface.Elevation);
       Assert.Equal("test", gridSurface.GridPlane.Name);
-      Assert.Equal(42, gridSurface.GridSurfaceID);
+      Assert.Equal(42, gridSurface.GridSurfaceId);
       Assert.Equal("test", gridSurface.GridSurface.Name);
       Assert.Equal(99, gridSurface.GridSurface.Tolerance);
       Assert.Equal(Span_Type.ONE_WAY, gridSurface.GridSurface.SpanType);

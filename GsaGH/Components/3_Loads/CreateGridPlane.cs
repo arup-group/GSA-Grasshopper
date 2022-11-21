@@ -66,7 +66,7 @@ namespace GsaGH.Components
       {
         int id = 0;
         GH_Convert.ToInt32(ghint, out id, GH_Conversion.Both);
-        gps.GridPlaneID = id;
+        gps.GridPlaneId = id;
       }
 
       // 2 Grid elevation

@@ -70,7 +70,7 @@ namespace GsaGH.Components
         }
 
         DA.SetData(0, gps == null ? Plane.Unset : gps.Plane);
-        DA.SetData(1, gps.GridPlane == null ? 0 : gps.GridPlaneID);
+        DA.SetData(1, gps.GridPlane == null ? 0 : gps.GridPlaneId);
         DA.SetData(2, gps.GridPlane == null ? null : gps.GridPlane.Name);
         DA.SetData(3, gps.GridPlane == null ? false : gps.GridPlane.IsStoreyType);
         Plane axis = new Plane();
@@ -85,7 +85,7 @@ namespace GsaGH.Components
         DA.SetData(7, new GH_UnitNumber(new Length(gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceAbove, this.LengthUnit)));
         DA.SetData(8, new GH_UnitNumber(new Length(gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceBelow, this.LengthUnit)));
 
-        DA.SetData(9, gps.GridSurfaceID);
+        DA.SetData(9, gps.GridSurfaceId);
         DA.SetData(10, gps.GridSurface.Name);
         DA.SetData(11, gps.GridSurface.Elements);
         string elemtype = gps.GridSurface.ElementType.ToString();
