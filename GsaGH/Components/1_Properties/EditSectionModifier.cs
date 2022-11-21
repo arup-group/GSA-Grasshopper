@@ -402,12 +402,12 @@ namespace GsaGH.Components
 
     private void UpdateLength(string unit)
     {
-      this.LengthUnit = Length.ParseUnit(unit);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Update();
     }
     private void UpdateDensity(string unit)
     {
-      this.LinearDensityUnit = LinearDensity.ParseUnit(unit);
+      this.LinearDensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), unit);
       Update();
     }
     private void Update()
