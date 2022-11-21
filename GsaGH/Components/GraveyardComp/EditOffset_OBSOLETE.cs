@@ -19,7 +19,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit an Offset and ouput the information
   /// </summary>
-  public class EditOffset : GH_OasysComponent, IGH_VariableParameterComponent
+  public class EditOffset_OBSOLETE : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("1e094fcd-8f5f-4047-983c-e0e57a83ae52");
@@ -27,7 +27,7 @@ namespace GsaGH.Components
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditOffset;
 
-    public EditOffset() : base("Edit Offset",
+    public EditOffset_OBSOLETE() : base("Edit Offset",
       "OffsetEdit",
       "Modify GSA Offset or just get information about existing",
       Ribbon.CategoryName.Name(),
@@ -125,7 +125,6 @@ namespace GsaGH.Components
     {
       this.LengthUnit = Length.ParseUnit(unit);
       this.Message = unit;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
     }
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
@@ -138,42 +137,9 @@ namespace GsaGH.Components
       if (reader.ItemExists("LengthUnit"))
         this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       else
-      {
         this.LengthUnit = DefaultUnits.LengthUnitSection;
-        List<IGH_Param> inputs = this.Params.Input.ToList();
-        List<IGH_Param> outputs = this.Params.Output.ToList();
-        bool flag = base.Read(reader);
-        foreach (IGH_Param param in inputs)
-          this.Params.RegisterInputParam(param);
-        foreach (IGH_Param param in outputs)
-          this.Params.RegisterOutputParam(param);
-        return flag;
-      }
       return base.Read(reader);
     }
-
-    #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance()
-    {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
-      this.Params.Input[1].Name = "Offset X1 [" + unitAbbreviation + "]";
-      this.Params.Input[2].Name = "Offset X2 [" + unitAbbreviation + "]";
-      this.Params.Input[3].Name = "Offset Y [" + unitAbbreviation + "]";
-      this.Params.Input[4].Name = "Offset Z [" + unitAbbreviation + "]";
-      this.Params.Output[1].Name = "Offset X1 [" + unitAbbreviation + "]";
-      this.Params.Output[2].Name = "Offset X2 [" + unitAbbreviation + "]";
-      this.Params.Output[3].Name = "Offset Y [" + unitAbbreviation + "]";
-      this.Params.Output[4].Name = "Offset Z [" + unitAbbreviation + "]";
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-    #endregion
     #endregion
   }
 }
