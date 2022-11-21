@@ -865,31 +865,31 @@ namespace GsaGH.Components
     }
     private void UpdateModel(string unit)
     {
-      this.LengthUnit = Length.ParseUnit(unit);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.ExpirePreview(true);
       base.UpdateUI();
     }
     private void UpdateLength(string unit)
     {
-      this.LengthResultUnit = Length.ParseUnit(unit);
+      this.LengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.ExpirePreview(true);
       base.UpdateUI();
     }
     private void UpdateForce(string unit)
     {
-      this.ForcePerLengthUnit = ForcePerLength.ParseUnit(unit);
+      this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), unit);
       this.ExpirePreview(true);
       base.UpdateUI();
     }
     private void UpdateMoment(string unit)
     {
-      this.ForceUnit = Force.ParseUnit(unit);
+      this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
       this.ExpirePreview(true);
       base.UpdateUI();
     }
     private void UpdateStress(string unit)
     {
-      this.StressUnitResult = Pressure.ParseUnit(unit);
+      this.StressUnitResult = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
       this.ExpirePreview(true);
       base.UpdateUI();
     }
