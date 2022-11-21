@@ -118,7 +118,7 @@ namespace GsaGH.Components
       }
 
       // we wait setting the gridplanesurface until we have run the polyline input
-
+      // another comment
       // 1 Polyline
       Polyline ln = new Polyline();
       GH_Curve gh_crv = new GH_Curve();
