@@ -317,7 +317,7 @@ namespace GsaGH.Parameters
       string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
       string type = Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
       string pb = this._section.Id > 0 ? "PB" + this._section.Id : this._section.Profile;
-      return idd + type + pb;
+      return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
     }
 
     internal void CloneApiObject()

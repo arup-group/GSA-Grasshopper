@@ -102,7 +102,7 @@ namespace GsaGH.Util.Gsa.ToGSA
     /// <param name="nodeidcounter"></param>
     /// <param name="unit">Model unit</param>
     /// <returns></returns>
-    public static Member ConvertMember2D(GsaMember2d member2d, ref List<Node> nodes, ref int nodeidcounter, LengthUnit unit)
+    public static Member ConvertMember2D(GsaMember2d member2d, ref List<Node> nodes, ref int nodeidcounter, LengthUnit modelUnit)
     {
       // take out api member
       Member apimember = member2d.GetAPI_MemberClone();
@@ -125,7 +125,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         }
 
         Point3d pt = member2d.Topology[j];
-        nodes.Add(Nodes.NodeFromPoint(pt, unit));
+        nodes.Add(Nodes.NodeFromPoint(pt, modelUnit));
 
         topo += nodeidcounter++;
 
@@ -152,7 +152,7 @@ namespace GsaGH.Util.Gsa.ToGSA
               topo += voidtopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
 
             Point3d pt = member2d.VoidTopology[j][k];
-            nodes.Add(Nodes.NodeFromPoint(pt, unit));
+            nodes.Add(Nodes.NodeFromPoint(pt, modelUnit));
 
             topo += nodeidcounter++;
 
@@ -183,7 +183,7 @@ namespace GsaGH.Util.Gsa.ToGSA
               topo += inclineTopologytype.ToLower() + " "; // add topology type (nothing or "a") in front of node id
 
             Point3d pt = member2d.IncLinesTopology[j][k];
-            nodes.Add(Nodes.NodeFromPoint(pt, unit));
+            nodes.Add(Nodes.NodeFromPoint(pt, modelUnit));
 
             topo += nodeidcounter++;
 
@@ -206,7 +206,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             topo += " P(";
 
           Point3d pt = member2d.InclusionPoints[j];
-          nodes.Add(Nodes.NodeFromPoint(pt, unit));
+          nodes.Add(Nodes.NodeFromPoint(pt, modelUnit));
 
           topo += nodeidcounter++;
 
@@ -230,9 +230,9 @@ namespace GsaGH.Util.Gsa.ToGSA
     /// <param name="member2ds"></param>
     /// <param name="nodes"></param>
     /// <param name="nodeidcounter"></param>
-    /// <param name="unit"></param>
+    /// <param name="modelUnit"></param>
     /// <returns></returns>
-    public static List<Member> ConvertMember2D(List<GsaMember2d> member2ds, ref List<Node> nodes, ref int nodeidcounter, LengthUnit unit)
+    public static List<Member> ConvertMember2D(List<GsaMember2d> member2ds, ref List<Node> nodes, ref int nodeidcounter, LengthUnit modelUnit)
     {
       // ensure node id is at least 1
       if (nodeidcounter < 1)
@@ -253,7 +253,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             {
               GsaMember2d member2d = member2ds[i];
 
-              Member apiMember = Members.ConvertMember2D(member2d, ref nodes, ref nodeidcounter, unit);
+              Member apiMember = Members.ConvertMember2D(member2d, ref nodes, ref nodeidcounter, modelUnit);
 
               mems.Add(apiMember);
             }

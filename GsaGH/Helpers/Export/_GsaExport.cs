@@ -213,7 +213,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds,
         List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
         List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
-        LengthUnit lengthUnit)
+        LengthUnit modelUnit)
     {
       // Set model to work on
       Model gsa = new Model();
@@ -233,7 +233,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       Dictionary<int, Axis> apiaxes = gsaAxes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
       // Set / add nodes to dictionary
-      Nodes.ConvertNode(nodes, ref apinodes, ref apiaxes, lengthUnit);
+      Nodes.ConvertNode(nodes, ref apinodes, ref apiaxes, modelUnit);
       #endregion
 
       #region Properties
@@ -309,13 +309,13 @@ namespace GsaGH.Util.Gsa.ToGSA
       }
 
       // Set / add 1D elements to dictionary
-      Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimodifiers, ref apimaterials, ref materials_guid);
+      Elements.ConvertElement1D(elem1ds, ref elems, ref newElementID, ref apinodes, modelUnit, ref apisections, ref sections_guid, ref apimodifiers, ref apimaterials, ref materials_guid);
 
       // Set / add 2D elements to dictionary
-      Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid);
+      Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, modelUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid);
 
       // Set / add 3D elements to dictionary
-      Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, lengthUnit);
+      Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, modelUnit);
       #endregion
 
       #region Members
@@ -362,13 +362,13 @@ namespace GsaGH.Util.Gsa.ToGSA
       }
 
       // Set / add 1D members to dictionary
-      Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apisections, ref sections_guid, ref apimodifiers, ref apimaterials, ref materials_guid);
+      Members.ConvertMember1D(mem1ds, ref mems, ref newMemberID, ref apinodes, modelUnit, ref apisections, ref sections_guid, ref apimodifiers, ref apimaterials, ref materials_guid);
 
       // Set / add 2D members to dictionary
-      Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, lengthUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid);
+      Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, modelUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid, modelUnit);
 
       // Set / add 3D members to dictionary
-      Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, lengthUnit);
+      Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, modelUnit);
       #endregion
 
       #region Loads
@@ -397,12 +397,12 @@ namespace GsaGH.Util.Gsa.ToGSA
       Dictionary<Guid, int> gs_guid = new Dictionary<Guid, int>();
 
       // Set / add Grid plane surfaces - do this first to set any GridPlane and GridSurfaces with IDs.
-      Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, lengthUnit);
+      Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, modelUnit);
 
       // Set / add loads to lists
       Loads.ConvertLoad(loads, ref gravityLoads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle,
           ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads,
-          ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, lengthUnit);
+          ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, modelUnit);
       #endregion
 
 

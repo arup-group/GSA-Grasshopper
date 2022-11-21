@@ -54,7 +54,7 @@ namespace GsaGH.Components
         {
           GsaMember1d mem = new GsaMember1d(crv);
           if (mem.PolyCurve.GetLength() < DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "One or more input curves have relatively short length and may convert into a zero-length line in GSA thus creating invalid topology that cannot be analysed.");
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Service message from you favourite Oasys dev team: Based on your Default Unit Settings (changed in the Oasys Menu), one or more input curves have relatively short length less than the set tolerance (" + DefaultUnits.Tolerance.ToString().Replace(" ", string.Empty) + ". This may convert into a zero-length line when assembling the GSA Model, thus creating invalid topology that cannot be analysed. You can ignore this message if you are creating your model in another unit (set on 'Analyse' or 'CreateModel' components) than " + DefaultUnits.LengthUnitGeometry.ToString() + ".");
 
           GsaBool6 rel1 = new GsaBool6
           {

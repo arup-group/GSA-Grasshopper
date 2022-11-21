@@ -366,7 +366,7 @@ namespace GsaGH.Parameters
         return "Null";
       string type = Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
       string info = "N:" + this.Mesh.Vertices.Count + " E:" + this.API_Elements.Count;
-      return type + info;
+      return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
     }
 
     private void CloneApiElements(ApiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null, List<Angle> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<System.Drawing.Color> col = null)

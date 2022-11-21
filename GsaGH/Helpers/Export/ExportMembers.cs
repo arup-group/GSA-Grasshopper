@@ -192,9 +192,11 @@ namespace GsaGH.Util.Gsa.ToGSA
         ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
         ref Dictionary<int, Node> existingNodes, ref int nodeidcounter, LengthUnit unit,
         ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
-        ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
+        ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid, LengthUnit modelUnit)
     {
       Member apiMember = member2d.GetAPI_MemberClone();
+
+      apiMember.MeshSize = new Length(member2d.MeshSize, modelUnit).Meters;
 
       // update topology list to fit model nodes
       string topo = CreateTopology(member2d.Topology, member2d.TopologyType, ref existingNodes, ref nodeidcounter, unit);
@@ -277,7 +279,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
         ref Dictionary<int, Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
-        ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
+        ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid, LengthUnit modelUnit)
     {
       // create a counter for creating new elements, nodes and properties
       int nodeidcounter = (existingNodes.Count > 0) ? existingNodes.Keys.Max() + 1 : 1;
@@ -295,7 +297,7 @@ namespace GsaGH.Util.Gsa.ToGSA
                ref existingMembers, ref memberidcounter,
                ref existingNodes, ref nodeidcounter, unit,
                ref existingProp2Ds, ref prop2d_guid,
-               ref existingMaterials, ref materials_guid);
+               ref existingMaterials, ref materials_guid, modelUnit);
           }
         }
       }

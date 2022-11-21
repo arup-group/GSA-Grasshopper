@@ -39,7 +39,7 @@ namespace GsaGH.Parameters
         s += " '" + this.Name + "'";
       if (this.Description != null)
         s += " " + this.Description;
-      return id + s;
+      return string.Join(" ", id.Trim(), s.Trim()).Trim().Replace("  ", " ");
     }
     #endregion
   }

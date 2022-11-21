@@ -38,6 +38,7 @@ namespace GsaGH.Parameters
     #region properties
     public int Id { get; set; } = 0;
     internal Member ApiMember { get; set; } = new Member();
+    public double MeshSize { get; set; } = 0;
     public GsaProp2d Property { get; set; } = new GsaProp2d();
     public PolyCurve PolyCurve => this._edgeCrv;
     public Brep Brep => this._brep;
@@ -45,19 +46,6 @@ namespace GsaGH.Parameters
     public List<string> TopologyType => this._edgeCrvTopoType;
     public List<List<Point3d>> VoidTopology => this._voidCrvsTopo;
     public List<List<string>> VoidTopologyType => this._voidCrvsTopoType;
-    public double MeshSize
-    {
-      get
-      {
-        return _meshSize;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this._meshSize = value;
-        this.ApiMember.MeshSize = ;
-      }
-    }
     public List<PolyCurve> InclusionLines
     {
       get
@@ -501,7 +489,7 @@ namespace GsaGH.Parameters
 
       string idd = this.Id == 0 ? "" : "ID:" + Id + " ";
       string type = Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
-      return idd + type + incl;
+      return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
     }
     #endregion
   }
