@@ -1,17 +1,14 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using System.Drawing;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using OasysGH.Helpers;
-using OasysUnits.Units;
 using OasysUnits;
-using Xunit;
+using OasysUnits.Units;
 using Rhino.Geometry;
-using System;
-using GsaGHTests.Components.Properties;
-using System.Drawing;
+using Xunit;
 
 namespace GsaGHTests.Components.Geometry
 {
@@ -86,8 +83,6 @@ namespace GsaGHTests.Components.Geometry
       var comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, 7, 1);
       ComponentTestHelper.SetInput(comp, Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(4, 0, 0), new Point3d(4, 4, 0), new Point3d(0, 4, 0), 1), 2);
-
-
       ComponentTestHelper.SetInput(comp, new GsaProp2dGoo(new GsaProp2d(new Length(200, LengthUnit.Millimeter))), 5);
       ComponentTestHelper.SetInput(comp, 1, 6);
       ComponentTestHelper.SetInput(comp, "Ribbed Slab", 7);

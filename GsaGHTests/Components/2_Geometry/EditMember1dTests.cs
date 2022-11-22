@@ -1,11 +1,11 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using System;
+using System.Drawing;
+using Grasshopper.Kernel.Types;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Rhino.Geometry;
-using System;
-using System.Drawing;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry
