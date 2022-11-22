@@ -135,20 +135,7 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      else
-      {
-        this.LengthUnit = DefaultUnits.LengthUnitSection;
-        List<IGH_Param> inputs = this.Params.Input.ToList();
-        List<IGH_Param> outputs = this.Params.Output.ToList();
-        bool flag = base.Read(reader);
-        foreach (IGH_Param param in inputs)
-          this.Params.RegisterInputParam(param);
-        foreach (IGH_Param param in outputs)
-          this.Params.RegisterOutputParam(param);
-        return flag;
-      }
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
 
@@ -167,11 +154,8 @@ namespace GsaGH.Components
     }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
     #endregion
     #endregion
