@@ -120,7 +120,7 @@ namespace GsaGHTests.Components.Geometry
       ComponentTestHelper.SetInput(comp, false, 13);
       ComponentTestHelper.SetInput(comp, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(1, 2, 3)), 14);
       ComponentTestHelper.SetInput(comp, "name", 15);
-      ComponentTestHelper.SetInput(comp, new GH_Colour(Color.Black), 16);
+      ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 16);
       ComponentTestHelper.SetInput(comp, true, 17);
 
       // Assert
@@ -190,10 +190,9 @@ namespace GsaGHTests.Components.Geometry
       Assert.Equal(3, output14.Value.LateralTorsionalBucklingFactor);
       Assert.True(output14.Value.LengthIsSet);
       Assert.Equal("name", output15.Value);
-      Assert.Equal(255, output16.Value.A);
-      Assert.Equal(0, output16.Value.R);
-      Assert.Equal(0, output16.Value.G);
-      Assert.Equal(0, output16.Value.B);
+      Assert.Equal(255, output16.Value.R);
+      Assert.Equal(255, output16.Value.G);
+      Assert.Equal(255, output16.Value.B);
       Assert.True(output17.Value);
       Assert.Equal("", output18.Value);
     }

@@ -250,10 +250,7 @@ namespace GsaGH.Components
         if (DA.GetData(11, ref ghbool))
         {
           if (GH_Convert.ToBoolean(ghbool, out bool mbool, GH_Conversion.Both))
-          {
-            if (mem.MeshWithOthers != mbool)
-              mem.MeshWithOthers = mbool;
-          }
+            mem.MeshWithOthers = mbool;
         }
 
         // 12 name
