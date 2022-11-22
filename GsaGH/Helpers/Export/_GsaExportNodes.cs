@@ -62,9 +62,9 @@ namespace GsaGH.Util.Gsa.ToGSA
           existingAxes.Add(apiNode.AxisProperty, ax);
         }
       }
-      if (node.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+      if (node.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
       {
-        existingNodes[node.ID] = apiNode;
+        existingNodes[node.Id] = apiNode;
       }
       else
       {
@@ -118,7 +118,7 @@ namespace GsaGH.Util.Gsa.ToGSA
         if (nodes.Count > 0)
         {
           // update counter if new nodes have set ID higher than existing max
-          int existingNodeMaxID = nodes.Max(x => x.ID); // max ID in new nodes
+          int existingNodeMaxID = nodes.Max(x => x.Id); // max ID in new nodes
           if (existingNodeMaxID > nodeidcounter)
             nodeidcounter = existingNodeMaxID + 1;
 

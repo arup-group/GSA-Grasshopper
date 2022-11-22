@@ -8,12 +8,8 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
-using OasysGH.Units;
-using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using Rhino;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
@@ -31,15 +27,12 @@ namespace GsaGH.Components
       "Create GSA Grid Surface",
       Ribbon.CategoryName.Name(),
       Ribbon.SubCategoryName.Cat3())
-    { } // sets the initial state of the component to hidden
+    { }
     #endregion
 
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity length = new Length(0, DefaultUnits.LengthUnitGeometry);
-      string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-
       pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model", GH_ParamAccess.item, 0);
       pManager.AddTextParameter("Element list", "El", "List of Elements for which load should be expanded to (by default 'all')." + System.Environment.NewLine +
@@ -47,7 +40,7 @@ namespace GsaGH.Components
          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Tolerance [" + unitAbbreviation + "]", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Tolerance in model units", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
       pManager.AddAngleParameter("Span Direction", "Di", "Span Direction between -180 and 180 degrees", GH_ParamAccess.item, 0);
       pManager[5].Optional = true;
       angleInputParam = this.Params.Input[5];

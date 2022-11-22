@@ -356,7 +356,7 @@ namespace GsaGH.Components
       {
         if (results.Nodes != null)
         {
-          data.SetDataList(0, results.Nodes.OrderBy(item => item.Value.ID));
+          data.SetDataList(0, results.Nodes.OrderBy(item => item.Value.Id));
           supportNodes = results.displaySupports;
           this.BoundingBox = new BoundingBox(results.Nodes.Select(n => n.Value.Point).ToArray());
         }

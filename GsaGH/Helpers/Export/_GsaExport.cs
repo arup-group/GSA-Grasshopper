@@ -57,7 +57,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       // convert from Goo-type
       List<GsaNode> nodes = goonodes.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      nodes.Select(c => { c.ID = 0; return c; }).ToList();
+      nodes.Select(c => { c.Id = 0; return c; }).ToList();
 
       // get elements
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
