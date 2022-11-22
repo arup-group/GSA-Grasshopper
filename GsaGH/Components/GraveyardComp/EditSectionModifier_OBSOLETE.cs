@@ -432,15 +432,17 @@ namespace GsaGH.Components
     {
       if (reader.ItemExists("LengthUnit"))
       {
-        this.LengthUnit = Length.ParseUnit(reader.GetString("LengthUnit"));
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
         this.LinearDensityUnit = LinearDensity.ParseUnit(reader.GetString("DensityUnit"));
+        bool flag = base.Read(reader);
+        return flag & this.Params.ReadAllParameterData(reader);
       }
       else
       {
-        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitSection;
+        this.LengthUnit = DefaultUnits.LengthUnitSection;
         this.LinearDensityUnit = DefaultUnits.LinearDensityUnit;
+        return base.Read(reader);
       }
-      return base.Read(reader);
     }
     #endregion
   }

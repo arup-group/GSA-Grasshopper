@@ -126,15 +126,17 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      if (reader.ItemExists("LengthUnit"))
+      if (reader.ItemExists("LengthUnit")) // = v0.9.33 => saved as IGH_Variableblabla
       {
         this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        bool flag = base.Read(reader);
+        return flag & this.Params.ReadAllParameterData(reader);
       }
       else
       {
         this.LengthUnit = DefaultUnits.LengthUnitSection;
+        return base.Read(reader);
       }
-      return base.Read(reader);
     }
     #endregion
   }
