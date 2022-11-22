@@ -159,7 +159,7 @@ namespace GsaGH.Components
       {
         if (j == 0)
         {
-          if (this._toMode == true)
+          if (this._toMode)
           {
             this.DropDownItems.RemoveAt(1);
             this.SelectedItems.RemoveAt(1);
@@ -169,7 +169,7 @@ namespace GsaGH.Components
         }
         else
         {
-          if (_toMode == false)
+          if (!_toMode)
           {
             this.DropDownItems.Insert(1, FilteredUnits.FilteredLengthUnits);
             this.SelectedItems.Insert(1, this.LengthUnit.ToString());
@@ -181,7 +181,7 @@ namespace GsaGH.Components
 
       if (i == 1)
       {
-        if (this._toMode == false)
+        if (!this._toMode)
           this.DensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), this.SelectedItems[i]);
         else
           this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
@@ -189,7 +189,7 @@ namespace GsaGH.Components
 
       if (i == 2)
       {
-        if (this._toMode == false)
+        if (!this._toMode)
         {
           if (j == 0)
             this.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
