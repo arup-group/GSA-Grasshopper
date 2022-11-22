@@ -49,7 +49,7 @@ namespace GsaGHTests.Components.Properties
       Assert.Equal(0.5, output.Value.K11Modifier.As(RatioUnit.DecimalFraction));
       Assert.Equal(0.6, output.Value.K22Modifier.As(RatioUnit.DecimalFraction));
       Assert.Equal(0.7, output.Value.VolumeModifier.As(RatioUnit.DecimalFraction));
-      Assert.Equal(1, output.Value.AdditionalMass.As(LinearDensityUnit.PoundPerInch));
+      Assert.Equal(1, output.Value.AdditionalMass.As(LinearDensityUnit.GramPerCentimeter));
       Assert.True(output.Value.IsBendingAxesPrincipal);
       Assert.True(output.Value.IsReferencePointCentroid);
     }
