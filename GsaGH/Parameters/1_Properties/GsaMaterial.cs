@@ -38,7 +38,7 @@ namespace GsaGH.Parameters
     }
 
     #region fields
-    
+
 
     private int _grade = 1;
     private Guid _guid;

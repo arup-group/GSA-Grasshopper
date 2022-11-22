@@ -14,16 +14,19 @@ namespace GsaGHTests.Components.Properties
     {
       var comp = new CreateMaterial();
       comp.CreateAttributes();
+
+      comp.SetSelected(0, 3); // set dropdown to "Timber"
+      
       return comp;
     }
 
     [Fact]
     public void CreateComponent()
     {
+      // Arrange & Act
       var comp = ComponentMother();
 
-      comp.SetSelected(0, 3); // set dropdown to "Timber"
-
+      // Assert
       GsaMaterialGoo output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(0, output.Value.AnalysisProperty);
       Assert.Equal(1, output.Value.GradeProperty);

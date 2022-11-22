@@ -5,8 +5,6 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units.Helpers;
-using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -15,6 +13,17 @@ namespace GsaGH.Components
   /// </summary>
   public class CreateMaterial : GH_OasysDropDownComponent
   {
+    public static List<string> MaterialTypes = new List<string>() {
+      "Generic",
+      "Steel",
+      "Concrete",
+      "Timber",
+      "Aluminium",
+      "FRP",
+      "Glass",
+      "Fabric"
+    };
+
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("40641747-cfb1-4dab-b060-b9dd344d3ac3");
     public override GH_Exposure Exposure => GH_Exposure.primary;
@@ -88,17 +97,6 @@ namespace GsaGH.Components
     }
 
     #region Custom UI
-    private static List<string> _materialTypes = new List<string>() {
-      "Generic",
-      "Steel",
-      "Concrete",
-      "Timber",
-      "Aluminium",
-      "FRP",
-      "Glass",
-      "Fabric"
-    };
-
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[] { "Material type" });
@@ -106,8 +104,8 @@ namespace GsaGH.Components
       this.DropDownItems = new List<List<string>>();
       this.SelectedItems = new List<string>();
 
-      this.DropDownItems.Add(new List<string>(_materialTypes));
-      this.SelectedItems.Add(_materialTypes[3]);
+      this.DropDownItems.Add(new List<string>(MaterialTypes));
+      this.SelectedItems.Add(MaterialTypes[3]);
 
       this.IsInitialised = true;
     }
