@@ -90,6 +90,7 @@ namespace GsaGH.Helpers
       }
       return new Ratio(100, RatioUnit.Percent);
     }
+
     internal static Ratio RatioInDecimalFractionToDecimalFraction(GH_Component owner, IGH_DataAccess DA, int inputid)
     {
       GH_UnitNumber unitNumber = null;

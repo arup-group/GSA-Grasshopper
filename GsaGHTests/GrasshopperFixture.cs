@@ -33,8 +33,9 @@ namespace GsaGHTests
 
       LoadRefs();
       Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
+      Assembly SQLite = Assembly.LoadFile(InstallPath + "\\System.Data.SQLite.dll");
       //Assert.NotNull(new GsaBool6());
-      
+
       InitializeCore();
 
       // setup headless units
