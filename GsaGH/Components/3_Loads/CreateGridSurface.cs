@@ -179,10 +179,10 @@ namespace GsaGH.Components
       }
 
       // 4 Tolerance
-      if (this.Params.Input[4].SourceCount != 0)
+      double tolerance = 0;
+      if (DA.GetData(4, ref tolerance))
       {
-        gs.Tolerance = ((Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true)).Millimeters;
-        changeGS = true;
+        gs.Tolerance = tolerance;
       }
 
       switch (_mode)
@@ -259,13 +259,12 @@ namespace GsaGH.Components
       "2D"
     });
     AngleUnit AngleUnit = AngleUnit.Radian;
-    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.One_Dimensional_One_Way;
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
         {
-          "Type", "Unit"
+          "Type"
         });
 
       this.DropDownItems = new List<List<string>>();
@@ -274,10 +273,6 @@ namespace GsaGH.Components
       // Type
       this.DropDownItems.Add(this._type);
       this.SelectedItems.Add(this._type[0].ToString());
-
-      // Length
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -300,9 +295,6 @@ namespace GsaGH.Components
             break;
         }
       }
-      else
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
-
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()
@@ -319,8 +311,6 @@ namespace GsaGH.Components
           this._mode = FoldMode.Two_Dimensional;
           break;
       }
-      if (this.SelectedItems.Count > 1)
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 
@@ -429,9 +419,7 @@ namespace GsaGH.Components
             this.SelectedItems.Add("2D");
             break;
         }
-        this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
       }
-      
       return base.Read(reader);
     }
     #endregion
