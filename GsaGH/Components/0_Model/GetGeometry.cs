@@ -362,14 +362,14 @@ namespace GsaGH.Components
         }
         if (results.Elem1ds != null)
         {
-          List<int> invalid1delem = results.Elem1ds.Where(x => !x.IsValid).Select(x => x.Value.ID).ToList();
+          List<int> invalid1delem = results.Elem1ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
           if (invalid1delem.Count > 0)
           {
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Element1D definition for Element IDs:");
             this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, string.Join(" ", invalid1delem.OrderBy(x => x)));
           }
           if (_mode == FoldMode.List)
-            data.SetDataList(1, results.Elem1ds.OrderBy(item => item.Value.ID));
+            data.SetDataList(1, results.Elem1ds.OrderBy(item => item.Value.Id));
           else
           {
             DataTree<GsaElement1dGoo> tree = new DataTree<GsaElement1dGoo>();

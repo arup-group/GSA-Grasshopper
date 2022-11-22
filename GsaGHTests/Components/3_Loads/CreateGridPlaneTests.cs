@@ -22,7 +22,7 @@ namespace GsaGHTests.Components.Loads
     }
 
     [Fact]
-    public void CreateGridPlaneTest()
+    public void CreateComponentTest()
     {
       var comp = ComponentMother();
 

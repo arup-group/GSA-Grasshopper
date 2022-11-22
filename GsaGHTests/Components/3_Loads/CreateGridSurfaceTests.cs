@@ -19,7 +19,7 @@ namespace GsaGHTests.Components.Loads
     }
 
     [Fact]
-    public void CreateGridSurfaceTest()
+    public void CreateComponentTest()
     {
       var comp = ComponentMother();
 

@@ -70,9 +70,9 @@ namespace GsaGH.Util.Gsa.ToGSA
           ref existingMaterials, ref materials_guid);
 
       // set apielement in dictionary
-      if (element1d.ID > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+      if (element1d.Id > 0) // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
       {
-        existingElements[element1d.ID] = apiElement;
+        existingElements[element1d.Id] = apiElement;
       }
       else
       {

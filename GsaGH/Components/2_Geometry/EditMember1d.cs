@@ -9,6 +9,7 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
@@ -188,6 +189,7 @@ namespace GsaGH.Components
           if (GH_Convert.ToInt32(ghint, out int type, GH_Conversion.Both))
             mem.Type = (MemberType)type;
         }
+
         GH_String ghstring = new GH_String();
         if (DA.GetData(5, ref ghstring))
         {
