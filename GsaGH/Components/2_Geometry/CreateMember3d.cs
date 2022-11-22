@@ -33,7 +33,7 @@ namespace GsaGH.Components
     {
       pManager.AddGeometryParameter("Solid", "S", "Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp3dParameter());
-      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Targe mesh size", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Targe mesh size", GH_ParamAccess.item);
 
       pManager[1].Optional = true;
       pManager[2].Optional = true;

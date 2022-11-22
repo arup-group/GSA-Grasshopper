@@ -182,18 +182,12 @@ namespace GsaGH.Components
         }
 
         // 5 type
-        GH_Integer ghint = new GH_Integer();
-        if (DA.GetData(5, ref ghint))
-        {
-          if (GH_Convert.ToInt32(ghint, out int type, GH_Conversion.Both))
-            mem.Type = (MemberType)type;
-        }
         GH_String ghstring = new GH_String();
         if (DA.GetData(5, ref ghstring))
         {
           if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
             mem.Type = (MemberType)typeInt;
-          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
             if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
               mem.Type = Helpers.Mappings.MemberTypeMapping[typestring];
@@ -208,7 +202,7 @@ namespace GsaGH.Components
         {
           if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
             mem.Type1D = (ElementType)typeInt;
-          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
             if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
               mem.Type1D = Helpers.Mappings.ElementTypeMapping[typestring];

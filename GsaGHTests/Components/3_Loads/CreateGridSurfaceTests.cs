@@ -21,6 +21,7 @@ namespace GsaGHTests.Components.Loads
     [Fact]
     public void CreateComponentTest()
     {
+      // Arrange & Act
       var comp = ComponentMother();
 
       GsaGridPlaneSurfaceGoo gridPlane = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(CreateGridPlaneTests.ComponentMother());
@@ -31,8 +32,8 @@ namespace GsaGHTests.Components.Loads
       ComponentTestHelper.SetInput(comp, 99, 4);
       ComponentTestHelper.SetInput(comp, 0.5, 5);
 
+      // Assert
       GsaGridPlaneSurfaceGoo output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
-
       GsaGridPlaneSurface gridSurface = null;
       output.CastTo(ref gridSurface);
 

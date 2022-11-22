@@ -43,7 +43,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Member3d Number", "ID", "Set Member Number. If ID is set it will replace any existing 3d Member in the model", GH_ParamAccess.item);
       pManager.AddGeometryParameter("Solid", "S", "Reposition Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV", "Set new 3D Property.", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
       pManager.AddTextParameter("Member3d Name", "Na", "Set Name of Member3d", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member3d Group", "Gr", "Set Member 3d Group", GH_ParamAccess.item);
@@ -64,7 +64,7 @@ namespace GsaGH.Components
       pManager.AddMeshParameter("Solid Mesh", "M", "Member Solid Mesh", GH_ParamAccess.item);
       pManager.HideParameter(2);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV", "Get 3D Property", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Get Target mesh size", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Get Target mesh size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);

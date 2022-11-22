@@ -70,7 +70,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
       pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Member Orientation Node", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBucklingLengthFactorsParameter(), "Set " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName, GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
@@ -99,7 +99,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Get Release (Bool6) at End of Member", GH_ParamAccess.item);
       pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Member Orientation Angle in radians", GH_ParamAccess.item);
       pManager.AddGenericParameter("Orientation Node", "⭮N", "Get Member Orientation Node", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBucklingLengthFactorsParameter(), "Get " + GsaBucklingLengthFactorsGoo.Name, GsaBucklingLengthFactorsGoo.NickName, GsaBucklingLengthFactorsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);
@@ -182,20 +182,13 @@ namespace GsaGH.Components
             mem.Group = grp;
         }
 
-        // 5 type
-        GH_Integer ghint = new GH_Integer();
-        if (DA.GetData(5, ref ghint))
-        {
-          if (GH_Convert.ToInt32(ghint, out int type, GH_Conversion.Both))
-            mem.Type = (MemberType)type;
-        }
-
+        // 5 member type
         GH_String ghstring = new GH_String();
         if (DA.GetData(5, ref ghstring))
         {
           if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
             mem.Type = (MemberType)typeInt;
-          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
             if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
               mem.Type = Helpers.Mappings.MemberTypeMapping[typestring];
@@ -210,7 +203,7 @@ namespace GsaGH.Components
         {
           if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
             mem.Type1D = (ElementType)typeInt;
-          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
             if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
               mem.Type1D = Helpers.Mappings.ElementTypeMapping[typestring];

@@ -35,7 +35,7 @@ namespace GsaGH.Components
       pManager.AddPointParameter("Incl. Points", "(P)", "Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
       pManager.AddCurveParameter("Incl. Curves", "(C)", "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp2dParameter());
-      pManager.AddGenericParameter("Mesh Size in model units", "Ms", "Target mesh size", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Target mesh size", GH_ParamAccess.item);
 
       pManager.HideParameter(0);
       pManager.HideParameter(1);
