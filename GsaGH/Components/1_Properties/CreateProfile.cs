@@ -767,7 +767,7 @@ namespace GsaGH.Components
       // IIBeamCellularProfile
       else if (typ == "IIBeamCellularProfile") //(typ.Name.Equals(typeof(IIBeamCellularProfile).Name))
       {
-        SetNumberOfGenericInputs(4);
+        SetNumberOfGenericInputs(6);
         //dup = IIBeamCellularProfile.Create(iBeamCellular.Depth, iBeamCellular.Flanges, iBeamCellular.Web, iBeamCellular.WebOpening);
       }
 

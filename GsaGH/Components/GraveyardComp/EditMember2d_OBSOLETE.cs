@@ -22,15 +22,15 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a 2D Member
   /// </summary>
-  public class EditMember2d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+  public class EditMember2d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("54bcb967-d3a1-4878-925b-5fd765d1b476");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override Guid ComponentGuid => new Guid("955e572d-1293-4ac6-b436-54135f7714f6");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem2d;
 
-    public EditMember2d()
+    public EditMember2d_OBSOLETE()
       : base("Edit 2D Member", "Mem2dEdit", "Modify GSA 2D Member",
             Ribbon.CategoryName.Name(),
             Ribbon.SubCategoryName.Cat2())
@@ -343,7 +343,6 @@ namespace GsaGH.Components
     {
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.Message = unit;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
     }
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
@@ -353,22 +352,18 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      this.LengthUnit = this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      return base.Read(reader);
+      if (reader.ItemExists("LengthUnit"))
+      {
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        bool flag = base.Read(reader);
+        return flag & this.Params.ReadAllParameterData(reader);
+      }
+      else
+      {
+        this.LengthUnit = DefaultUnits.LengthUnitGeometry;
+        return base.Read(reader);
+      }
     }
-
-    #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance()
-    {
-      this.Params.Input[10].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-      this.Params.Output[10].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-    #endregion
     #endregion
   }
 }
