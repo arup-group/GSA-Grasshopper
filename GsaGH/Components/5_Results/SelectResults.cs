@@ -11,6 +11,7 @@ using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units.Helpers;
 using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -385,7 +386,7 @@ namespace GsaGH.Components
               if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, _caseID)))
               {
                 Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, _caseID),
-                    new GsaResult(_gsaModel.Model, _analysisCaseResults[_caseID], _caseID));
+                    new GsaResult(_gsaModel, _analysisCaseResults[_caseID], _caseID));
               }
             }
             else
@@ -400,7 +401,7 @@ namespace GsaGH.Components
                 if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, key)))
                 {
                   Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, key),
-                      new GsaResult(_gsaModel.Model, _analysisCaseResults[key], key));
+                      new GsaResult(_gsaModel, _analysisCaseResults[key], key));
                 }
               }
             }
@@ -422,7 +423,7 @@ namespace GsaGH.Components
               if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, _caseID)))
               {
                 Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, _caseID),
-                    new GsaResult(_gsaModel.Model, _combinationCaseResults[_caseID], _caseID, _permutations));
+                    new GsaResult(_gsaModel, _combinationCaseResults[_caseID], _caseID, _permutations));
               }
               else
               {
@@ -451,7 +452,7 @@ namespace GsaGH.Components
                   }
 
                   Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, key),
-                      new GsaResult(_gsaModel.Model, _combinationCaseResults[key], key, _permutations));
+                      new GsaResult(_gsaModel, _combinationCaseResults[key], key, _permutations));
                 }
               }
             }
@@ -479,8 +480,8 @@ namespace GsaGH.Components
     #region Custom UI
     List<string> _type = new List<string>(new string[]
     {
-            "AnalysisCase",
-            "Combination"
+      "AnalysisCase",
+      "Combination"
     });
     GsaResult.ResultType ResultType = GsaResult.ResultType.AnalysisCase;
     bool updatePermutations;

@@ -48,7 +48,7 @@ namespace GsaGHTests.Parameters
       };
       prop.Material = mat;
 
-      Assert.Equal(-1, prop.AxisProperty);
+      Assert.Equal(1, prop.AxisProperty);
       Assert.Equal(4, prop.Material.GradeProperty);
       Assert.Equal(0, prop.Material.AnalysisProperty);
       Assert.Equal(MaterialType.GENERIC.ToString(),
@@ -109,7 +109,7 @@ namespace GsaGHTests.Parameters
           dup.Type.ToString());
       Assert.Equal(14, dup.ID);
 
-      Assert.Equal(-1, orig.AxisProperty);
+      Assert.Equal(1, orig.AxisProperty);
       Assert.Equal(0, orig.Material.GradeProperty);
       Assert.Equal(42, orig.Material.AnalysisProperty);
       Assert.Equal(MaterialType.FABRIC.ToString(),

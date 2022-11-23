@@ -8,12 +8,8 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
-using OasysGH.Units;
-using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using Rhino;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
@@ -31,15 +27,12 @@ namespace GsaGH.Components
       "Create GSA Grid Surface",
       Ribbon.CategoryName.Name(),
       Ribbon.SubCategoryName.Cat3())
-    { } // sets the initial state of the component to hidden
+    { }
     #endregion
 
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      IQuantity length = new Length(0, DefaultUnits.LengthUnitGeometry);
-      string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-
       pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model", GH_ParamAccess.item, 0);
       pManager.AddTextParameter("Element list", "El", "List of Elements for which load should be expanded to (by default 'all')." + System.Environment.NewLine +
@@ -47,7 +40,7 @@ namespace GsaGH.Components
          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Tolerance [" + unitAbbreviation + "]", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Tolerance in model units", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
       pManager.AddAngleParameter("Span Direction", "Di", "Span Direction between -180 and 180 degrees", GH_ParamAccess.item, 0);
       pManager[5].Optional = true;
       angleInputParam = this.Params.Input[5];
@@ -136,11 +129,11 @@ namespace GsaGH.Components
       {
         int id = 0;
         GH_Convert.ToInt32(ghint, out id, GH_Conversion.Both);
-        gps.GridSurfaceID = id;
+        gps.GridSurfaceId = id;
       }
 
       // 2 Elements
-      // check that user has not inputted Gsa geometry elements here
+      // check that user has not input Gsa geometry elements here
       gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(2, ref gh_typ))
       {
@@ -179,10 +172,10 @@ namespace GsaGH.Components
       }
 
       // 4 Tolerance
-      if (this.Params.Input[4].SourceCount != 0)
+      double tolerance = 0;
+      if (DA.GetData(4, ref tolerance))
       {
-        gs.Tolerance = ((Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true)).Millimeters;
-        changeGS = true;
+        gs.Tolerance = tolerance;
       }
 
       switch (_mode)
@@ -259,13 +252,12 @@ namespace GsaGH.Components
       "2D"
     });
     AngleUnit AngleUnit = AngleUnit.Radian;
-    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.One_Dimensional_One_Way;
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
         {
-          "Type", "Unit"
+          "Type"
         });
 
       this.DropDownItems = new List<List<string>>();
@@ -274,10 +266,6 @@ namespace GsaGH.Components
       // Type
       this.DropDownItems.Add(this._type);
       this.SelectedItems.Add(this._type[0].ToString());
-
-      // Length
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -300,9 +288,6 @@ namespace GsaGH.Components
             break;
         }
       }
-      else
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
-
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()
@@ -319,8 +304,6 @@ namespace GsaGH.Components
           this._mode = FoldMode.Two_Dimensional;
           break;
       }
-      if (this.SelectedItems.Count > 1)
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 
@@ -429,9 +412,7 @@ namespace GsaGH.Components
             this.SelectedItems.Add("2D");
             break;
         }
-        this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
       }
-      
       return base.Read(reader);
     }
     #endregion

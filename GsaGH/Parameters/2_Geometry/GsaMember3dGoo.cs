@@ -58,7 +58,7 @@ namespace GsaGH.Parameters
         else
         {
           GH_Integer ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
+          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
             target = (Q)(object)ghint;
           else
             target = default;
@@ -108,7 +108,7 @@ namespace GsaGH.Parameters
       if (Value.SolidMesh == null) { return null; }
 
       GsaMember3d dup = Value.Duplicate(true);
-      dup.ID = 0;
+      dup.Id = 0;
       dup.SolidMesh.Transform(xform);
 
       return new GsaMember3dGoo(dup);
@@ -120,7 +120,7 @@ namespace GsaGH.Parameters
       if (Value.SolidMesh == null) { return null; }
 
       GsaMember3d dup = Value.Duplicate(true);
-      dup.ID = 0;
+      dup.Id = 0;
       xmorph.Morph(dup.SolidMesh.Duplicate());
 
       return new GsaMember3dGoo(dup);

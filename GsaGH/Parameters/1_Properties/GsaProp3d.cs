@@ -155,7 +155,7 @@ namespace GsaGH.Parameters
     {
       string type = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key;
       string pa = (this.ID > 0) ? "PV" + this.ID + " " : "";
-      return pa + type;
+      return string.Join(" ", pa.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }
 
     private void CloneApiObject()

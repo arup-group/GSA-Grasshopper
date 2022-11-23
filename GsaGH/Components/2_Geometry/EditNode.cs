@@ -79,7 +79,7 @@ namespace GsaGH.Components
         {
           gh_typ.CastTo(ref node);
           if (node == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
-          if (node.API_Node == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
+          if (node.ApiNode == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
         }
         else if (GH_Convert.ToPoint3d(gh_typ.Value, ref tempPt, GH_Conversion.Both))
         {
@@ -117,7 +117,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghInt))
         {
           if (GH_Convert.ToInt32(ghInt, out int id, GH_Conversion.Both))
-            node.ID = id;
+            node.Id = id;
         }
 
         // 3 plane
@@ -157,11 +157,11 @@ namespace GsaGH.Components
 
         // #### outputs ####
         DA.SetData(0, new GsaNodeGoo(node));
-        DA.SetData(1, node.ID);
+        DA.SetData(1, node.Id);
         DA.SetData(2, node.Point);
         DA.SetData(3, new GH_Plane(node.LocalAxis));
         DA.SetData(4, new GsaBool6Goo(node.Restraint));
-        DA.SetData(5, node.API_Node.Name.ToString());
+        DA.SetData(5, node.ApiNode.Name.ToString());
         DA.SetData(6, node.Colour);
 
         // only get connected elements/members if enabled (computationally expensive)
@@ -169,13 +169,13 @@ namespace GsaGH.Components
         {
           try
           {
-            DA.SetDataList(7, node.API_Node.ConnectedElements);
+            DA.SetDataList(7, node.ApiNode.ConnectedElements);
           }
           catch (Exception) { }
 
           try
           {
-            DA.SetDataList(8, node.API_Node.ConnectedMembers);
+            DA.SetDataList(8, node.ApiNode.ConnectedMembers);
           }
           catch (Exception) { }
         }

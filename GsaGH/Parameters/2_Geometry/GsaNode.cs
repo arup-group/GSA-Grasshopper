@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using GH_IO.Serialization;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using OasysUnits;
@@ -21,23 +20,12 @@ namespace GsaGH.Parameters
     internal Brep previewSupportSymbol;
     internal Text3d previewText;
 
-    private int _id;
     private Plane _plane;
     private Node _node = new Node();
     #endregion
 
     #region properties
-    public int ID
-    {
-      get
-      {
-        return _id;
-      }
-      set
-      {
-        _id = value;
-      }
-    }
+    public int Id { get; set; }
     public Plane LocalAxis
     {
       get
@@ -50,13 +38,8 @@ namespace GsaGH.Parameters
         this.UpdatePreview();
       }
     }
-    public bool IsSupport
-    {
-      get
-      {
-        return _node.Restraint.X || _node.Restraint.Y || _node.Restraint.Z || _node.Restraint.XX || _node.Restraint.YY || _node.Restraint.ZZ;
-      }
-    }
+    public bool IsSupport => _node.Restraint.X || _node.Restraint.Y || _node.Restraint.Z || _node.Restraint.XX || _node.Restraint.YY || _node.Restraint.ZZ;
+
     public Point3d Point
     {
       get
@@ -70,7 +53,7 @@ namespace GsaGH.Parameters
       set
       {
         this.CloneApiObject();
-        _id = 0;
+        Id = 0;
         _node.Position.X = value.X;
         _node.Position.Y = value.Y;
         _node.Position.Z = value.Z;
@@ -78,7 +61,7 @@ namespace GsaGH.Parameters
       }
     }
     #region GsaAPI.Node members
-    internal Node API_Node
+    internal Node ApiNode
     {
       get
       {
@@ -153,7 +136,7 @@ namespace GsaGH.Parameters
         _node.Position.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
         _node.Position.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
       }
-      _id = id;
+      Id = id;
       _plane = localAxis;
       this.UpdatePreview();
     }
@@ -161,7 +144,7 @@ namespace GsaGH.Parameters
     public GsaNode(Point3d position, int id = 0)
     {
       Point = position;
-      _id = id;
+      Id = id;
       this.UpdatePreview();
     }
     #endregion
@@ -170,7 +153,7 @@ namespace GsaGH.Parameters
     public GsaNode Duplicate(bool cloneApiNode = false)
     {
       GsaNode dup = new GsaNode();
-      dup._id = _id;
+      dup.Id = Id;
       dup._node = _node;
       if (cloneApiNode)
         dup.CloneApiObject();
@@ -181,27 +164,27 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      if (API_Node == null) { return "Null"; }
-      string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
+      if (ApiNode == null) { return "Null"; }
+      string idd = this.Id == 0 ? "" : "ID:" + Id + " ";
 
       string sptTxt;
-      if (API_Node.Restraint.X == false && API_Node.Restraint.Y == false && API_Node.Restraint.Z == false &&
-          API_Node.Restraint.XX == false && API_Node.Restraint.YY == false && API_Node.Restraint.ZZ == false)
+      if (ApiNode.Restraint.X == false && ApiNode.Restraint.Y == false && ApiNode.Restraint.Z == false &&
+          ApiNode.Restraint.XX == false && ApiNode.Restraint.YY == false && ApiNode.Restraint.ZZ == false)
         sptTxt = "";
-      else if (API_Node.Restraint.X & API_Node.Restraint.Y & API_Node.Restraint.Z &
-            !API_Node.Restraint.XX & !API_Node.Restraint.YY & !API_Node.Restraint.ZZ)
+      else if (ApiNode.Restraint.X & ApiNode.Restraint.Y & ApiNode.Restraint.Z &
+            !ApiNode.Restraint.XX & !ApiNode.Restraint.YY & !ApiNode.Restraint.ZZ)
         sptTxt = " Pin";
-      else if (API_Node.Restraint.X & API_Node.Restraint.Y & API_Node.Restraint.Z &
-          API_Node.Restraint.XX & API_Node.Restraint.YY & API_Node.Restraint.ZZ)
+      else if (ApiNode.Restraint.X & ApiNode.Restraint.Y & ApiNode.Restraint.Z &
+          ApiNode.Restraint.XX & ApiNode.Restraint.YY & ApiNode.Restraint.ZZ)
         sptTxt = " Fix";
       else
       {
-        sptTxt = " " + "X:" + (API_Node.Restraint.X ? "\u2713" : "\u2610") +
-         " Y:" + (API_Node.Restraint.Y ? "\u2713" : "\u2610") +
-         " Z:" + (API_Node.Restraint.Z ? "\u2713" : "\u2610") +
-         " XX:" + (API_Node.Restraint.XX ? "\u2713" : "\u2610") +
-         " YY:" + (API_Node.Restraint.YY ? "\u2713" : "\u2610") +
-         " ZZ:" + (API_Node.Restraint.ZZ ? "\u2713" : "\u2610");
+        sptTxt = " " + "X:" + (ApiNode.Restraint.X ? "\u2713" : "\u2610") +
+         " Y:" + (ApiNode.Restraint.Y ? "\u2713" : "\u2610") +
+         " Z:" + (ApiNode.Restraint.Z ? "\u2713" : "\u2610") +
+         " XX:" + (ApiNode.Restraint.XX ? "\u2713" : "\u2610") +
+         " YY:" + (ApiNode.Restraint.YY ? "\u2713" : "\u2610") +
+         " ZZ:" + (ApiNode.Restraint.ZZ ? "\u2713" : "\u2610");
       }
 
       string localTxt = "";
@@ -215,7 +198,7 @@ namespace GsaGH.Parameters
         }
       }
 
-      return idd + sptTxt + localTxt + " Pos:" + new GH_Point(this.Point).ToString();
+      return string.Join(" ", idd.Trim(), sptTxt.Trim(), localTxt.Trim(), ("Pos:" + new GH_Point(this.Point).ToString()).Trim()).Trim().Replace("  ", " ");
     }
 
     internal void CloneApiObject()
@@ -287,9 +270,9 @@ namespace GsaGH.Parameters
       if (unit != LengthUnit.Meter) // convert from meter to input unit if not meter
       {
         Vector3 pos = new Vector3();
-        this.API_Node.Position.X = new Length(this.API_Node.Position.X, LengthUnit.Meter).As(unit);
-        this.API_Node.Position.Y = new Length(this.API_Node.Position.Y, LengthUnit.Meter).As(unit);
-        this.API_Node.Position.Z = new Length(this.API_Node.Position.Z, LengthUnit.Meter).As(unit);
+        this.ApiNode.Position.X = new Length(this.ApiNode.Position.X, LengthUnit.Meter).As(unit);
+        this.ApiNode.Position.Y = new Length(this.ApiNode.Position.Y, LengthUnit.Meter).As(unit);
+        this.ApiNode.Position.Z = new Length(this.ApiNode.Position.Z, LengthUnit.Meter).As(unit);
       }
     }
 

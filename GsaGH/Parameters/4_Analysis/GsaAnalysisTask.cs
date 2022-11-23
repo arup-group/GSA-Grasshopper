@@ -101,7 +101,7 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      return this.ID > 0 ? "ID:" +this.ID : "" + " '" + this.Name + "' " + this.Type.ToString().Replace("_"," ");
+      return (this.ID > 0 ? "ID:" +this.ID : "" + " '" + this.Name + "' " + this.Type.ToString().Replace("_"," ")).Trim().Replace("  ", " ");
     }
     #endregion
   }

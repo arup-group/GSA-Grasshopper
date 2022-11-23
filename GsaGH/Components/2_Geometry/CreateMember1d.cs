@@ -15,7 +15,7 @@ namespace GsaGH.Components
   public class CreateMember1d : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("5c5b9efa-cdae-4be5-af40-ff2b590801dd");
+    public override Guid ComponentGuid => new Guid("8278b67c-425a-4220-b759-79ecdd6aba55");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMem1d;
@@ -33,7 +33,9 @@ namespace GsaGH.Components
     {
       pManager.AddCurveParameter("Curve", "C", "Curve (a NURBS curve will automatically be converted in to a Polyline of Arc and Line segments)", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionParameter());
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Target mesh size", GH_ParamAccess.item);
       pManager[1].Optional = true;
+      pManager[2].Optional = true;
       pManager.HideParameter(0);
     }
 
@@ -54,7 +56,7 @@ namespace GsaGH.Components
         {
           GsaMember1d mem = new GsaMember1d(crv);
           if (mem.PolyCurve.GetLength() < DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "One or more input curves have relatively short length and may convert into a zero-length line in GSA thus creating invalid topology that cannot be analysed.");
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Service message from you favourite Oasys dev team: Based on your Default Unit Settings (changed in the Oasys Menu), one or more input curves have relatively short length less than the set tolerance (" + DefaultUnits.Tolerance.ToString().Replace(" ", string.Empty) + ". This may convert into a zero-length line when assembling the GSA Model, thus creating invalid topology that cannot be analysed. You can ignore this message if you are creating your model in another unit (set on 'Analyse' or 'CreateModel' components) than " + DefaultUnits.LengthUnitGeometry.ToString() + ".");
 
           GsaBool6 rel1 = new GsaBool6
           {
@@ -100,6 +102,14 @@ namespace GsaGH.Components
               }
             }
           }
+
+          // 2 mesh size
+          double meshSize = 0;
+          if (DA.GetData(2, ref meshSize))
+          {
+            mem.MeshSize = meshSize;
+          }
+
           DA.SetData(0, new GsaMember1dGoo(mem));
         }
       }

@@ -24,7 +24,7 @@ namespace GsaGH.Components
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("ab8af109-7ebc-4e49-9f5d-d4cb8ee45557");
+    public override Guid ComponentGuid => new Guid("6f18fffc-e03c-45cd-9d4c-b02bb6e2d10a");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditProp2d;
@@ -44,7 +44,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Prop2d Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Th", "Set Property Thickness", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Axis", "Ax", "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Axis", "Ax", "Set Axis as integer: Global (0) or Topological (-1)", GH_ParamAccess.item);
       pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour", "Co", "Set 2D Property Colour", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "Ty", "Set 2D Property Type." + System.Environment.NewLine +
@@ -166,7 +166,7 @@ namespace GsaGH.Components
 
         DA.SetData(0, new GsaProp2dGoo(prop));
         DA.SetData(1, prop.ID);
-        DA.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
+        DA.SetData(2, new GsaMaterialGoo(prop.Material));
         if (prop.API_Prop2d.Description == "")
           DA.SetData(3, new GH_UnitNumber(Length.Zero));
         else
@@ -203,12 +203,12 @@ namespace GsaGH.Components
         unitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
       menu.Items.Add(unitsMenu);
-      
+
       Menu_AppendSeparator(menu);
     }
     private void Update(string unit)
     {
-      this.LengthUnit = Length.ParseUnit(unit);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
@@ -220,26 +220,20 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      else
-        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitSection;
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
 
     #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance() 
+    public virtual void VariableParameterMaintenance()
     {
       this.Params.Input[3].Name = "Thickness [" + Length.GetAbbreviation(this.LengthUnit) + "]";
       this.Params.Output[3].Name = "Thickness [" + Length.GetAbbreviation(this.LengthUnit) + "]";
     }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
     #endregion
     #endregion

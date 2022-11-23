@@ -42,9 +42,9 @@ namespace GsaGHTests.Parameters
     {
       // Act
       GsaMember1d member = new GsaMember1d();
-      member.API_Member.MomentAmplificationFactorStrongAxis = factor1;
-      member.API_Member.MomentAmplificationFactorWeakAxis = factor2;
-      member.API_Member.LateralTorsionalBucklingFactor = factor3;
+      member.ApiMember.MomentAmplificationFactorStrongAxis = factor1;
+      member.ApiMember.MomentAmplificationFactorWeakAxis = factor2;
+      member.ApiMember.LateralTorsionalBucklingFactor = factor3;
 
       GsaBucklingLengthFactors factors = new GsaBucklingLengthFactors(member);
 
@@ -62,9 +62,9 @@ namespace GsaGHTests.Parameters
       // Act
       GsaMember1d member = new GsaMember1d();
       member.PolyCurve = new PolyCurve();
-      member.API_Member.MomentAmplificationFactorStrongAxis = factor1;
-      member.API_Member.MomentAmplificationFactorWeakAxis = factor2;
-      member.API_Member.LateralTorsionalBucklingFactor = factor3;
+      member.ApiMember.MomentAmplificationFactorStrongAxis = factor1;
+      member.ApiMember.MomentAmplificationFactorWeakAxis = factor2;
+      member.ApiMember.LateralTorsionalBucklingFactor = factor3;
 
       GsaBucklingLengthFactors factors = new GsaBucklingLengthFactors(member, unit);
 
@@ -82,9 +82,9 @@ namespace GsaGHTests.Parameters
     {
       // Arrange
       GsaMember1d member = new GsaMember1d();
-      member.API_Member.MomentAmplificationFactorStrongAxis = factor1;
-      member.API_Member.MomentAmplificationFactorWeakAxis = factor2;
-      member.API_Member.LateralTorsionalBucklingFactor = factor3;
+      member.ApiMember.MomentAmplificationFactorStrongAxis = factor1;
+      member.ApiMember.MomentAmplificationFactorWeakAxis = factor2;
+      member.ApiMember.LateralTorsionalBucklingFactor = factor3;
 
       GsaBucklingLengthFactors original = new GsaBucklingLengthFactors(member);
 

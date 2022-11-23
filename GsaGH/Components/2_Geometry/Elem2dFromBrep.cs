@@ -16,10 +16,10 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a Node
   /// </summary>
-  public class Elem2dFromBrep : GH_OasysDropDownComponent, IGH_PreviewObject
+  public class Elem2dFromBrep : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("4fa7ccd9-530e-4036-b2bf-203017b55611");
+    public override Guid ComponentGuid => new Guid("83948408-c55d-49b9-b9a7-98034bcf3ce1");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateElemsFromBreps;
@@ -35,12 +35,11 @@ namespace GsaGH.Components
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
-      pManager.AddBrepParameter("Brep [in " + unitAbbreviation + "]", "B", "Brep (can be non-planar)", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Incl. Points or Nodes [in " + unitAbbreviation + "]", "(P)", "Inclusion points or Nodes", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Incl. Curves or 1D Members [in " + unitAbbreviation + "]", "(C)", "Inclusion curves or 1D Members", GH_ParamAccess.list);
+      pManager.AddBrepParameter("Brep", "B", "Brep (can be non-planar)", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Incl. Points or Nodes", "(P)", "Inclusion points or Nodes", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Incl. Curves or 1D Members", "(C)", "Inclusion curves or 1D Members", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp2dParameter());
-      pManager.AddNumberParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Targe mesh size", GH_ParamAccess.item, 0);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Target mesh size", GH_ParamAccess.item, 0);
 
       pManager[1].Optional = true;
       pManager[2].Optional = true;
@@ -126,16 +125,11 @@ namespace GsaGH.Components
           }
 
           // 4 mesh size
-          GH_Number ghmsz = new GH_Number();
-          Length meshSize = Length.Zero;
-          if (DA.GetData(4, ref ghmsz))
-          {
-            GH_Convert.ToDouble(ghmsz, out double m_size, GH_Conversion.Both);
-            meshSize = new Length(m_size, LengthUnit);
-          }
+          double meshSize = 0;
+          DA.GetData(4, ref meshSize);
 
           // build new element2d with brep, crv and pts
-          GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize, mem1ds, nodes, LengthUnit);
+          GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize, mem1ds, nodes);
 
           // 3 section
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -168,49 +162,5 @@ namespace GsaGH.Components
         }
       }
     }
-
-    #region Custom UI
-    private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[]
-        {
-          "Unit"
-        });
-
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
-
-      // Length
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
-
-      this.IsInitialised = true;
-    }
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
-      base.UpdateUI();
-    }
-    public override void UpdateUIFromSelectedItems()
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
-      base.UpdateUIFromSelectedItems();
-    }
-    public override void VariableParameterMaintenance()
-    {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
-
-      int i = 0;
-      Params.Input[i++].Name = "Brep [in " + unitAbbreviation + "]";
-      Params.Input[i++].Name = "Incl. Points or Nodes [in " + unitAbbreviation + "]";
-      Params.Input[i++].Name = "Incl. Curves or 1D Members [in " + unitAbbreviation + "]";
-      i++;
-      Params.Input[i++].Name = "Mesh Size [" + unitAbbreviation + "]";
-    }
-    #endregion
   }
 }
-

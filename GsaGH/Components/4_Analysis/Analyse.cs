@@ -9,6 +9,7 @@ using GsaGH.Helpers;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
@@ -158,7 +159,7 @@ namespace GsaGH.Components
             try
             {
               if (model.Model.Analyse(task.Key))
-                PostHog.ModelIO("analyse", apielems.Count);
+                PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse", apielems.Count);
               else
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
               if (!model.Model.Results().ContainsKey(task.Key))
@@ -173,7 +174,7 @@ namespace GsaGH.Components
         }
       }
       #endregion
-
+      model.ModelUnit = this.LengthUnit;
       DA.SetData(0, new GsaModelGoo(model));
     }
 

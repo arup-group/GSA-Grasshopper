@@ -22,6 +22,15 @@ namespace GsaGH.Parameters
       GsaGH.Components.Ribbon.CategoryName.Name(),
       GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
     { }
+
+    protected override GsaGridPlaneSurfaceGoo PreferredCast(object data)
+    {
+      if (data.GetType() == typeof(GsaGridPlaneSurface))
+        return new GsaGridPlaneSurfaceGoo((GsaGridPlaneSurface)data);
+
+      return base.PreferredCast(data);
+    }
+
     public override void DrawViewportMeshes(IGH_PreviewArgs args)
     {
       //Meshes aren't drawn.

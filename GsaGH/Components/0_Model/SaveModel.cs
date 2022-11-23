@@ -8,6 +8,7 @@ using GsaGH.Helpers;
 using System.IO;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 
 namespace GsaGH.Components
 {
@@ -85,7 +86,7 @@ namespace GsaGH.Components
           if (save)
           {
             Message = gsaSaveModel.SaveAs(FileName).ToString();
-            PostHog.ModelIO("saveGWB", (int)(new FileInfo(FileName).Length / 1024));
+            PostHog.ModelIO(GsaGH.PluginInfo.Instance, "saveGWB", (int)(new FileInfo(FileName).Length / 1024));
           }
         }
 
@@ -144,7 +145,7 @@ namespace GsaGH.Components
           //CreateAttributes();
           mes = "Saved file";
 
-          PostHog.ModelIO("saveGWB", (int)(new FileInfo(FileName).Length / 1024));
+          PostHog.ModelIO(GsaGH.PluginInfo.Instance, "saveGWB", (int)(new FileInfo(FileName).Length / 1024));
 
           //add panel input with string
           //delete existing inputs if any

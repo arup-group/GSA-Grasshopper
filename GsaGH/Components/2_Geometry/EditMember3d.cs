@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
@@ -7,7 +8,6 @@ using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
-using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
@@ -22,7 +22,7 @@ namespace GsaGH.Components
   public class EditMember3d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("955e573d-7608-4ac6-b436-54135f7714f6");
+    public override Guid ComponentGuid => new Guid("e7d66219-2243-4108-9d6e-4a84dbf07d55");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem3d;
@@ -43,7 +43,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Member3d Number", "ID", "Set Member Number. If ID is set it will replace any existing 3d Member in the model", GH_ParamAccess.item);
       pManager.AddGeometryParameter("Solid", "S", "Reposition Solid Geometry - Closed Brep or Mesh", GH_ParamAccess.item);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV", "Set new 3D Property.", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Set Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
       pManager.AddTextParameter("Member3d Name", "Na", "Set Name of Member3d", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member3d Group", "Gr", "Set Member 3d Group", GH_ParamAccess.item);
@@ -64,7 +64,7 @@ namespace GsaGH.Components
       pManager.AddMeshParameter("Solid Mesh", "M", "Member Solid Mesh", GH_ParamAccess.item);
       pManager.HideParameter(2);
       pManager.AddParameter(new GsaProp3dParameter(), "3D Property", "PV", "Get 3D Property", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Ms", "Get Targe mesh size", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Get Target mesh size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
@@ -85,14 +85,14 @@ namespace GsaGH.Components
       }
 
       if (mem != null)
-      { 
+      {
         // #### inputs ####
         // 1 ID
         GH_Integer ghID = new GH_Integer();
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            mem.ID = id;
+            mem.Id = id;
         }
 
         // 2 geometry
@@ -136,10 +136,10 @@ namespace GsaGH.Components
         }
 
         // 4 mesh size
-        GH_Number ghmsz = new GH_Number();
-        if (Params.Input[4].Sources.Count > 0)
+        double meshSize = 0;
+        if (DA.GetData(4, ref meshSize))
         {
-          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true);
+          mem.MeshSize = meshSize;
         }
 
         // 5 mesh with others
@@ -187,16 +187,16 @@ namespace GsaGH.Components
 
         // #### outputs ####
         DA.SetData(0, new GsaMember3dGoo(mem));
-        DA.SetData(1, mem.ID);
+        DA.SetData(1, mem.Id);
         DA.SetData(2, mem.SolidMesh);
         DA.SetData(3, new GsaProp3dGoo(mem.Property));
-        DA.SetData(4, new GH_UnitNumber(mem.MeshSize.ToUnit(this.LengthUnit)));
+        DA.SetData(4, mem.MeshSize);
         DA.SetData(5, mem.MeshWithOthers);
         DA.SetData(6, mem.Name);
         DA.SetData(7, mem.Group);
         DA.SetData(8, mem.Colour);
         DA.SetData(9, mem.IsDummy);
-        DA.SetData(10, mem.API_Member.Topology.ToString());
+        DA.SetData(10, mem.ApiMember.Topology.ToString());
       }
     }
 
@@ -227,7 +227,7 @@ namespace GsaGH.Components
     }
     private void Update(string unit)
     {
-      this.LengthUnit = Length.ParseUnit(unit);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
@@ -239,10 +239,7 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      else
-        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitGeometry;
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
 
@@ -254,11 +251,8 @@ namespace GsaGH.Components
     }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
     #endregion
     #endregion

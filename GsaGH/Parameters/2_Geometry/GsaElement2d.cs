@@ -319,7 +319,7 @@ namespace GsaGH.Parameters
       this._props = prop2ds;
     }
 
-    public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, Length meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit, int prop = 0)
+    public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit = LengthUnit.Meter, int prop = 0)
     {
       this._mesh = Util.GH.Convert.ConvertBrepToMesh(brep, curves, points, meshSize, unit, mem1ds, nodes);
       Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(this._mesh, prop, true);
@@ -366,7 +366,7 @@ namespace GsaGH.Parameters
         return "Null";
       string type = Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
       string info = "N:" + this.Mesh.Vertices.Count + " E:" + this.API_Elements.Count;
-      return type + info;
+      return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
     }
 
     private void CloneApiElements(ApiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null, List<Angle> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<System.Drawing.Color> col = null)

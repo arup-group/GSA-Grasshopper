@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -23,7 +25,7 @@ namespace GsaGH.Components
   public class EditSectionModifier : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("7c78c61b-f01c-4a0e-9399-712fc853e23b");
+    public override Guid ComponentGuid => new Guid("db2046cc-236d-44a5-aa88-1394dbc4558f");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditSectionModifier;
@@ -286,7 +288,7 @@ namespace GsaGH.Components
         GH_ObjectWrapper obj = new GH_ObjectWrapper();
         if (DA.GetData(11, ref obj))
         {
-          if (GH_Convert.ToInt32(obj, out int stress, GH_Conversion.Both))
+          if (GH_Convert.ToInt32(obj.Value, out int stress, GH_Conversion.Both))
           {
             if (stress == 0)
               modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
@@ -300,7 +302,7 @@ namespace GsaGH.Components
               return;
             }
           }
-          else if (GH_Convert.ToString(obj, out string stressString, GH_Conversion.Both))
+          else if (GH_Convert.ToString(obj.Value, out string stressString, GH_Conversion.Both))
           {
             if (stressString.ToLower().Contains("no"))
               modifier.StressOption = GsaSectionModifier.StressOptionType.NoCalculation;
@@ -400,12 +402,12 @@ namespace GsaGH.Components
 
     private void UpdateLength(string unit)
     {
-      this.LengthUnit = Length.ParseUnit(unit);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Update();
     }
     private void UpdateDensity(string unit)
     {
-      this.LinearDensityUnit = LinearDensity.ParseUnit(unit);
+      this.LinearDensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), unit);
       Update();
     }
     private void Update()
@@ -429,16 +431,8 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      try
-      {
-        this.LengthUnit = Length.ParseUnit(reader.GetString("LengthUnit"));
-        this.LinearDensityUnit = LinearDensity.ParseUnit(reader.GetString("DensityUnit"));
-      }
-      catch (Exception)
-      {
-        this.LengthUnit = DefaultUnits.LengthUnitSection;
-        this.LinearDensityUnit = DefaultUnits.LinearDensityUnit;
-      }
+      this.LengthUnit = Length.ParseUnit(reader.GetString("LengthUnit"));
+      this.LinearDensityUnit = LinearDensity.ParseUnit(reader.GetString("DensityUnit"));
       return base.Read(reader);
     }
 
@@ -456,11 +450,8 @@ namespace GsaGH.Components
     }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
     #endregion
     #endregion

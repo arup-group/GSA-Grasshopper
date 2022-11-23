@@ -291,7 +291,7 @@ namespace GsaGH.Parameters
       string prof = this._section.Profile.Replace("%", " ") + " ";
       string mat = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
       string mod = this._modifier.IsModified ? " modified" : "";
-      return (pb + prof + mat + mod).Trim();
+      return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim().Replace("  ", " ");
     }
     #endregion
   }
