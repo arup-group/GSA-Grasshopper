@@ -18,7 +18,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to select results from a GSA Model
   /// </summary>
-  public class SelectResult : GH_OasysDropDownComponent
+  public class SelectResult_OBSOLETE : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -27,7 +27,7 @@ namespace GsaGH.Components
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SelectResult;
 
-    public SelectResult() : base("Select Results",
+    public SelectResult_OBSOLETE() : base("Select Results",
       "SelRes",
       "Select AnalysisCase or Combination Result from an analysed GSA model",
       Ribbon.CategoryName.Name(),
