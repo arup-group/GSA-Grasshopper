@@ -125,7 +125,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            mem.ID = id;
+            mem.Id = id;
         }
 
         // 2/3/4 Brep, incl.pts and incl.lns
@@ -249,7 +249,7 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[10].Sources.Count > 0)
         {
-          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 10, this.LengthUnit, true);
+          mem.MeshSize = ((Length)Input.UnitNumber(this, DA, 10, this.LengthUnit, true)).Meters;
         }
 
         // 11 mesh with others
@@ -290,7 +290,7 @@ namespace GsaGH.Components
         // #### outputs ####
 
         DA.SetData(0, new GsaMember2dGoo(mem));
-        DA.SetData(1, mem.ID);
+        DA.SetData(1, mem.Id);
         DA.SetData(2, mem.Brep);
         DA.SetDataList(3, mem.InclusionPoints);
         DA.SetDataList(4, mem.InclusionLines);
@@ -303,13 +303,13 @@ namespace GsaGH.Components
 
         DA.SetData(9, new GsaOffsetGoo(mem.Offset));
 
-        DA.SetData(10, new GH_UnitNumber(mem.MeshSize.ToUnit(this.LengthUnit)));
+        DA.SetData(10, new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(this.LengthUnit)));
         DA.SetData(11, mem.MeshWithOthers);
 
         DA.SetData(12, mem.Name);
         DA.SetData(13, mem.Colour);
         DA.SetData(14, mem.IsDummy);
-        DA.SetData(15, mem.API_Member.Topology.ToString());
+        DA.SetData(15, mem.ApiMember.Topology.ToString());
       }
     }
 

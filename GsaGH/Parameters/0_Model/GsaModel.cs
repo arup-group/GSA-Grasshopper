@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
 using GsaAPI;
-using OasysGH;
-using OasysGH.Parameters;
-using OasysUnits.Units;
 using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Parameters
 {

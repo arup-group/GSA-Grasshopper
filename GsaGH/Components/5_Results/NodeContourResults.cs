@@ -79,13 +79,18 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gh_typ))
       {
         #region Inputs
+        if (gh_typ == null || gh_typ.Value == null)
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+          return;
+        }
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
           if (result.Type == GsaResult.ResultType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination case contains "
-                + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination Case " + result.CaseID + " contains "
+                + result.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
                 System.Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.ResultType.Combination)
@@ -107,6 +112,9 @@ namespace GsaGH.Components
           if (GH_Convert.ToString(gh_noList, out string tempnodeList, GH_Conversion.Both))
             nodeList = tempnodeList;
         }
+
+        if (nodeList.ToLower() == "all" || nodeList == "")
+          nodeList = "All";
 
         // Get colours
         List<GH_Colour> gh_Colours = new List<GH_Colour>();
@@ -274,7 +282,7 @@ namespace GsaGH.Components
         {
           if (node.Value.Value != null)
           {
-            int nodeID = node.Value.Value.ID;
+            int nodeID = node.Value.Value.Id;
             if (xyzResults.ContainsKey(nodeID))
             {
               if (!(dmin == 0 & dmax == 0))

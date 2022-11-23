@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
-using OasysGH.Units;
-using OasysGH.Units.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
@@ -18,10 +12,10 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create new 2D Member
   /// </summary>
-  public class CreateMember2d : GH_OasysDropDownComponent, IGH_PreviewObject
+  public class CreateMember2d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("df0c2786-9e46-4500-ab63-0c4162a580d4");
+    public override Guid ComponentGuid => new Guid("01450bfc-7ac1-4c51-97a2-42d81d6476b6");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateMem2d;
@@ -37,13 +31,11 @@ namespace GsaGH.Components
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
-
       pManager.AddBrepParameter("Brep", "B", "Planar Brep (non-planar geometry will be automatically converted to an average plane of exterior boundary control points))", GH_ParamAccess.item);
       pManager.AddPointParameter("Incl. Points", "(P)", "Inclusion points (will automatically be projected onto Brep)", GH_ParamAccess.list);
       pManager.AddCurveParameter("Incl. Curves", "(C)", "Inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp2dParameter());
-      pManager.AddGenericParameter("Mesh Size [" + unitAbbreviation + "]", "Ms", "Target mesh size", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Target mesh size", GH_ParamAccess.item);
 
       pManager.HideParameter(0);
       pManager.HideParameter(1);
@@ -122,50 +114,16 @@ namespace GsaGH.Components
           }
 
           // 4 mesh size
-          if (this.Params.Input[4].SourceCount > 0)
-            mem.MeshSize = (Length)Input.UnitNumber(this, DA, 4, LengthUnit, true);
+          double meshSize = 0;
+          if (DA.GetData(4, ref meshSize))
+          {
+            mem.MeshSize = meshSize;
+          }
 
           DA.SetData(0, new GsaMember2dGoo(mem));
         }
       }
     }
-
-    #region Custom UI
-    private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[]
-        {
-          "Unit"
-        });
-
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
-
-      // Length
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
-
-      this.IsInitialised = true;
-    }
-
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
-      base.UpdateUI();
-    }
-    public override void UpdateUIFromSelectedItems()
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
-      base.UpdateUIFromSelectedItems();
-    }
-    public override void VariableParameterMaintenance()
-    {
-      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-    }
-    #endregion
   }
 }
 

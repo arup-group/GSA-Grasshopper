@@ -82,13 +82,18 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gh_typ))
       {
         #region Inputs
+        if (gh_typ == null || gh_typ.Value == null)
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+          return;
+        }
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
           if (result.Type == GsaResult.ResultType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination case contains "
-                + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination Case " + result.CaseID + " contains "
+                + result.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
                 System.Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.ResultType.Combination)
@@ -107,7 +112,10 @@ namespace GsaGH.Components
         GH_String gh_Type = new GH_String();
         if (DA.GetData(1, ref gh_Type))
           GH_Convert.ToString(gh_Type, out elementlist, GH_Conversion.Both);
-
+        
+        if (elementlist.ToLower() == "all" || elementlist == "")
+          elementlist = "All";
+        
         // Get number of divisions
         GH_Integer gh_Div = new GH_Integer();
         DA.GetData(2, ref gh_Div);
@@ -155,15 +163,6 @@ namespace GsaGH.Components
               res = result.Element1DStrainEnergyDensityValues(elementlist, EnergyResultUnit)[0];
             break;
         }
-
-        // get geometry for display from results class
-        List<int> elementIDs = new List<int>();
-        if (result.Type == GsaResult.ResultType.AnalysisCase)
-          elementIDs = result.ACaseElement1DResults.Values.First().Select(x => x.Key).ToList();
-        else
-          elementIDs = result.ComboElement1DResults.Values.First().Select(x => x.Key).ToList();
-        if (elementlist.ToLower() == "all")
-          elementlist = String.Join(" ", elementIDs);
 
         ConcurrentDictionary<int, Element> elems = new ConcurrentDictionary<int, Element>(result.Model.Model.Elements(elementlist));
         ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(result.Model.Model.Nodes());

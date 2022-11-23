@@ -193,7 +193,7 @@ namespace GsaGH.Components
       // now we can set the gridplanesurface:
       if (gridareaload.GridPlaneSurface != null)
       {
-        if (gridareaload.GridPlaneSurface.GridSurfaceID == 0)
+        if (gridareaload.GridPlaneSurface.GridSurfaceId == 0)
           gridareaload.GridPlaneSurface = grdplnsrf;
       }
 

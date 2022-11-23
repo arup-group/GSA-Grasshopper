@@ -7,7 +7,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
 
-namespace GsaGHTests.Components
+namespace GsaGHTests.Components.Properties
 {
   [Collection("GrasshopperFixture collection")]
   public class CreateProp2dTests

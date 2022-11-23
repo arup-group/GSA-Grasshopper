@@ -70,24 +70,22 @@ namespace GsaGH.Components
         }
 
         DA.SetData(0, gps == null ? Plane.Unset : gps.Plane);
-        DA.SetData(1, gps.GridPlane == null ? 0 : gps.GridPlaneID);
+        DA.SetData(1, gps.GridPlane == null ? 0 : gps.GridPlaneId);
         DA.SetData(2, gps.GridPlane == null ? null : gps.GridPlane.Name);
         DA.SetData(3, gps.GridPlane == null ? false : gps.GridPlane.IsStoreyType);
         Plane axis = new Plane();
         if (gps.GridPlane != null)
         {
-          axis = new Plane(new Point3d(gps.Axis.Origin.X, gps.Axis.Origin.Y, gps.Axis.Origin.Z),
-          new Vector3d(gps.Axis.XVector.X, gps.Axis.XVector.Y, gps.Axis.XVector.Z),
-          new Vector3d(gps.Axis.XYPlane.X, gps.Axis.XYPlane.Y, gps.Axis.XYPlane.Z)
-          );
+          axis = new Plane(gps.Plane);
+          axis.OriginZ -= gps.Elevation;
         }
         DA.SetData(4, gps.GridPlane == null ? Plane.Unset : axis);
-        DA.SetData(5, gps.AxisID);
+        DA.SetData(5, gps.AxisId);
         DA.SetData(6, new GH_UnitNumber(new Length(gps.GridPlane == null ? 0 : gps.GridPlane.Elevation, this.LengthUnit)));
         DA.SetData(7, new GH_UnitNumber(new Length(gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceAbove, this.LengthUnit)));
         DA.SetData(8, new GH_UnitNumber(new Length(gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceBelow, this.LengthUnit)));
 
-        DA.SetData(9, gps.GridSurfaceID);
+        DA.SetData(9, gps.GridSurfaceId);
         DA.SetData(10, gps.GridSurface.Name);
         DA.SetData(11, gps.GridSurface.Elements);
         string elemtype = gps.GridSurface.ElementType.ToString();
@@ -130,7 +128,7 @@ namespace GsaGH.Components
 
       Menu_AppendSeparator(menu);
     }
-    
+
     private void Update(string unit)
     {
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);

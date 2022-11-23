@@ -54,7 +54,7 @@ namespace GsaGHTests.Parameters
       GsaElement1d elem = new GsaElement1d(new LineCurve(ln));
 
       // set some element class members
-      elem.ID = 66;
+      elem.Id = 66;
       elem.Section = new GsaSection();
       elem.Section.Id = 2;
       elem.Colour = System.Drawing.Color.Yellow;
@@ -75,7 +75,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal(-5, elem.Line.PointAtEnd.Z);
 
       // check other members are valid
-      Assert.Equal(66, elem.ID);
+      Assert.Equal(66, elem.Id);
       Assert.Equal(3, elem.Section.Id);
       Assert.Equal(System.Drawing.Color.FromArgb(255, 255, 255, 0), elem.Colour);
       Assert.Equal(4, elem.Group);
@@ -96,7 +96,7 @@ namespace GsaGHTests.Parameters
       GsaElement1d orig = new GsaElement1d(new LineCurve(ln));
 
       // set some element class members
-      orig.ID = 3;
+      orig.Id = 3;
       orig.Section = new GsaSection();
       orig.Section.Id = 7;
       orig.Colour = System.Drawing.Color.Aqua;
@@ -112,7 +112,7 @@ namespace GsaGHTests.Parameters
 
       // make some changes to original
       orig.Line = new LineCurve(new Line(new Point3d(1, 1, -4), new Point3d(1, 1, 0)));
-      orig.ID = 5;
+      orig.Id = 5;
       orig.Section.Id = 9;
       orig.Colour = System.Drawing.Color.Red;
       orig.Group = 2;
@@ -129,7 +129,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal(2, dup.Line.PointAtEnd.X, 1E-9);
       Assert.Equal(-1, dup.Line.PointAtEnd.Y, 1E-9);
       Assert.Equal(4, dup.Line.PointAtEnd.Z, 1E-9);
-      Assert.Equal(3, dup.ID);
+      Assert.Equal(3, dup.Id);
       Assert.Equal(7, dup.Section.Id);
       Assert.Equal(System.Drawing.Color.FromArgb(255, 0, 255, 255), dup.Colour);
       Assert.Equal(1, dup.Group);
@@ -145,7 +145,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal(1, orig.Line.PointAtEnd.X, 1E-9);
       Assert.Equal(1, orig.Line.PointAtEnd.Y, 1E-9);
       Assert.Equal(0, orig.Line.PointAtEnd.Z, 1E-9);
-      Assert.Equal(5, orig.ID);
+      Assert.Equal(5, orig.Id);
       Assert.Equal(9, orig.Section.Id);
       Assert.Equal(System.Drawing.Color.FromArgb(255, 255, 0, 0), orig.Colour);
       Assert.Equal(2, orig.Group);
