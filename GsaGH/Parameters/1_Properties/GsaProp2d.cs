@@ -143,9 +143,7 @@ namespace GsaGH.Parameters
       set
       {
         this.CloneApiObject();
-        value = Math.Min(1, value);
-        value = Math.Max(0, value);
-        this._prop2d.AxisProperty = value * -1;
+        this._prop2d.AxisProperty = value;
       }
     }
     public Property2D_Type Type

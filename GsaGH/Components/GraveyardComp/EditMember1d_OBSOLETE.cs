@@ -195,6 +195,19 @@ namespace GsaGH.Components
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element1D Type");
           }
         }
+        GH_String ghstring = new GH_String();
+        if (DA.GetData(5, ref ghstring))
+        {
+          if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
+            mem.Type = (MemberType)typeInt;
+          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          {
+            if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
+              mem.Type = Helpers.Mappings.MemberTypeMapping[typestring];
+            else
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element1D Type");
+          }
+        }
 
         // 6 element type
         ghstring = new GH_String();
@@ -335,15 +348,18 @@ namespace GsaGH.Components
 
         DA.SetData(12, new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(this.LengthUnit)));
         DA.SetData(13, mem.MeshWithOthers);
-
+        
         DA.SetData(14, new GsaBucklingLengthFactorsGoo(new GsaBucklingLengthFactors(mem, this.LengthUnit)));
 
         DA.SetData(15, mem.Name);
 
         DA.SetData(16, mem.Colour);
         DA.SetData(17, mem.IsDummy);
-        DA.SetData(18, mem.ApiMember.Topology.ToString());
+        DA.SetData(18, mem.API_Member.Topology.ToString());
       }
+      menu.Items.Add(unitsMenu);
+
+      Menu_AppendSeparator(menu);
     }
 
     #region Custom UI
@@ -383,9 +399,8 @@ namespace GsaGH.Components
     }
     private void Update(string unit)
     {
-      this.LengthUnit = Length.ParseUnit(unit);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.Message = unit;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
     }
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
@@ -396,36 +411,17 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       if (reader.ItemExists("LengthUnit"))
+      {
         this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        bool flag = base.Read(reader);
+        return flag & this.Params.ReadAllParameterData(reader);
+      }
       else
       {
-        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitGeometry;
-        List<IGH_Param> inputs = this.Params.Input.ToList();
-        List<IGH_Param> outputs = this.Params.Output.ToList();
-        bool flag = base.Read(reader);
-        foreach (IGH_Param param in inputs)
-          this.Params.RegisterInputParam(param);
-        foreach (IGH_Param param in outputs)
-          this.Params.RegisterOutputParam(param);
-        return flag;
+        this.LengthUnit = DefaultUnits.LengthUnitGeometry;
+        return base.Read(reader);
       }
-      return base.Read(reader);
     }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      this.Params.Input[12].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-      this.Params.Output[12].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-    }
-
-    #region IGH_VariableParameterComponent null implementation
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-    #endregion
     #endregion
   }
 }

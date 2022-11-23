@@ -19,15 +19,15 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit an Offset and ouput the information
   /// </summary>
-  public class EditOffset : GH_OasysComponent, IGH_VariableParameterComponent
+  public class EditOffset_OBSOLETE : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("dd2b4e77-c1c7-4a0e-9d12-fe7a8982f9ea");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override Guid ComponentGuid => new Guid("1e094fcd-8f5f-4047-983c-e0e57a83ae52");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditOffset;
 
-    public EditOffset() : base("Edit Offset",
+    public EditOffset_OBSOLETE() : base("Edit Offset",
       "OffsetEdit",
       "Modify GSA Offset or just get information about existing",
       Ribbon.CategoryName.Name(),
@@ -123,9 +123,8 @@ namespace GsaGH.Components
     }
     private void Update(string unit)
     {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      this.LengthUnit = Length.ParseUnit(unit);
       this.Message = unit;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
     }
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
@@ -135,29 +134,18 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      return base.Read(reader);
+      if (reader.ItemExists("LengthUnit"))
+      {
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        bool flag = base.Read(reader);
+        return flag & this.Params.ReadAllParameterData(reader);
+      }
+      else
+      {
+        this.LengthUnit = DefaultUnits.LengthUnitSection;
+        return base.Read(reader);
+      }
     }
-
-    #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance()
-    {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
-      this.Params.Input[1].Name = "Offset X1 [" + unitAbbreviation + "]";
-      this.Params.Input[2].Name = "Offset X2 [" + unitAbbreviation + "]";
-      this.Params.Input[3].Name = "Offset Y [" + unitAbbreviation + "]";
-      this.Params.Input[4].Name = "Offset Z [" + unitAbbreviation + "]";
-      this.Params.Output[1].Name = "Offset X1 [" + unitAbbreviation + "]";
-      this.Params.Output[2].Name = "Offset X2 [" + unitAbbreviation + "]";
-      this.Params.Output[3].Name = "Offset Y [" + unitAbbreviation + "]";
-      this.Params.Output[4].Name = "Offset Z [" + unitAbbreviation + "]";
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-    #endregion
     #endregion
   }
 }

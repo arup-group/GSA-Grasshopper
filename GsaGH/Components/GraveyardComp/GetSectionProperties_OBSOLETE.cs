@@ -19,15 +19,15 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to get geometric properties of a section
   /// </summary>
-  public class GetSectionProperties : GH_OasysComponent, IGH_VariableParameterComponent
+  public class GetSectionProperties_OBSOLETE : GH_OasysComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("fc59d2f7-496e-4862-8f66-31f1068fcab7");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override Guid ComponentGuid => new Guid("6504a99f-a4e2-4e30-8251-de31ea83e8cb");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SectionProperties;
 
-    public GetSectionProperties() : base("Section Properties",
+    public GetSectionProperties_OBSOLETE() : base("Section Properties",
       "SectProp",
       "Get GSA Section Properties",
       Ribbon.CategoryName.Name(),
@@ -115,9 +115,8 @@ namespace GsaGH.Components
     }
     private void Update(string unit)
     {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      this.LengthUnit = Length.ParseUnit(unit);
       this.Message = unit;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
     }
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
@@ -127,31 +126,18 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      return base.Read(reader);
+      if (reader.ItemExists("LengthUnit")) // = v0.9.33 => saved as IGH_Variableblabla
+      {
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        bool flag = base.Read(reader);
+        return flag & this.Params.ReadAllParameterData(reader);
+      }
+      else
+      {
+        this.LengthUnit = DefaultUnits.LengthUnitSection;
+        return base.Read(reader);
+      }
     }
-
-    #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance()
-    {
-      AreaUnit areaUnit = UnitsHelper.GetAreaUnit(this.LengthUnit);
-      AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(this.LengthUnit);
-
-      this.Params.Output[0].Name = "Area [" + Area.GetAbbreviation(areaUnit) + "]";
-      this.Params.Output[1].Name = "Moment of Inertia y-y [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      this.Params.Output[2].Name = "Moment of Inertia z-z [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      this.Params.Output[3].Name = "Moment of Inertia y-z [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      this.Params.Output[4].Name = "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-    #endregion
     #endregion
   }
 }

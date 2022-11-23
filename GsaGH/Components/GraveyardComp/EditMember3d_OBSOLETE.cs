@@ -20,7 +20,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a 3D Member
   /// </summary>
-  public class EditMember3d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+  public class EditMember3d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("955e573d-7608-4ac6-b436-54135f7714f6");
@@ -188,16 +188,16 @@ namespace GsaGH.Components
 
         // #### outputs ####
         DA.SetData(0, new GsaMember3dGoo(mem));
-        DA.SetData(1, mem.Id);
+        DA.SetData(1, mem.ID);
         DA.SetData(2, mem.SolidMesh);
         DA.SetData(3, new GsaProp3dGoo(mem.Property));
-        DA.SetData(4, new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(this.LengthUnit)));
+        DA.SetData(4, new GH_UnitNumber(mem.MeshSize.ToUnit(this.LengthUnit)));
         DA.SetData(5, mem.MeshWithOthers);
         DA.SetData(6, mem.Name);
         DA.SetData(7, mem.Group);
         DA.SetData(8, mem.Colour);
         DA.SetData(9, mem.IsDummy);
-        DA.SetData(10, mem.ApiMember.Topology.ToString());
+        DA.SetData(10, mem.API_Member.Topology.ToString());
       }
     }
 
@@ -230,7 +230,6 @@ namespace GsaGH.Components
     {
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.Message = unit;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
     }
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
@@ -241,38 +240,3 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      else
-      {
-        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitGeometry;
-        List<IGH_Param> inputs = this.Params.Input.ToList();
-        List<IGH_Param> outputs = this.Params.Output.ToList();
-        bool flag = base.Read(reader);
-        foreach (IGH_Param param in inputs)
-          this.Params.RegisterInputParam(param);
-        foreach (IGH_Param param in outputs)
-          this.Params.RegisterOutputParam(param);
-        return flag;
-      }
-      return base.Read(reader);
-    }
-
-    #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance()
-    {
-      this.Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-      this.Params.Output[4].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-    #endregion
-    #endregion
-  }
-}
-
