@@ -23,23 +23,8 @@ namespace GsaGH.Components
 
     public override void RemovedFromDocument(GH_Document document)
     {
-      Removed(this);
+      PostHog.RemovedFromDocument(this, GsaGH.PluginInfo.Instance);
       base.RemovedFromDocument(document);
-    }
-
-    // TO-DO replace this with PostHog.RemovedFromDocument when it has been made public in OasysGH
-    private void Removed(GH_Component component)
-    {
-      if (component.Attributes.Selected)
-      {
-        string eventName = "RemovedFromDocument";
-        Dictionary<string, object> properties = new Dictionary<string, object>()
-        {
-          { "componentName", component.Name },
-          { "runCount", component.RunCount },
-        };
-        _ = PostHog.SendToPostHog(GsaGH.PluginInfo.Instance, eventName, properties);
-      }
     }
   }
 }
