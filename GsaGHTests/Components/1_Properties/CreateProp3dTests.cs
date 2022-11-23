@@ -1,15 +1,11 @@
-﻿using Grasshopper.Kernel.Types;
-using GsaAPI;
-using GsaGH.Components;
+﻿using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using OasysUnits.Units;
-using OasysUnits;
 using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
-namespace GsaGHTests.Components
+namespace GsaGHTests.Components.Properties
 {
   [Collection("GrasshopperFixture collection")]
   public class CreateProp3dTests

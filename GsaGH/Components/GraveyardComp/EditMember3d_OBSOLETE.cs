@@ -93,7 +93,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            mem.ID = id;
+            mem.Id = id;
         }
 
         // 2 geometry
@@ -140,7 +140,7 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[4].Sources.Count > 0)
         {
-          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true);
+          mem.MeshSize = ((Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true)).Meters;
         }
 
         // 5 mesh with others
@@ -188,16 +188,16 @@ namespace GsaGH.Components
 
         // #### outputs ####
         DA.SetData(0, new GsaMember3dGoo(mem));
-        DA.SetData(1, mem.ID);
+        DA.SetData(1, mem.Id);
         DA.SetData(2, mem.SolidMesh);
         DA.SetData(3, new GsaProp3dGoo(mem.Property));
-        DA.SetData(4, new GH_UnitNumber(mem.MeshSize.ToUnit(this.LengthUnit)));
+        DA.SetData(4, new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(this.LengthUnit)));
         DA.SetData(5, mem.MeshWithOthers);
         DA.SetData(6, mem.Name);
         DA.SetData(7, mem.Group);
         DA.SetData(8, mem.Colour);
         DA.SetData(9, mem.IsDummy);
-        DA.SetData(10, mem.API_Member.Topology.ToString());
+        DA.SetData(10, mem.ApiMember.Topology.ToString());
       }
     }
 

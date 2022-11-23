@@ -15,7 +15,7 @@ namespace GsaGH.Components
   public class CreateMember1d : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("5c5b9efa-cdae-4be5-af40-ff2b590801dd");
+    public override Guid ComponentGuid => new Guid("8278b67c-425a-4220-b759-79ecdd6aba55");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateMem1d;
@@ -33,7 +33,9 @@ namespace GsaGH.Components
     {
       pManager.AddCurveParameter("Curve", "C", "Curve (a NURBS curve will automatically be converted in to a Polyline of Arc and Line segments)", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionParameter());
+      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Target mesh size", GH_ParamAccess.item);
       pManager[1].Optional = true;
+      pManager[2].Optional = true;
       pManager.HideParameter(0);
     }
 
@@ -100,6 +102,14 @@ namespace GsaGH.Components
               }
             }
           }
+
+          // 2 mesh size
+          double meshSize = 0;
+          if (DA.GetData(2, ref meshSize))
+          {
+            mem.MeshSize = meshSize;
+          }
+
           DA.SetData(0, new GsaMember1dGoo(mem));
         }
       }

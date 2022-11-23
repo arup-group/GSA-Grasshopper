@@ -282,7 +282,7 @@ namespace GsaGH.Components
         {
           if (node.Value.Value != null)
           {
-            int nodeID = node.Value.Value.ID;
+            int nodeID = node.Value.Value.Id;
             if (xyzResults.ContainsKey(nodeID))
             {
               if (!(dmin == 0 & dmax == 0))

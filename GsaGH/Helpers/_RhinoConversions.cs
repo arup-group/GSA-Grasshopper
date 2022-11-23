@@ -747,7 +747,7 @@ namespace GsaGH.Util.GH
       return new Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>>(elems, topoPts, topoInts, faceInts);
     }
 
-    public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, Length meshSize, LengthUnit unit, List<Parameters.GsaMember1d> mem1ds = null, List<Parameters.GsaNode> nodes = null)
+    public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, LengthUnit unit, List<GsaMember1d> mem1ds = null, List<GsaNode> nodes = null)
     {
       Brep in_brep = brep.DuplicateBrep();
       in_brep.Faces.ShrinkFaces();

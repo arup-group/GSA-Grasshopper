@@ -133,7 +133,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            mem.ID = id;
+            mem.Id = id;
         }
 
         // 2 curve
@@ -250,7 +250,7 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[12].Sources.Count > 0)
         {
-          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 12, DefaultUnits.LengthUnitGeometry, true);
+          mem.MeshSize = ((Length)Input.UnitNumber(this, DA, 12, DefaultUnits.LengthUnitGeometry, true)).Meters;
           if (DefaultUnits.LengthUnitGeometry != OasysUnits.Units.LengthUnit.Meter)
             AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
                 + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
@@ -293,7 +293,7 @@ namespace GsaGH.Components
 
         // #### outputs ####
         DA.SetData(0, new GsaMember1dGoo(mem));
-        DA.SetData(1, mem.ID);
+        DA.SetData(1, mem.Id);
         DA.SetData(2, mem.PolyCurve);
         DA.SetData(3, new GsaSectionGoo(mem.Section));
         DA.SetData(4, mem.Group);
@@ -308,14 +308,14 @@ namespace GsaGH.Components
         DA.SetData(10, mem.OrientationAngle);
         DA.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
-        DA.SetData(12, new GH_UnitNumber(mem.MeshSize));
+        DA.SetData(12, new GH_UnitNumber(new Length(mem.MeshSize, LengthUnit.Meter).ToUnit(DefaultUnits.LengthUnitGeometry)));
         DA.SetData(13, mem.MeshWithOthers);
 
         DA.SetData(14, mem.Name);
 
         DA.SetData(15, mem.Colour);
         DA.SetData(16, mem.IsDummy);
-        DA.SetData(17, mem.API_Member.Topology.ToString());
+        DA.SetData(17, mem.ApiMember.Topology.ToString());
       }
     }
   }
