@@ -215,7 +215,7 @@ namespace GsaGH
         //Return a short string describing the purpose of this GHA library.
         return "Official Oasys GSA Grasshopper Plugin" + Environment.NewLine
           + (isBeta ? Disclaimer : "")
-        + Environment.NewLine + "A licensed version of GSA 10.1.60 or later installed in "
+        + Environment.NewLine + "A licensed version of GSA 10.1.63 or later installed in "
         + @"C:\Program Files\Oasys\GSA 10.1\ is required to use this plugin."
         + Environment.NewLine + "Contact oasys@arup.com to request a free trial version."
         + Environment.NewLine + TermsConditions
