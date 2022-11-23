@@ -22,7 +22,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a 1D Member
   /// </summary>
-  public class EditMember1d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+  public class EditMember1d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("094f676f-c384-4d49-9d7f-64515004bf4b");

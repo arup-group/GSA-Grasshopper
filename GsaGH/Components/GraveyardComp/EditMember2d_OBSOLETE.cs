@@ -249,7 +249,7 @@ namespace GsaGH.Components
         GH_Number ghmsz = new GH_Number();
         if (Params.Input[10].Sources.Count > 0)
         {
-          mem.MeshSize = (Length)Input.UnitNumber(this, DA, 10, this.LengthUnit, true).Meters;
+          mem.MeshSize = ((Length)Input.UnitNumber(this, DA, 10, this.LengthUnit, true)).Meters;
         }
 
         // 11 mesh with others
