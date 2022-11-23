@@ -1,12 +1,11 @@
 ﻿using System;
-using GsaGH.Graphics;
 using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Helpers
 {
   [Collection("GrasshopperFixture collection")]
-  public class _DisplayTest
+  public class DisplayTest
   {
     [Theory]
     [InlineData(0, 0, 1, 0, 0, 0, 1, 0, 1, 0)]
@@ -49,7 +48,7 @@ namespace GsaGHTests.Helpers
       double t = curve.GetLength() / 2.0;
 
       // Act
-      Tuple<Vector3d, Vector3d, Vector3d> localAxis = Display.GetLocalPlane(curve, t, angle);
+      Tuple<Vector3d, Vector3d, Vector3d> localAxis = GsaGH.Helpers.Graphics.Display.GetLocalPlane(curve, t, angle);
 
       // Assert
       Vector3d expectedLocalX = new Vector3d(expextedLocalX1, expextedLocalY1, expextedLocalZ1);
