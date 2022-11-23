@@ -344,9 +344,6 @@ namespace GsaGH.Components
         DA.SetData(17, mem.IsDummy);
         DA.SetData(18, mem.ApiMember.Topology.ToString());
       }
-      menu.Items.Add(unitsMenu);
-
-      Menu_AppendSeparator(menu);
     }
 
     #region Custom UI
