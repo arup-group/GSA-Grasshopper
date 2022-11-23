@@ -187,19 +187,6 @@ namespace GsaGH.Components
         {
           if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
             mem.Type = (MemberType)typeInt;
-          else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
-          {
-            if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
-              mem.Type = Helpers.Mappings.MemberTypeMapping[typestring];
-            else
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element1D Type");
-          }
-        }
-        GH_String ghstring = new GH_String();
-        if (DA.GetData(5, ref ghstring))
-        {
-          if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
-            mem.Type = (MemberType)typeInt;
           if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
             if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
@@ -355,7 +342,7 @@ namespace GsaGH.Components
 
         DA.SetData(16, mem.Colour);
         DA.SetData(17, mem.IsDummy);
-        DA.SetData(18, mem.API_Member.Topology.ToString());
+        DA.SetData(18, mem.ApiMember.Topology.ToString());
       }
       menu.Items.Add(unitsMenu);
 
