@@ -79,6 +79,11 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gh_typ))
       {
         #region Inputs
+        if (gh_typ == null || gh_typ.Value == null)
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+          return;
+        }
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
@@ -107,6 +112,9 @@ namespace GsaGH.Components
           if (GH_Convert.ToString(gh_noList, out string tempnodeList, GH_Conversion.Both))
             nodeList = tempnodeList;
         }
+
+        if (nodeList.ToLower() == "all" || nodeList == "")
+          nodeList = "All";
 
         // Get colours
         List<GH_Colour> gh_Colours = new List<GH_Colour>();

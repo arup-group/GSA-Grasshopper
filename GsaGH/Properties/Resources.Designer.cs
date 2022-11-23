@@ -743,6 +743,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap GetResults {
+            get {
+                object obj = ResourceManager.GetObject("GetResults", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap GetSection {
             get {
                 object obj = ResourceManager.GetObject("GetSection", resourceCulture);
@@ -1106,6 +1116,16 @@ namespace GsaGH.Properties {
         public static System.Drawing.Bitmap ResultGlobal {
             get {
                 object obj = ResourceManager.GetObject("ResultGlobal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ResultsInfo {
+            get {
+                object obj = ResourceManager.GetObject("ResultsInfo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
