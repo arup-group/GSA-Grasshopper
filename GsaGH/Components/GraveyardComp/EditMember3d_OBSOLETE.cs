@@ -240,3 +240,18 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       if (reader.ItemExists("LengthUnit"))
+      {
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        bool flag = base.Read(reader);
+        return flag & this.Params.ReadAllParameterData(reader);
+      }
+      else
+      {
+        this.LengthUnit = DefaultUnits.LengthUnitGeometry;
+        return base.Read(reader);
+      }
+    }
+    #endregion
+  }
+}
+
