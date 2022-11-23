@@ -92,8 +92,8 @@ namespace GsaGH.Components
           result = ((GsaResultGoo)gh_typ.Value).Value;
           if (result.Type == GsaResult.ResultType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination case contains "
-                + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination Case " + result.CaseID + " contains "
+                + result.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
                 System.Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.ResultType.Combination)
