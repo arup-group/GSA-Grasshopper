@@ -1,5 +1,5 @@
 ﻿using System;
-using GsaGH.UI;
+using GsaGH.Graphics;
 using Rhino.Geometry;
 using Xunit;
 

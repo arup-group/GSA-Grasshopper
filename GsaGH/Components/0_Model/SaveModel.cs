@@ -9,13 +9,14 @@ using System.IO;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to open an existing GSA model
-  /// </summary>
-  public class SaveModel : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to open an existing GSA model
+    /// </summary>
+    public class SaveModel : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
@@ -26,8 +27,8 @@ namespace GsaGH.Components
     public SaveModel() : base("Save GSA Model",
       "Save",
       "Saves your GSA model from this parametric nightmare",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat0())
+      CategoryName.Name(),
+      SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

@@ -4,6 +4,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -15,7 +16,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  public class CreateNodeLoad : GH_OasysDropDownComponent
+    public class CreateNodeLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
@@ -26,8 +27,8 @@ namespace GsaGH.Components
     public CreateNodeLoad() : base("Create Node Load",
       "NodeLoad",
       "Create GSA Node Load",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -50,19 +51,19 @@ namespace GsaGH.Components
       }
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
-      pManager.AddTextParameter("Node list", "No", "List of Nodes to apply load to." + System.Environment.NewLine +
-           "Node list should take the form:" + System.Environment.NewLine +
-           " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Node list", "No", "List of Nodes to apply load to." + Environment.NewLine +
+           "Node list should take the form:" + Environment.NewLine +
+           " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
            "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di", "Load direction (default z)." +
-              System.Environment.NewLine + "Accepted inputs are:" +
-              System.Environment.NewLine + "x" +
-              System.Environment.NewLine + "y" +
-              System.Environment.NewLine + "z" +
-              System.Environment.NewLine + "xx" +
-              System.Environment.NewLine + "yy" +
-              System.Environment.NewLine + "zz", GH_ParamAccess.item, "z");
+              Environment.NewLine + "Accepted inputs are:" +
+              Environment.NewLine + "x" +
+              Environment.NewLine + "y" +
+              Environment.NewLine + "z" +
+              Environment.NewLine + "xx" +
+              Environment.NewLine + "yy" +
+              Environment.NewLine + "zz", GH_ParamAccess.item, "z");
       pManager.AddGenericParameter("Value [" + funit + "]", "V", "Load Value", GH_ParamAccess.item);
       pManager[0].Optional = true;
       pManager[2].Optional = true;
@@ -110,9 +111,9 @@ namespace GsaGH.Components
         if (type.StartsWith("GSA "))
         {
           Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in NodeList input!" + System.Environment.NewLine +
-              "Element list should take the form:" + System.Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + System.Environment.NewLine +
+              "You cannot input a Node/Element/Member in NodeList input!" + Environment.NewLine +
+              "Element list should take the form:" + Environment.NewLine +
+              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + Environment.NewLine +
               "Refer to GSA help file for definition of lists and full vocabulary.");
           return;
         }

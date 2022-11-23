@@ -280,7 +280,7 @@ namespace GsaGH.Parameters
     {
       if (_node.Restraint.X || _node.Restraint.Y || _node.Restraint.Z || _node.Restraint.XX || _node.Restraint.YY || _node.Restraint.ZZ)
       {
-        GsaGH.UI.Display.PreviewRestraint(Restraint, _plane, Point, ref this.previewSupportSymbol, ref this.previewText);
+        Helpers.Graphics.Display.PreviewRestraint(Restraint, _plane, Point, ref this.previewSupportSymbol, ref this.previewText);
       }
       else
       {

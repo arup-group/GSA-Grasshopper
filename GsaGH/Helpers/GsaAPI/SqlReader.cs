@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Data;
-using System.Data.SqlClient;
 using System.Globalization;
 
-namespace GsaGH.Util
+namespace GsaGH.Helpers.GsaAPI
 {
   /// <summary>
   /// Class containing functions to interface with SQLite db files.

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -17,10 +18,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 3D Member
-  /// </summary>
-  public class EditMember3d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a 3D Member
+    /// </summary>
+    public class EditMember3d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("955e573d-7608-4ac6-b436-54135f7714f6");
@@ -31,8 +32,8 @@ namespace GsaGH.Components
     public EditMember3d_OBSOLETE() : base("Edit 3D Member",
       "Mem3dEdit",
       "Modify GSA 3D Member",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 

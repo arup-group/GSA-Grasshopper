@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using Rhino.Display;
 
-namespace GsaGH.UI
+namespace GsaGH.Helpers.Graphics
 {
   /// <summary>
   /// Colour class holding the main colours used in colour scheme. 
   /// Make calls to this class to be able to easy update colours.
   /// 
   /// </summary>
-  public class Colour
+  public class Colours
   {
     // General colour scheme
     public static Color GsaGreen
@@ -60,11 +60,11 @@ namespace GsaGH.UI
     }
     public static Brush ClickedButtonColour
     {
-      get { return new SolidBrush(UI.Colour.WhiteOverlay(GsaDarkBlue, 0.32)); }
+      get { return new SolidBrush(Graphics.Colours.WhiteOverlay(GsaDarkBlue, 0.32)); }
     }
     public static Brush HoverButtonColour
     {
-      get { return new SolidBrush(UI.Colour.WhiteOverlay(GsaDarkBlue, 0.16)); }
+      get { return new SolidBrush(Graphics.Colours.WhiteOverlay(GsaDarkBlue, 0.16)); }
     }
     public static Brush InactiveButtonColour
     {
@@ -395,7 +395,7 @@ namespace GsaGH.UI
       return gH_Gradient;
     }
 
-    public static Color ElementType(GsaAPI.ElementType elementType)
+    public static Color ElementType(global::GsaAPI.ElementType elementType)
     {
       switch ((int)elementType)
       {

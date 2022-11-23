@@ -1,16 +1,17 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Section and ouput the information
-  /// </summary>
-  public class EditSection : GH_OasysComponent
+    /// <summary>
+    /// Component to edit a Section and ouput the information
+    /// </summary>
+    public class EditSection : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -22,8 +23,8 @@ namespace GsaGH.Components
     public EditSection() : base("Edit Section",
       "SectionEdit",
       "Modify GSA Section",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

@@ -5,6 +5,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -14,7 +15,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridSurface : GH_OasysDropDownComponent
+    public class CreateGridSurface : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("1052955c-cf97-4378-81d3-8491e0defad0");
@@ -25,8 +26,8 @@ namespace GsaGH.Components
     public CreateGridSurface() : base("Create Grid Surface",
       "GridSurface",
       "Create GSA Grid Surface",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { }
     #endregion
 
@@ -35,9 +36,9 @@ namespace GsaGH.Components
     {
       pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model", GH_ParamAccess.item, 0);
-      pManager.AddTextParameter("Element list", "El", "List of Elements for which load should be expanded to (by default 'all')." + System.Environment.NewLine +
-         "Element list should take the form:" + System.Environment.NewLine +
-         " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Element list", "El", "List of Elements for which load should be expanded to (by default 'all')." + Environment.NewLine +
+         "Element list should take the form:" + Environment.NewLine +
+         " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
       pManager.AddGenericParameter("Tolerance in model units", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
@@ -141,9 +142,9 @@ namespace GsaGH.Components
         if (type.StartsWith("GSA "))
         {
           Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in ElementList input!" + System.Environment.NewLine +
-              "Element list should take the form:" + System.Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + System.Environment.NewLine +
+              "You cannot input a Node/Element/Member in ElementList input!" + Environment.NewLine +
+              "Element list should take the form:" + Environment.NewLine +
+              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + Environment.NewLine +
               "Refer to GSA help file for definition of lists and full vocabulary.");
           return;
         }
@@ -321,11 +322,11 @@ namespace GsaGH.Components
       {
         Params.Input[5].NickName = "Exp";
         Params.Input[5].Name = "Load Expansion";
-        Params.Input[5].Description = "Load Expansion: " + System.Environment.NewLine + "Accepted inputs are:" +
-            System.Environment.NewLine + "0 : Corner (plane)" +
-            System.Environment.NewLine + "1 : Smooth (plane)" +
-            System.Environment.NewLine + "2 : Plane" +
-            System.Environment.NewLine + "3 : Legacy";
+        Params.Input[5].Description = "Load Expansion: " + Environment.NewLine + "Accepted inputs are:" +
+            Environment.NewLine + "0 : Corner (plane)" +
+            Environment.NewLine + "1 : Smooth (plane)" +
+            Environment.NewLine + "2 : Plane" +
+            Environment.NewLine + "3 : Legacy";
         Params.Input[5].Access = GH_ParamAccess.item;
         Params.Input[5].Optional = true;
 

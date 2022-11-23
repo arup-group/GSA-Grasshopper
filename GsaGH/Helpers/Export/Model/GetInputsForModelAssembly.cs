@@ -6,7 +6,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export
 {
-  internal class ModelAssembly
+  internal class GetInputsForModelAssembly
   {
     internal static List<GsaModel> GetModels(GH_Component owner, IGH_DataAccess DA, int inputid, bool isOptional = false)
     {
@@ -168,7 +168,7 @@ namespace GsaGH.Helpers.Export
             type = type.Replace("GsaGH.Parameters.", "");
             type = type.Replace("Goo", "");
             owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input parameter of type " +
-                type + System.Environment.NewLine + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
+                type + Environment.NewLine + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
             return null;
           }
         }
@@ -234,7 +234,7 @@ namespace GsaGH.Helpers.Export
             type = type.Replace("GsaGH.Parameters.", "");
             type = type.Replace("Goo", "");
             owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input parameter of type " +
-                type + System.Environment.NewLine + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
+                type + Environment.NewLine + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
             return null;
           }
         }

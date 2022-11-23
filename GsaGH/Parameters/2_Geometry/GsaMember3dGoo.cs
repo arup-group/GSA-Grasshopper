@@ -137,12 +137,12 @@ namespace GsaGH.Parameters
         if (!Value.IsDummy)
         {
           if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-            args.Pipeline.DrawMeshShaded(Value.SolidMesh, UI.Colour.Element2dFace); //UI.Colour.Member2dFace
+            args.Pipeline.DrawMeshShaded(Value.SolidMesh, Helpers.Graphics.Colours.Element2dFace); //UI.Colour.Member2dFace
           else
-            args.Pipeline.DrawMeshShaded(Value.SolidMesh, UI.Colour.Element2dFaceSelected);
+            args.Pipeline.DrawMeshShaded(Value.SolidMesh, Helpers.Graphics.Colours.Element2dFaceSelected);
         }
         else
-          args.Pipeline.DrawMeshShaded(Value.SolidMesh, UI.Colour.Dummy2D);
+          args.Pipeline.DrawMeshShaded(Value.SolidMesh, Helpers.Graphics.Colours.Dummy2D);
       }
     }
     public override void DrawViewportWires(GH_PreviewWireArgs args)
@@ -159,11 +159,11 @@ namespace GsaGH.Parameters
           {
             if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
             {
-              args.Pipeline.DrawDottedLine(Value.previewEdgeLines[i], UI.Colour.Dummy1D);
+              args.Pipeline.DrawDottedLine(Value.previewEdgeLines[i], Helpers.Graphics.Colours.Dummy1D);
             }
             else
             {
-              args.Pipeline.DrawDottedLine(Value.previewEdgeLines[i], UI.Colour.Member2dEdgeSelected);
+              args.Pipeline.DrawDottedLine(Value.previewEdgeLines[i], Helpers.Graphics.Colours.Member2dEdgeSelected);
             }
           }
         }
@@ -177,26 +177,26 @@ namespace GsaGH.Parameters
                 args.Pipeline.DrawLine(Value.previewEdgeLines[i], (System.Drawing.Color)Value.Colour, 2);
               else
               {
-                System.Drawing.Color col = UI.Colour.Member2dEdge;
+                System.Drawing.Color col = Helpers.Graphics.Colours.Member2dEdge;
                 args.Pipeline.DrawLine(Value.previewEdgeLines[i], col, 2);
               }
             }
             else
-              args.Pipeline.DrawLine(Value.previewEdgeLines[i], UI.Colour.Element2dEdgeSelected, 2);
+              args.Pipeline.DrawLine(Value.previewEdgeLines[i], Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
           }
 
           for (int i = 0; i < Value.previewHiddenLines.Count; i++)
           {
-            args.Pipeline.DrawDottedPolyline(Value.previewHiddenLines[i], UI.Colour.Dummy1D, false);
+            args.Pipeline.DrawDottedPolyline(Value.previewHiddenLines[i], Helpers.Graphics.Colours.Dummy1D, false);
           }
         }
         // draw points
         for (int i = 0; i < Value.previewPts.Count; i++)
         {
           if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-            args.Pipeline.DrawPoint(Value.previewPts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
+            args.Pipeline.DrawPoint(Value.previewPts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.IsDummy) ? Helpers.Graphics.Colours.Dummy1D : Helpers.Graphics.Colours.Member1dNode);
           else
-            args.Pipeline.DrawPoint(Value.previewPts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Member1dNodeSelected);
+            args.Pipeline.DrawPoint(Value.previewPts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, Helpers.Graphics.Colours.Member1dNodeSelected);
         }
       }
     }

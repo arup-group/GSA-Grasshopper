@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.GsaAPI;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// Member3d class, this class defines the basic properties and methods for any Gsa Member 3d
-  /// </summary>
-  public class GsaMember3d
+    /// <summary>
+    /// Member3d class, this class defines the basic properties and methods for any Gsa Member 3d
+    /// </summary>
+    public class GsaMember3d
   {
     #region fields
     internal List<Polyline> previewHiddenLines;
@@ -33,7 +34,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this._mesh = Util.GH.Convert.ConvertMeshToTriMeshSolid(value);
+        this._mesh = Helpers.GH.RhinoConversions.ConvertMeshToTriMeshSolid(value);
         this.UpdatePreview();
       }
     }
@@ -121,7 +122,7 @@ namespace GsaGH.Parameters
     {
       this.ApiMember = member;
       this.Id = id;
-      this._mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+      this._mesh = GsaGH.Helpers.GH.RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
       this.UpdatePreview();
     }
 
@@ -129,7 +130,7 @@ namespace GsaGH.Parameters
     {
       this.ApiMember = member;
       this.Id = id;
-      this._mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+      this._mesh = GsaGH.Helpers.GH.RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
       this.Property = prop.Duplicate();
       this.UpdatePreview();
     }
@@ -140,7 +141,7 @@ namespace GsaGH.Parameters
       {
         Type = MemberType.GENERIC_3D
       };
-      this._mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+      this._mesh = GsaGH.Helpers.GH.RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
       this.UpdatePreview();
     }
 
@@ -151,7 +152,7 @@ namespace GsaGH.Parameters
         Type = MemberType.GENERIC_3D
       };
       this.Property = new GsaProp3d();
-      this._mesh = GsaGH.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
+      this._mesh = GsaGH.Helpers.GH.RhinoConversions.ConvertBrepToTriMeshSolid(brep);
       this.UpdatePreview();
     }
     #endregion
@@ -175,7 +176,7 @@ namespace GsaGH.Parameters
     public GsaMember3d UpdateGeometry(Brep brep)
     {
       GsaMember3d dup = this.Duplicate();
-      dup._mesh = GsaGH.Util.GH.Convert.ConvertBrepToTriMeshSolid(brep);
+      dup._mesh = GsaGH.Helpers.GH.RhinoConversions.ConvertBrepToTriMeshSolid(brep);
       dup.UpdatePreview();
       return dup;
     }
@@ -183,7 +184,7 @@ namespace GsaGH.Parameters
     public GsaMember3d UpdateGeometry(Mesh mesh)
     {
       GsaMember3d dup = this.Duplicate();
-      dup._mesh = GsaGH.Util.GH.Convert.ConvertMeshToTriMeshSolid(mesh);
+      dup._mesh = GsaGH.Helpers.GH.RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
       dup.UpdatePreview();
       return dup;
     }
@@ -191,7 +192,7 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       string idd = this.Id == 0 ? "" : "ID:" + Id + " ";
-      string type = Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.ApiMember.Type).Key;
+      string type = Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.ApiMember.Type).Key;
       return string.Join(" ", idd.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }
 
@@ -225,7 +226,7 @@ namespace GsaGH.Parameters
 
     private void UpdatePreview()
     {
-      GsaGH.UI.Display.PreviewMem3d(ref this._mesh, ref this.previewHiddenLines, ref this.previewEdgeLines, ref this.previewPts);
+      Helpers.Graphics.Display.PreviewMem3d(ref this._mesh, ref this.previewHiddenLines, ref this.previewEdgeLines, ref this.previewPts);
     }
     #endregion
   }

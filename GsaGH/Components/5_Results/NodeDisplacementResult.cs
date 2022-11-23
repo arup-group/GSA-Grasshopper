@@ -7,6 +7,7 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -18,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get GSA node displacement values
-  /// </summary>
-  public class NodeDisplacement : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get GSA node displacement values
+    /// </summary>
+    public class NodeDisplacement : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("83844063-3da9-4d96-95d3-ea39f96f3e2a");
@@ -32,8 +33,8 @@ namespace GsaGH.Components
     public NodeDisplacement() : base("Node Displacements",
       "NodeDisp",
       "Node Translation and Rotation result values",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -41,9 +42,9 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.list);
-      pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + System.Environment.NewLine +
-          "Node list should take the form:" + System.Environment.NewLine +
-          " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + Environment.NewLine +
+          "Node list should take the form:" + Environment.NewLine +
+          " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager[1].Optional = true;
     }
@@ -52,9 +53,9 @@ namespace GsaGH.Components
     {
       string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
 
-      string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation } " +
-                    System.Environment.NewLine + "fx. {1;2} is Case 1, Permutation 2, where each branch " +
-                      System.Environment.NewLine + "contains a list matching the NodeIDs in the ID output.";
+      string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation } " +
+                    Environment.NewLine + "fx. {1;2} is Case 1, Permutation 2, where each branch " +
+                      Environment.NewLine + "contains a list matching the NodeIDs in the ID output.";
 
       pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux", "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations Y [" + unitAbbreviation + "]", "Uy", "Translations in Y-direction in Global Axis" + note, GH_ParamAccess.tree);

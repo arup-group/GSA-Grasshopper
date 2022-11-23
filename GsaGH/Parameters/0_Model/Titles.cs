@@ -52,17 +52,6 @@ namespace GsaGH
     private static bool m_title_byuser = false;
     #endregion
 
-    public static void SetTitlesInGSA(Model model)
-    {
-      GsaAPI.Titles titles = model.Titles();
-      titles.Calculation = Titles.Calculation;
-      titles.Initials = Titles.Initials;
-      titles.JobNumber = Titles.JobNumber;
-      titles.Notes = Titles.Notes;
-      titles.SubTitle = Titles.SubTitle;
-      titles.Title = Titles.Title;
-      //model.Titles() = titles; GsaAPI needs to be updated to allow setting titles
-    }
     public static void GetTitlesFromGSA(Model model)
     {
       GsaAPI.Titles titles = model.Titles();

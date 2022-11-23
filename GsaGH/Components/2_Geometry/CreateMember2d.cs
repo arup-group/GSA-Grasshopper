@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -9,10 +10,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create new 2D Member
-  /// </summary>
-  public class CreateMember2d : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new 2D Member
+    /// </summary>
+    public class CreateMember2d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("01450bfc-7ac1-4c51-97a2-42d81d6476b6");
@@ -23,8 +24,8 @@ namespace GsaGH.Components
     public CreateMember2d() : base("Create 2D Member",
       "Mem2D",
       "Create GSA Member 2D",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 

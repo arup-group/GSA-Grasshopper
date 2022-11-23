@@ -8,13 +8,14 @@ using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using OasysUnits.Units;
 using OasysUnits;
+using GsaGH.Helpers.GsaAPI;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
-  /// </summary>
-  public class GsaElement1d
+    /// <summary>
+    /// Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
+    /// </summary>
+    public class GsaElement1d
   {
     #region fields
     internal Point3d previewPointStart;
@@ -256,7 +257,7 @@ namespace GsaGH.Parameters
       {
         PolyCurve crv = new PolyCurve();
         crv.Append(this._line);
-        return UI.Display.GetLocalPlane(crv, crv.GetLength() / 2, this._element.OrientationAngle * Math.PI / 180.0);
+        return Helpers.Graphics.Display.GetLocalPlane(crv, crv.GetLength() / 2, this._element.OrientationAngle * Math.PI / 180.0);
       }
     }
     #endregion
@@ -315,7 +316,7 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       string idd = this.Id == 0 ? "" : "ID:" + Id + " ";
-      string type = Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
+      string type = Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
       string pb = this._section.Id > 0 ? "PB" + this._section.Id : this._section.Profile;
       return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
     }
@@ -391,7 +392,7 @@ namespace GsaGH.Parameters
           };
           PolyCurve crv = new PolyCurve();
           crv.Append(this._line);
-          GsaGH.UI.Display.Preview1D(crv, _element.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2, ref previewGreenLines, ref previewRedLines);
+          Helpers.Graphics.Display.Preview1D(crv, _element.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2, ref previewGreenLines, ref previewRedLines);
         }
         else
           previewGreenLines = null;

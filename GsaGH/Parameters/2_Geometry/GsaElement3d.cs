@@ -5,14 +5,15 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper;
 using GsaAPI;
+using GsaGH.Helpers.GsaAPI;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// Element3d class, this class defines the basic properties and methods for any Gsa Element 3d
-  /// </summary>
-  public class GsaElement3d
+    /// <summary>
+    /// Element3d class, this class defines the basic properties and methods for any Gsa Element 3d
+    /// </summary>
+    public class GsaElement3d
   {
     private enum ApiObjectMember
     {
@@ -335,7 +336,7 @@ namespace GsaGH.Parameters
     public GsaElement3d(Mesh mesh, int prop = 0)
     {
       this._mesh = mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(mesh, 0);
+      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem3d(mesh, 0);
       this._elements = convertMesh.Item1;
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;
@@ -355,7 +356,7 @@ namespace GsaGH.Parameters
     {
       this._elements = elements;
       this._mesh = mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(mesh, 0);
+      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem3d(mesh, 0);
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;
       this._faceInt = convertMesh.Item4;
@@ -388,7 +389,7 @@ namespace GsaGH.Parameters
     {
       if (!this._mesh.IsValid)
         return "Null";
-      string type = Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
+      string type = Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
       string info = "N:" + this.NgonMesh.Vertices.Count + " E:" + this.API_Elements.Count;
       return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
     }
@@ -404,7 +405,7 @@ namespace GsaGH.Parameters
 
       GsaElement3d dup = this.Duplicate(true);
       this._mesh = updatedMesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(this._mesh, 0);
+      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem3d(this._mesh, 0);
       this._elements = convertMesh.Item1;
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;

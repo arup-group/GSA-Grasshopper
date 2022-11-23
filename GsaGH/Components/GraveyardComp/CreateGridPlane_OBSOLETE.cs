@@ -4,6 +4,7 @@ using Eto.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -16,7 +17,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridPlane_OBSOLETE : GH_OasysDropDownComponent
+    public class CreateGridPlane_OBSOLETE : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("675fd47a-890d-45b8-bdde-fb2e8c1d9cca");
@@ -27,8 +28,8 @@ namespace GsaGH.Components
     public CreateGridPlane_OBSOLETE() : base("Create Grid Plane",
       "GridPlane",
       "Create GSA Grid Plane",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { }
     #endregion
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Util.Gsa.ToGSA;
+using GsaGH.Helpers.GsaAPI.ToGSA;
 using GsaGHTests.Helpers;
 using Rhino.Geometry;
 using Xunit;

@@ -9,13 +9,14 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GsaAPI;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// Element2d class, this class defines the basic properties and methods for any Gsa Element 2d
-  /// </summary>
-  public class GsaElement2d
+    /// <summary>
+    /// Element2d class, this class defines the basic properties and methods for any Gsa Element 2d
+    /// </summary>
+    public class GsaElement2d
   {
     private enum ApiObjectMember
     {
@@ -296,7 +297,7 @@ namespace GsaGH.Parameters
     public GsaElement2d(Mesh mesh, int prop = 0)
     {
       this._mesh = mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(this._mesh, prop);
+      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem2d(this._mesh, prop);
       this._elements = convertMesh.Item1;
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;
@@ -313,7 +314,7 @@ namespace GsaGH.Parameters
     {
       this._mesh = mesh;
       this._topo = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
-      this._topoInt = Util.GH.Convert.ConvertMeshToElem2d(this._mesh);
+      this._topoInt = Helpers.GH.RhinoConversions.ConvertMeshToElem2d(this._mesh);
       this._elements = elements;
       this._ids = Ids;
       this._props = prop2ds;
@@ -321,8 +322,8 @@ namespace GsaGH.Parameters
 
     public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit = LengthUnit.Meter, int prop = 0)
     {
-      this._mesh = Util.GH.Convert.ConvertBrepToMesh(brep, curves, points, meshSize, unit, mem1ds, nodes);
-      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(this._mesh, prop, true);
+      this._mesh = Helpers.GH.RhinoConversions.ConvertBrepToMesh(brep, curves, points, meshSize, unit, mem1ds, nodes);
+      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem2d(this._mesh, prop, true);
       this._elements = convertMesh.Item1;
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;
@@ -353,7 +354,7 @@ namespace GsaGH.Parameters
 
       GsaElement2d dup = this.Duplicate(true);
       this._mesh = newMesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem2d(this._mesh, 0);
+      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem2d(this._mesh, 0);
       this._elements = convertMesh.Item1;
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;
@@ -364,7 +365,7 @@ namespace GsaGH.Parameters
     {
       if (!this._mesh.IsValid)
         return "Null";
-      string type = Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
+      string type = Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
       string info = "N:" + this.Mesh.Vertices.Count + " E:" + this.API_Elements.Count;
       return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
     }

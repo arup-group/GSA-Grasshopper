@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -14,10 +15,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Material
-  /// </summary>
-  public class CreateCustomMaterial : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to create a new Material
+    /// </summary>
+    public class CreateCustomMaterial : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("83bfce91-9204-4fe4-b81d-0036babf0c6d");
@@ -28,8 +29,8 @@ namespace GsaGH.Components
     public CreateCustomMaterial() : base("Custom Material",
       "Material",
       "Create a Custom GSA Analysis Material",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -69,7 +70,7 @@ namespace GsaGH.Components
         if (anal == 0)
         {
           AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Material ID cannot be 0 - that is 'from Grade'. " +
-               System.Environment.NewLine + "Leave blank or use -1 for automatic assigning.");
+               Environment.NewLine + "Leave blank or use -1 for automatic assigning.");
           return;
         }
       }

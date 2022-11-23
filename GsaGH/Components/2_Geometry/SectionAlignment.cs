@@ -5,23 +5,19 @@ using System.IO;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
-using GsaGH.Util;
-using GsaGH.Util.Gsa.ToGSA;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Parameters;
 using OasysUnits.Units;
 using OasysUnits;
-using Rhino.Geometry;
-using static Grasshopper.Kernel.Special.GH_Panel;
 using System.Linq;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to automatically create offset based on section profile
-  /// </summary>
-  public class SectionAlignment : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to automatically create offset based on section profile
+    /// </summary>
+    public class SectionAlignment : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4dc655a2-366e-486e-b8c3-10b2063b7aac");
@@ -32,8 +28,8 @@ namespace GsaGH.Components
     public SectionAlignment() : base("Section Alignment",
       "Align",
       "Automatically create Offset based on desired Alignment and Section profile",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -42,16 +38,16 @@ namespace GsaGH.Components
     {
       pManager.AddGenericParameter("Element/Member 1D/2D", "Geo", "Element1D, Element2D, Member1D or Member2D to align. Existing Offsets will be overwritten.", GH_ParamAccess.item);
       pManager.AddTextParameter("Alignment", "Al", "Section alignment. This input will overwrite dropdown selection." +
-              System.Environment.NewLine + "Accepted inputs are:" +
-              System.Environment.NewLine + "Centroid" +
-              System.Environment.NewLine + "Top-Left" +
-              System.Environment.NewLine + "Top-Centre" +
-              System.Environment.NewLine + "Top-Right" +
-              System.Environment.NewLine + "Mid-Left" +
-              System.Environment.NewLine + "Mid-Right" +
-              System.Environment.NewLine + "Bottom-Left" +
-              System.Environment.NewLine + "Bottom-Centre" +
-              System.Environment.NewLine + "Bottom-Right", GH_ParamAccess.item);
+              Environment.NewLine + "Accepted inputs are:" +
+              Environment.NewLine + "Centroid" +
+              Environment.NewLine + "Top-Left" +
+              Environment.NewLine + "Top-Centre" +
+              Environment.NewLine + "Top-Right" +
+              Environment.NewLine + "Mid-Left" +
+              Environment.NewLine + "Mid-Right" +
+              Environment.NewLine + "Bottom-Left" +
+              Environment.NewLine + "Bottom-Centre" +
+              Environment.NewLine + "Bottom-Right", GH_ParamAccess.item);
 
       pManager.AddParameter(new GsaOffsetParameter(), GsaOffsetGoo.Name, GsaOffsetGoo.NickName, "Additional Offset (y and z values will be added to alignment setting)", GH_ParamAccess.item);
 
@@ -334,7 +330,7 @@ namespace GsaGH.Components
           else if (profile.StartsWith("CAT"))
           {
             string prof = profile.Split(' ')[2];
-            List<double> sqlValues = SqlReader.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+            List<double> sqlValues = Helpers.GsaAPI.SqlReader.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
             unit = LengthUnit.Meter;
 
             depth = new Length(sqlValues[0], unit);

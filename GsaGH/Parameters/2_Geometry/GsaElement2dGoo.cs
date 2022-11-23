@@ -115,10 +115,10 @@ namespace GsaGH.Parameters
       //Draw shape.
       if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
       {
-        args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
+        args.Pipeline.DrawMeshShaded(Value.Mesh, Helpers.Graphics.Colours.Element2dFace);
       }
       else
-        args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFaceSelected);
+        args.Pipeline.DrawMeshShaded(Value.Mesh, Helpers.Graphics.Colours.Element2dFaceSelected);
     }
     public override void DrawViewportWires(GH_PreviewWireArgs args)
     {
@@ -130,11 +130,11 @@ namespace GsaGH.Parameters
       {
         if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
         {
-          args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdge, 1);
+          args.Pipeline.DrawMeshWires(Value.Mesh, Helpers.Graphics.Colours.Element2dEdge, 1);
         }
         else
         {
-          args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdgeSelected, 2);
+          args.Pipeline.DrawMeshWires(Value.Mesh, Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
         }
       }
     }

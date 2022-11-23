@@ -2,13 +2,14 @@
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.GsaAPI;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop3D"/>
-  /// </summary>
-  public class GsaProp3d
+    /// <summary>
+    /// Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop3D"/>
+    /// </summary>
+    public class GsaProp3d
   {
     #region fields
     private int _idd = 0;
@@ -57,7 +58,7 @@ namespace GsaGH.Parameters
         else
           this.CloneApiObject();
 
-        this._prop3d.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(this._material);
+        this._prop3d.MaterialType = Helpers.Export.Materials.ConvertType(this._material);
         this._prop3d.MaterialAnalysisProperty = this._material.AnalysisProperty;
         this._prop3d.MaterialGradeProperty = this._material.GradeProperty;
       }
@@ -153,7 +154,7 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string type = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key;
+      string type = Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key;
       string pa = (this.ID > 0) ? "PV" + this.ID + " " : "";
       return string.Join(" ", pa.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }

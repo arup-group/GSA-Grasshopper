@@ -5,6 +5,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -14,10 +16,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 1D Element
-  /// </summary>
-  public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a 1D Element
+    /// </summary>
+    public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -29,8 +31,8 @@ namespace GsaGH.Components
     public EditElement1d() : base("Edit 1D Element",
       "Elem1dEdit",
       "Modify GSA 1D Element",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -42,17 +44,17 @@ namespace GsaGH.Components
       pManager.AddLineParameter("Line", "L", "Reposition Element Line", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Set new Section Property", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Group", "Gr", "Set Element Group", GH_ParamAccess.item);
-      pManager.AddTextParameter("Type", "eT", "Set Element Type" + System.Environment.NewLine +
-          "Accepted inputs are:" + System.Environment.NewLine +
-          "1: Bar" + System.Environment.NewLine +
-          "2: Beam" + System.Environment.NewLine +
-          "3: Spring" + System.Environment.NewLine +
-          "9: Link" + System.Environment.NewLine +
-          "10: Cable" + System.Environment.NewLine +
-          "19: Spacer" + System.Environment.NewLine +
-          "20: Strut" + System.Environment.NewLine +
-          "21: Tie" + System.Environment.NewLine +
-          "23: Rod" + System.Environment.NewLine +
+      pManager.AddTextParameter("Type", "eT", "Set Element Type" + Environment.NewLine +
+          "Accepted inputs are:" + Environment.NewLine +
+          "1: Bar" + Environment.NewLine +
+          "2: Beam" + Environment.NewLine +
+          "3: Spring" + Environment.NewLine +
+          "9: Link" + Environment.NewLine +
+          "10: Cable" + Environment.NewLine +
+          "19: Spacer" + Environment.NewLine +
+          "20: Strut" + Environment.NewLine +
+          "21: Tie" + Environment.NewLine +
+          "23: Rod" + Environment.NewLine +
           "24: Damper", GH_ParamAccess.item);
 
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Element Offset", GH_ParamAccess.item);
@@ -186,8 +188,8 @@ namespace GsaGH.Components
             elem.Type = (ElementType)typeInt;
           if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
-            if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
-              elem.Type = Helpers.Mappings.ElementTypeMapping[typestring];
+            if (Mappings.ElementTypeMapping.ContainsKey(typestring))
+              elem.Type = Mappings.ElementTypeMapping[typestring];
             else
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element Type");
           }
@@ -268,7 +270,7 @@ namespace GsaGH.Components
         DA.SetData(2, new GH_Line(elem.Line.Line));
         DA.SetData(3, new GsaSectionGoo(elem.Section));
         DA.SetData(4, elem.Group);
-        DA.SetData(5, Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
+        DA.SetData(5, Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
         DA.SetData(6, new GsaOffsetGoo(elem.Offset));
         DA.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
         DA.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));

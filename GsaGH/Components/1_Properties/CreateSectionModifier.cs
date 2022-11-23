@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaGH.Helpers;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -14,10 +15,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Offset
-  /// </summary>
-  public class CreateSectionModifier : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to create a new Offset
+    /// </summary>
+    public class CreateSectionModifier : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e65d2554-75a9-4fac-9f12-1400e84aeee9");
@@ -29,8 +30,8 @@ namespace GsaGH.Components
       : base("Create Section Modifier", 
       "SectionModifier", 
       "Create GSA Section Modifier",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

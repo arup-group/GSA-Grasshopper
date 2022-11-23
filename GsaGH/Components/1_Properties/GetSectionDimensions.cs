@@ -10,19 +10,20 @@ using OasysGH.Units.Helpers;
 using OasysGH.Units;
 using OasysUnits.Units;
 using OasysUnits;
-using GsaGH.Util.Gsa;
+using GsaGH.Helpers.GsaAPI;
 using System.Globalization;
 using OasysGH.Helpers;
 using System.Collections.Generic;
 using System.IO;
-using GsaGH.Util;
+using GsaGH.Helpers;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get geometric dimensions of a section
-  /// </summary>
-  public class GetSectionDimensions : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to get geometric dimensions of a section
+    /// </summary>
+    public class GetSectionDimensions : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("98765d83-2b23-47c1-ad1d-201b5a2eed8b");
@@ -33,8 +34,8 @@ namespace GsaGH.Components
     public GetSectionDimensions() : base("Section Dimensions",
       "SectDims",
       "Get GSA Section Dimensions",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

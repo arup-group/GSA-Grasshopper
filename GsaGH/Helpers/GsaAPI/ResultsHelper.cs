@@ -10,7 +10,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Util.Gsa
+namespace GsaGH.Helpers.GsaAPI
 {
   class ResultHelper
   {

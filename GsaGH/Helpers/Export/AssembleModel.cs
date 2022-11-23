@@ -1,191 +1,16 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits;
+using OasysUnits.Units;
 
-namespace GsaGH.Util.Gsa.ToGSA
+namespace GsaGH.Helpers.Export
 {
-  public class Models
+  internal class AssembleModel
   {
-    public static GsaModel MergeModel(List<GsaModel> models)
-    {
-      if (models != null)
-      {
-        if (models.Count > 1)
-        {
-          GsaModel model = new GsaModel();
-          models.Reverse();
-          for (int i = 0; i < models.Count - 1; i++)
-          {
-            model = Models.MergeModel(model, models[i].Clone());
-          }
-          GsaModel clone = models[models.Count - 1].Clone();
-          clone = Models.MergeModel(clone, model);
-          return clone;
-        }
-        else if (models.Count > 0)
-          return models[0].Clone();
-      }
-      return null;
-    }
-
-    public static GsaModel MergeModel(GsaModel mainModel, GsaModel appendModel)
-    {
-      // open the copyfrom model
-      Model model = appendModel.Model;
-
-      // get dictionaries from model
-      ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
-      ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(model.Elements());
-      ConcurrentDictionary<int, Member> mDict = new ConcurrentDictionary<int, Member>(model.Members());
-      ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
-      ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
-      ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
-      ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
-      ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
-
-      // get nodes
-      ConcurrentBag<GsaNodeGoo> goonodes = Util.Gsa.FromGSA.GetNodes(nDict, LengthUnit.Meter);
-      // convert from Goo-type
-      List<GsaNode> nodes = goonodes.Select(n => n.Value).ToList();
-      // change all members in List's ID to 0;
-      nodes.Select(c => { c.Id = 0; return c; }).ToList();
-
-      // get elements
-      Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, LengthUnit.Meter);
-      // convert from Goo-type
-      List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
-      // change all members in List's ID to 0;
-      elem1ds.Select(c => { c.Id = 0; return c; }).ToList();
-      // convert from Goo-type
-      List<GsaElement2d> elem2ds = elementTuple.Item2.Select(n => n.Value).ToList();
-      // change all members in List's ID to 0;
-      foreach (var elem2d in elem2ds)
-        elem2d.Ids.Select(c => { c = 0; return c; }).ToList();
-      // convert from Goo-type
-      List<GsaElement3d> elem3ds = elementTuple.Item3.Select(n => n.Value).ToList();
-      // change all members in List's ID to 0;
-      foreach (var elem3d in elem3ds)
-        elem3d.IDs.Select(c => { c = 0; return c; }).ToList();
-
-      // get members
-      Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-          = Util.Gsa.FromGSA.GetMembers(mDict, nDict, LengthUnit.Meter, sDict, pDict, p3Dict);
-      // convert from Goo-type
-      List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
-      // change all members in List's ID to 0;
-      mem1ds.Select(c => { c.Id = 0; return c; }).ToList();
-      // convert from Goo-type
-      List<GsaMember2d> mem2ds = memberTuple.Item2.Select(n => n.Value).ToList();
-      // change all members in List's ID to 0;
-      mem2ds.Select(c => { c.Id = 0; return c; }).ToList();
-
-      // get properties
-      List<GsaSectionGoo> goosections = FromGSA.GetSections(sDict, model.AnalysisMaterials(), model.SectionModifiers());
-      // convert from Goo-type
-      List<GsaSection> sections = goosections.Select(n => n.Value).ToList();
-      // change all members in List's ID to 0;
-      sections.Select(c => { c.Id = 0; return c; }).ToList();
-      List<GsaProp2dGoo> gooprop2Ds = FromGSA.GetProp2ds(pDict, model.AnalysisMaterials());
-      // convert from Goo-type
-      List<GsaProp2d> prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
-      // change all members in List's ID to 0;
-      prop2Ds.Select(c => { c.ID = 0; return c; }).ToList();
-      List<GsaProp3dGoo> gooprop3Ds = FromGSA.GetProp3ds(p3Dict, model.AnalysisMaterials());
-      // convert from Goo-type
-      List<GsaProp3d> prop3Ds = gooprop3Ds.Select(n => n.Value).ToList();
-      // change all members in List's ID to 0;
-      prop3Ds.Select(c => { c.ID = 0; return c; }).ToList();
-
-      // get loads
-      List<GsaLoadGoo> gooloads = new List<GsaLoadGoo>();
-      gooloads.AddRange(FromGSA.GetGravityLoads(model.GravityLoads()));
-      gooloads.AddRange(FromGSA.GetNodeLoads(model));
-      gooloads.AddRange(FromGSA.GetBeamLoads(model.BeamLoads()));
-      gooloads.AddRange(FromGSA.GetFaceLoads(model.FaceLoads()));
-
-      IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
-      IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
-      IReadOnlyDictionary<int, Axis> axDict = model.Axes();
-
-      gooloads.AddRange(FromGSA.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict, LengthUnit.Meter));
-      gooloads.AddRange(FromGSA.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict, LengthUnit.Meter));
-      gooloads.AddRange(FromGSA.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict, axDict, LengthUnit.Meter));
-      List<GsaLoad> loads = gooloads.Select(n => n.Value).ToList();
-
-      // get grid plane surfaces
-      List<GsaGridPlaneSurfaceGoo> gpsgoo = new List<GsaGridPlaneSurfaceGoo>();
-      foreach (int key in srfDict.Keys)
-        gpsgoo.Add(new GsaGridPlaneSurfaceGoo(Util.Gsa.FromGSA.GetGridPlaneSurface(srfDict, plnDict, axDict, key, LengthUnit.Meter)));
-      // convert from Goo-type
-      List<GsaGridPlaneSurface> gps = gpsgoo.Select(n => n.Value).ToList();
-
-      // return new assembled model
-      mainModel.Model = Assemble.AssembleModel(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter);
-      return mainModel;
-    }
-  }
-
-  public class Assemble
-  {
-    /// <summary>
-    /// Method for assembling GSA model from Members only to create geometry
-    /// </summary>
-    /// <param name="member3Ds">3D Members</param>
-    /// <param name="member2Ds">2D Members</param>
-    /// <param name="member1Ds">1D Members</param>
-    /// <param name="nodes">Nodes</param>
-    /// <returns></returns>
-    public static Model AssembleModel(LengthUnit lengthUnit, List<GsaMember3d> member3Ds = null, List<GsaMember2d> member2Ds = null, List<GsaMember1d> member1Ds = null,
-        List<GsaNode> nodes = null)
-    {
-      // new model to set members in
-      Model gsa = new Model();
-
-      // list of topology nodes
-      List<Node> gsanodes = new List<Node>();
-      if (nodes != null)
-      {
-        gsanodes = nodes.ConvertAll(x => x.GetApiNodeToUnit(lengthUnit));
-      }
-
-      // counter for creating nodes
-      int id = 1;
-
-      // Create list of members to write to
-      List<Member> mems = new List<Member>();
-
-      // add converted 1D members
-      mems.AddRange(Members.ConvertMember1D(member1Ds, ref gsanodes, ref id, lengthUnit));
-
-      // add converted 2D members
-      mems.AddRange(Members.ConvertMember2D(member2Ds, ref gsanodes, ref id, lengthUnit));
-
-      // add converted 3D members
-      mems.AddRange(Members.ConvertMember3D(member3Ds, ref gsanodes, ref id, lengthUnit));
-
-      #region create model
-      Dictionary<int, Node> nodeDic = gsanodes
-          .Select((s, index) => new { s, index })
-          .ToDictionary(x => x.index + 1, x => x.s);
-      ReadOnlyDictionary<int, Node> setnodes = new ReadOnlyDictionary<int, Node>(nodeDic);
-      gsa.SetNodes(setnodes);
-
-      Dictionary<int, Member> memDic = mems
-          .Select((s, index) => new { s, index })
-          .ToDictionary(x => x.index + 1, x => x.s);
-      ReadOnlyDictionary<int, Member> setmem = new ReadOnlyDictionary<int, Member>(memDic);
-      gsa.SetMembers(setmem);
-      #endregion
-
-      return gsa;
-    }
-
     /// <summary>
     /// 
     /// </summary>
@@ -204,15 +29,16 @@ namespace GsaGH.Util.Gsa.ToGSA
     /// <param name="gridPlaneSurfaces">List of GridPlaneSurfaces</param>
     /// <param name="analysisTasks"></param>
     /// <param name="combinations"></param>
-    /// <param name="lengthUnit"></param>
+    /// <param name="modelUnit"></param>
+    /// /// <param name="toleranceCoincidentNodes">Set to zero to skip collapsing coincident nodes</param>
     /// <returns></returns>
-    public static Model AssembleModel(GsaModel model, List<GsaNode> nodes,
+    internal static Model Assemble(GsaModel model, List<GsaNode> nodes,
         List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,
         List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
         List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds,
         List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
         List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
-        LengthUnit modelUnit)
+        LengthUnit modelUnit, double toleranceCoincidentNodes)
     {
       // Set model to work on
       Model gsa = new Model();
@@ -222,17 +48,15 @@ namespace GsaGH.Util.Gsa.ToGSA
       #region Nodes
       // ### Nodes ###
       // We take out the existing nodes in the model and work on that dictionary
-
       // Get existing nodes
-      IReadOnlyDictionary<int, Node> gsaNodes = gsa.Nodes();
-      Dictionary<int, Node> apinodes = gsaNodes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+      GsaDictionary<Node> apinodes = new GsaDictionary<Node>(gsa.Nodes());
 
       // Get existing axes
       IReadOnlyDictionary<int, Axis> gsaAxes = gsa.Axes();
       Dictionary<int, Axis> apiaxes = gsaAxes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
+      
       // Set / add nodes to dictionary
-      Nodes.ConvertNode(nodes, ref apinodes, ref apiaxes, modelUnit);
+      Nodes.ConvertNodes(nodes, ref apinodes, ref apiaxes, modelUnit);
       #endregion
 
       #region Properties
@@ -278,7 +102,6 @@ namespace GsaGH.Util.Gsa.ToGSA
       #region Elements
       // ### Elements ###
       // We take out the existing elements in the model and work on that dictionary
-
       // Get existing elements
       IReadOnlyDictionary<int, Element> gsaElems = gsa.Elements();
       Dictionary<int, Element> elems = gsaElems.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -314,7 +137,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       Elements.ConvertElement2D(elem2ds, ref elems, ref newElementID, ref apinodes, modelUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid);
 
       // Set / add 3D elements to dictionary
-      Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, modelUnit);
+      Elements.ConvertElement3D(elem3ds, ref elems, ref newElementID, ref apinodes, modelUnit, ref apiprop3ds, ref prop3d_guid, ref apimaterials, ref materials_guid);
       #endregion
 
       #region Members
@@ -334,7 +157,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (mem1ds.Count > 0)
         {
-          int existingMem1dMaxID = mem1ds.Max(x => x.Id); // max ID in new Elem1ds
+          int existingMem1dMaxID = mem1ds.Max(x => x.Id); // max ID in new Mem1ds
           if (existingMem1dMaxID > newMemberID)
             newMemberID = existingMem1dMaxID + 1;
         }
@@ -344,7 +167,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (mem2ds.Count > 0)
         {
-          int existingMem2dMaxID = mem2ds.Max(x => x.Id); // max ID in new Elem2ds
+          int existingMem2dMaxID = mem2ds.Max(x => x.Id); // max ID in new Mem2ds
           if (existingMem2dMaxID > newMemberID)
             newMemberID = existingMem2dMaxID + 1;
         }
@@ -354,7 +177,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       {
         if (mem3ds.Count > 0)
         {
-          int existingMem3dMaxID = mem3ds.Max(x => x.Id); // max ID in new Elem2ds
+          int existingMem3dMaxID = mem3ds.Max(x => x.Id); // max ID in new Mem2ds
           if (existingMem3dMaxID > newMemberID)
             newMemberID = existingMem3dMaxID + 1;
         }
@@ -367,7 +190,7 @@ namespace GsaGH.Util.Gsa.ToGSA
       Members.ConvertMember2D(mem2ds, ref mems, ref newMemberID, ref apinodes, modelUnit, ref apiprop2ds, ref prop2d_guid, ref apimaterials, ref materials_guid, modelUnit);
 
       // Set / add 3D members to dictionary
-      Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, modelUnit);
+      Members.ConvertMember3D(mem3ds, ref mems, ref newMemberID, ref apinodes, modelUnit, ref apiprop3ds, ref prop3d_guid, ref apimaterials, ref materials_guid);
       #endregion
 
       #region Loads
@@ -406,48 +229,38 @@ namespace GsaGH.Util.Gsa.ToGSA
 
 
       #region set stuff in model
-      //nodes
-      gsa.SetNodes(new ReadOnlyDictionary<int, Node>(apinodes));
-      //elements
+      // Geometry
+      gsa.SetNodes(apinodes.Dictionary);
       gsa.SetElements(new ReadOnlyDictionary<int, Element>(elems));
-      //members
       gsa.SetMembers(new ReadOnlyDictionary<int, Member>(mems));
-      //gravity load
+      if (toleranceCoincidentNodes > 0)
+        gsa.CollapseCoincidentNodes(toleranceCoincidentNodes);
+
+      // Loads
       gsa.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(gravityLoads));
-      //node loads
       gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoads_displ));
       gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoads_node));
       gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(nodeLoads_settle));
-      //beam loads
       gsa.AddBeamLoads(new ReadOnlyCollection<BeamLoad>(beamLoads));
-      //face loads
       gsa.AddFaceLoads(new ReadOnlyCollection<FaceLoad>(faceLoads));
-      //grid point loads
       gsa.AddGridPointLoads(new ReadOnlyCollection<GridPointLoad>(gridPointLoads));
-      //grid line loads
       gsa.AddGridLineLoads(new ReadOnlyCollection<GridLineLoad>(gridLineLoads));
-      //grid area loads
       gsa.AddGridAreaLoads(new ReadOnlyCollection<GridAreaLoad>(gridAreaLoads));
-      //axes
       gsa.SetAxes(new ReadOnlyDictionary<int, Axis>(apiaxes));
-      //gridplanes
       gsa.SetGridPlanes(new ReadOnlyDictionary<int, GridPlane>(apiGridPlanes));
-      //gridsurfaces
       gsa.SetGridSurfaces(new ReadOnlyDictionary<int, GridSurface>(apiGridSurfaces));
-      //sections
+      
+      //properties
       gsa.SetSections(new ReadOnlyDictionary<int, Section>(apisections));
-      //section modifiers
       gsa.SetSectionModifiers(new ReadOnlyDictionary<int, SectionModifier>(apimodifiers));
-      //prop2ds
       gsa.SetProp2Ds(new ReadOnlyDictionary<int, Prop2D>(apiprop2ds));
-      //prop2ds
       gsa.SetProp3Ds(new ReadOnlyDictionary<int, Prop3D>(apiprop3ds));
-      //materials
       if (apimaterials.Count > 0)
       {
         foreach (KeyValuePair<int, AnalysisMaterial> mat in apimaterials)
           gsa.SetAnalysisMaterial(mat.Key, mat.Value);
       }
+
       //tasks
       if (analysisTasks != null)
       {
@@ -464,6 +277,7 @@ namespace GsaGH.Util.Gsa.ToGSA
             gsa.AddAnalysisCaseToTask(task.ID, ca.Name, ca.Description);
         }
       }
+
       //combinations
       if (combinations != null)
       {

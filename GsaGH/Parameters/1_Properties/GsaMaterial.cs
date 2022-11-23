@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using GH_IO.Serialization;
 using GsaAPI;
+using GsaGH.Helpers.GsaAPI;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// Material class, this class defines the basic properties and methods for any <see cref="GsaAPI.AnalysisMaterial"/>
-  /// </summary>
-  public class GsaMaterial
+    /// <summary>
+    /// Material class, this class defines the basic properties and methods for any <see cref="GsaAPI.AnalysisMaterial"/>
+    /// </summary>
+    public class GsaMaterial
   {
     public enum MatType
     {
@@ -188,7 +189,7 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string type = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.MaterialType).Key;
+      string type = Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.MaterialType).Key;
       if (this._analProp != 0)
         return "ID:" + this._analProp + " Custom " + type.Trim() + " Material";
       else

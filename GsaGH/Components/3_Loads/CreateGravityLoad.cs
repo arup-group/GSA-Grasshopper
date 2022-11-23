@@ -2,6 +2,7 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -9,7 +10,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGravityLoad : GH_OasysComponent
+    public class CreateGravityLoad : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("f9099874-92fa-4608-b4ed-a788df85a407");
@@ -20,8 +21,8 @@ namespace GsaGH.Components
     public CreateGravityLoad() : base("Create Gravity Load",
       "GravityLoad",
       "Create GSA Gravity Load",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -29,9 +30,9 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (by default 1)", GH_ParamAccess.item, 1);
-      pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to (by default 'All')." + System.Environment.NewLine +
-         "Element list should take the form:" + System.Environment.NewLine +
-         " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to (by default 'All')." + Environment.NewLine +
+         "Element list should take the form:" + Environment.NewLine +
+         " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
       pManager.AddVectorParameter("Gravity factor", "G", "Gravity vector factor (default z = -1)", GH_ParamAccess.item, new Vector3d(0, 0, -1));
@@ -65,9 +66,9 @@ namespace GsaGH.Components
         if (type.StartsWith("GSA "))
         {
           Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in ElementList input!" + System.Environment.NewLine +
-              "Element list should take the form:" + System.Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + System.Environment.NewLine +
+              "You cannot input a Node/Element/Member in ElementList input!" + Environment.NewLine +
+              "Element list should take the form:" + Environment.NewLine +
+              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + Environment.NewLine +
               "Refer to GSA help file for definition of lists and full vocabulary.");
           return;
         }

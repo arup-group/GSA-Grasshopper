@@ -174,9 +174,9 @@ namespace GsaGH.Parameters
       if (Grasshopper.CentralSettings.PreviewMeshEdges == false) { return; }
 
       if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-        args.Pipeline.DrawMeshWires(Value, UI.Colour.Element2dEdge, 1);
+        args.Pipeline.DrawMeshWires(Value, Helpers.Graphics.Colours.Element2dEdge, 1);
       else
-        args.Pipeline.DrawMeshWires(Value, UI.Colour.Element2dEdgeSelected, 1);
+        args.Pipeline.DrawMeshWires(Value, Helpers.Graphics.Colours.Element2dEdgeSelected, 1);
     }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args)

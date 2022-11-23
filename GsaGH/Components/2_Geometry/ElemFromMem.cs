@@ -5,6 +5,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -15,10 +16,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Node
-  /// </summary>
-  public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a Node
+    /// </summary>
+    public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
@@ -29,8 +30,8 @@ namespace GsaGH.Components
     public ElemFromMem() : base("Elements from Members",
       "ElemFromMem",
       "Create Elements from Members",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -174,7 +175,7 @@ namespace GsaGH.Components
       #endregion
 
       // Assemble model
-      Model gsa = Util.Gsa.ToGSA.Assemble.AssembleModel(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, LengthUnit);
+      Model gsa = Helpers.Export.AssembleModel.Assemble(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, this.LengthUnit, DefaultUnits.Tolerance.Meters);
 
       #region meshing
       // Create elements from members
@@ -182,11 +183,11 @@ namespace GsaGH.Components
       #endregion
 
       // extract nodes from model
-      ConcurrentBag<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()), LengthUnit);
+      ConcurrentBag<GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()), LengthUnit);
 
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Util.Gsa.FromGSA.GetElements(
+          = Helpers.Import.Elements.GetElements(
               new ConcurrentDictionary<int, Element>(gsa.Elements()),
               new ConcurrentDictionary<int, Node>(gsa.Nodes()),
               new ConcurrentDictionary<int, Section>(gsa.Sections()),
@@ -285,9 +286,9 @@ namespace GsaGH.Components
             if (!(element.Value.API_Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
             {
               if (this.Attributes.Selected)
-                args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFaceSelected);
+                args.Display.DrawMeshShaded(element.Value.Mesh, Helpers.Graphics.Colours.Element2dFaceSelected);
               else
-                args.Display.DrawMeshShaded(element.Value.Mesh, UI.Colour.Element2dFace);
+                args.Display.DrawMeshShaded(element.Value.Mesh, Helpers.Graphics.Colours.Element2dFace);
             }
           }
         }
@@ -319,12 +320,12 @@ namespace GsaGH.Components
               if (this.Attributes.Selected)
               {
                 for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-                  args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdgeSelected, 2);
+                  args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
               }
               else
               {
                 for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-                  args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), UI.Colour.Element2dEdge, 1);
+                  args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), Helpers.Graphics.Colours.Element2dEdge, 1);
               }
             }
           }

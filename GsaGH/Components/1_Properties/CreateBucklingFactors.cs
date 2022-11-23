@@ -1,6 +1,7 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -8,10 +9,10 @@ using OasysGH.UI;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Buckling Length Factors
-  /// </summary>
-  public class CreateBucklingFactors : GH_OasysComponent
+    /// <summary>
+    /// Component to create a new Buckling Length Factors
+    /// </summary>
+    public class CreateBucklingFactors : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("0c32af28-5057-4649-bd56-0850541c954b");
@@ -22,8 +23,8 @@ namespace GsaGH.Components
     public CreateBucklingFactors() : base("Create " + GsaBucklingLengthFactorsGoo.Name.Replace(" ", string.Empty),
       GsaBucklingLengthFactorsGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaBucklingLengthFactorsGoo.Description,
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

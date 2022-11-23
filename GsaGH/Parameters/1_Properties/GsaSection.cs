@@ -2,15 +2,16 @@
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.GsaAPI;
 using OasysGH.Units;
 using OasysUnits;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section"/>
-  /// </summary>
-  public class GsaSection
+    /// <summary>
+    /// Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section"/>
+    /// </summary>
+    public class GsaSection
   {
     #region fields
     private int _id = 0;
@@ -134,7 +135,7 @@ namespace GsaGH.Parameters
         else
           this.CloneApiObject();
 
-        this._section.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(_material);
+        this._section.MaterialType = Helpers.Export.Materials.ConvertType(_material);
         this._section.MaterialAnalysisProperty = _material.AnalysisProperty;
         this._section.MaterialGradeProperty = _material.GradeProperty;
       }
@@ -289,7 +290,7 @@ namespace GsaGH.Parameters
     {
       string pb = this.Id > 0 ? "PB" + this.Id + " " : "";
       string prof = this._section.Profile.Replace("%", " ") + " ";
-      string mat = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
+      string mat = Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
       string mod = this._modifier.IsModified ? " modified" : "";
       return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim().Replace("  ", " ");
     }

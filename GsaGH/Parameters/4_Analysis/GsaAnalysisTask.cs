@@ -79,12 +79,12 @@ namespace GsaGH.Parameters
     #region methods
     internal void CreateDeafultCases(Model model)
     {
-      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Util.Gsa.FromGSA.GetAnalysisTasksAndCombinations(model);
+      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Helpers.Import.Analyses.GetAnalysisTasksAndCombinations(model);
       this.Cases = tuple.Item2.Select(x => x.Value).ToList();
     }
     internal void CreateDeafultCases(GsaModel gsaModel)
     {
-      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Util.Gsa.FromGSA.GetAnalysisTasksAndCombinations(gsaModel);
+      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Helpers.Import.Analyses.GetAnalysisTasksAndCombinations(gsaModel);
       this.Cases = tuple.Item2.Select(x => x.Value).ToList();
     }
 

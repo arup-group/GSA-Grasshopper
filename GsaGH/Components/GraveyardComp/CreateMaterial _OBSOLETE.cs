@@ -15,13 +15,14 @@ using GsaGH.Parameters;
 using System.Resources;
 using OasysGH.Components;
 using OasysGH;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Material
-  /// </summary>
-  public class CreateMaterial_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to create a new Material
+    /// </summary>
+    public class CreateMaterial_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
@@ -29,8 +30,8 @@ namespace GsaGH.Components
     public override Guid ComponentGuid => new Guid("72bfce91-9204-4fe4-b81d-0036babf0c6d");
     public CreateMaterial_OBSOLETE()
       : base("Create Material", "Material", "Create GSA Material by reference to existing type and grade",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
+            CategoryName.Name(),
+            SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

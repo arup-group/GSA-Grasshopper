@@ -1,5 +1,5 @@
 ﻿using GsaGH;
-namespace GsaGH.UI
+namespace GsaGH.Graphics
 {
   partial class AboutBox
   {

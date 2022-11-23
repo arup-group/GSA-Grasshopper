@@ -8,7 +8,7 @@ using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.Kernel;
 
-namespace GsaGH.UI.Menu
+namespace GsaGH.Graphics.Menu
 {
   public class MenuLoad
   {

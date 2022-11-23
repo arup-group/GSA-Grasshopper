@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// This class provides a parameter interface for the <see cref="GsaSectionModifierGoo"/> type.
-  /// </summary>
-  public class GsaSectionModifierParameter : GH_OasysPersistentParam<GsaSectionModifierGoo>
+    /// <summary>
+    /// This class provides a parameter interface for the <see cref="GsaSectionModifierGoo"/> type.
+    /// </summary>
+    public class GsaSectionModifierParameter : GH_OasysPersistentParam<GsaSectionModifierGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaSectionModifierGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaSectionModifierGoo.Name : base.TypeName;
@@ -20,8 +21,8 @@ namespace GsaGH.Parameters
       GsaSectionModifierGoo.Name,
       GsaSectionModifierGoo.NickName,
       GsaSectionModifierGoo.Description + " parameter",
-      GsaGH.Components.Ribbon.CategoryName.Name(),
-      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+      CategoryName.Name(),
+      SubCategoryName.Cat9()))
     { }
 
     protected override GsaSectionModifierGoo PreferredCast(object data)

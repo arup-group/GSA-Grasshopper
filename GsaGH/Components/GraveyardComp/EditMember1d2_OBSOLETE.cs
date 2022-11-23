@@ -12,13 +12,14 @@ using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysUnits.Units;
 using OasysGH;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 1D Member
-  /// </summary>
-  public class EditMember1d2_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a 1D Member
+    /// </summary>
+    public class EditMember1d2_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
@@ -26,8 +27,8 @@ namespace GsaGH.Components
     public override Guid ComponentGuid => new Guid("2a121578-f9ff-4d80-ae90-2982faa425a6");
     public EditMember1d2_OBSOLETE()
       : base("Edit 1D Member", "Mem1dEdit", "Modify GSA 1D Member",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat2())
+            CategoryName.Name(),
+            SubCategoryName.Cat2())
     {
     }
 
@@ -53,25 +54,25 @@ namespace GsaGH.Components
       pManager.AddCurveParameter("Curve", "C", "Member Curve", GH_ParamAccess.item);
       pManager.AddGenericParameter("Section", "PB", "Change Section Property", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member1d Group", "Gr", "Set Member 1D Group", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Member Type", "mT", "Set 1D Member Type" + System.Environment.NewLine +
-          "Default is 0: Generic 1D - Accepted inputs are:" + System.Environment.NewLine +
-          "2: Beam" + System.Environment.NewLine +
-          "3: Column" + System.Environment.NewLine +
-          "6: Cantilever" + System.Environment.NewLine +
-          "8: Compos" + System.Environment.NewLine +
-          "9: Pile" + System.Environment.NewLine +
+      pManager.AddIntegerParameter("Member Type", "mT", "Set 1D Member Type" + Environment.NewLine +
+          "Default is 0: Generic 1D - Accepted inputs are:" + Environment.NewLine +
+          "2: Beam" + Environment.NewLine +
+          "3: Column" + Environment.NewLine +
+          "6: Cantilever" + Environment.NewLine +
+          "8: Compos" + Environment.NewLine +
+          "9: Pile" + Environment.NewLine +
           "11: Void cutter", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("1D Element Type", "eT", "Set Element 1D Type" + System.Environment.NewLine +
-          "Accepted inputs are:" + System.Environment.NewLine +
-          "1: Bar" + System.Environment.NewLine +
-          "2: Beam" + System.Environment.NewLine +
-          "3: Spring" + System.Environment.NewLine +
-          "9: Link" + System.Environment.NewLine +
-          "10: Cable" + System.Environment.NewLine +
-          "19: Spacer" + System.Environment.NewLine +
-          "20: Strut" + System.Environment.NewLine +
-          "21: Tie" + System.Environment.NewLine +
-          "23: Rod" + System.Environment.NewLine +
+      pManager.AddIntegerParameter("1D Element Type", "eT", "Set Element 1D Type" + Environment.NewLine +
+          "Accepted inputs are:" + Environment.NewLine +
+          "1: Bar" + Environment.NewLine +
+          "2: Beam" + Environment.NewLine +
+          "3: Spring" + Environment.NewLine +
+          "9: Link" + Environment.NewLine +
+          "10: Cable" + Environment.NewLine +
+          "19: Spacer" + Environment.NewLine +
+          "20: Strut" + Environment.NewLine +
+          "21: Tie" + Environment.NewLine +
+          "23: Rod" + Environment.NewLine +
           "24: Damper", GH_ParamAccess.item);
       pManager.AddGenericParameter("Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
       pManager.AddGenericParameter("Start release", "⭰", "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
@@ -253,7 +254,7 @@ namespace GsaGH.Components
           mem.MeshSize = ((Length)Input.UnitNumber(this, DA, 12, DefaultUnits.LengthUnitGeometry, true)).Meters;
           if (DefaultUnits.LengthUnitGeometry != OasysUnits.Units.LengthUnit.Meter)
             AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
-                + System.Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
+                + Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }
 
         // 13 mesh with others

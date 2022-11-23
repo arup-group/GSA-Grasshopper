@@ -4,6 +4,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -16,7 +17,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridPointLoad : GH_OasysDropDownComponent
+    public class CreateGridPointLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("076f03c6-67ba-49d3-9462-cd4a4b5aff92");
@@ -27,8 +28,8 @@ namespace GsaGH.Components
     public CreateGridPointLoad() : base("Create Grid Point Load",
       "PointLoad",
       "Create GSA Grid Point Load",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -41,14 +42,14 @@ namespace GsaGH.Components
       pManager.AddPointParameter("Point", "Pt", "Point. If you input grid plane below only x and y coordinates will be used from this point, but if not a new Grid Plane Surface (xy-plane) will be created at the z-elevation of this point.", GH_ParamAccess.item);
       pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface or Plane (optional). If no input here then the point's z-coordinate will be used for an xy-plane at that elevation.", GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di", "Load direction (default z)." +
-              System.Environment.NewLine + "Accepted inputs are:" +
-              System.Environment.NewLine + "x" +
-              System.Environment.NewLine + "y" +
-              System.Environment.NewLine + "z", GH_ParamAccess.item, "z");
+              Environment.NewLine + "Accepted inputs are:" +
+              Environment.NewLine + "x" +
+              Environment.NewLine + "y" +
+              Environment.NewLine + "z", GH_ParamAccess.item, "z");
       pManager.AddIntegerParameter("Axis", "Ax", "Load axis (default Global). " +
-              System.Environment.NewLine + "Accepted inputs are:" +
-              System.Environment.NewLine + "0 : Global" +
-              System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
+              Environment.NewLine + "Accepted inputs are:" +
+              Environment.NewLine + "0 : Global" +
+              Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
       pManager.AddGenericParameter("Value [" + unitAbbreviation + "]", "V", "Load Value", GH_ParamAccess.item);
 
@@ -112,7 +113,7 @@ namespace GsaGH.Components
           else
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
-                System.Environment.NewLine + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
+                Environment.NewLine + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
             return;
           }
         }

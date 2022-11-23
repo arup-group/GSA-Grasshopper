@@ -4,6 +4,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -16,7 +17,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridAreaLoad : GH_OasysDropDownComponent
+    public class CreateGridAreaLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("146f1bf8-8d2b-468f-bdb8-0237bee75262");
@@ -27,8 +28,8 @@ namespace GsaGH.Components
     public CreateGridAreaLoad() : base("Create Grid Area Load",
       "AreaLoad",
       "Create GSA Grid Area Load",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -41,14 +42,14 @@ namespace GsaGH.Components
       pManager.AddBrepParameter("Brep", "B", "(Optional) Brep. If no input the whole plane method will be used. If both Grid Plane Surface and Brep are inputted, this Brep will be projected onto the Grid Plane.", GH_ParamAccess.item);
       pManager.AddGenericParameter("Grid Plane Surface", "GPS", "Grid Plane Surface or Plane (optional). If no input here then the brep's best-fit plane will be used", GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di", "Load direction (default z)." +
-              System.Environment.NewLine + "Accepted inputs are:" +
-              System.Environment.NewLine + "x" +
-              System.Environment.NewLine + "y" +
-              System.Environment.NewLine + "z", GH_ParamAccess.item, "z");
+              Environment.NewLine + "Accepted inputs are:" +
+              Environment.NewLine + "x" +
+              Environment.NewLine + "y" +
+              Environment.NewLine + "z", GH_ParamAccess.item, "z");
       pManager.AddIntegerParameter("Axis", "Ax", "Load axis (default Global). " +
-              System.Environment.NewLine + "Accepted inputs are:" +
-              System.Environment.NewLine + "0 : Global" +
-              System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
+              Environment.NewLine + "Accepted inputs are:" +
+              Environment.NewLine + "0 : Global" +
+              Environment.NewLine + "-1 : Local", GH_ParamAccess.item, 0);
       pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
       pManager.AddNumberParameter("Value [" + unitAbbreviation + "]", "V", "Load Value", GH_ParamAccess.item);
@@ -113,7 +114,7 @@ namespace GsaGH.Components
           else
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
-                System.Environment.NewLine + "If no input here then the brep's best-fit plane will be used");
+                Environment.NewLine + "If no input here then the brep's best-fit plane will be used");
             return;
           }
         }
@@ -147,7 +148,7 @@ namespace GsaGH.Components
           if (!planeSet)
           {
             // create nice plane from pts
-            pln = Util.GH.Convert.CreateBestFitUnitisedPlaneFromPts(ctrl_pts);
+            pln = Helpers.GH.RhinoConversions.CreateBestFitUnitisedPlaneFromPts(ctrl_pts);
 
             // create grid plane surface from best fit plane
             grdplnsrf = new GsaGridPlaneSurface(pln, true);

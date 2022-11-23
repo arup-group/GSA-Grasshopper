@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -17,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Prop2d and ouput the information
-  /// </summary>
-  public class EditProp2d_OBSOLETE : GH_OasysComponent
+    /// <summary>
+    /// Component to edit a Prop2d and ouput the information
+    /// </summary>
+    public class EditProp2d_OBSOLETE : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -32,8 +34,8 @@ namespace GsaGH.Components
     public EditProp2d_OBSOLETE() : base("Edit 2D Property",
       "Prop2dEdit",
       "Modify GSA 2D Property",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -47,18 +49,18 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Axis", "Ax", "Set Axis as integer: Global (0) or Topological (1)", GH_ParamAccess.item);
       pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour", "Co", "Set 2D Property Colour", GH_ParamAccess.item);
-      pManager.AddTextParameter("Type", "Ty", "Set 2D Property Type." + System.Environment.NewLine +
+      pManager.AddTextParameter("Type", "Ty", "Set 2D Property Type." + Environment.NewLine +
           "Input either text string or integer:"
-          + System.Environment.NewLine + "Plane Stress : 1"
-          + System.Environment.NewLine + "Plane Strain : 2"
-          + System.Environment.NewLine + "Axis Symmetric : 3"
-          + System.Environment.NewLine + "Fabric : 4"
-          + System.Environment.NewLine + "Plate : 5"
-          + System.Environment.NewLine + "Shell : 6"
-          + System.Environment.NewLine + "Curved Shell : 7"
-          + System.Environment.NewLine + "Torsion : 8"
-          + System.Environment.NewLine + "Wall : 9"
-          + System.Environment.NewLine + "Load : 10",
+          + Environment.NewLine + "Plane Stress : 1"
+          + Environment.NewLine + "Plane Strain : 2"
+          + Environment.NewLine + "Axis Symmetric : 3"
+          + Environment.NewLine + "Fabric : 4"
+          + Environment.NewLine + "Plate : 5"
+          + Environment.NewLine + "Shell : 6"
+          + Environment.NewLine + "Curved Shell : 7"
+          + Environment.NewLine + "Torsion : 8"
+          + Environment.NewLine + "Wall : 9"
+          + Environment.NewLine + "Load : 10",
           GH_ParamAccess.item);
       for (int i = 0; i < pManager.ParamCount; i++)
         pManager[i].Optional = true;
@@ -175,7 +177,7 @@ namespace GsaGH.Components
         DA.SetData(5, nm);
         DA.SetData(6, colour);
 
-        DA.SetData(7, Helpers.Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
+        DA.SetData(7, Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
       }
       else
         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Prop2d is Null");

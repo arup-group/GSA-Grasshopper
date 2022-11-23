@@ -4,16 +4,16 @@ using Rhino.Geometry;
 using GsaGH.Parameters;
 using System;
 
-namespace GsaGH.UI
+namespace GsaGH.Helpers.Graphics
 {
   /// <summary>
   /// Colour class holding the main colours used in colour scheme. 
   /// Make calls to this class to be able to easy update colours.
   /// 
   /// </summary>
-  public class Display
+  internal class Display
   {
-    public static Tuple<Vector3d, Vector3d, Vector3d> GetLocalPlane(PolyCurve crv, double t, double orientationAngle)
+    internal static Tuple<Vector3d, Vector3d, Vector3d> GetLocalPlane(PolyCurve crv, double t, double orientationAngle)
     {
       crv.PerpendicularFrameAt(t, out Plane pln);
       pln.Rotate(orientationAngle, pln.Normal);

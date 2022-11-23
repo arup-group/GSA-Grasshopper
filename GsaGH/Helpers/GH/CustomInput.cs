@@ -1,10 +1,11 @@
-﻿using Grasshopper.Kernel;
+﻿using System;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 
-namespace GsaGH.Helpers
+namespace GsaGH.Helpers.GH
 {
   class CustomInput
   {
@@ -61,7 +62,7 @@ namespace GsaGH.Helpers
           if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(RatioUnit)))
           {
             owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
-                + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Ratio");
+                + Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Ratio");
             return new Ratio(100, RatioUnit.Percent);
           }
           return (Ratio)unitNumber.Value;
@@ -105,7 +106,7 @@ namespace GsaGH.Helpers
           if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(RatioUnit)))
           {
             owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + owner.Params.Input[inputid].NickName + " input: Wrong unit type"
-                + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Ratio");
+                + Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Ratio");
             return new Ratio(1, RatioUnit.DecimalFraction);
           }
         }
