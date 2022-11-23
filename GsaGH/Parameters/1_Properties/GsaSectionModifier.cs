@@ -328,15 +328,15 @@ namespace GsaGH.Parameters
       {
         return "Unmodified";
       }
-      string A = "A(";
-      string I11 = "I11(";
-      string I22 = "I22(";
-      string J = "J(";
-      string K11 = "K11(";
-      string K22 = "K22(";
-      string V = "V(";
-      string mass = "Add.Mass(";
-      string stress = "StressCalc.Opt.(";
+      string A = "A:";
+      string I11 = "I11:";
+      string I22 = "I22:";
+      string J = "J:";
+      string K11 = "K11:";
+      string K22 = "K22:";
+      string V = "V:";
+      string mass = "Add.Mass:";
+      string stress = "StressCalc.Opt.:";
       string axis = "X";
       string refPt = "X";
 
@@ -344,13 +344,13 @@ namespace GsaGH.Parameters
       if (this._sectionModifier.AreaModifier.Option == SectionModifierOptionType.TO)
       {
         Area val = (Area)this.AreaModifier;
-        A += val.ToString("f0").Replace(" ", string.Empty) + ")";
+        A += val.ToString("f0").Replace(" ", string.Empty);
       }
       else
       {
         Ratio val = (Ratio)this.AreaModifier;
         if (val.DecimalFractions != 1)
-          A += val.ToString("f0").Replace(" ", string.Empty) + ")";
+          A += val.ToString("f0").Replace(" ", string.Empty);
         else
           A = "X";
       }
@@ -359,13 +359,13 @@ namespace GsaGH.Parameters
       if (this._sectionModifier.I11Modifier.Option == SectionModifierOptionType.TO)
       {
         AreaMomentOfInertia val = (AreaMomentOfInertia)this.I11Modifier;
-        I11 += val.ToString("f0").Replace(" ", string.Empty) + ")";
+        I11 += val.ToString("f0").Replace(" ", string.Empty);
       }
       else
       {
         Ratio val = (Ratio)this.I11Modifier;
         if (val.DecimalFractions != 1)
-          I11 += val.ToString("f0").Replace(" ", string.Empty) + ")";
+          I11 += val.ToString("f0").Replace(" ", string.Empty);
         else
           I11 = "X";
       }
@@ -374,13 +374,13 @@ namespace GsaGH.Parameters
       if (this._sectionModifier.I22Modifier.Option == SectionModifierOptionType.TO)
       {
         AreaMomentOfInertia val = (AreaMomentOfInertia)this.I22Modifier;
-        I22 += val.ToString("f0").Replace(" ", string.Empty) + ")";
+        I22 += val.ToString("f0").Replace(" ", string.Empty);
       }
       else
       {
         Ratio val = (Ratio)this.I22Modifier;
         if (val.DecimalFractions != 1)
-          I22 += val.ToString("f0").Replace(" ", string.Empty) + ")";
+          I22 += val.ToString("f0").Replace(" ", string.Empty);
         else
           I22 = "X";
       }
@@ -389,13 +389,13 @@ namespace GsaGH.Parameters
       if (this._sectionModifier.JModifier.Option == SectionModifierOptionType.TO)
       {
         AreaMomentOfInertia val = (AreaMomentOfInertia)this.JModifier;
-        J += val.ToString("f0").Replace(" ", string.Empty) + ")";
+        J += val.ToString("f0").Replace(" ", string.Empty);
       }
       else
       {
         Ratio val = (Ratio)this.JModifier;
         if (val.DecimalFractions != 1)
-          J += val.ToString("f0").Replace(" ", string.Empty) + ")";
+          J += val.ToString("f0").Replace(" ", string.Empty);
         else
           J = "X";
       }
@@ -403,13 +403,13 @@ namespace GsaGH.Parameters
       // K11
       if (this._sectionModifier.K11Modifier.Option == SectionModifierOptionType.TO)
       {
-        K11 += this._sectionModifier.K11Modifier.Value.ToString("f3") + "[-])";
+        K11 += this._sectionModifier.K11Modifier.Value.ToString("f3") + "[-]";
       }
       else
       {
         Ratio val = this.K11Modifier;
         if (val.DecimalFractions != 1)
-          K11 += val.ToString("f0").Replace(" ", string.Empty) + ")";
+          K11 += val.ToString("f0").Replace(" ", string.Empty);
         else
           K11 = "X";
       }
@@ -417,13 +417,13 @@ namespace GsaGH.Parameters
       // K22
       if (this._sectionModifier.K22Modifier.Option == SectionModifierOptionType.TO)
       {
-        K22 += this._sectionModifier.K22Modifier.Value.ToString("f3") + "[-])";
+        K22 += this._sectionModifier.K22Modifier.Value.ToString("f3") + "[-]";
       }
       else
       {
         Ratio val = this.K22Modifier;
         if (val.DecimalFractions != 1)
-          K22 += val.ToString("f0").Replace(" ", string.Empty) + ")";
+          K22 += val.ToString("f0").Replace(" ", string.Empty);
         else
           K22 = "X";
       }
@@ -432,36 +432,36 @@ namespace GsaGH.Parameters
       if (this._sectionModifier.VolumeModifier.Option == SectionModifierOptionType.TO)
       {
         VolumePerLength val = (VolumePerLength)this.VolumeModifier;
-        V += val.ToString("f0").Replace(" ", string.Empty) + ")";
+        V += val.ToString("f0").Replace(" ", string.Empty);
       }
       else
       {
         Ratio val = (Ratio)this.VolumeModifier;
         if (val.DecimalFractions != 1)
-          V += val.ToString("f0").Replace(" ", string.Empty) + ")";
+          V += val.ToString("f0").Replace(" ", string.Empty);
         else
           V = "X";
       }
 
       // Additional Mass
       if (this.AdditionalMass.Value != 0)
-        mass += this.AdditionalMass.ToString("f0").Replace(" ", string.Empty) + ")";
+        mass += this.AdditionalMass.ToString("f0").Replace(" ", string.Empty);
       else
         mass = "X";
 
       if (this._sectionModifier.StressOption == SectionModifierStressType.NO_MOD)
         stress = "X";
       else if (this._sectionModifier.StressOption == SectionModifierStressType.USE_MOD)
-        stress += "UseModified)";
+        stress += "UseModified";
       else
-        stress += "UseUnmodified)";
+        stress += "UseUnmodified";
 
       if (this._sectionModifier.IsBendingAxesPrincipal)
-        axis = "BendingAxis(UsePringipal(u,v))";
+        axis = "BendingAxis(UsePringipal(u,v)";
       if (this._sectionModifier.IsReferencePointCentroid)
         refPt = "AnalysisRefPt(UseCentroid)";
 
-      string innerDesc = string.Join(", ", A, I11, I22, J, K11, K22, V, mass, stress, axis, refPt).Replace("X, ", string.Empty).TrimStart(',').TrimStart(' ').TrimEnd('X').TrimEnd(' ').TrimEnd(',');
+      string innerDesc = string.Join(" ", A.Trim(), I11.Trim(), I22.Trim(), J.Trim(), K11.Trim(), K22.Trim(), V.Trim(), mass.Trim(), stress.Trim(), axis.Trim(), refPt.Trim()).Replace("X, ", string.Empty).Replace("X ", string.Empty).TrimStart(',').TrimStart(' ').TrimEnd('X').TrimEnd(' ').TrimEnd(',').Replace("  ", " ");
       return innerDesc;
     }
     #endregion

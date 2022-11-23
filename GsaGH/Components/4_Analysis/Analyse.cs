@@ -9,6 +9,7 @@ using GsaGH.Helpers;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
@@ -158,7 +159,7 @@ namespace GsaGH.Components
             try
             {
               if (model.Model.Analyse(task.Key))
-                PostHog.ModelIO("analyse", apielems.Count);
+                PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse", apielems.Count);
               else
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
               if (!model.Model.Results().ContainsKey(task.Key))
@@ -173,7 +174,7 @@ namespace GsaGH.Components
         }
       }
       #endregion
-
+      model.ModelUnit = this.LengthUnit;
       DA.SetData(0, new GsaModelGoo(model));
     }
 
@@ -196,8 +197,8 @@ namespace GsaGH.Components
       SelectedItems = new List<string>();
 
       // length
-      DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-      SelectedItems.Add(LengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -211,7 +212,7 @@ namespace GsaGH.Components
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
 
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
 
       base.UpdateUI();
     }
@@ -223,7 +224,7 @@ namespace GsaGH.Components
     
     public override void UpdateUIFromSelectedItems()
     {
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[0]);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
 
       base.UpdateUIFromSelectedItems();
     }

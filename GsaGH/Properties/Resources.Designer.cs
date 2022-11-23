@@ -673,6 +673,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap ExampleFiles {
+            get {
+                object obj = ResourceManager.GetObject("ExampleFiles", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap FaceLoad {
             get {
                 object obj = ResourceManager.GetObject("FaceLoad", resourceCulture);
@@ -1149,11 +1159,35 @@ namespace GsaGH.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap SelectResult {
+
+    /// <summary>
+    ///   Looks up a localized resource of type System.Drawing.Bitmap.
+    /// </summary>
+    public static System.Drawing.Bitmap SectionDimensions
+    {
+      get
+      {
+        object obj = ResourceManager.GetObject("SectionDimensions", resourceCulture);
+        return ((System.Drawing.Bitmap)(obj));
+      }
+    }
+
+    /// <summary>
+    ///   Looks up a localized resource of type System.Drawing.Bitmap.
+    /// </summary>
+    public static System.Drawing.Bitmap SectionAlignment
+    {
+      get
+      {
+        object obj = ResourceManager.GetObject("SectionAlignment", resourceCulture);
+        return ((System.Drawing.Bitmap)(obj));
+      }
+    }
+
+    /// <summary>
+    ///   Looks up a localized resource of type System.Drawing.Bitmap.
+    /// </summary>
+    public static System.Drawing.Bitmap SelectResult {
             get {
                 object obj = ResourceManager.GetObject("SelectResult", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));

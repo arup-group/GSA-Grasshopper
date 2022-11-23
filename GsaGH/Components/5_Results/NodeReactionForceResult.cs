@@ -198,12 +198,12 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // force
-      this.DropDownItems.Add(FilteredUnits.FilteredForceUnits);
-      this.SelectedItems.Add(this.ForceUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      this.SelectedItems.Add(Force.GetAbbreviation(this.ForceUnit));
 
       // moment
-      this.DropDownItems.Add(FilteredUnits.FilteredMomentUnits);
-      this.SelectedItems.Add(this.MomentUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment));
+      this.SelectedItems.Add(Moment.GetAbbreviation(this.MomentUnit));
 
       this.IsInitialised = true;
     }
@@ -212,15 +212,15 @@ namespace GsaGH.Components
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
       if (i == 0)
-        this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[i]);
+        this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[i]);
       else if (i == 1)
-        this.MomentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), this.SelectedItems[i]);
+        this.MomentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), this.SelectedItems[i]);
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()
     {
-      this.ForceUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[0]);
-      this.MomentUnit = (MomentUnit)Enum.Parse(typeof(MomentUnit), this.SelectedItems[1]);
+      this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[0]);
+      this.MomentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

@@ -388,9 +388,9 @@ namespace GsaGH.Parameters
     {
       if (!this._mesh.IsValid)
         return "Null";
-      string type = Helpers.Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
+      string type = Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
       string info = "N:" + this.NgonMesh.Vertices.Count + " E:" + this.API_Elements.Count;
-      return type + info;
+      return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
     }
 
     /// <summary>

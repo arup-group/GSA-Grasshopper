@@ -1,6 +1,10 @@
 ﻿using System;
 using System.IO;
 using GsaAPI;
+using OasysGH;
+using OasysGH.Parameters;
+using OasysUnits.Units;
+using OasysUnits;
 
 namespace GsaGH.Parameters
 {
@@ -14,6 +18,7 @@ namespace GsaGH.Parameters
     public Model Model { get; set; } = new Model();
     public string FileName { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
+    public LengthUnit ModelUnit { get; set; } = LengthUnit.Undefined;
     
     internal GsaAPI.Titles Titles
     {
@@ -40,6 +45,7 @@ namespace GsaGH.Parameters
       GsaModel clone = new GsaModel();
       clone.Model = this.Model.Clone();
       clone.FileName = this.FileName;
+      clone.ModelUnit = this.ModelUnit;
       clone.Guid = Guid.NewGuid();
       return clone;
     }
@@ -55,6 +61,7 @@ namespace GsaGH.Parameters
       if (this.FileName != null)
         dup.FileName = this.FileName.ToString();
       dup.Guid = new Guid(this.Guid.ToString());
+      dup.ModelUnit = this.ModelUnit;
       return dup;
     }
 
@@ -76,7 +83,11 @@ namespace GsaGH.Parameters
             s = "Nameless";
           }
         }
+        else
+          s = "New GsaGH Model";
       }
+      if (this.ModelUnit != LengthUnit.Undefined)
+        s += " [" + Length.GetAbbreviation(this.ModelUnit) + "]";
       return s;
     }
     #endregion

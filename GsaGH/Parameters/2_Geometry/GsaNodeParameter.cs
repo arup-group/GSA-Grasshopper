@@ -25,6 +25,21 @@ namespace GsaGH.Parameters
       GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
     { }
 
+    protected override GsaNodeGoo PreferredCast(object data)
+    {
+      if (data.GetType() == typeof(GsaNode))
+        return new GsaNodeGoo((GsaNode)data);
+
+      Point3d pt = new Point3d();
+      if (GH_Convert.ToPoint3d(data, ref pt, GH_Conversion.Both))
+      {
+        GsaNode node = new GsaNode(pt);
+        return new GsaNodeGoo(node);
+      }
+
+      return base.PreferredCast(data);
+    }
+
     public override void DrawViewportMeshes(IGH_PreviewArgs args)
     {
       //Meshes aren't drawn for points.

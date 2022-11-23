@@ -26,8 +26,6 @@ namespace IntegrationTests.ExampleFiles
     public void MaxMyyAssert()
     {
       IGH_Param param = Helper.FindParameter(Document(), "MaxMyy");
-      Assert.NotNull(param);
-      param.CollectData();
       GH_Number output = (GH_Number)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(-157.193672, output.Value, 6);
     }
@@ -36,8 +34,6 @@ namespace IntegrationTests.ExampleFiles
     public void SumLoadForceAssert()
     {
       IGH_Param param = Helper.FindParameter(Document(), "SumLoadForce");
-      Assert.NotNull(param);
-      param.CollectData();
       GH_Boolean output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
       Assert.True(output.Value);
     }

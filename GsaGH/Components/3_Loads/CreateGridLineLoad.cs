@@ -240,7 +240,7 @@ namespace GsaGH.Components
       // 8 load value
       double load2 = load1;
       if (DA.GetData(8, ref load2))
-        load2 = ((ForcePerLength)Input.UnitNumber(this, DA, 6, this.ForcePerLengthUnit, true)).NewtonsPerMeter;
+        load2 = ((ForcePerLength)Input.UnitNumber(this, DA, 8, this.ForcePerLengthUnit, true)).NewtonsPerMeter;
       gridlineload.GridLineLoad.ValueAtEnd = load2;
 
       // convert to goo
@@ -262,21 +262,21 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // ForcePerLength
-      this.DropDownItems.Add(FilteredUnits.FilteredForcePerLengthUnits);
-      this.SelectedItems.Add(this.ForcePerLengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerLength)));
+      this.SelectedItems.Add(ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit));
 
       this.IsInitialised = true;
     }
     public override void SetSelected(int i, int j)
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.ForcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[i]);
+      this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[i]);
       base.UpdateUI();
     }
 
     public override void UpdateUIFromSelectedItems()
     {
-      this.ForcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[0]);
+      this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
     public override void VariableParameterMaintenance()

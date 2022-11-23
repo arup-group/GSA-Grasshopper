@@ -62,11 +62,13 @@ namespace GsaGH.Components
       pManager[5].Optional = true;
       pManager[6].Optional = true;
     }
+
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
       pManager.AddParameter(new GsaLoadParameter(), "Grid Area Load", "Ld", "GSA Grid Area Load", GH_ParamAccess.item);
     }
     #endregion
+
     protected override void SolveInstance(IGH_DataAccess DA)
     {
       GsaGridAreaLoad gridareaload = new GsaGridAreaLoad();
@@ -261,23 +263,25 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // ForcePerArea
-      this.DropDownItems.Add(FilteredUnits.FilteredForcePerAreaUnits);
-      this.SelectedItems.Add(this.ForcePerAreaUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerArea)));
+      this.SelectedItems.Add(Pressure.GetAbbreviation(this.ForcePerAreaUnit));
 
       this.IsInitialised = true;
     }
+
     public override void SetSelected(int i, int j)
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.ForcePerAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[i]);
+      this.ForcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), this.SelectedItems[i]);
       base.UpdateUI();
     }
 
     public override void UpdateUIFromSelectedItems()
     {
-      this.ForcePerAreaUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[0]);
+      this.ForcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), this.SelectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
+
     public override void VariableParameterMaintenance()
     {
       string unitAbbreviation = Pressure.GetAbbreviation(this.ForcePerAreaUnit);

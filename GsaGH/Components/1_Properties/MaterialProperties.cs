@@ -21,7 +21,7 @@ namespace GsaGH.Components
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("7504a99f-a4e2-4e30-8251-de31ea83e8cb");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.MaterialProperties;
 
@@ -66,17 +66,17 @@ namespace GsaGH.Components
           return;
         }
 
-        Pressure eModulus = new Pressure(gsaMaterial.AnalysisMaterial.ElasticModulus, UnitSystem.SI); //create unit from SI as API is in SI units
+        Pressure eModulus = new Pressure(gsaMaterial.AnalysisMaterial.ElasticModulus, PressureUnit.Pascal); //create unit from SI as API is in SI units
         eModulus = new Pressure(eModulus.As(this.StressUnit), this.StressUnit);
         DA.SetData(0, new GH_UnitNumber(eModulus));
 
         DA.SetData(1, gsaMaterial.AnalysisMaterial.PoissonsRatio);
 
-        Density density = new Density(gsaMaterial.AnalysisMaterial.Density, UnitSystem.SI);//create unit from SI as API is in SI units
+        Density density = new Density(gsaMaterial.AnalysisMaterial.Density, DensityUnit.KilogramPerCubicMeter);//create unit from SI as API is in SI units
         density = new Density(density.As(this.DensityUnit), this.DensityUnit);
         DA.SetData(2, new GH_UnitNumber(density));
 
-        CoefficientOfThermalExpansion deltaT = new CoefficientOfThermalExpansion(gsaMaterial.AnalysisMaterial.CoefficientOfThermalExpansion, UnitSystem.SI);//create unit from SI as API is in SI units
+        CoefficientOfThermalExpansion deltaT = new CoefficientOfThermalExpansion(gsaMaterial.AnalysisMaterial.CoefficientOfThermalExpansion, CoefficientOfThermalExpansionUnit.InverseDegreeCelsius);//create unit from SI as API is in SI units
         CoefficientOfThermalExpansionUnit temp = UnitsHelper.GetCoefficientOfThermalExpansionUnit(this.TemperatureUnit);
         deltaT = new CoefficientOfThermalExpansion(deltaT.As(temp), temp);
         DA.SetData(3, new GH_UnitNumber(deltaT));
@@ -95,9 +95,8 @@ namespace GsaGH.Components
     {
       Menu_AppendSeparator(menu);
 
-      ToolStripMenuItem stressUnitsMenu = new ToolStripMenuItem("Select Stress unit", Properties.Resources.Units);
+      ToolStripMenuItem stressUnitsMenu = new ToolStripMenuItem("Stress");
       stressUnitsMenu.Enabled = true;
-      stressUnitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress))
       {
         ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateStress(unit); });
@@ -105,48 +104,49 @@ namespace GsaGH.Components
         toolStripMenuItem.Enabled = true;
         stressUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
-      menu.Items.Add(stressUnitsMenu);
 
-      ToolStripMenuItem densityUnitsMenu = new ToolStripMenuItem("Select Stress unit", Properties.Resources.Units);
+      ToolStripMenuItem densityUnitsMenu = new ToolStripMenuItem("Density");
       densityUnitsMenu.Enabled = true;
-      densityUnitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Density))
       {
         ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateDensity(unit); });
-        toolStripMenuItem.Checked = unit == Pressure.GetAbbreviation(this.StressUnit);
+        toolStripMenuItem.Checked = unit == Density.GetAbbreviation(this.DensityUnit);
         toolStripMenuItem.Enabled = true;
         densityUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
-      menu.Items.Add(densityUnitsMenu);
 
-      ToolStripMenuItem temperatureUnitsMenu = new ToolStripMenuItem("Select Stress unit", Properties.Resources.Units);
+      ToolStripMenuItem temperatureUnitsMenu = new ToolStripMenuItem("Temperature");
       temperatureUnitsMenu.Enabled = true;
-      temperatureUnitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Temperature))
       {
         ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateTemperature(unit); });
-        toolStripMenuItem.Checked = unit == Pressure.GetAbbreviation(this.StressUnit);
+        toolStripMenuItem.Checked = unit == Temperature.GetAbbreviation(this.TemperatureUnit);
         toolStripMenuItem.Enabled = true;
         temperatureUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
-      menu.Items.Add(temperatureUnitsMenu);
+
+      ToolStripMenuItem unitsMenu = new ToolStripMenuItem("Select Units", Properties.Resources.Units);
+      unitsMenu.DropDownItems.AddRange(new ToolStripItem[] { stressUnitsMenu, densityUnitsMenu, temperatureUnitsMenu });
+      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+
+      menu.Items.Add(unitsMenu);
 
       Menu_AppendSeparator(menu);
     }
     
     private void UpdateStress(string unit)
     {
-      this.StressUnit = Pressure.ParseUnit(unit);
+      this.StressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
       Update();
     }
     private void UpdateDensity(string unit)
     {
-      this.DensityUnit = Density.ParseUnit(unit);
+      this.DensityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), unit);
       Update();
     }
     private void UpdateTemperature(string unit)
     {
-      this.TemperatureUnit = Temperature.ParseUnit(unit);
+      this.TemperatureUnit = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), unit);
       Update();
     }
     private void Update()
@@ -175,9 +175,9 @@ namespace GsaGH.Components
     {
       try
       {
-        this.StressUnit = Pressure.ParseUnit(reader.GetString("StressUnit"));
-        this.DensityUnit = Density.ParseUnit(reader.GetString("DensityUnit"));
-        this.TemperatureUnit = Temperature.ParseUnit(reader.GetString("TemperatureUnit"));
+        this.StressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("StressUnit"));
+        this.DensityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), reader.GetString("DensityUnit"));
+        this.TemperatureUnit = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), reader.GetString("TemperatureUnit"));
       }
       catch (Exception)
       {

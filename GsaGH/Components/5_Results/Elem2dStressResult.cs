@@ -191,7 +191,7 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // Stress
-      this.DropDownItems.Add(FilteredUnits.FilteredStressUnits);
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
       this.SelectedItems.Add(this.StresshUnit.ToString());
 
       this.IsInitialised = true;

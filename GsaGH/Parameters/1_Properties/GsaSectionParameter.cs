@@ -22,5 +22,23 @@ namespace GsaGH.Parameters
       GsaGH.Components.Ribbon.CategoryName.Name(),
       GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
     { }
+
+    protected override GsaSectionGoo PreferredCast(object data)
+    {
+      if (data.GetType() == typeof(GsaSection))
+        return new GsaSectionGoo((GsaSection)data);
+
+      if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both))
+      {
+        GsaSection section = new GsaSection(id);
+        return new GsaSectionGoo(section);
+      }
+      if (GH_Convert.ToString(data, out string profile, GH_Conversion.Both))
+      {
+        GsaSection section = new GsaSection(profile);
+        return new GsaSectionGoo(section);
+      }
+      return base.PreferredCast(data);
+    }
   }
 }

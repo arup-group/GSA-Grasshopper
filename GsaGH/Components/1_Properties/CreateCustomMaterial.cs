@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -18,7 +17,7 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to create a new Material
   /// </summary>
-  public class CustomMaterial : GH_OasysDropDownComponent
+  public class CreateCustomMaterial : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("83bfce91-9204-4fe4-b81d-0036babf0c6d");
@@ -26,7 +25,7 @@ namespace GsaGH.Components
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CustomMaterial;
 
-    public CustomMaterial() : base("Custom Material",
+    public CreateCustomMaterial() : base("Custom Material",
       "Material",
       "Create a Custom GSA Analysis Material",
       Ribbon.CategoryName.Name(),
@@ -139,17 +138,6 @@ namespace GsaGH.Components
     private PressureUnit StressUnit = DefaultUnits.StressUnitResult;
     private TemperatureUnit TemperatureUnit = DefaultUnits.TemperatureUnit;
 
-    private readonly List<string> _topLevelDropDownItems = new List<string>(new string[]
-    {
-      "Steel",
-      "Concrete",
-      "Timber",
-      "Aluminium",
-      "FRP",
-      "Glass",
-      "Undefined"
-    });
-
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
@@ -164,20 +152,20 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // Type
-      this.DropDownItems.Add(this._topLevelDropDownItems);
+      this.DropDownItems.Add(CreateMaterial.MaterialTypes);
       this.SelectedItems.Add(this._mode.ToString());
 
       // Stress unit
-      this.DropDownItems.Add(FilteredUnits.FilteredStressUnits);
-      this.SelectedItems.Add(this.StressUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
+      this.SelectedItems.Add(Pressure.GetAbbreviation(this.StressUnit));
 
       // Density unit
-      this.DropDownItems.Add(FilteredUnits.FilteredDensityUnits);
-      this.SelectedItems.Add(this.DensityUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Density));
+      this.SelectedItems.Add(Density.GetAbbreviation(this.DensityUnit));
 
       // Temperature unit
-      this.DropDownItems.Add(FilteredUnits.FilteredTemperatureUnits);
-      this.SelectedItems.Add(this.TemperatureUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Temperature));
+      this.SelectedItems.Add(Temperature.GetAbbreviation(this.TemperatureUnit));
 
       this.IsInitialised = true;
     }
@@ -195,13 +183,13 @@ namespace GsaGH.Components
         switch (i)
         {
           case 1:
-            this.StressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[1]);
+            this.StressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), this.SelectedItems[1]);
             break;
           case 2:
-            this.DensityUnit = (DensityUnit)Enum.Parse(typeof(DensityUnit), this.SelectedItems[2]);
+            this.DensityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), this.SelectedItems[2]);
             break;
           case 3:
-            this.TemperatureUnit = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), this.SelectedItems[3]);
+            this.TemperatureUnit = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), this.SelectedItems[3]);
             break;
         }
       }
@@ -211,9 +199,9 @@ namespace GsaGH.Components
     public override void UpdateUIFromSelectedItems()
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
-      this.StressUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[1]);
-      this.DensityUnit = (DensityUnit)Enum.Parse(typeof(DensityUnit), this.SelectedItems[2]);
-      this.TemperatureUnit = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), this.SelectedItems[3]);
+      this.StressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), this.SelectedItems[1]);
+      this.DensityUnit = (DensityUnit)UnitsHelper.Parse(typeof(DensityUnit), this.SelectedItems[2]);
+      this.TemperatureUnit = (TemperatureUnit)UnitsHelper.Parse(typeof(TemperatureUnit), this.SelectedItems[3]);
       base.UpdateUIFromSelectedItems();
     }
 

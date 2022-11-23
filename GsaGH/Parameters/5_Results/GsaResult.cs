@@ -334,18 +334,18 @@ namespace GsaGH.Parameters
       Combination
     }
     internal ResultType Type { get; set; }
-    internal Model Model { get; set; }
+    internal GsaModel Model { get; set; }
     public GsaResult()
     { }
-    internal GsaResult(Model model, AnalysisCaseResult result, int caseID)
+    internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseID)
     {
       this.Model = model;
       this.AnalysisCaseResult = result;
       this.Type = ResultType.AnalysisCase;
       this.CaseID = caseID;
-      this.CaseName = model.AnalysisCaseName(this.CaseID);
+      this.CaseName = model.Model.AnalysisCaseName(this.CaseID);
     }
-    internal GsaResult(Model model, CombinationCaseResult result, int caseID, List<int> permutations)
+    internal GsaResult(GsaModel model, CombinationCaseResult result, int caseID, List<int> permutations)
     {
       this.Model = model;
       this.CombinationCaseResult = result;
@@ -378,7 +378,7 @@ namespace GsaGH.Parameters
           this.ACaseNodeDisplacementValues.Add(nodelist,
               ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], lengthUnit));
         }
-        return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> { ACaseNodeDisplacementValues[nodelist] }, Model.Nodes(nodelist).Keys.ToList());
+        return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> { ACaseNodeDisplacementValues[nodelist] }, Model.Model.Nodes(nodelist).Keys.ToList());
       }
       else
       {
@@ -394,7 +394,7 @@ namespace GsaGH.Parameters
               ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], lengthUnit, SelectedPermutationIDs));
         }
         return new Tuple<List<GsaResultsValues>, List<int>>(
-          new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values), Model.Nodes(nodelist).Keys.ToList());
+          new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values), Model.Model.Nodes(nodelist).Keys.ToList());
       }
     }
 
@@ -413,7 +413,7 @@ namespace GsaGH.Parameters
       if (nodelist.ToLower() == "all" | nodelist == "")
       {
         supportnodeIDs = new ConcurrentBag<int>();
-        ReadOnlyDictionary<int, Node> nodes = Model.Nodes();
+        ReadOnlyDictionary<int, Node> nodes = Model.Model.Nodes();
         Parallel.ForEach(nodes, node =>
         {
           NodalRestraint rest = node.Value.Restraint;
@@ -472,7 +472,7 @@ namespace GsaGH.Parameters
       if (nodelist.ToLower() == "all" | nodelist == "")
       {
         supportnodeIDs = new ConcurrentBag<int>();
-        ReadOnlyDictionary<int, Node> nodes = Model.Nodes();
+        ReadOnlyDictionary<int, Node> nodes = Model.Model.Nodes();
         Parallel.ForEach(nodes, node =>
         {
           NodalRestraint rest = node.Value.Restraint;
@@ -966,7 +966,7 @@ namespace GsaGH.Parameters
             txt = txt + " p" + SelectedPermutationIDs[0];
         }
       }
-      return txt;
+      return txt.Trim().Replace("  ", " ");
     }
 
     #endregion

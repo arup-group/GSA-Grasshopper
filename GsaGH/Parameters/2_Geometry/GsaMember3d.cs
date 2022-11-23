@@ -240,8 +240,8 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
-      string type = Helpers.Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == this.API_Member.Type).Key;
-      return idd + type;
+      string type = Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.API_Member.Type).Key;
+      return string.Join(" ", idd.Trim(), type.Trim()).Trim().Replace("  ", " ");
     }
 
     internal void CloneApiObject()

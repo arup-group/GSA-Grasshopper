@@ -8,6 +8,7 @@ using GsaGH.Parameters;
 using GsaGH.Helpers;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 
 namespace GsaGH.Components
 {
@@ -71,14 +72,12 @@ namespace GsaGH.Components
               FileName = FileName
             };
 
-            Titles.GetTitlesFromGSA(model);
+            GetTitles(model);
+            GetUnit(ref gsaModel);
 
-            string mes = Path.GetFileName(FileName);
-            mes = mes.Substring(0, mes.Length - 4);
-            Message = mes;
             DA.SetData(0, new GsaModelGoo(gsaModel));
 
-            PostHog.ModelIO("openGWB", (int)(new FileInfo(FileName).Length / 1024));
+            PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB", (int)(new FileInfo(FileName).Length / 1024));
 
             return;
           }
@@ -117,11 +116,9 @@ namespace GsaGH.Components
             FileName = FileName
           };
 
-          Titles.GetTitlesFromGSA(model);
+          GetTitles(model);
+          GetUnit(ref gsaModel);
 
-          string mes = Path.GetFileName(FileName);
-          mes = mes.Substring(0, mes.Length - 4);
-          Message = mes;
           DA.SetData(0, new GsaModelGoo(gsaModel));
           return;
         }
@@ -131,6 +128,29 @@ namespace GsaGH.Components
           return;
         }
       }
+    }
+
+    private void GetTitles(Model model)
+    {
+      Titles.GetTitlesFromGSA(model);
+      string mes = Path.GetFileName(FileName);
+      mes = mes.Substring(0, mes.Length - 4);
+      Message = mes;
+    }
+
+    private void GetUnit(ref GsaModel gsaModel)
+    {
+      // none of this works:
+      // 1. save as gwa is not possible with GsaAPI
+      // 2. Output_UnitFactor and Output_String() both result COM error
+
+      //Interop.Gsa_10_1.ComAuto m = new Interop.Gsa_10_1.ComAuto();
+      //string temp = Path.GetTempPath() + Guid.NewGuid().ToString() + ".gwa";
+      //gsaModel.Model.SaveAs(temp);
+      //m.Open(temp);
+      //float unit = m.Output_UnitFactor();
+
+      //gsaModel.ModelGeometryUnit = (OasysUnits.Units.LengthUnit)OasysGH.Units.Helpers.UnitsHelper.Parse(typeof(OasysUnits.Units.LengthUnit), unit);
     }
 
     #region Custom UI

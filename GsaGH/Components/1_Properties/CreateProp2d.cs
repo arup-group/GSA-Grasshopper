@@ -153,8 +153,8 @@ namespace GsaGH.Components
       this.SelectedItems.Add(this._dropdownTopLevel[3]);
 
       // Length
-      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-      this.SelectedItems.Add(this.LengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -169,7 +169,7 @@ namespace GsaGH.Components
         {
           case "Plane Stress":
             if (this.DropDownItems.Count < 2)
-              this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
             Mode1Clicked();
             break;
           case "Fabric":
@@ -179,17 +179,17 @@ namespace GsaGH.Components
             break;
           case "Flat Plate":
             if (this.DropDownItems.Count < 2)
-              this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
             Mode3Clicked();
             break;
           case "Shell":
             if (this.DropDownItems.Count < 2)
-              this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
             Mode4Clicked();
             break;
           case "Curved Shell":
             if (this.DropDownItems.Count < 2)
-              this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits); // add length unit dropdown
+              this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
             Mode5Clicked();
             break;
           case "Load Panel":
@@ -200,14 +200,14 @@ namespace GsaGH.Components
         }
       }
       else
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
 
       base.UpdateUI();
     }
 
     public override void UpdateUIFromSelectedItems()
     {
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[1]);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

@@ -152,19 +152,19 @@ namespace GsaGH.Parameters
         string sx = (X) ? "\u2713" : "\u2610";
         sx = "X" + sx;
         string sy = (Y) ? "\u2713" : "\u2610";
-        sy = ", Y" + sy;
+        sy = " Y" + sy;
         string sz = (Z) ? "\u2713" : "\u2610";
-        sz = ", Z" + sz;
+        sz = " Z" + sz;
         string sxx = (XX) ? "\u2713" : "\u2610";
-        sxx = ", XX" + sxx;
+        sxx = " XX" + sxx;
         string syy = (YY) ? "\u2713" : "\u2610";
-        syy = ", YY" + syy;
+        syy = " YY" + syy;
         string szz = (ZZ) ? "\u2713" : "\u2610";
-        szz = ", ZZ" + szz;
+        szz = " ZZ" + szz;
         return sx + sy + sz + sxx + syy + szz;
       }
       else
-        return state.ToString();
+        return state.ToString().Trim();
     }
     #endregion
   }

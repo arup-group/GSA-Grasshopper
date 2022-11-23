@@ -11,6 +11,7 @@ using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units.Helpers;
 using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -220,8 +221,7 @@ namespace GsaGH.Components
           updateCases = false;
 
         // skip 'reflection' if inputs have been set
-        if (ResultType == GsaResult.ResultType.AnalysisCase && this.Params.Input[1].SourceCount > 0
-          && this.Params.Input[2].SourceCount > 0)
+        if (ResultType == GsaResult.ResultType.AnalysisCase && this.Params.Input[2].SourceCount > 0)
         {
           _analysisCaseResults = _gsaModel.Model.Results();
           if (_analysisCaseResults == null || _analysisCaseResults.Count == 0 || !_analysisCaseResults.ContainsKey(_caseID))
@@ -231,8 +231,7 @@ namespace GsaGH.Components
           }
           goto GetResults;
         }
-        if (ResultType == GsaResult.ResultType.Combination && this.Params.Input[1].SourceCount > 0
-          && this.Params.Input[2].SourceCount > 0 && this.Params.Input[3].SourceCount > 0)
+        if (ResultType == GsaResult.ResultType.Combination && this.Params.Input[2].SourceCount > 0)
         {
           _combinationCaseResults = _gsaModel.Model.CombinationCaseResults();
           if (_combinationCaseResults == null || _combinationCaseResults.Count == 0 || !_combinationCaseResults.ContainsKey(_caseID))
@@ -387,7 +386,7 @@ namespace GsaGH.Components
               if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, _caseID)))
               {
                 Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, _caseID),
-                    new GsaResult(_gsaModel.Model, _analysisCaseResults[_caseID], _caseID));
+                    new GsaResult(_gsaModel, _analysisCaseResults[_caseID], _caseID));
               }
             }
             else
@@ -402,7 +401,7 @@ namespace GsaGH.Components
                 if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, key)))
                 {
                   Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, key),
-                      new GsaResult(_gsaModel.Model, _analysisCaseResults[key], key));
+                      new GsaResult(_gsaModel, _analysisCaseResults[key], key));
                 }
               }
             }
@@ -424,7 +423,7 @@ namespace GsaGH.Components
               if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, _caseID)))
               {
                 Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, _caseID),
-                    new GsaResult(_gsaModel.Model, _combinationCaseResults[_caseID], _caseID, _permutations));
+                    new GsaResult(_gsaModel, _combinationCaseResults[_caseID], _caseID, _permutations));
               }
               else
               {
@@ -453,7 +452,7 @@ namespace GsaGH.Components
                   }
 
                   Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, key),
-                      new GsaResult(_gsaModel.Model, _combinationCaseResults[key], key, _permutations));
+                      new GsaResult(_gsaModel, _combinationCaseResults[key], key, _permutations));
                 }
               }
             }
@@ -481,8 +480,8 @@ namespace GsaGH.Components
     #region Custom UI
     List<string> _type = new List<string>(new string[]
     {
-            "AnalysisCase",
-            "Combination"
+      "AnalysisCase",
+      "Combination"
     });
     GsaResult.ResultType ResultType = GsaResult.ResultType.AnalysisCase;
     bool updatePermutations;

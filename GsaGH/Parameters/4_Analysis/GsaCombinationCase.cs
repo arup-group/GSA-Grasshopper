@@ -5,6 +5,7 @@
     internal int ID { get; set; } = 0;
     public string Name { get; set; }
     public string Description { get; set; }
+
     public GsaCombinationCase()
     {
     }
@@ -35,7 +36,7 @@
         s += " '" + this.Name.ToString() + "'";
       if (this.Description != null)
         s += " " + this.Description.ToString();
-      return this.ID > 0 ? "ID:" + this.ID : "" + s;
+      return string.Join(" ", (this.ID > 0 ? "ID:" + this.ID : "").Trim(), s.Trim()).Trim().Replace("  ", " ");
     }
     #endregion
   }

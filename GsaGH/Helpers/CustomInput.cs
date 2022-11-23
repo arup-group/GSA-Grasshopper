@@ -26,6 +26,14 @@ namespace GsaGH.Helpers
           owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Note: Input " + owner.Params.Input[inputid].NickName + " was automatically converted from DecimalFraction (" + val + ") to Percentage (" + rat.ToString("f0") + ")");
           return new GH_UnitNumber(rat);
         }
+        // try cast to string
+        else if (GH_Convert.ToString(gh_typ.Value, out string txt, GH_Conversion.Both))
+        {
+          if (Ratio.TryParse(txt, out Ratio res))
+            return new GH_UnitNumber(res);
+          else
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to Ratio");
+        }
         else
         {
           owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
@@ -56,6 +64,7 @@ namespace GsaGH.Helpers
                 + System.Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be Ratio");
             return new Ratio(100, RatioUnit.Percent);
           }
+          return (Ratio)unitNumber.Value;
         }
         // try cast to double
         else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
@@ -65,6 +74,14 @@ namespace GsaGH.Helpers
           owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Note: Input " + owner.Params.Input[inputid].NickName + " was automatically converted from DecimalFraction (" + val + ") to Percentage (" + rat.ToString("f0") + ")");
           return rat;
         }
+        // try cast to string
+        else if (GH_Convert.ToString(gh_typ.Value, out string txt, GH_Conversion.Both))
+        {
+          if (Ratio.TryParse(txt, out Ratio res))
+            return res;
+          else
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to Ratio");
+        }
         else
         {
           owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to UnitNumber");
@@ -73,6 +90,7 @@ namespace GsaGH.Helpers
       }
       return new Ratio(100, RatioUnit.Percent);
     }
+
     internal static Ratio RatioInDecimalFractionToDecimalFraction(GH_Component owner, IGH_DataAccess DA, int inputid)
     {
       GH_UnitNumber unitNumber = null;
@@ -96,6 +114,14 @@ namespace GsaGH.Helpers
         {
           owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Note: Input " + owner.Params.Input[inputid].NickName + " was not automatically converted to percentage");
           return new Ratio(val, RatioUnit.DecimalFraction);
+        }
+        // try cast to string
+        else if (GH_Convert.ToString(gh_typ.Value, out string txt, GH_Conversion.Both))
+        {
+          if (Ratio.TryParse(txt, out Ratio res))
+            return res;
+          else
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + owner.Params.Input[inputid].NickName + " to Ratio");
         }
         else
         {

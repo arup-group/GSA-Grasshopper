@@ -109,6 +109,8 @@ namespace GsaGH.Parameters
     {
       get
       {
+        if (this._inclCrvs == null)
+          return new List<PolyCurve>();
         return this._inclCrvs;
       }
     }
@@ -576,15 +578,15 @@ namespace GsaGH.Parameters
 
       if (this._inclPts != null)
       {
-        if (this._inclCrvs != null && this._inclCrvs.Count > 0)
+        if (this._inclPts != null && this._inclPts.Count > 0)
           incl += " &";
         if (this._inclPts.Count > 0)
           incl += " Incl.Pt:" + this._inclPts.Count;
       }
 
       string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
-      string type = Helpers.Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
-      return idd + type + incl;
+      string type = Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
+      return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
     }
     #endregion
   }

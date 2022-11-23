@@ -149,8 +149,8 @@ namespace GsaGH.Components
       this.SelectedItems.Add(this._mode.ToString());
 
       // Length
-      this.DropDownItems.Add(FilteredUnits.FilteredLengthUnits);
-      this.SelectedItems.Add(this.LengthUnit.ToString());
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -170,14 +170,14 @@ namespace GsaGH.Components
         }
       }
       else
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
 
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
-      this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 
@@ -187,6 +187,13 @@ namespace GsaGH.Components
 
       if (_mode == FoldMode.Storey)
       {
+        if (Params.Input.Count < 5)
+        {
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_GenericObject());
+
+        }
+
         Params.Input[4].NickName = "tA";
         Params.Input[4].Name = "Tolerance Above [" + Length.GetAbbreviation(this.LengthUnit) + "]";
         Params.Input[4].Description = "Tolerance Above Grid Plane";
@@ -233,6 +240,12 @@ namespace GsaGH.Components
       {
         _mode = (FoldMode)reader.GetInt32("Mode");
         this.InitialiseDropdowns();
+      }
+
+      if (_mode == FoldMode.Storey && this.Params.Input.Count < 5)
+      {
+        Params.RegisterInputParam(new Param_GenericObject());
+        Params.RegisterInputParam(new Param_GenericObject());
       }
 
       return base.Read(reader);

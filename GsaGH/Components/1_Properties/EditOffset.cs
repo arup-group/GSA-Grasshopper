@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
@@ -21,8 +22,8 @@ namespace GsaGH.Components
   public class EditOffset : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("1e094fcd-8f5f-4047-983c-e0e57a83ae52");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override Guid ComponentGuid => new Guid("dd2b4e77-c1c7-4a0e-9d12-fe7a8982f9ea");
+    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditOffset;
 
@@ -88,10 +89,10 @@ namespace GsaGH.Components
         int outp = 0;
         DA.SetData(outp++, new GsaOffsetGoo(offset));
 
-        DA.SetData(outp++, new GH_UnitNumber(offset.X1));
-        DA.SetData(outp++, new GH_UnitNumber(offset.X2));
-        DA.SetData(outp++, new GH_UnitNumber(offset.Y));
-        DA.SetData(outp++, new GH_UnitNumber(offset.Z));
+        DA.SetData(outp++, new GH_UnitNumber(offset.X1.ToUnit(this.LengthUnit)));
+        DA.SetData(outp++, new GH_UnitNumber(offset.X2.ToUnit(this.LengthUnit)));
+        DA.SetData(outp++, new GH_UnitNumber(offset.Y.ToUnit(this.LengthUnit)));
+        DA.SetData(outp++, new GH_UnitNumber(offset.Z.ToUnit(this.LengthUnit)));
       }
     }
 
@@ -122,7 +123,7 @@ namespace GsaGH.Components
     }
     private void Update(string unit)
     {
-      this.LengthUnit = Length.ParseUnit(unit);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
@@ -134,10 +135,7 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      else
-        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitSection;
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
 
@@ -156,11 +154,8 @@ namespace GsaGH.Components
     }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
     #endregion
     #endregion

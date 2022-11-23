@@ -481,4 +481,13 @@
   <data name="EditBucklingLengthFactors" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditBucklingLengthFactors.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ExampleFiles" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ExampleFiles.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SectionDimensions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SectionDimensions.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SectionAlignment" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SectionAlignment.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
