@@ -122,10 +122,10 @@ namespace GsaGH.Components
             gh_typ.CastTo(ref prop3d);
           else
           {
-            if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+            if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
             {
-              prop3d.ID = idd;
-              mem.PropertyID = idd;
+              prop3d.Id = id;
+              mem.PropertyID = id;
             }
             else
             {

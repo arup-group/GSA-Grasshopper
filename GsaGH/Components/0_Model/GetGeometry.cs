@@ -386,7 +386,7 @@ namespace GsaGH.Components
           {
             DataTree<GsaElement2dGoo> tree = new DataTree<GsaElement2dGoo>();
             foreach (GsaElement2dGoo element in results.Elem2ds)
-              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Properties.First().ID));
+              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Properties.First().Id));
             data.SetDataTree(2, tree);
           }
           element2ds = results.Elem2ds;
@@ -480,7 +480,7 @@ namespace GsaGH.Components
           {
             DataTree<GsaMember2dGoo> tree = new DataTree<GsaMember2dGoo>();
             foreach (GsaMember2dGoo element in results.Mem2ds)
-              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Property.ID));
+              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Property.Id));
             data.SetDataTree(5, tree);
           }
         }
@@ -498,7 +498,7 @@ namespace GsaGH.Components
           {
             DataTree<GsaMember3dGoo> tree = new DataTree<GsaMember3dGoo>();
             foreach (GsaMember3dGoo element in results.Mem3ds)
-              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Property.ID));
+              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Property.Id));
             data.SetDataTree(6, tree);
           }
         }
