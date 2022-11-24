@@ -95,12 +95,12 @@ namespace GsaGH.Helpers.Export
       // convert from Goo-type
       List<GsaProp2d> prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      prop2Ds.Select(c => { c.ID = 0; return c; }).ToList();
+      prop2Ds.Select(c => { c.Id = 0; return c; }).ToList();
       List<GsaProp3dGoo> gooprop3Ds = Import.Properties.GetProp3ds(p3Dict, model.AnalysisMaterials());
       // convert from Goo-type
       List<GsaProp3d> prop3Ds = gooprop3Ds.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
-      prop3Ds.Select(c => { c.ID = 0; return c; }).ToList();
+      prop3Ds.Select(c => { c.Id = 0; return c; }).ToList();
 
       // get loads
       List<GsaLoadGoo> gooloads = new List<GsaLoadGoo>();

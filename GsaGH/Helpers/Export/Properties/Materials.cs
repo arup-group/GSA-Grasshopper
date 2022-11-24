@@ -10,55 +10,48 @@ namespace GsaGH.Helpers.Export
   {
     internal static MaterialType ConvertType(GsaMaterial material)
     {
-            MaterialType matType = global::GsaAPI.MaterialType.NONE;
-      
+      MaterialType matType = global::GsaAPI.MaterialType.NONE;
+
       if (material != null)
         matType = (MaterialType)(int)material.MaterialType;
 
       return matType;
     }
 
-    internal static int ConvertCustomMaterial(GsaMaterial material,
-        ref Dictionary<int, AnalysisMaterial> existingMaterials,
-        ref Dictionary<Guid, int> materials_guid)
+    internal static int AddMaterial(GsaMaterial material, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
-      if (material == null) { return 0; }
-
-      int outID = material.AnalysisProperty;
-
-      // test if material has already bee added to the dictionary
-      if (materials_guid.ContainsKey(material.Guid))
+      if (material.AnalysisProperty > 0 && material.AnalysisMaterial != null)
       {
-        materials_guid.TryGetValue(material.Guid, out int sID);
-        // if guid exist in our dictionary it has been added to the model 
-        return sID;
-      }
-
-      // material
-      if (material.AnalysisProperty > 0)
-      {
-        if (material.AnalysisMaterial != null) // material can refer to an ID only, meaning that the material must already exist in the model. Else we set it in the model:
-          existingMaterials[material.AnalysisProperty] = material.AnalysisMaterial;
-        else
-          return outID; // return without setting the GUID in the dictionary
+        apiMaterials.SetValue(material.AnalysisProperty, material.Guid, material.AnalysisMaterial, true);
+        return material.AnalysisProperty;
       }
       else
-      {
-        if (material.AnalysisMaterial != null)
-        {
-          if (existingMaterials.Count > 0)
-            outID = existingMaterials.Keys.Max() + 1;
-          else
-            outID = 1;
+        return apiMaterials.AddValue(material.Guid, material.AnalysisMaterial);
+    }
 
-          existingMaterials.Add(outID, material.AnalysisMaterial);
-        }
-      }
+    internal static int ConvertCustomMaterial(GsaMaterial material, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
+    {
+      if (material == null)
+        return 0;
+      return AddMaterial(material, ref apiMaterials);
+    }
 
-      // set guid in dictionary
-      materials_guid.Add(material.Guid, outID);
+    internal static void AddMaterial(ref GsaSection section, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
+    {
+      if (section.API_Section.MaterialAnalysisProperty != 0 && section.Material != null && section.Material.AnalysisMaterial != null)
+        section.API_Section.MaterialAnalysisProperty = ConvertCustomMaterial(section.Material, ref apiMaterials);
+    }
 
-      return outID;
+    internal static void AddMaterial(ref GsaProp2d prop2d, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
+    {
+      if (prop2d.API_Prop2d.MaterialAnalysisProperty != 0 && prop2d.Material != null && prop2d.Material.AnalysisMaterial != null)
+        prop2d.API_Prop2d.MaterialAnalysisProperty = ConvertCustomMaterial(prop2d.Material, ref apiMaterials);
+    }
+
+    internal static void AddMaterial(ref GsaProp3d prop3d, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
+    {
+      if (prop3d.API_Prop3d.MaterialAnalysisProperty != 0 && prop3d.Material != null && prop3d.Material.AnalysisMaterial != null)
+        prop3d.API_Prop3d.MaterialAnalysisProperty = ConvertCustomMaterial(prop3d.Material, ref apiMaterials);
     }
   }
 }
