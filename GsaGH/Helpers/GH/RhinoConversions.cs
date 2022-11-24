@@ -787,10 +787,7 @@ namespace GsaGH.Helpers.GH
             }
 
             // assemble temp model
-            Model model = Export.AssembleModel.Assemble(null, nodes, null, null, null, mem1ds, mem2ds, null, null, null, null, null, null, null, null, unit, DefaultUnits.Tolerance.Meters);
-
-            // call the meshing algorithm
-            model.CreateElementsFromMembers();
+            Model model = Export.AssembleModel.Assemble(null, nodes, null, null, null, mem1ds, mem2ds, null, null, null, null, null, null, null, null, unit, DefaultUnits.Tolerance.Meters, true);
 
             // extract elements from model
             Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple

@@ -19,10 +19,10 @@ using Rhino.Runtime;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to assemble and analyse a GSA model
-    /// </summary>
-    public class GH_Analyse : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to assemble and analyse a GSA model
+  /// </summary>
+  public class GH_Analyse : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -108,10 +108,7 @@ namespace GsaGH.Components
         }
       }
 
-      model.Model = Helpers.Export.AssembleModel.Assemble(model, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks, combinationCases, this.LengthUnit, DefaultUnits.Tolerance.Meters);
-
-      if (this.ReMesh)
-        model.Model.CreateElementsFromMembers();
+      model.Model = Helpers.Export.AssembleModel.Assemble(model, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks, combinationCases, this.LengthUnit, DefaultUnits.Tolerance.Meters, this.ReMesh);
 
       #region analysis
 
@@ -175,6 +172,7 @@ namespace GsaGH.Components
         }
       }
       #endregion
+
       model.ModelUnit = this.LengthUnit;
       DA.SetData(0, new GsaModelGoo(model));
     }
@@ -222,7 +220,7 @@ namespace GsaGH.Components
       this.Analysis = value[0];
       this.ReMesh = value[1];
     }
-    
+
     public override void UpdateUIFromSelectedItems()
     {
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);

@@ -303,11 +303,10 @@ namespace GsaGH.Parameters
       this._topoInt = convertMesh.Item3;
 
       this._ids = new List<int>(new int[this._mesh.Faces.Count()]);
-
+      
+      GsaProp2d singleProp = new GsaProp2d();
       for (int i = 0; i < this._mesh.Faces.Count(); i++)
-      {
-        this._props.Add(new GsaProp2d());
-      }
+        this._props.Add(singleProp);
     }
 
     internal GsaElement2d(List<Element> elements, List<int> Ids, Mesh mesh, List<GsaProp2d> prop2ds)

@@ -21,7 +21,6 @@ namespace GsaGH.Parameters
     private Guid _guid = Guid.NewGuid();
     private GsaMaterial _material = new GsaMaterial();
     private Prop2D _prop2d = new Prop2D();
-    
     #endregion
 
     #region properties

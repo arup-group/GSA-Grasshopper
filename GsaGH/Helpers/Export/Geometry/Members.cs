@@ -9,10 +9,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export
 {
-  internal class Members
+    internal class Members
   {
     #region topologylist
-    private static string CreateTopology(List<Point3d> topology, List<string> topoType, ref GsaDictionary<Node> existingNodes, LengthUnit unit)
+    private static string CreateTopology(List<Point3d> topology, List<string> topoType, ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit)
     {
       string topo = "";
       for (int j = 0; j < topology.Count; j++)
@@ -52,7 +52,7 @@ namespace GsaGH.Helpers.Export
     /// <exception cref="Exception"></exception>
     internal static void ConvertMember1D(GsaMember1d member1d,
         ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-        ref GsaDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
         ref Dictionary<int, SectionModifier> existingSectionModifiers,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid, LengthUnit modelUnit)
@@ -99,7 +99,7 @@ namespace GsaGH.Helpers.Export
     /// <param name="materials_guid"></param>
     internal static void ConvertMember1D(List<GsaMember1d> member1ds,
         ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-        ref GsaDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
         ref Dictionary<int, SectionModifier> existingSectionModifiers,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid, LengthUnit modelUnit)
@@ -126,7 +126,7 @@ namespace GsaGH.Helpers.Export
     /// <param name="materials_guid"></param>
     internal static void ConvertMember2D(GsaMember2d member2d,
         ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-        ref GsaDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid, LengthUnit modelUnit)
     {
@@ -179,7 +179,7 @@ namespace GsaGH.Helpers.Export
     /// <param name="materials_guid"></param>
     internal static void ConvertMember2D(List<GsaMember2d> member2ds,
         ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-        ref GsaDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid, LengthUnit modelUnit)
     {
@@ -206,7 +206,7 @@ namespace GsaGH.Helpers.Export
     /// <param name="unit"></param>
     internal static void ConvertMember3D(GsaMember3d member3d,
         ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-        ref GsaDictionary<Node> existingNodes, LengthUnit modelUnit,
+        ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit modelUnit,
         ref Dictionary<int, Prop3D> existingProp3Ds, ref Dictionary<Guid, int> prop3d_guid,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {
@@ -244,7 +244,7 @@ namespace GsaGH.Helpers.Export
     /// <param name="unit"></param>
     internal static void ConvertMember3D(List<GsaMember3d> member3ds,
     ref Dictionary<int, Member> existingMembers, ref int memberidcounter,
-    ref GsaDictionary<Node> existingNodes, LengthUnit unit,
+    ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit,
     ref Dictionary<int, Prop3D> existingProp3Ds, ref Dictionary<Guid, int> prop3d_guid,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {

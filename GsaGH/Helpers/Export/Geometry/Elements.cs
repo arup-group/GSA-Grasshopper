@@ -9,12 +9,12 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export
 {
-  internal class Elements
+    internal class Elements
   {
     #region element1d
     internal static void ConvertElement1D(GsaElement1d element1d,
         ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-        ref GsaDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
         ref Dictionary<int, SectionModifier> existingSectionModifiers,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
@@ -49,7 +49,7 @@ namespace GsaGH.Helpers.Export
 
     internal static void ConvertElement1D(List<GsaElement1d> element1ds,
         ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-        ref GsaDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Section> existingSections, ref Dictionary<Guid, int> sections_guid,
         ref Dictionary<int, SectionModifier> existingSectionModifiers,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
@@ -67,7 +67,7 @@ namespace GsaGH.Helpers.Export
     #region element2d
     internal static void ConvertElement2D(GsaElement2d element2d,
         ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-        ref GsaDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {
@@ -104,7 +104,7 @@ namespace GsaGH.Helpers.Export
 
     internal static void ConvertElement2D(List<GsaElement2d> element2ds,
         ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-        ref GsaDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Prop2D> existingProp2Ds, ref Dictionary<Guid, int> prop2d_guid,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {
@@ -122,7 +122,7 @@ namespace GsaGH.Helpers.Export
     #region element3d
     internal static void ConvertElement3D(GsaElement3d element3d,
         ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-        ref GsaDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Prop3D> existingProp3Ds, ref Dictionary<Guid, int> prop3d_guid,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {
@@ -154,7 +154,7 @@ namespace GsaGH.Helpers.Export
 
     internal static void ConvertElement3D(List<GsaElement3d> element3ds,
         ref Dictionary<int, Element> existingElements, ref int elementidcounter,
-        ref GsaDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaIntKeyDictionary<Node> existingNodes, LengthUnit unit,
         ref Dictionary<int, Prop3D> existingProp3Ds, ref Dictionary<Guid, int> prop3d_guid,
         ref Dictionary<int, AnalysisMaterial> existingMaterials, ref Dictionary<Guid, int> materials_guid)
     {

@@ -175,7 +175,7 @@ namespace GsaGH.Components
       #endregion
 
       // Assemble model
-      Model gsa = Helpers.Export.AssembleModel.Assemble(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, this.LengthUnit, DefaultUnits.Tolerance.Meters);
+      Model gsa = Helpers.Export.AssembleModel.Assemble(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, this.LengthUnit, DefaultUnits.Tolerance.Meters, true);
 
       #region meshing
       // Create elements from members

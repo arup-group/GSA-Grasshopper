@@ -7,9 +7,9 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export
 {
-  internal class Nodes
+    internal class Nodes
   {
-    internal static void ConvertNodes(List<GsaNode> nodes, ref GsaDictionary<Node> existingNodes,
+    internal static void ConvertNodes(List<GsaNode> nodes, ref GsaIntKeyDictionary<Node> existingNodes,
         ref Dictionary<int, Axis> existingAxes, LengthUnit modelUnit)
     {
       if (nodes != null && nodes.Count > 0)
@@ -26,7 +26,7 @@ namespace GsaGH.Helpers.Export
     /// <param name="existingAxes">Dictionary of existing GsaAPI axes to add local axis to [in meters]</param>
     /// <param name="nodeidcounter">node id counter for </param>
     /// <param name="unit">UnitsNet LengthUnit of GsaNode node input</param>
-    internal static void ConvertNode(GsaNode node, ref GsaDictionary<Node> existingNodes, ref Dictionary<int, Axis> existingAxes, LengthUnit unit)
+    internal static void ConvertNode(GsaNode node, ref GsaIntKeyDictionary<Node> existingNodes, ref Dictionary<int, Axis> existingAxes, LengthUnit unit)
     {
       Node apiNode = node.GetApiNodeToUnit(unit);
 
@@ -76,11 +76,11 @@ namespace GsaGH.Helpers.Export
       }
     }
 
-    internal static int AddNode(ref GsaDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit)
+    internal static int AddNode(ref GsaIntKeyDictionary<Node> existNodes, Point3d testPoint, LengthUnit unit)
     {
       return existNodes.AddValue(NodeFromPoint(testPoint, unit));
     }
-    internal static int AddNode(ref GsaDictionary<Node> existNodes, Node node)
+    internal static int AddNode(ref GsaIntKeyDictionary<Node> existNodes, Node node)
     {
       return existNodes.AddValue(node);
     }

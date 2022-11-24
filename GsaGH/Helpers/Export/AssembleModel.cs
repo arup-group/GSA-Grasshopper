@@ -9,7 +9,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export
 {
-  internal class AssembleModel
+    internal class AssembleModel
   {
     /// <summary>
     /// 
@@ -38,7 +38,7 @@ namespace GsaGH.Helpers.Export
         List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds,
         List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
         List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
-        LengthUnit modelUnit, double toleranceCoincidentNodes)
+        LengthUnit modelUnit, double toleranceCoincidentNodes, bool createElementsFromMembers)
     {
       // Set model to work on
       Model gsa = new Model();
@@ -49,7 +49,7 @@ namespace GsaGH.Helpers.Export
       // ### Nodes ###
       // We take out the existing nodes in the model and work on that dictionary
       // Get existing nodes
-      GsaDictionary<Node> apinodes = new GsaDictionary<Node>(gsa.Nodes());
+      GsaIntKeyDictionary<Node> apinodes = new GsaIntKeyDictionary<Node>(gsa.Nodes());
 
       // Get existing axes
       IReadOnlyDictionary<int, Axis> gsaAxes = gsa.Axes();
@@ -233,8 +233,7 @@ namespace GsaGH.Helpers.Export
       gsa.SetNodes(apinodes.Dictionary);
       gsa.SetElements(new ReadOnlyDictionary<int, Element>(elems));
       gsa.SetMembers(new ReadOnlyDictionary<int, Member>(mems));
-      if (toleranceCoincidentNodes > 0)
-        gsa.CollapseCoincidentNodes(toleranceCoincidentNodes);
+      
 
       // Loads
       gsa.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(gravityLoads));
@@ -285,6 +284,11 @@ namespace GsaGH.Helpers.Export
           gsa.AddCombinationCase(co.Name, co.Description);
       }
       #endregion
+
+      if (createElementsFromMembers && mems.Count > 0)
+        gsa.CreateElementsFromMembers();
+      if (toleranceCoincidentNodes > 0)
+        gsa.CollapseCoincidentNodes(toleranceCoincidentNodes);
 
       return gsa;
     }
