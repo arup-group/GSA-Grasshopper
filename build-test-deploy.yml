@@ -38,7 +38,7 @@ steps:
 - powershell: |
     & 'C:\Program Files\Oasys\*\GSA.exe' /Register
   displayName: 'Register GSA COM'
-  failOnStderr: true
+  failOnStderr: false
   
 - task: NuGetToolInstaller@1
 
