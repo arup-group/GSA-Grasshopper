@@ -32,7 +32,7 @@ steps:
       Write-Error "Application could not be installed. Error code $($app.ExitCode)"
       exit(1)
     }
-    & 'C:\Program Files\Oasys\*\GsaRegister.exe'
+    & 'C:\Program Files\Oasys\*\GSA.exe' -register
   displayName: 'Install GSA'
   failOnStderr: true
   
