@@ -37,7 +37,7 @@ namespace GsaGH.Parameters
         this._material = new GsaMaterial(this);
       }
     }
-    public int ID
+    public int Id
     {
       get
       {
@@ -171,7 +171,7 @@ namespace GsaGH.Parameters
       }
     }
     #endregion
-    public Guid GUID
+    public Guid Guid
     {
       get
       {
@@ -228,7 +228,7 @@ namespace GsaGH.Parameters
       string type = Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == this._prop2d.Type).Key + " ";
       string desc = this.Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
       string mat = Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
-      string pa = (this.ID > 0) ? "PA" + this.ID + " " : "";
+      string pa = (this.Id > 0) ? "PA" + this.Id + " " : "";
       return string.Join(" ", pa.Trim(), type.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
     }
 

@@ -243,7 +243,7 @@ namespace GsaGH.Parameters
       this._guid = Guid.NewGuid();
     }
     #endregion
-    public Guid GUID
+    public Guid Guid
     {
       get
       {

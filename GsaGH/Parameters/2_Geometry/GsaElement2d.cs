@@ -296,7 +296,8 @@ namespace GsaGH.Parameters
 
     public GsaElement2d(Mesh mesh, int prop = 0)
     {
-      this._mesh = mesh;
+      this._mesh = mesh.DuplicateMesh();
+      this._mesh.Compact();
       Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem2d(this._mesh, prop);
       this._elements = convertMesh.Item1;
       this._topo = convertMesh.Item2;
@@ -306,7 +307,7 @@ namespace GsaGH.Parameters
       
       GsaProp2d singleProp = new GsaProp2d();
       for (int i = 0; i < this._mesh.Faces.Count(); i++)
-        this._props.Add(singleProp);
+        this._props.Add(singleProp.Duplicate());
     }
 
     internal GsaElement2d(List<Element> elements, List<int> Ids, Mesh mesh, List<GsaProp2d> prop2ds)
