@@ -78,6 +78,9 @@ namespace GsaGH.Components
       if (DA.GetData(1, ref gh_Type))
         GH_Convert.ToString(gh_Type, out elementlist, GH_Conversion.Both);
 
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
+
       // data trees to output
       DataTree<GH_UnitNumber> out_transX = new DataTree<GH_UnitNumber>();
       DataTree<GH_UnitNumber> out_transY = new DataTree<GH_UnitNumber>();
@@ -97,6 +100,11 @@ namespace GsaGH.Components
         for (int i = 0; i < gh_types.Count; i++) // loop through all case/combinations
         {
           GH_ObjectWrapper gh_typ = gh_types[i];
+          if (gh_typ == null || gh_typ.Value == null)
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+            return;
+          }
           if (gh_typ.Value is GsaResultGoo)
           {
             result = ((GsaResultGoo)gh_typ.Value).Value;

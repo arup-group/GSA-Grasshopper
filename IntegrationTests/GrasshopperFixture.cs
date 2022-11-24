@@ -104,6 +104,7 @@ namespace IntegrationTests
         return _GHPlugin as Grasshopper.Plugin.GH_RhinoScriptInterface;
       }
     }
+
     public Grasshopper.Kernel.GH_DocumentIO DocIO
     {
       get
@@ -117,6 +118,7 @@ namespace IntegrationTests
     {
       _Core = new Rhino.Runtime.InProcess.RhinoCore();
     }
+
     void InitializeGrasshopperPlugin()
     {
       if (null == _Core) InitializeCore();
@@ -124,12 +126,14 @@ namespace IntegrationTests
       // which will happen automatically when we enter the function containing GH references
       InitializeGrasshopperPlugin2();
     }
+
     void InitializeGrasshopperPlugin2()
     {
       _GHPlugin = Rhino.RhinoApp.GetPlugInObject("Grasshopper");
       var ghp = _GHPlugin as Grasshopper.Plugin.GH_RhinoScriptInterface;
       ghp.RunHeadless();
     }
+
     void InitializeDocIO()
     {
       // we do this in a seperate function to absolutely ensure that the core is initialized before we load the GH plugin,
@@ -137,6 +141,7 @@ namespace IntegrationTests
       if (null == _GHPlugin) InitializeGrasshopperPlugin();
       InitializeDocIO2();
     }
+
     void InitializeDocIO2()
     {
       var docIO = new Grasshopper.Kernel.GH_DocumentIO();

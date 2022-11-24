@@ -334,24 +334,33 @@ namespace GsaGH.Parameters
       Combination
     }
     internal ResultType Type { get; set; }
-    internal Model Model { get; set; }
+    internal GsaModel Model { get; set; }
     public GsaResult()
     { }
-    internal GsaResult(Model model, AnalysisCaseResult result, int caseID)
+    internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseID)
     {
       this.Model = model;
       this.AnalysisCaseResult = result;
       this.Type = ResultType.AnalysisCase;
       this.CaseID = caseID;
-      this.CaseName = model.AnalysisCaseName(this.CaseID);
+      this.CaseName = model.Model.AnalysisCaseName(this.CaseID);
     }
-    internal GsaResult(Model model, CombinationCaseResult result, int caseID, List<int> permutations)
+    internal GsaResult(GsaModel model, CombinationCaseResult result, int caseID, List<int> permutations)
     {
       this.Model = model;
       this.CombinationCaseResult = result;
       this.Type = ResultType.Combination;
       this.CaseID = caseID;
       this.SelectedPermutationIDs = permutations.OrderBy(x => x).ToList();
+    }
+
+    internal GsaResult(GsaModel model, CombinationCaseResult result, int caseID, int permutation)
+    {
+      this.Model = model;
+      this.CombinationCaseResult = result;
+      this.Type = ResultType.Combination;
+      this.CaseID = caseID;
+      this.SelectedPermutationIDs = new List<int>() { permutation };
     }
 
     #region output methods
@@ -365,6 +374,8 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal Tuple<List<GsaResultsValues>, List<int>> NodeDisplacementValues(string nodelist, LengthUnit lengthUnit)
     {
+      if (nodelist.ToLower() == "all" || nodelist == "")
+        nodelist = "All";
       if (this.Type == ResultType.AnalysisCase)
       {
         if (!this.ACaseNodeDisplacementValues.ContainsKey(nodelist)) // see if values exist
@@ -378,7 +389,7 @@ namespace GsaGH.Parameters
           this.ACaseNodeDisplacementValues.Add(nodelist,
               ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], lengthUnit));
         }
-        return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> { ACaseNodeDisplacementValues[nodelist] }, Model.Nodes(nodelist).Keys.ToList());
+        return new Tuple<List<GsaResultsValues>, List<int>>(new List<GsaResultsValues> { ACaseNodeDisplacementValues[nodelist] }, Model.Model.Nodes(nodelist).Keys.ToList());
       }
       else
       {
@@ -394,7 +405,7 @@ namespace GsaGH.Parameters
               ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], lengthUnit, SelectedPermutationIDs));
         }
         return new Tuple<List<GsaResultsValues>, List<int>>(
-          new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values), Model.Nodes(nodelist).Keys.ToList());
+          new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values), Model.Model.Nodes(nodelist).Keys.ToList());
       }
     }
 
@@ -408,12 +419,14 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal Tuple<List<GsaResultsValues>, List<int>> NodeReactionForceValues(string nodelist, ForceUnit forceUnit, MomentUnit momentUnit)
     {
+      if (nodelist.ToLower() == "all" || nodelist == "")
+        nodelist = "All";
       // get list of support nodes
       ConcurrentBag<int> supportnodeIDs = null;
-      if (nodelist.ToLower() == "all" | nodelist == "")
+      if (nodelist.ToLower() == "all" || nodelist == "")
       {
         supportnodeIDs = new ConcurrentBag<int>();
-        ReadOnlyDictionary<int, Node> nodes = Model.Nodes();
+        ReadOnlyDictionary<int, Node> nodes = Model.Model.Nodes();
         Parallel.ForEach(nodes, node =>
         {
           NodalRestraint rest = node.Value.Restraint;
@@ -467,12 +480,14 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal Tuple<List<GsaResultsValues>, List<int>> SpringReactionForceValues(string nodelist, ForceUnit forceUnit, MomentUnit momentUnit)
     {
+      if (nodelist.ToLower() == "all" || nodelist == "")
+        nodelist = "All";
       // get list of support nodes
       ConcurrentBag<int> supportnodeIDs = null;
-      if (nodelist.ToLower() == "all" | nodelist == "")
+      if (nodelist.ToLower() == "all" || nodelist == "")
       {
         supportnodeIDs = new ConcurrentBag<int>();
-        ReadOnlyDictionary<int, Node> nodes = Model.Nodes();
+        ReadOnlyDictionary<int, Node> nodes = Model.Model.Nodes();
         Parallel.ForEach(nodes, node =>
         {
           NodalRestraint rest = node.Value.Restraint;
@@ -526,6 +541,8 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DDisplacementValues(string elementlist, int positionsCount, LengthUnit lengthUnit)
     {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
       if (this.Type == ResultType.AnalysisCase)
       {
@@ -570,6 +587,8 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DForceValues(string elementlist, int positionsCount, ForceUnit forceUnit, MomentUnit momentUnit)
     {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
       if (this.Type == ResultType.AnalysisCase)
       {
@@ -613,6 +632,8 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DStrainEnergyDensityValues(string elementlist, int positionsCount, EnergyUnit energyUnit)
     {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
       if (this.Type == ResultType.AnalysisCase)
       {
@@ -656,6 +677,8 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal List<GsaResultsValues> Element1DStrainEnergyDensityValues(string elementlist, EnergyUnit energyUnit)
     {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, 1);
       if (this.Type == ResultType.AnalysisCase)
       {
@@ -699,6 +722,8 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DDisplacementValues(string elementlist, LengthUnit lengthUnit)
     {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
       if (this.Type == ResultType.AnalysisCase)
       {
         if (!this.ACaseElement2DDisplacementValues.ContainsKey(elementlist)) // see if values exist
@@ -742,6 +767,8 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DForceValues(string elementlist, ForcePerLengthUnit forceUnit, ForceUnit momentUnit)
     {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
       if (this.Type == ResultType.AnalysisCase)
       {
         if (!this.ACaseElement2DForceValues.ContainsKey(elementlist)) // see if values exist
@@ -784,6 +811,8 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DShearValues(string elementlist, ForcePerLengthUnit forceUnit)
     {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
       if (this.Type == ResultType.AnalysisCase)
       {
         if (!this.ACaseElement2DShearValues.ContainsKey(elementlist)) // see if values exist
@@ -827,6 +856,8 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal List<GsaResultsValues> Element2DStressValues(string elementlist, double layer, PressureUnit stressUnit)
     {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
       Tuple<string, double> key = new Tuple<string, double>(elementlist, layer);
       if (this.Type == ResultType.AnalysisCase)
       {
@@ -870,6 +901,8 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal List<GsaResultsValues> Element3DDisplacementValues(string elementlist, LengthUnit lengthUnit)
     {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
       if (this.Type == ResultType.AnalysisCase)
       {
         if (!this.ACaseElement3DDisplacementValues.ContainsKey(elementlist)) // see if values exist
@@ -912,6 +945,8 @@ namespace GsaGH.Parameters
     /// <returns></returns>
     internal List<GsaResultsValues> Element3DStressValues(string elementlist, PressureUnit stressUnit)
     {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
       if (this.Type == ResultType.AnalysisCase)
       {
         if (!this.ACaseElement3DStressValues.ContainsKey(elementlist)) // see if values exist
@@ -966,7 +1001,7 @@ namespace GsaGH.Parameters
             txt = txt + " p" + SelectedPermutationIDs[0];
         }
       }
-      return txt;
+      return txt.Trim().Replace("  ", " ");
     }
 
     #endregion

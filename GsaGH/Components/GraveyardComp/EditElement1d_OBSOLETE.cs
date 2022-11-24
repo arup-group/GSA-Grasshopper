@@ -114,7 +114,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            elem.ID = id;
+            elem.Id = id;
         }
 
         // 2 curve

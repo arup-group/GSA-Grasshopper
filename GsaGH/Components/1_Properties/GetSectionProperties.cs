@@ -10,6 +10,9 @@ using OasysGH.Units.Helpers;
 using OasysGH.Units;
 using OasysUnits.Units;
 using OasysUnits;
+using OasysGH.Helpers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GsaGH.Components
 {
@@ -19,7 +22,7 @@ namespace GsaGH.Components
   public class GetSectionProperties : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("6504a99f-a4e2-4e30-8251-de31ea83e8cb");
+    public override Guid ComponentGuid => new Guid("fc59d2f7-496e-4862-8f66-31f1068fcab7");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.SectionProperties;
@@ -112,7 +115,7 @@ namespace GsaGH.Components
     }
     private void Update(string unit)
     {
-      this.LengthUnit = Length.ParseUnit(unit);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
@@ -124,10 +127,7 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      else
-        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitSection;
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
 
@@ -141,7 +141,7 @@ namespace GsaGH.Components
       this.Params.Output[1].Name = "Moment of Inertia y-y [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
       this.Params.Output[2].Name = "Moment of Inertia z-z [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
       this.Params.Output[3].Name = "Moment of Inertia y-z [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      this.Params.Output[3].Name = "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+      this.Params.Output[4].Name = "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
     }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;

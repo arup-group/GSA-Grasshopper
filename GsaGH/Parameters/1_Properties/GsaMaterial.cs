@@ -38,7 +38,7 @@ namespace GsaGH.Parameters
     }
 
     #region fields
-    
+
 
     private int _grade = 1;
     private Guid _guid;
@@ -190,11 +190,11 @@ namespace GsaGH.Parameters
     {
       string type = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.MaterialType).Key;
       if (this._analProp != 0)
-        return "ID:" + this._analProp + " Custom " + type + " Material";
+        return "ID:" + this._analProp + " Custom " + type.Trim() + " Material";
       else
       {
         string id = this.GradeProperty == 0 ? "" : "Grd:" + GradeProperty + " ";
-        return id + type;
+        return (id + type).Trim();
       }
     }
 

@@ -138,17 +138,6 @@ namespace GsaGH.Components
     private PressureUnit StressUnit = DefaultUnits.StressUnitResult;
     private TemperatureUnit TemperatureUnit = DefaultUnits.TemperatureUnit;
 
-    private readonly List<string> _topLevelDropDownItems = new List<string>(new string[]
-    {
-      "Steel",
-      "Concrete",
-      "Timber",
-      "Aluminium",
-      "FRP",
-      "Glass",
-      "Undefined"
-    });
-
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
@@ -163,7 +152,7 @@ namespace GsaGH.Components
       this.SelectedItems = new List<string>();
 
       // Type
-      this.DropDownItems.Add(this._topLevelDropDownItems);
+      this.DropDownItems.Add(CreateMaterial.MaterialTypes);
       this.SelectedItems.Add(this._mode.ToString());
 
       // Stress unit

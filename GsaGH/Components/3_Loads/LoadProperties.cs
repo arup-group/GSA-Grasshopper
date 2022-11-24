@@ -41,7 +41,7 @@ namespace GsaGH.Components
       string lengthUnitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
       string unitAbbreviation = forceUnitAbbreviation + "/" + lengthUnitAbbreviation;
 
-      pManager.AddIntegerParameter("Load case", "LC", "Load case number)", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Load case", "LC", "Load case number", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Load name", GH_ParamAccess.item);
       pManager.AddGenericParameter("Elements/Nodes/Definition", "Def", "Element/Node list that load is applied to or Grid point / polygon definition", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Axis", "Ax", "Axis Property (0 : Global // -1 : Local", GH_ParamAccess.item);

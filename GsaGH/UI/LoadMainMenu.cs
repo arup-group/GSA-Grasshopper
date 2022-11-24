@@ -50,7 +50,7 @@ namespace GsaGH.UI.Menu
       {
         Process.Start(new ProcessStartInfo
         {
-          FileName = "https://docs.oasys-software.com/structural/gsa/explanations/gsagh-introduction.html",
+          FileName = "https://docs.oasys-software.com/structural/gsa/explanations/gsagh-introduction.html?source=grasshopper",
           UseShellExecute = true
         });
       });

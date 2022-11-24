@@ -164,7 +164,7 @@ namespace GsaGH.Parameters
         return sx + sy + sz + sxx + syy + szz;
       }
       else
-        return state.ToString();
+        return state.ToString().Trim();
     }
     #endregion
   }

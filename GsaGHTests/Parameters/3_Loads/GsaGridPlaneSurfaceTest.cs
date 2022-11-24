@@ -1,6 +1,7 @@
 ﻿using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
+using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 using static GsaAPI.GridSurface;
@@ -31,18 +32,18 @@ namespace GsaGHTests.Parameters
       Assert.Equal("", gps.GridSurface.Name);
       Assert.Equal(Span_Type.TWO_WAY, gps.GridSurface.SpanType);
       Assert.Equal(0.01, gps.GridSurface.Tolerance);
-      Assert.Equal("", gps.Axis.Name);
-      Assert.Equal(0, gps.Axis.Origin.X);
-      Assert.Equal(0, gps.Axis.Origin.Y);
-      Assert.Equal(0, gps.Axis.Origin.Z);
-      Assert.Equal(1, gps.Axis.XVector.X);
-      Assert.Equal(0, gps.Axis.XVector.Y);
-      Assert.Equal(0, gps.Axis.XVector.Z);
-      Assert.Equal(0, gps.Axis.XYPlane.X);
-      Assert.Equal(1, gps.Axis.XYPlane.Y);
-      Assert.Equal(0, gps.Axis.XYPlane.Z);
-      Assert.Equal(0, gps.GridSurfaceID);
-      Assert.Equal(0, gps.GridPlaneID);
+      Axis axis = gps.GetAxis(LengthUnit.Meter);
+      Assert.Equal(0, axis.Origin.X);
+      Assert.Equal(0, axis.Origin.Y);
+      Assert.Equal(0, axis.Origin.Z);
+      Assert.Equal(1, axis.XVector.X);
+      Assert.Equal(0, axis.XVector.Y);
+      Assert.Equal(0, axis.XVector.Z);
+      Assert.Equal(0, axis.XYPlane.X);
+      Assert.Equal(1, axis.XYPlane.Y);
+      Assert.Equal(0, axis.XYPlane.Z);
+      Assert.Equal(0, gps.GridSurfaceId);
+      Assert.Equal(0, gps.GridPlaneId);
     }
 
     [Theory]
@@ -86,18 +87,18 @@ namespace GsaGHTests.Parameters
       Assert.Equal("", gps.GridSurface.Name);
       Assert.Equal(Span_Type.ONE_WAY, gps.GridSurface.SpanType);
       Assert.Equal(0.01, gps.GridSurface.Tolerance);
-      Assert.Equal("", gps.Axis.Name);
-      Assert.Equal(originX, gps.Axis.Origin.X);
-      Assert.Equal(originY, gps.Axis.Origin.Y);
-      Assert.Equal(originZ, gps.Axis.Origin.Z);
-      Assert.Equal(xAxisX, gps.Axis.XVector.X);
-      Assert.Equal(xAxisY, gps.Axis.XVector.Y);
-      Assert.Equal(xAxisZ, gps.Axis.XVector.Z);
-      Assert.Equal(yAxisX, gps.Axis.XYPlane.X);
-      Assert.Equal(yAxisY, gps.Axis.XYPlane.Y);
-      Assert.Equal(yAxisZ, gps.Axis.XYPlane.Z);
-      Assert.Equal(0, gps.GridSurfaceID);
-      Assert.Equal(0, gps.GridPlaneID);
+      Axis axis = gps.GetAxis(LengthUnit.Meter);
+      Assert.Equal(originX, axis.Origin.X);
+      Assert.Equal(originY, axis.Origin.Y);
+      Assert.Equal(originZ, axis.Origin.Z);
+      Assert.Equal(xAxisX, axis.XVector.X);
+      Assert.Equal(xAxisY, axis.XVector.Y);
+      Assert.Equal(xAxisZ, axis.XVector.Z);
+      Assert.Equal(yAxisX, axis.XYPlane.X);
+      Assert.Equal(yAxisY, axis.XYPlane.Y);
+      Assert.Equal(yAxisZ, axis.XYPlane.Z);
+      Assert.Equal(0, gps.GridSurfaceId);
+      Assert.Equal(0, gps.GridPlaneId);
     }
 
     [Fact]
@@ -127,18 +128,8 @@ namespace GsaGHTests.Parameters
       duplicate.GridSurface.Name = "name";
       duplicate.GridSurface.SpanType = Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;
       duplicate.GridSurface.Tolerance = 0.2;
-      duplicate.Axis.Name = "name";
-      duplicate.Axis.Origin.X = -1;
-      duplicate.Axis.Origin.Y = -1;
-      duplicate.Axis.Origin.Z = -1;
-      duplicate.Axis.XVector.X = -1;
-      duplicate.Axis.XVector.Y = -1;
-      duplicate.Axis.XVector.Z = -1;
-      duplicate.Axis.XYPlane.X = -1;
-      duplicate.Axis.XYPlane.Y = -1;
-      duplicate.Axis.XYPlane.Z = -1;
-      duplicate.GridSurfaceID = 1;
-      duplicate.GridPlaneID = 1;
+      duplicate.GridSurfaceId = 1;
+      duplicate.GridPlaneId = 1;
 
       Assert.Equal(Plane.WorldXY, original.Plane);
       Assert.Equal(0, original.GridPlane.AxisProperty);
@@ -154,18 +145,8 @@ namespace GsaGHTests.Parameters
       Assert.Equal("", original.GridSurface.Name);
       Assert.Equal(Span_Type.TWO_WAY, original.GridSurface.SpanType);
       Assert.Equal(0.01, original.GridSurface.Tolerance);
-      Assert.Equal("", original.Axis.Name);
-      Assert.Equal(0, original.Axis.Origin.X);
-      Assert.Equal(0, original.Axis.Origin.Y);
-      Assert.Equal(0, original.Axis.Origin.Z);
-      Assert.Equal(1, original.Axis.XVector.X);
-      Assert.Equal(0, original.Axis.XVector.Y);
-      Assert.Equal(0, original.Axis.XVector.Z);
-      Assert.Equal(0, original.Axis.XYPlane.X);
-      Assert.Equal(1, original.Axis.XYPlane.Y);
-      Assert.Equal(0, original.Axis.XYPlane.Z);
-      Assert.Equal(0, original.GridSurfaceID);
-      Assert.Equal(0, original.GridPlaneID);
+      Assert.Equal(0, original.GridSurfaceId);
+      Assert.Equal(0, original.GridPlaneId);
     }
   }
 }

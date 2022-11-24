@@ -31,16 +31,16 @@ namespace GsaGH.Parameters
 
     internal GsaBucklingLengthFactors(GsaMember1d member)
     {
-      this.LateralTorsionalBucklingFactor = member.API_Member.LateralTorsionalBucklingFactor;
-      this.MomentAmplificationFactorStrongAxis = member.API_Member.MomentAmplificationFactorStrongAxis;
-      this.MomentAmplificationFactorWeakAxis = member.API_Member.MomentAmplificationFactorWeakAxis;
+      this.LateralTorsionalBucklingFactor = member.ApiMember.LateralTorsionalBucklingFactor;
+      this.MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
+      this.MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
     }
 
     internal GsaBucklingLengthFactors(GsaMember1d member, LengthUnit lengthUnit)
     {
-      this.LateralTorsionalBucklingFactor = member.API_Member.LateralTorsionalBucklingFactor;
-      this.MomentAmplificationFactorStrongAxis = member.API_Member.MomentAmplificationFactorStrongAxis;
-      this.MomentAmplificationFactorWeakAxis = member.API_Member.MomentAmplificationFactorWeakAxis;
+      this.LateralTorsionalBucklingFactor = member.ApiMember.LateralTorsionalBucklingFactor;
+      this.MomentAmplificationFactorStrongAxis = member.ApiMember.MomentAmplificationFactorStrongAxis;
+      this.MomentAmplificationFactorWeakAxis = member.ApiMember.MomentAmplificationFactorWeakAxis;
       this.Length = new Length(member.PolyCurve.GetLength(), lengthUnit);
       this.LengthIsSet = true;
     }

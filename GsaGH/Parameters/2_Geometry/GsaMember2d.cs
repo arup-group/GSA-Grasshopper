@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
 using OasysGH.Units;
 using OasysUnits;
@@ -18,10 +17,6 @@ namespace GsaGH.Parameters
   public class GsaMember2d
   {
     #region fields
-    private int _id = 0;
-    private Member _member = new Member();
-    private GsaProp2d _prop = new GsaProp2d();
-
     private Brep _brep; // brep for visualisation /member2d
 
     private PolyCurve _edgeCrv; // Polyline for visualisation /member1d/member2d
@@ -40,71 +35,17 @@ namespace GsaGH.Parameters
     #endregion
 
     #region properties
-    internal Member API_Member
-    {
-      get
-      {
-        return this._member;
-      }
-      set
-      {
-        this._member = value;
-      }
-    }
-
-    public PolyCurve PolyCurve
-    {
-      get
-      {
-        return this._edgeCrv;
-      }
-    }
-    public int ID
-    {
-      get
-      {
-        return this._id;
-      }
-      set
-      {
-        this._id = value;
-      }
-    }
-    public Brep Brep
-    {
-      get
-      {
-        return this._brep;
-      }
-    }
-    public List<Point3d> Topology
-    {
-      get
-      {
-        return this._edgeCrvTopo;
-      }
-    }
-    public List<string> TopologyType
-    {
-      get
-      {
-        return this._edgeCrvTopoType;
-      }
-    }
-    public List<List<Point3d>> VoidTopology
-    {
-      get
-      {
-        return this._voidCrvsTopo;
-      }
-    }
-    public List<List<string>> VoidTopologyType
-    {
-      get
-      {
-        return this._voidCrvsTopoType;
-      }
-    }
+    public int Id { get; set; } = 0;
+    internal Member ApiMember { get; set; } = new Member();
+    // mesh size in Rhino/Grasshopper world, might be different to internal GSA mesh size
+    public double MeshSize { get; set; } = 0;
+    public GsaProp2d Property { get; set; } = new GsaProp2d();
+    public PolyCurve PolyCurve => this._edgeCrv;
+    public Brep Brep => this._brep;
+    public List<Point3d> Topology => this._edgeCrvTopo;
+    public List<string> TopologyType => this._edgeCrvTopoType;
+    public List<List<Point3d>> VoidTopology => this._voidCrvsTopo;
+    public List<List<string>> VoidTopologyType => this._voidCrvsTopoType;
     public List<PolyCurve> InclusionLines
     {
       get
@@ -114,149 +55,107 @@ namespace GsaGH.Parameters
         return this._inclCrvs;
       }
     }
-    public List<List<Point3d>> IncLinesTopology
-    {
-      get
-      {
-        return this._inclCrvsTopo;
-      }
-    }
-    public List<List<string>> IncLinesTopologyType
-    {
-      get
-      {
-        return this._inclCrvsTopoType;
-      }
-    }
-    public List<Point3d> InclusionPoints
-    {
-      get
-      {
-        return this._inclPts;
-      }
-    }
-    public GsaProp2d Property
-    {
-      get
-      {
-        return this._prop;
-      }
-      set
-      {
-        this._prop = value;
-      }
-    }
+    public List<List<Point3d>> IncLinesTopology => this._inclCrvsTopo;
+    public List<List<string>> IncLinesTopologyType => this._inclCrvsTopoType;
+    public List<Point3d> InclusionPoints => this._inclPts;
     #region GsaAPI.Member members
     public Color Colour
     {
       get
       {
-        return (Color)this._member.Colour;
+        return (Color)this.ApiMember.Colour;
       }
       set
       {
         this.CloneApiObject();
-        this._member.Colour = value;
+        this.ApiMember.Colour = value;
       }
     }
     public int Group
     {
       get
       {
-        return this._member.Group;
+        return this.ApiMember.Group;
       }
       set
       {
         this.CloneApiObject();
-        this._member.Group = value;
+        this.ApiMember.Group = value;
       }
     }
     public bool IsDummy
     {
       get
       {
-        return _member.IsDummy;
+        return ApiMember.IsDummy;
       }
       set
       {
         this.CloneApiObject();
-        this._member.IsDummy = value;
+        this.ApiMember.IsDummy = value;
       }
     }
     public string Name
     {
       get
       {
-        return this._member.Name;
+        return this.ApiMember.Name;
       }
       set
       {
         this.CloneApiObject();
-        this._member.Name = value;
-      }
-    }
-    public Length MeshSize
-    {
-      get
-      {
-        Length l = new Length(this._member.MeshSize, LengthUnit.Meter);
-        return new Length(l.As(DefaultUnits.LengthUnitGeometry), DefaultUnits.LengthUnitGeometry);
-      }
-      set
-      {
-        this.CloneApiObject();
-        this._member.MeshSize = value.Meters;
+        this.ApiMember.Name = value;
       }
     }
     public bool MeshWithOthers
     {
       get
       {
-        return this._member.IsIntersector;
+        return this.ApiMember.IsIntersector;
       }
       set
       {
         this.CloneApiObject();
-        this._member.IsIntersector = value;
+        this.ApiMember.IsIntersector = value;
       }
     }
     public GsaOffset Offset
     {
       get
       {
-        return new GsaOffset(this._member.Offset.X1, this._member.Offset.X2, this._member.Offset.Y, this._member.Offset.Z);
+        return new GsaOffset(this.ApiMember.Offset.X1, this.ApiMember.Offset.X2, this.ApiMember.Offset.Y, this.ApiMember.Offset.Z);
       }
       set
       {
         this.CloneApiObject();
-        this._member.Offset.X1 = value.X1.Meters;
-        this._member.Offset.X2 = value.X2.Meters;
-        this._member.Offset.Y = value.Y.Meters;
-        this._member.Offset.Z = value.Z.Meters;
+        this.ApiMember.Offset.X1 = value.X1.Meters;
+        this.ApiMember.Offset.X2 = value.X2.Meters;
+        this.ApiMember.Offset.Y = value.Y.Meters;
+        this.ApiMember.Offset.Z = value.Z.Meters;
       }
     }
     public Angle OrientationAngle
     {
       get
       {
-        return new Angle(this._member.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian);
+        return new Angle(this.ApiMember.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian);
       }
       set
       {
         this.CloneApiObject();
-        this._member.OrientationAngle = value.Degrees;
+        this.ApiMember.OrientationAngle = value.Degrees;
       }
     }
     public int OrientationNode
     {
       get
       {
-        return this._member.OrientationNode;
+        return this.ApiMember.OrientationNode;
       }
       set
       {
         this.CloneApiObject();
-        this._member.OrientationNode = value;
+        this.ApiMember.OrientationNode = value;
       }
     }
 
@@ -264,30 +163,30 @@ namespace GsaGH.Parameters
     {
       get
       {
-        return this._member.Type;
+        return this.ApiMember.Type;
       }
       set
       {
         this.CloneApiObject();
-        this._member.Type = value;
+        this.ApiMember.Type = value;
       }
     }
     public AnalysisOrder Type2D
     {
       get
       {
-        return this._member.Type2D;
+        return this.ApiMember.Type2D;
       }
       set
       {
         this.CloneApiObject();
-        this._member.Type2D = value;
+        this.ApiMember.Type2D = value;
       }
     }
 
     internal void CloneApiObject()
     {
-      this._member = this.GetAPI_MemberClone();
+      this.ApiMember = this.GetAPI_MemberClone();
     }
     #endregion
     #endregion
@@ -299,7 +198,7 @@ namespace GsaGH.Parameters
 
     public GsaMember2d(Brep brep, List<Curve> includeCurves = null, List<Point3d> includePoints = null, int prop = 0)
     {
-      this._member = new Member
+      this.ApiMember = new Member
       {
         Type = MemberType.GENERIC_2D,
         Property = prop
@@ -327,11 +226,14 @@ namespace GsaGH.Parameters
         throw new Exception(" Error with Mem2D: Unable to build Brep, please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
     }
 
-    internal GsaMember2d(Member member, int id, List<Point3d> topology, List<string> topologyType, List<List<Point3d>> voidTopology, List<List<string>> voidTopologyType, List<List<Point3d>> inlcusionLinesTopology, List<List<string>> inclusionTopologyType, List<Point3d> includePoints, GsaProp2d prop, GH_Component owner = null)
+    internal GsaMember2d(Member member, LengthUnit modelUnit, int id, List<Point3d> topology, List<string> topologyType, List<List<Point3d>> voidTopology, List<List<string>> voidTopologyType, List<List<Point3d>> inlcusionLinesTopology, List<List<string>> inclusionTopologyType, List<Point3d> includePoints, GsaProp2d prop, GH_Component owner = null)
     {
-      this._member = member;
-      this._id = id;
+      this.ApiMember = member;
+      this.Id = id;
+      // scale mesh size to model units
+      this.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
 
+      // this will always be overridden by the next if statement?!
       if (topology.Count == 0)
       {
         this._brep = null;
@@ -407,9 +309,9 @@ namespace GsaGH.Parameters
 
       this._inclPts = includePoints;
 
-      this._brep = Util.GH.Convert.BuildBrep(this._edgeCrv, this._voidCrvs, new Length(0.25, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry)); 
+      this._brep = Util.GH.Convert.BuildBrep(this._edgeCrv, this._voidCrvs, new Length(0.25, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
 
-      this._prop = prop;
+      this.Property = prop;
     }
     #endregion
 
@@ -417,13 +319,14 @@ namespace GsaGH.Parameters
     public GsaMember2d Duplicate(bool cloneApiMember = false)
     {
       GsaMember2d dup = new GsaMember2d();
-      dup._id = this._id;
-      dup._member = this._member;
+      dup.Id = this.Id;
+      dup.MeshSize = this.MeshSize;
+      dup.ApiMember = this.ApiMember;
       if (cloneApiMember)
         dup.CloneApiObject();
-      dup._prop = this._prop.Duplicate();
+      dup.Property = this.Property.Duplicate();
 
-      if (this._brep == null) 
+      if (this._brep == null)
         return dup;
 
       dup._brep = (Brep)this._brep.DuplicateShallow();
@@ -455,22 +358,22 @@ namespace GsaGH.Parameters
     {
       Member mem = new Member
       {
-        Group = _member.Group,
-        IsDummy = _member.IsDummy,
-        MeshSize = _member.MeshSize,
-        Name = _member.Name.ToString(),
-        Offset = _member.Offset,
-        OrientationAngle = _member.OrientationAngle,
-        OrientationNode = _member.OrientationNode,
-        Property = _member.Property,
-        Type = _member.Type,
-        Type2D = _member.Type2D
+        Group = ApiMember.Group,
+        IsDummy = ApiMember.IsDummy,
+        MeshSize = ApiMember.MeshSize,
+        Name = ApiMember.Name.ToString(),
+        Offset = ApiMember.Offset,
+        OrientationAngle = ApiMember.OrientationAngle,
+        OrientationNode = ApiMember.OrientationNode,
+        Property = ApiMember.Property,
+        Type = ApiMember.Type,
+        Type2D = ApiMember.Type2D
       };
-      if (this._member.Topology != String.Empty)
-        mem.Topology = this._member.Topology;
+      if (this.ApiMember.Topology != String.Empty)
+        mem.Topology = this.ApiMember.Topology;
 
-      if ((Color)_member.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        mem.Colour = this._member.Colour;
+      if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        mem.Colour = this.ApiMember.Colour;
 
       return mem;
     }
@@ -485,9 +388,9 @@ namespace GsaGH.Parameters
         inclPts = this._inclPts.ToList();
 
       GsaMember2d dup = new GsaMember2d(brep, inclCrvs, inclPts);
-      dup._id = this._id;
-      dup._member = this._member;
-      dup._prop = this._prop.Duplicate();
+      dup.Id = this.Id;
+      dup.ApiMember = this.ApiMember;
+      dup.Property = this.Property.Duplicate();
 
       return dup;
     }
@@ -495,7 +398,7 @@ namespace GsaGH.Parameters
     public GsaMember2d Transform(Transform xform)
     {
       GsaMember2d dup = this.Duplicate(true);
-      dup.ID = 0;
+      dup.Id = 0;
 
       // Brep
       if (dup._brep != null)
@@ -530,7 +433,7 @@ namespace GsaGH.Parameters
     public GsaMember2d Morph(SpaceMorph xmorph)
     {
       GsaMember2d dup = this.Duplicate(true);
-      dup.ID = 0;
+      dup.Id = 0;
 
       // Brep
       if (dup._brep != null)
@@ -584,9 +487,9 @@ namespace GsaGH.Parameters
           incl += " Incl.Pt:" + this._inclPts.Count;
       }
 
-      string idd = this.ID == 0 ? "" : "ID:" + ID + " ";
+      string idd = this.Id == 0 ? "" : "ID:" + Id + " ";
       string type = Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
-      return idd + type + incl;
+      return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
     }
     #endregion
   }

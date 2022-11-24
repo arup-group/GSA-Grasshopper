@@ -2,6 +2,7 @@
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
+using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
 
@@ -16,9 +17,9 @@ namespace GsaGHTests.Parameters
       // Arrange
       GsaSection section = new GsaSection();
       section.Name = "Name";
-      GsaMember1d member1d = new GsaMember1d(new Member(), 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
+      GsaMember1d member1d = new GsaMember1d(new Member(), LengthUnit.Yard, 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
       member1d.Name = "Name";
-      Member original = member1d.API_Member;
+      Member original = member1d.ApiMember;
 
       // Act
       Member duplicate = member1d.GetAPI_MemberClone();
@@ -33,7 +34,7 @@ namespace GsaGHTests.Parameters
       // Arrange
       GsaSection section = new GsaSection();
       section.Name = "Name";
-      GsaMember1d original = new GsaMember1d(new Member(), 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
+      GsaMember1d original = new GsaMember1d(new Member(), LengthUnit.PrinterPoint, 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
       original.Name = "Name";
 
       // Act
@@ -62,7 +63,7 @@ namespace GsaGHTests.Parameters
 
       // set some members
       mem.Colour = System.Drawing.Color.Red;
-      mem.ID = 3;
+      mem.Id = 3;
       mem.Name = "gemma";
       mem.IsDummy = true;
       mem.Offset = new GsaOffset(0, 0, 0, -0.45);
@@ -81,7 +82,7 @@ namespace GsaGHTests.Parameters
         Assert.True(mem.PolyCurve.SegmentCurve(i).IsLinear() || mem.PolyCurve.SegmentCurve(i).IsArc());
 
       Assert.Equal(System.Drawing.Color.FromArgb(255, 255, 0, 0), mem.Colour);
-      Assert.Equal(3, mem.ID);
+      Assert.Equal(3, mem.Id);
       Assert.Equal("gemma", mem.Name);
       Assert.True(mem.IsDummy);
       Assert.Equal(-0.45, mem.Offset.Z.Value);
@@ -106,7 +107,7 @@ namespace GsaGHTests.Parameters
 
       // set some members
       orig.Colour = System.Drawing.Color.Green;
-      orig.ID = 2;
+      orig.Id = 2;
       orig.Name = "Sally";
       orig.IsDummy = false;
       orig.Offset = new GsaOffset(0, 0.1, 0, 0);
@@ -121,7 +122,7 @@ namespace GsaGHTests.Parameters
 
       // check that member is duplicated
       Assert.Equal(System.Drawing.Color.FromArgb(255, 0, 128, 0), dup.Colour);
-      Assert.Equal(2, dup.ID);
+      Assert.Equal(2, dup.Id);
       Assert.Equal("Sally", dup.Name);
       Assert.False(dup.IsDummy);
       Assert.Equal(0.1, dup.Offset.X2.Value);
@@ -132,7 +133,7 @@ namespace GsaGHTests.Parameters
 
       // make changes to original
       orig.Colour = System.Drawing.Color.White;
-      orig.ID = 1;
+      orig.Id = 1;
       orig.Name = "Peter Peterson";
       orig.IsDummy = true;
       orig.Offset = new GsaOffset(0, 0.4, 0, 0);
@@ -143,7 +144,7 @@ namespace GsaGHTests.Parameters
 
       // check that duplicate keeps its values
       Assert.Equal(System.Drawing.Color.FromArgb(255, 0, 128, 0), dup.Colour);
-      Assert.Equal(2, dup.ID);
+      Assert.Equal(2, dup.Id);
       Assert.Equal("Sally", dup.Name);
       Assert.False(dup.IsDummy);
       Assert.Equal(0.1, dup.Offset.X2.Value);
@@ -154,7 +155,7 @@ namespace GsaGHTests.Parameters
 
       // check that original is changed
       Assert.Equal(System.Drawing.Color.FromArgb(255, 255, 255, 255), orig.Colour);
-      Assert.Equal(1, orig.ID);
+      Assert.Equal(1, orig.Id);
       Assert.Equal("Peter Peterson", orig.Name);
       Assert.True(orig.IsDummy);
       Assert.Equal(0.4, orig.Offset.X2.Value);

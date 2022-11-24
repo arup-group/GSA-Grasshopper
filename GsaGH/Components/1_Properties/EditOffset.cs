@@ -22,7 +22,7 @@ namespace GsaGH.Components
   public class EditOffset : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("1e094fcd-8f5f-4047-983c-e0e57a83ae52");
+    public override Guid ComponentGuid => new Guid("dd2b4e77-c1c7-4a0e-9d12-fe7a8982f9ea");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditOffset;
@@ -123,7 +123,7 @@ namespace GsaGH.Components
     }
     private void Update(string unit)
     {
-      this.LengthUnit = Length.ParseUnit(unit);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       this.Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
@@ -135,20 +135,7 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      else
-      {
-        this.LengthUnit = OasysGH.Units.DefaultUnits.LengthUnitSection;
-        List<IGH_Param> inputs = this.Params.Input.ToList();
-        List<IGH_Param> outputs = this.Params.Output.ToList();
-        bool flag = base.Read(reader);
-        foreach (IGH_Param param in inputs)
-          this.Params.RegisterInputParam(param);
-        foreach (IGH_Param param in outputs)
-          this.Params.RegisterOutputParam(param);
-        return flag;
-      }
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
 
@@ -167,11 +154,8 @@ namespace GsaGH.Components
     }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
-
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
-
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
-
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
     #endregion
     #endregion

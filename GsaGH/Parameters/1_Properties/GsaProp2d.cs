@@ -143,9 +143,7 @@ namespace GsaGH.Parameters
       set
       {
         this.CloneApiObject();
-        value = Math.Min(1, value);
-        value = Math.Max(0, value);
-        this._prop2d.AxisProperty = value * -1;
+        this._prop2d.AxisProperty = value;
       }
     }
     public Property2D_Type Type
@@ -231,7 +229,7 @@ namespace GsaGH.Parameters
       string desc = this.Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
       string mat = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
       string pa = (this.ID > 0) ? "PA" + this.ID + " " : "";
-      return pa + type + desc + mat;
+      return string.Join(" ", pa.Trim(), type.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
     }
 
     private void CloneApiObject()

@@ -5,7 +5,7 @@ using OasysGH.Components;
 using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
-namespace GsaGHTests.Slab
+namespace GsaGHTests.Components.Properties
 {
   [Collection("GrasshopperFixture collection")]
   public class CreateMaterialTests
@@ -14,16 +14,19 @@ namespace GsaGHTests.Slab
     {
       var comp = new CreateMaterial();
       comp.CreateAttributes();
+
+      comp.SetSelected(0, 3); // set dropdown to "Timber"
+      
       return comp;
     }
 
     [Fact]
     public void CreateComponent()
     {
+      // Arrange & Act
       var comp = ComponentMother();
 
-      comp.SetSelected(0, 3); // set dropdown to "Timber"
-
+      // Assert
       GsaMaterialGoo output = (GsaMaterialGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(0, output.Value.AnalysisProperty);
       Assert.Equal(1, output.Value.GradeProperty);

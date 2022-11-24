@@ -90,13 +90,13 @@ namespace GsaGHTests.Parameters
       node.Restraint = bool6;
       pln.Origin = node.Point;
       node.LocalAxis = pln;
-      node.ID = id;
+      node.Id = id;
 
       Assert.Equal(-40, node.Point.X);
       Assert.Equal(-3.654, node.Point.Y);
       Assert.Equal(-99, node.Point.Z);
 
-      Assert.Equal(44, node.ID);
+      Assert.Equal(44, node.Id);
 
       Assert.False(node.Restraint.X);
       Assert.True(node.Restraint.Y);
@@ -121,7 +121,7 @@ namespace GsaGHTests.Parameters
       GsaNode node = new GsaNode(new Point3d(-3.3, 0, 1.5));
       node.Colour = System.Drawing.Color.Red;
       node.LocalAxis = Plane.WorldYZ;
-      node.ID = 3;
+      node.Id = 3;
       node.Name = "Mariam";
 
       // duplicate node
@@ -139,7 +139,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal(duplicate.LocalAxis.Normal.Y, node.LocalAxis.Normal.Y);
       Assert.Equal(duplicate.LocalAxis.Normal.Z, node.LocalAxis.Normal.Z);
 
-      Assert.Equal(node.ID, duplicate.ID);
+      Assert.Equal(node.Id, duplicate.Id);
       Assert.Equal(node.Colour, duplicate.Colour);
       Assert.Equal(node.Name, duplicate.Name);
 
@@ -148,7 +148,7 @@ namespace GsaGHTests.Parameters
       node.Point = new Point3d(3.3, 1, -1.5);
       node.LocalAxis = Plane.Unset;
       node.Colour = System.Drawing.Color.Blue;
-      node.ID = 2;
+      node.Id = 2;
       node.Name = "Kristjan";
 
       // check that original and duplicate are not the same
@@ -164,7 +164,7 @@ namespace GsaGHTests.Parameters
       Assert.NotEqual(duplicate.LocalAxis.Normal.Y, node.LocalAxis.Normal.Y);
       Assert.NotEqual(duplicate.LocalAxis.Normal.Z, node.LocalAxis.Normal.Z);
 
-      Assert.NotEqual(node.ID, duplicate.ID);
+      Assert.NotEqual(node.Id, duplicate.Id);
       Assert.NotEqual(node.Colour, duplicate.Colour);
       Assert.NotEqual(node.Name, duplicate.Name);
     }

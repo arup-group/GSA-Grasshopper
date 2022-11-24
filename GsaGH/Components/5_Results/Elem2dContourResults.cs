@@ -29,7 +29,7 @@ namespace GsaGH.Components
   public class Elem2dContourResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("935d359a-9394-42fc-a76e-ea08ccb84135");
+    public override Guid ComponentGuid => new Guid("e2b011dc-c5ca-46fd-87f5-b888b27ef684");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => GsaGH.Properties.Resources.Result2D;
@@ -41,7 +41,7 @@ namespace GsaGH.Components
       Ribbon.SubCategoryName.Cat5())
     { }
     #endregion
-    
+
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
@@ -76,13 +76,18 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gh_typ))
       {
         #region Inputs
+        if (gh_typ == null || gh_typ.Value == null)
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+          return;
+        }
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
           if (result.Type == GsaResult.ResultType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination case contains "
-                + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination Case " + result.CaseID + " contains "
+                + result.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
                 System.Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.ResultType.Combination)
@@ -101,6 +106,9 @@ namespace GsaGH.Components
         GH_String gh_Type = new GH_String();
         if (DA.GetData(1, ref gh_Type))
           GH_Convert.ToString(gh_Type, out elementlist, GH_Conversion.Both);
+
+        if (elementlist.ToLower() == "all" || elementlist == "")
+          elementlist = "All";
 
         // Get colours
         List<GH_Colour> gh_Colours = new List<GH_Colour>();
@@ -123,38 +131,44 @@ namespace GsaGH.Components
         switch (_mode)
         {
           case FoldMode.Displacement:
-            res = result.Element2DDisplacementValues(elementlist, LengthUnit)[0];
+            res = result.Element2DDisplacementValues(elementlist, this.LengthResultUnit)[0];
             break;
 
           case FoldMode.Force:
             res = result.Element2DForceValues(elementlist,
-                DefaultUnits.ForcePerLengthUnit, DefaultUnits.ForceUnit)[0];
-            resShear = result.Element2DShearValues(elementlist, DefaultUnits.ForcePerLengthUnit)[0];
+                this.ForcePerLengthUnit, this.ForceUnit)[0];
+            resShear = result.Element2DShearValues(elementlist, this.ForcePerLengthUnit)[0];
             break;
           case FoldMode.Stress:
             res = result.Element2DStressValues(elementlist,
-                _flayer, DefaultUnits.StressUnitResult)[0];
+                _flayer, this.StressUnitResult)[0];
             break;
         }
 
         // get geometry for display from results class
-        ConcurrentDictionary<int, Element> elems = new ConcurrentDictionary<int, Element>(result.Model.Elements(elementlist));
-        ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(result.Model.Nodes());
+        ConcurrentDictionary<int, Element> elems = new ConcurrentDictionary<int, Element>(result.Model.Model.Elements(elementlist));
+        ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(result.Model.Model.Nodes());
 
         ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = (_isShear) ? resShear.xyzResults : res.xyzResults;
         ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
 
-        Enum xyzunit = LengthUnit;
+        Enum xyzunit = this.LengthResultUnit;
         Enum xxyyzzunit = AngleUnit.Radian;
         if (_mode == FoldMode.Force)
         {
-          xyzunit = DefaultUnits.ForcePerLengthUnit;
-          xxyyzzunit = DefaultUnits.ForceUnit;
+          xyzunit = this.ForcePerLengthUnit;
+          xxyyzzunit = this.ForceUnit;
         }
         else if (_mode == FoldMode.Stress)
         {
-          xyzunit = DefaultUnits.StressUnitResult;
-          xxyyzzunit = DefaultUnits.StressUnitResult;
+          xyzunit = this.StressUnitResult;
+          xxyyzzunit = this.StressUnitResult;
+        }
+
+        if ((_isShear ? resShear.dmax_x : res.dmax_x) == null)
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Result does not contain any values for 2D Elements");
+          return;
         }
 
         double dmax_x = (_isShear) ? resShear.dmax_x.As(xyzunit) : res.dmax_x.As(xyzunit);
@@ -263,12 +277,23 @@ namespace GsaGH.Components
         ConcurrentDictionary<int, List<double>> values = new ConcurrentDictionary<int, List<double>>();
         values.AsParallel().AsOrdered();
 
+        LengthUnit lengthUnit = result.Model.ModelUnit;
+        this.undefinedModelLengthUnit = false;
+        if (lengthUnit == LengthUnit.Undefined)
+        {
+          lengthUnit = this.LengthUnit;
+          this.undefinedModelLengthUnit = true;
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in " + lengthUnit.ToString() + ". This can be changed by right-clicking the component -> 'Select Units'");
+        }
+        else
+          this.LengthUnit = lengthUnit;
+
         // loop through elements
         Parallel.ForEach(elems.Keys, key => //foreach (int key in elems.Keys)
         {
           Element element = elems[key];
           if (element.Topology.Count < 3) { return; }
-          Mesh tempmesh = Util.Gsa.FromGSA.ConvertElement2D(element, nodes, LengthUnit);
+          Mesh tempmesh = Util.Gsa.FromGSA.ConvertElement2D(element, nodes, lengthUnit);
           if (tempmesh == null) { return; }
 
           List<Vector3d> transformation = null;
@@ -278,28 +303,37 @@ namespace GsaGH.Components
             case (DisplayValue.X):
               vals = xyzResults[key].Select(item => item.Value.X.As(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
-                transformation = vals.Select(item => new Vector3d(item * _defScale, 0, 0)).ToList();
+                transformation = xyzResults[key].Select(item => new Vector3d(
+                            item.Value.X.As(lengthUnit) * _defScale,
+                            0,
+                            0)).ToList();
               break;
 
             case (DisplayValue.Y):
               vals = xyzResults[key].Select(item => item.Value.Y.As(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
-                transformation = vals.Select(item => new Vector3d(0, item * _defScale, 0)).ToList();
+                transformation = xyzResults[key].Select(item => new Vector3d(
+                            0,
+                            item.Value.Y.As(lengthUnit) * _defScale,
+                            0)).ToList();
               break;
 
             case (DisplayValue.Z):
               vals = xyzResults[key].Select(item => item.Value.Z.As(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
-                transformation = vals.Select(item => new Vector3d(0, 0, item * _defScale)).ToList();
+                transformation = xyzResults[key].Select(item => new Vector3d(
+                            0,
+                            0,
+                            item.Value.Z.As(lengthUnit) * _defScale)).ToList();
               break;
 
             case (DisplayValue.resXYZ):
               vals = xyzResults[key].Select(item => item.Value.XYZ.As(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
                 transformation = xyzResults[key].Select(item => new Vector3d(
-                            item.Value.X.As(xyzunit) * _defScale,
-                            item.Value.Y.As(xyzunit) * _defScale,
-                            item.Value.Z.As(xyzunit) * _defScale)).ToList();
+                            item.Value.X.As(lengthUnit) * _defScale,
+                            item.Value.Y.As(lengthUnit) * _defScale,
+                            item.Value.Z.As(lengthUnit) * _defScale)).ToList();
               break;
 
             case (DisplayValue.XX):
@@ -389,37 +423,39 @@ namespace GsaGH.Components
           {
             if ((int)_disp < 4)
             {
-              Length displacement = new Length(t, LengthUnit).ToUnit(LengthResultUnit);
+              Length displacement = new Length(t, this.LengthResultUnit);
               legendValues.Add(displacement.ToString("f" + significantDigits));
               ts.Add(new GH_UnitNumber(displacement));
+              this.Message = Length.GetAbbreviation(this.LengthResultUnit);
             }
             else
             {
               Angle rotation = new Angle(t, AngleUnit.Radian);
               legendValues.Add(rotation.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(rotation));
+              this.Message = Angle.GetAbbreviation(AngleUnit.Radian);
             }
           }
           if (_mode == FoldMode.Force)
           {
             if ((int)_disp < 4 | _isShear)
             {
-              ForcePerLength forcePerLength = new ForcePerLength(t, DefaultUnits.ForcePerLengthUnit);
+              ForcePerLength forcePerLength = new ForcePerLength(t, this.ForcePerLengthUnit);
               legendValues.Add(forcePerLength.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(forcePerLength));
+              this.Message = ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit);
             }
             else
             {
-              IQuantity length = new Length(0, LengthUnit);
-              string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-              legendValues.Add(new Force(t, DefaultUnits.ForceUnit).ToString("s" + significantDigits) + lengthunitAbbreviation + "/" + lengthunitAbbreviation);
-              Moment moment = new Moment(t, DefaultUnits.MomentUnit); // this is technically moment per length
+              legendValues.Add(new Moment(t, UnitsHelper.GetMomentUnit(this.ForceUnit, lengthUnit)).ToString("s" + significantDigits) + "/" + Length.GetAbbreviation(lengthUnit));
+              Moment moment = new Moment(t, UnitsHelper.GetMomentUnit(this.ForceUnit, lengthUnit)); // this is technically moment per length
               ts.Add(new GH_UnitNumber(moment));
+              this.Message = Moment.GetAbbreviation(UnitsHelper.GetMomentUnit(this.ForceUnit, lengthUnit)) + "/" + Length.GetAbbreviation(lengthUnit);
             }
           }
           if (_mode == FoldMode.Stress)
           {
-            Pressure stress = new Pressure(t, DefaultUnits.StressUnitResult);
+            Pressure stress = new Pressure(t, this.StressUnitResult);
             legendValues.Add(stress.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(stress));
           }
@@ -506,8 +542,13 @@ namespace GsaGH.Components
     string _case = "";
     bool _isShear;
     int _flayer = 0;
+
     LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
     LengthUnit LengthResultUnit = DefaultUnits.LengthUnitResult;
+    bool undefinedModelLengthUnit = false;
+    ForcePerLengthUnit ForcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
+    ForceUnit ForceUnit = DefaultUnits.ForceUnit;
+    PressureUnit StressUnitResult = DefaultUnits.StressUnitResult;
     FoldMode _mode = FoldMode.Displacement;
     DisplayValue _disp = DisplayValue.resXYZ;
 
@@ -515,7 +556,7 @@ namespace GsaGH.Components
     {
       this.SpacerDescriptions = new List<string>(new string[]
         {
-          "Result Type", "Component", "Geometry Unit", "Deform Shape"
+          "Result Type", "Component", "Deform Shape"
         });
 
       this.DropDownItems = new List<List<string>>();
@@ -528,10 +569,6 @@ namespace GsaGH.Components
       // component
       this.DropDownItems.Add(this._displacement);
       this.SelectedItems.Add(this.DropDownItems[1][3]);
-
-      // Length
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -562,7 +599,6 @@ namespace GsaGH.Components
 
             SelectedItems[0] = DropDownItems[0][0]; // displacement
             SelectedItems[1] = DropDownItems[1][3]; // Resolved XYZ
-            SelectedItems[2] = Length.GetAbbreviation(this.LengthUnit);
 
             _disp = (DisplayValue)3;
             _isShear = false;
@@ -585,7 +621,6 @@ namespace GsaGH.Components
 
             SelectedItems[0] = DropDownItems[0][1];
             SelectedItems[1] = DropDownItems[1][0];
-            SelectedItems[2] = Length.GetAbbreviation(this.LengthUnit);
 
             _disp = 0;
             _isShear = false;
@@ -612,8 +647,6 @@ namespace GsaGH.Components
               SelectedItems.Insert(2, DropDownItems[2][1]);
             else
               SelectedItems[2] = DropDownItems[2][1];
-
-            SelectedItems[3] = Length.GetAbbreviation(this.LengthUnit);
 
             _disp = 0;
             _isShear = false;
@@ -673,10 +706,7 @@ namespace GsaGH.Components
         if (selectedidd == 2)
           _flayer = -1;
       }
-      else
-      {
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[2]);
-      }
+
       base.UpdateUI();
     }
     public void SetVal(double value)
@@ -688,34 +718,29 @@ namespace GsaGH.Components
       _maxValue = max;
       _minValue = min;
     }
-    public override void UpdateUIFromSelectedItems()
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[2]);
-      base.UpdateUIFromSelectedItems();
-    }
+
     public override void VariableParameterMaintenance()
     {
-      string lengthunitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
-
       if (_mode == FoldMode.Displacement)
       {
         if ((int)_disp < 4)
-          Params.Output[2].Name = "Values [" + lengthunitAbbreviation + "]";
+          Params.Output[2].Name = "Values [" + Length.GetAbbreviation(this.LengthResultUnit) + "]";
         else
           Params.Output[2].Name = "Values [rad]";
       }
 
       if (_mode == FoldMode.Force)
       {
+        
         if ((int)_disp < 4 | _isShear)
-          Params.Output[2].Name = "Legend Values [" + ForcePerLength.GetAbbreviation(DefaultUnits.ForcePerLengthUnit) + "/" + lengthunitAbbreviation + "]";
+          Params.Output[2].Name = "Legend Values [" + ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit) + "/" + Length.GetAbbreviation(this.LengthUnit) + "]";
         else
-          Params.Output[2].Name = "Legend Values [" + Force.GetAbbreviation(DefaultUnits.ForceUnit) + "·" + lengthunitAbbreviation + "/" + lengthunitAbbreviation + "]";
+          Params.Output[2].Name = "Legend Values [" + Force.GetAbbreviation(this.ForceUnit) + "·" + Length.GetAbbreviation(this.LengthUnit) + "/" + Length.GetAbbreviation(this.LengthUnit) + "]";
       }
 
       if (_mode == FoldMode.Stress)
       {
-        Params.Output[2].Name = "Legend Values [" + Pressure.GetAbbreviation(DefaultUnits.StressUnitResult) + "]";
+        Params.Output[2].Name = "Legend Values [" + Pressure.GetAbbreviation(this.StressUnitResult) + "]";
       }
     }
     #endregion
@@ -780,7 +805,101 @@ namespace GsaGH.Components
       gradient.CreateAttributes();
       ToolStripMenuItem extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => { CreateGradient(); });
       menu.Items.Add(extract);
+
+      ToolStripMenuItem lengthUnitsMenu = new ToolStripMenuItem("Displacement");
+      lengthUnitsMenu.Enabled = true;
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length))
+      {
+        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateLength(unit); });
+        toolStripMenuItem.Checked = unit == Length.GetAbbreviation(this.LengthResultUnit);
+        toolStripMenuItem.Enabled = true;
+        lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      ToolStripMenuItem forceUnitsMenu = new ToolStripMenuItem("Force");
+      forceUnitsMenu.Enabled = true;
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength))
+      {
+        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateForce(unit); });
+        toolStripMenuItem.Checked = unit == ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit);
+        toolStripMenuItem.Enabled = true;
+        forceUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      ToolStripMenuItem momentUnitsMenu = new ToolStripMenuItem("Moment");
+      momentUnitsMenu.Enabled = true;
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force))
+      {
+        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateMoment(unit); });
+        toolStripMenuItem.Checked = unit == Force.GetAbbreviation(this.ForceUnit);
+        toolStripMenuItem.Enabled = true;
+        momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      ToolStripMenuItem stressUnitsMenu = new ToolStripMenuItem("Stress");
+      stressUnitsMenu.Enabled = true;
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress))
+      {
+        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateStress(unit); });
+        toolStripMenuItem.Checked = unit == Pressure.GetAbbreviation(this.StressUnitResult);
+        toolStripMenuItem.Enabled = true;
+        stressUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      ToolStripMenuItem unitsMenu = new ToolStripMenuItem("Select Units", Properties.Resources.Units);
+
+      if (undefinedModelLengthUnit)
+      {
+        ToolStripMenuItem modelUnitsMenu = new ToolStripMenuItem("Model geometry");
+        modelUnitsMenu.Enabled = true;
+        foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length))
+        {
+          ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateModel(unit); });
+          toolStripMenuItem.Checked = unit == Length.GetAbbreviation(this.LengthUnit);
+          toolStripMenuItem.Enabled = true;
+          modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+        }
+        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] { modelUnitsMenu, lengthUnitsMenu, forceUnitsMenu, momentUnitsMenu, stressUnitsMenu });
+      }
+      else
+      {
+        unitsMenu.DropDownItems.AddRange(new ToolStripItem[] { lengthUnitsMenu, forceUnitsMenu, momentUnitsMenu, stressUnitsMenu });
+      }
+      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+
+      menu.Items.Add(unitsMenu);
+
       Menu_AppendSeparator(menu);
+    }
+    private void UpdateModel(string unit)
+    {
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      this.ExpirePreview(true);
+      base.UpdateUI();
+    }
+    private void UpdateLength(string unit)
+    {
+      this.LengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      this.ExpirePreview(true);
+      base.UpdateUI();
+    }
+    private void UpdateForce(string unit)
+    {
+      this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), unit);
+      this.ExpirePreview(true);
+      base.UpdateUI();
+    }
+    private void UpdateMoment(string unit)
+    {
+      this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
+      this.ExpirePreview(true);
+      base.UpdateUI();
+    }
+    private void UpdateStress(string unit)
+    {
+      this.StressUnitResult = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
+      this.ExpirePreview(true);
+      base.UpdateUI();
     }
     bool _showLegend = true;
     private void ShowLegend(object sender, EventArgs e)
@@ -843,6 +962,11 @@ namespace GsaGH.Components
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
       writer.SetBoolean("legend", _showLegend);
+      writer.SetString("model", Length.GetAbbreviation(this.LengthUnit));
+      writer.SetString("length", Length.GetAbbreviation(this.LengthResultUnit));
+      writer.SetString("force", ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit));
+      writer.SetString("moment", Force.GetAbbreviation(this.ForceUnit));
+      writer.SetString("stress", Pressure.GetAbbreviation(this.StressUnitResult));
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
@@ -856,6 +980,11 @@ namespace GsaGH.Components
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
       _showLegend = reader.GetBoolean("legend");
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
+      this.LengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
+      this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), reader.GetString("force"));
+      this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("moment"));
+      this.StressUnitResult = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("stress"));
       return base.Read(reader);
     }
     #endregion
