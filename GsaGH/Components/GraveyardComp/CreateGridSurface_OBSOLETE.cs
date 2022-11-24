@@ -5,43 +5,49 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    public class CreateGridSurface : GH_OasysDropDownComponent
+  public class CreateGridSurface_OBSOLETE : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("b9405f78-317b-474f-b258-4a178a70bc02");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override Guid ComponentGuid => new Guid("1052955c-cf97-4378-81d3-8491e0defad0");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GridSurface;
 
-    public CreateGridSurface() : base("Create Grid Surface",
+    public CreateGridSurface_OBSOLETE() : base("Create Grid Surface",
       "GridSurface",
       "Create GSA Grid Surface",
-      CategoryName.Name(),
-      SubCategoryName.Cat3())
-    { }
+      Ribbon.CategoryName.Name(),
+      Ribbon.SubCategoryName.Cat3())
+    { } // sets the initial state of the component to hidden
     #endregion
 
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
+      IQuantity length = new Length(0, DefaultUnits.LengthUnitGeometry);
+      string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+
       pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model", GH_ParamAccess.item, 0);
-      pManager.AddTextParameter("Element list", "El", "List of Elements for which load should be expanded to (by default 'all')." + Environment.NewLine +
-         "Element list should take the form:" + Environment.NewLine +
-         " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
+      pManager.AddTextParameter("Element list", "El", "List of Elements for which load should be expanded to (by default 'all')." + System.Environment.NewLine +
+         "Element list should take the form:" + System.Environment.NewLine +
+         " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Tolerance in model units", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Tolerance [" + unitAbbreviation + "]", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
       pManager.AddAngleParameter("Span Direction", "Di", "Span Direction between -180 and 180 degrees", GH_ParamAccess.item, 0);
       pManager[5].Optional = true;
       angleInputParam = this.Params.Input[5];
@@ -134,7 +140,7 @@ namespace GsaGH.Components
       }
 
       // 2 Elements
-      // check that user has not input Gsa geometry elements here
+      // check that user has not inputted Gsa geometry elements here
       gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(2, ref gh_typ))
       {
@@ -142,9 +148,9 @@ namespace GsaGH.Components
         if (type.StartsWith("GSA "))
         {
           Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in ElementList input!" + Environment.NewLine +
-              "Element list should take the form:" + Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + Environment.NewLine +
+              "You cannot input a Node/Element/Member in ElementList input!" + System.Environment.NewLine +
+              "Element list should take the form:" + System.Environment.NewLine +
+              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + System.Environment.NewLine +
               "Refer to GSA help file for definition of lists and full vocabulary.");
           return;
         }
@@ -173,10 +179,10 @@ namespace GsaGH.Components
       }
 
       // 4 Tolerance
-      double tolerance = 0;
-      if (DA.GetData(4, ref tolerance))
+      if (this.Params.Input[4].SourceCount != 0)
       {
-        gs.Tolerance = tolerance;
+        gs.Tolerance = ((Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true)).Millimeters;
+        changeGS = true;
       }
 
       switch (_mode)
@@ -253,12 +259,13 @@ namespace GsaGH.Components
       "2D"
     });
     AngleUnit AngleUnit = AngleUnit.Radian;
+    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.One_Dimensional_One_Way;
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
         {
-          "Type"
+          "Type", "Unit"
         });
 
       this.DropDownItems = new List<List<string>>();
@@ -267,6 +274,10 @@ namespace GsaGH.Components
       // Type
       this.DropDownItems.Add(this._type);
       this.SelectedItems.Add(this._type[0].ToString());
+
+      // Length
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
 
       this.IsInitialised = true;
     }
@@ -289,6 +300,9 @@ namespace GsaGH.Components
             break;
         }
       }
+      else
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()
@@ -305,6 +319,8 @@ namespace GsaGH.Components
           this._mode = FoldMode.Two_Dimensional;
           break;
       }
+      if (this.SelectedItems.Count > 1)
+        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 
@@ -322,11 +338,11 @@ namespace GsaGH.Components
       {
         Params.Input[5].NickName = "Exp";
         Params.Input[5].Name = "Load Expansion";
-        Params.Input[5].Description = "Load Expansion: " + Environment.NewLine + "Accepted inputs are:" +
-            Environment.NewLine + "0 : Corner (plane)" +
-            Environment.NewLine + "1 : Smooth (plane)" +
-            Environment.NewLine + "2 : Plane" +
-            Environment.NewLine + "3 : Legacy";
+        Params.Input[5].Description = "Load Expansion: " + System.Environment.NewLine + "Accepted inputs are:" +
+            System.Environment.NewLine + "0 : Corner (plane)" +
+            System.Environment.NewLine + "1 : Smooth (plane)" +
+            System.Environment.NewLine + "2 : Plane" +
+            System.Environment.NewLine + "3 : Legacy";
         Params.Input[5].Access = GH_ParamAccess.item;
         Params.Input[5].Optional = true;
 
@@ -413,7 +429,9 @@ namespace GsaGH.Components
             this.SelectedItems.Add("2D");
             break;
         }
+        this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
       }
+      
       return base.Read(reader);
     }
     #endregion

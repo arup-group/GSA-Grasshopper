@@ -1,5 +1,4 @@
-﻿using Grasshopper.Kernel.Types;
-using GsaGH.Components;
+﻿using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
@@ -16,24 +15,28 @@ namespace GsaGHTests.Components.Properties
       var comp = new CreateSection();
       comp.CreateAttributes();
 
-      GH_String profile = (GH_String)ComponentTestHelper.GetOutput(CreateProfileTests.ComponentMother(), 0);
+      return comp;
+    }
+
+    [Theory]
+    [InlineData("STD CH(m) 40 30 2 1")]
+    [InlineData("STD CH(cm) 40 30 2 1")]
+    [InlineData("STD CH(mm) 40 30 2 1")]
+    [InlineData("STD CH(ft) 40 30 2 1")]
+    [InlineData("STD CH(in) 40 30 2 1")]
+    public void CreateComponentTest1(string profile)
+    {
+      // Arrange & Act
+      var comp = ComponentMother();
+
       GsaMaterialGoo material = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother(), 0);
 
       ComponentTestHelper.SetInput(comp, profile, 0);
       ComponentTestHelper.SetInput(comp, material, 1);
 
-      return comp;
-    }
-
-    [Fact]
-    public void CreateComponent()
-    {
-      // Arrange & Act
-      var comp = ComponentMother();
-
       // Assert
       GsaSectionGoo output = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal("STD CH(ft) 1 2 3 4", output.Value.Profile);
+      Assert.Equal(profile, output.Value.Profile);
       Assert.Equal(MatType.TIMBER, output.Value.Material.MaterialType);
     }
   }

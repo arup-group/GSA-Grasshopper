@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Grasshopper;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -97,7 +99,7 @@ namespace GsaGH.Components
       pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Topology", "Tp", "Get the Element's original topology list referencing node IDs in Model that Element was created from", GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Topology", "Tp", "Get the Element's original topology list referencing node IDs in Model that Element was created from", GH_ParamAccess.tree);
     }
     #endregion
 
@@ -281,7 +283,9 @@ namespace GsaGH.Components
         DA.SetData(13, elem.IsDummy);
 
         try { DA.SetData(14, elem.ParentMember); } catch (Exception) { }
-        DA.SetDataList(15, new Collection<int>(elem.API_Element.Topology));
+        DataTree<int> topo = new DataTree<int>();
+        topo.AddRange(elem.API_Element.Topology, new GH_Path(elem.Id));
+        DA.SetDataTree(15, topo);
       }
     }
   }
