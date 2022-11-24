@@ -27,7 +27,7 @@ namespace IntegrationTests.ExampleFiles
     {
       IGH_Param param = Helper.FindParameter(Document(), "RH_OUT:deflection");
       GH_Number output = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      Assert.Equal(5.563437, output.Value, 6);
+      Assert.Equal(5.563436, output.Value, 5);
     }
 
     [Fact]
