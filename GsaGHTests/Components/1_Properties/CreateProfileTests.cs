@@ -26,7 +26,7 @@ namespace GsaGHTests.Components.Properties
     }
 
     [Fact]
-    public void CreateComponent()
+    public void CreateComponentTest1()
     {
       // Arrange & Act
       var comp = ComponentMother();
@@ -34,6 +34,24 @@ namespace GsaGHTests.Components.Properties
       // Assert
       GH_String output = (GH_String)ComponentTestHelper.GetOutput(comp);
       Assert.Equal("STD CH(ft) 1 2 3 4", output.Value);
+    }
+
+    [Theory]
+    [UseCulture("zh-cn")]
+    [InlineData(0, "STD CH(mm) 1 2 3 4")]
+    [InlineData(1, "STD CH(cm) 1 2 3 4")]
+    [InlineData(2, "STD CH(m) 1 2 3 4")]
+    [InlineData(3, "STD CH(in) 1 2 3 4")]
+    [InlineData(4, "STD CH(ft) 1 2 3 4")]
+    public void CreateComponentTest2(int j, string profile)
+    {
+      // Arrange & Act
+      var comp = ComponentMother();
+      comp.SetSelected(1, j); // set measure
+
+      // Assert
+      GH_String output = (GH_String)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(profile, output.Value);
     }
   }
 }
