@@ -57,7 +57,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal("awesome property", prop.Description);
       Assert.Equal(Property2D_Type.LOAD.ToString(),
           prop.Type.ToString());
-      Assert.Equal(0, prop.ID);
+      Assert.Equal(0, prop.Id);
     }
 
     [Fact]
@@ -88,7 +88,7 @@ namespace GsaGHTests.Parameters
       GsaProp2d dup = orig.Duplicate();
 
       // make some changes to original
-      orig.ID = 4;
+      orig.Id = 4;
 
       orig.AxisProperty = 1;
       orig.Material.GradeProperty = 4;
@@ -107,7 +107,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal("awesome property", dup.Description);
       Assert.Equal(Property2D_Type.SHELL.ToString(),
           dup.Type.ToString());
-      Assert.Equal(14, dup.ID);
+      Assert.Equal(14, dup.Id);
 
       Assert.Equal(1, orig.AxisProperty);
       Assert.Equal(0, orig.Material.GradeProperty);
@@ -118,7 +118,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal("less cool property", orig.Description);
       Assert.Equal(Property2D_Type.CURVED_SHELL.ToString(),
           orig.Type.ToString());
-      Assert.Equal(4, orig.ID);
+      Assert.Equal(4, orig.Id);
     }
   }
 }

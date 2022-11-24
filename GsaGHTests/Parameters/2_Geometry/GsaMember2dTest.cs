@@ -38,7 +38,7 @@ namespace GsaGHTests.Parameters
       mem.Name = "meminem";
       mem.IsDummy = true;
       mem.Offset = new GsaOffset(0, 0, 0, -0.45);
-      mem.Property.ID = 2;
+      mem.Property.Id = 2;
       mem.Type2D = AnalysisOrder.LINEAR;
       mem.Type = MemberType.SLAB;
 
@@ -59,7 +59,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal("meminem", mem.Name);
       Assert.True(mem.IsDummy);
       Assert.Equal(-0.45, mem.Offset.Z.Value);
-      Assert.Equal(2, mem.Property.ID);
+      Assert.Equal(2, mem.Property.Id);
       Assert.Equal(AnalysisOrder.LINEAR, mem.Type2D);
       Assert.Equal(MemberType.SLAB, mem.Type);
     }
@@ -95,7 +95,7 @@ namespace GsaGHTests.Parameters
       original.Name = "ehbaba";
       original.IsDummy = false;
       original.Offset = new GsaOffset(0.33, 0, 0, 0, LengthUnit.Meter);
-      original.Property.ID = 3;
+      original.Property.Id = 3;
       original.Type2D = AnalysisOrder.RIGID_DIAPHRAGM;
       original.Type = MemberType.GENERIC_2D;
 
@@ -125,7 +125,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal("ehbaba", dup.Name);
       Assert.False(dup.IsDummy);
       Assert.Equal(0.33, dup.Offset.X1.Value);
-      Assert.Equal(3, dup.Property.ID);
+      Assert.Equal(3, dup.Property.Id);
       Assert.Equal(AnalysisOrder.RIGID_DIAPHRAGM, dup.Type2D);
       Assert.Equal(MemberType.GENERIC_2D, dup.Type);
 
@@ -150,7 +150,7 @@ namespace GsaGHTests.Parameters
       original.Name = "Persepolis";
       original.IsDummy = true;
       original.Offset = new GsaOffset(0.12, 0, 0, 0, LengthUnit.Meter);
-      original.Property.ID = 44;
+      original.Property.Id = 44;
       original.Type2D = AnalysisOrder.QUADRATIC;
       original.Type = MemberType.WALL;
 
@@ -173,7 +173,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal("ehbaba", dup.Name);
       Assert.False(dup.IsDummy);
       Assert.Equal(0.33, dup.Offset.X1.Meters);
-      Assert.Equal(3, dup.Property.ID);
+      Assert.Equal(3, dup.Property.Id);
       Assert.Equal(AnalysisOrder.RIGID_DIAPHRAGM, dup.Type2D);
       Assert.Equal(MemberType.GENERIC_2D, dup.Type);
 
@@ -184,7 +184,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal("Persepolis", original.Name);
       Assert.True(original.IsDummy);
       Assert.Equal(0.12, original.Offset.X1.Value);
-      Assert.Equal(44, original.Property.ID);
+      Assert.Equal(44, original.Property.Id);
       Assert.Equal(AnalysisOrder.QUADRATIC, original.Type2D);
       Assert.Equal(MemberType.WALL, original.Type);
     }
