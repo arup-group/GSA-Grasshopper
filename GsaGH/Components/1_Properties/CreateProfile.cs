@@ -1,23 +1,22 @@
-﻿using Grasshopper.Kernel;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Util;
-using GsaGH.Util.GH;
 using GsaGH.Util.Gsa;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
-using OasysGH.Helpers;
-using OasysGH.Units.Helpers;
-using OasysGH.Units;
 
 namespace GsaGH.Components
 {
@@ -104,8 +103,7 @@ namespace GsaGH.Components
       #region std
       if (_mode == FoldMode.Other)
       {
-        //IProfile profile = null;
-        string unit = "(" + Length.GetAbbreviation(this.LengthUnit) + ") ";
+        string unit = "(" + Length.GetAbbreviation(this.LengthUnit, new CultureInfo("en")) + ") ";
         string profile = "STD ";
         // angle
         if (typ == "IAngleProfile") //(typ.Name.Equals(typeof(IAngleProfile).Name))
@@ -851,7 +849,7 @@ namespace GsaGH.Components
     #endregion
 
     #region Custom UI
-    
+
     //List<string> excludedInterfaces = new List<string>(new string[]
     //{
     //    "IProfile", "IPoint", "IPolygon", "IFlange", "IWeb", "IWebConstant", "IWebTapered", "ITrapezoidProfileAbstractInterface", "IIBeamProfile"
@@ -1214,7 +1212,7 @@ namespace GsaGH.Components
 
     public override void VariableParameterMaintenance()
     {
-      
+
       if (_mode == FoldMode.Catalogue)
       {
         int i = 0;
