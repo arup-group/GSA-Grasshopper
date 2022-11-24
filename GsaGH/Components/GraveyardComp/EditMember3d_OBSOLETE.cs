@@ -125,7 +125,7 @@ namespace GsaGH.Components
           {
             if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
             {
-              prop3d.ID = idd;
+              prop3d.Id = idd;
               mem.PropertyID = idd;
             }
             else
