@@ -26,12 +26,7 @@ namespace GsaGH.UI
       if (absAngleToZ < 0.25 * Math.PI || absAngleToZ > 0.75 * Math.PI)
       {
         outY = new Vector3d(outX);
-        double angle;
-        if (outX.Z > 0)
-          angle = -0.5 * Math.PI;
-        else
-          angle = 0.5 * Math.PI;
-
+        double angle = -0.5 * Math.PI;
         if (!outY.Rotate(angle, pln.XAxis))
           throw new Exception();
       }

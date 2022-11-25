@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
@@ -105,15 +106,15 @@ namespace GsaGH.Components
       // local axis
       if (previewXaxis != null)
       {
-        args.Display.DrawLine(previewXaxis, System.Drawing.Color.FromArgb(255, 244, 96, 96), 3);
+        args.Display.DrawLine(previewXaxis, Color.FromArgb(255, 244, 96, 96), 3);
       }
       if (previewYaxis != null)
       {
-        args.Display.DrawLine(previewYaxis, System.Drawing.Color.FromArgb(255, 96, 244, 96), 1);
+        args.Display.DrawLine(previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
       }
       if (previewZaxis != null)
       {
-        args.Display.DrawLine(previewZaxis, System.Drawing.Color.FromArgb(255, 96, 96, 234), 1);
+        args.Display.DrawLine(previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
       }
     }
   }
