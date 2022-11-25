@@ -17,7 +17,7 @@ namespace GsaGH.Helpers.Export
       int outID;
       if (section.Id > 0)
       {
-        apiSections.SetValue(section.Id, section.Guid, section.API_Section, true);
+        apiSections.SetValue(section.Id, section.Guid, section.API_Section);
         outID = section.Id;
       }
       else

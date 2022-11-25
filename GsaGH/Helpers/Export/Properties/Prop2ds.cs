@@ -15,7 +15,7 @@ namespace GsaGH.Helpers.Export
 
       if (prop.Id > 0)
       {
-        apiProp2ds.SetValue(prop.Id, prop.Guid, prop.API_Prop2d, true);
+        apiProp2ds.SetValue(prop.Id, prop.Guid, prop.API_Prop2d);
         return prop.Id;
       }
       else

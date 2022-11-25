@@ -22,6 +22,8 @@ namespace GsaGH.Helpers.Export
     internal GsaIntDictionary(ReadOnlyDictionary<int, T> dictionary)
     {
       _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+      if (_dictionary.Count > 0)
+        _maxKey = _dictionary.Keys.Max();
     }
 
     internal int AddValue(T value)
@@ -45,6 +47,7 @@ namespace GsaGH.Helpers.Export
     private IDictionary<Guid, int> _GuidDictionary;
     private int _maxKey = 0;
 
+    internal int Count => _dictionary.Count;
     internal ReadOnlyDictionary<int, T> Dictionary
     {
       get
@@ -57,6 +60,8 @@ namespace GsaGH.Helpers.Export
     {
       _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
       _GuidDictionary = dictionary.ToDictionary(kvp => Guid.NewGuid(), kvp => kvp.Key);
+      if (_dictionary.Count > 0)
+        _maxKey = _dictionary.Keys.Max();
     }
 
     internal int AddValue(Guid guid, T value)
@@ -69,15 +74,12 @@ namespace GsaGH.Helpers.Export
       return _maxKey;
     }
 
-    internal void SetValue(int key, Guid guid, T value, bool overwrite = false)
+    internal void SetValue(int key, Guid guid, T value)
     {
-      if (overwrite && !_GuidDictionary.ContainsKey(guid))
-      {
-        _dictionary[key] = value;
-        _GuidDictionary[guid] = key;
-        if (_maxKey <= key)
-          _maxKey = key;
-      }
+      _dictionary[key] = value;
+      _GuidDictionary[guid] = key;
+      if (_maxKey <= key)
+        _maxKey = key;
     }
   }
 }

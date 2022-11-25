@@ -22,7 +22,7 @@ namespace GsaGH.Helpers.Export
     {
       if (material.AnalysisProperty > 0 && material.AnalysisMaterial != null)
       {
-        apiMaterials.SetValue(material.AnalysisProperty, material.Guid, material.AnalysisMaterial, true);
+        apiMaterials.SetValue(material.AnalysisProperty, material.Guid, material.AnalysisMaterial);
         return material.AnalysisProperty;
       }
       else
