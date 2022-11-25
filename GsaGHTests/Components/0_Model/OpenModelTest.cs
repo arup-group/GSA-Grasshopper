@@ -1,6 +1,4 @@
 ﻿using System;
-using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helper;
