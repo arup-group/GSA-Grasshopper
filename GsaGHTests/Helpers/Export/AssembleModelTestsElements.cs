@@ -12,6 +12,7 @@ using GsaGHTests.Components.Properties;
 using GsaAPI;
 using OasysUnits.Units;
 using OasysUnits;
+using System.Drawing;
 
 namespace GsaGHTests.Helpers.Export
 {
@@ -25,6 +26,15 @@ namespace GsaGHTests.Helpers.Export
       GsaSectionGoo section = Section(profile, false);
       GH_Line ln = new GH_Line(new Line(new Point3d(0, 0, 0), new Point3d(10, 0, 0)));
       GsaElement1dGoo elem1d = Element1d(ln, section);
+
+      elem1d.Value.Offset = new GsaOffset(12, 15, 17, 19, LengthUnit.Centimeter);
+      elem1d.Value.Colour = Color.Red;
+      elem1d.Value.Group = 4;
+      elem1d.Value.Name = "name Name Name";
+      elem1d.Value.OrientationAngle = new Angle(45, AngleUnit.Degree);
+      elem1d.Value.ReleaseEnd = new GsaBool6(true, true, true, false, false, true);
+      elem1d.Value.ReleaseStart = new GsaBool6(false, false, false, false, false, false);
+      elem1d.Value.Type = ElementType.BEAM;
 
       GsaModelGoo modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(new List<GsaElement1dGoo>() { elem1d }, null, null, null, null, ModelUnit.m));
