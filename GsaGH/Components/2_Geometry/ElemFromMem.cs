@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -184,6 +185,13 @@ namespace GsaGH.Components
       // extract nodes from model
       ConcurrentBag<GsaNodeGoo> nodes = Util.Gsa.FromGSA.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()), LengthUnit);
 
+      ConcurrentDictionary<int, Element> elementDict = new ConcurrentDictionary<int, Element>(gsa.Elements());
+
+      // populate local axes dictionary
+      ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      foreach (int id in elementDict.Keys)
+        localAxesDict.TryAdd(id, gsa.ElementDirectionCosine(id));
+
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
           = Util.Gsa.FromGSA.GetElements(
@@ -194,6 +202,7 @@ namespace GsaGH.Components
               new ConcurrentDictionary<int, Prop3D>(gsa.Prop3Ds()),
               new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials()),
               new ConcurrentDictionary<int, SectionModifier>(gsa.SectionModifiers()),
+              localAxesDict,
               LengthUnit);
 
       // post process materials (as they currently have a bug when running parallel!)
@@ -363,7 +372,7 @@ namespace GsaGH.Components
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-    
+
     public override void VariableParameterMaintenance()
     {
       string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);

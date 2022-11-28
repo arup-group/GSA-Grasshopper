@@ -1,5 +1,5 @@
 ﻿using System;
-using GsaGH.UI;
+using GsaGH.Parameters;
 using Rhino.Geometry;
 using Xunit;
 
@@ -58,15 +58,15 @@ namespace GsaGHTests.Helpers
 
       int precision = 10;
 
-      Assert.Equal(expectedLocalX.X, localAxis.Item1.X, precision);
-      Assert.Equal(expectedLocalX.Y, localAxis.Item1.Y, precision);
-      Assert.Equal(expectedLocalX.Z, localAxis.Item1.Z, precision);
-      Assert.Equal(expectedLocalY.X, localAxis.Item2.X, precision);
-      Assert.Equal(expectedLocalY.Y, localAxis.Item2.Y, precision);
-      Assert.Equal(expectedLocalY.Z, localAxis.Item2.Z, precision);
-      Assert.Equal(expectedLocalZ.X, localAxis.Item3.X, precision);
-      Assert.Equal(expectedLocalZ.Y, localAxis.Item3.Y, precision);
-      Assert.Equal(expectedLocalZ.Z, localAxis.Item3.Z, precision);
+      Assert.Equal(expectedLocalX.X, localAxis.X.X, precision);
+      Assert.Equal(expectedLocalX.Y, localAxis.X.Y, precision);
+      Assert.Equal(expectedLocalX.Z, localAxis.X.Z, precision);
+      Assert.Equal(expectedLocalY.X, localAxis.Y.X, precision);
+      Assert.Equal(expectedLocalY.Y, localAxis.Y.Y, precision);
+      Assert.Equal(expectedLocalY.Z, localAxis.Y.Z, precision);
+      Assert.Equal(expectedLocalZ.X, localAxis.Z.X, precision);
+      Assert.Equal(expectedLocalZ.Y, localAxis.Z.Y, precision);
+      Assert.Equal(expectedLocalZ.Z, localAxis.Z.Z, precision);
     }
   }
 }

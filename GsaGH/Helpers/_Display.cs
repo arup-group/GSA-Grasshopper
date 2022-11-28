@@ -13,7 +13,7 @@ namespace GsaGH.UI
   /// </summary>
   public class Display
   {
-    public static Tuple<Vector3d, Vector3d, Vector3d> GetLocalPlane(PolyCurve crv, double t, double orientationAngle)
+    public static GsaLocalAxes GetLocalAxes(PolyCurve crv, double t, double orientationAngle)
     {
       crv.PerpendicularFrameAt(t, out Plane pln);
       pln.Rotate(orientationAngle, pln.Normal);
@@ -40,7 +40,7 @@ namespace GsaGH.UI
         outY = pln.YAxis;
       }
       Vector3d outZ = Vector3d.CrossProduct(outX, outY);
-      return new Tuple<Vector3d, Vector3d, Vector3d>(outX, outY, outZ);
+      return new GsaLocalAxes(outX, outY, outZ);
     }
 
     public static void Preview1D(PolyCurve crv, double angle_radian, GsaBool6 start, GsaBool6 end,
