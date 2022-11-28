@@ -19,6 +19,7 @@ using OasysUnits;
 using OasysUnits.Serialization.JsonNet;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using System.Collections.ObjectModel;
 
 namespace GsaGH.Components
 {
@@ -90,8 +91,9 @@ namespace GsaGH.Components
       internal ConcurrentBag<GsaMember2dGoo> Mem2ds { get; set; }
       internal ConcurrentBag<GsaMember3dGoo> Mem3ds { get; set; }
     }
+
     SolveResults Compute(
-        ConcurrentDictionary<int, Node> allnDict, 
+        ConcurrentDictionary<int, Node> allnDict,
         ConcurrentDictionary<int, Axis> axDict,
         ConcurrentDictionary<int, Node> nDict,
         ConcurrentDictionary<int, Element> eDict,
@@ -100,7 +102,8 @@ namespace GsaGH.Components
         ConcurrentDictionary<int, Prop2D> pDict,
         ConcurrentDictionary<int, Prop3D> p3Dict,
         ConcurrentDictionary<int, AnalysisMaterial> amDict,
-        ConcurrentDictionary<int, SectionModifier> modDict
+        ConcurrentDictionary<int, SectionModifier> modDict,
+        ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict
         )
     {
       SolveResults results = new SolveResults();
@@ -121,7 +124,7 @@ namespace GsaGH.Components
           {
             // create elements
             Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-                = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, modDict, LengthUnit);
+                = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, modDict, localAxesDict, LengthUnit);
 
             results.Elem1ds = elementTuple.Item1;
             results.Elem2ds = elementTuple.Item2;
@@ -132,7 +135,7 @@ namespace GsaGH.Components
           {
             // create members
             Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-                = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, LengthUnit, sDict, pDict, p3Dict, this);
+                = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, LengthUnit, sDict, pDict, p3Dict, localAxesDict, this);
 
             results.Mem1ds = memberTuple.Item1;
             results.Mem2ds = memberTuple.Item2;
@@ -293,8 +296,13 @@ namespace GsaGH.Components
           ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
           ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
 
+          // populate local axes dictionary
+          ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          foreach(int id in eDict.Keys)
+            localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+
           tsk = Task.Run(() => Compute(nDict, axDict, out_nDict,
-              eDict, mDict, sDict, pDict, p3Dict, amDict, modDict), CancelToken);
+              eDict, mDict, sDict, pDict, p3Dict, amDict, modDict, localAxesDict), CancelToken);
         }
         // Add a null task even if data collection fails. This keeps the
         // list size in sync with the iterations
@@ -345,8 +353,13 @@ namespace GsaGH.Components
           ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
           ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
 
+          // populate local axes dictionary
+          ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          foreach (int id in eDict.Keys)
+            localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+
           results = Compute(nDict, axDict, out_nDict,
-          eDict, mDict, sDict, pDict, p3Dict, amDict, modDict);
+          eDict, mDict, sDict, pDict, p3Dict, amDict, modDict, localAxesDict);
         }
         else return;
       }
@@ -603,7 +616,7 @@ namespace GsaGH.Components
     public List<string> SpacerDescriptions;
 
     public bool IsInitialised;
-    
+
     private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public override void CreateAttributes()
@@ -614,7 +627,7 @@ namespace GsaGH.Components
       m_attributes = new OasysGH.UI.DropDownComponentAttributes(this, SetSelected, DropDownItems, SelectedItems, SpacerDescriptions);
     }
 
-    public void InitialiseDropdowns() 
+    public void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
         {

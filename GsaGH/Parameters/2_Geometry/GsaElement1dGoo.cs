@@ -1,6 +1,5 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using OasysGH;
 using Rhino.Geometry;
 using OasysGH.Parameters;
@@ -114,35 +113,6 @@ namespace GsaGH.Parameters
     }
     #endregion
 
-    #region transformation methods
-    public override IGH_GeometricGoo Transform(Transform xform)
-    {
-      if (Value == null) { return null; }
-      if (Value.Line == null) { return null; }
-
-      GsaElement1d elem = Value.Duplicate(true);
-      elem.Id = 0;
-      LineCurve xLn = elem.Line;
-      xLn.Transform(xform);
-      elem.Line = xLn;
-
-      return new GsaElement1dGoo(elem);
-    }
-
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-    {
-      if (Value == null) { return null; }
-      if (Value.Line == null) { return null; }
-
-      GsaElement1d elem = Value.Duplicate(true);
-      LineCurve xLn = Value.Line;
-      xmorph.Morph(xLn);
-      elem.Line = xLn;
-
-      return new GsaElement1dGoo(elem);
-    }
-    #endregion
-
     #region drawing methods
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
     {
@@ -196,6 +166,18 @@ namespace GsaGH.Parameters
             args.Pipeline.DrawLine(ln2, UI.Colour.Release);
         }
       }
+    }
+    #endregion
+
+    #region transformation methods
+    public override IGH_GeometricGoo Transform(Transform xform)
+    {
+      return new GsaElement1dGoo(Value.Transform(xform));
+    }
+
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
+    {
+      return new GsaElement1dGoo(Value.Morph(xmorph));
     }
     #endregion
   }
