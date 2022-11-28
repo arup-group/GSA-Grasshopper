@@ -1,5 +1,7 @@
 ﻿using System;
+using GsaGH.Components;
 using GsaGH.Parameters;
+using GsaGH.UI;
 using Rhino.Geometry;
 using Xunit;
 
@@ -49,7 +51,7 @@ namespace GsaGHTests.Helpers
       double t = curve.GetLength() / 2.0;
 
       // Act
-      Tuple<Vector3d, Vector3d, Vector3d> localAxis = Display.GetLocalPlane(curve, t, angle);
+      GsaLocalAxes localAxes = Display.GetLocalAxes(curve, t, angle);
 
       // Assert
       Vector3d expectedLocalX = new Vector3d(expextedLocalX1, expextedLocalY1, expextedLocalZ1);
@@ -58,15 +60,15 @@ namespace GsaGHTests.Helpers
 
       int precision = 10;
 
-      Assert.Equal(expectedLocalX.X, localAxis.X.X, precision);
-      Assert.Equal(expectedLocalX.Y, localAxis.X.Y, precision);
-      Assert.Equal(expectedLocalX.Z, localAxis.X.Z, precision);
-      Assert.Equal(expectedLocalY.X, localAxis.Y.X, precision);
-      Assert.Equal(expectedLocalY.Y, localAxis.Y.Y, precision);
-      Assert.Equal(expectedLocalY.Z, localAxis.Y.Z, precision);
-      Assert.Equal(expectedLocalZ.X, localAxis.Z.X, precision);
-      Assert.Equal(expectedLocalZ.Y, localAxis.Z.Y, precision);
-      Assert.Equal(expectedLocalZ.Z, localAxis.Z.Z, precision);
+      Assert.Equal(expectedLocalX.X, localAxes.X.X, precision);
+      Assert.Equal(expectedLocalX.Y, localAxes.X.Y, precision);
+      Assert.Equal(expectedLocalX.Z, localAxes.X.Z, precision);
+      Assert.Equal(expectedLocalY.X, localAxes.Y.X, precision);
+      Assert.Equal(expectedLocalY.Y, localAxes.Y.Y, precision);
+      Assert.Equal(expectedLocalY.Z, localAxes.Y.Z, precision);
+      Assert.Equal(expectedLocalZ.X, localAxes.Z.X, precision);
+      Assert.Equal(expectedLocalZ.Y, localAxes.Z.Y, precision);
+      Assert.Equal(expectedLocalZ.Z, localAxes.Z.Z, precision);
     }
   }
 }

@@ -217,7 +217,7 @@ namespace GsaGH.Util.Gsa
       if (elem1dDict.Count > 0)
         elem1ds = new ConcurrentBag<GsaElement1dGoo>(elem1dDict.AsParallel().
             Select(item => new GsaElement1dGoo(
-                ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, modDict, unit))));
+                ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, modDict, localAxesDict, unit))));
 
       if (elem2dDict.Count > 0)
         elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, unit);
@@ -241,7 +241,7 @@ namespace GsaGH.Util.Gsa
     /// <returns></returns>
     public static GsaElement1d ConvertToElement1D(Element element,
         int ID, ConcurrentDictionary<int, Node> nodes, ConcurrentDictionary<int, Section> sections,
-        ConcurrentDictionary<int, AnalysisMaterial> materials, ConcurrentDictionary<int, SectionModifier> sectionModifiers, LengthUnit unit)
+        ConcurrentDictionary<int, AnalysisMaterial> materials, ConcurrentDictionary<int, SectionModifier> sectionModifiers, ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxes, LengthUnit unit)
     {
       // get element's topology
       ReadOnlyCollection<int> topo = element.Topology;
