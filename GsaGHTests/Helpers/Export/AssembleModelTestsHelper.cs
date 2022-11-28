@@ -87,6 +87,36 @@ namespace GsaGHTests.Helpers.Export
       Assert.Equal(apiEnd.Position.Y, new Length(expected.Line.PointAtEnd.Y, unit).Meters);
       Assert.Equal(apiEnd.Position.Z, new Length(expected.Line.PointAtEnd.Z, unit).Meters);
 
+      Assert.Equal(expected.Group, api.Group);
+      Assert.Equal(expected.Type, api.Type);
+      Assert.Equal(expected.Name, api.Name);
+      Assert.Equal(expected.IsDummy, api.IsDummy);
+      Assert.Equal(expected.Offset.X1.Meters, api.Offset.X1);
+      Assert.Equal(expected.Offset.X2.Meters, api.Offset.X2);
+      Assert.Equal(expected.Offset.Y.Meters, api.Offset.Y);
+      Assert.Equal(expected.Offset.Z.Meters, api.Offset.Z);
+      Assert.Equal(expected.OrientationAngle.Degrees, api.OrientationAngle);
+      if (expected.OrientationNode != null)
+      {
+        Node apiNode = apiNodes[api.OrientationNode];
+        Point3d pt = expected.OrientationNode.Point;
+        Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
+        Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
+        Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
+      }
+      Assert.Equal(expected.ReleaseStart.X, api.GetEndRelease(0).Releases.X);
+      Assert.Equal(expected.ReleaseStart.Y, api.GetEndRelease(0).Releases.Y);
+      Assert.Equal(expected.ReleaseStart.Z, api.GetEndRelease(0).Releases.Z);
+      Assert.Equal(expected.ReleaseStart.XX, api.GetEndRelease(0).Releases.XX);
+      Assert.Equal(expected.ReleaseStart.YY, api.GetEndRelease(0).Releases.YY);
+      Assert.Equal(expected.ReleaseStart.ZZ, api.GetEndRelease(0).Releases.ZZ);
+      Assert.Equal(expected.ReleaseEnd.X, api.GetEndRelease(1).Releases.X);
+      Assert.Equal(expected.ReleaseEnd.Y, api.GetEndRelease(1).Releases.Y);
+      Assert.Equal(expected.ReleaseEnd.Z, api.GetEndRelease(1).Releases.Z);
+      Assert.Equal(expected.ReleaseEnd.XX, api.GetEndRelease(1).Releases.XX);
+      Assert.Equal(expected.ReleaseEnd.YY, api.GetEndRelease(1).Releases.YY);
+      Assert.Equal(expected.ReleaseEnd.ZZ, api.GetEndRelease(1).Releases.ZZ);
+
       TestSection(expected.Section, api.Property, actualModel);
     }
 
@@ -112,12 +142,73 @@ namespace GsaGHTests.Helpers.Export
           Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
           Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
         }
-
         // take last item if lists doesnt match in length
-        GsaProp2d prop = (i > expected.Properties.Count - 1) ? expected.Properties.Last() : expected.Properties[i];
+        int group = (i > expected.Groups.Count - 1) ? expected.Groups.Last() : expected.Groups[i];
+        Assert.Equal(group, api.Group);
+        bool dummy = (i > expected.IsDummies.Count - 1) ? expected.IsDummies.Last() : expected.IsDummies[i];
+        Assert.Equal(dummy, api.IsDummy);
+        string name = (i > expected.Names.Count - 1) ? expected.Names.Last() : expected.Names[i];
+        Assert.Equal(name, api.Name);
+        GsaOffset offset = (i > expected.Offsets.Count - 1) ? expected.Offsets.Last() : expected.Offsets[i];
+        Assert.Equal(offset.Z.Meters, api.Offset.Z);
 
+        GsaProp2d prop = (i > expected.Properties.Count - 1) ? expected.Properties.Last() : expected.Properties[i];
         TestProp2d(prop, api.Property, actualModel);
       }
+    }
+
+    public void TestMember1d(GsaMember1d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
+    {
+      ReadOnlyDictionary<int, GsaAPI.Member> apiElements = actualModel.Model.Members();
+      Assert.True(apiElements.ContainsKey(expectedId), "Member with id " + expectedId + " is not present in model");
+
+      ReadOnlyDictionary<int, GsaAPI.Node> apiNodes = actualModel.Model.Nodes();
+      Member api = apiElements[expectedId];
+      string[] topologySplit = api.Topology.Split(' ');
+      int i = 0;
+      foreach (string topo in topologySplit)
+      {
+        Node apiNode = apiNodes[int.Parse(topo)];
+        Point3d pt = expected.Topology[i++];
+        Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
+        Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
+        Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
+      }
+      
+      Assert.Equal(expected.Group, api.Group);
+      Assert.Equal(expected.Type, api.Type);
+      Assert.Equal(expected.Type1D, api.Type1D);
+      Assert.Equal(expected.Name, api.Name);
+      Assert.Equal(expected.IsDummy, api.IsDummy);
+      Assert.Equal(expected.MeshSize, api.MeshSize);
+      Assert.Equal(expected.MeshWithOthers, api.IsIntersector);
+      Assert.Equal(expected.Offset.X1.Meters, api.Offset.X1);
+      Assert.Equal(expected.Offset.X2.Meters, api.Offset.X2);
+      Assert.Equal(expected.Offset.Y.Meters, api.Offset.Y);
+      Assert.Equal(expected.Offset.Z.Meters, api.Offset.Z);
+      Assert.Equal(expected.OrientationAngle.Degrees, api.OrientationAngle);
+      if (expected.OrientationNode != null)
+      {
+        Node apiNode = apiNodes[api.OrientationNode];
+        Point3d pt = expected.OrientationNode.Point;
+        Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
+        Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
+        Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
+      }
+      Assert.Equal(expected.ReleaseStart.X, api.GetEndRelease(0).Releases.X);
+      Assert.Equal(expected.ReleaseStart.Y, api.GetEndRelease(0).Releases.Y);
+      Assert.Equal(expected.ReleaseStart.Z, api.GetEndRelease(0).Releases.Z);
+      Assert.Equal(expected.ReleaseStart.XX, api.GetEndRelease(0).Releases.XX);
+      Assert.Equal(expected.ReleaseStart.YY, api.GetEndRelease(0).Releases.YY);
+      Assert.Equal(expected.ReleaseStart.ZZ, api.GetEndRelease(0).Releases.ZZ);
+      Assert.Equal(expected.ReleaseEnd.X, api.GetEndRelease(1).Releases.X);
+      Assert.Equal(expected.ReleaseEnd.Y, api.GetEndRelease(1).Releases.Y);
+      Assert.Equal(expected.ReleaseEnd.Z, api.GetEndRelease(1).Releases.Z);
+      Assert.Equal(expected.ReleaseEnd.XX, api.GetEndRelease(1).Releases.XX);
+      Assert.Equal(expected.ReleaseEnd.YY, api.GetEndRelease(1).Releases.YY);
+      Assert.Equal(expected.ReleaseEnd.ZZ, api.GetEndRelease(1).Releases.ZZ);
+
+      TestSection(expected.Section, api.Property, actualModel);
     }
   }
 }
