@@ -71,7 +71,7 @@ namespace GsaGH.Components
             GsaModel model = new GsaModel();
             model.Model = Util.Gsa.ToGSA.Assemble.AssembleModel(model, new List<GsaNode>(), new List<GsaElement1d>(), new List<GsaElement2d>(), new List<GsaElement3d>(), new List<GsaMember1d>() { mem }, new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(), new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(), new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(), new List<GsaCombinationCase>(), LengthUnit.Meter);
 
-            axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));
+            axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Members´s local axes might deviate from the local axes in the assembled GSA model.");
           }
           midPt = mem.PolyCurve.PointAtNormalizedLength(0.5);
