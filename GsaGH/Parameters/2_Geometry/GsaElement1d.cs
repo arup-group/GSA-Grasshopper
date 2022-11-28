@@ -255,13 +255,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        if (this._localAxes != null)
-        {
-          return _localAxes;
-        }
-        PolyCurve crv = new PolyCurve();
-        crv.Append(this._line);
-        return UI.Display.GetLocalAxes(crv, crv.GetLength() / 2, this._element.OrientationAngle * Math.PI / 180.0);
+        return _localAxes;
       }
       set
       {

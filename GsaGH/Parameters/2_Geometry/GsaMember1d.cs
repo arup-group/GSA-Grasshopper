@@ -70,11 +70,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        if (this._localAxes != null)
-        {
-          return _localAxes;
-        }
-        return UI.Display.GetLocalAxes(this._crv, this._crv.GetLength() / 2.0, this.OrientationAngle.Radians);
+        return _localAxes;
       }
       set
       {
