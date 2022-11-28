@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -16,10 +17,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a Node
-    /// </summary>
-    public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to edit a Node
+  /// </summary>
+  public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
@@ -185,16 +186,24 @@ namespace GsaGH.Components
       // extract nodes from model
       ConcurrentBag<GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()), LengthUnit);
 
+      ConcurrentDictionary<int, Element> elementDict = new ConcurrentDictionary<int, Element>(gsa.Elements());
+
+      // populate local axes dictionary
+      ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      foreach (int id in elementDict.Keys)
+        localAxesDict.TryAdd(id, gsa.ElementDirectionCosine(id));
+
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
           = Helpers.Import.Elements.GetElements(
-              new ConcurrentDictionary<int, Element>(gsa.Elements()),
+              elementDict,
               new ConcurrentDictionary<int, Node>(gsa.Nodes()),
               new ConcurrentDictionary<int, Section>(gsa.Sections()),
               new ConcurrentDictionary<int, Prop2D>(gsa.Prop2Ds()),
               new ConcurrentDictionary<int, Prop3D>(gsa.Prop3Ds()),
               new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials()),
               new ConcurrentDictionary<int, SectionModifier>(gsa.SectionModifiers()),
+              localAxesDict,
               LengthUnit);
 
       // post process materials (as they currently have a bug when running parallel!)
@@ -364,7 +373,7 @@ namespace GsaGH.Components
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-    
+
     public override void VariableParameterMaintenance()
     {
       string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);

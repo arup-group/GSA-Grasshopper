@@ -10,6 +10,7 @@ using GsaGH.Parameters;
 using OasysUnits.Units;
 using OasysUnits;
 using Rhino.Geometry;
+using System.Collections.ObjectModel;
 
 namespace GsaGH.Helpers.Import
 {
@@ -59,7 +60,7 @@ namespace GsaGH.Helpers.Import
     /// <returns></returns>
     internal static Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>
         GetMembers(ConcurrentDictionary<int, Member> mDict, ConcurrentDictionary<int, Node> nDict, LengthUnit unit,
-        ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, ConcurrentDictionary<int, Prop3D> p3Dict, GH_Component owner = null)
+        ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, ConcurrentDictionary<int, Prop3D> p3Dict, ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict, GH_Component owner = null)
     {
       // Create lists for Rhino lines and meshes
       ConcurrentBag<GsaMember1dGoo> mem1ds = new ConcurrentBag<GsaMember1dGoo>();
@@ -259,6 +260,9 @@ namespace GsaGH.Helpers.Import
               // create the element from list of points and type description
               GsaMember1d mem1d = new GsaMember1d(mem, unit, key, topopts.ToList(), topoType.ToList(), section, orient);
               mem1d.MeshSize = new Length(mem.MeshSize, LengthUnit.Meter).As(unit);
+
+              // set local axes
+              mem1d.LocalAxes = new GsaLocalAxes(localAxesDict[key]);
 
               // add member to output list
               mem1ds.Add(new GsaMember1dGoo(mem1d));

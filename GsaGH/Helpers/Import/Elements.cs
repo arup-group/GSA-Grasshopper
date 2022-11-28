@@ -32,7 +32,7 @@ namespace GsaGH.Helpers.Import
     internal static Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>
         GetElements(ConcurrentDictionary<int, Element> eDict, ConcurrentDictionary<int, Node> nDict,
         ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, ConcurrentDictionary<int, Prop3D> p3Dict,
-        ConcurrentDictionary<int, AnalysisMaterial> mDict, ConcurrentDictionary<int, SectionModifier> modDict, LengthUnit unit)
+        ConcurrentDictionary<int, AnalysisMaterial> mDict, ConcurrentDictionary<int, SectionModifier> modDict, ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit unit)
     {
       // Create lists for Rhino lines and meshes
       ConcurrentBag<GsaElement1dGoo> elem1ds = new ConcurrentBag<GsaElement1dGoo>();
@@ -93,7 +93,7 @@ namespace GsaGH.Helpers.Import
       if (elem1dDict.Count > 0)
         elem1ds = new ConcurrentBag<GsaElement1dGoo>(elem1dDict.AsParallel().
             Select(item => new GsaElement1dGoo(
-                ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, modDict, unit))));
+                ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, modDict, localAxesDict, unit))));
 
       if (elem2dDict.Count > 0)
         elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, unit);
@@ -117,7 +117,7 @@ namespace GsaGH.Helpers.Import
     /// <returns></returns>
     internal static GsaElement1d ConvertToElement1D(Element element,
         int ID, ConcurrentDictionary<int, Node> nodes, ConcurrentDictionary<int, Section> sections,
-        ConcurrentDictionary<int, AnalysisMaterial> materials, ConcurrentDictionary<int, SectionModifier> sectionModifiers, LengthUnit unit)
+        ConcurrentDictionary<int, AnalysisMaterial> materials, ConcurrentDictionary<int, SectionModifier> sectionModifiers, ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxes, LengthUnit unit)
     {
       // get element's topology
       ReadOnlyCollection<int> topo = element.Topology;
@@ -168,7 +168,12 @@ namespace GsaGH.Helpers.Import
         }
 
         // create GH GsaElement1d
-        return new GsaElement1d(element, ln, ID, section, orient);
+        GsaElement1d element1d =  new GsaElement1d(element, ln, ID, section, orient);
+
+        // set local axes
+        element1d.LocalAxes = new GsaLocalAxes(localAxes[ID]);
+
+        return element1d;
       }
       return null;
     }

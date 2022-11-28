@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
@@ -47,6 +48,10 @@ namespace GsaGH.Helpers.Export
       ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
       ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
       ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
+          // populate local axes dictionary
+          ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          foreach(int id in eDict.Keys)
+            localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
 
       // get nodes
       ConcurrentBag<GsaNodeGoo> goonodes = Import.Nodes.GetNodes(nDict, LengthUnit.Meter);
@@ -57,7 +62,7 @@ namespace GsaGH.Helpers.Export
 
       // get elements
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Import.Elements.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, LengthUnit.Meter);
+          = Import.Elements.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localAxesDict, LengthUnit.Meter);
       // convert from Goo-type
       List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -75,7 +80,7 @@ namespace GsaGH.Helpers.Export
 
       // get members
       Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-          = Import.Members.GetMembers(mDict, nDict, LengthUnit.Meter, sDict, pDict, p3Dict);
+          = Import.Members.GetMembers(mDict, nDict, LengthUnit.Meter, sDict, pDict, p3Dict, localAxesDict);
       // convert from Goo-type
       List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;

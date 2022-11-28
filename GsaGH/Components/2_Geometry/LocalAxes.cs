@@ -12,7 +12,7 @@ namespace GsaGH.Components
     /// <summary>
     /// Component to edit a Node
     /// </summary>
-    public class LocalAxis : GH_OasysComponent, IGH_PreviewObject
+    public class LocalAxes : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4a322b8e-031a-4c90-b8df-b32d162a3274");
@@ -20,7 +20,7 @@ namespace GsaGH.Components
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.LocalAxes;
 
-    public LocalAxis() : base("Local Axis",
+    public LocalAxes() : base("Local Axis",
       "Axis",
       "Get Element1D or Member1D local axes",
       CategoryName.Name(),
@@ -51,7 +51,7 @@ namespace GsaGH.Components
         GsaElement1d elem = null;
         Point3d midPt = new Point3d();
         double size = 0;
-        Tuple<Vector3d, Vector3d, Vector3d> axes;
+        GsaLocalAxes axes;
         if (gh_typ.Value is GsaMember1dGoo)
         {
           gh_typ.CastTo(ref mem);
@@ -82,9 +82,9 @@ namespace GsaGH.Components
           return;
         }
 
-        Vector3d x = axes.Item1;
-        Vector3d y = axes.Item2;
-        Vector3d z = axes.Item3;
+        Vector3d x = axes.X;
+        Vector3d y = axes.Y;
+        Vector3d z = axes.Z;
 
         DA.SetData(0, x);
         DA.SetData(1, y);
