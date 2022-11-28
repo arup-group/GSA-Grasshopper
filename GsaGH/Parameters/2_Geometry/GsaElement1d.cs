@@ -405,5 +405,33 @@ namespace GsaGH.Parameters
       previewPointEnd = this._line.PointAtEnd;
     }
     #endregion
+
+    #region transformation methods
+    public GsaElement1d Transform(Transform xform)
+    {
+      GsaElement1d elem = this.Duplicate(true);
+      elem.Id = 0;
+      elem.LocalAxes = null;
+
+      LineCurve xLn = elem.Line;
+      xLn.Transform(xform);
+      elem.Line = xLn;
+
+      return elem;
+    }
+
+    public GsaElement1d Morph(SpaceMorph xmorph)
+    {
+      GsaElement1d elem = this.Duplicate(true);
+      elem.Id = 0;
+      elem.LocalAxes = null;
+
+      LineCurve xLn = this.Line;
+      xmorph.Morph(xLn);
+      elem.Line = xLn;
+
+      return elem;
+    }
+    #endregion
   }
 }

@@ -354,6 +354,7 @@ namespace GsaGH.Parameters
     {
       GsaMember1d dup = this.Duplicate(true);
       dup.Id = 0;
+      dup.LocalAxes = null;
 
       List<Point3d> pts = this._topo.ToList();
       Point3dList xpts = new Point3dList(pts);
@@ -374,6 +375,7 @@ namespace GsaGH.Parameters
     {
       GsaMember1d dup = this.Duplicate(true);
       dup.Id = 0;
+      dup.LocalAxes = null;
 
       List<Point3d> pts = this._topo.ToList();
       for (int i = 0; i < pts.Count; i++)
