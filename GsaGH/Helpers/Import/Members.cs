@@ -261,6 +261,9 @@ namespace GsaGH.Helpers.Import
               GsaMember1d mem1d = new GsaMember1d(mem, unit, key, topopts.ToList(), topoType.ToList(), section, orient);
               mem1d.MeshSize = new Length(mem.MeshSize, LengthUnit.Meter).As(unit);
 
+              // set local axes
+              mem1d.LocalAxes = new GsaLocalAxes(localAxesDict[key]);
+
               // add member to output list
               mem1ds.Add(new GsaMember1dGoo(mem1d));
             }

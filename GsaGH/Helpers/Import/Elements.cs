@@ -9,6 +9,7 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using GsaGH.Helpers.Export;
 
 namespace GsaGH.Helpers.Import
 {
@@ -93,7 +94,7 @@ namespace GsaGH.Helpers.Import
       if (elem1dDict.Count > 0)
         elem1ds = new ConcurrentBag<GsaElement1dGoo>(elem1dDict.AsParallel().
             Select(item => new GsaElement1dGoo(
-                ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, modDict, unit))));
+                ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, modDict, localAxesDict, unit))));
 
       if (elem2dDict.Count > 0)
         elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, unit);
@@ -117,7 +118,7 @@ namespace GsaGH.Helpers.Import
     /// <returns></returns>
     internal static GsaElement1d ConvertToElement1D(Element element,
         int ID, ConcurrentDictionary<int, Node> nodes, ConcurrentDictionary<int, Section> sections,
-        ConcurrentDictionary<int, AnalysisMaterial> materials, ConcurrentDictionary<int, SectionModifier> sectionModifiers, LengthUnit unit)
+        ConcurrentDictionary<int, AnalysisMaterial> materials, ConcurrentDictionary<int, SectionModifier> sectionModifiers, ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit unit)
     {
       // get element's topology
       ReadOnlyCollection<int> topo = element.Topology;
@@ -167,8 +168,13 @@ namespace GsaGH.Helpers.Import
             section.Modifier = new GsaSectionModifier(sectionModifier);
         }
 
+
         // create GH GsaElement1d
-        return new GsaElement1d(element, ln, ID, section, orient);
+        GsaElement1d element1d = new GsaElement1d(element, ln, ID, section, orient);
+
+        // set local axes
+        element1d.LocalAxes = new GsaLocalAxes(localAxesDict[ID]);
+        return element1d;
       }
       return null;
     }
