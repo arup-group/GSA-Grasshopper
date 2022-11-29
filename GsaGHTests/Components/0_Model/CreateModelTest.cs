@@ -11,11 +11,15 @@ namespace GsaGHTests.Model
   [Collection("GrasshopperFixture collection")]
   public class CreateModelTest
   {
-    public static GH_OasysDropDownComponent CreateModelFromGeometry(List<GsaElement1dGoo> elem1d, List<GsaElement2dGoo> elem2d, List<GsaMember1dGoo> mem1d, List<GsaMember2dGoo> mem2d, List<GsaMember3dGoo> mem3d, ModelUnit unit)
+    public static GH_OasysDropDownComponent CreateModelFromGeometry(List<GsaNodeGoo> node, List<GsaElement1dGoo> elem1d, List<GsaElement2dGoo> elem2d, List<GsaMember1dGoo> mem1d, List<GsaMember2dGoo> mem2d, List<GsaMember3dGoo> mem3d, ModelUnit unit)
     {
       var comp = new CreateModel();
       comp.CreateAttributes();
+      comp.Params.Input[2].DataMapping = Grasshopper.Kernel.GH_DataMapping.Flatten;
       comp.SetSelected(0, (int)unit);
+      if (node != null)
+        foreach (GsaNodeGoo input in node)
+          ComponentTestHelper.SetInput(comp, input, 2);
       if (elem1d != null)
         foreach (GsaElement1dGoo input in elem1d)
           ComponentTestHelper.SetInput(comp, input, 2);

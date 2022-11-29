@@ -192,7 +192,7 @@ namespace GsaGH.Parameters
     public GsaNode Duplicate(bool cloneApiNode = false)
     {
       GsaNode dup = new GsaNode();
-      dup.Id = Id;
+      dup.Id = this.Id;
       dup._node = _node;
       if (cloneApiNode)
         dup.CloneApiObject();

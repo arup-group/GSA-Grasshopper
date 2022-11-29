@@ -129,6 +129,11 @@ namespace GsaGH.Helpers.Export
       gsa.SetElements(apiElements.Dictionary);
       gsa.SetMembers(apiMembers.Dictionary);
 
+      if (createElementsFromMembers && apiMembers.Count > 0)
+        gsa.CreateElementsFromMembers();
+      if (toleranceCoincidentNodes > 0)
+        gsa.CollapseCoincidentNodes(toleranceCoincidentNodes);
+
       // Loads
       gsa.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(gravityLoads));
       gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoads_displ));
@@ -179,11 +184,6 @@ namespace GsaGH.Helpers.Export
           gsa.AddCombinationCase(co.Name, co.Description);
       }
       #endregion
-
-      if (createElementsFromMembers && apiMembers.Count > 0)
-        gsa.CreateElementsFromMembers();
-      if (toleranceCoincidentNodes > 0)
-        gsa.CollapseCoincidentNodes(toleranceCoincidentNodes);
 
       return gsa;
     }

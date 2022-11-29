@@ -37,7 +37,7 @@ namespace GsaGHTests.Helpers.Export
       elem1d.Value.Type = ElementType.BEAM;
 
       GsaModelGoo modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(new List<GsaElement1dGoo>() { elem1d }, null, null, null, null, ModelUnit.m));
+        CreateModelTest.CreateModelFromGeometry(null, new List<GsaElement1dGoo>() { elem1d }, null, null, null, null, ModelUnit.m));
 
       TestElement1d(elem1d.Value, LengthUnit.Meter, 1, modelGoo.Value);
     }
@@ -56,7 +56,7 @@ namespace GsaGHTests.Helpers.Export
       GsaElement1dGoo elem1d2 = Element1d(ln2, section2);
 
       GsaModelGoo modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(new List<GsaElement1dGoo>() { elem1d1, elem1d2 }, null, null, null, null, ModelUnit.ft));
+        CreateModelTest.CreateModelFromGeometry(null, new List<GsaElement1dGoo>() { elem1d1, elem1d2 }, null, null, null, null, ModelUnit.ft));
 
       TestElement1d(elem1d1.Value, LengthUnit.Foot, 1, modelGoo.Value);
       TestElement1d(elem1d2.Value, LengthUnit.Foot, 2, modelGoo.Value);
@@ -79,7 +79,7 @@ namespace GsaGHTests.Helpers.Export
       GH_Mesh mesh = new GH_Mesh(m);
       GsaElement2dGoo elem2d = Element2d(mesh, prop);
       GsaModelGoo modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(null, new List<GsaElement2dGoo>() { elem2d }, null, null, null, ModelUnit.cm));
+        CreateModelTest.CreateModelFromGeometry(null, null, new List<GsaElement2dGoo>() { elem2d }, null, null, null, ModelUnit.cm));
 
       TestElement2d(elem2d.Value, LengthUnit.Centimeter, new List<int>() { 1, 2 }, modelGoo.Value);
     }
@@ -114,7 +114,7 @@ namespace GsaGHTests.Helpers.Export
       GsaElement2dGoo elem2d2 = Element2d(mesh2, prop2);
 
       GsaModelGoo modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(null, new List<GsaElement2dGoo>() { elem2d1, elem2d2 }, null, null, null, ModelUnit.ft));
+        CreateModelTest.CreateModelFromGeometry(null, null, new List<GsaElement2dGoo>() { elem2d1, elem2d2 }, null, null, null, ModelUnit.ft));
 
       TestElement2d(elem2d1.Value, LengthUnit.Foot, new List<int>() { 1, 2 }, modelGoo.Value);
       TestElement2d(elem2d2.Value, LengthUnit.Foot, new List<int>() { 3, 4 }, modelGoo.Value);
@@ -161,7 +161,7 @@ namespace GsaGHTests.Helpers.Export
       GsaElement2dGoo elem2d2 = Element2d(mesh2, prop2);
 
       GsaModelGoo modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(new List<GsaElement1dGoo>() { elem1d1, elem1d2 }, new List<GsaElement2dGoo>() { elem2d1, elem2d2 }, null, null, null, ModelUnit.inch));
+        CreateModelTest.CreateModelFromGeometry(null, new List<GsaElement1dGoo>() { elem1d1, elem1d2 }, new List<GsaElement2dGoo>() { elem2d1, elem2d2 }, null, null, null, ModelUnit.inch));
 
       TestElement1d(elem1d1.Value, LengthUnit.Inch, 1, modelGoo.Value);
       TestElement1d(elem1d2.Value, LengthUnit.Inch, 2, modelGoo.Value);

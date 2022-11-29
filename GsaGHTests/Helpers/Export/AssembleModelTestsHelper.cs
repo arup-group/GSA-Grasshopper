@@ -71,6 +71,48 @@ namespace GsaGHTests.Helpers.Export
         Assert.Null(expected.Material.AnalysisMaterial);
     }
 
+    public void TestNode(GsaNode expected, LengthUnit unit, int expectedId, GsaModel actualModel)
+    {
+      ReadOnlyDictionary<int, GsaAPI.Node> apiNodes = actualModel.Model.Nodes();
+      Assert.True(apiNodes.ContainsKey(expectedId), "Node with id " + expectedId + " is not present in model");
+      
+      Node apiNode = apiNodes[expectedId];
+      Point3d pt = expected.Point;
+      Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
+      Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
+      Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
+      
+      Assert.Equal(apiNode.Restraint.X, expected.Restraint.X);
+      Assert.Equal(apiNode.Restraint.Y, expected.Restraint.Y);
+      Assert.Equal(apiNode.Restraint.Z, expected.Restraint.Z);
+      Assert.Equal(apiNode.Restraint.XX, expected.Restraint.XX);
+      Assert.Equal(apiNode.Restraint.YY, expected.Restraint.YY);
+      Assert.Equal(apiNode.Restraint.ZZ, expected.Restraint.ZZ);
+
+      if (expected.LocalAxis != null && expected.LocalAxis.IsValid && expected.LocalAxis != Plane.WorldXY)
+      {
+        ReadOnlyDictionary<int, GsaAPI.Axis> apiAxes = actualModel.Model.Axes();
+        Assert.True(apiAxes.ContainsKey(apiNode.AxisProperty), "Axis with id " + apiNode.AxisProperty + " is not present in model");
+        Axis apiAxis = apiAxes[apiNode.AxisProperty];
+        Point3d origin = expected.LocalAxis.Origin;
+        Assert.Equal(apiAxis.Origin.X, new Length(origin.X, unit).Meters);
+        Assert.Equal(apiAxis.Origin.Y, new Length(origin.Y, unit).Meters);
+        Assert.Equal(apiAxis.Origin.Z, new Length(origin.Z, unit).Meters);
+        Assert.Equal(apiAxis.XVector.X, expected.LocalAxis.XAxis.X);
+        Assert.Equal(apiAxis.XVector.Y, expected.LocalAxis.XAxis.Y);
+        Assert.Equal(apiAxis.XVector.Z, expected.LocalAxis.XAxis.Z);
+        Assert.Equal(apiAxis.XYPlane.X, expected.LocalAxis.YAxis.X);
+        Assert.Equal(apiAxis.XYPlane.Y, expected.LocalAxis.YAxis.Y);
+        Assert.Equal(apiAxis.XYPlane.Z, expected.LocalAxis.YAxis.Z);
+      }
+
+      Assert.Equal(apiNode.Name, expected.Name);
+      Assert.Equal(apiNode.Colour, expected.Colour);
+      Assert.Equal(apiNode.DamperProperty, expected.DamperProperty);
+      Assert.Equal(apiNode.MassProperty, expected.MassProperty);
+      Assert.Equal(apiNode.SpringProperty, expected.SpringProperty);
+    }
+
     public void TestElement1d(GsaElement1d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
     {
       ReadOnlyDictionary<int, GsaAPI.Element> apiElements = actualModel.Model.Elements();
