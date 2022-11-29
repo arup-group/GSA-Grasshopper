@@ -204,11 +204,13 @@ namespace GsaGH.Helpers.Export
 
       List<string> topos = new List<string>();
       // Loop through the face list
+      
+      List<int> topoInts = new List<int>();
+      foreach (Point3d verticy in member3d.SolidMesh.TopologyVertices)
+        topoInts.Add(Nodes.AddNode(ref existingNodes, verticy, unit));
+
       for (int j = 0; j < member3d.SolidMesh.Faces.Count; j++)
-        topos.Add(string.Join(" ",
-          Nodes.AddNode(ref existingNodes, member3d.SolidMesh.Vertices[member3d.SolidMesh.Faces[j].A], unit),
-          Nodes.AddNode(ref existingNodes, member3d.SolidMesh.Vertices[member3d.SolidMesh.Faces[j].B], unit),
-          Nodes.AddNode(ref existingNodes, member3d.SolidMesh.Vertices[member3d.SolidMesh.Faces[j].C], unit)));
+        topos.Add(string.Join(" ", topoInts[member3d.SolidMesh.Faces[j].A], topoInts[member3d.SolidMesh.Faces[j].B], topoInts[member3d.SolidMesh.Faces[j].C]));
 
       string topo = string.Join("; ", topos);
       apiMember.Topology = string.Copy(topo);
