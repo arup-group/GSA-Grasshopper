@@ -149,7 +149,6 @@ namespace GsaGH.Parameters
     {
       return new GsaMember1dGoo(Value.Morph(xmorph));
     }
-
     #endregion
 
     #region drawing methods

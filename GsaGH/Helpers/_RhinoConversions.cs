@@ -12,6 +12,7 @@ using GsaGH.Parameters;
 using OasysUnits.Units;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+using System.Collections.ObjectModel;
 
 namespace GsaGH.Util.GH
 {
@@ -816,16 +817,24 @@ namespace GsaGH.Util.GH
       // call the meshing algorithm
       model.CreateElementsFromMembers();
 
+      ConcurrentDictionary<int, Element> elementDict = new ConcurrentDictionary<int, Element>(model.Elements());
+
+      // populate local axes dictionary
+      ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      foreach (int id in elementDict.Keys)
+        localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
           = Util.Gsa.FromGSA.GetElements(
-              new ConcurrentDictionary<int, Element>(model.Elements()),
+              elementDict,
               new ConcurrentDictionary<int, Node>(model.Nodes()),
               new ConcurrentDictionary<int, Section>(model.Sections()),
               new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds()),
               new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds()),
               new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials()),
               new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers()),
+              localAxesDict,
               unit);
 
       List<GsaElement2dGoo> elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.Ids).ToList();

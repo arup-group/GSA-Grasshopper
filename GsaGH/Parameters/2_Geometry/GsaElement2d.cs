@@ -8,7 +8,6 @@ using GsaAPI;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
-using Grasshopper.Kernel.Types;
 
 namespace GsaGH.Parameters
 {

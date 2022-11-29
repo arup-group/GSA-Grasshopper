@@ -118,6 +118,45 @@ namespace GsaGH.Parameters
         _node.Name = value;
       }
     }
+
+    public int DamperProperty
+    {
+      get
+      {
+        return _node.DamperProperty;
+      }
+      set
+      {
+        CloneApiObject();
+        _node.DamperProperty = value;
+      }
+    }
+
+    public int MassProperty
+    {
+      get
+      {
+        return _node.MassProperty;
+      }
+      set
+      {
+        CloneApiObject();
+        _node.MassProperty = value;
+      }
+    }
+
+    public int SpringProperty
+    {
+      get
+      {
+        return _node.SpringProperty;
+      }
+      set
+      {
+        CloneApiObject();
+        _node.SpringProperty = value;
+      }
+    }
     #endregion
     #endregion
 
