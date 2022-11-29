@@ -9,40 +9,9 @@ namespace GsaGH.Helpers.Graphics
   /// <summary>
   /// Colour class holding the main colours used in colour scheme. 
   /// Make calls to this class to be able to easy update colours.
-  /// 
   /// </summary>
   internal class Display
   {
-    internal static Tuple<Vector3d, Vector3d, Vector3d> GetLocalPlane(PolyCurve crv, double t, double orientationAngle)
-    {
-      crv.PerpendicularFrameAt(t, out Plane pln);
-      pln.Rotate(orientationAngle, pln.Normal);
-
-      double absAngleToZ = Vector3d.VectorAngle(pln.Normal, Vector3d.ZAxis);
-      absAngleToZ %= Math.PI;
-
-      Vector3d outX = pln.ZAxis;
-      Vector3d outY;
-      if (absAngleToZ < 0.25 * Math.PI || absAngleToZ > 0.75 * Math.PI)
-      {
-        outY = new Vector3d(outX);
-        double angle;
-        if (outX.Z > 0)
-          angle = -0.5 * Math.PI;
-        else
-          angle = 0.5 * Math.PI;
-
-        if (!outY.Rotate(angle, pln.XAxis))
-          throw new Exception();
-      }
-      else
-      {
-        outY = pln.YAxis;
-      }
-      Vector3d outZ = Vector3d.CrossProduct(outX, outY);
-      return new Tuple<Vector3d, Vector3d, Vector3d>(outX, outY, outZ);
-    }
-
     public static void Preview1D(PolyCurve crv, double angle_radian, GsaBool6 start, GsaBool6 end,
         ref List<Line> greenLines20, ref List<Line> redLines10)
     {

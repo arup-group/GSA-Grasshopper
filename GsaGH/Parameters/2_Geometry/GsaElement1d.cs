@@ -30,6 +30,7 @@ namespace GsaGH.Parameters
     private GsaBool6 _rel2;
     private GsaSection _section = new GsaSection();
     private GsaNode _orientationNode;
+    private GsaLocalAxes _localAxes = null;
 
     private Line previewSX1;
     private Line previewSX2;
@@ -251,13 +252,15 @@ namespace GsaGH.Parameters
         this._element.Type = value;
       }
     }
-    internal Tuple<Vector3d, Vector3d, Vector3d> LocalAxes
+    internal GsaLocalAxes LocalAxes
     {
       get
       {
-        PolyCurve crv = new PolyCurve();
-        crv.Append(this._line);
-        return Helpers.Graphics.Display.GetLocalPlane(crv, crv.GetLength() / 2, this._element.OrientationAngle * Math.PI / 180.0);
+        return _localAxes;
+      }
+      set
+      {
+        this._localAxes = value;
       }
     }
     #endregion
@@ -299,6 +302,7 @@ namespace GsaGH.Parameters
       GsaElement1d dup = new GsaElement1d();
       dup._id = this._id;
       dup._element = this._element;
+      dup._localAxes = this._localAxes;
       if (cloneApiElement)
         dup.CloneApiObject();
       dup._line = (LineCurve)this._line.DuplicateShallow();
@@ -400,6 +404,34 @@ namespace GsaGH.Parameters
 
       previewPointStart = this._line.PointAtStart;
       previewPointEnd = this._line.PointAtEnd;
+    }
+    #endregion
+
+    #region transformation methods
+    public GsaElement1d Transform(Transform xform)
+    {
+      GsaElement1d elem = this.Duplicate(true);
+      elem.Id = 0;
+      elem.LocalAxes = null;
+
+      LineCurve xLn = elem.Line;
+      xLn.Transform(xform);
+      elem.Line = xLn;
+
+      return elem;
+    }
+
+    public GsaElement1d Morph(SpaceMorph xmorph)
+    {
+      GsaElement1d elem = this.Duplicate(true);
+      elem.Id = 0;
+      elem.LocalAxes = null;
+
+      LineCurve xLn = this.Line;
+      xmorph.Morph(xLn);
+      elem.Line = xLn;
+
+      return elem;
     }
     #endregion
   }

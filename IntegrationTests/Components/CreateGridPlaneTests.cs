@@ -29,8 +29,6 @@ namespace IntegrationTests.Components
       GH_Document doc = Document();
       GH_Component comp = Helper.FindComponent(doc, "gps");
       Assert.NotNull(comp);
-      // Todo fix: referencing GsaGH directly causes tests to fail
-      // Not only this one but tests that otherwise work
       GsaGridPlaneSurfaceGoo output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
       GsaGridPlaneSurface gps = output.Value;
       Assert.Equal(42, gps.GridPlaneId);

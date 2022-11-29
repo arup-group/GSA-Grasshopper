@@ -26,6 +26,7 @@ namespace GsaGH.Parameters
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
     private GsaNode _orientationNode;
+    private GsaLocalAxes _localAxes = null;
 
     private Line previewSX1;
     private Line previewSX2;
@@ -66,7 +67,17 @@ namespace GsaGH.Parameters
     public GsaSection Section { get; set; } = new GsaSection();
     public List<Point3d> Topology => this._topo;
     public List<string> TopologyType => this._topoType;
-    internal Tuple<Vector3d, Vector3d, Vector3d> LocalAxes => Helpers.Graphics.Display.GetLocalPlane(this._crv, this._crv.GetLength() / 2.0, this.OrientationAngle.Radians);
+    internal GsaLocalAxes LocalAxes
+    {
+      get
+      {
+        return _localAxes;
+      }
+      set
+      {
+        this._localAxes = value;
+      }
+    }
     public PolyCurve PolyCurve
     {
       get
@@ -323,6 +334,7 @@ namespace GsaGH.Parameters
       dup.Id = this.Id;
       dup.MeshSize = this.MeshSize;
       dup.ApiMember = this.ApiMember;
+      dup._localAxes = this._localAxes;
       if (cloneApiMember)
         dup.CloneApiObject();
       dup._crv = (PolyCurve)this._crv.DuplicateShallow();
@@ -343,6 +355,7 @@ namespace GsaGH.Parameters
     {
       GsaMember1d dup = this.Duplicate(true);
       dup.Id = 0;
+      dup.LocalAxes = null;
 
       List<Point3d> pts = this._topo.ToList();
       Point3dList xpts = new Point3dList(pts);
@@ -363,6 +376,7 @@ namespace GsaGH.Parameters
     {
       GsaMember1d dup = this.Duplicate(true);
       dup.Id = 0;
+      dup.LocalAxes = null;
 
       List<Point3d> pts = this._topo.ToList();
       for (int i = 0; i < pts.Count; i++)

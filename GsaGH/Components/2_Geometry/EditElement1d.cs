@@ -65,7 +65,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Set Release (Bool6) at End of Element", GH_ParamAccess.item);
 
       pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Element Orientation Angle", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Element Orientation Node", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaNodeParameter(), "Orientation Node", "⭮N", "Set Element Orientation Node", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.item);
       pManager.AddColourParameter("Colour", "Co", "Set Element Colour", GH_ParamAccess.item);
