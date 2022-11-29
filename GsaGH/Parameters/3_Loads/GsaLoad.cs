@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using GsaAPI;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
@@ -11,7 +13,7 @@ namespace GsaGH.Parameters
   public class GsaGravityLoad
   {
     public GravityLoad GravityLoad { get; set; } = new GravityLoad();
-
+    internal Guid RefObjectGuid;
     public GsaGravityLoad()
     {
       this.GravityLoad.Factor = new Vector3() { X = 0, Y = 0, Z = -1 };
@@ -28,6 +30,8 @@ namespace GsaGH.Parameters
       dup.GravityLoad.Nodes = this.GravityLoad.Nodes.ToString();
       dup.GravityLoad.Name = this.GravityLoad.Name.ToString();
       dup.GravityLoad.Factor = this.GravityLoad.Factor;
+      if (this.RefObjectGuid != null)
+        this.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
       return dup;
     }
   }
@@ -46,6 +50,7 @@ namespace GsaGH.Parameters
     public NodeLoadTypes Type;
 
     public NodeLoad NodeLoad { get; set; } = new NodeLoad();
+    internal Point3d RefPoint;
 
     public GsaNodeLoad()
     {
@@ -62,6 +67,8 @@ namespace GsaGH.Parameters
       dup.NodeLoad.Name = this.NodeLoad.Name.ToString();
       dup.NodeLoad.Value = this.NodeLoad.Value;
       dup.Type = Type;
+      if (this.RefPoint != null)
+        this.RefPoint = new Point3d(this.RefPoint);
       return dup;
     }
   }
@@ -69,6 +76,7 @@ namespace GsaGH.Parameters
   public class GsaBeamLoad
   {
     public BeamLoad BeamLoad { get; set; }
+    internal Guid RefObjectGuid;
 
     public GsaBeamLoad()
     {
@@ -116,6 +124,8 @@ namespace GsaGH.Parameters
         dup.BeamLoad.SetValue(0, this.BeamLoad.Value(0));
         dup.BeamLoad.SetValue(1, this.BeamLoad.Value(1));
       }
+      if (this.RefObjectGuid != null)
+        this.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
       return dup;
     }
   }
@@ -123,6 +133,7 @@ namespace GsaGH.Parameters
   public class GsaFaceLoad
   {
     public FaceLoad FaceLoad { get; set; }
+    internal Guid RefObjectGuid;
 
     public GsaFaceLoad()
     {
@@ -162,6 +173,8 @@ namespace GsaGH.Parameters
                                                         //note Vector2 currently only get in GsaAPI
                                                         // duplicate Position.X and Position.Y when fixed
       }
+      if (this.RefObjectGuid != null)
+        this.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
       return dup;
     }
   }
@@ -170,7 +183,7 @@ namespace GsaGH.Parameters
   {
     public GridPointLoad GridPointLoad { get; set; } = new GridPointLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
-
+    internal Point3d RefPoint;
     public GsaGridPointLoad()
     {
     }
@@ -187,6 +200,8 @@ namespace GsaGH.Parameters
       dup.GridPointLoad.Y = this.GridPointLoad.Y;
       dup.GridPointLoad.Value = this.GridPointLoad.Value;
       dup.GridPlaneSurface = this.GridPlaneSurface.Duplicate();
+      if (this.RefPoint != null)
+        this.RefPoint = new Point3d(this.RefPoint);
       return dup;
     }
   }
@@ -195,7 +210,7 @@ namespace GsaGH.Parameters
   {
     public GridLineLoad GridLineLoad { get; set; } = new GridLineLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
-
+    internal Guid RefObjectGuid;
     public GsaGridLineLoad()
     {
       GridLineLoad.PolyLineReference = 0; // explicit type = 0
@@ -216,6 +231,8 @@ namespace GsaGH.Parameters
       dup.GridLineLoad.ValueAtStart = this.GridLineLoad.ValueAtStart;
       dup.GridLineLoad.ValueAtEnd = this.GridLineLoad.ValueAtEnd;
       dup.GridPlaneSurface = this.GridPlaneSurface.Duplicate();
+      if (this.RefObjectGuid != null)
+        this.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
       return dup;
     }
   }
@@ -224,7 +241,7 @@ namespace GsaGH.Parameters
   {
     public GridAreaLoad GridAreaLoad { get; set; } = new GridAreaLoad();
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
-
+    internal Guid RefObjectGuid;
     public GsaGridAreaLoad()
     {
       GridAreaLoad.Type = GridAreaPolyLineType.PLANE;
@@ -244,6 +261,8 @@ namespace GsaGH.Parameters
       dup.GridAreaLoad.Type = this.GridAreaLoad.Type;
       dup.GridAreaLoad.Value = this.GridAreaLoad.Value;
       dup.GridPlaneSurface = this.GridPlaneSurface.Duplicate();
+      if (this.RefObjectGuid != null)
+        this.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
       return dup;
     }
   }
