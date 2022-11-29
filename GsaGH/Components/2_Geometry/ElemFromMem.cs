@@ -17,10 +17,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a Node
-    /// </summary>
-    public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to edit a Node
+  /// </summary>
+  public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
@@ -196,7 +196,7 @@ namespace GsaGH.Components
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
           = Helpers.Import.Elements.GetElements(
-              new ConcurrentDictionary<int, Element>(gsa.Elements()),
+              elementDict,
               new ConcurrentDictionary<int, Node>(gsa.Nodes()),
               new ConcurrentDictionary<int, Section>(gsa.Sections()),
               new ConcurrentDictionary<int, Prop2D>(gsa.Prop2Ds()),

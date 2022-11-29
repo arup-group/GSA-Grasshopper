@@ -99,9 +99,11 @@ namespace GsaGH.Components
           AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert input to Element1D or Member1D");
           return;
         }
+
         Vector3d x = axes.X;
         Vector3d y = axes.Y;
         Vector3d z = axes.Z;
+
         DA.SetData(0, x);
         DA.SetData(1, y);
         DA.SetData(2, z);

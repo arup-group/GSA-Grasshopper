@@ -174,6 +174,7 @@ namespace GsaGH.Helpers.Import
 
         // set local axes
         element1d.LocalAxes = new GsaLocalAxes(localAxesDict[ID]);
+
         return element1d;
       }
       return null;

@@ -23,10 +23,10 @@ using System.Collections.ObjectModel;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to retrieve geometric objects from a GSA model
-    /// </summary>
-    public class GetGeometry : GH_OasysTaskCapableComponent<GetGeometry.SolveResults>, IGH_PreviewObject, IGH_VariableParameterComponent
+  /// <summary>
+  /// Component to retrieve geometric objects from a GSA model
+  /// </summary>
+  public class GetGeometry : GH_OasysTaskCapableComponent<GetGeometry.SolveResults>, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");

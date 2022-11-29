@@ -33,7 +33,7 @@ namespace GsaGH.Helpers.Export
         Nodes.AddNode(ref existingNodes, line.PointAtEnd, unit)
       };
       apiElement.Topology = new ReadOnlyCollection<int>(topo);
-      
+
       if (element1d.OrientationNode != null)
         apiElement.OrientationNode = Nodes.AddNode(ref existingNodes, element1d.OrientationNode.Point, unit);
 
@@ -43,9 +43,7 @@ namespace GsaGH.Helpers.Export
       AddElement(element1d.Id, apiElement, ref apiElements);
     }
 
-    internal static void ConvertElement1D(List<GsaElement1d> element1ds,
-        ref GsaIntDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
-        ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
+    internal static void ConvertElement1D(List<GsaElement1d> element1ds, ref GsaIntDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit, ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (element1ds != null)
         for (int i = 0; i < element1ds.Count; i++)

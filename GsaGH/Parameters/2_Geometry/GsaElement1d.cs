@@ -9,13 +9,14 @@ using Grasshopper.Kernel.Types;
 using OasysUnits.Units;
 using OasysUnits;
 using GsaGH.Helpers.GsaAPI;
+using GsaGH.Components;
 
 namespace GsaGH.Parameters
 {
-    /// <summary>
-    /// Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
-    /// </summary>
-    public class GsaElement1d
+  /// <summary>
+  /// Element1d class, this class defines the basic properties and methods for any Gsa Element 1d
+  /// </summary>
+  public class GsaElement1d
   {
     #region fields
     internal Point3d previewPointStart;

@@ -11,10 +11,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
-    /// <summary>
-    /// Member1d class, this class defines the basic properties and methods for any Gsa Member 1d
-    /// </summary>
-    public class GsaMember1d
+  /// <summary>
+  /// Member1d class, this class defines the basic properties and methods for any Gsa Member 1d
+  /// </summary>
+  public class GsaMember1d
   {
     #region fields
     internal List<Line> previewGreenLines;
