@@ -174,7 +174,7 @@ namespace GsaGHTests.Helpers.Export
         Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
         Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
       }
-      
+
       Assert.Equal(expected.Group, api.Group);
       Assert.Equal(expected.Type, api.Type);
       Assert.Equal(expected.Type1D, api.Type1D);
@@ -209,6 +209,78 @@ namespace GsaGHTests.Helpers.Export
       Assert.Equal(expected.ReleaseEnd.ZZ, api.GetEndRelease(1).Releases.ZZ);
 
       TestSection(expected.Section, api.Property, actualModel);
+    }
+
+    public void TestMember2d(GsaMember2d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
+    {
+      ReadOnlyDictionary<int, GsaAPI.Member> apiElements = actualModel.Model.Members();
+      Assert.True(apiElements.ContainsKey(expectedId), "Member with id " + expectedId + " is not present in model");
+
+      ReadOnlyDictionary<int, GsaAPI.Node> apiNodes = actualModel.Model.Nodes();
+      Member api = apiElements[expectedId];
+      string[] topologySplit = api.Topology.Split(' ');
+      for (int i = 0; i < expected.Topology.Count; i++)
+      {
+        Node apiNode = apiNodes[int.Parse(topologySplit[i])];
+        Point3d pt = expected.Topology[i];
+        Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
+        Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
+        Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
+      }
+
+      Assert.Equal(expected.Group, api.Group);
+      Assert.Equal(expected.Type, api.Type);
+      Assert.Equal(expected.Type2D, api.Type2D);
+      Assert.Equal(expected.Name, api.Name);
+      Assert.Equal(expected.IsDummy, api.IsDummy);
+      Assert.Equal(expected.MeshSize, api.MeshSize);
+      Assert.Equal(expected.MeshWithOthers, api.IsIntersector);
+      Assert.Equal(expected.Offset.Z.Meters, api.Offset.Z);
+      Assert.Equal(expected.OrientationAngle.Degrees, api.OrientationAngle);
+
+      TestProp2d(expected.Property, api.Property, actualModel);
+    }
+
+    public void TestMember3d(GsaMember3d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
+    {
+      ReadOnlyDictionary<int, GsaAPI.Member> apiElements = actualModel.Model.Members();
+      Assert.True(apiElements.ContainsKey(expectedId), "Member with id " + expectedId + " is not present in model");
+
+      ReadOnlyDictionary<int, GsaAPI.Node> apiNodes = actualModel.Model.Nodes();
+      Member api = apiElements[expectedId];
+      string[] faces = api.Topology.Split(';');
+      int faceId = 0;
+      foreach (string face in faces)
+      {
+        string[] topo = face.Trim().Split(' ');
+        MeshFace mface = expected.SolidMesh.Faces[faceId++];
+        
+        Node apiNode = apiNodes[int.Parse(topo[0])];
+        Point3d pt = expected.SolidMesh.TopologyVertices[mface.A];
+        Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
+        Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
+        Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
+
+        apiNode = apiNodes[int.Parse(topo[1])];
+        pt = expected.SolidMesh.TopologyVertices[mface.B];
+        Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
+        Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
+        Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
+
+        apiNode = apiNodes[int.Parse(topo[2])];
+        pt = expected.SolidMesh.TopologyVertices[mface.C];
+        Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
+        Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
+        Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
+      }
+
+      Assert.Equal(expected.Group, api.Group);
+      Assert.Equal(expected.Name, api.Name);
+      Assert.Equal(expected.IsDummy, api.IsDummy);
+      Assert.Equal(expected.MeshSize, api.MeshSize);
+      Assert.Equal(expected.MeshWithOthers, api.IsIntersector);
+
+      TestProp3d(expected.Property, api.Property, actualModel);
     }
   }
 }

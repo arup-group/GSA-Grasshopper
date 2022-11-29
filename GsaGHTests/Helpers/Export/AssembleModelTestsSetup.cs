@@ -108,7 +108,7 @@ namespace GsaGHTests.Helpers.Export
       return (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
-    public static GsaMember2dGoo Member2d(Brep brep, GsaProp2dGoo prop)
+    public static GsaMember2dGoo Member2d(GH_Brep brep, GsaProp2dGoo prop)
     {
       var comp = new CreateMember2d();
       comp.CreateAttributes();
@@ -117,7 +117,7 @@ namespace GsaGHTests.Helpers.Export
       return (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp);
     }
 
-    public static GsaMember3dGoo Member3d(Box box, GsaProp3dGoo prop)
+    public static GsaMember3dGoo Member3d(GH_Box box, GsaProp3dGoo prop)
     {
       var comp = new CreateMember3d();
       comp.CreateAttributes();
