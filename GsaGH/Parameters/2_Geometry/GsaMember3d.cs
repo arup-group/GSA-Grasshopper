@@ -17,7 +17,7 @@ namespace GsaGH.Parameters
     internal List<Polyline> previewHiddenLines;
     internal List<Line> previewEdgeLines;
     internal List<Point3d> previewPts;
-
+    private Guid _guid = Guid.NewGuid();
     private Mesh _mesh = new Mesh();
     #endregion
 
@@ -35,6 +35,7 @@ namespace GsaGH.Parameters
       set
       {
         this._mesh = Helpers.GH.RhinoConversions.ConvertMeshToTriMeshSolid(value);
+        _guid = Guid.NewGuid();
         this.UpdatePreview();
       }
     }
@@ -110,6 +111,13 @@ namespace GsaGH.Parameters
         this.ApiMember.Property = value;
       }
     }
+    public Guid Guid
+    {
+      get
+      {
+        return this._guid;
+      }
+    }
     #endregion
 
     #region constructors
@@ -163,6 +171,7 @@ namespace GsaGH.Parameters
       GsaMember3d dup = new GsaMember3d();
       dup.MeshSize = this.MeshSize;
       dup._mesh = (Mesh)this._mesh.DuplicateShallow();
+      dup._guid = new Guid(_guid.ToString());
       dup.Property = this.Property.Duplicate();
       if (cloneApiMember)
         dup.CloneApiObject();
@@ -199,6 +208,7 @@ namespace GsaGH.Parameters
     internal void CloneApiObject()
     {
       this.ApiMember = GetAPI_MemberClone();
+      _guid = Guid.NewGuid();
     }
 
     internal Member GetAPI_MemberClone()

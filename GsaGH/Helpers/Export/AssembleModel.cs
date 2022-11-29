@@ -76,14 +76,14 @@ namespace GsaGH.Helpers.Export
       #endregion
 
       #region Elements
-      GsaIntDictionary<Element> apiElements = new GsaIntDictionary<Element>(gsa.Elements());
+      GsaGuidIntListDictionary<Element> apiElements = new GsaGuidIntListDictionary<Element>(gsa.Elements());
       Elements.ConvertElement1D(elem1ds, ref apiElements, ref apiNodes, modelUnit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
       Elements.ConvertElement2D(elem2ds, ref apiElements, ref apiNodes, modelUnit, ref apiProp2ds, ref apiMaterials);
       Elements.ConvertElement3D(elem3ds, ref apiElements, ref apiNodes, modelUnit, ref apiProp3ds, ref apiMaterials);
       #endregion
 
       #region Members
-      GsaIntDictionary<Member> apiMembers = new GsaIntDictionary<Member>(gsa.Members());
+      GsaGuidDictionary<Member> apiMembers = new GsaGuidDictionary<Member>(gsa.Members());
       Members.ConvertMember1D(mem1ds, ref apiMembers, ref apiNodes, modelUnit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
       Members.ConvertMember2D(mem2ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp2ds, ref apiMaterials);
       Members.ConvertMember3D(mem3ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp3ds, ref apiMaterials);
@@ -133,6 +133,7 @@ namespace GsaGH.Helpers.Export
         gsa.CreateElementsFromMembers();
       if (toleranceCoincidentNodes > 0)
         gsa.CollapseCoincidentNodes(toleranceCoincidentNodes);
+
 
       // Loads
       gsa.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(gravityLoads));

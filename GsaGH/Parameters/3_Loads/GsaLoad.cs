@@ -7,7 +7,6 @@ namespace GsaGH.Parameters
   /// Individual load type classes holding GsaAPI load type along with any required geometry objects
   /// </summary>
   /// 
-
   #region internal load classes
   public class GsaGravityLoad
   {

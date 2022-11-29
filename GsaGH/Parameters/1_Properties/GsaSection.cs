@@ -15,7 +15,7 @@ namespace GsaGH.Parameters
   {
     #region fields
     private int _id = 0;
-    private Guid _guid;
+    private Guid _guid = Guid.NewGuid();
     private GsaMaterial _material = new GsaMaterial();
     private GsaSectionModifier _modifier = new GsaSectionModifier();
     private Section _section = new Section();

@@ -25,6 +25,7 @@ namespace GsaGH.Parameters
     internal List<Line> previewRedLines;
 
     private int _id = 0;
+    private Guid _guid = Guid.NewGuid();
     private Element _element = new Element();
     private LineCurve _line = new LineCurve();
     private GsaBool6 _rel1;
@@ -75,6 +76,7 @@ namespace GsaGH.Parameters
       set
       {
         this._line = value;
+        this._guid = Guid.NewGuid();
         this.UpdatePreview();
       }
     }
@@ -264,6 +266,13 @@ namespace GsaGH.Parameters
         this._localAxes = value;
       }
     }
+    public Guid Guid
+    {
+      get
+      {
+        return this._guid;
+      }
+    }
     #endregion
 
     #region constructors
@@ -304,6 +313,7 @@ namespace GsaGH.Parameters
       dup._id = this._id;
       dup._element = this._element;
       dup._localAxes = this._localAxes;
+      dup._guid = new Guid(_guid.ToString());
       if (cloneApiElement)
         dup.CloneApiObject();
       dup._line = (LineCurve)this._line.DuplicateShallow();
@@ -329,6 +339,7 @@ namespace GsaGH.Parameters
     internal void CloneApiObject()
     {
       this._element = this.GetAPI_ElementClone();
+      this._guid = Guid.NewGuid();
     }
 
     internal Element GetAPI_ElementClone()

@@ -35,8 +35,8 @@ namespace GsaGH.Parameters
     private List<List<int>> _faceInt; // list of face integers included in each solid mesh referring to the mesh face list
     private List<Point3d> _topo; // list of topology points for visualisation
     private List<int> _ids = new List<int>();
+    private Guid _guid = Guid.NewGuid();
     private List<GsaProp3d> _props = new List<GsaProp3d>();
-
     private Mesh _displayMesh;
     #endregion
 
@@ -160,6 +160,13 @@ namespace GsaGH.Parameters
             topos.AddRange(this._elements[i].Topology.ToList(), new Grasshopper.Kernel.Data.GH_Path(i));
         }
         return topos;
+      }
+    }
+    public Guid Guid
+    {
+      get
+      {
+        return this._guid;
       }
     }
     #region GsaAPI.Element members
@@ -373,6 +380,7 @@ namespace GsaGH.Parameters
     {
       GsaElement3d dup = new GsaElement3d();
       dup._mesh = (Mesh)this._mesh.DuplicateShallow();
+      dup._guid = new Guid(_guid.ToString());
       dup._topo = this._topo;
       dup._topoInt = this._topoInt;
       dup._faceInt = this._faceInt;

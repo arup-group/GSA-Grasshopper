@@ -39,10 +39,8 @@ namespace GsaGH.Parameters
     }
 
     #region fields
-
-
     private int _grade = 1;
-    private Guid _guid;
+    private Guid _guid = Guid.NewGuid();
     private int _analProp = 0;
     private AnalysisMaterial _analysisMaterial;
     #endregion

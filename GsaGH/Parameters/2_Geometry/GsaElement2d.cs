@@ -38,6 +38,7 @@ namespace GsaGH.Parameters
     private List<List<int>> _topoInt; // list of topology integers referring to the topo list of points
     private List<Point3d> _topo; // list of topology points for visualisation
     private List<int> _ids = new List<int>();
+    private Guid _guid = Guid.NewGuid();
     #endregion
 
     #region properties
@@ -133,6 +134,13 @@ namespace GsaGH.Parameters
             pMems.Add(0);
           }
         return pMems;
+      }
+    }
+    public Guid Guid
+    {
+      get
+      {
+        return this._guid;
       }
     }
     #region GsaAPI.Element members
@@ -337,6 +345,7 @@ namespace GsaGH.Parameters
     {
       GsaElement2d dup = new GsaElement2d();
       dup._elements = this._elements;
+      dup._guid = new Guid(_guid.ToString());
       if (cloneApiElements)
         dup.CloneApiElements();
       dup._ids = this._ids.ToList();

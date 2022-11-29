@@ -11,17 +11,17 @@ namespace GsaGH.Helpers.Export
 {
   internal class Elements
   {
-    private static void AddElement(int id, Element apiElement, ref GsaIntDictionary<Element> apiElements)
+    private static void AddElement(int id, Guid guid, Element apiElement, bool overwrite, ref GsaGuidIntListDictionary<Element> apiElements)
     {
       if (id > 0)
-        apiElements.SetValue(id, apiElement);
+        apiElements.SetValue(id, guid, apiElement, overwrite);
       else
-        apiElements.AddValue(apiElement);
+        apiElements.AddValue(guid, apiElement);
     }
 
     #region element1d
     internal static void ConvertElement1D(GsaElement1d element1d,
-        ref GsaIntDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       LineCurve line = element1d.Line;
@@ -40,10 +40,10 @@ namespace GsaGH.Helpers.Export
       apiElement.Property = Sections.ConvertSection(element1d.Section,
           ref apiSections, ref apiSectionModifiers, ref apiMaterials);
 
-      AddElement(element1d.Id, apiElement, ref apiElements);
+      AddElement(element1d.Id, element1d.Guid, apiElement, true, ref apiElements);
     }
 
-    internal static void ConvertElement1D(List<GsaElement1d> element1ds, ref GsaIntDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit, ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
+    internal static void ConvertElement1D(List<GsaElement1d> element1ds, ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit, ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (element1ds != null)
         for (int i = 0; i < element1ds.Count; i++)
@@ -54,7 +54,7 @@ namespace GsaGH.Helpers.Export
 
     #region element2d
     internal static void ConvertElement2D(GsaElement2d element2d,
-        ref GsaIntDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       List<Point3d> meshVerticies = element2d.Topology;
@@ -74,12 +74,12 @@ namespace GsaGH.Helpers.Export
         GsaProp2d prop = (i > element2d.Properties.Count - 1) ? element2d.Properties.Last() : element2d.Properties[i];
         apiMeshElement.Property = Prop2ds.ConvertProp2d(prop, ref apiProp2ds, ref apiMaterials);
 
-        AddElement(element2d.Ids[i], apiMeshElement, ref apiElements);
+        AddElement(element2d.Ids[i], element2d.Guid, apiMeshElement, false, ref apiElements);
       }
     }
 
     internal static void ConvertElement2D(List<GsaElement2d> element2ds,
-        ref GsaIntDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (element2ds != null)
@@ -91,7 +91,7 @@ namespace GsaGH.Helpers.Export
 
     #region element3d
     internal static void ConvertElement3D(GsaElement3d element3d,
-        ref GsaIntDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       List<Point3d> meshVerticies = element3d.Topology;
@@ -111,12 +111,12 @@ namespace GsaGH.Helpers.Export
         GsaProp3d prop = (i > element3d.Properties.Count - 1) ? element3d.Properties.Last() : element3d.Properties[i];
         apiMeshElement.Property = Prop3ds.ConvertProp3d(prop, ref apiProp3ds, ref apiMaterials);
 
-        AddElement(element3d.IDs[i], apiMeshElement, ref apiElements);
+        AddElement(element3d.IDs[i], element3d.Guid, apiMeshElement, false, ref apiElements);
       }
     }
 
     internal static void ConvertElement3D(List<GsaElement3d> element3ds,
-        ref GsaIntDictionary<Element> apiElements,
+        ref GsaGuidIntListDictionary<Element> apiElements,
         ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {

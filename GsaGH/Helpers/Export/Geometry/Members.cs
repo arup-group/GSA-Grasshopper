@@ -36,31 +36,17 @@ namespace GsaGH.Helpers.Export
     }
     #endregion
 
-    private static void AddMember(int id, Member apiMember, ref GsaIntDictionary<Member> apiMembers)
+    private static void AddMember(int id, Guid guid, Member apiMember, ref GsaGuidDictionary<Member> apiMembers)
     {
       if (id > 0)
-        apiMembers.SetValue(id, apiMember);
+        apiMembers.SetValue(id, guid, apiMember);
       else
-        apiMembers.AddValue(apiMember);
+        apiMembers.AddValue(guid, apiMember);
     }
 
     #region member1d
-    /// <summary>
-    /// Method to create API Member
-    /// </summary>
-    /// <param name="member1d"></param>
-    /// <param name="existingMembers"></param>
-    /// <param name="memberidcounter"></param>
-    /// <param name="existingNodes"></param>
-    /// <param name="unit"></param>
-    /// <param name="existingSections"></param>
-    /// <param name="sections_guid"></param>
-    /// <param name="existingSectionModifiers"></param>
-    /// <param name="existingMaterials"></param>
-    /// <param name="materials_guid"></param>
-    /// <exception cref="Exception"></exception>
     internal static void ConvertMember1D(GsaMember1d member1d,
-        ref GsaIntDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       Member apiMember = member1d.GetAPI_MemberClone();
@@ -84,24 +70,11 @@ namespace GsaGH.Helpers.Export
 
       apiMember.Property = Sections.ConvertSection(member1d.Section, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
 
-      AddMember(member1d.Id, apiMember, ref apiMembers);
+      AddMember(member1d.Id, member1d.Guid, apiMember, ref apiMembers);
     }
 
-    /// <summary>
-    /// Method to create a list of API Members
-    /// </summary>
-    /// <param name="member1ds"></param>
-    /// <param name="existingMembers"></param>
-    /// <param name="memberidcounter"></param>
-    /// <param name="existingNodes"></param>
-    /// <param name="unit"></param>
-    /// <param name="existingSections"></param>
-    /// <param name="sections_guid"></param>
-    /// <param name="existingSectionModifiers"></param>
-    /// <param name="existingMaterials"></param>
-    /// <param name="materials_guid"></param>
     internal static void ConvertMember1D(List<GsaMember1d> member1ds,
-        ref GsaIntDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (member1ds != null)
@@ -112,20 +85,9 @@ namespace GsaGH.Helpers.Export
     #endregion
 
     #region member2d
-    /// <summary>
-    /// Method to create API Member
-    /// </summary>
-    /// <param name="member2d"></param>
-    /// <param name="existingMembers"></param>
-    /// <param name="memberidcounter"></param>
-    /// <param name="existingNodes"></param>
-    /// <param name="unit"></param>
-    /// <param name="existingProp2Ds"></param>
-    /// <param name="prop2d_guid"></param>
-    /// <param name="existingMaterials"></param>
-    /// <param name="materials_guid"></param>
+    
     internal static void ConvertMember2D(GsaMember2d member2d,
-        ref GsaIntDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       Member apiMember = member2d.GetAPI_MemberClone();
@@ -157,23 +119,11 @@ namespace GsaGH.Helpers.Export
 
       apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref apiProp2ds, ref apiMaterials);
 
-      AddMember(member2d.Id, apiMember, ref apiMembers);
+      AddMember(member2d.Id, member2d.Guid, apiMember, ref apiMembers);
     }
 
-    /// <summary>
-    /// Method to create a list of API Members
-    /// </summary>
-    /// <param name="member2ds"></param>
-    /// <param name="existingMembers"></param>
-    /// <param name="memberidcounter"></param>
-    /// <param name="existingNodes"></param>
-    /// <param name="unit"></param>
-    /// <param name="existingProp2Ds"></param>
-    /// <param name="prop2d_guid"></param>
-    /// <param name="existingMaterials"></param>
-    /// <param name="materials_guid"></param>
     internal static void ConvertMember2D(List<GsaMember2d> member2ds,
-        ref GsaIntDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (member2ds != null)
@@ -184,17 +134,8 @@ namespace GsaGH.Helpers.Export
     #endregion
 
     #region member3d
-    /// <summary>
-    /// Method to create API Member
-    /// </summary>
-    /// <param name="member3d"></param>
-    /// <param name="existingMembers"></param>
-    /// <param name="memberidcounter"></param>
-    /// <param name="existingNodes"></param>
-    /// <param name="nodeidcounter"></param>
-    /// <param name="unit"></param>
     internal static void ConvertMember3D(GsaMember3d member3d,
-        ref GsaIntDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       Member apiMember = member3d.GetAPI_MemberClone();
@@ -217,19 +158,11 @@ namespace GsaGH.Helpers.Export
 
       apiMember.Property = Prop3ds.ConvertProp3d(member3d.Property, ref apiProp3ds, ref apiMaterials);
 
-      AddMember(member3d.Id, apiMember, ref apiMembers);
+      AddMember(member3d.Id, member3d.Guid, apiMember, ref apiMembers);
     }
 
-    /// <summary>
-    /// Method to create a list of API Members.
-    /// </summary>
-    /// <param name="member3ds"></param>
-    /// <param name="existingMembers"></param>
-    /// <param name="memberidcounter"></param>
-    /// <param name="existingNodes"></param>
-    /// <param name="unit"></param>
     internal static void ConvertMember3D(List<GsaMember3d> member3ds,
-        ref GsaIntDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
+        ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (member3ds != null)

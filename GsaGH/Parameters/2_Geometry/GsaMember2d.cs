@@ -33,6 +33,8 @@ namespace GsaGH.Parameters
     private List<List<string>> _inclCrvsTopoType; // list of polyline curve type (arch or line) for inclusion /member2d
 
     private List<Point3d> _inclPts; //slist of points for inclusion /member2d
+
+    private Guid _guid = Guid.NewGuid();
     #endregion
 
     #region properties
@@ -59,6 +61,13 @@ namespace GsaGH.Parameters
     public List<List<Point3d>> IncLinesTopology => this._inclCrvsTopo;
     public List<List<string>> IncLinesTopologyType => this._inclCrvsTopoType;
     public List<Point3d> InclusionPoints => this._inclPts;
+    public Guid Guid
+    {
+      get
+      {
+        return this._guid;
+      }
+    }
     #region GsaAPI.Member members
     public Color Colour
     {
@@ -322,6 +331,7 @@ namespace GsaGH.Parameters
       GsaMember2d dup = new GsaMember2d();
       dup.Id = this.Id;
       dup.MeshSize = this.MeshSize;
+      dup._guid = new Guid(_guid.ToString());
       dup.ApiMember = this.ApiMember;
       if (cloneApiMember)
         dup.CloneApiObject();

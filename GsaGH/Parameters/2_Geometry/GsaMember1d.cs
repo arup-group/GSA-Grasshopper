@@ -27,6 +27,7 @@ namespace GsaGH.Parameters
     private GsaBool6 _rel2;
     private GsaNode _orientationNode;
     private GsaLocalAxes _localAxes = null;
+    private Guid _guid = Guid.NewGuid();
 
     private Line previewSX1;
     private Line previewSX2;
@@ -286,6 +287,13 @@ namespace GsaGH.Parameters
         this.ApiMember.Type1D = value;
       }
     }
+    public Guid Guid
+    {
+      get
+      {
+        return this._guid;
+      }
+    }
     #endregion
 
     #region constructors
@@ -333,6 +341,7 @@ namespace GsaGH.Parameters
       GsaMember1d dup = new GsaMember1d();
       dup.Id = this.Id;
       dup.MeshSize = this.MeshSize;
+      dup._guid = new Guid(_guid.ToString());
       dup.ApiMember = this.ApiMember;
       dup._localAxes = this._localAxes;
       if (cloneApiMember)
