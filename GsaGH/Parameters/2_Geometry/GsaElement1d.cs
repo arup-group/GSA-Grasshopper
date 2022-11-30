@@ -29,7 +29,6 @@ namespace GsaGH.Parameters
     private GsaBool6 _rel2;
     private GsaSection _section = new GsaSection();
     private GsaNode _orientationNode;
-    private GsaLocalAxes _localAxes = null;
 
     private Line previewSX1;
     private Line previewSX2;
@@ -64,6 +63,8 @@ namespace GsaGH.Parameters
     #endregion
 
     #region properties
+    public int Id { get; set; } = 0;
+    internal GsaLocalAxes LocalAxes { get; set; } = null;
     public LineCurve Line
     {
       get
@@ -74,17 +75,6 @@ namespace GsaGH.Parameters
       {
         this._line = value;
         this.UpdatePreview();
-      }
-    }
-    public int Id
-    {
-      get
-      {
-        return this._id;
-      }
-      set
-      {
-        this._id = value;
       }
     }
     public GsaBool6 ReleaseStart
@@ -249,17 +239,6 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._element.Type = value;
-      }
-    }
-    internal GsaLocalAxes LocalAxes
-    {
-      get
-      {
-        return _localAxes;
-      }
-      set
-      {
-        this._localAxes = value;
       }
     }
     #endregion

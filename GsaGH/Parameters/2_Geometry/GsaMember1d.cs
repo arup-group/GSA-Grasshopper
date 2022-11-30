@@ -25,7 +25,6 @@ namespace GsaGH.Parameters
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
     private GsaNode _orientationNode;
-    private GsaLocalAxes _localAxes = null;
 
     private Line previewSX1;
     private Line previewSX2;
@@ -64,19 +63,9 @@ namespace GsaGH.Parameters
     internal Member ApiMember { get; set; } = new Member();
     public double MeshSize { get; set; } = 0;
     public GsaSection Section { get; set; } = new GsaSection();
+    internal GsaLocalAxes LocalAxes { get; set; } = null;
     public List<Point3d> Topology => this._topo;
     public List<string> TopologyType => this._topoType;
-    internal GsaLocalAxes LocalAxes
-    {
-      get
-      {
-        return _localAxes;
-      }
-      set
-      {
-        this._localAxes = value;
-      }
-    }
     public PolyCurve PolyCurve
     {
       get
