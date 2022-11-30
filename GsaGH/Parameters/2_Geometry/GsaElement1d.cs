@@ -22,7 +22,6 @@ namespace GsaGH.Parameters
     internal List<Line> previewGreenLines;
     internal List<Line> previewRedLines;
 
-    private int _id = 0;
     private Element _element = new Element();
     private LineCurve _line = new LineCurve();
     private GsaBool6 _rel1;
@@ -255,7 +254,7 @@ namespace GsaGH.Parameters
         Type = ElementType.BEAM,
       };
       this._line = line;
-      this._id = id;
+      this.Id = Id;
       this._section.Id = prop;
       this._orientationNode = orientationNode;
       this.UpdatePreview();
@@ -267,7 +266,7 @@ namespace GsaGH.Parameters
       this._line = line;
       this._rel1 = new GsaBool6(_element.GetEndRelease(0).Releases);
       this._rel2 = new GsaBool6(_element.GetEndRelease(1).Releases);
-      this._id = id;
+      this.Id = Id;
       this._section = section;
       this._orientationNode = orientationNode;
       this.UpdatePreview();
@@ -278,9 +277,9 @@ namespace GsaGH.Parameters
     public GsaElement1d Duplicate(bool cloneApiElement = false)
     {
       GsaElement1d dup = new GsaElement1d();
-      dup._id = this._id;
+      dup.Id = this.Id;
       dup._element = this._element;
-      dup._localAxes = this._localAxes;
+      dup.LocalAxes = this.LocalAxes;
       if (cloneApiElement)
         dup.CloneApiObject();
       dup._line = (LineCurve)this._line.DuplicateShallow();
