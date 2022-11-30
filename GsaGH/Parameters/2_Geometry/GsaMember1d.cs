@@ -70,7 +70,12 @@ namespace GsaGH.Parameters
     {
       get
       {
-        return _localAxes;
+        // change after GsaAPI fix
+        Vector3d x = new Vector3d(_crv.PointAtEnd.X - _crv.PointAtStart.X, _crv.PointAtEnd.Y - _crv.PointAtStart.Y, _crv.PointAtEnd.Z - _crv.PointAtStart.Z);
+        if (x.Unitize())
+          return new GsaLocalAxes(x, Vector3d.Zero, Vector3d.Zero);
+        else
+          return new GsaLocalAxes(Vector3d.Zero, Vector3d.Zero, Vector3d.Zero);
       }
       set
       {
