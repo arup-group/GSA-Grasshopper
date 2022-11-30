@@ -1,9 +1,7 @@
-﻿using GsaAPI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using GsaAPI;
 using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGH.Helpers
@@ -108,5 +106,79 @@ namespace GsaGH.Helpers
       { "2D Void Cutter", MemberType.VOID_CUTTER_2D },
       { "Generic 3D", MemberType.GENERIC_3D },
     };
+
+    internal static AnalysisOrder GetAnalysisOrder(string input)
+    {
+      return (AnalysisOrder)GetValue(input, typeof(AnalysisOrder));
+    }
+
+    internal static ElementType GetElementType(string typestring)
+    {
+      return (ElementType)GetValue(typestring, typeof(ElementType));
+    }
+
+    internal static MatType GetMatType(string typestring)
+    {
+      return (MatType)GetValue(typestring, typeof(MatType));
+    }
+
+    internal static MemberType GetMemberType(string typestring)
+    {
+      return (MemberType)GetValue(typestring, typeof(MemberType));
+    }
+
+    internal static Property2D_Type GetProperty2D_Type(string typestring)
+    {
+      return (Property2D_Type)GetValue(typestring, typeof(Property2D_Type));
+    }
+
+    private static Enum GetValue(string key, Type t)
+    {
+      List<string> types;
+      int index;
+      switch (t)
+      {
+        case Type _ when t == typeof(AnalysisOrder):
+          types = AnalysisOrderMapping.Keys.ToList();
+          index = GetIndex(key, types);
+          if (index != -1)
+            return AnalysisOrderMapping[types[index]];
+          break;
+
+        case Type _ when t == typeof(ElementType):
+          types = ElementTypeMapping.Keys.ToList();
+          index = GetIndex(key, types);
+          if (index != -1)
+            return ElementTypeMapping[types[index]];
+          break;
+
+        case Type _ when t == typeof(MatType):
+          types = MaterialTypeMapping.Keys.ToList();
+          index = GetIndex(key, types);
+          if (index != -1)
+            return MaterialTypeMapping[types[index]];
+          break;
+
+        case Type _ when t == typeof(MemberType):
+          types = MemberTypeMapping.Keys.ToList();
+          index = GetIndex(key, types);
+          if (index != -1)
+            return MemberTypeMapping[types[index]];
+          break;
+
+        case Type _ when t == typeof(Property2D_Type):
+          types = Prop2dTypeMapping.Keys.ToList();
+          index = GetIndex(key, types);
+          if (index != -1)
+            return Prop2dTypeMapping[types[index]];
+          break;
+      }
+      throw new ArgumentException();
+    }
+
+    private static int GetIndex(string key, List<string> types)
+    {
+      return types.Select(v => v.ToLower().Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty)).ToList().IndexOf(key.ToLower().Trim().Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty));
+    }
   }
 }

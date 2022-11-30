@@ -115,7 +115,8 @@ namespace GsaGH.Components
       GsaMember1d mem = new GsaMember1d();
       if (DA.GetData(0, ref gsaMember1d))
       {
-        if (gsaMember1d == null) { 
+        if (gsaMember1d == null)
+        {
           AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input is null");
         }
         mem = gsaMember1d.Duplicate();
@@ -189,10 +190,14 @@ namespace GsaGH.Components
             mem.Type = (MemberType)typeInt;
           else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
-            if (Helpers.Mappings.MemberTypeMapping.ContainsKey(typestring))
-              mem.Type = Helpers.Mappings.MemberTypeMapping[typestring];
-            else
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element1D Type");
+            try
+            {
+              mem.Type = Helpers.Mappings.GetMemberType(typestring);
+            }
+            catch (ArgumentException)
+            {
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Member Type");
+            }
           }
         }
 
@@ -204,10 +209,14 @@ namespace GsaGH.Components
             mem.Type1D = (ElementType)typeInt;
           else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
-            if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
-              mem.Type1D = Helpers.Mappings.ElementTypeMapping[typestring];
-            else
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element1D Type");
+            try
+            {
+              mem.Type1D = Helpers.Mappings.GetElementType(typestring);
+            }
+            catch (ArgumentException)
+            {
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element Type");
+            }
           }
         }
 
