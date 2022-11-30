@@ -322,7 +322,7 @@ namespace GsaGH.Parameters
       dup.Id = this.Id;
       dup.MeshSize = this.MeshSize;
       dup.ApiMember = this.ApiMember;
-      dup._localAxes = this._localAxes;
+      dup.LocalAxes = this.LocalAxes;
       if (cloneApiMember)
         dup.CloneApiObject();
       dup._crv = (PolyCurve)this._crv.DuplicateShallow();
