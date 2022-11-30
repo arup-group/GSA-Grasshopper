@@ -133,31 +133,31 @@ namespace GsaGH.Components
         gps.GridSurfaceId = id;
       }
 
-      // 2 Elements
-      // check that user has not input Gsa geometry elements here
+      // element/member list
       gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(2, ref gh_typ))
       {
-        string type = gh_typ.Value.ToString().ToUpper();
-        if (type.StartsWith("GSA "))
+        gps.GridSurface.Elements = "";
+        if (gh_typ.Value is GsaElement2dGoo)
         {
-          Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in ElementList input!" + Environment.NewLine +
-              "Element list should take the form:" + Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + Environment.NewLine +
-              "Refer to GSA help file for definition of lists and full vocabulary.");
-          return;
+          GsaElement2dGoo goo = (GsaElement2dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Element;
         }
-      }
-      GH_String ghelem = new GH_String();
-      if (DA.GetData(2, ref ghelem))
-      {
-        string elem = "";
-        if (GH_Convert.ToString(ghelem, out elem, GH_Conversion.Both))
+        else if (gh_typ.Value is GsaMember2dGoo)
         {
-          gs.Elements = elem;
-          changeGS = true;
+          GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Member;
         }
+        else if (gh_typ.Value is GsaProp2dGoo)
+        {
+          GsaProp2dGoo goo = (GsaProp2dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Property;
+        }
+        else if (GH_Convert.ToString(gh_typ.Value, out string elemList, GH_Conversion.Both))
+          gps.GridSurface.Elements = elemList;
       }
 
       // 3 Name

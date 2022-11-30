@@ -13,6 +13,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
@@ -103,26 +104,22 @@ namespace GsaGH.Components
       nodeLoad.NodeLoad.Case = lc;
 
       // 1 element/beam list
-      // check that user has not inputted Gsa geometry elements here
       GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(1, ref gh_typ))
       {
-        string type = gh_typ.Value.ToString().ToUpper();
-        if (type.StartsWith("GSA "))
+        Point3d refPt = new Point3d();
+        if (gh_typ.Value is GsaNodeGoo)
         {
-          Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in NodeList input!" + Environment.NewLine +
-              "Element list should take the form:" + Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + Environment.NewLine +
-              "Refer to GSA help file for definition of lists and full vocabulary.");
-          return;
+          GsaNodeGoo goo = (GsaNodeGoo)gh_typ.Value;
+          nodeLoad.RefPoint = goo.Value.Point;
         }
+        else if (GH_Convert.ToPoint3d(gh_typ.Value, ref refPt, GH_Conversion.Both))
+        {
+          nodeLoad.RefPoint = refPt;
+        }
+        else if (GH_Convert.ToString(gh_typ.Value, out string nodeList, GH_Conversion.Both))
+          nodeLoad.NodeLoad.Nodes = nodeList;
       }
-      string nodeList = "all";
-      GH_String gh_nl = new GH_String();
-      if (DA.GetData(1, ref gh_nl))
-        GH_Convert.ToString(gh_nl, out nodeList, GH_Conversion.Both);
-      nodeLoad.NodeLoad.Nodes = nodeList;
 
       // 3 Name
       string name = "";

@@ -39,7 +39,7 @@ namespace GsaGH.Components
       string unitAbbreviation = ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit);
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
-      pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to." + Environment.NewLine +
+      pManager.AddGenericParameter("Element list", "G1D", "Section, 1D Elements or 1D Members to apply load to; either input Section, Element1d, or Member1d, or a text string." + Environment.NewLine +
           "Element list should take the form:" + Environment.NewLine +
           " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
@@ -84,31 +84,30 @@ namespace GsaGH.Components
       beamLoad.BeamLoad.Case = lc;
 
       // 1 element/beam list
-      // check that user has not inputted Gsa geometry elements here
       GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(1, ref gh_typ))
       {
-        string type = gh_typ.Value.ToString().ToUpper();
-        if (type.StartsWith("GSA "))
+        if (gh_typ.Value is GsaElement1dGoo)
         {
-          Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in ElementList input!" + Environment.NewLine +
-              "Element list should take the form:" + Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + Environment.NewLine +
-              "Refer to GSA help file for definition of lists and full vocabulary.");
-          return;
+          GsaElement1dGoo goo = (GsaElement1dGoo)gh_typ.Value;
+          beamLoad.RefObjectGuid = goo.Value.Guid;
+          beamLoad.ReferenceType = ReferenceType.Element;
         }
+        else if (gh_typ.Value is GsaMember1dGoo)
+        {
+          GsaMember1dGoo goo = (GsaMember1dGoo)gh_typ.Value;
+          beamLoad.RefObjectGuid = goo.Value.Guid;
+          beamLoad.ReferenceType = ReferenceType.Member;
+        }
+        else if (gh_typ.Value is GsaSectionGoo)
+        {
+          GsaSectionGoo goo = (GsaSectionGoo)gh_typ.Value;
+          beamLoad.RefObjectGuid = goo.Value.Guid;
+          beamLoad.ReferenceType = ReferenceType.Property;
+        }
+        else if (GH_Convert.ToString(gh_typ.Value, out string beamList, GH_Conversion.Both))
+          beamLoad.BeamLoad.Elements = beamList;
       }
-
-      // Get Geometry input
-      string beamList = "";
-      GH_String gh_bl = new GH_String();
-      if (DA.GetData(1, ref gh_bl))
-        GH_Convert.ToString(gh_bl, out beamList, GH_Conversion.Both);
-      //var isNumeric = int.TryParse(beamList, out int n);
-      //if (isNumeric)
-      //    beamList = "PB" + n;
-      beamLoad.BeamLoad.Elements = beamList;
 
       // 2 Name
       string name = "";

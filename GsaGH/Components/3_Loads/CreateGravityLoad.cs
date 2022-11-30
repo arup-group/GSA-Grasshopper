@@ -30,10 +30,10 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (by default 1)", GH_ParamAccess.item, 1);
-      pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to (by default 'All')." + Environment.NewLine +
-         "Element list should take the form:" + Environment.NewLine +
-         " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
-         "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+      pManager.AddGenericParameter("Element list", "El", "Properties, Elements or Members to apply load to; either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string." + Environment.NewLine +
+          "Element list should take the form:" + Environment.NewLine +
+          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
+          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
       pManager.AddVectorParameter("Gravity factor", "G", "Gravity vector factor (default z = -1)", GH_ParamAccess.item, new Vector3d(0, 0, -1));
       pManager[0].Optional = true;
@@ -57,27 +57,72 @@ namespace GsaGH.Components
         GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
       gravityLoad.GravityLoad.Case = lc;
 
-      //element/beam list
-      // check that user has not inputted Gsa geometry elements here
+      // element/member list
       GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(1, ref gh_typ))
       {
-        string type = gh_typ.Value.ToString().ToUpper();
-        if (type.StartsWith("GSA "))
+        gravityLoad.GravityLoad.Elements = "";
+        if (gh_typ.Value is GsaElement1dGoo)
         {
-          Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in ElementList input!" + Environment.NewLine +
-              "Element list should take the form:" + Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + Environment.NewLine +
-              "Refer to GSA help file for definition of lists and full vocabulary.");
-          return;
+          GsaElement1dGoo goo = (GsaElement1dGoo)gh_typ.Value;
+          gravityLoad.RefObjectGuid = goo.Value.Guid;
+          gravityLoad.ReferenceType = ReferenceType.Element;
+          gravityLoad.TypeD = 1;
         }
+        if (gh_typ.Value is GsaElement2dGoo)
+        {
+          GsaElement2dGoo goo = (GsaElement2dGoo)gh_typ.Value;
+          gravityLoad.RefObjectGuid = goo.Value.Guid;
+          gravityLoad.ReferenceType = ReferenceType.Element;
+          gravityLoad.TypeD = 2;
+        }
+        else if (gh_typ.Value is GsaMember1dGoo)
+        {
+          GsaMember1dGoo goo = (GsaMember1dGoo)gh_typ.Value;
+          gravityLoad.RefObjectGuid = goo.Value.Guid;
+          gravityLoad.ReferenceType = ReferenceType.Member;
+          gravityLoad.TypeD = 1;
+        }
+        else if (gh_typ.Value is GsaMember2dGoo)
+        {
+          GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
+          gravityLoad.RefObjectGuid = goo.Value.Guid;
+          gravityLoad.ReferenceType = ReferenceType.Member;
+          gravityLoad.TypeD = 2;
+        }
+        else if (gh_typ.Value is GsaMember3dGoo)
+        {
+          GsaMember3dGoo goo = (GsaMember3dGoo)gh_typ.Value;
+          gravityLoad.RefObjectGuid = goo.Value.Guid;
+          gravityLoad.ReferenceType = ReferenceType.Member;
+          gravityLoad.TypeD = 3;
+        }
+        else if (gh_typ.Value is GsaSectionGoo)
+        {
+          GsaSectionGoo goo = (GsaSectionGoo)gh_typ.Value;
+          gravityLoad.RefObjectGuid = goo.Value.Guid;
+          gravityLoad.ReferenceType = ReferenceType.Property;
+          gravityLoad.TypeD = 1;
+        }
+        else if (gh_typ.Value is GsaProp2dGoo)
+        {
+          GsaProp2dGoo goo = (GsaProp2dGoo)gh_typ.Value;
+          gravityLoad.RefObjectGuid = goo.Value.Guid;
+          gravityLoad.ReferenceType = ReferenceType.Property;
+          gravityLoad.TypeD = 2;
+        }
+        else if (gh_typ.Value is GsaProp3dGoo)
+        {
+          GsaProp3dGoo goo = (GsaProp3dGoo)gh_typ.Value;
+          gravityLoad.RefObjectGuid = goo.Value.Guid;
+          gravityLoad.ReferenceType = ReferenceType.Property;
+          gravityLoad.TypeD = 3;
+        }
+        else if (GH_Convert.ToString(gh_typ.Value, out string elemList, GH_Conversion.Both))
+          gravityLoad.GravityLoad.Elements = elemList;
       }
-      string beamList = "all";
-      GH_String gh_bl = new GH_String();
-      if (DA.GetData(1, ref gh_bl))
-        GH_Convert.ToString(gh_bl, out beamList, GH_Conversion.Both);
-      gravityLoad.GravityLoad.Elements = beamList;
+      else
+        gravityLoad.GravityLoad.Elements = "All";
 
       // 2 Name
       string name = "";

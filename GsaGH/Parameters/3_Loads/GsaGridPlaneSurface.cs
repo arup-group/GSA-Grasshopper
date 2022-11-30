@@ -106,6 +106,9 @@ namespace GsaGH.Parameters
         _pln = value;
       }
     }
+
+    internal Guid RefObjectGuid;
+    internal ReferenceType ReferenceType = ReferenceType.None;
     #endregion
 
     #region constructors

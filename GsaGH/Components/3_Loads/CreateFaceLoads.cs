@@ -39,7 +39,7 @@ namespace GsaGH.Components
       string unitAbbreviation = Pressure.GetAbbreviation(this.ForcePerAreaUnit);
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
-      pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to." + Environment.NewLine +
+      pManager.AddGenericParameter("Element list", "G2D", "Property, 2D Elements or 2D Members to apply load to; either input Prop2d, Element2d, or Member2d, or a text string." + Environment.NewLine +
           "Element list should take the form:" + Environment.NewLine +
           " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
@@ -79,31 +79,31 @@ namespace GsaGH.Components
         GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
       faceLoad.FaceLoad.Case = lc;
 
-      // 1 element/beam list
-      // check that user has not inputted Gsa geometry elements here
+      // element/member list
       GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(1, ref gh_typ))
       {
-        string type = gh_typ.Value.ToString().ToUpper();
-        if (type.StartsWith("GSA "))
+        if (gh_typ.Value is GsaElement2dGoo)
         {
-          Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in ElementList input!" + Environment.NewLine +
-              "Element list should take the form:" + Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + Environment.NewLine +
-              "Refer to GSA help file for definition of lists and full vocabulary.");
-          return;
+          GsaElement2dGoo goo = (GsaElement2dGoo)gh_typ.Value;
+          faceLoad.RefObjectGuid = goo.Value.Guid;
+          faceLoad.ReferenceType = ReferenceType.Element;
         }
+        else if (gh_typ.Value is GsaMember2dGoo)
+        {
+          GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
+          faceLoad.RefObjectGuid = goo.Value.Guid;
+          faceLoad.ReferenceType = ReferenceType.Member;
+        }
+        else if (gh_typ.Value is GsaProp2dGoo)
+        {
+          GsaProp2dGoo goo = (GsaProp2dGoo)gh_typ.Value;
+          faceLoad.RefObjectGuid = goo.Value.Guid;
+          faceLoad.ReferenceType = ReferenceType.Property;
+        }
+        else if (GH_Convert.ToString(gh_typ.Value, out string elemList, GH_Conversion.Both))
+          faceLoad.FaceLoad.Elements = elemList;
       }
-      string elemList = "";
-      GH_String gh_el = new GH_String();
-      if (DA.GetData(1, ref gh_el))
-        GH_Convert.ToString(gh_el, out elemList, GH_Conversion.Both);
-      //var isNumeric = int.TryParse(elemList, out int n);
-      //if (isNumeric)
-      //    elemList = "PA" + n;
-
-      faceLoad.FaceLoad.Elements = elemList;
 
       // 2 Name
       string name = "";
