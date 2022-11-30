@@ -18,9 +18,9 @@ namespace GsaGH.Parameters
 
     public GsaLocalAxes(ReadOnlyCollection<double> collection)
     {
-      this.X = new Vector3d(collection[0], collection[3], collection[6]);
-      this.Y = new Vector3d(collection[1], collection[4], collection[7]);
-      this.Z = new Vector3d(collection[2], collection[5], collection[8]);
+      this.X = new Vector3d(collection[0], collection[1], collection[2]);
+      this.Y = new Vector3d(collection[3], collection[4], collection[5]);
+      this.Z = new Vector3d(collection[6], collection[7], collection[8]);
     }
   }
 }
