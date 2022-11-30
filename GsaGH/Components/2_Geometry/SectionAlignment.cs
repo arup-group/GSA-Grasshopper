@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 using GsaGH.Util;
-using GsaGH.Util.Gsa.ToGSA;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Parameters;
-using OasysUnits.Units;
 using OasysUnits;
-using Rhino.Geometry;
-using static Grasshopper.Kernel.Special.GH_Panel;
-using System.Linq;
+using OasysUnits.Units;
+using static GsaGH.Parameters.GsaOffset;
 
 namespace GsaGH.Components
 {
@@ -75,11 +73,11 @@ namespace GsaGH.Components
         GsaElement1d elem1d = null;
         GsaMember2d mem2d = null;
         GsaElement2d elem2d = null;
-        
+
         bool oneD = true;
-        
+
         string profile = "";
-        
+
 
         if (gh_typ.Value is GsaMember1dGoo)
         {
@@ -131,12 +129,15 @@ namespace GsaGH.Components
           return;
         }
 
+        AlignmentType alignmentType = Helpers.Mappings.GetAlignmentType(this.SelectedItems[0]);
         string alignment = this.SelectedItems[0];
         if (DA.GetData(1, ref alignment))
         {
-          if (alignment == "Centroid" || alignment == "Top-Left" || alignment == "Top-Centre" || alignment == "Top-Right" || alignment == "Mid-Left" || alignment == "Mid-Right" || alignment == "Bottom-Left" || alignment == "Bottom-Centre" || alignment == "Bottom-Right")
-            this.SelectedItems[0] = alignment;
-          else
+          try
+          {
+            alignmentType = Helpers.Mappings.GetAlignmentType(alignment);
+          }
+          catch (ArgumentException)
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not convert input Al to recognisable Alignment. Input is " + alignment);
             return;
@@ -226,9 +227,9 @@ namespace GsaGH.Components
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
             depth = new Length(double.Parse(parts[2]), unit);
-            if (alignment.Contains("Left"))
+            if (alignmentType == AlignmentType.Top_Left || alignmentType == AlignmentType.Mid_Left || alignmentType == AlignmentType.Bottom_Left)
               width = new Length(double.Parse(parts[4]), unit);
-            else if (alignment.Contains("Right"))
+            else if (alignmentType == AlignmentType.Top_Right || alignmentType == AlignmentType.Mid_Right || alignmentType == AlignmentType.Bottom_Right)
               width = new Length(double.Parse(parts[3]), unit);
             else
               width = new Length(double.Parse(parts[3]) + double.Parse(parts[4]), unit);
@@ -343,44 +344,44 @@ namespace GsaGH.Components
           else
             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to get dimensions for Profile " + profile);
 
-          
-          switch (alignment)
+
+          switch (alignmentType)
           {
-            case "Centroid":
+            case AlignmentType.Centroid:
               break;
 
-            case "Top-Centre":
+            case AlignmentType.Top_Centre:
               alignmentOffset.Z = depth * -1 / 2;
               break;
 
-            case "Bottom-Centre":
+            case AlignmentType.Bottom_Centre:
               alignmentOffset.Z = depth / 2;
               break;
 
-            case "Top-Left":
+            case AlignmentType.Top_Left:
               alignmentOffset.Z = depth * -1 / 2;
               alignmentOffset.Y = width * -1 / 2;
               break;
 
-            case "Top-Right":
+            case AlignmentType.Top_Right:
               alignmentOffset.Z = depth * -1 / 2;
               alignmentOffset.Y = width / 2;
               break;
 
-            case "Left":
+            case AlignmentType.Mid_Left:
               alignmentOffset.Y = width * -1 / 2;
               break;
 
-            case "Right":
+            case AlignmentType.Mid_Right:
               alignmentOffset.Y = width / 2;
               break;
 
-            case "Bottom-Left":
+            case AlignmentType.Bottom_Left:
               alignmentOffset.Z = depth / 2;
               alignmentOffset.Y = width * -1 / 2;
               break;
 
-            case "Bottom-Right":
+            case AlignmentType.Bottom_Right:
               alignmentOffset.Z = depth / 2;
               alignmentOffset.Y = width / 2;
               break;
@@ -404,11 +405,11 @@ namespace GsaGH.Components
         }
         else
         {
-          if (mem2d != null) 
+          if (mem2d != null)
           {
-            if (alignment.Contains("Top"))
+            if (alignmentType == AlignmentType.Top_Left || alignmentType == AlignmentType.Top_Centre || alignmentType == AlignmentType.Top_Right)
               alignmentOffset.Z = mem2d.Property.Thickness * -1 / 2;
-            if (alignment.Contains("Bottom"))
+            if (alignmentType == AlignmentType.Bottom_Left || alignmentType == AlignmentType.Bottom_Centre || alignmentType == AlignmentType.Bottom_Right)
               alignmentOffset.Z = mem2d.Property.Thickness / 2;
             alignmentOffset.Z += additionalOffset.Z;
             mem2d.Offset = alignmentOffset;
@@ -417,13 +418,13 @@ namespace GsaGH.Components
           if (elem2d != null)
           {
             List<GsaOffset> offsets = new List<GsaOffset>();
-            for(int i = 0; i < elem2d.Properties.Count; i++) 
+            for (int i = 0; i < elem2d.Properties.Count; i++)
             {
               GsaProp2d prop = elem2d.Properties[i];
               alignmentOffset = new GsaOffset();
-              if (alignment.Contains("Top"))
+              if (alignmentType == AlignmentType.Top_Left || alignmentType == AlignmentType.Top_Centre || alignmentType == AlignmentType.Top_Right)
                 alignmentOffset.Z = prop.Thickness * -1 / 2;
-              if (alignment.Contains("Bottom"))
+              if (alignmentType == AlignmentType.Bottom_Left || alignmentType == AlignmentType.Bottom_Centre || alignmentType == AlignmentType.Bottom_Right)
                 alignmentOffset.Z = prop.Thickness / 2;
               alignmentOffset.Z += additionalOffset.Z;
               offsets.Add(alignmentOffset.Duplicate());
@@ -439,17 +440,6 @@ namespace GsaGH.Components
       }
     }
     #region Custom UI
-    private static List<string> _alignmentTypes = new List<string>() {
-      "Centroid" ,
-      "Top-Left" ,
-      "Top-Centre" ,
-      "Top-Right" ,
-      "Mid-Left" ,
-      "Mid-Right" ,
-      "Bottom-Left" ,
-      "Bottom-Centre" ,
-      "Bottom-Right"
-    };
 
     public override void InitialiseDropdowns()
     {
@@ -458,8 +448,9 @@ namespace GsaGH.Components
       this.DropDownItems = new List<List<string>>();
       this.SelectedItems = new List<string>();
 
-      this.DropDownItems.Add(new List<string>(_alignmentTypes));
-      this.SelectedItems.Add(_alignmentTypes[0]);
+      List<string> alignmentTypes = Enum.GetNames(typeof(AlignmentType)).ToList();
+      this.DropDownItems.Add(alignmentTypes);
+      this.SelectedItems.Add(alignmentTypes[0]);
 
       this.IsInitialised = true;
     }
