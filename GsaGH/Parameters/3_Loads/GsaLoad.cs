@@ -11,12 +11,14 @@ namespace GsaGH.Parameters
   /// </summary>
   internal enum ReferenceType
   {
-    None = 0,
-    Property = 1,
-    Element = 2,
-    Member = 3
+    None,
+    Section,
+    Prop2d,
+    Prop3d,
+    Element,
+    Member
   }
-  
+
   /// <summary>
   /// Individual load type classes holding GsaAPI load type along with any required geometry objects
   /// </summary>
@@ -26,7 +28,6 @@ namespace GsaGH.Parameters
     public GravityLoad GravityLoad { get; set; } = new GravityLoad();
     internal Guid RefObjectGuid;
     internal ReferenceType ReferenceType = ReferenceType.None;
-    internal int TypeD; // set to 1 for 1D, 2 for 2D or 3 for 3D. Used in combination with ReferenceType.
     public GsaGravityLoad()
     {
       this.GravityLoad.Factor = new Vector3() { X = 0, Y = 0, Z = -1 };
@@ -43,8 +44,11 @@ namespace GsaGH.Parameters
       dup.GravityLoad.Nodes = this.GravityLoad.Nodes.ToString();
       dup.GravityLoad.Name = this.GravityLoad.Name.ToString();
       dup.GravityLoad.Factor = this.GravityLoad.Factor;
-      if (this.RefObjectGuid != null)
-        this.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
+      if (this.ReferenceType != ReferenceType.None)
+      {
+        dup.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
+        dup.ReferenceType = this.ReferenceType;
+      }
       return dup;
     }
   }
@@ -81,7 +85,7 @@ namespace GsaGH.Parameters
       dup.NodeLoad.Value = this.NodeLoad.Value;
       dup.Type = Type;
       if (this.RefPoint != null)
-        this.RefPoint = new Point3d(this.RefPoint);
+        dup.RefPoint = new Point3d(this.RefPoint);
       return dup;
     }
   }
@@ -138,8 +142,11 @@ namespace GsaGH.Parameters
         dup.BeamLoad.SetValue(0, this.BeamLoad.Value(0));
         dup.BeamLoad.SetValue(1, this.BeamLoad.Value(1));
       }
-      if (this.RefObjectGuid != null)
-        this.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
+      if (this.ReferenceType != ReferenceType.None)
+      {
+        dup.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
+        dup.ReferenceType = this.ReferenceType;
+      }
       return dup;
     }
   }
@@ -187,8 +194,11 @@ namespace GsaGH.Parameters
                                                         //note Vector2 currently only get in GsaAPI
                                                         // duplicate Position.X and Position.Y when fixed
       }
-      if (this.RefObjectGuid != null)
-        this.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
+      if (this.ReferenceType != ReferenceType.None)
+      {
+        dup.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
+        dup.ReferenceType = this.ReferenceType;
+      }
       return dup;
     }
   }
@@ -214,8 +224,6 @@ namespace GsaGH.Parameters
       dup.GridPointLoad.Y = this.GridPointLoad.Y;
       dup.GridPointLoad.Value = this.GridPointLoad.Value;
       dup.GridPlaneSurface = this.GridPlaneSurface.Duplicate();
-      if (this.RefPoint != null)
-        this.RefPoint = new Point3d(this.RefPoint);
       return dup;
     }
   }

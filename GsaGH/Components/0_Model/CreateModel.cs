@@ -43,7 +43,7 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Properties", "Pro", "GSA Sections (PB), Prop2Ds (PA) and Prop3Ds (PV) to add/set in the model" + Environment.NewLine +
           "Properties already added to Elements or Members" + Environment.NewLine + "will automatically be added with Geometry input", GH_ParamAccess.list);
       pManager.AddGenericParameter("GSA Geometry in [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Geo", "GSA Nodes, Element1Ds, Element2Ds, Member1Ds, Member2Ds and Member3Ds to add/set in model", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaLoadParameter(), "Load", "Ld", "Loads to add to the model" + Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Load", "Ld", "Loads to add to the model" + Environment.NewLine + "You can also use this input to add Edited GridPlaneSurfaces", GH_ParamAccess.list);
       pManager.AddGenericParameter("Analysis Tasks & Combinations", "ΣT", "GSA Analysis Tasks and Combination Cases to add to the model", GH_ParamAccess.list);
       for (int i = 0; i < pManager.ParamCount; i++)
         pManager[i].Optional = true;

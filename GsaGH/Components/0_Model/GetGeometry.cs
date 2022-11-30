@@ -251,10 +251,10 @@ namespace GsaGH.Components
       this.ClearRuntimeMessages();
       return results;
     }
-
+    
+    ConcurrentDictionary<int, Member> mDict = null;
     protected override void SolveInstance(IGH_DataAccess data)
     {
-      ConcurrentDictionary<int, Member> mDict = null;
       if (InPreSolve)
       {
         // First pass; collect data and construct tasks

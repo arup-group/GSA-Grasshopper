@@ -25,6 +25,9 @@ namespace GsaGH.Parameters
     private GridPlane _gridPln = new GridPlane();
 
     private Plane _pln = Plane.WorldXY;  // plane at display point (Axis + elevation) 
+
+    internal Guid RefObjectGuid;
+    internal ReferenceType ReferenceType = ReferenceType.None;
     #endregion
 
     #region properties
@@ -107,8 +110,6 @@ namespace GsaGH.Parameters
       }
     }
 
-    internal Guid RefObjectGuid;
-    internal ReferenceType ReferenceType = ReferenceType.None;
     #endregion
 
     #region constructors
@@ -169,6 +170,11 @@ namespace GsaGH.Parameters
       };
       dup._gridSrfGuid = new Guid(_gridSrfGuid.ToString());
       dup._gridPlnGuid = new Guid(_gridPlnGuid.ToString());
+      if (this.ReferenceType != ReferenceType.None)
+      {
+        dup.RefObjectGuid = new Guid(this.RefObjectGuid.ToString());
+        dup.ReferenceType = this.ReferenceType;
+      }
       return dup;
     }
     #endregion

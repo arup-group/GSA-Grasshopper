@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits;
@@ -9,7 +11,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export
 {
-    internal class AssembleModel
+  internal class AssembleModel
   {
     /// <summary>
     /// 
@@ -54,7 +56,7 @@ namespace GsaGH.Helpers.Export
       // Get existing axes
       IReadOnlyDictionary<int, Axis> gsaAxes = gsa.Axes();
       Dictionary<int, Axis> apiaxes = gsaAxes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-      
+
       // Set / add nodes to dictionary
       Nodes.ConvertNodes(nodes, ref apiNodes, ref apiaxes, modelUnit);
       #endregion
@@ -89,6 +91,18 @@ namespace GsaGH.Helpers.Export
       Members.ConvertMember3D(mem3ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp3ds, ref apiMaterials);
       #endregion
 
+      #region set geometry in model
+      // Geometry
+      gsa.SetNodes(apiNodes.Dictionary);
+      gsa.SetElements(apiElements.Dictionary);
+      gsa.SetMembers(apiMembers.Dictionary);
+
+      if (createElementsFromMembers && apiMembers.Count > 0)
+        gsa.CreateElementsFromMembers();
+      if (toleranceCoincidentNodes > 0)
+        gsa.CollapseCoincidentNodes(toleranceCoincidentNodes);
+      #endregion
+
       #region Loads
       // ### Loads ###
       // We let the existing loads (if any) survive and just add new loads
@@ -113,28 +127,20 @@ namespace GsaGH.Helpers.Export
       Dictionary<Guid, int> gp_guid = new Dictionary<Guid, int>();
       Dictionary<Guid, int> gs_guid = new Dictionary<Guid, int>();
 
+      // member-element relationship, not used if not needed
+      ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship = null;
+
       // Set / add Grid plane surfaces - do this first to set any GridPlane and GridSurfaces with IDs.
-      Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, modelUnit);
+      Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, modelUnit, ref memberElementRelationship, gsa, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
 
       // Set / add loads to lists
       Loads.ConvertLoad(loads, ref gravityLoads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle,
           ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads,
-          ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, modelUnit);
+          ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, modelUnit, 
+          ref memberElementRelationship, gsa, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
       #endregion
 
-
-      #region set stuff in model
-      // Geometry
-      gsa.SetNodes(apiNodes.Dictionary);
-      gsa.SetElements(apiElements.Dictionary);
-      gsa.SetMembers(apiMembers.Dictionary);
-
-      if (createElementsFromMembers && apiMembers.Count > 0)
-        gsa.CreateElementsFromMembers();
-      if (toleranceCoincidentNodes > 0)
-        gsa.CollapseCoincidentNodes(toleranceCoincidentNodes);
-
-
+      #region set rest in model
       // Loads
       gsa.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(gravityLoads));
       gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoads_displ));
@@ -148,7 +154,7 @@ namespace GsaGH.Helpers.Export
       gsa.SetAxes(new ReadOnlyDictionary<int, Axis>(apiaxes));
       gsa.SetGridPlanes(new ReadOnlyDictionary<int, GridPlane>(apiGridPlanes));
       gsa.SetGridSurfaces(new ReadOnlyDictionary<int, GridSurface>(apiGridSurfaces));
-      
+
       //properties
       gsa.SetSections(apiSections.Dictionary);
       gsa.SetSectionModifiers(apiSectionModifiers.Dictionary);

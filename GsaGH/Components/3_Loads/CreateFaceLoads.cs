@@ -99,7 +99,7 @@ namespace GsaGH.Components
         {
           GsaProp2dGoo goo = (GsaProp2dGoo)gh_typ.Value;
           faceLoad.RefObjectGuid = goo.Value.Guid;
-          faceLoad.ReferenceType = ReferenceType.Property;
+          faceLoad.ReferenceType = ReferenceType.Prop2d;
         }
         else if (GH_Convert.ToString(gh_typ.Value, out string elemList, GH_Conversion.Both))
           faceLoad.FaceLoad.Elements = elemList;
@@ -307,6 +307,23 @@ namespace GsaGH.Components
     public override void UpdateUIFromSelectedItems()
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
+      this.DuringLoad = true;
+      switch (SelectedItems[0])
+      {
+        case "Uniform":
+          Mode1Clicked();
+          break;
+        case "Variable":
+          Mode2Clicked();
+          break;
+        case "Point":
+          Mode3Clicked();
+          break;
+        case "Edge":
+          Mode4Clicked();
+          break;
+      }
+      this.DuringLoad = false;
       this.ForcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
@@ -420,9 +437,10 @@ namespace GsaGH.Components
     #endregion
 
     #region menu override
+    bool DuringLoad = false;
     private void Mode1Clicked()
     {
-      if (_mode == FoldMode.Uniform)
+      if (!this.DuringLoad && _mode == FoldMode.Uniform)
         return;
 
       RecordUndoEvent("Uniform Parameters");
@@ -447,7 +465,7 @@ namespace GsaGH.Components
     }
     private void Mode2Clicked()
     {
-      if (_mode == FoldMode.Variable)
+      if (!this.DuringLoad && _mode == FoldMode.Variable)
         return;
 
       RecordUndoEvent("Variable Parameters");
@@ -479,7 +497,7 @@ namespace GsaGH.Components
 
     private void Mode3Clicked()
     {
-      if (_mode == FoldMode.Point)
+      if (!this.DuringLoad && _mode == FoldMode.Point)
         return;
 
       RecordUndoEvent("Point Parameters");
@@ -508,7 +526,7 @@ namespace GsaGH.Components
     }
     private void Mode4Clicked()
     {
-      if (_mode == FoldMode.Edge)
+      if (!this.DuringLoad && _mode == FoldMode.Edge)
         return;
 
       RecordUndoEvent("Edge Parameters");

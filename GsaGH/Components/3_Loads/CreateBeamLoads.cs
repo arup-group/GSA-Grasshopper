@@ -103,7 +103,7 @@ namespace GsaGH.Components
         {
           GsaSectionGoo goo = (GsaSectionGoo)gh_typ.Value;
           beamLoad.RefObjectGuid = goo.Value.Guid;
-          beamLoad.ReferenceType = ReferenceType.Property;
+          beamLoad.ReferenceType = ReferenceType.Section;
         }
         else if (GH_Convert.ToString(gh_typ.Value, out string beamList, GH_Conversion.Both))
           beamLoad.BeamLoad.Elements = beamList;
@@ -333,6 +333,26 @@ namespace GsaGH.Components
     public override void UpdateUIFromSelectedItems()
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
+      this.DuringLoad = true;
+      switch (SelectedItems[0])
+      {
+        case "Point":
+          Mode1Clicked();
+          break;
+        case "Uniform":
+          Mode2Clicked();
+          break;
+        case "Linear":
+          Mode3Clicked();
+          break;
+        case "Patch":
+          Mode4Clicked();
+          break;
+        case "Trilinear":
+          Mode5Clicked();
+          break;
+      }
+      this.DuringLoad = false;
       this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
@@ -436,9 +456,10 @@ namespace GsaGH.Components
     #endregion
 
     #region menu override
+    bool DuringLoad = false;
     private void Mode1Clicked()
     {
-      if (_mode == FoldMode.Point)
+      if (!this.DuringLoad && _mode == FoldMode.Point)
         return;
 
       RecordUndoEvent("Point Parameters");
@@ -451,7 +472,7 @@ namespace GsaGH.Components
     }
     private void Mode2Clicked()
     {
-      if (_mode == FoldMode.Uniform)
+      if (!this.DuringLoad && _mode == FoldMode.Uniform)
         return;
 
       RecordUndoEvent("Uniform Parameters");
@@ -463,7 +484,7 @@ namespace GsaGH.Components
     }
     private void Mode3Clicked()
     {
-      if (_mode == FoldMode.Linear)
+      if (!this.DuringLoad && _mode == FoldMode.Linear)
         return;
 
       RecordUndoEvent("Linear Parameters");
@@ -478,7 +499,7 @@ namespace GsaGH.Components
     }
     private void Mode4Clicked()
     {
-      if (_mode == FoldMode.Patch)
+      if (!this.DuringLoad && _mode == FoldMode.Patch)
         return;
 
       RecordUndoEvent("Patch Parameters");
@@ -498,7 +519,7 @@ namespace GsaGH.Components
     }
     private void Mode5Clicked()
     {
-      if (_mode == FoldMode.Trilinear)
+      if (!this.DuringLoad && _mode == FoldMode.Trilinear)
         return;
 
       RecordUndoEvent("Trilinear Parameters");

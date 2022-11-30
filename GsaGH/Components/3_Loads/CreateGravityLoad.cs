@@ -67,56 +67,48 @@ namespace GsaGH.Components
           GsaElement1dGoo goo = (GsaElement1dGoo)gh_typ.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
           gravityLoad.ReferenceType = ReferenceType.Element;
-          gravityLoad.TypeD = 1;
         }
         if (gh_typ.Value is GsaElement2dGoo)
         {
           GsaElement2dGoo goo = (GsaElement2dGoo)gh_typ.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
           gravityLoad.ReferenceType = ReferenceType.Element;
-          gravityLoad.TypeD = 2;
         }
         else if (gh_typ.Value is GsaMember1dGoo)
         {
           GsaMember1dGoo goo = (GsaMember1dGoo)gh_typ.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
           gravityLoad.ReferenceType = ReferenceType.Member;
-          gravityLoad.TypeD = 1;
         }
         else if (gh_typ.Value is GsaMember2dGoo)
         {
           GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
           gravityLoad.ReferenceType = ReferenceType.Member;
-          gravityLoad.TypeD = 2;
         }
         else if (gh_typ.Value is GsaMember3dGoo)
         {
           GsaMember3dGoo goo = (GsaMember3dGoo)gh_typ.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
           gravityLoad.ReferenceType = ReferenceType.Member;
-          gravityLoad.TypeD = 3;
         }
         else if (gh_typ.Value is GsaSectionGoo)
         {
           GsaSectionGoo goo = (GsaSectionGoo)gh_typ.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
-          gravityLoad.ReferenceType = ReferenceType.Property;
-          gravityLoad.TypeD = 1;
+          gravityLoad.ReferenceType = ReferenceType.Section;
         }
         else if (gh_typ.Value is GsaProp2dGoo)
         {
           GsaProp2dGoo goo = (GsaProp2dGoo)gh_typ.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
-          gravityLoad.ReferenceType = ReferenceType.Property;
-          gravityLoad.TypeD = 2;
+          gravityLoad.ReferenceType = ReferenceType.Prop2d;
         }
         else if (gh_typ.Value is GsaProp3dGoo)
         {
           GsaProp3dGoo goo = (GsaProp3dGoo)gh_typ.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
-          gravityLoad.ReferenceType = ReferenceType.Property;
-          gravityLoad.TypeD = 3;
+          gravityLoad.ReferenceType = ReferenceType.Prop3d;
         }
         else if (GH_Convert.ToString(gh_typ.Value, out string elemList, GH_Conversion.Both))
           gravityLoad.GravityLoad.Elements = elemList;

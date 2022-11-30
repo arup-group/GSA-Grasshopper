@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits;
@@ -79,7 +81,8 @@ namespace GsaGH.Helpers.Export
         ref Dictionary<int, Axis> existingAxes,
         ref Dictionary<int, GridPlane> existingGridPlanes,
         ref Dictionary<int, GridSurface> existingGridSurfaces,
-        ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit)
+        ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit,
+        ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model, GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers)
     {
       if (loads != null)
       {
@@ -99,7 +102,7 @@ namespace GsaGH.Helpers.Export
             ConvertLoad(load, ref gravityLoads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle,
                 ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads,
                     ref existingAxes, ref axisidcounter, ref existingGridPlanes, ref gridplaneidcounter,
-                        ref existingGridSurfaces, ref gridsurfaceidcounter, ref gp_guid, ref gs_guid, unit);
+                        ref existingGridSurfaces, ref gridsurfaceidcounter, ref gp_guid, ref gs_guid, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
           }
         }
       }
@@ -134,12 +137,19 @@ namespace GsaGH.Helpers.Export
     ref Dictionary<int, Axis> existingAxes, ref int axisidcounter,
     ref Dictionary<int, GridPlane> existingGridPlanes, ref int gridplaneidcounter,
     ref Dictionary<int, GridSurface> existingGridSurfaces, ref int gridsurfaceidcounter,
-    ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit)
+    ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit,
+    ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model, GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers)
     {
 
       switch (load.LoadType)
       {
         case GsaLoad.LoadTypes.Gravity:
+          if (load.GravityLoad.ReferenceType != ReferenceType.None)
+          {
+            if (memberElementRelationship == null)
+              memberElementRelationship = ElementListFromReference.GetMemberElementRelationship(model);
+            load.GravityLoad.GravityLoad.Elements += ElementListFromReference.GetRefElementIds(load.GravityLoad, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship);
+          }
           gravityLoads.Add(load.GravityLoad.GravityLoad);
           break;
 
@@ -153,10 +163,22 @@ namespace GsaGH.Helpers.Export
           break;
 
         case GsaLoad.LoadTypes.Beam:
+          if (load.BeamLoad.ReferenceType != ReferenceType.None)
+          {
+            if (memberElementRelationship == null)
+              memberElementRelationship = ElementListFromReference.GetMemberElementRelationship(model);
+            load.BeamLoad.BeamLoad.Elements += ElementListFromReference.GetRefElementIds(load.BeamLoad, apiSections, apiElements, apiMembers, memberElementRelationship);
+          }
           beamLoads.Add(load.BeamLoad.BeamLoad);
           break;
 
         case GsaLoad.LoadTypes.Face:
+          if (load.FaceLoad.ReferenceType != ReferenceType.None)
+          {
+            if (memberElementRelationship == null)
+              memberElementRelationship = ElementListFromReference.GetMemberElementRelationship(model);
+            load.FaceLoad.FaceLoad.Elements += ElementListFromReference.GetRefElementIds(load.FaceLoad, apiProp2ds, apiElements, apiMembers, memberElementRelationship);
+          }
           faceLoads.Add(load.FaceLoad.FaceLoad);
           break;
 
@@ -189,7 +211,7 @@ namespace GsaGH.Helpers.Export
 
             // ### GRID SURFACE ###
             // set the surface number in the load, add/set the surface in the model
-            gridptref.GridPointLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes, unit);
+            gridptref.GridPointLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
           }
 
           // add the load to our list of loads to be set later
@@ -225,7 +247,7 @@ namespace GsaGH.Helpers.Export
 
             // ### GRID SURFACE ###
             // set the surface number in the load, add/set the surface in the model
-            gridlnref.GridLineLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes, unit);
+            gridlnref.GridLineLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
           }
           // add the load to our list of loads to be set later
           gridLineLoads.Add(gridlnref.GridLineLoad);
@@ -260,7 +282,7 @@ namespace GsaGH.Helpers.Export
 
             // ### GRID SURFACE ###
             // set the surface number in the load, add/set the surface in the model
-            gridarref.GridAreaLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes, unit);
+            gridarref.GridAreaLoad.GridSurface = SetGridSurface(ref gridplnsrf, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
           }
           // add the load to our list of loads to be set later
           gridAreaLoads.Add(gridarref.GridAreaLoad);
@@ -400,7 +422,7 @@ namespace GsaGH.Helpers.Export
     /// <returns></returns>
     internal static int SetGridSurface(ref GsaGridPlaneSurface gridplanesurface,
         ref Dictionary<int, GridSurface> existingGridSurfaces, ref int gridsurfaceidcounter, ref Dictionary<Guid, int> gs_guid,
-        Dictionary<int, GridPlane> existingGridPlanes, Dictionary<int, Axis> existingAxes, LengthUnit modelUnit)
+        Dictionary<int, GridPlane> existingGridPlanes, Dictionary<int, Axis> existingAxes, LengthUnit modelUnit, ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model, GsaGuidDictionary < Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers)
     {
       if (existingGridSurfaces.Count > 0)
         gridsurfaceidcounter = Math.Max(existingGridSurfaces.Keys.Max() + 1, gridsurfaceidcounter);
@@ -409,6 +431,14 @@ namespace GsaGH.Helpers.Export
 
       if (gridplanesurface.GridSurface.Name == "")
         gridplanesurface.GridSurface.Name = "Grid surface " + gridsurfaceidcounter;
+
+      // add referenced loads
+      if (model != null && gridplanesurface.ReferenceType != ReferenceType.None)
+      {
+        if (memberElementRelationship == null)
+          memberElementRelationship = ElementListFromReference.GetMemberElementRelationship(model);
+        gridplanesurface.GridSurface.Elements += ElementListFromReference.GetRefElementIds(gridplanesurface, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, memberElementRelationship);
+      }
 
       // see if grid surface ID has been set by user
       if (gridplanesurface.GridSurfaceId > 0)
@@ -505,7 +535,7 @@ namespace GsaGH.Helpers.Export
     internal static void ConvertGridPlaneSurface(List<GsaGridPlaneSurface> gridPlaneSurfaces,
         ref Dictionary<int, Axis> existingAxes, ref Dictionary<int, GridPlane> existingGridPlanes,
         ref Dictionary<int, GridSurface> existingGridSurfaces,
-        ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit)
+        ref Dictionary<Guid, int> gp_guid, ref Dictionary<Guid, int> gs_guid, LengthUnit unit, ref ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship, Model model, GsaGuidDictionary<Section> apiSections, GsaGuidDictionary<Prop2D> apiProp2ds, GsaGuidDictionary<Prop3D> apiProp3ds, GsaGuidIntListDictionary<Element> apiElements, GsaGuidDictionary<Member> apiMembers)
     {
       if (gridPlaneSurfaces != null)
       {
@@ -516,9 +546,6 @@ namespace GsaGH.Helpers.Export
 
         // get the highest gridplaneID+1 and gridsurfaceID+1
         GetGridPlaneSurfaceCounters(gridPlaneSurfaces, ref gridplaneidcounter, ref gridsurfaceidcounter);
-
-        //gridplaneidcounter = gridPlaneSurfaces.OrderByDescending(g => g.GridPlaneID).First().GridPlaneID + 1;
-        //gridsurfaceidcounter = gridPlaneSurfaces.OrderByDescending(g => g.GridSurfaceID).First().GridSurfaceID + 1;
 
         for (int i = 0; i < gridPlaneSurfaces.Count; i++)
         {
@@ -535,7 +562,7 @@ namespace GsaGH.Helpers.Export
               gps.GridSurface.GridPlane = SetGridPlane(ref gps, ref existingGridPlanes, ref gridplaneidcounter, ref gp_guid, existingAxes, unit);
             }
             // add / set Grid Surface
-            SetGridSurface(ref gps, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes, unit);
+            SetGridSurface(ref gps, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gs_guid, existingGridPlanes, existingAxes, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
           }
         }
       }

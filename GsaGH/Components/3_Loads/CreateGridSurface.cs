@@ -36,10 +36,10 @@ namespace GsaGH.Components
     {
       pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model", GH_ParamAccess.item, 0);
-      pManager.AddTextParameter("Element list", "El", "List of Elements for which load should be expanded to (by default 'all')." + Environment.NewLine +
+      pManager.AddGenericParameter("Element list", "El", "Properties, Elements or Members to which load should be expanded to (by default 'All'); either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string." + Environment.NewLine +
          "Element list should take the form:" + Environment.NewLine +
          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
-         "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+         "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
       pManager.AddGenericParameter("Tolerance in model units", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
       pManager.AddAngleParameter("Span Direction", "Di", "Span Direction between -180 and 180 degrees", GH_ParamAccess.item, 0);
@@ -138,11 +138,23 @@ namespace GsaGH.Components
       if (DA.GetData(2, ref gh_typ))
       {
         gps.GridSurface.Elements = "";
+        if (gh_typ.Value is GsaElement1dGoo)
+        {
+          GsaElement1dGoo goo = (GsaElement1dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Element;
+        }
         if (gh_typ.Value is GsaElement2dGoo)
         {
           GsaElement2dGoo goo = (GsaElement2dGoo)gh_typ.Value;
           gps.RefObjectGuid = goo.Value.Guid;
           gps.ReferenceType = ReferenceType.Element;
+        }
+        else if (gh_typ.Value is GsaMember1dGoo)
+        {
+          GsaMember1dGoo goo = (GsaMember1dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Member;
         }
         else if (gh_typ.Value is GsaMember2dGoo)
         {
@@ -150,15 +162,35 @@ namespace GsaGH.Components
           gps.RefObjectGuid = goo.Value.Guid;
           gps.ReferenceType = ReferenceType.Member;
         }
+        else if (gh_typ.Value is GsaMember3dGoo)
+        {
+          GsaMember3dGoo goo = (GsaMember3dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Member;
+        }
+        else if (gh_typ.Value is GsaSectionGoo)
+        {
+          GsaSectionGoo goo = (GsaSectionGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Section;
+        }
         else if (gh_typ.Value is GsaProp2dGoo)
         {
           GsaProp2dGoo goo = (GsaProp2dGoo)gh_typ.Value;
           gps.RefObjectGuid = goo.Value.Guid;
-          gps.ReferenceType = ReferenceType.Property;
+          gps.ReferenceType = ReferenceType.Prop2d;
+        }
+        else if (gh_typ.Value is GsaProp3dGoo)
+        {
+          GsaProp3dGoo goo = (GsaProp3dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Prop3d;
         }
         else if (GH_Convert.ToString(gh_typ.Value, out string elemList, GH_Conversion.Both))
           gps.GridSurface.Elements = elemList;
       }
+      else
+        gps.GridSurface.Elements = "All";
 
       // 3 Name
       GH_String ghtxt = new GH_String();
