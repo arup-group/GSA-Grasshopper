@@ -27,6 +27,7 @@ namespace IntegrationTests.Components
     {
       GH_Document doc = Document();
 
+      IGH_Param paramLine = Helper.FindParameter(doc, "line");
       IGH_Param paramX1 = Helper.FindParameter(doc, "X1");
       IGH_Param paramY1 = Helper.FindParameter(doc, "Y1");
       IGH_Param paramZ1 = Helper.FindParameter(doc, "Z1");
