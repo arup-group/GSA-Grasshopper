@@ -103,7 +103,8 @@ namespace GsaGH.Components
         ConcurrentDictionary<int, Prop3D> p3Dict,
         ConcurrentDictionary<int, AnalysisMaterial> amDict,
         ConcurrentDictionary<int, SectionModifier> modDict,
-        ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict
+        ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict,
+        ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict
         )
     {
       SolveResults results = new SolveResults();
@@ -124,7 +125,7 @@ namespace GsaGH.Components
           {
             // create elements
             Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-                = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, modDict, localAxesDict, LengthUnit);
+                = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, modDict, elementLocalAxesDict, LengthUnit);
 
             results.Elem1ds = elementTuple.Item1;
             results.Elem2ds = elementTuple.Item2;
@@ -135,7 +136,7 @@ namespace GsaGH.Components
           {
             // create members
             Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-                = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, LengthUnit, sDict, pDict, p3Dict, localAxesDict, this);
+                = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, LengthUnit, sDict, pDict, p3Dict, memberLocalAxesDict, this);
 
             results.Mem1ds = memberTuple.Item1;
             results.Mem2ds = memberTuple.Item2;
@@ -297,14 +298,15 @@ namespace GsaGH.Components
           ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
 
           // populate local axes dictionary
-          ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
-          foreach(int id in eDict.Keys)
-            localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+          ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          foreach (int id in eDict.Keys)
+            elementLocalAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
           foreach (int id in mDict.Keys)
-            localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+            memberLocalAxesDict.TryAdd(id, model.MemberDirectionCosine(id));
 
           tsk = Task.Run(() => Compute(nDict, axDict, out_nDict,
-              eDict, mDict, sDict, pDict, p3Dict, amDict, modDict, localAxesDict), CancelToken);
+              eDict, mDict, sDict, pDict, p3Dict, amDict, modDict, elementLocalAxesDict, memberLocalAxesDict), CancelToken);
         }
         // Add a null task even if data collection fails. This keeps the
         // list size in sync with the iterations
@@ -356,14 +358,15 @@ namespace GsaGH.Components
           ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
 
           // populate local axes dictionary
-          ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
           foreach (int id in eDict.Keys)
-            localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+            elementLocalAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
           foreach (int id in mDict.Keys)
-            localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+            memberLocalAxesDict.TryAdd(id, model.MemberDirectionCosine(id));
 
           results = Compute(nDict, axDict, out_nDict,
-          eDict, mDict, sDict, pDict, p3Dict, amDict, modDict, localAxesDict);
+          eDict, mDict, sDict, pDict, p3Dict, amDict, modDict, elementLocalAxesDict, memberLocalAxesDict);
         }
         else return;
       }
