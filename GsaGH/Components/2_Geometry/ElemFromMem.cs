@@ -188,21 +188,21 @@ namespace GsaGH.Components
       ConcurrentDictionary<int, Element> elementDict = new ConcurrentDictionary<int, Element>(gsa.Elements());
 
       // populate local axes dictionary
-      ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
       foreach (int id in elementDict.Keys)
-        localAxesDict.TryAdd(id, gsa.ElementDirectionCosine(id));
+        elementLocalAxesDict.TryAdd(id, gsa.ElementDirectionCosine(id));
 
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
           = Util.Gsa.FromGSA.GetElements(
-              new ConcurrentDictionary<int, Element>(gsa.Elements()),
+              elementDict,
               new ConcurrentDictionary<int, Node>(gsa.Nodes()),
               new ConcurrentDictionary<int, Section>(gsa.Sections()),
               new ConcurrentDictionary<int, Prop2D>(gsa.Prop2Ds()),
               new ConcurrentDictionary<int, Prop3D>(gsa.Prop3Ds()),
               new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials()),
               new ConcurrentDictionary<int, SectionModifier>(gsa.SectionModifiers()),
-              localAxesDict,
+              elementLocalAxesDict,
               LengthUnit);
 
       // post process materials (as they currently have a bug when running parallel!)
