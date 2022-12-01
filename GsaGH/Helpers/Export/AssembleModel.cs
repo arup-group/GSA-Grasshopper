@@ -3,10 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Parameters;
-using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export
@@ -91,11 +89,22 @@ namespace GsaGH.Helpers.Export
       Members.ConvertMember3D(mem3ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp3ds, ref apiMaterials);
       #endregion
 
+      #region Node loads
+      List<NodeLoad> nodeLoads_node = new List<NodeLoad>();
+      List<NodeLoad> nodeLoads_displ = new List<NodeLoad>();
+      List<NodeLoad> nodeLoads_settle = new List<NodeLoad>();
+      Loads.ConvertNodeLoad(loads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle, ref apiNodes, modelUnit);
+      #endregion
+
       #region set geometry in model
       // Geometry
       gsa.SetNodes(apiNodes.Dictionary);
       gsa.SetElements(apiElements.Dictionary);
       gsa.SetMembers(apiMembers.Dictionary);
+      // node loads
+      gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoads_displ));
+      gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoads_node));
+      gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(nodeLoads_settle));
 
       if (createElementsFromMembers && apiMembers.Count > 0)
         gsa.CreateElementsFromMembers();
@@ -108,9 +117,6 @@ namespace GsaGH.Helpers.Export
       // We let the existing loads (if any) survive and just add new loads
       // Get existing loads
       List<GravityLoad> gravityLoads = new List<GravityLoad>();
-      List<NodeLoad> nodeLoads_node = new List<NodeLoad>();
-      List<NodeLoad> nodeLoads_displ = new List<NodeLoad>();
-      List<NodeLoad> nodeLoads_settle = new List<NodeLoad>();
       List<BeamLoad> beamLoads = new List<BeamLoad>();
       List<FaceLoad> faceLoads = new List<FaceLoad>();
       List<GridPointLoad> gridPointLoads = new List<GridPointLoad>();
@@ -134,18 +140,12 @@ namespace GsaGH.Helpers.Export
       Loads.ConvertGridPlaneSurface(gridPlaneSurfaces, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, modelUnit, ref memberElementRelationship, gsa, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
 
       // Set / add loads to lists
-      Loads.ConvertLoad(loads, ref gravityLoads, ref nodeLoads_node, ref nodeLoads_displ, ref nodeLoads_settle,
-          ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads,
-          ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, modelUnit, 
-          ref memberElementRelationship, gsa, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
+      Loads.ConvertLoad(loads, ref gravityLoads, ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads, ref apiaxes, ref apiGridPlanes, ref apiGridSurfaces, ref gp_guid, ref gs_guid, modelUnit, ref memberElementRelationship, gsa, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers);
       #endregion
 
       #region set rest in model
       // Loads
       gsa.AddGravityLoads(new ReadOnlyCollection<GravityLoad>(gravityLoads));
-      gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoads_displ));
-      gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoads_node));
-      gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(nodeLoads_settle));
       gsa.AddBeamLoads(new ReadOnlyCollection<BeamLoad>(beamLoads));
       gsa.AddFaceLoads(new ReadOnlyCollection<FaceLoad>(faceLoads));
       gsa.AddGridPointLoads(new ReadOnlyCollection<GridPointLoad>(gridPointLoads));
