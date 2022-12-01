@@ -36,15 +36,24 @@ namespace IntegrationTests.Components
     [InlineData("GravityLoadFromElem2dTest", 0)]
     [InlineData("GravityLoadFromMember1dTest", 0)]
     [InlineData("GravityLoadFromMember2dTest", 0)]
-    [InlineData("GridPlnSrfFromSection", "PB7")]
-    [InlineData("GridPlnSrfFromProp2d", "PA19")]
-    [InlineData("GridPlnSrfFromElem2d", 0)]
-    [InlineData("GridPlnSrfFromMem1d", 0)]
-    [InlineData("GridPlnSrfFromMem2d", 0)]
+    [InlineData("GridPlnSrfFromSectionTest", "PB7")]
+    [InlineData("GridPlnSrfFromProp2dTest", "PA19")]
+    [InlineData("GridPlnSrfFromElem2dTest", 0)]
+    [InlineData("GridPlnSrfFromMem1dTest", 0)]
+    [InlineData("GridPlnSrfFromMem2dTest", 0)]
+    [InlineData("NodeLoadFromPtTest", 0)]
     public void Test(string groupIdentifier, object expected)
     {
       IGH_Param param = Helper.FindParameter(Document(), groupIdentifier);
       Helper.TestGHPrimitives(param, expected);
     }
+
+    [Fact]
+    public void NoRuntimeErrorTest()
+    {
+      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Warning);
+    }
   }
 }
+
