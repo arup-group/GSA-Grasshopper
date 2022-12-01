@@ -53,11 +53,12 @@ namespace GsaGH.Util.Gsa.ToGSA
       ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
 
       // populate local axes dictionary
-      ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
       foreach (int id in eDict.Keys)
-        localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+        elementLocalAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
       foreach (int id in mDict.Keys)
-        localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+        memberLocalAxesDict.TryAdd(id, model.MemberDirectionCosine(id));
 
       // get nodes
       ConcurrentBag<GsaNodeGoo> goonodes = Util.Gsa.FromGSA.GetNodes(nDict, LengthUnit.Meter);
@@ -68,7 +69,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
       // get elements
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localAxesDict, LengthUnit.Meter);
+          = Util.Gsa.FromGSA.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, elementLocalAxesDict, LengthUnit.Meter);
       // convert from Goo-type
       List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -86,7 +87,7 @@ namespace GsaGH.Util.Gsa.ToGSA
 
       // get members
       Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-          = Util.Gsa.FromGSA.GetMembers(mDict, nDict, LengthUnit.Meter, sDict, pDict, p3Dict, localAxesDict);
+          = Util.Gsa.FromGSA.GetMembers(mDict, nDict, LengthUnit.Meter, sDict, pDict, p3Dict, memberLocalAxesDict);
       // convert from Goo-type
       List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
