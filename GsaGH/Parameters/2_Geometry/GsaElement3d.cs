@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using Grasshopper;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GsaAPI;
 using Rhino.Geometry;
@@ -421,9 +422,38 @@ namespace GsaGH.Parameters
       return dup;
     }
 
+    public GsaElement3d Transform(Transform xform)
+    {
+      if (this.NgonMesh == null)
+        return null;
+
+      GsaElement3d dup = this.Duplicate(true);
+      dup.IDs = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
+
+      Mesh xMs = dup.NgonMesh.DuplicateMesh();
+      xMs.Transform(xform);
+
+      return dup.UpdateGeometry(xMs);
+    }
+
+    public GsaElement3d Morph(SpaceMorph xmorph)
+    {
+      if (this.NgonMesh == null)
+        return null;
+
+      GsaElement3d dup = this.Duplicate(true);
+      dup.IDs = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
+
+      Mesh xMs = dup.NgonMesh.DuplicateMesh();
+      xmorph.Morph(xMs);
+
+      return dup.UpdateGeometry(xMs);
+    }
+
     internal void CloneApiElements()
     {
       this.CloneApiElements(ApiObjectMember.all);
+      this._guid = Guid.NewGuid();
     }
 
     private void CloneApiElements(ApiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null, List<double> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<Color> col = null)

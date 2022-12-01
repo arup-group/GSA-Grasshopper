@@ -197,6 +197,7 @@ namespace GsaGH.Parameters
     internal void CloneApiObject()
     {
       this.ApiMember = this.GetAPI_MemberClone();
+      this._guid = Guid.NewGuid();
     }
     #endregion
     #endregion

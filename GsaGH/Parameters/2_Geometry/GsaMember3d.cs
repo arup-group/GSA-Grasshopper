@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GsaAPI;
 using Rhino.Geometry;
@@ -195,6 +196,30 @@ namespace GsaGH.Parameters
       GsaMember3d dup = this.Duplicate();
       dup._mesh = GsaGH.Helpers.GH.RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
       dup.UpdatePreview();
+      return dup;
+    }
+
+    public GsaMember3d Transform(Transform xform)
+    {
+      if (this.SolidMesh == null) 
+        return null;
+
+      GsaMember3d dup = this.Duplicate(true);
+      dup.Id = 0;
+      dup.SolidMesh.Transform(xform);
+
+      return dup;
+    }
+
+    public GsaMember3d Morph(SpaceMorph xmorph)
+    {
+      if (this.SolidMesh == null) 
+        return null;
+
+      GsaMember3d dup = this.Duplicate(true);
+      dup.Id = 0;
+      xmorph.Morph(dup.SolidMesh.Duplicate());
+
       return dup;
     }
 

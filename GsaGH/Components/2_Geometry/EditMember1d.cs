@@ -120,7 +120,7 @@ namespace GsaGH.Components
         if (gsaMember1d == null) { 
           AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input is null");
         }
-        mem = gsaMember1d.Duplicate();
+        mem = gsaMember1d.Duplicate(true);
       }
 
       if (mem != null)

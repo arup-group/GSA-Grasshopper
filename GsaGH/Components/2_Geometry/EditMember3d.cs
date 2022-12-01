@@ -82,7 +82,7 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gsaMember3d))
       {
         if (gsaMember3d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member3D input is null"); }
-        mem = gsaMember3d.Duplicate();
+        mem = gsaMember3d.Duplicate(true);
       }
 
       if (mem != null)

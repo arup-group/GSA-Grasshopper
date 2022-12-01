@@ -117,34 +117,13 @@ namespace GsaGH.Parameters
     #region transformation methods
     public override IGH_GeometricGoo Transform(Transform xform)
     {
-      if (Value == null) { return null; }
-      if (Value.Point == null) { return null; }
-
-      GsaNode node = Value.Duplicate(true);
-      node.Id = 0;
-      Point3d pt = new Point3d(node.Point);
-      pt.Transform(xform);
-
-      node.Point = pt;
-      return new GsaNodeGoo(node);
+      return new GsaNodeGoo(Value.Transform(xform));
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
-      if (Value == null) { return null; }
-      if (Value.Point == null) { return null; }
-
-      GsaNode node = Value.Duplicate();
-      node.Id = 0;
-
-      Point3d pt = new Point3d(node.Point);
-      pt = xmorph.MorphPoint(pt);
-
-      node.Point = pt;
-
-      return new GsaNodeGoo(node);
+      return new GsaNodeGoo(Value.Morph(xmorph));
     }
-
     #endregion
 
     #region drawing methods

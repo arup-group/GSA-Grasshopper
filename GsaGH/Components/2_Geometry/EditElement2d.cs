@@ -76,7 +76,7 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gsaElement2d))
       {
         if (gsaElement2d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element2D input is null"); }
-        GsaElement2d elem = gsaElement2d.Duplicate();
+        GsaElement2d elem = gsaElement2d.Duplicate(true);
 
         // #### inputs ####
 

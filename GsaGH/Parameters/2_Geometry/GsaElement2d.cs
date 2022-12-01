@@ -10,6 +10,7 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GsaAPI;
+using Newtonsoft.Json.Linq;
 
 namespace GsaGH.Parameters
 {
@@ -370,6 +371,33 @@ namespace GsaGH.Parameters
       return dup;
     }
 
+    public GsaElement2d Transform(Transform xform)
+    {
+      if (this.Mesh == null)
+        return null;
+
+      GsaElement2d dup = this.Duplicate(true);
+      dup.Ids = new List<int>(new int[dup.Mesh.Faces.Count()]);
+
+      Mesh xMs = dup.Mesh.DuplicateMesh();
+      xMs.Transform(xform);
+
+      return dup.UpdateGeometry(xMs);
+    }
+
+    public GsaElement2d Morph(SpaceMorph xmorph)
+    {
+      if (this.Mesh == null)
+        return null;
+      GsaElement2d dup = this.Duplicate(true);
+      dup.Ids = new List<int>(new int[dup.Mesh.Faces.Count()]);
+
+      Mesh xMs = dup.Mesh.DuplicateMesh();
+      xmorph.Morph(xMs);
+
+      return dup.UpdateGeometry(xMs);
+    }
+
     public override string ToString()
     {
       if (!this._mesh.IsValid)
@@ -474,6 +502,7 @@ namespace GsaGH.Parameters
     internal void CloneApiElements()
     {
       this.CloneApiElements(ApiObjectMember.all);
+      this._guid = Guid.NewGuid();
     }
     #endregion
   }

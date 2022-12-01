@@ -328,6 +328,32 @@ namespace GsaGH.Parameters
       return dup;
     }
 
+    public GsaElement1d Transform(Transform xform)
+    {
+      GsaElement1d elem = this.Duplicate(true);
+      elem.Id = 0;
+      elem.LocalAxes = null;
+
+      LineCurve xLn = elem.Line;
+      xLn.Transform(xform);
+      elem.Line = xLn;
+
+      return elem;
+    }
+
+    public GsaElement1d Morph(SpaceMorph xmorph)
+    {
+      GsaElement1d elem = this.Duplicate(true);
+      elem.Id = 0;
+      elem.LocalAxes = null;
+
+      LineCurve xLn = this.Line;
+      xmorph.Morph(xLn);
+      elem.Line = xLn;
+
+      return elem;
+    }
+
     public override string ToString()
     {
       string idd = this.Id == 0 ? "" : "ID:" + Id + " ";
@@ -416,34 +442,6 @@ namespace GsaGH.Parameters
 
       previewPointStart = this._line.PointAtStart;
       previewPointEnd = this._line.PointAtEnd;
-    }
-    #endregion
-
-    #region transformation methods
-    public GsaElement1d Transform(Transform xform)
-    {
-      GsaElement1d elem = this.Duplicate(true);
-      elem.Id = 0;
-      elem.LocalAxes = null;
-
-      LineCurve xLn = elem.Line;
-      xLn.Transform(xform);
-      elem.Line = xLn;
-
-      return elem;
-    }
-
-    public GsaElement1d Morph(SpaceMorph xmorph)
-    {
-      GsaElement1d elem = this.Duplicate(true);
-      elem.Id = 0;
-      elem.LocalAxes = null;
-
-      LineCurve xLn = this.Line;
-      xmorph.Morph(xLn);
-      elem.Line = xLn;
-
-      return elem;
     }
     #endregion
   }

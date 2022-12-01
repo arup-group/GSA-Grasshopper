@@ -104,28 +104,13 @@ namespace GsaGH.Parameters
     #region transformation methods
     public override IGH_GeometricGoo Transform(Transform xform)
     {
-      if (Value == null) { return null; }
-      if (Value.SolidMesh == null) { return null; }
-
-      GsaMember3d dup = Value.Duplicate(true);
-      dup.Id = 0;
-      dup.SolidMesh.Transform(xform);
-
-      return new GsaMember3dGoo(dup);
+      return new GsaMember3dGoo(Value.Transform(xform));
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
-      if (Value == null) { return null; }
-      if (Value.SolidMesh == null) { return null; }
-
-      GsaMember3d dup = Value.Duplicate(true);
-      dup.Id = 0;
-      xmorph.Morph(dup.SolidMesh.Duplicate());
-
-      return new GsaMember3dGoo(dup);
+      return new GsaMember3dGoo(Value.Morph(xmorph));
     }
-
     #endregion
 
     #region drawing methods

@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using Newtonsoft.Json.Linq;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
@@ -199,6 +200,36 @@ namespace GsaGH.Parameters
       dup._plane = _plane;
       dup.UpdatePreview();
       return dup;
+    }
+
+    public GsaNode Transform(Transform xform)
+    {
+      if (this.Point == null) 
+        return null;
+
+      GsaNode node = this.Duplicate(true);
+      node.Id = 0;
+      Point3d pt = new Point3d(node.Point);
+      pt.Transform(xform);
+
+      node.Point = pt;
+      return node;
+    }
+
+    public GsaNode Morph(SpaceMorph xmorph)
+    {
+      if (this.Point == null) 
+        return null;
+
+      GsaNode node = this.Duplicate();
+      node.Id = 0;
+
+      Point3d pt = new Point3d(node.Point);
+      pt = xmorph.MorphPoint(pt);
+
+      node.Point = pt;
+
+      return node;
     }
 
     public override string ToString()

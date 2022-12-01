@@ -72,7 +72,7 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gsaElement3d))
       {
         if (gsaElement3d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element3D input is null"); }
-        GsaElement3d elem = gsaElement3d.Duplicate();
+        GsaElement3d elem = gsaElement3d.Duplicate(true);
 
         // #### inputs ####
 

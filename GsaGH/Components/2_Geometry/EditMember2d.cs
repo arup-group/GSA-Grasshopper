@@ -109,7 +109,7 @@ namespace GsaGH.Components
         {
           AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input is null");
         }
-        mem = gsaMember2d.Duplicate();
+        mem = gsaMember2d.Duplicate(true);
       }
 
       if (mem != null)

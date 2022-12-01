@@ -85,28 +85,13 @@ namespace GsaGH.Parameters
     #region transformation methods
     public override IGH_GeometricGoo Transform(Transform xform)
     {
-      if (Value == null) { return null; }
-      if (Value.Mesh == null) { return null; }
-
-      GsaElement2d dup = Value.Duplicate(true);
-      dup.Ids = new List<int>(new int[dup.Mesh.Faces.Count()]);
-      Mesh xMs = dup.Mesh.DuplicateMesh();
-      xMs.Transform(xform);
-      return new GsaElement2dGoo(dup.UpdateGeometry(xMs));
+      return new GsaElement2dGoo(Value.Transform(xform));
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
-      if (Value == null) { return null; }
-      if (Value.Mesh == null) { return null; }
-
-      GsaElement2d dup = Value.Duplicate(true);
-      dup.Ids = new List<int>(new int[dup.Mesh.Faces.Count()]);
-      Mesh xMs = dup.Mesh.DuplicateMesh();
-      xmorph.Morph(xMs);
-      return new GsaElement2dGoo(dup.UpdateGeometry(xMs));
+      return new GsaElement2dGoo(Value.Morph(xmorph));
     }
-
     #endregion
 
     #region drawing methods

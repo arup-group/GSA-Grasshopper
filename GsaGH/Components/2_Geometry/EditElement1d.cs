@@ -124,7 +124,7 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gsaElement1d))
       {
         if (gsaElement1d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element1D input is null"); }
-        elem = gsaElement1d.Duplicate();
+        elem = gsaElement1d.Duplicate(true);
       }
 
       if (elem != null)
