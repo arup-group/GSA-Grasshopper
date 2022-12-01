@@ -300,6 +300,8 @@ namespace GsaGH.Components
           ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
           foreach(int id in eDict.Keys)
             localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+          foreach (int id in mDict.Keys)
+            localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
 
           tsk = Task.Run(() => Compute(nDict, axDict, out_nDict,
               eDict, mDict, sDict, pDict, p3Dict, amDict, modDict, localAxesDict), CancelToken);
@@ -356,6 +358,8 @@ namespace GsaGH.Components
           // populate local axes dictionary
           ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
           foreach (int id in eDict.Keys)
+            localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+          foreach (int id in mDict.Keys)
             localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
 
           results = Compute(nDict, axDict, out_nDict,
