@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaGH.Helpers;
 using GsaGH.Parameters;
-using GsaGH.Util;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using OasysGH;
 using OasysGH.Components;
 using OasysUnits;
@@ -139,13 +139,13 @@ namespace GsaGH.Components
           return;
         }
 
-        AlignmentType alignmentType = Helpers.Mappings.GetAlignmentType(this.SelectedItems[0]);
+        AlignmentType alignmentType = Mappings.GetAlignmentType(this.SelectedItems[0]);
         string alignment = this.SelectedItems[0];
         if (DA.GetData(1, ref alignment))
         {
           try
           {
-            alignmentType = Helpers.Mappings.GetAlignmentType(alignment);
+            alignmentType = Mappings.GetAlignmentType(alignment);
           }
           catch (ArgumentException)
           {

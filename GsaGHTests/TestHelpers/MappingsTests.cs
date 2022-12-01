@@ -1,5 +1,5 @@
 ﻿using GsaAPI;
-using GsaGH.Helpers;
+using GsaGH.Helpers.GsaAPI;
 using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 

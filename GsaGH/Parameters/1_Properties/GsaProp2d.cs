@@ -8,7 +8,6 @@ using OasysUnits;
 using OasysUnits.Units;
 using OasysGH;
 using GsaGH.Helpers.GsaAPI;
-using Grasshopper.Kernel;
 
 namespace GsaGH.Parameters
 {
@@ -203,7 +202,7 @@ namespace GsaGH.Parameters
     {
       try
       {
-        return Helpers.Mappings.GetProperty2D_Type(type);
+        return Mappings.GetProperty2D_Type(type);
       }
       catch (ArgumentException)
       {

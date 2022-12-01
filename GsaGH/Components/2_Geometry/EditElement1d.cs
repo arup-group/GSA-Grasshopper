@@ -192,7 +192,7 @@ namespace GsaGH.Components
           {
             try
             {
-              elem.Type = Helpers.Mappings.GetElementType(typestring);
+              elem.Type = Mappings.GetElementType(typestring);
             }
             catch (ArgumentException)
             {

@@ -194,7 +194,7 @@ namespace GsaGH.Components
           {
             try
             {
-              mem.Type = Helpers.Mappings.GetMemberType(typestring);
+              mem.Type = Mappings.GetMemberType(typestring);
             }
             catch (ArgumentException)
             {
@@ -213,7 +213,7 @@ namespace GsaGH.Components
           {
             try
             {
-              mem.Type1D = Helpers.Mappings.GetElementType(typestring);
+              mem.Type1D = Mappings.GetElementType(typestring);
             }
             catch (ArgumentException)
             {
