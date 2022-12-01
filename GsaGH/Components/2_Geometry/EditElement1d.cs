@@ -128,7 +128,7 @@ namespace GsaGH.Components
       }
 
       if (elem != null)
-      { 
+      {
         // #### inputs ####
         // 1 ID
         GH_Integer ghID = new GH_Integer();
@@ -188,12 +188,16 @@ namespace GsaGH.Components
         {
           if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
             elem.Type = (ElementType)typeInt;
-          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
-            if (Mappings.ElementTypeMapping.ContainsKey(typestring))
-              elem.Type = Mappings.ElementTypeMapping[typestring];
-            else
+            try
+            {
+              elem.Type = Helpers.Mappings.GetElementType(typestring);
+            }
+            catch (ArgumentException)
+            {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element Type");
+            }
           }
         }
 

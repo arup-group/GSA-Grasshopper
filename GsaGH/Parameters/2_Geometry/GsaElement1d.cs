@@ -259,7 +259,12 @@ namespace GsaGH.Parameters
     {
       get
       {
-        return _localAxes;
+        // change after GsaAPI fix
+        Vector3d x = new Vector3d(_line.PointAtEnd.X - _line.PointAtStart.X, _line.PointAtEnd.Y - _line.PointAtStart.Y, _line.PointAtEnd.Z - _line.PointAtStart.Z);
+        if (x.Unitize())
+          return new GsaLocalAxes(x, Vector3d.Zero, Vector3d.Zero);
+        else
+          return new GsaLocalAxes(Vector3d.Zero, Vector3d.Zero, Vector3d.Zero);
       }
       set
       {

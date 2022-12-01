@@ -8,6 +8,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using OasysGH;
 using GsaGH.Helpers.GsaAPI;
+using Grasshopper.Kernel;
 
 namespace GsaGH.Parameters
 {
@@ -200,9 +201,11 @@ namespace GsaGH.Parameters
     #region methods
     internal static Property2D_Type PropTypeFromString(string type)
     {
-      if (Mappings.Prop2dTypeMapping.ContainsKey(type))
-        return Mappings.Prop2dTypeMapping[type];
-      else
+      try
+      {
+        return Helpers.Mappings.GetProperty2D_Type(type);
+      }
+      catch (ArgumentException)
       {
         type = type.Trim().Replace(" ", "_").ToUpper();
         type = type.Replace("PLANE", "PL");
