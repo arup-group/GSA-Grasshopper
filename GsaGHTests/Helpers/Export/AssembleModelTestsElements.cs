@@ -70,10 +70,10 @@ namespace GsaGHTests.Helpers.Export
       GsaProp2dGoo prop = Prop2d(thickness, true);
       Mesh m = new Mesh();
       m.Vertices.Add(new Point3d(0, 0, 0));
-      m.Vertices.Add(new Point3d(1, 0, 0));
-      m.Vertices.Add(new Point3d(1, 1, 0));
-      m.Vertices.Add(new Point3d(0, 1, 0));
-      m.Vertices.Add(new Point3d(0, -1, 0));
+      m.Vertices.Add(new Point3d(10, 0, 0));
+      m.Vertices.Add(new Point3d(10, 10, 0));
+      m.Vertices.Add(new Point3d(0, 10, 0));
+      m.Vertices.Add(new Point3d(0, -10, 0));
       m.Faces.AddFace(0, 1, 2, 3);
       m.Faces.AddFace(0, 4, 1);
       GH_Mesh mesh = new GH_Mesh(m);
@@ -125,12 +125,12 @@ namespace GsaGHTests.Helpers.Export
     {
       string profile1 = "STD I 900 300 9 4";
       GsaSectionGoo section1 = Section(profile1, false);
-      GH_Line ln1 = new GH_Line(new Line(new Point3d(1, 0, 0), new Point3d(1, 0, -1)));
+      GH_Line ln1 = new GH_Line(new Line(new Point3d(100, 0, 0), new Point3d(100, 0, -100)));
       GsaElement1dGoo elem1d1 = Element1d(ln1, section1);
 
       string profile2 = "STD R 400 600";
       GsaSectionGoo section2 = Section(profile2, true);
-      GH_Line ln2 = new GH_Line(new Line(new Point3d(0, 0, 0), new Point3d(0, 0, -1)));
+      GH_Line ln2 = new GH_Line(new Line(new Point3d(0, 0, 0), new Point3d(0, 0, -100)));
       GsaElement1dGoo elem1d2 = Element1d(ln2, section2);
 
 
@@ -138,10 +138,10 @@ namespace GsaGHTests.Helpers.Export
       GsaProp2dGoo prop1 = Prop2d(thickness1, true);
       Mesh m1 = new Mesh();
       m1.Vertices.Add(new Point3d(0, 0, 0));
-      m1.Vertices.Add(new Point3d(1, 0, 0));
-      m1.Vertices.Add(new Point3d(1, 1, 0));
-      m1.Vertices.Add(new Point3d(0, 1, 0));
-      m1.Vertices.Add(new Point3d(0, -1, 0));
+      m1.Vertices.Add(new Point3d(100, 0, 0));
+      m1.Vertices.Add(new Point3d(100, 100, 0));
+      m1.Vertices.Add(new Point3d(0, 100, 0));
+      m1.Vertices.Add(new Point3d(0, -100, 0));
       m1.Faces.AddFace(0, 1, 2, 3);
       m1.Faces.AddFace(0, 4, 1);
       GH_Mesh mesh1 = new GH_Mesh(m1);
@@ -150,11 +150,11 @@ namespace GsaGHTests.Helpers.Export
       Length thickness2 = new Length(2, LengthUnit.Centimeter);
       GsaProp2dGoo prop2 = Prop2d(thickness2, false);
       Mesh m2 = new Mesh();
-      m2.Vertices.Add(new Point3d(1, 0, 0));
-      m2.Vertices.Add(new Point3d(2, 0, 0));
-      m2.Vertices.Add(new Point3d(2, 2, 0));
-      m2.Vertices.Add(new Point3d(1, 2, 0));
-      m2.Vertices.Add(new Point3d(0, 0, -1));
+      m2.Vertices.Add(new Point3d(100, 0, 0));
+      m2.Vertices.Add(new Point3d(200, 0, 0));
+      m2.Vertices.Add(new Point3d(200, 200, 0));
+      m2.Vertices.Add(new Point3d(100, 200, 0));
+      m2.Vertices.Add(new Point3d(0, 0, -100));
       m2.Faces.AddFace(0, 1, 2, 3);
       m2.Faces.AddFace(0, 4, 1);
       GH_Mesh mesh2 = new GH_Mesh(m2);
