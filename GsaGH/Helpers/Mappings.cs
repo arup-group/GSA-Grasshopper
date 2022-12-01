@@ -3,11 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
 using static GsaGH.Parameters.GsaMaterial;
+using static GsaGH.Parameters.GsaOffset;
 
 namespace GsaGH.Helpers
 {
   internal class Mappings
   {
+    internal static readonly Dictionary<string, AlignmentType> AlignmentTypeMapping = new Dictionary<string, AlignmentType>()
+    {
+     { "Centroid" , AlignmentType.Centroid },
+     { "Top-Left", AlignmentType.Top_Left },
+     { "Top-Centre" , AlignmentType.Top_Centre },
+     { "Top-Center" , AlignmentType.Top_Centre },
+     { "Top" , AlignmentType.Top_Centre },
+     { "Top-Right" , AlignmentType.Top_Right },
+     { "Mid-Left" , AlignmentType.Mid_Left },
+     { "Left" , AlignmentType.Mid_Left },
+     { "Mid-Right" , AlignmentType.Mid_Right },
+     { "Right" , AlignmentType.Mid_Right },
+     { "Bottom-Left" , AlignmentType.Bottom_Left },
+     { "Bottom-Centre" , AlignmentType.Bottom_Centre },
+     { "Bottom-Center" , AlignmentType.Bottom_Centre },
+     { "Bottom" , AlignmentType.Bottom_Centre },
+     { "Bottom-Right", AlignmentType.Bottom_Right }
+    };
+
     internal static readonly Dictionary<string, MatType> MaterialTypeMapping = new Dictionary<string, MatType>()
     {
       { "Undefined", MatType.UNDEF },
@@ -107,6 +127,11 @@ namespace GsaGH.Helpers
       { "Generic 3D", MemberType.GENERIC_3D },
     };
 
+    internal static AlignmentType GetAlignmentType(string typestring)
+    {
+      return (AlignmentType)GetValue(typestring, typeof(AlignmentType));
+    }
+
     internal static AnalysisOrder GetAnalysisOrder(string input)
     {
       return (AnalysisOrder)GetValue(input, typeof(AnalysisOrder));
@@ -138,6 +163,13 @@ namespace GsaGH.Helpers
       int index;
       switch (t)
       {
+        case Type _ when t == typeof(AlignmentType):
+          types = AlignmentTypeMapping.Keys.ToList();
+          index = GetIndex(key, types);
+          if (index != -1)
+            return AlignmentTypeMapping[types[index]];
+          break;
+
         case Type _ when t == typeof(AnalysisOrder):
           types = AnalysisOrderMapping.Keys.ToList();
           index = GetIndex(key, types);
