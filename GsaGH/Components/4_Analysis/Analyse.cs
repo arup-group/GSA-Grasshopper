@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Forms;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -16,6 +18,7 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Runtime;
+using static Grasshopper.GUI.GH_MenuCustomControl;
 
 namespace GsaGH.Components
 {
@@ -108,10 +111,11 @@ namespace GsaGH.Components
         }
       }
 
-      model.Model = Helpers.Export.AssembleModel.Assemble(model, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks, combinationCases, this.LengthUnit, DefaultUnits.Tolerance.Meters, this.ReMesh);
+      model.Model = Helpers.Export.AssembleModel.Assemble(model, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks, combinationCases, this.LengthUnit, _tolerance, this.ReMesh);
+
+      this.Message = "Tol: " + new Length(_tolerance, this.LengthUnit).ToString();
 
       #region analysis
-
       //analysis
       if (Analysis)
       {
@@ -183,6 +187,8 @@ namespace GsaGH.Components
     private List<bool> InitialCheckState = new List<bool>() { true, true };
     private bool Analysis = true;
     private bool ReMesh = true;
+    private double _tolerance = DefaultUnits.Tolerance.Meters;
+    private string _toleranceTxt = "";
 
     public override void InitialiseDropdowns()
     {
@@ -210,9 +216,8 @@ namespace GsaGH.Components
     public override void SetSelected(int i, int j)
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
-
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
-
+      this.Message = "Tol: " + new Length(_tolerance, this.LengthUnit).ToString();
       base.UpdateUI();
     }
     public void SetAnalysis(List<bool> value)
@@ -224,13 +229,55 @@ namespace GsaGH.Components
     public override void UpdateUIFromSelectedItems()
     {
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
-
       base.UpdateUIFromSelectedItems();
     }
 
     public override void VariableParameterMaintenance()
     {
       Params.Input[2].Name = "GSA Geometry in [" + Length.GetAbbreviation(this.LengthUnit) + "]";
+    }
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+    {
+      Menu_AppendSeparator(menu);
+
+      ToolStripTextBox tolerance = new ToolStripTextBox();
+      _toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
+      tolerance.Text = _toleranceTxt;
+      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
+
+      ToolStripMenuItem toleranceMenu = new ToolStripMenuItem("Set Tolerance", Properties.Resources.Units);
+      toleranceMenu.Enabled = true;
+      toleranceMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+
+      GH_MenuCustomControl menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => { Update(); };
+      menu.Items.Add(toleranceMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+    private void MaintainText(ToolStripTextBox tolerance)
+    {
+      _toleranceTxt = tolerance.Text;
+      if (Length.TryParse(_toleranceTxt, out Length res))
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
+      else
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 255, 100, 100);
+    }
+    private void Update()
+    {
+      try
+      {
+        Length newTolerance = Length.Parse(_toleranceTxt);
+        _tolerance = newTolerance.Meters;
+        this.Message = "Tol: " + new Length(_tolerance, this.LengthUnit).ToString();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      }
+      catch (Exception e)
+      {
+        MessageBox.Show(e.Message);
+      }
     }
     #endregion
 
@@ -239,15 +286,19 @@ namespace GsaGH.Components
     {
       writer.SetBoolean("Analyse", this.Analysis);
       writer.SetBoolean("ReMesh", this.ReMesh);
+      writer.SetDouble("Tolerance", this._tolerance);
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       this.Analysis = reader.GetBoolean("Analyse");
       this.ReMesh = reader.GetBoolean("ReMesh");
+      if (reader.ItemExists("Tolerance"))
+        this._tolerance = reader.GetDouble("Tolerance");
+      else
+        this._tolerance = DefaultUnits.Tolerance.Meters;
       return base.Read(reader);
     }
     #endregion
   }
 }
-

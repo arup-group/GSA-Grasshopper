@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Grasshopper.GUI;
+using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -344,6 +346,8 @@ namespace GsaGH.Components
 
     #region Custom UI
     private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+    private double _tolerance = DefaultUnits.Tolerance.Meters;
+    private string _toleranceTxt = "";
 
     public override void InitialiseDropdowns()
     {
@@ -383,6 +387,66 @@ namespace GsaGH.Components
       Params.Input[i++].Name = "1D Members [" + unitAbbreviation + "]";
       Params.Input[i++].Name = "2D Members [" + unitAbbreviation + "]";
       Params.Input[i++].Name = "3D Members [" + unitAbbreviation + "]";
+    }
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+    {
+      Menu_AppendSeparator(menu);
+
+      ToolStripTextBox tolerance = new ToolStripTextBox();
+      _toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
+      tolerance.Text = _toleranceTxt;
+      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
+
+      ToolStripMenuItem toleranceMenu = new ToolStripMenuItem("Set Tolerance", Properties.Resources.Units);
+      toleranceMenu.Enabled = true;
+      toleranceMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+
+      GH_MenuCustomControl menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => { Update(); };
+      menu.Items.Add(toleranceMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+
+    private void MaintainText(ToolStripTextBox tolerance)
+    {
+      _toleranceTxt = tolerance.Text;
+      if (Length.TryParse(_toleranceTxt, out Length res))
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
+      else
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 255, 100, 100);
+    }
+    private void Update()
+    {
+      try
+      {
+        Length newTolerance = Length.Parse(_toleranceTxt);
+        _tolerance = newTolerance.Meters;
+        this.Message = "Tol: " + new Length(_tolerance, this.LengthUnit).ToString();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      }
+      catch (Exception e)
+      {
+        MessageBox.Show(e.Message);
+      }
+    }
+    #endregion
+
+    #region (de)serialization
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    {
+      writer.SetDouble("Tolerance", this._tolerance);
+      return base.Write(writer);
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      if (reader.ItemExists("Tolerance"))
+        this._tolerance = reader.GetDouble("Tolerance");
+      else
+        this._tolerance = DefaultUnits.Tolerance.Meters;
+      return base.Read(reader);
     }
     #endregion
   }
