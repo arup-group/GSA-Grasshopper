@@ -139,6 +139,7 @@ namespace GsaGH.Components
           }
 
           // 3 inclusion points
+          ghpts = new List<GH_Point>();
           if (DA.GetDataList(3, ghpts))
           {
             pts = new List<Point3d>();
@@ -153,6 +154,7 @@ namespace GsaGH.Components
           }
 
           // 4 inclusion lines
+          ghcrvs = new List<GH_Curve>();
           if (DA.GetDataList(4, ghcrvs))
           {
             crvs = new List<Curve>();
