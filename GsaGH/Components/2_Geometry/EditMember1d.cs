@@ -339,7 +339,7 @@ namespace GsaGH.Components
         DA.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
         DA.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
 
-        DA.SetData(10, mem.OrientationAngle.As(AngleUnit.Radian));
+        DA.SetData(10, mem.OrientationAngle.Radians);
         DA.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
         DA.SetData(12, mem.MeshSize);
