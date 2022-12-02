@@ -188,9 +188,9 @@ namespace GsaGH.Components
       ConcurrentDictionary<int, Element> elementDict = new ConcurrentDictionary<int, Element>(gsa.Elements());
 
       // populate local axes dictionary
-      ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      ConcurrentDictionary<int, List<double>> elementLocalAxesDict = new ConcurrentDictionary<int, List<double>>();
       foreach (int id in elementDict.Keys)
-        elementLocalAxesDict.TryAdd(id, gsa.ElementDirectionCosine(id));
+        elementLocalAxesDict.TryAdd(id, gsa.ElementDirectionCosine(id).ToList());
 
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple

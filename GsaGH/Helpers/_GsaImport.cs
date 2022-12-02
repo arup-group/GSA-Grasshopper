@@ -156,7 +156,7 @@ namespace GsaGH.Util.Gsa
     public static Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>
         GetElements(ConcurrentDictionary<int, Element> eDict, ConcurrentDictionary<int, Node> nDict,
         ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, ConcurrentDictionary<int, Prop3D> p3Dict,
-        ConcurrentDictionary<int, AnalysisMaterial> mDict, ConcurrentDictionary<int, SectionModifier> modDict, ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict, LengthUnit unit)
+        ConcurrentDictionary<int, AnalysisMaterial> mDict, ConcurrentDictionary<int, SectionModifier> modDict, ConcurrentDictionary<int, List<double>> elementLocalAxesDict, LengthUnit unit)
     {
       // Create lists for Rhino lines and meshes
       ConcurrentBag<GsaElement1dGoo> elem1ds = new ConcurrentBag<GsaElement1dGoo>();
@@ -241,7 +241,7 @@ namespace GsaGH.Util.Gsa
     /// <returns></returns>
     public static GsaElement1d ConvertToElement1D(Element element,
         int ID, ConcurrentDictionary<int, Node> nodes, ConcurrentDictionary<int, Section> sections,
-        ConcurrentDictionary<int, AnalysisMaterial> materials, ConcurrentDictionary<int, SectionModifier> sectionModifiers, ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxes, LengthUnit unit)
+        ConcurrentDictionary<int, AnalysisMaterial> materials, ConcurrentDictionary<int, SectionModifier> sectionModifiers, ConcurrentDictionary<int, List<double>> elementLocalAxes, LengthUnit unit)
     {
       // get element's topology
       ReadOnlyCollection<int> topo = element.Topology;
@@ -295,7 +295,7 @@ namespace GsaGH.Util.Gsa
         GsaElement1d element1d = new GsaElement1d(element, ln, ID, section, orient);
 
         // set local axes
-        element1d.LocalAxes = new GsaLocalAxes(elementLocalAxes[ID]);
+        element1d.LocalAxes = new GsaLocalAxes(elementLocalAxes[ID].ToList(), ID);
 
         return element1d;
       }
@@ -804,7 +804,7 @@ namespace GsaGH.Util.Gsa
     /// <returns></returns>
     public static Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>
         GetMembers(ConcurrentDictionary<int, Member> mDict, ConcurrentDictionary<int, Node> nDict, LengthUnit unit,
-        ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, ConcurrentDictionary<int, Prop3D> p3Dict, ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict, GH_Component owner = null)
+        ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, ConcurrentDictionary<int, Prop3D> p3Dict, ConcurrentDictionary<int, List<double>> memberLocalAxesDict, GH_Component owner = null)
     {
       // Create lists for Rhino lines and meshes
       ConcurrentBag<GsaMember1dGoo> mem1ds = new ConcurrentBag<GsaMember1dGoo>();
@@ -1006,7 +1006,7 @@ namespace GsaGH.Util.Gsa
               mem1d.MeshSize = new Length(mem.MeshSize, LengthUnit.Meter).As(unit);
 
               // set local axes
-              mem1d.LocalAxes = new GsaLocalAxes(memberLocalAxesDict[key]);
+              mem1d.LocalAxes = new GsaLocalAxes(memberLocalAxesDict[key].ToList(), mem1d.Id);
 
               // add member to output list
               mem1ds.Add(new GsaMember1dGoo(mem1d));

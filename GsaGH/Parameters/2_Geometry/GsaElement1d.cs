@@ -266,7 +266,7 @@ namespace GsaGH.Parameters
       this._line = line;
       this._rel1 = new GsaBool6(_element.GetEndRelease(0).Releases);
       this._rel2 = new GsaBool6(_element.GetEndRelease(1).Releases);
-      this.Id = Id;
+      this.Id = id;
       this._section = section;
       this._orientationNode = orientationNode;
       this.UpdatePreview();

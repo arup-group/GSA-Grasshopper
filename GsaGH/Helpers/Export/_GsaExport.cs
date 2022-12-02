@@ -53,12 +53,12 @@ namespace GsaGH.Util.Gsa.ToGSA
       ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
 
       // populate local axes dictionary
-      ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
-      ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      ConcurrentDictionary<int, List<double>> elementLocalAxesDict = new ConcurrentDictionary<int, List<double>>();
+      ConcurrentDictionary<int, List<double>> memberLocalAxesDict = new ConcurrentDictionary<int, List<double>>();
       foreach (int id in eDict.Keys)
-        elementLocalAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+        elementLocalAxesDict.TryAdd(id, model.ElementDirectionCosine(id).ToList());
       foreach (int id in mDict.Keys)
-        memberLocalAxesDict.TryAdd(id, model.MemberDirectionCosine(id));
+        memberLocalAxesDict.TryAdd(id, model.MemberDirectionCosine(id).ToList());
 
       // get nodes
       ConcurrentBag<GsaNodeGoo> goonodes = Util.Gsa.FromGSA.GetNodes(nDict, LengthUnit.Meter);

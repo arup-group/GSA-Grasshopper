@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -71,7 +72,7 @@ namespace GsaGH.Components
             GsaModel model = new GsaModel();
             model.Model = Util.Gsa.ToGSA.Assemble.AssembleModel(model, new List<GsaNode>(), new List<GsaElement1d>(), new List<GsaElement2d>(), new List<GsaElement3d>(), new List<GsaMember1d>() { mem }, new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(), new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(), new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(), new List<GsaCombinationCase>(), LengthUnit.Meter);
 
-            axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
+            axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1).ToList(), 0);
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Members´s local axes might deviate from the local axes in the assembled GSA model.");
           }
           midPt = mem.PolyCurve.PointAtNormalizedLength(0.5);
@@ -91,7 +92,7 @@ namespace GsaGH.Components
             GsaModel model = new GsaModel();
             model.Model = Util.Gsa.ToGSA.Assemble.AssembleModel(model, new List<GsaNode>(), new List<GsaElement1d>() { elem }, new List<GsaElement2d>(), new List<GsaElement3d>(), new List<GsaMember1d>(), new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(), new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(), new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(), new List<GsaCombinationCase>(), LengthUnit.Meter);
 
-            axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));
+            axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1).ToList(), 0);
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element´s local axes might deviate from the local axes in the assembled GSA model.");
           }
           midPt = elem.Line.PointAtNormalizedLength(0.5);
