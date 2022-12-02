@@ -98,8 +98,8 @@ namespace GsaGHTests.Components.Geometry
       GsaMember2dGoo output0 = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp, 0);
       GH_Integer output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       GH_Brep output2 = (GH_Brep)ComponentTestHelper.GetOutput(comp, 2);
-      GH_Point output3 = (GH_Point)ComponentTestHelper.GetOutput(comp, 3);
-      GH_Curve output4 = (GH_Curve)ComponentTestHelper.GetOutput(comp, 4);
+      //GH_Point output3 = (GH_Point)ComponentTestHelper.GetOutput(comp, 3);
+      //GH_Curve output4 = (GH_Curve)ComponentTestHelper.GetOutput(comp, 4);
       GsaProp2dGoo output5 = (GsaProp2dGoo)ComponentTestHelper.GetOutput(comp, 5);
       GH_Integer output6 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 6);
       GH_String output7 = (GH_String)ComponentTestHelper.GetOutput(comp, 7);
