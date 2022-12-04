@@ -10,10 +10,15 @@ namespace GsaGHTests.Components.Properties
   [Collection("GrasshopperFixture collection")]
   public class CreateSectionTests
   {
-    public static GH_OasysComponent ComponentMother()
+    public static GH_OasysComponent ComponentMother(string profile)
     {
       var comp = new CreateSection();
       comp.CreateAttributes();
+
+      GsaMaterialGoo material = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother(), 0);
+
+      ComponentTestHelper.SetInput(comp, profile, 0);
+      ComponentTestHelper.SetInput(comp, material, 1);
 
       return comp;
     }
@@ -27,12 +32,7 @@ namespace GsaGHTests.Components.Properties
     public void CreateComponentTest1(string profile)
     {
       // Arrange & Act
-      var comp = ComponentMother();
-
-      GsaMaterialGoo material = (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother(), 0);
-
-      ComponentTestHelper.SetInput(comp, profile, 0);
-      ComponentTestHelper.SetInput(comp, material, 1);
+      var comp = ComponentMother(profile);
 
       // Assert
       GsaSectionGoo output = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp);

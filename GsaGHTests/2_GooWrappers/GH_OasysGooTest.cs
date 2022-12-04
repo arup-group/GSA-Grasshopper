@@ -2,26 +2,28 @@
 using System.Reflection;
 using GsaGHTests.Helpers;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Parameters;
 using Xunit;
-using OasysGH.Parameters;
 
-namespace GsaGHTests.Parameters
+namespace GsaGHTests.GooWrappers
 {
   [Collection("GrasshopperFixture collection")]
-  public class GH_OasysGeometricGooTest
+  public class GH_OasysGooTest
   {
     [Theory]
-    [InlineData(typeof(GsaElement1dGoo), typeof(GsaElement1d))]
-    [InlineData(typeof(GsaElement2dGoo), typeof(GsaElement2d))]
-    [InlineData(typeof(GsaElement3dGoo), typeof(GsaElement3d))]
-    [InlineData(typeof(GsaMember1dGoo), typeof(GsaMember1d))]
-    [InlineData(typeof(GsaMember2dGoo), typeof(GsaMember2d))]
-    [InlineData(typeof(GsaMember3dGoo), typeof(GsaMember3d))]
-    [InlineData(typeof(GsaNodeGoo), typeof(GsaNode))]
-    [InlineData(typeof(GsaGridPlaneSurfaceGoo), typeof(GsaGridPlaneSurface))]
-    public void GenericGH_OasysGeometricGooTest(Type gooType, Type wrapType)
+    [InlineData(typeof(GsaModelGoo), typeof(GsaModel))]
+    [InlineData(typeof(GsaBool6Goo), typeof(GsaBool6))]
+    [InlineData(typeof(GsaMaterialGoo), typeof(GsaMaterial))]
+    [InlineData(typeof(GsaOffsetGoo), typeof(GsaOffset))]
+    [InlineData(typeof(GsaProp2dGoo), typeof(GsaProp2d))]
+    [InlineData(typeof(GsaProp3dGoo), typeof(GsaProp3d))]
+    [InlineData(typeof(GsaSectionGoo), typeof(GsaSection))]
+    [InlineData(typeof(GsaSectionModifierGoo), typeof(GsaSectionModifier))]
+    [InlineData(typeof(GsaLoadGoo), typeof(GsaLoad))]
+    [InlineData(typeof(GsaAnalysisCaseGoo), typeof(GsaAnalysisCase))]
+    [InlineData(typeof(GsaAnalysisTaskGoo), typeof(GsaAnalysisTask))]
+    [InlineData(typeof(GsaCombinationCaseGoo), typeof(GsaCombinationCase))]
+    public void GenericGH_OasysGooTest(Type gooType, Type wrapType)
     {
       // Create the actual API object
       Object value = Activator.CreateInstance(wrapType);
