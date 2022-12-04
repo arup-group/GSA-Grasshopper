@@ -8,7 +8,7 @@ namespace GsaGHTests.Helpers
 {
   public class OasysDropDownComponentTestHelper
   {
-    public static void TestDeserialize(GH_OasysDropDownComponent comp, string customIdentifier = "")
+    public static void TestDeserialize(GH_OasysComponent comp, string customIdentifier = "")
     {
       comp.CreateAttributes();
 
