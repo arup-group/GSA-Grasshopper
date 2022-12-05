@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using Rhino.Geometry;
 using Xunit;
 
 namespace IntegrationTests.Components
@@ -36,12 +37,24 @@ namespace IntegrationTests.Components
       IGH_Param paramZ2 = Helper.FindParameter(doc, "Z2");
       for (int i = 0; i < 20; i++)
       {
+        GH_Line outputLine = (GH_Line)paramLine.VolatileData.get_Branch(0)[i];
+        double x = outputLine.Value.ToX - outputLine.Value.FromX;
+        double y = outputLine.Value.ToY - outputLine.Value.FromY;
+        double z = outputLine.Value.ToZ - outputLine.Value.FromZ;
+        Vector3d vector = new Vector3d(x, y, z);
+        vector.Unitize();
+
         GH_Vector outputX1 = (GH_Vector)paramX1.VolatileData.get_Branch(0)[i];
         GH_Vector outputY1 = (GH_Vector)paramY1.VolatileData.get_Branch(0)[i];
         GH_Vector outputZ1 = (GH_Vector)paramZ1.VolatileData.get_Branch(0)[i];
         GH_Vector outputX2 = (GH_Vector)paramX2.VolatileData.get_Branch(0)[i];
         GH_Vector outputY2 = (GH_Vector)paramY2.VolatileData.get_Branch(0)[i];
         GH_Vector outputZ2 = (GH_Vector)paramZ2.VolatileData.get_Branch(0)[i];
+
+        // is x vector in direction of the line?
+        Assert.Equal(outputX1.Value.X, vector.X, 6);
+        Assert.Equal(outputX1.Value.Y, vector.Y, 6);
+        Assert.Equal(outputX1.Value.Z, vector.Z, 6);
 
         Assert.Equal(outputX1.Value.X, outputX2.Value.X, 6);
         Assert.Equal(outputX1.Value.Y, outputX2.Value.Y, 6);
