@@ -245,6 +245,13 @@ namespace GsaGH.Parameters
         this._element.Type = value;
       }
     }
+    public Guid Guid
+    {
+      get
+      {
+        return this._guid;
+      }
+    }
     #endregion
 
     #region constructors
@@ -284,7 +291,7 @@ namespace GsaGH.Parameters
       GsaElement1d dup = new GsaElement1d();
       dup.Id = this.Id;
       dup._element = this._element;
-      dup._localAxes = this._localAxes;
+      dup.LocalAxes = this.LocalAxes;
       dup._guid = new Guid(_guid.ToString());
       if (cloneApiElement)
         dup.CloneApiObject();
