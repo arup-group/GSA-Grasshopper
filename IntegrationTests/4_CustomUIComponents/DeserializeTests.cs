@@ -4,7 +4,7 @@ using OasysGH.Components;
 using System;
 using Xunit;
 
-namespace GsaGHTests.CustomComponent
+namespace IntegrationTests.CustomComponent
 {
   [Collection("GrasshopperFixture collection")]
   public class DeserializeTests
