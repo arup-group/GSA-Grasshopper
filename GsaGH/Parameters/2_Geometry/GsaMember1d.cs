@@ -25,7 +25,6 @@ namespace GsaGH.Parameters
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
     private GsaNode _orientationNode;
-    private GsaLocalAxes _localAxes = null;
 
     private Line previewSX1;
     private Line previewSX2;
@@ -64,24 +63,9 @@ namespace GsaGH.Parameters
     internal Member ApiMember { get; set; } = new Member();
     public double MeshSize { get; set; } = 0;
     public GsaSection Section { get; set; } = new GsaSection();
+    internal GsaLocalAxes LocalAxes { get; set; } = null;
     public List<Point3d> Topology => this._topo;
     public List<string> TopologyType => this._topoType;
-    internal GsaLocalAxes LocalAxes
-    {
-      get
-      {
-        // change after GsaAPI fix
-        Vector3d x = new Vector3d(_crv.PointAtEnd.X - _crv.PointAtStart.X, _crv.PointAtEnd.Y - _crv.PointAtStart.Y, _crv.PointAtEnd.Z - _crv.PointAtStart.Z);
-        if (x.Unitize())
-          return new GsaLocalAxes(x, Vector3d.Zero, Vector3d.Zero);
-        else
-          return new GsaLocalAxes(Vector3d.Zero, Vector3d.Zero, Vector3d.Zero);
-      }
-      set
-      {
-        this._localAxes = value;
-      }
-    }
     public PolyCurve PolyCurve
     {
       get
@@ -338,7 +322,7 @@ namespace GsaGH.Parameters
       dup.Id = this.Id;
       dup.MeshSize = this.MeshSize;
       dup.ApiMember = this.ApiMember;
-      dup._localAxes = this._localAxes;
+      dup.LocalAxes = this.LocalAxes;
       if (cloneApiMember)
         dup.CloneApiObject();
       dup._crv = (PolyCurve)this._crv.DuplicateShallow();
