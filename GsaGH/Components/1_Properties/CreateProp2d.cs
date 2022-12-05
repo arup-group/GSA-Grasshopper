@@ -208,7 +208,40 @@ namespace GsaGH.Components
 
     public override void UpdateUIFromSelectedItems()
     {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
+      switch (this.SelectedItems[0])
+      {
+        case "Plane Stress":
+          if (this.DropDownItems.Count < 2)
+            this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode1Clicked();
+          break;
+        case "Fabric":
+          if (this.DropDownItems.Count > 1)
+            this.DropDownItems.RemoveAt(1); // remove length unit dropdown
+          Mode2Clicked();
+          break;
+        case "Flat Plate":
+          if (this.DropDownItems.Count < 2)
+            this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode3Clicked();
+          break;
+        case "Shell":
+          if (this.DropDownItems.Count < 2)
+            this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode4Clicked();
+          break;
+        case "Curved Shell":
+          if (this.DropDownItems.Count < 2)
+            this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode5Clicked();
+          break;
+        case "Load Panel":
+          if (this.DropDownItems.Count > 1)
+            this.DropDownItems.RemoveAt(1); // remove length unit dropdown
+          Mode6Clicked();
+          break;
+      }
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

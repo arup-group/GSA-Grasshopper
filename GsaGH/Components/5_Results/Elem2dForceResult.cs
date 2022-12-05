@@ -231,15 +231,15 @@ namespace GsaGH.Components
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
       if (i == 0)
-        this.ForceUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[i]);
+        this.ForceUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[i]);
       else if (i == 1)
-        this.MomentUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[i]);
+        this.MomentUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[i]);
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()
     {
-      this.ForceUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[0]);
-      this.MomentUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[1]);
+      this.ForceUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[0]);
+      this.MomentUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

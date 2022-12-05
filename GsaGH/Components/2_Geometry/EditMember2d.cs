@@ -14,10 +14,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a 2D Member
-    /// </summary>
-    public class EditMember2d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+  /// <summary>
+  /// Component to edit a 2D Member
+  /// </summary>
+  public class EditMember2d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("54bcb967-d3a1-4878-925b-5fd765d1b476");
@@ -48,7 +48,7 @@ namespace GsaGH.Components
           "5: Wall" + Environment.NewLine +
           "7: Ribbed Slab" + Environment.NewLine +
           "12: Void-cutter", GH_ParamAccess.item);
-      pManager.AddTextParameter("2D Element Type", "aT", "Set Member 2D Analysis Element Type" + Environment.NewLine +
+      pManager.AddTextParameter("2D Element Type", "eT", "Set Member 2D Analysis Element Type" + Environment.NewLine +
           "Accepted inputs are:" + Environment.NewLine +
           "0: Linear - Tri3/Quad4 Elements (default)" + Environment.NewLine +
           "1: Quadratic - Tri6/Quad8 Elements" + Environment.NewLine +
@@ -314,14 +314,16 @@ namespace GsaGH.Components
         DA.SetData(15, mem.ApiMember.Topology.ToString());
       }
     }
-
     #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance() { }
-
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+
+    public void VariableParameterMaintenance()
+    {
+      return;
+    }
     #endregion
   }
 }

@@ -326,7 +326,7 @@ namespace GsaGH.Components
         }
       }
       else
-        this.ForcePerLengthUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[1]);
+        this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[1]);
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()

@@ -432,8 +432,8 @@ namespace GsaGH.Components
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      this.LengthUnit = Length.ParseUnit(reader.GetString("LengthUnit"));
-      this.LinearDensityUnit = LinearDensity.ParseUnit(reader.GetString("DensityUnit"));
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+      this.LinearDensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), reader.GetString("DensityUnit"));
       return base.Read(reader);
     }
 

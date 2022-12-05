@@ -286,6 +286,7 @@ namespace GsaGH.Components
     });
     AngleUnit AngleUnit = AngleUnit.Radian;
     private FoldMode _mode = FoldMode.One_Dimensional_One_Way;
+    private bool DuringLoad = false;
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
@@ -325,18 +326,23 @@ namespace GsaGH.Components
     }
     public override void UpdateUIFromSelectedItems()
     {
+      this.DuringLoad = true;
       switch (this.SelectedItems[0])
       {
         case "1D, One-way span":
           this._mode = FoldMode.One_Dimensional_One_Way;
+          Mode1Clicked();
           break;
         case "1D, Two-way span":
           this._mode = FoldMode.One_Dimensional_Two_Way;
+          Mode2Clicked();
           break;
         case "2D":
           this._mode = FoldMode.Two_Dimensional;
+          Mode3Clicked();
           break;
       }
+      this.DuringLoad = false;
       base.UpdateUIFromSelectedItems();
     }
 
@@ -375,7 +381,7 @@ namespace GsaGH.Components
     private IGH_Param angleInputParam;
     private void Mode1Clicked()
     {
-      if (_mode == FoldMode.One_Dimensional_One_Way)
+      if (!this.DuringLoad && _mode == FoldMode.One_Dimensional_One_Way)
         return;
 
       RecordUndoEvent("1D, one-way Parameters");
@@ -390,7 +396,7 @@ namespace GsaGH.Components
     }
     private void Mode2Clicked()
     {
-      if (_mode == FoldMode.One_Dimensional_Two_Way)
+      if (!this.DuringLoad && _mode == FoldMode.One_Dimensional_Two_Way)
         return;
       if (_mode == FoldMode.One_Dimensional_One_Way)
         angleInputParam = Params.Input[5];
@@ -408,7 +414,7 @@ namespace GsaGH.Components
     }
     private void Mode3Clicked()
     {
-      if (_mode == FoldMode.Two_Dimensional)
+      if (!this.DuringLoad && _mode == FoldMode.Two_Dimensional)
         return;
       if (_mode == FoldMode.One_Dimensional_One_Way)
         angleInputParam = Params.Input[5];

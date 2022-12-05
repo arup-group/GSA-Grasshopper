@@ -17,10 +17,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a 3D Member
-    /// </summary>
-    public class EditMember3d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+  /// <summary>
+  /// Component to edit a 3D Member
+  /// </summary>
+  public class EditMember3d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e7d66219-2243-4108-9d6e-4a84dbf07d55");
@@ -201,61 +201,16 @@ namespace GsaGH.Components
       }
     }
 
-    #region Custom UI
-    protected override void BeforeSolveInstance()
-    {
-      this.Message = Length.GetAbbreviation(this.LengthUnit);
-    }
-
-    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
-    {
-      Menu_AppendSeparator(menu);
-
-      ToolStripMenuItem unitsMenu = new ToolStripMenuItem("Select unit", Properties.Resources.Units);
-      unitsMenu.Enabled = true;
-      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length))
-      {
-        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); });
-        toolStripMenuItem.Checked = unit == Length.GetAbbreviation(this.LengthUnit);
-        toolStripMenuItem.Enabled = true;
-        unitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-      menu.Items.Add(unitsMenu);
-
-      Menu_AppendSeparator(menu);
-    }
-    private void Update(string unit)
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      this.Message = unit;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-    }
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      writer.SetString("LengthUnit", this.LengthUnit.ToString());
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      return base.Read(reader);
-    }
-
     #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance()
-    {
-      this.Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-      this.Params.Output[4].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-    }
-
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-    #endregion
+
+    public void VariableParameterMaintenance()
+    {
+      return;
+    }
     #endregion
   }
 }

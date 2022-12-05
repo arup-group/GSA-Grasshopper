@@ -580,11 +580,12 @@ namespace GsaGH.Components
       this.m_attributes = new OasysGH.UI.DropDownSliderComponentAttributes(this, SetSelected, this.DropDownItems, this.SelectedItems, this._slider, SetVal, SetMaxMin, this._defScale, this._maxValue, this._minValue, this._noDigits, this.SpacerDescriptions);
     }
 
-    public override void SetSelected(int dropdownlistidd, int selectedidd)
+    public override void SetSelected(int i, int j)
     {
-      if (dropdownlistidd == 0) // if change is made to first list
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      if (i == 0) // if change is made to first list
       {
-        if (selectedidd == 0) // displacement mode
+        if (j == 0) // displacement mode
         {
           if (DropDownItems[1] != _displacement)
           {
@@ -607,7 +608,7 @@ namespace GsaGH.Components
             Mode1Clicked();
           }
         }
-        if (selectedidd == 1)  // force mode
+        if (j == 1)  // force mode
         {
           if (DropDownItems[1] != _force)
           {
@@ -629,7 +630,7 @@ namespace GsaGH.Components
             Mode2Clicked();
           }
         }
-        if (selectedidd == 2) // stress mode
+        if (j == 2) // stress mode
         {
           if (DropDownItems[1] != _stress)
           {
@@ -655,59 +656,58 @@ namespace GsaGH.Components
           }
         }
       }
-      else if (dropdownlistidd == 1) // if change is made to second list, the type of result
+      else if (i == 1) // if change is made to second list, the type of result
       {
         bool redraw = false;
-        SelectedItems[1] = DropDownItems[1][selectedidd];
+        SelectedItems[1] = DropDownItems[1][j];
         if (_mode == FoldMode.Displacement)
         {
-          if ((int)_disp > 3 & selectedidd < 4)
+          if ((int)_disp > 3 & j < 4)
           {
             redraw = true;
             _slider = true;
           }
-          if ((int)_disp < 4 & selectedidd > 3)
+          if ((int)_disp < 4 & j > 3)
           {
             redraw = true;
             _slider = false;
 
           }
         }
-        _disp = (DisplayValue)selectedidd;
+        _disp = (DisplayValue)j;
         if (DropDownItems[1] != _displacement)
         {
           _isShear = false;
           if (_mode == FoldMode.Force)
           {
-            if (selectedidd == 3 | selectedidd == 4)
+            if (j == 3 | j == 4)
             {
-              _disp = (DisplayValue)selectedidd - 3;
+              _disp = (DisplayValue)j - 3;
               _isShear = true;
             }
-            else if (selectedidd > 4)
-              _disp = (DisplayValue)selectedidd - 1;
+            else if (j > 4)
+              _disp = (DisplayValue)j - 1;
 
           }
           else if (_mode == FoldMode.Force)
           {
-            if (selectedidd > 2)
-              _disp = (DisplayValue)selectedidd + 1;
+            if (j > 2)
+              _disp = (DisplayValue)j + 1;
           }
         }
 
         if (redraw)
           ReDrawComponent();
       }
-      else if (dropdownlistidd == 2 && _mode == FoldMode.Stress) // if change is made to third list
+      else if (i == 2 && _mode == FoldMode.Stress) // if change is made to third list
       {
-        if (selectedidd == 0)
+        if (j == 0)
           _flayer = 1;
-        if (selectedidd == 1)
+        if (j == 1)
           _flayer = 0;
-        if (selectedidd == 2)
+        if (j == 2)
           _flayer = -1;
       }
-
       base.UpdateUI();
     }
     public void SetVal(double value)
@@ -793,7 +793,6 @@ namespace GsaGH.Components
 
       _slider = false;
       _defScale = 0;
-
 
       ReDrawComponent();
     }

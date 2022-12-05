@@ -39,5 +39,6 @@ namespace GsaGHTests.Components.Properties
       Assert.True(output.Value.YY);
       Assert.True(output.Value.ZZ);
     }
+
   }
 }
