@@ -65,7 +65,7 @@ namespace GsaGH.Helpers
       { "Shell", Property2D_Type.SHELL },
       { "Curved Shell", Property2D_Type.CURVED_SHELL },
       { "Torsion", Property2D_Type.TORSION },
-      //{ "Wall", Property2D_Type.WALL },
+      { "Wall", Property2D_Type.WALL },
       { "Load Panel", Property2D_Type.LOAD },
       { "Num Type", Property2D_Type.NUM_TYPE }
     };
