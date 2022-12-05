@@ -139,6 +139,7 @@ namespace GsaGH.Components
           }
 
           // 3 inclusion points
+          ghpts = new List<GH_Point>();
           if (DA.GetDataList(3, ghpts))
           {
             pts = new List<Point3d>();
@@ -153,6 +154,7 @@ namespace GsaGH.Components
           }
 
           // 4 inclusion lines
+          ghcrvs = new List<GH_Curve>();
           if (DA.GetDataList(4, ghcrvs))
           {
             crvs = new List<Curve>();
@@ -207,12 +209,16 @@ namespace GsaGH.Components
         {
           if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
             mem.Type = (MemberType)typeInt;
-          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
-            if (Helpers.Mappings.MemberTypeMapping.ContainsKey(typestring))
-              mem.Type = Helpers.Mappings.MemberTypeMapping[typestring];
-            else
+            try
+            {
+              mem.Type = Helpers.Mappings.GetMemberType(typestring);
+            }
+            catch (ArgumentException)
+            {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Member Type");
+            }
           }
         }
 
@@ -222,12 +228,16 @@ namespace GsaGH.Components
         {
           if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
             mem.Type2D = (AnalysisOrder)typeInt;
-          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
-            if (Helpers.Mappings.AnalysisOrderMapping.ContainsKey(typestring))
-              mem.Type2D = Helpers.Mappings.AnalysisOrderMapping[typestring];
-            else
+            try
+            {
+              mem.Type2D = Helpers.Mappings.GetAnalysisOrder(typestring);
+            }
+            catch (ArgumentException)
+            {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Analysis Element Type");
+            }
           }
         }
 

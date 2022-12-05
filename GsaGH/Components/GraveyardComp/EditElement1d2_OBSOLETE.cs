@@ -19,16 +19,16 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a 1D Element
   /// </summary>
-  public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
+  public class EditElement1d2_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("e0bae222-f7ac-4440-a146-2df8b66b2389");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override Guid ComponentGuid => new Guid("5aa4635c-b60e-4812-ab45-6af9437255e4");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditElem1d;
 
-    public EditElement1d() : base("Edit 1D Element",
+    public EditElement1d2_OBSOLETE() : base("Edit 1D Element",
       "Elem1dEdit",
       "Modify GSA 1D Element",
       Ribbon.CategoryName.Name(),
@@ -278,7 +278,7 @@ namespace GsaGH.Components
         DA.SetData(6, new GsaOffsetGoo(elem.Offset));
         DA.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
         DA.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
-        DA.SetData(9, elem.OrientationAngle.Radians);
+        DA.SetData(9, elem.OrientationAngle.As(AngleUnit.Degree));
         DA.SetData(10, new GsaNodeGoo(elem.OrientationNode));
         DA.SetData(11, elem.Name);
         DA.SetData(12, elem.Colour);

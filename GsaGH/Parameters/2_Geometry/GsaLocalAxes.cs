@@ -1,5 +1,4 @@
 ﻿using Rhino.Geometry;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters
@@ -17,7 +16,7 @@ namespace GsaGH.Parameters
       this.Z = z;
     }
 
-    public GsaLocalAxes(List<double> collection, int id)
+    public GsaLocalAxes(ReadOnlyCollection<double> collection)
     {
       this.X = new Vector3d(collection[0], collection[3], collection[6]);
       this.Y = new Vector3d(collection[1], collection[4], collection[7]);
