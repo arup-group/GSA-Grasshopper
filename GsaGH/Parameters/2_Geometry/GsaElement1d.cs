@@ -32,7 +32,6 @@ namespace GsaGH.Parameters
     private GsaBool6 _rel2;
     private GsaSection _section = new GsaSection();
     private GsaNode _orientationNode;
-    private GsaLocalAxes _localAxes = null;
 
     private Line previewSX1;
     private Line previewSX2;
@@ -67,6 +66,8 @@ namespace GsaGH.Parameters
     #endregion
 
     #region properties
+    public int Id { get; set; } = 0;
+    internal GsaLocalAxes LocalAxes { get; set; } = null;
     public LineCurve Line
     {
       get
@@ -78,17 +79,6 @@ namespace GsaGH.Parameters
         this._line = value;
         this._guid = Guid.NewGuid();
         this.UpdatePreview();
-      }
-    }
-    public int Id
-    {
-      get
-      {
-        return this._id;
-      }
-      set
-      {
-        this._id = value;
       }
     }
     public GsaBool6 ReleaseStart
@@ -255,29 +245,6 @@ namespace GsaGH.Parameters
         this._element.Type = value;
       }
     }
-    internal GsaLocalAxes LocalAxes
-    {
-      get
-      {
-        // change after GsaAPI fix
-        Vector3d x = new Vector3d(_line.PointAtEnd.X - _line.PointAtStart.X, _line.PointAtEnd.Y - _line.PointAtStart.Y, _line.PointAtEnd.Z - _line.PointAtStart.Z);
-        if (x.Unitize())
-          return new GsaLocalAxes(x, Vector3d.Zero, Vector3d.Zero);
-        else
-          return new GsaLocalAxes(Vector3d.Zero, Vector3d.Zero, Vector3d.Zero);
-      }
-      set
-      {
-        this._localAxes = value;
-      }
-    }
-    public Guid Guid
-    {
-      get
-      {
-        return this._guid;
-      }
-    }
     #endregion
 
     #region constructors
@@ -292,7 +259,7 @@ namespace GsaGH.Parameters
         Type = ElementType.BEAM,
       };
       this._line = line;
-      this._id = id;
+      this.Id = Id;
       this._section.Id = prop;
       this._orientationNode = orientationNode;
       this.UpdatePreview();
@@ -304,7 +271,7 @@ namespace GsaGH.Parameters
       this._line = line;
       this._rel1 = new GsaBool6(_element.GetEndRelease(0).Releases);
       this._rel2 = new GsaBool6(_element.GetEndRelease(1).Releases);
-      this._id = id;
+      this.Id = id;
       this._section = section;
       this._orientationNode = orientationNode;
       this.UpdatePreview();
@@ -315,7 +282,7 @@ namespace GsaGH.Parameters
     public GsaElement1d Duplicate(bool cloneApiElement = false)
     {
       GsaElement1d dup = new GsaElement1d();
-      dup._id = this._id;
+      dup.Id = this.Id;
       dup._element = this._element;
       dup._localAxes = this._localAxes;
       dup._guid = new Guid(_guid.ToString());
