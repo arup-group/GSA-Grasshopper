@@ -31,7 +31,6 @@ namespace IntegrationTests
 
       LoadRefs();
       Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-      //Assert.NotNull(new GsaBool6());
 
       InitializeCore();
 
