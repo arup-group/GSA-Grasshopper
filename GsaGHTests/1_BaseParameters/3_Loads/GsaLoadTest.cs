@@ -58,13 +58,14 @@ namespace GsaGHTests.Parameters
     }
 
     [Theory]
-    [InlineData(NodeLoadTypes.NODE_LOAD)]
-    [InlineData(NodeLoadTypes.APPLIED_DISP)]
-    [InlineData(NodeLoadTypes.SETTLEMENT)]
-    [InlineData(NodeLoadTypes.GRAVITY)]
-    [InlineData(NodeLoadTypes.NUM_TYPES)]
-    public void NodeLoadConstructorTest(NodeLoadTypes type)
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public void NodeLoadConstructorTest(int typeId)
     {
+      NodeLoadTypes type = (NodeLoadTypes)typeId;
       // Act
       GsaNodeLoad nodeLoad = new GsaNodeLoad();
       nodeLoad.Type = type;
@@ -196,13 +197,16 @@ namespace GsaGHTests.Parameters
     }
 
     [Theory]
-    [InlineData(NodeLoadTypes.NODE_LOAD, NodeLoadTypes.GRAVITY)]
-    [InlineData(NodeLoadTypes.APPLIED_DISP, NodeLoadTypes.NODE_LOAD)]
-    [InlineData(NodeLoadTypes.SETTLEMENT, NodeLoadTypes.NODE_LOAD)]
-    [InlineData(NodeLoadTypes.GRAVITY, NodeLoadTypes.NODE_LOAD)]
-    [InlineData(NodeLoadTypes.NUM_TYPES, NodeLoadTypes.NODE_LOAD)]
-    public void NodeLoadDuplicateTest(NodeLoadTypes originalType, NodeLoadTypes duplicateType)
+    [InlineData(0, 3)]
+    [InlineData(1, 0)]
+    [InlineData(2, 0)]
+    [InlineData(3, 0)]
+    [InlineData(4, 0)]
+    public void NodeLoadDuplicateTest(int intType, int intDuplicateType)
     {
+      NodeLoadTypes originalType = (NodeLoadTypes)intType;
+      NodeLoadTypes duplicateType = (NodeLoadTypes)intDuplicateType;
+
       // Arrange
       GsaNodeLoad nodeLoad = new GsaNodeLoad();
       nodeLoad.Type = originalType;

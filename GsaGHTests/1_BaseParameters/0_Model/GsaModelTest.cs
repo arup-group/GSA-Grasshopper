@@ -1,5 +1,6 @@
 ﻿using GsaAPI;
 using GsaGH.Parameters;
+using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using System;
 using Xunit;
@@ -28,14 +29,11 @@ namespace GsaGHTests.Parameters
       // create new GH-GSA model 
       GsaModel m = new GsaModel();
 
-      // get the GSA install path
-      string installPath = GsaGH.Helpers.GsaAPI.InstallationFolder.GetPath;
-
-      // open existing GSA model (steel design sample)
-      m.Model.Open(installPath + "\\UnitTests\\Steel_Design_Simple.gwb");
+      string file = GsaFile.Steel_Design_Simple;
+      m.Model.Open(file);
 
       // save file to temp location
-      string tempfilename = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Oasys") + "GSA-Grasshopper_temp.gwb";
+      string tempfilename = System.IO.Path.GetTempPath() + "GSA-Grasshopper_temp.gwb";
       ReturnValue returnValue = m.Model.SaveAs(tempfilename);
 
       Assert.Same(ReturnValue.GS_OK.ToString(), returnValue.ToString());

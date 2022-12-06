@@ -209,12 +209,12 @@ namespace GsaGH.Components
     public override void SetSelected(int i, int j)
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.StresshUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), this.SelectedItems[i]);
+      this.StresshUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), this.SelectedItems[i]);
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()
     {
-      this.StresshUnit = (PressureUnit)Enum.Parse(typeof(PressureUnit), SelectedItems[0]);
+      this.StresshUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), this.SelectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 

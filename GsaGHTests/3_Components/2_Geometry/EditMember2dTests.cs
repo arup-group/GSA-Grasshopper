@@ -138,5 +138,34 @@ namespace GsaGHTests.Components.Geometry
       Assert.True(output14.Value);
       Assert.Equal("", output15.Value);
     }
+
+    [Fact]
+    public void CreateComponentTest3()
+    {
+      // Arrange & Act
+      var comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(4, 0, 0), new Point3d(4, 4, 0), new Point3d(0, 4, 0), 1), 2);
+      ComponentTestHelper.SetInput(comp, new Point3d(2, 2, 0), 3);
+      ComponentTestHelper.SetInput(comp, new Line(new Point3d(3, 0, 0), new Point3d(3, 3, 0)), 4);
+
+      // Assert
+      GsaMember2dGoo output0 = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp, 0);
+      GH_Point output3 = (GH_Point)ComponentTestHelper.GetOutput(comp, 3);
+      GH_Curve output4 = (GH_Curve)ComponentTestHelper.GetOutput(comp, 4);
+
+      //Assert.Equal("1 2 3 4 P(5 6) L(7 8)", output0.Value.ApiMember.Topology);
+      Assert.Single(output0.Value.InclusionPoints);
+      Assert.Single(output0.Value.InclusionLines);
+      Assert.Equal(2, output3.Value.X);
+      Assert.Equal(2, output3.Value.Y);
+      Assert.Equal(0, output3.Value.Z);
+      Assert.Equal(3, output4.Value.PointAtStart.X);
+      Assert.Equal(0, output4.Value.PointAtStart.Y);
+      Assert.Equal(0, output4.Value.PointAtStart.Z);
+      Assert.Equal(3, output4.Value.PointAtEnd.X);
+      Assert.Equal(3, output4.Value.PointAtEnd.Y);
+      Assert.Equal(0, output4.Value.PointAtEnd.Z);
+    }
   }
 }
+

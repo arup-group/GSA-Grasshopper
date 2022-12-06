@@ -104,7 +104,7 @@ namespace GsaGH.Components
       material.GradeProperty = 0; //will be ignored
 
       // element type (picked in dropdown)
-      if (_mode == FoldMode.Undefined)
+      if (_mode == FoldMode.Generic)
         material.MaterialType = GsaMaterial.MatType.GENERIC;
       if (_mode == FoldMode.Steel)
         material.MaterialType = GsaMaterial.MatType.STEEL;
@@ -118,6 +118,8 @@ namespace GsaGH.Components
         material.MaterialType = GsaMaterial.MatType.FRP;
       if (_mode == FoldMode.Glass)
         material.MaterialType = GsaMaterial.MatType.GLASS;
+      if (_mode == FoldMode.Fabric)
+        material.MaterialType = GsaMaterial.MatType.FABRIC;
 
       DA.SetData(0, new GsaMaterialGoo(material));
     }
@@ -125,13 +127,14 @@ namespace GsaGH.Components
     #region Custom UI
     private enum FoldMode
     {
+      Generic,
       Steel,
       Concrete,
       Timber,
       Aluminium,
       FRP,
       Glass,
-      Undefined
+      Fabric
     }
     private FoldMode _mode = FoldMode.Timber;
 

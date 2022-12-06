@@ -341,7 +341,7 @@ namespace GsaGH.Components
         DA.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
         DA.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
 
-        DA.SetData(10, mem.OrientationAngle.As(AngleUnit.Radian));
+        DA.SetData(10, mem.OrientationAngle.Radians);
         DA.SetData(11, new GsaNodeGoo(mem.OrientationNode));
 
         DA.SetData(12, mem.MeshSize);
@@ -409,17 +409,16 @@ namespace GsaGH.Components
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      this.Params.Input[12].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-      this.Params.Output[12].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-    }
 
     #region IGH_VariableParameterComponent null implementation
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+    public void VariableParameterMaintenance()
+    {
+      return;
+    }
     #endregion
     #endregion
   }

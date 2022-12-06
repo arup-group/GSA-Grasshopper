@@ -93,7 +93,8 @@ namespace GsaGH.Parameters
       if (this == null) { return null; }
       GsaAnalysisTask dup = new GsaAnalysisTask();
       dup.m_idd = this.m_idd;
-      dup.Cases = this.Cases.ToList();
+      if (this.Cases != null)
+        dup.Cases = this.Cases.ToList();
       dup.Type = this.Type;
       dup.Name = this.Name;
       return dup;
@@ -101,7 +102,7 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      return (this.ID > 0 ? "ID:" +this.ID : "" + " '" + this.Name + "' " + this.Type.ToString().Replace("_"," ")).Trim().Replace("  ", " ");
+      return (this.ID > 0 ? "ID:" + this.ID : "" + " '" + this.Name + "' " + this.Type.ToString().Replace("_", " ")).Trim().Replace("  ", " ");
     }
     #endregion
   }
