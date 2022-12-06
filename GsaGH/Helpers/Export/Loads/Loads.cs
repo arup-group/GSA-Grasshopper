@@ -2,8 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -146,6 +148,10 @@ namespace GsaGH.Helpers.Export
           break;
 
         case GsaLoad.LoadTypes.GridArea:
+          // update polygon definition with unit
+          if (load.AreaLoad.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON)
+            load.AreaLoad.GridAreaLoad.PolyLineDefinition += "(" + Length.GetAbbreviation(unit) + ")";
+
           if (load.AreaLoad.GridPlaneSurface == null) // if gridsurface id has been set
           {
             // add the load to our list of loads to be set later
