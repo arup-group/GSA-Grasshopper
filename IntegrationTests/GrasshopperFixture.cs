@@ -31,11 +31,18 @@ namespace IntegrationTests
 
       LoadRefs();
       Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
+      TryGsaCOM();
 
       InitializeCore();
 
       // setup headless units
       OasysGH.Units.Utility.SetupUnitsDuringLoad(true);
+    }
+    public void TryGsaCOM()
+    {
+      Interop.Gsa_10_1.ComAuto m = new Interop.Gsa_10_1.ComAuto();
+      m.NewFile();
+      m.SetLocale(Interop.Gsa_10_1.Locale.LOC_EN_GB);
     }
 
     public void LoadRefs()
