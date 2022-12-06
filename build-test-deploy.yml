@@ -32,9 +32,13 @@ steps:
       Write-Error "Application could not be installed. Error code $($app.ExitCode)"
       exit(1)
     }
-    gsa.exe /register
   displayName: 'Install GSA'
   failOnStderr: true
+  
+- powershell: |
+    & 'C:\Program Files\Oasys\*\GSA.exe' /Register
+  displayName: 'Register GSA COM'
+  failOnStderr: false
   
 - task: NuGetToolInstaller@1
 
