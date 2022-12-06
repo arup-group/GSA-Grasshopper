@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
-  /// </summary>
-  public class GetAnalysis : GH_OasysComponent
+    /// <summary>
+    /// Component to retrieve non-geometric objects from a GSA model
+    /// </summary>
+    public class GetAnalysis : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -22,8 +23,8 @@ namespace GsaGH.Components
     public GetAnalysis() : base("Get Model Analysis Tasks",
       "GetAnalysisTasks",
       "Get Analysis Tasks and their Cases from GSA model",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat0())
+      CategoryName.Name(),
+      SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -50,7 +51,7 @@ namespace GsaGH.Components
       GsaModel gsaModel = new GsaModel();
       if (DA.GetData(0, ref gsaModel))
       {
-        Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Util.Gsa.FromGSA.GetAnalysisTasksAndCombinations(gsaModel);
+        Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Helpers.Import.Analyses.GetAnalysisTasksAndCombinations(gsaModel);
 
         DA.SetDataList(0, tuple.Item1);
         DA.SetDataList(1, tuple.Item2);

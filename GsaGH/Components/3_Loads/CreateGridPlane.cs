@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -10,7 +11,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridPlane : GH_OasysDropDownComponent
+    public class CreateGridPlane : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("95c9281a-739b-4480-a2d0-8b04ab0250bd");
@@ -21,8 +22,8 @@ namespace GsaGH.Components
     public CreateGridPlane() : base("Create Grid Plane",
       "GridPlane",
       "Create GSA Grid Plane",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { }
     #endregion
 

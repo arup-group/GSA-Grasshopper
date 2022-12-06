@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Grasshopper;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -14,14 +18,14 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 1D Element
-  /// </summary>
-  public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a 1D Element
+    /// </summary>
+    public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("5aa4635c-b60e-4812-ab45-6af9437255e4");
+    public override Guid ComponentGuid => new Guid("e0bae222-f7ac-4440-a146-2df8b66b2389");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditElem1d;
@@ -29,8 +33,8 @@ namespace GsaGH.Components
     public EditElement1d() : base("Edit 1D Element",
       "Elem1dEdit",
       "Modify GSA 1D Element",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -42,17 +46,17 @@ namespace GsaGH.Components
       pManager.AddLineParameter("Line", "L", "Reposition Element Line", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Set new Section Property", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Group", "Gr", "Set Element Group", GH_ParamAccess.item);
-      pManager.AddTextParameter("Type", "eT", "Set Element Type" + System.Environment.NewLine +
-          "Accepted inputs are:" + System.Environment.NewLine +
-          "1: Bar" + System.Environment.NewLine +
-          "2: Beam" + System.Environment.NewLine +
-          "3: Spring" + System.Environment.NewLine +
-          "9: Link" + System.Environment.NewLine +
-          "10: Cable" + System.Environment.NewLine +
-          "19: Spacer" + System.Environment.NewLine +
-          "20: Strut" + System.Environment.NewLine +
-          "21: Tie" + System.Environment.NewLine +
-          "23: Rod" + System.Environment.NewLine +
+      pManager.AddTextParameter("Type", "eT", "Set Element Type" + Environment.NewLine +
+          "Accepted inputs are:" + Environment.NewLine +
+          "1: Bar" + Environment.NewLine +
+          "2: Beam" + Environment.NewLine +
+          "3: Spring" + Environment.NewLine +
+          "9: Link" + Environment.NewLine +
+          "10: Cable" + Environment.NewLine +
+          "19: Spacer" + Environment.NewLine +
+          "20: Strut" + Environment.NewLine +
+          "21: Tie" + Environment.NewLine +
+          "23: Rod" + Environment.NewLine +
           "24: Damper", GH_ParamAccess.item);
 
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Element Offset", GH_ParamAccess.item);
@@ -61,7 +65,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲", "Set Release (Bool6) at End of Element", GH_ParamAccess.item);
 
       pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Element Orientation Angle", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Orientation Node", "⭮N", "Set Element Orientation Node", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaNodeParameter(), "Orientation Node", "⭮N", "Set Element Orientation Node", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.item);
       pManager.AddColourParameter("Colour", "Co", "Set Element Colour", GH_ParamAccess.item);
@@ -95,7 +99,7 @@ namespace GsaGH.Components
       pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Parent Members", "pM", "Get Parent Member IDs in Model that Element was created from", GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Topology", "Tp", "Get the Element's original topology list referencing node IDs in Model that Element was created from", GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Topology", "Tp", "Get the Element's original topology list referencing node IDs in Model that Element was created from", GH_ParamAccess.tree);
     }
     #endregion
 
@@ -120,11 +124,11 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gsaElement1d))
       {
         if (gsaElement1d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element1D input is null"); }
-        elem = gsaElement1d.Duplicate();
+        elem = gsaElement1d.Duplicate(true);
       }
 
       if (elem != null)
-      { 
+      {
         // #### inputs ####
         // 1 ID
         GH_Integer ghID = new GH_Integer();
@@ -184,12 +188,16 @@ namespace GsaGH.Components
         {
           if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
             elem.Type = (ElementType)typeInt;
-          if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
+          else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
-            if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
-              elem.Type = Helpers.Mappings.ElementTypeMapping[typestring];
-            else
+            try
+            {
+              elem.Type = Mappings.GetElementType(typestring);
+            }
+            catch (ArgumentException)
+            {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element Type");
+            }
           }
         }
 
@@ -268,18 +276,20 @@ namespace GsaGH.Components
         DA.SetData(2, new GH_Line(elem.Line.Line));
         DA.SetData(3, new GsaSectionGoo(elem.Section));
         DA.SetData(4, elem.Group);
-        DA.SetData(5, Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
+        DA.SetData(5, Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
         DA.SetData(6, new GsaOffsetGoo(elem.Offset));
         DA.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
         DA.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
-        DA.SetData(9, elem.OrientationAngle.As(AngleUnit.Degree));
+        DA.SetData(9, elem.OrientationAngle.Radians);
         DA.SetData(10, new GsaNodeGoo(elem.OrientationNode));
         DA.SetData(11, elem.Name);
         DA.SetData(12, elem.Colour);
         DA.SetData(13, elem.IsDummy);
 
         try { DA.SetData(14, elem.ParentMember); } catch (Exception) { }
-        DA.SetDataList(15, new Collection<int>(elem.API_Element.Topology));
+        DataTree<int> topo = new DataTree<int>();
+        topo.AddRange(elem.API_Element.Topology, new GH_Path(elem.Id));
+        DA.SetDataTree(15, topo);
       }
     }
   }

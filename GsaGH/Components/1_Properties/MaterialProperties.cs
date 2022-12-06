@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -13,10 +14,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get geometric properties of a section
-  /// </summary>
-  public class GetMaterialProperties : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to get geometric properties of a section
+    /// </summary>
+    public class GetMaterialProperties : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -28,8 +29,8 @@ namespace GsaGH.Components
     public GetMaterialProperties() : base("Material Properties",
       "MatProp",
       "Get GSA Material Properties for Elastic Isotropic material type",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

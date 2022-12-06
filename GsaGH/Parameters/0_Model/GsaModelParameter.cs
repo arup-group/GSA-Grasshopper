@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// This class provides a parameter interface for the <see cref="GsaModelGoo"/> type.
-  /// </summary>
-  public class GsaModelParameter : GH_OasysPersistentParam<GsaModelGoo>
+    /// <summary>
+    /// This class provides a parameter interface for the <see cref="GsaModelGoo"/> type.
+    /// </summary>
+    public class GsaModelParameter : GH_OasysPersistentParam<GsaModelGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaModelGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaModelGoo.Name : base.TypeName;
@@ -20,8 +21,8 @@ namespace GsaGH.Parameters
       GsaModelGoo.Name,
       GsaModelGoo.NickName,
       GsaModelGoo.Description + " parameter",
-      GsaGH.Components.Ribbon.CategoryName.Name(),
-      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+      CategoryName.Name(),
+      SubCategoryName.Cat9()))
     { }
 
     protected override GsaModelGoo PreferredCast(object data)

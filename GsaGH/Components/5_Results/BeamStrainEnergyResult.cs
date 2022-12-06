@@ -7,6 +7,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -18,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get GSA Beam strain energy density results
-  /// </summary>
-  public class BeamStrainEnergy : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get GSA Beam strain energy density results
+    /// </summary>
+    public class BeamStrainEnergy : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("c1a927cb-ad0e-4a69-94ce-9ad079047d21");
@@ -32,8 +33,8 @@ namespace GsaGH.Components
     public BeamStrainEnergy() : base("Beam Strain Energy Density",
       "StrainEnergy",
       "Element1D Strain Energy Density result values",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -41,18 +42,18 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.list);
-      pManager.AddTextParameter("Element filter list", "El", "Filter results by list." + System.Environment.NewLine +
-          "Element list should take the form:" + System.Environment.NewLine +
-          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Element filter list", "El", "Filter results by list." + Environment.NewLine +
+          "Element list should take the form:" + Environment.NewLine +
+          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
       string unitAbbreviation = Energy.GetAbbreviation(this.EnergyUnit) + "/m\u00B3";
-      string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
-                    System.Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
-          System.Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
+      string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
+                    Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
+          Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
 
       pManager.AddGenericParameter("Strain energy density [" + unitAbbreviation + "]", "E", "Strain energy density. The strain energy density for a beam is a measure of how hard the beam is working. The average strain energy density is the average density along the element or member." + note, GH_ParamAccess.tree);
     }

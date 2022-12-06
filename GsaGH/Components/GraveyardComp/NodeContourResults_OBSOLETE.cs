@@ -10,7 +10,7 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Util.Gsa;
+using GsaGH.Helpers.GsaAPI;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
@@ -20,13 +20,14 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to display GSA node result contours
-  /// </summary>
-  public class NodeContourResults_OBSOLETE : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to display GSA node result contours
+    /// </summary>
+    public class NodeContourResults_OBSOLETE : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("47053884-2c22-4f2c-b092-8531fa5751e1");
@@ -37,8 +38,8 @@ namespace GsaGH.Components
     public NodeContourResults_OBSOLETE() : base("Node Contour Results",
       "ContourNode",
       "Diplays GSA Node Results as Contours",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { }
     #endregion
 
@@ -46,12 +47,12 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
-      pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + System.Environment.NewLine +
-          "Node list should take the form:" + System.Environment.NewLine +
-          " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + Environment.NewLine +
+          "Node list should take the form:" + Environment.NewLine +
+          " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddColourParameter("Colour", "Co", "Optional list of colours to override default colours." +
-          System.Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
+          Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
       pManager.AddNumberParameter("Scalar", "x:X", "Scale the result display size", GH_ParamAccess.item, 10);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
@@ -86,7 +87,7 @@ namespace GsaGH.Components
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination case contains "
                 + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
-                System.Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
+                Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.ResultType.Combination)
             _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
@@ -120,7 +121,7 @@ namespace GsaGH.Components
             colors.Add(color);
           }
         }
-        Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = UI.Colour.Stress_Gradient(colors);
+        Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = Helpers.Graphics.Colours.Stress_Gradient(colors);
 
         // Get scalar 
         GH_Number gh_Scale = new GH_Number();
@@ -180,7 +181,7 @@ namespace GsaGH.Components
         // ### Coloured Result Points ###
 
         // Get nodes for point location and restraint check in case of reaction force
-        ConcurrentDictionary<int, GsaNodeGoo> gsanodes = Util.Gsa.FromGSA.GetNodeDictionary(nodes, LengthUnit);
+        ConcurrentDictionary<int, GsaNodeGoo> gsanodes = Helpers.Import.Nodes.GetNodeDictionary(nodes, LengthUnit);
 
         // round max and min to reasonable numbers
         double dmax = 0;
@@ -685,7 +686,7 @@ namespace GsaGH.Components
       Grasshopper.Kernel.Special.GH_GradientControl gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
 
-      gradient.Gradient = UI.Colour.Stress_Gradient(null);
+      gradient.Gradient = Helpers.Graphics.Colours.Stress_Gradient(null);
       gradient.Gradient.NormalizeGrips();
       gradient.Params.Input[0].AddVolatileData(new GH_Path(0), 0, -1);
       gradient.Params.Input[1].AddVolatileData(new GH_Path(0), 0, 1);

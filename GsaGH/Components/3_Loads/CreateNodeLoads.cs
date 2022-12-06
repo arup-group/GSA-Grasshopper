@@ -4,6 +4,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -12,10 +13,11 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateNodeLoad : GH_OasysDropDownComponent
+    public class CreateNodeLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
@@ -26,8 +28,8 @@ namespace GsaGH.Components
     public CreateNodeLoad() : base("Create Node Load",
       "NodeLoad",
       "Create GSA Node Load",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -44,25 +46,25 @@ namespace GsaGH.Components
           funit = "Value [" + Moment.GetAbbreviation(this.MomentUnit) + "]";
           break;
         case FoldMode.Applied_Displ:
-        case FoldMode.Settlements:
+        case FoldMode.Settlement:
           funit = "Value [" + Length.GetAbbreviation(this.LengthUnit) + "]";
           break;
       }
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
-      pManager.AddTextParameter("Node list", "No", "List of Nodes to apply load to." + System.Environment.NewLine +
-           "Node list should take the form:" + System.Environment.NewLine +
-           " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
+      pManager.AddGenericParameter("Node list", "Pt", "Node or Point to apply load to; either input Node, Point, or a text string." + Environment.NewLine +
+           "Text string with Node list should take the form:" + Environment.NewLine +
+           " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
            "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di", "Load direction (default z)." +
-              System.Environment.NewLine + "Accepted inputs are:" +
-              System.Environment.NewLine + "x" +
-              System.Environment.NewLine + "y" +
-              System.Environment.NewLine + "z" +
-              System.Environment.NewLine + "xx" +
-              System.Environment.NewLine + "yy" +
-              System.Environment.NewLine + "zz", GH_ParamAccess.item, "z");
+              Environment.NewLine + "Accepted inputs are:" +
+              Environment.NewLine + "x" +
+              Environment.NewLine + "y" +
+              Environment.NewLine + "z" +
+              Environment.NewLine + "xx" +
+              Environment.NewLine + "yy" +
+              Environment.NewLine + "zz", GH_ParamAccess.item, "z");
       pManager.AddGenericParameter("Value [" + funit + "]", "V", "Load Value", GH_ParamAccess.item);
       pManager[0].Optional = true;
       pManager[2].Optional = true;
@@ -89,7 +91,7 @@ namespace GsaGH.Components
         case FoldMode.Applied_Displ:
           nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;
           break;
-        case FoldMode.Settlements:
+        case FoldMode.Settlement:
           nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.SETTLEMENT;
           break;
       }
@@ -102,26 +104,22 @@ namespace GsaGH.Components
       nodeLoad.NodeLoad.Case = lc;
 
       // 1 element/beam list
-      // check that user has not inputted Gsa geometry elements here
       GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(1, ref gh_typ))
       {
-        string type = gh_typ.Value.ToString().ToUpper();
-        if (type.StartsWith("GSA "))
+        Point3d refPt = new Point3d();
+        if (gh_typ.Value is GsaNodeGoo)
         {
-          Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in NodeList input!" + System.Environment.NewLine +
-              "Element list should take the form:" + System.Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + System.Environment.NewLine +
-              "Refer to GSA help file for definition of lists and full vocabulary.");
-          return;
+          GsaNodeGoo goo = (GsaNodeGoo)gh_typ.Value;
+          nodeLoad.RefPoint = goo.Value.Point;
         }
+        else if (GH_Convert.ToPoint3d(gh_typ.Value, ref refPt, GH_Conversion.Both))
+        {
+          nodeLoad.RefPoint = refPt;
+        }
+        else if (GH_Convert.ToString(gh_typ.Value, out string nodeList, GH_Conversion.Both))
+          nodeLoad.NodeLoad.Nodes = nodeList;
       }
-      string nodeList = "all";
-      GH_String gh_nl = new GH_String();
-      if (DA.GetData(1, ref gh_nl))
-        GH_Convert.ToString(gh_nl, out nodeList, GH_Conversion.Both);
-      nodeLoad.NodeLoad.Nodes = nodeList;
 
       // 3 Name
       string name = "";
@@ -205,7 +203,7 @@ namespace GsaGH.Components
       Node_Force,
       Node_Moment,
       Applied_Displ,
-      Settlements
+      Settlement
     }
     readonly List<string> _type = new List<string>(new string[]
     {
@@ -263,7 +261,7 @@ namespace GsaGH.Components
             this.SelectedItems[1] = Length.GetAbbreviation(this.LengthUnit);
             break;
           case "Settlement":
-            this._mode = FoldMode.Settlements;
+            this._mode = FoldMode.Settlement;
             this.DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length);
             this.SelectedItems[1] = Length.GetAbbreviation(this.LengthUnit);
             break;
@@ -280,7 +278,7 @@ namespace GsaGH.Components
             this.MomentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), this.SelectedItems[1]);
             break;
           case FoldMode.Applied_Displ:
-          case FoldMode.Settlements:
+          case FoldMode.Settlement:
             this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
             break;
         }
@@ -290,11 +288,11 @@ namespace GsaGH.Components
     }
     public override void UpdateUIFromSelectedItems()
     {
-      string md = SelectedItems[0].Replace(' ', '_');
+      string md = this.SelectedItems[0].Replace(' ', '_');
       if (md.ToLower() == "node")
         this._mode = FoldMode.Node_Force;
       else
-        this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].Replace(' ', '_'));
+        this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0].Replace(' ', '_'));
       
       switch (this._mode)
       {
@@ -305,7 +303,7 @@ namespace GsaGH.Components
           this.MomentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), this.SelectedItems[1]);
           break;
         case FoldMode.Applied_Displ:
-        case FoldMode.Settlements:
+        case FoldMode.Settlement:
           this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
           break;
       }
@@ -323,7 +321,7 @@ namespace GsaGH.Components
           Params.Input[4].Name = "Value [" + Moment.GetAbbreviation(this.MomentUnit) + "]";
           break;
         case FoldMode.Applied_Displ:
-        case FoldMode.Settlements:
+        case FoldMode.Settlement:
           Params.Input[4].Name = "Value [" + Length.GetAbbreviation(this.LengthUnit) + "]";
           break;
       }

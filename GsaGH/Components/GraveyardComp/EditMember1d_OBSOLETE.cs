@@ -6,6 +6,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -19,10 +21,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 1D Member
-  /// </summary>
-  public class EditMember1d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a 1D Member
+    /// </summary>
+    public class EditMember1d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("094f676f-c384-4d49-9d7f-64515004bf4b");
@@ -33,8 +35,8 @@ namespace GsaGH.Components
     public EditMember1d_OBSOLETE() : base("Edit 1D Member",
       "Mem1dEdit",
       "Modify GSA 1D Member",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -46,25 +48,25 @@ namespace GsaGH.Components
       pManager.AddCurveParameter("Curve", "C", "Member Curve", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Set new Section Property.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member1d Group", "Gr", "Set Member 1D Group", GH_ParamAccess.item);
-      pManager.AddTextParameter("Member Type", "mT", "Set 1D Member Type" + System.Environment.NewLine +
-          "Default is 0: Generic 1D - Accepted inputs are:" + System.Environment.NewLine +
-          "2: Beam" + System.Environment.NewLine +
-          "3: Column" + System.Environment.NewLine +
-          "6: Cantilever" + System.Environment.NewLine +
-          "8: Compos" + System.Environment.NewLine +
-          "9: Pile" + System.Environment.NewLine +
+      pManager.AddTextParameter("Member Type", "mT", "Set 1D Member Type" + Environment.NewLine +
+          "Default is 0: Generic 1D - Accepted inputs are:" + Environment.NewLine +
+          "2: Beam" + Environment.NewLine +
+          "3: Column" + Environment.NewLine +
+          "6: Cantilever" + Environment.NewLine +
+          "8: Compos" + Environment.NewLine +
+          "9: Pile" + Environment.NewLine +
           "11: Void cutter", GH_ParamAccess.item);
-      pManager.AddTextParameter("1D Element Type", "eT", "Set Element 1D Type" + System.Environment.NewLine +
-          "Accepted inputs are:" + System.Environment.NewLine +
-          "1: Bar" + System.Environment.NewLine +
-          "2: Beam" + System.Environment.NewLine +
-          "3: Spring" + System.Environment.NewLine +
-          "9: Link" + System.Environment.NewLine +
-          "10: Cable" + System.Environment.NewLine +
-          "19: Spacer" + System.Environment.NewLine +
-          "20: Strut" + System.Environment.NewLine +
-          "21: Tie" + System.Environment.NewLine +
-          "23: Rod" + System.Environment.NewLine +
+      pManager.AddTextParameter("1D Element Type", "eT", "Set Element 1D Type" + Environment.NewLine +
+          "Accepted inputs are:" + Environment.NewLine +
+          "1: Bar" + Environment.NewLine +
+          "2: Beam" + Environment.NewLine +
+          "3: Spring" + Environment.NewLine +
+          "9: Link" + Environment.NewLine +
+          "10: Cable" + Environment.NewLine +
+          "19: Spacer" + Environment.NewLine +
+          "20: Strut" + Environment.NewLine +
+          "21: Tie" + Environment.NewLine +
+          "23: Rod" + Environment.NewLine +
           "24: Damper", GH_ParamAccess.item);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰", "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
@@ -189,8 +191,8 @@ namespace GsaGH.Components
             mem.Type = (MemberType)typeInt;
           if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
-            if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
-              mem.Type = Helpers.Mappings.MemberTypeMapping[typestring];
+            if (Mappings.ElementTypeMapping.ContainsKey(typestring))
+              mem.Type = Mappings.MemberTypeMapping[typestring];
             else
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element1D Type");
           }
@@ -204,8 +206,8 @@ namespace GsaGH.Components
             mem.Type1D = (ElementType)typeInt;
           else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
           {
-            if (Helpers.Mappings.ElementTypeMapping.ContainsKey(typestring))
-              mem.Type1D = Helpers.Mappings.ElementTypeMapping[typestring];
+            if (Mappings.ElementTypeMapping.ContainsKey(typestring))
+              mem.Type1D = Mappings.ElementTypeMapping[typestring];
             else
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element1D Type");
           }
@@ -322,8 +324,8 @@ namespace GsaGH.Components
         DA.SetData(2, mem.PolyCurve);
         DA.SetData(3, new GsaSectionGoo(mem.Section));
         DA.SetData(4, mem.Group);
-        DA.SetData(5, Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
-        DA.SetData(6, Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
+        DA.SetData(5, Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+        DA.SetData(6, Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
 
         DA.SetData(7, new GsaOffsetGoo(mem.Offset));
 
@@ -397,8 +399,10 @@ namespace GsaGH.Components
       if (reader.ItemExists("LengthUnit"))
       {
         this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-        bool flag = base.Read(reader);
-        return flag & this.Params.ReadAllParameterData(reader);
+        if (base.Read(reader))
+          return true;
+        else
+          return this.Params.ReadAllParameterData(reader);
       }
       else
       {

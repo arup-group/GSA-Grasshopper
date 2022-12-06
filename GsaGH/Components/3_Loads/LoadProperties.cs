@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -14,7 +15,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  public class LoadProp : GH_OasysDropDownComponent
+    public class LoadProp : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("0df96bee-3440-4699-b08d-d805220d1f68");
@@ -25,8 +26,8 @@ namespace GsaGH.Components
     public LoadProp() : base("Load Properties",
       "LoadProp",
       "Get properties of a GSA Load",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -170,6 +171,8 @@ namespace GsaGH.Components
     #region Custom UI
     private ForceUnit ForceUnit = DefaultUnits.ForceUnit;
     private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+    private LengthUnit _UsUnit = (DefaultUnits.LengthUnitGeometry == LengthUnit.Foot || DefaultUnits.LengthUnitGeometry == LengthUnit.Inch) ? DefaultUnits.LengthUnitGeometry : LengthUnit.Foot;
+    private LengthUnit _SiUnit = (DefaultUnits.LengthUnitGeometry != LengthUnit.Foot || DefaultUnits.LengthUnitGeometry != LengthUnit.Inch) ? DefaultUnits.LengthUnitGeometry : LengthUnit.Meter;
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
@@ -183,6 +186,7 @@ namespace GsaGH.Components
 
       // Force
       this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      this.DropDownItems[0].RemoveAt(this.DropDownItems[0].Count - 1); // remove Tonneforce
       this.SelectedItems.Add(Force.GetAbbreviation(this.ForceUnit));
 
       // Length
@@ -204,6 +208,7 @@ namespace GsaGH.Components
           this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
           break;
       }
+      this.SelectedItems[1] = Length.GetAbbreviation(this.LengthUnit);
       base.UpdateUI();
     }
 
@@ -216,15 +221,22 @@ namespace GsaGH.Components
 
     public override void VariableParameterMaintenance()
     {
-      string forceUnitAbbreviation = Force.GetAbbreviation(this.ForceUnit);
-      string forcePerLengthUnit = ForcePerLength.GetAbbreviation(UnitsHelper.GetForcePerLengthUnit(this.ForceUnit, this.LengthUnit));
-      string forcePerAreaUnit = Pressure.GetAbbreviation(UnitsHelper.GetForcePerAreaUnit(this.ForceUnit, this.LengthUnit));
-      string unitAbbreviation = string.Join(", ", new string[] { forceUnitAbbreviation, forcePerLengthUnit, forcePerAreaUnit });
+      try
+      {
+        string forceUnitAbbreviation = Force.GetAbbreviation(this.ForceUnit);
+        string forcePerLengthUnit = ForcePerLength.GetAbbreviation(UnitsHelper.GetForcePerLengthUnit(this.ForceUnit, this.LengthUnit));
+        string forcePerAreaUnit = Pressure.GetAbbreviation(UnitsHelper.GetForcePerAreaUnit(this.ForceUnit, this.LengthUnit));
+        string unitAbbreviation = string.Join(", ", new string[] { forceUnitAbbreviation, forcePerLengthUnit, forcePerAreaUnit });
 
-      Params.Output[6].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
-      Params.Output[7].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
-      Params.Output[8].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
-      Params.Output[9].Name = "Load Value [" + unitAbbreviation + "]";
+        Params.Output[6].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
+        Params.Output[7].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
+        Params.Output[8].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
+        Params.Output[9].Name = "Load Value [" + unitAbbreviation + "]";
+      }
+      catch (Exception e)
+      {
+        this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+      }
     }
     #endregion
   }

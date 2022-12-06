@@ -5,13 +5,14 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using OasysGH.Components;
 using OasysGH;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create new Node with restraints (support)
-  /// </summary>
-  public class CreateSupport : GH_OasysDropDownComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new Node with restraints (support)
+    /// </summary>
+    public class CreateSupport : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("d808e81f-6ae1-49d9-a8a5-2424a1763a69");
@@ -22,8 +23,8 @@ namespace GsaGH.Components
     public CreateSupport() : base("Create Support",
       "Support",
       "Create GSA Node Support",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 

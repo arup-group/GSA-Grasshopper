@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// This class provides a parameter interface for the <see cref="GsaAnalysisTaskGoo"/> type.
-  /// </summary>
-  public class GsaAnalysisTaskParameter : GH_OasysPersistentParam<GsaAnalysisTaskGoo>
+    /// <summary>
+    /// This class provides a parameter interface for the <see cref="GsaAnalysisTaskGoo"/> type.
+    /// </summary>
+    public class GsaAnalysisTaskParameter : GH_OasysPersistentParam<GsaAnalysisTaskGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaAnalysisTaskGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaAnalysisTaskGoo.Name : base.TypeName;
@@ -20,8 +21,8 @@ namespace GsaGH.Parameters
       GsaAnalysisTaskGoo.Name,
       GsaAnalysisTaskGoo.NickName,
       GsaAnalysisTaskGoo.Description + " parameter",
-      GsaGH.Components.Ribbon.CategoryName.Name(),
-      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+      CategoryName.Name(),
+      SubCategoryName.Cat9()))
     { }
 
     protected override GsaAnalysisTaskGoo PreferredCast(object data)

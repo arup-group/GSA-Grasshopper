@@ -149,7 +149,6 @@ namespace GsaGH.Parameters
     {
       return new GsaMember1dGoo(Value.Morph(xmorph));
     }
-
     #endregion
 
     #region drawing methods
@@ -167,14 +166,14 @@ namespace GsaGH.Parameters
         if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Dummy1D, false);
+            args.Pipeline.DrawDottedPolyline(Value.Topology, Helpers.Graphics.Colours.Dummy1D, false);
           else
           {
             if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
               args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2);
             else
             {
-              System.Drawing.Color col = UI.Colour.ElementType(Value.Type1D);
+              System.Drawing.Color col = Helpers.Graphics.Colours.ElementType(Value.Type1D);
               args.Pipeline.DrawCurve(Value.PolyCurve, col, 2);
             }
           }
@@ -182,9 +181,9 @@ namespace GsaGH.Parameters
         else
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Member1dSelected, false);
+            args.Pipeline.DrawDottedPolyline(Value.Topology, Helpers.Graphics.Colours.Member1dSelected, false);
           else
-            args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
+            args.Pipeline.DrawCurve(Value.PolyCurve, Helpers.Graphics.Colours.Member1dSelected, 2);
         }
       }
 
@@ -199,16 +198,16 @@ namespace GsaGH.Parameters
             if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
             {
               if (i == 0 | i == pts.Count - 1) // draw first point bigger
-                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, UI.Colour.Member1dNode);
+                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, Helpers.Graphics.Colours.Member1dNode);
               else
-                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 1, UI.Colour.Member1dNode);
+                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 1, Helpers.Graphics.Colours.Member1dNode);
             }
             else
             {
               if (i == 0 | i == pts.Count - 1) // draw first point bigger
-                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 2, UI.Colour.Member1dNodeSelected);
+                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 2, Helpers.Graphics.Colours.Member1dNodeSelected);
               else
-                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 1, UI.Colour.Member1dNodeSelected);
+                args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 1, Helpers.Graphics.Colours.Member1dNodeSelected);
             }
           }
         }
@@ -220,9 +219,9 @@ namespace GsaGH.Parameters
         if (Value.previewGreenLines != null)
         {
           foreach (Line ln1 in Value.previewGreenLines)
-            args.Pipeline.DrawLine(ln1, UI.Colour.Support);
+            args.Pipeline.DrawLine(ln1, Helpers.Graphics.Colours.Support);
           foreach (Line ln2 in Value.previewRedLines)
-            args.Pipeline.DrawLine(ln2, UI.Colour.Release);
+            args.Pipeline.DrawLine(ln2, Helpers.Graphics.Colours.Release);
         }
       }
     }

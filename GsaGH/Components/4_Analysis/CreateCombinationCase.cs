@@ -1,15 +1,16 @@
 ﻿using System;
 using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create GSA Combination Case
-  /// </summary>
-  public class CreateCombinationCase : GH_OasysComponent
+    /// <summary>
+    /// Component to create GSA Combination Case
+    /// </summary>
+    public class CreateCombinationCase : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("d8df767a-ef59-4e08-b592-2a39149efde1");
@@ -20,8 +21,8 @@ namespace GsaGH.Components
     public CreateCombinationCase() : base("Create Combination Case",
       "CreateCombination",
       "Create a new GSA Combination Case",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat4())
+      CategoryName.Name(),
+      SubCategoryName.Cat4())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -30,8 +31,8 @@ namespace GsaGH.Components
     {
       pManager.AddTextParameter("Name", "Na", "Case Name", GH_ParamAccess.item);
       pManager.AddTextParameter("Description", "De",
-          "The description should take the form: 1.5A1 + 0.4A3." + System.Environment.NewLine +
-          "Use 'or' for enveloping cases eg (1 or -1.4)A1," + System.Environment.NewLine +
+          "The description should take the form: 1.5A1 + 0.4A3." + Environment.NewLine +
+          "Use 'or' for enveloping cases eg (1 or -1.4)A1," + Environment.NewLine +
           "'to' for enveloping a range of cases eg (C1 to C3)", GH_ParamAccess.item);
     }
 

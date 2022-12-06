@@ -1,6 +1,5 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using OasysGH;
 using Rhino.Geometry;
 using OasysGH.Parameters;
@@ -114,35 +113,6 @@ namespace GsaGH.Parameters
     }
     #endregion
 
-    #region transformation methods
-    public override IGH_GeometricGoo Transform(Transform xform)
-    {
-      if (Value == null) { return null; }
-      if (Value.Line == null) { return null; }
-
-      GsaElement1d elem = Value.Duplicate(true);
-      elem.Id = 0;
-      LineCurve xLn = elem.Line;
-      xLn.Transform(xform);
-      elem.Line = xLn;
-
-      return new GsaElement1dGoo(elem);
-    }
-
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-    {
-      if (Value == null) { return null; }
-      if (Value.Line == null) { return null; }
-
-      GsaElement1d elem = Value.Duplicate(true);
-      LineCurve xLn = Value.Line;
-      xmorph.Morph(xLn);
-      elem.Line = xLn;
-
-      return new GsaElement1dGoo(elem);
-    }
-    #endregion
-
     #region drawing methods
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args)
     {
@@ -159,14 +129,14 @@ namespace GsaGH.Parameters
         if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedLine(Value.previewPointStart, Value.previewPointEnd, UI.Colour.Dummy1D);
+            args.Pipeline.DrawDottedLine(Value.previewPointStart, Value.previewPointEnd, Helpers.Graphics.Colours.Dummy1D);
           else
           {
             if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
               args.Pipeline.DrawCurve(Value.Line, Value.Colour, 2);
             else
             {
-              System.Drawing.Color col = UI.Colour.ElementType(Value.Type);
+              System.Drawing.Color col = Helpers.Graphics.Colours.ElementType(Value.Type);
               args.Pipeline.DrawCurve(Value.Line, col, 2);
             }
             //args.Pipeline.DrawPoint(Value.previewPointStart, Rhino.Display.PointStyle.RoundSimple, 3, UI.Colour.Element1dNode);
@@ -176,10 +146,10 @@ namespace GsaGH.Parameters
         else
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedLine(Value.previewPointStart, Value.previewPointEnd, UI.Colour.Element1dSelected);
+            args.Pipeline.DrawDottedLine(Value.previewPointStart, Value.previewPointEnd, Helpers.Graphics.Colours.Element1dSelected);
           else
           {
-            args.Pipeline.DrawCurve(Value.Line, UI.Colour.Element1dSelected, 2);
+            args.Pipeline.DrawCurve(Value.Line, Helpers.Graphics.Colours.Element1dSelected, 2);
             //args.Pipeline.DrawPoint(Value.previewPointStart, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
             //args.Pipeline.DrawPoint(Value.previewPointEnd, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Element1dNodeSelected);
           }
@@ -191,11 +161,23 @@ namespace GsaGH.Parameters
         if (Value.previewGreenLines != null)
         {
           foreach (Line ln1 in Value.previewGreenLines)
-            args.Pipeline.DrawLine(ln1, UI.Colour.Support);
+            args.Pipeline.DrawLine(ln1, Helpers.Graphics.Colours.Support);
           foreach (Line ln2 in Value.previewRedLines)
-            args.Pipeline.DrawLine(ln2, UI.Colour.Release);
+            args.Pipeline.DrawLine(ln2, Helpers.Graphics.Colours.Release);
         }
       }
+    }
+    #endregion
+
+    #region transformation methods
+    public override IGH_GeometricGoo Transform(Transform xform)
+    {
+      return new GsaElement1dGoo(Value.Transform(xform));
+    }
+
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
+    {
+      return new GsaElement1dGoo(Value.Morph(xmorph));
     }
     #endregion
   }

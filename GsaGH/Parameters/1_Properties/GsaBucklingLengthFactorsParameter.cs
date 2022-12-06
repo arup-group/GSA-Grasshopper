@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// This class provides a parameter interface for the <see cref="GsaBucklingLengthFactorsGoo"/> type.
-  /// </summary>
-  public class GsaBucklingLengthFactorsParameter : GH_OasysPersistentParam<GsaBucklingLengthFactorsGoo>
+    /// <summary>
+    /// This class provides a parameter interface for the <see cref="GsaBucklingLengthFactorsGoo"/> type.
+    /// </summary>
+    public class GsaBucklingLengthFactorsParameter : GH_OasysPersistentParam<GsaBucklingLengthFactorsGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaBucklingLengthFactorsGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaBucklingLengthFactorsGoo.Name : base.TypeName;
@@ -20,8 +21,8 @@ namespace GsaGH.Parameters
       GsaBucklingLengthFactorsGoo.Name,
       GsaBucklingLengthFactorsGoo.NickName,
       GsaBucklingLengthFactorsGoo.Description + " parameter",
-      GsaGH.Components.Ribbon.CategoryName.Name(),
-      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+      CategoryName.Name(),
+      SubCategoryName.Cat9()))
     { }
 
     protected override GsaBucklingLengthFactorsGoo PreferredCast(object data)

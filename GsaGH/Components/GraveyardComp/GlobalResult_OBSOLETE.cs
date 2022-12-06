@@ -2,6 +2,7 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -9,10 +10,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
-  /// </summary>
-  public class GlobalResult_OBSOLETE : GH_OasysComponent
+    /// <summary>
+    /// Component to retrieve non-geometric objects from a GSA model
+    /// </summary>
+    public class GlobalResult_OBSOLETE : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
@@ -20,8 +21,8 @@ namespace GsaGH.Components
     public override Guid ComponentGuid => new Guid("267d8dc3-aa6e-4ed2-b82d-57fc290173cc");
     public GlobalResult_OBSOLETE()
       : base("Global Results", "GlobalResult", "Get Global Results from GSA model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat5())
+            CategoryName.Name(),
+            SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -51,9 +52,9 @@ namespace GsaGH.Components
       pManager.AddVectorParameter("Effective Mass [kg]", "Σkg", "Effective Mass in GSA Model", GH_ParamAccess.item);
       pManager.AddVectorParameter("Effective Inertia [m4]", "ΣI", "Effective Inertia in GSA Model", GH_ParamAccess.item);
       pManager.AddNumberParameter("Mode", "Mo", "Mode number if LC is a dynamic task", GH_ParamAccess.item);
-      pManager.AddVectorParameter("Modal", "Md", "Modal results in vector form:" + System.Environment.NewLine +
-          "x: Modal Mass" + System.Environment.NewLine +
-          "y: Modal Stiffness" + System.Environment.NewLine +
+      pManager.AddVectorParameter("Modal", "Md", "Modal results in vector form:" + Environment.NewLine +
+          "x: Modal Mass" + Environment.NewLine +
+          "y: Modal Stiffness" + Environment.NewLine +
           "z: Modal Geometric Stiffness", GH_ParamAccess.item);
       pManager.AddNumberParameter("Frequency [Hz]", "f", "Frequency of selected LoadCase / mode", GH_ParamAccess.item);
       pManager.AddNumberParameter("Load Factor", "LF", "Load Factor for selected LoadCase / mode", GH_ParamAccess.item);

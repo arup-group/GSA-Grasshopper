@@ -7,6 +7,7 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -18,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get GSA reaction forces
-  /// </summary>
-  public class ReactionForce : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get GSA reaction forces
+    /// </summary>
+    public class ReactionForce : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4f06d674-c736-4d9c-89d9-377bc424c547");
@@ -32,8 +33,8 @@ namespace GsaGH.Components
     public ReactionForce() : base("Reaction Forces",
       "ReacForce",
       "Reaction Force result values",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -41,9 +42,9 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.list);
-      pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + System.Environment.NewLine +
-          "Node list should take the form:" + System.Environment.NewLine +
-          " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + Environment.NewLine +
+          "Node list should take the form:" + Environment.NewLine +
+          " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager[1].Optional = true;
     }
@@ -53,9 +54,9 @@ namespace GsaGH.Components
       string forceunitAbbreviation = Force.GetAbbreviation(this.ForceUnit);
       string momentunitAbbreviation = Moment.GetAbbreviation(this.MomentUnit);
 
-      string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation } " +
-                    System.Environment.NewLine + "fx. {1;2} is Case 1, Permutation 2, where each branch " +
-          System.Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
+      string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation } " +
+                    Environment.NewLine + "fx. {1;2} is Case 1, Permutation 2, where each branch " +
+          Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx", "Reaction Forces in X-direction in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy", "Reaction Forces in Y-direction in Global Axis." + note, GH_ParamAccess.tree);

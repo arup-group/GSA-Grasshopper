@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -10,10 +11,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 3D Element
-  /// </summary>
-  public class EditElement3d : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a 3D Element
+    /// </summary>
+    public class EditElement3d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("040f2915-543d-41ef-9a64-0c4055e47a63");
@@ -24,8 +25,8 @@ namespace GsaGH.Components
     public EditElement3d() : base("Edit 3D Element",
       "Elem3dEdit",
       "Modify GSA 3D Element",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -49,13 +50,13 @@ namespace GsaGH.Components
     {
       pManager.AddParameter(new GsaElement3dParameter(), GsaElement3dGoo.Name, GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " with applied changes.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
-      pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh. " + System.Environment.NewLine
-          + "This will export a list of solid meshes representing each 3D element." + System.Environment.NewLine
+      pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh. " + Environment.NewLine
+          + "This will export a list of solid meshes representing each 3D element." + Environment.NewLine
           + "To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly", GH_ParamAccess.item);
       pManager.HideParameter(2);
       pManager.AddParameter(new GsaProp2dParameter(), "3D Property", "PV", "Get 3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model", GH_ParamAccess.list);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.list);
-      pManager.AddTextParameter("Element Type", "eT", "Get Element 3D Type." + System.Environment.NewLine
+      pManager.AddTextParameter("Element Type", "eT", "Get Element 3D Type." + Environment.NewLine
           + "Type can not be set; it is either Tetra4, Pyramid5, Wedge6 or Brick8", GH_ParamAccess.list);
       pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
       pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
@@ -71,7 +72,7 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gsaElement3d))
       {
         if (gsaElement3d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element3D input is null"); }
-        GsaElement3d elem = gsaElement3d.Duplicate();
+        GsaElement3d elem = gsaElement3d.Duplicate(true);
 
         // #### inputs ####
 
@@ -87,7 +88,7 @@ namespace GsaGH.Components
           {
             if (i > elem.API_Elements.Count)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "ID input List Length is longer than number of elements." + System.Environment.NewLine + "Excess ID's have been ignored");
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "ID input List Length is longer than number of elements." + Environment.NewLine + "Excess ID's have been ignored");
               continue;
             }
             if (GH_Convert.ToInt32(ghID[i], out int id, GH_Conversion.Both))
@@ -96,7 +97,7 @@ namespace GsaGH.Components
               {
                 if (id > 0)
                 {
-                  AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "ID input(" + i + ") = " + id + " already exist in your input list." + System.Environment.NewLine + "You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
+                  AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "ID input(" + i + ") = " + id + " already exist in your input list." + Environment.NewLine + "You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
                   continue;
                 }
               }
@@ -115,7 +116,7 @@ namespace GsaGH.Components
           for (int i = 0; i < gh_types.Count; i++)
           {
             if (i > elem.API_Elements.Count)
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "PA input List Length is longer than number of elements." + System.Environment.NewLine + "Excess PA's have been ignored");
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "PA input List Length is longer than number of elements." + Environment.NewLine + "Excess PA's have been ignored");
             GH_ObjectWrapper gh_typ = gh_types[i];
             GsaProp3d prop3d = new GsaProp3d();
             if (gh_typ.Value is GsaProp3dGoo)
@@ -148,7 +149,7 @@ namespace GsaGH.Components
           {
             if (i > elem.API_Elements.Count)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Group input List Length is longer than number of elements." + System.Environment.NewLine + "Excess Group numbers have been ignored");
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Group input List Length is longer than number of elements." + Environment.NewLine + "Excess Group numbers have been ignored");
               continue;
             }
             if (GH_Convert.ToInt32(ghgrp[i], out int grp, GH_Conversion.Both))
@@ -166,7 +167,7 @@ namespace GsaGH.Components
           {
             if (i > elem.API_Elements.Count)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Name input List Length is longer than number of elements." + System.Environment.NewLine + "Excess Names have been ignored");
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Name input List Length is longer than number of elements." + Environment.NewLine + "Excess Names have been ignored");
               continue;
             }
             if (GH_Convert.ToString(ghnm[i], out string name, GH_Conversion.Both))
@@ -184,7 +185,7 @@ namespace GsaGH.Components
           {
             if (i > elem.API_Elements.Count)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Colour input List Length is longer than number of elements." + System.Environment.NewLine + "Excess Colours have been ignored");
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Colour input List Length is longer than number of elements." + Environment.NewLine + "Excess Colours have been ignored");
               continue;
             }
             if (GH_Convert.ToColor(ghcol[i], out System.Drawing.Color col, GH_Conversion.Both))
@@ -202,7 +203,7 @@ namespace GsaGH.Components
           {
             if (i > elem.API_Elements.Count)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Dummy input List Length is longer than number of elements." + System.Environment.NewLine + "Excess Dummy booleans have been ignored");
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Dummy input List Length is longer than number of elements." + Environment.NewLine + "Excess Dummy booleans have been ignored");
               continue;
             }
             if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both))

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -16,10 +17,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit an Offset and ouput the information
-  /// </summary>
-  public class EditOffset_OBSOLETE : GH_OasysComponent
+    /// <summary>
+    /// Component to edit an Offset and ouput the information
+    /// </summary>
+    public class EditOffset_OBSOLETE : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("1e094fcd-8f5f-4047-983c-e0e57a83ae52");
@@ -30,8 +31,8 @@ namespace GsaGH.Components
     public EditOffset_OBSOLETE() : base("Edit Offset",
       "OffsetEdit",
       "Modify GSA Offset or just get information about existing",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

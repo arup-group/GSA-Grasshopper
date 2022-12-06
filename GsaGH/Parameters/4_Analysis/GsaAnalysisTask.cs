@@ -79,12 +79,12 @@ namespace GsaGH.Parameters
     #region methods
     internal void CreateDeafultCases(Model model)
     {
-      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Util.Gsa.FromGSA.GetAnalysisTasksAndCombinations(model);
+      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Helpers.Import.Analyses.GetAnalysisTasksAndCombinations(model);
       this.Cases = tuple.Item2.Select(x => x.Value).ToList();
     }
     internal void CreateDeafultCases(GsaModel gsaModel)
     {
-      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Util.Gsa.FromGSA.GetAnalysisTasksAndCombinations(gsaModel);
+      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Helpers.Import.Analyses.GetAnalysisTasksAndCombinations(gsaModel);
       this.Cases = tuple.Item2.Select(x => x.Value).ToList();
     }
 
@@ -93,7 +93,8 @@ namespace GsaGH.Parameters
       if (this == null) { return null; }
       GsaAnalysisTask dup = new GsaAnalysisTask();
       dup.m_idd = this.m_idd;
-      dup.Cases = this.Cases.ToList();
+      if (this.Cases != null)
+        dup.Cases = this.Cases.ToList();
       dup.Type = this.Type;
       dup.Name = this.Name;
       return dup;
@@ -101,7 +102,7 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      return (this.ID > 0 ? "ID:" +this.ID : "" + " '" + this.Name + "' " + this.Type.ToString().Replace("_"," ")).Trim().Replace("  ", " ");
+      return (this.ID > 0 ? "ID:" + this.ID : "" + " '" + this.Name + "' " + this.Type.ToString().Replace("_", " ")).Trim().Replace("  ", " ");
     }
     #endregion
   }

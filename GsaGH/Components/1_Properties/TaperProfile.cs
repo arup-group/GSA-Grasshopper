@@ -1,15 +1,16 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Section
-  /// </summary>
-  public class TaperProfile : GH_OasysComponent
+    /// <summary>
+    /// Component to create a new Section
+    /// </summary>
+    public class TaperProfile : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("fd6dd254-c16f-4970-a447-a9b258d116ef");
@@ -20,8 +21,8 @@ namespace GsaGH.Components
     public TaperProfile() : base("Taper Profile",
       "Taper",
       "Create a Profile that tapers along its length from start and end profiles",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

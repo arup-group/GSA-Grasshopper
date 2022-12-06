@@ -7,8 +7,9 @@ using System.Text.RegularExpressions;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
-using GsaGH.Util;
-using GsaGH.Util.Gsa;
+using GsaGH.Helpers;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
@@ -20,10 +21,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create AdSec profile
-  /// </summary>
-  public class CreateProfile : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to create AdSec profile
+    /// </summary>
+    public class CreateProfile : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -34,8 +35,8 @@ namespace GsaGH.Components
 
     public CreateProfile()
       : base("Create Profile", "Profile", "Create Profile text-string for a GSA Section",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
+            CategoryName.Name(),
+            SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
 
     protected override string HtmlHelp_Source()
@@ -420,8 +421,8 @@ namespace GsaGH.Components
         // IPerimeterProfile (last chance...)
         else if (typ == "IPerimeterProfile") //(typ.Name.Equals(typeof(IPerimeterProfile).Name))
         {
-          Profile perimeter = new Profile();
-          perimeter.profileType = Profile.ProfileTypes.Geometric;
+          ProfileHelper perimeter = new ProfileHelper();
+          perimeter.profileType = ProfileHelper.ProfileTypes.Geometric;
           GH_Brep gh_Brep = new GH_Brep();
           if (DA.GetData(0, ref gh_Brep))
           {
@@ -509,7 +510,7 @@ namespace GsaGH.Components
               if (localPlaneNotSet)
                 rotation = Transform.ChangeBasis(Vector3d.XAxis, Vector3d.YAxis, Vector3d.ZAxis, plane.YAxis, plane.XAxis, plane.ZAxis);
 
-              perimeter.geoType = Profile.GeoTypes.Perim;
+              perimeter.geoType = ProfileHelper.GeoTypes.Perim;
 
               List<Point2d> pts = new List<Point2d>();
               foreach (Point3d pt3d in ctrl_pts)
@@ -558,19 +559,19 @@ namespace GsaGH.Components
           switch (LengthUnit)
           {
             case LengthUnit.Millimeter:
-              perimeter.sectUnit = Profile.SectUnitOptions.u_mm;
+              perimeter.sectUnit = ProfileHelper.SectUnitOptions.u_mm;
               break;
             case LengthUnit.Centimeter:
-              perimeter.sectUnit = Profile.SectUnitOptions.u_cm;
+              perimeter.sectUnit = ProfileHelper.SectUnitOptions.u_cm;
               break;
             case LengthUnit.Meter:
-              perimeter.sectUnit = Profile.SectUnitOptions.u_m;
+              perimeter.sectUnit = ProfileHelper.SectUnitOptions.u_m;
               break;
             case LengthUnit.Foot:
-              perimeter.sectUnit = Profile.SectUnitOptions.u_ft;
+              perimeter.sectUnit = ProfileHelper.SectUnitOptions.u_ft;
               break;
             case LengthUnit.Inch:
-              perimeter.sectUnit = Profile.SectUnitOptions.u_in;
+              perimeter.sectUnit = ProfileHelper.SectUnitOptions.u_in;
               break;
           }
 

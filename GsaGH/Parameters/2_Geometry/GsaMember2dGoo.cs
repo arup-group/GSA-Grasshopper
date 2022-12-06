@@ -208,14 +208,14 @@ namespace GsaGH.Parameters
         if (Value.Type == MemberType.VOID_CUTTER_2D)
         {
           if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-            args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dVoidCutterFace); //UI.Colour.Member2dFace
+            args.Pipeline.DrawBrepShaded(Value.Brep, Helpers.Graphics.Colours.Member2dVoidCutterFace); //UI.Colour.Member2dFace
         }
         else
         {
           if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-            args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFace); //UI.Colour.Member2dFace
+            args.Pipeline.DrawBrepShaded(Value.Brep, Helpers.Graphics.Colours.Member2dFace); //UI.Colour.Member2dFace
           else
-            args.Pipeline.DrawBrepShaded(Value.Brep, UI.Colour.Member2dFaceSelected);
+            args.Pipeline.DrawBrepShaded(Value.Brep, Helpers.Graphics.Colours.Member2dFaceSelected);
         }
       }
     }
@@ -230,13 +230,13 @@ namespace GsaGH.Parameters
         {
           if (Value.Type == MemberType.VOID_CUTTER_2D)
           {
-            args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.VoidCutter, -1);
+            args.Pipeline.DrawBrepWires(Value.Brep, Helpers.Graphics.Colours.VoidCutter, -1);
           }
           else if (!Value.IsDummy)
-            args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdge, -1);
+            args.Pipeline.DrawBrepWires(Value.Brep, Helpers.Graphics.Colours.Member2dEdge, -1);
         }
         else
-          args.Pipeline.DrawBrepWires(Value.Brep, UI.Colour.Member2dEdgeSelected, -1);
+          args.Pipeline.DrawBrepWires(Value.Brep, Helpers.Graphics.Colours.Member2dEdgeSelected, -1);
       }
 
       //Draw lines
@@ -245,14 +245,14 @@ namespace GsaGH.Parameters
         if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Dummy1D, false);
+            args.Pipeline.DrawDottedPolyline(Value.Topology, Helpers.Graphics.Colours.Dummy1D, false);
           else
           {
             if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
               args.Pipeline.DrawCurve(Value.PolyCurve, Value.Colour, 2);
             else
             {
-              System.Drawing.Color col = UI.Colour.Member2dEdge;
+              System.Drawing.Color col = Helpers.Graphics.Colours.Member2dEdge;
               args.Pipeline.DrawCurve(Value.PolyCurve, col, 2);
             }
           }
@@ -260,9 +260,9 @@ namespace GsaGH.Parameters
         else
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedPolyline(Value.Topology, UI.Colour.Member1dSelected, false);
+            args.Pipeline.DrawDottedPolyline(Value.Topology, Helpers.Graphics.Colours.Member1dSelected, false);
           else
-            args.Pipeline.DrawCurve(Value.PolyCurve, UI.Colour.Member1dSelected, 2);
+            args.Pipeline.DrawCurve(Value.PolyCurve, Helpers.Graphics.Colours.Member1dSelected, 2);
         }
       }
 
@@ -271,9 +271,9 @@ namespace GsaGH.Parameters
         for (int i = 0; i < Value.InclusionLines.Count; i++)
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedPolyline(Value.IncLinesTopology[i], UI.Colour.Member1dSelected, false);
+            args.Pipeline.DrawDottedPolyline(Value.IncLinesTopology[i], Helpers.Graphics.Colours.Member1dSelected, false);
           else
-            args.Pipeline.DrawCurve(Value.InclusionLines[i], UI.Colour.Member2dInclLn, 2);
+            args.Pipeline.DrawCurve(Value.InclusionLines[i], Helpers.Graphics.Colours.Member2dInclLn, 2);
         }
       }
 
@@ -286,23 +286,23 @@ namespace GsaGH.Parameters
           if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
           {
             if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) // draw first point bigger
-              args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 3, (Value.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
+              args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 3, (Value.IsDummy) ? Helpers.Graphics.Colours.Dummy1D : Helpers.Graphics.Colours.Member1dNode);
             else
-              args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member1dNode);
+              args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundSimple, 2, (Value.IsDummy) ? Helpers.Graphics.Colours.Dummy1D : Helpers.Graphics.Colours.Member1dNode);
           }
           else
           {
             if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) // draw first point bigger
-              args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.Member1dNodeSelected);
+              args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 3, Helpers.Graphics.Colours.Member1dNodeSelected);
             else
-              args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 2, UI.Colour.Member1dNodeSelected);
+              args.Pipeline.DrawPoint(pts[i], Rhino.Display.PointStyle.RoundControlPoint, 2, Helpers.Graphics.Colours.Member1dNodeSelected);
           }
         }
       }
       if (Value.InclusionPoints != null)
       {
         for (int i = 0; i < Value.InclusionPoints.Count; i++)
-          args.Pipeline.DrawPoint(Value.InclusionPoints[i], Rhino.Display.PointStyle.RoundSimple, 3, (Value.IsDummy) ? UI.Colour.Dummy1D : UI.Colour.Member2dInclPt);
+          args.Pipeline.DrawPoint(Value.InclusionPoints[i], Rhino.Display.PointStyle.RoundSimple, 3, (Value.IsDummy) ? Helpers.Graphics.Colours.Dummy1D : Helpers.Graphics.Colours.Member2dInclPt);
       }
     }
     #endregion

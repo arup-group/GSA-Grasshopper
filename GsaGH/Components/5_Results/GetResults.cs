@@ -7,20 +7,21 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Util.GH;
+using GsaGH.Helpers.GH;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to select results from a GSA Model
-  /// </summary>
-  public class GetResult : GH_OasysComponent
+    /// <summary>
+    /// Component to select results from a GSA Model
+    /// </summary>
+    public class GetResult : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -32,8 +33,8 @@ namespace GsaGH.Components
     public GetResult() : base("Get Results",
       "GetRes",
       "Get AnalysisCase or Combination Result from an analysed GSA model",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -42,10 +43,10 @@ namespace GsaGH.Components
     {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model containing some results", GH_ParamAccess.item);
       pManager.AddTextParameter("Result Type", "T", "Result type. " +
-          System.Environment.NewLine + "Accepted inputs are: " +
-          System.Environment.NewLine + "'AnalysisCase' or 'Combination'", GH_ParamAccess.item, "A");
+          Environment.NewLine + "Accepted inputs are: " +
+          Environment.NewLine + "'AnalysisCase' or 'Combination'", GH_ParamAccess.item, "A");
       pManager.AddIntegerParameter("Case", "ID", "Case ID(s)" +
-          System.Environment.NewLine + "Use -1 for 'all'", GH_ParamAccess.item, 1);
+          Environment.NewLine + "Use -1 for 'all'", GH_ParamAccess.item, 1);
       pManager.AddIntegerParameter("Permutation", "P", "Permutations (only applicable for combination cases).", GH_ParamAccess.list);
       pManager[3].Optional = true;
     }

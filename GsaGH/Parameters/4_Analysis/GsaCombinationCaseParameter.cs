@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// This class provides a parameter interface for the <see cref="GsaCombinationCaseGoo"/> type.
-  /// </summary>
-  public class GsaCombinationCaseParameter : GH_OasysPersistentParam<GsaCombinationCaseGoo>
+    /// <summary>
+    /// This class provides a parameter interface for the <see cref="GsaCombinationCaseGoo"/> type.
+    /// </summary>
+    public class GsaCombinationCaseParameter : GH_OasysPersistentParam<GsaCombinationCaseGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaCombinationCaseGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaCombinationCaseGoo.Name : base.TypeName;
@@ -23,8 +24,8 @@ namespace GsaGH.Parameters
      GsaCombinationCaseGoo.Name,
      GsaCombinationCaseGoo.NickName,
      GsaCombinationCaseGoo.Description + " parameter",
-     GsaGH.Components.Ribbon.CategoryName.Name(),
-     GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+     CategoryName.Name(),
+     SubCategoryName.Cat9()))
     { }
 
     protected override GsaCombinationCaseGoo PreferredCast(object data)

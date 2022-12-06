@@ -7,20 +7,20 @@ using GsaAPI;
 using OasysUnits;
 using OasysUnits.Units;
 using OasysGH;
+using GsaGH.Helpers.GsaAPI;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop2D"/>
-  /// </summary>
-  public class GsaProp2d
+    /// <summary>
+    /// Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop2D"/>
+    /// </summary>
+    public class GsaProp2d
   {
     #region fields
     private int _id = 0;
     private Guid _guid = Guid.NewGuid();
     private GsaMaterial _material = new GsaMaterial();
     private Prop2D _prop2d = new Prop2D();
-    
     #endregion
 
     #region properties
@@ -37,7 +37,7 @@ namespace GsaGH.Parameters
         this._material = new GsaMaterial(this);
       }
     }
-    public int ID
+    public int Id
     {
       get
       {
@@ -63,7 +63,7 @@ namespace GsaGH.Parameters
         else
           CloneApiObject();
 
-        this._prop2d.MaterialType = Util.Gsa.ToGSA.Materials.ConvertType(_material);
+        this._prop2d.MaterialType = Helpers.Export.Materials.ConvertType(_material);
         this._prop2d.MaterialAnalysisProperty = this._material.AnalysisProperty;
         this._prop2d.MaterialGradeProperty = this._material.GradeProperty;
       }
@@ -171,7 +171,7 @@ namespace GsaGH.Parameters
       }
     }
     #endregion
-    public Guid GUID
+    public Guid Guid
     {
       get
       {
@@ -200,9 +200,11 @@ namespace GsaGH.Parameters
     #region methods
     internal static Property2D_Type PropTypeFromString(string type)
     {
-      if (Helpers.Mappings.Prop2dTypeMapping.ContainsKey(type))
-        return Helpers.Mappings.Prop2dTypeMapping[type];
-      else
+      try
+      {
+        return Mappings.GetProperty2D_Type(type);
+      }
+      catch (ArgumentException)
       {
         type = type.Trim().Replace(" ", "_").ToUpper();
         type = type.Replace("PLANE", "PL");
@@ -225,10 +227,10 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string type = Helpers.Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == this._prop2d.Type).Key + " ";
+      string type = Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == this._prop2d.Type).Key + " ";
       string desc = this.Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
-      string mat = Helpers.Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
-      string pa = (this.ID > 0) ? "PA" + this.ID + " " : "";
+      string mat = Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
+      string pa = (this.Id > 0) ? "PA" + this.Id + " " : "";
       return string.Join(" ", pa.Trim(), type.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
     }
 

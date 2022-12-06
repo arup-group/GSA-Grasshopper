@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using OasysGH.Parameters;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// This class provides a parameter interface for the <see cref="GsaMember1dGoo"/> type.
-  /// </summary>
-  public class GsaMember1dParameter : GH_OasysPersistentGeometryParam<GsaMember1dGoo>
+    /// <summary>
+    /// This class provides a parameter interface for the <see cref="GsaMember1dGoo"/> type.
+    /// </summary>
+    public class GsaMember1dParameter : GH_OasysPersistentGeometryParam<GsaMember1dGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaMember1dGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaMember1dGoo.Name : base.TypeName;
@@ -21,8 +22,8 @@ namespace GsaGH.Parameters
       GsaMember1dGoo.Name,
       GsaMember1dGoo.NickName,
       GsaMember1dGoo.Description + " parameter",
-      GsaGH.Components.Ribbon.CategoryName.Name(),
-      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+      CategoryName.Name(),
+      SubCategoryName.Cat9()))
     { }
 
     protected override GsaMember1dGoo PreferredCast(object data)

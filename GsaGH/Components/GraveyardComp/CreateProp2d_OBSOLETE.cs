@@ -5,6 +5,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -14,10 +15,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Prop2d
-  /// </summary>
-  public class CreateProp2d_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to create a new Prop2d
+    /// </summary>
+    public class CreateProp2d_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
@@ -25,8 +26,8 @@ namespace GsaGH.Components
     public override Guid ComponentGuid => new Guid("3fd61492-b5ff-47ea-8c7c-89cf639b32dc");
     public CreateProp2d_OBSOLETE()
       : base("Create 2D Property", "Prop2d", "Create GSA 2D Property",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
+            CategoryName.Name(),
+            SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -387,14 +388,14 @@ namespace GsaGH.Components
     #region (de)serialization
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
     {
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, DropDownItems, SelectedItems, SpacerDescriptions);
+      writeDropDownComponents(ref writer, DropDownItems, SelectedItems, SpacerDescriptions);
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       try// if users has an old version of this component then dropdown menu wont read
       {
-        Util.GH.DeSerialization.readDropDownComponents(ref reader, ref DropDownItems, ref SelectedItems, ref SpacerDescriptions);
+        readDropDownComponents(ref reader, ref DropDownItems, ref SelectedItems, ref SpacerDescriptions);
         _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].Replace(" ", string.Empty));
         lengthUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), SelectedItems[1]);
       }
@@ -452,15 +453,15 @@ namespace GsaGH.Components
         int i = 0;
         Params.Input[i].NickName = "Mat";
         Params.Input[i].Name = "Material";
-        Params.Input[i].Description = "GsaMaterial or Number referring to a Material already in Existing GSA Model." + System.Environment.NewLine
-            + "Accepted inputs are: " + System.Environment.NewLine
-            + "0 : Generic" + System.Environment.NewLine
-            + "1 : Steel" + System.Environment.NewLine
-            + "2 : Concrete (default)" + System.Environment.NewLine
-            + "3 : Aluminium" + System.Environment.NewLine
-            + "4 : Glass" + System.Environment.NewLine
-            + "5 : FRP" + System.Environment.NewLine
-            + "7 : Timber" + System.Environment.NewLine
+        Params.Input[i].Description = "GsaMaterial or Number referring to a Material already in Existing GSA Model." + Environment.NewLine
+            + "Accepted inputs are: " + Environment.NewLine
+            + "0 : Generic" + Environment.NewLine
+            + "1 : Steel" + Environment.NewLine
+            + "2 : Concrete (default)" + Environment.NewLine
+            + "3 : Aluminium" + Environment.NewLine
+            + "4 : Glass" + Environment.NewLine
+            + "5 : FRP" + Environment.NewLine
+            + "7 : Timber" + Environment.NewLine
             + "8 : Fabric";
 
         Params.Input[i].Access = GH_ParamAccess.item;
@@ -485,5 +486,86 @@ namespace GsaGH.Components
       }
     }
     #endregion
+
+    internal static GH_IO.Serialization.GH_IWriter writeDropDownComponents(ref GH_IO.Serialization.GH_IWriter writer, List<List<string>> DropDownItems, List<string> SelectedItems, List<string> SpacerDescriptions)
+    {
+      // to save the dropdownlist content, spacer list and selection list 
+      // loop through the lists and save number of lists as well
+      bool dropdown = false;
+      if (DropDownItems != null)
+      {
+        writer.SetInt32("dropdownCount", DropDownItems.Count);
+        for (int i = 0; i < DropDownItems.Count; i++)
+        {
+          writer.SetInt32("dropdowncontentsCount" + i, DropDownItems[i].Count);
+          for (int j = 0; j < DropDownItems[i].Count; j++)
+            writer.SetString("dropdowncontents" + i + j, DropDownItems[i][j]);
+        }
+        dropdown = true;
+      }
+      writer.SetBoolean("dropdown", dropdown);
+
+      // spacer list
+      bool spacer = false;
+      if (SpacerDescriptions != null)
+      {
+        writer.SetInt32("spacerCount", SpacerDescriptions.Count);
+        for (int i = 0; i < SpacerDescriptions.Count; i++)
+          writer.SetString("spacercontents" + i, SpacerDescriptions[i]);
+        spacer = true;
+      }
+      writer.SetBoolean("spacer", spacer);
+
+      // selection list
+      bool select = false;
+      if (SelectedItems != null)
+      {
+        writer.SetInt32("selectionCount", SelectedItems.Count);
+        for (int i = 0; i < SelectedItems.Count; i++)
+          writer.SetString("selectioncontents" + i, SelectedItems[i]);
+        select = true;
+      }
+      writer.SetBoolean("select", select);
+
+      return writer;
+    }
+
+    internal static void readDropDownComponents(ref GH_IO.Serialization.GH_IReader reader, ref List<List<string>> DropDownItems, ref List<string> SelectedItems, ref List<string> SpacerDescriptions)
+    {
+      // dropdown content list
+      if (reader.GetBoolean("dropdown"))
+      {
+        int dropdownCount = reader.GetInt32("dropdownCount");
+        DropDownItems = new List<List<string>>();
+        for (int i = 0; i < dropdownCount; i++)
+        {
+          int dropdowncontentsCount = reader.GetInt32("dropdowncontentsCount" + i);
+          List<string> tempcontent = new List<string>();
+          for (int j = 0; j < dropdowncontentsCount; j++)
+            tempcontent.Add(reader.GetString("dropdowncontents" + i + j));
+          DropDownItems.Add(tempcontent);
+        }
+      }
+      else
+        throw new Exception("Component doesnt have 'dropdown' content stored");
+
+      // spacer list
+      if (reader.GetBoolean("spacer"))
+      {
+        int dropdownspacerCount = reader.GetInt32("spacerCount");
+        SpacerDescriptions = new List<string>();
+        for (int i = 0; i < dropdownspacerCount; i++)
+          SpacerDescriptions.Add(reader.GetString("spacercontents" + i));
+      }
+
+      // selection list
+      if (reader.GetBoolean("select"))
+      {
+        int selectionsCount = reader.GetInt32("selectionCount");
+        SelectedItems = new List<string>();
+        for (int i = 0; i < selectionsCount; i++)
+          SelectedItems.Add(reader.GetString("selectioncontents" + i));
+      }
+    }
   }
 }

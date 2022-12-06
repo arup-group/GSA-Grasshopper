@@ -5,6 +5,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -16,7 +17,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  public class CreateFaceLoads : GH_OasysDropDownComponent
+    public class CreateFaceLoads : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
@@ -27,8 +28,8 @@ namespace GsaGH.Components
     public CreateFaceLoads() : base("Create Face Load",
       "FaceLoad",
       "Create GSA Face Load",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -38,20 +39,20 @@ namespace GsaGH.Components
       string unitAbbreviation = Pressure.GetAbbreviation(this.ForcePerAreaUnit);
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
-      pManager.AddTextParameter("Element list", "El", "List of Elements to apply load to." + System.Environment.NewLine +
-          "Element list should take the form:" + System.Environment.NewLine +
-          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+      pManager.AddGenericParameter("Element list", "G2D", "Property, 2D Elements or 2D Members to apply load to; either input Prop2d, Element2d, or Member2d, or a text string." + Environment.NewLine +
+          "Text string with Element list should take the form:" + Environment.NewLine +
+          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Axis", "Ax", "Load axis (default Local). " +
-              System.Environment.NewLine + "Accepted inputs are:" +
-              System.Environment.NewLine + "0 : Global" +
-              System.Environment.NewLine + "-1 : Local", GH_ParamAccess.item, -1);
+              Environment.NewLine + "Accepted inputs are:" +
+              Environment.NewLine + "0 : Global" +
+              Environment.NewLine + "-1 : Local", GH_ParamAccess.item, -1);
       pManager.AddTextParameter("Direction", "Di", "Load direction (default z)." +
-              System.Environment.NewLine + "Accepted inputs are:" +
-              System.Environment.NewLine + "x" +
-              System.Environment.NewLine + "y" +
-              System.Environment.NewLine + "z", GH_ParamAccess.item, "z");
+              Environment.NewLine + "Accepted inputs are:" +
+              Environment.NewLine + "x" +
+              Environment.NewLine + "y" +
+              Environment.NewLine + "z", GH_ParamAccess.item, "z");
       pManager.AddBooleanParameter("Projected", "Pj", "Projected (default not)", GH_ParamAccess.item, false);
       pManager.AddNumberParameter("Value [" + unitAbbreviation + "]", "V", "Load Value", GH_ParamAccess.item);
 
@@ -78,31 +79,31 @@ namespace GsaGH.Components
         GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
       faceLoad.FaceLoad.Case = lc;
 
-      // 1 element/beam list
-      // check that user has not inputted Gsa geometry elements here
+      // element/member list
       GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(1, ref gh_typ))
       {
-        string type = gh_typ.Value.ToString().ToUpper();
-        if (type.StartsWith("GSA "))
+        if (gh_typ.Value is GsaElement2dGoo)
         {
-          Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in ElementList input!" + System.Environment.NewLine +
-              "Element list should take the form:" + System.Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + System.Environment.NewLine +
-              "Refer to GSA help file for definition of lists and full vocabulary.");
-          return;
+          GsaElement2dGoo goo = (GsaElement2dGoo)gh_typ.Value;
+          faceLoad.RefObjectGuid = goo.Value.Guid;
+          faceLoad.ReferenceType = ReferenceType.Element;
         }
+        else if (gh_typ.Value is GsaMember2dGoo)
+        {
+          GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
+          faceLoad.RefObjectGuid = goo.Value.Guid;
+          faceLoad.ReferenceType = ReferenceType.Member;
+        }
+        else if (gh_typ.Value is GsaProp2dGoo)
+        {
+          GsaProp2dGoo goo = (GsaProp2dGoo)gh_typ.Value;
+          faceLoad.RefObjectGuid = goo.Value.Guid;
+          faceLoad.ReferenceType = ReferenceType.Prop2d;
+        }
+        else if (GH_Convert.ToString(gh_typ.Value, out string elemList, GH_Conversion.Both))
+          faceLoad.FaceLoad.Elements = elemList;
       }
-      string elemList = "";
-      GH_String gh_el = new GH_String();
-      if (DA.GetData(1, ref gh_el))
-        GH_Convert.ToString(gh_el, out elemList, GH_Conversion.Both);
-      //var isNumeric = int.TryParse(elemList, out int n);
-      //if (isNumeric)
-      //    elemList = "PA" + n;
-
-      faceLoad.FaceLoad.Elements = elemList;
 
       // 2 Name
       string name = "";
@@ -306,6 +307,23 @@ namespace GsaGH.Components
     public override void UpdateUIFromSelectedItems()
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
+      this.DuringLoad = true;
+      switch (SelectedItems[0])
+      {
+        case "Uniform":
+          Mode1Clicked();
+          break;
+        case "Variable":
+          Mode2Clicked();
+          break;
+        case "Point":
+          Mode3Clicked();
+          break;
+        case "Edge":
+          Mode4Clicked();
+          break;
+      }
+      this.DuringLoad = false;
       this.ForcePerAreaUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
@@ -379,18 +397,18 @@ namespace GsaGH.Components
         Params.Input[7].NickName = "r";
         Params.Input[7].Name = "Position r";
         Params.Input[7].Description = "The position r of the point load to be specified in ( r , s )" +
-            System.Environment.NewLine + "coordinates based on two-dimensional shape function." +
-            System.Environment.NewLine + " • Coordinates vary from −1 to 1 for Quad 4 and Quad 8." +
-            System.Environment.NewLine + " • Coordinates vary from 0 to 1 for Triangle 3 and Triangle 6";
+            Environment.NewLine + "coordinates based on two-dimensional shape function." +
+            Environment.NewLine + " • Coordinates vary from −1 to 1 for Quad 4 and Quad 8." +
+            Environment.NewLine + " • Coordinates vary from 0 to 1 for Triangle 3 and Triangle 6";
         Params.Input[7].Access = GH_ParamAccess.item;
         Params.Input[7].Optional = true;
 
         Params.Input[8].NickName = "s";
         Params.Input[8].Name = "Position s";
         Params.Input[8].Description = "The position s of the point load to be specified in ( r , s )" +
-            System.Environment.NewLine + "coordinates based on two-dimensional shape function." +
-            System.Environment.NewLine + " • Coordinates vary from −1 to 1 for Quad 4 and Quad 8." +
-            System.Environment.NewLine + " • Coordinates vary from 0 to 1 for Triangle 3 and Triangle 6";
+            Environment.NewLine + "coordinates based on two-dimensional shape function." +
+            Environment.NewLine + " • Coordinates vary from −1 to 1 for Quad 4 and Quad 8." +
+            Environment.NewLine + " • Coordinates vary from 0 to 1 for Triangle 3 and Triangle 6";
         Params.Input[8].Access = GH_ParamAccess.item;
         Params.Input[8].Optional = true;
       }
@@ -419,9 +437,10 @@ namespace GsaGH.Components
     #endregion
 
     #region menu override
+    bool DuringLoad = false;
     private void Mode1Clicked()
     {
-      if (_mode == FoldMode.Uniform)
+      if (!this.DuringLoad && _mode == FoldMode.Uniform)
         return;
 
       RecordUndoEvent("Uniform Parameters");
@@ -446,7 +465,7 @@ namespace GsaGH.Components
     }
     private void Mode2Clicked()
     {
-      if (_mode == FoldMode.Variable)
+      if (!this.DuringLoad && _mode == FoldMode.Variable)
         return;
 
       RecordUndoEvent("Variable Parameters");
@@ -478,7 +497,7 @@ namespace GsaGH.Components
 
     private void Mode3Clicked()
     {
-      if (_mode == FoldMode.Point)
+      if (!this.DuringLoad && _mode == FoldMode.Point)
         return;
 
       RecordUndoEvent("Point Parameters");
@@ -507,7 +526,7 @@ namespace GsaGH.Components
     }
     private void Mode4Clicked()
     {
-      if (_mode == FoldMode.Edge)
+      if (!this.DuringLoad && _mode == FoldMode.Edge)
         return;
 
       RecordUndoEvent("Edge Parameters");

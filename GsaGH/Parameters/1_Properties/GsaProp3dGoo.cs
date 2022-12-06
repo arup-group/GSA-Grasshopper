@@ -33,7 +33,7 @@ namespace GsaGH.Parameters
         else
         {
           GH_Integer ghint = new GH_Integer();
-          if (GH_Convert.ToGHInteger(Value.ID, GH_Conversion.Both, ref ghint))
+          if (GH_Convert.ToGHInteger(Value.Id, GH_Conversion.Both, ref ghint))
             target = (Q)(object)ghint;
           else
             target = default;

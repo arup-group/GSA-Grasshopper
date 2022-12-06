@@ -4,8 +4,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Util.GH;
-using GsaGH.Util.Gsa;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
@@ -13,13 +13,14 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get GSA total model load and reactions
-  /// </summary>
-  public class TotalLoadsAndReactionResults : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get GSA total model load and reactions
+    /// </summary>
+    public class TotalLoadsAndReactionResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("00a195ef-b8f2-4b91-ac47-a8ae12d48b8e");
@@ -30,8 +31,8 @@ namespace GsaGH.Components
     public TotalLoadsAndReactionResults() : base("Total Loads & Reactions",
       "TotalResults",
       "Get Total Loads and Reaction Results from a GSA model",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

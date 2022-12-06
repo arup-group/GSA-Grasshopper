@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using Newtonsoft.Json.Linq;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
@@ -118,6 +119,45 @@ namespace GsaGH.Parameters
         _node.Name = value;
       }
     }
+
+    public int DamperProperty
+    {
+      get
+      {
+        return _node.DamperProperty;
+      }
+      set
+      {
+        CloneApiObject();
+        _node.DamperProperty = value;
+      }
+    }
+
+    public int MassProperty
+    {
+      get
+      {
+        return _node.MassProperty;
+      }
+      set
+      {
+        CloneApiObject();
+        _node.MassProperty = value;
+      }
+    }
+
+    public int SpringProperty
+    {
+      get
+      {
+        return _node.SpringProperty;
+      }
+      set
+      {
+        CloneApiObject();
+        _node.SpringProperty = value;
+      }
+    }
     #endregion
     #endregion
 
@@ -153,13 +193,43 @@ namespace GsaGH.Parameters
     public GsaNode Duplicate(bool cloneApiNode = false)
     {
       GsaNode dup = new GsaNode();
-      dup.Id = Id;
+      dup.Id = this.Id;
       dup._node = _node;
       if (cloneApiNode)
         dup.CloneApiObject();
       dup._plane = _plane;
       dup.UpdatePreview();
       return dup;
+    }
+
+    public GsaNode Transform(Transform xform)
+    {
+      if (this.Point == null) 
+        return null;
+
+      GsaNode node = this.Duplicate(true);
+      node.Id = 0;
+      Point3d pt = new Point3d(node.Point);
+      pt.Transform(xform);
+
+      node.Point = pt;
+      return node;
+    }
+
+    public GsaNode Morph(SpaceMorph xmorph)
+    {
+      if (this.Point == null) 
+        return null;
+
+      GsaNode node = this.Duplicate();
+      node.Id = 0;
+
+      Point3d pt = new Point3d(node.Point);
+      pt = xmorph.MorphPoint(pt);
+
+      node.Point = pt;
+
+      return node;
     }
 
     public override string ToString()
@@ -280,7 +350,7 @@ namespace GsaGH.Parameters
     {
       if (_node.Restraint.X || _node.Restraint.Y || _node.Restraint.Z || _node.Restraint.XX || _node.Restraint.YY || _node.Restraint.ZZ)
       {
-        GsaGH.UI.Display.PreviewRestraint(Restraint, _plane, Point, ref this.previewSupportSymbol, ref this.previewText);
+        Helpers.Graphics.Display.PreviewRestraint(Restraint, _plane, Point, ref this.previewSupportSymbol, ref this.previewText);
       }
       else
       {

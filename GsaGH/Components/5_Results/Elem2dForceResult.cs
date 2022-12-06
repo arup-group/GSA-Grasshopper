@@ -7,6 +7,7 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -18,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
-  /// </summary>
-  public class Elem2dForces : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to retrieve non-geometric objects from a GSA model
+    /// </summary>
+    public class Elem2dForces : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -33,8 +34,8 @@ namespace GsaGH.Components
     public Elem2dForces() : base("2D Forces and Moments",
       "Forces2D",
       "2D Projected Force and Moment result values",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -42,9 +43,9 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.list);
-      pManager.AddTextParameter("Element filter list", "El", "Filter results by list." + System.Environment.NewLine +
-          "Element list should take the form:" + System.Environment.NewLine +
-          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Element filter list", "El", "Filter results by list." + Environment.NewLine +
+          "Element list should take the form:" + Environment.NewLine +
+          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
     }
 
@@ -53,13 +54,13 @@ namespace GsaGH.Components
       string forceunitAbbreviation = ForcePerLength.GetAbbreviation(this.ForceUnit);
       string momentunitAbbreviation = Force.GetAbbreviation(this.MomentUnit);
 
-      string forcerule = System.Environment.NewLine + "+ve in plane force resultant: tensile";
-      string momentrule = System.Environment.NewLine + "+ve moments correspond to +ve stress on the top (eg. Mx +ve if top Sxx +ve)";
-      string note = System.Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
-                    System.Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
-                    System.Environment.NewLine + "branch contains a list of results in the following order: " +
-                    System.Environment.NewLine + "Vertex(1), Vertex(2), ..., Vertex(i), Centre" +
-                    System.Environment.NewLine + "Element results are NOT averaged at nodes";
+      string forcerule = Environment.NewLine + "+ve in plane force resultant: tensile";
+      string momentrule = Environment.NewLine + "+ve moments correspond to +ve stress on the top (eg. Mx +ve if top Sxx +ve)";
+      string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
+                    Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
+                    Environment.NewLine + "branch contains a list of results in the following order: " +
+                    Environment.NewLine + "Vertex(1), Vertex(2), ..., Vertex(i), Centre" +
+                    Environment.NewLine + "Element results are NOT averaged at nodes";
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Nx", "Element in-plane Forces in Local X-direction." + forcerule + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Ny", "Element in-plane Forces in Local Y-direction." + forcerule + note, GH_ParamAccess.tree);
@@ -230,15 +231,15 @@ namespace GsaGH.Components
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
       if (i == 0)
-        this.ForceUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[i]);
+        this.ForceUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[i]);
       else if (i == 1)
-        this.MomentUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[i]);
+        this.MomentUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[i]);
       base.UpdateUI();
     }
     public override void UpdateUIFromSelectedItems()
     {
-      this.ForceUnit = (ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[0]);
-      this.MomentUnit = (ForceUnit)Enum.Parse(typeof(ForceUnit), this.SelectedItems[1]);
+      this.ForceUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[0]);
+      this.MomentUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

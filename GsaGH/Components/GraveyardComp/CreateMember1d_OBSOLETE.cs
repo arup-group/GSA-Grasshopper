@@ -1,6 +1,7 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -9,10 +10,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create new 1D Member
-  /// </summary>
-  public class CreateMember1d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new 1D Member
+    /// </summary>
+    public class CreateMember1d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("5c5b9efa-cdae-4be5-af40-ff2b590801dd");
@@ -23,8 +24,8 @@ namespace GsaGH.Components
     public CreateMember1d_OBSOLETE() : base("Create 1D Member",
       "Mem1D",
       "Create GSA 1D Member",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 

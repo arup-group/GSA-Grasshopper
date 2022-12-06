@@ -9,13 +9,14 @@ using GsaGH.Helpers;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to open an existing GSA model
-  /// </summary>
-  public class OpenModel : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to open an existing GSA model
+    /// </summary>
+    public class OpenModel : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
@@ -26,8 +27,8 @@ namespace GsaGH.Components
     public OpenModel() : base("Open Model",
       "Open",
       "Open an existing GSA model",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat0())
+      CategoryName.Name(),
+      SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
     
@@ -37,8 +38,8 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddGenericParameter("Filename and path", "File", "GSA model to open and work with." +
-              System.Environment.NewLine + "Input either path component, a text string with path and " +
-              System.Environment.NewLine + "filename or an existing GSA model created in Grasshopper.", GH_ParamAccess.item);
+              Environment.NewLine + "Input either path component, a text string with path and " +
+              Environment.NewLine + "filename or an existing GSA model created in Grasshopper.", GH_ParamAccess.item);
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
@@ -83,7 +84,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + System.Environment.NewLine + status.ToString());
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + Environment.NewLine + status.ToString());
             return;
           }
         }
@@ -124,7 +125,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + System.Environment.NewLine + status.ToString());
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + Environment.NewLine + status.ToString());
           return;
         }
       }

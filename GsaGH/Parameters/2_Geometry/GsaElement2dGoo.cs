@@ -85,28 +85,13 @@ namespace GsaGH.Parameters
     #region transformation methods
     public override IGH_GeometricGoo Transform(Transform xform)
     {
-      if (Value == null) { return null; }
-      if (Value.Mesh == null) { return null; }
-
-      GsaElement2d dup = Value.Duplicate(true);
-      dup.Ids = new List<int>(new int[dup.Mesh.Faces.Count()]);
-      Mesh xMs = dup.Mesh.DuplicateMesh();
-      xMs.Transform(xform);
-      return new GsaElement2dGoo(dup.UpdateGeometry(xMs));
+      return new GsaElement2dGoo(Value.Transform(xform));
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
-      if (Value == null) { return null; }
-      if (Value.Mesh == null) { return null; }
-
-      GsaElement2d dup = Value.Duplicate(true);
-      dup.Ids = new List<int>(new int[dup.Mesh.Faces.Count()]);
-      Mesh xMs = dup.Mesh.DuplicateMesh();
-      xmorph.Morph(xMs);
-      return new GsaElement2dGoo(dup.UpdateGeometry(xMs));
+      return new GsaElement2dGoo(Value.Morph(xmorph));
     }
-
     #endregion
 
     #region drawing methods
@@ -115,10 +100,10 @@ namespace GsaGH.Parameters
       //Draw shape.
       if (args.Material.Diffuse == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
       {
-        args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFace);
+        args.Pipeline.DrawMeshShaded(Value.Mesh, Helpers.Graphics.Colours.Element2dFace);
       }
       else
-        args.Pipeline.DrawMeshShaded(Value.Mesh, UI.Colour.Element2dFaceSelected);
+        args.Pipeline.DrawMeshShaded(Value.Mesh, Helpers.Graphics.Colours.Element2dFaceSelected);
     }
     public override void DrawViewportWires(GH_PreviewWireArgs args)
     {
@@ -130,11 +115,11 @@ namespace GsaGH.Parameters
       {
         if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
         {
-          args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdge, 1);
+          args.Pipeline.DrawMeshWires(Value.Mesh, Helpers.Graphics.Colours.Element2dEdge, 1);
         }
         else
         {
-          args.Pipeline.DrawMeshWires(Value.Mesh, UI.Colour.Element2dEdgeSelected, 2);
+          args.Pipeline.DrawMeshWires(Value.Mesh, Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
         }
       }
     }

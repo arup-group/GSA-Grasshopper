@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using OasysGH.Units;
-using OasysUnits;
+﻿using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Parameters
@@ -11,6 +8,19 @@ namespace GsaGH.Parameters
   /// </summary>
   public class GsaOffset
   {
+    public enum AlignmentType
+    {
+      Centroid,
+      Top_Left,
+      Top_Centre,
+      Top_Right,
+      Mid_Left,
+      Mid_Right,
+      Bottom_Left,
+      Bottom_Centre,
+      Bottom_Right
+    }
+
     #region properties
     public Length X1 { get; set; } = Length.Zero;
     public Length X2 { get; set; } = Length.Zero;
@@ -43,10 +53,10 @@ namespace GsaGH.Parameters
       LengthUnit unit = this.Z.Unit;
       string unitAbbreviation = Length.GetAbbreviation(unit);
 
-      return "X1:" + X1.As(unit).ToString("g") + 
-        " X2:" + X2.As(unit).ToString("g") + 
-        " Y:" + Y.As(unit).ToString("g") + 
-        " Z:" + Z.As(unit).ToString("g") + 
+      return "X1:" + X1.As(unit).ToString("g") +
+        " X2:" + X2.As(unit).ToString("g") +
+        " Y:" + Y.As(unit).ToString("g") +
+        " Z:" + Z.As(unit).ToString("g") +
         " [" + unitAbbreviation + "]";
     }
     #endregion

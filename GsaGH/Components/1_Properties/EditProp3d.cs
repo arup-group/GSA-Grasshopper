@@ -1,16 +1,17 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Prop3d and ouput the information
-  /// </summary>
-  public class EditProp3d : GH_OasysComponent
+    /// <summary>
+    /// Component to edit a Prop3d and ouput the information
+    /// </summary>
+    public class EditProp3d : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -22,8 +23,8 @@ namespace GsaGH.Components
     public EditProp3d() : base("Edit 3D Property",
       "Prop3dEdit",
       "Modify GSA 3D Property",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -69,7 +70,7 @@ namespace GsaGH.Components
         if (DA.GetData(1, ref ghID))
         {
           if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            prop.ID = id;
+            prop.Id = id;
         }
 
         // 2 Material
@@ -126,7 +127,7 @@ namespace GsaGH.Components
         ValueType colour = (prop.API_Prop3d == null) ? null : prop.API_Prop3d.Colour;
 
         DA.SetData(0, new GsaProp3dGoo(prop));
-        DA.SetData(1, prop.ID);
+        DA.SetData(1, prop.Id);
         DA.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
         DA.SetData(3, ax);
         DA.SetData(4, nm);

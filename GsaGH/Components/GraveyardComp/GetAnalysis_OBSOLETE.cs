@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
-  /// </summary>
-  public class GetAnalysis_OBSOLETE : GH_OasysComponent
+    /// <summary>
+    /// Component to retrieve non-geometric objects from a GSA model
+    /// </summary>
+    public class GetAnalysis_OBSOLETE : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
@@ -19,8 +20,8 @@ namespace GsaGH.Components
     public override Guid ComponentGuid => new Guid("fa497db7-8bdd-438d-888f-83a85d6cd48a");
     public GetAnalysis_OBSOLETE()
       : base("Get Model Analysis", "GetAnalysis", "Get Analysis Cases and Tasks from GSA model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat0())
+            CategoryName.Name(),
+            SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GsaAPI;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
@@ -11,10 +12,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
-  /// </summary>
-  public class GsaMember2d
+    /// <summary>
+    /// Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
+    /// </summary>
+    public class GsaMember2d
   {
     #region fields
     private Brep _brep; // brep for visualisation /member2d
@@ -32,6 +33,8 @@ namespace GsaGH.Parameters
     private List<List<string>> _inclCrvsTopoType; // list of polyline curve type (arch or line) for inclusion /member2d
 
     private List<Point3d> _inclPts; //slist of points for inclusion /member2d
+
+    private Guid _guid = Guid.NewGuid();
     #endregion
 
     #region properties
@@ -58,6 +61,13 @@ namespace GsaGH.Parameters
     public List<List<Point3d>> IncLinesTopology => this._inclCrvsTopo;
     public List<List<string>> IncLinesTopologyType => this._inclCrvsTopoType;
     public List<Point3d> InclusionPoints => this._inclPts;
+    public Guid Guid
+    {
+      get
+      {
+        return this._guid;
+      }
+    }
     #region GsaAPI.Member members
     public Color Colour
     {
@@ -187,6 +197,7 @@ namespace GsaGH.Parameters
     internal void CloneApiObject()
     {
       this.ApiMember = this.GetAPI_MemberClone();
+      this._guid = Guid.NewGuid();
     }
     #endregion
     #endregion
@@ -204,7 +215,7 @@ namespace GsaGH.Parameters
         Property = prop
       };
 
-      Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>> convertBrepInclusion = Util.GH.Convert.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
+      Tuple<Tuple<PolyCurve, List<Point3d>, List<string>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>>, Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>, List<Point3d>>> convertBrepInclusion = Helpers.GH.RhinoConversions.ConvertPolyBrepInclusion(brep, includeCurves, includePoints);
 
       Tuple<PolyCurve, List<Point3d>, List<string>> edgeTuple = convertBrepInclusion.Item1;
       Tuple<List<PolyCurve>, List<List<Point3d>>, List<List<string>>> voidTuple = convertBrepInclusion.Item2;
@@ -221,7 +232,7 @@ namespace GsaGH.Parameters
       this._inclCrvsTopoType = inclTuple.Item3;
       this._inclPts = inclTuple.Item4;
 
-      this._brep = Util.GH.Convert.BuildBrep(_edgeCrv, _voidCrvs);
+      this._brep = Helpers.GH.RhinoConversions.BuildBrep(_edgeCrv, _voidCrvs);
       if (this._brep == null)
         throw new Exception(" Error with Mem2D: Unable to build Brep, please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
     }
@@ -263,7 +274,7 @@ namespace GsaGH.Parameters
         topologyType.Add("");
       }
 
-      this._edgeCrv = Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
+      this._edgeCrv = Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
       this._edgeCrvTopo = topology;
       this._edgeCrvTopoType = topologyType;
 
@@ -282,9 +293,9 @@ namespace GsaGH.Parameters
             voidTopologyType[i].Add("");
           }
           if (voidTopologyType != null)
-            this._voidCrvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i], voidTopologyType[i]));
+            this._voidCrvs.Add(Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i], voidTopologyType[i]));
           else
-            this._voidCrvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i]));
+            this._voidCrvs.Add(Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i]));
         }
       }
       this._voidCrvsTopo = voidTopology;
@@ -299,9 +310,9 @@ namespace GsaGH.Parameters
         for (int i = 0; i < inlcusionLinesTopology.Count; i++)
         {
           if (inclusionTopologyType != null)
-            this._inclCrvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i], inclusionTopologyType[i]));
+            this._inclCrvs.Add(Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i], inclusionTopologyType[i]));
           else
-            this._inclCrvs.Add(Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i]));
+            this._inclCrvs.Add(Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i]));
         }
       }
       this._inclCrvsTopo = inlcusionLinesTopology;
@@ -309,7 +320,7 @@ namespace GsaGH.Parameters
 
       this._inclPts = includePoints;
 
-      this._brep = Util.GH.Convert.BuildBrep(this._edgeCrv, this._voidCrvs, new Length(0.25, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
+      this._brep = Helpers.GH.RhinoConversions.BuildBrep(this._edgeCrv, this._voidCrvs, new Length(0.25, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
 
       this.Property = prop;
     }
@@ -321,6 +332,7 @@ namespace GsaGH.Parameters
       GsaMember2d dup = new GsaMember2d();
       dup.Id = this.Id;
       dup.MeshSize = this.MeshSize;
+      dup._guid = new Guid(_guid.ToString());
       dup.ApiMember = this.ApiMember;
       if (cloneApiMember)
         dup.CloneApiObject();
@@ -488,7 +500,7 @@ namespace GsaGH.Parameters
       }
 
       string idd = this.Id == 0 ? "" : "ID:" + Id + " ";
-      string type = Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
+      string type = Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
       return string.Join(" ", idd.Trim(), type.Trim(), incl.Trim()).Trim().Replace("  ", " ");
     }
     #endregion

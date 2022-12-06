@@ -10,7 +10,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Util.GH;
+using GsaGH.Helpers.GH;
 using Newtonsoft.Json;
 using OasysGH.Parameters;
 using OasysGH.Units;
@@ -19,6 +19,7 @@ using OasysUnits;
 using OasysUnits.Serialization.JsonNet;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using System.Collections.ObjectModel;
 
 namespace GsaGH.Components
 {
@@ -31,8 +32,8 @@ namespace GsaGH.Components
     public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
     public GetGeometry()
       : base("Get Model Geometry", "GetGeo", "Get nodes, elements and members from GSA model",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat0())
+            CategoryName.Name(),
+            SubCategoryName.Cat0())
     {
     }
 
@@ -44,17 +45,17 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model containing some geometry", GH_ParamAccess.item);
-      pManager.AddTextParameter("Node filter list", "No", "Filter import by list." + System.Environment.NewLine +
-          "Node list should take the form:" + System.Environment.NewLine +
-          " 1 11 to 72 step 2 not (XY3 31 to 45)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Node filter list", "No", "Filter import by list." + Environment.NewLine +
+          "Node list should take the form:" + Environment.NewLine +
+          " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-      pManager.AddTextParameter("Element filter list", "El", "Filter import by list." + System.Environment.NewLine +
-          "Element list should take the form:" + System.Environment.NewLine +
-          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Element filter list", "El", "Filter import by list." + Environment.NewLine +
+          "Element list should take the form:" + Environment.NewLine +
+          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-      pManager.AddTextParameter("Member filter list", "Me", "Filter import by list." + System.Environment.NewLine +
-          "Member list should take the form:" + System.Environment.NewLine +
-          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Member filter list", "Me", "Filter import by list." + Environment.NewLine +
+          "Member list should take the form:" + Environment.NewLine +
+          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager[1].Optional = true;
       pManager[2].Optional = true;
@@ -90,8 +91,9 @@ namespace GsaGH.Components
       internal ConcurrentBag<GsaMember2dGoo> Mem2ds { get; set; }
       internal ConcurrentBag<GsaMember3dGoo> Mem3ds { get; set; }
     }
+
     SolveResults Compute(
-        ConcurrentDictionary<int, Node> allnDict, 
+        ConcurrentDictionary<int, Node> allnDict,
         ConcurrentDictionary<int, Axis> axDict,
         ConcurrentDictionary<int, Node> nDict,
         ConcurrentDictionary<int, Element> eDict,
@@ -100,7 +102,9 @@ namespace GsaGH.Components
         ConcurrentDictionary<int, Prop2D> pDict,
         ConcurrentDictionary<int, Prop3D> p3Dict,
         ConcurrentDictionary<int, AnalysisMaterial> amDict,
-        ConcurrentDictionary<int, SectionModifier> modDict
+        ConcurrentDictionary<int, SectionModifier> modDict,
+        ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict,
+        ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict
         )
     {
       SolveResults results = new SolveResults();
@@ -113,7 +117,7 @@ namespace GsaGH.Components
           if (i == 0)
           {
             // create nodes
-            results.Nodes = Util.Gsa.FromGSA.GetNodes(nDict, LengthUnit, axDict);
+            results.Nodes = Helpers.Import.Nodes.GetNodes(nDict, LengthUnit, axDict);
             results.displaySupports = new ConcurrentBag<GsaNodeGoo>(results.Nodes.AsParallel().Where(n => n.Value.IsSupport));
           }
 
@@ -121,7 +125,7 @@ namespace GsaGH.Components
           {
             // create elements
             Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-                = Util.Gsa.FromGSA.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, modDict, LengthUnit);
+                = Helpers.Import.Elements.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, modDict, elementLocalAxesDict, LengthUnit);
 
             results.Elem1ds = elementTuple.Item1;
             results.Elem2ds = elementTuple.Item2;
@@ -132,7 +136,7 @@ namespace GsaGH.Components
           {
             // create members
             Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-                = Util.Gsa.FromGSA.GetMembers(mDict, allnDict, LengthUnit, sDict, pDict, p3Dict, this);
+                = Helpers.Import.Members.GetMembers(mDict, allnDict, LengthUnit, sDict, pDict, p3Dict, memberLocalAxesDict, this);
 
             results.Mem1ds = memberTuple.Item1;
             results.Mem2ds = memberTuple.Item2;
@@ -248,10 +252,10 @@ namespace GsaGH.Components
       this.ClearRuntimeMessages();
       return results;
     }
+    
     ConcurrentDictionary<int, Member> mDict = null;
     protected override void SolveInstance(IGH_DataAccess data)
     {
-      
       if (InPreSolve)
       {
         // First pass; collect data and construct tasks
@@ -293,8 +297,16 @@ namespace GsaGH.Components
           ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
           ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
 
+          // populate local axes dictionary
+          ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          foreach (int id in eDict.Keys)
+            elementLocalAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+          foreach (int id in mDict.Keys)
+            memberLocalAxesDict.TryAdd(id, model.MemberDirectionCosine(id));
+
           tsk = Task.Run(() => Compute(nDict, axDict, out_nDict,
-              eDict, mDict, sDict, pDict, p3Dict, amDict, modDict), CancelToken);
+              eDict, mDict, sDict, pDict, p3Dict, amDict, modDict, elementLocalAxesDict, memberLocalAxesDict), CancelToken);
         }
         // Add a null task even if data collection fails. This keeps the
         // list size in sync with the iterations
@@ -345,8 +357,16 @@ namespace GsaGH.Components
           ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
           ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
 
+          // populate local axes dictionary
+          ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          foreach (int id in eDict.Keys)
+            elementLocalAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+          foreach (int id in mDict.Keys)
+            memberLocalAxesDict.TryAdd(id, model.MemberDirectionCosine(id));
+
           results = Compute(nDict, axDict, out_nDict,
-          eDict, mDict, sDict, pDict, p3Dict, amDict, modDict);
+          eDict, mDict, sDict, pDict, p3Dict, amDict, modDict, elementLocalAxesDict, memberLocalAxesDict);
         }
         else return;
       }
@@ -386,7 +406,7 @@ namespace GsaGH.Components
           {
             DataTree<GsaElement2dGoo> tree = new DataTree<GsaElement2dGoo>();
             foreach (GsaElement2dGoo element in results.Elem2ds)
-              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Properties.First().ID));
+              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Properties.First().Id));
             data.SetDataTree(2, tree);
           }
           element2ds = results.Elem2ds;
@@ -480,7 +500,7 @@ namespace GsaGH.Components
           {
             DataTree<GsaMember2dGoo> tree = new DataTree<GsaMember2dGoo>();
             foreach (GsaMember2dGoo element in results.Mem2ds)
-              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Property.ID));
+              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Property.Id));
             data.SetDataTree(5, tree);
           }
         }
@@ -498,7 +518,7 @@ namespace GsaGH.Components
           {
             DataTree<GsaMember3dGoo> tree = new DataTree<GsaMember3dGoo>();
             foreach (GsaMember3dGoo element in results.Mem3ds)
-              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Property.ID));
+              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Property.Id));
             data.SetDataTree(6, tree);
           }
         }
@@ -533,22 +553,22 @@ namespace GsaGH.Components
       {
         if (this.Attributes.Selected)
         {
-          args.Display.DrawMeshWires(cachedDisplayMeshNotShaded, UI.Colour.Element2dEdgeSelected, 2);
+          args.Display.DrawMeshWires(cachedDisplayMeshNotShaded, Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
         }
         else
         {
-          args.Display.DrawMeshWires(cachedDisplayMeshNotShaded, UI.Colour.Element2dEdge, 1);
+          args.Display.DrawMeshWires(cachedDisplayMeshNotShaded, Helpers.Graphics.Colours.Element2dEdge, 1);
         }
       }
       if (cachedDisplayNgonMeshNotShaded != null)
       {
         if (this.Attributes.Selected)
         {
-          args.Display.DrawMeshWires(cachedDisplayNgonMeshNotShaded, UI.Colour.Element2dEdgeSelected, 2);
+          args.Display.DrawMeshWires(cachedDisplayNgonMeshNotShaded, Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
         }
         else
         {
-          args.Display.DrawMeshWires(cachedDisplayNgonMeshNotShaded, UI.Colour.Element2dEdge, 1);
+          args.Display.DrawMeshWires(cachedDisplayNgonMeshNotShaded, Helpers.Graphics.Colours.Element2dEdge, 1);
         }
       }
 
@@ -566,21 +586,21 @@ namespace GsaGH.Components
               }
               else
               {
-                System.Drawing.Color col = UI.Colour.Node;
+                System.Drawing.Color col = Helpers.Graphics.Colours.Node;
                 args.Display.DrawPoint(node.Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, col);
               }
               if (node.Value.previewSupportSymbol != null)
-                args.Display.DrawBrepShaded(node.Value.previewSupportSymbol, UI.Colour.SupportSymbol);
+                args.Display.DrawBrepShaded(node.Value.previewSupportSymbol, Helpers.Graphics.Colours.SupportSymbol);
               if (node.Value.previewText != null)
-                args.Display.Draw3dText(node.Value.previewText, UI.Colour.Support);
+                args.Display.Draw3dText(node.Value.previewText, Helpers.Graphics.Colours.Support);
             }
             else
             {
-              args.Display.DrawPoint(node.Value.Point, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.NodeSelected);
+              args.Display.DrawPoint(node.Value.Point, Rhino.Display.PointStyle.RoundControlPoint, 3, Helpers.Graphics.Colours.NodeSelected);
               if (node.Value.previewSupportSymbol != null)
-                args.Display.DrawBrepShaded(node.Value.previewSupportSymbol, UI.Colour.SupportSymbolSelected);
+                args.Display.DrawBrepShaded(node.Value.previewSupportSymbol, Helpers.Graphics.Colours.SupportSymbolSelected);
               if (node.Value.previewText != null)
-                args.Display.Draw3dText(node.Value.previewText, UI.Colour.NodeSelected);
+                args.Display.Draw3dText(node.Value.previewText, Helpers.Graphics.Colours.NodeSelected);
             }
 
             // local axis
@@ -603,7 +623,7 @@ namespace GsaGH.Components
     public List<string> SpacerDescriptions;
 
     public bool IsInitialised;
-    
+
     private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public override void CreateAttributes()
@@ -614,7 +634,7 @@ namespace GsaGH.Components
       m_attributes = new OasysGH.UI.DropDownComponentAttributes(this, SetSelected, DropDownItems, SelectedItems, SpacerDescriptions);
     }
 
-    public void InitialiseDropdowns() 
+    public void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
         {
@@ -827,14 +847,14 @@ namespace GsaGH.Components
     public override bool Write(GH_IWriter writer)
     {
       writer.SetInt32("Mode", (int)_mode);
-      Util.GH.DeSerialization.writeDropDownComponents(ref writer, this.DropDownItems, this.SelectedItems, this.SpacerDescriptions);
+      writeDropDownComponents(ref writer, this.DropDownItems, this.SelectedItems, this.SpacerDescriptions);
       return base.Write(writer);
     }
 
     public override bool Read(GH_IReader reader)
     {
       _mode = (FoldMode)reader.GetInt32("Mode");
-      Util.GH.DeSerialization.readDropDownComponents(ref reader, ref this.DropDownItems, ref this.SelectedItems, ref this.SpacerDescriptions);
+      readDropDownComponents(ref reader, ref this.DropDownItems, ref this.SelectedItems, ref this.SpacerDescriptions);
       IsInitialised = true;
       UpdateUIFromSelectedItems();
       return base.Read(reader);
@@ -862,5 +882,86 @@ namespace GsaGH.Components
       return false;
     }
     #endregion
+
+    internal static GH_IO.Serialization.GH_IWriter writeDropDownComponents(ref GH_IO.Serialization.GH_IWriter writer, List<List<string>> DropDownItems, List<string> SelectedItems, List<string> SpacerDescriptions)
+    {
+      // to save the dropdownlist content, spacer list and selection list 
+      // loop through the lists and save number of lists as well
+      bool dropdown = false;
+      if (DropDownItems != null)
+      {
+        writer.SetInt32("dropdownCount", DropDownItems.Count);
+        for (int i = 0; i < DropDownItems.Count; i++)
+        {
+          writer.SetInt32("dropdowncontentsCount" + i, DropDownItems[i].Count);
+          for (int j = 0; j < DropDownItems[i].Count; j++)
+            writer.SetString("dropdowncontents" + i + j, DropDownItems[i][j]);
+        }
+        dropdown = true;
+      }
+      writer.SetBoolean("dropdown", dropdown);
+
+      // spacer list
+      bool spacer = false;
+      if (SpacerDescriptions != null)
+      {
+        writer.SetInt32("spacerCount", SpacerDescriptions.Count);
+        for (int i = 0; i < SpacerDescriptions.Count; i++)
+          writer.SetString("spacercontents" + i, SpacerDescriptions[i]);
+        spacer = true;
+      }
+      writer.SetBoolean("spacer", spacer);
+
+      // selection list
+      bool select = false;
+      if (SelectedItems != null)
+      {
+        writer.SetInt32("selectionCount", SelectedItems.Count);
+        for (int i = 0; i < SelectedItems.Count; i++)
+          writer.SetString("selectioncontents" + i, SelectedItems[i]);
+        select = true;
+      }
+      writer.SetBoolean("select", select);
+
+      return writer;
+    }
+
+    internal static void readDropDownComponents(ref GH_IO.Serialization.GH_IReader reader, ref List<List<string>> DropDownItems, ref List<string> SelectedItems, ref List<string> SpacerDescriptions)
+    {
+      // dropdown content list
+      if (reader.GetBoolean("dropdown"))
+      {
+        int dropdownCount = reader.GetInt32("dropdownCount");
+        DropDownItems = new List<List<string>>();
+        for (int i = 0; i < dropdownCount; i++)
+        {
+          int dropdowncontentsCount = reader.GetInt32("dropdowncontentsCount" + i);
+          List<string> tempcontent = new List<string>();
+          for (int j = 0; j < dropdowncontentsCount; j++)
+            tempcontent.Add(reader.GetString("dropdowncontents" + i + j));
+          DropDownItems.Add(tempcontent);
+        }
+      }
+      else
+        throw new Exception("Component doesnt have 'dropdown' content stored");
+
+      // spacer list
+      if (reader.GetBoolean("spacer"))
+      {
+        int dropdownspacerCount = reader.GetInt32("spacerCount");
+        SpacerDescriptions = new List<string>();
+        for (int i = 0; i < dropdownspacerCount; i++)
+          SpacerDescriptions.Add(reader.GetString("spacercontents" + i));
+      }
+
+      // selection list
+      if (reader.GetBoolean("select"))
+      {
+        int selectionsCount = reader.GetInt32("selectionCount");
+        SelectedItems = new List<string>();
+        for (int i = 0; i < selectionsCount; i++)
+          SelectedItems.Add(reader.GetString("selectioncontents" + i));
+      }
+    }
   }
 }

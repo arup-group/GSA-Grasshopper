@@ -8,6 +8,8 @@ using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using OasysUnits.Units;
 using OasysUnits;
+using GsaGH.Helpers.GsaAPI;
+using GsaGH.Components;
 
 namespace GsaGH.Parameters
 {
@@ -23,6 +25,7 @@ namespace GsaGH.Parameters
     internal List<Line> previewRedLines;
 
     private int _id = 0;
+    private Guid _guid = Guid.NewGuid();
     private Element _element = new Element();
     private LineCurve _line = new LineCurve();
     private GsaBool6 _rel1;
@@ -63,6 +66,8 @@ namespace GsaGH.Parameters
     #endregion
 
     #region properties
+    public int Id { get; set; } = 0;
+    internal GsaLocalAxes LocalAxes { get; set; } = null;
     public LineCurve Line
     {
       get
@@ -72,18 +77,8 @@ namespace GsaGH.Parameters
       set
       {
         this._line = value;
+        this._guid = Guid.NewGuid();
         this.UpdatePreview();
-      }
-    }
-    public int Id
-    {
-      get
-      {
-        return this._id;
-      }
-      set
-      {
-        this._id = value;
       }
     }
     public GsaBool6 ReleaseStart
@@ -250,13 +245,11 @@ namespace GsaGH.Parameters
         this._element.Type = value;
       }
     }
-    internal Tuple<Vector3d, Vector3d, Vector3d> LocalAxes
+    public Guid Guid
     {
       get
       {
-        PolyCurve crv = new PolyCurve();
-        crv.Append(this._line);
-        return UI.Display.GetLocalPlane(crv, crv.GetLength() / 2, this._element.OrientationAngle * Math.PI / 180.0);
+        return this._guid;
       }
     }
     #endregion
@@ -273,7 +266,7 @@ namespace GsaGH.Parameters
         Type = ElementType.BEAM,
       };
       this._line = line;
-      this._id = id;
+      this.Id = Id;
       this._section.Id = prop;
       this._orientationNode = orientationNode;
       this.UpdatePreview();
@@ -285,7 +278,7 @@ namespace GsaGH.Parameters
       this._line = line;
       this._rel1 = new GsaBool6(_element.GetEndRelease(0).Releases);
       this._rel2 = new GsaBool6(_element.GetEndRelease(1).Releases);
-      this._id = id;
+      this.Id = id;
       this._section = section;
       this._orientationNode = orientationNode;
       this.UpdatePreview();
@@ -296,8 +289,10 @@ namespace GsaGH.Parameters
     public GsaElement1d Duplicate(bool cloneApiElement = false)
     {
       GsaElement1d dup = new GsaElement1d();
-      dup._id = this._id;
+      dup.Id = this.Id;
       dup._element = this._element;
+      dup.LocalAxes = this.LocalAxes;
+      dup._guid = new Guid(_guid.ToString());
       if (cloneApiElement)
         dup.CloneApiObject();
       dup._line = (LineCurve)this._line.DuplicateShallow();
@@ -312,10 +307,36 @@ namespace GsaGH.Parameters
       return dup;
     }
 
+    public GsaElement1d Transform(Transform xform)
+    {
+      GsaElement1d elem = this.Duplicate(true);
+      elem.Id = 0;
+      elem.LocalAxes = null;
+
+      LineCurve xLn = elem.Line;
+      xLn.Transform(xform);
+      elem.Line = xLn;
+
+      return elem;
+    }
+
+    public GsaElement1d Morph(SpaceMorph xmorph)
+    {
+      GsaElement1d elem = this.Duplicate(true);
+      elem.Id = 0;
+      elem.LocalAxes = null;
+
+      LineCurve xLn = this.Line;
+      xmorph.Morph(xLn);
+      elem.Line = xLn;
+
+      return elem;
+    }
+
     public override string ToString()
     {
       string idd = this.Id == 0 ? "" : "ID:" + Id + " ";
-      string type = Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
+      string type = Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
       string pb = this._section.Id > 0 ? "PB" + this._section.Id : this._section.Profile;
       return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
     }
@@ -323,6 +344,7 @@ namespace GsaGH.Parameters
     internal void CloneApiObject()
     {
       this._element = this.GetAPI_ElementClone();
+      this._guid = Guid.NewGuid();
     }
 
     internal Element GetAPI_ElementClone()
@@ -391,7 +413,7 @@ namespace GsaGH.Parameters
           };
           PolyCurve crv = new PolyCurve();
           crv.Append(this._line);
-          GsaGH.UI.Display.Preview1D(crv, _element.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2, ref previewGreenLines, ref previewRedLines);
+          Helpers.Graphics.Display.Preview1D(crv, _element.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2, ref previewGreenLines, ref previewRedLines);
         }
         else
           previewGreenLines = null;
