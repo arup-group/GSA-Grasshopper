@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Grasshopper.GUI;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
@@ -113,7 +114,7 @@ namespace GsaGH.Components
 
       model.Model = Helpers.Export.AssembleModel.Assemble(model, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks, combinationCases, this.LengthUnit, _tolerance, this.ReMesh);
 
-      this.Message = "Tol: " + new Length(_tolerance, this.LengthUnit).ToString();
+      this.UpdateMessage();
 
       #region analysis
       //analysis
@@ -190,6 +191,12 @@ namespace GsaGH.Components
     private double _tolerance = DefaultUnits.Tolerance.Meters;
     private string _toleranceTxt = "";
 
+    protected override void BeforeSolveInstance()
+    {
+      base.BeforeSolveInstance();
+      this.UpdateMessage();
+    }
+
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
@@ -251,7 +258,12 @@ namespace GsaGH.Components
       toleranceMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
 
       GH_MenuCustomControl menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
-      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => { Update(); };
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => 
+      { 
+        this.UpdateMessage();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      };
       menu.Items.Add(toleranceMenu);
 
       Menu_AppendSeparator(menu);
@@ -264,20 +276,26 @@ namespace GsaGH.Components
       else
         tolerance.BackColor = System.Drawing.Color.FromArgb(255, 255, 100, 100);
     }
-    private void Update()
+    private void UpdateMessage()
     {
-      try
+      if (this._toleranceTxt != "")
       {
-        Length newTolerance = Length.Parse(_toleranceTxt);
-        _tolerance = newTolerance.Meters;
-        this.Message = "Tol: " + new Length(_tolerance, this.LengthUnit).ToString();
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        ExpireSolution(true);
+        try
+        {
+          Length newTolerance = Length.Parse(_toleranceTxt);
+          _tolerance = newTolerance.Meters;
+        }
+        catch (Exception e)
+        {
+          MessageBox.Show(e.Message);
+          return;
+        }
       }
-      catch (Exception e)
-      {
-        MessageBox.Show(e.Message);
-      }
+      this.Message = "Tol: " + new Length(_tolerance, this.LengthUnit).ToString();
+      if (_tolerance < 0.001)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
+      if (_tolerance > 0.25)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     #endregion
 
@@ -296,7 +314,8 @@ namespace GsaGH.Components
       if (reader.ItemExists("Tolerance"))
         this._tolerance = reader.GetDouble("Tolerance");
       else
-        this._tolerance = DefaultUnits.Tolerance.Meters;
+        this._tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+      this.UpdateMessage();
       return base.Read(reader);
     }
     #endregion
