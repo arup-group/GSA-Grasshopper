@@ -165,6 +165,7 @@ namespace GsaGH.Parameters
           Tolerance = this._gridSrf.Tolerance
         },
         Elevation = this.Elevation,
+        Tolerance = this.Tolerance,
         AxisName = this.AxisName,
         GridPlaneId = _gridPlnId,
         GridSurfaceId = _gridSrfId
