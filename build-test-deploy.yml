@@ -36,9 +36,10 @@ steps:
   failOnStderr: true
   
 - powershell: |
-    & 'C:\Program Files\Oasys\*\GSA.exe' /Register
+    CD 'C:\Program Files\Oasys\GSA 10.1\'
+    C:\windows\system32\regsvr32.exe /s Interop.Gsa_10_1.dll
   displayName: 'Register GSA COM'
-  failOnStderr: false
+  failOnStderr: true
   
 - task: NuGetToolInstaller@1
 
