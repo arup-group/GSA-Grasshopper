@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -147,6 +148,17 @@ namespace GsaGH.Components
                 tryAnalyse = false;
               }
             }
+          }
+        }
+
+        if (tryAnalyse)
+        {
+          if (!GsaGH.libiomp5mdCheck.CanAnalyse())
+          {
+            tryAnalyse = false;
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "A dll required to run analysis has been previously loaded by another application. Please remove this file and try again:");
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, GsaGH.libiomp5mdCheck.loadedFromPath);
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Either uninstall the host application or delete the file.");
           }
         }
 

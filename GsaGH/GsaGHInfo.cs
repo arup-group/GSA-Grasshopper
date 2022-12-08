@@ -26,14 +26,23 @@ namespace GsaGH
       // ### Set system environment variables to allow user rights to read below dlls ###
       const string name = "PATH";
       string pathvar = System.Environment.GetEnvironmentVariable(name);
-      var value = pathvar + ";" + InstallPath;
+      var value = InstallPath + ";" + pathvar;
       var target = EnvironmentVariableTarget.Process;
       System.Environment.SetEnvironmentVariable(name, value, target);
 
       // ### Reference GSA API and SQLite dlls ###
-      // set folder to latest GSA version.
+      // check if GSA is installed
+      if (!File.Exists(InstallPath + "\\GsaAPI.dll"))
+      {
+        Exception exception = new Exception("GsaGH requires GSA to be installed in " + InstallPath + ". Unable to find GsaAPI.dll. It looks like you haven't got GSA installed, or it may be installed in an unknown path. Please install or reinstall GSA in " + InstallPath + ", restart Rhino and load Grasshopper again.");
+        GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI.dll loading", exception);
+        Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
+        PostHog.PluginLoaded(PluginInfo.Instance, exception.Message);
+        return GH_LoadingInstruction.Abort;
+      }
       try
       {
+        // Try load GSA
         Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
 
         FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
@@ -169,6 +178,8 @@ namespace GsaGH
       PluginPath = Path.GetDirectoryName(path);
       return true;
     }
+
+
   }
 
   internal sealed class PluginInfo
@@ -186,6 +197,39 @@ namespace GsaGH
 
     private PluginInfo() { }
   }
+
+
+  public static class libiomp5mdCheck
+  {
+    private static bool notLoaded = true;
+    private static bool canAnalyse = false;
+    public static string loadedFromPath = "";
+    public static bool CanAnalyse()
+    {
+      if (notLoaded || !canAnalyse)
+      {
+        ProcessModuleCollection dlls = Process.GetCurrentProcess().Modules;
+        foreach (ProcessModule module in dlls)
+        {
+          if (module.ModuleName == "libiomp5md.dll")
+          {
+            notLoaded = false;
+            if (module.FileName == AddReferencePriority.InstallPath + "\\libiomp5md.dll")
+              canAnalyse = true;
+            else
+            {
+              canAnalyse = false;
+              loadedFromPath = module.FileName;
+            }
+          }
+        }
+      }
+      if (notLoaded)
+        return true;
+      return canAnalyse;
+    }
+  }
+
 
   public class GsaGHInfo : GH_AssemblyInfo
   {
