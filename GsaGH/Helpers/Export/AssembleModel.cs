@@ -176,8 +176,8 @@ namespace GsaGH.Helpers.Export
           if (!existingTasks.Keys.Contains(task.ID))
             task.ID = gsa.AddAnalysisTask();
 
-          if (task.Cases == null)
-            task.CreateDeafultCases(gsa);
+          if (task.Cases == null || task.Cases.Count == 0)
+            task.CreateDefaultCases(gsa);
 
           foreach (GsaAnalysisCase ca in task.Cases)
             gsa.AddAnalysisCaseToTask(task.ID, ca.Name, ca.Description);
