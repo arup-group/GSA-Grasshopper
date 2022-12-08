@@ -148,6 +148,7 @@ namespace GsaGH.Parameters
       dup._prop3d = this._prop3d;
       dup._idd = this._idd;
       dup._material = this._material.Duplicate();
+      dup.CloneApiObject();
       dup._guid = new Guid(this._guid.ToString());
       return dup;
     }

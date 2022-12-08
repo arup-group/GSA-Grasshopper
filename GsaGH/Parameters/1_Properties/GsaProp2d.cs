@@ -221,6 +221,7 @@ namespace GsaGH.Parameters
       dup._prop2d = this._prop2d;
       dup._id = this._id;
       dup._material = this._material.Duplicate();
+      dup.CloneApiObject();
       dup._guid = new Guid(this._guid.ToString());
       return dup;
     }
