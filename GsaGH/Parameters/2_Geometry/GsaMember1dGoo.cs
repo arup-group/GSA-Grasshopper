@@ -20,10 +20,15 @@ namespace GsaGH.Parameters
     public static string Description => "GSA 1D Member";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     
-    public GsaMember1dGoo(GsaMember1d item) : base(item)
+    public GsaMember1dGoo(GsaMember1d item) : base(item) { }
+    internal GsaMember1dGoo(GsaMember1d item, bool duplicate) : base(null)
     {
+      if (duplicate)
+        this.Value = item.Duplicate();
+      else
+        this.Value= item;
     }
-    
+
     public override IGH_GeometricGoo Duplicate() => new GsaMember1dGoo(this.Value);
     public override GeometryBase GetGeometry() => this.Value.PolyCurve;
 

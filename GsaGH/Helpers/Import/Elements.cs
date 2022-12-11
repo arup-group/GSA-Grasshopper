@@ -94,7 +94,7 @@ namespace GsaGH.Helpers.Import
       if (elem1dDict.Count > 0)
         elem1ds = new ConcurrentBag<GsaElement1dGoo>(elem1dDict.AsParallel().
             Select(item => new GsaElement1dGoo(
-                ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, modDict, localAxesDict, unit))));
+                ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, modDict, localAxesDict, unit), false)));
 
       if (elem2dDict.Count > 0)
         elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, unit);
@@ -152,7 +152,6 @@ namespace GsaGH.Helpers.Import
         GsaSection section = new GsaSection(element.Property);
         if (sections.TryGetValue(element.Property, out Section apisection))
         {
-          section = new GsaSection(element.Property);
           section.API_Section = apisection;
 
           //// get material (if analysis material exist)
@@ -167,7 +166,6 @@ namespace GsaGH.Helpers.Import
           if (sectionModifiers.TryGetValue(element.Property, out SectionModifier sectionModifier))
             section.Modifier = new GsaSectionModifier(sectionModifier);
         }
-
 
         // create GH GsaElement1d
         GsaElement1d element1d = new GsaElement1d(element, ln, ID, section, orient);
@@ -392,7 +390,7 @@ namespace GsaGH.Helpers.Import
                     m,
                     props);
 
-          elem2dGoos.Add(new GsaElement2dGoo(element2D));
+          elem2dGoos.Add(new GsaElement2dGoo(element2D, false));
         }
 
       });
@@ -585,7 +583,7 @@ namespace GsaGH.Helpers.Import
                       );
 
             // add the element to list of goo 2d elements
-            elem3dGoos.Add(new GsaElement3dGoo(singleelement3D));
+            elem3dGoos.Add(new GsaElement3dGoo(singleelement3D, false));
           }
         }
         else

@@ -143,7 +143,7 @@ namespace GsaGH.Helpers.Import
             mem3d.MeshSize = new Length(mem.MeshSize, LengthUnit.Meter).As(unit);
 
             // add member to list
-            mem3ds.Add(new GsaMember3dGoo(mem3d));
+            mem3ds.Add(new GsaMember3dGoo(mem3d, false));
 
             //topints.Clear();
           }
@@ -265,7 +265,7 @@ namespace GsaGH.Helpers.Import
               mem1d.LocalAxes = new GsaLocalAxes(localAxesDict[key]);
 
               // add member to output list
-              mem1ds.Add(new GsaMember1dGoo(mem1d));
+              mem1ds.Add(new GsaMember1dGoo(mem1d, false));
             }
             else // Member2D:
             {
@@ -293,7 +293,7 @@ namespace GsaGH.Helpers.Import
               mem2d.MeshSize = new Length(mem.MeshSize, LengthUnit.Meter).As(unit);
 
               // add member to output list
-              mem2ds.Add(new GsaMember2dGoo(mem2d));
+              mem2ds.Add(new GsaMember2dGoo(mem2d, false));
             }
 
             topopts.Clear();

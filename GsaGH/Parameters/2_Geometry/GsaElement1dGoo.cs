@@ -16,8 +16,13 @@ namespace GsaGH.Parameters
     public static string Description => "GSA 1D Element";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaElement1dGoo(GsaElement1d item) : base(item)
+    public GsaElement1dGoo(GsaElement1d item) : base(item) { }
+    internal GsaElement1dGoo(GsaElement1d item, bool duplicate) : base(null)
     {
+      if (duplicate)
+        this.Value = item.Duplicate();
+      else
+        this.Value = item;
     }
 
     public override IGH_GeometricGoo Duplicate() => new GsaElement1dGoo(this.Value);
