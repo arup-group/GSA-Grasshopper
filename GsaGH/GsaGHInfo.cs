@@ -206,27 +206,29 @@ namespace GsaGH
     public static string loadedFromPath = "";
     public static bool CanAnalyse()
     {
-      if (notLoaded || !canAnalyse)
-      {
-        ProcessModuleCollection dlls = Process.GetCurrentProcess().Modules;
-        foreach (ProcessModule module in dlls)
-        {
-          if (module.ModuleName == "libiomp5md.dll")
-          {
-            notLoaded = false;
-            if (module.FileName == AddReferencePriority.InstallPath + "\\libiomp5md.dll")
-              canAnalyse = true;
-            else
-            {
-              canAnalyse = false;
-              loadedFromPath = module.FileName;
-            }
-          }
-        }
-      }
-      if (notLoaded)
-        return true;
-      return canAnalyse;
+      return true;
+      //if (notLoaded || !canAnalyse)
+      //{
+      //  ProcessModuleCollection dlls = Process.GetCurrentProcess().Modules;
+      //  foreach (ProcessModule module in dlls)
+      //  {
+      //    if (module.ModuleName == "libiomp5md.dll")
+      //    {
+      //      notLoaded = false;
+      //      // should check against file version not install path
+      //      if (module.FileName == AddReferencePriority.InstallPath + "\\libiomp5md.dll")
+      //        canAnalyse = true;
+      //      else
+      //      {
+      //        canAnalyse = false;
+      //        loadedFromPath = module.FileName;
+      //      }
+      //    }
+      //  }
+      //}
+      //if (notLoaded)
+      //  return true;
+      //return canAnalyse;
     }
   }
 
