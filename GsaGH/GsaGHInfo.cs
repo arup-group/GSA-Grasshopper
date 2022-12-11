@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using OasysGH;
 using OasysGH.Helpers;
+using System.Runtime.InteropServices;
 
 namespace GsaGH
 {
@@ -201,34 +202,71 @@ namespace GsaGH
 
   public static class libiomp5mdCheck
   {
-    private static bool notLoaded = true;
-    private static bool canAnalyse = false;
+    private static bool _loaded = false;
+    private static bool _canAnalyse = false;
     public static string loadedFromPath = "";
     public static bool CanAnalyse()
     {
-      if (notLoaded || !canAnalyse)
+      if (!_loaded || !_canAnalyse)
       {
         ProcessModuleCollection dlls = Process.GetCurrentProcess().Modules;
         foreach (ProcessModule module in dlls)
         {
           if (module.ModuleName == "libiomp5md.dll")
           {
-            notLoaded = false;
-            // should check against file version not install path
-            if (module.FileName == AddReferencePriority.InstallPath + "\\libiomp5md.dll")
-              canAnalyse = true;
+            _loaded = true;
+
+            string gsas_libiomp5md_version = FileVersionInfo.GetVersionInfo(AddReferencePriority.InstallPath + "\\libiomp5md.dll").FileVersion;
+            if (FileVersionInfo.GetVersionInfo(module.FileName).FileVersion == gsas_libiomp5md_version)
+              _canAnalyse = true;
             else
             {
-              canAnalyse = false;
+              _canAnalyse = false;
               loadedFromPath = module.FileName;
             }
+            break;
           }
         }
       }
-      if (notLoaded)
-        return true;
-      return canAnalyse;
+      if (!_loaded)
+        return true; // GsaAPI.dll will load the correct verison
+      return _canAnalyse;
     }
+
+    internal static Version GetFileVersionCe(string fileName)
+    {
+      int handle = 0;
+      int length = GetFileVersionInfoSize(fileName, ref handle);
+      Version v = null;
+      if (length > 0)
+      {
+        IntPtr buffer = System.Runtime.InteropServices.Marshal.AllocHGlobal(length);
+        if (GetFileVersionInfo(fileName, handle, length, buffer))
+        {
+          IntPtr fixedbuffer = IntPtr.Zero;
+          int fixedlen = 0;
+          if (VerQueryValue(buffer, "\\", ref fixedbuffer, ref fixedlen))
+          {
+            byte[] fixedversioninfo = new byte[fixedlen];
+            System.Runtime.InteropServices.Marshal.Copy(fixedbuffer, fixedversioninfo, 0, fixedlen);
+            v = new Version(
+                BitConverter.ToInt16(fixedversioninfo, 10),
+                BitConverter.ToInt16(fixedversioninfo, 8),
+                BitConverter.ToInt16(fixedversioninfo, 14),
+                BitConverter.ToInt16(fixedversioninfo, 12));
+          }
+        }
+        Marshal.FreeHGlobal(buffer);
+      }
+      return v;
+    }
+
+    [DllImport("coredll", EntryPoint = "GetFileVersionInfo", SetLastError = true)]
+    private static extern bool GetFileVersionInfo(string filename, int handle, int len, IntPtr buffer);
+    [DllImport("coredll", EntryPoint = "GetFileVersionInfoSize", SetLastError = true)]
+    private static extern int GetFileVersionInfoSize(string filename, ref int handle);
+    [DllImport("coredll", EntryPoint = "VerQueryValue", SetLastError = true)]
+    private static extern bool VerQueryValue(IntPtr buffer, string subblock, ref IntPtr blockbuffer, ref int len);
   }
 
 
