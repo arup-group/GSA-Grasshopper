@@ -18,7 +18,7 @@ namespace GsaGHTests.Helpers.Export
 {
   public partial class AssembleModelTests
   {
-    public void TestAnalysisMaterial(GsaMaterial expected, int expectedId, GsaModel actualModel)
+    internal void TestAnalysisMaterial(GsaMaterial expected, int expectedId, GsaModel actualModel)
     {
       ReadOnlyDictionary<int, GsaAPI.AnalysisMaterial> apiMaterials = actualModel.Model.AnalysisMaterials();
       Assert.True(apiMaterials.ContainsKey(expectedId), "Analysis material with id " + expectedId + " is not present in model");
@@ -30,7 +30,7 @@ namespace GsaGHTests.Helpers.Export
       Assert.Equal(expected.AnalysisMaterial.PoissonsRatio, api.PoissonsRatio);
     }
 
-    public void TestSection(GsaSection expected, int expectedId, GsaModel actualModel)
+    internal void TestSection(GsaSection expected, int expectedId, GsaModel actualModel)
     {
       ReadOnlyDictionary<int, GsaAPI.Section> apiSections = actualModel.Model.Sections();
       Assert.True(apiSections.ContainsKey(expectedId), "Section with id " + expectedId + " is not present in model");
@@ -44,7 +44,7 @@ namespace GsaGHTests.Helpers.Export
         Assert.Null(expected.Material.AnalysisMaterial);
     }
 
-    public void TestProp2d(GsaProp2d expected, int expectedId, GsaModel actualModel)
+    internal void TestProp2d(GsaProp2d expected, int expectedId, GsaModel actualModel)
     {
       ReadOnlyDictionary<int, GsaAPI.Prop2D> apiProp2ds = actualModel.Model.Prop2Ds();
       Assert.True(apiProp2ds.ContainsKey(expectedId), "Prop2d with id " + expectedId + " is not present in model");
@@ -58,7 +58,7 @@ namespace GsaGHTests.Helpers.Export
         Assert.Null(expected.Material.AnalysisMaterial);
     }
 
-    public void TestProp3d(GsaProp3d expected, int expectedId, GsaModel actualModel)
+    internal void TestProp3d(GsaProp3d expected, int expectedId, GsaModel actualModel)
     {
       ReadOnlyDictionary<int, GsaAPI.Prop3D> apiProp3ds = actualModel.Model.Prop3Ds();
       Assert.True(apiProp3ds.ContainsKey(expectedId), "Prop3d with id " + expectedId + " is not present in model");
@@ -71,17 +71,17 @@ namespace GsaGHTests.Helpers.Export
         Assert.Null(expected.Material.AnalysisMaterial);
     }
 
-    public void TestNode(GsaNode expected, LengthUnit unit, int expectedId, GsaModel actualModel)
+    internal void TestNode(GsaNode expected, LengthUnit unit, int expectedId, GsaModel actualModel)
     {
       ReadOnlyDictionary<int, GsaAPI.Node> apiNodes = actualModel.Model.Nodes();
       Assert.True(apiNodes.ContainsKey(expectedId), "Node with id " + expectedId + " is not present in model");
-      
+
       Node apiNode = apiNodes[expectedId];
       Point3d pt = expected.Point;
       Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
       Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
       Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
-      
+
       Assert.Equal(apiNode.Restraint.X, expected.Restraint.X);
       Assert.Equal(apiNode.Restraint.Y, expected.Restraint.Y);
       Assert.Equal(apiNode.Restraint.Z, expected.Restraint.Z);
@@ -113,7 +113,7 @@ namespace GsaGHTests.Helpers.Export
       Assert.Equal(apiNode.SpringProperty, expected.SpringProperty);
     }
 
-    public void TestElement1d(GsaElement1d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
+    internal void TestElement1d(GsaElement1d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
     {
       ReadOnlyDictionary<int, GsaAPI.Element> apiElements = actualModel.Model.Elements();
       Assert.True(apiElements.ContainsKey(expectedId), "Element with id " + expectedId + " is not present in model");
@@ -162,7 +162,7 @@ namespace GsaGHTests.Helpers.Export
       TestSection(expected.Section, api.Property, actualModel);
     }
 
-    public void TestElement2d(GsaElement2d expected, LengthUnit unit, List<int> expectedIds, GsaModel actualModel)
+    internal void TestElement2d(GsaElement2d expected, LengthUnit unit, List<int> expectedIds, GsaModel actualModel)
     {
       ReadOnlyDictionary<int, GsaAPI.Element> apiElements = actualModel.Model.Elements();
       ReadOnlyDictionary<int, GsaAPI.Node> apiNodes = actualModel.Model.Nodes();
@@ -199,7 +199,7 @@ namespace GsaGHTests.Helpers.Export
       }
     }
 
-    public void TestMember1d(GsaMember1d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
+    internal void TestMember1d(GsaMember1d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
     {
       ReadOnlyDictionary<int, GsaAPI.Member> apiElements = actualModel.Model.Members();
       Assert.True(apiElements.ContainsKey(expectedId), "Member with id " + expectedId + " is not present in model");
@@ -253,7 +253,7 @@ namespace GsaGHTests.Helpers.Export
       TestSection(expected.Section, api.Property, actualModel);
     }
 
-    public void TestMember2d(GsaMember2d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
+    internal void TestMember2d(GsaMember2d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
     {
       ReadOnlyDictionary<int, GsaAPI.Member> apiElements = actualModel.Model.Members();
       Assert.True(apiElements.ContainsKey(expectedId), "Member with id " + expectedId + " is not present in model");
@@ -283,7 +283,7 @@ namespace GsaGHTests.Helpers.Export
       TestProp2d(expected.Property, api.Property, actualModel);
     }
 
-    public void TestMember3d(GsaMember3d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
+    internal void TestMember3d(GsaMember3d expected, LengthUnit unit, int expectedId, GsaModel actualModel)
     {
       ReadOnlyDictionary<int, GsaAPI.Member> apiElements = actualModel.Model.Members();
       Assert.True(apiElements.ContainsKey(expectedId), "Member with id " + expectedId + " is not present in model");
@@ -296,7 +296,7 @@ namespace GsaGHTests.Helpers.Export
       {
         string[] topo = face.Trim().Split(' ');
         MeshFace mface = expected.SolidMesh.Faces[faceId++];
-        
+
         Node apiNode = apiNodes[int.Parse(topo[0])];
         Point3d pt = expected.SolidMesh.TopologyVertices[mface.A];
         Assert.Equal(apiNode.Position.X, new Length(pt.X, unit).Meters);
