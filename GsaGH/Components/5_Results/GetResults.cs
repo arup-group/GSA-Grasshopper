@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -10,11 +9,7 @@ using GsaGH.Parameters;
 using GsaGH.Helpers.GH;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
-using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
-using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {

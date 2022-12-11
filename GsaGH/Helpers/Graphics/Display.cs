@@ -12,12 +12,13 @@ namespace GsaGH.Helpers.Graphics
   /// </summary>
   internal class Display
   {
-    public static void Preview1D(PolyCurve crv, double angle_radian, GsaBool6 start, GsaBool6 end,
-        ref List<Line> greenLines20, ref List<Line> redLines10)
+    public static Tuple<List<Line>, List<Line>> Preview1D(PolyCurve crv, double angle_radian, GsaBool6 start, GsaBool6 end)
     {
+      List<Line> greenLines20 = new List<Line>();
+      List<Line> redLines10 = new List<Line>();
       int i = 0;
 
-      if (start == null | end == null) { return; }
+      if (start == null | end == null) { return null; }
       #region translation start
       if (start.X == true)
       {
@@ -593,6 +594,7 @@ namespace GsaGH.Helpers.Graphics
         redLines10[i++] = Line.Unset;
       }
       #endregion
+      return new Tuple<List<Line>, List<Line>>(greenLines20, redLines10);
     }
 
     public static void PreviewRestraint(GsaBool6 restraint, Plane localAxis, Point3d pt, ref Brep support, ref Text3d text)

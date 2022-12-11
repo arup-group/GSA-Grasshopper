@@ -221,11 +221,11 @@ namespace GsaGH.Parameters
       //Draw releases
       if (!Value.IsDummy)
       {
-        if (Value.previewGreenLines != null)
+        if (Value.PreviewGreenLines != null)
         {
-          foreach (Line ln1 in Value.previewGreenLines)
+          foreach (Line ln1 in Value.PreviewGreenLines)
             args.Pipeline.DrawLine(ln1, Helpers.Graphics.Colours.Support);
-          foreach (Line ln2 in Value.previewRedLines)
+          foreach (Line ln2 in Value.PreviewRedLines)
             args.Pipeline.DrawLine(ln2, Helpers.Graphics.Colours.Release);
         }
       }

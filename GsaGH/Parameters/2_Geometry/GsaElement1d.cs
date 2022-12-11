@@ -21,8 +21,8 @@ namespace GsaGH.Parameters
     #region fields
     internal Point3d previewPointStart;
     internal Point3d previewPointEnd;
-    internal List<Line> previewGreenLines;
-    internal List<Line> previewRedLines;
+    internal List<Line> PreviewGreenLines;
+    internal List<Line> PreviewRedLines;
 
     private int _id = 0;
     private Guid _guid = Guid.NewGuid();
@@ -32,41 +32,21 @@ namespace GsaGH.Parameters
     private GsaBool6 _rel2;
     private GsaSection _section = new GsaSection();
     private GsaNode _orientationNode;
-
-    private Line previewSX1;
-    private Line previewSX2;
-    private Line previewSY1;
-    private Line previewSY2;
-    private Line previewSY3;
-    private Line previewSY4;
-    private Line previewSZ1;
-    private Line previewSZ2;
-    private Line previewSZ3;
-    private Line previewSZ4;
-    private Line previewEX1;
-    private Line previewEX2;
-    private Line previewEY1;
-    private Line previewEY2;
-    private Line previewEY3;
-    private Line previewEY4;
-    private Line previewEZ1;
-    private Line previewEZ2;
-    private Line previewEZ3;
-    private Line previewEZ4;
-    private Line previewSXX;
-    private Line previewSYY1;
-    private Line previewSYY2;
-    private Line previewSZZ1;
-    private Line previewSZZ2;
-    private Line previewEXX;
-    private Line previewEYY1;
-    private Line previewEYY2;
-    private Line previewEZZ1;
-    private Line previewEZZ2;
     #endregion
 
     #region properties
-    public int Id { get; set; } = 0;
+    public int Id
+    {
+      get
+      {
+        return _id;
+      }
+      set
+      {
+        this.CloneApiObject();
+        _id = value;
+      }
+    }
     internal GsaLocalAxes LocalAxes { get; set; } = null;
     public LineCurve Line
     {
@@ -375,48 +355,14 @@ namespace GsaGH.Parameters
       {
         if (this._rel1.X || this._rel1.Y || _rel1.Z || _rel1.XX || this._rel1.YY || this._rel1.ZZ || this._rel2.X || this._rel2.Y || this._rel2.Z || this._rel2.XX || this._rel2.YY || this._rel2.ZZ)
         {
-          previewGreenLines = new List<Line>
-          {
-            previewSX1,
-            previewSX2,
-            previewSY1,
-            previewSY2,
-            previewSY3,
-            previewSY4,
-            previewSZ1,
-            previewSZ2,
-            previewSZ3,
-            previewSZ4,
-            previewEX1,
-            previewEX2,
-            previewEY1,
-            previewEY2,
-            previewEY3,
-            previewEY4,
-            previewEZ1,
-            previewEZ2,
-            previewEZ3,
-            previewEZ4
-          };
-          previewRedLines = new List<Line>
-          {
-            previewSXX,
-            previewSYY1,
-            previewSYY2,
-            previewSZZ1,
-            previewSZZ2,
-            previewEXX,
-            previewEYY1,
-            previewEYY2,
-            previewEZZ1,
-            previewEZZ2
-          };
           PolyCurve crv = new PolyCurve();
           crv.Append(this._line);
-          Helpers.Graphics.Display.Preview1D(crv, _element.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2, ref previewGreenLines, ref previewRedLines);
+          Tuple<List<Line>, List<Line>> previewCurves = Helpers.Graphics.Display.Preview1D(crv, this.API_Element.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2);
+          PreviewGreenLines = previewCurves.Item1;
+          PreviewRedLines = previewCurves.Item2;
         }
         else
-          previewGreenLines = null;
+          PreviewGreenLines = null;
       }
 
       previewPointStart = this._line.PointAtStart;

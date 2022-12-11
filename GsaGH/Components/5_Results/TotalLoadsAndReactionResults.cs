@@ -13,7 +13,6 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
