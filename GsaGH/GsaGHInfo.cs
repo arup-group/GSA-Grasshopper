@@ -204,7 +204,7 @@ namespace GsaGH
   {
     private static bool _loaded = false;
     private static bool _canAnalyse = false;
-    public static string loadedFromPath = "";
+    internal static string loadedFromPath { get; private set; }
     public static bool CanAnalyse()
     {
       if (!_loaded || !_canAnalyse)
@@ -215,7 +215,6 @@ namespace GsaGH
           if (module.ModuleName == "libiomp5md.dll")
           {
             _loaded = true;
-
             string gsas_libiomp5md_version = FileVersionInfo.GetVersionInfo(AddReferencePriority.InstallPath + "\\libiomp5md.dll").FileVersion;
             if (FileVersionInfo.GetVersionInfo(module.FileName).FileVersion == gsas_libiomp5md_version)
               _canAnalyse = true;
