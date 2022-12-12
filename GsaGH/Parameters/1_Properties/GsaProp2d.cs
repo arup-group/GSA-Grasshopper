@@ -8,6 +8,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using OasysGH;
 using GsaGH.Helpers.GsaAPI;
+using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters
 {
@@ -194,6 +195,23 @@ namespace GsaGH.Parameters
     {
       this.Thickness = thickness;
       this._id = id;
+    }
+
+    internal GsaProp2d(ReadOnlyDictionary<int, Prop2D> pDict, int id, ReadOnlyDictionary<int, AnalysisMaterial> matDict)
+    {
+      // API Object
+      if (!pDict.ContainsKey(id))
+        throw new Exception("Model does not contain Section ID:" + id);
+      this.Id = id;
+      this._prop2d = pDict[id];
+      // material
+      if (this._prop2d.MaterialAnalysisProperty != 0)
+      {
+        if (!matDict.ContainsKey(this._prop2d.MaterialAnalysisProperty))
+          throw new Exception("Model does not contain AnalysisMaterial ID:" + this._prop2d.MaterialAnalysisProperty);
+        this._material.AnalysisMaterial = matDict[this._prop2d.MaterialAnalysisProperty];
+      }
+      this._material = new GsaMaterial(this);
     }
     #endregion
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
@@ -213,7 +215,6 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this._guid = Guid.NewGuid();
         this.CloneApiObject();
         this._section.Colour = value;
       }
@@ -272,18 +273,39 @@ namespace GsaGH.Parameters
       this._section.Profile = profile;
       this._id = id;
     }
+
+    internal GsaSection(ReadOnlyDictionary<int, Section> sDict, int id, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict)
+    {
+      // API Object
+      if (!sDict.ContainsKey(id))
+        throw new Exception("Model does not contain Section ID:" + id);
+      this.Id = id;
+      this._section = sDict[id];
+      // modifier
+      if (modDict.ContainsKey(id))
+        this._modifier = new GsaSectionModifier(modDict[id]);
+      // material
+      if (this._section.MaterialAnalysisProperty != 0)
+      {
+        if (!matDict.ContainsKey(this._section.MaterialAnalysisProperty))
+          throw new Exception("Model does not contain AnalysisMaterial ID:" + this._section.MaterialAnalysisProperty);
+        this._material.AnalysisMaterial = matDict[this._section.MaterialAnalysisProperty];
+      }
+      this._material = new GsaMaterial(this);
+    }
     #endregion
 
     #region methods
-    public GsaSection Duplicate()
+    public GsaSection Duplicate(bool cloneApiElement = false)
     {
       GsaSection dup = new GsaSection();
       dup._section = this._section;
       dup._id = this._id;
       dup._material = this._material.Duplicate();
       dup._modifier = this._modifier.Duplicate();
-      dup.CloneApiObject();
       dup._guid = new Guid(this._guid.ToString());
+      if (cloneApiElement)
+        dup.CloneApiObject();
       return dup;
     }
 

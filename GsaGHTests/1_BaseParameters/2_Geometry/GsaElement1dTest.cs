@@ -19,10 +19,10 @@ namespace GsaGHTests.Parameters
       section.Name = "Name";
       GsaElement1d element1d = new GsaElement1d(new Element(), new LineCurve(), 1, section, new GsaNode());
       element1d.Name = "Name";
-      Element original = element1d.API_Element;
+      Element original = element1d.ApiElement;
 
       // Act
-      Element duplicate = element1d.GetAPI_ElementClone();
+      Element duplicate = element1d.GetApiElementClone();
 
       // Assert
       Duplicates.AreEqual(original, duplicate);

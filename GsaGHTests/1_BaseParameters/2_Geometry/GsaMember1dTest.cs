@@ -17,7 +17,7 @@ namespace GsaGHTests.Parameters
       // Arrange
       GsaSection section = new GsaSection();
       section.Name = "Name";
-      GsaMember1d member1d = new GsaMember1d(new Member(), LengthUnit.Yard, 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
+      GsaMember1d member1d = new GsaMember1d();
       member1d.Name = "Name";
       Member original = member1d.ApiMember;
 
@@ -32,9 +32,7 @@ namespace GsaGHTests.Parameters
     public void DuplicateTest()
     {
       // Arrange
-      GsaSection section = new GsaSection();
-      section.Name = "Name";
-      GsaMember1d original = new GsaMember1d(new Member(), LengthUnit.PrinterPoint, 1, new List<Point3d>(), new List<string>(), section, new GsaNode());
+      GsaMember1d original = new GsaMember1d();
       original.Name = "Name";
 
       // Act

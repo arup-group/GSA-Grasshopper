@@ -133,7 +133,7 @@ namespace GsaGH.Components
               return;
             }
           }
-          mem.Property = prop3d;
+          mem.Prop3d = prop3d;
         }
 
         // 4 mesh size
@@ -190,7 +190,7 @@ namespace GsaGH.Components
         DA.SetData(0, new GsaMember3dGoo(mem));
         DA.SetData(1, mem.Id);
         DA.SetData(2, mem.SolidMesh);
-        DA.SetData(3, new GsaProp3dGoo(mem.Property));
+        DA.SetData(3, new GsaProp3dGoo(mem.Prop3d));
         DA.SetData(4, mem.MeshSize);
         DA.SetData(5, mem.MeshWithOthers);
         DA.SetData(6, mem.Name);

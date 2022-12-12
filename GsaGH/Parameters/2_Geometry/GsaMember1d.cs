@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GsaAPI;
 using OasysUnits;
@@ -267,27 +269,7 @@ namespace GsaGH.Parameters
     #endregion
 
     #region constructors
-    public GsaMember1d()
-    {
-    }
-
-    internal GsaMember1d(Member member, LengthUnit modelUnit, int id, List<Point3d> topology, List<string> topo_type, GsaSection section, GsaNode orientationNode)
-    {
-      this.ApiMember = member;
-      // scale mesh size to model units
-      this.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
-      this.Id = id;
-      this._crv = Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
-      this._topo = topology;
-      this._topoType = topo_type;
-      this.Section = section;
-      this._rel1 = new GsaBool6(this.ApiMember.GetEndRelease(0).Releases);
-      this._rel2 = new GsaBool6(this.ApiMember.GetEndRelease(1).Releases);
-      // is this check necessary?
-      if (orientationNode != null)
-        this._orientationNode = orientationNode;
-      this.UpdatePreview();
-    }
+    public GsaMember1d() { }
 
     public GsaMember1d(Curve crv, int prop = 0)
     {
@@ -303,9 +285,26 @@ namespace GsaGH.Parameters
 
       this.UpdatePreview();
     }
+
+    internal GsaMember1d(Member member, int id, List<Point3d> topology, List<string> topo_type, ReadOnlyDictionary<int, Node> nDict,
+      ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict,
+      Dictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit)
+    {
+      this.ApiMember = member;
+      this.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
+      this._id = id;
+      this._crv = Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
+      this._topo = topology;
+      this._topoType = topo_type;
+      this._rel1 = new GsaBool6(this.ApiMember.GetEndRelease(0).Releases);
+      this._rel2 = new GsaBool6(this.ApiMember.GetEndRelease(1).Releases);
+      this.LocalAxes = new GsaLocalAxes(localAxesDict[id]);
+      this.Section = new GsaSection(sDict, this.ApiMember.Property, modDict, matDict);
+      this.UpdatePreview();
+    }
     #endregion
 
-    #region methods
+      #region methods
     public GsaMember1d Duplicate(bool cloneApiMember = false)
     {
       GsaMember1d dup = new GsaMember1d();

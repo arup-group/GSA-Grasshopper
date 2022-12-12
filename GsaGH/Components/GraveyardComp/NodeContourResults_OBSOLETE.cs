@@ -21,6 +21,7 @@ using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
 using GsaGH.Helpers.GH;
+using System.Collections.ObjectModel;
 
 namespace GsaGH.Components
 {
@@ -147,7 +148,7 @@ namespace GsaGH.Components
         }
 
         // get geometry for display from results class
-        ConcurrentDictionary<int, Node> nodes = new ConcurrentDictionary<int, Node>(result.Model.Model.Nodes(nodeList));
+        ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes(nodeList);
 
         ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.xyzResults;
         ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;

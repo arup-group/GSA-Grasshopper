@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
@@ -138,6 +139,23 @@ namespace GsaGH.Parameters
     public GsaProp3d(GsaMaterial material)
     {
       this.Material = material;
+    }
+
+    internal GsaProp3d(ReadOnlyDictionary<int, Prop3D> pDict, int id, ReadOnlyDictionary<int, AnalysisMaterial> matDict)
+    {
+      // API Object
+      if (!pDict.ContainsKey(id))
+        throw new Exception("Model does not contain Section ID:" + id);
+      this.Id = id;
+      this._prop3d = pDict[id];
+      // material
+      if (this._prop3d.MaterialAnalysisProperty != 0)
+      {
+        if (!matDict.ContainsKey(this._prop3d.MaterialAnalysisProperty))
+          throw new Exception("Model does not contain AnalysisMaterial ID:" + this._prop3d.MaterialAnalysisProperty);
+        this._material.AnalysisMaterial = matDict[this._prop3d.MaterialAnalysisProperty];
+      }
+      this._material = new GsaMaterial(this);
     }
     #endregion
 

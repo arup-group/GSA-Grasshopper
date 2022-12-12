@@ -11,6 +11,7 @@ using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GsaAPI;
 using Newtonsoft.Json.Linq;
+using System.Collections.Concurrent;
 
 namespace GsaGH.Parameters
 {
@@ -311,21 +312,28 @@ namespace GsaGH.Parameters
       this._elements = convertMesh.Item1;
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;
-
       this._ids = new List<int>(new int[this._mesh.Faces.Count()]);
-      
       GsaProp2d singleProp = new GsaProp2d();
       for (int i = 0; i < this._mesh.Faces.Count(); i++)
         this._props.Add(singleProp.Duplicate());
     }
 
-    internal GsaElement2d(List<Element> elements, List<int> Ids, Mesh mesh, List<GsaProp2d> prop2ds)
+    internal GsaElement2d(Element element, int id, Mesh mesh, GsaProp2d prop2d)
     {
       this._mesh = mesh;
       this._topo = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
       this._topoInt = Helpers.GH.RhinoConversions.ConvertMeshToElem2d(this._mesh);
-      this._elements = elements;
-      this._ids = Ids;
+      this._elements = new List<Element>() { element };
+      this._ids = new List<int>() { id };
+      this._props = new List<GsaProp2d>() { prop2d };
+    }
+    internal GsaElement2d(ConcurrentDictionary<int, Element> elements, Mesh mesh, List<GsaProp2d> prop2ds)
+    {
+      this._mesh = mesh;
+      this._topo = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
+      this._topoInt = Helpers.GH.RhinoConversions.ConvertMeshToElem2d(this._mesh);
+      this._elements = elements.Values.ToList();
+      this._ids = elements.Keys.ToList();
       this._props = prop2ds;
     }
 

@@ -790,25 +790,17 @@ namespace GsaGH.Helpers.GH
       // assemble temp model
       Model model = Export.AssembleModel.Assemble(null, nodes, null, null, null, mem1ds, mem2ds, null, null, null, null, null, null, null, null, unit, DefaultUnits.Tolerance.Meters, true);
 
-      ConcurrentDictionary<int, Element> elementDict = new ConcurrentDictionary<int, Element>(model.Elements());
+      ReadOnlyDictionary<int, Element> elementDict = model.Elements();
 
       // populate local axes dictionary
-      ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
       foreach (int id in elementDict.Keys)
-        elementLocalAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+        elementLocalAxesDict.Add(id, model.ElementDirectionCosine(id));
 
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-                = Import.Elements.GetElements(
-                    elementDict,
-                    new ConcurrentDictionary<int, Node>(model.Nodes()),
-                    new ConcurrentDictionary<int, Section>(model.Sections()),
-                    new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds()),
-                    new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds()),
-                    new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials()),
-                    new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers()),
-                    elementLocalAxesDict,
-                    unit);
+                = Import.Elements.GetElements(elementDict, model.Nodes(), model.Sections(), model.Prop2Ds(), model.Prop3Ds(), model.AnalysisMaterials(), model.SectionModifiers(),
+                    elementLocalAxesDict, unit, false);
 
       List<GsaElement2dGoo> elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.Ids).ToList();
       Mesh mesh = elem2dgoo[0].Value.Mesh;

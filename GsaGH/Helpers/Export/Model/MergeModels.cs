@@ -40,18 +40,21 @@ namespace GsaGH.Helpers.Export
       Model model = appendModel.Model;
 
       // get dictionaries from model
-      ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
-      ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(model.Elements());
-      ConcurrentDictionary<int, Member> mDict = new ConcurrentDictionary<int, Member>(model.Members());
-      ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
-      ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
-      ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
-      ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
-      ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
-          // populate local axes dictionary
-          ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
-          foreach(int id in eDict.Keys)
-            localAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+      ReadOnlyDictionary<int, Node> nDict = model.Nodes();
+      ReadOnlyDictionary<int, Element> eDict = model.Elements();
+      ReadOnlyDictionary<int, Member> mDict = model.Members();
+      ReadOnlyDictionary<int, Section> sDict = model.Sections();
+      ReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
+      ReadOnlyDictionary<int, Prop3D> p3Dict = model.Prop3Ds();
+      ReadOnlyDictionary<int, AnalysisMaterial> amDict = model.AnalysisMaterials();
+      ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
+      // populate local axes dictionary
+      Dictionary<int, ReadOnlyCollection<double>> localElemAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
+      foreach (int id in eDict.Keys)
+        localElemAxesDict.Add(id, model.ElementDirectionCosine(id));
+      Dictionary<int, ReadOnlyCollection<double>> localMemAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
+      foreach (int id in mDict.Keys)
+        localMemAxesDict.Add(id, model.MemberDirectionCosine(id));
 
       // get nodes
       ConcurrentBag<GsaNodeGoo> goonodes = Import.Nodes.GetNodes(nDict, LengthUnit.Meter);
@@ -62,7 +65,7 @@ namespace GsaGH.Helpers.Export
 
       // get elements
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Import.Elements.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localAxesDict, LengthUnit.Meter);
+          = Import.Elements.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localElemAxesDict, LengthUnit.Meter, true);
       // convert from Goo-type
       List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -76,11 +79,11 @@ namespace GsaGH.Helpers.Export
       List<GsaElement3d> elem3ds = elementTuple.Item3.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
       foreach (var elem3d in elem3ds)
-        elem3d.IDs.Select(c => { c = 0; return c; }).ToList();
+        elem3d.Ids.Select(c => { c = 0; return c; }).ToList();
 
       // get members
       Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-          = Import.Members.GetMembers(mDict, nDict, LengthUnit.Meter, sDict, pDict, p3Dict, localAxesDict);
+          = Import.Members.GetMembers(mDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localMemAxesDict, LengthUnit.Meter, true);
       // convert from Goo-type
       List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;

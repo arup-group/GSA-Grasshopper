@@ -81,14 +81,14 @@ namespace GsaGH.Components
           if (gh_typ.Value is GsaProp3dGoo)
           {
             gh_typ.CastTo(ref prop3d);
-            mem.Property = prop3d;
+            mem.Prop3d = prop3d;
           }
           else if (gh_typ.Value is GsaMaterialGoo)
           {
             GsaMaterial mat = new GsaMaterial();
             gh_typ.CastTo(ref mat);
             prop3d = new GsaProp3d(mat);
-            mem.Property = prop3d;
+            mem.Prop3d = prop3d;
           }
           else
           {

@@ -10,6 +10,7 @@ using GsaGH.Parameters;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using GsaGH.Helpers.Export;
+using Grasshopper.Kernel;
 
 namespace GsaGH.Helpers.Import
 {
@@ -18,29 +19,11 @@ namespace GsaGH.Helpers.Import
   /// </summary>
   internal class Elements
   {
-    /// <summary>
-    /// Method to convert Elements to Element 1D and Element 2D
-    /// Element 3Ds to be implemented
-    /// Will output a tuple containing a:
-    /// 1. List of GsaElement1dGoos and 
-    /// 2. List of GsaElement2dGoos
-    /// </summary>
-    /// <param name="eDict">Dictionary of Elements to import</param>
-    /// <param name="nDict">Dictionary of Nodes that elements refers to by topology. Include all Nodes unless you are sure what you are doing</param>
-    /// <param name="sDict">Dictionary of Sections (for 1D elements)</param>
-    /// <param name="pDict">Dictionary of 2D Properties (for 2D elements)</param>
-    /// <returns></returns>
     internal static Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>
-        GetElements(ConcurrentDictionary<int, Element> eDict, ConcurrentDictionary<int, Node> nDict,
-        ConcurrentDictionary<int, Section> sDict, ConcurrentDictionary<int, Prop2D> pDict, ConcurrentDictionary<int, Prop3D> p3Dict,
-        ConcurrentDictionary<int, AnalysisMaterial> mDict, ConcurrentDictionary<int, SectionModifier> modDict, ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit unit)
+        GetElements(ReadOnlyDictionary<int, Element> eDict, ReadOnlyDictionary<int, Node> nDict,
+        ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict, ReadOnlyDictionary<int, Prop3D> p3Dict, ReadOnlyDictionary<int, AnalysisMaterial> mDict, ReadOnlyDictionary<int, SectionModifier> modDict, Dictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit, bool duplicateApiObjects)
     {
-      // Create lists for Rhino lines and meshes
       ConcurrentBag<GsaElement1dGoo> elem1ds = new ConcurrentBag<GsaElement1dGoo>();
-      ConcurrentBag<GsaElement2dGoo> elem2ds = new ConcurrentBag<GsaElement2dGoo>();
-      ConcurrentBag<GsaElement3dGoo> elem3ds = new ConcurrentBag<GsaElement3dGoo>();
-
-      ConcurrentDictionary<int, Element> elem1dDict = new ConcurrentDictionary<int, Element>();
       ConcurrentDictionary<int, Element> elem2dDict = new ConcurrentDictionary<int, Element>();
       ConcurrentDictionary<int, Element> elem3dDict = new ConcurrentDictionary<int, Element>();
 
@@ -67,124 +50,117 @@ namespace GsaGH.Helpers.Import
         switch (elemDimension)
         {
           case 1:
-            // create new element from api element;
-            elem1dDict.TryAdd(item.Key, item.Value);
-            //elem1ds.Add(new GsaElement1dGoo(
-            //    ConvertToElement1D(
-            //        item.Value, item.Key, nDict, sDict, mDict, unit)));
+            elem1ds.Add(new GsaElement1dGoo(new GsaElement1d(
+              eDict, item.Key, nDict, sDict, modDict, mDict, localAxesDict, modelUnit), duplicateApiObjects));
             break;
 
           case 2:
-            // add 2D element to dictionary to bulk create and combine
-            // meshes in one go
             elem2dDict.TryAdd(item.Key, item.Value);
             break;
 
           case 3:
-            // add 3D element to dictionary to bulk create and combine
-            // meshes in one go
             elem3dDict.TryAdd(item.Key, item.Value);
             break;
         }
       });
-
-      // if import found any 1D elements add these in one go.
-      // GsaElement2d and 3d consist of a list of 2D elements in order
-      // to display a combined mesh: each 2D element is a mesh face
-      if (elem1dDict.Count > 0)
-        elem1ds = new ConcurrentBag<GsaElement1dGoo>(elem1dDict.AsParallel().
-            Select(item => new GsaElement1dGoo(
-                ConvertToElement1D(item.Value, item.Key, nDict, sDict, mDict, modDict, localAxesDict, unit), false)));
-
+      
+      ConcurrentBag<GsaElement2dGoo> elem2ds = new ConcurrentBag<GsaElement2dGoo>();
       if (elem2dDict.Count > 0)
-        elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, unit);
+        elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, modelUnit, duplicateApiObjects);
 
+      ConcurrentBag<GsaElement3dGoo> elem3ds = new ConcurrentBag<GsaElement3dGoo>();
       if (elem3dDict.Count > 0)
-        elem3ds = ConvertToElement3Ds(elem3dDict, nDict, p3Dict, mDict, unit);
-
+        elem3ds = ConvertToElement3Ds(elem3dDict, nDict, p3Dict, mDict, modelUnit, duplicateApiObjects);
 
       return new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>
           (elem1ds, elem2ds, elem3ds);
     }
 
-    /// <summary>
-    /// Method to convert a single 1D Element to a Element 1D
-    /// Will output a GsaElement1d
-    /// </summary>
-    /// <param name="element">GsaAPI Element to be converted</param>
-    /// <param name="ID">Element number (key/ID). Set to 0 if this shall be ignored when exporting from Grasshopper</param>
-    /// <param name="nodes">Dictionary of Nodes that elements refers to by topology. Include all Nodes unless you are sure what you are doing</param>
-    /// <param name="sections">Dictionary of Sections</param>
-    /// <returns></returns>
-    internal static GsaElement1d ConvertToElement1D(Element element,
-        int ID, ConcurrentDictionary<int, Node> nodes, ConcurrentDictionary<int, Section> sections,
-        ConcurrentDictionary<int, AnalysisMaterial> materials, ConcurrentDictionary<int, SectionModifier> sectionModifiers, ConcurrentDictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit unit)
+    #region Element2d
+    internal static ConcurrentBag<GsaElement2dGoo> ConvertToElement2Ds(
+        ConcurrentDictionary<int, Element> elements, ReadOnlyDictionary<int, Node> nodes,
+        ReadOnlyDictionary<int, Prop2D> properties, ReadOnlyDictionary<int, AnalysisMaterial> materials, LengthUnit unit, bool duplicateApiObjects)
     {
-      // get element's topology
-      ReadOnlyCollection<int> topo = element.Topology;
+      // main sorted dictionary with 
+      // key = parent member
+      // value = dictionary of elements belong to that parent:
+      //    key = element id
+      //    value = element
+      ConcurrentDictionary<int, ConcurrentDictionary<int, Element>> sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, Element>>();
 
-      // ensure the element is a 1D element
-      if (topo.Count == 2)
+      Parallel.ForEach(elements, elem =>
       {
-        // get start and end nodes
-        List<Point3d> pts = new List<Point3d>();
-        for (int i = 0; i <= 1; i++)
-        {
-          if (nodes.TryGetValue(topo[i], out Node node))
-            pts.Add(Nodes.Point3dFromNode(node, unit));
-        }
-        // create line
-        LineCurve ln = new LineCurve(new Line(pts[0], pts[1]));
+        // get parent member
+        int parent = -elem.Value.ParentMember.Member;
 
-        // orientation node
-        GsaNode orient = null;
-        if (element.OrientationNode > 0)
+        // if no parent member then split by property
+        if (parent == 0)
+          parent = elem.Value.Property;
+
+        if (!sortedElements.ContainsKey(parent))
+          sortedElements.TryAdd(parent, new ConcurrentDictionary<int, Element>());
+
+        // add elements to parent member
+        sortedElements[parent][elem.Key] = elem.Value;
+      });
+
+      // bag to drop all elements to
+      ConcurrentBag<GsaElement2dGoo> elem2dGoos = new ConcurrentBag<GsaElement2dGoo>();
+
+      Parallel.For(0, sortedElements.Count, i =>
+      {
+        int parentID = sortedElements.Keys.ElementAt(i);
+        ConcurrentDictionary<int, Element> elems = sortedElements[parentID];
+        ConcurrentDictionary<int, GsaProp2d> prop2Ds = new ConcurrentDictionary<int, GsaProp2d>();
+        ConcurrentDictionary<int, Mesh> mList = new ConcurrentDictionary<int, Mesh>();
+
+        Parallel.For(0, elems.Count, j =>
         {
-          if (nodes.TryGetValue(element.OrientationNode, out Node node))
+          int elementID = elems.Keys.ElementAt(j);
+          Mesh faceMesh = ConvertElement2D(elems[elementID], nodes, unit);
+          if (faceMesh == null) { return; }
+          mList[elementID] = faceMesh;
+
+          GsaProp2d prop = new GsaProp2d(properties, elems[elementID].Property, materials);
+          prop2Ds.TryAdd(elementID, prop);
+        });
+
+        // create one large mesh from single mesh face using
+        // append list of meshes (faster than appending each mesh one by one)
+        Mesh m = new Mesh(); // new mesh to merge existing into
+        m.Append(mList.Values);
+
+        // if parent member value is 0 then no parent member exist for element
+        // we can therefore not be sure all elements with parent member = 0 are
+        // connected in one mesh.
+        if (parentID == 0 && m.DisjointMeshCount > 1)
+        {
+          // revert back to list of meshes instead of the joined one
+          foreach (int key in elems.Keys)
           {
-            var p = node.Position;
-            orient = new GsaNode(Nodes.Point3dFromNode(node, unit),
-                element.OrientationNode);
+            // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
+            elems.TryGetValue(key, out Element api_elem);
+            mList.TryGetValue(key, out Mesh mesh);
+            prop2Ds.TryGetValue(key, out GsaProp2d prop);
+
+            GsaElement2d singleelement2D = new GsaElement2d(api_elem, key, mesh, prop);
+
+            // add the element to list of goo 2d elements
+            elem2dGoos.Add(new GsaElement2dGoo(singleelement2D, duplicateApiObjects));
           }
         }
-
-        // get section (if it exist)
-        GsaSection section = new GsaSection(element.Property);
-        if (sections.TryGetValue(element.Property, out Section apisection))
+        else
         {
-          section.API_Section = apisection;
+          // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
+          GsaElement2d element2D = new GsaElement2d(elems, m, prop2Ds.Values.ToList());
 
-          //// get material (if analysis material exist)
-          //if (section.API_Section.MaterialAnalysisProperty > 0)
-          //{
-          //    materials.TryGetValue(apisection.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-          //    section.Material = new GsaMaterial(section, apimaterial);
-          //}
-          //else
-          //    section.Material = new GsaMaterial(section);
-
-          if (sectionModifiers.TryGetValue(element.Property, out SectionModifier sectionModifier))
-            section.Modifier = new GsaSectionModifier(sectionModifier);
+          elem2dGoos.Add(new GsaElement2dGoo(element2D, duplicateApiObjects));
         }
+      });
 
-        // create GH GsaElement1d
-        GsaElement1d element1d = new GsaElement1d(element, ln, ID, section, orient);
-
-        // set local axes
-        element1d.LocalAxes = new GsaLocalAxes(localAxesDict[ID]);
-
-        return element1d;
-      }
-      return null;
+      return elem2dGoos;
     }
-
-    /// <summary>
-    /// Method to get convert an Element to a Mesh with one face (tri, quad or ngon)
-    /// </summary>
-    /// <param name="element">Element to get mesh face from</param>
-    /// <param name="nodes">Dictionary of nodes that includes nodes for the topology which the element.Topology refers to. Typically use all nodes from a GSA model</param>
-    /// <returns></returns>
-    internal static Mesh ConvertElement2D(Element element, IReadOnlyDictionary<int, Node> nodes, LengthUnit unit)
+    internal static Mesh ConvertElement2D(Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit)
     {
       // get element's topology
       ReadOnlyCollection<int> topo = element.Topology;
@@ -265,18 +241,12 @@ namespace GsaGH.Helpers.Import
       }
       return outMesh;
     }
+    #endregion
 
-    /// <summary>
-    /// Method to bulk convert 2D Elements to Element 2Ds
-    /// Will output a list of GsaElement2dGoos
-    /// </summary>
-    /// <param name="elements">Dictionary of 2D Elements</param>
-    /// <param name="nodes">Dictionary of Nodes that elements refers to by topology. Include all Nodes unless you are sure what you are doing</param>
-    /// <param name="properties">Dictionary of 2D Properties</param>
-    /// <returns></returns>
-    internal static ConcurrentBag<GsaElement2dGoo> ConvertToElement2Ds(
-        ConcurrentDictionary<int, Element> elements, ConcurrentDictionary<int, Node> nodes,
-        ConcurrentDictionary<int, Prop2D> properties, ConcurrentDictionary<int, AnalysisMaterial> materials, LengthUnit unit)
+
+    #region Element3d
+    internal static ConcurrentBag<GsaElement3dGoo> ConvertToElement3Ds(ConcurrentDictionary<int, Element> elements, ReadOnlyDictionary<int, Node> nodes,
+        ReadOnlyDictionary<int, Prop3D> properties, ReadOnlyDictionary<int, AnalysisMaterial> materials, LengthUnit unit, bool duplicateApiObjects)
     {
       // main sorted dictionary with 
       // key = parent member
@@ -295,57 +265,32 @@ namespace GsaGH.Helpers.Import
           parent = elem.Value.Property;
 
         if (!sortedElements.ContainsKey(parent))
-        {
           sortedElements.TryAdd(parent, new ConcurrentDictionary<int, Element>());
-        }
-
         // add elements to parent member
         sortedElements[parent][elem.Key] = elem.Value;
       });
 
       // bag to drop all elements to
-      ConcurrentBag<GsaElement2dGoo> elem2dGoos = new ConcurrentBag<GsaElement2dGoo>();
+      ConcurrentBag<GsaElement3dGoo> elem3dGoos = new ConcurrentBag<GsaElement3dGoo>();
 
       Parallel.For(0, sortedElements.Count, i =>
       {
         int parentID = sortedElements.Keys.ElementAt(i);
 
-        // list of elements with same parent
         ConcurrentDictionary<int, Element> elems = sortedElements[parentID];
-
-        // create list of Prop2Ds
-        ConcurrentDictionary<int, GsaProp2d> prop2Ds = new ConcurrentDictionary<int, GsaProp2d>();
-
-        // create list of meshes
+        ConcurrentDictionary<int, GsaProp3d> prop3Ds = new ConcurrentDictionary<int, GsaProp3d>();
         ConcurrentDictionary<int, Mesh> mList = new ConcurrentDictionary<int, Mesh>();
 
         Parallel.For(0, elems.Count, j =>
-              {
-                int elementID = elems.Keys.ElementAt(j);
-                Mesh faceMesh = ConvertElement2D(elems[elementID], nodes, unit);
-                if (faceMesh == null) { return; }
-                mList[elementID] = faceMesh;
+        {
+          int elementID = elems.Keys.ElementAt(j);
+          Mesh ngonClosedMesh = ConvertElement3D(elems[elementID], nodes, unit);
+          if (ngonClosedMesh == null) { return; }
+          mList[elementID] = ngonClosedMesh;
 
-                // get prop2d (if it exist)
-                int propID = elems[elementID].Property;
-                GsaProp2d prop = new GsaProp2d(propID);
-                if (properties.TryGetValue(propID, out Prop2D apiprop))
-                {
-                  prop = new GsaProp2d(propID);
-                  prop.API_Prop2d = apiprop;
-
-                  // get material (if analysis material exist)
-                  //if (prop.API_Prop2d.MaterialAnalysisProperty > 0)
-                  //{
-                  //    materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-                  //    prop.Material = new GsaMaterial(prop, apimaterial);
-                  //}
-                  //else
-                  //    prop.Material = new GsaMaterial(prop);
-                }
-
-                prop2Ds[elementID] = prop;
-              });
+          GsaProp3d prop = new GsaProp3d(properties, elems[elementID].Property, materials);
+          prop3Ds.TryAdd(elementID, prop);
+        });
 
         // create one large mesh from single mesh face using
         // append list of meshes (faster than appending each mesh one by one)
@@ -363,56 +308,36 @@ namespace GsaGH.Helpers.Import
             // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
             elems.TryGetValue(key, out Element api_elem);
             mList.TryGetValue(key, out Mesh mesh);
-            prop2Ds.TryGetValue(key, out GsaProp2d prop);
+            prop3Ds.TryGetValue(key, out GsaProp3d prop);
 
-            GsaElement2d singleelement2D = new GsaElement2d(
-                      new List<Element> { api_elem },
-                      new List<int> { key },
-                      mesh,
-                      new List<GsaProp2d> { prop }
-                      );
-
-            // add the element to list of goo 2d elements
-            elem2dGoos.Add(new GsaElement2dGoo(singleelement2D));
+            GsaElement3d singleelement3D = new GsaElement3d(api_elem, key, mesh, prop);
+            elem3dGoos.Add(new GsaElement3dGoo(singleelement3D, duplicateApiObjects));
           }
         }
         else
         {
-          // lists needed to create GsaElement2d
-          List<Element> api_elems = elems.Values.ToList();
-          List<int> ids = elems.Keys.ToList();
-          List<GsaProp2d> props = prop2Ds.Values.ToList();
-
           // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
-          GsaElement2d element2D = new GsaElement2d(
-                    api_elems,
-                    ids,
-                    m,
-                    props);
-
-          elem2dGoos.Add(new GsaElement2dGoo(element2D, false));
+          GsaElement3d element3D = new GsaElement3d(elems, m, prop3Ds.Values.ToList());
+          elem3dGoos.Add(new GsaElement3dGoo(element3D, duplicateApiObjects));
         }
-
       });
-
-      return elem2dGoos;
-      //return elem2dGoos.AsParallel().OrderBy(e => e.Value.ID.Max()).ToList();
+      return elem3dGoos;
     }
 
-    internal static Mesh ConvertElement3D(Element element, ConcurrentDictionary<int, Node> nodes, LengthUnit unit)
+    internal static Mesh ConvertElement3D(Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit)
     {
       // get element's topology
       ReadOnlyCollection<int> topo = element.Topology;
 
       // check if element is 3D
       List<bool> check3d = new List<bool>
-                    {
-                        element.Type == ElementType.THREE_D,
-                        element.Type == ElementType.BRICK8,
-                        element.Type == ElementType.WEDGE6,
-                        element.Type == ElementType.PYRAMID5,
-                        element.Type == ElementType.TETRA4
-                    };
+      {
+        element.Type == ElementType.THREE_D,
+        element.Type == ElementType.BRICK8,
+        element.Type == ElementType.WEDGE6,
+        element.Type == ElementType.PYRAMID5,
+        element.Type == ElementType.TETRA4
+      };
       if (!check3d.Contains(true))
         return null;
 
@@ -485,156 +410,6 @@ namespace GsaGH.Helpers.Import
       }
       return outMesh;
     }
-
-    internal static ConcurrentBag<GsaElement3dGoo> ConvertToElement3Ds(ConcurrentDictionary<int, Element> elements, ConcurrentDictionary<int, Node> nodes,
-        ConcurrentDictionary<int, Prop3D> properties, ConcurrentDictionary<int, AnalysisMaterial> materials, LengthUnit unit)
-    {
-      // main sorted dictionary with 
-      // key = parent member
-      // value = dictionary of elements belong to that parent:
-      //    key = element id
-      //    value = element
-      ConcurrentDictionary<int, ConcurrentDictionary<int, Element>> sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, Element>>();
-
-      Parallel.ForEach(elements, elem =>
-      {
-        // get parent member
-        int parent = -elem.Value.ParentMember.Member;
-
-        // if no parent member then split by property
-        if (parent == 0)
-          parent = elem.Value.Property;
-
-        if (!sortedElements.ContainsKey(parent))
-        {
-          sortedElements.TryAdd(parent, new ConcurrentDictionary<int, Element>());
-        }
-        // add elements to parent member
-        sortedElements[parent][elem.Key] = elem.Value;
-      });
-
-      // bag to drop all elements to
-      ConcurrentBag<GsaElement3dGoo> elem3dGoos = new ConcurrentBag<GsaElement3dGoo>();
-
-      Parallel.For(0, sortedElements.Count, i =>
-      {
-        int parentID = sortedElements.Keys.ElementAt(i);
-
-        // list of elements with same parent
-        ConcurrentDictionary<int, Element> elems = sortedElements[parentID];
-
-        // create list of Prop3Ds
-        ConcurrentDictionary<int, GsaProp3d> prop3Ds = new ConcurrentDictionary<int, GsaProp3d>();
-
-        // create list of meshes
-        ConcurrentDictionary<int, Mesh> mList = new ConcurrentDictionary<int, Mesh>();
-
-        Parallel.For(0, elems.Count, j =>
-              {
-                int elementID = elems.Keys.ElementAt(j);
-                Mesh ngonClosedMesh = ConvertElement3D(elems[elementID], nodes, unit);
-                if (ngonClosedMesh == null) { return; }
-                mList[elementID] = ngonClosedMesh;
-
-                // get prop2d (if it exist)
-                int propID = elems[elementID].Property;
-                GsaProp3d prop = new GsaProp3d(propID);
-                if (properties.TryGetValue(propID, out Prop3D apiprop))
-                {
-                  prop = new GsaProp3d(propID);
-                  prop.API_Prop3d = apiprop;
-
-                  // get material (if analysis material exist)
-                  //if (prop.API_Prop3d.MaterialAnalysisProperty > 0)
-                  //{
-                  //    materials.TryGetValue(apiprop.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-                  //    prop.Material = new GsaMaterial(prop, apimaterial);
-                  //}
-                  //else
-                  //    prop.Material = new GsaMaterial(prop);
-                }
-
-                prop3Ds[elementID] = prop;
-              });
-
-        // create one large mesh from single mesh face using
-        // append list of meshes (faster than appending each mesh one by one)
-        Mesh m = new Mesh(); // new mesh to merge existing into
-        m.Append(mList.Values.ToList());
-
-        // if parent member value is 0 then no parent member exist for element
-        // we can therefore not be sure all elements with parent member = 0 are
-        // connected in one mesh.
-        if (parentID == 0 && m.DisjointMeshCount > 1)
-        {
-          // revert back to list of meshes instead of the joined one
-          foreach (int key in elems.Keys)
-          {
-            // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
-            elems.TryGetValue(key, out Element api_elem);
-            mList.TryGetValue(key, out Mesh mesh);
-            prop3Ds.TryGetValue(key, out GsaProp3d prop);
-
-            GsaElement3d singleelement3D = new GsaElement3d(
-                      new List<Element> { api_elem },
-                      new List<int> { key },
-                      mesh,
-                      new List<GsaProp3d> { prop }
-                      );
-
-            // add the element to list of goo 2d elements
-            elem3dGoos.Add(new GsaElement3dGoo(singleelement3D, false));
-          }
-        }
-        else
-        {
-          // lists needed to create GsaElement3d
-          List<Element> api_elems = elems.Values.ToList();
-          List<int> ids = elems.Keys.ToList();
-          List<GsaProp3d> props = prop3Ds.Values.ToList();
-
-          // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
-          GsaElement3d element3D = new GsaElement3d(
-                    api_elems,
-                    ids,
-                    m,
-                    props
-                    );
-
-          elem3dGoos.Add(new GsaElement3dGoo(element3D));
-        }
-
-      });
-      return elem3dGoos;
-      //return elem3dGoos.AsParallel().OrderBy(e => e.Value.ID.Max()).ToList();
-
-    }
-    internal static Element DuplicateElement(Element elem)
-    {
-      Element dup = new Element()
-      {
-        Group = elem.Group,
-        IsDummy = elem.IsDummy,
-        Name = elem.Name.ToString(),
-        Offset = elem.Offset,
-        OrientationAngle = elem.OrientationAngle,
-        OrientationNode = elem.OrientationNode,
-        ParentMember = elem.ParentMember,
-        Property = elem.Property,
-        Type = elem.Type //GsaToModel.Element1dType((int)Element.Type)
-      };
-
-      dup.Topology = new ReadOnlyCollection<int>(elem.Topology.ToList());
-
-      if ((Color)elem.Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        dup.Colour = elem.Colour;
-
-      dup.Offset.X1 = elem.Offset.X1;
-      dup.Offset.X2 = elem.Offset.X2;
-      dup.Offset.Y = elem.Offset.Y;
-      dup.Offset.Z = elem.Offset.Z;
-
-      return dup;
-    }
+    #endregion
   }
 }

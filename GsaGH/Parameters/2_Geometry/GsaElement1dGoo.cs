@@ -134,7 +134,7 @@ namespace GsaGH.Parameters
         if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedLine(Value.previewPointStart, Value.previewPointEnd, Helpers.Graphics.Colours.Dummy1D);
+            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, Helpers.Graphics.Colours.Dummy1D);
           else
           {
             if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
@@ -151,7 +151,7 @@ namespace GsaGH.Parameters
         else
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedLine(Value.previewPointStart, Value.previewPointEnd, Helpers.Graphics.Colours.Element1dSelected);
+            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, Helpers.Graphics.Colours.Element1dSelected);
           else
           {
             args.Pipeline.DrawCurve(Value.Line, Helpers.Graphics.Colours.Element1dSelected, 2);
@@ -175,15 +175,8 @@ namespace GsaGH.Parameters
     #endregion
 
     #region transformation methods
-    public override IGH_GeometricGoo Transform(Transform xform)
-    {
-      return new GsaElement1dGoo(Value.Transform(xform));
-    }
-
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-    {
-      return new GsaElement1dGoo(Value.Morph(xmorph));
-    }
+    public override IGH_GeometricGoo Transform(Transform xform) => new GsaElement1dGoo(Value.Transform(xform));
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph) => new GsaElement1dGoo(Value.Morph(xmorph));
     #endregion
   }
 }

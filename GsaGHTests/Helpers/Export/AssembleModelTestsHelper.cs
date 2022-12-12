@@ -322,7 +322,7 @@ namespace GsaGHTests.Helpers.Export
       Assert.Equal(expected.MeshSize, api.MeshSize);
       Assert.Equal(expected.MeshWithOthers, api.IsIntersector);
 
-      TestProp3d(expected.Property, api.Property, actualModel);
+      TestProp3d(expected.Prop3d, api.Property, actualModel);
     }
   }
 }
