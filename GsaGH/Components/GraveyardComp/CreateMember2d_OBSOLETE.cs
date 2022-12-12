@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -16,10 +18,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create new 2D Member
-    /// </summary>
-    public class CreateMember2d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to create new 2D Member
+  /// </summary>
+  public class CreateMember2d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("df0c2786-9e46-4500-ab63-0c4162a580d4");
@@ -167,6 +169,48 @@ namespace GsaGH.Components
       Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
     }
     #endregion
+
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      GH_IReader attributes = reader.FindChunk("Attributes");
+      this.Attributes.Bounds = (System.Drawing.RectangleF)attributes.Items[0].InternalData;
+      this.Attributes.Pivot = (System.Drawing.PointF)attributes.Items[1].InternalData;
+
+      int num = this.Params.Input.Count - 1;
+      bool flag = true;
+      for (int i = 0; i <= num; i++)
+      {
+        GH_IReader gH_IReader = reader.FindChunk("param_input", i);
+        if (gH_IReader == null)
+        {
+          reader.AddMessage("Input parameter chunk is missing. Archive is corrupt.", GH_Message_Type.error);
+          continue;
+        }
+
+        GH_ParamAccess access = this.Params.Input[i].Access;
+        flag &= this.Params.Input[i].Read(gH_IReader);
+        if (!(this.Params.Input[i] is Param_ScriptVariable))
+        {
+          this.Params.Input[i].Access = access;
+        }
+      }
+
+      int num2 = this.Params.Output.Count - 1;
+      for (int j = 0; j <= num2; j++)
+      {
+        GH_IReader gH_IReader2 = reader.FindChunk("param_output", j);
+        if (gH_IReader2 == null)
+        {
+          reader.AddMessage("Output parameter chunk is missing. Archive is corrupt.", GH_Message_Type.error);
+          continue;
+        }
+
+        GH_ParamAccess access2 = this.Params.Output[j].Access;
+        flag &= this.Params.Output[j].Read(gH_IReader2);
+        this.Params.Output[j].Access = access2;
+      }
+      return true;
+    }
   }
 }
 

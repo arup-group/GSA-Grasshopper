@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
@@ -435,8 +437,44 @@ namespace GsaGH.Components
       {
         this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
         this.LinearDensityUnit = LinearDensity.ParseUnit(reader.GetString("DensityUnit"));
-        bool flag = base.Read(reader);
-        return flag & this.Params.ReadAllParameterData(reader);
+        
+        GH_IReader attributes = reader.FindChunk("Attributes");
+        this.Attributes.Bounds = (System.Drawing.RectangleF)attributes.Items[0].InternalData;
+        this.Attributes.Pivot = (System.Drawing.PointF)attributes.Items[1].InternalData;
+
+        int num = this.Params.Input.Count - 1;
+        bool flag = true;
+        for (int i = 0; i <= num; i++)
+        {
+          GH_IReader gH_IReader = reader.FindChunk("param_input", i);
+          if (gH_IReader == null)
+          {
+            continue;
+          }
+
+          GH_ParamAccess access = this.Params.Input[i].Access;
+          flag &= this.Params.Input[i].Read(gH_IReader);
+          if (!(this.Params.Input[i] is Param_ScriptVariable))
+          {
+            this.Params.Input[i].Access = access;
+          }
+        }
+
+        int num2 = this.Params.Output.Count - 1;
+        for (int j = 0; j <= num2; j++)
+        {
+          GH_IReader gH_IReader2 = reader.FindChunk("param_output", j);
+          if (gH_IReader2 == null)
+          {
+            reader.AddMessage("Output parameter chunk is missing. Archive is corrupt.", GH_Message_Type.error);
+            continue;
+          }
+
+          GH_ParamAccess access2 = this.Params.Output[j].Access;
+          flag &= this.Params.Output[j].Read(gH_IReader2);
+          this.Params.Output[j].Access = access2;
+        }
+        return true;
       }
       else
       {
