@@ -15,10 +15,10 @@ namespace GsaGHTests.Parameters
     public void CloneApiObjectTest()
     {
       // Arrange
-      GsaSection section = new GsaSection();
-      section.Name = "Name";
-      GsaMember1d member1d = new GsaMember1d();
-      member1d.Name = "Name";
+      GsaMember1d member1d = new GsaMember1d
+      {
+        Name = "Name"
+      };
       Member original = member1d.ApiMember;
 
       // Act
@@ -32,8 +32,10 @@ namespace GsaGHTests.Parameters
     public void DuplicateTest()
     {
       // Arrange
-      GsaMember1d original = new GsaMember1d();
-      original.Name = "Name";
+      GsaMember1d original = new GsaMember1d
+      {
+        Name = "Name"
+      };
 
       // Act
       GsaMember1d duplicate = original.Duplicate();
@@ -46,25 +48,27 @@ namespace GsaGHTests.Parameters
     public void TestCreateGsaMem1dFromCrv()
     {
       // create a list of control points
-      List<Point3d> pts = new List<Point3d>();
-      pts.Add(new Point3d(-3, -4, 0));
-      pts.Add(new Point3d(5, -2, 0));
-      pts.Add(new Point3d(2, 2, 0));
-      pts.Add(new Point3d(6, 7, 0));
+      List<Point3d> pts = new List<Point3d>
+      {
+        new Point3d(-3, -4, 0),
+        new Point3d(5, -2, 0),
+        new Point3d(2, 2, 0),
+        new Point3d(6, 7, 0)
+      };
 
       // create nurbscurve from pts
       PolylineCurve crv = new PolylineCurve(pts);
-      //NurbsCurve crv = NurbsCurve.Create(false, 3, pts);
 
       // create 1d member from crv
-      GsaMember1d mem = new GsaMember1d(crv);
-
-      // set some members
-      mem.Colour = System.Drawing.Color.Red;
-      mem.Id = 3;
-      mem.Name = "gemma";
-      mem.IsDummy = true;
-      mem.Offset = new GsaOffset(0, 0, 0, -0.45);
+      GsaMember1d mem = new GsaMember1d(crv)
+      {
+        // set some members
+        Colour = System.Drawing.Color.Red,
+        Id = 3,
+        Name = "gemma",
+        IsDummy = true,
+        Offset = new GsaOffset(0, 0, 0, -0.45)
+      };
       mem.Section.Id = 2;
       mem.Type1D = ElementType.BEAM;
       mem.Type = MemberType.BEAM;
@@ -93,23 +97,25 @@ namespace GsaGHTests.Parameters
     public void TestDuplicateMem1d()
     {
       // create a list of control points
-      List<Point3d> pts = new List<Point3d>();
-      pts.Add(new Point3d(0, 0, 0));
-      pts.Add(new Point3d(0, 10, 0));
-
+      List<Point3d> pts = new List<Point3d>
+      {
+        new Point3d(0, 0, 0),
+        new Point3d(0, 10, 0)
+      };
       // create nurbscurve from pts
       NurbsCurve crv = NurbsCurve.Create(false, 1, pts);
 
       // create 1d member from crv
-      GsaMember1d orig = new GsaMember1d(crv);
-
-      // set some members
-      orig.Colour = System.Drawing.Color.Green;
-      orig.Id = 2;
-      orig.Name = "Sally";
-      orig.IsDummy = false;
-      orig.Offset = new GsaOffset(0, 0.1, 0, 0);
-      orig.Section = new GsaSection();
+      GsaMember1d orig = new GsaMember1d(crv)
+      {
+        // set some members
+        Colour = System.Drawing.Color.Green,
+        Id = 2,
+        Name = "Sally",
+        IsDummy = false,
+        Offset = new GsaOffset(0, 0.1, 0, 0),
+        Section = new GsaSection()
+      };
       orig.Section.Id = 4;
       orig.Group = 99;
       orig.Type1D = ElementType.BAR;
