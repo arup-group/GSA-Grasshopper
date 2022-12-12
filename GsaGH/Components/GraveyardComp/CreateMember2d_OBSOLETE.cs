@@ -172,6 +172,9 @@ namespace GsaGH.Components
 
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
+      if (reader.ItemExists("dropdown"))
+        return base.Read(reader);
+
       GH_IReader attributes = reader.FindChunk("Attributes");
       this.Attributes.Bounds = (System.Drawing.RectangleF)attributes.Items[0].InternalData;
       this.Attributes.Pivot = (System.Drawing.PointF)attributes.Items[1].InternalData;
