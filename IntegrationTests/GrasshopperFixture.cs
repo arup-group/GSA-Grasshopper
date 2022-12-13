@@ -38,7 +38,7 @@ namespace IntegrationTests
       // setup headless units
       OasysGH.Units.Utility.SetupUnitsDuringLoad(true);
     }
-    public void TryGsaCOM()
+    public static void TryGsaCOM()
     {
       Interop.Gsa_10_1.ComAuto m = new Interop.Gsa_10_1.ComAuto();
       m.NewFile();
