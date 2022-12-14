@@ -21,6 +21,8 @@ using OasysUnits.Units;
 using Rhino.Geometry;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json.Linq;
+using OasysGH.Components;
+using OasysGH;
 
 namespace GsaGH.Components
 {
@@ -37,8 +39,8 @@ namespace GsaGH.Components
             SubCategoryName.Cat0())
     {
     }
-
     public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GetGeometry;
     #endregion
 
