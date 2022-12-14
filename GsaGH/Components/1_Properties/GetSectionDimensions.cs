@@ -74,7 +74,13 @@ namespace GsaGH.Components
         {
           string profileIn = "";
           gh_typ.CastTo(ref profileIn);
-          gsaSection = new GsaSection(profileIn);
+          if (GsaSection.ValidProfile(profileIn))
+            gsaSection = new GsaSection(profileIn);
+          else
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid profile syntax: " + profile);
+            return;
+          }
         }
 
         string profile = gsaSection.Profile;

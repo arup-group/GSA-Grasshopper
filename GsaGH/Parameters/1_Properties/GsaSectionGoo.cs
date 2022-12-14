@@ -56,14 +56,17 @@ namespace GsaGH.Parameters
         return true;
 
       // Cast from string
-      else if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
+      if (GH_Convert.ToString(source, out string name, GH_Conversion.Both))
       {
-        Value = new GsaSection(name);
-        return true;
+        if (GsaSection.ValidProfile(name))
+        {
+          Value = new GsaSection(name);
+          return true;
+        }
       }
 
       // Cast from integer
-      else if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both))
+      if (GH_Convert.ToInt32(source, out int idd, GH_Conversion.Both))
       {
         Value.Id = idd;
         return true;
