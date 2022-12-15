@@ -200,8 +200,11 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this.CloneApiObject();
-        this._section.Profile = value;
+        if (ValidProfile(value))
+        {
+          this.CloneApiObject();
+          this._section.Profile = value;
+        }
       }
     }
     public Color Colour
@@ -316,6 +319,16 @@ namespace GsaGH.Parameters
       string mat = Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
       string mod = this._modifier.IsModified ? " modified" : "";
       return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim().Replace("  ", " ");
+    }
+
+    internal static bool ValidProfile(string profile)
+    {
+      Section test = new Section();
+      test.Profile = profile;
+      if (test.Area == 0)
+        return false;
+      else
+        return true;
     }
     #endregion
   }
