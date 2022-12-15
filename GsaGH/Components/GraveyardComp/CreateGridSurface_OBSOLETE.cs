@@ -6,6 +6,7 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Helpers.GH;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
@@ -13,7 +14,6 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using Rhino;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
@@ -29,8 +29,8 @@ namespace GsaGH.Components
     public CreateGridSurface_OBSOLETE() : base("Create Grid Surface",
       "GridSurface",
       "Create GSA Grid Surface",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { } // sets the initial state of the component to hidden
     #endregion
 

@@ -13,13 +13,14 @@ using OasysUnits;
 using OasysGH.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get geometric properties of a section
-  /// </summary>
-  public class GetSectionProperties : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to get geometric properties of a section
+    /// </summary>
+    public class GetSectionProperties : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("fc59d2f7-496e-4862-8f66-31f1068fcab7");
@@ -30,8 +31,8 @@ namespace GsaGH.Components
     public GetSectionProperties() : base("Section Properties",
       "SectProp",
       "Get GSA Section Properties",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

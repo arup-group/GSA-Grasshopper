@@ -12,7 +12,7 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Util.Gsa;
+using GsaGH.Helpers.GsaAPI;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
@@ -22,13 +22,14 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get Element1D results
-  /// </summary>
-  public class Elem1dContourResults_OBSOLETE : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get Element1D results
+    /// </summary>
+    public class Elem1dContourResults_OBSOLETE : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("dee5c513-197e-4659-998f-09225df9beaa");
@@ -39,8 +40,8 @@ namespace GsaGH.Components
     public Elem1dContourResults_OBSOLETE() : base("1D Contour Results",
       "ContourElem1d",
       "Displays GSA 1D Element Results as Contour",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { }
     #endregion
 
@@ -48,13 +49,13 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
-      pManager.AddTextParameter("Element filter list", "El", "Filter import by list." + System.Environment.NewLine +
-          "Element list should take the form:" + System.Environment.NewLine +
-          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Element filter list", "El", "Filter import by list." + Environment.NewLine +
+          "Element list should take the form:" + Environment.NewLine +
+          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddIntegerParameter("Intermediate Points", "nP", "Number of intermediate equidistant points (default 10)", GH_ParamAccess.item, 10);
       pManager.AddColourParameter("Colour", "Co", "[Optional] List of colours to override default colours" +
-          System.Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
+          Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
       pManager.AddNumberParameter("Scale", "x:X", "Scale the result display size", GH_ParamAccess.item, 10);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
@@ -89,7 +90,7 @@ namespace GsaGH.Components
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination case contains "
                 + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
-                System.Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
+                Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.ResultType.Combination)
             _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
@@ -126,7 +127,7 @@ namespace GsaGH.Components
             colors.Add(color);
           }
         }
-        Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = UI.Colour.Stress_Gradient(colors);
+        Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = Helpers.Graphics.Colours.Stress_Gradient(colors);
 
         // Get scalar 
         GH_Number gh_Scale = new GH_Number();
@@ -288,7 +289,7 @@ namespace GsaGH.Components
           }
         }
 
-        List<double> rounded = Util.Gsa.ResultHelper.SmartRounder(dmax, dmin);
+        List<double> rounded = Helpers.GsaAPI.ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
         int significantDigits = (int)rounded[2];
@@ -305,8 +306,8 @@ namespace GsaGH.Components
           if (element.Value.Type == ElementType.LINK) { return; }
           if (element.Value.Topology.Count > 2) { return; }
           Line ln = new Line(
-                      FromGSA.Point3dFromNode(nodes[element.Value.Topology[0]], LengthUnit), // start point
-                      FromGSA.Point3dFromNode(nodes[element.Value.Topology[1]], LengthUnit));// end point
+                      Helpers.Import.Nodes.Point3dFromNode(nodes[element.Value.Topology[0]], LengthUnit), // start point
+                      Helpers.Import.Nodes.Point3dFromNode(nodes[element.Value.Topology[1]], LengthUnit));// end point
 
           int key = element.Key;
 
@@ -836,7 +837,7 @@ namespace GsaGH.Components
       Grasshopper.Kernel.Special.GH_GradientControl gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
 
-      gradient.Gradient = UI.Colour.Stress_Gradient(null);
+      gradient.Gradient = Helpers.Graphics.Colours.Stress_Gradient(null);
       gradient.Gradient.NormalizeGrips();
       gradient.Params.Input[0].AddVolatileData(new GH_Path(0), 0, -1);
       gradient.Params.Input[1].AddVolatileData(new GH_Path(0), 0, 1);

@@ -4,7 +4,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Util.Gsa;
+using GsaGH.Helpers.GsaAPI;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
@@ -12,13 +12,14 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get GSA global performance results
-  /// </summary>
-  public class GlobalPerformanceResults : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get GSA global performance results
+    /// </summary>
+    public class GlobalPerformanceResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("9a0b6077-1cb6-405c-85d3-c24a533d6d43");
@@ -29,8 +30,8 @@ namespace GsaGH.Components
     public GlobalPerformanceResults() : base("Global Performance Results",
       "GlobalPerformance",
       "Get Global Performance (Dynamic, Model Stability, and Buckling) Results from a GSA model",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

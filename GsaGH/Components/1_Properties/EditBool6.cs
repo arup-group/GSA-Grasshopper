@@ -1,15 +1,16 @@
 ﻿using System;
 using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Bool6 and ouput the information
-  /// </summary>
-  public class EditBool6 : GH_OasysComponent
+    /// <summary>
+    /// Component to edit a Bool6 and ouput the information
+    /// </summary>
+    public class EditBool6 : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("dad5064c-6648-45a5-8d98-afaae861e3b9");
@@ -20,8 +21,8 @@ namespace GsaGH.Components
     public EditBool6() : base("Edit Bool6",
       "Bool6Edit",
       "Modify GSA Bool6 or just get information about existing",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

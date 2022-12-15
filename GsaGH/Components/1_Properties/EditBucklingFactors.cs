@@ -6,6 +6,7 @@ using Eto.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -18,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit Buckling Length Factors and ouput the information
-  /// </summary>
-  public class EditBucklingFactors : GH_OasysComponent
+    /// <summary>
+    /// Component to edit Buckling Length Factors and ouput the information
+    /// </summary>
+    public class EditBucklingFactors : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -33,8 +34,8 @@ namespace GsaGH.Components
     public EditBucklingFactors() : base("Edit " + GsaBucklingLengthFactorsGoo.Name,
       "BucklingFactorsEdit",
       "Modify GSA Buckling Length Factors",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

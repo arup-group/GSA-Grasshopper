@@ -1,6 +1,7 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -8,10 +9,10 @@ using OasysGH.UI;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Bool6
-  /// </summary>
-  public class CreateBool6_OBSOLETE : GH_OasysComponent
+    /// <summary>
+    /// Component to create a new Bool6
+    /// </summary>
+    public class CreateBool6_OBSOLETE : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -23,8 +24,8 @@ namespace GsaGH.Components
     public CreateBool6_OBSOLETE() : base("Create " + GsaBool6Goo.Name.Replace(" ", string.Empty),
       GsaBool6Goo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaBool6Goo.Description,
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -9,10 +10,10 @@ using OasysGH.Units.Helpers;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a GSA Analysis Task
-  /// </summary>
-  public class CreateAnalysisTask : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to create a GSA Analysis Task
+    /// </summary>
+    public class CreateAnalysisTask : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("6ef86d0b-892c-4b6f-950e-b4477e9f0910");
@@ -23,8 +24,8 @@ namespace GsaGH.Components
     public CreateAnalysisTask() : base("Create " + GsaAnalysisTaskGoo.Name.Replace(" ", string.Empty),
       GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty),
       "Create a " + GsaAnalysisTaskGoo.Description,
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat4())
+      CategoryName.Name(),
+      SubCategoryName.Cat4())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -79,7 +80,7 @@ namespace GsaGH.Components
 
       if (_analtype != GsaAnalysisTask.AnalysisType.Static)
         AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "It is currently not possible to adjust the solver settings. " +
-            System.Environment.NewLine + "Please verify the solver settings in GSA ('Task and Cases' -> 'Analysis Tasks')");
+            Environment.NewLine + "Please verify the solver settings in GSA ('Task and Cases' -> 'Analysis Tasks')");
 
       GsaAnalysisTask task = new GsaAnalysisTask();
       task.Name = name;

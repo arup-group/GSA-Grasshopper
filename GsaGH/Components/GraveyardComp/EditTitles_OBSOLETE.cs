@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  public class EditGsaTitles_OBSOLETE : GH_OasysComponent
+    public class EditGsaTitles_OBSOLETE : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
@@ -19,8 +20,8 @@ namespace GsaGH.Components
 
     public EditGsaTitles_OBSOLETE()
       : base("Edit GSA Titles", "Title", "Set GSA Titles for this document",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat0())
+            CategoryName.Name(),
+            SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -53,9 +54,9 @@ namespace GsaGH.Components
     protected override void SolveInstance(IGH_DataAccess DA)
     {
       AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "It is currently not possible to set titles back into a GSA model."
-          + System.Environment.NewLine + "Any chances made here will not be reflected in a your model."
-          + System.Environment.NewLine + "You can currently use this to get information from an existing GSA model;"
-          + System.Environment.NewLine + "when opening a model the values in this component will be set automatically");
+          + Environment.NewLine + "Any chances made here will not be reflected in a your model."
+          + Environment.NewLine + "You can currently use this to get information from an existing GSA model;"
+          + Environment.NewLine + "when opening a model the values in this component will be set automatically");
 
 
       GH_String ghstr = new GH_String();

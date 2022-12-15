@@ -6,6 +6,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -17,10 +19,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 1D Member
-  /// </summary>
-  public class EditMember1d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to edit a 1D Member
+    /// </summary>
+    public class EditMember1d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("06ae2d01-b152-49c1-9356-c83714c4e5f4");
@@ -31,8 +33,8 @@ namespace GsaGH.Components
     public EditMember1d() : base("Edit 1D Member",
       "Mem1dEdit",
       "Modify GSA 1D Member",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -44,25 +46,25 @@ namespace GsaGH.Components
       pManager.AddCurveParameter("Curve", "C", "Member Curve", GH_ParamAccess.item);
       pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Set new Section Property.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member1d Group", "Gr", "Set Member 1D Group", GH_ParamAccess.item);
-      pManager.AddTextParameter("Member Type", "mT", "Set 1D Member Type" + System.Environment.NewLine +
-          "Default is 0: Generic 1D - Accepted inputs are:" + System.Environment.NewLine +
-          "2: Beam" + System.Environment.NewLine +
-          "3: Column" + System.Environment.NewLine +
-          "6: Cantilever" + System.Environment.NewLine +
-          "8: Compos" + System.Environment.NewLine +
-          "9: Pile" + System.Environment.NewLine +
+      pManager.AddTextParameter("Member Type", "mT", "Set 1D Member Type" + Environment.NewLine +
+          "Default is 0: Generic 1D - Accepted inputs are:" + Environment.NewLine +
+          "2: Beam" + Environment.NewLine +
+          "3: Column" + Environment.NewLine +
+          "6: Cantilever" + Environment.NewLine +
+          "8: Compos" + Environment.NewLine +
+          "9: Pile" + Environment.NewLine +
           "11: Void cutter", GH_ParamAccess.item);
-      pManager.AddTextParameter("1D Element Type", "eT", "Set Element 1D Type" + System.Environment.NewLine +
-          "Accepted inputs are:" + System.Environment.NewLine +
-          "1: Bar" + System.Environment.NewLine +
-          "2: Beam" + System.Environment.NewLine +
-          "3: Spring" + System.Environment.NewLine +
-          "9: Link" + System.Environment.NewLine +
-          "10: Cable" + System.Environment.NewLine +
-          "19: Spacer" + System.Environment.NewLine +
-          "20: Strut" + System.Environment.NewLine +
-          "21: Tie" + System.Environment.NewLine +
-          "23: Rod" + System.Environment.NewLine +
+      pManager.AddTextParameter("1D Element Type", "eT", "Set Element 1D Type" + Environment.NewLine +
+          "Accepted inputs are:" + Environment.NewLine +
+          "1: Bar" + Environment.NewLine +
+          "2: Beam" + Environment.NewLine +
+          "3: Spring" + Environment.NewLine +
+          "9: Link" + Environment.NewLine +
+          "10: Cable" + Environment.NewLine +
+          "19: Spacer" + Environment.NewLine +
+          "20: Strut" + Environment.NewLine +
+          "21: Tie" + Environment.NewLine +
+          "23: Rod" + Environment.NewLine +
           "24: Damper", GH_ParamAccess.item);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
       pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰", "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
@@ -119,7 +121,7 @@ namespace GsaGH.Components
         {
           AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input is null");
         }
-        mem = gsaMember1d.Duplicate();
+        mem = gsaMember1d.Duplicate(true);
       }
 
       if (mem != null)
@@ -192,7 +194,7 @@ namespace GsaGH.Components
           {
             try
             {
-              mem.Type = Helpers.Mappings.GetMemberType(typestring);
+              mem.Type = Mappings.GetMemberType(typestring);
             }
             catch (ArgumentException)
             {
@@ -211,7 +213,7 @@ namespace GsaGH.Components
           {
             try
             {
-              mem.Type1D = Helpers.Mappings.GetElementType(typestring);
+              mem.Type1D = Mappings.GetElementType(typestring);
             }
             catch (ArgumentException)
             {
@@ -331,8 +333,8 @@ namespace GsaGH.Components
         DA.SetData(2, mem.PolyCurve);
         DA.SetData(3, new GsaSectionGoo(mem.Section));
         DA.SetData(4, mem.Group);
-        DA.SetData(5, Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
-        DA.SetData(6, Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
+        DA.SetData(5, Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+        DA.SetData(6, Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
 
         DA.SetData(7, new GsaOffsetGoo(mem.Offset));
 
@@ -407,17 +409,16 @@ namespace GsaGH.Components
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
-    void IGH_VariableParameterComponent.VariableParameterMaintenance()
-    {
-      this.Params.Input[12].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-      this.Params.Output[12].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-    }
 
     #region IGH_VariableParameterComponent null implementation
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+    public void VariableParameterMaintenance()
+    {
+      return;
+    }
     #endregion
     #endregion
   }

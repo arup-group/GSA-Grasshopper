@@ -6,16 +6,17 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit GSA analysis tasks
-  /// </summary>
-  public class EditAnalysisTask : GH_OasysComponent
+    /// <summary>
+    /// Component to edit GSA analysis tasks
+    /// </summary>
+    public class EditAnalysisTask : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("efc2aae5-7ebf-4032-89d5-8fec8830989d");
@@ -26,8 +27,8 @@ namespace GsaGH.Components
     public EditAnalysisTask() : base("Edit Analysis Task",
       "EditTask",
       "Modify GSA Analysis Tasks",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat4())
+      CategoryName.Name(),
+      SubCategoryName.Cat4())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -37,25 +38,25 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaAnalysisTaskParameter(), GsaAnalysisTaskGoo.Name, GsaAnalysisTaskGoo.NickName, GsaAnalysisTaskGoo.Name + " to Edit", GH_ParamAccess.item);
       //pManager.AddTextParameter("Name", "Na", "Set Task Name", GH_ParamAccess.item);
       pManager.AddParameter(new GsaAnalysisCaseParameter(), GsaAnalysisCaseGoo.Name + "(s)", GsaAnalysisCaseGoo.NickName, "Add list of " + GsaAnalysisCaseGoo.Name + " to task", GH_ParamAccess.list);
-      //pManager.AddTextParameter("Solver Type", "sT", "Set Solver Type" + System.Environment.NewLine +
-      //"Default is: '1 : Static' - Accepted inputs are (either integer or text):" + System.Environment.NewLine +
-      //"1 : Static" + System.Environment.NewLine +
-      //"4 : Static_P_delta" + System.Environment.NewLine +
-      //"8 : Nonlinear_static" + System.Environment.NewLine +
-      //"2 : Modal_dynamic" + System.Environment.NewLine +
-      //"5 : Modal_P_delta" + System.Environment.NewLine +
-      //"32 : Ritz" + System.Environment.NewLine +
-      //"33 : Ritz_P_Delta" + System.Environment.NewLine +
-      //"6 : Response_spectrum" + System.Environment.NewLine +
-      //"42 : Pseudo_Response_spectrum" + System.Environment.NewLine +
-      //"15 : Linear_time_history" + System.Environment.NewLine +
-      //"14 : Harmonic" + System.Environment.NewLine +
-      //"34 : Footfall" + System.Environment.NewLine +
-      //"35 : Periodic" + System.Environment.NewLine +
-      //"3 : Buckling" + System.Environment.NewLine +
-      //"9 : Form_finding" + System.Environment.NewLine +
-      //"37 : Envelope" + System.Environment.NewLine +
-      //"39 : Model_stability" + System.Environment.NewLine +
+      //pManager.AddTextParameter("Solver Type", "sT", "Set Solver Type" + Environment.NewLine +
+      //"Default is: '1 : Static' - Accepted inputs are (either integer or text):" + Environment.NewLine +
+      //"1 : Static" + Environment.NewLine +
+      //"4 : Static_P_delta" + Environment.NewLine +
+      //"8 : Nonlinear_static" + Environment.NewLine +
+      //"2 : Modal_dynamic" + Environment.NewLine +
+      //"5 : Modal_P_delta" + Environment.NewLine +
+      //"32 : Ritz" + Environment.NewLine +
+      //"33 : Ritz_P_Delta" + Environment.NewLine +
+      //"6 : Response_spectrum" + Environment.NewLine +
+      //"42 : Pseudo_Response_spectrum" + Environment.NewLine +
+      //"15 : Linear_time_history" + Environment.NewLine +
+      //"14 : Harmonic" + Environment.NewLine +
+      //"34 : Footfall" + Environment.NewLine +
+      //"35 : Periodic" + Environment.NewLine +
+      //"3 : Buckling" + Environment.NewLine +
+      //"9 : Form_finding" + Environment.NewLine +
+      //"37 : Envelope" + Environment.NewLine +
+      //"39 : Model_stability" + Environment.NewLine +
       //"40 : Model_stability_P_delta", GH_ParamAccess.item);
       //pManager.AddIntegerParameter("TaskID", "ID", "The Task number - only set this if you want to append cases to an existing task.", GH_ParamAccess.item);
       for (int i = 0; i < pManager.ParamCount; i++)
@@ -130,7 +131,7 @@ namespace GsaGH.Components
 
         DA.SetData(0, new GsaAnalysisTaskGoo(gsaTask));
         //if (gsaTask.Type != GsaAnalysisTask.AnalysisType.Static)
-        //  AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Please note that currently only 'Static' analysis tasks will work as input to the 'Analyse' component." + System.Environment.NewLine +
+        //  AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Please note that currently only 'Static' analysis tasks will work as input to the 'Analyse' component." + Environment.NewLine +
         //    "As a workaround, it is possible to use either a seed model or the GWA component with the desired analysis tasks (and their dependencies) already set up.");
         DA.SetData(1, gsaTask.Name);
         if (gsaTask.Cases != null)

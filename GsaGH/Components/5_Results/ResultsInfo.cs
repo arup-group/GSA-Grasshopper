@@ -7,23 +7,17 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
-using GsaGH.Util.GH;
-using GsaGH.Util.Gsa.ToGSA;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
-using OasysGH.Units.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
-using Rhino.Commands;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to select results from a GSA Model
-  /// </summary>
-  public class ResultsInfo : GH_OasysComponent
+    /// <summary>
+    /// Component to select results from a GSA Model
+    /// </summary>
+    public class ResultsInfo : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -35,8 +29,8 @@ namespace GsaGH.Components
     public ResultsInfo() : base("Get Result Cases",
       "GetCases",
       "Get Analysis or Combination Case IDs from a GSA model with Results",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

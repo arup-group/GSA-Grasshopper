@@ -16,7 +16,7 @@ namespace GsaGH
   public class AddReferencePriority : GH_AssemblyPriority
   {
     public static string PluginPath;
-    public static string InstallPath = Util.Gsa.InstallationFolderPath.GetPath;
+    public static string InstallPath = Helpers.GsaAPI.InstallationFolder.GetPath;
 
     public override GH_LoadingInstruction PriorityLoad()
     {
@@ -37,12 +37,12 @@ namespace GsaGH
         Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
 
         FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
-        if (myFileVersionInfo.FileBuildPart < 60)
+        if (myFileVersionInfo.FileBuildPart < 63)
         {
-          Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper require GSA 10.1.60 installed. Please upgrade GSA.");
+          Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper require GSA 10.1.63 installed. Please upgrade GSA.");
           GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
           Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-          PostHog.PluginLoaded(GsaGH.PluginInfo.Instance, exception.Message);
+          PostHog.PluginLoaded(PluginInfo.Instance, exception.Message);
           return GH_LoadingInstruction.Abort;
         }
       }
@@ -57,20 +57,20 @@ namespace GsaGH
           {
             if (!plugin.Name.StartsWith("Kangaroo"))
             {
-              loadedPlugins = loadedPlugins + "-" + plugin.Name + System.Environment.NewLine;
+              loadedPlugins = loadedPlugins + "-" + plugin.Name + Environment.NewLine;
             }
           }
         }
         string message = e.Message
-            + System.Environment.NewLine + System.Environment.NewLine +
+            + Environment.NewLine + Environment.NewLine +
             "This may be due to clash with other referenced dll files by one of these plugins that's already been loaded: "
-            + System.Environment.NewLine + loadedPlugins
-            + System.Environment.NewLine + "You may try disable the above plugins to solve the issue."
-            + System.Environment.NewLine + "The plugin cannot be loaded.";
+            + Environment.NewLine + loadedPlugins
+            + Environment.NewLine + "You may try disable the above plugins to solve the issue."
+            + Environment.NewLine + "The plugin cannot be loaded.";
         Exception exception = new Exception(message);
         GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI.dll loading", exception);
         Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-        PostHog.PluginLoaded(GsaGH.PluginInfo.Instance, message);
+        PostHog.PluginLoaded(PluginInfo.Instance, message);
         return GH_LoadingInstruction.Abort;
       }
 
@@ -88,16 +88,16 @@ namespace GsaGH
           {
             if (!plugin.Name.StartsWith("Kangaroo"))
             {
-              loadedPlugins = loadedPlugins + "-" + plugin.Name + System.Environment.NewLine;
+              loadedPlugins = loadedPlugins + "-" + plugin.Name + Environment.NewLine;
             }
           }
         }
         string message = e.Message
-            + System.Environment.NewLine + System.Environment.NewLine +
+            + Environment.NewLine + Environment.NewLine +
             "This may be due to clash with other referenced dll files by one of these plugins that's already been loaded: "
-            + System.Environment.NewLine + loadedPlugins
-            + System.Environment.NewLine + "You may try disable the above plugins to solve the issue."
-            + System.Environment.NewLine + "The plugin cannot be loaded.";
+            + Environment.NewLine + loadedPlugins
+            + Environment.NewLine + "You may try disable the above plugins to solve the issue."
+            + Environment.NewLine + "The plugin cannot be loaded.";
         Exception exception = new Exception(message);
         GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: System.Data.SQLite.dll loading", exception);
         Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
@@ -106,7 +106,7 @@ namespace GsaGH
       }
 
       // ### Queue up Main menu loader ###
-      Grasshopper.Instances.CanvasCreated += UI.Menu.MenuLoad.OnStartup;
+      Grasshopper.Instances.CanvasCreated += Graphics.Menu.MenuLoad.OnStartup;
 
       // ### Create Ribbon Category name and icon ###
       Grasshopper.Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
@@ -207,19 +207,19 @@ namespace GsaGH
         return ProductName;
       }
     }
-    public override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GSALogo;
+    public override System.Drawing.Bitmap Icon => Properties.Resources.GSALogo;
     public override string Description
     {
       get
       {
         //Return a short string describing the purpose of this GHA library.
-        return "Official Oasys GSA Grasshopper Plugin" + System.Environment.NewLine
+        return "Official Oasys GSA Grasshopper Plugin" + Environment.NewLine
           + (isBeta ? Disclaimer : "")
-        + System.Environment.NewLine + "A licensed version of GSA 10.1.60 or later installed in "
+        + Environment.NewLine + "A licensed version of GSA 10.1.63 or later installed in "
         + @"C:\Program Files\Oasys\GSA 10.1\ is required to use this plugin."
-        + System.Environment.NewLine + "Contact oasys@arup.com to request a free trial version."
-        + System.Environment.NewLine + TermsConditions
-        + System.Environment.NewLine + Copyright;
+        + Environment.NewLine + "Contact oasys@arup.com to request a free trial version."
+        + Environment.NewLine + TermsConditions
+        + Environment.NewLine + Copyright;
       }
     }
     public override Guid Id

@@ -10,6 +10,7 @@ using Eto.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -23,10 +24,10 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a GSA model from GWA string
-  /// </summary>
-  public class GwaCommand : GH_OasysComponent
+    /// <summary>
+    /// Component to create a GSA model from GWA string
+    /// </summary>
+    public class GwaCommand : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("ed3e5d61-9942-49d4-afc7-310285c783c6");
@@ -42,8 +43,8 @@ namespace GsaGH.Components
     public GwaCommand() : base(
       "GWA Command",
       "GWA", "Create a model from a GWA string, inject data into a model using GWA command, or retrieve model data or results through a GWA command.",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat0())
+      CategoryName.Name(),
+      SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
 
     #endregion

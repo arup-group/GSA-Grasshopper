@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -13,10 +14,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
-  /// </summary>
-  public class GetLoads : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to retrieve non-geometric objects from a GSA model
+    /// </summary>
+    public class GetLoads : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("87ff28e5-a1a6-4d78-ba71-e930e01dca13");
@@ -27,8 +28,8 @@ namespace GsaGH.Components
     public GetLoads() : base("Get Model Loads",
       "GetLoads",
       "Get Loads and Grid Planes/Surfaces from GSA model",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat0())
+      CategoryName.Name(),
+      SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -63,22 +64,22 @@ namespace GsaGH.Components
         Model model = new Model();
         model = gsaModel.Model;
 
-        List<GsaLoadGoo> gravity = Util.Gsa.FromGSA.GetGravityLoads(model.GravityLoads());
-        List<GsaLoadGoo> node = Util.Gsa.FromGSA.GetNodeLoads(model);
-        List<GsaLoadGoo> beam = Util.Gsa.FromGSA.GetBeamLoads(model.BeamLoads());
-        List<GsaLoadGoo> face = Util.Gsa.FromGSA.GetFaceLoads(model.FaceLoads());
+        List<GsaLoadGoo> gravity = Helpers.Import.Loads.GetGravityLoads(model.GravityLoads());
+        List<GsaLoadGoo> node = Helpers.Import.Loads.GetNodeLoads(model);
+        List<GsaLoadGoo> beam = Helpers.Import.Loads.GetBeamLoads(model.BeamLoads());
+        List<GsaLoadGoo> face = Helpers.Import.Loads.GetFaceLoads(model.FaceLoads());
 
         IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
         IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
         IReadOnlyDictionary<int, Axis> axDict = model.Axes();
-        List<GsaLoadGoo> point = Util.Gsa.FromGSA.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict, this.LengthUnit);
-        List<GsaLoadGoo> line = Util.Gsa.FromGSA.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict, this.LengthUnit);
-        List<GsaLoadGoo> area = Util.Gsa.FromGSA.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict, axDict, this.LengthUnit);
+        List<GsaLoadGoo> point = Helpers.Import.Loads.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict, this.LengthUnit);
+        List<GsaLoadGoo> line = Helpers.Import.Loads.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict, this.LengthUnit);
+        List<GsaLoadGoo> area = Helpers.Import.Loads.GetGridAreaLoads(model.GridAreaLoads(), srfDict, plnDict, axDict, this.LengthUnit);
 
         List<GsaGridPlaneSurfaceGoo> gps = new List<GsaGridPlaneSurfaceGoo>();
 
         foreach (int key in srfDict.Keys)
-          gps.Add(new GsaGridPlaneSurfaceGoo(Util.Gsa.FromGSA.GetGridPlaneSurface(srfDict, plnDict, axDict, key, this.LengthUnit)));
+          gps.Add(new GsaGridPlaneSurfaceGoo(Helpers.Import.Loads.GetGridPlaneSurface(srfDict, plnDict, axDict, key, this.LengthUnit)));
 
         DA.SetDataList(0, gravity);
         DA.SetDataList(1, node);

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel;
@@ -8,6 +7,8 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using OasysGH;
 using OasysGH.Components;
 using OasysUnits;
@@ -31,8 +32,8 @@ namespace GsaGH.Components
     public EditElement1d2_OBSOLETE() : base("Edit 1D Element",
       "Elem1dEdit",
       "Modify GSA 1D Element",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -190,7 +191,7 @@ namespace GsaGH.Components
           {
             try
             {
-              elem.Type = Helpers.Mappings.GetElementType(typestring);
+              elem.Type = Mappings.GetElementType(typestring);
             }
             catch (ArgumentException)
             {
@@ -274,7 +275,7 @@ namespace GsaGH.Components
         DA.SetData(2, new GH_Line(elem.Line.Line));
         DA.SetData(3, new GsaSectionGoo(elem.Section));
         DA.SetData(4, elem.Group);
-        DA.SetData(5, Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
+        DA.SetData(5, Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
         DA.SetData(6, new GsaOffsetGoo(elem.Offset));
         DA.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
         DA.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -30,8 +31,8 @@ namespace GsaGH.Components
     public EditMember3d() : base("Edit 3D Member",
       "Mem3dEdit",
       "Modify GSA 3D Member",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -81,7 +82,7 @@ namespace GsaGH.Components
       if (DA.GetData(0, ref gsaMember3d))
       {
         if (gsaMember3d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member3D input is null"); }
-        mem = gsaMember3d.Duplicate();
+        mem = gsaMember3d.Duplicate(true);
       }
 
       if (mem != null)
@@ -121,10 +122,10 @@ namespace GsaGH.Components
             gh_typ.CastTo(ref prop3d);
           else
           {
-            if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
+            if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
             {
-              prop3d.ID = idd;
-              mem.PropertyID = idd;
+              prop3d.Id = id;
+              mem.PropertyID = id;
             }
             else
             {
@@ -200,61 +201,16 @@ namespace GsaGH.Components
       }
     }
 
-    #region Custom UI
-    protected override void BeforeSolveInstance()
-    {
-      this.Message = Length.GetAbbreviation(this.LengthUnit);
-    }
-
-    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
-    {
-      Menu_AppendSeparator(menu);
-
-      ToolStripMenuItem unitsMenu = new ToolStripMenuItem("Select unit", Properties.Resources.Units);
-      unitsMenu.Enabled = true;
-      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length))
-      {
-        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); });
-        toolStripMenuItem.Checked = unit == Length.GetAbbreviation(this.LengthUnit);
-        toolStripMenuItem.Enabled = true;
-        unitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-      menu.Items.Add(unitsMenu);
-
-      Menu_AppendSeparator(menu);
-    }
-    private void Update(string unit)
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      this.Message = unit;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
-    }
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      writer.SetString("LengthUnit", this.LengthUnit.ToString());
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      return base.Read(reader);
-    }
-
     #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance()
-    {
-      this.Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-      this.Params.Output[4].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
-    }
-
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
-    #endregion
+
+    public void VariableParameterMaintenance()
+    {
+      return;
+    }
     #endregion
   }
 }

@@ -1,16 +1,17 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Prop2d
-  /// </summary>
-  public class CreateProp3d : GH_OasysComponent
+    /// <summary>
+    /// Component to create a new Prop2d
+    /// </summary>
+    public class CreateProp3d : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4919553a-8d96-4170-a357-74cfbe930897");
@@ -21,8 +22,8 @@ namespace GsaGH.Components
     public CreateProp3d() : base("Create 3D Property",
       "Prop3d",
       "Create GSA 3D Property",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

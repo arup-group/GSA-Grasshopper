@@ -5,6 +5,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -14,7 +15,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridSurface : GH_OasysDropDownComponent
+    public class CreateGridSurface : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("b9405f78-317b-474f-b258-4a178a70bc02");
@@ -25,8 +26,8 @@ namespace GsaGH.Components
     public CreateGridSurface() : base("Create Grid Surface",
       "GridSurface",
       "Create GSA Grid Surface",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { }
     #endregion
 
@@ -35,10 +36,10 @@ namespace GsaGH.Components
     {
       pManager.AddGenericParameter("Grid Plane", "GP", "Grid Plane. If no input, Global XY-plane will be used", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Grid Surface ID", "ID", "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model", GH_ParamAccess.item, 0);
-      pManager.AddTextParameter("Element list", "El", "List of Elements for which load should be expanded to (by default 'all')." + System.Environment.NewLine +
-         "Element list should take the form:" + System.Environment.NewLine +
-         " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
-         "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+      pManager.AddGenericParameter("Element list", "El", "Properties, Elements or Members to which load should be expanded to (by default 'All'); either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string." + Environment.NewLine +
+         "Element list should take the form:" + Environment.NewLine +
+         " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
+         "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
       pManager.AddGenericParameter("Tolerance in model units", "To", "Tolerance for Load Expansion (default 10mm)", GH_ParamAccess.item);
       pManager.AddAngleParameter("Span Direction", "Di", "Span Direction between -180 and 180 degrees", GH_ParamAccess.item, 0);
@@ -132,32 +133,64 @@ namespace GsaGH.Components
         gps.GridSurfaceId = id;
       }
 
-      // 2 Elements
-      // check that user has not input Gsa geometry elements here
+      // element/member list
       gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(2, ref gh_typ))
       {
-        string type = gh_typ.Value.ToString().ToUpper();
-        if (type.StartsWith("GSA "))
+        gps.GridSurface.Elements = "";
+        if (gh_typ.Value is GsaElement1dGoo)
         {
-          Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in ElementList input!" + System.Environment.NewLine +
-              "Element list should take the form:" + System.Environment.NewLine +
-              "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + System.Environment.NewLine +
-              "Refer to GSA help file for definition of lists and full vocabulary.");
-          return;
+          GsaElement1dGoo goo = (GsaElement1dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Element;
         }
-      }
-      GH_String ghelem = new GH_String();
-      if (DA.GetData(2, ref ghelem))
-      {
-        string elem = "";
-        if (GH_Convert.ToString(ghelem, out elem, GH_Conversion.Both))
+        if (gh_typ.Value is GsaElement2dGoo)
         {
-          gs.Elements = elem;
-          changeGS = true;
+          GsaElement2dGoo goo = (GsaElement2dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Element;
         }
+        else if (gh_typ.Value is GsaMember1dGoo)
+        {
+          GsaMember1dGoo goo = (GsaMember1dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Member;
+        }
+        else if (gh_typ.Value is GsaMember2dGoo)
+        {
+          GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Member;
+        }
+        else if (gh_typ.Value is GsaMember3dGoo)
+        {
+          GsaMember3dGoo goo = (GsaMember3dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Member;
+        }
+        else if (gh_typ.Value is GsaSectionGoo)
+        {
+          GsaSectionGoo goo = (GsaSectionGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Section;
+        }
+        else if (gh_typ.Value is GsaProp2dGoo)
+        {
+          GsaProp2dGoo goo = (GsaProp2dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Prop2d;
+        }
+        else if (gh_typ.Value is GsaProp3dGoo)
+        {
+          GsaProp3dGoo goo = (GsaProp3dGoo)gh_typ.Value;
+          gps.RefObjectGuid = goo.Value.Guid;
+          gps.ReferenceType = ReferenceType.Prop3d;
+        }
+        else if (GH_Convert.ToString(gh_typ.Value, out string elemList, GH_Conversion.Both))
+          gps.GridSurface.Elements = elemList;
       }
+      else
+        gps.GridSurface.Elements = "All";
 
       // 3 Name
       GH_String ghtxt = new GH_String();
@@ -253,6 +286,7 @@ namespace GsaGH.Components
     });
     AngleUnit AngleUnit = AngleUnit.Radian;
     private FoldMode _mode = FoldMode.One_Dimensional_One_Way;
+    private bool DuringLoad = false;
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new string[]
@@ -292,18 +326,23 @@ namespace GsaGH.Components
     }
     public override void UpdateUIFromSelectedItems()
     {
+      this.DuringLoad = true;
       switch (this.SelectedItems[0])
       {
         case "1D, One-way span":
           this._mode = FoldMode.One_Dimensional_One_Way;
+          Mode1Clicked();
           break;
         case "1D, Two-way span":
           this._mode = FoldMode.One_Dimensional_Two_Way;
+          Mode2Clicked();
           break;
         case "2D":
           this._mode = FoldMode.Two_Dimensional;
+          Mode3Clicked();
           break;
       }
+      this.DuringLoad = false;
       base.UpdateUIFromSelectedItems();
     }
 
@@ -321,11 +360,11 @@ namespace GsaGH.Components
       {
         Params.Input[5].NickName = "Exp";
         Params.Input[5].Name = "Load Expansion";
-        Params.Input[5].Description = "Load Expansion: " + System.Environment.NewLine + "Accepted inputs are:" +
-            System.Environment.NewLine + "0 : Corner (plane)" +
-            System.Environment.NewLine + "1 : Smooth (plane)" +
-            System.Environment.NewLine + "2 : Plane" +
-            System.Environment.NewLine + "3 : Legacy";
+        Params.Input[5].Description = "Load Expansion: " + Environment.NewLine + "Accepted inputs are:" +
+            Environment.NewLine + "0 : Corner (plane)" +
+            Environment.NewLine + "1 : Smooth (plane)" +
+            Environment.NewLine + "2 : Plane" +
+            Environment.NewLine + "3 : Legacy";
         Params.Input[5].Access = GH_ParamAccess.item;
         Params.Input[5].Optional = true;
 
@@ -342,7 +381,7 @@ namespace GsaGH.Components
     private IGH_Param angleInputParam;
     private void Mode1Clicked()
     {
-      if (_mode == FoldMode.One_Dimensional_One_Way)
+      if (!this.DuringLoad && _mode == FoldMode.One_Dimensional_One_Way)
         return;
 
       RecordUndoEvent("1D, one-way Parameters");
@@ -357,7 +396,7 @@ namespace GsaGH.Components
     }
     private void Mode2Clicked()
     {
-      if (_mode == FoldMode.One_Dimensional_Two_Way)
+      if (!this.DuringLoad && _mode == FoldMode.One_Dimensional_Two_Way)
         return;
       if (_mode == FoldMode.One_Dimensional_One_Way)
         angleInputParam = Params.Input[5];
@@ -375,7 +414,7 @@ namespace GsaGH.Components
     }
     private void Mode3Clicked()
     {
-      if (_mode == FoldMode.Two_Dimensional)
+      if (!this.DuringLoad && _mode == FoldMode.Two_Dimensional)
         return;
       if (_mode == FoldMode.One_Dimensional_One_Way)
         angleInputParam = Params.Input[5];

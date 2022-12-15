@@ -1,13 +1,14 @@
 ﻿using System;
 using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// This class provides a parameter interface for the <see cref="GsaMaterialGoo"/> type.
-  /// </summary>
-  public class GsaMaterialParameter : GH_OasysPersistentParam<GsaMaterialGoo>
+    /// <summary>
+    /// This class provides a parameter interface for the <see cref="GsaMaterialGoo"/> type.
+    /// </summary>
+    public class GsaMaterialParameter : GH_OasysPersistentParam<GsaMaterialGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaMaterialGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaMaterialGoo.Name : base.TypeName;
@@ -19,8 +20,8 @@ namespace GsaGH.Parameters
       GsaMaterialGoo.Name,
       GsaMaterialGoo.NickName,
       GsaMaterialGoo.Description + " parameter",
-      GsaGH.Components.Ribbon.CategoryName.Name(),
-      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+      CategoryName.Name(),
+      SubCategoryName.Cat9()))
     { }
 
     protected override GsaMaterialGoo PreferredCast(object data)

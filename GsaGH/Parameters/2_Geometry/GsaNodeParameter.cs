@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using OasysGH.Parameters;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// This class provides a parameter interface for the <see cref="GsaNodeGoo"/> type.
-  /// </summary>
-  public class GsaNodeParameter : GH_OasysPersistentGeometryParam<GsaNodeGoo>
+    /// <summary>
+    /// This class provides a parameter interface for the <see cref="GsaNodeGoo"/> type.
+    /// </summary>
+    public class GsaNodeParameter : GH_OasysPersistentGeometryParam<GsaNodeGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaNodeGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaNodeGoo.Name : base.TypeName;
@@ -21,8 +22,8 @@ namespace GsaGH.Parameters
       GsaNodeGoo.Name,
       GsaNodeGoo.NickName,
       GsaNodeGoo.Description + " parameter",
-      GsaGH.Components.Ribbon.CategoryName.Name(),
-      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+      CategoryName.Name(),
+      SubCategoryName.Cat9()))
     { }
 
     protected override GsaNodeGoo PreferredCast(object data)

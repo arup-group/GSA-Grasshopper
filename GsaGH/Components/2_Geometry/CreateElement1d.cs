@@ -1,6 +1,7 @@
 ﻿using System;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -8,10 +9,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create new 1D Element
-  /// </summary>
-  public class CreateElement1d : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new 1D Element
+    /// </summary>
+    public class CreateElement1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("88c58aae-4cd8-4d37-b63f-d828571e6941");
@@ -22,8 +23,8 @@ namespace GsaGH.Components
     public CreateElement1d() : base("Create 1D Element",
       "Elem1D",
       "Create GSA 1D Element",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 

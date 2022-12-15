@@ -4,16 +4,17 @@ using System.Drawing;
 using System.IO;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a GSA model from GWA string
-  /// </summary>
-  public class GwaModel_OBSOLETE : GH_OasysComponent
+    /// <summary>
+    /// Component to create a GSA model from GWA string
+    /// </summary>
+    public class GwaModel_OBSOLETE : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("6f701c53-1531-45ef-9842-9356da59b590");
@@ -22,8 +23,8 @@ namespace GsaGH.Components
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GwaModel;
     public GwaModel_OBSOLETE()
        : base("Create GWA Model", "GWA", "Create a model from a GWA string.",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat0())
+            CategoryName.Name(),
+            SubCategoryName.Cat0())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

@@ -5,6 +5,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -16,10 +17,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Prop2d
-  /// </summary>
-  public class CreateProp2d : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to create a new Prop2d
+    /// </summary>
+    public class CreateProp2d : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("d693b4ad-7aaf-450e-a436-afbb9d2061fc");
@@ -30,8 +31,8 @@ namespace GsaGH.Components
     public CreateProp2d() : base("Create 2D Property",
       "Prop2d",
       "Create GSA 2D Property",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -207,7 +208,40 @@ namespace GsaGH.Components
 
     public override void UpdateUIFromSelectedItems()
     {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
+      switch (this.SelectedItems[0])
+      {
+        case "Plane Stress":
+          if (this.DropDownItems.Count < 2)
+            this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode1Clicked();
+          break;
+        case "Fabric":
+          if (this.DropDownItems.Count > 1)
+            this.DropDownItems.RemoveAt(1); // remove length unit dropdown
+          Mode2Clicked();
+          break;
+        case "Flat Plate":
+          if (this.DropDownItems.Count < 2)
+            this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode3Clicked();
+          break;
+        case "Shell":
+          if (this.DropDownItems.Count < 2)
+            this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode4Clicked();
+          break;
+        case "Curved Shell":
+          if (this.DropDownItems.Count < 2)
+            this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+          Mode5Clicked();
+          break;
+        case "Load Panel":
+          if (this.DropDownItems.Count > 1)
+            this.DropDownItems.RemoveAt(1); // remove length unit dropdown
+          Mode6Clicked();
+          break;
+      }
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 

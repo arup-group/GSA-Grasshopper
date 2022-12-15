@@ -4,6 +4,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using GsaGH.Helpers.GH;
 using OasysGH;
 using OasysGH.Components;
 using Rhino.Geometry;
@@ -24,8 +25,8 @@ namespace GsaGH.Components
     public EditNode_OBSOLETE() : base("Edit Node",
       "NodeEdit",
       "Modify GSA Node",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 

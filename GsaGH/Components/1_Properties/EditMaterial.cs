@@ -2,16 +2,17 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Material and ouput the information
-  /// </summary>
-  public class EditMaterial : GH_OasysComponent
+    /// <summary>
+    /// Component to edit a Material and ouput the information
+    /// </summary>
+    public class EditMaterial : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("865f73c7-a057-481a-834b-c7e12873dd39");
@@ -22,8 +23,8 @@ namespace GsaGH.Components
     public EditMaterial() : base("Edit Material",
       "MaterialEdit",
       "Modify GSA Material",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -32,16 +33,16 @@ namespace GsaGH.Components
     {
       pManager.AddParameter(new GsaMaterialParameter(), GsaMaterialGoo.Name, GsaMaterialGoo.NickName, GsaMaterialGoo.Description + " to get or set information for. Leave blank to create a new " + GsaMaterialGoo.Name, GH_ParamAccess.item);
       pManager.AddIntegerParameter("Analysis Property", "An", "Set Material Analysis Property Number (0 -> 'from Grade'", GH_ParamAccess.item);
-      pManager.AddTextParameter("Material Type", "mT", "Set Material Type" + System.Environment.NewLine +
+      pManager.AddTextParameter("Material Type", "mT", "Set Material Type" + Environment.NewLine +
           "Input either text string or integer:"
-          + System.Environment.NewLine + "Generic : 0"
-          + System.Environment.NewLine + "Steel : 1"
-          + System.Environment.NewLine + "Concrete : 2"
-          + System.Environment.NewLine + "Aluminium : 3"
-          + System.Environment.NewLine + "Glass : 4"
-          + System.Environment.NewLine + "FRP : 5"
-          + System.Environment.NewLine + "Timber : 7"
-          + System.Environment.NewLine + "Fabric : 8", GH_ParamAccess.item);
+          + Environment.NewLine + "Generic : 0"
+          + Environment.NewLine + "Steel : 1"
+          + Environment.NewLine + "Concrete : 2"
+          + Environment.NewLine + "Aluminium : 3"
+          + Environment.NewLine + "Glass : 4"
+          + Environment.NewLine + "FRP : 5"
+          + Environment.NewLine + "Timber : 7"
+          + Environment.NewLine + "Fabric : 8", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Material Grade", "Grd", "Set Material Grade", GH_ParamAccess.item);
 
       for (int i = 0; i < pManager.ParamCount; i++)

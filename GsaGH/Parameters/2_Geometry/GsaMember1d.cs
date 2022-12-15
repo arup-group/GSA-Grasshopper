@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.GsaAPI;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Collections;
@@ -25,6 +26,8 @@ namespace GsaGH.Parameters
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
     private GsaNode _orientationNode;
+    private GsaLocalAxes _localAxes = null;
+    private Guid _guid = Guid.NewGuid();
 
     private Line previewSX1;
     private Line previewSX2;
@@ -74,7 +77,7 @@ namespace GsaGH.Parameters
       }
       set
       {
-        Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Util.GH.Convert.ConvertMem1dCrv(value);
+        Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Helpers.GH.RhinoConversions.ConvertMem1dCrv(value);
         this._crv = convertCrv.Item1;
         this._topo = convertCrv.Item2;
         this._topoType = convertCrv.Item3;
@@ -274,6 +277,13 @@ namespace GsaGH.Parameters
         this.ApiMember.Type1D = value;
       }
     }
+    public Guid Guid
+    {
+      get
+      {
+        return this._guid;
+      }
+    }
     #endregion
 
     #region constructors
@@ -287,7 +297,7 @@ namespace GsaGH.Parameters
       // scale mesh size to model units
       this.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
       this.Id = id;
-      this._crv = Util.GH.Convert.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
+      this._crv = Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
       this._topo = topology;
       this._topoType = topo_type;
       this.Section = section;
@@ -306,7 +316,7 @@ namespace GsaGH.Parameters
         Type = MemberType.GENERIC_1D,
         Property = prop
       };
-      Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Util.GH.Convert.ConvertMem1dCrv(crv);
+      Tuple<PolyCurve, List<Point3d>, List<string>> convertCrv = Helpers.GH.RhinoConversions.ConvertMem1dCrv(crv);
       this._crv = convertCrv.Item1;
       this._topo = convertCrv.Item2;
       this._topoType = convertCrv.Item3;
@@ -321,6 +331,7 @@ namespace GsaGH.Parameters
       GsaMember1d dup = new GsaMember1d();
       dup.Id = this.Id;
       dup.MeshSize = this.MeshSize;
+      dup._guid = new Guid(_guid.ToString());
       dup.ApiMember = this.ApiMember;
       dup.LocalAxes = this.LocalAxes;
       if (cloneApiMember)
@@ -384,7 +395,7 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       string idd = this.Id == 0 ? "" : "ID:" + Id + " ";
-      string type = Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
+      string type = Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == this.Type).Key + " ";
       string pb = this.Section.Id > 0 ? "PB" + this.Section.Id : this.Section.Profile;
       return string.Join(" ", idd.Trim(), type.Trim(), pb.Trim()).Trim().Replace("  ", " ");
     }
@@ -392,6 +403,7 @@ namespace GsaGH.Parameters
     internal void CloneApiObject()
     {
       this.ApiMember = this.GetAPI_MemberClone();
+      this._guid = Guid.NewGuid();
     }
 
     private void UpdatePreview()
@@ -436,7 +448,7 @@ namespace GsaGH.Parameters
             previewEZZ1,
             previewEZZ2
           };
-          GsaGH.UI.Display.Preview1D(this._crv, this.ApiMember.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2,
+          Helpers.Graphics.Display.Preview1D(this._crv, this.ApiMember.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2,
           ref previewGreenLines, ref previewRedLines);
         }
         else

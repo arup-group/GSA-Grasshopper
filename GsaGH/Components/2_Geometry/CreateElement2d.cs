@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -9,10 +10,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create new 2D Element
-  /// </summary>
-  public class CreateElement2d : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new 2D Element
+    /// </summary>
+    public class CreateElement2d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("8f83d32a-c2df-4f47-9cfc-d2d4253703e1");
@@ -23,8 +24,8 @@ namespace GsaGH.Components
     public CreateElement2d() : base("Create 2D Element",
       "Elem2D",
       "Create GSA 2D Element",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -60,8 +61,8 @@ namespace GsaGH.Components
           {
             if (gh_typ.Value is GsaProp2dGoo)
               gh_typ.CastTo(ref prop2d);
-            else if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-              prop2d.ID = idd;
+            else if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
+              prop2d.Id = id;
             else
             {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property or reference integer");

@@ -117,34 +117,13 @@ namespace GsaGH.Parameters
     #region transformation methods
     public override IGH_GeometricGoo Transform(Transform xform)
     {
-      if (Value == null) { return null; }
-      if (Value.Point == null) { return null; }
-
-      GsaNode node = Value.Duplicate(true);
-      node.Id = 0;
-      Point3d pt = new Point3d(node.Point);
-      pt.Transform(xform);
-
-      node.Point = pt;
-      return new GsaNodeGoo(node);
+      return new GsaNodeGoo(Value.Transform(xform));
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
-      if (Value == null) { return null; }
-      if (Value.Point == null) { return null; }
-
-      GsaNode node = Value.Duplicate();
-      node.Id = 0;
-
-      Point3d pt = new Point3d(node.Point);
-      pt = xmorph.MorphPoint(pt);
-
-      node.Point = pt;
-
-      return new GsaNodeGoo(node);
+      return new GsaNodeGoo(Value.Morph(xmorph));
     }
-
     #endregion
 
     #region drawing methods
@@ -167,21 +146,21 @@ namespace GsaGH.Parameters
           }
           else
           {
-            System.Drawing.Color col = UI.Colour.Node;
+            System.Drawing.Color col = Helpers.Graphics.Colours.Node;
             args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundSimple, 3, col);
           }
           if (Value.previewSupportSymbol != null)
-            args.Pipeline.DrawBrepShaded(Value.previewSupportSymbol, UI.Colour.SupportSymbol);
+            args.Pipeline.DrawBrepShaded(Value.previewSupportSymbol, Helpers.Graphics.Colours.SupportSymbol);
           if (Value.previewText != null)
-            args.Pipeline.Draw3dText(Value.previewText, UI.Colour.Support);
+            args.Pipeline.Draw3dText(Value.previewText, Helpers.Graphics.Colours.Support);
         }
         else
         {
-          args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundControlPoint, 3, UI.Colour.NodeSelected);
+          args.Pipeline.DrawPoint(Value.Point, Rhino.Display.PointStyle.RoundControlPoint, 3, Helpers.Graphics.Colours.NodeSelected);
           if (Value.previewSupportSymbol != null)
-            args.Pipeline.DrawBrepShaded(Value.previewSupportSymbol, UI.Colour.SupportSymbolSelected);
+            args.Pipeline.DrawBrepShaded(Value.previewSupportSymbol, Helpers.Graphics.Colours.SupportSymbolSelected);
           if (Value.previewText != null)
-            args.Pipeline.Draw3dText(Value.previewText, UI.Colour.NodeSelected);
+            args.Pipeline.Draw3dText(Value.previewText, Helpers.Graphics.Colours.NodeSelected);
         }
 
         // local axis

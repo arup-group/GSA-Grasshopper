@@ -3,6 +3,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -12,10 +13,10 @@ using OasysUnits;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Prop2d and ouput the information
-  /// </summary>
-  public class EditProp2d2_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a Prop2d and ouput the information
+    /// </summary>
+    public class EditProp2d2_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
@@ -23,8 +24,8 @@ namespace GsaGH.Components
     public override Guid ComponentGuid => new Guid("4cfdee19-451b-4ee3-878b-93a86767ffef");
     public EditProp2d2_OBSOLETE()
       : base("Edit 2D Property", "Prop2dEdit", "Modify GSA 2D Property",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat1())
+            CategoryName.Name(),
+            SubCategoryName.Cat1())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -87,7 +88,7 @@ namespace GsaGH.Components
       if (DA.GetData(1, ref ghID))
       {
         if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-          prop.ID = id;
+          prop.Id = id;
       }
 
       // 2 Material
@@ -148,7 +149,7 @@ namespace GsaGH.Components
       ValueType colour = (prop.API_Prop2d == null) ? null : prop.API_Prop2d.Colour;
 
       DA.SetData(0, new GsaProp2dGoo(prop));
-      DA.SetData(1, prop.ID);
+      DA.SetData(1, prop.Id);
       DA.SetData(2, new GsaMaterialGoo(new GsaMaterial(prop)));
       if (prop.API_Prop2d.Description == "")
         DA.SetData(3, new GH_UnitNumber(Length.Zero));

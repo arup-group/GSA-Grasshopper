@@ -10,6 +10,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -23,10 +24,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get Element2d results
-  /// </summary>
-  public class Elem2dContourResults : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get Element2d results
+    /// </summary>
+    public class Elem2dContourResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e2b011dc-c5ca-46fd-87f5-b888b27ef684");
@@ -37,8 +38,8 @@ namespace GsaGH.Components
     public Elem2dContourResults() : base("2D Contour Results",
       "ContourElem2d",
       "Displays GSA 2D Element Results as Contour",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { }
     #endregion
 
@@ -46,12 +47,12 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
-      pManager.AddTextParameter("Element filter list", "El", "Filter import by list." + System.Environment.NewLine +
-          "Element list should take the form:" + System.Environment.NewLine +
-          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + System.Environment.NewLine +
+      pManager.AddTextParameter("Element filter list", "El", "Filter import by list." + Environment.NewLine +
+          "Element list should take the form:" + Environment.NewLine +
+          " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" + Environment.NewLine +
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddColourParameter("Colour", "Co", "Optional list of colours to override default colours" +
-          System.Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
+          Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
     }
@@ -88,7 +89,7 @@ namespace GsaGH.Components
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination Case " + result.CaseID + " contains "
                 + result.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
-                System.Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
+                Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.ResultType.Combination)
             _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
@@ -122,7 +123,7 @@ namespace GsaGH.Components
             colors.Add(color);
           }
         }
-        Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = UI.Colour.Stress_Gradient(colors);
+        Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = Helpers.Graphics.Colours.Stress_Gradient(colors);
 
         #endregion
         // get results from results class
@@ -265,7 +266,7 @@ namespace GsaGH.Components
             break;
         }
 
-        List<double> rounded = Util.Gsa.ResultHelper.SmartRounder(dmax, dmin);
+        List<double> rounded = Helpers.GsaAPI.ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
         int significantDigits = (int)rounded[2];
@@ -293,7 +294,7 @@ namespace GsaGH.Components
         {
           Element element = elems[key];
           if (element.Topology.Count < 3) { return; }
-          Mesh tempmesh = Util.Gsa.FromGSA.ConvertElement2D(element, nodes, lengthUnit);
+          Mesh tempmesh = Helpers.Import.Elements.ConvertElement2D(element, nodes, lengthUnit);
           if (tempmesh == null) { return; }
 
           List<Vector3d> transformation = null;
@@ -579,11 +580,12 @@ namespace GsaGH.Components
       this.m_attributes = new OasysGH.UI.DropDownSliderComponentAttributes(this, SetSelected, this.DropDownItems, this.SelectedItems, this._slider, SetVal, SetMaxMin, this._defScale, this._maxValue, this._minValue, this._noDigits, this.SpacerDescriptions);
     }
 
-    public override void SetSelected(int dropdownlistidd, int selectedidd)
+    public override void SetSelected(int i, int j)
     {
-      if (dropdownlistidd == 0) // if change is made to first list
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      if (i == 0) // if change is made to first list
       {
-        if (selectedidd == 0) // displacement mode
+        if (j == 0) // displacement mode
         {
           if (DropDownItems[1] != _displacement)
           {
@@ -606,7 +608,7 @@ namespace GsaGH.Components
             Mode1Clicked();
           }
         }
-        if (selectedidd == 1)  // force mode
+        if (j == 1)  // force mode
         {
           if (DropDownItems[1] != _force)
           {
@@ -628,7 +630,7 @@ namespace GsaGH.Components
             Mode2Clicked();
           }
         }
-        if (selectedidd == 2) // stress mode
+        if (j == 2) // stress mode
         {
           if (DropDownItems[1] != _stress)
           {
@@ -654,59 +656,58 @@ namespace GsaGH.Components
           }
         }
       }
-      else if (dropdownlistidd == 1) // if change is made to second list, the type of result
+      else if (i == 1) // if change is made to second list, the type of result
       {
         bool redraw = false;
-        SelectedItems[1] = DropDownItems[1][selectedidd];
+        SelectedItems[1] = DropDownItems[1][j];
         if (_mode == FoldMode.Displacement)
         {
-          if ((int)_disp > 3 & selectedidd < 4)
+          if ((int)_disp > 3 & j < 4)
           {
             redraw = true;
             _slider = true;
           }
-          if ((int)_disp < 4 & selectedidd > 3)
+          if ((int)_disp < 4 & j > 3)
           {
             redraw = true;
             _slider = false;
 
           }
         }
-        _disp = (DisplayValue)selectedidd;
+        _disp = (DisplayValue)j;
         if (DropDownItems[1] != _displacement)
         {
           _isShear = false;
           if (_mode == FoldMode.Force)
           {
-            if (selectedidd == 3 | selectedidd == 4)
+            if (j == 3 | j == 4)
             {
-              _disp = (DisplayValue)selectedidd - 3;
+              _disp = (DisplayValue)j - 3;
               _isShear = true;
             }
-            else if (selectedidd > 4)
-              _disp = (DisplayValue)selectedidd - 1;
+            else if (j > 4)
+              _disp = (DisplayValue)j - 1;
 
           }
           else if (_mode == FoldMode.Force)
           {
-            if (selectedidd > 2)
-              _disp = (DisplayValue)selectedidd + 1;
+            if (j > 2)
+              _disp = (DisplayValue)j + 1;
           }
         }
 
         if (redraw)
           ReDrawComponent();
       }
-      else if (dropdownlistidd == 2 && _mode == FoldMode.Stress) // if change is made to third list
+      else if (i == 2 && _mode == FoldMode.Stress) // if change is made to third list
       {
-        if (selectedidd == 0)
+        if (j == 0)
           _flayer = 1;
-        if (selectedidd == 1)
+        if (j == 1)
           _flayer = 0;
-        if (selectedidd == 2)
+        if (j == 2)
           _flayer = -1;
       }
-
       base.UpdateUI();
     }
     public void SetVal(double value)
@@ -792,7 +793,6 @@ namespace GsaGH.Components
 
       _slider = false;
       _defScale = 0;
-
 
       ReDrawComponent();
     }
@@ -913,7 +913,7 @@ namespace GsaGH.Components
       Grasshopper.Kernel.Special.GH_GradientControl gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
 
-      gradient.Gradient = UI.Colour.Stress_Gradient(null);
+      gradient.Gradient = Helpers.Graphics.Colours.Stress_Gradient(null);
       gradient.Gradient.NormalizeGrips();
       gradient.Params.Input[0].AddVolatileData(new GH_Path(0), 0, -1);
       gradient.Params.Input[1].AddVolatileData(new GH_Path(0), 0, 1);

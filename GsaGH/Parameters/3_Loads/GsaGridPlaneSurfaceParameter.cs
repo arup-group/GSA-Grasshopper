@@ -1,13 +1,14 @@
 ﻿using System;
 using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// This class provides a parameter interface for the <see cref="GsaGridPlaneSurfaceGoo"/> type.
-  /// </summary>
-  public class GsaGridPlaneParameter : GH_OasysPersistentGeometryParam<GsaGridPlaneSurfaceGoo>
+    /// <summary>
+    /// This class provides a parameter interface for the <see cref="GsaGridPlaneSurfaceGoo"/> type.
+    /// </summary>
+    public class GsaGridPlaneParameter : GH_OasysPersistentGeometryParam<GsaGridPlaneSurfaceGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaGridPlaneSurfaceGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaGridPlaneSurfaceGoo.Name : base.TypeName;
@@ -19,8 +20,8 @@ namespace GsaGH.Parameters
       GsaGridPlaneSurfaceGoo.Name,
       GsaGridPlaneSurfaceGoo.NickName,
       GsaGridPlaneSurfaceGoo.Description + " parameter",
-      GsaGH.Components.Ribbon.CategoryName.Name(),
-      GsaGH.Components.Ribbon.SubCategoryName.Cat9()))
+      CategoryName.Name(),
+      SubCategoryName.Cat9()))
     { }
 
     protected override GsaGridPlaneSurfaceGoo PreferredCast(object data)

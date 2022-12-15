@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -13,10 +14,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Node
-  /// </summary>
-  public class Elem2dFromBrep_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a Node
+    /// </summary>
+    public class Elem2dFromBrep_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4fa7ccd9-530e-4036-b2bf-203017b55611");
@@ -27,8 +28,8 @@ namespace GsaGH.Components
     public Elem2dFromBrep_OBSOLETE() : base("Element2d from Brep",
       "Elem2dFromBrep",
       "Mesh a non-planar Brep",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat2())
+      CategoryName.Name(),
+      SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -147,7 +148,7 @@ namespace GsaGH.Components
             else
             {
               if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                prop2d.ID = idd;
+                prop2d.Id = idd;
               else
               {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
@@ -156,7 +157,7 @@ namespace GsaGH.Components
             }
           }
           else
-            prop2d.ID = 1;
+            prop2d.Id = 1;
           List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
           for (int i = 0; i < elem2d.API_Elements.Count; i++)
             prop2Ds.Add(prop2d);

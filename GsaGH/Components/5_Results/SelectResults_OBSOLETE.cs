@@ -6,19 +6,20 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Util.GH;
+using GsaGH.Helpers.GH;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to select results from a GSA Model
-  /// </summary>
-  public class SelectResult_OBSOLETE : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to select results from a GSA Model
+    /// </summary>
+    public class SelectResult_OBSOLETE : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -30,8 +31,8 @@ namespace GsaGH.Components
     public SelectResult_OBSOLETE() : base("Select Results",
       "SelRes",
       "Select AnalysisCase or Combination Result from an analysed GSA model",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat5())
+      CategoryName.Name(),
+      SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 
@@ -40,12 +41,12 @@ namespace GsaGH.Components
     {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model containing some results", GH_ParamAccess.item);
       pManager.AddTextParameter("Result Type", "rT", "Result type. " +
-          System.Environment.NewLine + "Accepted inputs are: " +
-          System.Environment.NewLine + "'AnalysisCase' or 'Combination'", GH_ParamAccess.item);
+          Environment.NewLine + "Accepted inputs are: " +
+          Environment.NewLine + "'AnalysisCase' or 'Combination'", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Case", "C", "Case ID(s)" +
-          System.Environment.NewLine + "Use -1 for 'all'", GH_ParamAccess.item);
+          Environment.NewLine + "Use -1 for 'all'", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Permutation", "P", "Permutations (only applicable for combination cases). " +
-          System.Environment.NewLine + "Leave blank for 'all'", GH_ParamAccess.list);
+          Environment.NewLine + "Leave blank for 'all'", GH_ParamAccess.list);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;

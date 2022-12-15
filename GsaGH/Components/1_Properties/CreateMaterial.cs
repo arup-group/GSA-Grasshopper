@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Material
-  /// </summary>
-  public class CreateMaterial : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to create a new Material
+    /// </summary>
+    public class CreateMaterial : GH_OasysDropDownComponent
   {
     public static List<string> MaterialTypes = new List<string>() {
       "Generic",
@@ -34,8 +35,8 @@ namespace GsaGH.Components
       "Create" + GsaMaterialGoo.Name.Replace(" ", string.Empty),
       GsaMaterialGoo.Name.Replace(" ", string.Empty),
       "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat1())
+      CategoryName.Name(),
+      SubCategoryName.Cat1())
     {
       this.Hidden = true; // sets the initial state of the component to hidden
     }

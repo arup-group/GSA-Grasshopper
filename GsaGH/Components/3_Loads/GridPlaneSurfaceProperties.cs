@@ -11,10 +11,11 @@ using OasysUnits.Units;
 using OasysUnits;
 using Rhino.Geometry;
 using OasysGH.Parameters;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  public class GridPlaneSurfaceProperties : GH_OasysComponent, IGH_VariableParameterComponent
+    public class GridPlaneSurfaceProperties : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("cb5c1d72-e414-447b-b5db-ce18d76e2f4d");
@@ -25,8 +26,8 @@ namespace GsaGH.Components
     public GridPlaneSurfaceProperties() : base("Grid Plane Surface Properties",
       "GridPlaneSurfaceProp",
       "Get GSA Grid Plane Surface Properties",
-      Ribbon.CategoryName.Name(),
-      Ribbon.SubCategoryName.Cat3())
+      CategoryName.Name(),
+      SubCategoryName.Cat3())
     { }
     #endregion
 

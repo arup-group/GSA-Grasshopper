@@ -4,6 +4,8 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -25,8 +27,8 @@ namespace GsaGH.Components
 
     public EditMember2d()
       : base("Edit 2D Member", "Mem2dEdit", "Modify GSA 2D Member",
-            Ribbon.CategoryName.Name(),
-            Ribbon.SubCategoryName.Cat2())
+            CategoryName.Name(),
+            SubCategoryName.Cat2())
     { }
     #endregion
 
@@ -40,16 +42,16 @@ namespace GsaGH.Components
       pManager.AddCurveParameter("Incl. Curves", "(C)", "Add inclusion curves (will automatically be made planar and projected onto brep, and converted to Arcs and Lines)", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp2dParameter(), "2D Property", "PA", "Set new 2D Property.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member2d Group", "Gr", "Set Member 2d Group", GH_ParamAccess.item);
-      pManager.AddTextParameter("Member Type", "mT", "Set 2D Member Type" + System.Environment.NewLine
-          + "Default is 1: Generic 2D - Accepted inputs are:" + System.Environment.NewLine +
-          "4: Slab" + System.Environment.NewLine +
-          "5: Wall" + System.Environment.NewLine +
-          "7: Ribbed Slab" + System.Environment.NewLine +
+      pManager.AddTextParameter("Member Type", "mT", "Set 2D Member Type" + Environment.NewLine
+          + "Default is 1: Generic 2D - Accepted inputs are:" + Environment.NewLine +
+          "4: Slab" + Environment.NewLine +
+          "5: Wall" + Environment.NewLine +
+          "7: Ribbed Slab" + Environment.NewLine +
           "12: Void-cutter", GH_ParamAccess.item);
-      pManager.AddTextParameter("2D Element Type", "aT", "Set Member 2D Analysis Element Type" + System.Environment.NewLine +
-          "Accepted inputs are:" + System.Environment.NewLine +
-          "0: Linear - Tri3/Quad4 Elements (default)" + System.Environment.NewLine +
-          "1: Quadratic - Tri6/Quad8 Elements" + System.Environment.NewLine +
+      pManager.AddTextParameter("2D Element Type", "eT", "Set Member 2D Analysis Element Type" + Environment.NewLine +
+          "Accepted inputs are:" + Environment.NewLine +
+          "0: Linear - Tri3/Quad4 Elements (default)" + Environment.NewLine +
+          "1: Quadratic - Tri6/Quad8 Elements" + Environment.NewLine +
           "2: Rigid Diaphragm", GH_ParamAccess.item);
 
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset", GH_ParamAccess.item);
@@ -83,7 +85,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Member Type", "mT", "Get 2D Member Type", GH_ParamAccess.item);
-      pManager.AddTextParameter("2D Element Type", "eT", "Get Member 2D Analysis Element Type" + System.Environment.NewLine +
+      pManager.AddTextParameter("2D Element Type", "eT", "Get Member 2D Analysis Element Type" + Environment.NewLine +
           "0: Linear (Tri3/Quad4), 1: Quadratic (Tri6/Quad8), 2: Rigid Diaphragm", GH_ParamAccess.item);
 
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
@@ -107,7 +109,7 @@ namespace GsaGH.Components
         {
           AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input is null");
         }
-        mem = gsaMember2d.Duplicate();
+        mem = gsaMember2d.Duplicate(true);
       }
 
       if (mem != null)
@@ -213,7 +215,7 @@ namespace GsaGH.Components
           {
             try
             {
-              mem.Type = Helpers.Mappings.GetMemberType(typestring);
+              mem.Type = Mappings.GetMemberType(typestring);
             }
             catch (ArgumentException)
             {
@@ -232,7 +234,7 @@ namespace GsaGH.Components
           {
             try
             {
-              mem.Type2D = Helpers.Mappings.GetAnalysisOrder(typestring);
+              mem.Type2D = Mappings.GetAnalysisOrder(typestring);
             }
             catch (ArgumentException)
             {
@@ -298,8 +300,8 @@ namespace GsaGH.Components
         DA.SetData(5, new GsaProp2dGoo(mem.Property));
         DA.SetData(6, mem.Group);
 
-        DA.SetData(7, Helpers.Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
-        DA.SetData(8, Helpers.Mappings.AnalysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);
+        DA.SetData(7, Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+        DA.SetData(8, Mappings.AnalysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);
 
         DA.SetData(9, new GsaOffsetGoo(mem.Offset));
 
@@ -312,14 +314,16 @@ namespace GsaGH.Components
         DA.SetData(15, mem.ApiMember.Topology.ToString());
       }
     }
-
     #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance() { }
-
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
     IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) => null;
     bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) => false;
+
+    public void VariableParameterMaintenance()
+    {
+      return;
+    }
     #endregion
   }
 }

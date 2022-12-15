@@ -4,15 +4,17 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using Grasshopper;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers.GsaAPI;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
-  /// <summary>
-  /// Element3d class, this class defines the basic properties and methods for any Gsa Element 3d
-  /// </summary>
-  public class GsaElement3d
+    /// <summary>
+    /// Element3d class, this class defines the basic properties and methods for any Gsa Element 3d
+    /// </summary>
+    public class GsaElement3d
   {
     private enum ApiObjectMember
     {
@@ -34,8 +36,8 @@ namespace GsaGH.Parameters
     private List<List<int>> _faceInt; // list of face integers included in each solid mesh referring to the mesh face list
     private List<Point3d> _topo; // list of topology points for visualisation
     private List<int> _ids = new List<int>();
+    private Guid _guid = Guid.NewGuid();
     private List<GsaProp3d> _props = new List<GsaProp3d>();
-
     private Mesh _displayMesh;
     #endregion
 
@@ -159,6 +161,13 @@ namespace GsaGH.Parameters
             topos.AddRange(this._elements[i].Topology.ToList(), new Grasshopper.Kernel.Data.GH_Path(i));
         }
         return topos;
+      }
+    }
+    public Guid Guid
+    {
+      get
+      {
+        return this._guid;
       }
     }
     #region GsaAPI.Element members
@@ -335,7 +344,7 @@ namespace GsaGH.Parameters
     public GsaElement3d(Mesh mesh, int prop = 0)
     {
       this._mesh = mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(mesh, 0);
+      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem3d(mesh, 0);
       this._elements = convertMesh.Item1;
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;
@@ -355,7 +364,7 @@ namespace GsaGH.Parameters
     {
       this._elements = elements;
       this._mesh = mesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(mesh, 0);
+      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem3d(mesh, 0);
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;
       this._faceInt = convertMesh.Item4;
@@ -372,6 +381,7 @@ namespace GsaGH.Parameters
     {
       GsaElement3d dup = new GsaElement3d();
       dup._mesh = (Mesh)this._mesh.DuplicateShallow();
+      dup._guid = new Guid(_guid.ToString());
       dup._topo = this._topo;
       dup._topoInt = this._topoInt;
       dup._faceInt = this._faceInt;
@@ -388,7 +398,7 @@ namespace GsaGH.Parameters
     {
       if (!this._mesh.IsValid)
         return "Null";
-      string type = Helpers.Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
+      string type = Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
       string info = "N:" + this.NgonMesh.Vertices.Count + " E:" + this.API_Elements.Count;
       return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
     }
@@ -404,7 +414,7 @@ namespace GsaGH.Parameters
 
       GsaElement3d dup = this.Duplicate(true);
       this._mesh = updatedMesh;
-      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Util.GH.Convert.ConvertMeshToElem3d(this._mesh, 0);
+      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem3d(this._mesh, 0);
       this._elements = convertMesh.Item1;
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;
@@ -412,9 +422,38 @@ namespace GsaGH.Parameters
       return dup;
     }
 
+    public GsaElement3d Transform(Transform xform)
+    {
+      if (this.NgonMesh == null)
+        return null;
+
+      GsaElement3d dup = this.Duplicate(true);
+      dup.IDs = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
+
+      Mesh xMs = dup.NgonMesh.DuplicateMesh();
+      xMs.Transform(xform);
+
+      return dup.UpdateGeometry(xMs);
+    }
+
+    public GsaElement3d Morph(SpaceMorph xmorph)
+    {
+      if (this.NgonMesh == null)
+        return null;
+
+      GsaElement3d dup = this.Duplicate(true);
+      dup.IDs = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
+
+      Mesh xMs = dup.NgonMesh.DuplicateMesh();
+      xmorph.Morph(xMs);
+
+      return dup.UpdateGeometry(xMs);
+    }
+
     internal void CloneApiElements()
     {
       this.CloneApiElements(ApiObjectMember.all);
+      this._guid = Guid.NewGuid();
     }
 
     private void CloneApiElements(ApiObjectMember memType, List<int> grp = null, List<bool> dum = null, List<string> nm = null, List<double> oriA = null, List<GsaOffset> off = null, List<int> prop = null, List<ElementType> typ = null, List<Color> col = null)
