@@ -200,12 +200,12 @@ namespace GsaGH
   }
 
 
-  public static class libiomp5mdCheck
+  public static class SolverRequiredDll
   {
     private static bool _loaded = false;
     private static bool _canAnalyse = false;
     internal static string loadedFromPath { get; private set; }
-    public static bool CanAnalyse()
+    public static bool IsCorrectVersionLoaded()
     {
       if (!_loaded || !_canAnalyse)
       {
@@ -215,8 +215,8 @@ namespace GsaGH
           if (module.ModuleName == "libiomp5md.dll")
           {
             _loaded = true;
-            string gsas_libiomp5md_version = FileVersionInfo.GetVersionInfo(AddReferencePriority.InstallPath + "\\libiomp5md.dll").FileVersion;
-            if (FileVersionInfo.GetVersionInfo(module.FileName).FileVersion == gsas_libiomp5md_version)
+            string gsaVersion = FileVersionInfo.GetVersionInfo(AddReferencePriority.InstallPath + "\\libiomp5md.dll").FileVersion;
+            if (FileVersionInfo.GetVersionInfo(module.FileName).FileVersion == gsaVersion)
               _canAnalyse = true;
             else
             {
@@ -231,41 +231,6 @@ namespace GsaGH
         return true; // GsaAPI.dll will load the correct verison
       return _canAnalyse;
     }
-
-    internal static Version GetFileVersionCe(string fileName)
-    {
-      int handle = 0;
-      int length = GetFileVersionInfoSize(fileName, ref handle);
-      Version v = null;
-      if (length > 0)
-      {
-        IntPtr buffer = System.Runtime.InteropServices.Marshal.AllocHGlobal(length);
-        if (GetFileVersionInfo(fileName, handle, length, buffer))
-        {
-          IntPtr fixedbuffer = IntPtr.Zero;
-          int fixedlen = 0;
-          if (VerQueryValue(buffer, "\\", ref fixedbuffer, ref fixedlen))
-          {
-            byte[] fixedversioninfo = new byte[fixedlen];
-            System.Runtime.InteropServices.Marshal.Copy(fixedbuffer, fixedversioninfo, 0, fixedlen);
-            v = new Version(
-                BitConverter.ToInt16(fixedversioninfo, 10),
-                BitConverter.ToInt16(fixedversioninfo, 8),
-                BitConverter.ToInt16(fixedversioninfo, 14),
-                BitConverter.ToInt16(fixedversioninfo, 12));
-          }
-        }
-        Marshal.FreeHGlobal(buffer);
-      }
-      return v;
-    }
-
-    [DllImport("coredll", EntryPoint = "GetFileVersionInfo", SetLastError = true)]
-    private static extern bool GetFileVersionInfo(string filename, int handle, int len, IntPtr buffer);
-    [DllImport("coredll", EntryPoint = "GetFileVersionInfoSize", SetLastError = true)]
-    private static extern int GetFileVersionInfoSize(string filename, ref int handle);
-    [DllImport("coredll", EntryPoint = "VerQueryValue", SetLastError = true)]
-    private static extern bool VerQueryValue(IntPtr buffer, string subblock, ref IntPtr blockbuffer, ref int len);
   }
 
 
