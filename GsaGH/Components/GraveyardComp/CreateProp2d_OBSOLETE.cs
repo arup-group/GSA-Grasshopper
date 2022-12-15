@@ -15,10 +15,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create a new Prop2d
-    /// </summary>
-    public class CreateProp2d_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
+  /// <summary>
+  /// Component to create a new Prop2d
+  /// </summary>
+  public class CreateProp2d_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
@@ -401,24 +401,21 @@ namespace GsaGH.Components
       }
       catch (Exception)
       {
-        _mode = (FoldMode)reader.GetInt32("Mode"); //old version would have this set
-        SelectedItems.Add(reader.GetString("select")); // same
-
-        // set length to meters as this was the only option for old components
-        lengthUnit = LengthUnit.Meter;
-
         DropDownItems = new List<List<string>>();
         SelectedItems = new List<string>();
-
         // length
         DropDownItems.Add(dropdownTopList);
         DropDownItems.Add(OasysGH.Units.Helpers.FilteredUnits.FilteredLengthUnits);
 
+        _mode = (FoldMode)reader.GetInt32("Mode"); //old version would have this set
+        SelectedItems.Add(reader.GetString("select")); // same
         SelectedItems.Add(lengthUnit.ToString());
+
+        // set length to meters as this was the only option for old components
+        lengthUnit = LengthUnit.Meter;
 
         IQuantity quantity = new Length(0, lengthUnit);
         unitAbbreviation = string.Concat(quantity.ToString().Where(char.IsLetter));
-
       }
       UpdateUIFromSelectedItems();
       first = false;
@@ -533,7 +530,7 @@ namespace GsaGH.Components
     internal static void readDropDownComponents(ref GH_IO.Serialization.GH_IReader reader, ref List<List<string>> DropDownItems, ref List<string> SelectedItems, ref List<string> SpacerDescriptions)
     {
       // dropdown content list
-      if (reader.GetBoolean("dropdown"))
+      if (reader.ItemExists("dropdown"))
       {
         int dropdownCount = reader.GetInt32("dropdownCount");
         DropDownItems = new List<List<string>>();
@@ -550,7 +547,7 @@ namespace GsaGH.Components
         throw new Exception("Component doesnt have 'dropdown' content stored");
 
       // spacer list
-      if (reader.GetBoolean("spacer"))
+      if (reader.ItemExists("spacer"))
       {
         int dropdownspacerCount = reader.GetInt32("spacerCount");
         SpacerDescriptions = new List<string>();
@@ -559,7 +556,7 @@ namespace GsaGH.Components
       }
 
       // selection list
-      if (reader.GetBoolean("select"))
+      if (reader.ItemExists("select"))
       {
         int selectionsCount = reader.GetInt32("selectionCount");
         SelectedItems = new List<string>();

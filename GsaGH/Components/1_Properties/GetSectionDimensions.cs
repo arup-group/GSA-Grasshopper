@@ -74,10 +74,21 @@ namespace GsaGH.Components
         {
           string profileIn = "";
           gh_typ.CastTo(ref profileIn);
-          gsaSection = new GsaSection(profileIn);
+          if (GsaSection.ValidProfile(profileIn))
+            gsaSection = new GsaSection(profileIn);
+          else
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid profile syntax: " + profileIn);
+            return;
+          }
         }
 
         string profile = gsaSection.Profile;
+        if (profile.Trim() == "")
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Profile not set in Section");
+          return;
+        }
         string[] parts = profile.Split(' ');
 
         LengthUnit unit = LengthUnit.Millimeter; // default unit for sections is mm

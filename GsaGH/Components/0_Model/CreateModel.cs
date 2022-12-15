@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Grasshopper.GUI;
 using System.Windows.Forms;
+using GH_IO.Serialization;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-using GsaAPI;
+using GsaGH.Components.GraveyardComp;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
@@ -17,10 +16,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to assemble and analyse a GSA model
-    /// </summary>
-    public class CreateModel : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to assemble and analyse a GSA model
+  /// </summary>
+  public class CreateModel : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -159,7 +158,7 @@ namespace GsaGH.Components
     {
       this.ReMesh = value[0];
     }
-    
+
     public override void UpdateUIFromSelectedItems()
     {
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
@@ -239,6 +238,18 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       this.ReMesh = reader.GetBoolean("ReMesh");
+
+      if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData"))
+        base.Read(reader);
+      else
+      {
+        BaseReader.Read(reader, this, true);
+        IsInitialised = true;
+        UpdateUIFromSelectedItems();
+      }
+      GH_IReader attributes = reader.FindChunk("Attributes");
+      this.Attributes.Bounds = (System.Drawing.RectangleF)attributes.Items[0].InternalData;
+      this.Attributes.Pivot = (System.Drawing.PointF)attributes.Items[1].InternalData;
       if (reader.ItemExists("Tolerance"))
         this._tolerance = reader.GetDouble("Tolerance");
       else
