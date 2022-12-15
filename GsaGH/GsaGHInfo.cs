@@ -31,7 +31,7 @@ namespace GsaGH
       var target = EnvironmentVariableTarget.Process;
       System.Environment.SetEnvironmentVariable(name, value, target);
 
-      // ### Reference GSA API and SQLite dlls ###
+      // ### Reference GSA API dlls ###
       // check if GSA is installed
       if (!File.Exists(InstallPath + "\\GsaAPI.dll"))
       {
@@ -81,37 +81,6 @@ namespace GsaGH
         GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI.dll loading", exception);
         Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
         PostHog.PluginLoaded(PluginInfo.Instance, message);
-        return GH_LoadingInstruction.Abort;
-      }
-
-      try
-      {
-        Assembly ass2 = Assembly.LoadFile(InstallPath + "\\System.Data.SQLite.dll");
-      }
-      catch (Exception e)
-      {
-        string loadedPlugins = "";
-        ReadOnlyCollection<GH_AssemblyInfo> plugins = Grasshopper.Instances.ComponentServer.Libraries;
-        foreach (GH_AssemblyInfo plugin in plugins)
-        {
-          if (!plugin.IsCoreLibrary)
-          {
-            if (!plugin.Name.StartsWith("Kangaroo"))
-            {
-              loadedPlugins = loadedPlugins + "-" + plugin.Name + Environment.NewLine;
-            }
-          }
-        }
-        string message = e.Message
-            + Environment.NewLine + Environment.NewLine +
-            "This may be due to clash with other referenced dll files by one of these plugins that's already been loaded: "
-            + Environment.NewLine + loadedPlugins
-            + Environment.NewLine + "You may try disable the above plugins to solve the issue."
-            + Environment.NewLine + "The plugin cannot be loaded.";
-        Exception exception = new Exception(message);
-        GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: System.Data.SQLite.dll loading", exception);
-        Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
-        PostHog.PluginLoaded(GsaGH.PluginInfo.Instance, message);
         return GH_LoadingInstruction.Abort;
       }
 
