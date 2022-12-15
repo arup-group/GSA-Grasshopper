@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Grasshopper.GUI;
+using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -14,6 +16,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Grasshopper.Kernel.Parameters;
 
 namespace GsaGH.Components
 {
@@ -176,12 +179,9 @@ namespace GsaGH.Components
       #endregion
 
       // Assemble model
-      Model gsa = Helpers.Export.AssembleModel.Assemble(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, this.LengthUnit, DefaultUnits.Tolerance.Meters, true);
+      Model gsa = Helpers.Export.AssembleModel.Assemble(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, this.LengthUnit, this._tolerance, true);
 
-      #region meshing
-      // Create elements from members
-      gsa.CreateElementsFromMembers();
-      #endregion
+      this.UpdateMessage();
 
       // extract nodes from model
       ConcurrentBag<GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()), LengthUnit);
@@ -344,6 +344,14 @@ namespace GsaGH.Components
 
     #region Custom UI
     private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+    private double _tolerance = DefaultUnits.Tolerance.Meters;
+    private string _toleranceTxt = "";
+
+    protected override void BeforeSolveInstance()
+    {
+      base.BeforeSolveInstance();
+      this.UpdateMessage();
+    }
 
     public override void InitialiseDropdowns()
     {
@@ -383,6 +391,81 @@ namespace GsaGH.Components
       Params.Input[i++].Name = "1D Members [" + unitAbbreviation + "]";
       Params.Input[i++].Name = "2D Members [" + unitAbbreviation + "]";
       Params.Input[i++].Name = "3D Members [" + unitAbbreviation + "]";
+    }
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+    {
+      Menu_AppendSeparator(menu);
+
+      ToolStripTextBox tolerance = new ToolStripTextBox();
+      _toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
+      tolerance.Text = _toleranceTxt;
+      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
+
+      ToolStripMenuItem toleranceMenu = new ToolStripMenuItem("Set Tolerance", Properties.Resources.Units);
+      toleranceMenu.Enabled = true;
+      toleranceMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+
+      GH_MenuCustomControl menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) =>
+      {
+        this.UpdateMessage();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      };
+      menu.Items.Add(toleranceMenu);
+
+      Menu_AppendSeparator(menu);
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      ExpireSolution(true);
+    }
+
+    private void MaintainText(ToolStripTextBox tolerance)
+    {
+      _toleranceTxt = tolerance.Text;
+      if (Length.TryParse(_toleranceTxt, out Length res))
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
+      else
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 255, 100, 100);
+    }
+    private void UpdateMessage()
+    {
+      if (this._toleranceTxt != "")
+      {
+        try
+        {
+          Length newTolerance = Length.Parse(_toleranceTxt);
+          _tolerance = newTolerance.Meters;
+        }
+        catch (Exception e)
+        {
+          MessageBox.Show(e.Message);
+          return;
+        }
+      }
+      this.Message = "Tol: " + new Length(_tolerance, this.LengthUnit).ToString();
+      if (_tolerance < 0.001)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
+      if (_tolerance > 0.25)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
+    }
+    #endregion
+
+    #region (de)serialization
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    {
+      writer.SetDouble("Tolerance", this._tolerance);
+      return base.Write(writer);
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      if (reader.ItemExists("Tolerance"))
+        this._tolerance = reader.GetDouble("Tolerance");
+      else
+        this._tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+      this.UpdateMessage();
+      return base.Read(reader);
     }
     #endregion
   }
