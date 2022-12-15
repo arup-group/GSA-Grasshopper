@@ -337,9 +337,9 @@ namespace GsaGH.Parameters
       this._props = prop2ds;
     }
 
-    public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit = LengthUnit.Meter, int prop = 0)
+    public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit, Length tolerance, int prop = 0)
     {
-      this._mesh = Helpers.GH.RhinoConversions.ConvertBrepToMesh(brep, curves, points, meshSize, unit, mem1ds, nodes);
+      this._mesh = Helpers.GH.RhinoConversions.ConvertBrepToMesh(brep, curves, points, meshSize, unit, tolerance, mem1ds, nodes);
       Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem2d(this._mesh, prop, true);
       this._elements = convertMesh.Item1;
       this._topo = convertMesh.Item2;

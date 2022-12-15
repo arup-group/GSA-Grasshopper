@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
+using GH_IO.Serialization;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Components.GraveyardComp;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
@@ -14,10 +19,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a Node
-    /// </summary>
-    public class Elem2dFromBrep : GH_OasysComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to edit a Node
+  /// </summary>
+  public class Elem2dFromBrep : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("83948408-c55d-49b9-b9a7-98034bcf3ce1");
@@ -40,11 +45,12 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Incl. Points or Nodes", "(P)", "Inclusion points or Nodes", GH_ParamAccess.list);
       pManager.AddGenericParameter("Incl. Curves or 1D Members", "(C)", "Inclusion curves or 1D Members", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProp2dParameter());
-      pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Target mesh size", GH_ParamAccess.item, 0);
+      pManager.AddGenericParameter("Mesh Size", "Ms", "Target mesh size", GH_ParamAccess.item);
 
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
+      pManager[4].Optional = true;
       pManager.HideParameter(0);
       pManager.HideParameter(1);
       pManager.HideParameter(2);
@@ -78,11 +84,11 @@ namespace GsaGH.Components
               {
                 GsaNode gsanode = new GsaNode();
                 gh_types[i].CastTo(ref gsanode);
-                nodes.Add(gsanode);
+                nodes.Add(gsanode.Duplicate(true));
               }
               else if (GH_Convert.ToPoint3d(gh_types[i].Value, ref pt, GH_Conversion.Both))
               {
-                pts.Add(pt);
+                pts.Add(new Point3d(pt));
               }
               else
               {
@@ -108,11 +114,11 @@ namespace GsaGH.Components
               {
                 GsaMember1d gsamem1d = new GsaMember1d();
                 gh_types[i].CastTo(ref gsamem1d);
-                mem1ds.Add(gsamem1d);
+                mem1ds.Add(gsamem1d.Duplicate(true));
               }
               else if (GH_Convert.ToCurve(gh_types[i].Value, ref crv, GH_Conversion.Both))
               {
-                crvs.Add(crv);
+                crvs.Add(crv.DuplicateCurve());
               }
               else
               {
@@ -126,11 +132,10 @@ namespace GsaGH.Components
           }
 
           // 4 mesh size
-          double meshSize = 0;
-          DA.GetData(4, ref meshSize);
+          Length meshSize = (Length)Input.LengthOrRatio(this, DA, 4, this.LengthUnit, true);
 
           // build new element2d with brep, crv and pts
-          GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize, mem1ds, nodes);
+          GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize.As(this.LengthUnit), mem1ds, nodes, this.LengthUnit, this.Tolerance);
 
           // 3 section
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -151,17 +156,131 @@ namespace GsaGH.Components
             }
           }
           else
-            prop2d.Id = 1;
+            prop2d.Id = 0;
           List<GsaProp2d> prop2Ds = new List<GsaProp2d>();
           for (int i = 0; i < elem2d.API_Elements.Count; i++)
             prop2Ds.Add(prop2d);
           elem2d.Properties = prop2Ds;
 
-          DA.SetData(0, new GsaElement2dGoo(elem2d));
+          DA.SetData(0, new GsaElement2dGoo(elem2d, false));
 
           AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
         }
       }
     }
+
+    #region Custom UI
+    private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+    private Length Tolerance = DefaultUnits.Tolerance;
+    private string _toleranceTxt = "";
+
+    protected override void BeforeSolveInstance()
+    {
+      base.BeforeSolveInstance();
+      this.UpdateMessage();
+    }
+
+    public override void InitialiseDropdowns()
+    {
+      this.SpacerDescriptions = new List<string>(new string[]
+        {
+          "Unit"
+        });
+
+      this.DropDownItems = new List<List<string>>();
+      this.SelectedItems = new List<string>();
+
+      // Length
+      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
+
+      this.IsInitialised = true;
+    }
+
+    public override void SetSelected(int i, int j)
+    {
+      this.SelectedItems[i] = this.DropDownItems[i][j];
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+      base.UpdateUI();
+    }
+    public override void UpdateUIFromSelectedItems()
+    {
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
+      base.UpdateUIFromSelectedItems();
+    }
+
+    public override void VariableParameterMaintenance()
+    {
+      Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
+    }
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+    {
+      Menu_AppendSeparator(menu);
+
+      ToolStripTextBox tolerance = new ToolStripTextBox();
+      _toleranceTxt = Tolerance.ToString();
+      tolerance.Text = _toleranceTxt;
+      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
+
+      ToolStripMenuItem toleranceMenu = new ToolStripMenuItem("Set Tolerance", Properties.Resources.Units);
+      toleranceMenu.Enabled = true;
+      toleranceMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+
+      GH_MenuCustomControl menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) =>
+      {
+        this.UpdateMessage();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      };
+      menu.Items.Add(toleranceMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+    private void MaintainText(ToolStripTextBox tolerance)
+    {
+      _toleranceTxt = tolerance.Text;
+      if (Length.TryParse(_toleranceTxt, out Length res))
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
+      else
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 255, 100, 100);
+    }
+    private void UpdateMessage()
+    {
+      if (this._toleranceTxt != "")
+      {
+        try
+        {
+          Length newTolerance = Length.Parse(_toleranceTxt);
+          Tolerance = newTolerance;
+        }
+        catch (Exception e)
+        {
+          MessageBox.Show(e.Message);
+          return;
+        }
+      }
+      this.Message = "Tol: " + Tolerance.ToString();
+      if (Tolerance.Meters < 0.001)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
+      if (Tolerance.Meters > 0.25)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      if (reader.ChunkExists("ParameterData"))
+        return base.Read(reader);
+      else
+      {
+        BaseReader.Read(reader, this);
+        IsInitialised = true;
+        UpdateUIFromSelectedItems();
+        GH_IReader attributes = reader.FindChunk("Attributes");
+        this.Attributes.Bounds = (System.Drawing.RectangleF)attributes.Items[0].InternalData;
+        this.Attributes.Pivot = (System.Drawing.PointF)attributes.Items[1].InternalData;
+        return true;
+      }
+    }
+    #endregion
   }
 }
