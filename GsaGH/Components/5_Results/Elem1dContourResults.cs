@@ -353,14 +353,14 @@ namespace GsaGH.Components
                     case (DisplayValue.Y):
                       t1 = xyzResults[key][i].Y.As(this.LengthResultUnit);
                       t2 = xyzResults[key][i + 1].Y.As(this.LengthResultUnit);
-                      startTranslation.X = xyzResults[key][i].Y.As(lengthUnit) * _defScale;
-                      endTranslation.X = xyzResults[key][i + 1].Y.As(lengthUnit) * _defScale;
+                      startTranslation.Y = xyzResults[key][i].Y.As(lengthUnit) * _defScale;
+                      endTranslation.Y = xyzResults[key][i + 1].Y.As(lengthUnit) * _defScale;
                       break;
                     case (DisplayValue.Z):
                       t1 = xyzResults[key][i].Z.As(this.LengthResultUnit);
                       t2 = xyzResults[key][i + 1].Z.As(this.LengthResultUnit);
-                      startTranslation.X = xyzResults[key][i].Z.As(lengthUnit) * _defScale;
-                      endTranslation.X = xyzResults[key][i + 1].Z.As(lengthUnit) * _defScale;
+                      startTranslation.Z = xyzResults[key][i].Z.As(lengthUnit) * _defScale;
+                      endTranslation.Z = xyzResults[key][i + 1].Z.As(lengthUnit) * _defScale;
                       break;
                     case (DisplayValue.resXYZ):
                       t1 = xyzResults[key][i].XYZ.As(this.LengthResultUnit);
