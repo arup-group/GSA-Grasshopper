@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Grasshopper.GUI;
 using System.Windows.Forms;
+using GH_IO.Serialization;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Parameters;
-using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Components.GraveyardComp;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -16,7 +13,6 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using GH_IO.Serialization;
 
 namespace GsaGH.Components
 {
@@ -254,7 +250,12 @@ namespace GsaGH.Components
       GH_IReader attributes = reader.FindChunk("Attributes");
       this.Attributes.Bounds = (System.Drawing.RectangleF)attributes.Items[0].InternalData;
       this.Attributes.Pivot = (System.Drawing.PointF)attributes.Items[1].InternalData;
-      return true;
+      if (reader.ItemExists("Tolerance"))
+        this._tolerance = reader.GetDouble("Tolerance");
+      else
+        this._tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+      this.UpdateMessage();
+      return base.Read(reader);
     }
     #endregion
   }

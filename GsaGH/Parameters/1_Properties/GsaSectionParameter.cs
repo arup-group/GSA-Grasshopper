@@ -5,10 +5,10 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
-    /// <summary>
-    /// This class provides a parameter interface for the <see cref="GsaSectionGoo"/> type.
-    /// </summary>
-    public class GsaSectionParameter : GH_OasysPersistentParam<GsaSectionGoo>
+  /// <summary>
+  /// This class provides a parameter interface for the <see cref="GsaSectionGoo"/> type.
+  /// </summary>
+  public class GsaSectionParameter : GH_OasysPersistentParam<GsaSectionGoo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaSectionGoo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaSectionGoo.Name : base.TypeName;
@@ -36,8 +36,11 @@ namespace GsaGH.Parameters
       }
       if (GH_Convert.ToString(data, out string profile, GH_Conversion.Both))
       {
-        GsaSection section = new GsaSection(profile);
-        return new GsaSectionGoo(section);
+        if (GsaSection.ValidProfile(profile))
+        {
+          GsaSection section = new GsaSection(profile);
+          return new GsaSectionGoo(section);
+        }
       }
       return base.PreferredCast(data);
     }
