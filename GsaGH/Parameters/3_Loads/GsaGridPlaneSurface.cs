@@ -32,6 +32,7 @@ namespace GsaGH.Parameters
 
     #region properties
     public double Elevation { get; set; } = 0;
+    public double Tolerance { get; set; } = 0;
     public string AxisName { get; set; } = "";
     public Guid GridSurfaceGUID => _gridSrfGuid;
     public Guid GridPlaneGUID => _gridPlnGuid;
@@ -164,6 +165,7 @@ namespace GsaGH.Parameters
           Tolerance = this._gridSrf.Tolerance
         },
         Elevation = this.Elevation,
+        Tolerance = this.Tolerance,
         AxisName = this.AxisName,
         GridPlaneId = _gridPlnId,
         GridSurfaceId = _gridSrfId
@@ -202,7 +204,7 @@ namespace GsaGH.Parameters
       else
         gp += $"O:{this._pln.Origin}, X:{this._pln.XAxis}, Y:{this._pln.YAxis}";
       if (this.Elevation != 0)
-        gp += "E:" + new Length(this.Elevation, LengthUnit.Meter).ToUnit(DefaultUnits.LengthUnitGeometry).ToString("g").Replace(" ", string.Empty) + " ";
+        gp += " E:" + new Length(this.Elevation, LengthUnit.Meter).ToUnit(DefaultUnits.LengthUnitGeometry).ToString("g").Replace(" ", string.Empty) + " ";
       if (this.GridPlane.IsStoreyType)
         gp += "Storey ";
 
@@ -233,12 +235,12 @@ namespace GsaGH.Parameters
       axis.Origin.X = new Length(this.Plane.Origin.X, modelUnit).Meters;
       axis.Origin.Y = new Length(this.Plane.Origin.Y, modelUnit).Meters;
       axis.Origin.Z = new Length(this.Plane.Origin.Z - this.Elevation, modelUnit).Meters;
-      axis.XVector.X = new Length(this.Plane.XAxis.X, modelUnit).Meters;
-      axis.XVector.Y = new Length(this.Plane.XAxis.Y, modelUnit).Meters;
-      axis.XVector.Z = new Length(this.Plane.XAxis.Z, modelUnit).Meters;
-      axis.XYPlane.X = new Length(this.Plane.YAxis.X, modelUnit).Meters;
-      axis.XYPlane.Y = new Length(this.Plane.YAxis.Y, modelUnit).Meters;
-      axis.XYPlane.Z = new Length(this.Plane.YAxis.Z, modelUnit).Meters;
+      axis.XVector.X = this.Plane.XAxis.X;
+      axis.XVector.Y = this.Plane.XAxis.Y;
+      axis.XVector.Z = this.Plane.XAxis.Z;
+      axis.XYPlane.X = this.Plane.YAxis.X;
+      axis.XYPlane.Y = this.Plane.YAxis.Y;
+      axis.XYPlane.Z = this.Plane.YAxis.Z;
 
       return axis;
     }
