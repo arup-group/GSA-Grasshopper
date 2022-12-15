@@ -126,7 +126,7 @@ namespace GsaGH.Components
         {
           GsaAnalysisTask task = new GsaAnalysisTask();
           task.ID = model.Model.AddAnalysisTask();
-          task.CreateDeafultCases(model.Model);
+          task.CreateDefaultCases(model.Model);
           if (task.Cases == null || task.Cases.Count == 0)
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Model contains no loads and has not been analysed, but has been assembled.");
           else
@@ -152,6 +152,17 @@ namespace GsaGH.Components
                 tryAnalyse = false;
               }
             }
+          }
+        }
+
+        if (tryAnalyse)
+        {
+          if (!GsaGH.libiomp5mdCheck.CanAnalyse())
+          {
+            tryAnalyse = false;
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "A dll required to run analysis has been previously loaded by another application. Please remove this file and try again:");
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, GsaGH.libiomp5mdCheck.loadedFromPath);
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Either uninstall the host application or delete the file.");
           }
         }
 

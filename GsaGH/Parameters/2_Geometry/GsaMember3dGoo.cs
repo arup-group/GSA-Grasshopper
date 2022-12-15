@@ -17,6 +17,13 @@ namespace GsaGH.Parameters
     public static string Description => "GSA 3D Member";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     public GsaMember3dGoo(GsaMember3d item) : base(item) { }
+    internal GsaMember3dGoo(GsaMember3d item, bool duplicate) : base(null)
+    {
+      if (duplicate)
+        this.Value = item.Duplicate();
+      else
+        this.Value = item;
+    }
     public override IGH_GeometricGoo Duplicate() => new GsaMember3dGoo(this.Value);
     public override GeometryBase GetGeometry() => this.Value.SolidMesh;
 

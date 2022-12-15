@@ -20,8 +20,13 @@ namespace GsaGH.Parameters
     public static string Description => "GSA 2D Member";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaMember2dGoo(GsaMember2d item) : base(item)
+    public GsaMember2dGoo(GsaMember2d item) : base(item) { }
+    internal GsaMember2dGoo(GsaMember2d item, bool duplicate) : base(null)
     {
+      if (duplicate)
+        this.Value = item.Duplicate();
+      else
+        this.Value = item;
     }
 
     public override IGH_GeometricGoo Duplicate() => new GsaMember2dGoo(this.Value);

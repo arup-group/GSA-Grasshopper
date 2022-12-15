@@ -12,12 +12,12 @@ namespace GsaGH.Helpers.Graphics
   /// </summary>
   internal class Display
   {
-    public static void Preview1D(PolyCurve crv, double angle_radian, GsaBool6 start, GsaBool6 end,
-        ref List<Line> greenLines20, ref List<Line> redLines10)
+    public static Tuple<List<Line>, List<Line>> Preview1D(PolyCurve crv, double angle_radian, GsaBool6 start, GsaBool6 end)
     {
-      int i = 0;
+      List<Line> greenLines20 = new List<Line>();
+      List<Line> redLines10 = new List<Line>();
 
-      if (start == null | end == null) { return; }
+      if (start == null | end == null) { return null; }
       #region translation start
       if (start.X == true)
       {
@@ -31,16 +31,15 @@ namespace GsaGH.Helpers.Graphics
         else
           pt = crv.PointAtLength(0.05);
 
-        Plane pln = new Plane();
-        crv.PerpendicularFrameAt(0.02, out pln);
+        crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angle_radian, pln.Normal);
         Vector3d vec1 = new Vector3d(pln.XAxis);
         vec1.Unitize();
         vec1 = new Vector3d(vec1.X * 0.025 * scale, vec1.Y * 0.025 * scale, vec1.Z * 0.025 * scale);
         Vector3d vec2 = new Vector3d(vec1);
         vec2.Reverse();
-        Transform xf1 = Rhino.Geometry.Transform.Translation(vec1);
-        Transform xf2 = Rhino.Geometry.Transform.Translation(vec2);
+        Transform xf1 = Transform.Translation(vec1);
+        Transform xf2 = Transform.Translation(vec2);
         Point3d pt1 = new Point3d(pt);
         pt1.Transform(xf1);
         Point3d pt2 = new Point3d(pt);
@@ -48,15 +47,13 @@ namespace GsaGH.Helpers.Graphics
         Vector3d vec = new Vector3d(pln.Normal);
         vec.Unitize();
         vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
-        greenLines20[i++] = new Line(pt1, vec);
-        //args.Pipeline.DrawLine(ln1, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt2, vec);
-        //args.Pipeline.DrawLine(ln2, UI.Colour.Support);
+        greenLines20.Add(new Line(pt1, vec));
+        greenLines20.Add(new Line(pt2, vec));
       }
       else
       {
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
       }
       if (start.Y == true)
       {
@@ -70,16 +67,15 @@ namespace GsaGH.Helpers.Graphics
         else
           pt = crv.PointAtLength(0.05);
 
-        Plane pln = new Plane();
-        crv.PerpendicularFrameAt(0.02, out pln);
+        crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angle_radian, pln.Normal);
         Vector3d vec1 = new Vector3d(pln.XAxis);
         vec1.Unitize();
         vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
         Vector3d vec2 = new Vector3d(vec1);
         vec2.Reverse();
-        Transform xf1 = Rhino.Geometry.Transform.Translation(vec1);
-        Transform xf2 = Rhino.Geometry.Transform.Translation(vec2);
+        Transform xf1 = Transform.Translation(vec1);
+        Transform xf2 = Transform.Translation(vec2);
         Point3d pt1 = new Point3d(pt);
         pt1.Transform(xf1);
         Point3d pt2 = new Point3d(pt);
@@ -89,8 +85,8 @@ namespace GsaGH.Helpers.Graphics
         vec3 = new Vector3d(vec3.X * 0.025 * scale, vec3.Y * 0.025 * scale, vec3.Z * 0.025 * scale);
         Vector3d vec4 = new Vector3d(vec3);
         vec4.Reverse();
-        Transform xf3 = Rhino.Geometry.Transform.Translation(vec3);
-        Transform xf4 = Rhino.Geometry.Transform.Translation(vec4);
+        Transform xf3 = Transform.Translation(vec3);
+        Transform xf4 = Transform.Translation(vec4);
         Point3d pt3A = new Point3d(pt1);
         pt3A.Transform(xf3);
         Point3d pt3B = new Point3d(pt2);
@@ -105,21 +101,17 @@ namespace GsaGH.Helpers.Graphics
         vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
         Vector3d vecRev = new Vector3d(vec);
         vecRev.Reverse();
-        greenLines20[i++] = new Line(pt3A, vec);
-        //args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt3B, vecRev);
-        //args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt4A, vec);
-        //args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt4B, vecRev);
-        //args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+        greenLines20.Add(new Line(pt3A, vec));
+        greenLines20.Add(new Line(pt3B, vecRev));
+        greenLines20.Add(new Line(pt4A, vec));
+        greenLines20.Add(new Line(pt4B, vecRev));
       }
       else
       {
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
       }
       if (start.Z == true)
       {
@@ -133,16 +125,15 @@ namespace GsaGH.Helpers.Graphics
         else
           pt = crv.PointAtLength(0.05);
 
-        Plane pln = new Plane();
-        crv.PerpendicularFrameAt(0.02, out pln);
+        crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angle_radian, pln.Normal);
         Vector3d vec1 = new Vector3d(pln.YAxis);
         vec1.Unitize();
         vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
         Vector3d vec2 = new Vector3d(vec1);
         vec2.Reverse();
-        Transform xf1 = Rhino.Geometry.Transform.Translation(vec1);
-        Transform xf2 = Rhino.Geometry.Transform.Translation(vec2);
+        Transform xf1 = Transform.Translation(vec1);
+        Transform xf2 = Transform.Translation(vec2);
         Point3d pt1 = new Point3d(pt);
         pt1.Transform(xf1);
         Point3d pt2 = new Point3d(pt);
@@ -152,8 +143,8 @@ namespace GsaGH.Helpers.Graphics
         vec3 = new Vector3d(vec3.X * 0.025 * scale, vec3.Y * 0.025 * scale, vec3.Z * 0.025 * scale);
         Vector3d vec4 = new Vector3d(vec3);
         vec4.Reverse();
-        Transform xf3 = Rhino.Geometry.Transform.Translation(vec3);
-        Transform xf4 = Rhino.Geometry.Transform.Translation(vec4);
+        Transform xf3 = Transform.Translation(vec3);
+        Transform xf4 = Transform.Translation(vec4);
         Point3d pt3A = new Point3d(pt1);
         pt3A.Transform(xf3);
         Point3d pt3B = new Point3d(pt2);
@@ -168,21 +159,17 @@ namespace GsaGH.Helpers.Graphics
         vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
         Vector3d vecRev = new Vector3d(vec);
         vecRev.Reverse();
-        greenLines20[i++] = new Line(pt3A, vec);
-        //args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt3B, vecRev);
-        //args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt4A, vec);
-        //args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt4B, vecRev);
-        //args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+        greenLines20.Add(new Line(pt3A, vec));
+        greenLines20.Add(new Line(pt3B, vecRev));
+        greenLines20.Add(new Line(pt4A, vec));
+        greenLines20.Add(new Line(pt4B, vecRev));
       }
       else
       {
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
       }
       #endregion
       #region translation end
@@ -201,16 +188,15 @@ namespace GsaGH.Helpers.Graphics
           pt = crv.PointAtLength(len - 0.05);
         }
 
-        Plane pln = new Plane();
-        crv.PerpendicularFrameAt(0.98, out pln);
+        crv.PerpendicularFrameAt(0.98, out Plane pln);
         pln.Rotate(angle_radian, pln.Normal);
         Vector3d vec1 = new Vector3d(pln.XAxis);
         vec1.Unitize();
         vec1 = new Vector3d(vec1.X * 0.025 * scale, vec1.Y * 0.025 * scale, vec1.Z * 0.025 * scale);
         Vector3d vec2 = new Vector3d(vec1);
         vec2.Reverse();
-        Transform xf1 = Rhino.Geometry.Transform.Translation(vec1);
-        Transform xf2 = Rhino.Geometry.Transform.Translation(vec2);
+        Transform xf1 = Transform.Translation(vec1);
+        Transform xf2 = Transform.Translation(vec2);
         Point3d pt1 = new Point3d(pt);
         pt1.Transform(xf1);
         Point3d pt2 = new Point3d(pt);
@@ -219,15 +205,13 @@ namespace GsaGH.Helpers.Graphics
         vec.Unitize();
         vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
         vec.Reverse();
-        greenLines20[i++] = new Line(pt1, vec);
-        //args.Pipeline.DrawLine(ln1, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt2, vec);
-        //args.Pipeline.DrawLine(ln2, UI.Colour.Support);
+        greenLines20.Add(new Line(pt1, vec));
+        greenLines20.Add(new Line(pt2, vec));
       }
       else
       {
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
       }
       if (end.Y == true)
       {
@@ -279,21 +263,17 @@ namespace GsaGH.Helpers.Graphics
         vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
         Vector3d vecRev = new Vector3d(vec);
         vecRev.Reverse();
-        greenLines20[i++] = new Line(pt3A, vec);
-        //args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt3B, vecRev);
-        //args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt4A, vec);
-        //args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt4B, vecRev);
-        //args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+        greenLines20.Add(new Line(pt3A, vec));
+        greenLines20.Add(new Line(pt3B, vecRev));
+        greenLines20.Add(new Line(pt4A, vec));
+        greenLines20.Add(new Line(pt4B, vecRev));
       }
       else
       {
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
       }
       if (end.Z == true)
       {
@@ -310,16 +290,15 @@ namespace GsaGH.Helpers.Graphics
           pt = crv.PointAtLength(len - 0.05);
         }
 
-        Plane pln = new Plane();
-        crv.PerpendicularFrameAt(0.02, out pln);
+        crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angle_radian, pln.Normal);
         Vector3d vec1 = new Vector3d(pln.YAxis);
         vec1.Unitize();
         vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
         Vector3d vec2 = new Vector3d(vec1);
         vec2.Reverse();
-        Transform xf1 = Rhino.Geometry.Transform.Translation(vec1);
-        Transform xf2 = Rhino.Geometry.Transform.Translation(vec2);
+        Transform xf1 = Transform.Translation(vec1);
+        Transform xf2 = Transform.Translation(vec2);
         Point3d pt1 = new Point3d(pt);
         pt1.Transform(xf1);
         Point3d pt2 = new Point3d(pt);
@@ -329,8 +308,8 @@ namespace GsaGH.Helpers.Graphics
         vec3 = new Vector3d(vec3.X * 0.025 * scale, vec3.Y * 0.025 * scale, vec3.Z * 0.025 * scale);
         Vector3d vec4 = new Vector3d(vec3);
         vec4.Reverse();
-        Transform xf3 = Rhino.Geometry.Transform.Translation(vec3);
-        Transform xf4 = Rhino.Geometry.Transform.Translation(vec4);
+        Transform xf3 = Transform.Translation(vec3);
+        Transform xf4 = Transform.Translation(vec4);
         Point3d pt3A = new Point3d(pt1);
         pt3A.Transform(xf3);
         Point3d pt3B = new Point3d(pt2);
@@ -345,25 +324,20 @@ namespace GsaGH.Helpers.Graphics
         vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
         Vector3d vecRev = new Vector3d(vec);
         vecRev.Reverse();
-        greenLines20[i++] = new Line(pt3A, vec);
-        //args.Pipeline.DrawLine(ln1A, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt3B, vecRev);
-        //args.Pipeline.DrawLine(ln1B, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt4A, vec);
-        //args.Pipeline.DrawLine(ln2A, UI.Colour.Support);
-        greenLines20[i++] = new Line(pt4B, vecRev);
-        //args.Pipeline.DrawLine(ln2B, UI.Colour.Support);
+        greenLines20.Add(new Line(pt3A, vec));
+        greenLines20.Add(new Line(pt3B, vecRev));
+        greenLines20.Add(new Line(pt4A, vec));
+        greenLines20.Add(new Line(pt4B, vecRev));
       }
       else
       {
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
-        greenLines20[i++] = Line.Unset;
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
+        greenLines20.Add(Line.Unset);
       }
       #endregion
       #region rotation start
-      i = 0;
       if (start.XX == true)
       {
         Point3d pt;
@@ -376,18 +350,15 @@ namespace GsaGH.Helpers.Graphics
         else
           pt = crv.PointAtLength(0.05);
 
-        Plane pln = new Plane();
-        crv.PerpendicularFrameAt(0.02, out pln);
+        crv.PerpendicularFrameAt(0.02, out Plane pln);
         Vector3d vec = new Vector3d(pln.Normal);
         vec.Unitize();
         vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
-        redLines10[i++] = new Line(pt, vec);
-        //args.Pipeline.DrawLine(ln1, UI.Colour.Release, 3);
+        redLines10.Add(new Line(pt, vec));
       }
       else
-      {
-        redLines10[i++] = Line.Unset;
-      }
+        redLines10.Add(Line.Unset);
+      
       if (start.YY == true)
       {
         Point3d pt;
@@ -400,16 +371,15 @@ namespace GsaGH.Helpers.Graphics
         else
           pt = crv.PointAtLength(0.05);
 
-        Plane pln = new Plane();
-        crv.PerpendicularFrameAt(0.02, out pln);
+        crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angle_radian, pln.Normal);
         Vector3d vec1 = new Vector3d(pln.XAxis);
         vec1.Unitize();
         vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
         Vector3d vec2 = new Vector3d(vec1);
         vec2.Reverse();
-        Transform xf1 = Rhino.Geometry.Transform.Translation(vec1);
-        Transform xf2 = Rhino.Geometry.Transform.Translation(vec2);
+        Transform xf1 = Transform.Translation(vec1);
+        Transform xf2 = Transform.Translation(vec2);
         Point3d pt1 = new Point3d(pt);
         pt1.Transform(xf1);
         Point3d pt2 = new Point3d(pt);
@@ -420,16 +390,15 @@ namespace GsaGH.Helpers.Graphics
         vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
         Vector3d vecRev = new Vector3d(vec);
         vecRev.Reverse();
-        redLines10[i++] = new Line(pt1, vec);
-        //args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
-        redLines10[i++] = new Line(pt2, vecRev);
-        //args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+        redLines10.Add(new Line(pt1, vec));
+        redLines10.Add(new Line(pt2, vecRev));
       }
       else
       {
-        redLines10[i++] = Line.Unset;
-        redLines10[i++] = Line.Unset;
+        redLines10.Add(Line.Unset);
+        redLines10.Add(Line.Unset);
       }
+
       if (start.ZZ == true)
       {
         Point3d pt;
@@ -442,16 +411,15 @@ namespace GsaGH.Helpers.Graphics
         else
           pt = crv.PointAtLength(0.05);
 
-        Plane pln = new Plane();
-        crv.PerpendicularFrameAt(0.02, out pln);
+        crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angle_radian, pln.Normal);
         Vector3d vec1 = new Vector3d(pln.YAxis);
         vec1.Unitize();
         vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
         Vector3d vec2 = new Vector3d(vec1);
         vec2.Reverse();
-        Transform xf1 = Rhino.Geometry.Transform.Translation(vec1);
-        Transform xf2 = Rhino.Geometry.Transform.Translation(vec2);
+        Transform xf1 = Transform.Translation(vec1);
+        Transform xf2 = Transform.Translation(vec2);
         Point3d pt1 = new Point3d(pt);
         pt1.Transform(xf1);
         Point3d pt2 = new Point3d(pt);
@@ -462,15 +430,13 @@ namespace GsaGH.Helpers.Graphics
         vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
         Vector3d vecRev = new Vector3d(vec);
         vecRev.Reverse();
-        redLines10[i++] = new Line(pt1, vec);
-        //args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
-        redLines10[i++] = new Line(pt2, vecRev);
-        //args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+        redLines10.Add(new Line(pt1, vec));
+        redLines10.Add(new Line(pt2, vecRev));
       }
       else
       {
-        redLines10[i++] = Line.Unset;
-        redLines10[i++] = Line.Unset;
+        redLines10.Add(Line.Unset);
+        redLines10.Add(Line.Unset);
       }
       #endregion
       #region rotation end
@@ -489,19 +455,16 @@ namespace GsaGH.Helpers.Graphics
           pt = crv.PointAtLength(len - 0.05);
         }
 
-        Plane pln = new Plane();
-        crv.PerpendicularFrameAt(0.02, out pln);
+        crv.PerpendicularFrameAt(0.02, out Plane pln);
         Vector3d vec = new Vector3d(pln.Normal);
         vec.Unitize();
         vec.Reverse();
         vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
-        redLines10[i++] = new Line(pt, vec);
-        //args.Pipeline.DrawLine(ln1, UI.Colour.Release, 3);
+        redLines10.Add(new Line(pt, vec));
       }
       else
-      {
-        redLines10[i++] = Line.Unset;
-      }
+        redLines10.Add(Line.Unset);
+
       if (end.YY == true)
       {
         Point3d pt;
@@ -517,16 +480,15 @@ namespace GsaGH.Helpers.Graphics
           pt = crv.PointAtLength(len - 0.05);
         }
 
-        Plane pln = new Plane();
-        crv.PerpendicularFrameAt(0.02, out pln);
+        crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angle_radian, pln.Normal);
         Vector3d vec1 = new Vector3d(pln.XAxis);
         vec1.Unitize();
         vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
         Vector3d vec2 = new Vector3d(vec1);
         vec2.Reverse();
-        Transform xf1 = Rhino.Geometry.Transform.Translation(vec1);
-        Transform xf2 = Rhino.Geometry.Transform.Translation(vec2);
+        Transform xf1 = Transform.Translation(vec1);
+        Transform xf2 = Transform.Translation(vec2);
         Point3d pt1 = new Point3d(pt);
         pt1.Transform(xf1);
         Point3d pt2 = new Point3d(pt);
@@ -537,16 +499,15 @@ namespace GsaGH.Helpers.Graphics
         vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
         Vector3d vecRev = new Vector3d(vec);
         vecRev.Reverse();
-        redLines10[i++] = new Line(pt1, vec);
-        //args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
-        redLines10[i++] = new Line(pt2, vecRev);
-        //args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+        redLines10.Add(new Line(pt1, vec));
+        redLines10.Add(new Line(pt2, vecRev));
       }
       else
       {
-        redLines10[i++] = Line.Unset;
-        redLines10[i++] = Line.Unset;
+        redLines10.Add(Line.Unset);
+        redLines10.Add(Line.Unset);
       }
+
       if (end.ZZ == true)
       {
         Point3d pt;
@@ -562,16 +523,15 @@ namespace GsaGH.Helpers.Graphics
           pt = crv.PointAtLength(len - 0.05);
         }
 
-        Plane pln = new Plane();
-        crv.PerpendicularFrameAt(0.02, out pln);
+        crv.PerpendicularFrameAt(0.02, out Plane pln);
         pln.Rotate(angle_radian, pln.Normal);
         Vector3d vec1 = new Vector3d(pln.YAxis);
         vec1.Unitize();
         vec1 = new Vector3d(vec1.X * 0.05 * scale, vec1.Y * 0.05 * scale, vec1.Z * 0.05 * scale);
         Vector3d vec2 = new Vector3d(vec1);
         vec2.Reverse();
-        Transform xf1 = Rhino.Geometry.Transform.Translation(vec1);
-        Transform xf2 = Rhino.Geometry.Transform.Translation(vec2);
+        Transform xf1 = Transform.Translation(vec1);
+        Transform xf2 = Transform.Translation(vec2);
         Point3d pt1 = new Point3d(pt);
         pt1.Transform(xf1);
         Point3d pt2 = new Point3d(pt);
@@ -582,17 +542,16 @@ namespace GsaGH.Helpers.Graphics
         vec = new Vector3d(vec.X * 0.15 * scale, vec.Y * 0.15 * scale, vec.Z * 0.15 * scale);
         Vector3d vecRev = new Vector3d(vec);
         vecRev.Reverse();
-        redLines10[i++] = new Line(pt1, vec);
-        //args.Pipeline.DrawLine(ln1A, UI.Colour.Release);
-        redLines10[i++] = new Line(pt2, vecRev);
-        //args.Pipeline.DrawLine(ln1B, UI.Colour.Release);
+        redLines10.Add(new Line(pt1, vec));
+        redLines10.Add(new Line(pt2, vecRev));
       }
       else
       {
-        redLines10[i++] = Line.Unset;
-        redLines10[i++] = Line.Unset;
+        redLines10.Add(Line.Unset);
+        redLines10.Add(Line.Unset);
       }
       #endregion
+      return new Tuple<List<Line>, List<Line>>(greenLines20, redLines10);
     }
 
     public static void PreviewRestraint(GsaBool6 restraint, Plane localAxis, Point3d pt, ref Brep support, ref Text3d text)

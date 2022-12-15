@@ -287,7 +287,7 @@ namespace GsaGH.Components
 
         try { DA.SetData(14, elem.ParentMember); } catch (Exception) { }
         DataTree<int> topo = new DataTree<int>();
-        topo.AddRange(elem.API_Element.Topology, new GH_Path(elem.Id));
+        topo.AddRange(elem.ApiElement.Topology, new GH_Path(elem.Id));
         DA.SetDataTree(15, topo);
       }
     }

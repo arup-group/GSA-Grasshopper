@@ -667,15 +667,9 @@ namespace GsaGH.Components
         lastInputWasSecant = false;
 
       if (isPerimeter)
-      {
         Params.RegisterInputParam(new Param_Plane());
-        lastInputWasPerimeter = true;
-      }
-      else
-        lastInputWasPerimeter = false;
     }
     private bool lastInputWasSecant;
-    private bool lastInputWasPerimeter;
     private int _numberOfInputs;
     // temporary 
     //private Type typ = typeof(IRectangleProfile);
@@ -905,8 +899,6 @@ namespace GsaGH.Components
     int _catalogueIndex = -1; //-1 is all
     int _typeIndex = -1;
     // displayed selections
-    string typeName = "All";
-    string sectionName = "All";
     // list of sections as outcome from selections
     string profileString = "HE HE200.B";
     string _search = "";

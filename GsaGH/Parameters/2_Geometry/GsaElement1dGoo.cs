@@ -16,8 +16,13 @@ namespace GsaGH.Parameters
     public static string Description => "GSA 1D Element";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaElement1dGoo(GsaElement1d item) : base(item)
+    public GsaElement1dGoo(GsaElement1d item) : base(item) { }
+    internal GsaElement1dGoo(GsaElement1d item, bool duplicate) : base(null)
     {
+      if (duplicate)
+        this.Value = item.Duplicate();
+      else
+        this.Value = item;
     }
 
     public override IGH_GeometricGoo Duplicate() => new GsaElement1dGoo(this.Value);
@@ -129,7 +134,7 @@ namespace GsaGH.Parameters
         if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedLine(Value.previewPointStart, Value.previewPointEnd, Helpers.Graphics.Colours.Dummy1D);
+            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, Helpers.Graphics.Colours.Dummy1D);
           else
           {
             if ((System.Drawing.Color)Value.Colour != System.Drawing.Color.FromArgb(0, 0, 0))
@@ -146,7 +151,7 @@ namespace GsaGH.Parameters
         else
         {
           if (Value.IsDummy)
-            args.Pipeline.DrawDottedLine(Value.previewPointStart, Value.previewPointEnd, Helpers.Graphics.Colours.Element1dSelected);
+            args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd, Helpers.Graphics.Colours.Element1dSelected);
           else
           {
             args.Pipeline.DrawCurve(Value.Line, Helpers.Graphics.Colours.Element1dSelected, 2);
@@ -158,11 +163,11 @@ namespace GsaGH.Parameters
       //Draw releases
       if (!Value.IsDummy)
       {
-        if (Value.previewGreenLines != null)
+        if (Value.PreviewGreenLines != null)
         {
-          foreach (Line ln1 in Value.previewGreenLines)
+          foreach (Line ln1 in Value.PreviewGreenLines)
             args.Pipeline.DrawLine(ln1, Helpers.Graphics.Colours.Support);
-          foreach (Line ln2 in Value.previewRedLines)
+          foreach (Line ln2 in Value.PreviewRedLines)
             args.Pipeline.DrawLine(ln2, Helpers.Graphics.Colours.Release);
         }
       }
@@ -170,15 +175,8 @@ namespace GsaGH.Parameters
     #endregion
 
     #region transformation methods
-    public override IGH_GeometricGoo Transform(Transform xform)
-    {
-      return new GsaElement1dGoo(Value.Transform(xform));
-    }
-
-    public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
-    {
-      return new GsaElement1dGoo(Value.Morph(xmorph));
-    }
+    public override IGH_GeometricGoo Transform(Transform xform) => new GsaElement1dGoo(Value.Transform(xform));
+    public override IGH_GeometricGoo Morph(SpaceMorph xmorph) => new GsaElement1dGoo(Value.Morph(xmorph));
     #endregion
   }
 }

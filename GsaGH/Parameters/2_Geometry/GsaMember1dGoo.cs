@@ -20,10 +20,15 @@ namespace GsaGH.Parameters
     public static string Description => "GSA 1D Member";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     
-    public GsaMember1dGoo(GsaMember1d item) : base(item)
+    public GsaMember1dGoo(GsaMember1d item) : base(item) { }
+    internal GsaMember1dGoo(GsaMember1d item, bool duplicate) : base(null)
     {
+      if (duplicate)
+        this.Value = item.Duplicate();
+      else
+        this.Value= item;
     }
-    
+
     public override IGH_GeometricGoo Duplicate() => new GsaMember1dGoo(this.Value);
     public override GeometryBase GetGeometry() => this.Value.PolyCurve;
 
@@ -216,11 +221,11 @@ namespace GsaGH.Parameters
       //Draw releases
       if (!Value.IsDummy)
       {
-        if (Value.previewGreenLines != null)
+        if (Value.PreviewGreenLines != null)
         {
-          foreach (Line ln1 in Value.previewGreenLines)
+          foreach (Line ln1 in Value.PreviewGreenLines)
             args.Pipeline.DrawLine(ln1, Helpers.Graphics.Colours.Support);
-          foreach (Line ln2 in Value.previewRedLines)
+          foreach (Line ln2 in Value.PreviewRedLines)
             args.Pipeline.DrawLine(ln2, Helpers.Graphics.Colours.Release);
         }
       }

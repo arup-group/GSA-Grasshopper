@@ -9,10 +9,7 @@ using GsaGH.Parameters;
 using GsaGH.Helpers.GH;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
-using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
@@ -205,7 +202,6 @@ namespace GsaGH.Components
           }
         }
 
-        AnalysisCaseResult analysisCaseResult;
         CombinationCaseResult combinationCaseResult;
         IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeResult;
         if (ResultType == GsaResult.ResultType.AnalysisCase)

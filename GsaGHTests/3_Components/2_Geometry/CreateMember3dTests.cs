@@ -39,7 +39,7 @@ namespace GsaGHTests.Components.Geometry
 
       // Assert
       GsaMember3dGoo output = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(MatType.CONCRETE, output.Value.Property.Material.MaterialType);
+      Assert.Equal(MatType.CONCRETE, output.Value.Prop3d.Material.MaterialType);
       Assert.Equal(0.5, output.Value.MeshSize);
     }
   }

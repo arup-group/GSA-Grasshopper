@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using OasysGH;
 using OasysGH.Helpers;
+using System.Runtime.InteropServices;
 
 namespace GsaGH
 {
@@ -26,14 +27,23 @@ namespace GsaGH
       // ### Set system environment variables to allow user rights to read below dlls ###
       const string name = "PATH";
       string pathvar = System.Environment.GetEnvironmentVariable(name);
-      var value = pathvar + ";" + InstallPath;
+      var value = InstallPath + ";" + pathvar;
       var target = EnvironmentVariableTarget.Process;
       System.Environment.SetEnvironmentVariable(name, value, target);
 
       // ### Reference GSA API and SQLite dlls ###
-      // set folder to latest GSA version.
+      // check if GSA is installed
+      if (!File.Exists(InstallPath + "\\GsaAPI.dll"))
+      {
+        Exception exception = new Exception("GsaGH requires GSA to be installed in " + InstallPath + ". Unable to find GsaAPI.dll. It looks like you haven't got GSA installed, or it may be installed in an unknown path. Please install or reinstall GSA in " + InstallPath + ", restart Rhino and load Grasshopper again.");
+        GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA: GsaAPI.dll loading", exception);
+        Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
+        PostHog.PluginLoaded(PluginInfo.Instance, exception.Message);
+        return GH_LoadingInstruction.Abort;
+      }
       try
       {
+        // Try load GSA
         Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
 
         FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
@@ -169,6 +179,8 @@ namespace GsaGH
       PluginPath = Path.GetDirectoryName(path);
       return true;
     }
+
+
   }
 
   internal sealed class PluginInfo
@@ -186,6 +198,76 @@ namespace GsaGH
 
     private PluginInfo() { }
   }
+
+
+  public static class libiomp5mdCheck
+  {
+    private static bool _loaded = false;
+    private static bool _canAnalyse = false;
+    internal static string loadedFromPath { get; private set; }
+    public static bool CanAnalyse()
+    {
+      if (!_loaded || !_canAnalyse)
+      {
+        ProcessModuleCollection dlls = Process.GetCurrentProcess().Modules;
+        foreach (ProcessModule module in dlls)
+        {
+          if (module.ModuleName == "libiomp5md.dll")
+          {
+            _loaded = true;
+            string gsas_libiomp5md_version = FileVersionInfo.GetVersionInfo(AddReferencePriority.InstallPath + "\\libiomp5md.dll").FileVersion;
+            if (FileVersionInfo.GetVersionInfo(module.FileName).FileVersion == gsas_libiomp5md_version)
+              _canAnalyse = true;
+            else
+            {
+              _canAnalyse = false;
+              loadedFromPath = module.FileName;
+            }
+            break;
+          }
+        }
+      }
+      if (!_loaded)
+        return true; // GsaAPI.dll will load the correct verison
+      return _canAnalyse;
+    }
+
+    internal static Version GetFileVersionCe(string fileName)
+    {
+      int handle = 0;
+      int length = GetFileVersionInfoSize(fileName, ref handle);
+      Version v = null;
+      if (length > 0)
+      {
+        IntPtr buffer = System.Runtime.InteropServices.Marshal.AllocHGlobal(length);
+        if (GetFileVersionInfo(fileName, handle, length, buffer))
+        {
+          IntPtr fixedbuffer = IntPtr.Zero;
+          int fixedlen = 0;
+          if (VerQueryValue(buffer, "\\", ref fixedbuffer, ref fixedlen))
+          {
+            byte[] fixedversioninfo = new byte[fixedlen];
+            System.Runtime.InteropServices.Marshal.Copy(fixedbuffer, fixedversioninfo, 0, fixedlen);
+            v = new Version(
+                BitConverter.ToInt16(fixedversioninfo, 10),
+                BitConverter.ToInt16(fixedversioninfo, 8),
+                BitConverter.ToInt16(fixedversioninfo, 14),
+                BitConverter.ToInt16(fixedversioninfo, 12));
+          }
+        }
+        Marshal.FreeHGlobal(buffer);
+      }
+      return v;
+    }
+
+    [DllImport("coredll", EntryPoint = "GetFileVersionInfo", SetLastError = true)]
+    private static extern bool GetFileVersionInfo(string filename, int handle, int len, IntPtr buffer);
+    [DllImport("coredll", EntryPoint = "GetFileVersionInfoSize", SetLastError = true)]
+    private static extern int GetFileVersionInfoSize(string filename, ref int handle);
+    [DllImport("coredll", EntryPoint = "VerQueryValue", SetLastError = true)]
+    private static extern bool VerQueryValue(IntPtr buffer, string subblock, ref IntPtr blockbuffer, ref int len);
+  }
+
 
   public class GsaGHInfo : GH_AssemblyInfo
   {

@@ -184,84 +184,18 @@ namespace GsaGH.Components
       this.UpdateMessage();
 
       // extract nodes from model
-      ConcurrentBag<GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()), LengthUnit);
+      ConcurrentBag<GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodes(gsa.Nodes(), this.LengthUnit, null, false);
 
-      ConcurrentDictionary<int, Element> elementDict = new ConcurrentDictionary<int, Element>(gsa.Elements());
-
+      
       // populate local axes dictionary
-      ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      ReadOnlyDictionary<int, Element> elementDict = gsa.Elements();
+      Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
       foreach (int id in elementDict.Keys)
-        elementLocalAxesDict.TryAdd(id, gsa.ElementDirectionCosine(id));
+        elementLocalAxesDict.Add(id, gsa.ElementDirectionCosine(id));
 
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Helpers.Import.Elements.GetElements(
-              elementDict,
-              new ConcurrentDictionary<int, Node>(gsa.Nodes()),
-              new ConcurrentDictionary<int, Section>(gsa.Sections()),
-              new ConcurrentDictionary<int, Prop2D>(gsa.Prop2Ds()),
-              new ConcurrentDictionary<int, Prop3D>(gsa.Prop3Ds()),
-              new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials()),
-              new ConcurrentDictionary<int, SectionModifier>(gsa.SectionModifiers()),
-              elementLocalAxesDict,
-              LengthUnit);
-
-      // post process materials (as they currently have a bug when running parallel!)
-
-      ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials());
-
-      if (elementTuple.Item1 != null)
-      {
-        foreach (GsaElement1dGoo element in elementTuple.Item1)
-        {
-          if (element.Value.Section != null && element.Value.Section.API_Section != null)
-          {
-            if (element.Value.Section.API_Section.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Section.API_Section.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              element.Value.Section.Material = new GsaMaterial(element.Value.Section, apimaterial);
-            }
-            else
-              element.Value.Section.Material = new GsaMaterial(element.Value.Section);
-          }
-        }
-      }
-      if (elementTuple.Item2 != null)
-      {
-        foreach (GsaElement2dGoo element in elementTuple.Item2)
-        {
-          if (element.Value.Properties != null && element.Value.Properties[0].API_Prop2d != null)
-          {
-            if (element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              foreach (GsaProp2d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop, apimaterial);
-            }
-            else
-              foreach (GsaProp2d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop);
-          }
-        }
-      }
-      if (elementTuple.Item3 != null)
-      {
-        foreach (GsaElement3dGoo element in elementTuple.Item3)
-        {
-          if (element.Value.Properties != null && element.Value.Properties[0].API_Prop3d != null)
-          {
-            if (element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              foreach (GsaProp3d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop, apimaterial);
-            }
-            else
-              foreach (GsaProp3d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop);
-          }
-        }
-      }
+          = Helpers.Import.Elements.GetElements(elementDict, gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(), gsa.SectionModifiers(), elementLocalAxesDict, this.LengthUnit, false);
 
       // expose internal model if anyone wants to use it
       GsaModel outModel = new GsaModel();
@@ -272,7 +206,7 @@ namespace GsaGH.Components
       DA.SetDataList(0, nodes.OrderBy(item => item.Value.Id));
       DA.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.Id));
       DA.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.Ids.First()));
-      DA.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.IDs.First()));
+      DA.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.Ids.First()));
       DA.SetData(4, new GsaModelGoo(outModel));
 
       // custom display settings for element2d mesh

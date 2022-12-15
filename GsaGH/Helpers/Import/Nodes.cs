@@ -5,6 +5,7 @@ using GsaGH.Parameters;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using OasysUnits;
+using System.Collections.ObjectModel;
 
 namespace GsaGH.Helpers.Import
 {
@@ -13,7 +14,7 @@ namespace GsaGH.Helpers.Import
   /// </summary>
   internal class Nodes
   {
-    internal static GsaNode GetNode(Node node, LengthUnit unit, int ID, ConcurrentDictionary<int, Axis> axDict = null)
+    internal static GsaNode GetNode(Node node, LengthUnit modelUnit, int ID, ReadOnlyDictionary<int, Axis> axDict = null)
     {
       Plane local = new Plane();
       // add local axis if node has Axis property
@@ -22,7 +23,7 @@ namespace GsaGH.Helpers.Import
         if (node.AxisProperty > 0)
         {
           axDict.TryGetValue(node.AxisProperty, out Axis axis);
-          local = AxisToPlane(axis, unit);
+          local = AxisToPlane(axis, modelUnit);
         }
         else
         {
@@ -55,7 +56,7 @@ namespace GsaGH.Helpers.Import
       }
 
       // create new node with basic Position and ID values
-      return new GsaNode(node, ID, unit, local);
+      return new GsaNode(node, ID, modelUnit, local);
     }
 
 
@@ -67,19 +68,19 @@ namespace GsaGH.Helpers.Import
     /// <param name="nDict">Dictionary of GSA Nodes pre-filtered for nodes to import</param>
     /// <param name="model">GSA Model, only used in case node refers to a local axis</param>
     /// <returns></returns>
-    internal static ConcurrentBag<GsaNodeGoo> GetNodes(ConcurrentDictionary<int, Node> nDict, LengthUnit unit, ConcurrentDictionary<int, Axis> axDict = null)
+    internal static ConcurrentBag<GsaNodeGoo> GetNodes(ReadOnlyDictionary<int, Node> nDict, LengthUnit unit, ReadOnlyDictionary<int, Axis> axDict = null, bool duplicateApiObjects = false)
     {
       ConcurrentBag<GsaNodeGoo> outNodes = new ConcurrentBag<GsaNodeGoo>();
       Parallel.ForEach(nDict, node =>
       {
-        outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
+        outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict), duplicateApiObjects));
       });
       return outNodes;
 
       // use linq parallel
       //return nDict.AsParallel().Select(node => new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
     }
-    internal static ConcurrentDictionary<int, GsaNodeGoo> GetNodeDictionary(ConcurrentDictionary<int, Node> nDict, LengthUnit unit, ConcurrentDictionary<int, Axis> axDict = null)
+    internal static ConcurrentDictionary<int, GsaNodeGoo> GetNodeDictionary(ReadOnlyDictionary<int, Node> nDict, LengthUnit unit, ReadOnlyDictionary<int, Axis> axDict = null)
     {
       ConcurrentDictionary<int, GsaNodeGoo> outNodes = new ConcurrentDictionary<int, GsaNodeGoo>();
       Parallel.ForEach(nDict, node =>

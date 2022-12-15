@@ -17,8 +17,13 @@ namespace GsaGH.Parameters
     public static string Description => "GSA Node";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaNodeGoo(GsaNode item) : base(item)
+    public GsaNodeGoo(GsaNode item) : base(item) { }
+    internal GsaNodeGoo(GsaNode item, bool duplicate) : base(null)
     {
+      if (duplicate)
+        this.Value = item.Duplicate();
+      else
+        this.Value = item;
     }
 
     public override IGH_GeometricGoo Duplicate() => new GsaNodeGoo(this.Value);

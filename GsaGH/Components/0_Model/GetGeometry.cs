@@ -20,6 +20,7 @@ using OasysUnits.Serialization.JsonNet;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using System.Collections.ObjectModel;
+using Newtonsoft.Json.Linq;
 
 namespace GsaGH.Components
 {
@@ -93,18 +94,18 @@ namespace GsaGH.Components
     }
 
     SolveResults Compute(
-        ConcurrentDictionary<int, Node> allnDict,
-        ConcurrentDictionary<int, Axis> axDict,
-        ConcurrentDictionary<int, Node> nDict,
-        ConcurrentDictionary<int, Element> eDict,
-        ConcurrentDictionary<int, Member> mDict,
-        ConcurrentDictionary<int, Section> sDict,
-        ConcurrentDictionary<int, Prop2D> pDict,
-        ConcurrentDictionary<int, Prop3D> p3Dict,
-        ConcurrentDictionary<int, AnalysisMaterial> amDict,
-        ConcurrentDictionary<int, SectionModifier> modDict,
-        ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict,
-        ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict
+        ReadOnlyDictionary<int, Node> allnDict,
+        ReadOnlyDictionary<int, Axis> axDict,
+        ReadOnlyDictionary<int, Node> nDict,
+        ReadOnlyDictionary<int, Element> eDict,
+        ReadOnlyDictionary<int, Member> mDict,
+        ReadOnlyDictionary<int, Section> sDict,
+        ReadOnlyDictionary<int, SectionModifier> modDict,
+        ReadOnlyDictionary<int, Prop2D> pDict,
+        ReadOnlyDictionary<int, Prop3D> p3Dict,
+        ReadOnlyDictionary<int, AnalysisMaterial> matDict,
+        Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict,
+        Dictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict
         )
     {
       SolveResults results = new SolveResults();
@@ -117,15 +118,15 @@ namespace GsaGH.Components
           if (i == 0)
           {
             // create nodes
-            results.Nodes = Helpers.Import.Nodes.GetNodes(nDict, LengthUnit, axDict);
-            results.displaySupports = new ConcurrentBag<GsaNodeGoo>(results.Nodes.AsParallel().Where(n => n.Value.IsSupport));
+            results.Nodes = Helpers.Import.Nodes.GetNodes(nDict, this.LengthUnit, axDict, false);
+            results.displaySupports = new ConcurrentBag<GsaNodeGoo>(results.Nodes.Where(n => n.Value.IsSupport));
           }
 
           if (i == 1)
           {
             // create elements
             Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-                = Helpers.Import.Elements.GetElements(eDict, allnDict, sDict, pDict, p3Dict, amDict, modDict, elementLocalAxesDict, LengthUnit);
+          = Helpers.Import.Elements.GetElements(eDict, allnDict, sDict, pDict, p3Dict, matDict, modDict, elementLocalAxesDict, this.LengthUnit, false);
 
             results.Elem1ds = elementTuple.Item1;
             results.Elem2ds = elementTuple.Item2;
@@ -136,7 +137,7 @@ namespace GsaGH.Components
           {
             // create members
             Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-                = Helpers.Import.Members.GetMembers(mDict, allnDict, LengthUnit, sDict, pDict, p3Dict, memberLocalAxesDict, this);
+          = Helpers.Import.Members.GetMembers(mDict, allnDict, sDict, pDict, p3Dict, matDict, modDict, memberLocalAxesDict, this.LengthUnit, false, this);
 
             results.Mem1ds = memberTuple.Item1;
             results.Mem2ds = memberTuple.Item2;
@@ -148,114 +149,12 @@ namespace GsaGH.Components
       {
         AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.InnerException.Message);
       }
-      // post process materials (as they currently have a bug when running parallel!)
-      if (results.Elem1ds != null)
-      {
-        foreach (GsaElement1dGoo element in results.Elem1ds)
-        {
-          if (element.Value.Section != null && element.Value.Section.API_Section != null)
-          {
-            if (element.Value.Section.API_Section.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Section.API_Section.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              element.Value.Section.Material = new GsaMaterial(element.Value.Section, apimaterial);
-            }
-            else
-              element.Value.Section.Material = new GsaMaterial(element.Value.Section);
-          }
-        }
-      }
-      if (results.Elem2ds != null)
-      {
-        foreach (GsaElement2dGoo element in results.Elem2ds)
-        {
-          if (element.Value.Properties != null && element.Value.Properties[0].API_Prop2d != null)
-          {
-            if (element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              foreach (GsaProp2d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop, apimaterial);
-            }
-            else
-              foreach (GsaProp2d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop);
-          }
-        }
-      }
-      if (results.Elem3ds != null)
-      {
-        foreach (GsaElement3dGoo element in results.Elem3ds)
-        {
-          if (element.Value.Properties != null && element.Value.Properties[0].API_Prop3d != null)
-          {
-            if (element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              foreach (GsaProp3d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop, apimaterial);
-            }
-            else
-              foreach (GsaProp3d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop);
-          }
-        }
-      }
-      if (results.Mem1ds != null)
-      {
-        foreach (GsaMember1dGoo element in results.Mem1ds)
-        {
-          if (element.Value.Section != null && element.Value.Section.API_Section != null)
-          {
-            if (element.Value.Section.API_Section.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Section.API_Section.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              element.Value.Section.Material = new GsaMaterial(element.Value.Section, apimaterial);
-            }
-            else
-              element.Value.Section.Material = new GsaMaterial(element.Value.Section);
-          }
-        }
-      }
-      if (results.Mem2ds != null)
-      {
-        foreach (GsaMember2dGoo element in results.Mem2ds)
-        {
-          if (element.Value.Property != null && element.Value.Property.API_Prop2d != null)
-          {
-            if (element.Value.Property.API_Prop2d.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Property.API_Prop2d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              element.Value.Property.Material = new GsaMaterial(element.Value.Property, apimaterial);
-            }
-            else
-              element.Value.Property.Material = new GsaMaterial(element.Value.Property);
-          }
-        }
-      }
-      if (results.Mem3ds != null)
-      {
-        foreach (GsaMember3dGoo element in results.Mem3ds)
-        {
-          if (element.Value.Property != null && element.Value.Property.API_Prop3d != null)
-          {
-            if (element.Value.Property.API_Prop3d.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Property.API_Prop3d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              element.Value.Property.Material = new GsaMaterial(element.Value.Property, apimaterial);
-            }
-            else
-              element.Value.Property.Material = new GsaMaterial(element.Value.Property);
-          }
-        }
-      }
-      this.ClearRuntimeMessages();
       return results;
     }
     
-    ConcurrentDictionary<int, Member> mDict = null;
     protected override void SolveInstance(IGH_DataAccess data)
     {
+      List<int> memberKeys = new List<int>();
       if (InPreSolve)
       {
         // First pass; collect data and construct tasks
@@ -285,28 +184,28 @@ namespace GsaGH.Components
 
           // collect data from model:
           Model model = gsaModel.Model;
-
-          ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
-          ConcurrentDictionary<int, Axis> axDict = new ConcurrentDictionary<int, Axis>(model.Axes());
-          ConcurrentDictionary<int, Node> out_nDict = (nodeList.ToLower() == "all") ? nDict : new ConcurrentDictionary<int, Node>(model.Nodes(nodeList));
-          ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(model.Elements(elemList));
-          mDict = new ConcurrentDictionary<int, Member>(model.Members(memList));
-          ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
-          ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
-          ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
-          ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
-          ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
+          ReadOnlyDictionary<int, Node> nDict = model.Nodes();
+          ReadOnlyDictionary<int, Axis> axDict =model.Axes();
+          ReadOnlyDictionary<int, Node> allNDict = (nodeList.ToLower() == "all") ? nDict : model.Nodes(nodeList);
+          ReadOnlyDictionary<int, Element> eDict = model.Elements(elemList);
+          ReadOnlyDictionary<int, Member> mDict = model.Members(memList);
+          memberKeys = mDict.Keys.ToList();
+          ReadOnlyDictionary<int, Section> sDict = model.Sections();
+          ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
+          ReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
+          ReadOnlyDictionary<int, Prop3D> p3Dict = model.Prop3Ds();
+          ReadOnlyDictionary<int, AnalysisMaterial> amDict = model.AnalysisMaterials();
 
           // populate local axes dictionary
-          ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
-          ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
           foreach (int id in eDict.Keys)
-            elementLocalAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+            elementLocalAxesDict.Add(id, model.ElementDirectionCosine(id));
+          Dictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
           foreach (int id in mDict.Keys)
-            memberLocalAxesDict.TryAdd(id, model.MemberDirectionCosine(id));
+            memberLocalAxesDict.Add(id, model.MemberDirectionCosine(id));
 
-          tsk = Task.Run(() => Compute(nDict, axDict, out_nDict,
-              eDict, mDict, sDict, pDict, p3Dict, amDict, modDict, elementLocalAxesDict, memberLocalAxesDict), CancelToken);
+          tsk = Task.Run(() => Compute(nDict, axDict, allNDict,
+              eDict, mDict, sDict, modDict, pDict, p3Dict, amDict, elementLocalAxesDict, memberLocalAxesDict), CancelToken);
         }
         // Add a null task even if data collection fails. This keeps the
         // list size in sync with the iterations
@@ -345,28 +244,28 @@ namespace GsaGH.Components
           // 2. Compute
           // collect data from model:
           Model model = gsaModel.Model;
-
-          ConcurrentDictionary<int, Node> nDict = new ConcurrentDictionary<int, Node>(model.Nodes());
-          ConcurrentDictionary<int, Axis> axDict = new ConcurrentDictionary<int, Axis>(model.Axes());
-          ConcurrentDictionary<int, Node> out_nDict = (nodeList.ToLower() == "all") ? nDict : new ConcurrentDictionary<int, Node>(model.Nodes(nodeList));
-          ConcurrentDictionary<int, Element> eDict = new ConcurrentDictionary<int, Element>(model.Elements(elemList));
-          mDict = new ConcurrentDictionary<int, Member>(model.Members(memList));
-          ConcurrentDictionary<int, Section> sDict = new ConcurrentDictionary<int, Section>(model.Sections());
-          ConcurrentDictionary<int, Prop2D> pDict = new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds());
-          ConcurrentDictionary<int, Prop3D> p3Dict = new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds());
-          ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials());
-          ConcurrentDictionary<int, SectionModifier> modDict = new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers());
+          ReadOnlyDictionary<int, Node> nDict = model.Nodes();
+          ReadOnlyDictionary<int, Axis> axDict = model.Axes();
+          ReadOnlyDictionary<int, Node> allNDict = (nodeList.ToLower() == "all") ? nDict : model.Nodes(nodeList);
+          ReadOnlyDictionary<int, Element> eDict = model.Elements(elemList);
+          ReadOnlyDictionary<int, Member> mDict = model.Members(memList);
+          memberKeys = mDict.Keys.ToList();
+          ReadOnlyDictionary<int, Section> sDict = model.Sections();
+          ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
+          ReadOnlyDictionary<int, Prop2D> pDict = model.Prop2Ds();
+          ReadOnlyDictionary<int, Prop3D> p3Dict = model.Prop3Ds();
+          ReadOnlyDictionary<int, AnalysisMaterial> amDict = model.AnalysisMaterials();
 
           // populate local axes dictionary
-          ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
-          ConcurrentDictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+          Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
           foreach (int id in eDict.Keys)
-            elementLocalAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
+            elementLocalAxesDict.Add(id, model.ElementDirectionCosine(id));
+          Dictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
           foreach (int id in mDict.Keys)
-            memberLocalAxesDict.TryAdd(id, model.MemberDirectionCosine(id));
+            memberLocalAxesDict.Add(id, model.MemberDirectionCosine(id));
 
-          results = Compute(nDict, axDict, out_nDict,
-          eDict, mDict, sDict, pDict, p3Dict, amDict, modDict, elementLocalAxesDict, memberLocalAxesDict);
+          results = Compute(nDict, axDict, allNDict,
+              eDict, mDict, sDict, modDict, pDict, p3Dict, amDict, elementLocalAxesDict, memberLocalAxesDict);
         }
         else return;
       }
@@ -417,8 +316,8 @@ namespace GsaGH.Components
           {
             try
             {
-              if (elem.Value.API_Elements[0].ParentMember.Member > 0
-                                                && mDict.ContainsKey(elem.Value.API_Elements[0].ParentMember.Member))
+              int parent = elem.Value.API_Elements[0].ParentMember.Member;
+              if (parent > 0 && memberKeys.Contains(parent))
                 element2dsShaded.Add(elem);
               else
                 element2dsNotShaded.Add(elem);
@@ -428,16 +327,16 @@ namespace GsaGH.Components
               element2dsNotShaded.Add(elem);
             }
           });
-          cachedDisplayMeshShaded = new Mesh();
-          cachedDisplayMeshShaded.Append(element2dsShaded.Select(e => e.Value.Mesh));
-          cachedDisplayMeshNotShaded = new Mesh();
-          cachedDisplayMeshNotShaded.Append(element2dsNotShaded.Select(e => e.Value.Mesh));
+          cachedDisplayMeshWithParent = new Mesh();
+          cachedDisplayMeshWithParent.Append(element2dsShaded.Select(e => e.Value.Mesh));
+          cachedDisplayMeshWithoutParent = new Mesh();
+          cachedDisplayMeshWithoutParent.Append(element2dsNotShaded.Select(e => e.Value.Mesh));
         }
         if (results.Elem3ds != null)
         {
 
           if (_mode == FoldMode.List)
-            data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.IDs.First()));
+            data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.Ids.First()));
           else
           {
             DataTree<GsaElement3dGoo> tree = new DataTree<GsaElement3dGoo>();
@@ -452,8 +351,8 @@ namespace GsaGH.Components
           {
             try
             {
-              if (elem.Value.API_Elements[0].ParentMember.Member > 0
-                        && mDict.ContainsKey(elem.Value.API_Elements[0].ParentMember.Member))
+              int parent = elem.Value.API_Elements[0].ParentMember.Member;
+              if (parent > 0 && memberKeys.Contains(parent))
                 element3dsShaded.Add(elem);
               else
                 element3dsNotShaded.Add(elem);
@@ -463,10 +362,10 @@ namespace GsaGH.Components
               element3dsNotShaded.Add(elem);
             }
           });
-          cachedDisplayNgonMeshShaded = new Mesh();
-          cachedDisplayNgonMeshShaded.Append(element3dsShaded.Select(e => e.Value.DisplayMesh));
-          cachedDisplayNgonMeshNotShaded = new Mesh();
-          cachedDisplayNgonMeshNotShaded.Append(element3dsNotShaded.Select(e => e.Value.DisplayMesh));
+          cachedDisplayNgonMeshWithParent = new Mesh();
+          cachedDisplayNgonMeshWithParent.Append(element3dsShaded.Select(e => e.Value.DisplayMesh));
+          cachedDisplayNgonMeshWithoutParent = new Mesh();
+          cachedDisplayNgonMeshWithoutParent.Append(element3dsNotShaded.Select(e => e.Value.DisplayMesh));
         }
         if (results.Mem1ds != null)
         {
@@ -518,7 +417,7 @@ namespace GsaGH.Components
           {
             DataTree<GsaMember3dGoo> tree = new DataTree<GsaMember3dGoo>();
             foreach (GsaMember3dGoo element in results.Mem3ds)
-              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Property.Id));
+              tree.Add(element, new Grasshopper.Kernel.Data.GH_Path(element.Value.Prop3d.Id));
             data.SetDataTree(6, tree);
           }
         }
@@ -530,45 +429,63 @@ namespace GsaGH.Components
     BoundingBox BoundingBox;
     ConcurrentBag<GsaElement2dGoo> element2ds;
     ConcurrentBag<GsaElement3dGoo> element3ds;
-    Mesh cachedDisplayMeshShaded;
-    Mesh cachedDisplayMeshNotShaded;
-    Mesh cachedDisplayNgonMeshShaded;
-    Mesh cachedDisplayNgonMeshNotShaded;
+    Mesh cachedDisplayMeshWithParent;
+    Mesh cachedDisplayMeshWithoutParent;
+    Mesh cachedDisplayNgonMeshWithParent;
+    Mesh cachedDisplayNgonMeshWithoutParent;
     ConcurrentBag<GsaNodeGoo> supportNodes;
     public override BoundingBox ClippingBox => this.BoundingBox;
+    public override void DrawViewportMeshes(IGH_PreviewArgs args)
+    {
+      base.DrawViewportMeshes(args);
+      if (this.Attributes.Selected)
+      {
+        if (cachedDisplayMeshWithoutParent != null)
+          args.Display.DrawMeshShaded(cachedDisplayMeshWithoutParent, Helpers.Graphics.Colours.Element2dFace);
+        if (cachedDisplayNgonMeshWithoutParent != null)
+          args.Display.DrawMeshShaded(cachedDisplayNgonMeshWithoutParent, Helpers.Graphics.Colours.Element2dFace);
+      }
+      else
+      {
+        if (cachedDisplayMeshWithoutParent != null)
+          args.Display.DrawMeshShaded(cachedDisplayMeshWithoutParent, Helpers.Graphics.Colours.Element2dFaceSelected);
+        if (cachedDisplayNgonMeshWithoutParent != null)
+          args.Display.DrawMeshShaded(cachedDisplayNgonMeshWithoutParent, Helpers.Graphics.Colours.Element2dFaceSelected);
+      }
+    }
     public override void DrawViewportWires(IGH_PreviewArgs args)
     {
       base.DrawViewportWires(args);
 
-      if (cachedDisplayMeshShaded != null)
+      if (cachedDisplayMeshWithParent != null)
       {
-        args.Display.DrawMeshWires(cachedDisplayMeshShaded, System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
+        args.Display.DrawMeshWires(cachedDisplayMeshWithParent, System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
       }
-      if (cachedDisplayNgonMeshShaded != null)
+      if (cachedDisplayNgonMeshWithParent != null)
       {
-        args.Display.DrawMeshWires(cachedDisplayNgonMeshShaded, System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
+        args.Display.DrawMeshWires(cachedDisplayNgonMeshWithParent, System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
       }
 
-      if (cachedDisplayMeshNotShaded != null)
+      if (cachedDisplayMeshWithoutParent != null)
       {
         if (this.Attributes.Selected)
         {
-          args.Display.DrawMeshWires(cachedDisplayMeshNotShaded, Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
+          args.Display.DrawMeshWires(cachedDisplayMeshWithoutParent, Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
         }
         else
         {
-          args.Display.DrawMeshWires(cachedDisplayMeshNotShaded, Helpers.Graphics.Colours.Element2dEdge, 1);
+          args.Display.DrawMeshWires(cachedDisplayMeshWithoutParent, Helpers.Graphics.Colours.Element2dEdge, 1);
         }
       }
-      if (cachedDisplayNgonMeshNotShaded != null)
+      if (cachedDisplayNgonMeshWithoutParent != null)
       {
         if (this.Attributes.Selected)
         {
-          args.Display.DrawMeshWires(cachedDisplayNgonMeshNotShaded, Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
+          args.Display.DrawMeshWires(cachedDisplayNgonMeshWithoutParent, Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
         }
         else
         {
-          args.Display.DrawMeshWires(cachedDisplayNgonMeshNotShaded, Helpers.Graphics.Colours.Element2dEdge, 1);
+          args.Display.DrawMeshWires(cachedDisplayNgonMeshWithoutParent, Helpers.Graphics.Colours.Element2dEdge, 1);
         }
       }
 
@@ -747,8 +664,6 @@ namespace GsaGH.Components
     public bool AlwaysExpireDownStream;
 
     public Dictionary<int, List<string>> ExistingOutputsSerialized = new Dictionary<int, List<string>>();
-
-    private bool ExpireDownStream = true;
 
     private Dictionary<int, List<bool>> OutputsAreExpired = new Dictionary<int, List<bool>>();
 

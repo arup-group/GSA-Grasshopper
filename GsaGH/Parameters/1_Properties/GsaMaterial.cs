@@ -182,6 +182,7 @@ namespace GsaGH.Parameters
           PoissonsRatio = this.AnalysisMaterial.PoissonsRatio
         };
       }
+      dup._guid = new Guid(this._guid.ToString());
       return dup;
     }
 

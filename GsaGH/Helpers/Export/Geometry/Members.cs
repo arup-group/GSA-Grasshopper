@@ -156,7 +156,7 @@ namespace GsaGH.Helpers.Export
       string topo = string.Join("; ", topos);
       apiMember.Topology = string.Copy(topo);
 
-      apiMember.Property = Prop3ds.ConvertProp3d(member3d.Property, ref apiProp3ds, ref apiMaterials);
+      apiMember.Property = Prop3ds.ConvertProp3d(member3d.Prop3d, ref apiProp3ds, ref apiMaterials);
 
       AddMember(member3d.Id, member3d.Guid, apiMember, ref apiMembers);
     }

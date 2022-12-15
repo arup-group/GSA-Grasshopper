@@ -25,7 +25,7 @@ namespace GsaGH.Helpers.Export
         ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       LineCurve line = element1d.Line;
-      Element apiElement = element1d.GetAPI_ElementClone();
+      Element apiElement = element1d.GetApiElementClone();
 
       List<int> topo = new List<int>
       {
@@ -111,7 +111,7 @@ namespace GsaGH.Helpers.Export
         GsaProp3d prop = (i > element3d.Properties.Count - 1) ? element3d.Properties.Last() : element3d.Properties[i];
         apiMeshElement.Property = Prop3ds.ConvertProp3d(prop, ref apiProp3ds, ref apiMaterials);
 
-        AddElement(element3d.IDs[i], element3d.Guid, apiMeshElement, false, ref apiElements);
+        AddElement(element3d.Ids[i], element3d.Guid, apiMeshElement, false, ref apiElements);
       }
     }
 
