@@ -208,7 +208,7 @@ namespace GsaGH.Components
       double tolerance = 0;
       if (DA.GetData(4, ref tolerance))
       {
-        gs.Tolerance = tolerance;
+        gps.Tolerance = tolerance;
       }
 
       switch (_mode)

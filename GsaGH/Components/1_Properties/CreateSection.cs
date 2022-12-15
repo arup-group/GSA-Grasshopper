@@ -51,7 +51,13 @@ namespace GsaGH.Components
       {
         if (GH_Convert.ToString(gh_profile, out string profile, GH_Conversion.Both))
         {
-          gsaSection = new GsaSection(profile);
+          if (GsaSection.ValidProfile(profile))
+            gsaSection = new GsaSection(profile);
+          else
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid profile syntax: " + profile);
+            return;
+          }
 
           // 3 Material
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();

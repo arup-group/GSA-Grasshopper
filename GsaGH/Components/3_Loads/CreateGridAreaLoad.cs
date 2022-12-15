@@ -180,8 +180,6 @@ namespace GsaGH.Components
             // format accepted by GSA: (0,0) (0,1) (1,2) (3,4) (4,0)(m)
             desc += "(" + temppt.X + "," + temppt.Y + ")";
           }
-          // add units to the end
-          desc += "(" + DefaultUnits.LengthUnitGeometry + ")";
 
           // set polyline in grid line load
           gridareaload.GridAreaLoad.Type = GridAreaPolyLineType.POLYGON;
