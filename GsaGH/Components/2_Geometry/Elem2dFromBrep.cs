@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using GH_IO.Serialization;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Components.GraveyardComp;
@@ -82,11 +84,11 @@ namespace GsaGH.Components
               {
                 GsaNode gsanode = new GsaNode();
                 gh_types[i].CastTo(ref gsanode);
-                nodes.Add(gsanode);
+                nodes.Add(gsanode.Duplicate(true));
               }
               else if (GH_Convert.ToPoint3d(gh_types[i].Value, ref pt, GH_Conversion.Both))
               {
-                pts.Add(pt);
+                pts.Add(new Point3d(pt));
               }
               else
               {
@@ -112,11 +114,11 @@ namespace GsaGH.Components
               {
                 GsaMember1d gsamem1d = new GsaMember1d();
                 gh_types[i].CastTo(ref gsamem1d);
-                mem1ds.Add(gsamem1d);
+                mem1ds.Add(gsamem1d.Duplicate(true));
               }
               else if (GH_Convert.ToCurve(gh_types[i].Value, ref crv, GH_Conversion.Both))
               {
-                crvs.Add(crv);
+                crvs.Add(crv.DuplicateCurve());
               }
               else
               {
@@ -130,10 +132,10 @@ namespace GsaGH.Components
           }
 
           // 4 mesh size
-          Length meshSize = (Length)Input.LengthOrRatio(this, DA, 4, this.LengthUnit);
+          Length meshSize = (Length)Input.LengthOrRatio(this, DA, 4, this.LengthUnit, true);
 
           // build new element2d with brep, crv and pts
-          GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize.As(this.LengthUnit), mem1ds, nodes, this.LengthUnit);
+          GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize.As(this.LengthUnit), mem1ds, nodes, this.LengthUnit, this.Tolerance);
 
           // 3 section
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -169,6 +171,14 @@ namespace GsaGH.Components
 
     #region Custom UI
     private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+    private Length Tolerance = DefaultUnits.Tolerance;
+    private string _toleranceTxt = "";
+
+    protected override void BeforeSolveInstance()
+    {
+      base.BeforeSolveInstance();
+      this.UpdateMessage();
+    }
 
     public override void InitialiseDropdowns()
     {
@@ -203,7 +213,59 @@ namespace GsaGH.Components
     {
       Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
     }
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+    {
+      Menu_AppendSeparator(menu);
 
+      ToolStripTextBox tolerance = new ToolStripTextBox();
+      _toleranceTxt = Tolerance.ToString();
+      tolerance.Text = _toleranceTxt;
+      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
+
+      ToolStripMenuItem toleranceMenu = new ToolStripMenuItem("Set Tolerance", Properties.Resources.Units);
+      toleranceMenu.Enabled = true;
+      toleranceMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+
+      GH_MenuCustomControl menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) =>
+      {
+        this.UpdateMessage();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      };
+      menu.Items.Add(toleranceMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+    private void MaintainText(ToolStripTextBox tolerance)
+    {
+      _toleranceTxt = tolerance.Text;
+      if (Length.TryParse(_toleranceTxt, out Length res))
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
+      else
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 255, 100, 100);
+    }
+    private void UpdateMessage()
+    {
+      if (this._toleranceTxt != "")
+      {
+        try
+        {
+          Length newTolerance = Length.Parse(_toleranceTxt);
+          Tolerance = newTolerance;
+        }
+        catch (Exception e)
+        {
+          MessageBox.Show(e.Message);
+          return;
+        }
+      }
+      this.Message = "Tol: " + Tolerance.ToString();
+      if (Tolerance.Meters < 0.001)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
+      if (Tolerance.Meters > 0.25)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
+    }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       if (reader.ChunkExists("ParameterData"))
