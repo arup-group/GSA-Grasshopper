@@ -11,6 +11,7 @@ using OasysUnits.Units;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using System.Collections.ObjectModel;
+using OasysUnits;
 
 namespace GsaGH.Helpers.GH
 {
@@ -122,7 +123,7 @@ namespace GsaGH.Helpers.GH
       PolyCurve m_crv = null;
       List<string> crv_type = new List<string>();
       List<Point3d> m_topo = new List<Point3d>();
-
+      
       // arc curve
       if (crv.IsArc())
       {
@@ -139,12 +140,15 @@ namespace GsaGH.Helpers.GH
       }
       else
       {
+        if (tolerance < 0)
+          tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry); // use the user set unit
+        if (crv.SpanCount == 1 && crv.Degree > 2)
+        {
+          crv = crv.ToPolyline(tolerance, 2, 0, 0);
+        }
         if (crv.SpanCount > 1) // polyline (or assumed polyline, we will take controlpoints)
         {
           m_crv = new PolyCurve();
-
-          if (tolerance < 0)
-            tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry); // use the user set unit
 
           if (!crv.IsPolyline())
             crv = crv.ToPolyline(tolerance, 2, 0, 0);
@@ -724,7 +728,7 @@ namespace GsaGH.Helpers.GH
       return new Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>>(elems, topoPts, topoInts, faceInts);
     }
 
-    public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, LengthUnit unit, List<GsaMember1d> mem1ds = null, List<GsaNode> nodes = null)
+    public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, LengthUnit unit, Length tolerance, List<GsaMember1d> mem1ds = null, List<GsaNode> nodes = null)
     {
       Brep in_brep = brep.DuplicateBrep();
       in_brep.Faces.ShrinkFaces();
@@ -747,7 +751,7 @@ namespace GsaGH.Helpers.GH
 
       unroller.AddFollowingGeometry(points);
       unroller.AddFollowingGeometry(curves);
-      unroller.RelativeTolerance = DefaultUnits.Tolerance.As(unit);
+      unroller.RelativeTolerance = tolerance.As(unit);
       //unroller.AbsoluteTolerance = double.PositiveInfinity;
       //unroller.ExplodeOutput = false;
 
@@ -762,8 +766,12 @@ namespace GsaGH.Helpers.GH
         throw new Exception(" Unable to unroll surface for re-meshing, the curvature is likely too high! Try with a more non-dramatic curvature.");
       }
 
+      // split inclusion curves
+      Curve[] inclCrvsCurves = new Curve[inclCrvs.Length - mem1ds.Count];
+      Array.Copy(inclCrvs, mem1ds.Count, inclCrvsCurves, 0, inclCrvs.Length - mem1ds.Count);
+
       // create 2d member from flattened geometry
-      GsaMember2d mem = new GsaMember2d(flattened[0], inclCrvs.ToList(), inclPts.ToList());
+      GsaMember2d mem = new GsaMember2d(flattened[0], null, inclPts.ToList());
       mem.MeshSize = meshSize;
 
       // add to temp list for input in assemble function
@@ -779,16 +787,13 @@ namespace GsaGH.Helpers.GH
           mem1ds[i] = mem1d;
         }
       }
-      if (nodes != null)
-      {
-        for (int i = 0; i < nodes.Count; i++)
-        {
-          nodes[i].Point = inclPts[i];
-        }
-      }
+      if (mem1ds == null)
+        mem1ds= new List<GsaMember1d>();
+      for (int i = 0; i < inclCrvsCurves.Length; i++)
+        mem1ds.Add(new GsaMember1d(inclCrvsCurves[i]));
 
       // assemble temp model
-      Model model = Export.AssembleModel.Assemble(null, nodes, null, null, null, mem1ds, mem2ds, null, null, null, null, null, null, null, null, unit, DefaultUnits.Tolerance.Meters, true);
+      Model model = Export.AssembleModel.Assemble(null, null, null, null, null, mem1ds, mem2ds, null, null, null, null, null, null, null, null, unit, tolerance.Meters, true);
 
       ReadOnlyDictionary<int, Element> elementDict = model.Elements();
 
@@ -817,7 +822,7 @@ namespace GsaGH.Helpers.GH
       }
 
       mesh.Faces.ConvertNonPlanarQuadsToTriangles(
-          DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry), Rhino.RhinoMath.DefaultAngleTolerance, 0);
+          tolerance.As(unit), Rhino.RhinoMath.DefaultAngleTolerance, 0);
 
       return mesh;
     }
