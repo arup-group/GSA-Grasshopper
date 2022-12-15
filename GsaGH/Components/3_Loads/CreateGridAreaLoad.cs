@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Grasshopper.GUI;
+using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -17,7 +19,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    public class CreateGridAreaLoad : GH_OasysDropDownComponent
+  public class CreateGridAreaLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("146f1bf8-8d2b-468f-bdb8-0237bee75262");
@@ -129,7 +131,6 @@ namespace GsaGH.Components
       GH_Brep gh_brep = new GH_Brep();
       if (DA.GetData(1, ref gh_brep))
       {
-
         GH_Convert.ToBrep(gh_brep, ref brep, GH_Conversion.Both);
 
         // get edge curves
@@ -149,6 +150,15 @@ namespace GsaGH.Components
           {
             // create nice plane from pts
             pln = Helpers.GH.RhinoConversions.CreateBestFitUnitisedPlaneFromPts(ctrl_pts);
+
+            if (this.Params.Input[2].SourceCount == 0 && this._expansionType == ExpansionType.Use_GPS_Settings)
+            {
+              this._expansionType = ExpansionType.To_1D;
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Input Brep has automatically been converted to a GridPlaneSurface.");
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "The default expansion type is set to be onto 1D Elements.");
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "You can change this by right-clicking the component.");
+              this.UpdateMessage();
+            }
 
             // create grid plane surface from best fit plane
             grdplnsrf = new GsaGridPlaneSurface(pln, true);
@@ -192,6 +202,20 @@ namespace GsaGH.Components
       // now we can set the gridplanesurface:
       if (gridareaload.GridPlaneSurface != null)
       {
+        switch (this._expansionType)
+        {
+          case ExpansionType.To_1D:
+            grdplnsrf.GridSurface.ElementType = GridSurface.Element_Type.ONE_DIMENSIONAL;
+            break;
+          case ExpansionType.To_2D:
+            grdplnsrf.GridSurface.ElementType = GridSurface.Element_Type.TWO_DIMENSIONAL;
+            break;
+
+          case ExpansionType.Use_GPS_Settings:
+          default:
+            break;
+        }
+
         if (gridareaload.GridPlaneSurface.GridSurfaceId == 0)
           gridareaload.GridPlaneSurface = grdplnsrf;
       }
@@ -250,6 +274,19 @@ namespace GsaGH.Components
 
     #region Custom UI
     PressureUnit ForcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
+    private enum ExpansionType
+    {
+      Use_GPS_Settings = 0,
+      To_1D = 1,
+      To_2D = 2
+    }
+    private ExpansionType _expansionType = ExpansionType.Use_GPS_Settings;
+
+    protected override void BeforeSolveInstance()
+    {
+      base.BeforeSolveInstance();
+      this.UpdateMessage();
+    }
 
     public override void InitialiseDropdowns()
     {
@@ -285,6 +322,52 @@ namespace GsaGH.Components
     {
       string unitAbbreviation = Pressure.GetAbbreviation(this.ForcePerAreaUnit);
       Params.Input[7].Name = "Value [" + unitAbbreviation + "]";
+    }
+
+    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
+    {
+      bool noGPS = false;
+      if (this.Params.Input[1].SourceCount > 0 && this.Params.Input[2].SourceCount == 0)
+        noGPS = true;
+      Menu_AppendItem(menu, "Use GridPlaneSurface", SetUseGPS, !noGPS, _expansionType == ExpansionType.Use_GPS_Settings);
+      Menu_AppendItem(menu, "Expand to 1D Elements", SetUse1D, true, _expansionType == ExpansionType.To_1D);
+      Menu_AppendItem(menu, "Expand to 2D Elements", SetUse2D, true, _expansionType == ExpansionType.To_2D);
+    }
+    private void UpdateMessage()
+    {
+      this.Message = "Expansion: " + this._expansionType.ToString().Replace("_", " ");
+    }
+    private void SetUseGPS(object s, EventArgs e)
+    {
+      this._expansionType = ExpansionType.Use_GPS_Settings;
+      this.UpdateMessage();
+      base.UpdateUI();
+    }
+    private void SetUse1D(object s, EventArgs e)
+    {
+      this._expansionType = ExpansionType.To_1D;
+      this.UpdateMessage();
+      base.UpdateUI();
+    }
+    private void SetUse2D(object s, EventArgs e)
+    {
+      this._expansionType = ExpansionType.To_2D;
+      this.UpdateMessage();
+      base.UpdateUI();
+    }
+    #endregion
+
+    #region deserialization
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    {
+      writer.SetString("Mode", this._expansionType.ToString());
+      return base.Write(writer);
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      if (reader.ItemExists("Mode"))
+        this._expansionType = (ExpansionType)Enum.Parse(typeof(ExpansionType), reader.GetString("Mode"));
+      return base.Read(reader);
     }
     #endregion
   }
