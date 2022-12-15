@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export
@@ -136,6 +137,9 @@ namespace GsaGH.Helpers.Export
       if (gridplanesurface.GridPlane.Name == "")
         gridplanesurface.GridPlane.Name = "Grid plane " + gridplaneidcounter;
 
+      // set API elevation converted to [m]
+      gridplanesurface.GridPlane.Elevation = new Length(gridplanesurface.Elevation, modelUnit).Meters;
+
       int gp_ID = gridplanesurface.GridPlaneId;
       // see if grid plane Id has been set by user
       if (gridplanesurface.GridPlaneId > 0)
@@ -211,6 +215,9 @@ namespace GsaGH.Helpers.Export
 
       if (gridplanesurface.GridSurface.Name == "")
         gridplanesurface.GridSurface.Name = "Grid surface " + gridsurfaceidcounter;
+
+      // set API tolerance converted to [m]
+      gridplanesurface.GridSurface.Tolerance = new Length(gridplanesurface.Tolerance, modelUnit).Meters;
 
       // add referenced loads
       if (model != null && gridplanesurface.ReferenceType != ReferenceType.None)
