@@ -334,6 +334,7 @@ namespace GsaGH.Components
       ToolStripTextBox tolerance = new ToolStripTextBox();
       _toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
       tolerance.Text = _toleranceTxt;
+      tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
 
       ToolStripMenuItem toleranceMenu = new ToolStripMenuItem("Set Tolerance", Properties.Resources.Units);
