@@ -116,6 +116,7 @@ namespace GsaGH.Components
         else if (GH_Convert.ToPoint3d(gh_typ.Value, ref refPt, GH_Conversion.Both))
         {
           nodeLoad.RefPoint = refPt;
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Point loading in GsaGH will automatically find the corrosponding node and apply the load to that node by ID. If you save the file and continue working in GSA please note that the point-load relationship will be lost.");
         }
         else if (GH_Convert.ToString(gh_typ.Value, out string nodeList, GH_Conversion.Both))
           nodeLoad.NodeLoad.Nodes = nodeList;

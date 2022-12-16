@@ -94,6 +94,10 @@ namespace GsaGH.Components
           GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
           faceLoad.RefObjectGuid = goo.Value.Guid;
           faceLoad.ReferenceType = ReferenceType.Member;
+          if (_mode != FoldMode.Uniform)
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members are likely not what you are after. Please check the load in GSA.");
+          else
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaProp2dGoo)
         {
