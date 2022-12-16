@@ -132,7 +132,7 @@ namespace GsaGH.Components
           }
 
           // 4 mesh size
-          Length meshSize = (Length)Input.LengthOrRatio(this, DA, 4, this.LengthUnit, true);
+          Length meshSize = (Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true);
 
           // build new element2d with brep, crv and pts
           GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize.As(this.LengthUnit), mem1ds, nodes, this.LengthUnit, this.Tolerance);
