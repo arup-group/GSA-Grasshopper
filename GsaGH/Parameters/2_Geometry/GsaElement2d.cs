@@ -339,12 +339,11 @@ namespace GsaGH.Parameters
 
     public GsaElement2d(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit, Length tolerance, int prop = 0)
     {
-      this._mesh = Helpers.GH.RhinoConversions.ConvertBrepToMesh(brep, curves, points, meshSize, unit, tolerance, mem1ds, nodes);
+      this._mesh = Helpers.GH.RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, null, mem1ds, meshSize, unit, tolerance).Item1;
       Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem2d(this._mesh, prop, true);
       this._elements = convertMesh.Item1;
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;
-
       this._ids = new List<int>(new int[this._mesh.Faces.Count()]);
     }
     #endregion
@@ -404,6 +403,21 @@ namespace GsaGH.Parameters
       xmorph.Morph(xMs);
 
       return dup.UpdateGeometry(xMs);
+    }
+
+    public static Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(Brep brep, List<Point3d> points, List<GsaNode> nodes, List<Curve> curves, List<GsaElement1d> elem1ds, List<GsaMember1d> mem1ds, double meshSize, LengthUnit unit, Length tolerance)
+    {
+      GsaElement2d gsaElement2D = new GsaElement2d();
+      Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> tuple 
+        = Helpers.GH.RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, elem1ds, mem1ds, meshSize, unit, tolerance);
+      gsaElement2D._mesh = tuple.Item1;
+      Tuple<List<Element>, List<Point3d>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem2d(gsaElement2D._mesh, 0, true);
+      gsaElement2D._elements = convertMesh.Item1;
+      gsaElement2D._topo = convertMesh.Item2;
+      gsaElement2D._topoInt = convertMesh.Item3;
+      gsaElement2D._ids = new List<int>(new int[gsaElement2D._mesh.Faces.Count()]);
+
+      return new Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>>(gsaElement2D, tuple.Item2, tuple.Item3);
     }
 
     public override string ToString()

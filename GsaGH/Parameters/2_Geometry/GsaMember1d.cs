@@ -6,6 +6,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.Import;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Collections;
@@ -383,6 +384,13 @@ namespace GsaGH.Parameters
     {
       this.ApiMember = this.GetAPI_MemberClone();
       this._guid = Guid.NewGuid();
+    }
+    
+    internal void UpdateCurveFromTopology()
+    {
+      if (this._crv == null)
+        return;
+      this._crv = Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(this._topo, this._topoType);
     }
 
     private void UpdatePreview()
