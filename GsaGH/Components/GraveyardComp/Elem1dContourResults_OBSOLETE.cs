@@ -154,7 +154,7 @@ namespace GsaGH.Components
             if (_disp == DisplayValue.X)
               res = result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, EnergyResultUnit)[0];
             else
-              res = result.Element1DStrainEnergyDensityValues(elementlist, EnergyResultUnit)[0];
+              res = result.Element1DAverageStrainEnergyDensityValues(elementlist, EnergyResultUnit)[0];
             break;
         }
 
