@@ -155,18 +155,21 @@ namespace GsaGH.Components
           GsaMember1dGoo goo = (GsaMember1dGoo)gh_typ.Value;
           gps.RefObjectGuid = goo.Value.Guid;
           gps.ReferenceType = ReferenceType.Member;
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaMember2dGoo)
         {
           GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
           gps.RefObjectGuid = goo.Value.Guid;
           gps.ReferenceType = ReferenceType.Member;
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaMember3dGoo)
         {
           GsaMember3dGoo goo = (GsaMember3dGoo)gh_typ.Value;
           gps.RefObjectGuid = goo.Value.Guid;
           gps.ReferenceType = ReferenceType.Member;
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaSectionGoo)
         {
