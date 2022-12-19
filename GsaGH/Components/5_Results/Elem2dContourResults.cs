@@ -406,9 +406,14 @@ namespace GsaGH.Components
         for (int i = 0; i < gH_Gradient.GripCount; i++)
         {
           double t = dmin + (dmax - dmin) / ((double)gH_Gradient.GripCount - 1) * (double)i;
-          double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
-          scl = Math.Max(scl, 1);
-          t = scl * Math.Round(t / scl, 3);
+          if (t > 1)
+          {
+            double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
+            scl = Math.Max(scl, 1);
+            t = scl * Math.Round(t / scl, 3);
+          }
+          else
+            t = Math.Round(t, significantDigits);
 
           Color gradientcolour = gH_Gradient.ColourAt(2 * (double)i / ((double)gH_Gradient.GripCount - 1) - 1);
           cs.Add(gradientcolour);
