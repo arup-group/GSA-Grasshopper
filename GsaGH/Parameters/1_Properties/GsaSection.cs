@@ -275,23 +275,17 @@ namespace GsaGH.Parameters
       this._id = id;
     }
 
-    internal GsaSection(ReadOnlyDictionary<int, Section> sDict, int id, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict)
+    internal GsaSection(ReadOnlyDictionary<int, Section> sDict, int id, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id)
     {
-      // API Object
       if (!sDict.ContainsKey(id))
-        throw new Exception("Model does not contain Section ID:" + id);
-      this.Id = id;
+        return;
       this._section = sDict[id];
       // modifier
       if (modDict.ContainsKey(id))
         this._modifier = new GsaSectionModifier(modDict[id]);
       // material
-      if (this._section.MaterialAnalysisProperty != 0)
-      {
-        if (!matDict.ContainsKey(this._section.MaterialAnalysisProperty))
-          throw new Exception("Model does not contain AnalysisMaterial ID:" + this._section.MaterialAnalysisProperty);
+      if (this._section.MaterialAnalysisProperty != 0 && matDict.ContainsKey(this._section.MaterialAnalysisProperty))
         this._material.AnalysisMaterial = matDict[this._section.MaterialAnalysisProperty];
-      }
       this._material = new GsaMaterial(this);
     }
     #endregion

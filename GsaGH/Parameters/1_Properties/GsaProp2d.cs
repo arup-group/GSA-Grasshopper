@@ -9,13 +9,14 @@ using OasysUnits.Units;
 using OasysGH;
 using GsaGH.Helpers.GsaAPI;
 using System.Collections.ObjectModel;
+using Grasshopper.Kernel.Types;
 
 namespace GsaGH.Parameters
 {
-    /// <summary>
-    /// Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop2D"/>
-    /// </summary>
-    public class GsaProp2d
+  /// <summary>
+  /// Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop2D"/>
+  /// </summary>
+  public class GsaProp2d
   {
     #region fields
     private int _id = 0;
@@ -197,25 +198,41 @@ namespace GsaGH.Parameters
       this._id = id;
     }
 
-    internal GsaProp2d(ReadOnlyDictionary<int, Prop2D> pDict, int id, ReadOnlyDictionary<int, AnalysisMaterial> matDict)
+    internal GsaProp2d(ReadOnlyDictionary<int, Prop2D> pDict, int id, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id)
     {
-      // API Object
       if (!pDict.ContainsKey(id))
-        throw new Exception("Model does not contain Section ID:" + id);
-      this.Id = id;
+        return;
       this._prop2d = pDict[id];
       // material
-      if (this._prop2d.MaterialAnalysisProperty != 0)
-      {
-        if (!matDict.ContainsKey(this._prop2d.MaterialAnalysisProperty))
-          throw new Exception("Model does not contain AnalysisMaterial ID:" + this._prop2d.MaterialAnalysisProperty);
+      if (this._prop2d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(this._prop2d.MaterialAnalysisProperty))
         this._material.AnalysisMaterial = matDict[this._prop2d.MaterialAnalysisProperty];
-      }
       this._material = new GsaMaterial(this);
     }
     #endregion
 
     #region methods
+    
+
+    public GsaProp2d Duplicate(bool cloneApiElement = false)
+    {
+      GsaProp2d dup = new GsaProp2d();
+      dup._prop2d = this._prop2d;
+      dup._id = this._id;
+      dup._material = this._material.Duplicate();
+      dup._guid = new Guid(this._guid.ToString());
+      if (cloneApiElement)
+        dup.CloneApiObject();
+      return dup;
+    }
+
+    public override string ToString()
+    {
+      string type = Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == this._prop2d.Type).Key + " ";
+      string desc = this.Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
+      string mat = Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
+      string pa = (this.Id > 0) ? "PA" + this.Id + " " : "";
+      return string.Join(" ", pa.Trim(), type.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
+    }
     internal static Property2D_Type PropTypeFromString(string type)
     {
       try
@@ -233,30 +250,30 @@ namespace GsaGH.Parameters
       }
     }
 
-    public GsaProp2d Duplicate()
-    {
-      GsaProp2d dup = new GsaProp2d();
-      dup._prop2d = this._prop2d;
-      dup._id = this._id;
-      dup._material = this._material.Duplicate();
-      dup.CloneApiObject();
-      dup._guid = new Guid(this._guid.ToString());
-      return dup;
-    }
-
-    public override string ToString()
-    {
-      string type = Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == this._prop2d.Type).Key + " ";
-      string desc = this.Description.Replace("(", string.Empty).Replace(")", string.Empty) + " ";
-      string mat = Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
-      string pa = (this.Id > 0) ? "PA" + this.Id + " " : "";
-      return string.Join(" ", pa.Trim(), type.Trim(), desc.Trim(), mat.Trim()).Trim().Replace("  ", " ");
-    }
-
     private void CloneApiObject()
     {
-      this._prop2d = (Prop2D)this._prop2d.Duplicate();
+      this._prop2d = this.GetApiObject();
       this._guid = Guid.NewGuid();
+    }
+
+    private Prop2D GetApiObject()
+    {
+      if (this._prop2d == null)
+        return new Prop2D();
+      Prop2D prop = new Prop2D
+      {
+        MaterialAnalysisProperty = this._prop2d.MaterialAnalysisProperty,
+        MaterialGradeProperty = this._prop2d.MaterialGradeProperty,
+        MaterialType = this._prop2d.MaterialType,
+        Name = this._prop2d.Name.ToString(),
+        Description = this._prop2d.Description.ToString(),
+        Type = this._prop2d.Type, //GsaToModel.Prop2dType((int)m_prop2d.Type),
+        AxisProperty = this._prop2d.AxisProperty
+      };
+      if ((Color)this._prop2d.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
+        prop.Colour = this._prop2d.Colour;
+
+      return prop;
     }
     #endregion
   }

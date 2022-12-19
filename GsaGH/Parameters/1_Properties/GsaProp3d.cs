@@ -7,13 +7,13 @@ using GsaGH.Helpers.GsaAPI;
 
 namespace GsaGH.Parameters
 {
-    /// <summary>
-    /// Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop3D"/>
-    /// </summary>
-    public class GsaProp3d
+  /// <summary>
+  /// Prop2d class, this class defines the basic properties and methods for any <see cref="GsaAPI.Prop3D"/>
+  /// </summary>
+  public class GsaProp3d
   {
     #region fields
-    private int _idd = 0;
+    private int _id = 0;
     private Guid _guid = Guid.NewGuid();
     private Prop3D _prop3d = new Prop3D();
     private GsaMaterial _material = new GsaMaterial();
@@ -37,12 +37,12 @@ namespace GsaGH.Parameters
     {
       get
       {
-        return this._idd;
+        return this._id;
       }
       set
       {
         this._guid = Guid.NewGuid();
-        this._idd = value;
+        this._id = value;
       }
     }
     public GsaMaterial Material
@@ -133,7 +133,7 @@ namespace GsaGH.Parameters
 
     public GsaProp3d(int id)
     {
-      this._idd = id;
+      this._id = id;
     }
 
     public GsaProp3d(GsaMaterial material)
@@ -141,20 +141,14 @@ namespace GsaGH.Parameters
       this.Material = material;
     }
 
-    internal GsaProp3d(ReadOnlyDictionary<int, Prop3D> pDict, int id, ReadOnlyDictionary<int, AnalysisMaterial> matDict)
+    internal GsaProp3d(ReadOnlyDictionary<int, Prop3D> pDict, int id, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id)
     {
-      // API Object
       if (!pDict.ContainsKey(id))
-        throw new Exception("Model does not contain Section ID:" + id);
-      this.Id = id;
+        return;
       this._prop3d = pDict[id];
       // material
-      if (this._prop3d.MaterialAnalysisProperty != 0)
-      {
-        if (!matDict.ContainsKey(this._prop3d.MaterialAnalysisProperty))
-          throw new Exception("Model does not contain AnalysisMaterial ID:" + this._prop3d.MaterialAnalysisProperty);
+      if (this._prop3d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(this._prop3d.MaterialAnalysisProperty))
         this._material.AnalysisMaterial = matDict[this._prop3d.MaterialAnalysisProperty];
-      }
       this._material = new GsaMaterial(this);
     }
     #endregion
@@ -164,7 +158,7 @@ namespace GsaGH.Parameters
     {
       GsaProp3d dup = new GsaProp3d();
       dup._prop3d = this._prop3d;
-      dup._idd = this._idd;
+      dup._id = this._id;
       dup._material = this._material.Duplicate();
       dup.CloneApiObject();
       dup._guid = new Guid(this._guid.ToString());

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.GUI;
@@ -23,15 +22,15 @@ namespace GsaGH.Components
   /// <summary>
   /// Component to edit a Node
   /// </summary>
-  public class Elem2dFromBrep : GH_OasysDropDownComponent, IGH_PreviewObject
+  public class Elem2dFromBrep2_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("18c5913e-cbce-42e8-8563-18e28b079d34");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override Guid ComponentGuid => new Guid("83948408-c55d-49b9-b9a7-98034bcf3ce1");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateElemsFromBreps;
 
-    public Elem2dFromBrep() : base("Element2d from Brep",
+    public Elem2dFromBrep2_OBSOLETE() : base("Element2d from Brep",
       "Elem2dFromBrep",
       "Mesh a non-planar Brep",
       CategoryName.Name(),
@@ -59,9 +58,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddParameter(new GsaElement2dParameter(), "2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaNodeParameter(), "Incl. Nodes", "No", "Inclusion Nodes which may have been moved during the meshing process", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaElement1dParameter(), "Incl. Element1Ds", "E1D", "Inclusion 1D Elements which may have been moved during the meshing process", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaElement2dParameter(), "2D Elements", "E2D", "GSA 2D Elements", GH_ParamAccess.list);
     }
     #endregion
 
@@ -74,26 +71,6 @@ namespace GsaGH.Components
         Brep brep = new Brep();
         if (GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
         {
-          if (!brep.IsValidGeometry(out string log))
-          {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input Brep is not valid: " + log);
-            return;
-          }
-          if (brep.Surfaces.Count > 1)
-          {
-            Brep inBrep = brep.DuplicateBrep();
-            inBrep.Faces.ShrinkFaces();
-            if (inBrep.Surfaces.Count > 1)
-            {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input Brep contains more than one surface. This component is will only work with single surfaces.");
-              return;
-            }
-          }
-          if (brep.Surfaces[0].IsPlanar())
-          {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Input Surface is planar. You may want to use Member2D component as this component is intended to help mesh non-planar Breps and provides less functionality than Member2D.");
-          }
-
           // 1 Points
           List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
           List<Point3d> pts = new List<Point3d>();
@@ -127,20 +104,13 @@ namespace GsaGH.Components
           // 2 Curves
           gh_types = new List<GH_ObjectWrapper>();
           List<Curve> crvs = new List<Curve>();
-          List<GsaElement1d> elem1ds = new List<GsaElement1d>();
           List<GsaMember1d> mem1ds = new List<GsaMember1d>();
           if (DA.GetDataList(2, gh_types))
           {
             for (int i = 0; i < gh_types.Count; i++)
             {
               Curve crv = null;
-              if (gh_types[i].Value is GsaElement1dGoo)
-              {
-                GsaElement1d gsaelem1d = new GsaElement1d();
-                gh_types[i].CastTo(ref gsaelem1d);
-                elem1ds.Add(gsaelem1d.Duplicate(true));
-              }
-              else if (gh_types[i].Value is GsaMember1dGoo)
+              if (gh_types[i].Value is GsaMember1dGoo)
               {
                 GsaMember1d gsamem1d = new GsaMember1d();
                 gh_types[i].CastTo(ref gsamem1d);
@@ -165,8 +135,7 @@ namespace GsaGH.Components
           Length meshSize = (Length)Input.UnitNumber(this, DA, 4, this.LengthUnit, true);
 
           // build new element2d with brep, crv and pts
-          Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> tuple = GsaElement2d.GetElement2dFromBrep(brep, pts, nodes, crvs, elem1ds, mem1ds, meshSize.As(this.LengthUnit), this.LengthUnit, this.Tolerance);
-          GsaElement2d elem2d = tuple.Item1;
+          GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize.As(this.LengthUnit), mem1ds, nodes, this.LengthUnit, this.Tolerance);
 
           // 3 section
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -194,12 +163,8 @@ namespace GsaGH.Components
           elem2d.Properties = prop2Ds;
 
           DA.SetData(0, new GsaElement2dGoo(elem2d, false));
-          if (tuple.Item2 != null)
-            DA.SetDataList(1, new List<GsaNodeGoo>(tuple.Item2.Select(n=> new GsaNodeGoo(n, false))));
-          if (tuple.Item3 != null)
-            DA.SetDataList(2, new List<GsaElement1dGoo>(tuple.Item3.Select(elem => new GsaElement1dGoo(elem, false))));
 
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) are unlikely to produce good results");
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
         }
       }
     }
