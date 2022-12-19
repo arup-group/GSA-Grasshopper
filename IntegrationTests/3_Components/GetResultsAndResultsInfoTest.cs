@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using Xunit;
 
@@ -43,7 +44,7 @@ namespace IntegrationTests.Components
       Assert.Equal(1, case3.Value);
 
       IGH_Param permutations = Helper.FindParameter(doc, "Permutations");
-      GH_Integer perm3 = (GH_Integer)permutations.VolatileData.get_Branch(2)[0];
+      GH_Integer perm3 = (GH_Integer)permutations.VolatileData.get_Branch(new GH_Path(1))[0];
       Assert.Equal(1, perm3.Value);
 
       IGH_Param myy = Helper.FindParameter(doc, "Myy");
