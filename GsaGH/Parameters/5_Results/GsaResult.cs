@@ -179,6 +179,13 @@ namespace GsaGH.Parameters
     internal Dictionary<Tuple<string, int>, GsaResultsValues> ACaseElement1DForceValues { get; set; } = new Dictionary<Tuple<string, int>, GsaResultsValues>();
 
     /// <summary>
+    /// Analysis Case 1DElement Strain Energy Density Result VALUES Dictionary 
+    /// Append to this dictionary to chache results
+    /// key = Tuple<elementList, numberOfDivisions>
+    /// </summary>
+    internal Dictionary<Tuple<string, int>, GsaResultsValues> ACaseElement1DStrainEnergyDensityValues { get; set; } = new Dictionary<Tuple<string, int>, GsaResultsValues>();
+
+    /// <summary>
     /// Analysis Case Node API Result Dictionary 
     /// Append to this dictionary to chache results
     /// key = elementList
@@ -285,12 +292,28 @@ namespace GsaGH.Parameters
     internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>> ComboElement1DResults { get; set; } = new Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
 
     /// <summary>
+    /// Combination Case 1DElement API Result Dictionary 
+    /// Append to this dictionary to chache results
+    /// key = Tuple<elementList, permutations>
+    /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
+    /// </summary>
+    internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>> ComboElement1DResultsInclStrainEnergyDensity { get; set; } = new Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
+
+    /// <summary>
     /// Combination Case 1DElement Forces Result VALUES Dictionary 
     /// Append to this dictionary to chache results
     /// key = Tuple<elementList, permutations>
     /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
     /// </summary>
     internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>> ComboElement1DForceValues { get; set; } = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
+
+    /// <summary>
+    /// Combination Case 1DElement Strain Energy Density Result VALUES Dictionary 
+    /// Append to this dictionary to chache results
+    /// key = Tuple<elementList, permutations>
+    /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
+    /// </summary>
+    internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>> ComboElement1DStrainEnergyDensityValues { get; set; } = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
 
     /// <summary>
     /// Combination Case 1DElement Displacement Result VALUES Dictionary 
@@ -335,6 +358,8 @@ namespace GsaGH.Parameters
     }
     internal ResultType Type { get; set; }
     internal GsaModel Model { get; set; }
+
+    #region constructors
     public GsaResult()
     { }
     internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseID)
@@ -362,8 +387,9 @@ namespace GsaGH.Parameters
       this.CaseID = caseID;
       this.SelectedPermutationIDs = new List<int>() { permutation };
     }
+    #endregion
 
-    #region output methods
+    #region methods
     /// <summary>
     /// Get node displacement values 
     /// For analysis case the length of the list will be 1
@@ -637,7 +663,7 @@ namespace GsaGH.Parameters
       Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
       if (this.Type == ResultType.AnalysisCase)
       {
-        if (!this.ACaseElement1DForceValues.ContainsKey(key)) // see if values exist
+        if (!this.ACaseElement1DStrainEnergyDensityValues.ContainsKey(key)) // see if values exist
         {
           if (!this.ACaseElement1DResults.ContainsKey(key)) // see if result exist
           {
@@ -645,25 +671,25 @@ namespace GsaGH.Parameters
             this.ACaseElement1DResults.Add(key, AnalysisCaseResult.Element1DResults(elementlist, positionsCount));
           }
           // compute result values and add to dictionary for cache
-          this.ACaseElement1DForceValues.Add(key,
+          this.ACaseElement1DStrainEnergyDensityValues.Add(key,
               ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit));
         }
-        return new List<GsaResultsValues>() { ACaseElement1DForceValues[key] };
+        return new List<GsaResultsValues>() { ACaseElement1DStrainEnergyDensityValues[key] };
       }
       else
       {
-        if (!this.ComboElement1DForceValues.ContainsKey(key)) // see if values exist
+        if (!this.ComboElement1DStrainEnergyDensityValues.ContainsKey(key)) // see if values exist
         {
-          if (!this.ComboElement1DResults.ContainsKey(key)) // see if result exist
+          if (!this.ComboElement1DResultsInclStrainEnergyDensity.ContainsKey(key)) // see if result exist
           {
             // if the results hasn't already been taken out and add them to our dictionary
-            this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, positionsCount, true));
+            this.ComboElement1DResultsInclStrainEnergyDensity.Add(key, CombinationCaseResult.Element1DResults(elementlist, positionsCount, true));
           }
           // compute result values and add to dictionary for cache
-          this.ComboElement1DForceValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], energyUnit, SelectedPermutationIDs));
+          this.ComboElement1DStrainEnergyDensityValues.Add(key,
+              ResultHelper.GetElement1DResultValues(ComboElement1DResultsInclStrainEnergyDensity[key], energyUnit, SelectedPermutationIDs, false));
         }
-        return new List<GsaResultsValues>(ComboElement1DForceValues[key].Values);
+        return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key].Values);
       }
     }
 
@@ -675,14 +701,14 @@ namespace GsaGH.Parameters
     /// <param name="elementlist"></param>
     /// <param name="energyUnit"></param>
     /// <returns></returns>
-    internal List<GsaResultsValues> Element1DStrainEnergyDensityValues(string elementlist, EnergyUnit energyUnit)
+    internal List<GsaResultsValues> Element1DAverageStrainEnergyDensityValues(string elementlist, EnergyUnit energyUnit)
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, 1);
       if (this.Type == ResultType.AnalysisCase)
       {
-        if (!this.ACaseElement1DForceValues.ContainsKey(key)) // see if values exist
+        if (!this.ACaseElement1DStrainEnergyDensityValues.ContainsKey(key)) // see if values exist
         {
           if (!this.ACaseElement1DResults.ContainsKey(key)) // see if result exist
           {
@@ -690,14 +716,14 @@ namespace GsaGH.Parameters
             this.ACaseElement1DResults.Add(key, AnalysisCaseResult.Element1DResults(elementlist, 1));
           }
           // compute result values and add to dictionary for cache
-          this.ACaseElement1DForceValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit, true));
+          this.ACaseElement1DStrainEnergyDensityValues.Add(key,
+              ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit, false));
         }
-        return new List<GsaResultsValues>() { ACaseElement1DForceValues[key] };
+        return new List<GsaResultsValues>() { ACaseElement1DStrainEnergyDensityValues[key] };
       }
       else
       {
-        if (!this.ComboElement1DForceValues.ContainsKey(key)) // see if values exist
+        if (!this.ComboElement1DStrainEnergyDensityValues.ContainsKey(key)) // see if values exist
         {
           if (!this.ComboElement1DResults.ContainsKey(key)) // see if result exist
           {
@@ -705,10 +731,10 @@ namespace GsaGH.Parameters
             this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, 1, true));
           }
           // compute result values and add to dictionary for cache
-          this.ComboElement1DForceValues.Add(key,
+          this.ComboElement1DStrainEnergyDensityValues.Add(key,
               ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], energyUnit, SelectedPermutationIDs, true));
         }
-        return new List<GsaResultsValues>(ComboElement1DForceValues[key].Values);
+        return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key].Values);
       }
     }
 
@@ -978,9 +1004,7 @@ namespace GsaGH.Parameters
         return new List<GsaResultsValues>(ComboElement3DStressValues[elementlist].Values);
       }
     }
-    #endregion
 
-    #region other methods
     public GsaResult Duplicate()
     {
       return this;
@@ -1003,7 +1027,6 @@ namespace GsaGH.Parameters
       }
       return txt.Trim().Replace("  ", " ");
     }
-
     #endregion
   }
 }

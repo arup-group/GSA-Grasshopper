@@ -113,7 +113,7 @@ namespace GsaGH.Components
           }
 
           List<GsaResultsValues> vals = Average ?
-            result.Element1DStrainEnergyDensityValues(elementlist, EnergyUnit) :
+            result.Element1DAverageStrainEnergyDensityValues(elementlist, EnergyUnit) :
             result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, EnergyUnit);
 
           List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
@@ -124,7 +124,7 @@ namespace GsaGH.Components
             if (vals[index].xyzResults.Count == 0)
             {
               string[] typ = result.ToString().Split('{');
-              string acase = typ[1].Replace('}', ' ');
+              string acase = typ[0].Replace('}', ' ');
               AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + "contains no Element1D results.");
               continue;
             }
