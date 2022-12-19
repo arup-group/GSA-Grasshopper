@@ -8,16 +8,17 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to select results from a GSA Model
-    /// </summary>
-    public class ResultsInfo : GH_OasysComponent
+  /// <summary>
+  /// Component to select results from a GSA Model
+  /// </summary>
+  public class ResultsInfo : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -43,8 +44,8 @@ namespace GsaGH.Components
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
       pManager.AddTextParameter("Result Type", "T", "Result type", GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Case", "ID", "Case ID(s)", GH_ParamAccess.list);
-      pManager.AddIntegerParameter("Permutation", "P", "Permutations (only applicable for combination cases).", GH_ParamAccess.tree);
+      pManager.AddIntegerParameter("Case", "ID", "Case ID(s) - to be read in conjunction with Type output ", GH_ParamAccess.list);
+      pManager.AddIntegerParameter("Permutation", "P", "Permutations (only applicable for combination cases). Data as a Tree where each path {i} corrosponds to the Combination Case ID.", GH_ParamAccess.tree);
     }
     #endregion
 
@@ -83,35 +84,11 @@ namespace GsaGH.Components
           return;
         }
 
-        ReadOnlyDictionary<int, AnalysisCaseResult> analysisCaseResults = model.Model.Results();
-        ReadOnlyDictionary<int, CombinationCaseResult> combinationCaseResults = model.Model.CombinationCaseResults();
-        int tempNodeID = model.Model.Nodes().Keys.First();
+        Tuple<List<string>, List<int>, DataTree<int?>> modelResults = ResultHelper.GetAvalailableResults(model);
 
-        List<string> type = new List<string>();
-        List<int> caseId = new List<int>();
-        DataTree<int?> perm = new DataTree<int?>();
-        int i = 0;
-        foreach (int a in analysisCaseResults.Keys)
-        {
-          type.Add("Analysis");
-          caseId.Add(a);
-          perm.Add(null, new GH_Path(i++));
-        }
-        foreach (int c in combinationCaseResults.Keys)
-        {
-          type.Add("Combination");
-          caseId.Add(c);
-          IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult = combinationCaseResults[c].NodeResults(tempNodeID.ToString());
-          int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
-          List<int> permutationsInCase = Enumerable.Range(1, nP).ToList();
-          GH_Path path = new GH_Path(i++);
-          foreach (int p in permutationsInCase) 
-            perm.Add(p, path);
-        }
-
-        DA.SetDataList(0, type);
-        DA.SetDataList(1, caseId);
-        DA.SetDataTree(2, perm);
+        DA.SetDataList(0, modelResults.Item1);
+        DA.SetDataList(1, modelResults.Item2);
+        DA.SetDataTree(2, modelResults.Item3);
       }
     }
   }
