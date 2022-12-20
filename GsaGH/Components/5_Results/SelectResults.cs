@@ -50,13 +50,12 @@ namespace GsaGH.Components
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model containing some results", GH_ParamAccess.item);
-      pManager.AddTextParameter("Result Type", "rT", "Result type. " +
+      pManager.AddTextParameter("Result Type", "T", "Result type. " +
           Environment.NewLine + "Accepted inputs are: " +
-          Environment.NewLine + "'AnalysisCase' or 'Combination'", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Case", "C", "Case ID(s)" +
-          Environment.NewLine + "Use -1 for 'all'", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Permutation", "P", "Permutations (only applicable for combination cases). " +
-          Environment.NewLine + "Leave blank for 'all'", GH_ParamAccess.list);
+          Environment.NewLine + "'AnalysisCase' or 'Combination'", GH_ParamAccess.item, "A");
+      pManager.AddIntegerParameter("Case", "ID", "Case ID(s)" +
+          Environment.NewLine + "Use -1 for 'all'", GH_ParamAccess.item, 1);
+      pManager.AddIntegerParameter("Permutation", "P", "Permutations (only applicable for combination cases).", GH_ParamAccess.list);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
