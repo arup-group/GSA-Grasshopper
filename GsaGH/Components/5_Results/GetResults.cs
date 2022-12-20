@@ -39,9 +39,8 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model containing some results", GH_ParamAccess.item);
       pManager.AddTextParameter("Result Type", "T", "Result type. " +
           Environment.NewLine + "Accepted inputs are: " +
-          Environment.NewLine + "'AnalysisCase' or 'Combination'", GH_ParamAccess.item, "A");
-      pManager.AddIntegerParameter("Case", "ID", "Case ID(s)" +
-          Environment.NewLine + "Use -1 for 'all'", GH_ParamAccess.item, 1);
+          Environment.NewLine + "'AnalysisCase' or 'Combination'", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Case", "ID", "Case ID(s)", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Permutation", "P", "Permutations (only applicable for combination cases).", GH_ParamAccess.list);
       pManager[3].Optional = true;
     }
