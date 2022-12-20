@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using OasysGH.Parameters;
@@ -96,6 +97,17 @@ namespace GsaGHTests.Helpers
         component.Params.Output[index].CollectData();
       }
       return component.Params.Output[index].VolatileData.get_Branch(branch)[item];
+    }
+
+    public static object GetOutput(GH_Component component, int index, GH_Path path, int item = 0, bool forceUpdate = false)
+    {
+      if (forceUpdate || component.Params.Output[index].VolatileDataCount == 0)
+      {
+        component.ExpireSolution(true);
+        component.Params.Output[index].ExpireSolution(true);
+        component.Params.Output[index].CollectData();
+      }
+      return component.Params.Output[index].VolatileData.get_Branch(path)[item];
     }
   }
 }
