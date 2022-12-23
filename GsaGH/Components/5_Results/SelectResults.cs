@@ -85,6 +85,8 @@ namespace GsaGH.Components
               _gsaModel = in_Model;
               this.UpdateDropdowns();
               this._resultCache = new Dictionary<Tuple<GsaResult.ResultType, int>, GsaResult>();
+              this._analysisCaseResults = null;
+              this._combinationCaseResults = null;
             }
           }
           else
