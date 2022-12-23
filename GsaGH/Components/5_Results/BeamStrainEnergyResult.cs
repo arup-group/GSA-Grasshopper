@@ -123,9 +123,8 @@ namespace GsaGH.Components
           {
             if (vals[index].xyzResults.Count == 0)
             {
-              string[] typ = result.ToString().Split('{');
-              string acase = typ[0].Replace('}', ' ');
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + "contains no Element1D results.");
+              string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element1D results.");
               continue;
             }
             // loop through all elements

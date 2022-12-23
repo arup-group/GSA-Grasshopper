@@ -183,7 +183,8 @@ namespace GsaGH.Components
 
         if (res.dmax_x == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Result does not contain any values for 1D Elements");
+          string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element1D results.");
           return;
         }
 

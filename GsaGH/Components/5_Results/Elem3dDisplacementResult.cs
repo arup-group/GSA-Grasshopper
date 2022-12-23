@@ -125,9 +125,8 @@ namespace GsaGH.Components
           {
             if (vals[index].xyzResults.Count == 0 & vals[index].xxyyzzResults.Count == 0)
             {
-              string[] typ = result.ToString().Split('{');
-              string acase = typ[1].Replace('}', ' ');
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + "contains no Element3D results.");
+              string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element3D results.");
               continue;
             }
             Parallel.For(0, 2, thread => // split computation in two for xyz and xxyyzz

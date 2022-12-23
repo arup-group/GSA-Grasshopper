@@ -169,7 +169,8 @@ namespace GsaGH.Components
 
         if ((_isShear ? resShear.dmax_x : res.dmax_x) == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Result does not contain any values for 2D Elements");
+          string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element2D results.");
           return;
         }
 
