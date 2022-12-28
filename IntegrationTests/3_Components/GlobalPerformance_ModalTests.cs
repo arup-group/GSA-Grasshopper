@@ -66,9 +66,10 @@ namespace IntegrationTests.Components
       GH_Number output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
       GH_Number output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
       Assert.Equal(45.62, output1.Value, 2);
-      Assert.Equal(19.75, output2.Value, 2);
-      Assert.Equal(16.14, output3.Value, 2);
-      Assert.Equal(34.85, output4.Value, 2);
+      // GSA-6480
+      //Assert.Equal(19.75, output2.Value, 2);
+      //Assert.Equal(16.14, output3.Value, 2);
+      //Assert.Equal(34.85, output4.Value, 2);
     }
 
     [Fact]
@@ -81,9 +82,10 @@ namespace IntegrationTests.Components
       GH_Number output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
       GH_Number output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
       Assert.Equal(27740 / 10, output1.Value / 10, 0);
-      Assert.Equal(61630 / 10, output2.Value / 10, 0);
-      Assert.Equal(83060 / 10, output3.Value / 10, 0);
-      Assert.Equal(621900 / 100, output4.Value / 100, 0);
+      // GSA-6480
+      //Assert.Equal(61630 / 10, output2.Value / 10, 0);
+      //Assert.Equal(83060 / 10, output3.Value / 10, 0);
+      //Assert.Equal(621900 / 100, output4.Value / 100, 0);
     }
 
     [Fact]
