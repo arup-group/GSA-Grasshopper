@@ -151,7 +151,7 @@ namespace GsaGH.Components
                   transX.Add(new GH_UnitNumber(values.X.ToUnit(ForceUnit))); // use ToUnit to capture changes in dropdown
                   transY.Add(new GH_UnitNumber(values.Y.ToUnit(ForceUnit)));
                   transZ.Add(new GH_UnitNumber(values.Z.ToUnit(ForceUnit)));
-                  transXYZ.Add(new GH_UnitNumber(values.XYZ));
+                  transXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(ForceUnit)));
                 }
               }
               if (item == 1)
@@ -164,7 +164,7 @@ namespace GsaGH.Components
                   rotX.Add(new GH_UnitNumber(values.X.ToUnit(MomentUnit))); // use ToUnit to capture changes in dropdown
                   rotY.Add(new GH_UnitNumber(values.Y.ToUnit(MomentUnit)));
                   rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(MomentUnit)));
-                  rotXYZ.Add(new GH_UnitNumber(values.XYZ));
+                  rotXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(MomentUnit)));
                 }
               }
             });
