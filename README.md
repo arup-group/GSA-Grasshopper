@@ -1,3 +1,7 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/arup-group/GSA-Grasshopper?include_prereleases)
+[![codecov](https://codecov.io/gh/arup-group/GSA-Grasshopper/branch/main/graph/badge.svg?token=MB9FPYAICX)](https://codecov.io/gh/arup-group/GSA-Grasshopper)
+
 # GSA-Grasshopper
 
 GSA-Grasshopper is a plugin for Grasshopper wrapping Oasys GSA's .NET API. The plugin allows users of Grasshopper to create, edit and analyse GSA models seemlesly. 
