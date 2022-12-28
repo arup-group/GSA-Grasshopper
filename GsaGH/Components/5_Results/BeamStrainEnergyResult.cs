@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA Beam strain energy density results
-    /// </summary>
-    public class BeamStrainEnergy : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA Beam strain energy density results
+  /// </summary>
+  public class BeamStrainEnergy : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("c1a927cb-ad0e-4a69-94ce-9ad079047d21");
@@ -184,33 +184,34 @@ namespace GsaGH.Components
     public override void UpdateUIFromSelectedItems()
     {
       this.EnergyUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), SelectedItems[0]);
-      UpdateInputs();
+      this.UpdateInputs();
       base.UpdateUIFromSelectedItems();
     }
 
     public void SetAnalysis(List<bool> value)
     {
       this.Average = value[0];
-      UpdateInputs();
+      this.UpdateInputs();
     }
 
     private void UpdateInputs()
     {
       RecordUndoEvent("Toggled Average");
-      if (Average)
+      if (this.Average)
       {
         //remove input parameters
-        while (Params.Input.Count > 2)
-          Params.UnregisterInputParameter(Params.Input[2], true);
+        while (this.Params.Input.Count > 2)
+          this.Params.UnregisterInputParameter(Params.Input[2], true);
       }
       else
       {
         //add input parameters
-        Params.RegisterInputParam(new Param_Integer());
+        if (this.Params.Input.Count < 3)
+          this.Params.RegisterInputParam(new Param_Integer());
       }
 
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
+      this.Params.OnParametersChanged();
       ExpireSolution(true);
     }
 
@@ -232,12 +233,13 @@ namespace GsaGH.Components
     #region (de)serialization
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
     {
-      writer.SetBoolean("checked", Average);
+      writer.SetBoolean("checked", this.Average);
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
-      Average = reader.GetBoolean("checked");
+      this.Average = reader.GetBoolean("checked");
+      m_initialCheckState = new List<bool>() { this.Average };
       return base.Read(reader);
     }
     #endregion
