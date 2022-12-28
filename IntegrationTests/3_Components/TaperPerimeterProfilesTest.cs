@@ -10,7 +10,17 @@ namespace IntegrationTests.Components
   [Collection("GrasshopperFixture collection")]
   public class TaperPerimeterProfilesTest
   {
-    public static GH_Document Document()
+    public static GH_Document Document
+    {
+      get
+      {
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
+      }
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
     {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
@@ -25,7 +35,7 @@ namespace IntegrationTests.Components
     [Fact]
     public void PerimeterProfilesTaperTest()
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "Test1");
       GH_String output = (GH_String)param.VolatileData.get_Branch(0)[0];
 
@@ -36,7 +46,7 @@ namespace IntegrationTests.Components
     [Fact]
     public void IncorrectProfilesTest()
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
       GH_Component comp = Helper.FindComponent(doc, "Test2");
       
       var output = comp.Params.Output[0].VolatileData.get_Branch(0)[0];

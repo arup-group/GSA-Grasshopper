@@ -9,21 +9,26 @@ namespace IntegrationTests.Parameters
   [Collection("GrasshopperFixture collection")]
   public class EditBool6Test
   {
-    public static GH_Document Document;
-
-    public static GH_Document GetDocument()
+    public static GH_Document Document
     {
-      if (Document == null)
+      get
       {
-        string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
-        fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
-
-        string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
-        string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Parameters", "1_Properties" });
-
-        Document = Helper.CreateDocument(Path.Combine(path, fileName));
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
       }
-      return Document;
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
+    {
+      string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
+      fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
+
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
+      string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Parameters", "1_Properties" });
+
+      return Helper.CreateDocument(Path.Combine(path, fileName));
+
     }
 
     [Theory]
@@ -35,7 +40,7 @@ namespace IntegrationTests.Parameters
     [InlineData("ZZ", true)]
     public void OutputTest(string groupIdentifier, bool expected)
     {
-      GH_Document doc = GetDocument();
+      GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
       GH_Boolean output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(expected, output.Value);
@@ -44,7 +49,7 @@ namespace IntegrationTests.Parameters
     [Fact]
     public void NoRuntimeErrorTest()
     {
-      Helper.TestNoRuntimeMessagesInDocument(GetDocument(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
     }
   }
 }

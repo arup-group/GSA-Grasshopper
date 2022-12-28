@@ -11,7 +11,17 @@ namespace IntegrationTests.Components
   [Collection("GrasshopperFixture collection")]
   public class LoadsFromReferenceObjectsTests
   {
-    public static GH_Document Document()
+    public static GH_Document Document
+    {
+      get
+      {
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
+      }
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
     {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
@@ -44,15 +54,15 @@ namespace IntegrationTests.Components
     [InlineData("NodeLoadFromPtTest", 0)]
     public void Test(string groupIdentifier, object expected)
     {
-      IGH_Param param = Helper.FindParameter(Document(), groupIdentifier);
+      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGHPrimitives(param, expected);
     }
 
     [Fact]
     public void NoRuntimeErrorTest()
     {
-      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
-      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Warning);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
     }
   }
 }

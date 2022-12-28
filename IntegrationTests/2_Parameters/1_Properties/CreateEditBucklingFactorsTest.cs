@@ -9,7 +9,17 @@ namespace IntegrationTests.Parameters
   [Collection("GrasshopperFixture collection")]
   public class CreateEditBucklingFactorsTest
   {
-    public static GH_Document Document()
+    public static GH_Document Document
+    {
+      get
+      {
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
+      }
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
     {
       string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
@@ -24,7 +34,7 @@ namespace IntegrationTests.Parameters
     [Fact]
     public void OutputTest()
     {
-      GH_Document doc = CreateEditBucklingFactorsTest.Document();
+      GH_Document doc = Document;
 
       IGH_Param y = Helper.FindParameter(doc, "TestLsy");
       GH_Number outputY = (GH_Number)y.VolatileData.get_Branch(0)[0];
@@ -42,7 +52,7 @@ namespace IntegrationTests.Parameters
     [Fact]
     public void NoRuntimeErrorTest()
     {
-      Helper.TestNoRuntimeMessagesInDocument(CreateEditBucklingFactorsTest.Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
     }
   }
 }

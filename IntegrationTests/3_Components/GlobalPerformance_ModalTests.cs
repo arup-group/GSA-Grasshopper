@@ -10,7 +10,17 @@ namespace IntegrationTests.Components
   [Collection("GrasshopperFixture collection")]
   public class GlobalPerformance_ModalTests
   {
-    public static GH_Document Document()
+    public static GH_Document Document
+    {
+      get
+      {
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
+      }
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
     {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
@@ -25,7 +35,7 @@ namespace IntegrationTests.Components
     [Fact]
     public void EffectiveMassesZTest()
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "EffectiveMassesZ");
       GH_Number output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(77.91, output1.Value, 2);
@@ -34,7 +44,7 @@ namespace IntegrationTests.Components
     [Fact]
     public void ModesTest()
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "Modes");
       GH_Integer output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
       GH_Integer output2 = (GH_Integer)param.VolatileData.get_Branch(0)[1];
@@ -49,7 +59,7 @@ namespace IntegrationTests.Components
     [Fact]
     public void ModalMassesTest()
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "ModalMasses");
       GH_Number output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       GH_Number output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
@@ -64,7 +74,7 @@ namespace IntegrationTests.Components
     [Fact]
     public void ModalStiffnessesTest()
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "ModalStiffnesses");
       GH_Number output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       GH_Number output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
@@ -79,7 +89,7 @@ namespace IntegrationTests.Components
     [Fact]
     public void FrequenciesTest()
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "Frequencies");
       GH_Number output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       GH_Number output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];

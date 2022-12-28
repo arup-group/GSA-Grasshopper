@@ -10,7 +10,17 @@ namespace IntegrationTests.Components
   [Collection("GrasshopperFixture collection")]
   public class SectionAlignmentTest
   {
-    public static GH_Document Document()
+    public static GH_Document Document
+    {
+      get
+      {
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
+      }
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
     {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
@@ -25,7 +35,7 @@ namespace IntegrationTests.Components
     [Fact]
     public void CalculatedOffsetsTest()
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
       IGH_Param param1 = Helper.FindParameter(doc, "Y");
       GH_Number output1 = (GH_Number)param1.VolatileData.get_Branch(0)[0];
       GH_Number output2 = (GH_Number)param1.VolatileData.get_Branch(0)[1];
