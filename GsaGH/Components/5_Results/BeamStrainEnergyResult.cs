@@ -53,7 +53,7 @@ namespace GsaGH.Components
       string unitAbbreviation = Energy.GetAbbreviation(this.EnergyUnit) + "/m\u00B3";
       string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
                     Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
-          Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
+          Environment.NewLine + "branch contains a list of results per element position.";
 
       pManager.AddGenericParameter("Strain energy density [" + unitAbbreviation + "]", "E", "Strain energy density. The strain energy density for a beam is a measure of how hard the beam is working. The average strain energy density is the average density along the element or member." + note, GH_ParamAccess.tree);
     }

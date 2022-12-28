@@ -58,7 +58,7 @@ namespace GsaGH.Components
       string momentrule = Environment.NewLine + "Moments follow the right hand grip rule";
       string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
                     Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
-          Environment.NewLine + "branch contains a list matching the NodeIDs in the ID output.";
+          Environment.NewLine + "branch contains a list of results per element position.";
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx", "Element Axial Forces in Local Element X-direction." + forcerule + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy", "Element Shear Forces in Local Element Y-direction." + forcerule + note, GH_ParamAccess.tree);
