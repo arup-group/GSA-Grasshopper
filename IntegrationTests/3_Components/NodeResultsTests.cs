@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml.Linq;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using Xunit;
 
@@ -29,9 +30,25 @@ namespace IntegrationTests.Components
       fileName = fileName.Replace(thisClass.Namespace, string.Empty).Replace("Tests", string.Empty);
 
       string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
-      string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Components"});
-      
+      string path = Path.Combine(new string[] { solutiondir, "ExampleFiles", "Components" });
+
       return Helper.CreateDocument(Path.Combine(path, fileName));
+    }
+
+    [Fact]
+    public void PermutationIDsTests()
+    {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, "Permutations");
+      GH_Integer output1 = (GH_Integer)param.VolatileData.get_Branch(new GH_Path(1))[0];
+      Assert.Equal(1, output1.Value);
+
+      Assert.Null(param.VolatileData.get_Branch(new GH_Path(2))[0]);
+
+      GH_Integer output31 = (GH_Integer)param.VolatileData.get_Branch(new GH_Path(3))[0];
+      GH_Integer output32 = (GH_Integer)param.VolatileData.get_Branch(new GH_Path(3))[1];
+      Assert.Equal(1, output31.Value);
+      Assert.Equal(2, output32.Value);
     }
 
     [Theory]
@@ -47,8 +64,8 @@ namespace IntegrationTests.Components
     {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
-      GH_Number output1 = (GH_Number)param.VolatileData.get_Branch(new Grasshopper.Kernel.Data.GH_Path(3, 1))[0];
-      GH_Number output2 = (GH_Number)param.VolatileData.get_Branch(new Grasshopper.Kernel.Data.GH_Path(3, 2))[0];
+      GH_Number output1 = (GH_Number)param.VolatileData.get_Branch(new GH_Path(3, 1))[0];
+      GH_Number output2 = (GH_Number)param.VolatileData.get_Branch(new GH_Path(3, 2))[0];
       Assert.Equal(expected1, output1.Value, precision);
       Assert.Equal(expected2, output2.Value, precision);
     }
@@ -72,8 +89,8 @@ namespace IntegrationTests.Components
       Assert.Equal(expected2, output2.Value, precision);
     }
 
-    [Fact] 
-    public void ReactionForcesIDsTests() 
+    [Fact]
+    public void ReactionForcesIDsTests()
     {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, "Rids");
