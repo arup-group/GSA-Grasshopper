@@ -8,3 +8,4 @@ flags:
     carryforward: false
 ignore:
   - "GsaGHTests"  # ignore folders and all its contents
+  - "GsaGH/Components/GraveyardComp"  # ignore folders and all its contents
