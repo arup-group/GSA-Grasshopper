@@ -7,5 +7,6 @@ flags:
   integration:
     carryforward: false
 ignore:
-  - "GsaGHTests"  # ignore folders and all its contents
+  - "GsaGHTests"  # ignore project (as it is referenced by Integration test)
   - "GsaGH/Components/GraveyardComp"  # ignore folders and all its contents
+  - "GsaGH/UI"  # ignore folders and all its contents
