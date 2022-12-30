@@ -437,7 +437,7 @@ namespace GsaGH.Components
           DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width Bottom
           DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Top
           DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Bottom
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[2], unit).ToUnit(this.LengthUnit)));  //Web Thk Bottom
+          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[2], unit).ToUnit(this.LengthUnit))); //Web Thk Bottom
           DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[4], unit).ToUnit(this.LengthUnit))); //Root radius
           DA.SetData(i++, null); //Spacing
           DA.SetData(i, "CAT");
@@ -496,19 +496,22 @@ namespace GsaGH.Components
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
-
-    #region IGH_VariableParameterComponent null implementation
     public virtual void VariableParameterMaintenance()
     {
-      AreaUnit areaUnit = UnitsHelper.GetAreaUnit(this.LengthUnit);
-      AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(this.LengthUnit);
+      string abb = Length.GetAbbreviation(this.LengthUnit);
 
-      this.Params.Output[0].Name = "Area [" + Area.GetAbbreviation(areaUnit) + "]";
-      this.Params.Output[1].Name = "Moment of Inertia y-y [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      this.Params.Output[2].Name = "Moment of Inertia z-z [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      this.Params.Output[3].Name = "Moment of Inertia y-z [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      this.Params.Output[3].Name = "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+      this.Params.Output[0].Name = "Depth [" + abb + "]";
+      this.Params.Output[1].Name = "Width [" + abb + "]";
+      this.Params.Output[2].Name = "Width Top [" + abb + "]";
+      this.Params.Output[3].Name = "Width Bottom [" + abb + "]";
+      this.Params.Output[4].Name = "Flange Thk Top [" + abb + "]";
+      this.Params.Output[5].Name = "Flange Thk Bottom [" + abb + "]";
+      this.Params.Output[6].Name = "Web Thk [" + abb + "]";
+      this.Params.Output[7].Name = "Radius [" + abb + "]";
+      this.Params.Output[8].Name = "Spacing [" + abb + "]";
     }
+
+    #region IGH_VariableParameterComponent null implementation
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;
