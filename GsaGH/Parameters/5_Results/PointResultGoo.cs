@@ -3,12 +3,13 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using System.Drawing;
 using Rhino.Display;
+using OasysUnits;
 
 namespace GsaGH.Parameters
 {
-  public class ResultPointGoo : GH_GeometricGoo<Point3d>, IGH_PreviewData
+  public class PointResultGoo : GH_GeometricGoo<Point3d>, IGH_PreviewData
   {
-    public ResultPointGoo(Point3d point, double result, Color colour, float size)
+    public PointResultGoo(Point3d point, IQuantity result, Color colour, float size)
     : base(point)
     {
       m_result = result;
@@ -16,13 +17,13 @@ namespace GsaGH.Parameters
       m_colour = colour;
     }
 
-    private double m_result;
+    internal IQuantity m_result;
     private float m_size;
     private Color m_colour;
 
     public override string ToString()
     {
-      return string.Format("NodeResult: P:{0:0.0},{1:0.0},{2:0.0}, Val:{3:0.0}", Value.X, Value.Y, Value.Z, m_result);
+      return string.Format("NodeResult: P:({0:0.0},{1:0.0},{2:0.0}) R:{3:0.0}", Value.X, Value.Y, Value.Z, m_result);
     }
     public override string TypeName
     {
@@ -35,7 +36,7 @@ namespace GsaGH.Parameters
 
     public override IGH_GeometricGoo DuplicateGeometry()
     {
-      return new ResultPointGoo(Value, m_result, m_colour, m_size);
+      return new PointResultGoo(Value, m_result, m_colour, m_size);
     }
     public override BoundingBox Boundingbox
     {
@@ -58,12 +59,12 @@ namespace GsaGH.Parameters
     {
       Point3d point = Value;
       point.Transform(xform);
-      return new ResultPointGoo(point, m_result, m_colour, m_size);
+      return new PointResultGoo(point, m_result, m_colour, m_size);
     }
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
       Point3d point = xmorph.MorphPoint(Value);
-      return new ResultPointGoo(point, m_result, m_colour, m_size);
+      return new PointResultGoo(point, m_result, m_colour, m_size);
     }
 
     public override object ScriptVariable()
@@ -86,7 +87,7 @@ namespace GsaGH.Parameters
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Number)))
       {
-        target = (TQ)(object)new GH_Number(m_result);
+        target = (TQ)(object)new GH_Number(m_result.Value);
         return true;
       }
 

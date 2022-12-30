@@ -266,7 +266,7 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         // Loop through nodes and set result colour into ResultPoint format
-        ConcurrentDictionary<int, ResultPointGoo> pts = new ConcurrentDictionary<int, ResultPointGoo>();
+        ConcurrentDictionary<int, PointResultGoo> pts = new ConcurrentDictionary<int, PointResultGoo>();
 
         LengthUnit lengthUnit = result.Model.ModelUnit;
         this.undefinedModelLengthUnit = false;
@@ -292,7 +292,7 @@ namespace GsaGH.Components
                 // create deflection point
                 Point3d def = new Point3d(node.Value.Value.Point);
 
-                double t = 0;
+                IQuantity t = null;
                 switch (_mode)
                 {
                   case FoldMode.Displacement:
@@ -301,34 +301,34 @@ namespace GsaGH.Components
                     switch (_disp)
                     {
                       case (DisplayValue.X):
-                        t = xyzResults[nodeID][0].X.As(this.LengthResultUnit);
+                        t = xyzResults[nodeID][0].X.ToUnit(this.LengthResultUnit);
                         translation.X = xyzResults[nodeID][0].X.As(lengthUnit) * _defScale;
                         break;
                       case (DisplayValue.Y):
-                        t = xyzResults[nodeID][0].Y.As(this.LengthResultUnit);
+                        t = xyzResults[nodeID][0].Y.ToUnit(this.LengthResultUnit);
                         translation.Y = xyzResults[nodeID][0].Y.As(lengthUnit) * _defScale;
                         break;
                       case (DisplayValue.Z):
-                        t = xyzResults[nodeID][0].Z.As(this.LengthResultUnit);
+                        t = xyzResults[nodeID][0].Z.ToUnit(this.LengthResultUnit);
                         translation.Z = xyzResults[nodeID][0].Z.As(lengthUnit) * _defScale;
                         break;
                       case (DisplayValue.resXYZ):
-                        t = xyzResults[nodeID][0].XYZ.As(this.LengthResultUnit);
+                        t = xyzResults[nodeID][0].XYZ.ToUnit(this.LengthResultUnit);
                         translation.X = xyzResults[nodeID][0].X.As(lengthUnit) * _defScale;
                         translation.Y = xyzResults[nodeID][0].Y.As(lengthUnit) * _defScale;
                         translation.Z = xyzResults[nodeID][0].Z.As(lengthUnit) * _defScale;
                         break;
                       case (DisplayValue.XX):
-                        t = xxyyzzResults[nodeID][0].X.As(AngleUnit.Radian);
+                        t = xxyyzzResults[nodeID][0].X.ToUnit(AngleUnit.Radian);
                         break;
                       case (DisplayValue.YY):
-                        t = xxyyzzResults[nodeID][0].Y.As(AngleUnit.Radian);
+                        t = xxyyzzResults[nodeID][0].Y.ToUnit(AngleUnit.Radian);
                         break;
                       case (DisplayValue.ZZ):
-                        t = xxyyzzResults[nodeID][0].Z.As(AngleUnit.Radian);
+                        t = xxyyzzResults[nodeID][0].Z.ToUnit(AngleUnit.Radian);
                         break;
                       case (DisplayValue.resXXYYZZ):
-                        t = xxyyzzResults[nodeID][0].XYZ.As(AngleUnit.Radian);
+                        t = xxyyzzResults[nodeID][0].XYZ.ToUnit(AngleUnit.Radian);
                         break;
                     }
                     def.Transform(Transform.Translation(translation));
@@ -338,46 +338,46 @@ namespace GsaGH.Components
                     switch (_disp)
                     {
                       case (DisplayValue.X):
-                        t = xyzResults[nodeID][0].X.As(this.ForceUnit);
+                        t = xyzResults[nodeID][0].X.ToUnit(this.ForceUnit);
                         break;
                       case (DisplayValue.Y):
-                        t = xyzResults[nodeID][0].Y.As(this.ForceUnit);
+                        t = xyzResults[nodeID][0].Y.ToUnit(this.ForceUnit);
                         break;
                       case (DisplayValue.Z):
-                        t = xyzResults[nodeID][0].Z.As(this.ForceUnit);
+                        t = xyzResults[nodeID][0].Z.ToUnit(this.ForceUnit);
                         break;
                       case (DisplayValue.resXYZ):
-                        t = xyzResults[nodeID][0].XYZ.As(this.ForceUnit);
+                        t = xyzResults[nodeID][0].XYZ.ToUnit(this.ForceUnit);
                         break;
                       case (DisplayValue.XX):
-                        t = xxyyzzResults[nodeID][0].X.As(this.MomentUnit);
+                        t = xxyyzzResults[nodeID][0].X.ToUnit(this.MomentUnit);
                         break;
                       case (DisplayValue.YY):
-                        t = xxyyzzResults[nodeID][0].Y.As(this.MomentUnit);
+                        t = xxyyzzResults[nodeID][0].Y.ToUnit(this.MomentUnit);
                         break;
                       case (DisplayValue.ZZ):
-                        t = xxyyzzResults[nodeID][0].Z.As(this.MomentUnit);
+                        t = xxyyzzResults[nodeID][0].Z.ToUnit(this.MomentUnit);
                         break;
                       case (DisplayValue.resXXYYZZ):
-                        t = xxyyzzResults[nodeID][0].XYZ.As(this.MomentUnit);
+                        t = xxyyzzResults[nodeID][0].XYZ.ToUnit(this.MomentUnit);
                         break;
                     }
                     break;
                 }
 
                 //normalised value between -1 and 1
-                double tnorm = 2 * (t - dmin) / (dmax - dmin) - 1;
+                double tnorm = 2 * (t.Value - dmin) / (dmax - dmin) - 1;
 
                 // get colour for that normalised value
                 Color valcol = gH_Gradient.ColourAt(tnorm);
 
                 // set the size of the point for ResultPoint class. Size is calculated from 0-base, so not a normalised value between extremes
-                float size = (t >= 0 && dmax != 0) ?
-                    Math.Max(2, (float)(t / dmax * scale)) :
-                    Math.Max(2, (float)(Math.Abs(t) / Math.Abs(dmin) * scale));
+                float size = (t.Value >= 0 && dmax != 0) ?
+                    Math.Max(2, (float)(t.Value / dmax * scale)) :
+                    Math.Max(2, (float)(Math.Abs(t.Value) / Math.Abs(dmin) * scale));
 
                 // add our special resultpoint to the list of points
-                pts[nodeID] = new ResultPointGoo(def, t, valcol, size);
+                pts[nodeID] = new PointResultGoo(def, t, valcol, size);
               }
             }
           }

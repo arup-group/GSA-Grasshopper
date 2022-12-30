@@ -235,11 +235,13 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         #region create mesh
-        ResultMeshGoo resultMeshes = new ResultMeshGoo(new Mesh(), new List<List<double>>());
+        MeshResultGoo resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(), new List<bool>());
         ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
         meshes.AsParallel().AsOrdered();
-        ConcurrentDictionary<int, List<double>> values = new ConcurrentDictionary<int, List<double>>();
+        ConcurrentDictionary<int, List<IQuantity>> values = new ConcurrentDictionary<int, List<IQuantity>>();
         values.AsParallel().AsOrdered();
+        ConcurrentDictionary<int, bool> ngons = new ConcurrentDictionary<int, bool>();
+        ngons.AsParallel().AsOrdered();
 
         LengthUnit lengthUnit = result.Model.ModelUnit;
         this.undefinedModelLengthUnit = false;
@@ -261,11 +263,11 @@ namespace GsaGH.Components
           if (tempmesh == null) { return; }
 
           List<Vector3d> transformation = null;
-          List<double> vals = new List<double>();
+          List<IQuantity> vals = new List<IQuantity>();
           switch (_disp)
           {
             case (DisplayValue.X):
-              vals = xyzResults[key].Select(item => item.Value.X.As(xyzunit)).ToList();
+              vals = xyzResults[key].Select(item => item.Value.X.ToUnit(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
                 transformation = xyzResults[key].Select(item => new Vector3d(
                             item.Value.X.As(lengthUnit) * _defScale,
@@ -274,7 +276,7 @@ namespace GsaGH.Components
               break;
 
             case (DisplayValue.Y):
-              vals = xyzResults[key].Select(item => item.Value.Y.As(xyzunit)).ToList();
+              vals = xyzResults[key].Select(item => item.Value.Y.ToUnit(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
                 transformation = xyzResults[key].Select(item => new Vector3d(
                             0,
@@ -283,7 +285,7 @@ namespace GsaGH.Components
               break;
 
             case (DisplayValue.Z):
-              vals = xyzResults[key].Select(item => item.Value.Z.As(xyzunit)).ToList();
+              vals = xyzResults[key].Select(item => item.Value.Z.ToUnit(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
                 transformation = xyzResults[key].Select(item => new Vector3d(
                             0,
@@ -292,7 +294,7 @@ namespace GsaGH.Components
               break;
 
             case (DisplayValue.resXYZ):
-              vals = xyzResults[key].Select(item => item.Value.XYZ.As(xyzunit)).ToList();
+              vals = xyzResults[key].Select(item => item.Value.XYZ.ToUnit(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
                 transformation = xyzResults[key].Select(item => new Vector3d(
                             item.Value.X.As(lengthUnit) * _defScale,
@@ -301,23 +303,23 @@ namespace GsaGH.Components
               break;
 
             case (DisplayValue.XX):
-              vals = xxyyzzResults[key].Select(item => item.Value.X.As(xxyyzzunit)).ToList();
+              vals = xxyyzzResults[key].Select(item => item.Value.X.ToUnit(xxyyzzunit)).ToList();
               break;
             case (DisplayValue.YY):
-              vals = xxyyzzResults[key].Select(item => item.Value.Y.As(xxyyzzunit)).ToList();
+              vals = xxyyzzResults[key].Select(item => item.Value.Y.ToUnit(xxyyzzunit)).ToList();
               break;
             case (DisplayValue.ZZ):
-              vals = xxyyzzResults[key].Select(item => item.Value.Z.As(xxyyzzunit)).ToList();
+              vals = xxyyzzResults[key].Select(item => item.Value.Z.ToUnit(xxyyzzunit)).ToList();
               break;
             case (DisplayValue.resXXYYZZ):
-              vals = xxyyzzResults[key].Select(item => item.Value.XYZ.As(xxyyzzunit)).ToList();
+              vals = xxyyzzResults[key].Select(item => item.Value.XYZ.ToUnit(xxyyzzunit)).ToList();
               break;
           }
 
           for (int i = 0; i < vals.Count - 1; i++) // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
           {
             //normalised value between -1 and 1
-            double tnorm = 2 * (vals[i] - dmin) / (dmax - dmin) - 1;
+            double tnorm = 2 * (vals[i].Value - dmin) / (dmax - dmin) - 1;
             Color col = (double.IsNaN(tnorm)) ? Color.Transparent : gH_Gradient.ColourAt(tnorm);
             tempmesh.VertexColors.Add(col);
             if (transformation != null)
@@ -330,17 +332,18 @@ namespace GsaGH.Components
           if (vals.Count == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
           {
             //normalised value between -1 and 1
-            double tnorm = 2 * (vals[0] - dmin) / (dmax - dmin) - 1;
+            double tnorm = 2 * (vals[0].Value - dmin) / (dmax - dmin) - 1;
             Color col = (double.IsNaN(tnorm)) ? Color.Transparent : gH_Gradient.ColourAt(tnorm);
             for (int i = 0; i < tempmesh.Vertices.Count; i++)
               tempmesh.VertexColors.Add(col);
           }
           meshes[key] = tempmesh;
           values[key] = vals;
+          ngons[key] = true;
           #endregion
         });
         #endregion
-        resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList());
+        resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList(), ngons.Values.ToList());
 
         #region Legend
         // ### Legend ###
