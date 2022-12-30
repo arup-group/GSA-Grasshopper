@@ -65,7 +65,7 @@ namespace GsaGH.Components
       IQuantity length = new Length(0, LengthResultUnit);
       string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-      pManager.AddGenericParameter("Point", "P", "Contoured Points with result values", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Result Point", "P", "Contoured Points with result values", GH_ParamAccess.list);
       pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
       pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values", GH_ParamAccess.list);
     }
@@ -426,14 +426,12 @@ namespace GsaGH.Components
               Length displacement = new Length(t, this.LengthResultUnit);
               legendValues.Add(displacement.ToString("f" + significantDigits));
               ts.Add(new GH_UnitNumber(displacement));
-              this.Message = Length.GetAbbreviation(this.LengthResultUnit);
             }
             else
             {
               Angle rotation = new Angle(t, AngleUnit.Radian);
               legendValues.Add(rotation.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(rotation));
-              this.Message = Angle.GetAbbreviation(AngleUnit.Radian);
             }
           }
           if (_mode == FoldMode.Reaction)
@@ -632,6 +630,25 @@ namespace GsaGH.Components
     #endregion
 
     #region menu override
+    protected override void BeforeSolveInstance()
+    {
+      switch (_mode)
+      {
+        case FoldMode.Displacement:
+          if ((int)_disp < 4)
+            this.Message = Length.GetAbbreviation(this.LengthResultUnit);
+          else
+            this.Message = Angle.GetAbbreviation(AngleUnit.Radian);
+          break;
+
+        case FoldMode.Reaction:
+          if ((int)_disp < 4)
+            this.Message = Force.GetAbbreviation(this.ForceUnit);
+          else
+            this.Message = Moment.GetAbbreviation(this.MomentUnit);
+          break;
+      }
+    }
     private void ReDrawComponent()
     {
       System.Drawing.PointF pivot = new System.Drawing.PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);

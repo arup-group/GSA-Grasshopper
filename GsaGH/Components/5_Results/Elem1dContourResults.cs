@@ -67,7 +67,7 @@ namespace GsaGH.Components
       IQuantity length = new Length(0, LengthResultUnit);
       string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-      pManager.AddGenericParameter("Line", "L", "Contoured Line segments with result values", GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Result Line", "L", "Contoured Line segments with result values", GH_ParamAccess.tree);
       pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
       pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values", GH_ParamAccess.list);
     }
@@ -521,14 +521,12 @@ namespace GsaGH.Components
               Length displacement = new Length(t, this.LengthResultUnit);
               legendValues.Add(displacement.ToString("f" + significantDigits));
               ts.Add(new GH_UnitNumber(displacement));
-              this.Message = Length.GetAbbreviation(this.LengthResultUnit);
             }
             else
             {
               Angle rotation = new Angle(t, AngleUnit.Radian);
               legendValues.Add(rotation.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(rotation));
-              this.Message = Angle.GetAbbreviation(AngleUnit.Radian);
             }
           }
           else if (_mode == FoldMode.Force)
@@ -538,14 +536,12 @@ namespace GsaGH.Components
               Force force = new Force(t, this.ForceUnit);
               legendValues.Add(force.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(force));
-              this.Message = Force.GetAbbreviation(this.ForceUnit);
             }
             else
             {
               Moment moment = new Moment(t, this.MomentUnit);
               legendValues.Add(moment.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(moment));
-              this.Message = Moment.GetAbbreviation(this.MomentUnit);
             }
           }
           else
@@ -553,7 +549,6 @@ namespace GsaGH.Components
             Energy energy = new Energy(t, this.EnergyResultUnit);
             legendValues.Add(energy.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(energy));
-            this.Message = Energy.GetAbbreviation(this.EnergyResultUnit);
           }
 
           if (Math.Abs(t) > 1)
@@ -779,6 +774,29 @@ namespace GsaGH.Components
     #endregion
 
     #region menu override
+    protected override void BeforeSolveInstance()
+    {
+      switch (_mode)
+      {
+        case FoldMode.Displacement:
+          if ((int)_disp < 4)
+            this.Message = Length.GetAbbreviation(this.LengthResultUnit);
+          else
+            this.Message = Angle.GetAbbreviation(AngleUnit.Radian);
+          break;
+
+        case FoldMode.Force:
+          if ((int)_disp < 4)
+            this.Message = Force.GetAbbreviation(this.ForceUnit);
+          else
+            this.Message = Moment.GetAbbreviation(this.MomentUnit);
+          break;
+
+        case FoldMode.StrainEnergy:
+          this.Message = Energy.GetAbbreviation(this.EnergyResultUnit);
+          break;
+      }
+    }
     private void ReDrawComponent()
     {
       System.Drawing.PointF pivot = new System.Drawing.PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);
