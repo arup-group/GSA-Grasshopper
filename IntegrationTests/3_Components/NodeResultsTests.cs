@@ -117,7 +117,19 @@ namespace IntegrationTests.Components
       GH_Number output1 = (GH_Number)param1.VolatileData.get_Branch(0)[0];
       IGH_Param param2 = Helper.FindParameter(doc, "ScaledContour");
       GH_Number output2 = (GH_Number)param2.VolatileData.get_Branch(0)[0];
-      Assert.Equal(output1.Value, output2.Value);
+      Assert.Equal(output1.Value, output2.Value, 6);
+    }
+
+    [Theory]
+    [InlineData("FContour", 871.0, 66.14, 1)]
+    public void NodeContourTests(string name, double expected1, double expected2, int precision = 6)
+    {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, name);
+      GH_Number output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
+      GH_Number output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
+      Assert.Equal(expected1, output1.Value, precision);
+      Assert.Equal(expected2, output2.Value, precision);
     }
   }
 }

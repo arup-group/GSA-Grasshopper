@@ -94,5 +94,29 @@ namespace IntegrationTests.Components
       for (int i = 0; i < expectedVals.Count; i++)
         Assert.Equal(expectedVals[i], output[i].Value, 0.01);
     }
+
+    [Fact]
+    public void Elem1dContourScaledDeformationTests()
+    {
+      GH_Document doc = Document;
+      IGH_Param param1 = Helper.FindParameter(doc, "ScaledResults");
+      List<GH_Number> output1 = (List<GH_Number>)param1.VolatileData.get_Branch(0);
+      IGH_Param param2 = Helper.FindParameter(doc, "ScaledContours");
+      List<GH_Number> output2 = (List<GH_Number>)param2.VolatileData.get_Branch(0);
+      for (int i = 0; i < output1.Count; i++)
+        Assert.Equal(output2[i].Value, output1[i].Value, 6);
+    }
+
+    [Theory]
+    [InlineData("FxContour", new double[] { -110.8, -110.8, -110.8, -110.8, -110.8, -110.8, -110.8, -110.8, -110.8 }, 1)]
+    [InlineData("MyyContour", new double[] { -7.964, -7.221, -6.479, -5.736, -4.994, -4.251, -3.508, -2.766, -2.023 }, 3)]
+    public void Elem1dContourForcesTests(string name, double[] expectedVals, int precision = 6)
+    {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, name);
+      List<GH_Number> output = (List<GH_Number>)param.VolatileData.get_Branch(0);
+      for (int i = 0; i < expectedVals.Length; i++)
+        Assert.Equal(expectedVals[i], output[i].Value, precision);
+    }
   }
 }
