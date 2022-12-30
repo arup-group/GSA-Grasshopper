@@ -434,13 +434,13 @@ namespace GsaGH.Components
                 case FoldMode.StrainEnergy:
                   if (_disp == DisplayValue.X)
                   {
-                    t1 = xyzResults[key][i].X.ToUnit(DefaultUnits.EnergyUnit);
-                    t2 = xyzResults[key][i + 1].X.ToUnit(DefaultUnits.EnergyUnit);
+                    t1 = xyzResults[key][i].X.ToUnit(this.EnergyResultUnit);
+                    t2 = xyzResults[key][i + 1].X.ToUnit(this.EnergyResultUnit);
                   }
                   else
                   {
-                    t1 = xyzResults[key][i].X.ToUnit(DefaultUnits.EnergyUnit);
-                    t2 = xyzResults[key][i].X.ToUnit(DefaultUnits.EnergyUnit);
+                    t1 = xyzResults[key][i].X.ToUnit(this.EnergyResultUnit);
+                    t2 = xyzResults[key][i].X.ToUnit(this.EnergyResultUnit);
                   }
                   break;
               }
