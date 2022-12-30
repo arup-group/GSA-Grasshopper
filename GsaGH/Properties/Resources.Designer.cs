@@ -1109,11 +1109,59 @@ namespace GsaGH.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap ResultGlobal {
+
+    /// <summary>
+    ///   Looks up a localized resource of type System.Drawing.Bitmap.
+    /// </summary>
+    public static System.Drawing.Bitmap Result0dInfo
+    {
+      get
+      {
+        object obj = ResourceManager.GetObject("Result0dInfo", resourceCulture);
+        return ((System.Drawing.Bitmap)(obj));
+      }
+    }
+
+    /// <summary>
+    ///   Looks up a localized resource of type System.Drawing.Bitmap.
+    /// </summary>
+    public static System.Drawing.Bitmap Result1dInfo
+    {
+      get
+      {
+        object obj = ResourceManager.GetObject("Result1dInfo", resourceCulture);
+        return ((System.Drawing.Bitmap)(obj));
+      }
+    }
+
+    /// <summary>
+    ///   Looks up a localized resource of type System.Drawing.Bitmap.
+    /// </summary>
+    public static System.Drawing.Bitmap Result2dInfo
+    {
+      get
+      {
+        object obj = ResourceManager.GetObject("Result2dInfo", resourceCulture);
+        return ((System.Drawing.Bitmap)(obj));
+      }
+    }
+
+    /// <summary>
+    ///   Looks up a localized resource of type System.Drawing.Bitmap.
+    /// </summary>
+    public static System.Drawing.Bitmap Result3dInfo
+    {
+      get
+      {
+        object obj = ResourceManager.GetObject("Result3dInfo", resourceCulture);
+        return ((System.Drawing.Bitmap)(obj));
+      }
+    }
+
+    /// <summary>
+    ///   Looks up a localized resource of type System.Drawing.Bitmap.
+    /// </summary>
+    public static System.Drawing.Bitmap ResultGlobal {
             get {
                 object obj = ResourceManager.GetObject("ResultGlobal", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
