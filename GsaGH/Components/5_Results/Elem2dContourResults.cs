@@ -716,7 +716,7 @@ namespace GsaGH.Components
               _disp = (DisplayValue)j - 1;
 
           }
-          else if (_mode == FoldMode.Force)
+          else if (_mode == FoldMode.Force || _mode == FoldMode.Stress)
           {
             if (j > 2)
               _disp = (DisplayValue)j + 1;
