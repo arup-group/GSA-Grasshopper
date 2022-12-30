@@ -259,13 +259,13 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         #region create mesh
-        MeshResultGoo resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(), new List<bool>());
+        MeshResultGoo resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(), new List<List<Point3d>>());
         ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
         meshes.AsParallel().AsOrdered();
         ConcurrentDictionary<int, List<IQuantity>> values = new ConcurrentDictionary<int, List<IQuantity>>();
         values.AsParallel().AsOrdered();
-        ConcurrentDictionary<int, bool> ngons = new ConcurrentDictionary<int, bool>();
-        ngons.AsParallel().AsOrdered();
+        ConcurrentDictionary<int, List<Point3d>> verticies = new ConcurrentDictionary<int, List<Point3d>>();
+        verticies.AsParallel().AsOrdered();
 
         // loop through elements
         Parallel.ForEach(elems.Keys, key => //foreach (int key in elems.Keys)
@@ -356,11 +356,11 @@ namespace GsaGH.Components
           }
           meshes[key] = tempmesh;
           values[key] = vals;
-          ngons[key] = ngon;
+          verticies[key] = tempmesh.Vertices.Select(pt => (Point3d)pt).ToList();
           #endregion
         });
         #endregion
-        resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList(), ngons.Values.ToList());
+        resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList());
 
         #region Legend
         // ### Legend ###

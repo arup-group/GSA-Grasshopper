@@ -9,11 +9,16 @@ namespace GsaGH.Parameters
 {
   public class MeshResultGoo : GH_GeometricGoo<Mesh>, IGH_PreviewData
   {
-    public MeshResultGoo(Mesh mesh, List<List<IQuantity>> results, List<bool> ngons)
+    internal List<List<IQuantity>> ResultValues = new List<List<IQuantity>>();
+    internal List<List<Point3d>> Vertices = new List<List<Point3d>>();
+    private List<Mesh> _tempMeshes = new List<Mesh>();
+    private bool _finalised = false;
+
+    public MeshResultGoo(Mesh mesh, List<List<IQuantity>> results, List<List<Point3d>> vertices)
     : base(mesh)
     {
-      ResultValues = results;
-      Ngons = ngons;
+      this.ResultValues = results;
+      this.Vertices = vertices;
     }
 
     public Mesh ValidMesh
@@ -44,23 +49,18 @@ namespace GsaGH.Parameters
       }
     }
 
-    internal List<List<IQuantity>> ResultValues = new List<List<IQuantity>>();
-    internal List<bool> Ngons = new List<bool>();
-    private List<Mesh> _tempMeshes = new List<Mesh>();
-    private bool _finalised = false;
-
-    public void Add(Mesh temp_mesh, List<IQuantity> results, bool ngon)
+    public void Add(Mesh temp_mesh, List<IQuantity> results, List<Point3d> vertices)
     {
       _tempMeshes.Add(temp_mesh);
       ResultValues.Add(results);
-      Ngons.Add(ngon);
+      Vertices.Add(vertices);
       _finalised = false;
     }
-    public void Add(List<Mesh> temp_mesh, List<List<IQuantity>> results, List<bool> ngons)
+    public void Add(List<Mesh> temp_mesh, List<List<IQuantity>> results, List<List<Point3d>> vertices)
     {
       _tempMeshes.AddRange(temp_mesh);
       ResultValues.AddRange(results);
-      Ngons.AddRange(ngons);
+      Vertices.AddRange(vertices);
       Finalise();
     }
     public void Finalise()
@@ -76,7 +76,7 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      return string.Format("MeshResult: V:{0:0}, F:{1:0.0}, R:{2:0.0}", Value.Vertices.Count, Value.Faces.Count, ResultValues.Count);
+      return string.Format("MeshResult: V:{0:0}, F:{1:0}, R:{2:0}", Value.Vertices.Count, Value.Faces.Count, ResultValues.Count);
     }
     public override string TypeName
     {
@@ -89,7 +89,7 @@ namespace GsaGH.Parameters
 
     public override IGH_GeometricGoo DuplicateGeometry()
     {
-      return new MeshResultGoo(Value, ResultValues, Ngons);
+      return new MeshResultGoo(Value, ResultValues, Vertices);
     }
     public override BoundingBox Boundingbox
     {
@@ -108,13 +108,37 @@ namespace GsaGH.Parameters
     {
       Mesh m = Value.DuplicateMesh();
       m.Transform(xform);
-      return new MeshResultGoo(m, ResultValues, Ngons);
+      List<List<Point3d>> vertices = new List<List<Point3d>>();
+      foreach (List<Point3d> vertex in this.Vertices) 
+      {
+        List<Point3d> duplicates = new List<Point3d>();
+        foreach (Point3d point in vertex) 
+        { 
+          Point3d dup = new Point3d(point);
+          dup.Transform(xform);
+          duplicates.Add(dup);
+        }
+        vertices.Add(duplicates);
+      }
+
+      return new MeshResultGoo(m, this.ResultValues, vertices);
     }
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
       Mesh m = Value.DuplicateMesh();
       xmorph.Morph(m);
-      return new MeshResultGoo(m, ResultValues, Ngons);
+      List<List<Point3d>> vertices = new List<List<Point3d>>();
+      foreach (List<Point3d> vertex in this.Vertices)
+      {
+        List<Point3d> duplicates = new List<Point3d>();
+        foreach (Point3d point in vertex)
+        {
+          Point3d dup = new Point3d(point);
+          duplicates.Add(xmorph.MorphPoint(dup));
+        }
+        vertices.Add(duplicates);
+      }
+      return new MeshResultGoo(m, ResultValues, Vertices);
     }
 
     public override object ScriptVariable()

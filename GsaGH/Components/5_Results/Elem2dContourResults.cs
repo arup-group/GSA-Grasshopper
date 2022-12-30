@@ -25,10 +25,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get Element2d results
-    /// </summary>
-    public class Elem2dContourResults : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get Element2d results
+  /// </summary>
+  public class Elem2dContourResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e2b011dc-c5ca-46fd-87f5-b888b27ef684");
@@ -62,7 +62,7 @@ namespace GsaGH.Components
       IQuantity length = new Length(0, LengthResultUnit);
       string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-      pManager.AddGenericParameter("Mesh", "M", "Mesh with coloured result values", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Result Mesh", "M", "Mesh with coloured result values", GH_ParamAccess.item);
       pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
       pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values", GH_ParamAccess.list);
     }
@@ -274,13 +274,13 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         #region create mesh
-        MeshResultGoo resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(), new List<bool>());
+        MeshResultGoo resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(), new List<List<Point3d>>());
         ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
         meshes.AsParallel().AsOrdered();
         ConcurrentDictionary<int, List<IQuantity>> values = new ConcurrentDictionary<int, List<IQuantity>>();
         values.AsParallel().AsOrdered();
-        ConcurrentDictionary<int, bool> ngons = new ConcurrentDictionary<int, bool>();
-        ngons.AsParallel().AsOrdered();
+        ConcurrentDictionary<int, List<Point3d>> verticies = new ConcurrentDictionary<int, List<Point3d>>();
+        verticies.AsParallel().AsOrdered();
 
         LengthUnit lengthUnit = result.Model.ModelUnit;
         this.undefinedModelLengthUnit = false;
@@ -300,7 +300,6 @@ namespace GsaGH.Components
           if (element.Topology.Count < 3) { return; }
           Mesh tempmesh = Helpers.Import.Elements.ConvertElement2D(element, nodes, lengthUnit);
           if (tempmesh == null) { return; }
-          bool ngon = tempmesh.Ngons.Count > 0;
 
           List<Vector3d> transformation = null;
           List<IQuantity> vals = new List<IQuantity>();
@@ -387,15 +386,40 @@ namespace GsaGH.Components
             double tnorm = 2 * (vals[0].Value - dmin) / (dmax - dmin) - 1;
             Color col = (double.IsNaN(tnorm)) ? Color.Transparent : gH_Gradient.ColourAt(tnorm);
             for (int i = 0; i < tempmesh.Vertices.Count; i++)
-              tempmesh.VertexColors.Add(col);
+              tempmesh.VertexColors.SetColor(i, col);
+
+            if (tempmesh.Ngons.Count == 0)
+            {
+              verticies[key] = new List<Point3d>()
+              {
+                new Point3d(
+                  tempmesh.Vertices.Select(pt => pt.X).Average(),
+                  tempmesh.Vertices.Select(pt => pt.Y).Average(),
+                  tempmesh.Vertices.Select(pt => pt.Z).Average()
+                )
+              };
+            }
+            else
+            {
+              verticies[key] = new List<Point3d>()
+              {
+                new Point3d(
+                  tempmesh.Vertices.Last().X,
+                  tempmesh.Vertices.Last().Y,
+                  tempmesh.Vertices.Last().Z
+                )
+              };
+            }
           }
+          else
+            verticies[key] = tempmesh.Vertices.Select(pt => (Point3d)pt).ToList();
           meshes[key] = tempmesh;
           values[key] = vals;
-          ngons[key] = ngon;
+
           #endregion
         });
         #endregion
-        resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList(), ngons.Values.ToList());
+        resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList());
 
         #region Legend
         // ### Legend ###
@@ -599,7 +623,7 @@ namespace GsaGH.Components
         {
           if (DropDownItems[1] != _displacement)
           {
-            if (DropDownItems.Count == 4) // if coming from stress we remove the layer dropdown
+            while (DropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
             {
               DropDownItems.RemoveAt(2);
               SelectedItems.RemoveAt(2);
@@ -607,9 +631,6 @@ namespace GsaGH.Components
             }
 
             DropDownItems[1] = _displacement;
-            DropDownItems[2] = FilteredUnits.FilteredLengthUnits;
-
-            SelectedItems[0] = DropDownItems[0][0]; // displacement
             SelectedItems[1] = DropDownItems[1][3]; // Resolved XYZ
 
             _disp = (DisplayValue)3;
@@ -622,7 +643,7 @@ namespace GsaGH.Components
         {
           if (DropDownItems[1] != _force)
           {
-            if (DropDownItems.Count == 4) // if coming from stress we remove the layer dropdown
+            while (DropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
             {
               DropDownItems.RemoveAt(2);
               SelectedItems.RemoveAt(2);
@@ -630,8 +651,6 @@ namespace GsaGH.Components
             }
 
             DropDownItems[1] = _force;
-
-            SelectedItems[0] = DropDownItems[0][1];
             SelectedItems[1] = DropDownItems[1][0];
 
             _disp = 0;
@@ -644,18 +663,16 @@ namespace GsaGH.Components
         {
           if (DropDownItems[1] != _stress)
           {
-            if (DropDownItems.Count < 4)
+            if (DropDownItems.Count < 3)
             {
               DropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
               SpacerDescriptions.Insert(2, "Layer");
             }
 
             DropDownItems[1] = _stress;
-
-            SelectedItems[0] = DropDownItems[0][2];
             SelectedItems[1] = DropDownItems[1][0];
 
-            if (SelectedItems.Count < 4)
+            if (SelectedItems.Count < 3)
               SelectedItems.Insert(2, DropDownItems[2][1]);
             else
               SelectedItems[2] = DropDownItems[2][1];
@@ -742,7 +759,7 @@ namespace GsaGH.Components
 
       if (_mode == FoldMode.Force)
       {
-        
+
         if ((int)_disp < 4 | _isShear)
           Params.Output[2].Name = "Legend Values [" + ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit) + "/" + Length.GetAbbreviation(this.LengthUnit) + "]";
         else
@@ -757,6 +774,30 @@ namespace GsaGH.Components
     #endregion
 
     #region menu override
+    protected override void BeforeSolveInstance()
+    {
+      switch (_mode)
+      {
+        case FoldMode.Displacement:
+          if ((int)_disp < 4)
+            this.Message = Length.GetAbbreviation(this.LengthResultUnit);
+          else
+            this.Message = Angle.GetAbbreviation(AngleUnit.Radian);
+          break;
+
+        case FoldMode.Force:
+          if ((int)_disp < 4)
+            this.Message = ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit);
+          else
+            this.Message = Force.GetAbbreviation(this.ForceUnit) + "·" + Length.GetAbbreviation(this.LengthUnit) + "/" + Length.GetAbbreviation(this.LengthUnit);
+          break;
+
+        case FoldMode.Stress:
+          this.Message = Pressure.GetAbbreviation(this.StressUnitResult);
+          break;
+      }
+    }
+
     private void ReDrawComponent()
     {
       PointF pivot = new PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);
