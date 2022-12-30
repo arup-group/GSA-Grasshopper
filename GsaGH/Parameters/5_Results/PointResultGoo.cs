@@ -23,7 +23,7 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      return string.Format("NodeResult: P:({0:0.0},{1:0.0},{2:0.0}) R:{3:0.0}", Value.X, Value.Y, Value.Z, m_result);
+      return string.Format("PointResult: P:({0:0.0},{1:0.0},{2:0.0}) R:{3:0.0}", Value.X, Value.Y, Value.Z, m_result);
     }
     public override string TypeName
     {
