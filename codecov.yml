@@ -11,3 +11,5 @@ ignore:
   - "GsaGH/Components/GraveyardComp"  # ignore folders and all its contents
   - "GsaGH/UI"  # ignore folders and all its contents
   - "GsaGH/Properties"
+  - "GsaGH/Parameter/*Goo.cs"
+  - "GsaGH/Parameter/*Parameter.cs"
