@@ -118,5 +118,17 @@ namespace IntegrationTests.Components
       for (int i = 0; i < expectedVals.Length; i++)
         Assert.Equal(expectedVals[i], output[i].Value, precision);
     }
+
+    [Fact]
+    public void Elem1dContourStrainEnergyDensityTests()
+    {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, "StrainEnergyDensityContour");
+      List<GH_Number> output = (List<GH_Number>)param.VolatileData.get_Branch(0);
+
+      List<double> expectedVals = new List<double>() { 459.7E-9, 1.029E-6, 1.828E-6, 2.652E-6, 3.342E-6 };
+      for (int i = 0; i < expectedVals.Count; i++)
+        Assert.Equal(expectedVals[i], output[i].Value, 0.01);
+    }
   }
 }
