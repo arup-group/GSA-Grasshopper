@@ -98,7 +98,26 @@ namespace IntegrationTests.Components
       List<int> expected = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 3024, 3025, 3026, 3027 };
       for (int i = 0; i < expected.Count; i++)
         Assert.Equal(expected[i], output1[i].Value);
+    }
 
+    [Fact]
+    public void NodeContourSupportPtsCountTests()
+    {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, "SupportPtsCount");
+      GH_Integer output1 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
+      Assert.Equal(23, output1.Value);
+    }
+
+    [Fact]
+    public void NodeContourScaledDeformationTests()
+    {
+      GH_Document doc = Document;
+      IGH_Param param1 = Helper.FindParameter(doc, "ScaledResult");
+      GH_Number output1 = (GH_Number)param1.VolatileData.get_Branch(0)[0];
+      IGH_Param param2 = Helper.FindParameter(doc, "ScaledContour");
+      GH_Number output2 = (GH_Number)param2.VolatileData.get_Branch(0)[0];
+      Assert.Equal(output1.Value, output2.Value);
     }
   }
 }
