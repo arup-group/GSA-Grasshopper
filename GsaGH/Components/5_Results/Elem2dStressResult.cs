@@ -151,9 +151,9 @@ namespace GsaGH.Components
 
                   GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(StresshUnit))), p); // use ToUnit to capture changes in dropdown
-                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(StresshUnit))), p);
-                  out_ZZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(StresshUnit))), p);
+                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.StresshUnit))), p); // use ToUnit to capture changes in dropdown
+                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.StresshUnit))), p);
+                  out_ZZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.StresshUnit))), p);
                 }
               }
               if (thread == 1)
@@ -168,9 +168,9 @@ namespace GsaGH.Components
 
                   GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)), p); // always use [rad] units
-                  out_YZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), p);
-                  out_ZX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), p);
+                  out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.StresshUnit))), p); // always use [rad] units
+                  out_YZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.StresshUnit))), p);
+                  out_ZX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.StresshUnit))), p);
                 }
               }
             });
