@@ -1,9 +1,10 @@
 # GSA-Grasshopper
 ![GitHub branch checks state](https://img.shields.io/badge/dynamic/json?color=blue&label=Downloads&query=download_count&url=https%3A%2F%2Fyak.rhino3d.com%2Fpackages%2Fgsa) [![Install plugin](https://img.shields.io/badge/Install-Food4Rhino-lightgrey)](https://www.food4rhino.com/en/app/gsa)
 
+A Grasshopper plugin for structural analysis using Oasys GSA.
 
-| Release | Pipeline | Tests | Deployment | Dependencies |
-| ------- | -------- | ----- | ---------- | ------------ |
+| Latest | CI Pipeline | Unit Tests | Deployment | Dependencies |
+| ------ | ----------- | ---------- | ---------- | ------------ |
 | [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/arup-group/GSA-Grasshopper?include_prereleases)](https://github.com/arup-group/GSA-Grasshopper/releases) <br /> ![Yak](https://img.shields.io/badge/dynamic/json?color=blue&label=Yak&prefix=v&query=version&url=https%3A%2F%2Fyak.rhino3d.com%2Fpackages%2Fgsa) <br /> ![Nuget](https://img.shields.io/nuget/vpre/gsagh) | [![Build Status](https://dev.azure.com/oasys-software/OASYS%20libraries/_apis/build/status/arup-group.GSA-Grasshopper?branchName=main)](https://dev.azure.com/oasys-software/OASYS%20libraries/_build/latest?definitionId=139&branchName=main) <br /> ![GitHub branch checks state](https://img.shields.io/github/checks-status/arup-group/gsa-grasshopper/main) | [![codecov](https://codecov.io/gh/arup-group/GSA-Grasshopper/branch/main/graph/badge.svg?token=MB9FPYAICX)](https://codecov.io/gh/arup-group/GSA-Grasshopper) <br /> ![Azure DevOps tests](https://img.shields.io/azure-devops/tests/oasys-software/OASYS%2520libraries/139/main?compact_message) | ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/arup-group/gsa-grasshopper/github-release-yak.yml?label=yak) <br /> ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/arup-group/gsa-grasshopper/github-release-nuget.yml?label=nuget) | ![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/arup-group/gsa-grasshopper) |
 
 ## Documentation
