@@ -207,7 +207,7 @@ namespace GsaGH
   {
     internal static Guid GUID = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
     internal const string Company = "Oasys";
-    internal const string Copyright = "Copyright © Oasys 1985 - 2022";
+    internal const string Copyright = "Copyright © Oasys 1985 - 2023";
     internal const string Contact = "https://www.oasys-software.com/";
     internal const string Vers = "0.9.38";
     internal static bool isBeta = true;
