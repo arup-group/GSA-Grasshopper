@@ -23,6 +23,7 @@ Tutorials and more example files to come shortly!
 This repository contains a number of example files that are also used for testing on new releases, please check out the [ExampleFiles folder](/ExampleFiles) for a growing list of Grasshopper files.
 
 ## Contributing
+![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/arup-group/gsa-grasshopper) ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/arup-group/gsa-grasshopper?logoColor=brightgreen)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/arup-group/gsa-grasshopper)
 ![GitHub contributors](https://img.shields.io/github/contributors/arup-group/gsa-grasshopper)
 
