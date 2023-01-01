@@ -26,6 +26,7 @@ This repository contains a number of example files that are also used for testin
 ## Contributing
 ![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/arup-group/gsa-grasshopper) ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/arup-group/gsa-grasshopper?logoColor=brightgreen)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/arup-group/gsa-grasshopper)
+![GitHub top language](https://img.shields.io/github/languages/top/arup-group/gsa-grasshopper)
 ![GitHub contributors](https://img.shields.io/github/contributors/arup-group/gsa-grasshopper)
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
