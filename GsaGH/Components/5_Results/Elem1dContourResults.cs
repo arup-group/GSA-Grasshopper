@@ -67,7 +67,7 @@ namespace GsaGH.Components
       IQuantity length = new Length(0, LengthResultUnit);
       string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-      pManager.AddGenericParameter("Line", "L", "Contoured Line segments with result values", GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Result Line", "L", "Contoured Line segments with result values", GH_ParamAccess.tree);
       pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
       pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values", GH_ParamAccess.list);
     }
@@ -183,7 +183,8 @@ namespace GsaGH.Components
 
         if (res.dmax_x == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Result does not contain any values for 1D Elements");
+          string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element1D results.");
           return;
         }
 
@@ -299,7 +300,7 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         // Loop through segmented lines and set result colour into ResultLine format
-        DataTree<ResultLineGoo> resultLines = new DataTree<ResultLineGoo>();
+        DataTree<LineResultGoo> resultLines = new DataTree<LineResultGoo>();
         LengthUnit lengthUnit = result.Model.ModelUnit;
         this.undefinedModelLengthUnit = false;
         if (lengthUnit == LengthUnit.Undefined)
@@ -311,7 +312,7 @@ namespace GsaGH.Components
 
         Parallel.ForEach(elems, element =>
         {
-          ConcurrentDictionary<int, ResultLineGoo> resLns = new ConcurrentDictionary<int, ResultLineGoo>();
+          ConcurrentDictionary<int, LineResultGoo> resLns = new ConcurrentDictionary<int, LineResultGoo>();
 
           // list for element geometry and info
           if (element.Value.IsDummy) { return; }
@@ -330,8 +331,8 @@ namespace GsaGH.Components
               Vector3d startTranslation = new Vector3d(0, 0, 0);
               Vector3d endTranslation = new Vector3d(0, 0, 0);
 
-              double t1 = 0;
-              double t2 = 0;
+              IQuantity t1 = null;
+              IQuantity t2 = null;
 
               Point3d start = new Point3d(ln.PointAt((double)i / (positionsCount - 1)));
               Point3d end = new Point3d(ln.PointAt((double)(i + 1) / (positionsCount - 1)));
@@ -345,26 +346,26 @@ namespace GsaGH.Components
                   switch (_disp)
                   {
                     case (DisplayValue.X):
-                      t1 = xyzResults[key][i].X.As(this.LengthResultUnit);
-                      t2 = xyzResults[key][i + 1].X.As(this.LengthResultUnit);
+                      t1 = xyzResults[key][i].X.ToUnit(this.LengthResultUnit);
+                      t2 = xyzResults[key][i + 1].X.ToUnit(this.LengthResultUnit);
                       startTranslation.X = xyzResults[key][i].X.As(lengthUnit) * _defScale;
                       endTranslation.X = xyzResults[key][i + 1].X.As(lengthUnit) * _defScale;
                       break;
                     case (DisplayValue.Y):
-                      t1 = xyzResults[key][i].Y.As(this.LengthResultUnit);
-                      t2 = xyzResults[key][i + 1].Y.As(this.LengthResultUnit);
+                      t1 = xyzResults[key][i].Y.ToUnit(this.LengthResultUnit);
+                      t2 = xyzResults[key][i + 1].Y.ToUnit(this.LengthResultUnit);
                       startTranslation.Y = xyzResults[key][i].Y.As(lengthUnit) * _defScale;
                       endTranslation.Y = xyzResults[key][i + 1].Y.As(lengthUnit) * _defScale;
                       break;
                     case (DisplayValue.Z):
-                      t1 = xyzResults[key][i].Z.As(this.LengthResultUnit);
-                      t2 = xyzResults[key][i + 1].Z.As(this.LengthResultUnit);
+                      t1 = xyzResults[key][i].Z.ToUnit(this.LengthResultUnit);
+                      t2 = xyzResults[key][i + 1].Z.ToUnit(this.LengthResultUnit);
                       startTranslation.Z = xyzResults[key][i].Z.As(lengthUnit) * _defScale;
                       endTranslation.Z = xyzResults[key][i + 1].Z.As(lengthUnit) * _defScale;
                       break;
                     case (DisplayValue.resXYZ):
-                      t1 = xyzResults[key][i].XYZ.As(this.LengthResultUnit);
-                      t2 = xyzResults[key][i + 1].XYZ.As(this.LengthResultUnit);
+                      t1 = xyzResults[key][i].XYZ.ToUnit(this.LengthResultUnit);
+                      t2 = xyzResults[key][i + 1].XYZ.ToUnit(this.LengthResultUnit);
                       startTranslation.X = xyzResults[key][i].X.As(lengthUnit) * _defScale;
                       startTranslation.Y = xyzResults[key][i].Y.As(lengthUnit) * _defScale;
                       startTranslation.Z = xyzResults[key][i].Z.As(lengthUnit) * _defScale;
@@ -373,20 +374,20 @@ namespace GsaGH.Components
                       endTranslation.Z = xyzResults[key][i + 1].Z.As(lengthUnit) * _defScale;
                       break;
                     case (DisplayValue.XX):
-                      t1 = xxyyzzResults[key][i].X.As(AngleUnit.Radian);
-                      t2 = xxyyzzResults[key][i + 1].X.As(AngleUnit.Radian);
+                      t1 = xxyyzzResults[key][i].X.ToUnit(AngleUnit.Radian);
+                      t2 = xxyyzzResults[key][i + 1].X.ToUnit(AngleUnit.Radian);
                       break;
                     case (DisplayValue.YY):
-                      t1 = xxyyzzResults[key][i].Y.As(AngleUnit.Radian);
-                      t2 = xxyyzzResults[key][i + 1].Y.As(AngleUnit.Radian);
+                      t1 = xxyyzzResults[key][i].Y.ToUnit(AngleUnit.Radian);
+                      t2 = xxyyzzResults[key][i + 1].Y.ToUnit(AngleUnit.Radian);
                       break;
                     case (DisplayValue.ZZ):
-                      t1 = xxyyzzResults[key][i].Z.As(AngleUnit.Radian);
-                      t2 = xxyyzzResults[key][i + 1].Z.As(AngleUnit.Radian);
+                      t1 = xxyyzzResults[key][i].Z.ToUnit(AngleUnit.Radian);
+                      t2 = xxyyzzResults[key][i + 1].Z.ToUnit(AngleUnit.Radian);
                       break;
                     case (DisplayValue.resXXYYZZ):
-                      t1 = xxyyzzResults[key][i].XYZ.As(AngleUnit.Radian);
-                      t2 = xxyyzzResults[key][i + 1].XYZ.As(AngleUnit.Radian);
+                      t1 = xxyyzzResults[key][i].XYZ.ToUnit(AngleUnit.Radian);
+                      t2 = xxyyzzResults[key][i + 1].XYZ.ToUnit(AngleUnit.Radian);
                       break;
                   }
                   start.Transform(Transform.Translation(startTranslation));
@@ -397,49 +398,49 @@ namespace GsaGH.Components
                   switch (_disp)
                   {
                     case (DisplayValue.X):
-                      t1 = xyzResults[key][i].X.As(this.ForceUnit);
-                      t2 = xyzResults[key][i + 1].X.As(this.ForceUnit);
+                      t1 = xyzResults[key][i].X.ToUnit(this.ForceUnit);
+                      t2 = xyzResults[key][i + 1].X.ToUnit(this.ForceUnit);
                       break;
                     case (DisplayValue.Y):
-                      t1 = xyzResults[key][i].Y.As(this.ForceUnit);
-                      t2 = xyzResults[key][i + 1].Y.As(this.ForceUnit);
+                      t1 = xyzResults[key][i].Y.ToUnit(this.ForceUnit);
+                      t2 = xyzResults[key][i + 1].Y.ToUnit(this.ForceUnit);
                       break;
                     case (DisplayValue.Z):
-                      t1 = xyzResults[key][i].Z.As(this.ForceUnit);
-                      t2 = xyzResults[key][i + 1].Z.As(this.ForceUnit);
+                      t1 = xyzResults[key][i].Z.ToUnit(this.ForceUnit);
+                      t2 = xyzResults[key][i + 1].Z.ToUnit(this.ForceUnit);
                       break;
                     case (DisplayValue.resXYZ):
-                      t1 = xyzResults[key][i].XYZ.As(this.ForceUnit);
-                      t2 = xyzResults[key][i + 1].XYZ.As(this.ForceUnit);
+                      t1 = xyzResults[key][i].XYZ.ToUnit(this.ForceUnit);
+                      t2 = xyzResults[key][i + 1].XYZ.ToUnit(this.ForceUnit);
                       break;
                     case (DisplayValue.XX):
-                      t1 = xxyyzzResults[key][i].X.As(this.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].X.As(this.MomentUnit);
+                      t1 = xxyyzzResults[key][i].X.ToUnit(this.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].X.ToUnit(this.MomentUnit);
                       break;
                     case (DisplayValue.YY):
-                      t1 = xxyyzzResults[key][i].Y.As(this.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].Y.As(this.MomentUnit);
+                      t1 = xxyyzzResults[key][i].Y.ToUnit(this.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].Y.ToUnit(this.MomentUnit);
                       break;
                     case (DisplayValue.ZZ):
-                      t1 = xxyyzzResults[key][i].Z.As(this.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].Z.As(this.MomentUnit);
+                      t1 = xxyyzzResults[key][i].Z.ToUnit(this.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].Z.ToUnit(this.MomentUnit);
                       break;
                     case (DisplayValue.resXXYYZZ):
-                      t1 = xxyyzzResults[key][i].XYZ.As(this.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].XYZ.As(this.MomentUnit);
+                      t1 = xxyyzzResults[key][i].XYZ.ToUnit(this.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].XYZ.ToUnit(this.MomentUnit);
                       break;
                   }
                   break;
                 case FoldMode.StrainEnergy:
                   if (_disp == DisplayValue.X)
                   {
-                    t1 = xyzResults[key][i].X.As(DefaultUnits.EnergyUnit);
-                    t2 = xyzResults[key][i + 1].X.As(DefaultUnits.EnergyUnit);
+                    t1 = xyzResults[key][i].X.ToUnit(this.EnergyResultUnit);
+                    t2 = xyzResults[key][i + 1].X.ToUnit(this.EnergyResultUnit);
                   }
                   else
                   {
-                    t1 = xyzResults[key][i].X.As(DefaultUnits.EnergyUnit);
-                    t2 = xyzResults[key][i].X.As(DefaultUnits.EnergyUnit);
+                    t1 = xyzResults[key][i].X.ToUnit(this.EnergyResultUnit);
+                    t2 = xyzResults[key][i].X.ToUnit(this.EnergyResultUnit);
                   }
                   break;
               }
@@ -447,22 +448,22 @@ namespace GsaGH.Components
               Line segmentline = new Line(start, end);
 
               //normalised value between -1 and 1
-              double tnorm1 = 2 * (t1 - dmin) / (dmax - dmin) - 1;
-              double tnorm2 = 2 * (t2 - dmin) / (dmax - dmin) - 1;
+              double tnorm1 = 2 * (t1.Value - dmin) / (dmax - dmin) - 1;
+              double tnorm2 = 2 * (t2.Value - dmin) / (dmax - dmin) - 1;
 
               // get colour for that normalised value
               Color valcol1 = double.IsNaN(tnorm1) ? Color.Black : gH_Gradient.ColourAt(tnorm1);
               Color valcol2 = double.IsNaN(tnorm2) ? Color.Black : gH_Gradient.ColourAt(tnorm2);
 
               // set the size of the line ends for ResultLine class. Size is calculated from 0-base, so not a normalised value between extremes
-              float size1 = (t1 >= 0 && dmax != 0) ?
-                          Math.Max(2, (float)(t1 / dmax * scale)) :
-                          Math.Max(2, (float)(Math.Abs(t1) / Math.Abs(dmin) * scale));
+              float size1 = (t1.Value >= 0 && dmax != 0) ?
+                          Math.Max(2, (float)(t1.Value / dmax * scale)) :
+                          Math.Max(2, (float)(Math.Abs(t1.Value) / Math.Abs(dmin) * scale));
               if (double.IsNaN(size1))
                 size1 = 1;
-              float size2 = (t2 >= 0 && dmax != 0) ?
-                          Math.Max(2, (float)(t2 / dmax * scale)) :
-                          Math.Max(2, (float)(Math.Abs(t2) / Math.Abs(dmin) * scale));
+              float size2 = (t2.Value >= 0 && dmax != 0) ?
+                          Math.Max(2, (float)(t2.Value / dmax * scale)) :
+                          Math.Max(2, (float)(Math.Abs(t2.Value) / Math.Abs(dmin) * scale));
               if (double.IsNaN(size2))
                 size2 = 1;
 
@@ -470,7 +471,7 @@ namespace GsaGH.Components
               lock (resultLines)
               {
                 resultLines.Add(
-                        new ResultLineGoo(segmentline, t1, t2, valcol1, valcol2, size1, size2),
+                        new LineResultGoo(segmentline, t1, t2, valcol1, valcol2, size1, size2),
                         new GH_Path(key));
               }
             }
@@ -520,14 +521,12 @@ namespace GsaGH.Components
               Length displacement = new Length(t, this.LengthResultUnit);
               legendValues.Add(displacement.ToString("f" + significantDigits));
               ts.Add(new GH_UnitNumber(displacement));
-              this.Message = Length.GetAbbreviation(this.LengthResultUnit);
             }
             else
             {
               Angle rotation = new Angle(t, AngleUnit.Radian);
               legendValues.Add(rotation.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(rotation));
-              this.Message = Angle.GetAbbreviation(AngleUnit.Radian);
             }
           }
           else if (_mode == FoldMode.Force)
@@ -537,14 +536,12 @@ namespace GsaGH.Components
               Force force = new Force(t, this.ForceUnit);
               legendValues.Add(force.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(force));
-              this.Message = Force.GetAbbreviation(this.ForceUnit);
             }
             else
             {
               Moment moment = new Moment(t, this.MomentUnit);
               legendValues.Add(moment.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(moment));
-              this.Message = Moment.GetAbbreviation(this.MomentUnit);
             }
           }
           else
@@ -552,7 +549,6 @@ namespace GsaGH.Components
             Energy energy = new Energy(t, this.EnergyResultUnit);
             legendValues.Add(energy.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(energy));
-            this.Message = Energy.GetAbbreviation(this.EnergyResultUnit);
           }
 
           if (Math.Abs(t) > 1)
@@ -778,6 +774,29 @@ namespace GsaGH.Components
     #endregion
 
     #region menu override
+    protected override void BeforeSolveInstance()
+    {
+      switch (_mode)
+      {
+        case FoldMode.Displacement:
+          if ((int)_disp < 4)
+            this.Message = Length.GetAbbreviation(this.LengthResultUnit);
+          else
+            this.Message = Angle.GetAbbreviation(AngleUnit.Radian);
+          break;
+
+        case FoldMode.Force:
+          if ((int)_disp < 4)
+            this.Message = Force.GetAbbreviation(this.ForceUnit);
+          else
+            this.Message = Moment.GetAbbreviation(this.MomentUnit);
+          break;
+
+        case FoldMode.StrainEnergy:
+          this.Message = Energy.GetAbbreviation(this.EnergyResultUnit);
+          break;
+      }
+    }
     private void ReDrawComponent()
     {
       System.Drawing.PointF pivot = new System.Drawing.PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);

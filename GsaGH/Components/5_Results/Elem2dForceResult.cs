@@ -131,9 +131,8 @@ namespace GsaGH.Components
           {
             if (vals[index].xyzResults.Count == 0 & vals[index].xxyyzzResults.Count == 0)
             {
-              string[] typ = result.ToString().Split('{');
-              string acase = typ[1].Replace('}', ' ');
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + "contains no Element2D results.");
+              string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element2D results.");
               continue;
             }
             Parallel.For(0, 3, thread => // split computation in three for xyz and xxyyzz and shear

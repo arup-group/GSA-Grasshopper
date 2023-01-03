@@ -53,20 +53,20 @@
             return new string(' ', 2) + "Results";
         }
 
-        public static string Cat6()
-        {
-            return "";
-        }
+        //public static string Cat6()
+        //{
+        //    return "";
+        //}
 
-        public static string Cat7()
-        {
-            return "";
-        }
+        //public static string Cat7()
+        //{
+        //    return "";
+        //}
 
-        public static string Cat8()
-        {
-            return "test";
-        }
+        //public static string Cat8()
+        //{
+        //    return "test";
+        //}
 
         public static string Cat9()
         {

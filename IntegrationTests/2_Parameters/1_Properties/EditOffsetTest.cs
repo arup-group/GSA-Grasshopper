@@ -11,7 +11,17 @@ namespace IntegrationTests.Parameters
   [Collection("GrasshopperFixture collection")]
   public class EditOffsetTest
   {
-    public static GH_Document Document()
+    public static GH_Document Document
+    {
+      get
+      {
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
+      }
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
     {
       string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
@@ -26,7 +36,7 @@ namespace IntegrationTests.Parameters
     [InlineData("Of", 4, 3, 2, 1, LengthUnit.Centimeter)]
     public void OutputTest(string groupIdentifier, double expectedX1, double expectedX2, double expectedY, double expectedZ, LengthUnit expectedUnit)
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
       GsaOffsetGoo output = (GsaOffsetGoo)param.VolatileData.get_Branch(0)[0];
       GsaOffset offset = output.Value;
@@ -39,7 +49,7 @@ namespace IntegrationTests.Parameters
     [Fact]
     public void NoRuntimeErrorTest()
     {
-      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
     }
   }
 }

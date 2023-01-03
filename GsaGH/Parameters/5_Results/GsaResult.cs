@@ -672,7 +672,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ACaseElement1DStrainEnergyDensityValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit));
+              ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit, false));
         }
         return new List<GsaResultsValues>() { ACaseElement1DStrainEnergyDensityValues[key] };
       }
@@ -717,7 +717,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ACaseElement1DStrainEnergyDensityValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit, false));
+              ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit, true));
         }
         return new List<GsaResultsValues>() { ACaseElement1DStrainEnergyDensityValues[key] };
       }

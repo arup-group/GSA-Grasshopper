@@ -11,7 +11,17 @@ namespace IntegrationTests.Components
   [Collection("GrasshopperFixture collection")]
   public class GetResultsAndResultsInfoTest
   {
-    public static GH_Document Document()
+    public static GH_Document Document
+    {
+      get
+      {
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
+      }
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
     {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
@@ -26,7 +36,7 @@ namespace IntegrationTests.Components
     [Fact]
     public void Test()
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
       IGH_Param types = Helper.FindParameter(doc, "Types");
       GH_String types1 = (GH_String)types.VolatileData.get_Branch(0)[0];
       GH_String types2 = (GH_String)types.VolatileData.get_Branch(0)[1];

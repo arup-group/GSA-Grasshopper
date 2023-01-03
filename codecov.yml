@@ -7,4 +7,13 @@ flags:
   integration:
     carryforward: false
 ignore:
-  - "GsaGHTests"  # ignore folders and all its contents
+  - "GsaGHTests"  # ignore project (as it is referenced by Integration test)
+  - "GsaGH/Components/GraveyardComp"  # ignore old versions of components in
+  - "GsaGH/UI"  # ignore UI about box
+  - "GsaGH/Properties" # ignore icons etc
+  - "GsaGH/Parameters/**/*Goo.cs" # ignore all files ending with *Goo.cs (goo wrappers, no logic should be placed here)
+  - "GsaGH/Parameters/**/*Parameter.cs" # ignore all files ending with *Parameter.cs (scaffolding for params, no logic should be placed here)
+  - "GsaGH/Helpers/Graphics/Colours.cs" # ignore colours library class
+comment:     # this is a top-level key
+  layout: "reach, diff, tree"
+  behavior: new

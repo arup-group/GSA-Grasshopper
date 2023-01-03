@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
@@ -10,9 +11,9 @@ namespace GsaGH.Parameters
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="Line"/> can be used in Grasshopper.
   /// </summary>
-  public class ResultLineGoo : GH_GeometricGoo<Line>, IGH_PreviewData
+  public class LineResultGoo : GH_GeometricGoo<Line>, IGH_PreviewData
   {
-    public ResultLineGoo(Line line, double result1, double result2, Color colour1, Color colour2, float size1, float size2) : base(line)
+    public LineResultGoo(Line line, IQuantity result1, IQuantity result2, Color colour1, Color colour2, float size1, float size2) : base(line)
     {
       m_result1 = result1;
       m_result2 = result2;
@@ -37,8 +38,8 @@ namespace GsaGH.Parameters
       previewResultSegments.Add(new Line(Value.PointAt(0.5), Value.PointAt(1)));
     }
 
-    private double m_result1;
-    private double m_result2;
+    internal IQuantity m_result1;
+    internal IQuantity m_result2;
     private float m_size1;
     private float m_size2;
     private Color m_colour1;
@@ -49,7 +50,7 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      return string.Format("LineResult: L:{0:0.0}, Val1:{1:0.0}, Val2:{2:0.0}", Value.Length, m_result1, m_result2);
+      return string.Format("LineResult: L:{0:0.0}, R1:{1:0.0}, R2:{2:0.0}", Value.Length, m_result1, m_result2);
     }
 
     public override string TypeName
@@ -64,7 +65,7 @@ namespace GsaGH.Parameters
 
     public override IGH_GeometricGoo DuplicateGeometry()
     {
-      return new ResultLineGoo(Value, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
+      return new LineResultGoo(Value, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
     }
 
     public override BoundingBox Boundingbox
@@ -86,7 +87,7 @@ namespace GsaGH.Parameters
     {
       Line ln = Value;
       ln.Transform(xform);
-      return new ResultLineGoo(ln, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
+      return new LineResultGoo(ln, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
@@ -94,7 +95,7 @@ namespace GsaGH.Parameters
       Point3d start = xmorph.MorphPoint(Value.From);
       Point3d end = xmorph.MorphPoint(Value.To);
       Line ln = new Line(start, end);
-      return new ResultLineGoo(ln, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
+      return new LineResultGoo(ln, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
     }
 
     public override object ScriptVariable()
@@ -113,6 +114,12 @@ namespace GsaGH.Parameters
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Line)))
       {
         target = (TQ)(object)new GH_Line(Value);
+        return true;
+      }
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve)))
+      {
+        target = (TQ)(object)new GH_Curve(Value.ToNurbsCurve());
         return true;
       }
 

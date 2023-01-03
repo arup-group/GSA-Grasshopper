@@ -2,23 +2,30 @@
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
-  public class ResultMeshGoo : GH_GeometricGoo<Mesh>, IGH_PreviewData
+  public class MeshResultGoo : GH_GeometricGoo<Mesh>, IGH_PreviewData
   {
-    public ResultMeshGoo(Mesh mesh, List<List<double>> results)
+    internal List<List<IQuantity>> ResultValues = new List<List<IQuantity>>();
+    internal List<List<Point3d>> Vertices = new List<List<Point3d>>();
+    private List<Mesh> _tempMeshes = new List<Mesh>();
+    private bool _finalised = false;
+
+    public MeshResultGoo(Mesh mesh, List<List<IQuantity>> results, List<List<Point3d>> vertices)
     : base(mesh)
     {
-      m_results = results;
+      this.ResultValues = results;
+      this.Vertices = vertices;
     }
 
     public Mesh ValidMesh
     {
       get
       {
-        if (!finalised)
+        if (!_finalised)
           Finalise();
 
         Mesh m = new Mesh();
@@ -42,36 +49,34 @@ namespace GsaGH.Parameters
       }
     }
 
-    private List<List<double>> m_results = new List<List<double>>();
-    private List<Mesh> temp_meshes = new List<Mesh>();
-    private bool finalised = false;
-
-    public void Add(Mesh temp_mesh, List<double> results)
+    public void Add(Mesh temp_mesh, List<IQuantity> results, List<Point3d> vertices)
     {
-      temp_meshes.Add(temp_mesh);
-      m_results.Add(results);
-      finalised = false;
+      _tempMeshes.Add(temp_mesh);
+      ResultValues.Add(results);
+      Vertices.Add(vertices);
+      _finalised = false;
     }
-    public void Add(List<Mesh> temp_mesh, List<List<double>> results)
+    public void Add(List<Mesh> temp_mesh, List<List<IQuantity>> results, List<List<Point3d>> vertices)
     {
-      temp_meshes.AddRange(temp_mesh);
-      m_results.AddRange(results);
+      _tempMeshes.AddRange(temp_mesh);
+      ResultValues.AddRange(results);
+      Vertices.AddRange(vertices);
       Finalise();
     }
     public void Finalise()
     {
-      if (finalised == true) { return; }
+      if (_finalised == true) { return; }
       this.Value = new Mesh();
-      this.Value.Append(temp_meshes);
+      this.Value.Append(_tempMeshes);
       this.Value.RebuildNormals();
       this.Value.Compact();
-      temp_meshes = new List<Mesh>();
-      finalised = true;
+      _tempMeshes = new List<Mesh>();
+      _finalised = true;
     }
 
     public override string ToString()
     {
-      return string.Format("MeshResult: V:{0:0}, F{1:0.0}, R{2:0.0}", Value.Vertices.Count, Value.Faces.Count, m_results.Count);
+      return string.Format("MeshResult: V:{0:0}, F:{1:0}, R:{2:0}", Value.Vertices.Count, Value.Faces.Count, ResultValues.Count);
     }
     public override string TypeName
     {
@@ -84,7 +89,7 @@ namespace GsaGH.Parameters
 
     public override IGH_GeometricGoo DuplicateGeometry()
     {
-      return new ResultMeshGoo(Value, m_results);
+      return new MeshResultGoo(Value, ResultValues, Vertices);
     }
     public override BoundingBox Boundingbox
     {
@@ -103,13 +108,37 @@ namespace GsaGH.Parameters
     {
       Mesh m = Value.DuplicateMesh();
       m.Transform(xform);
-      return new ResultMeshGoo(m, m_results);
+      List<List<Point3d>> vertices = new List<List<Point3d>>();
+      foreach (List<Point3d> vertex in this.Vertices) 
+      {
+        List<Point3d> duplicates = new List<Point3d>();
+        foreach (Point3d point in vertex) 
+        { 
+          Point3d dup = new Point3d(point);
+          dup.Transform(xform);
+          duplicates.Add(dup);
+        }
+        vertices.Add(duplicates);
+      }
+
+      return new MeshResultGoo(m, this.ResultValues, vertices);
     }
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
       Mesh m = Value.DuplicateMesh();
       xmorph.Morph(m);
-      return new ResultMeshGoo(m, m_results);
+      List<List<Point3d>> vertices = new List<List<Point3d>>();
+      foreach (List<Point3d> vertex in this.Vertices)
+      {
+        List<Point3d> duplicates = new List<Point3d>();
+        foreach (Point3d point in vertex)
+        {
+          Point3d dup = new Point3d(point);
+          duplicates.Add(xmorph.MorphPoint(dup));
+        }
+        vertices.Add(duplicates);
+      }
+      return new MeshResultGoo(m, ResultValues, Vertices);
     }
 
     public override object ScriptVariable()

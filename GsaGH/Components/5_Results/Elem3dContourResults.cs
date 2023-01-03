@@ -235,11 +235,13 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         #region create mesh
-        ResultMeshGoo resultMeshes = new ResultMeshGoo(new Mesh(), new List<List<double>>());
+        MeshResultGoo resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(), new List<List<Point3d>>());
         ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
         meshes.AsParallel().AsOrdered();
-        ConcurrentDictionary<int, List<double>> values = new ConcurrentDictionary<int, List<double>>();
+        ConcurrentDictionary<int, List<IQuantity>> values = new ConcurrentDictionary<int, List<IQuantity>>();
         values.AsParallel().AsOrdered();
+        ConcurrentDictionary<int, List<Point3d>> verticies = new ConcurrentDictionary<int, List<Point3d>>();
+        verticies.AsParallel().AsOrdered();
 
         LengthUnit lengthUnit = result.Model.ModelUnit;
         this.undefinedModelLengthUnit = false;
@@ -261,11 +263,11 @@ namespace GsaGH.Components
           if (tempmesh == null) { return; }
 
           List<Vector3d> transformation = null;
-          List<double> vals = new List<double>();
+          List<IQuantity> vals = new List<IQuantity>();
           switch (_disp)
           {
             case (DisplayValue.X):
-              vals = xyzResults[key].Select(item => item.Value.X.As(xyzunit)).ToList();
+              vals = xyzResults[key].Select(item => item.Value.X.ToUnit(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
                 transformation = xyzResults[key].Select(item => new Vector3d(
                             item.Value.X.As(lengthUnit) * _defScale,
@@ -274,7 +276,7 @@ namespace GsaGH.Components
               break;
 
             case (DisplayValue.Y):
-              vals = xyzResults[key].Select(item => item.Value.Y.As(xyzunit)).ToList();
+              vals = xyzResults[key].Select(item => item.Value.Y.ToUnit(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
                 transformation = xyzResults[key].Select(item => new Vector3d(
                             0,
@@ -283,7 +285,7 @@ namespace GsaGH.Components
               break;
 
             case (DisplayValue.Z):
-              vals = xyzResults[key].Select(item => item.Value.Z.As(xyzunit)).ToList();
+              vals = xyzResults[key].Select(item => item.Value.Z.ToUnit(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
                 transformation = xyzResults[key].Select(item => new Vector3d(
                             0,
@@ -292,7 +294,7 @@ namespace GsaGH.Components
               break;
 
             case (DisplayValue.resXYZ):
-              vals = xyzResults[key].Select(item => item.Value.XYZ.As(xyzunit)).ToList();
+              vals = xyzResults[key].Select(item => item.Value.XYZ.ToUnit(xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
                 transformation = xyzResults[key].Select(item => new Vector3d(
                             item.Value.X.As(lengthUnit) * _defScale,
@@ -301,23 +303,23 @@ namespace GsaGH.Components
               break;
 
             case (DisplayValue.XX):
-              vals = xxyyzzResults[key].Select(item => item.Value.X.As(xxyyzzunit)).ToList();
+              vals = xxyyzzResults[key].Select(item => item.Value.X.ToUnit(xxyyzzunit)).ToList();
               break;
             case (DisplayValue.YY):
-              vals = xxyyzzResults[key].Select(item => item.Value.Y.As(xxyyzzunit)).ToList();
+              vals = xxyyzzResults[key].Select(item => item.Value.Y.ToUnit(xxyyzzunit)).ToList();
               break;
             case (DisplayValue.ZZ):
-              vals = xxyyzzResults[key].Select(item => item.Value.Z.As(xxyyzzunit)).ToList();
+              vals = xxyyzzResults[key].Select(item => item.Value.Z.ToUnit(xxyyzzunit)).ToList();
               break;
             case (DisplayValue.resXXYYZZ):
-              vals = xxyyzzResults[key].Select(item => item.Value.XYZ.As(xxyyzzunit)).ToList();
+              vals = xxyyzzResults[key].Select(item => item.Value.XYZ.ToUnit(xxyyzzunit)).ToList();
               break;
           }
 
           for (int i = 0; i < vals.Count - 1; i++) // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
           {
             //normalised value between -1 and 1
-            double tnorm = 2 * (vals[i] - dmin) / (dmax - dmin) - 1;
+            double tnorm = 2 * (vals[i].Value - dmin) / (dmax - dmin) - 1;
             Color col = (double.IsNaN(tnorm)) ? Color.Transparent : gH_Gradient.ColourAt(tnorm);
             tempmesh.VertexColors.Add(col);
             if (transformation != null)
@@ -330,17 +332,29 @@ namespace GsaGH.Components
           if (vals.Count == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
           {
             //normalised value between -1 and 1
-            double tnorm = 2 * (vals[0] - dmin) / (dmax - dmin) - 1;
+            double tnorm = 2 * (vals[0].Value - dmin) / (dmax - dmin) - 1;
             Color col = (double.IsNaN(tnorm)) ? Color.Transparent : gH_Gradient.ColourAt(tnorm);
             for (int i = 0; i < tempmesh.Vertices.Count; i++)
-              tempmesh.VertexColors.Add(col);
+              tempmesh.VertexColors.SetColor(i, col);
+
+            verticies[key] = new List<Point3d>()
+              {
+                new Point3d(
+                  tempmesh.Vertices.Select(pt => pt.X).Average(),
+                  tempmesh.Vertices.Select(pt => pt.Y).Average(),
+                  tempmesh.Vertices.Select(pt => pt.Z).Average()
+                )
+              };
           }
+          else
+            verticies[key] = tempmesh.Vertices.Select(pt => (Point3d)pt).ToList();
+
           meshes[key] = tempmesh;
           values[key] = vals;
           #endregion
         });
         #endregion
-        resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList());
+        resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList());
 
         #region Legend
         // ### Legend ###
@@ -422,7 +436,7 @@ namespace GsaGH.Components
 
     private enum DisplayValue
     {
-      X, 
+      X,
       Y,
       Z,
       resXYZ,
@@ -505,8 +519,6 @@ namespace GsaGH.Components
           if (this.DropDownItems[1] != this._displacement)
           {
             this.DropDownItems[1] = this._displacement;
-
-            this.SelectedItems[0] = this.DropDownItems[0][0]; // displacement
             this.SelectedItems[1] = this.DropDownItems[1][3]; // Resolved XYZ
 
             this._disp = (DisplayValue)3; // Resolved XYZ
@@ -518,11 +530,9 @@ namespace GsaGH.Components
           if (this.DropDownItems[1] != this._stress)
           {
             this.DropDownItems[1] = this._stress;
-
-            this.SelectedItems[0] = this.DropDownItems[0][1];
             this.SelectedItems[1] = this.DropDownItems[1][2];
 
-            this._disp = (DisplayValue)2; 
+            this._disp = (DisplayValue)2;
             this.StressModeClicked();
           }
         }
@@ -586,6 +596,19 @@ namespace GsaGH.Components
     #endregion
 
     #region menu override
+    protected override void BeforeSolveInstance()
+    {
+      switch (_mode)
+      {
+        case FoldMode.Displacement:
+          this.Message = Length.GetAbbreviation(this.LengthResultUnit);
+          break;
+
+        case FoldMode.Stress:
+          this.Message = Pressure.GetAbbreviation(this.StressUnitResult);
+          break;
+      }
+    }
     private void ReDrawComponent()
     {
       PointF pivot = new PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);
