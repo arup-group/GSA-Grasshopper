@@ -61,7 +61,7 @@ namespace GsaGH.Components
             FileName = tempfile;
 
           if (!FileName.EndsWith(".gwb"))
-            FileName = FileName + ".gwb";
+            FileName += ".gwb";
 
           ReturnValue status = model.Open(FileName);
 
@@ -70,7 +70,7 @@ namespace GsaGH.Components
             GsaModel gsaModel = new GsaModel
             {
               Model = model,
-              FileName = FileName
+              FileNameAndPath = FileName
             };
 
             GetTitles(model);
@@ -114,7 +114,7 @@ namespace GsaGH.Components
           GsaModel gsaModel = new GsaModel
           {
             Model = model,
-            FileName = FileName
+            FileNameAndPath = FileName
           };
 
           GetTitles(model);

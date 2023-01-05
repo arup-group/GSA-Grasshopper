@@ -14,7 +14,7 @@ namespace GsaGH.Parameters
   {
     #region properties
     public Model Model { get; set; } = new Model();
-    public string FileName { get; set; }
+    public string FileNameAndPath { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
     public LengthUnit ModelUnit { get; set; } = LengthUnit.Undefined;
     
@@ -42,7 +42,7 @@ namespace GsaGH.Parameters
     {
       GsaModel clone = new GsaModel();
       clone.Model = this.Model.Clone();
-      clone.FileName = this.FileName;
+      clone.FileNameAndPath = this.FileNameAndPath;
       clone.ModelUnit = this.ModelUnit;
       clone.Guid = Guid.NewGuid();
       return clone;
@@ -56,8 +56,8 @@ namespace GsaGH.Parameters
       // create shallow copy
       GsaModel dup = new GsaModel();
       dup.Model = this.Model;
-      if (this.FileName != null)
-        dup.FileName = this.FileName.ToString();
+      if (this.FileNameAndPath != null)
+        dup.FileNameAndPath = this.FileNameAndPath.ToString();
       dup.Guid = new Guid(this.Guid.ToString());
       dup.ModelUnit = this.ModelUnit;
       return dup;
@@ -69,11 +69,11 @@ namespace GsaGH.Parameters
       if (this.Model != null && this.Titles != null)
       {
         s = Titles.Title;
-        if (s == "" && this.FileName != null)
+        if (s == "" && this.FileNameAndPath != null)
         {
-          if (this.FileName != "" && this.FileName.EndsWith(".gwb"))
+          if (this.FileNameAndPath != "" && this.FileNameAndPath.EndsWith(".gwb"))
           {
-            s = Path.GetFileName(this.FileName);
+            s = Path.GetFileName(this.FileNameAndPath);
             s = s.Substring(0, s.Length - 4);
           }
           else
