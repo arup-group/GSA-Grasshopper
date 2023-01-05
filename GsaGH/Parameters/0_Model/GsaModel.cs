@@ -68,21 +68,16 @@ namespace GsaGH.Parameters
       string s = "Invalid";
       if (this.Model != null && this.Titles != null)
       {
-        s = Titles.Title;
-        if (s == "" && this.FileNameAndPath != null)
+        if (this.FileNameAndPath != null && this.FileNameAndPath != "")
+          s = Path.GetFileName(this.FileNameAndPath).Replace(".gwb", string.Empty);
+        
+        if (Titles != null && Titles.Title != null && Titles.Title != "")
         {
-          if (this.FileNameAndPath != "" && this.FileNameAndPath.EndsWith(".gwb"))
-          {
-            s = Path.GetFileName(this.FileNameAndPath);
-            s = s.Substring(0, s.Length - 4);
-          }
+          if (s == "" || s == "Invalid")
+            s = Titles.Title;
           else
-          {
-            s = "Nameless";
-          }
+            s += " {" + Titles.Title + "}";
         }
-        else
-          s = "New GsaGH Model";
       }
       if (this.ModelUnit != LengthUnit.Undefined)
         s += " [" + Length.GetAbbreviation(this.ModelUnit) + "]";
