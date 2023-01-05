@@ -10,13 +10,14 @@ using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using GsaGH.Helpers.GH;
+using System.Linq;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to open an existing GSA model
-    /// </summary>
-    public class SaveModel : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to open an existing GSA model
+  /// </summary>
+  public class SaveModel : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
@@ -33,17 +34,11 @@ namespace GsaGH.Components
     #endregion
 
     #region Input and output
-    string FileName = null;
-    bool usersetFileName = false;
-    Model gsaSaveModel;
-    bool canOpen = false;
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model to save", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Save?", "Save", "Input 'True' to save or use button", GH_ParamAccess.item, false);
+      pManager.AddBooleanParameter("Save?", "Save", "Input 'True' to save or use button", GH_ParamAccess.item, true);
       pManager.AddTextParameter("File and Path", "File", "Filename and path", GH_ParamAccess.item);
-      pManager[1].Optional = true;
-      pManager[2].Optional = true;
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
@@ -56,13 +51,13 @@ namespace GsaGH.Components
       Model model = new Model();
       GsaModel gsaModel = new GsaModel();
       GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+      this.Message = "";
       if (DA.GetData(0, ref gh_typ))
       {
         if (gh_typ == null) { return; }
         if (gh_typ.Value is GsaModelGoo)
         {
           gh_typ.CastTo(ref gsaModel);
-          gsaSaveModel = gsaModel.Model;
           Message = "";
         }
         else
@@ -71,140 +66,89 @@ namespace GsaGH.Components
           return;
         }
 
-        if (!usersetFileName)
-        {
-          if (gsaModel.FileName != "")
-            FileName = gsaModel.FileName;
-        }
-
-        string tempfile = "";
-        if (DA.GetData(2, ref tempfile))
-          FileName = tempfile;
+        string fileName = "";
+        DA.GetData(2, ref fileName);
 
         bool save = false;
-        if (DA.GetData(1, ref save))
-        {
-          if (save)
-          {
-            Message = gsaSaveModel.SaveAs(FileName).ToString();
-            PostHog.ModelIO(GsaGH.PluginInfo.Instance, "saveGWB", (int)(new FileInfo(FileName).Length / 1024));
-          }
-        }
+        if (DA.GetData(1, ref save) && save)
+          this.Save(ref gsaModel, fileName);
 
         DA.SetData(0, new GsaModelGoo(gsaModel));
       }
     }
+
+    internal void Save(ref GsaModel model, string fileNameAndPath)
+    {
+      if (!fileNameAndPath.EndsWith(".gwb"))
+        fileNameAndPath += ".gwb";
+
+      string fileName = fileNameAndPath.Split('\\').Last();
+      string path = fileNameAndPath.Replace('\\' + fileName, string.Empty);
+      Directory.CreateDirectory(path);
+
+      string mes = model.Model.SaveAs(fileNameAndPath).ToString();
+      if (mes == GsaAPI.ReturnValue.GS_OK.ToString())
+      {
+        _fileNameLastSaved = fileNameAndPath;
+        PostHog.ModelIO(GsaGH.PluginInfo.Instance, "saveGWB", (int)(new FileInfo(fileNameAndPath).Length / 1024));
+        model.FileNameAndPath = fileNameAndPath;
+      }
+      else
+        this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, mes);
+    }
+
     #region Custom UI
+    string _fileNameLastSaved;
     public override void SetSelected(int i, int j) { }
     public override void InitialiseDropdowns() { }
     public override void CreateAttributes()
     {
-      m_attributes = new OasysGH.UI.ThreeButtonAtrributes(this, "Save", "Save As", "Open in GSA", SaveFile, SaveAsFile, OpenGSAexe, true, "Save GSA file");
+      m_attributes = new OasysGH.UI.ThreeButtonAtrributes(this, "Save", "Save As", "Open in GSA", SaveButtonClick, SaveAsButtonClick, OpenGSAexe, true, "Save GSA file");
     }
 
-    public override void VariableParameterMaintenance()
+    internal void SaveButtonClick()
     {
-      Params.Input[0].Optional = FileName != null; //filename can have input from user input
-      Params.Input[0].ClearRuntimeMessages(); // this needs to be called to avoid having a runtime warning message after changed to optional
+      // trigger rerunning the component
+      UpdateUI();
     }
 
-    public void SaveFile()
-    {
-      if (FileName == null | FileName == "")
-        SaveAsFile();
-      else
-      {
-        string mes = gsaSaveModel.SaveAs(FileName).ToString();
-        if (mes == GsaAPI.ReturnValue.GS_OK.ToString())
-        {
-          canOpen = true;
-          //this.OnAttributesChanged();
-          //CreateAttributes();
-          mes = "Saved file";
-          //ExpireSolution(true);
-        }
-        else
-        {
-          mes = Char.ToUpper(mes[3]) + mes.Substring(4).ToLower().Replace("_", " ");
-        }
-        this.Message = mes;
-      }
-    }
-
-    public void SaveAsFile()
+    internal void SaveAsButtonClick()
     {
       var fdi = new Rhino.UI.SaveFileDialog { Filter = "GSA File (*.gwb)|*.gwb|All files (*.*)|*.*" };
       var res = fdi.ShowSaveDialog();
       if (res) // == DialogResult.OK)
       {
-        FileName = fdi.FileName;
-        usersetFileName = true;
-        string mes = gsaSaveModel.SaveAs(FileName).ToString();
-        if (mes == GsaAPI.ReturnValue.GS_OK.ToString())
-        {
-          canOpen = true;
-          //CreateAttributes();
-          mes = "Saved file";
+        //add panel input with string
+        //delete existing inputs if any
+        while (Params.Input[2].Sources.Count > 0)
+          Grasshopper.Instances.ActiveCanvas.Document.RemoveObject(Params.Input[2].Sources[0], false);
 
-          PostHog.ModelIO(GsaGH.PluginInfo.Instance, "saveGWB", (int)(new FileInfo(FileName).Length / 1024));
+        //instantiate  new panel
+        var panel = new Grasshopper.Kernel.Special.GH_Panel();
+        panel.CreateAttributes();
 
-          //add panel input with string
-          //delete existing inputs if any
-          while (Params.Input[2].Sources.Count > 0)
-            Grasshopper.Instances.ActiveCanvas.Document.RemoveObject(Params.Input[2].Sources[0], false);
+        panel.Attributes.Pivot = new PointF((float)Attributes.DocObject.Attributes.Bounds.Left -
+            panel.Attributes.Bounds.Width - 40, (float)Attributes.DocObject.Attributes.Bounds.Bottom - panel.Attributes.Bounds.Height);
 
-          //instantiate  new panel
-          var panel = new Grasshopper.Kernel.Special.GH_Panel();
-          panel.CreateAttributes();
+        //populate value list with our own data
+        panel.UserText = fdi.FileName;
 
-          panel.Attributes.Pivot = new PointF((float)Attributes.DocObject.Attributes.Bounds.Left -
-              panel.Attributes.Bounds.Width - 40, (float)Attributes.DocObject.Attributes.Bounds.Bottom - panel.Attributes.Bounds.Height);
+        //Until now, the panel is a hypothetical object.
+        // This command makes it 'real' and adds it to the canvas.
+        Grasshopper.Instances.ActiveCanvas.Document.AddObject(panel, false);
 
-          //populate value list with our own data
-          panel.UserText = FileName;
-
-          //Until now, the panel is a hypothetical object.
-          // This command makes it 'real' and adds it to the canvas.
-          Grasshopper.Instances.ActiveCanvas.Document.AddObject(panel, false);
-
-          //Connect the new slider to this component
-          Params.Input[2].AddSource(panel);
-          Params.OnParametersChanged();
-          ExpireSolution(true);
-        }
-        else
-        {
-          mes = Char.ToUpper(mes[3]) + mes.Substring(4).ToLower().Replace("_", " ");
-        }
-        this.Message = mes;
+        //Connect the new slider to this component
+        Params.Input[2].AddSource(panel);
+        Params.OnParametersChanged();
+        ExpireSolution(true);
       }
     }
 
-    public void OpenGSAexe()
+    internal void OpenGSAexe()
     {
-      if (FileName != null)
-      {
-        if (FileName != "")
-        {
-          if (canOpen)
-            System.Diagnostics.Process.Start(FileName);
-        }
-      }
-    }
-    #endregion
-
-    #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      writer.SetString("File", this.FileName);
-      return base.Write(writer);
-    }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
-      this.FileName = reader.GetString("File");
-      return base.Read(reader);
+      if (_fileNameLastSaved != null && _fileNameLastSaved != "")
+        System.Diagnostics.Process.Start(_fileNameLastSaved);
     }
     #endregion
   }
 }
-
