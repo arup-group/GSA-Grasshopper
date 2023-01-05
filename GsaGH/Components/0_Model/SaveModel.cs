@@ -82,9 +82,7 @@ namespace GsaGH.Components
       if (!fileNameAndPath.EndsWith(".gwb"))
         fileNameAndPath += ".gwb";
 
-      string fileName = fileNameAndPath.Split('\\').Last();
-      string path = fileNameAndPath.Replace('\\' + fileName, string.Empty);
-      Directory.CreateDirectory(path);
+      Directory.CreateDirectory(Path.GetDirectoryName(fileNameAndPath));
 
       string mes = model.Model.SaveAs(fileNameAndPath).ToString();
       if (mes == GsaAPI.ReturnValue.GS_OK.ToString())
