@@ -65,7 +65,7 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string s = "Invalid";
+      string s = "New GsaGH Model";
       if (this.Model != null && this.Titles != null)
       {
         if (this.FileNameAndPath != null && this.FileNameAndPath != "")
