@@ -44,7 +44,7 @@ namespace GsaGHTests.Model
       GsaModel model = new GsaModel();
       output.CastTo(ref model);
 
-      Assert.Equal(GsaFile.Steel_Design_Simple, model.FileName);
+      Assert.Equal(GsaFile.Steel_Design_Simple, model.FileNameAndPath);
       Assert.NotEqual(new Guid(), model.Guid);
     }
   }
