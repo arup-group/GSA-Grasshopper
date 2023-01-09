@@ -56,7 +56,6 @@ namespace GsaGH.Components
       pManager.AddTextParameter("Name", "Na", "Load Name", GH_ParamAccess.item);
       pManager.AddNumberParameter("Value [" + unitAbbreviation + "]", "V", "Load Value", GH_ParamAccess.item);
 
-
       pManager[0].Optional = true;
       pManager[1].Optional = true;
       pManager[2].Optional = true;
@@ -98,6 +97,8 @@ namespace GsaGH.Components
           grdplnsrf = temppln.Duplicate();
           pln = grdplnsrf.Plane;
           planeSet = true;
+          this._expansionType = ExpansionType.Use_GPS_Settings;
+          this.UpdateMessage();
         }
         else if (gh_typ.Value is Plane)
         {
@@ -327,11 +328,11 @@ namespace GsaGH.Components
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
     {
       bool noGPS = false;
-      if (this.Params.Input[1].SourceCount > 0 && this.Params.Input[2].SourceCount == 0)
+      if (this.Params.Input[2].SourceCount == 0)
         noGPS = true;
       Menu_AppendItem(menu, "Use GridPlaneSurface", SetUseGPS, !noGPS, _expansionType == ExpansionType.Use_GPS_Settings);
-      Menu_AppendItem(menu, "Expand to 1D Elements", SetUse1D, true, _expansionType == ExpansionType.To_1D);
-      Menu_AppendItem(menu, "Expand to 2D Elements", SetUse2D, true, _expansionType == ExpansionType.To_2D);
+      Menu_AppendItem(menu, "Expand to 1D Elements", SetUse1D, noGPS, _expansionType == ExpansionType.To_1D);
+      Menu_AppendItem(menu, "Expand to 2D Elements", SetUse2D, noGPS, _expansionType == ExpansionType.To_2D);
     }
     private void UpdateMessage()
     {
