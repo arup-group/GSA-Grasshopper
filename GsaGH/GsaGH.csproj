@@ -67,7 +67,7 @@ Copyright © Oasys 1985 - 2022</Description>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.SQLite">
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\System.Data.SQLite.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Net.Http" />
