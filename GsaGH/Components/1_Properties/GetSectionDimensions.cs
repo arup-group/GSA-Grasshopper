@@ -428,7 +428,7 @@ namespace GsaGH.Components
         else if (profile.StartsWith("CAT"))
         {
           string prof = profile.Split(' ')[2];
-          List<double> sqlValues = SqlReader.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+          List<double> sqlValues = SqlReader.reader.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
           unit = LengthUnit.Meter;
 
           DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(this.LengthUnit))); //Depth

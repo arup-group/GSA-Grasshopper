@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
-using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaAPI;
 using OasysGH;
@@ -21,10 +22,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create AdSec profile
-    /// </summary>
-    public class CreateProfile : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to create AdSec profile
+  /// </summary>
+  public class CreateProfile : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -32,6 +33,7 @@ namespace GsaGH.Components
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateProfile;
+
 
     public CreateProfile()
       : base("Create Profile", "Profile", "Create Profile text-string for a GSA Section",
@@ -882,19 +884,19 @@ namespace GsaGH.Components
 
     // for catalogue selection
     // Catalogues
-    private readonly Tuple<List<string>, List<int>> _cataloguedata = SqlReader.GetCataloguesDataFromSQLite(Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+    private readonly Tuple<List<string>, List<int>> _cataloguedata = SqlReader.reader.GetCataloguesDataFromSQLite(Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
     private List<int> _catalogueNumbers = new List<int>(); // internal db catalogue numbers
     private List<string> _catalogueNames = new List<string>(); // list of displayed catalogues
     bool _inclSS;
 
     // Types
-    private Tuple<List<string>, List<int>> _typedata = SqlReader.GetTypesDataFromSQLite(-1, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
+    private Tuple<List<string>, List<int>> _typedata = SqlReader.reader.GetTypesDataFromSQLite(-1, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
     private List<int> _typeNumbers = new List<int>(); //  internal db type numbers
     private List<string> _typeNames = new List<string>(); // list of displayed types
 
     // Sections
     // list of displayed sections
-    private List<string> _sectionList = SqlReader.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
+    private List<string> _sectionList = SqlReader.reader.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
     private List<string> _filteredlist = new List<string>();
     int _catalogueIndex = -1; //-1 is all
     int _typeIndex = -1;
@@ -961,12 +963,12 @@ namespace GsaGH.Components
           // set types to all
           _typeIndex = -1;
           // update typelist with all catalogues
-          _typedata = SqlReader.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+          _typedata = this.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
           _typeNames = _typedata.Item1;
           _typeNumbers = _typedata.Item2;
 
           // update section list to all types
-          _sectionList = SqlReader.GetSectionsDataFromSQLite(_typeNumbers, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+          _sectionList = SqlReader.reader.GetSectionsDataFromSQLite(_typeNumbers, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
 
           // filter by search pattern
           _filteredlist = new List<string>();
@@ -1022,14 +1024,14 @@ namespace GsaGH.Components
           SelectedItems[1] = _catalogueNames[j];
 
           // update typelist with selected input catalogue
-          _typedata = SqlReader.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+          _typedata = SqlReader.reader.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
           _typeNames = _typedata.Item1;
           _typeNumbers = _typedata.Item2;
 
           // update section list from new types (all new types in catalogue)
           List<int> types = _typeNumbers.ToList();
           types.RemoveAt(0); // remove -1 from beginning of list
-          _sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+          _sectionList = SqlReader.reader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
 
           // filter by search pattern
           _filteredlist = new List<string>();
@@ -1087,7 +1089,7 @@ namespace GsaGH.Components
 
 
           // section list with selected types (only types in selected type)
-          _sectionList = SqlReader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+          _sectionList = SqlReader.reader.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
 
           // filter by search pattern
           _filteredlist = new List<string>();
@@ -1168,6 +1170,11 @@ namespace GsaGH.Components
       }
     }
 
+    private Tuple<List<string>, List<int>> GetTypesDataFromSQLite(int catalogueIndex, string filePath, bool inclSuperseeded)
+    {
+      return SqlReader.reader.GetTypesDataFromSQLite2(catalogueIndex, filePath, inclSuperseeded);
+    }
+
     public override void UpdateUIFromSelectedItems()
     {
       if (SelectedItems[0] == "Catalogue")
@@ -1180,7 +1187,7 @@ namespace GsaGH.Components
 
         _catalogueNames = _cataloguedata.Item1;
         _catalogueNumbers = _cataloguedata.Item2;
-        _typedata = SqlReader.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+        _typedata = SqlReader.reader.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
         _typeNames = _typedata.Item1;
         _typeNumbers = _typedata.Item2;
 
