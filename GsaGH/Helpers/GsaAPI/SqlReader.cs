@@ -230,6 +230,7 @@ namespace GsaGH.Helpers.GsaAPI
         }
 
         string[] vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
+        // in case of welded sections this didn´t return a result
         if (vals.Length <= 1)
         {
           cmd = db.CreateCommand();
