@@ -179,7 +179,7 @@ namespace GsaGH.Components
       #endregion
 
       // Assemble model
-      Model gsa = Helpers.Export.AssembleModel.Assemble(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, this.LengthUnit, this._tolerance, true);
+      Model gsa = Helpers.Export.AssembleModel.Assemble(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, this.LengthUnit, this._tolerance, true, null);
 
       this.UpdateMessage();
 

@@ -126,10 +126,8 @@ namespace GsaGH.Components
             }
             else
             {
-              if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-              {
-                prop3Ds.Add(new GsaProp3d(idd));
-              }
+              if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
+                prop3Ds.Add(new GsaProp3d(id));
               else
               {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");

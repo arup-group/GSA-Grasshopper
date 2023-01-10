@@ -407,9 +407,10 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      if (!this._mesh.IsValid)
+      if (!(this._mesh.Ngons.Count > 0))
         return "Null";
-      string type = Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
+      List<string> types = this.Types.Select(t => Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == t).Key).ToList();
+      string type = string.Join("/", types.Distinct());
       string info = "N:" + this.NgonMesh.Vertices.Count + " E:" + this.API_Elements.Count;
       return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
     }

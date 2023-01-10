@@ -134,7 +134,7 @@ namespace GsaGH.Helpers.Export
       List<GsaGridPlaneSurface> gps = gpsgoo.Select(n => n.Value).ToList();
 
       // return new assembled model
-      mainModel.Model = AssembleModel.Assemble(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter, DefaultUnits.Tolerance.Meters, false);
+      mainModel.Model = AssembleModel.Assemble(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter, DefaultUnits.Tolerance.Meters, false, null);
       return mainModel;
     }
   }

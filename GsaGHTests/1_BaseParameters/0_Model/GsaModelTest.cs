@@ -78,7 +78,7 @@ namespace GsaGHTests.Parameters
       original.Model.Open(GsaFile.Steel_Design_Simple);
 
       GsaModel assembled = new GsaModel();
-      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(original, null, null, null, null, null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false);
+      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(original, null, null, null, null, null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false, null);
 
       // Assert
       Duplicates.AreEqual(original, assembled, true);

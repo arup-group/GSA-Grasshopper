@@ -7,7 +7,7 @@ on:
     - '**'
     - '!main'
  workflow_dispatch:
-      
+
 jobs:
   # This workflow contains a single job called "branch-check-jira"
   branch-jira-check:

@@ -161,10 +161,8 @@ namespace GsaGH.Components
           }
           else
           {
-            if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-            {
-              section = new GsaSection(idd);
-            }
+            if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
+              section = new GsaSection(id);
             else
             {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
