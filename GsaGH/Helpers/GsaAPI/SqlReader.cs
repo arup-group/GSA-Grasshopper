@@ -230,25 +230,21 @@ namespace GsaGH.Helpers.GsaAPI
         }
 
         string[] vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
-
         if (vals.Length <= 1)
         {
+          cmd = db.CreateCommand();
           cmd.CommandText = $"Select " +
             $"SECT_DEPTH_DIAM || ' -- ' || " +
             $"SECT_WIDTH || ' -- ' || " +
             $"SECT_WEB_THICK || ' -- ' || " +
-            $"SECT_FLG_THICK || ' -- ' || " +
+            $"SECT_FLG_THICK " +
             $"as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_NAME = \"{profileString}\" ORDER BY SECT_DATE_ADDED";
-
+          cmd.CommandType = CommandType.Text;
           data = new List<string>();
           r = cmd.ExecuteReader();
           while (r.Read())
           {
-            // get data
             string sqlData = Convert.ToString(r["SECT_NAME"]);
-
-            // split text string
-            // example (IPE100): 0.1 --  0.055 -- 0.0041 -- 0.0057 -- 0.007
             data.Add(sqlData);
           }
         }
