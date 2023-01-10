@@ -49,12 +49,15 @@ Copyright © Oasys 1985 - 2022</Description>
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>compile;build</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Data.SQLite" Version="1.0.117" />
   </ItemGroup>
   
   <ItemGroup>
     <Reference Include="GsaAPI">
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\System.Data.SQLite.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Interop.Gsa_10_1">
