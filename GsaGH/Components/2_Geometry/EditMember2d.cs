@@ -108,6 +108,7 @@ namespace GsaGH.Components
         if (gsaMember2d == null)
         {
           AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input is null");
+          return;
         }
         mem = gsaMember2d.Duplicate(true);
       }
@@ -136,9 +137,7 @@ namespace GsaGH.Components
         {
           // 2 brep
           if (DA.GetData(2, ref ghbrep))
-          {
             GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both);
-          }
 
           // 3 inclusion points
           ghpts = new List<GH_Point>();
@@ -149,9 +148,7 @@ namespace GsaGH.Components
             {
               Point3d pt = new Point3d();
               if (GH_Convert.ToPoint3d(ghpts[i], ref pt, GH_Conversion.Both))
-              {
                 pts.Add(pt);
-              }
             }
           }
 
@@ -164,9 +161,7 @@ namespace GsaGH.Components
             {
               Curve crv = null;
               if (GH_Convert.ToCurve(ghcrvs[i], ref crv, GH_Conversion.Both))
-              {
                 crvs.Add(crv);
-              }
             }
           }
           // rebuild 
@@ -179,15 +174,11 @@ namespace GsaGH.Components
         {
           GsaProp2d prop2d = new GsaProp2d();
           if (gh_typ.Value is GsaProp2dGoo)
-          {
             gh_typ.CastTo(ref prop2d);
-          }
           else
           {
-            if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-            {
-              prop2d = new GsaProp2d(idd);
-            }
+            if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
+              prop2d = new GsaProp2d(id);
             else
             {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using GsaGH.Parameters;
 using System.Linq;
+using static System.Collections.Specialized.BitVector32;
 
 namespace GsaGH.Helpers.Export
 {
@@ -24,7 +25,7 @@ namespace GsaGH.Helpers.Export
     internal static int ConvertProp3d(GsaProp3d prop3d, ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (prop3d == null) { return 0; }
-      if (prop3d.API_Prop3d == null) { return prop3d.Id; }
+      if (prop3d.IsReferencedByID || prop3d.API_Prop3d == null) { return prop3d.Id; }
       return AddProp3d(prop3d, ref apiProp3ds, ref apiMaterials);
     }
 

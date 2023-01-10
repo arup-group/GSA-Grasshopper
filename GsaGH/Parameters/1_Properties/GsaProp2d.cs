@@ -51,6 +51,7 @@ namespace GsaGH.Parameters
         this._id = value;
       }
     }
+    internal bool IsReferencedByID { get; set; } = false;
     public GsaMaterial Material
     {
       get
@@ -190,6 +191,7 @@ namespace GsaGH.Parameters
     public GsaProp2d(int id)
     {
       this._id = id;
+      this.IsReferencedByID = true;
     }
 
     public GsaProp2d(Length thickness, int id = 0)
@@ -203,6 +205,7 @@ namespace GsaGH.Parameters
       if (!pDict.ContainsKey(id))
         return;
       this._prop2d = pDict[id];
+      this.IsReferencedByID = false;
       // material
       if (this._prop2d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(this._prop2d.MaterialAnalysisProperty))
         this._material.AnalysisMaterial = matDict[this._prop2d.MaterialAnalysisProperty];
@@ -215,11 +218,14 @@ namespace GsaGH.Parameters
 
     public GsaProp2d Duplicate(bool cloneApiElement = false)
     {
-      GsaProp2d dup = new GsaProp2d();
-      dup._prop2d = this._prop2d;
-      dup._id = this._id;
-      dup._material = this._material.Duplicate();
-      dup._guid = new Guid(this._guid.ToString());
+      GsaProp2d dup = new GsaProp2d
+      {
+        _prop2d = this._prop2d,
+        _id = this._id,
+        _material = this._material.Duplicate(),
+        _guid = new Guid(this._guid.ToString()),
+        IsReferencedByID = this.IsReferencedByID
+      };
       if (cloneApiElement)
         dup.CloneApiObject();
       return dup;

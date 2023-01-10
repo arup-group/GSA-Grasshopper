@@ -123,6 +123,7 @@ namespace GsaGH.Parameters
         this._id = value;
       }
     }
+    internal bool IsReferencedByID { get; set; } = false;
     public GsaMaterial Material
     {
       get
@@ -262,6 +263,7 @@ namespace GsaGH.Parameters
     public GsaSection(int id)
     {
       this._id = id;
+      this.IsReferencedByID = true;
     }
 
     public GsaSection(string profile)
@@ -280,6 +282,7 @@ namespace GsaGH.Parameters
       if (!sDict.ContainsKey(id))
         return;
       this._section = sDict[id];
+      this.IsReferencedByID = false;
       // modifier
       if (modDict.ContainsKey(id))
         this._modifier = new GsaSectionModifier(modDict[id]);
@@ -299,7 +302,8 @@ namespace GsaGH.Parameters
         _id = this._id,
         _material = this._material.Duplicate(),
         _modifier = this._modifier.Duplicate(cloneApiElement),
-        _guid = new Guid(this._guid.ToString())
+        _guid = new Guid(this._guid.ToString()),
+        IsReferencedByID = this.IsReferencedByID
       };
       if (cloneApiElement)
         dup.CloneApiObject();

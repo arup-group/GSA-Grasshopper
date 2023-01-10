@@ -113,18 +113,6 @@ namespace GsaGH.Parameters
         this.ApiMember.IsIntersector = value;
       }
     }
-    public int PropertyID
-    {
-      get
-      {
-        return this.ApiMember.Property;
-      }
-      set
-      {
-        this.CloneApiObject();
-        this.ApiMember.Property = value;
-      }
-    }
     public Guid Guid
     {
       get
