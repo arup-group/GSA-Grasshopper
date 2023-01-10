@@ -45,6 +45,7 @@ namespace GsaGH.Parameters
         this._id = value;
       }
     }
+    internal bool IsReferencedByID { get; set; } = false;
     public GsaMaterial Material
     {
       get
@@ -134,6 +135,7 @@ namespace GsaGH.Parameters
     public GsaProp3d(int id)
     {
       this._id = id;
+      this.IsReferencedByID = true;
     }
 
     public GsaProp3d(GsaMaterial material)
@@ -146,6 +148,7 @@ namespace GsaGH.Parameters
       if (!pDict.ContainsKey(id))
         return;
       this._prop3d = pDict[id];
+      this.IsReferencedByID = false;
       // material
       if (this._prop3d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(this._prop3d.MaterialAnalysisProperty))
         this._material.AnalysisMaterial = matDict[this._prop3d.MaterialAnalysisProperty];
@@ -154,14 +157,18 @@ namespace GsaGH.Parameters
     #endregion
 
     #region methods
-    public GsaProp3d Duplicate()
+    public GsaProp3d Duplicate(bool cloneApiElement = false)
     {
-      GsaProp3d dup = new GsaProp3d();
-      dup._prop3d = this._prop3d;
-      dup._id = this._id;
-      dup._material = this._material.Duplicate();
-      dup.CloneApiObject();
-      dup._guid = new Guid(this._guid.ToString());
+      GsaProp3d dup = new GsaProp3d
+      {
+        _prop3d = this._prop3d,
+        _id = this._id,
+        _material = this._material.Duplicate(),
+        _guid = new Guid(this._guid.ToString()),
+        IsReferencedByID = this.IsReferencedByID
+      };
+      if (cloneApiElement)
+        dup.CloneApiObject();
       return dup;
     }
 

@@ -35,7 +35,7 @@ namespace GsaGH.Helpers.Export
         ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (section == null) { return 0; }
-      if (section.API_Section == null) { return section.Id; }
+      if (section.IsReferencedByID || section.API_Section == null) { return section.Id; }
       return AddSection(section, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
     }
 

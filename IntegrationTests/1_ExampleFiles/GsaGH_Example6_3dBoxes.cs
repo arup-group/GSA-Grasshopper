@@ -32,6 +32,7 @@ namespace IntegrationTests.ExampleFiles
       GH_Number output2 = (GH_Number)param2.VolatileData.get_Branch(0)[0];
 
       Assert.Equal(output1.Value, output2.Value, 2);
+      Assert.NotEqual(0.0, output1.Value);
     }
 
     [Fact]

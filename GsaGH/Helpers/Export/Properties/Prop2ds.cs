@@ -25,7 +25,7 @@ namespace GsaGH.Helpers.Export
     internal static int ConvertProp2d(GsaProp2d prop2d, ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (prop2d == null) { return 0; }
-      if (prop2d.API_Prop2d == null) { return prop2d.Id; }
+      if (prop2d.IsReferencedByID || prop2d.API_Prop2d == null) { return prop2d.Id; }
       return AddProp2d(prop2d, ref apiProp2ds, ref apiMaterials);
     }
 
