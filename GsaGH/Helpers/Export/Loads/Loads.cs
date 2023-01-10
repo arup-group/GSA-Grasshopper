@@ -9,6 +9,7 @@ using GsaGH.Parameters;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export
 {
@@ -228,7 +229,7 @@ namespace GsaGH.Helpers.Export
 
     internal static void ConvertNodeLoad(GsaLoad load, ref List<NodeLoad> nodeLoads_node, ref List<NodeLoad> nodeLoads_displ, ref List<NodeLoad> nodeLoads_settle, ref GsaIntDictionary<Node> apiNodes, LengthUnit unit)
     {
-      if (load.NodeLoad.RefPoint != null)
+      if (load.NodeLoad.RefPoint != Point3d.Unset)
         load.NodeLoad.NodeLoad.Nodes = Nodes.AddNode(ref apiNodes, load.NodeLoad.RefPoint, unit).ToString();
       if (load.NodeLoad.Type == GsaNodeLoad.NodeLoadTypes.APPLIED_DISP)
         nodeLoads_displ.Add(load.NodeLoad.NodeLoad);

@@ -67,7 +67,7 @@ namespace GsaGH.Parameters
     public NodeLoadTypes Type;
 
     public NodeLoad NodeLoad { get; set; } = new NodeLoad();
-    internal Point3d RefPoint;
+    internal Point3d RefPoint = Point3d.Unset;
 
     public GsaNodeLoad()
     {
@@ -84,7 +84,7 @@ namespace GsaGH.Parameters
       dup.NodeLoad.Name = this.NodeLoad.Name.ToString();
       dup.NodeLoad.Value = this.NodeLoad.Value;
       dup.Type = Type;
-      if (this.RefPoint != null)
+      if (this.RefPoint != Point3d.Unset)
         dup.RefPoint = new Point3d(this.RefPoint);
       return dup;
     }
