@@ -5,16 +5,17 @@ using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 
 namespace GsaGH.Helpers.GsaAPI
 {
   /// <summary>
   /// Class containing functions to interface with SQLite db files.
+  /// Singleton makes sure this class is executed in a separate AppDomain to avoid conflicts with different SQLite versions in main AppDomain.
   /// </summary>
   public class SqlReader : MarshalByRefObject
   {
-    public static SqlReader reader = Initialize();
+    public static SqlReader Instance { get { return lazy.Value; } }
+    private static readonly Lazy<SqlReader> lazy = new Lazy<SqlReader>(() => Initialize());
 
     public static SqlReader Initialize()
     {
@@ -32,24 +33,16 @@ namespace GsaGH.Helpers.GsaAPI
       ads.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 
       // Create the second AppDomain.
-      AppDomain ad2 = AppDomain.CreateDomain("AD #2", null, ads);
+      AppDomain ad = AppDomain.CreateDomain("SQLite AppDomain", null, ads);
 
-      try
-      {
-        // Create an instance of MarshalbyRefType in the second AppDomain.
-        // A proxy to the object is returned.
-        reader = (SqlReader)ad2.CreateInstanceAndUnwrap(exeAssembly, typeof(SqlReader).FullName);
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e.Message);
-      }
-
-      //// Unload the second AppDomain. This deletes its object and
-      //// invalidates the proxy object.
-      //AppDomain.Unload(ad2);
-
+      // Create an instance of MarshalbyRefType in the second AppDomain.
+      // A proxy to the object is returned.
+      SqlReader reader = (SqlReader)ad.CreateInstanceAndUnwrap(exeAssembly, typeof(SqlReader).FullName);
       return reader;
+    }
+
+    public SqlReader()
+    {
     }
 
     /// <summary>
@@ -297,7 +290,7 @@ namespace GsaGH.Helpers.GsaAPI
     /// [1]: Width
     /// [2]: Web THK
     /// [3]: Flange THK
-    /// [4]: Root radius
+    /// [4]: Root radius (only if section is not welded!)
     /// </summary>
     /// <param name="profileString"></param>
     /// <returns></returns>
