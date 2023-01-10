@@ -11,6 +11,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.117" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -29,10 +30,6 @@
   <ItemGroup>
     <Reference Include="GsaAPI">
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\GsaAPI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Data.SQLite">
-      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.1\System.Data.SQLite.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
