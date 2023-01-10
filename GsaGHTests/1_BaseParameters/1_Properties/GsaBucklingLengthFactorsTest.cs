@@ -119,7 +119,7 @@ namespace GsaGHTests.Parameters
       GsaBucklingLengthFactors originalFactors = new GsaBucklingLengthFactors(m1d);
 
       GsaModel assembled = new GsaModel();
-      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(null, null, null, null, null, new List<GsaMember1d>() { m1d }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false);
+      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(null, null, null, null, null, new List<GsaMember1d>() { m1d }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false, null);
 
       GsaAPI.Member assembledMem1d = assembled.Model.Members()[1];
 

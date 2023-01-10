@@ -40,7 +40,7 @@ namespace GsaGH
       {
         // Try load GSA
         Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-
+        Assembly SQLite = Assembly.LoadFile(InstallPath + "\\System.Data.SQLite.dll");
         FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
         if (myFileVersionInfo.FileBuildPart < 63)
         {

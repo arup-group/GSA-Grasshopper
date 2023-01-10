@@ -67,7 +67,7 @@ namespace GsaGHTests.Parameters
       e1d.ReleaseEnd = new GsaBool6(false, true, false, true, false, true);
 
       GsaModel assembled = new GsaModel();
-      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(null, null, new List<GsaElement1d>() { e1d }, null, null, null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false);
+      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(null, null, new List<GsaElement1d>() { e1d }, null, null, null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false, null);
 
       GsaBool6 startAssembled = new GsaBool6(assembled.Model.Elements()[1].Release(0));
       GsaBool6 endAssembled = new GsaBool6(assembled.Model.Elements()[1].Release(1));
@@ -84,7 +84,7 @@ namespace GsaGHTests.Parameters
       m1d.ReleaseEnd = new GsaBool6(false, true, false, true, false, true);
 
       GsaModel assembled = new GsaModel();
-      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(null, null, null, null, null, new List<GsaMember1d>() { m1d }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false);
+      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(null, null, null, null, null, new List<GsaMember1d>() { m1d }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false, null);
 
       GsaBool6 startAssembled = new GsaBool6(assembled.Model.Members()[1].GetEndRelease(0).Releases);
       GsaBool6 endAssembled = new GsaBool6(assembled.Model.Members()[1].GetEndRelease(1).Releases);
