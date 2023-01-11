@@ -9,7 +9,7 @@ flags:
 
 coverage:
   status:
-    project:
+    patch:
       default:
         # basic
         target: auto
