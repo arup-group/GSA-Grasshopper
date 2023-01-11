@@ -1,23 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Data;
+using System.Data.SQLite;
 using System.Globalization;
+using System.IO;
+using System.Reflection;
 
 namespace GsaGH.Helpers.GsaAPI
 {
   /// <summary>
   /// Class containing functions to interface with SQLite db files.
+  /// Singleton makes sure this class is executed in a separate AppDomain to avoid conflicts with different SQLite versions in main AppDomain.
   /// </summary>
-  public class SqlReader
+  public class SqlReader : MarshalByRefObject
   {
+    public static SqlReader Instance { get { return lazy.Value; } }
+    private static readonly Lazy<SqlReader> lazy = new Lazy<SqlReader>(() => Initialize());
+
+    public static SqlReader Initialize()
+    {
+      // Get the full name of the EXE assembly.
+      string exeAssembly = Assembly.GetCallingAssembly().FullName;
+      string codeBase = Assembly.GetCallingAssembly().CodeBase;
+      UriBuilder uri = new UriBuilder(codeBase);
+      string path = Uri.UnescapeDataString(uri.Path);
+
+      // Construct and initialize settings for a second AppDomain.
+      AppDomainSetup ads = new AppDomainSetup();
+      ads.ApplicationBase = Path.GetDirectoryName(path);
+      ads.DisallowBindingRedirects = false;
+      ads.DisallowCodeDownload = true;
+      ads.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+
+      // Create the second AppDomain.
+      AppDomain ad = AppDomain.CreateDomain("SQLite AppDomain", null, ads);
+
+      // Create an instance of MarshalbyRefType in the second AppDomain.
+      // A proxy to the object is returned.
+      SqlReader reader = (SqlReader)ad.CreateInstanceAndUnwrap(exeAssembly, typeof(SqlReader).FullName);
+      return reader;
+    }
+
+    public SqlReader()
+    {
+    }
+
     /// <summary>
     /// Method to set up a SQLite Connection to a specified .db3 file.
     /// Will return a SQLite connection to the aforementioned .db3 file database.
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    public static SQLiteConnection Connection(string filePath)
+    public SQLiteConnection Connection(string filePath)
     {
       return new SQLiteConnection($"URI=file:{filePath};mode=ReadOnly");
     }
@@ -31,8 +65,9 @@ namespace GsaGH.Helpers.GsaAPI
     /// </summary>
     /// <param name="filePath">Path to SecLib.db3</param>
     /// <returns></returns>
-    public static Tuple<List<string>, List<int>> GetCataloguesDataFromSQLite(string filePath)
+    public Tuple<List<string>, List<int>> GetCataloguesDataFromSQLite(string filePath)
     {
+
       // Create empty lists to work on:
       List<string> catNames = new List<string>();
       List<int> catNumber = new List<int>();
@@ -73,7 +108,7 @@ namespace GsaGH.Helpers.GsaAPI
     /// <param name="filePath">Path to SecLib.db3</param>
     /// <param name="inclSuperseeded">True if you want to include superseeded items</param>
     /// <returns></returns>
-    public static Tuple<List<string>, List<int>> GetTypesDataFromSQLite(int catalogue_number, string filePath, bool inclSuperseeded = false)
+    public Tuple<List<string>, List<int>> GetTypesDataFromSQLite2(int catalogue_number, string filePath, bool inclSuperseeded = false)
     {
       // Create empty lists to work on:
       List<string> typeNames = new List<string>();
@@ -122,6 +157,65 @@ namespace GsaGH.Helpers.GsaAPI
       return new Tuple<List<string>, List<int>>(typeNames, typeNumber);
     }
 
+    /// <summary>
+    /// Get section type data from SQLite file (.db3). The method returns a tuple with:
+    /// Item1 = list of type name (string)
+    /// where first item will be "All"
+    /// Item2 = list of type number (int)
+    /// where first item will be "-1" representing All
+    /// </summary>
+    /// <param name="catalogue_number">Catalogue number to get section types from. Input -1 in first item of the input list to get all types</param>
+    /// <param name="filePath">Path to SecLib.db3</param>
+    /// <param name="inclSuperseeded">True if you want to include superseeded items</param>
+    /// <returns></returns>
+    public Tuple<List<string>, List<int>> GetTypesDataFromSQLite(int catalogue_number, string filePath, bool inclSuperseeded = false)
+    {
+      // Create empty lists to work on:
+      List<string> typeNames = new List<string>();
+      List<int> typeNumber = new List<int>();
+
+      // get Catalogue numbers if input is -1 (All catalogues)
+      List<int> catNumbers = new List<int>();
+      if (catalogue_number == -1)
+      {
+        Tuple<List<string>, List<int>> catalogueData = GetCataloguesDataFromSQLite(filePath);
+        catNumbers = catalogueData.Item2;
+        catNumbers.RemoveAt(0); // remove -1 from beginning of list
+      }
+      else
+        catNumbers.Add(catalogue_number);
+
+      using (var db = Connection(filePath))
+      {
+        for (int i = 0; i < catNumbers.Count; i++)
+        {
+          int cat = catNumbers[i];
+
+          db.Open();
+          SQLiteCommand cmd = db.CreateCommand();
+          if (inclSuperseeded)
+            cmd.CommandText = $"Select TYPE_NAME || ' -- ' || TYPE_NUM as TYPE_NAME from Types where TYPE_CAT_NUM = {cat}";
+          else
+            cmd.CommandText = $"Select TYPE_NAME || ' -- ' || TYPE_NUM as TYPE_NAME from Types where TYPE_CAT_NUM = {cat} and not (TYPE_SUPERSEDED = True or TYPE_SUPERSEDED = TRUE or TYPE_SUPERSEDED = 1)";
+          cmd.CommandType = CommandType.Text;
+          SQLiteDataReader r = cmd.ExecuteReader();
+          while (r.Read())
+          {
+            // get data
+            string sqlData = Convert.ToString(r["TYPE_NAME"]);
+
+            // split text string
+            // example: Universal Beams -- 51
+            typeNames.Add(sqlData.Split(new string[] { " -- " }, StringSplitOptions.None)[0]);
+            typeNumber.Add(Int32.Parse(sqlData.Split(new string[] { " -- " }, StringSplitOptions.None)[1]));
+          }
+          db.Close();
+        }
+      }
+      typeNames.Insert(0, "All");
+      typeNumber.Insert(0, -1);
+      return new Tuple<List<string>, List<int>>(typeNames, typeNumber);
+    }
 
     /// <summary>
     /// Get a list of section profile strings from SQLite file (.db3). The method returns a string that includes type abbriviation as accepted by GSA. 
@@ -130,7 +224,7 @@ namespace GsaGH.Helpers.GsaAPI
     /// <param name="filePath">Path to SecLib.db3</param>
     /// <param name="inclSuperseeded">True if you want to include superseeded items</param>
     /// <returns></returns>
-    public static List<string> GetSectionsDataFromSQLite(List<int> type_numbers, string filePath, bool inclSuperseeded = false)
+    public List<string> GetSectionsDataFromSQLite(List<int> type_numbers, string filePath, bool inclSuperseeded = false)
     {
       // Create empty list to work on:
       List<string> section = new List<string>();
@@ -196,11 +290,11 @@ namespace GsaGH.Helpers.GsaAPI
     /// [1]: Width
     /// [2]: Web THK
     /// [3]: Flange THK
-    /// [4]: Root radius
+    /// [4]: Root radius (only if section is not welded!)
     /// </summary>
     /// <param name="profileString"></param>
     /// <returns></returns>
-    public static List<double> GetCatalogueProfileValues(string profileString, string filePath)
+    public List<double> GetCatalogueProfileValues(string profileString, string filePath)
     {
       // Create empty lists to work on:
       List<double> values = new List<double>();
@@ -246,6 +340,31 @@ namespace GsaGH.Helpers.GsaAPI
           while (r.Read())
           {
             string sqlData = Convert.ToString(r["SECT_NAME"]);
+            data.Add(sqlData);
+          }
+        }
+        db.Close();
+
+        vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
+
+        if (vals.Length <= 1)
+        {
+          cmd.CommandText = $"Select " +
+            $"SECT_DEPTH_DIAM || ' -- ' || " +
+            $"SECT_WIDTH || ' -- ' || " +
+            $"SECT_WEB_THICK || ' -- ' || " +
+            $"SECT_FLG_THICK || ' -- ' || " +
+            $"as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_NAME = \"{profileString}\" ORDER BY SECT_DATE_ADDED";
+
+          data = new List<string>();
+          r = cmd.ExecuteReader();
+          while (r.Read())
+          {
+            // get data
+            string sqlData = Convert.ToString(r["SECT_NAME"]);
+
+            // split text string
+            // example (IPE100): 0.1 --  0.055 -- 0.0041 -- 0.0057 -- 0.007
             data.Add(sqlData);
           }
         }

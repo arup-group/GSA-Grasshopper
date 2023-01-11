@@ -1,22 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
-using OasysGH.Units.Helpers;
 using OasysGH.Units;
-using OasysUnits.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
-using GsaGH.Helpers.GsaAPI;
-using System.Globalization;
-using OasysGH.Helpers;
-using System.Collections.Generic;
-using System.IO;
-using GsaGH.Helpers;
-using GsaGH.Helpers.GH;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -428,7 +426,7 @@ namespace GsaGH.Components
         else if (profile.StartsWith("CAT"))
         {
           string prof = profile.Split(' ')[2];
-          List<double> sqlValues = SqlReader.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+          List<double> sqlValues = SqlReader.Instance.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
           unit = LengthUnit.Meter;
 
           DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(this.LengthUnit))); //Depth
