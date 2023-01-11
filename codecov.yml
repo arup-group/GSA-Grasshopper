@@ -6,6 +6,20 @@ flags:
     carryforward: false
   integration:
     carryforward: false
+
+coverage:
+  status:
+    project:
+      default:
+        # basic
+        target: auto
+        threshold: 0.1%
+        base: auto 
+        flags: 
+          - gsagh
+          - integration
+        only_pulls: true
+        
 ignore:
   - "GsaGHTests"  # ignore project (as it is referenced by Integration test)
   - "GsaGH/Components/GraveyardComp"  # ignore old versions of components in
