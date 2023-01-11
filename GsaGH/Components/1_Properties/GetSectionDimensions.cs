@@ -20,10 +20,10 @@ using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get geometric dimensions of a section
-    /// </summary>
-    public class GetSectionDimensions : GH_OasysComponent, IGH_VariableParameterComponent
+  /// <summary>
+  /// Component to get geometric dimensions of a section
+  /// </summary>
+  public class GetSectionDimensions : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("98765d83-2b23-47c1-ad1d-201b5a2eed8b");
@@ -438,7 +438,10 @@ namespace GsaGH.Components
           DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Top
           DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Bottom
           DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[2], unit).ToUnit(this.LengthUnit))); //Web Thk Bottom
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[4], unit).ToUnit(this.LengthUnit))); //Root radius
+          if (sqlValues.Count > 4)
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[4], unit).ToUnit(this.LengthUnit))); //Root radius
+          else
+            DA.SetData(i++, new GH_UnitNumber(Length.Zero.ToUnit(this.LengthUnit))); // welded section don´t have a root radius
           DA.SetData(i++, null); //Spacing
           DA.SetData(i, "CAT");
         }

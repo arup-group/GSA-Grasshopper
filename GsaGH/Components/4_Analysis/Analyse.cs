@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using Grasshopper.GUI;
 using System.Windows.Forms;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
@@ -18,8 +14,6 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using Rhino.Runtime;
-using System.Drawing;
 
 namespace GsaGH.Components
 {
