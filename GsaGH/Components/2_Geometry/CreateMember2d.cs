@@ -90,7 +90,15 @@ namespace GsaGH.Components
           }
 
           // build new member with brep, crv and pts
-          GsaMember2d mem = new GsaMember2d(brep, crvs, pts);
+          GsaMember2d mem = new GsaMember2d();
+          try
+          {
+            mem = new GsaMember2d(brep, crvs, pts);
+          }
+          catch (Exception e)
+          {
+            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+          }
 
           // 3 section
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -109,7 +117,6 @@ namespace GsaGH.Components
               else
               {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
-                return;
               }
             }
           }
