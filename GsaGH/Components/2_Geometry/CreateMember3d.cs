@@ -10,10 +10,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create new 3d Member
-    /// </summary>
-    public class CreateMember3d : GH_OasysComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to create new 3d Member
+  /// </summary>
+  public class CreateMember3d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("08a48fa5-8aaa-43fb-a095-9142794684f7");
@@ -58,15 +58,35 @@ namespace GsaGH.Components
         if (GH_Convert.ToBrep(gh_typ.Value, ref brep, GH_Conversion.Both))
         {
           if (brep.IsValid)
-            mem = new GsaMember3d(brep);
+          {
+            try
+            {
+              mem = new GsaMember3d(brep);
+            }
+            catch (Exception e)
+            {
+              this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+              return;
+            }
+          }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "S input is not a valid Brep geometry");
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "S input is not a valid Brep geometry");
             return;
           }
         }
         else if (GH_Convert.ToMesh(gh_typ.Value, ref mesh, GH_Conversion.Both))
-          mem = new GsaMember3d(mesh);
+        {
+          try
+          {
+            mem = new GsaMember3d(mesh);
+          }
+          catch (Exception e)
+          {
+            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+            return;
+          }
+        }
         else
         {
           AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input to a 3D Member");
@@ -96,8 +116,7 @@ namespace GsaGH.Components
               mem.Prop3d = new GsaProp3d(id);
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
-              return;
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert PA input to a 2D Property of reference integer");
             }
           }
         }
