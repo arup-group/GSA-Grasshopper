@@ -45,9 +45,12 @@ namespace GsaGH.Helpers.Export
         ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (sections != null)
+      {
+        sections = sections.OrderByDescending(s => s.Id).ToList();
         for (int i = 0; i < sections.Count; i++)
           if (sections[i] != null)
             ConvertSection(sections[i], ref apiSections, ref apiSectionModifiers, ref apiMaterials);
+      }
     }
   }
 }

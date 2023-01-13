@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -46,9 +47,12 @@ namespace GsaGH.Helpers.Export
     internal static void ConvertElement1D(List<GsaElement1d> element1ds, ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit, ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (element1ds != null)
+      {
+        element1ds = element1ds.OrderByDescending(x => x.Id).ToList();
         for (int i = 0; i < element1ds.Count; i++)
           if (element1ds[i] != null)
             ConvertElement1D(element1ds[i], ref apiElements, ref existingNodes, unit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
+      }
     }
     #endregion
 
@@ -83,9 +87,12 @@ namespace GsaGH.Helpers.Export
         ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (element2ds != null)
+      {
+        element2ds = element2ds.OrderByDescending(e => e.Ids.First()).ToList();
         for (int i = 0; i < element2ds.Count; i++)
           if (element2ds[i] != null)
             ConvertElement2D(element2ds[i], ref apiElements, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials);
+      }
     }
     #endregion
 
@@ -121,9 +128,12 @@ namespace GsaGH.Helpers.Export
         ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (element3ds != null)
+      {
+        element3ds = element3ds.OrderByDescending(e => e.Ids.First()).ToList();
         for (int i = 0; i < element3ds.Count; i++)
           if (element3ds[i] != null)
             ConvertElement3D(element3ds[i], ref apiElements, ref existingNodes, unit, ref apiProp3ds, ref apiMaterials);
+      }
     }
     #endregion
   }

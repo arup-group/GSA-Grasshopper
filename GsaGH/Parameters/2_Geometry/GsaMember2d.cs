@@ -52,7 +52,7 @@ namespace GsaGH.Parameters
         _id = value;
       }
     }
-    internal Member ApiMember { get; set; } = new Member();
+    internal Member ApiMember { get; set; } = new Member() { Type = MemberType.GENERIC_2D };
     // mesh size in Rhino/Grasshopper world, might be different to internal GSA mesh size
     public double MeshSize { get; set; } = 0;
     public GsaProp2d Property { get; set; } = new GsaProp2d();
@@ -377,11 +377,11 @@ namespace GsaGH.Parameters
 
     public GsaMember2d UpdateGeometry(Brep brep = null, List<Curve> inclCrvs = null, List<Point3d> inclPts = null)
     {
-      if (brep == null)
+      if (brep == null && this._brep != null)
         brep = this._brep.DuplicateBrep();
-      if (inclCrvs == null)
+      if (inclCrvs == null && this._inclCrvs != null)
         inclCrvs = this._inclCrvs.Select(x => (Curve)x).ToList();
-      if (inclPts == null)
+      if (inclPts == null && this._inclPts != null)
         inclPts = this._inclPts.ToList();
 
       GsaMember2d dup = new GsaMember2d(brep, inclCrvs, inclPts);

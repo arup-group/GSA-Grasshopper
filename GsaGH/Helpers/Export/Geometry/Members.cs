@@ -16,6 +16,8 @@ namespace GsaGH.Helpers.Export
     private static string CreateTopology(List<Point3d> topology, List<string> topoType, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit)
     {
       string topo = "";
+      if (topology == null)
+        return topo;
       for (int j = 0; j < topology.Count; j++)
       {
         // add the topology type to the topo string first
@@ -53,16 +55,18 @@ namespace GsaGH.Helpers.Export
       apiMember.MeshSize = new Length(member1d.MeshSize, unit).Meters;
 
       string topo = CreateTopology(member1d.Topology, member1d.TopologyType, ref existingNodes, unit);
-
-      try //GsaAPI will perform check on topology list
+      if (topo!= "")
       {
-        apiMember.Topology = string.Copy(topo.Replace("  ", " "));
-      }
-      catch (Exception)
-      {
-        List<string> errors = member1d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
-        string error = string.Join(", ", errors);
-        throw new Exception(" Invalid topology for Member1d: " + topo + " with original points: " + error);
+        try //GsaAPI will perform check on topology list
+        {
+          apiMember.Topology = string.Copy(topo.Replace("  ", " "));
+        }
+        catch (Exception)
+        {
+          List<string> errors = member1d.Topology.Select(t => "{" + t.ToString() + "}").ToList();
+          string error = string.Join(", ", errors);
+          throw new Exception(" Invalid topology for Member1d: " + topo + " with original points: " + error);
+        }
       }
 
       if (member1d.OrientationNode != null)
@@ -78,9 +82,12 @@ namespace GsaGH.Helpers.Export
         ref GsaGuidDictionary<Section> apiSections, ref GsaIntDictionary<SectionModifier> apiSectionModifiers, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (member1ds != null)
+      {
+        member1ds = member1ds.OrderByDescending(x => x.Id).ToList();
         for (int i = 0; i < member1ds.Count; i++)
           if (member1ds[i] != null)
             ConvertMember1D(member1ds[i], ref apiMembers, ref existingNodes, unit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
+      }
     }
     #endregion
 
@@ -127,9 +134,12 @@ namespace GsaGH.Helpers.Export
         ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (member2ds != null)
+      {
+        member2ds = member2ds.OrderByDescending(x => x.Id).ToList();
         for (int i = 0; i < member2ds.Count; i++)
           if (member2ds[i] != null)
             ConvertMember2D(member2ds[i], ref apiMembers, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials);
+      }
     }
     #endregion
 
@@ -166,9 +176,12 @@ namespace GsaGH.Helpers.Export
         ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (member3ds != null)
+      {
+        member3ds = member3ds.OrderByDescending(x => x.Id).ToList();
         for (int i = 0; i < member3ds.Count; i++)
           if (member3ds[i] != null)
             ConvertMember3D(member3ds[i], ref apiMembers, ref existingNodes, unit, ref apiProp3ds, ref apiMaterials);
+      }
     }
     #endregion
   }
