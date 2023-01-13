@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits;
@@ -7,15 +8,18 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export
 {
-    internal class Nodes
+  internal class Nodes
   {
     internal static void ConvertNodes(List<GsaNode> nodes, ref GsaIntDictionary<Node> existingNodes,
         ref Dictionary<int, Axis> existingAxes, LengthUnit modelUnit)
     {
       if (nodes != null && nodes.Count > 0)
+      {
+        nodes = nodes.OrderByDescending(n => n.Id).ToList();
         for (int i = 0; i < nodes.Count; i++)
           if (nodes[i] != null)
             ConvertNode(nodes[i], ref existingNodes, ref existingAxes, modelUnit);
+      }
     }
 
     /// <summary>
