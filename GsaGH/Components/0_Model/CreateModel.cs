@@ -221,10 +221,11 @@ namespace GsaGH.Components
           return;
         }
       }
-      this.Message = "Tol: " + new Length(_tolerance, this.LengthUnit).ToString();
-      if (_tolerance < 0.001)
+      Length tol = new Length(_tolerance, this.LengthUnit);
+      this.Message = "Tol: " + tol.ToString();
+      if (tol.Meters < 0.001)
         AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
-      if (_tolerance > 0.25)
+      if (tol.Meters > 0.25)
         AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     #endregion
@@ -239,7 +240,7 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       this.ReMesh = reader.GetBoolean("ReMesh");
-
+      this.InitialCheckState = new List<bool>() { this.ReMesh };
       if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData"))
         base.Read(reader);
       else
