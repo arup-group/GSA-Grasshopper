@@ -11,6 +11,10 @@ using OasysGH.Components;
 using OasysGH.Helpers;
 using GsaGH.Helpers.GH;
 using System.Linq;
+using Grasshopper.Kernel.Parameters;
+using GH_IO.Serialization;
+using GsaGH.Components.GraveyardComp;
+using OasysGH.Units;
 
 namespace GsaGH.Components
 {
@@ -146,6 +150,18 @@ namespace GsaGH.Components
     {
       if (_fileNameLastSaved != null && _fileNameLastSaved != "")
         System.Diagnostics.Process.Start(_fileNameLastSaved);
+    }
+
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      bool flag = base.Read(reader);
+      Param_Boolean saveInput = (Param_Boolean)this.Params.Input[1];
+      if (saveInput.PersistentData.First().Value == false)
+      {
+        saveInput.PersistentData.Clear();
+        saveInput.PersistentData.Append(new GH_Boolean(true));
+      }
+      return flag;
     }
     #endregion
   }
