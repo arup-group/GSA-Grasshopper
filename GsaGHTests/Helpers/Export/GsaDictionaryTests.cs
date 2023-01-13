@@ -34,9 +34,9 @@ namespace GsaGHTests.Helpers.Export
 
       int expectedID = dictionary.AddValue("myFirst");
 
-      Assert.Equal(6, expectedID);
+      Assert.Equal(2, expectedID);
       Assert.Equal(3, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[6]);
+      Assert.Equal("myFirst", dictionary.Dictionary[2]);
     }
 
     [Fact]
@@ -104,9 +104,9 @@ namespace GsaGHTests.Helpers.Export
       Guid guid = Guid.NewGuid();
       int expectedID = dictionary.AddValue(guid, "myFirst");
 
-      Assert.Equal(6, expectedID);
+      Assert.Equal(2, expectedID);
       Assert.Equal(3, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[6]);
+      Assert.Equal("myFirst", dictionary.Dictionary[2]);
 
       // try to add with same guid but different object
       Assert.Equal(expectedID, dictionary.AddValue(guid, "second"));
@@ -212,11 +212,11 @@ namespace GsaGHTests.Helpers.Export
       expectedIDs.Add(dictionary.AddValue(guid, "myFirst"));
       expectedIDs.Add(dictionary.AddValue(guid, "mySecond"));
 
-      Assert.Equal(6, expectedIDs[0]);
-      Assert.Equal(7, expectedIDs[1]);
+      Assert.Equal(2, expectedIDs[0]);
+      Assert.Equal(3, expectedIDs[1]);
       Assert.Equal(4, dictionary.Count);
-      Assert.Equal("myFirst", dictionary.Dictionary[6]);
-      Assert.Equal("mySecond", dictionary.Dictionary[7]);
+      Assert.Equal("myFirst", dictionary.Dictionary[2]);
+      Assert.Equal("mySecond", dictionary.Dictionary[3]);
     }
 
     [Fact]
@@ -237,7 +237,7 @@ namespace GsaGHTests.Helpers.Export
       Assert.Equal("myFirst", dictionary.Dictionary[5]);
       Assert.Equal(2, dictionary.GuidDictionary[guid].Count);
 
-      Assert.Equal("mySecond", dictionary.Dictionary[6]);
+      Assert.Equal("mySecond", dictionary.Dictionary[2]);
     }
 
     [Fact]
