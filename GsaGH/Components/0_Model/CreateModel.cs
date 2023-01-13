@@ -239,7 +239,7 @@ namespace GsaGH.Components
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       this.ReMesh = reader.GetBoolean("ReMesh");
-
+      this.InitialCheckState = new List<bool>() { this.ReMesh };
       if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData"))
         base.Read(reader);
       else

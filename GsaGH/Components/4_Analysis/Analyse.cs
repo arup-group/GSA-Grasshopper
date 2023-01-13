@@ -321,6 +321,7 @@ namespace GsaGH.Components
     {
       this.Analysis = reader.GetBoolean("Analyse");
       this.ReMesh = reader.GetBoolean("ReMesh");
+      this.InitialCheckState = new List<bool>() { this.Analysis, this.ReMesh };
       if (reader.ItemExists("Tolerance"))
         this._tolerance = reader.GetDouble("Tolerance");
       else
