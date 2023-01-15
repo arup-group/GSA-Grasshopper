@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Check Jira key in PR title exists and is valid
 
 # Runs when opening or changing a PR
@@ -16,9 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # First check the format is OK
-      - name: PR title starts with Jira Key
-        uses: arup-group/action-pr-title-jira-check@main
+      - uses: arup-group/action-pr-title-jira-check@main
+        if: startsWith( github.event.pull_request.head.ref, 'release') == false
         with:
           prTitle: '${{ github.event.pull_request.title }}'
           jiraSecret: '${{ secrets.JIRA_PASSWORD }}'
