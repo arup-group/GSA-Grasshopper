@@ -257,6 +257,11 @@ namespace GsaGH.Components
               else
                 modifier.AdditionalMass = (LinearDensity)unitNumber.Value;
             }
+            // try cast to double
+            else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
+            {
+              modifier.AdditionalMass = new LinearDensity(val, this.LinearDensityUnit);
+            }
             // try cast to string
             else if (GH_Convert.ToString(gh_typ.Value, out string txt, GH_Conversion.Both))
             {
@@ -264,11 +269,6 @@ namespace GsaGH.Components
                 modifier.AdditionalMass = res;
               else
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + this.Params.Input[8].NickName + " to LinearDensity");
-            }
-            // try cast to double
-            else if (GH_Convert.ToDouble(gh_typ.Value, out double val, GH_Conversion.Both))
-            {
-              modifier.AdditionalMass = new LinearDensity(val, this.LinearDensityUnit);
             }
             else
             {
