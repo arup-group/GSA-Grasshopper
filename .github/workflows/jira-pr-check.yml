@@ -19,6 +19,7 @@ jobs:
       # First check the format is OK
       - name: PR title starts with Jira Key
         uses: arup-group/action-pr-title-jira-check@main
+        if: startsWith( github.ref, 'refs/heads/release') == false
         with:
           prTitle: '${{ github.event.pull_request.title }}'
           jiraSecret: '${{ secrets.JIRA_PASSWORD }}'
