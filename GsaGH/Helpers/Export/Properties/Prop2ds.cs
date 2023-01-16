@@ -1,9 +1,7 @@
-﻿using GsaAPI;
-using System;
-using System.Collections.Generic;
-using GsaGH.Parameters;
+﻿using System.Collections.Generic;
 using System.Linq;
-using static System.Collections.Specialized.BitVector32;
+using GsaAPI;
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export
 {
@@ -32,9 +30,12 @@ namespace GsaGH.Helpers.Export
     internal static void ConvertProp2d(List<GsaProp2d> prop2Ds, ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (prop2Ds != null)
+      {
+        prop2Ds = prop2Ds.OrderByDescending(p => p.Id).ToList();
         for (int i = 0; i < prop2Ds.Count; i++)
           if (prop2Ds[i] != null)
             ConvertProp2d(prop2Ds[i], ref apiProp2ds, ref apiMaterials);
+      }
     }
   }
 }

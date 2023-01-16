@@ -1,10 +1,7 @@
-﻿using GsaAPI;
-using System;
-using System.Collections.Generic;
-using GsaGH.Parameters;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using GsaGH.Helpers.Import;
+using GsaAPI;
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export
 {
@@ -45,9 +42,12 @@ namespace GsaGH.Helpers.Export
         ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (sections != null)
+      {
+        sections = sections.OrderByDescending(s => s.Id).ToList();
         for (int i = 0; i < sections.Count; i++)
           if (sections[i] != null)
             ConvertSection(sections[i], ref apiSections, ref apiSectionModifiers, ref apiMaterials);
+      }
     }
   }
 }
