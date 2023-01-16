@@ -41,6 +41,12 @@ namespace GsaGH.Helpers.GsaAPI
       return reader;
     }
 
+    public override object InitializeLifetimeService()
+    {
+      // disable the leasing and then the object is only reclaimed when the AppDomain is unloaded
+      return null;
+    }
+
     public SqlReader()
     {
     }
