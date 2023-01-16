@@ -131,7 +131,7 @@ namespace GsaGH.Components
             {
               try
               {
-                modifier.AreaModifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 1, true).Value;
+                modifier.AreaModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 1, true).Value;
               }
               catch (Exception e)
               {
@@ -154,7 +154,7 @@ namespace GsaGH.Components
             {
               try
               {
-                modifier.I11Modifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 2, true).Value;
+                modifier.I11Modifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 2, true).Value;
               }
               catch (Exception e)
               {
@@ -177,7 +177,7 @@ namespace GsaGH.Components
             {
               try
               {
-                modifier.I22Modifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 3, true).Value;
+                modifier.I22Modifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 3, true).Value;
               }
               catch (Exception e)
               {
@@ -200,7 +200,7 @@ namespace GsaGH.Components
             {
               try
               {
-                modifier.JModifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 4, true).Value;
+                modifier.JModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 4, true).Value;
               }
               catch (Exception e)
               {
@@ -212,10 +212,10 @@ namespace GsaGH.Components
         }
 
         if (this.Params.Input[5].SourceCount > 0)
-          modifier.K11Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 5);
+          modifier.K11Modifier = Input.RatioInDecimalFractionToPercentage(this, DA, 5);
 
         if (this.Params.Input[6].SourceCount > 0)
-          modifier.K22Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 6);
+          modifier.K22Modifier = Input.RatioInDecimalFractionToPercentage(this, DA, 6);
 
         if (this.Params.Input[7].SourceCount > 0)
         {
@@ -229,7 +229,7 @@ namespace GsaGH.Components
             {
               try
               {
-                modifier.VolumeModifier = CustomInput.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 7, true).Value;
+                modifier.VolumeModifier = Input.UnitNumberOrDoubleAsRatioToPercentage(this, DA, 7, true).Value;
               }
               catch (Exception e)
               {

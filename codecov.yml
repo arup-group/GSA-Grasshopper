@@ -1,6 +1,22 @@
 codecov:
     notify:
         after_n_builds: 2
+comment:
+  behavior: new
+  layout: reach, diff, tree
+  show_carryforward_flags: false
+coverage:
+  precision: 1
+  range:
+  - 30.0
+  - 90.0
+  round: up
+  status:
+    changes: false
+    default_rules:
+      flag_coverage_not_uploaded_behavior: include
+    patch: true
+    project: true
 flags:
   gsagh:
     carryforward: false
@@ -14,6 +30,3 @@ ignore:
   - "GsaGH/Parameters/**/*Goo.cs" # ignore all files ending with *Goo.cs (goo wrappers, no logic should be placed here)
   - "GsaGH/Parameters/**/*Parameter.cs" # ignore all files ending with *Parameter.cs (scaffolding for params, no logic should be placed here)
   - "GsaGH/Helpers/Graphics/Colours.cs" # ignore colours library class
-comment:     # this is a top-level key
-  layout: "reach, diff, tree"
-  behavior: new
