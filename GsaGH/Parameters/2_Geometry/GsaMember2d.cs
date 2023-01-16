@@ -13,10 +13,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
-    /// <summary>
-    /// Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
-    /// </summary>
-    public class GsaMember2d
+  /// <summary>
+  /// Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
+  /// </summary>
+  public class GsaMember2d
   {
     #region fields
     private Brep _brep; // brep for visualisation /member2d

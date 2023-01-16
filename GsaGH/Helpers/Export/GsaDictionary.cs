@@ -22,7 +22,7 @@ namespace GsaGH.Helpers.Export
 
     internal int AddValue(T value)
     {
-      while(_dictionary.ContainsKey(_firstEmptyKey))
+      while (_dictionary.ContainsKey(_firstEmptyKey))
         _firstEmptyKey++;
       _dictionary[_firstEmptyKey] = value;
       return _firstEmptyKey;

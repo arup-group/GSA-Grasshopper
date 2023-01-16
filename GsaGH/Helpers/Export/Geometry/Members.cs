@@ -10,7 +10,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export
 {
-    internal class Members
+  internal class Members
   {
     #region topologylist
     private static string CreateTopology(List<Point3d> topology, List<string> topoType, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit)
@@ -55,7 +55,7 @@ namespace GsaGH.Helpers.Export
       apiMember.MeshSize = new Length(member1d.MeshSize, unit).Meters;
 
       string topo = CreateTopology(member1d.Topology, member1d.TopologyType, ref existingNodes, unit);
-      if (topo!= "")
+      if (topo != "")
       {
         try //GsaAPI will perform check on topology list
         {
@@ -92,7 +92,7 @@ namespace GsaGH.Helpers.Export
     #endregion
 
     #region member2d
-    
+
     internal static void ConvertMember2D(GsaMember2d member2d,
         ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
         ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
@@ -155,7 +155,7 @@ namespace GsaGH.Helpers.Export
 
       List<string> topos = new List<string>();
       // Loop through the face list
-      
+
       List<int> topoInts = new List<int>();
       foreach (Point3d verticy in member3d.SolidMesh.TopologyVertices)
         topoInts.Add(Nodes.AddNode(ref existingNodes, verticy, unit));
