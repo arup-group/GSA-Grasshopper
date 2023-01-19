@@ -66,7 +66,7 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      Interop.Gsa_10_1.ComAuto m = new Interop.Gsa_10_1.ComAuto();
+      Interop.Gsa_10_1.ComAuto m = GsaComObject.Instance;
       string temp = Path.GetTempPath() + Guid.NewGuid().ToString() + ".gwb";
 
       GsaModelGoo model = null;

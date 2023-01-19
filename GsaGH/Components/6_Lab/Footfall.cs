@@ -22,7 +22,7 @@ namespace GsaGH.Components
     public override Guid ComponentGuid => new Guid("c5194fe3-8c20-43f0-a8cb-3207ed867221");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ResultsInfo;
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Footfall;
 
     public FootfallResults() : base("Get Footfall Result",
       "Footfall",
@@ -41,14 +41,14 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddNumberParameter("Response Factor", "RF", "Maximum response factor", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Resonant Response Factor", "RRF", "Maximum resonant response factor", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Transient Response Factor", "TRF", "Maximum transient response factor", GH_ParamAccess.item);
     }
     #endregion
 
-    Guid _modelGUID = new Guid(); // chache model to 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      Interop.Gsa_10_1.ComAuto GSA = new Interop.Gsa_10_1.ComAuto();
+      Interop.Gsa_10_1.ComAuto GSA = GsaComObject.Instance;
       string temp = Path.GetTempPath() + Guid.NewGuid().ToString() + ".gwb";
 
       GsaModelGoo model = null;
@@ -63,23 +63,38 @@ namespace GsaGH.Components
 
       GSA.SetLocale(Interop.Gsa_10_1.Locale.LOC_EN_GB);
       ReadOnlyDictionary<int, Node> nodes = model.Value.Model.Nodes();
-      var check = GSA.Output_Init(0, "local", "A" + caseId, 12009001, 0);
-      double ffMax = 0;
+      
+      var check = GSA.Output_Init(0, "global", "A" + caseId, 12009001, 0);
+
+      double rffMax = 0;
       foreach(int key in nodes.Keys) 
       {
         if (nodes[key].Restraint.Z)
           continue;
         var r = GSA.Output_Extract(key, 0);
-        if (r > ffMax)
-          ffMax = r;
+        if (r > rffMax)
+          rffMax = r;
       }
 
-      DA.SetData(0, ffMax);
-      
+      DA.SetData(0, rffMax);
+
+      check = GSA.Output_Init(0, "global", "A" + caseId, 12009101, 0);
+      double tffMax = 0;
+      foreach (int key in nodes.Keys)
+      {
+        if (nodes[key].Restraint.Z)
+          continue;
+        var r = GSA.Output_Extract(key, 0);
+        if (r > tffMax)
+          tffMax = r;
+      }
+
+      DA.SetData(1, tffMax);
+
       GSA.Close();
       GSA = null;
 
-      PostHogGWA("Footfall results component");
+      PostHogGWA("FootfallResultsComponent");
     }
 
     private void PostHogGWA(string gwa)
