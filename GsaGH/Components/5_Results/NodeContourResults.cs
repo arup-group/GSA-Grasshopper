@@ -584,99 +584,97 @@ namespace GsaGH.Components
       m_attributes = new OasysGH.UI.DropDownSliderComponentAttributes(this, SetSelected, this.DropDownItems, this.SelectedItems, this._slider, SetVal, SetMaxMin, this._defScale, this._maxValue, this._minValue, this._noDigits, this.SpacerDescriptions);
     }
 
-    public override void SetSelected(int dropdownlistidd, int selectedidd)
+    public override void SetSelected(int i, int j)
     {
-      if (dropdownlistidd == 0) // if change is made to first list
+      if (i == 0) // if change is made to first list
       {
-        if (selectedidd == 0)
+        if (j == 0)
         {
-          if (DropDownItems[1] != _displacement)
+          if (this.DropDownItems[1] != this._displacement)
           {
-            DropDownItems[1] = _displacement;
-            SelectedItems[0] = DropDownItems[0][0];
-            SelectedItems[1] = DropDownItems[1][3];
-            Mode1Clicked();
+            this.DropDownItems[1] = _displacement;
+            this.SelectedItems[0] = this.DropDownItems[0][0];
+            this.SelectedItems[1] = this.DropDownItems[1][3];
+            this.Mode1Clicked();
           }
         }
-        if (selectedidd == 1)
+        if (j == 1)
         {
-          if (DropDownItems[1] != _reaction)
+          if (this.DropDownItems[1] != this._reaction)
           {
-            DropDownItems[1] = _reaction;
-            SelectedItems[0] = DropDownItems[0][1];
-            SelectedItems[1] = DropDownItems[1][3];
-            Mode2Clicked();
+            this.DropDownItems[1] = this._reaction;
+            this.SelectedItems[0] = this.DropDownItems[0][1];
+            this.SelectedItems[1] = this.DropDownItems[1][3];
+            this.Mode2Clicked();
           }
         }
-        if (selectedidd == 2)
+        if (j == 2)
         {
-          if (DropDownItems[1] != _footfall)
+          if (this.DropDownItems[1] != this._footfall)
           {
-            DropDownItems[1] = _footfall;
-            SelectedItems[0] = DropDownItems[0][2];
-            SelectedItems[1] = DropDownItems[1][0];
-            Mode3Clicked();
+            this.DropDownItems[1] = this._footfall;
+            this.SelectedItems[0] = this.DropDownItems[0][2];
+            this.SelectedItems[1] = this.DropDownItems[1][0];
+            this.Mode3Clicked();
           }
         }
       }
-      else if (dropdownlistidd == 1)
+      else if (i == 1)
       {
-        _disp = (DisplayValue)selectedidd;
-        SelectedItems[1] = DropDownItems[1][selectedidd];
+        this._disp = (DisplayValue)j;
+        this.SelectedItems[1] = this.DropDownItems[1][j];
       }
       base.UpdateUI();
     }
 
     public void SetVal(double value)
     {
-      _defScale = value;
+      this._defScale = value;
     }
 
     public void SetMaxMin(double max, double min)
     {
-      _maxValue = max;
-      _minValue = min;
+      this._maxValue = max;
+      this._minValue = min;
     }
 
     public override void VariableParameterMaintenance()
     {
-      if (_mode == FoldMode.Displacement)
+      if (this._mode == FoldMode.Displacement)
       {
         if ((int)_disp < 4)
-          Params.Output[2].Name = "Values [" + Length.GetAbbreviation(this.LengthResultUnit) + "]";
+          this.Params.Output[2].Name = "Values [" + Length.GetAbbreviation(this.LengthResultUnit) + "]";
         else
-          Params.Output[2].Name = "Values [rad]";
+          this.Params.Output[2].Name = "Values [rad]";
       }
 
-      if (_mode == FoldMode.Reaction)
+      if (this._mode == FoldMode.Reaction)
       {
-        if ((int)_disp < 4)
-          Params.Output[2].Name = "Values [" + Force.GetAbbreviation(this.ForceUnit) + "]";
+        if ((int)this._disp < 4)
+          this.Params.Output[2].Name = "Values [" + Force.GetAbbreviation(this.ForceUnit) + "]";
         else
-          Params.Output[2].Name = "Values [" + Moment.GetAbbreviation(this.MomentUnit) + "]";
+          this.Params.Output[2].Name = "Values [" + Moment.GetAbbreviation(this.MomentUnit) + "]";
       }
 
-      if (_mode == FoldMode.Footfall)
-      {
-        Params.Output[2].Name = "Values [-]";
-      }
+      if (this._mode == FoldMode.Footfall)
+        this.Params.Output[2].Name = "Values [-]";
     }
     #endregion
 
     #region menu override
     protected override void BeforeSolveInstance()
     {
-      switch (_mode)
+      switch (this._mode)
       {
         case FoldMode.Displacement:
-          if ((int)_disp < 4)
+          if ((int)this._disp < 4)
             this.Message = Length.GetAbbreviation(this.LengthResultUnit);
           else
             this.Message = Angle.GetAbbreviation(AngleUnit.Radian);
           break;
 
         case FoldMode.Reaction:
-          if ((int)_disp < 4)
+          if ((int)this._disp < 4)
             this.Message = Force.GetAbbreviation(this.ForceUnit);
           else
             this.Message = Moment.GetAbbreviation(this.MomentUnit);
@@ -698,41 +696,42 @@ namespace GsaGH.Components
 
     private void Mode1Clicked()
     {
-      if (_mode == FoldMode.Displacement)
+      if (this._mode == FoldMode.Displacement)
         return;
 
-      RecordUndoEvent(_mode.ToString() + " Parameters");
-      _mode = FoldMode.Displacement;
+      RecordUndoEvent(this._mode.ToString() + " Parameters");
+      this._mode = FoldMode.Displacement;
 
-      _slider = true;
-      _defScale = 100;
+      this._slider = true;
+      this._defScale = 100;
 
-      ReDrawComponent();
+      this.ReDrawComponent();
     }
 
     private void Mode2Clicked()
     {
-      if (_mode == FoldMode.Reaction)
+      if (this._mode == FoldMode.Reaction)
         return;
 
-      RecordUndoEvent(_mode.ToString() + " Parameters");
-      _mode = FoldMode.Reaction;
-      _slider = false;
-      _defScale = 0;
+      RecordUndoEvent(this._mode.ToString() + " Parameters");
+      this._mode = FoldMode.Reaction;
+      this._slider = false;
+      this._defScale = 0;
 
-      ReDrawComponent();
+      this.ReDrawComponent();
     }
 
     private void Mode3Clicked()
     {
-      if (_mode == FoldMode.Footfall)
+      if (this._mode == FoldMode.Footfall)
         return;
 
-      RecordUndoEvent(_mode.ToString() + " Parameters");
-      _mode = FoldMode.Footfall;
-      _slider = false;
-      _defScale = 0;
-      ReDrawComponent();
+      RecordUndoEvent(this._mode.ToString() + " Parameters");
+      this._mode = FoldMode.Footfall;
+      this._slider = false;
+      this._defScale = 0;
+
+      this.ReDrawComponent();
     }
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
