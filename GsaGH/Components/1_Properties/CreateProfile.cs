@@ -26,34 +26,34 @@ namespace GsaGH.Components
   public class CreateProfile : GH_OasysDropDownComponent
   {
     public static readonly List<string> EasterCat = new List<string>() {
-      "▌─────────────────────────▐█─────▐",
-      "▌────▄──────────────────▄█▓█▌────▐",
-      "▌───▐██▄───────────────▄▓░░▓▓────▐",
-      "▌───▐█░██▓────────────▓▓░░░▓▌────▐",
-      "▌───▐█▌░▓██──────────█▓░░░░▓─────▐",
-      "▌────▓█▌░░▓█▄███████▄███▓░▓█─────▐",
-      "▌────▓██▌░▓██░░░░░░░░░░▓█░▓▌─────▐",
-      "▌─────▓█████░░░░░░░░░░░░▓██──────▐",
-      "▌─────▓██▓░░░░░░░░░░░░░░░▓█──────▐",
-      "▌─────▐█▓░░░░░░█▓░░▓█░░░░▓█▌─────▐",
-      "▌─────▓█▌░▓█▓▓██▓░█▓▓▓▓▓░▓█▌─────▐",
-      "▌─────▓▓░▓██████▓░▓███▓▓▌░█▓─────▐",
-      "▌────▐▓▓░█▄▐▓▌█▓░░▓█▐▓▌▄▓░██─────▐",
-      "▌────▓█▓░▓█▄▄▄█▓░░▓█▄▄▄█▓░██▌────▐",
-      "▌────▓█▌░▓█████▓░░░▓███▓▀░▓█▓────▐",
-      "▌───▐▓█░░░▀▓██▀░░░░░─▀▓▀░░▓█▓────▐",
-      "▌───▓██░░░░░░░░▀▄▄▄▄▀░░░░░░▓▓────▐",
-      "▌───▓█▌░░░░░░░░░░▐▌░░░░░░░░▓▓▌───▐",
-      "▌───▓█░░░░░░░░░▄▀▀▀▀▄░░░░░░░█▓───▐",
-      "▌──▐█▌░░░░░░░░▀░░░░░░▀░░░░░░█▓▌──▐",
-      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░██▓──▐",
-      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░▓█▓──▐",
-      "▌──██░░░░░░░░░░░░░░░░░░░░░░░░█▓──▐",
-      "▌──█▌░░░░░░░░░░░░░░░░░░░░░░░░▐▓▌─▐",
-      "▌─▐▓░░░░░░░░░░░░░░░░░░░░░░░░░░█▓─▐",
-      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓─▐",
-      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓▌▐",
-      "▌▐█▓░░░░░░░░░░░░░░░░░░░░░░░░░░░██▐",
+      "▌─────────────────────────▐█─────▐" + Environment.NewLine +
+      "▌────▄──────────────────▄█▓█▌────▐" + Environment.NewLine +
+      "▌───▐██▄───────────────▄▓░░▓▓────▐" + Environment.NewLine +
+      "▌───▐█░██▓────────────▓▓░░░▓▌────▐" + Environment.NewLine +
+      "▌───▐█▌░▓██──────────█▓░░░░▓─────▐" + Environment.NewLine +
+      "▌────▓█▌░░▓█▄███████▄███▓░▓█─────▐" + Environment.NewLine +
+      "▌────▓██▌░▓██░░░░░░░░░░▓█░▓▌─────▐" + Environment.NewLine +
+      "▌─────▓█████░░░░░░░░░░░░▓██──────▐" + Environment.NewLine +
+      "▌─────▓██▓░░░░░░░░░░░░░░░▓█──────▐" + Environment.NewLine +
+      "▌─────▐█▓░░░░░░█▓░░▓█░░░░▓█▌─────▐" + Environment.NewLine +
+      "▌─────▓█▌░▓█▓▓██▓░█▓▓▓▓▓░▓█▌─────▐" + Environment.NewLine +
+      "▌─────▓▓░▓██████▓░▓███▓▓▌░█▓─────▐" + Environment.NewLine +
+      "▌────▐▓▓░█▄▐▓▌█▓░░▓█▐▓▌▄▓░██─────▐" + Environment.NewLine +
+      "▌────▓█▓░▓█▄▄▄█▓░░▓█▄▄▄█▓░██▌────▐" + Environment.NewLine +
+      "▌────▓█▌░▓█████▓░░░▓███▓▀░▓█▓────▐" + Environment.NewLine +
+      "▌───▐▓█░░░▀▓██▀░░░░░─▀▓▀░░▓█▓────▐" + Environment.NewLine +
+      "▌───▓██░░░░░░░░▀▄▄▄▄▀░░░░░░▓▓────▐" + Environment.NewLine +
+      "▌───▓█▌░░░░░░░░░░▐▌░░░░░░░░▓▓▌───▐" + Environment.NewLine +
+      "▌───▓█░░░░░░░░░▄▀▀▀▀▄░░░░░░░█▓───▐" + Environment.NewLine +
+      "▌──▐█▌░░░░░░░░▀░░░░░░▀░░░░░░█▓▌──▐" + Environment.NewLine +
+      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░██▓──▐" + Environment.NewLine +
+      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░▓█▓──▐" + Environment.NewLine +
+      "▌──██░░░░░░░░░░░░░░░░░░░░░░░░█▓──▐" + Environment.NewLine +
+      "▌──█▌░░░░░░░░░░░░░░░░░░░░░░░░▐▓▌─▐" + Environment.NewLine +
+      "▌─▐▓░░░░░░░░░░░░░░░░░░░░░░░░░░█▓─▐" + Environment.NewLine +
+      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓─▐" + Environment.NewLine +
+      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓▌▐" + Environment.NewLine +
+      "▌▐█▓░░░░░░░░░░░░░░░░░░░░░░░░░░░██▐" + Environment.NewLine +
       "▌█▓▌░░░░░░░░░░░░░░░░░░░░░░░░░░░▓█▐" };
 
     #region Name and Ribbon Layout
@@ -105,9 +105,20 @@ namespace GsaGH.Components
         bool incl = false;
         if (DA.GetData(1, ref incl))
         {
-          this._inclSS = incl;
-          this.UpdateTypeData();
-          this.SelectedItems[2] = this._typeNames[0];
+          if (this._inclSS != incl)
+          {
+            this._inclSS = incl;
+            this.UpdateTypeData();
+            this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(_typeNumbers, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
+
+            this.SelectedItems[2] = this._typeNames[0];
+            this.DropDownItems[2] = this._typeNames;
+
+            this.SelectedItems[3] = this._sectionList[0];
+            this.DropDownItems[3] = this._sectionList;
+
+            base.UpdateUI();
+          }
         }
 
         // get user input filter search string
@@ -115,14 +126,22 @@ namespace GsaGH.Components
         string inSearch = "";
         if (DA.GetData(0, ref inSearch))
         {
+          this._search = inSearch.ToLower().Replace(" ", string.Empty).Replace(".", string.Empty);
           if (_search == "cat")
           {
             DA.SetDataList(0, EasterCat);
+            string eventName = "EasterCat";
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            _ = PostHog.SendToPostHog(GsaGH.PluginInfo.Instance, eventName, properties);
             return;
+          }
+          if (_search.Contains("cat"))
+          {
+            string[] s = _search.Split(new string[] { "cat" }, StringSplitOptions.None);
+            _search = s[s.Length - 1];
           }
 
           // filter by search pattern
-          this._search = inSearch.ToLower().Replace(" ", string.Empty).Replace(".", string.Empty);
 
           List<string> filteredlist = new List<string>();
           if (this.SelectedItems[3] != "All")
@@ -132,7 +151,7 @@ namespace GsaGH.Components
             else
             {
               this.ProfileString = new List<string>();
-              this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No profile found that matches selected profile and search!");
+              this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No profile found that matches selected profile and search!");
             }
           }
           else if (this._search != "")
@@ -164,7 +183,7 @@ namespace GsaGH.Components
           }
           else
           {
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No profile found that matches selection and search!");
+            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No profile found that matches selection and search!");
             return;
           }
         }
@@ -1040,7 +1059,7 @@ namespace GsaGH.Components
           this._typeIndex = -1;
           // update typelist with all catalogues
           this.UpdateTypeData();
-          
+
           // update section list to all types
           this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(_typeNumbers, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
 
@@ -1167,18 +1186,18 @@ namespace GsaGH.Components
 
     private void UpdateProfileString()
     {
-        if (this.SelectedItems[3] == "All")
+      if (this.SelectedItems[3] == "All")
+      {
+        this.ProfileString = new List<string>();
+        foreach (string profile in _sectionList)
         {
-          this.ProfileString = new List<string>();
-          foreach (string profile in _sectionList)
-          {
-            if (profile == "All")
-              continue;
-            this.ProfileString.Add("CAT " + profile);
-          }
+          if (profile == "All")
+            continue;
+          this.ProfileString.Add("CAT " + profile);
         }
-        else
-          this.ProfileString = new List<string>() { this.SelectedItems[3] };
+      }
+      else
+        this.ProfileString = new List<string>() { this.SelectedItems[3] };
     }
 
     private Tuple<List<string>, List<int>> GetTypesDataFromSQLite(int catalogueIndex, string filePath, bool inclSuperseeded)
