@@ -76,6 +76,7 @@ namespace GsaGH.Components
         {
           if (this._inclSS != incl)
           {
+            this._inclSS = incl;
             this.SetSelected(-1, 0);
             this.ExpireSolution(true);
           }
@@ -89,12 +90,12 @@ namespace GsaGH.Components
         }
         if (!inSearch.Equals(this._search))
         {
-          this._search = inSearch.ToString();
+          this._search = inSearch;
           this.SetSelected(-1, 0);
           this.ExpireSolution(true);
         }
 
-        DA.SetData(0, "CAT " + ProfileString);
+        DA.SetData(0, "CAT " + this.ProfileString);
 
         return;
       }
@@ -600,7 +601,6 @@ namespace GsaGH.Components
         DA.SetData(0, profile);
         return;
       }
-
       #endregion
     }
 
@@ -626,6 +626,7 @@ namespace GsaGH.Components
 
       base.UpdateUI();
     }
+
     private void SetNumberOfGenericInputs(int inputs, bool isSecantPile = false, bool isPerimeter = false)
     {
       this._numberOfInputs = inputs;
@@ -668,11 +669,13 @@ namespace GsaGH.Components
       if (isPerimeter)
         this.Params.RegisterInputParam(new Param_Plane());
     }
+
     private bool LastInputWasSecant;
     private int _numberOfInputs;
     // temporary 
     //private Type typ = typeof(IRectangleProfile);
     private string Typ = "IRectangleProfile";
+
     private void Mode2Clicked()
     {
       // check if mode is correct
@@ -835,9 +838,9 @@ namespace GsaGH.Components
         //voidPolygons;
       }
 
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      this.Params.OnParametersChanged();
+      this.ExpireSolution(true);
     }
 
     #endregion
@@ -1021,14 +1024,14 @@ namespace GsaGH.Components
           this.SelectedItems[1] = this._catalogueNames[j];
 
           // update typelist with selected input catalogue
-          this._typedata = SqlReader.Instance.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+          this._typedata = SqlReader.Instance.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
           this._typeNames = this._typedata.Item1;
           this._typeNumbers = this._typedata.Item2;
 
           // update section list from new types (all new types in catalogue)
           List<int> types = this._typeNumbers.ToList();
           types.RemoveAt(0); // remove -1 from beginning of list
-          this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+          this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
 
           // filter by search pattern
           this._filteredlist = new List<string>();
@@ -1086,7 +1089,7 @@ namespace GsaGH.Components
 
 
           // section list with selected types (only types in selected type)
-          this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
+          this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
 
           // filter by search pattern
           this._filteredlist = new List<string>();
@@ -1874,15 +1877,16 @@ namespace GsaGH.Components
     #region (de)serialization
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
     {
-      writer.SetString("mode", _mode.ToString());
-      writer.SetString("lengthUnit", LengthUnit.ToString());
-      writer.SetBoolean("inclSS", _inclSS);
-      writer.SetInt32("NumberOfInputs", _numberOfInputs);
-      writer.SetInt32("catalogueIndex", _catalogueIndex);
-      writer.SetInt32("typeIndex", _typeIndex);
-      writer.SetString("search", _search);
+      writer.SetString("mode", this._mode.ToString());
+      writer.SetString("lengthUnit", this.LengthUnit.ToString());
+      writer.SetBoolean("inclSS", this._inclSS);
+      writer.SetInt32("NumberOfInputs", this._numberOfInputs);
+      writer.SetInt32("catalogueIndex", this._catalogueIndex);
+      writer.SetInt32("typeIndex", this._typeIndex);
+      writer.SetString("search", this._search);
       return base.Write(writer);
     }
+
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), reader.GetString("mode"));
