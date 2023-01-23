@@ -162,14 +162,7 @@ namespace GsaGH
     private PluginInfo() { }
   }
 
-  public sealed class GsaComObject
-  {
-    private static readonly Lazy<Interop.Gsa_10_1.ComAuto> lazy = new Lazy<Interop.Gsa_10_1.ComAuto>(() => new Interop.Gsa_10_1.ComAuto());
-
-    public static Interop.Gsa_10_1.ComAuto Instance { get { return lazy.Value; } }
-
-    private GsaComObject() { }
-  }
+  
 
   public static class SolverRequiredDll
   {
