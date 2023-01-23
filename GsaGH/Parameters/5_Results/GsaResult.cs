@@ -460,7 +460,7 @@ namespace GsaGH.Parameters
         {
           // compute result values and add to dictionary for cache
           this.ACaseNodeFootfallValues.Add(key,
-              ResultHelper.GetNodeFootfallResultValues(this.Model, type, this.CaseID));
+              ResultHelper.GetNodeFootfallResultValues(nodelist, this.Model, type, this.CaseID));
         }
         return ACaseNodeFootfallValues[key];
       }

@@ -19,13 +19,13 @@ namespace GsaGH.Helpers.GsaAPI
   }
   internal partial class ResultHelper
   {
-    internal static GsaResultsValues GetNodeFootfallResultValues(GsaModel model, FootfallResultType type, int caseId)
+    internal static GsaResultsValues GetNodeFootfallResultValues(string nodelist, GsaModel model, FootfallResultType type, int caseId)
     {
       if (model == null) { return null; }
 
       Interop.Gsa_10_1.ComAuto GSA = GsaComHelper.GetGsaComModel(model);
 
-      ReadOnlyDictionary<int, Node> nodes = model.Model.Nodes();
+      ReadOnlyDictionary<int, Node> nodes = model.Model.Nodes(nodelist);
 
       int dataRef = 12009001;
       if (type == FootfallResultType.Transient)
