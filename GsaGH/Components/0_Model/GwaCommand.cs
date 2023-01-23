@@ -2,25 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Net.Sockets;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Eto.Forms;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Parameters;
-using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
-using Rhino.Geometry;
-using Rhino.PlugIns;
-using Rhino.Runtime;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace GsaGH.Components
 {
@@ -66,19 +54,11 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      Interop.Gsa_10_1.ComAuto m = GsaComObject.Instance;
-      string temp = Path.GetTempPath() + Guid.NewGuid().ToString() + ".gwb";
-
-      GsaModelGoo model = null;
-      if (DA.GetData(0, ref model))
-      {
-        model.Value.Model.SaveAs(temp);
-        m.Open(temp);
-      }
-      else
-        m.NewFile();
-
-      m.SetLocale(Interop.Gsa_10_1.Locale.LOC_EN_GB);
+      GsaModelGoo gooModel = null;
+      GsaModel model = null;
+      if (DA.GetData(0, ref gooModel))
+        model = gooModel.Value;
+      Interop.Gsa_10_1.ComAuto m = GsaComHelper.GetGsaComModel(model);
 
       string gwa = "";
       List<string> strings = new List<string>();
@@ -86,12 +66,9 @@ namespace GsaGH.Components
         foreach (string s in strings)
           gwa += s + "\n";
       DA.SetData(1, m.GwaCommand(gwa));
-      m.SaveAs(temp);
-      GsaModel gsaGH = new GsaModel();
-      gsaGH.Model.Open(temp);
+      
+      GsaModel gsaGH = GsaComHelper.GetGsaGhModel();
       DA.SetData(0, new GsaModelGoo(gsaGH));
-      m.Close();
-      m = null;
       PostHogGWA(gwa);
     }
 
