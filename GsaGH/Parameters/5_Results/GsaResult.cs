@@ -28,7 +28,8 @@ namespace GsaGH.Parameters
       Force,
       Stress,
       Shear,
-      StrainEnergy
+      StrainEnergy,
+      Footfall
     }
     internal ResultType Type { get; set; }
     internal void UpdateMinMax()
@@ -206,6 +207,12 @@ namespace GsaGH.Parameters
     /// </summary>
     internal Dictionary<string, GsaResultsValues> ACaseNodeReactionForceValues { get; set; } = new Dictionary<string, GsaResultsValues>();
 
+    /// <summary>
+    /// Analysis Case Node Footfall Result VALUES Dictionary 
+    /// Append to this dictionary to chache results
+    /// key = elementList
+    /// </summary>
+    internal Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues> ACaseNodeFootfallValues { get; set; } = new Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues>();
     #endregion
 
     #region combination members
@@ -432,6 +439,35 @@ namespace GsaGH.Parameters
         }
         return new Tuple<List<GsaResultsValues>, List<int>>(
           new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values), Model.Model.Nodes(nodelist).Keys.ToList());
+      }
+    }
+
+    /// <summary>
+    /// Get node footfall result values 
+    /// For analysis case results only
+    /// This method will use cache data if it exists
+    /// </summary>
+    /// <param name="nodelist"></param>
+    /// <returns></returns>
+    internal GsaResultsValues NodeFootfallValues(string nodelist, FootfallResultType type)
+    {
+      if (nodelist.ToLower() == "all" || nodelist == "")
+        nodelist = "All";
+      if (this.Type == ResultType.AnalysisCase)
+      {
+        Tuple<string, FootfallResultType> key = new Tuple<string, FootfallResultType>(nodelist, type);
+        if (!this.ACaseNodeFootfallValues.ContainsKey(key)) // see if values exist
+        {
+          // compute result values and add to dictionary for cache
+          this.ACaseNodeFootfallValues.Add(key,
+              ResultHelper.GetNodeFootfallResultValues(this.Model, type, this.CaseID));
+        }
+        return ACaseNodeFootfallValues[key];
+      }
+      else
+      {
+        // can only get Footfall for Analysis Case
+        throw new Exception("Cannot get Footfall results for a Combination Case.");
       }
     }
 

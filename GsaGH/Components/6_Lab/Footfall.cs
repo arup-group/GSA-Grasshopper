@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using Grasshopper.Kernel;
-using GsaAPI;
+using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
@@ -35,8 +33,11 @@ namespace GsaGH.Components
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
-      pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model containing some results", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Case", "ID", "Case ID", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
+      pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + Environment.NewLine +
+          "Node list should take the form:" + Environment.NewLine +
+          " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
+          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -48,53 +49,53 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      Interop.Gsa_10_1.ComAuto GSA = GsaComObject.Instance;
-      string temp = Path.GetTempPath() + Guid.NewGuid().ToString() + ".gwb";
+      // Result to work on
+      GsaResult result = new GsaResult();
 
-      GsaModelGoo model = null;
-      if (DA.GetData(0, ref model))
+      // Get Model
+      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+      if (DA.GetData(0, ref gh_typ))
       {
-        model.Value.Model.SaveAs(temp);
-        GSA.Open(temp);
+        if (gh_typ == null || gh_typ.Value == null)
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+          return;
+        }
+        if (gh_typ.Value is GsaResultGoo)
+        {
+          result = ((GsaResultGoo)gh_typ.Value).Value;
+          if (result.Type == GsaResult.ResultType.Combination)
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Footfall Result only available for Analysis Cases");
+            return;
+          }
+        }
+        else
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
+          return;
+        }
+
+        // Get node filter list
+        string nodeList = "All";
+        GH_String gh_noList = new GH_String();
+        if (DA.GetData(1, ref gh_noList))
+        {
+          if (GH_Convert.ToString(gh_noList, out string tempnodeList, GH_Conversion.Both))
+            nodeList = tempnodeList;
+        }
+
+        if (nodeList.ToLower() == "all" || nodeList == "")
+          nodeList = "All";
+
+        GsaResultsValues res = result.NodeFootfallValues(nodeList, Helpers.GsaAPI.FootfallResultType.Resonant);
+        GsaResultsValues tra = result.NodeFootfallValues(nodeList, Helpers.GsaAPI.FootfallResultType.Transient);
+
+        DA.SetData(0, res.dmax_x.Value);
+        DA.SetData(1, tra.dmax_x.Value);
+
+        PostHogGWA("FootfallResultsComponent");
       }
-
-      int caseId = 0;
-      DA.GetData(1, ref caseId);
-
-      GSA.SetLocale(Interop.Gsa_10_1.Locale.LOC_EN_GB);
-      ReadOnlyDictionary<int, Node> nodes = model.Value.Model.Nodes();
-      
-      var check = GSA.Output_Init(0, "global", "A" + caseId, 12009001, 0);
-
-      double rffMax = 0;
-      foreach(int key in nodes.Keys) 
-      {
-        if (nodes[key].Restraint.Z)
-          continue;
-        var r = GSA.Output_Extract(key, 0);
-        if (r > rffMax)
-          rffMax = r;
-      }
-
-      DA.SetData(0, rffMax);
-
-      check = GSA.Output_Init(0, "global", "A" + caseId, 12009101, 0);
-      double tffMax = 0;
-      foreach (int key in nodes.Keys)
-      {
-        if (nodes[key].Restraint.Z)
-          continue;
-        var r = GSA.Output_Extract(key, 0);
-        if (r > tffMax)
-          tffMax = r;
-      }
-
-      DA.SetData(1, tffMax);
-
-      GSA.Close();
-      GSA = null;
-
-      PostHogGWA("FootfallResultsComponent");
     }
 
     private void PostHogGWA(string gwa)
