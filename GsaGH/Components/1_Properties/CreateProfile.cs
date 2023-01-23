@@ -25,13 +25,43 @@ namespace GsaGH.Components
   /// </summary>
   public class CreateProfile : GH_OasysDropDownComponent
   {
+    public static readonly List<string> EasterCat = new List<string>() {
+      "▌─────────────────────────▐█─────▐",
+      "▌────▄──────────────────▄█▓█▌────▐",
+      "▌───▐██▄───────────────▄▓░░▓▓────▐",
+      "▌───▐█░██▓────────────▓▓░░░▓▌────▐",
+      "▌───▐█▌░▓██──────────█▓░░░░▓─────▐",
+      "▌────▓█▌░░▓█▄███████▄███▓░▓█─────▐",
+      "▌────▓██▌░▓██░░░░░░░░░░▓█░▓▌─────▐",
+      "▌─────▓█████░░░░░░░░░░░░▓██──────▐",
+      "▌─────▓██▓░░░░░░░░░░░░░░░▓█──────▐",
+      "▌─────▐█▓░░░░░░█▓░░▓█░░░░▓█▌─────▐",
+      "▌─────▓█▌░▓█▓▓██▓░█▓▓▓▓▓░▓█▌─────▐",
+      "▌─────▓▓░▓██████▓░▓███▓▓▌░█▓─────▐",
+      "▌────▐▓▓░█▄▐▓▌█▓░░▓█▐▓▌▄▓░██─────▐",
+      "▌────▓█▓░▓█▄▄▄█▓░░▓█▄▄▄█▓░██▌────▐",
+      "▌────▓█▌░▓█████▓░░░▓███▓▀░▓█▓────▐",
+      "▌───▐▓█░░░▀▓██▀░░░░░─▀▓▀░░▓█▓────▐",
+      "▌───▓██░░░░░░░░▀▄▄▄▄▀░░░░░░▓▓────▐",
+      "▌───▓█▌░░░░░░░░░░▐▌░░░░░░░░▓▓▌───▐",
+      "▌───▓█░░░░░░░░░▄▀▀▀▀▄░░░░░░░█▓───▐",
+      "▌──▐█▌░░░░░░░░▀░░░░░░▀░░░░░░█▓▌──▐",
+      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░██▓──▐",
+      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░▓█▓──▐",
+      "▌──██░░░░░░░░░░░░░░░░░░░░░░░░█▓──▐",
+      "▌──█▌░░░░░░░░░░░░░░░░░░░░░░░░▐▓▌─▐",
+      "▌─▐▓░░░░░░░░░░░░░░░░░░░░░░░░░░█▓─▐",
+      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓─▐",
+      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓▌▐",
+      "▌▐█▓░░░░░░░░░░░░░░░░░░░░░░░░░░░██▐",
+      "▌█▓▌░░░░░░░░░░░░░░░░░░░░░░░░░░░▓█▐" };
+
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("ea1741e5-905e-4ecb-8270-a584e3f99aa3");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateProfile;
-
 
     public CreateProfile()
       : base("Create Profile", "Profile", "Create Profile text-string for a GSA Section",
@@ -54,9 +84,10 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Width [" + unitAbbreviation + "]", "B", "Profile width", GH_ParamAccess.item);
       pManager.AddGenericParameter("Depth [" + unitAbbreviation + "]", "H", "Profile depth", GH_ParamAccess.item);
     }
+
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddTextParameter("Profile", "Pf", "Profile for a GSA Section", GH_ParamAccess.item);
+      pManager.AddTextParameter("Profile", "Pf", "Profile for a GSA Section", GH_ParamAccess.list);
     }
     #endregion
 
@@ -74,28 +105,74 @@ namespace GsaGH.Components
         bool incl = false;
         if (DA.GetData(1, ref incl))
         {
-          if (this._inclSS != incl)
-          {
-            this._inclSS = incl;
-            this.SetSelected(-1, 0);
-            this.ExpireSolution(true);
-          }
+          this._inclSS = incl;
+          this.UpdateTypeData();
+          this.SelectedItems[2] = this._typeNames[0];
         }
 
         // get user input filter search string
+        this._search = null;
         string inSearch = "";
         if (DA.GetData(0, ref inSearch))
         {
-          inSearch = inSearch.ToLower();
-        }
-        if (!inSearch.Equals(this._search))
-        {
-          this._search = inSearch;
-          this.SetSelected(-1, 0);
-          this.ExpireSolution(true);
+          if (_search == "cat")
+          {
+            DA.SetDataList(0, EasterCat);
+            return;
+          }
+
+          // filter by search pattern
+          this._search = inSearch.ToLower().Replace(" ", string.Empty).Replace(".", string.Empty);
+
+          List<string> filteredlist = new List<string>();
+          if (this.SelectedItems[3] != "All")
+          {
+            if (this.SelectedItems[3].ToLower().Replace(" ", string.Empty).Replace(".", string.Empty).Contains(_search))
+              filteredlist.Add(this.SelectedItems[3]);
+            else
+            {
+              this.ProfileString = new List<string>();
+              this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No profile found that matches selected profile and search!");
+            }
+          }
+          else if (this._search != "")
+          {
+            for (int k = 0; k < this._sectionList.Count; k++)
+            {
+              if (this._sectionList[k].ToLower().Replace(" ", string.Empty).Replace(".", string.Empty).Contains(_search))
+                filteredlist.Add(this._sectionList[k]);
+
+              else if (!_search.Any(char.IsDigit))
+              {
+                string test = this._sectionList[k].ToString();
+                test = Regex.Replace(test, "[0-9]", string.Empty);
+                test = test.Replace(".", string.Empty);
+                test = test.Replace("-", string.Empty);
+                test = test.ToLower();
+                if (test.Contains(_search))
+                {
+                  filteredlist.Add(this._sectionList[k]);
+                }
+              }
+            }
+          }
+          this.ProfileString = new List<string>();
+          if (filteredlist.Count > 0)
+          {
+            foreach (string profile in filteredlist)
+              this.ProfileString.Add("CAT " + profile);
+          }
+          else
+          {
+            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No profile found that matches selection and search!");
+            return;
+          }
         }
 
-        DA.SetData(0, "CAT " + this.ProfileString);
+        if (this._search == null)
+          this.UpdateProfileString();
+
+        DA.SetDataList(0, this.ProfileString);
 
         return;
       }
@@ -897,12 +974,11 @@ namespace GsaGH.Components
     // Sections
     // list of displayed sections
     private List<string> _sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
-    private List<string> _filteredlist = new List<string>();
     int _catalogueIndex = -1; //-1 is all
     int _typeIndex = -1;
     // displayed selections
     // list of sections as outcome from selections
-    string ProfileString = "HE HE200.B";
+    List<string> ProfileString = new List<string>() { "HE HE200.B" };
     string _search = "";
 
     public override void InitialiseDropdowns()
@@ -963,46 +1039,15 @@ namespace GsaGH.Components
           // set types to all
           this._typeIndex = -1;
           // update typelist with all catalogues
-          this._typedata = this.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
-          this._typeNames = this._typedata.Item1;
-          this._typeNumbers = this._typedata.Item2;
-
+          this.UpdateTypeData();
+          
           // update section list to all types
           this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(_typeNumbers, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
-
-          // filter by search pattern
-          this._filteredlist = new List<string>();
-          if (this._search == "")
-          {
-            this._filteredlist = this._sectionList;
-          }
-          else
-          {
-            for (int k = 0; k < this._sectionList.Count; k++)
-            {
-              if (this._sectionList[k].ToLower().Contains(this._search))
-              {
-                this._filteredlist.Add(this._sectionList[k]);
-              }
-              if (!_search.Any(char.IsDigit))
-              {
-                string test = _sectionList[k].ToString();
-                test = Regex.Replace(test, "[0-9]", string.Empty);
-                test = test.Replace(".", string.Empty);
-                test = test.Replace("-", string.Empty);
-                test = test.ToLower();
-                if (test.Contains(_search))
-                {
-                  _filteredlist.Add(this._sectionList[k]);
-                }
-              }
-            }
-          }
 
           // update displayed selections to all
           this.SelectedItems.Add(this._catalogueNames[0]);
           this.SelectedItems.Add(this._typeNames[0]);
-          this.SelectedItems.Add(this._filteredlist[0]);
+          this.SelectedItems.Add(this._sectionList[0]);
 
           // call graphics update
           this.Mode1Clicked();
@@ -1033,44 +1078,14 @@ namespace GsaGH.Components
           types.RemoveAt(0); // remove -1 from beginning of list
           this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
 
-          // filter by search pattern
-          this._filteredlist = new List<string>();
-          if (_search == "")
-          {
-            this._filteredlist = this._sectionList;
-          }
-          else
-          {
-            for (int k = 0; k < this._sectionList.Count; k++)
-            {
-              if (this._sectionList[k].ToLower().Contains(_search))
-              {
-                this._filteredlist.Add(this._sectionList[k]);
-              }
-              if (!_search.Any(char.IsDigit))
-              {
-                string test = this._sectionList[k].ToString();
-                test = Regex.Replace(test, "[0-9]", string.Empty);
-                test = test.Replace(".", string.Empty);
-                test = test.Replace("-", string.Empty);
-                test = test.ToLower();
-                if (test.Contains(_search))
-                {
-                  this._filteredlist.Add(this._sectionList[k]);
-                }
-              }
-            }
-          }
-
           // update selections to display first item in new list
           this.SelectedItems[2] = this._typeNames[0];
-          this.SelectedItems[3] = this._filteredlist[0];
+          this.SelectedItems[3] = this._sectionList[0];
         }
         this.DropDownItems.Add(this._typeNames);
 
         // section list
         // if third list (i.e. types list) is changed, update sections list to account for these section types
-
         if (i == 2)
         {
           // update catalogue index with the selected catalogue
@@ -1091,48 +1106,21 @@ namespace GsaGH.Components
           // section list with selected types (only types in selected type)
           this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
 
-          // filter by search pattern
-          this._filteredlist = new List<string>();
-          if (this._search == "")
-          {
-            this._filteredlist = this._sectionList;
-          }
-          else
-          {
-            for (int k = 0; k < this._sectionList.Count; k++)
-            {
-              if (this._sectionList[k].ToLower().Contains(this._search))
-              {
-                this._filteredlist.Add(this._sectionList[k]);
-              }
-              if (!_search.Any(char.IsDigit))
-              {
-                string test = this._sectionList[k].ToString();
-                test = Regex.Replace(test, "[0-9]", string.Empty);
-                test = test.Replace(".", string.Empty);
-                test = test.Replace("-", string.Empty);
-                test = test.ToLower();
-                if (test.Contains(_search))
-                {
-                  this._filteredlist.Add(this._sectionList[k]);
-                }
-              }
-            }
-          }
-
           // update selected section to be all
-          this.SelectedItems[3] = this._filteredlist[0];
+          this.SelectedItems[3] = this._sectionList[0];
         }
-        this.DropDownItems.Add(this._filteredlist);
+        this.DropDownItems.Add(this._sectionList);
 
         // selected profile
         // if fourth list (i.e. section list) is changed, updated the sections list to only be that single profile
         if (i == 3)
         {
           // update displayed selected
-          this.SelectedItems[3] = this._filteredlist[j];
+          this.SelectedItems[3] = this._sectionList[j];
         }
-        this.ProfileString = this.SelectedItems[3];
+
+        if (this._search == "")
+          this.UpdateProfileString();
 
         base.UpdateUI();
       }
@@ -1170,9 +1158,32 @@ namespace GsaGH.Components
       }
     }
 
+    private void UpdateTypeData()
+    {
+      this._typedata = this.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
+      this._typeNames = this._typedata.Item1;
+      this._typeNumbers = this._typedata.Item2;
+    }
+
+    private void UpdateProfileString()
+    {
+        if (this.SelectedItems[3] == "All")
+        {
+          this.ProfileString = new List<string>();
+          foreach (string profile in _sectionList)
+          {
+            if (profile == "All")
+              continue;
+            this.ProfileString.Add("CAT " + profile);
+          }
+        }
+        else
+          this.ProfileString = new List<string>() { this.SelectedItems[3] };
+    }
+
     private Tuple<List<string>, List<int>> GetTypesDataFromSQLite(int catalogueIndex, string filePath, bool inclSuperseeded)
     {
-      return SqlReader.Instance.GetTypesDataFromSQLite2(catalogueIndex, filePath, inclSuperseeded);
+      return SqlReader.Instance.GetTypesDataFromSQLite(catalogueIndex, filePath, inclSuperseeded);
     }
 
     public override void UpdateUIFromSelectedItems()
@@ -1193,7 +1204,7 @@ namespace GsaGH.Components
 
         this.Mode1Clicked();
 
-        this.ProfileString = this.SelectedItems[3];
+        this.ProfileString = new List<string>() { this.SelectedItems[3] };
       }
       else
       {
