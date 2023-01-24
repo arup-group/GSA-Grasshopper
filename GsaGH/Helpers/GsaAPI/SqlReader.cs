@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace GsaGH.Helpers.GsaAPI
@@ -79,7 +78,7 @@ namespace GsaGH.Helpers.GsaAPI
       List<string> catNames = new List<string>();
       List<int> catNumber = new List<int>();
 
-      using (var db = Connection(filePath))
+      using (var db = this.Connection(filePath))
       {
         db.Open();
         SQLiteCommand cmd = db.CreateCommand();
@@ -125,14 +124,14 @@ namespace GsaGH.Helpers.GsaAPI
       List<int> catNumbers = new List<int>();
       if (catalogue_number == -1)
       {
-        Tuple<List<string>, List<int>> catalogueData = GetCataloguesDataFromSQLite(filePath);
+        Tuple<List<string>, List<int>> catalogueData = this.GetCataloguesDataFromSQLite(filePath);
         catNumbers = catalogueData.Item2;
         catNumbers.RemoveAt(0); // remove -1 from beginning of list
       }
       else
         catNumbers.Add(catalogue_number);
 
-      using (var db = Connection(filePath))
+      using (var db = this.Connection(filePath))
       {
         for (int i = 0; i < catNumbers.Count; i++)
         {
@@ -164,8 +163,6 @@ namespace GsaGH.Helpers.GsaAPI
       return new Tuple<List<string>, List<int>>(typeNames, typeNumber);
     }
 
-
-
     /// <summary>
     /// Get a list of section profile strings from SQLite file (.db3). The method returns a string that includes type abbriviation as accepted by GSA. 
     /// </summary>
@@ -181,14 +178,14 @@ namespace GsaGH.Helpers.GsaAPI
       List<int> types = new List<int>();
       if (type_numbers[0] == -1)
       {
-        Tuple<List<string>, List<int>> typeData = GetTypesDataFromSQLite(-1, filePath, inclSuperseeded);
+        Tuple<List<string>, List<int>> typeData = this.GetTypesDataFromSQLite(-1, filePath, inclSuperseeded);
         types = typeData.Item2;
         types.RemoveAt(0); // remove -1 from beginning of list
       }
       else
         types = type_numbers;
 
-      using (var db = Connection(filePath))
+      using (var db = this.Connection(filePath))
       {
         // get section name
         for (int i = 0; i < types.Count; i++)
@@ -250,7 +247,7 @@ namespace GsaGH.Helpers.GsaAPI
       // Create empty lists to work on:
       List<double> values = new List<double>();
 
-      using (var db = Connection(filePath))
+      using (var db = this.Connection(filePath))
       {
         db.Open();
         SQLiteCommand cmd = db.CreateCommand();
