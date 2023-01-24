@@ -4,7 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Grasshopper;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
@@ -16,6 +18,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Commands;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
@@ -25,13 +28,43 @@ namespace GsaGH.Components
   /// </summary>
   public class CreateProfile : GH_OasysDropDownComponent
   {
+    public static readonly List<string> EasterCat = new List<string>() {
+      "▌─────────────────────────▐█─────▐" + Environment.NewLine +
+      "▌────▄──────────────────▄█▓█▌────▐" + Environment.NewLine +
+      "▌───▐██▄───────────────▄▓░░▓▓────▐" + Environment.NewLine +
+      "▌───▐█░██▓────────────▓▓░░░▓▌────▐" + Environment.NewLine +
+      "▌───▐█▌░▓██──────────█▓░░░░▓─────▐" + Environment.NewLine +
+      "▌────▓█▌░░▓█▄███████▄███▓░▓█─────▐" + Environment.NewLine +
+      "▌────▓██▌░▓██░░░░░░░░░░▓█░▓▌─────▐" + Environment.NewLine +
+      "▌─────▓█████░░░░░░░░░░░░▓██──────▐" + Environment.NewLine +
+      "▌─────▓██▓░░░░░░░░░░░░░░░▓█──────▐" + Environment.NewLine +
+      "▌─────▐█▓░░░░░░█▓░░▓█░░░░▓█▌─────▐" + Environment.NewLine +
+      "▌─────▓█▌░▓█▓▓██▓░█▓▓▓▓▓░▓█▌─────▐" + Environment.NewLine +
+      "▌─────▓▓░▓██████▓░▓███▓▓▌░█▓─────▐" + Environment.NewLine +
+      "▌────▐▓▓░█▄▐▓▌█▓░░▓█▐▓▌▄▓░██─────▐" + Environment.NewLine +
+      "▌────▓█▓░▓█▄▄▄█▓░░▓█▄▄▄█▓░██▌────▐" + Environment.NewLine +
+      "▌────▓█▌░▓█████▓░░░▓███▓▀░▓█▓────▐" + Environment.NewLine +
+      "▌───▐▓█░░░▀▓██▀░░░░░─▀▓▀░░▓█▓────▐" + Environment.NewLine +
+      "▌───▓██░░░░░░░░▀▄▄▄▄▀░░░░░░▓▓────▐" + Environment.NewLine +
+      "▌───▓█▌░░░░░░░░░░▐▌░░░░░░░░▓▓▌───▐" + Environment.NewLine +
+      "▌───▓█░░░░░░░░░▄▀▀▀▀▄░░░░░░░█▓───▐" + Environment.NewLine +
+      "▌──▐█▌░░░░░░░░▀░░░░░░▀░░░░░░█▓▌──▐" + Environment.NewLine +
+      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░██▓──▐" + Environment.NewLine +
+      "▌──▓█░░░░░░░░░░░░░░░░░░░░░░░▓█▓──▐" + Environment.NewLine +
+      "▌──██░░░░░░░░░░░░░░░░░░░░░░░░█▓──▐" + Environment.NewLine +
+      "▌──█▌░░░░░░░░░░░░░░░░░░░░░░░░▐▓▌─▐" + Environment.NewLine +
+      "▌─▐▓░░░░░░░░░░░░░░░░░░░░░░░░░░█▓─▐" + Environment.NewLine +
+      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓─▐" + Environment.NewLine +
+      "▌─█▓░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓▌▐" + Environment.NewLine +
+      "▌▐█▓░░░░░░░░░░░░░░░░░░░░░░░░░░░██▐" + Environment.NewLine +
+      "▌█▓▌░░░░░░░░░░░░░░░░░░░░░░░░░░░▓█▐" };
+
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("ea1741e5-905e-4ecb-8270-a584e3f99aa3");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateProfile;
-
 
     public CreateProfile()
       : base("Create Profile", "Profile", "Create Profile text-string for a GSA Section",
@@ -54,9 +87,10 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Width [" + unitAbbreviation + "]", "B", "Profile width", GH_ParamAccess.item);
       pManager.AddGenericParameter("Depth [" + unitAbbreviation + "]", "H", "Profile depth", GH_ParamAccess.item);
     }
+
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddTextParameter("Profile", "Pf", "Profile for a GSA Section", GH_ParamAccess.item);
+      pManager.AddTextParameter("Profile", "Pf", "Profile for a GSA Section", GH_ParamAccess.tree);
     }
     #endregion
 
@@ -68,36 +102,102 @@ namespace GsaGH.Components
 
       #region catalogue
       this.ClearRuntimeMessages();
-      if (_mode == FoldMode.Catalogue)
+      if (this._mode == FoldMode.Catalogue)
       {
         // get user input filter search string
         bool incl = false;
         if (DA.GetData(1, ref incl))
         {
-          if (_inclSS != incl)
+          if (this._inclSS != incl)
           {
-            SetSelected(-1, 0);
-            this.ExpireSolution(true);
+            this._inclSS = incl;
+            this.UpdateTypeData();
+            this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(_typeNumbers, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
+
+            this.SelectedItems[2] = this._typeNames[0];
+            this.DropDownItems[2] = this._typeNames;
+
+            this.SelectedItems[3] = this._sectionList[0];
+            this.DropDownItems[3] = this._sectionList;
+
+            base.UpdateUI();
           }
         }
 
         // get user input filter search string
+        this._search = null;
         string inSearch = "";
         if (DA.GetData(0, ref inSearch))
         {
-          inSearch = inSearch.ToLower();
+          this._search = inSearch.ToLower().Replace(" ", string.Empty).Replace(".", string.Empty);
+          if (_search == "cat")
+          {
+            string eventName = "EasterCat";
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            _ = PostHog.SendToPostHog(GsaGH.PluginInfo.Instance, eventName, properties);
+            DA.SetDataList(0, EasterCat);
+            return;
+          }
+          if (_search.Contains("cat"))
+          {
+            string[] s = _search.Split(new string[] { "cat" }, StringSplitOptions.None);
+            _search = s[s.Length - 1];
+          }
 
+          // filter by search pattern
+          List<string> filteredlist = new List<string>();
+          if (this.SelectedItems[3] != "All")
+          {
+            if (this.SelectedItems[3].ToLower().Replace(" ", string.Empty).Replace(".", string.Empty).Contains(_search))
+              filteredlist.Add(this.SelectedItems[3]);
+            else
+            {
+              this.ProfileString = new List<string>();
+              this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No profile found that matches selected profile and search!");
+            }
+          }
+          else if (this._search != "")
+          {
+            for (int k = 0; k < this._sectionList.Count; k++)
+            {
+              if (this._sectionList[k].ToLower().Replace(" ", string.Empty).Replace(".", string.Empty).Contains(_search))
+                filteredlist.Add(this._sectionList[k]);
+
+              else if (!_search.Any(char.IsDigit))
+              {
+                string test = this._sectionList[k].ToString();
+                test = Regex.Replace(test, "[0-9]", string.Empty);
+                test = test.Replace(".", string.Empty);
+                test = test.Replace("-", string.Empty);
+                test = test.ToLower();
+                if (test.Contains(_search))
+                {
+                  filteredlist.Add(this._sectionList[k]);
+                }
+              }
+            }
+          }
+          this.ProfileString = new List<string>();
+          if (filteredlist.Count > 0)
+          {
+            foreach (string profile in filteredlist)
+              this.ProfileString.Add("CAT " + profile);
+          }
+          else
+          {
+            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No profile found that matches selection and search!");
+            return;
+          }
         }
-        if (!inSearch.Equals(_search))
-        {
-          _search = inSearch.ToString();
-          SetSelected(-1, 0);
-          this.ExpireSolution(true);
-        }
 
-        DA.SetData(0, "CAT " + profileString);
+        if (this._search == null)
+          this.UpdateProfileString();
 
-        return;
+        DataTree<string> tree = new DataTree<string>();
+        GH_Path path = new Grasshopper.Kernel.Data.GH_Path(new int[] { 0 });
+        tree.AddRange(this.ProfileString, path);
+
+        DA.SetDataTree(0, tree);
       }
       #endregion
 
@@ -107,7 +207,7 @@ namespace GsaGH.Components
         string unit = "(" + Length.GetAbbreviation(this.LengthUnit, new CultureInfo("en")) + ") ";
         string profile = "STD ";
         // angle
-        if (typ == "IAngleProfile") //(typ.Name.Equals(typeof(IAngleProfile).Name))
+        if (this.Typ == "IAngleProfile") //(typ.Name.Equals(typeof(IAngleProfile).Name))
         {
           profile += "A" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -122,7 +222,7 @@ namespace GsaGH.Components
         }
 
         // channel
-        else if (typ == "IChannelProfile") //(typ.Name.Equals(typeof(IChannelProfile).Name))
+        else if (this.Typ == "IChannelProfile") //(typ.Name.Equals(typeof(IChannelProfile).Name))
         {
           profile += "CH" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -137,7 +237,7 @@ namespace GsaGH.Components
         }
 
         // circle hollow
-        else if (typ == "ICircleHollowProfile") //(typ.Name.Equals(typeof(ICircleHollowProfile).Name))
+        else if (this.Typ == "ICircleHollowProfile") //(typ.Name.Equals(typeof(ICircleHollowProfile).Name))
         {
           profile += "CHS" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -149,7 +249,7 @@ namespace GsaGH.Components
         }
 
         // circle
-        else if (typ == "ICircleProfile") //(typ.Name.Equals(typeof(ICircleProfile).Name))
+        else if (this.Typ == "ICircleProfile") //(typ.Name.Equals(typeof(ICircleProfile).Name))
         {
           profile += "C" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString();
@@ -159,7 +259,7 @@ namespace GsaGH.Components
         }
 
         // ICruciformSymmetricalProfile
-        else if (typ == "ICruciformSymmetricalProfile") //(typ.Name.Equals(typeof(ICruciformSymmetricalProfile).Name))
+        else if (this.Typ == "ICruciformSymmetricalProfile") //(typ.Name.Equals(typeof(ICruciformSymmetricalProfile).Name))
         {
           profile += "X" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -174,7 +274,7 @@ namespace GsaGH.Components
         }
 
         // IEllipseHollowProfile
-        else if (typ == "IEllipseHollowProfile") //(typ.Name.Equals(typeof(IEllipseHollowProfile).Name))
+        else if (this.Typ == "IEllipseHollowProfile") //(typ.Name.Equals(typeof(IEllipseHollowProfile).Name))
         {
           profile += "OVAL" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -188,7 +288,7 @@ namespace GsaGH.Components
         }
 
         // IEllipseProfile
-        else if (typ == "IEllipseProfile") //(typ.Name.Equals(typeof(IEllipseProfile).Name))
+        else if (this.Typ == "IEllipseProfile") //(typ.Name.Equals(typeof(IEllipseProfile).Name))
         {
           profile += "E" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -200,7 +300,7 @@ namespace GsaGH.Components
         }
 
         // IGeneralCProfile
-        else if (typ == "IGeneralCProfile") //(typ.Name.Equals(typeof(IGeneralCProfile).Name))
+        else if (this.Typ == "IGeneralCProfile") //(typ.Name.Equals(typeof(IGeneralCProfile).Name))
         {
           profile += "GC" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -216,7 +316,7 @@ namespace GsaGH.Components
         }
 
         // IGeneralZProfile
-        else if (typ == "IGeneralZProfile") //(typ.Name.Equals(typeof(IGeneralZProfile).Name))
+        else if (this.Typ == "IGeneralZProfile") //(typ.Name.Equals(typeof(IGeneralZProfile).Name))
         {
           profile += "GZ" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -236,7 +336,7 @@ namespace GsaGH.Components
         }
 
         // IIBeamAsymmetricalProfile
-        else if (typ == "IIBeamAsymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamAsymmetricalProfile).Name))
+        else if (this.Typ == "IIBeamAsymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamAsymmetricalProfile).Name))
         {
           profile += "GI" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -254,7 +354,7 @@ namespace GsaGH.Components
         }
 
         // IIBeamCellularProfile
-        else if (typ == "IIBeamCellularProfile") //(typ.Name.Equals(typeof(IIBeamCellularProfile).Name))
+        else if (this.Typ == "IIBeamCellularProfile") //(typ.Name.Equals(typeof(IIBeamCellularProfile).Name))
         {
           profile += "CB" + unit +
              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -272,7 +372,7 @@ namespace GsaGH.Components
         }
 
         // IIBeamSymmetricalProfile
-        else if (typ == "IIBeamSymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamSymmetricalProfile).Name))
+        else if (this.Typ == "IIBeamSymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamSymmetricalProfile).Name))
         {
           profile += "I" + unit +
              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -287,7 +387,7 @@ namespace GsaGH.Components
         }
 
         // IRectangleHollowProfile
-        else if (typ == "IRectangleHollowProfile") //(typ.Name.Equals(typeof(IRectangleHollowProfile).Name))
+        else if (this.Typ == "IRectangleHollowProfile") //(typ.Name.Equals(typeof(IRectangleHollowProfile).Name))
         {
           profile += "RHS" + unit +
              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -302,7 +402,7 @@ namespace GsaGH.Components
         }
 
         // IRectangleProfile
-        else if (typ == "IRectangleProfile") //(typ.Name.Equals(typeof(IRectangleProfile).Name))
+        else if (this.Typ == "IRectangleProfile") //(typ.Name.Equals(typeof(IRectangleProfile).Name))
         {
           profile += "R" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -314,7 +414,7 @@ namespace GsaGH.Components
         }
 
         // IRectoEllipseProfile
-        else if (typ == "IRectoEllipseProfile") //(typ.Name.Equals(typeof(IRectoEllipseProfile).Name))
+        else if (this.Typ == "IRectoEllipseProfile") //(typ.Name.Equals(typeof(IRectoEllipseProfile).Name))
         {
           profile += "RE" + unit +
              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -330,7 +430,7 @@ namespace GsaGH.Components
         }
 
         // ISecantPileProfile
-        else if (typ == "ISecantPileProfile") //(typ.Name.Equals(typeof(ISecantPileProfile).Name))
+        else if (this.Typ == "ISecantPileProfile") //(typ.Name.Equals(typeof(ISecantPileProfile).Name))
         {
           int pileCount = 0;
           if (!DA.GetData(2, ref pileCount))
@@ -358,7 +458,7 @@ namespace GsaGH.Components
         }
 
         // ISheetPileProfile
-        else if (typ == "ISheetPileProfile") //(typ.Name.Equals(typeof(ISheetPileProfile).Name))
+        else if (this.Typ == "ISheetPileProfile") //(typ.Name.Equals(typeof(ISheetPileProfile).Name))
         {
           profile += "SHT" + unit +
              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -378,7 +478,7 @@ namespace GsaGH.Components
         }
 
         // IStadiumProfile
-        else if (typ == "IStadiumProfile") //(typ.Name.Equals(typeof(IStadiumProfile).Name))
+        else if (this.Typ == "IStadiumProfile") //(typ.Name.Equals(typeof(IStadiumProfile).Name))
         {
           profile += "RC" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -390,7 +490,7 @@ namespace GsaGH.Components
         }
 
         // ITrapezoidProfile
-        else if (typ == "ITrapezoidProfile") //(typ.Name.Equals(typeof(ITrapezoidProfile).Name))
+        else if (this.Typ == "ITrapezoidProfile") //(typ.Name.Equals(typeof(ITrapezoidProfile).Name))
         {
           profile += "TR" + unit +
               Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -404,7 +504,7 @@ namespace GsaGH.Components
         }
 
         // ITSectionProfile
-        else if (typ == "ITSectionProfile") //(typ.Name.Equals(typeof(ITSectionProfile).Name))
+        else if (this.Typ == "ITSectionProfile") //(typ.Name.Equals(typeof(ITSectionProfile).Name))
         {
           profile += "T" + unit +
              Input.LengthOrRatio(this, DA, 0, LengthUnit).As(LengthUnit).ToString() + " " +
@@ -419,7 +519,7 @@ namespace GsaGH.Components
         }
 
         // IPerimeterProfile (last chance...)
-        else if (typ == "IPerimeterProfile") //(typ.Name.Equals(typeof(IPerimeterProfile).Name))
+        else if (this.Typ == "IPerimeterProfile") //(typ.Name.Equals(typeof(IPerimeterProfile).Name))
         {
           ProfileHelper perimeter = new ProfileHelper();
           perimeter.profileType = ProfileHelper.ProfileTypes.Geometric;
@@ -601,7 +701,6 @@ namespace GsaGH.Components
         DA.SetData(0, profile);
         return;
       }
-
       #endregion
     }
 
@@ -616,218 +715,221 @@ namespace GsaGH.Components
     private void Mode1Clicked()
     {
       //remove input parameters
-      while (Params.Input.Count > 0)
-        Params.UnregisterInputParameter(Params.Input[0], true);
+      while (this.Params.Input.Count > 0)
+        this.Params.UnregisterInputParameter(this.Params.Input[0], true);
 
       //register input parameter
-      Params.RegisterInputParam(new Param_String());
-      Params.RegisterInputParam(new Param_Boolean());
+      this.Params.RegisterInputParam(new Param_String());
+      this.Params.RegisterInputParam(new Param_Boolean());
 
-      _mode = FoldMode.Catalogue;
+      this._mode = FoldMode.Catalogue;
 
       base.UpdateUI();
     }
+
     private void SetNumberOfGenericInputs(int inputs, bool isSecantPile = false, bool isPerimeter = false)
     {
       this._numberOfInputs = inputs;
 
       // if last input previously was a bool and we no longer need that
-      if (lastInputWasSecant || isSecantPile || isPerimeter)
+      if (this.LastInputWasSecant || isSecantPile || isPerimeter)
       {
-        if (Params.Input.Count > 0)
+        if (this.Params.Input.Count > 0)
         {
           // make sure to remove last param
-          Params.UnregisterInputParameter(Params.Input[Params.Input.Count - 1], true);
-          Params.UnregisterInputParameter(Params.Input[Params.Input.Count - 1], true);
+          this.Params.UnregisterInputParameter(this.Params.Input[this.Params.Input.Count - 1], true);
+          this.Params.UnregisterInputParameter(this.Params.Input[this.Params.Input.Count - 1], true);
         }
       }
 
       // remove any additional inputs
-      while (Params.Input.Count > inputs)
-        Params.UnregisterInputParameter(Params.Input[inputs], true);
+      while (this.Params.Input.Count > inputs)
+        this.Params.UnregisterInputParameter(this.Params.Input[inputs], true);
 
       if (isSecantPile) // add two less generic than input says
       {
-        while (Params.Input.Count > inputs + 2)
-          Params.UnregisterInputParameter(Params.Input[inputs + 2], true);
+        while (this.Params.Input.Count > inputs + 2)
+          this.Params.UnregisterInputParameter(this.Params.Input[inputs + 2], true);
         inputs -= 2;
       }
 
       // add inputs parameter
-      while (Params.Input.Count < inputs)
-        Params.RegisterInputParam(new Param_GenericObject());
+      while (this.Params.Input.Count < inputs)
+        this.Params.RegisterInputParam(new Param_GenericObject());
 
       if (isSecantPile) // finally add int and bool param if secant
       {
-        Params.RegisterInputParam(new Param_Integer());
-        Params.RegisterInputParam(new Param_Boolean());
-        lastInputWasSecant = true;
+        this.Params.RegisterInputParam(new Param_Integer());
+        this.Params.RegisterInputParam(new Param_Boolean());
+        this.LastInputWasSecant = true;
       }
       else
-        lastInputWasSecant = false;
+        this.LastInputWasSecant = false;
 
       if (isPerimeter)
-        Params.RegisterInputParam(new Param_Plane());
+        this.Params.RegisterInputParam(new Param_Plane());
     }
-    private bool lastInputWasSecant;
+
+    private bool LastInputWasSecant;
     private int _numberOfInputs;
     // temporary 
     //private Type typ = typeof(IRectangleProfile);
-    private string typ = "IRectangleProfile";
+    private string Typ = "IRectangleProfile";
+
     private void Mode2Clicked()
     {
       // check if mode is correct
-      if (_mode != FoldMode.Other)
+      if (this._mode != FoldMode.Other)
       {
         // if we come from catalogue mode remove all input parameters
-        while (Params.Input.Count > 0)
-          Params.UnregisterInputParameter(Params.Input[0], true);
+        while (this.Params.Input.Count > 0)
+          this.Params.UnregisterInputParameter(this.Params.Input[0], true);
 
         // set mode to other
-        _mode = FoldMode.Other;
+        this._mode = FoldMode.Other;
       }
 
       // angle
-      if (typ == "IAngleProfile") //(typ.Name.Equals(typeof(IAngleProfile).Name))
+      if (this.Typ == "IAngleProfile") //(typ.Name.Equals(typeof(IAngleProfile).Name))
       {
         SetNumberOfGenericInputs(4);
         //dup = IAngleProfile.Create(angle.Depth, angle.Flange, angle.Web);
       }
 
       // channel
-      else if (typ == "IChannelProfile") //(typ.Name.Equals(typeof(IChannelProfile).Name))
+      else if (this.Typ == "IChannelProfile") //(typ.Name.Equals(typeof(IChannelProfile).Name))
       {
         SetNumberOfGenericInputs(4);
         //dup = IChannelProfile.Create(channel.Depth, channel.Flanges, channel.Web);
       }
 
       // circle hollow
-      else if (typ == "ICircleHollowProfile") //(typ.Name.Equals(typeof(ICircleHollowProfile).Name))
+      else if (this.Typ == "ICircleHollowProfile") //(typ.Name.Equals(typeof(ICircleHollowProfile).Name))
       {
         SetNumberOfGenericInputs(2);
         //dup = ICircleHollowProfile.Create(circleHollow.Diameter, circleHollow.WallThickness);
       }
 
       // circle
-      else if (typ == "ICircleProfile") //(typ.Name.Equals(typeof(ICircleProfile).Name))
+      else if (this.Typ == "ICircleProfile") //(typ.Name.Equals(typeof(ICircleProfile).Name))
       {
         SetNumberOfGenericInputs(1);
         //dup = ICircleProfile.Create(circle.Diameter);
       }
 
       // ICruciformSymmetricalProfile
-      else if (typ == "ICruciformSymmetricalProfile") //(typ.Name.Equals(typeof(ICruciformSymmetricalProfile).Name))
+      else if (this.Typ == "ICruciformSymmetricalProfile") //(typ.Name.Equals(typeof(ICruciformSymmetricalProfile).Name))
       {
         SetNumberOfGenericInputs(4);
         //dup = ICruciformSymmetricalProfile.Create(cruciformSymmetrical.Depth, cruciformSymmetrical.Flange, cruciformSymmetrical.Web);
       }
 
       // IEllipseHollowProfile
-      else if (typ == "IEllipseHollowProfile") //(typ.Name.Equals(typeof(IEllipseHollowProfile).Name))
+      else if (this.Typ == "IEllipseHollowProfile") //(typ.Name.Equals(typeof(IEllipseHollowProfile).Name))
       {
         SetNumberOfGenericInputs(3);
         //dup = IEllipseHollowProfile.Create(ellipseHollow.Depth, ellipseHollow.Width, ellipseHollow.WallThickness);
       }
 
       // IEllipseProfile
-      else if (typ == "IEllipseProfile") //(typ.Name.Equals(typeof(IEllipseProfile).Name))
+      else if (this.Typ == "IEllipseProfile") //(typ.Name.Equals(typeof(IEllipseProfile).Name))
       {
         SetNumberOfGenericInputs(2);
         //dup = IEllipseProfile.Create(ellipse.Depth, ellipse.Width);
       }
 
       // IGeneralCProfile
-      else if (typ == "IGeneralCProfile") //(typ.Name.Equals(typeof(IGeneralCProfile).Name))
+      else if (this.Typ == "IGeneralCProfile") //(typ.Name.Equals(typeof(IGeneralCProfile).Name))
       {
         SetNumberOfGenericInputs(4);
         //dup = IGeneralCProfile.Create(generalC.Depth, generalC.FlangeWidth, generalC.Lip, generalC.Thickness);
       }
 
       // IGeneralZProfile
-      else if (typ == "IGeneralZProfile") //(typ.Name.Equals(typeof(IGeneralZProfile).Name))
+      else if (this.Typ == "IGeneralZProfile") //(typ.Name.Equals(typeof(IGeneralZProfile).Name))
       {
         SetNumberOfGenericInputs(6);
         //dup = IGeneralZProfile.Create(generalZ.Depth, generalZ.TopFlangeWidth, generalZ.BottomFlangeWidth, generalZ.TopLip, generalZ.BottomLip, generalZ.Thickness);
       }
 
       // IIBeamAsymmetricalProfile
-      else if (typ == "IIBeamAsymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamAsymmetricalProfile).Name))
+      else if (this.Typ == "IIBeamAsymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamAsymmetricalProfile).Name))
       {
         SetNumberOfGenericInputs(6);
         //dup = IIBeamAsymmetricalProfile.Create(iBeamAsymmetrical.Depth, iBeamAsymmetrical.TopFlange, iBeamAsymmetrical.BottomFlange, iBeamAsymmetrical.Web);
       }
 
       // IIBeamCellularProfile
-      else if (typ == "IIBeamCellularProfile") //(typ.Name.Equals(typeof(IIBeamCellularProfile).Name))
+      else if (this.Typ == "IIBeamCellularProfile") //(typ.Name.Equals(typeof(IIBeamCellularProfile).Name))
       {
         SetNumberOfGenericInputs(6);
         //dup = IIBeamCellularProfile.Create(iBeamCellular.Depth, iBeamCellular.Flanges, iBeamCellular.Web, iBeamCellular.WebOpening);
       }
 
       // IIBeamSymmetricalProfile
-      else if (typ == "IIBeamSymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamSymmetricalProfile).Name))
+      else if (this.Typ == "IIBeamSymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamSymmetricalProfile).Name))
       {
         SetNumberOfGenericInputs(4);
         //dup = IIBeamSymmetricalProfile.Create(iBeamSymmetrical.Depth, iBeamSymmetrical.Flanges, iBeamSymmetrical.Web);
       }
 
       // IRectangleHollowProfile
-      else if (typ == "IRectangleHollowProfile") //(typ.Name.Equals(typeof(IRectangleHollowProfile).Name))
+      else if (this.Typ == "IRectangleHollowProfile") //(typ.Name.Equals(typeof(IRectangleHollowProfile).Name))
       {
         SetNumberOfGenericInputs(4);
         //dup = IRectangleHollowProfile.Create(rectangleHollow.Depth, rectangleHollow.Flanges, rectangleHollow.Webs);
       }
 
       // IRectangleProfile
-      else if (typ == "IRectangleProfile") //(typ.Name.Equals(typeof(IRectangleProfile).Name))
+      else if (this.Typ == "IRectangleProfile") //(typ.Name.Equals(typeof(IRectangleProfile).Name))
       {
         SetNumberOfGenericInputs(2);
         //dup = IRectangleProfile.Create(rectangle.Depth, rectangle.Width);
       }
 
       // IRectoEllipseProfile
-      else if (typ == "IRectoEllipseProfile") //(typ.Name.Equals(typeof(IRectoEllipseProfile).Name))
+      else if (this.Typ == "IRectoEllipseProfile") //(typ.Name.Equals(typeof(IRectoEllipseProfile).Name))
       {
         SetNumberOfGenericInputs(4);
         //dup = IRectoEllipseProfile.Create(rectoEllipse.Depth, rectoEllipse.DepthFlat, rectoEllipse.Width, rectoEllipse.WidthFlat);
       }
 
       // ISecantPileProfile
-      else if (typ == "ISecantPileProfile") //(typ.Name.Equals(typeof(ISecantPileProfile).Name))
+      else if (this.Typ == "ISecantPileProfile") //(typ.Name.Equals(typeof(ISecantPileProfile).Name))
       {
         SetNumberOfGenericInputs(4, true);
         //dup = ISecantPileProfile.Create(secantPile.Diameter, secantPile.PileCentres, secantPile.PileCount, secantPile.IsWallNotSection);
       }
 
       // ISheetPileProfile
-      else if (typ == "ISheetPileProfile") //(typ.Name.Equals(typeof(ISheetPileProfile).Name))
+      else if (this.Typ == "ISheetPileProfile") //(typ.Name.Equals(typeof(ISheetPileProfile).Name))
       {
         SetNumberOfGenericInputs(6);
         //dup = ISheetPileProfile.Create(sheetPile.Depth, sheetPile.Width, sheetPile.TopFlangeWidth, sheetPile.BottomFlangeWidth, sheetPile.FlangeThickness, sheetPile.WebThickness);
       }
 
       // IStadiumProfile
-      else if (typ == "IStadiumProfile") //(typ.Name.Equals(typeof(IStadiumProfile).Name))
+      else if (this.Typ == "IStadiumProfile") //(typ.Name.Equals(typeof(IStadiumProfile).Name))
       {
         SetNumberOfGenericInputs(2);
         //dup = IStadiumProfile.Create(stadium.Depth, stadium.Width);
       }
 
       // ITrapezoidProfile
-      else if (typ == "ITrapezoidProfile") //(typ.Name.Equals(typeof(ITrapezoidProfile).Name))
+      else if (this.Typ == "ITrapezoidProfile") //(typ.Name.Equals(typeof(ITrapezoidProfile).Name))
       {
         SetNumberOfGenericInputs(3);
         //dup = ITrapezoidProfile.Create(trapezoid.Depth, trapezoid.TopWidth, trapezoid.BottomWidth);
       }
 
       // ITSectionProfile
-      else if (typ == "ITSectionProfile") //(typ.Name.Equals(typeof(ITSectionProfile).Name))
+      else if (this.Typ == "ITSectionProfile") //(typ.Name.Equals(typeof(ITSectionProfile).Name))
       {
         SetNumberOfGenericInputs(4);
         //dup = ITSectionProfile.Create(tSection.Depth, tSection.Flange, tSection.Web);
       }
       // IPerimeterProfile
-      else if (typ == "IPerimeterProfile") //(typ.Name.Equals(typeof(IPerimeterProfile).Name))
+      else if (this.Typ == "IPerimeterProfile") //(typ.Name.Equals(typeof(IPerimeterProfile).Name))
       {
         SetNumberOfGenericInputs(1, false, true);
 
@@ -836,9 +938,9 @@ namespace GsaGH.Components
         //voidPolygons;
       }
 
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      Params.OnParametersChanged();
-      ExpireSolution(true);
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      this.Params.OnParametersChanged();
+      this.ExpireSolution(true);
     }
 
     #endregion
@@ -895,12 +997,11 @@ namespace GsaGH.Components
     // Sections
     // list of displayed sections
     private List<string> _sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
-    private List<string> _filteredlist = new List<string>();
     int _catalogueIndex = -1; //-1 is all
     int _typeIndex = -1;
     // displayed selections
     // list of sections as outcome from selections
-    string profileString = "HE HE200.B";
+    List<string> ProfileString = new List<string>() { "CAT HE HE200.B" };
     string _search = "";
 
     public override void InitialiseDropdowns()
@@ -930,279 +1031,214 @@ namespace GsaGH.Components
       bool updateCat = false;
       if (i == -1)
       {
-        SelectedItems[0] = "Catalogue";
+        this.SelectedItems[0] = "Catalogue";
         updateCat = true;
         i = 0;
       }
       else
       {
         // change selected item
-        SelectedItems[i] = DropDownItems[i][j];
+        this.SelectedItems[i] = this.DropDownItems[i][j];
       }
 
-      if (SelectedItems[0] == "Catalogue")
+      if (this.SelectedItems[0] == "Catalogue")
       {
         // update spacer description to match catalogue dropdowns
-        SpacerDescriptions[1] = "Catalogue";
+        this.SpacerDescriptions[1] = "Catalogue";
 
         // if FoldMode is not currently catalogue state, then we update all lists
-        if (_mode != FoldMode.Catalogue | updateCat)
+        if (this._mode != FoldMode.Catalogue | updateCat)
         {
           // remove any existing selections
-          while (SelectedItems.Count > 1)
-            SelectedItems.RemoveAt(1);
+          while (this.SelectedItems.Count > 1)
+            this.SelectedItems.RemoveAt(1);
 
           // set catalogue selection to all
-          _catalogueIndex = -1;
+          this._catalogueIndex = -1;
 
-          _catalogueNames = _cataloguedata.Item1;
-          _catalogueNumbers = _cataloguedata.Item2;
+          this._catalogueNames = this._cataloguedata.Item1;
+          this._catalogueNumbers = this._cataloguedata.Item2;
 
           // set types to all
-          _typeIndex = -1;
+          this._typeIndex = -1;
           // update typelist with all catalogues
-          _typedata = this.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
-          _typeNames = _typedata.Item1;
-          _typeNumbers = _typedata.Item2;
+          this.UpdateTypeData();
 
           // update section list to all types
-          _sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(_typeNumbers, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
-
-          // filter by search pattern
-          _filteredlist = new List<string>();
-          if (_search == "")
-          {
-            _filteredlist = _sectionList;
-          }
-          else
-          {
-            for (int k = 0; k < _sectionList.Count; k++)
-            {
-              if (_sectionList[k].ToLower().Contains(_search))
-              {
-                _filteredlist.Add(_sectionList[k]);
-              }
-              if (!_search.Any(char.IsDigit))
-              {
-                string test = _sectionList[k].ToString();
-                test = Regex.Replace(test, "[0-9]", string.Empty);
-                test = test.Replace(".", string.Empty);
-                test = test.Replace("-", string.Empty);
-                test = test.ToLower();
-                if (test.Contains(_search))
-                {
-                  _filteredlist.Add(_sectionList[k]);
-                }
-              }
-            }
-          }
+          this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(_typeNumbers, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
 
           // update displayed selections to all
-          SelectedItems.Add(_catalogueNames[0]);
-          SelectedItems.Add(_typeNames[0]);
-          SelectedItems.Add(_filteredlist[0]);
+          this.SelectedItems.Add(this._catalogueNames[0]);
+          this.SelectedItems.Add(this._typeNames[0]);
+          this.SelectedItems.Add(this._sectionList[0]);
 
           // call graphics update
-          Mode1Clicked();
+          this.Mode1Clicked();
         }
 
         // update dropdown lists
-        while (DropDownItems.Count > 1)
-          DropDownItems.RemoveAt(1);
+        while (this.DropDownItems.Count > 1)
+          this.DropDownItems.RemoveAt(1);
 
         // add catalogues (they will always be the same so no need to rerun sql call)
-        DropDownItems.Add(_catalogueNames);
+        this.DropDownItems.Add(this._catalogueNames);
 
         // type list
         // if second list (i.e. catalogue list) is changed, update types list to account for that catalogue
         if (i == 1)
         {
           // update catalogue index with the selected catalogue
-          _catalogueIndex = _catalogueNumbers[j];
-          SelectedItems[1] = _catalogueNames[j];
+          this._catalogueIndex = this._catalogueNumbers[j];
+          this.SelectedItems[1] = this._catalogueNames[j];
 
           // update typelist with selected input catalogue
-          _typedata = SqlReader.Instance.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
-          _typeNames = _typedata.Item1;
-          _typeNumbers = _typedata.Item2;
+          this._typedata = SqlReader.Instance.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
+          this._typeNames = this._typedata.Item1;
+          this._typeNumbers = this._typedata.Item2;
 
           // update section list from new types (all new types in catalogue)
-          List<int> types = _typeNumbers.ToList();
+          List<int> types = this._typeNumbers.ToList();
           types.RemoveAt(0); // remove -1 from beginning of list
-          _sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
-
-          // filter by search pattern
-          _filteredlist = new List<string>();
-          if (_search == "")
-          {
-            _filteredlist = _sectionList;
-          }
-          else
-          {
-            for (int k = 0; k < _sectionList.Count; k++)
-            {
-              if (_sectionList[k].ToLower().Contains(_search))
-              {
-                _filteredlist.Add(_sectionList[k]);
-              }
-              if (!_search.Any(char.IsDigit))
-              {
-                string test = _sectionList[k].ToString();
-                test = Regex.Replace(test, "[0-9]", string.Empty);
-                test = test.Replace(".", string.Empty);
-                test = test.Replace("-", string.Empty);
-                test = test.ToLower();
-                if (test.Contains(_search))
-                {
-                  _filteredlist.Add(_sectionList[k]);
-                }
-              }
-            }
-          }
+          this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
 
           // update selections to display first item in new list
-          SelectedItems[2] = _typeNames[0];
-          SelectedItems[3] = _filteredlist[0];
+          this.SelectedItems[2] = this._typeNames[0];
+          this.SelectedItems[3] = this._sectionList[0];
         }
-        DropDownItems.Add(_typeNames);
+        this.DropDownItems.Add(this._typeNames);
 
         // section list
         // if third list (i.e. types list) is changed, update sections list to account for these section types
-
         if (i == 2)
         {
           // update catalogue index with the selected catalogue
-          _typeIndex = _typeNumbers[j];
-          SelectedItems[2] = _typeNames[j];
+          this._typeIndex = this._typeNumbers[j];
+          this.SelectedItems[2] = this._typeNames[j];
 
           // create type list
           List<int> types = new List<int>();
-          if (_typeIndex == -1) // if all
+          if (this._typeIndex == -1) // if all
           {
-            types = _typeNumbers.ToList(); // use current selected list of type numbers
+            types = this._typeNumbers.ToList(); // use current selected list of type numbers
             types.RemoveAt(0); // remove -1 from beginning of list
           }
           else
-            types = new List<int> { _typeIndex }; // create empty list and add the single selected type 
+            types = new List<int> { this._typeIndex }; // create empty list and add the single selected type 
 
 
           // section list with selected types (only types in selected type)
-          _sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
-
-          // filter by search pattern
-          _filteredlist = new List<string>();
-          if (_search == "")
-          {
-            _filteredlist = _sectionList;
-          }
-          else
-          {
-            for (int k = 0; k < _sectionList.Count; k++)
-            {
-              if (_sectionList[k].ToLower().Contains(_search))
-              {
-                _filteredlist.Add(_sectionList[k]);
-              }
-              if (!_search.Any(char.IsDigit))
-              {
-                string test = _sectionList[k].ToString();
-                test = Regex.Replace(test, "[0-9]", string.Empty);
-                test = test.Replace(".", string.Empty);
-                test = test.Replace("-", string.Empty);
-                test = test.ToLower();
-                if (test.Contains(_search))
-                {
-                  _filteredlist.Add(_sectionList[k]);
-                }
-              }
-            }
-          }
+          this._sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(types, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
 
           // update selected section to be all
-          SelectedItems[3] = _filteredlist[0];
+          this.SelectedItems[3] = this._sectionList[0];
         }
-        DropDownItems.Add(_filteredlist);
+        this.DropDownItems.Add(this._sectionList);
 
         // selected profile
         // if fourth list (i.e. section list) is changed, updated the sections list to only be that single profile
         if (i == 3)
         {
           // update displayed selected
-          SelectedItems[3] = _filteredlist[j];
+          this.SelectedItems[3] = this._sectionList[j];
         }
-        profileString = SelectedItems[3];
+
+        if (this._search == "")
+          this.UpdateProfileString();
 
         base.UpdateUI();
       }
       else
       {
         // update spacer description to match none-catalogue dropdowns
-        SpacerDescriptions[1] = "Measure";// = new List<string>(new string[]
+        this.SpacerDescriptions[1] = "Measure";// = new List<string>(new string[]
 
-        if (_mode != FoldMode.Other)
+        if (this._mode != FoldMode.Other)
         {
           // remove all catalogue dropdowns
-          while (DropDownItems.Count > 1)
-            DropDownItems.RemoveAt(1);
+          while (this.DropDownItems.Count > 1)
+            this.DropDownItems.RemoveAt(1);
 
           // add length measure dropdown list
           this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
 
           // set selected length
-          SelectedItems[1] = LengthUnit.ToString();
+          this.SelectedItems[1] = LengthUnit.ToString();
         }
 
         if (i == 0)
         {
           // update profile type if change is made to first dropdown menu
-          typ = _profileTypes[SelectedItems[0]];
+          this.Typ = _profileTypes[this.SelectedItems[0]];
           Mode2Clicked();
         }
         else
         {
           // change unit
-          this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+          this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
 
           base.UpdateUI();
         }
       }
     }
 
+    private void UpdateTypeData()
+    {
+      this._typedata = this.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
+      this._typeNames = this._typedata.Item1;
+      this._typeNumbers = this._typedata.Item2;
+    }
+
+    private void UpdateProfileString()
+    {
+      if (this.SelectedItems[3] == "All")
+      {
+        this.ProfileString = new List<string>();
+        foreach (string profile in _sectionList)
+        {
+          if (profile == "All")
+            continue;
+          this.ProfileString.Add("CAT " + profile);
+        }
+      }
+      else
+        this.ProfileString = new List<string>() { "CAT " + this.SelectedItems[3] };
+    }
+
     private Tuple<List<string>, List<int>> GetTypesDataFromSQLite(int catalogueIndex, string filePath, bool inclSuperseeded)
     {
-      return SqlReader.Instance.GetTypesDataFromSQLite2(catalogueIndex, filePath, inclSuperseeded);
+      return SqlReader.Instance.GetTypesDataFromSQLite(catalogueIndex, filePath, inclSuperseeded);
     }
 
     public override void UpdateUIFromSelectedItems()
     {
-      if (SelectedItems[0] == "Catalogue")
+      if (this.SelectedItems[0] == "Catalogue")
       {
         // update spacer description to match catalogue dropdowns
-        SpacerDescriptions = new List<string>(new string[]
+        this.SpacerDescriptions = new List<string>(new string[]
         {
           "Profile type", "Catalogue", "Type", "Profile"
         });
 
-        _catalogueNames = _cataloguedata.Item1;
-        _catalogueNumbers = _cataloguedata.Item2;
-        _typedata = SqlReader.Instance.GetTypesDataFromSQLite(_catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), _inclSS);
-        _typeNames = _typedata.Item1;
-        _typeNumbers = _typedata.Item2;
+        this._catalogueNames = this._cataloguedata.Item1;
+        this._catalogueNumbers = this._cataloguedata.Item2;
+        this._typedata = SqlReader.Instance.GetTypesDataFromSQLite(this._catalogueIndex, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), this._inclSS);
+        this._typeNames = this._typedata.Item1;
+        this._typeNumbers = this._typedata.Item2;
 
-        Mode1Clicked();
+        this.Mode1Clicked();
 
-        profileString = SelectedItems[3];
+        this.ProfileString = new List<string>() { "CAT " + this.SelectedItems[3] };
       }
       else
       {
         // update spacer description to match none-catalogue dropdowns
-        SpacerDescriptions = new List<string>(new string[]
+        this.SpacerDescriptions = new List<string>(new string[]
         {
           "Profile type", "Measure", "Type", "Profile"
         });
 
-        typ = _profileTypes[SelectedItems[0]];
-        Mode2Clicked();
+        this.Typ = _profileTypes[SelectedItems[0]];
+        this.Mode2Clicked();
       }
 
       base.UpdateUIFromSelectedItems();
@@ -1214,18 +1250,18 @@ namespace GsaGH.Components
       if (_mode == FoldMode.Catalogue)
       {
         int i = 0;
-        Params.Input[i].NickName = "S";
-        Params.Input[i].Name = "Search";
-        Params.Input[i].Description = "Text to search from";
-        Params.Input[i].Access = GH_ParamAccess.item;
-        Params.Input[i].Optional = true;
+        this.Params.Input[i].NickName = "S";
+        this.Params.Input[i].Name = "Search";
+        this.Params.Input[i].Description = "Text to search from";
+        this.Params.Input[i].Access = GH_ParamAccess.item;
+        this.Params.Input[i].Optional = true;
 
         i++;
-        Params.Input[i].NickName = "iSS";
-        Params.Input[i].Name = "InclSuperseeded";
-        Params.Input[i].Description = "Input true to include superseeded catalogue sections";
-        Params.Input[i].Access = GH_ParamAccess.item;
-        Params.Input[i].Optional = true;
+        this.Params.Input[i].NickName = "iSS";
+        this.Params.Input[i].Name = "InclSuperseeded";
+        this.Params.Input[i].Description = "Input true to include superseeded catalogue sections";
+        this.Params.Input[i].Access = GH_ParamAccess.item;
+        this.Params.Input[i].Optional = true;
       }
       else
       {
@@ -1233,632 +1269,633 @@ namespace GsaGH.Components
 
         int i = 0;
         // angle
-        if (typ == "IAngleProfile") //(typ.Name.Equals(typeof(IAngleProfile).Name))
+        if (this.Typ == "IAngleProfile") //(typ.Name.Equals(typeof(IAngleProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the angle profile (leg in the local z axis).";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the angle profile (leg in the local z axis).";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "W";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The width of the angle profile (leg in the local y axis).";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "W";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The width of the angle profile (leg in the local y axis).";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tw";
-          Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The web thickness of the angle profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tw";
+          this.Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The web thickness of the angle profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tf";
-          Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The flange thickness of the angle profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tf";
+          this.Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The flange thickness of the angle profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           //dup = IAngleProfile.Create(angle.Depth, angle.Flange, angle.Web);
         }
 
         // channel
-        else if (typ == "IChannelProfile") //(typ.Name.Equals(typeof(IChannelProfile).Name))
+        else if (this.Typ == "IChannelProfile") //(typ.Name.Equals(typeof(IChannelProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the channel profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the channel profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The width of the flange of the channel profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The width of the flange of the channel profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tw";
-          Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The web thickness of the channel profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tw";
+          this.Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The web thickness of the channel profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tf";
-          Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The flange thickness of the channel profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tf";
+          this.Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The flange thickness of the channel profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
+          this.Params.Input[i].Optional = false;
           //dup = IChannelProfile.Create(channel.Depth, channel.Flanges, channel.Web);
         }
 
         // circle hollow
-        else if (typ == "ICircleHollowProfile") //(typ.Name.Equals(typeof(ICircleHollowProfile).Name))
+        else if (this.Typ == "ICircleHollowProfile") //(typ.Name.Equals(typeof(ICircleHollowProfile).Name))
         {
-          Params.Input[i].NickName = "Ø";
-          Params.Input[i].Name = "Diameter [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The diameter of the hollow circle.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Ø";
+          this.Params.Input[i].Name = "Diameter [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The diameter of the hollow circle.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "t";
-          Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The wall thickness of the hollow circle.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "t";
+          this.Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The wall thickness of the hollow circle.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = ICircleHollowProfile.Create(circleHollow.Diameter, circleHollow.WallThickness);
         }
 
         // circle
-        else if (typ == "ICircleProfile") //(typ.Name.Equals(typeof(ICircleProfile).Name))
+        else if (this.Typ == "ICircleProfile") //(typ.Name.Equals(typeof(ICircleProfile).Name))
         {
-          Params.Input[i].NickName = "Ø";
-          Params.Input[i].Name = "Diameter [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The diameter of the circle.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Ø";
+          this.Params.Input[i].Name = "Diameter [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The diameter of the circle.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           //dup = ICircleProfile.Create(circle.Diameter);
         }
 
         // ICruciformSymmetricalProfile
-        else if (typ == "ICruciformSymmetricalProfile") //(typ.Name.Equals(typeof(ICruciformSymmetricalProfile).Name))
+        else if (this.Typ == "ICruciformSymmetricalProfile") //(typ.Name.Equals(typeof(ICruciformSymmetricalProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth (local z axis leg) of the profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth (local z axis leg) of the profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The width of the flange (local y axis leg) of the cruciform.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The width of the flange (local y axis leg) of the cruciform.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tw";
-          Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The web thickness of the cruciform.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tw";
+          this.Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The web thickness of the cruciform.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tf";
-          Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The flange thickness of the cruciform.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tf";
+          this.Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The flange thickness of the cruciform.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = ICruciformSymmetricalProfile.Create(cruciformSymmetrical.Depth, cruciformSymmetrical.Flange, cruciformSymmetrical.Web);
         }
 
         // IEllipseHollowProfile
-        else if (typ == "IEllipseHollowProfile") //(typ.Name.Equals(typeof(IEllipseHollowProfile).Name))
+        else if (this.Typ == "IEllipseHollowProfile") //(typ.Name.Equals(typeof(IEllipseHollowProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the hollow ellipse.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the hollow ellipse.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The width of the hollow ellipse.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The width of the hollow ellipse.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "t";
-          Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The wall thickness of the hollow ellipse.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "t";
+          this.Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The wall thickness of the hollow ellipse.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = IEllipseHollowProfile.Create(ellipseHollow.Depth, ellipseHollow.Width, ellipseHollow.WallThickness);
         }
 
         // IEllipseProfile
-        else if (typ == "IEllipseProfile") //(typ.Name.Equals(typeof(IEllipseProfile).Name))
+        else if (this.Typ == "IEllipseProfile") //(typ.Name.Equals(typeof(IEllipseProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the ellipse.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the ellipse.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The width of the ellipse.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The width of the ellipse.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = IEllipseProfile.Create(ellipse.Depth, ellipse.Width);
         }
 
         // IGeneralCProfile
-        else if (typ == "IGeneralCProfile") //(typ.Name.Equals(typeof(IGeneralCProfile).Name))
+        else if (this.Typ == "IGeneralCProfile") //(typ.Name.Equals(typeof(IGeneralCProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the generic c section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the generic c section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The flange width of the generic c section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The flange width of the generic c section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "L";
-          Params.Input[i].Name = "Lip [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The lip of the generic c section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "L";
+          this.Params.Input[i].Name = "Lip [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The lip of the generic c section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "t";
-          Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The thickness of the generic c section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "t";
+          this.Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The thickness of the generic c section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = IGeneralCProfile.Create(generalC.Depth, generalC.FlangeWidth, generalC.Lip, generalC.Thickness);
         }
 
         // IGeneralZProfile
-        else if (typ == "IGeneralZProfile") //(typ.Name.Equals(typeof(IGeneralZProfile).Name))
+        else if (this.Typ == "IGeneralZProfile") //(typ.Name.Equals(typeof(IGeneralZProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the generic z section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the generic z section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Bt";
-          Params.Input[i].Name = "TopWidth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The top flange width of the generic z section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Bt";
+          this.Params.Input[i].Name = "TopWidth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The top flange width of the generic z section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Bb";
-          Params.Input[i].Name = "BottomWidth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The bottom flange width of the generic z section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Bb";
+          this.Params.Input[i].Name = "BottomWidth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The bottom flange width of the generic z section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Lt";
-          Params.Input[i].Name = "Top Lip [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The top lip of the generic z section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Lt";
+          this.Params.Input[i].Name = "Top Lip [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The top lip of the generic z section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Lb";
-          Params.Input[i].Name = "Lip [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The top lip of the generic z section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Lb";
+          this.Params.Input[i].Name = "Lip [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The top lip of the generic z section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "t";
-          Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The thickness of the generic z section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "t";
+          this.Params.Input[i].Name = "Thickness [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The thickness of the generic z section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = IGeneralZProfile.Create(generalZ.Depth, generalZ.TopFlangeWidth, generalZ.BottomFlangeWidth, generalZ.TopLip, generalZ.BottomLip, generalZ.Thickness);
         }
 
         // IIBeamAsymmetricalProfile
-        else if (typ == "IIBeamAsymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamAsymmetricalProfile).Name))
+        else if (this.Typ == "IIBeamAsymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamAsymmetricalProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Bt";
-          Params.Input[i].Name = "TopFlangeWidth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The width of the top flange of the beam. Top is relative to the beam local access.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Bt";
+          this.Params.Input[i].Name = "TopFlangeWidth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The width of the top flange of the beam. Top is relative to the beam local access.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Bb";
-          Params.Input[i].Name = "BottomFlangeWidth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The width of the bottom flange of the beam. Bottom is relative to the beam local access.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Bb";
+          this.Params.Input[i].Name = "BottomFlangeWidth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The width of the bottom flange of the beam. Bottom is relative to the beam local access.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Web";
-          Params.Input[i].Name = "Web Thickness [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The web thickness of the beam.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Web";
+          this.Params.Input[i].Name = "Web Thickness [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The web thickness of the beam.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tt";
-          Params.Input[i].Name = "TopFlangeThk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The top flange thickness.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tt";
+          this.Params.Input[i].Name = "TopFlangeThk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The top flange thickness.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tb";
-          Params.Input[i].Name = "BottomFlangeThk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The bpttom flange thickness.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tb";
+          this.Params.Input[i].Name = "BottomFlangeThk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The bpttom flange thickness.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           //dup = IIBeamAsymmetricalProfile.Create(iBeamAsymmetrical.Depth, iBeamAsymmetrical.TopFlange, iBeamAsymmetrical.BottomFlange, iBeamAsymmetrical.Web);
         }
 
         // IIBeamCellularProfile
-        else if (typ == "IIBeamCellularProfile") //(typ.Name.Equals(typeof(IIBeamCellularProfile).Name))
+        else if (this.Typ == "IIBeamCellularProfile") //(typ.Name.Equals(typeof(IIBeamCellularProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The width of the flanges of the beam.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The width of the flanges of the beam.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tw";
-          Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The web thickness of the angle profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tw";
+          this.Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The web thickness of the angle profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tf";
-          Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The flange thickness of the angle profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tf";
+          this.Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The flange thickness of the angle profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "O";
-          Params.Input[i].Name = "WebOpening [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The size of the web opening.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "O";
+          this.Params.Input[i].Name = "WebOpening [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The size of the web opening.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "P";
-          Params.Input[i].Name = "Pitch [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The pitch (spacing) between the web openings.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "P";
+          this.Params.Input[i].Name = "Pitch [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The pitch (spacing) between the web openings.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = IIBeamCellularProfile.Create(iBeamCellular.Depth, iBeamCellular.Flanges, iBeamCellular.Web, iBeamCellular.WebOpening);
         }
 
         // IIBeamSymmetricalProfile
-        else if (typ == "IIBeamSymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamSymmetricalProfile).Name))
+        else if (this.Typ == "IIBeamSymmetricalProfile") //(typ.Name.Equals(typeof(IIBeamSymmetricalProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The width of the flanges of the beam.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The width of the flanges of the beam.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tw";
-          Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The web thickness of the angle profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tw";
+          this.Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The web thickness of the angle profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tf";
-          Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The flange thickness of the angle profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tf";
+          this.Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The flange thickness of the angle profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           //dup = IIBeamSymmetricalProfile.Create(iBeamSymmetrical.Depth, iBeamSymmetrical.Flanges, iBeamSymmetrical.Web);
         }
 
         // IRectangleHollowProfile
-        else if (typ == "IRectangleHollowProfile") //(typ.Name.Equals(typeof(IRectangleHollowProfile).Name))
+        else if (this.Typ == "IRectangleHollowProfile") //(typ.Name.Equals(typeof(IRectangleHollowProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the hollow rectangle.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the hollow rectangle.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The width of the hollow rectangle.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The width of the hollow rectangle.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tw";
-          Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The side thickness of the hollow rectangle.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tw";
+          this.Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The side thickness of the hollow rectangle.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tf";
-          Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The top/bottom thickness of the hollow rectangle.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tf";
+          this.Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The top/bottom thickness of the hollow rectangle.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = IRectangleHollowProfile.Create(rectangleHollow.Depth, rectangleHollow.Flanges, rectangleHollow.Webs);
         }
 
         // IRectangleProfile
-        else if (typ == "IRectangleProfile") //(typ.Name.Equals(typeof(IRectangleProfile).Name))
+        else if (this.Typ == "IRectangleProfile") //(typ.Name.Equals(typeof(IRectangleProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "Depth of the rectangle, in local z-axis direction.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "Depth of the rectangle, in local z-axis direction.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "Width of the rectangle, in local y-axis direction.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "Width of the rectangle, in local y-axis direction.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = IRectangleProfile.Create(rectangle.Depth, rectangle.Width);
         }
 
         // IRectoEllipseProfile
-        else if (typ == "IRectoEllipseProfile") //(typ.Name.Equals(typeof(IRectoEllipseProfile).Name))
+        else if (this.Typ == "IRectoEllipseProfile") //(typ.Name.Equals(typeof(IRectoEllipseProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The overall depth of the recto-ellipse profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The overall depth of the recto-ellipse profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Df";
-          Params.Input[i].Name = "DepthFlat [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The flat length of the profile's overall depth.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Df";
+          this.Params.Input[i].Name = "DepthFlat [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The flat length of the profile's overall depth.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The overall width of the recto-ellipse profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The overall width of the recto-ellipse profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Bf";
-          Params.Input[i].Name = "WidthFlat [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The flat length of the profile's overall width.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Bf";
+          this.Params.Input[i].Name = "WidthFlat [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The flat length of the profile's overall width.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = IRectoEllipseProfile.Create(rectoEllipse.Depth, rectoEllipse.DepthFlat, rectoEllipse.Width, rectoEllipse.WidthFlat);
         }
 
         // ISecantPileProfile
-        else if (typ == "ISecantPileProfile") //(typ.Name.Equals(typeof(ISecantPileProfile).Name))
+        else if (this.Typ == "ISecantPileProfile") //(typ.Name.Equals(typeof(ISecantPileProfile).Name))
         {
-          Params.Input[i].NickName = "Ø";
-          Params.Input[i].Name = "Diameter [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The diameter of the piles.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Ø";
+          this.Params.Input[i].Name = "Diameter [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The diameter of the piles.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "c/c";
-          Params.Input[i].Name = "PileCentres [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The centre to centre distance between adjacent piles.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "c/c";
+          this.Params.Input[i].Name = "PileCentres [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The centre to centre distance between adjacent piles.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "No";
-          Params.Input[i].Name = "PileCount";
-          Params.Input[i].Description = "The number of piles in the profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "No";
+          this.Params.Input[i].Name = "PileCount";
+          this.Params.Input[i].Description = "The number of piles in the profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "W/S";
-          Params.Input[i].Name = "isWall";
-          Params.Input[i].Description = "Converts the profile into a wall secant pile profile if true -- Converts the profile into a section secant pile profile if false.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "W/S";
+          this.Params.Input[i].Name = "isWall";
+          this.Params.Input[i].Description = "Converts the profile into a wall secant pile profile if true -- Converts the profile into a section secant pile profile if false.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = ISecantPileProfile.Create(secantPile.Diameter, secantPile.PileCentres, secantPile.PileCount, secantPile.IsWallNotSection);
         }
 
         // ISheetPileProfile
-        else if (typ == "ISheetPileProfile") //(typ.Name.Equals(typeof(ISheetPileProfile).Name))
+        else if (this.Typ == "ISheetPileProfile") //(typ.Name.Equals(typeof(ISheetPileProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the sheet pile section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the sheet pile section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The overall width of the sheet pile section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The overall width of the sheet pile section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Bt";
-          Params.Input[i].Name = "TopFlangeWidth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The top flange width of the sheet pile section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Bt";
+          this.Params.Input[i].Name = "TopFlangeWidth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The top flange width of the sheet pile section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Bb";
-          Params.Input[i].Name = "BottomFlangeWidth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The bottom flange width of the sheet pile section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Bb";
+          this.Params.Input[i].Name = "BottomFlangeWidth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The bottom flange width of the sheet pile section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Ft";
-          Params.Input[i].Name = "FlangeThickness [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The flange thickness of the sheet pile section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Ft";
+          this.Params.Input[i].Name = "FlangeThickness [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The flange thickness of the sheet pile section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Wt";
-          Params.Input[i].Name = "WebThickness [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The web thickness of the sheet pile section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Wt";
+          this.Params.Input[i].Name = "WebThickness [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The web thickness of the sheet pile section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = ISheetPileProfile.Create(sheetPile.Depth, sheetPile.Width, sheetPile.TopFlangeWidth, sheetPile.BottomFlangeWidth, sheetPile.FlangeThickness, sheetPile.WebThickness);
         }
 
         // IStadiumProfile
-        else if (typ == "IStadiumProfile") //(typ.Name.Equals(typeof(IStadiumProfile).Name))
+        else if (this.Typ == "IStadiumProfile") //(typ.Name.Equals(typeof(IStadiumProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The profile's overall depth considering the side length of the rectangle and the radii of the semicircles on the two ends.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The profile's overall depth considering the side length of the rectangle and the radii of the semicircles on the two ends.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The profile's width (diameter of the semicircles).";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The profile's width (diameter of the semicircles).";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = IStadiumProfile.Create(stadium.Depth, stadium.Width);
         }
 
         // ITrapezoidProfile
-        else if (typ == "ITrapezoidProfile") //(typ.Name.Equals(typeof(ITrapezoidProfile).Name))
+        else if (this.Typ == "ITrapezoidProfile") //(typ.Name.Equals(typeof(ITrapezoidProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth in z-axis direction of trapezoidal profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth in z-axis direction of trapezoidal profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Bt";
-          Params.Input[i].Name = "TopWidth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The top width of trapezoidal profile. Top is relative to the local z-axis.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Bt";
+          this.Params.Input[i].Name = "TopWidth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The top width of trapezoidal profile. Top is relative to the local z-axis.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Bb";
-          Params.Input[i].Name = "BottomWidth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The bottom width of trapezoidal profile. Bottom is relative to the local z-axis.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Bb";
+          this.Params.Input[i].Name = "BottomWidth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The bottom width of trapezoidal profile. Bottom is relative to the local z-axis.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
           //dup = ITrapezoidProfile.Create(trapezoid.Depth, trapezoid.TopWidth, trapezoid.BottomWidth);
         }
 
         // ITSectionProfile
-        else if (typ == "ITSectionProfile") //(typ.Name.Equals(typeof(ITSectionProfile).Name))
+        else if (this.Typ == "ITSectionProfile") //(typ.Name.Equals(typeof(ITSectionProfile).Name))
         {
-          Params.Input[i].NickName = "D";
-          Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The depth of the T section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "D";
+          this.Params.Input[i].Name = "Depth [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The depth of the T section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The width of the T section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Width [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The width of the T section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tw";
-          Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The web thickness of the T section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tw";
+          this.Params.Input[i].Name = "Web Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The web thickness of the T section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           i++;
-          Params.Input[i].NickName = "Tf";
-          Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
-          Params.Input[i].Description = "The flange thickness of the T section profile.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "Tf";
+          this.Params.Input[i].Name = "Flange Thk [" + unitAbbreviation + "]";
+          this.Params.Input[i].Description = "The flange thickness of the T section profile.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           //dup = ITSectionProfile.Create(tSection.Depth, tSection.Flange, tSection.Web);
         }
         // IPerimeterProfile
-        else if (typ == "IPerimeterProfile") //(typ.Name.Equals(typeof(IPerimeterProfile).Name))
+        else if (this.Typ == "IPerimeterProfile") //(typ.Name.Equals(typeof(IPerimeterProfile).Name))
         {
-          Params.Input[i].NickName = "B";
-          Params.Input[i].Name = "Boundary";
-          Params.Input[i].Description = "Planar Brep or closed planar curve.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          this.Params.Input[i].NickName = "B";
+          this.Params.Input[i].Name = "Boundary";
+          this.Params.Input[i].Description = "Planar Brep or closed planar curve.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = false;
 
           if (Params.Input.Count == 1) // handle backwards compatability
             Params.RegisterInputParam(new Param_Plane());
 
           i++;
-          Params.Input[i].NickName = "P";
-          Params.Input[i].Name = "Plane";
-          Params.Input[i].Description = "Optional plane in which to project boundary onto. Profile will get coordinates in this plane.";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = true;
+          this.Params.Input[i].NickName = "P";
+          this.Params.Input[i].Name = "Plane";
+          this.Params.Input[i].Description = "Optional plane in which to project boundary onto. Profile will get coordinates in this plane.";
+          this.Params.Input[i].Access = GH_ParamAccess.item;
+          this.Params.Input[i].Optional = true;
 
           //i++;
           //Params.Input[i].NickName = "V";
@@ -1874,15 +1911,16 @@ namespace GsaGH.Components
     #region (de)serialization
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
     {
-      writer.SetString("mode", _mode.ToString());
-      writer.SetString("lengthUnit", LengthUnit.ToString());
-      writer.SetBoolean("inclSS", _inclSS);
-      writer.SetInt32("NumberOfInputs", _numberOfInputs);
-      writer.SetInt32("catalogueIndex", _catalogueIndex);
-      writer.SetInt32("typeIndex", _typeIndex);
-      writer.SetString("search", _search);
+      writer.SetString("mode", this._mode.ToString());
+      writer.SetString("lengthUnit", this.LengthUnit.ToString());
+      writer.SetBoolean("inclSS", this._inclSS);
+      writer.SetInt32("NumberOfInputs", this._numberOfInputs);
+      writer.SetInt32("catalogueIndex", this._catalogueIndex);
+      writer.SetInt32("typeIndex", this._typeIndex);
+      writer.SetString("search", this._search);
       return base.Write(writer);
     }
+
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), reader.GetString("mode"));
@@ -1894,7 +1932,11 @@ namespace GsaGH.Components
       this._typeIndex = reader.GetInt32("typeIndex");
       this._search = reader.GetString("search");
 
-      return base.Read(reader);
+      bool flag = base.Read(reader);
+
+      this.Params.Output[0].Access = GH_ParamAccess.tree;
+
+      return flag;
     }
     #endregion
   }

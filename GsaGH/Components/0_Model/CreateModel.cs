@@ -198,6 +198,7 @@ namespace GsaGH.Components
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
     }
+
     private void MaintainText(ToolStripTextBox tolerance)
     {
       _toleranceTxt = tolerance.Text;
@@ -206,6 +207,7 @@ namespace GsaGH.Components
       else
         tolerance.BackColor = System.Drawing.Color.FromArgb(255, 255, 100, 100);
     }
+
     private void UpdateMessage()
     {
       if (this._toleranceTxt != "")
@@ -237,6 +239,7 @@ namespace GsaGH.Components
       writer.SetDouble("Tolerance", this._tolerance);
       return base.Write(writer);
     }
+    
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       this.ReMesh = reader.GetBoolean("ReMesh");

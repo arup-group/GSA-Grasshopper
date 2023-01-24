@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>GSALogo128.png</PackageIcon>
-    <Version>0.9.41-beta</Version>
+    <Version>0.9.42-beta</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <Description>Official Oasys GSA Grasshopper Plugin
