@@ -132,10 +132,10 @@ namespace GsaGH.Components
           this._search = inSearch.ToLower().Replace(" ", string.Empty).Replace(".", string.Empty);
           if (_search == "cat")
           {
-            DA.SetDataList(0, EasterCat);
             string eventName = "EasterCat";
             Dictionary<string, object> properties = new Dictionary<string, object>();
             _ = PostHog.SendToPostHog(GsaGH.PluginInfo.Instance, eventName, properties);
+            DA.SetDataList(0, EasterCat);
             return;
           }
           if (_search.Contains("cat"))
