@@ -4,7 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Grasshopper;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
@@ -16,6 +18,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Commands;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
@@ -87,7 +90,7 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddTextParameter("Profile", "Pf", "Profile for a GSA Section", GH_ParamAccess.list);
+      pManager.AddTextParameter("Profile", "Pf", "Profile for a GSA Section", GH_ParamAccess.tree);
     }
     #endregion
 
@@ -142,7 +145,6 @@ namespace GsaGH.Components
           }
 
           // filter by search pattern
-
           List<string> filteredlist = new List<string>();
           if (this.SelectedItems[3] != "All")
           {
@@ -191,9 +193,11 @@ namespace GsaGH.Components
         if (this._search == null)
           this.UpdateProfileString();
 
-        DA.SetDataList(0, this.ProfileString);
+        DataTree<string> tree = new DataTree<string>();
+        GH_Path path = new Grasshopper.Kernel.Data.GH_Path(new int[] { 0 });
+        tree.AddRange(this.ProfileString, path);
 
-        return;
+        DA.SetDataTree(0, tree);
       }
       #endregion
 
@@ -1928,7 +1932,11 @@ namespace GsaGH.Components
       this._typeIndex = reader.GetInt32("typeIndex");
       this._search = reader.GetString("search");
 
-      return base.Read(reader);
+      bool flag = base.Read(reader);
+
+      this.Params.Output[0].Access = GH_ParamAccess.tree;
+
+      return flag;
     }
     #endregion
   }
