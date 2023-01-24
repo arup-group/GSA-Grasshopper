@@ -997,7 +997,7 @@ namespace GsaGH.Components
     int _typeIndex = -1;
     // displayed selections
     // list of sections as outcome from selections
-    List<string> ProfileString = new List<string>() { "HE HE200.B" };
+    List<string> ProfileString = new List<string>() { "CAT HE HE200.B" };
     string _search = "";
 
     public override void InitialiseDropdowns()
@@ -1197,7 +1197,7 @@ namespace GsaGH.Components
         }
       }
       else
-        this.ProfileString = new List<string>() { this.SelectedItems[3] };
+        this.ProfileString = new List<string>() { "CAT " + this.SelectedItems[3] };
     }
 
     private Tuple<List<string>, List<int>> GetTypesDataFromSQLite(int catalogueIndex, string filePath, bool inclSuperseeded)
@@ -1223,7 +1223,7 @@ namespace GsaGH.Components
 
         this.Mode1Clicked();
 
-        this.ProfileString = new List<string>() { this.SelectedItems[3] };
+        this.ProfileString = new List<string>() { "CAT " + this.SelectedItems[3] };
       }
       else
       {
