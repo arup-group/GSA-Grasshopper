@@ -270,8 +270,8 @@ namespace GsaGH.Helpers.GsaAPI
           // example (IPE100): 0.1 --  0.055 -- 0.0041 -- 0.0057 -- 0.007
           data.Add(sqlData);
         }
-
         string[] vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
+        r.Close();
         
         // Welded Sections
         if (vals.Length <= 1)
@@ -292,16 +292,18 @@ namespace GsaGH.Helpers.GsaAPI
             data.Add(sqlData);
           }
           vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
+          r.Close();
         }
 
         // CHS Sections
         if (vals.Length <= 1)
         {
+          r.Close();
           cmd.CommandText = $"Select " +
             $"SECT_DEPTH_DIAM || ' -- ' || " +
             $"SECT_WEB_THICK " +
             $"as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_NAME = \"{profileString}\" ORDER BY SECT_DATE_ADDED";
-
+          cmd.CommandType = CommandType.Text;
           data = new List<string>();
           r = cmd.ExecuteReader();
           while (r.Read())
@@ -313,8 +315,8 @@ namespace GsaGH.Helpers.GsaAPI
             // example (CHS457x12.5): 0.457 -- 0.0125
             data.Add(sqlData);
           }
-
           vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
+          r.Close();
         }
         db.Close();
 
