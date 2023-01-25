@@ -148,7 +148,7 @@ namespace GsaGH.Components
           List<string> filteredlist = new List<string>();
           if (this.SelectedItems[3] != "All")
           {
-            if (Regex.Match(this.SelectedItems[3].ToLower(), this._search, RegexOptions.Singleline).Success)
+            if (Regex.Match(this.SelectedItems[3].ToLower().Replace(".", String.Empty), this._search, RegexOptions.Singleline).Success)
               filteredlist.Add(this.SelectedItems[3]);
             else
             {
@@ -160,7 +160,7 @@ namespace GsaGH.Components
           {
             for (int k = 0; k < this._sectionList.Count; k++)
             {
-              if (Regex.Match(this._sectionList[k].ToLower(), this._search, RegexOptions.Singleline).Success)
+              if (Regex.Match(this._sectionList[k].ToLower().Replace(".", String.Empty), this._search, RegexOptions.Singleline).Success)
                 filteredlist.Add(this._sectionList[k]);
 
               else if (!this._search.Any(char.IsDigit))
