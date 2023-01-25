@@ -272,7 +272,8 @@ namespace GsaGH.Helpers.GsaAPI
         }
 
         string[] vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
-        // in case of welded sections this didn´t return a result
+        
+        // Welded Sections
         if (vals.Length <= 1)
         {
           cmd = db.CreateCommand();
@@ -290,18 +291,15 @@ namespace GsaGH.Helpers.GsaAPI
             string sqlData = Convert.ToString(r["SECT_NAME"]);
             data.Add(sqlData);
           }
+          vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
         }
-        db.Close();
 
-        vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
-
+        // CHS Sections
         if (vals.Length <= 1)
         {
           cmd.CommandText = $"Select " +
             $"SECT_DEPTH_DIAM || ' -- ' || " +
-            $"SECT_WIDTH || ' -- ' || " +
-            $"SECT_WEB_THICK || ' -- ' || " +
-            $"SECT_FLG_THICK || ' -- ' || " +
+            $"SECT_WEB_THICK " +
             $"as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_NAME = \"{profileString}\" ORDER BY SECT_DATE_ADDED";
 
           data = new List<string>();
@@ -312,13 +310,13 @@ namespace GsaGH.Helpers.GsaAPI
             string sqlData = Convert.ToString(r["SECT_NAME"]);
 
             // split text string
-            // example (IPE100): 0.1 --  0.055 -- 0.0041 -- 0.0057 -- 0.007
+            // example (CHS457x12.5): 0.457 -- 0.0125
             data.Add(sqlData);
           }
+
+          vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
         }
         db.Close();
-
-        vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
 
         NumberFormatInfo noComma = CultureInfo.InvariantCulture.NumberFormat;
 
