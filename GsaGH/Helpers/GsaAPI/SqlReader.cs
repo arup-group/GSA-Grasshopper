@@ -298,7 +298,6 @@ namespace GsaGH.Helpers.GsaAPI
         // CHS Sections
         if (vals.Length <= 1)
         {
-          r.Close();
           cmd.CommandText = $"Select " +
             $"SECT_DEPTH_DIAM || ' -- ' || " +
             $"SECT_WEB_THICK " +
