@@ -138,6 +138,13 @@ namespace GsaGH.Parameters
     internal Dictionary<string, GsaResultsValues> ACaseElement2DDisplacementValues { get; set; } = new Dictionary<string, GsaResultsValues>();
 
     /// <summary>
+    /// Analysis Case 1DElement Footfall Result VALUES Dictionary 
+    /// Append to this dictionary to chache results
+    /// key = Tuple<elementList, numberOfDivisions>
+    /// </summary>
+    internal Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues> ACaseElement2DFootfallValues { get; set; } = new Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues>();
+
+    /// <summary>
     /// Analysis Case 2DElement Force Result VALUES Dictionary 
     /// Append to this dictionary to chache results
     /// key = elementList
@@ -191,7 +198,7 @@ namespace GsaGH.Parameters
     /// Append to this dictionary to chache results
     /// key = Tuple<elementList, numberOfDivisions>
     /// </summary>
-    internal Dictionary<Tuple<string, int, FootfallResultType>, GsaResultsValues> ACaseElement1DFootfallValues { get; set; } = new Dictionary<Tuple<string, int, FootfallResultType>, GsaResultsValues>();
+    internal Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues> ACaseElement1DFootfallValues { get; set; } = new Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues>();
 
     /// <summary>
     /// Analysis Case Node API Result Dictionary 
@@ -653,18 +660,19 @@ namespace GsaGH.Parameters
     /// <param name="elementlist"></param>
     /// <param name="lengthUnit"></param>
     /// <returns></returns>
-    internal List<GsaResultsValues> Element1DFootfallValues(string elementlist, int positionsCount, FootfallResultType type)
+    internal List<GsaResultsValues> Element1DFootfallValues(string elementlist, FootfallResultType type)
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
-      Tuple<string, int, FootfallResultType> key = new Tuple<string, int, FootfallResultType>(elementlist, positionsCount, type);
+      Tuple<string, FootfallResultType> key = new Tuple<string, FootfallResultType>(elementlist, type);
       if (this.Type == ResultType.AnalysisCase)
       {
         if (!this.ACaseElement1DFootfallValues.ContainsKey(key)) // see if values exist
         {
+          GsaResultsValues nodeFootfallResultValues = this.NodeFootfallValues("All", type);
           // compute result values and add to dictionary for cache
           this.ACaseElement1DFootfallValues.Add(key,
-              ResultHelper.GetElement1DFootfallResultValues(elementlist, positionsCount, this.Model, type, this.CaseID));
+              ResultHelper.GetElement1DFootfallResultValues(elementlist, this.Model, nodeFootfallResultValues));
         }
         return new List<GsaResultsValues>() { ACaseElement1DFootfallValues[key] };
       }
@@ -852,6 +860,36 @@ namespace GsaGH.Parameters
               ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], lengthUnit, SelectedPermutationIDs));
         }
         return new List<GsaResultsValues>(ComboElement2DDisplacementValues[elementlist].Values);
+      }
+    }
+
+    /// <summary>
+    /// Get beam footfall values 
+    /// For analysis case results only
+    /// This method will use cache data if it exists
+    /// </summary>
+    /// <param name="elementlist"></param>
+    /// <returns></returns>
+    internal List<GsaResultsValues> Element2DFootfallValues(string elementlist, FootfallResultType type)
+    {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
+      Tuple<string, FootfallResultType> key = new Tuple<string, FootfallResultType>(elementlist, type);
+      if (this.Type == ResultType.AnalysisCase)
+      {
+        if (!this.ACaseElement2DFootfallValues.ContainsKey(key)) // see if values exist
+        {
+          GsaResultsValues nodeFootfallResultValues = this.NodeFootfallValues("All", type);
+          // compute result values and add to dictionary for cache
+          this.ACaseElement2DFootfallValues.Add(key,
+              ResultHelper.GetElement2DFootfallResultValues(elementlist, this.Model, nodeFootfallResultValues));
+        }
+        return new List<GsaResultsValues>() { ACaseElement2DFootfallValues[key] };
+      }
+      else
+      {
+        // can only get Footfall for Analysis Case
+        throw new Exception("Cannot get Footfall results for a Combination Case.");
       }
     }
 

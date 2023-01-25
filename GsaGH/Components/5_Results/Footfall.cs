@@ -18,15 +18,15 @@ namespace GsaGH.Components
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("c5194fe3-8c20-43f0-a8cb-3207ed867221");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Footfall;
 
-    public FootfallResults() : base("Get Footfall Result",
+    public FootfallResults() : base("Footfall Result",
       "Footfall",
       "Get the maximum response factor for a footfall analysis case",
       CategoryName.Name(),
-      SubCategoryName.Cat6())
+      SubCategoryName.Cat5())
     { this.Hidden = true; } // sets the initial state of the component to hidden
     #endregion
 

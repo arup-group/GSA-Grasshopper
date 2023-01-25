@@ -34,7 +34,7 @@ namespace GsaGH.Helpers.GsaAPI
 
       string aCase = "A";
 
-      var check = GSA.Output_Init(0, "global", aCase + caseId, dataRef, 0);
+      var check = GSA.Output_Init(0, "default", aCase + caseId, dataRef, 0);
 
       GsaResultsValues r = new GsaResultsValues();
       r.Type = GsaResultsValues.ResultType.Footfall;
@@ -55,36 +55,56 @@ namespace GsaGH.Helpers.GsaAPI
       return r;
     }
 
-    internal static GsaResultsValues GetElement1DFootfallResultValues(string elemList, int positionsCount, GsaModel model, FootfallResultType type, int caseId)
+    internal static GsaResultsValues GetElement1DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues)
+    {
+      return GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._1D);
+    }
+
+    internal static GsaResultsValues GetElement2DFootfallResultValues(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues)
+    {
+      return GetElementFootfallResults(elemList, model, nodeFootfallResultValues, ElementDimension._2D);
+    }
+    private enum ElementDimension
+    {
+      _1D,
+      _2D
+    }
+    private static GsaResultsValues GetElementFootfallResults(string elemList, GsaModel model, GsaResultsValues nodeFootfallResultValues, ElementDimension typ)
     {
       if (model == null) { return null; }
 
-      Interop.Gsa_10_1.ComAuto GSA = GsaComHelper.GetGsaComModel(model);
-
       ReadOnlyDictionary<int, Element> elements = model.Model.Elements(elemList);
-
-      int dataRef = 12509001;
-      if (type == FootfallResultType.Transient)
-        dataRef = 12509101;
-      
-      string aCase = "A";
-
-      var check = GSA.Output_Init(0, "global", aCase + caseId, dataRef, positionsCount);
 
       GsaResultsValues r = new GsaResultsValues();
       r.Type = GsaResultsValues.ResultType.Footfall;
 
       foreach (int elemID in elements.Keys)
       {
-        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        for (int i = 0; i < positionsCount; i++)
+        int startint = 0;
+        if (typ == ElementDimension._1D)
         {
-          Ratio ff = new Ratio((double)GSA.Output_Extract(elemID, i), RatioUnit.DecimalFraction);
-          GsaResultQuantity res = new GsaResultQuantity()
-          {
-            X = ff
-          };
-          xyzRes.TryAdd(i, res);
+          if (elements[elemID].Topology.Count > 2)
+            continue;
+        }
+        else
+        {
+          startint = 1;
+          if (elements[elemID].Topology.Count < 3)
+            continue;
+        }
+
+        ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
+        for (int i = startint; i < elements[elemID].Topology.Count; i++)
+        {
+          int nodeID = elements[elemID].Topology[i];
+          GsaResultQuantity nodeResult = nodeFootfallResultValues.xyzResults[nodeID][0];
+          xyzRes.TryAdd(i, nodeResult);
+        }
+        if (typ == ElementDimension._2D)
+        {
+          int nodeID = elements[elemID].Topology[0];
+          GsaResultQuantity nodeResult = nodeFootfallResultValues.xyzResults[nodeID][0];
+          xyzRes.TryAdd(elements[elemID].Topology.Count, nodeResult);// add centre point last
         }
         r.xyzResults.TryAdd(elemID, xyzRes);
       }
