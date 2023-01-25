@@ -129,8 +129,8 @@ namespace GsaGH.Components
         string inSearch = "";
         if (DA.GetData(0, ref inSearch))
         {
-          this._search = inSearch.ToLower().Replace(" ", string.Empty).Replace(".", string.Empty);
-          if (_search == "cat")
+          this._search = inSearch.Trim().ToLower().Replace("*", ".*").Replace(" ", ".*");
+          if (this._search == "cat")
           {
             string eventName = "EasterCat";
             Dictionary<string, object> properties = new Dictionary<string, object>();
@@ -138,17 +138,17 @@ namespace GsaGH.Components
             DA.SetDataList(0, EasterCat);
             return;
           }
-          if (_search.Contains("cat"))
+          if (this._search.Contains("cat"))
           {
             string[] s = _search.Split(new string[] { "cat" }, StringSplitOptions.None);
-            _search = s[s.Length - 1];
+            this._search = s[s.Length - 1];
           }
 
           // filter by search pattern
           List<string> filteredlist = new List<string>();
           if (this.SelectedItems[3] != "All")
           {
-            if (this.SelectedItems[3].ToLower().Replace(" ", string.Empty).Replace(".", string.Empty).Contains(_search))
+            if (Regex.Match(this.SelectedItems[3].ToLower(), this._search, RegexOptions.Singleline).Success)
               filteredlist.Add(this.SelectedItems[3]);
             else
             {
@@ -160,17 +160,17 @@ namespace GsaGH.Components
           {
             for (int k = 0; k < this._sectionList.Count; k++)
             {
-              if (this._sectionList[k].ToLower().Replace(" ", string.Empty).Replace(".", string.Empty).Contains(_search))
+              if (Regex.Match(this._sectionList[k].ToLower(), this._search, RegexOptions.Singleline).Success)
                 filteredlist.Add(this._sectionList[k]);
 
-              else if (!_search.Any(char.IsDigit))
+              else if (!this._search.Any(char.IsDigit))
               {
                 string test = this._sectionList[k].ToString();
                 test = Regex.Replace(test, "[0-9]", string.Empty);
                 test = test.Replace(".", string.Empty);
                 test = test.Replace("-", string.Empty);
                 test = test.ToLower();
-                if (test.Contains(_search))
+                if (test.Contains(this._search))
                 {
                   filteredlist.Add(this._sectionList[k]);
                 }
@@ -194,7 +194,12 @@ namespace GsaGH.Components
           this.UpdateProfileString();
 
         DataTree<string> tree = new DataTree<string>();
-        GH_Path path = new Grasshopper.Kernel.Data.GH_Path(new int[] { 0 });
+
+        int pathCount = 0;
+        if (this.Params.Output[0].VolatileDataCount > 0)
+          pathCount = this.Params.Output[0].VolatileData.PathCount;
+
+        GH_Path path = new Grasshopper.Kernel.Data.GH_Path(new int[] { pathCount });
         tree.AddRange(this.ProfileString, path);
 
         DA.SetDataTree(0, tree);
