@@ -80,7 +80,6 @@ namespace GsaGH.Helpers.GsaAPI
 
       foreach (int elemID in elements.Keys)
       {
-        int startint = 0;
         if (typ == ElementDimension._1D)
         {
           if (elements[elemID].Topology.Count > 2)
@@ -88,13 +87,12 @@ namespace GsaGH.Helpers.GsaAPI
         }
         else
         {
-          startint = 1;
           if (elements[elemID].Topology.Count < 3)
             continue;
         }
 
         ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        for (int i = startint; i < elements[elemID].Topology.Count; i++)
+        for (int i = 0; i < elements[elemID].Topology.Count; i++)
         {
           int nodeID = elements[elemID].Topology[i];
           GsaResultQuantity nodeResult = nodeFootfallResultValues.xyzResults[nodeID][0];
@@ -102,11 +100,14 @@ namespace GsaGH.Helpers.GsaAPI
         }
         if (typ == ElementDimension._2D)
         {
-          int nodeID = elements[elemID].Topology[0];
-          GsaResultQuantity nodeResult = nodeFootfallResultValues.xyzResults[nodeID][0];
-          xyzRes.TryAdd(elements[elemID].Topology.Count, nodeResult);// add centre point last
+          Ratio average = new Ratio(0, RatioUnit.DecimalFraction);
+          foreach (int key in xyzRes.Keys)
+            average += (Ratio)xyzRes[key].X;
+          average /= elements[elemID].Topology.Count;
+          xyzRes.TryAdd(elements[elemID].Topology.Count, new GsaResultQuantity() { X = average });
         }
-        r.xyzResults.TryAdd(elemID, xyzRes);
+
+          r.xyzResults.TryAdd(elemID, xyzRes);
       }
       r.UpdateMinMax();
 

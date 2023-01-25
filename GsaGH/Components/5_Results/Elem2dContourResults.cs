@@ -142,6 +142,7 @@ namespace GsaGH.Components
                 this.ForcePerLengthUnit, this.ForceUnit)[0];
             resShear = result.Element2DShearValues(elementlist, this.ForcePerLengthUnit)[0];
             break;
+
           case FoldMode.Stress:
             res = result.Element2DStressValues(elementlist,
                 _flayer, this.StressUnitResult)[0];
@@ -927,7 +928,7 @@ namespace GsaGH.Components
         return;
 
       RecordUndoEvent(this._mode.ToString() + " Parameters");
-      this._mode = FoldMode.Stress;
+      this._mode = FoldMode.Footfall;
 
       this._slider = false;
       this._defScale = 0;
