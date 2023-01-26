@@ -689,11 +689,23 @@ namespace GsaGH.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Forces2D {
+
+    /// <summary>
+    ///   Looks up a localized resource of type System.Drawing.Bitmap.
+    /// </summary>
+    public static System.Drawing.Bitmap Footfall
+    {
+      get
+      {
+        object obj = ResourceManager.GetObject("Footfall", resourceCulture);
+        return ((System.Drawing.Bitmap)(obj));
+      }
+    }
+
+    /// <summary>
+    ///   Looks up a localized resource of type System.Drawing.Bitmap.
+    /// </summary>
+    public static System.Drawing.Bitmap Forces2D {
             get {
                 object obj = ResourceManager.GetObject("Forces2D", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
