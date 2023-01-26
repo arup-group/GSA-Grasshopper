@@ -74,6 +74,16 @@ namespace GsaGH.Parameters
           Value.ZZ = true;
           return true;
         }
+        else if (mystring == "release" | mystring == "released" | mystring == "hinge" | mystring == "hinged" | mystring == "charnier")
+        {
+          Value.X = false;
+          Value.Y = false;
+          Value.Z = false;
+          Value.XX = false;
+          Value.YY = true;
+          Value.ZZ = true;
+          return true;
+        }
         else if (mystring.Length == 6)
         {
           if (mystring[0] == 'r')
@@ -117,16 +127,6 @@ namespace GsaGH.Parameters
             Value.ZZ = true;
           else
             return false;
-          return true;
-        }
-        else if (mystring == "release" | mystring == "released" | mystring == "hinge" | mystring == "hinged" | mystring == "charnier")
-        {
-          Value.X = false;
-          Value.Y = false;
-          Value.Z = false;
-          Value.XX = false;
-          Value.YY = true;
-          Value.ZZ = true;
           return true;
         }
         return false;
