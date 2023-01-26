@@ -1,5 +1,4 @@
-﻿using Grasshopper.Documentation;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysGH;
 using OasysGH.Parameters;
@@ -13,7 +12,7 @@ namespace GsaGH.Parameters
   {
     public static string Name => "Bool6";
     public static string NickName => "B6";
-    public static string Description => "GSA Bool6 (to set releases and restraints)";
+    public static string Description => "GSA Bool6 (A 6-character string to describe the restraint condition (F = Fixed, R = Released) for each degree of freedom)";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaBool6Goo(GsaBool6 item) : base(item) { }
@@ -75,6 +74,51 @@ namespace GsaGH.Parameters
           Value.ZZ = true;
           return true;
         }
+        else if (mystring.Length == 6)
+        {
+          if (mystring[0] == 'r')
+            Value.X = false;
+          else if (mystring[0] == 'f')
+            Value.X = true;
+          else
+            return false;
+
+          if (mystring[1] == 'r')
+            Value.Y = false;
+          else if (mystring[1] == 'f')
+            Value.Y = true;
+          else
+            return false;
+
+          if (mystring[2] == 'r')
+            Value.Z = false;
+          else if (mystring[2] == 'f')
+            Value.Z = true;
+          else
+            return false;
+
+          if (mystring[3] == 'r')
+            Value.XX = false;
+          else if (mystring[3] == 'f')
+            Value.XX = true;
+          else
+            return false;
+
+          if (mystring[4] == 'r')
+            Value.YY = false;
+          else if (mystring[4] == 'f')
+            Value.YY = true;
+          else
+            return false;
+
+          if (mystring[5] == 'r')
+            Value.ZZ = false;
+          else if (mystring[5] == 'f')
+            Value.ZZ = true;
+          else
+            return false;
+          return true;
+        }
         else if (mystring == "release" | mystring == "released" | mystring == "hinge" | mystring == "hinged" | mystring == "charnier")
         {
           Value.X = false;
@@ -85,53 +129,8 @@ namespace GsaGH.Parameters
           Value.ZZ = true;
           return true;
         }
-        else if (mystring.Length == 6)
-        {
-          if (mystring[0] == 'f')
-            Value.X = false;
-          else if (mystring[0] == 'r')
-            Value.X = true;
-          else
-            return false;
-
-          if (mystring[1] == 'f')
-            Value.Y = false;
-          else if (mystring[1] == 'r')
-            Value.Y = true;
-          else
-            return false;
-
-          if (mystring[2] == 'f')
-            Value.Z = false;
-          else if (mystring[2] == 'r')
-            Value.Z = true;
-          else
-            return false;
-
-          if (mystring[3] == 'f')
-            Value.XX = false;
-          else if (mystring[3] == 'r')
-            Value.XX = true;
-          else
-            return false;
-
-          if (mystring[4] == 'f')
-            Value.YY = false;
-          else if (mystring[4] == 'r')
-            Value.YY = true;
-          else
-            return false;
-
-          if (mystring[5] == 'f')
-            Value.ZZ = false;
-          else if (mystring[5] == 'r')
-            Value.ZZ = true;
-          else
-            return false;
-        }
         return false;
       }
-      
       return false;
     }
   }

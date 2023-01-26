@@ -59,17 +59,9 @@ namespace GsaGH.Components
           if (DA.GetData(1, ref gH_Plane))
             GH_Convert.ToPlane(gH_Plane, ref localAxis, GH_Conversion.Both);
 
-          GH_ObjectWrapper wrapper = new GH_ObjectWrapper();
-          if (DA.GetData(2, ref wrapper))
+          GsaBool6 bool6 = new GsaBool6();
+          if (DA.GetData(2, ref bool6))
           {
-            GsaBool6 bool6 = new GsaBool6();
-            GsaBool6Goo goo = new GsaBool6Goo(bool6);
-            if (wrapper.Value is GsaBool6Goo)
-              goo = (GsaBool6Goo)wrapper.Value;
-            else
-              goo.CastFrom(wrapper.Value);
-
-            bool6 = goo.Value;
             _x = bool6.X;
             _y = bool6.Y;
             _z = bool6.Z;
