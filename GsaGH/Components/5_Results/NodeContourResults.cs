@@ -89,15 +89,15 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.ResultType.Combination && result.SelectedPermutationIDs.Count > 1)
+          if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination Case " + result.CaseID + " contains "
                 + result.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
-          if (result.Type == GsaResult.ResultType.Combination)
+          if (result.Type == GsaResult.CaseType.Combination)
             _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
-          if (result.Type == GsaResult.ResultType.AnalysisCase)
+          if (result.Type == GsaResult.CaseType.AnalysisCase)
             _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
         }
         else
@@ -484,6 +484,9 @@ namespace GsaGH.Components
         DA.SetDataList(0, pts.OrderBy(x => x.Key).Select(y => y.Value).ToList());
         DA.SetDataList(1, cs);
         DA.SetDataList(2, ts);
+
+        GsaResultsValues.ResultType resultType = _mode == FoldMode.Reaction ? GsaResultsValues.ResultType.Force : (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType), _mode.ToString());
+        Helpers.Results.PostHog(result.Type, 0, resultType, this._disp.ToString());
       }
     }
 

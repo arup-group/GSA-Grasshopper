@@ -64,7 +64,7 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.ResultType.Combination)
+          if (result.Type == GsaResult.CaseType.Combination)
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Footfall Result only available for Analysis Cases");
             return;
@@ -94,25 +94,7 @@ namespace GsaGH.Components
         DA.SetData(0, res.dmax_x.Value);
         DA.SetData(1, tra.dmax_x.Value);
 
-        PostHogGWA("FootfallResultsComponent");
-      }
-    }
-
-    private void PostHogGWA(string gwa)
-    {
-      string[] commands = gwa.Split('\n');
-      foreach (string command in commands)
-      {
-        if (command == "") { continue; }
-        string key = command.Split('.')[0].Split(',')[0].Split('\t')[0].Split(' ')[0];
-        if (key == "") { continue; }
-        string eventName = "GwaCommand";
-        Dictionary<string, object> properties = new Dictionary<string, object>()
-        {
-          { key, command },
-          { "existingModel", this.Params.Input.Count > 0 },
-        };
-        _ = PostHog.SendToPostHog(GsaGH.PluginInfo.Instance, eventName, properties);
+        Helpers.Results.PostHog(result.Type, 0, GsaResultsValues.ResultType.Footfall, "Max");
       }
     }
   }

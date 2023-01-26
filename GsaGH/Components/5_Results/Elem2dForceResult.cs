@@ -199,6 +199,8 @@ namespace GsaGH.Components
         DA.SetDataTree(5, out_XX);
         DA.SetDataTree(6, out_YY);
         DA.SetDataTree(7, out_XXYY);
+
+        Helpers.Results.PostHog(result.Type, 2, GsaResultsValues.ResultType.Force);
       }
     }
 

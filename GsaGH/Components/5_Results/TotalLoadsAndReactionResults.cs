@@ -83,7 +83,7 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.ResultType.Combination)
+          if (result.Type == GsaResult.CaseType.Combination)
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Global Result only available for Analysis Cases");
             return;
@@ -125,6 +125,8 @@ namespace GsaGH.Components
         DA.SetData(i++, new GH_UnitNumber(rm.Y));
         DA.SetData(i++, new GH_UnitNumber(rm.Z));
         DA.SetData(i++, new GH_UnitNumber(rm.XYZ));
+
+        Helpers.Results.PostHog(result.Type, -1, "Global", "TotalLoadsAndReactions");
       }
     }
 
