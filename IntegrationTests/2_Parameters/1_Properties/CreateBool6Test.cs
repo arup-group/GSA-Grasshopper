@@ -72,6 +72,7 @@ namespace IntegrationTests.Parameters
     [InlineData("XX", false)]
     [InlineData("YY", true)]
     [InlineData("ZZ", false)]
+    [InlineData("Cast", true)]
     public void OutputTest(string groupIdentifier, bool expected)
     {
       GH_Document doc = Document;

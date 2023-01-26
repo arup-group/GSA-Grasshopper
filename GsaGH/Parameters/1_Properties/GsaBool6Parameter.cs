@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using OasysGH.Parameters;

@@ -1,18 +1,18 @@
 ﻿using System;
 using Grasshopper.Kernel;
-using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
-using GsaGH.Parameters;
-using OasysGH.Components;
-using OasysGH;
 using GsaGH.Helpers.GH;
+using GsaGH.Parameters;
+using OasysGH;
+using OasysGH.Components;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create new Node with restraints (support)
-    /// </summary>
-    public class CreateSupport : GH_OasysDropDownComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to create new Node with restraints (support)
+  /// </summary>
+  public class CreateSupport : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("d808e81f-6ae1-49d9-a8a5-2424a1763a69");
@@ -48,7 +48,6 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      string name = this.Params.Input[0].Name;
       GH_Point ghpt = new GH_Point();
       if (DA.GetData(0, ref ghpt))
       {
@@ -60,11 +59,17 @@ namespace GsaGH.Components
           if (DA.GetData(1, ref gH_Plane))
             GH_Convert.ToPlane(gH_Plane, ref localAxis, GH_Conversion.Both);
 
-          GsaNode node = new GsaNode(pt);
-
-          GsaBool6 bool6 = new GsaBool6();
-          if (DA.GetData(2, ref bool6))
+          GH_ObjectWrapper wrapper = new GH_ObjectWrapper();
+          if (DA.GetData(2, ref wrapper))
           {
+            GsaBool6 bool6 = new GsaBool6();
+            GsaBool6Goo goo = new GsaBool6Goo(bool6);
+            if (wrapper.Value is GsaBool6Goo)
+              goo = (GsaBool6Goo)wrapper.Value;
+            else
+              goo.CastFrom(wrapper.Value);
+
+            bool6 = goo.Value;
             _x = bool6.X;
             _y = bool6.Y;
             _z = bool6.Z;
@@ -77,6 +82,7 @@ namespace GsaGH.Components
           //if (DA.GetData(3, ref spring))
           //    node.Spring = spring;
 
+          GsaNode node = new GsaNode(pt);
           node.LocalAxis = localAxis;
 
           node.Restraint = new GsaBool6
@@ -93,7 +99,6 @@ namespace GsaGH.Components
         }
       }
     }
-
 
     #region Custom UI
     private bool _x;
@@ -134,6 +139,7 @@ namespace GsaGH.Components
       writer.SetBoolean("zz", (bool)_zz);
       return base.Write(writer);
     }
+
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       // when a GH file is opened we need to read in the data that was previously set by user
@@ -148,4 +154,3 @@ namespace GsaGH.Components
     #endregion
   }
 }
-

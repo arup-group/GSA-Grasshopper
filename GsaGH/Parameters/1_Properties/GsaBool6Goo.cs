@@ -1,6 +1,6 @@
-﻿using Grasshopper.Kernel;
+﻿using Grasshopper.Documentation;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using OasysGH;
 using OasysGH.Parameters;
 
@@ -43,8 +43,7 @@ namespace GsaGH.Parameters
       // Cast from string
       else if (GH_Convert.ToString(source, out string mystring, GH_Conversion.Both))
       {
-        mystring = mystring.Trim();
-        mystring = mystring.ToLower();
+        mystring = mystring.Trim().ToLower();
 
         if (mystring == "free")
         {
