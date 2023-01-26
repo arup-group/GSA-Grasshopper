@@ -5,10 +5,10 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Parameters
 {
-    /// <summary>
-    /// This class provides a parameter interface for the <see cref="GsaBool6Goo"/> type.
-    /// </summary>
-    public class GsaBool6Parameter : GH_OasysPersistentParam<GsaBool6Goo>
+  /// <summary>
+  /// This class provides a parameter interface for the <see cref="GsaBool6Goo"/> type.
+  /// </summary>
+  public class GsaBool6Parameter : GH_OasysPersistentParam<GsaBool6Goo>
   {
     public override string InstanceDescription => this.m_data.DataCount == 0 ? "Empty " + GsaBool6Goo.Name + " parameter" : base.InstanceDescription;
     public override string TypeName => this.SourceCount == 0 ? GsaBool6Goo.Name : base.TypeName;
@@ -28,6 +28,12 @@ namespace GsaGH.Parameters
     {
       if (data.GetType() == typeof(GsaBool6))
         return new GsaBool6Goo((GsaBool6)data);
+
+      GsaBool6Goo goo = new GsaBool6Goo(new GsaBool6());
+      bool flag = goo.CastFrom(data);
+      if (flag)
+        return goo;
+
       return base.PreferredCast(data);
     }
   }
