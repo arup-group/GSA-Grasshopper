@@ -73,6 +73,8 @@ namespace GsaGH.Components
     {
       // Result to work on
       GsaResult result = new GsaResult();
+      this._case = "";
+      this.resType = "";
 
       // Get Model
       GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -239,6 +241,8 @@ namespace GsaGH.Components
               resType = "2D Shear, Qx";
             else if (_mode == FoldMode.Stress)
               resType = "Stress, xx";
+            else if (_mode == FoldMode.Footfall)
+              resType = "Response Factor [-]";
             break;
           case (DisplayValue.Y):
             dmax = dmax_y;
