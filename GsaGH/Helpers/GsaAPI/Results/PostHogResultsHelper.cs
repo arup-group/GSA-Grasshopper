@@ -4,7 +4,7 @@ using System.Data;
 
 namespace GsaGH.Helpers
 {
-  internal class Results
+  internal class PostHogResultsHelper
   {
     internal static void PostHog(GsaResult.CaseType caseType, int dimension, GsaResultsValues.ResultType resultType, string subType = "-")
     {

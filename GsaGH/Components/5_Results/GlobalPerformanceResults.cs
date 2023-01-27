@@ -169,7 +169,7 @@ namespace GsaGH.Components
         else
           DA.SetData(i++, null);
 
-        Helpers.Results.PostHog(result.Type, -1, "Global", "Performance");
+        Helpers.PostHogResultsHelper.PostHog(result.Type, -1, "Global", "Performance");
       }
     }
 

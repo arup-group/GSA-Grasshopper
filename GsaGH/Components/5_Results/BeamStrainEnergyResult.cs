@@ -143,7 +143,7 @@ namespace GsaGH.Components
 
         DA.SetDataTree(0, out_transX);
 
-        Helpers.Results.PostHog(result.Type, 1, GsaResultsValues.ResultType.StrainEnergy);
+        Helpers.PostHogResultsHelper.PostHog(result.Type, 1, GsaResultsValues.ResultType.StrainEnergy);
       }
     }
 
