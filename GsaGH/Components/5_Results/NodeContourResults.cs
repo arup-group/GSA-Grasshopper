@@ -75,6 +75,8 @@ namespace GsaGH.Components
     {
       // Result to work on
       GsaResult result = new GsaResult();
+      this._case = "";
+      this.resType = "";
 
       // Get Model
       GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
