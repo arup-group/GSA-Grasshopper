@@ -157,6 +157,8 @@ namespace GsaGH.Components
                   out_X.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.ForceUnit))), p); // use ToUnit to capture changes in dropdown
                   out_Y.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.ForceUnit))), p);
                   out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.ForceUnit))), p);
+                  // Wood-Armer moment M*x is stored in .XYZ
+                  out_WAXX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.MomentUnit))), p);
                 }
               }
               if (thread == 1)
@@ -174,19 +176,8 @@ namespace GsaGH.Components
                   out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.MomentUnit))), p); // always use [rad] units
                   out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.MomentUnit))), p);
                   out_XXYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.MomentUnit))), p);
-                  
-                  out_WAXX.AddRange(res.Select(x => new GH_UnitNumber(new Force(
-                    x.Value.X.As(this.MomentUnit)                 // Mx
-                    + Math.Sign(x.Value.X.Value)                  // + sign(Mx)
-                    * Math.Abs(x.Value.Z.As(this.MomentUnit)),    // * abs(Mxy)
-                    this.MomentUnit
-                    ))), p);
-                  out_WAYY.AddRange(res.Select(x => new GH_UnitNumber(new Force(
-                    x.Value.Y.As(this.MomentUnit)                 // Mx
-                    + Math.Sign(x.Value.Y.Value)                  // + sign(Mx)
-                    * Math.Abs(x.Value.Z.As(this.MomentUnit)),    // * abs(Mxy)
-                    this.MomentUnit
-                    ))), p);
+                  // Wood-Armer moment M*y 
+                  out_WAYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.MomentUnit))), p);
                 }
               }
               if (thread == 2)
