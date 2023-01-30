@@ -124,7 +124,7 @@ namespace GsaGH.Components
 
           List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
 
-          for (int index = 0; index < vals.Count; index++)
+          for (int index = 0; index < permutations.Count; index++)
           {
             GH_Path p = new GH_Path(result.CaseID, permutations[index]);
 
