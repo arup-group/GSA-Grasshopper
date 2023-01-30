@@ -37,8 +37,8 @@ namespace GsaGHTests.GooWrappers
         [InlineData("hinge", false, false, false, false, true, true)]
         [InlineData("hinged", false, false, false, false, true, true)]
         [InlineData("charnier", false, false, false, false, true, true)]
-        [InlineData("ffffff", false, false, false, false, false, false)]
-        [InlineData("rrrrrr", true, true, true, true, true, true)]
+        [InlineData("rrrrrr", false, false, false, false, false, false)]
+        [InlineData("ffffff", true, true, true, true, true, true)]
         public void CastFromStringtest(string s, bool expectedX, bool expectedY, bool expectedZ, bool expectedXX, bool expectedYY, bool expectedZZ)
         {
             // Arrange

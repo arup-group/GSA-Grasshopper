@@ -372,12 +372,12 @@ namespace GsaGH.Parameters
 
     internal int CaseID { get; set; }
     internal string CaseName { get; set; }
-    public enum ResultType
+    public enum CaseType
     {
       AnalysisCase,
       Combination
     }
-    internal ResultType Type { get; set; }
+    internal CaseType Type { get; set; }
     internal GsaModel Model { get; set; }
 
     #region constructors
@@ -387,7 +387,7 @@ namespace GsaGH.Parameters
     {
       this.Model = model;
       this.AnalysisCaseResult = result;
-      this.Type = ResultType.AnalysisCase;
+      this.Type = CaseType.AnalysisCase;
       this.CaseID = caseID;
       this.CaseName = model.Model.AnalysisCaseName(this.CaseID);
     }
@@ -395,7 +395,7 @@ namespace GsaGH.Parameters
     {
       this.Model = model;
       this.CombinationCaseResult = result;
-      this.Type = ResultType.Combination;
+      this.Type = CaseType.Combination;
       this.CaseID = caseID;
       this.SelectedPermutationIDs = permutations.OrderBy(x => x).ToList();
     }
@@ -404,7 +404,7 @@ namespace GsaGH.Parameters
     {
       this.Model = model;
       this.CombinationCaseResult = result;
-      this.Type = ResultType.Combination;
+      this.Type = CaseType.Combination;
       this.CaseID = caseID;
       this.SelectedPermutationIDs = new List<int>() { permutation };
     }
@@ -423,7 +423,7 @@ namespace GsaGH.Parameters
     {
       if (nodelist.ToLower() == "all" || nodelist == "")
         nodelist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseNodeDisplacementValues.ContainsKey(nodelist)) // see if values exist
         {
@@ -467,7 +467,7 @@ namespace GsaGH.Parameters
     {
       if (nodelist.ToLower() == "all" || nodelist == "")
         nodelist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         Tuple<string, FootfallResultType> key = new Tuple<string, FootfallResultType>(nodelist, type);
         if (!this.ACaseNodeFootfallValues.ContainsKey(key)) // see if values exist
@@ -512,7 +512,7 @@ namespace GsaGH.Parameters
         nodelist = "All";
       }
 
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseNodeReactionForceValues.ContainsKey(nodelist)) // see if values exist
         {
@@ -573,7 +573,7 @@ namespace GsaGH.Parameters
         nodelist = "All";
       }
 
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseNodeReactionForceValues.ContainsKey(nodelist)) // see if values exist
         {
@@ -620,7 +620,7 @@ namespace GsaGH.Parameters
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement1DDisplacementValues.ContainsKey(key)) // see if values exist
         {
@@ -665,7 +665,7 @@ namespace GsaGH.Parameters
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, FootfallResultType> key = new Tuple<string, FootfallResultType>(elementlist, type);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement1DFootfallValues.ContainsKey(key)) // see if values exist
         {
@@ -697,7 +697,7 @@ namespace GsaGH.Parameters
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement1DForceValues.ContainsKey(key)) // see if values exist
         {
@@ -742,7 +742,7 @@ namespace GsaGH.Parameters
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement1DStrainEnergyDensityValues.ContainsKey(key)) // see if values exist
         {
@@ -787,7 +787,7 @@ namespace GsaGH.Parameters
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, 1);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement1DStrainEnergyDensityValues.ContainsKey(key)) // see if values exist
         {
@@ -831,7 +831,7 @@ namespace GsaGH.Parameters
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement2DDisplacementValues.ContainsKey(elementlist)) // see if values exist
         {
@@ -875,7 +875,7 @@ namespace GsaGH.Parameters
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, FootfallResultType> key = new Tuple<string, FootfallResultType>(elementlist, type);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement2DFootfallValues.ContainsKey(key)) // see if values exist
         {
@@ -906,7 +906,7 @@ namespace GsaGH.Parameters
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement2DForceValues.ContainsKey(elementlist)) // see if values exist
         {
@@ -950,7 +950,7 @@ namespace GsaGH.Parameters
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement2DShearValues.ContainsKey(elementlist)) // see if values exist
         {
@@ -996,7 +996,7 @@ namespace GsaGH.Parameters
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, double> key = new Tuple<string, double>(elementlist, layer);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement2DStressValues.ContainsKey(key)) // see if values exist
         {
@@ -1040,7 +1040,7 @@ namespace GsaGH.Parameters
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement3DDisplacementValues.ContainsKey(elementlist)) // see if values exist
         {
@@ -1084,7 +1084,7 @@ namespace GsaGH.Parameters
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement3DStressValues.ContainsKey(elementlist)) // see if values exist
         {
@@ -1123,9 +1123,9 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       string txt = "";
-      if (Type == ResultType.AnalysisCase)
+      if (Type == CaseType.AnalysisCase)
         txt = "A" + CaseID;
-      else if (Type == ResultType.Combination)
+      else if (Type == CaseType.Combination)
       {
         txt = "C" + CaseID;
         if (SelectedPermutationIDs.Count > 0)

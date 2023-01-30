@@ -86,15 +86,15 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.ResultType.Combination && result.SelectedPermutationIDs.Count > 1)
+          if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination case contains "
                 + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
-          if (result.Type == GsaResult.ResultType.Combination)
+          if (result.Type == GsaResult.CaseType.Combination)
             _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
-          if (result.Type == GsaResult.ResultType.AnalysisCase)
+          if (result.Type == GsaResult.CaseType.AnalysisCase)
             _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
         }
         else
@@ -160,7 +160,7 @@ namespace GsaGH.Components
 
         // get geometry for display from results class
         List<int> elementIDs = new List<int>();
-        if (result.Type == GsaResult.ResultType.AnalysisCase)
+        if (result.Type == GsaResult.CaseType.AnalysisCase)
           elementIDs = result.ACaseElement1DResults.Values.First().Select(x => x.Key).ToList();
         else
           elementIDs = result.ComboElement1DResults.Values.First().Select(x => x.Key).ToList();
