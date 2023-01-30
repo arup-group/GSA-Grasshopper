@@ -121,7 +121,7 @@ namespace GsaGH.Components
           List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
 
           // loop through all permutations (analysis case will just have one)
-          for (int index = 0; index < vals.Count; index++)
+          for (int index = 0; index < permutations.Count; index++)
           {
             if (vals[index].xyzResults.Count == 0 & vals[index].xxyyzzResults.Count == 0)
             {

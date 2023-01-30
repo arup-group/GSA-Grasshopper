@@ -305,6 +305,11 @@ namespace GsaGH.Components
           this.SelectedItems.Add("All");
           this.UpdatePermutations();
         }
+        else
+        {
+          this.DropDownItems[2] = new List<string>() { "All" };
+          this.SelectedItems[2] = "All";
+        }
         List<int?> ints = modelResults.Item3.Branch(new GH_Path(this._caseID));
         this.DropDownItems[2].AddRange(ints.Select(x => "P" + x.ToString()).ToList());
       }

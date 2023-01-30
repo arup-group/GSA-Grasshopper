@@ -216,11 +216,16 @@ namespace GsaGH.Components
           dmax_xx = (_isShear) ? 0 : res.dmax_xx.As(xxyyzzunit);
           dmax_yy = (_isShear) ? 0 : res.dmax_yy.As(xxyyzzunit);
           dmax_zz = (_isShear) ? 0 : res.dmax_zz.As(xxyyzzunit);
-          dmax_xxyyzz = 0;
+          dmax_xxyyzz = (_mode == FoldMode.Force) ? res.dmax_xxyyzz.As(xxyyzzunit) : 0;
           dmin_xx = (_isShear) ? 0 : res.dmin_xx.As(xxyyzzunit);
           dmin_yy = (_isShear) ? 0 : res.dmin_yy.As(xxyyzzunit);
           dmin_zz = (_isShear) ? 0 : res.dmin_zz.As(xxyyzzunit);
-          dmin_xxyyzz = 0;
+          dmin_xxyyzz = (_mode == FoldMode.Force) ? res.dmin_xxyyzz.As(xxyyzzunit) : 0; 
+        }
+        if (_mode == FoldMode.Force && _disp == DisplayValue.resXYZ)
+        {
+          dmax_xyz = res.dmax_xyz.As(xxyyzzunit);
+          dmin_xyz = res.dmin_xyz.As(xxyyzzunit);
         }
 
         #region Result mesh values
@@ -271,6 +276,8 @@ namespace GsaGH.Components
             dmin = dmin_xyz;
             if (_mode == FoldMode.Displacement)
               resType = "Res. Trans., |U|";
+            if (_mode == FoldMode.Force)
+              resType = "2D Moment, Mx+sgn(Mx)|Mxy|";
             break;
           case (DisplayValue.XX):
             dmax = dmax_xx;
@@ -297,12 +304,14 @@ namespace GsaGH.Components
               resType = "Stress, zy";
             break;
           case (DisplayValue.resXXYYZZ):
+            if (_mode == FoldMode.Force)
+              resType = "2D Moment, My+sgn(My)|Mxy|";
             dmax = dmax_xxyyzz;
             dmin = dmin_xxyyzz;
             break;
         }
 
-        List<double> rounded = Helpers.GsaAPI.ResultHelper.SmartRounder(dmax, dmin);
+        List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
         int significantDigits = (int)rounded[2];
@@ -367,7 +376,7 @@ namespace GsaGH.Components
               break;
 
             case (DisplayValue.resXYZ):
-              vals = xyzResults[key].Select(item => item.Value.XYZ.ToUnit(xyzunit)).ToList();
+              vals = xyzResults[key].Select(item => item.Value.XYZ.ToUnit(_mode == FoldMode.Force ? xxyyzzunit : xyzunit)).ToList();
               if (_mode == FoldMode.Displacement)
                 transformation = xyzResults[key].Select(item => new Vector3d(
                             item.Value.X.As(lengthUnit) * _defScale,
@@ -597,7 +606,9 @@ namespace GsaGH.Components
             "Shear Qy",
             "Moment Mx",
             "Moment My",
-            "Moment Mxy"
+            "Moment Mxy",
+            "Wood-Armer M*x",
+            "Wood-Armer M*y",
     });
 
     List<string> _stress = new List<string>(new string[]
@@ -787,6 +798,10 @@ namespace GsaGH.Components
             else if (j > 4)
               this._disp = (DisplayValue)j - 1;
 
+            if (j == 8)
+              this._disp = DisplayValue.resXYZ;
+            if (j == 9)
+              this._disp = DisplayValue.resXXYYZZ;
           }
           else if (this._mode == FoldMode.Force || this._mode == FoldMode.Stress)
           {

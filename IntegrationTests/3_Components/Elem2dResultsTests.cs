@@ -123,5 +123,25 @@ namespace IntegrationTests.Components
       for (int i = 0; i < expectedVals.Length; i++)
         Assert.Equal(expectedVals[i], output[i].Value, precision);
     }
+
+    [Theory]
+    [InlineData("NxComb", new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }, 1)]
+    [InlineData("NyComb", new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }, 1)]
+    [InlineData("NxyComb", new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }, 1)]
+    [InlineData("QxComb", new double[] { 11.005, 17.088, -4.239, -3.623, 14.047, 6.425, -3.931, 3.691, 5.058 }, 3)]
+    [InlineData("QyComb", new double[] { 11.005, -3.623, -4.239, 17.088, 3.691, -3.931, 6.425, 14.047, 5.058 }, 3)]
+    [InlineData("MxComb", new double[] { 1.634, 3.916, 7.018, 14.30, 2.476, 3.974, 10.361, 6.474, 4.9254 }, 3)]
+    [InlineData("MyComb", new double[] { 1.634, 14.30, 7.018, 3.916, 6.474, 10.361, 3.974, 2.476, 4.9254 }, 3)]
+    [InlineData("MxyComb", new double[] { -0.4632, 1.336, 12.692, 1.336, 0.8351, 7.413, 7.413, 0.8351, 4.522 }, 3)]
+    [InlineData("M*xComb", new double[] { 2.097, 5.253, 19.71, 15.637, 3.311, 11.387, 17.773, 7.309, 9.448 }, 3)]
+    [InlineData("M*yComb", new double[] { 2.097, 15.637, 19.71, 5.253, 7.309, 17.773, 11.387, 3.311, 9.448 }, 3)]
+    public void Elem2dForceCombinationTests(string name, double[] expectedVals, int precision = 6)
+    {
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, name);
+      List<GH_Number> output = (List<GH_Number>)param.VolatileData.get_Branch(0);
+      for (int i = 0; i < expectedVals.Length; i++)
+        Assert.Equal(expectedVals[i], output[i].Value, precision);
+    }
   }
 }

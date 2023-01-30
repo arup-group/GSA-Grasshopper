@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -68,8 +69,10 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Shear X [" + forceunitAbbreviation + "]", "Qx", "Element through thickness Shears in Local XZ-plane." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Shear Y [" + forceunitAbbreviation + "]", "Qz", "Element through thickness Shears in Local YZ-plane." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment X [" + momentunitAbbreviation + "]", "Mx", "Element Moments around Local Element X-axis." + momentrule + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment Y [" + momentunitAbbreviation + "]", "My", "Element Moments around Local Element X-axis." + momentrule + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Moment Y [" + momentunitAbbreviation + "]", "My", "Element Moments around Local Element Y-axis." + momentrule + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XY [" + momentunitAbbreviation + "]", "Mxy", "Element Moments around Local Element XY-axis." + momentrule + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Wood-Armer X [" + momentunitAbbreviation + "]", "M*x", "Element Wood-Armer Moments (Mx + sgn(Mx)·|Mxy|) around Local Element X-axis." + momentrule + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Wood-Armer Y [" + momentunitAbbreviation + "]", "M*y", "Element Wood-Armer Moments (My + sgn(My)·|Mxy|) around Local Element Y-axis." + momentrule + note, GH_ParamAccess.tree);
     }
     #endregion
 
@@ -96,6 +99,8 @@ namespace GsaGH.Components
       DataTree<GH_UnitNumber> out_XX = new DataTree<GH_UnitNumber>();
       DataTree<GH_UnitNumber> out_YY = new DataTree<GH_UnitNumber>();
       DataTree<GH_UnitNumber> out_XXYY = new DataTree<GH_UnitNumber>();
+      DataTree<GH_UnitNumber> out_WAXX = new DataTree<GH_UnitNumber>();
+      DataTree<GH_UnitNumber> out_WAYY = new DataTree<GH_UnitNumber>();
 
       // Get Model
       List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
@@ -127,7 +132,7 @@ namespace GsaGH.Components
           List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
 
           // loop through all permutations (analysis case will just have one)
-          for (int index = 0; index < vals.Count; index++)
+          for (int index = 0; index < permutations.Count; index++)
           {
             if (vals[index].xyzResults.Count == 0 & vals[index].xxyyzzResults.Count == 0)
             {
@@ -149,9 +154,11 @@ namespace GsaGH.Components
 
                   GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_X.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(ForceUnit))), p); // use ToUnit to capture changes in dropdown
-                  out_Y.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(ForceUnit))), p);
-                  out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(ForceUnit))), p);
+                  out_X.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.ForceUnit))), p); // use ToUnit to capture changes in dropdown
+                  out_Y.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.ForceUnit))), p);
+                  out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.ForceUnit))), p);
+                  // Wood-Armer moment M*x is stored in .XYZ
+                  out_WAXX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.MomentUnit))), p);
                 }
               }
               if (thread == 1)
@@ -166,9 +173,11 @@ namespace GsaGH.Components
 
                   GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
 
-                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(MomentUnit))), p); // always use [rad] units
-                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(MomentUnit))), p);
-                  out_XXYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(MomentUnit))), p);
+                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.MomentUnit))), p); // always use [rad] units
+                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.MomentUnit))), p);
+                  out_XXYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.MomentUnit))), p);
+                  // Wood-Armer moment M*y 
+                  out_WAYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.MomentUnit))), p);
                 }
               }
               if (thread == 2)
@@ -201,6 +210,8 @@ namespace GsaGH.Components
         DA.SetDataTree(7, out_XXYY);
 
         Helpers.PostHogResultsHelper.PostHog(result.Type, 2, GsaResultsValues.ResultType.Force);
+        DA.SetDataTree(8, out_WAXX);
+        DA.SetDataTree(9, out_WAYY);
       }
     }
 
@@ -248,6 +259,28 @@ namespace GsaGH.Components
     {
       string forceunitAbbreviation = ForcePerLength.GetAbbreviation(this.ForceUnit);
       string momentunitAbbreviation = Force.GetAbbreviation(this.MomentUnit);
+
+      if (this.Params.Output.Count != 10)
+      {
+        this.Params.RegisterOutputParam(new Param_GenericObject());
+        string momentrule = Environment.NewLine + "+ve moments correspond to +ve stress on the top (eg. Mx +ve if top Sxx +ve)";
+        string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
+                      Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
+                      Environment.NewLine + "branch contains a list of results in the following order: " +
+                      Environment.NewLine + "Vertex(1), Vertex(2), ..., Vertex(i), Centre" +
+                      Environment.NewLine + "Element results are NOT averaged at nodes";
+        Params.Output[8].NickName = "M*x";
+        Params.Output[8].Description = "Element Wood-Armer Moments (Mx + sgn(Mx)·|Mxy|) around Local Element X-axis." + momentrule + note;
+        Params.Output[8].Access = GH_ParamAccess.tree;
+        
+        this.Params.RegisterOutputParam(new Param_GenericObject());
+        Params.Output[9].NickName = "M*y";
+        Params.Output[9].Description = "Element Wood-Armer Moments (My + sgn(My)·|Mxy|) around Local Element Y-axis." + momentrule + note;
+        Params.Output[9].Access = GH_ParamAccess.tree;
+
+        Params.Output[6].Description = "Element Moments around Local Element Y-axis." + momentrule + note;
+      }
+
       int i = 0;
       Params.Output[i++].Name = "Force X [" + forceunitAbbreviation + "]";
       Params.Output[i++].Name = "Force Y [" + forceunitAbbreviation + "]";
@@ -257,6 +290,8 @@ namespace GsaGH.Components
       Params.Output[i++].Name = "Moment X [" + momentunitAbbreviation + "]";
       Params.Output[i++].Name = "Moment Y [" + momentunitAbbreviation + "]";
       Params.Output[i++].Name = "Moment XY [" + momentunitAbbreviation + "]";
+      Params.Output[i++].Name = "Wood-Armer X [" + momentunitAbbreviation + "]";
+      Params.Output[i++].Name = "Wood-Armer Y [" + momentunitAbbreviation + "]";
     }
     #endregion
   }
