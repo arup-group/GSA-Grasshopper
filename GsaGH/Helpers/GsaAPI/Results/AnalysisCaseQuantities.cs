@@ -196,8 +196,8 @@ namespace GsaGH.Helpers.GsaAPI
         ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xxyyzzRes.AsParallel().AsOrdered();
 
-        List<Tensor2> forces = elementResults.Force.ToList();
-        List<Tensor2> moments = elementResults.Moment.ToList();
+        ReadOnlyCollection<Tensor2> forces = elementResults.Force;
+        ReadOnlyCollection<Tensor2> moments = elementResults.Moment;
         Parallel.For(1, forces.Count + moments.Count, i => // (Tensor2 force in forces)
               {
             if (i == forces.Count)
