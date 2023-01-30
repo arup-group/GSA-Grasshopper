@@ -246,22 +246,23 @@ namespace GsaGH.Helpers.GsaAPI
           // lists for results
           ReadOnlyCollection<Element2DResult> results = globalResults[key];
           Element2DResult result = results[permutationID - 1];
-          ReadOnlyCollection<Tensor2> values = result.Force;
-          if (values.Count == 0) { return; }
+          ReadOnlyCollection<Tensor2> forceValues = result.Force;
+          ReadOnlyCollection<Tensor2> momentValues = result.Moment;
+          if (forceValues.Count == 0) { return; }
           ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xyzRes.AsParallel().AsOrdered();
           ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
           xxyyzzRes.AsParallel().AsOrdered();
 
           // loop through the results
-          Parallel.For(1, values.Count, i =>
+          Parallel.For(1, forceValues.Count, i =>
           {
             // add the values to the vector lists
-            xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit));
-            xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], momentUnit));
+            xyzRes.TryAdd(i, GetQuantityResult(forceValues[i], forceUnit));
+            xxyyzzRes.TryAdd(i, GetQuantityResult(momentValues[i], momentUnit));
           });
-          xyzRes.TryAdd(values.Count, GetQuantityResult(values[0], forceUnit)); // add centre point last
-          xxyyzzRes.TryAdd(values.Count, GetQuantityResult(values[0], momentUnit)); // add centre point last
+          xyzRes.TryAdd(forceValues.Count, GetQuantityResult(forceValues[0], forceUnit)); // add centre point last
+          xxyyzzRes.TryAdd(forceValues.Count, GetQuantityResult(momentValues[0], momentUnit)); // add centre point last
                                                                                     // add the vector list to the out tree
           r.xyzResults.TryAdd(key, xyzRes);
           r.xxyyzzResults.TryAdd(key, xxyyzzRes);
