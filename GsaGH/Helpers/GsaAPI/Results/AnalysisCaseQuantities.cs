@@ -199,12 +199,12 @@ namespace GsaGH.Helpers.GsaAPI
         ReadOnlyCollection<Tensor2> forces = elementResults.Force;
         ReadOnlyCollection<Tensor2> moments = elementResults.Moment;
         Parallel.For(1, forces.Count + moments.Count, i => // (Tensor2 force in forces)
-              {
+          {
             if (i == forces.Count)
               return;
 
-                  // combine forces and momemts (list lengths must be the same) to run
-                  // calculations in parallel by doubling the i-counter
+            // combine forces and momemts (list lengths must be the same) to run
+            // calculations in parallel by doubling the i-counter
             if (i < forces.Count)
               xyzRes[i] = GetQuantityResult(forces[i], forceUnit);
             else
@@ -213,7 +213,22 @@ namespace GsaGH.Helpers.GsaAPI
         xyzRes[forces.Count] = GetQuantityResult(forces[0], forceUnit); // add centre point at the end
         xxyyzzRes[moments.Count] = GetQuantityResult(moments[0], momentUnit);
 
-              // add vector lists to main lists
+        // Wood-Armer moments as xyz (M*x) and xxyyzz (M*y)
+        Parallel.ForEach(xxyyzzRes.Keys, i =>
+        {
+          xyzRes[i].XYZ = new Force(
+                    xxyyzzRes[i].X.Value              // Mx
+                    + Math.Sign(xxyyzzRes[i].X.Value) // + sign(Mx)
+                    * Math.Abs(xxyyzzRes[i].Z.Value), // * abs(Mxy)
+                    momentUnit);
+          xxyyzzRes[i].XYZ = new Force(
+                    xxyyzzRes[i].Y.Value              // Mx
+                    + Math.Sign(xxyyzzRes[i].Y.Value) // + sign(Mx)
+                    * Math.Abs(xxyyzzRes[i].Z.Value), // * abs(Mxy)
+                    momentUnit);
+        });
+
+        // add vector lists to main lists
         r.xyzResults.TryAdd(key, xyzRes);
         r.xxyyzzResults.TryAdd(key, xxyyzzRes);
       });

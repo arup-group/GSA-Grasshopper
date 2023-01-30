@@ -263,7 +263,23 @@ namespace GsaGH.Helpers.GsaAPI
           });
           xyzRes.TryAdd(forceValues.Count, GetQuantityResult(forceValues[0], forceUnit)); // add centre point last
           xxyyzzRes.TryAdd(forceValues.Count, GetQuantityResult(momentValues[0], momentUnit)); // add centre point last
-                                                                                    // add the vector list to the out tree
+
+          // Wood-Armer moments as xyz (M*x) and xxyyzz (M*y)
+          Parallel.ForEach(xxyyzzRes.Keys, i =>
+          {
+            xyzRes[i].XYZ = new Force(
+                      xxyyzzRes[i].X.Value              // Mx
+                      + Math.Sign(xxyyzzRes[i].X.Value) // + sign(Mx)
+                      * Math.Abs(xxyyzzRes[i].Z.Value), // * abs(Mxy)
+                      momentUnit);
+            xxyyzzRes[i].XYZ = new Force(
+                      xxyyzzRes[i].Y.Value              // Mx
+                      + Math.Sign(xxyyzzRes[i].Y.Value) // + sign(Mx)
+                      * Math.Abs(xxyyzzRes[i].Z.Value), // * abs(Mxy)
+                      momentUnit);
+          });
+
+          // add the vector list to the out tree
           r.xyzResults.TryAdd(key, xyzRes);
           r.xxyyzzResults.TryAdd(key, xxyyzzRes);
         });
