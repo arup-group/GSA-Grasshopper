@@ -22,6 +22,7 @@ using Rhino.Display;
 using Rhino.Geometry;
 using GsaGH.Helpers.GH;
 using System.Collections.ObjectModel;
+using Grasshopper.Kernel.Parameters;
 
 namespace GsaGH.Components
 {
@@ -55,9 +56,11 @@ namespace GsaGH.Components
       pManager.AddColourParameter("Colour", "Co", "Optional list of colours to override default colours." +
           Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
       pManager.AddNumberParameter("Scalar", "x:X", "Scale the result display size", GH_ParamAccess.item, 10);
+      pManager.AddIntervalParameter("Min/Max Domain", "I", "Opitonal Domain for custom Min to Max contour colours", GH_ParamAccess.item);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
+      pManager[4].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -139,6 +142,12 @@ namespace GsaGH.Components
         DA.GetData(3, ref gh_Scale);
         double scale = 1;
         GH_Convert.ToDouble(gh_Scale, out scale, GH_Conversion.Both);
+
+        // Get interval min/max
+        GH_Interval gH_Interval = new GH_Interval();
+        Interval customMinMax = Interval.Unset;
+        if (DA.GetData(4, ref gH_Interval))
+          GH_Convert.ToInterval(gH_Interval, ref customMinMax, GH_Conversion.Both);
         #endregion
 
         // get stuff for drawing
@@ -275,10 +284,20 @@ namespace GsaGH.Components
         if (_mode == FoldMode.Footfall)
           resType = "Response Factor [-]";
 
+        if (customMinMax != Interval.Unset)
+        {
+          dmin = customMinMax.Min;
+          dmax = customMinMax.Max;
+        }
         List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
         int significantDigits = (int)rounded[2];
+        if (customMinMax != Interval.Unset)
+        {
+          dmin = customMinMax.Min;
+          dmax = customMinMax.Max;
+        }
 
         // Loop through nodes and set result colour into ResultPoint format
         ConcurrentDictionary<int, PointResultGoo> pts = new ConcurrentDictionary<int, PointResultGoo>();
@@ -645,6 +664,16 @@ namespace GsaGH.Components
 
     public override void VariableParameterMaintenance()
     {
+      if (this.Params.Input.Count != 5)
+      {
+        this.Params.RegisterInputParam(new Param_Interval2D());
+        this.Params.Output[4].Name = "Min/Max Domain";
+        this.Params.Output[4].NickName = "I";
+        this.Params.Output[4].Description = "Opitonal Domain for custom Min to Max contour colours";
+        this.Params.Output[4].Optional = true;
+        this.Params.Output[4].Access = GH_ParamAccess.item;
+      }
+
       if (this._mode == FoldMode.Displacement)
       {
         if ((int)_disp < 4)

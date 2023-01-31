@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
@@ -55,8 +56,10 @@ namespace GsaGH.Components
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddColourParameter("Colour", "Co", "Optional list of colours to override default colours" +
           Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
+      pManager.AddIntervalParameter("Min/Max Domain", "I", "Opitonal Domain for custom Min to Max contour colours", GH_ParamAccess.item);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
+      pManager[3].Optional = true;
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
@@ -128,6 +131,12 @@ namespace GsaGH.Components
           }
         }
         Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = Helpers.Graphics.Colours.Stress_Gradient(colors);
+
+        // Get interval min/max
+        GH_Interval gH_Interval = new GH_Interval();
+        Interval customMinMax = Interval.Unset;
+        if (DA.GetData(3, ref gH_Interval))
+          GH_Convert.ToInterval(gH_Interval, ref customMinMax, GH_Conversion.Both);
 
         #endregion
         // get results from results class
@@ -220,7 +229,7 @@ namespace GsaGH.Components
           dmin_xx = (_isShear) ? 0 : res.dmin_xx.As(xxyyzzunit);
           dmin_yy = (_isShear) ? 0 : res.dmin_yy.As(xxyyzzunit);
           dmin_zz = (_isShear) ? 0 : res.dmin_zz.As(xxyyzzunit);
-          dmin_xxyyzz = (_mode == FoldMode.Force) ? res.dmin_xxyyzz.As(xxyyzzunit) : 0; 
+          dmin_xxyyzz = (_mode == FoldMode.Force) ? res.dmin_xxyyzz.As(xxyyzzunit) : 0;
         }
         if (_mode == FoldMode.Force && _disp == DisplayValue.resXYZ)
         {
@@ -310,11 +319,20 @@ namespace GsaGH.Components
             dmin = dmin_xxyyzz;
             break;
         }
-
+        if (customMinMax != Interval.Unset)
+        {
+          dmin = customMinMax.Min;
+          dmax = customMinMax.Max;
+        }
         List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
         int significantDigits = (int)rounded[2];
+        if (customMinMax != Interval.Unset)
+        {
+          dmin = customMinMax.Min;
+          dmax = customMinMax.Max;
+        }
 
         #region create mesh
         MeshResultGoo resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(), new List<List<Point3d>>());
@@ -836,6 +854,16 @@ namespace GsaGH.Components
 
     public override void VariableParameterMaintenance()
     {
+      if (this.Params.Input.Count != 4)
+      {
+        this.Params.RegisterInputParam(new Param_Interval2D());
+        this.Params.Output[3].Name = "Min/Max Domain";
+        this.Params.Output[3].NickName = "I";
+        this.Params.Output[3].Description = "Opitonal Domain for custom Min to Max contour colours";
+        this.Params.Output[3].Optional = true;
+        this.Params.Output[3].Access = GH_ParamAccess.item;
+      }
+
       if (_mode == FoldMode.Displacement)
       {
         if ((int)_disp < 4)
@@ -1141,6 +1169,7 @@ namespace GsaGH.Components
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
       _showLegend = reader.GetBoolean("legend");
+
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       this.LengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
       this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), reader.GetString("force"));
