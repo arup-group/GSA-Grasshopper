@@ -28,6 +28,7 @@ namespace GsaGH.Helpers.GsaAPI
       // Construct and initialize settings for a second AppDomain.
       AppDomainSetup ads = new AppDomainSetup();
       ads.ApplicationBase = Path.GetDirectoryName(path);
+      ads.PrivateBinPath = @"x64";
       ads.DisallowBindingRedirects = false;
       ads.DisallowCodeDownload = true;
       ads.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
