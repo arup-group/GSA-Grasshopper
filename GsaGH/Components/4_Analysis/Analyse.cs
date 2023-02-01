@@ -153,9 +153,10 @@ namespace GsaGH.Components
           if (!GsaGH.SolverRequiredDll.IsCorrectVersionLoaded())
           {
             tryAnalyse = false;
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "A dll required to run analysis has been previously loaded by another application. Please remove this file and try again:");
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, GsaGH.SolverRequiredDll.loadedFromPath);
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Either uninstall the host application or delete the file.");
+            string message = "A dll required to run analysis has been previously loaded by another application. Please remove this file and try again:" + System.Environment.NewLine
+             + System.Environment.NewLine + GsaGH.SolverRequiredDll.loadedFromPath 
+            +System.Environment.NewLine + "Either uninstall the host application or delete the file.";
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, message);
           }
         }
 
