@@ -48,6 +48,7 @@ namespace GsaGH.Helpers.Export
       ReadOnlyDictionary<int, Prop3D> p3Dict = model.Prop3Ds();
       ReadOnlyDictionary<int, AnalysisMaterial> amDict = model.AnalysisMaterials();
       ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
+      ReadOnlyDictionary<int, Axis> axDict = model.Axes();
       // populate local axes dictionary
       Dictionary<int, ReadOnlyCollection<double>> localElemAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
       foreach (int id in eDict.Keys)
@@ -65,7 +66,7 @@ namespace GsaGH.Helpers.Export
 
       // get elements
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Import.Elements.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localElemAxesDict, LengthUnit.Meter, true);
+          = Import.Elements.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localElemAxesDict, axDict, LengthUnit.Meter, true);
       // convert from Goo-type
       List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -83,7 +84,7 @@ namespace GsaGH.Helpers.Export
 
       // get members
       Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-          = Import.Members.GetMembers(mDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localMemAxesDict, LengthUnit.Meter, true);
+          = Import.Members.GetMembers(mDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localMemAxesDict, axDict, LengthUnit.Meter, true);
       // convert from Goo-type
       List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -99,7 +100,7 @@ namespace GsaGH.Helpers.Export
       List<GsaSection> sections = goosections.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
       sections.Select(c => { c.Id = 0; return c; }).ToList();
-      List<GsaProp2dGoo> gooprop2Ds = Import.Properties.GetProp2ds(pDict, model.AnalysisMaterials());
+      List<GsaProp2dGoo> gooprop2Ds = Import.Properties.GetProp2ds(pDict, model.AnalysisMaterials(), axDict);
       // convert from Goo-type
       List<GsaProp2d> prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -119,7 +120,6 @@ namespace GsaGH.Helpers.Export
 
       IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
       IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
-      IReadOnlyDictionary<int, Axis> axDict = model.Axes();
 
       gooloads.AddRange(Import.Loads.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict, LengthUnit.Meter));
       gooloads.AddRange(Import.Loads.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict, LengthUnit.Meter));

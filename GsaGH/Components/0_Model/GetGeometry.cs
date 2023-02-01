@@ -128,7 +128,7 @@ namespace GsaGH.Components
           {
             // create elements
             Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Helpers.Import.Elements.GetElements(eDict, allnDict, sDict, pDict, p3Dict, matDict, modDict, elementLocalAxesDict, this.LengthUnit, false);
+          = Helpers.Import.Elements.GetElements(eDict, allnDict, sDict, pDict, p3Dict, matDict, modDict, elementLocalAxesDict, axDict, this.LengthUnit, false);
 
             results.Elem1ds = elementTuple.Item1;
             results.Elem2ds = elementTuple.Item2;
@@ -139,7 +139,7 @@ namespace GsaGH.Components
           {
             // create members
             Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-          = Helpers.Import.Members.GetMembers(mDict, allnDict, sDict, pDict, p3Dict, matDict, modDict, memberLocalAxesDict, this.LengthUnit, false, this);
+          = Helpers.Import.Members.GetMembers(mDict, allnDict, sDict, pDict, p3Dict, matDict, modDict, memberLocalAxesDict, axDict, this.LengthUnit, false, this);
 
             results.Mem1ds = memberTuple.Item1;
             results.Mem2ds = memberTuple.Item2;

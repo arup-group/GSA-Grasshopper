@@ -70,7 +70,7 @@ namespace GsaGH.Helpers.Export
 
       // ### Prop2ds ###
       GsaGuidDictionary<Prop2D> apiProp2ds = new GsaGuidDictionary<Prop2D>(gsa.Prop2Ds());
-      Prop2ds.ConvertProp2d(prop2Ds, ref apiProp2ds, ref apiMaterials);
+      Prop2ds.ConvertProp2d(prop2Ds, ref apiProp2ds, ref apiMaterials, ref apiaxes, modelUnit);
 
       // ### Prop3ds ###
       GsaGuidDictionary<Prop3D> apiProp3ds = new GsaGuidDictionary<Prop3D>(gsa.Prop3Ds());
@@ -80,14 +80,14 @@ namespace GsaGH.Helpers.Export
       #region Elements
       GsaGuidIntListDictionary<Element> apiElements = new GsaGuidIntListDictionary<Element>(gsa.Elements());
       Elements.ConvertElement1D(elem1ds, ref apiElements, ref apiNodes, modelUnit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
-      Elements.ConvertElement2D(elem2ds, ref apiElements, ref apiNodes, modelUnit, ref apiProp2ds, ref apiMaterials);
+      Elements.ConvertElement2D(elem2ds, ref apiElements, ref apiNodes, modelUnit, ref apiProp2ds, ref apiMaterials, ref apiaxes);
       Elements.ConvertElement3D(elem3ds, ref apiElements, ref apiNodes, modelUnit, ref apiProp3ds, ref apiMaterials);
       #endregion
 
       #region Members
       GsaGuidDictionary<Member> apiMembers = new GsaGuidDictionary<Member>(gsa.Members());
       Members.ConvertMember1D(mem1ds, ref apiMembers, ref apiNodes, modelUnit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
-      Members.ConvertMember2D(mem2ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp2ds, ref apiMaterials);
+      Members.ConvertMember2D(mem2ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp2ds, ref apiMaterials, ref apiaxes);
       Members.ConvertMember3D(mem3ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp3ds, ref apiMaterials);
       #endregion
 

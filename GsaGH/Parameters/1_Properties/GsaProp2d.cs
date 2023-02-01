@@ -10,6 +10,7 @@ using OasysGH;
 using GsaGH.Helpers.GsaAPI;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel.Types;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
@@ -23,6 +24,7 @@ namespace GsaGH.Parameters
     private Guid _guid = Guid.NewGuid();
     private GsaMaterial _material = new GsaMaterial();
     private Prop2D _prop2d = new Prop2D();
+    private Plane _localAxis = Plane.Unset;
     #endregion
 
     #region properties
@@ -181,6 +183,19 @@ namespace GsaGH.Parameters
         return this._guid;
       }
     }
+    public Plane LocalAxis
+    {
+      get
+      {
+        return this._localAxis;
+      }
+      set
+      {
+        this._localAxis = value;
+        CloneApiObject();
+        this._prop2d.AxisProperty = -2;
+      }
+    }
     #endregion
 
     #region constructors
@@ -200,7 +215,7 @@ namespace GsaGH.Parameters
       this._id = id;
     }
 
-    internal GsaProp2d(ReadOnlyDictionary<int, Prop2D> pDict, int id, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id)
+    internal GsaProp2d(ReadOnlyDictionary<int, Prop2D> pDict, int id, ReadOnlyDictionary<int, AnalysisMaterial> matDict, ReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) : this(id)
     {
       if (!pDict.ContainsKey(id))
         return;
@@ -209,6 +224,20 @@ namespace GsaGH.Parameters
       // material
       if (this._prop2d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(this._prop2d.MaterialAnalysisProperty))
         this._material.AnalysisMaterial = matDict[this._prop2d.MaterialAnalysisProperty];
+      if (this._prop2d.AxisProperty > 0)
+      {
+        if (axDict != null && axDict.ContainsKey(this._prop2d.AxisProperty))
+        {
+          Axis ax = axDict[this._prop2d.AxisProperty];
+          this.LocalAxis = new Plane(new Point3d(
+            new Length(ax.Origin.X, LengthUnit.Meter).As(unit), 
+            new Length(ax.Origin.Y, LengthUnit.Meter).As(unit), 
+            new Length(ax.Origin.Z, LengthUnit.Meter).As(unit)),
+            new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
+            new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z)
+            );
+        }
+      }
       this._material = new GsaMaterial(this);
     }
     #endregion
@@ -224,6 +253,7 @@ namespace GsaGH.Parameters
         _id = this._id,
         _material = this._material.Duplicate(),
         _guid = new Guid(this._guid.ToString()),
+        _localAxis = new Plane(this._localAxis),
         IsReferencedByID = this.IsReferencedByID
       };
       if (cloneApiElement)

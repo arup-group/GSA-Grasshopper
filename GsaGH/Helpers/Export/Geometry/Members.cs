@@ -95,7 +95,7 @@ namespace GsaGH.Helpers.Export
 
     internal static void ConvertMember2D(GsaMember2d member2d,
         ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
-        ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
+        ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes)
     {
       Member apiMember = member2d.GetAPI_MemberClone();
       apiMember.MeshSize = new Length(member2d.MeshSize, unit).Meters;
@@ -124,21 +124,21 @@ namespace GsaGH.Helpers.Export
         throw new Exception(" Invalid topology for Member2d: " + topo + " with original points: " + error);
       }
 
-      apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref apiProp2ds, ref apiMaterials);
+      apiMember.Property = Prop2ds.ConvertProp2d(member2d.Property, ref apiProp2ds, ref apiMaterials, ref existingAxes, unit);
 
       AddMember(member2d.Id, member2d.Guid, apiMember, ref apiMembers);
     }
 
     internal static void ConvertMember2D(List<GsaMember2d> member2ds,
         ref GsaGuidDictionary<Member> apiMembers, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
-        ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
+        ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes)
     {
       if (member2ds != null)
       {
         member2ds = member2ds.OrderByDescending(x => x.Id).ToList();
         for (int i = 0; i < member2ds.Count; i++)
           if (member2ds[i] != null)
-            ConvertMember2D(member2ds[i], ref apiMembers, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials);
+            ConvertMember2D(member2ds[i], ref apiMembers, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials, ref existingAxes);
       }
     }
     #endregion

@@ -21,7 +21,7 @@ namespace GsaGH.Helpers.Import
     internal static Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>
         GetMembers(ReadOnlyDictionary<int, Member> mDict, ReadOnlyDictionary<int, Node> nDict,
         ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict, ReadOnlyDictionary<int, Prop3D> p3Dict,
-        ReadOnlyDictionary<int, AnalysisMaterial> matDict, ReadOnlyDictionary<int, SectionModifier> modDict, Dictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit, bool duplicateApiObjects, GH_Component owner = null)
+        ReadOnlyDictionary<int, AnalysisMaterial> matDict, ReadOnlyDictionary<int, SectionModifier> modDict, Dictionary<int, ReadOnlyCollection<double>> localAxesDict, ReadOnlyDictionary<int, Axis> axDict, LengthUnit modelUnit, bool duplicateApiObjects, GH_Component owner = null)
     {
       ConcurrentBag<GsaMember1dGoo> mem1ds = new ConcurrentBag<GsaMember1dGoo>();
       ConcurrentBag<GsaMember2dGoo> mem2ds = new ConcurrentBag<GsaMember2dGoo>();
@@ -165,7 +165,7 @@ namespace GsaGH.Helpers.Import
                 }
               }
 
-              GsaMember2d mem2d = new GsaMember2d(mem, key, topopts, topoType, void_topo, void_topoType, incLines_topo, inclLines_topoType, incl_pts, pDict, matDict, modelUnit);
+              GsaMember2d mem2d = new GsaMember2d(mem, key, topopts, topoType, void_topo, void_topoType, incLines_topo, inclLines_topoType, incl_pts, pDict, matDict, axDict, modelUnit);
               mem2ds.Add(new GsaMember2dGoo(mem2d, duplicateApiObjects));
             }
           }

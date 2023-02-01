@@ -50,7 +50,7 @@ namespace GsaGH.Components
         Model model = gsaModel.Model;
 
         List<GsaSectionGoo> sections = Helpers.Import.Properties.GetSections(model.Sections(), model.AnalysisMaterials(), model.SectionModifiers());
-        List<GsaProp2dGoo> prop2Ds = Helpers.Import.Properties.GetProp2ds(model.Prop2Ds(), model.AnalysisMaterials());
+        List<GsaProp2dGoo> prop2Ds = Helpers.Import.Properties.GetProp2ds(model.Prop2Ds(), model.AnalysisMaterials(), model.Axes());
         List<GsaProp3dGoo> prop3Ds = Helpers.Import.Properties.GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
 
         DA.SetDataList(0, sections);

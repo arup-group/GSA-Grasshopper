@@ -248,7 +248,7 @@ namespace GsaGH.Parameters
         throw new Exception(" Error with Mem2D: Unable to build Brep, please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
     }
 
-    internal GsaMember2d(Member member, int id, List<Point3d> topology, List<string> topologyType, List<List<Point3d>> voidTopology, List<List<string>> voidTopologyType, List<List<Point3d>> inlcusionLinesTopology, List<List<string>> inclusionTopologyType, List<Point3d> includePoints, ReadOnlyDictionary<int, Prop2D> properties, ReadOnlyDictionary<int, AnalysisMaterial> materials, LengthUnit modelUnit)
+    internal GsaMember2d(Member member, int id, List<Point3d> topology, List<string> topologyType, List<List<Point3d>> voidTopology, List<List<string>> voidTopologyType, List<List<Point3d>> inlcusionLinesTopology, List<List<string>> inclusionTopologyType, List<Point3d> includePoints, ReadOnlyDictionary<int, Prop2D> properties, ReadOnlyDictionary<int, AnalysisMaterial> materials, ReadOnlyDictionary<int, Axis> axDict, LengthUnit modelUnit)
     {
       this.ApiMember = member;
       this.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
@@ -307,7 +307,7 @@ namespace GsaGH.Parameters
 
       this._brep = Helpers.GH.RhinoConversions.BuildBrep(this._edgeCrv, this._voidCrvs, new Length(0.001, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
 
-      this.Property = new GsaProp2d(properties, this.ApiMember.Property, materials);
+      this.Property = new GsaProp2d(properties, this.ApiMember.Property, materials, axDict, modelUnit);
     }
     #endregion
 
