@@ -55,8 +55,8 @@ namespace GsaGH.Components
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddColourParameter("Colour", "Co", "Optional list of colours to override default colours." +
           Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
-      pManager.AddNumberParameter("Scalar", "x:X", "Scale the result display size", GH_ParamAccess.item, 10);
       pManager.AddIntervalParameter("Min/Max Domain", "I", "Opitonal Domain for custom Min to Max contour colours", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Scalar", "x:X", "Scale the result display size", GH_ParamAccess.item, 10);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
@@ -137,17 +137,17 @@ namespace GsaGH.Components
         }
         Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = Helpers.Graphics.Colours.Stress_Gradient(colors);
 
-        // Get scalar 
-        GH_Number gh_Scale = new GH_Number();
-        DA.GetData(3, ref gh_Scale);
-        double scale = 1;
-        GH_Convert.ToDouble(gh_Scale, out scale, GH_Conversion.Both);
-
         // Get interval min/max
         GH_Interval gH_Interval = new GH_Interval();
         Interval customMinMax = Interval.Unset;
-        if (DA.GetData(4, ref gH_Interval))
+        if (DA.GetData(3, ref gH_Interval))
           GH_Convert.ToInterval(gH_Interval, ref customMinMax, GH_Conversion.Both);
+
+        // Get scalar 
+        GH_Number gh_Scale = new GH_Number();
+        DA.GetData(4, ref gh_Scale);
+        double scale = 1;
+        GH_Convert.ToDouble(gh_Scale, out scale, GH_Conversion.Both);
         #endregion
 
         // get stuff for drawing
@@ -666,12 +666,15 @@ namespace GsaGH.Components
     {
       if (this.Params.Input.Count != 5)
       {
-        this.Params.RegisterInputParam(new Param_Interval2D());
-        this.Params.Output[4].Name = "Min/Max Domain";
-        this.Params.Output[4].NickName = "I";
-        this.Params.Output[4].Description = "Opitonal Domain for custom Min to Max contour colours";
-        this.Params.Output[4].Optional = true;
-        this.Params.Output[4].Access = GH_ParamAccess.item;
+        Param_Number scale = (Param_Number)this.Params.Input[3];
+        this.Params.UnregisterInputParameter(this.Params.Input[3], false);
+        this.Params.RegisterInputParam(new Param_Interval());
+        this.Params.Input[3].Name = "Min/Max Domain";
+        this.Params.Input[3].NickName = "I";
+        this.Params.Input[3].Description = "Opitonal Domain for custom Min to Max contour colours";
+        this.Params.Input[3].Optional = true;
+        this.Params.Input[3].Access = GH_ParamAccess.item;
+        this.Params.RegisterInputParam(scale);
       }
 
       if (this._mode == FoldMode.Displacement)

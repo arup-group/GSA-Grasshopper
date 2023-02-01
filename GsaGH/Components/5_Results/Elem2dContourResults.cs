@@ -856,12 +856,12 @@ namespace GsaGH.Components
     {
       if (this.Params.Input.Count != 4)
       {
-        this.Params.RegisterInputParam(new Param_Interval2D());
-        this.Params.Output[3].Name = "Min/Max Domain";
-        this.Params.Output[3].NickName = "I";
-        this.Params.Output[3].Description = "Opitonal Domain for custom Min to Max contour colours";
-        this.Params.Output[3].Optional = true;
-        this.Params.Output[3].Access = GH_ParamAccess.item;
+        this.Params.RegisterInputParam(new Param_Interval());
+        this.Params.Input[3].Name = "Min/Max Domain";
+        this.Params.Input[3].NickName = "I";
+        this.Params.Input[3].Description = "Opitonal Domain for custom Min to Max contour colours";
+        this.Params.Input[3].Optional = true;
+        this.Params.Input[3].Access = GH_ParamAccess.item;
       }
 
       if (_mode == FoldMode.Displacement)
