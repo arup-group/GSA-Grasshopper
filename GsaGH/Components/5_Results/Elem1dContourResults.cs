@@ -23,6 +23,8 @@ using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
 using GsaGH.Helpers.GH;
+using Grasshopper.Kernel.Parameters;
+using OasysGH.Helpers;
 
 namespace GsaGH.Components
 {
@@ -56,11 +58,14 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Intermediate Points", "nP", "Number of intermediate equidistant points (default 10)", GH_ParamAccess.item, 10);
       pManager.AddColourParameter("Colour", "Co", "[Optional] List of colours to override default colours" +
           Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
+      pManager.AddIntervalParameter("Min/Max Domain", "I", "Opitonal Domain for custom Min to Max contour colours", GH_ParamAccess.item);
       pManager.AddNumberParameter("Scale", "x:X", "Scale the result display size", GH_ParamAccess.item, 10);
+
       pManager[1].Optional = true;
       pManager[2].Optional = true;
       pManager[3].Optional = true;
       pManager[4].Optional = true;
+      pManager[5].Optional = true;
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
@@ -139,9 +144,15 @@ namespace GsaGH.Components
         }
         Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = Helpers.Graphics.Colours.Stress_Gradient(colors);
 
+        // Get interval min/max
+        GH_Interval gH_Interval = new GH_Interval();
+        Interval customMinMax = Interval.Unset;
+        if (DA.GetData(4, ref gH_Interval))
+          GH_Convert.ToInterval(gH_Interval, ref customMinMax, GH_Conversion.Both);
+
         // Get scalar 
         GH_Number gh_Scale = new GH_Number();
-        DA.GetData(4, ref gh_Scale);
+        DA.GetData(5, ref gh_Scale);
         double scale = 1;
         GH_Convert.ToDouble(gh_Scale, out scale, GH_Conversion.Both);
         #endregion
@@ -311,11 +322,20 @@ namespace GsaGH.Components
               break;
           }
         }
-
+        if (customMinMax != Interval.Unset)
+        {
+          dmin = customMinMax.Min;
+          dmax = customMinMax.Max;
+        }
         List<double> rounded = Helpers.GsaAPI.ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
         int significantDigits = (int)rounded[2];
+        if (customMinMax != Interval.Unset)
+        {
+          dmin = customMinMax.Min;
+          dmax = customMinMax.Max;
+        }
 
         // Loop through segmented lines and set result colour into ResultLine format
         DataTree<LineResultGoo> resultLines = new DataTree<LineResultGoo>();
@@ -806,6 +826,19 @@ namespace GsaGH.Components
 
     public override void VariableParameterMaintenance()
     {
+      if (this.Params.Input.Count != 6)
+      {
+        Param_Number scale = (Param_Number)this.Params.Input[4];
+        this.Params.UnregisterInputParameter(this.Params.Input[4], false);
+        this.Params.RegisterInputParam(new Param_Interval());
+        this.Params.Input[4].Name = "Min/Max Domain";
+        this.Params.Input[4].NickName = "I";
+        this.Params.Input[4].Description = "Opitonal Domain for custom Min to Max contour colours";
+        this.Params.Input[4].Optional = true;
+        this.Params.Input[4].Access = GH_ParamAccess.item;
+        this.Params.RegisterInputParam(scale);
+      }
+
       if (this._mode == FoldMode.Displacement)
       {
         if ((int)this._disp < 4)
