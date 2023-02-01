@@ -11,7 +11,7 @@ namespace IntegrationTests
 {
   internal class Helper
   {
-    public static void TestGHPrimitives(IGH_Param param, object expected)
+    public static void TestGHPrimitives(IGH_Param param, object expected, int tolerance = 6)
     {
       if (expected.GetType() == typeof(string))
       {
@@ -26,7 +26,7 @@ namespace IntegrationTests
       else if (expected.GetType() == typeof(double))
       {
         GH_Number valOut = (GH_Number)param.VolatileData.get_Branch(0)[0];
-        Assert.Equal((double)expected, valOut.Value, 6);
+        Assert.Equal((double)expected, valOut.Value, tolerance);
       }
       else if (expected.GetType() == typeof(bool))
       {
@@ -62,7 +62,7 @@ namespace IntegrationTests
         for (int i = 0; i < ((double[])expected).Length; i++)
         {
           GH_Number valOut = (GH_Number)param.VolatileData.get_Branch(0)[i];
-          Assert.Equal(((double[])expected)[i], valOut.Value, 6);
+          Assert.Equal(((double[])expected)[i], valOut.Value, tolerance);
         }
       }
       else

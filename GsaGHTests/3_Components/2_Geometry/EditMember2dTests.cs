@@ -44,10 +44,11 @@ namespace GsaGHTests.Components.Geometry
       GsaOffsetGoo output9 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 9);
       GH_Number output10 = (GH_Number)ComponentTestHelper.GetOutput(comp, 10);
       GH_Boolean output11 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 11);
-      GH_String output12 = (GH_String)ComponentTestHelper.GetOutput(comp, 12);
-      GH_Colour output13 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 13);
-      GH_Boolean output14 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 14);
-      GH_String output15 = (GH_String)ComponentTestHelper.GetOutput(comp, 15);
+      GH_Number output12 = (GH_Number)ComponentTestHelper.GetOutput(comp, 12);
+      GH_String output13 = (GH_String)ComponentTestHelper.GetOutput(comp, 13);
+      GH_Colour output14 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 14);
+      GH_Boolean output15 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 15);
+      GH_String output16 = (GH_String)ComponentTestHelper.GetOutput(comp, 16);
 
       Assert.Equal(100, output0.Value.Brep.GetArea());
       Assert.Equal(Property2D_Type.PLATE, output0.Value.Property.Type);
@@ -68,12 +69,13 @@ namespace GsaGHTests.Components.Geometry
       Assert.Equal(0, output9.Value.Z.Value);
       Assert.Equal(0.5, output10.Value);
       Assert.True(output11.Value);
-      Assert.Equal("", output12.Value);
-      Assert.Equal(0, output13.Value.R);
-      Assert.Equal(0, output13.Value.G);
-      Assert.Equal(0, output13.Value.B);
-      Assert.False(output14.Value);
-      Assert.Equal("", output15.Value);
+      Assert.Equal(0.0, output12.Value);
+      Assert.Equal("", output13.Value);
+      Assert.Equal(0, output14.Value.R);
+      Assert.Equal(0, output14.Value.G);
+      Assert.Equal(0, output14.Value.B);
+      Assert.False(output15.Value);
+      Assert.Equal("", output16.Value);
     }
 
     [Fact]
@@ -90,9 +92,9 @@ namespace GsaGHTests.Components.Geometry
       ComponentTestHelper.SetInput(comp, new GsaOffsetGoo(new GsaOffset(1, 2, 3, 4)), 9);
       ComponentTestHelper.SetInput(comp, 0.7, 10);
       ComponentTestHelper.SetInput(comp, false, 11);
-      ComponentTestHelper.SetInput(comp, "name", 12);
-      ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 13);
-      ComponentTestHelper.SetInput(comp, true, 14);
+      ComponentTestHelper.SetInput(comp, "name", 13);
+      ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 14);
+      ComponentTestHelper.SetInput(comp, true, 15);
 
       // Assert
       GsaMember2dGoo output0 = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp, 0);
@@ -107,10 +109,11 @@ namespace GsaGHTests.Components.Geometry
       GsaOffsetGoo output9 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 9);
       GH_Number output10 = (GH_Number)ComponentTestHelper.GetOutput(comp, 10);
       GH_Boolean output11 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 11);
-      GH_String output12 = (GH_String)ComponentTestHelper.GetOutput(comp, 12);
-      GH_Colour output13 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 13);
-      GH_Boolean output14 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 14);
-      GH_String output15 = (GH_String)ComponentTestHelper.GetOutput(comp, 15);
+      GH_Number output12 = (GH_Number)ComponentTestHelper.GetOutput(comp, 12);
+      GH_String output13 = (GH_String)ComponentTestHelper.GetOutput(comp, 13);
+      GH_Colour output14 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 14);
+      GH_Boolean output15 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 15);
+      GH_String output16 = (GH_String)ComponentTestHelper.GetOutput(comp, 16);
 
       Assert.Equal(16, output0.Value.Brep.GetArea());
       Assert.Equal(Property2D_Type.SHELL, output0.Value.Property.Type);
@@ -131,12 +134,13 @@ namespace GsaGHTests.Components.Geometry
       Assert.Equal(4, output9.Value.Z.Value);
       Assert.Equal(0.7, output10.Value);
       Assert.True(output11.Value); // overridden by IsDummy
-      Assert.Equal("name", output12.Value);
-      Assert.Equal(255, output13.Value.R);
-      Assert.Equal(255, output13.Value.G);
-      Assert.Equal(255, output13.Value.B);
-      Assert.True(output14.Value);
-      Assert.Equal("", output15.Value);
+      Assert.Equal(0.0, output12.Value);
+      Assert.Equal("name", output13.Value);
+      Assert.Equal(255, output14.Value.R);
+      Assert.Equal(255, output14.Value.G);
+      Assert.Equal(255, output14.Value.B);
+      Assert.True(output15.Value);
+      Assert.Equal("", output16.Value);
     }
 
     [Fact]

@@ -21,7 +21,7 @@ namespace GsaGH.Helpers.Import
   {
     internal static Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>
         GetElements(ReadOnlyDictionary<int, Element> eDict, ReadOnlyDictionary<int, Node> nDict,
-        ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict, ReadOnlyDictionary<int, Prop3D> p3Dict, ReadOnlyDictionary<int, AnalysisMaterial> mDict, ReadOnlyDictionary<int, SectionModifier> modDict, Dictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit, bool duplicateApiObjects)
+        ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, Prop2D> pDict, ReadOnlyDictionary<int, Prop3D> p3Dict, ReadOnlyDictionary<int, AnalysisMaterial> mDict, ReadOnlyDictionary<int, SectionModifier> modDict, Dictionary<int, ReadOnlyCollection<double>> localAxesDict, ReadOnlyDictionary<int, Axis> axDict, LengthUnit modelUnit, bool duplicateApiObjects)
     {
       ConcurrentBag<GsaElement1dGoo> elem1ds = new ConcurrentBag<GsaElement1dGoo>();
       ConcurrentDictionary<int, Element> elem2dDict = new ConcurrentDictionary<int, Element>();
@@ -66,7 +66,7 @@ namespace GsaGH.Helpers.Import
       
       ConcurrentBag<GsaElement2dGoo> elem2ds = new ConcurrentBag<GsaElement2dGoo>();
       if (elem2dDict.Count > 0)
-        elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, modelUnit, duplicateApiObjects);
+        elem2ds = ConvertToElement2Ds(elem2dDict, nDict, pDict, mDict, axDict, modelUnit, duplicateApiObjects);
 
       ConcurrentBag<GsaElement3dGoo> elem3ds = new ConcurrentBag<GsaElement3dGoo>();
       if (elem3dDict.Count > 0)
@@ -79,7 +79,7 @@ namespace GsaGH.Helpers.Import
     #region Element2d
     internal static ConcurrentBag<GsaElement2dGoo> ConvertToElement2Ds(
         ConcurrentDictionary<int, Element> elements, ReadOnlyDictionary<int, Node> nodes,
-        ReadOnlyDictionary<int, Prop2D> properties, ReadOnlyDictionary<int, AnalysisMaterial> materials, LengthUnit unit, bool duplicateApiObjects)
+        ReadOnlyDictionary<int, Prop2D> properties, ReadOnlyDictionary<int, AnalysisMaterial> materials, ReadOnlyDictionary<int, Axis> axDict, LengthUnit unit, bool duplicateApiObjects)
     {
       // main sorted dictionary with 
       // key = parent member
@@ -121,7 +121,7 @@ namespace GsaGH.Helpers.Import
           if (faceMesh == null) { return; }
           mList[elementID] = faceMesh;
 
-          GsaProp2d prop = new GsaProp2d(properties, elems[elementID].Property, materials);
+          GsaProp2d prop = new GsaProp2d(properties, elems[elementID].Property, materials, axDict, unit);
           prop2Ds.TryAdd(elementID, prop);
         });
 

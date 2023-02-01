@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -11,23 +9,22 @@ using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units;
 using OasysUnits;
-using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 2D Element
-  /// </summary>
-  public class EditElement2d : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a 2D Element
+    /// </summary>
+    public class EditElement2d_OBSOLETE : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This  handles how the component in displayed on the ribbon including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("0b4ecb0e-ef8f-4b42-bcf2-de940594fada");
-    public override GH_Exposure Exposure => GH_Exposure.secondary;
+    public override Guid ComponentGuid => new Guid("e9611aa7-88c1-4b5b-83d6-d9629e21ad8a");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditElem2d;
 
-    public EditElement2d() : base("Edit 2D Element",
+    public EditElement2d_OBSOLETE() : base("Edit 2D Element",
       "Elem2dEdit",
       "Modify GSA 2D Element",
       CategoryName.Name(),
@@ -43,7 +40,6 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaProp2dParameter(), "2D Property", "PA", "Change 2D Property. Input either a GSA 2D Property or an Integer to use a Property already defined in model", GH_ParamAccess.list);
       pManager.AddIntegerParameter("Element2d Group", "Gr", "Set Element Group", GH_ParamAccess.list);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Element Offset", GH_ParamAccess.list);
-      pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Element Orientation Angle", GH_ParamAccess.list);
       pManager.AddTextParameter("Element2d Name", "Na", "Set Name of Element", GH_ParamAccess.list);
       pManager.AddColourParameter("Element2d Colour", "Co", "Set Element Colour", GH_ParamAccess.list);
       pManager.AddBooleanParameter("Dummy Element", "Dm", "Set Element to Dummy", GH_ParamAccess.list);
@@ -66,7 +62,6 @@ namespace GsaGH.Components
           + "Type can not be set; it is either Tri3 or Quad4" + Environment.NewLine
           + "depending on Rhino/Grasshopper mesh face type", GH_ParamAccess.list);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Element Offset", GH_ParamAccess.list);
-      pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Element Orientation Angle in radians", GH_ParamAccess.list);
       pManager.AddTextParameter("Name", "Na", "Set Element Name", GH_ParamAccess.list);
       pManager.AddColourParameter("Colour", "Co", "Get Element Colour", GH_ParamAccess.list);
       pManager.AddBooleanParameter("Dummy Element", "Dm", "Get if Element is Dummy", GH_ParamAccess.list);
@@ -198,27 +193,9 @@ namespace GsaGH.Components
           elem.Offsets = in_offsets;
         }
 
-        // 5 orientation angle
-        List<GH_Number> ghangles = new List<GH_Number>();
-        if (DA.GetDataList(5, ghangles))
-        {
-          List<Angle> in_angles = new List<Angle>();
-          for (int i = 0; i < ghangles.Count; i++)
-          {
-            if (i > elem.API_Elements.Count)
-            {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Orientation Angle input List Length is longer than number of elements." + Environment.NewLine + "Excess Angles have been ignored");
-              continue;
-            }
-            if (GH_Convert.ToDouble(ghangles[i], out double angle, GH_Conversion.Both))
-              in_angles.Add(new Angle(angle, this.AngleUnit));
-          }
-          elem.OrientationAngles = in_angles;
-        }
-
-        // 6 name
+        // 5 name
         List<GH_String> ghnm = new List<GH_String>();
-        if (DA.GetDataList(6, ghnm))
+        if (DA.GetDataList(5, ghnm))
         {
           List<string> in_names = new List<string>();
           for (int i = 0; i < ghnm.Count; i++)
@@ -234,9 +211,9 @@ namespace GsaGH.Components
           elem.Names = in_names;
         }
 
-        // 7 Colour
+        // 6 Colour
         List<GH_Colour> ghcol = new List<GH_Colour>();
-        if (DA.GetDataList(7, ghcol))
+        if (DA.GetDataList(6, ghcol))
         {
           List<System.Drawing.Color> in_colours = new List<System.Drawing.Color>();
           for (int i = 0; i < ghcol.Count; i++)
@@ -252,10 +229,10 @@ namespace GsaGH.Components
           elem.Colours = in_colours;
         }
 
-        // 8 Dummy
+        // 7 Dummy
         List<GH_Boolean> ghdum = new List<GH_Boolean>();
 
-        if (DA.GetDataList(8, ghdum))
+        if (DA.GetDataList(7, ghdum))
         {
           List<bool> in_dummies = new List<bool>();
           for (int i = 0; i < ghdum.Count; i++)
@@ -279,26 +256,12 @@ namespace GsaGH.Components
         DA.SetDataList(4, elem.Groups);
         DA.SetDataList(5, elem.Types);
         DA.SetDataList(6, new List<GsaOffsetGoo>(elem.Offsets.ConvertAll(offset => new GsaOffsetGoo(offset))));
-        DA.SetDataList(7, elem.OrientationAngles.ConvertAll(angle => angle.Radians));
-        DA.SetDataList(8, elem.Names);
-        DA.SetDataList(9, elem.Colours);
-        DA.SetDataList(10, elem.IsDummies);
-        DA.SetDataList(11, elem.ParentMembers);
-        DA.SetDataTree(12, elem.TopologyIDs);
+        DA.SetDataList(7, elem.Names);
+        DA.SetDataList(8, elem.Colours);
+        DA.SetDataList(9, elem.IsDummies);
+        DA.SetDataList(10, elem.ParentMembers);
+        DA.SetDataTree(11, elem.TopologyIDs);
       }
     }
-    protected override void BeforeSolveInstance()
-    {
-      base.BeforeSolveInstance();
-      Param_Number angleParameter = Params.Input[5] as Param_Number;
-      if (angleParameter != null)
-      {
-        if (angleParameter.UseDegrees)
-          this.AngleUnit = AngleUnit.Degree;
-        else
-          this.AngleUnit = AngleUnit.Radian;
-      }
-    }
-    AngleUnit AngleUnit = AngleUnit.Radian;
   }
 }

@@ -195,7 +195,7 @@ namespace GsaGH.Components
 
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Helpers.Import.Elements.GetElements(elementDict, gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(), gsa.SectionModifiers(), elementLocalAxesDict, this.LengthUnit, false);
+          = Helpers.Import.Elements.GetElements(elementDict, gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(), gsa.SectionModifiers(), elementLocalAxesDict, gsa.Axes(), this.LengthUnit, false);
 
       // expose internal model if anyone wants to use it
       GsaModel outModel = new GsaModel();

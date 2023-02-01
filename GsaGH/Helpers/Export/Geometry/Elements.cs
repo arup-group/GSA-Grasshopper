@@ -59,7 +59,7 @@ namespace GsaGH.Helpers.Export
     #region element2d
     internal static void ConvertElement2D(GsaElement2d element2d,
         ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
-        ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
+        ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes)
     {
       List<Point3d> meshVerticies = element2d.Topology;
 
@@ -76,7 +76,7 @@ namespace GsaGH.Helpers.Export
 
         // take last item if lists doesnt match in length
         GsaProp2d prop = (i > element2d.Properties.Count - 1) ? element2d.Properties.Last() : element2d.Properties[i];
-        apiMeshElement.Property = Prop2ds.ConvertProp2d(prop, ref apiProp2ds, ref apiMaterials);
+        apiMeshElement.Property = Prop2ds.ConvertProp2d(prop, ref apiProp2ds, ref apiMaterials, ref existingAxes, unit);
 
         AddElement(element2d.Ids[i], element2d.Guid, apiMeshElement, false, ref apiElements);
       }
@@ -84,14 +84,14 @@ namespace GsaGH.Helpers.Export
 
     internal static void ConvertElement2D(List<GsaElement2d> element2ds,
         ref GsaGuidIntListDictionary<Element> apiElements, ref GsaIntDictionary<Node> existingNodes, LengthUnit unit,
-        ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
+        ref GsaGuidDictionary<Prop2D> apiProp2ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials, ref Dictionary<int, Axis> existingAxes)
     {
       if (element2ds != null)
       {
         element2ds = element2ds.OrderByDescending(e => e.Ids.First()).ToList();
         for (int i = 0; i < element2ds.Count; i++)
           if (element2ds[i] != null)
-            ConvertElement2D(element2ds[i], ref apiElements, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials);
+            ConvertElement2D(element2ds[i], ref apiElements, ref existingNodes, unit, ref apiProp2ds, ref apiMaterials, ref existingAxes);
       }
     }
     #endregion
