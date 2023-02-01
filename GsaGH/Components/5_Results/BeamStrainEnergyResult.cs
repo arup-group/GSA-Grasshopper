@@ -113,30 +113,32 @@ namespace GsaGH.Components
           }
 
           List<GsaResultsValues> vals = Average ?
-            result.Element1DAverageStrainEnergyDensityValues(elementlist, EnergyUnit) :
-            result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, EnergyUnit);
+            result.Element1DAverageStrainEnergyDensityValues(elementlist, this.EnergyUnit) :
+            result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, this.EnergyUnit);
 
-          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 1 } : result.SelectedPermutationIDs);
+          if (permutations.Count == 1 && permutations[0] == -1)
+            permutations = Enumerable.Range(1, vals.Count).ToList();
 
           // loop through all permutations (analysis case will just have one)
-          for (int index = 0; index < permutations.Count; index++)
+          foreach (int perm in permutations)
           {
-            if (vals[index].xyzResults.Count == 0)
+            if (vals[perm - 1].xyzResults.Count == 0)
             {
               string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
               AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element1D results.");
               continue;
             }
             // loop through all elements
-            foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xyzResults)
+            foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults)
             {
               int elementID = kvp.Key;
               ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
               if (res.Count == 0) { continue; }
 
-              GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
+              GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
-              out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(EnergyUnit))), p); // use ToUnit to capture changes in dropdown
+              out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.EnergyUnit))), path); 
             }
           }
         }

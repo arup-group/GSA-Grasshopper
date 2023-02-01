@@ -20,10 +20,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to retrieve non-geometric objects from a GSA model
-    /// </summary>
-    public class Elem2dForces : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to retrieve non-geometric objects from a GSA model
+  /// </summary>
+  public class Elem2dForces : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -126,15 +126,17 @@ namespace GsaGH.Components
             return;
           }
 
-          List<GsaResultsValues> vals = result.Element2DForceValues(elementlist, ForceUnit, MomentUnit);
-          List<GsaResultsValues> valsShear = result.Element2DShearValues(elementlist, ForceUnit);
+          List<GsaResultsValues> vals = result.Element2DForceValues(elementlist, this.ForceUnit, this.MomentUnit);
+          List<GsaResultsValues> valsShear = result.Element2DShearValues(elementlist, this.ForceUnit);
 
-          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 1 } : result.SelectedPermutationIDs);
+          if (permutations.Count == 1 && permutations[0] == -1)
+            permutations = Enumerable.Range(1, vals.Count).ToList();
 
           // loop through all permutations (analysis case will just have one)
-          for (int index = 0; index < permutations.Count; index++)
+          foreach (int perm in permutations)
           {
-            if (vals[index].xyzResults.Count == 0 & vals[index].xxyyzzResults.Count == 0)
+            if (vals[perm - 1].xyzResults.Count == 0 & vals[perm - 1].xxyyzzResults.Count == 0)
             {
               string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
               AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element2D results.");
@@ -146,38 +148,38 @@ namespace GsaGH.Components
               {
                 //do xyz part of results
                 // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xyzResults)
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
+                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
-                  out_X.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.ForceUnit))), p); // use ToUnit to capture changes in dropdown
-                  out_Y.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.ForceUnit))), p);
-                  out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.ForceUnit))), p);
+                  out_X.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.ForceUnit))), path); // use ToUnit to capture changes in dropdown
+                  out_Y.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.ForceUnit))), path);
+                  out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.ForceUnit))), path);
                   // Wood-Armer moment M*x is stored in .XYZ
-                  out_WAXX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.MomentUnit))), p);
+                  out_WAXX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.MomentUnit))), path);
                 }
               }
               if (thread == 1)
               {
                 //do xxyyzz
                 // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xxyyzzResults)
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
+                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
-                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.MomentUnit))), p); // always use [rad] units
-                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.MomentUnit))), p);
-                  out_XXYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.MomentUnit))), p);
+                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.MomentUnit))), path); // always use [rad] units
+                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.MomentUnit))), path);
+                  out_XXYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.MomentUnit))), path);
                   // Wood-Armer moment M*y 
-                  out_WAYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.MomentUnit))), p);
+                  out_WAYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.MomentUnit))), path);
                 }
               }
               if (thread == 2)
@@ -185,15 +187,15 @@ namespace GsaGH.Components
                 //do shear
 
                 // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in valsShear[index].xyzResults)
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in valsShear[perm - 1].xyzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
 
-                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
+                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
-                  out_qX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(ForceUnit))), p); // always use [rad] units
-                  out_qY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(ForceUnit))), p);
+                  out_qX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.ForceUnit))), path); // always use [rad] units
+                  out_qY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.ForceUnit))), path);
                 }
               }
             });
@@ -272,7 +274,7 @@ namespace GsaGH.Components
         Params.Output[8].NickName = "M*x";
         Params.Output[8].Description = "Element Wood-Armer Moments (Mx + sgn(Mx)·|Mxy|) around Local Element X-axis." + momentrule + note;
         Params.Output[8].Access = GH_ParamAccess.tree;
-        
+
         this.Params.RegisterOutputParam(new Param_GenericObject());
         Params.Output[9].NickName = "M*y";
         Params.Output[9].Description = "Element Wood-Armer Moments (My + sgn(My)·|Mxy|) around Local Element Y-axis." + momentrule + note;
