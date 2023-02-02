@@ -10,7 +10,7 @@ namespace GsaGH.Helpers.GsaAPI
 {
   /// <summary>
   /// Class containing functions to interface with SQLite db files.
-  /// Singleton makes sure this class is executed in a separate AppDomain to avoid conflicts with different SQLite versions in main AppDomain.
+  /// In case of problems loading SQLite the singleton is executed in a separate AppDomain.
   /// </summary>
   public class SqlReader : MarshalByRefObject
   {
@@ -19,27 +19,38 @@ namespace GsaGH.Helpers.GsaAPI
 
     public static SqlReader Initialize()
     {
-      // Get the full name of the EXE assembly.
-      string exeAssembly = Assembly.GetCallingAssembly().FullName;
       string codeBase = Assembly.GetCallingAssembly().CodeBase;
       UriBuilder uri = new UriBuilder(codeBase);
       string path = Uri.UnescapeDataString(uri.Path);
+      try
+      {
+        Assembly SQLiteInterop = Assembly.LoadFile(Path.GetDirectoryName(path) + @"\System.Data.SQLite.dll");
+        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-      // Construct and initialize settings for a second AppDomain.
-      AppDomainSetup ads = new AppDomainSetup();
-      ads.ApplicationBase = Path.GetDirectoryName(path);
-      ads.PrivateBinPath = @"x64";
-      ads.DisallowBindingRedirects = false;
-      ads.DisallowCodeDownload = true;
-      ads.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+        return new SqlReader();
+      }
+      // try using a second AppDomain
+      catch (Exception)
+      {
+        // Get the full name of the EXE assembly.
+        string exeAssembly = Assembly.GetCallingAssembly().FullName;
 
-      // Create the second AppDomain.
-      AppDomain ad = AppDomain.CreateDomain("SQLite AppDomain", null, ads);
+        // Construct and initialize settings for a second AppDomain.
+        AppDomainSetup ads = new AppDomainSetup();
+        ads.ApplicationBase = Path.GetDirectoryName(path);
+        ads.PrivateBinPath = @"x64";
+        ads.DisallowBindingRedirects = false;
+        ads.DisallowCodeDownload = true;
+        ads.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 
-      // Create an instance of MarshalbyRefType in the second AppDomain.
-      // A proxy to the object is returned.
-      SqlReader reader = (SqlReader)ad.CreateInstanceAndUnwrap(exeAssembly, typeof(SqlReader).FullName);
-      return reader;
+        // Create the second AppDomain.
+        AppDomain ad = AppDomain.CreateDomain("SQLite AppDomain", null, ads);
+
+        // Create an instance of MarshalbyRefType in the second AppDomain.
+        // A proxy to the object is returned.
+        SqlReader reader = (SqlReader)ad.CreateInstanceAndUnwrap(exeAssembly, typeof(SqlReader).FullName);
+        return reader;
+      }
     }
 
     public override object InitializeLifetimeService()
@@ -273,7 +284,7 @@ namespace GsaGH.Helpers.GsaAPI
         }
         string[] vals = data[0].Split(new string[] { " -- " }, StringSplitOptions.None);
         r.Close();
-        
+
         // Welded Sections
         if (vals.Length <= 1)
         {
