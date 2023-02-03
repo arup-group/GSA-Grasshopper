@@ -9,6 +9,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -208,10 +209,26 @@ namespace GsaGH.Components
       }
 
       // 4 Tolerance
-      double tolerance = 0;
-      if (DA.GetData(4, ref tolerance))
+      gh_typ = new GH_ObjectWrapper();
+      if (DA.GetData(4, ref gh_typ))
       {
-        gps.Tolerance = tolerance;
+        string tol_in = gh_typ.Value.ToString();
+        
+        if (tol_in != "")
+        {
+          try
+          {
+            Length newTolerance = Length.Parse(tol_in);
+            gps.Tolerance = tol_in;
+          }
+          catch (Exception e)
+          {
+            if (double.TryParse(tol_in, out double tolerance))
+              gps.Tolerance = tol_in;
+            else
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+          }
+        }
       }
 
       switch (_mode)
