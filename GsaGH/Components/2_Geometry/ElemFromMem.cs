@@ -278,7 +278,7 @@ namespace GsaGH.Components
 
     #region Custom UI
     private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-    private double _tolerance = DefaultUnits.Tolerance.Meters;
+    private double _tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
     private string _toleranceTxt = "";
 
     protected override void BeforeSolveInstance()
@@ -332,8 +332,8 @@ namespace GsaGH.Components
       Menu_AppendSeparator(menu);
 
       ToolStripTextBox tolerance = new ToolStripTextBox();
-      _toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
-      tolerance.Text = _toleranceTxt;
+      this._toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
+      tolerance.Text = this._toleranceTxt;
       tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
 
@@ -358,7 +358,7 @@ namespace GsaGH.Components
 
     private void MaintainText(ToolStripTextBox tolerance)
     {
-      _toleranceTxt = tolerance.Text;
+      this._toleranceTxt = tolerance.Text;
       if (Length.TryParse(_toleranceTxt, out Length res))
         tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
       else
@@ -371,7 +371,7 @@ namespace GsaGH.Components
         try
         {
           Length newTolerance = Length.Parse(_toleranceTxt);
-          _tolerance = newTolerance.Meters;
+          this._tolerance = newTolerance.As(this.LengthUnit);
         }
         catch (Exception e)
         {
@@ -379,7 +379,7 @@ namespace GsaGH.Components
           return;
         }
       }
-      Length tol = new Length(_tolerance, this.LengthUnit);
+      Length tol = new Length(this._tolerance, this.LengthUnit);
       this.Message = "Tol: " + tol.ToString();
       if (tol.Meters < 0.001)
         AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
