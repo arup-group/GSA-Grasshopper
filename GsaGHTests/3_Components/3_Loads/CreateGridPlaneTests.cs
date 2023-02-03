@@ -33,7 +33,7 @@ namespace GsaGHTests.Components.Loads
       output.CastTo(ref gridPlane);
 
       Assert.Equal(42, gridPlane.GridPlaneId);
-      Assert.Equal(10, gridPlane.Elevation);
+      Assert.Equal("10", gridPlane.Elevation);
       Assert.Equal("test", gridPlane.GridPlane.Name);
     }
   }

@@ -78,20 +78,33 @@ namespace GsaGH.Components
         if (gps.GridPlane != null)
         {
           axis = new Plane(gps.Plane);
-          axis.OriginZ -= gps.Elevation;
+          if (gps.Elevation != "0")
+          {
+            Length elevation = new Length();
+            try
+            {
+              elevation = Length.Parse(gps.Elevation);
+            }
+            catch (Exception)
+            {
+              if (double.TryParse(gps.Elevation, out double elev))
+                elevation = new Length(elev, this.LengthUnit);
+            }
+            axis.OriginZ -= elevation.As(this.LengthUnit);
+          }
         }
         DA.SetData(4, gps.GridPlane == null ? Plane.Unset : axis);
         DA.SetData(5, gps.AxisId);
-        DA.SetData(6, new GH_UnitNumber(new Length(gps.GridPlane == null ? 0 : gps.GridPlane.Elevation, this.LengthUnit)));
-        DA.SetData(7, new GH_UnitNumber(new Length(gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceAbove, this.LengthUnit)));
-        DA.SetData(8, new GH_UnitNumber(new Length(gps.GridPlane == null ? 0 : gps.GridPlane.ToleranceBelow, this.LengthUnit)));
+        DA.SetData(6, gps.GridPlane == null ? "0" : gps.Elevation);
+        DA.SetData(7, gps.GridPlane == null ? "" : gps.StoreyToleranceAbove);
+        DA.SetData(8, gps.GridPlane == null ? "" : gps.StoreyToleranceBelow);
 
         DA.SetData(9, gps.GridSurfaceId);
         DA.SetData(10, gps.GridSurface.Name);
         DA.SetData(11, gps.GridSurface.Elements);
         string elemtype = gps.GridSurface.ElementType.ToString();
         DA.SetData(12, Char.ToUpper(elemtype[0]) + elemtype.Substring(1).ToLower().Replace("_", " "));
-        DA.SetData(13, new GH_UnitNumber(new Length(gps.GridSurface.Tolerance, this.LengthUnit)));
+        DA.SetData(13, gps.Tolerance);
         string spantype = gps.GridSurface.SpanType.ToString();
         DA.SetData(14, Char.ToUpper(spantype[0]) + spantype.Substring(1).ToLower().Replace("_", " "));
         DA.SetData(15, gps.GridSurface.Direction);
