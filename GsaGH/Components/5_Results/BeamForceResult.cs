@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA beam force values
-    /// </summary>
-    public class BeamForces : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA beam force values
+  /// </summary>
+  public class BeamForces : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("5dee1b78-7b47-4c65-9d17-446140fc4e0d");

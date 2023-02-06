@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA beam displacement values
-    /// </summary>
-    public class BeamDisplacement : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA beam displacement values
+  /// </summary>
+  public class BeamDisplacement : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon

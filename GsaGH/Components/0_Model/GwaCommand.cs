@@ -9,10 +9,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create a GSA model from GWA string
-    /// </summary>
-    public class GwaCommand : GH_OasysComponent
+  /// <summary>
+  /// Component to create a GSA model from GWA string
+  /// </summary>
+  public class GwaCommand : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("ed3e5d61-9942-49d4-afc7-310285c783c6");

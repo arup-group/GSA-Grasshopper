@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA reaction forces
-    /// </summary>
-    public class ReactionForce : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA reaction forces
+  /// </summary>
+  public class ReactionForce : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4f06d674-c736-4d9c-89d9-377bc424c547");
