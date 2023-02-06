@@ -92,7 +92,7 @@ namespace GsaGH.Components
       if (mes == GsaAPI.ReturnValue.GS_OK.ToString())
       {
         _fileNameLastSaved = fileNameAndPath;
-        PostHog.ModelIO(GsaGH.PluginInfo.Instance, "saveGWB", (int)(new FileInfo(fileNameAndPath).Length / 1024));
+        OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "saveGWB", (int)(new FileInfo(fileNameAndPath).Length / 1024));
         model.FileNameAndPath = fileNameAndPath;
       }
       else
