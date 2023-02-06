@@ -2,11 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Parameters;
-using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -49,6 +47,7 @@ namespace GsaGH.Helpers.Export
       switch (load.LoadType)
       {
         case GsaLoad.LoadTypes.Gravity:
+          PostHog.Load(load.LoadType, load.GravityLoad.ReferenceType);
           if (load.GravityLoad.ReferenceType != ReferenceType.None)
           {
             if (memberElementRelationship == null)
@@ -68,6 +67,7 @@ namespace GsaGH.Helpers.Export
           break;
 
         case GsaLoad.LoadTypes.Beam:
+          PostHog.Load(load.LoadType, load.BeamLoad.ReferenceType);
           if (load.BeamLoad.ReferenceType != ReferenceType.None)
           {
             if (memberElementRelationship == null)
@@ -87,6 +87,7 @@ namespace GsaGH.Helpers.Export
           break;
 
         case GsaLoad.LoadTypes.Face:
+          PostHog.Load(load.LoadType, load.FaceLoad.ReferenceType);
           if (load.FaceLoad.ReferenceType != ReferenceType.None)
           {
             if (memberElementRelationship == null)
@@ -106,6 +107,7 @@ namespace GsaGH.Helpers.Export
           break;
 
         case GsaLoad.LoadTypes.GridPoint:
+          PostHog.Load(load.LoadType, ReferenceType.None);
           if (load.PointLoad.GridPlaneSurface == null) // if gridsurface id has been set
           {
             // add the load to our list of loads to be set later
@@ -142,6 +144,7 @@ namespace GsaGH.Helpers.Export
           break;
 
         case GsaLoad.LoadTypes.GridLine:
+          PostHog.Load(load.LoadType, ReferenceType.None);
           if (load.LineLoad.GridPlaneSurface == null) // if gridsurface id has been set
           {
             // add the load to our list of loads to be set later
@@ -177,6 +180,7 @@ namespace GsaGH.Helpers.Export
           break;
 
         case GsaLoad.LoadTypes.GridArea:
+          PostHog.Load(load.LoadType, ReferenceType.None, load.AreaLoad.GridAreaLoad.Type.ToString());
           // update polygon definition with unit
           if (load.AreaLoad.GridAreaLoad.Type == GridAreaPolyLineType.POLYGON)
             load.AreaLoad.GridAreaLoad.PolyLineDefinition += "(" + Length.GetAbbreviation(unit) + ")";
@@ -237,6 +241,7 @@ namespace GsaGH.Helpers.Export
         nodeLoads_node.Add(load.NodeLoad.NodeLoad);
       if (load.NodeLoad.Type == GsaNodeLoad.NodeLoadTypes.SETTLEMENT)
         nodeLoads_settle.Add(load.NodeLoad.NodeLoad);
+      PostHog.Load(load.NodeLoad.RefPoint != Point3d.Unset, load.NodeLoad.Type.ToString());
     }
   }
 }
