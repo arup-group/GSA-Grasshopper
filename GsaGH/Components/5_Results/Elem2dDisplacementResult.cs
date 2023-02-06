@@ -182,7 +182,7 @@ namespace GsaGH.Components
         DA.SetDataTree(6, out_rotZ);
         DA.SetDataTree(7, out_rotXYZ);
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 2, GsaResultsValues.ResultType.Displacement);
+        Helpers.PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Displacement);
       }
     }
 

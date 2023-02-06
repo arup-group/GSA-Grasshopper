@@ -611,7 +611,7 @@ namespace GsaGH.Components
         DA.SetDataList(2, ts);
 
         GsaResultsValues.ResultType resultType = (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType), _mode.ToString());
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 1, resultType, this._disp.ToString());
+        Helpers.PostHog.Result(result.Type, 1, resultType, this._disp.ToString());
       }
     }
 

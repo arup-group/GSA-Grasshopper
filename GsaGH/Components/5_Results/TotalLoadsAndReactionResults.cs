@@ -126,7 +126,7 @@ namespace GsaGH.Components
         DA.SetData(i++, new GH_UnitNumber(rm.Z));
         DA.SetData(i++, new GH_UnitNumber(rm.XYZ));
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, -1, "Global", "TotalLoadsAndReactions");
+        Helpers.PostHog.Result(result.Type, -1, "Global", "TotalLoadsAndReactions");
       }
     }
 

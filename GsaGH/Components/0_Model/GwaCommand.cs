@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
 using Grasshopper.Kernel;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
 
 namespace GsaGH.Components
 {
@@ -69,25 +66,7 @@ namespace GsaGH.Components
       
       GsaModel gsaGH = GsaComHelper.GetGsaGhModel();
       DA.SetData(0, new GsaModelGoo(gsaGH));
-      PostHogGWA(gwa);
-    }
-
-    private void PostHogGWA(string gwa)
-    {
-      string[] commands = gwa.Split('\n');
-      foreach (string command in commands)
-      {
-        if (command == "") { continue; }
-        string key = command.Split('.')[0].Split(',')[0].Split('\t')[0].Split(' ')[0];
-        if (key == "") { continue; }
-        string eventName = "GwaCommand";
-        Dictionary<string, object> properties = new Dictionary<string, object>()
-        {
-          { key, command },
-          { "existingModel", this.Params.Input.Count > 0 },
-        };
-        _ = PostHog.SendToPostHog(GsaGH.PluginInfo.Instance, eventName, properties);
-      }
+      PostHog.GWA(gwa, this.Params.Input.Count > 0);
     }
   }
 }

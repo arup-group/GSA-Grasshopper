@@ -177,7 +177,7 @@ namespace GsaGH.Components
         DA.SetDataTree(4, out_YZ);
         DA.SetDataTree(5, out_ZX);
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 3, GsaResultsValues.ResultType.Stress);
+        Helpers.PostHog.Result(result.Type, 3, GsaResultsValues.ResultType.Stress);
       }
     }
 
