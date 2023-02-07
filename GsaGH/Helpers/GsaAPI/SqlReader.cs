@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace GsaGH.Helpers.GsaAPI
 {
@@ -17,6 +18,18 @@ namespace GsaGH.Helpers.GsaAPI
     public static SqlReader Instance { get { return lazy.Value; } }
     private static readonly Lazy<SqlReader> lazy = new Lazy<SqlReader>(() => Initialize());
 
+    [HandleProcessCorruptedStateExceptions] // access violation
+    static void UEHandler(object sender, UnhandledExceptionEventArgs e)
+    {
+      var ex = e.ExceptionObject as Exception;
+
+      string assemblies = "";
+      foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
+        assemblies += ass.ToString() + "; ";
+
+      throw new Exception(ex.ToString() + "     " + assemblies);
+    }
+
     public static SqlReader Initialize()
     {
       string codeBase = Assembly.GetCallingAssembly().CodeBase;
@@ -24,8 +37,8 @@ namespace GsaGH.Helpers.GsaAPI
       string path = Uri.UnescapeDataString(uri.Path);
       try
       {
-        Assembly SQLiteInterop = Assembly.LoadFile(Path.GetDirectoryName(path) + @"\System.Data.SQLite.dll");
-        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        AppDomain.CurrentDomain.UnhandledException += UEHandler;
+        Assembly SQLite = Assembly.LoadFile(Path.GetDirectoryName(path) + @"\System.Data.SQLite.dll");
 
         return new SqlReader();
       }
@@ -45,6 +58,7 @@ namespace GsaGH.Helpers.GsaAPI
 
         // Create the second AppDomain.
         AppDomain ad = AppDomain.CreateDomain("SQLite AppDomain", null, ads);
+        ad.UnhandledException += UEHandler;
 
         // Create an instance of MarshalbyRefType in the second AppDomain.
         // A proxy to the object is returned.
