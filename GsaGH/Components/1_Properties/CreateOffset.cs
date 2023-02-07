@@ -13,10 +13,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create a new Offset
-    /// </summary>
-    public class CreateOffset : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to create a new Offset
+  /// </summary>
+  public class CreateOffset : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon

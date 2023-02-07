@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace GsaGH.Helpers.GsaAPI
 {
@@ -17,15 +18,28 @@ namespace GsaGH.Helpers.GsaAPI
     public static SqlReader Instance { get { return lazy.Value; } }
     private static readonly Lazy<SqlReader> lazy = new Lazy<SqlReader>(() => Initialize());
 
+    [HandleProcessCorruptedStateExceptions] // access violation
+    static void UEHandler(object sender, UnhandledExceptionEventArgs e)
+    {
+      var ex = e.ExceptionObject as Exception;
+
+      string assemblies = "";
+      foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
+        assemblies += ass.ToString() + "; ";
+
+      throw new Exception(ex.ToString() + "     " + assemblies);
+    }
+
     public static SqlReader Initialize()
     {
       string codeBase = Assembly.GetCallingAssembly().CodeBase;
       UriBuilder uri = new UriBuilder(codeBase);
       string path = Uri.UnescapeDataString(uri.Path);
+      path = Uri.UnescapeDataString(uri.Path);
       try
       {
-        Assembly SQLiteInterop = Assembly.LoadFile(Path.GetDirectoryName(path) + @"\System.Data.SQLite.dll");
-        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        AppDomain.CurrentDomain.UnhandledException += UEHandler;
+        Assembly SQLiteInterop = Assembly.LoadFile(Path.GetDirectoryName(path) + @"\Microsoft.Data.Sqlite.dll");
 
         return new SqlReader();
       }
@@ -45,6 +59,7 @@ namespace GsaGH.Helpers.GsaAPI
 
         // Create the second AppDomain.
         AppDomain ad = AppDomain.CreateDomain("SQLite AppDomain", null, ads);
+        ad.UnhandledException += UEHandler;
 
         // Create an instance of MarshalbyRefType in the second AppDomain.
         // A proxy to the object is returned.
@@ -69,9 +84,10 @@ namespace GsaGH.Helpers.GsaAPI
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    public SQLiteConnection Connection(string filePath)
+    public SqliteConnection Connection(string filePath)
     {
-      return new SQLiteConnection($"URI=file:{filePath};mode=ReadOnly");
+      string connectionString = $"Data Source={filePath};Mode=ReadOnly";
+      return new SqliteConnection(connectionString);
     }
 
     /// <summary>
@@ -93,11 +109,11 @@ namespace GsaGH.Helpers.GsaAPI
       using (var db = this.Connection(filePath))
       {
         db.Open();
-        SQLiteCommand cmd = db.CreateCommand();
+        SqliteCommand cmd = db.CreateCommand();
         cmd.CommandText = @"Select CAT_NAME || ' -- ' || CAT_NUM as CAT_NAME from Catalogues";
 
         cmd.CommandType = CommandType.Text;
-        SQLiteDataReader r = cmd.ExecuteReader();
+        SqliteDataReader r = cmd.ExecuteReader();
         while (r.Read())
         {
           // get data
@@ -150,13 +166,13 @@ namespace GsaGH.Helpers.GsaAPI
           int cat = catNumbers[i];
 
           db.Open();
-          SQLiteCommand cmd = db.CreateCommand();
+          SqliteCommand cmd = db.CreateCommand();
           if (inclSuperseeded)
             cmd.CommandText = $"Select TYPE_NAME || ' -- ' || TYPE_NUM as TYPE_NAME from Types where TYPE_CAT_NUM = {cat}";
           else
             cmd.CommandText = $"Select TYPE_NAME || ' -- ' || TYPE_NUM as TYPE_NAME from Types where TYPE_CAT_NUM = {cat} and not (TYPE_SUPERSEDED = True or TYPE_SUPERSEDED = TRUE or TYPE_SUPERSEDED = 1)";
           cmd.CommandType = CommandType.Text;
-          SQLiteDataReader r = cmd.ExecuteReader();
+          SqliteDataReader r = cmd.ExecuteReader();
           while (r.Read())
           {
             // get data
@@ -204,7 +220,7 @@ namespace GsaGH.Helpers.GsaAPI
         {
           int type = types[i];
           db.Open();
-          SQLiteCommand cmd = db.CreateCommand();
+          SqliteCommand cmd = db.CreateCommand();
 
           if (inclSuperseeded)
             cmd.CommandText = $"Select Types.TYPE_ABR || ' ' || SECT_NAME || ' -- ' || SECT_DATE_ADDED as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_TYPE_NUM = {type} ORDER BY SECT_AREA";
@@ -212,7 +228,7 @@ namespace GsaGH.Helpers.GsaAPI
             cmd.CommandText = $"Select Types.TYPE_ABR || ' ' || SECT_NAME as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_TYPE_NUM = {type} and not (SECT_SUPERSEDED = True or SECT_SUPERSEDED = TRUE or SECT_SUPERSEDED = 1) ORDER BY SECT_AREA";
 
           cmd.CommandType = CommandType.Text;
-          SQLiteDataReader r = cmd.ExecuteReader();
+          SqliteDataReader r = cmd.ExecuteReader();
           while (r.Read())
           {
             if (inclSuperseeded)
@@ -262,7 +278,7 @@ namespace GsaGH.Helpers.GsaAPI
       using (var db = this.Connection(filePath))
       {
         db.Open();
-        SQLiteCommand cmd = db.CreateCommand();
+        SqliteCommand cmd = db.CreateCommand();
         cmd.CommandText = $"Select " +
           $"SECT_DEPTH_DIAM || ' -- ' || " +
           $"SECT_WIDTH || ' -- ' || " +
@@ -272,7 +288,7 @@ namespace GsaGH.Helpers.GsaAPI
           $"as SECT_NAME from Sect INNER JOIN Types ON Sect.SECT_TYPE_NUM = Types.TYPE_NUM where SECT_NAME = \"{profileString}\" ORDER BY SECT_DATE_ADDED";
         cmd.CommandType = CommandType.Text;
         List<string> data = new List<string>();
-        SQLiteDataReader r = cmd.ExecuteReader();
+        SqliteDataReader r = cmd.ExecuteReader();
         while (r.Read())
         {
           // get data

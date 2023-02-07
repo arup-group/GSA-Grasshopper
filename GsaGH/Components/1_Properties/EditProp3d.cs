@@ -8,10 +8,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a Prop3d and ouput the information
-    /// </summary>
-    public class EditProp3d : GH_OasysComponent
+  /// <summary>
+  /// Component to edit a Prop3d and ouput the information
+  /// </summary>
+  public class EditProp3d : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon

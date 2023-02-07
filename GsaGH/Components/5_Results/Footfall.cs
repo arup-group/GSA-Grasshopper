@@ -94,7 +94,7 @@ namespace GsaGH.Components
         DA.SetData(0, res.dmax_x.Value);
         DA.SetData(1, tra.dmax_x.Value);
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 0, GsaResultsValues.ResultType.Footfall, "Max");
+        Helpers.PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Footfall, "Max");
       }
     }
   }
