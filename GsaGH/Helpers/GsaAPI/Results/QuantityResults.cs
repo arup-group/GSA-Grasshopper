@@ -30,7 +30,7 @@ namespace GsaGH.Helpers.GsaAPI
     internal static GsaResultQuantity GetQuantityResult(double result, EnergyUnit unit)
     {
       IQuantity x = new Energy(new Energy(result, EnergyUnit.Joule).As(unit), unit);
-      
+
       return new GsaResultQuantity() { X = x };
     }
     internal static GsaResultQuantity GetQuantityResult(Double6 result, MomentUnit unit, bool isBeam = false)
@@ -67,24 +67,58 @@ namespace GsaGH.Helpers.GsaAPI
     internal static GsaResultQuantity GetQuantityResult(Double6 result, AngleUnit unit)
     {
       IQuantity x;
-      if (!double.IsNaN(result.XX))
-        x = new Angle(new Angle(result.XX, AngleUnit.Radian).As(unit), unit);
+      if (!double.IsNaN(result.XX)) // TO-DO: GSA-5351 remove NaN and Infinity values from GsaAPI results
+      {
+        if (!double.IsInfinity(result.XX))
+          x = new Angle(new Angle(result.XX, AngleUnit.Radian).As(unit), unit);
+        else
+        {
+          if (double.IsPositiveInfinity(result.XX))
+            x = Angle.MaxValue;
+          else
+            x = Angle.MinValue;
+        }
+      }
       else
         x = new Angle(0, unit);
 
       IQuantity y;
       if (!double.IsNaN(result.YY))
-        y = new Angle(new Angle(result.YY, AngleUnit.Radian).As(unit), unit);
+      {
+        if (!double.IsInfinity(result.YY))
+          y = new Angle(new Angle(result.YY, AngleUnit.Radian).As(unit), unit);
+        else
+        {
+          if (double.IsPositiveInfinity(result.YY))
+            y = Angle.MaxValue;
+          else
+            y = Angle.MinValue;
+        }
+      }
       else
         y = new Angle(0, unit);
 
       IQuantity z;
       if (!double.IsNaN(result.ZZ))
-        z = new Angle(new Angle(result.ZZ, AngleUnit.Radian).As(unit), unit);
+      {
+        if (!double.IsInfinity(result.ZZ))
+          z = new Angle(new Angle(result.ZZ, AngleUnit.Radian).As(unit), unit);
+        else
+        {
+          if (double.IsPositiveInfinity(result.ZZ))
+            z = Angle.MaxValue;
+          else
+            z = Angle.MinValue;
+        }
+      }
       else
         z = new Angle(0, unit);
       double pyth = Math.Sqrt(Math.Pow(x.Value, 2) + Math.Pow(y.Value, 2) + Math.Pow(z.Value, 2));
-      IQuantity xyz = new Angle(new Angle(pyth, AngleUnit.Radian).As(unit), unit);
+      IQuantity xyz;
+      if (double.IsInfinity((double)pyth))
+        xyz = Angle.MaxValue;
+      else
+        xyz = new Angle(new Angle(pyth, AngleUnit.Radian).As(unit), unit);
       return new GsaResultQuantity() { X = x, Y = y, Z = z, XYZ = xyz };
     }
     internal static GsaResultQuantity GetQuantityResult(Double6 result, PressureUnit unit, bool shear = false)
