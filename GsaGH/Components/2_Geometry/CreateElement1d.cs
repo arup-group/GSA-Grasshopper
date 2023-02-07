@@ -9,10 +9,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create new 1D Element
-    /// </summary>
-    public class CreateElement1d : GH_OasysComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to create new 1D Element
+  /// </summary>
+  public class CreateElement1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("88c58aae-4cd8-4d37-b63f-d828571e6941");

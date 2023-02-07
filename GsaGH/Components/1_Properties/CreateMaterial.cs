@@ -9,10 +9,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create a new Material
-    /// </summary>
-    public class CreateMaterial : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to create a new Material
+  /// </summary>
+  public class CreateMaterial : GH_OasysDropDownComponent
   {
     public static List<string> MaterialTypes = new List<string>() {
       "Generic",

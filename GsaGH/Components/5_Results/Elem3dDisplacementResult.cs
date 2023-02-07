@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA 3D element displacement values
-    /// </summary>
-    public class Elem3dDisplacement : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA 3D element displacement values
+  /// </summary>
+  public class Elem3dDisplacement : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("b24e0b5d-6376-43bf-9844-15443ce3b9dd");
@@ -184,7 +184,7 @@ namespace GsaGH.Components
         DA.SetDataTree(6, out_rotZ);
         DA.SetDataTree(7, out_rotXYZ);
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 3, GsaResultsValues.ResultType.Displacement);
+        Helpers.PostHog.Result(result.Type, 3, GsaResultsValues.ResultType.Displacement);
       }
     }
 

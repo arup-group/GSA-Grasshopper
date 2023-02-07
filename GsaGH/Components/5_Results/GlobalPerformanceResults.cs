@@ -16,10 +16,10 @@ using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA global performance results
-    /// </summary>
-    public class GlobalPerformanceResults : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA global performance results
+  /// </summary>
+  public class GlobalPerformanceResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("9a0b6077-1cb6-405c-85d3-c24a533d6d43");
@@ -169,7 +169,7 @@ namespace GsaGH.Components
         else
           DA.SetData(i++, null);
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, -1, "Global", "Performance");
+        Helpers.PostHog.Result(result.Type, -1, "Global", "Performance");
       }
     }
 

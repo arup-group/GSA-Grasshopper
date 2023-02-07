@@ -11,10 +11,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a 3D Element
-    /// </summary>
-    public class EditElement3d : GH_OasysComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to edit a 3D Element
+  /// </summary>
+  public class EditElement3d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("040f2915-543d-41ef-9a64-0c4055e47a63");

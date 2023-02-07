@@ -16,10 +16,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA total model load and reactions
-    /// </summary>
-    public class TotalLoadsAndReactionResults : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA total model load and reactions
+  /// </summary>
+  public class TotalLoadsAndReactionResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("00a195ef-b8f2-4b91-ac47-a8ae12d48b8e");
@@ -126,7 +126,7 @@ namespace GsaGH.Components
         DA.SetData(i++, new GH_UnitNumber(rm.Z));
         DA.SetData(i++, new GH_UnitNumber(rm.XYZ));
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, -1, "Global", "TotalLoadsAndReactions");
+        Helpers.PostHog.Result(result.Type, -1, "Global", "TotalLoadsAndReactions");
       }
     }
 

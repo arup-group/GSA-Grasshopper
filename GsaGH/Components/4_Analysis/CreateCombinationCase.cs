@@ -7,10 +7,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create GSA Combination Case
-    /// </summary>
-    public class CreateCombinationCase : GH_OasysComponent
+  /// <summary>
+  /// Component to create GSA Combination Case
+  /// </summary>
+  public class CreateCombinationCase : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("d8df767a-ef59-4e08-b592-2a39149efde1");

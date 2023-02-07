@@ -78,7 +78,7 @@ namespace GsaGH.Components
 
             DA.SetData(0, new GsaModelGoo(gsaModel));
 
-            PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB", (int)(new FileInfo(FileName).Length / 1024));
+            OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB", (int)(new FileInfo(FileName).Length / 1024));
 
             return;
           }

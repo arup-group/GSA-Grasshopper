@@ -145,7 +145,7 @@ namespace GsaGH.Components
 
         DA.SetDataTree(0, out_transX);
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 1, GsaResultsValues.ResultType.StrainEnergy);
+        Helpers.PostHog.Result(result.Type, 1, GsaResultsValues.ResultType.StrainEnergy);
       }
     }
 

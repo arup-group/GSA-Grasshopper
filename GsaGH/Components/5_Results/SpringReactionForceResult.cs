@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA spring reaction forces
-    /// </summary>
-    public class SpringReactionForce : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA spring reaction forces
+  /// </summary>
+  public class SpringReactionForce : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("60f6a109-577d-4e90-8790-7f8cf110b230");
@@ -194,7 +194,7 @@ namespace GsaGH.Components
         DA.SetDataTree(7, out_rotXYZ);
         DA.SetDataTree(8, outIDs);
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 0, GsaResultsValues.ResultType.Force, "Spring");
+        Helpers.PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force, "Spring");
       }
     }
 
