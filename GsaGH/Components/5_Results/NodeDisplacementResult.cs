@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA node displacement values
-    /// </summary>
-    public class NodeDisplacement : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA node displacement values
+  /// </summary>
+  public class NodeDisplacement : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("83844063-3da9-4d96-95d3-ea39f96f3e2a");
@@ -194,7 +194,7 @@ namespace GsaGH.Components
         DA.SetDataTree(7, out_rotXYZ);
         DA.SetDataTree(8, outIDs);
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 0, GsaResultsValues.ResultType.Displacement);
+        Helpers.PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Displacement);
       }
     }
 
