@@ -211,7 +211,7 @@ namespace GsaGH.Components
         DA.SetDataTree(6, out_YY);
         DA.SetDataTree(7, out_XXYY);
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 2, GsaResultsValues.ResultType.Force);
+        Helpers.PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Force);
         DA.SetDataTree(8, out_WAXX);
         DA.SetDataTree(9, out_WAYY);
       }

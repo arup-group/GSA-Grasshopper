@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA beam displacement values
-    /// </summary>
-    public class BeamDisplacement : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA beam displacement values
+  /// </summary>
+  public class BeamDisplacement : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -187,7 +187,7 @@ namespace GsaGH.Components
         DA.SetDataTree(6, out_rotZ);
         DA.SetDataTree(7, out_rotXYZ);
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 1, GsaResultsValues.ResultType.Displacement);
+        Helpers.PostHog.Result(result.Type, 1, GsaResultsValues.ResultType.Displacement);
       }
     }
 
