@@ -16,7 +16,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    public class CreateBeamLoads : GH_OasysDropDownComponent
+  public class CreateBeamLoads : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override GH_Exposure Exposure => GH_Exposure.primary;

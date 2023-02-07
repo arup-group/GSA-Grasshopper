@@ -18,10 +18,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a 1D Element
-    /// </summary>
-    public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to edit a 1D Element
+  /// </summary>
+  public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon

@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
 using Grasshopper.Kernel;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create a GSA model from GWA string
-    /// </summary>
-    public class GwaCommand : GH_OasysComponent
+  /// <summary>
+  /// Component to create a GSA model from GWA string
+  /// </summary>
+  public class GwaCommand : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("ed3e5d61-9942-49d4-afc7-310285c783c6");
@@ -69,25 +66,7 @@ namespace GsaGH.Components
       
       GsaModel gsaGH = GsaComHelper.GetGsaGhModel();
       DA.SetData(0, new GsaModelGoo(gsaGH));
-      PostHogGWA(gwa);
-    }
-
-    private void PostHogGWA(string gwa)
-    {
-      string[] commands = gwa.Split('\n');
-      foreach (string command in commands)
-      {
-        if (command == "") { continue; }
-        string key = command.Split('.')[0].Split(',')[0].Split('\t')[0].Split(' ')[0];
-        if (key == "") { continue; }
-        string eventName = "GwaCommand";
-        Dictionary<string, object> properties = new Dictionary<string, object>()
-        {
-          { key, command },
-          { "existingModel", this.Params.Input.Count > 0 },
-        };
-        _ = PostHog.SendToPostHog(GsaGH.PluginInfo.Instance, eventName, properties);
-      }
+      PostHog.GWA(gwa, this.Params.Input.Count > 0);
     }
   }
 }

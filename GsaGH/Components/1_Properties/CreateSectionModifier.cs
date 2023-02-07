@@ -15,10 +15,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create a new Offset
-    /// </summary>
-    public class CreateSectionModifier : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to create a new Offset
+  /// </summary>
+  public class CreateSectionModifier : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e65d2554-75a9-4fac-9f12-1400e84aeee9");
