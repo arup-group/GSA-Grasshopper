@@ -10,10 +10,10 @@ using OasysGH.Units.Helpers;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create a GSA Analysis Task
-    /// </summary>
-    public class CreateAnalysisTask : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to create a GSA Analysis Task
+  /// </summary>
+  public class CreateAnalysisTask : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("6ef86d0b-892c-4b6f-950e-b4477e9f0910");

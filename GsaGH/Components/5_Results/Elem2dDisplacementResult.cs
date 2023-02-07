@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to GSA 2D Element displacement values
-    /// </summary>
-    public class Elem2dDisplacement : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to GSA 2D Element displacement values
+  /// </summary>
+  public class Elem2dDisplacement : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("22f87d33-4f9a-49d6-9f3d-b366e446a75f");
@@ -182,7 +182,7 @@ namespace GsaGH.Components
         DA.SetDataTree(6, out_rotZ);
         DA.SetDataTree(7, out_rotXYZ);
 
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 2, GsaResultsValues.ResultType.Displacement);
+        Helpers.PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Displacement);
       }
     }
 

@@ -31,7 +31,6 @@ namespace IntegrationTests
 
       LoadRefs();
       Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-      Assembly SQLite = Assembly.LoadFile(InstallPath + "\\System.Data.SQLite.dll");
 
       InitializeCore();
 

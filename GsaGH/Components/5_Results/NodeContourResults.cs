@@ -507,7 +507,7 @@ namespace GsaGH.Components
         DA.SetDataList(2, ts);
 
         GsaResultsValues.ResultType resultType = _mode == FoldMode.Reaction ? GsaResultsValues.ResultType.Force : (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType), _mode.ToString());
-        Helpers.PostHogResultsHelper.PostHog(result.Type, 0, resultType, this._disp.ToString());
+        Helpers.PostHog.Result(result.Type, 0, resultType, this._disp.ToString());
       }
     }
 
