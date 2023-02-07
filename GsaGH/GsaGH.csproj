@@ -50,12 +50,12 @@ Copyright © Oasys 1985 - 2022</Description>
     <PackageReference Include="Grasshopper" Version="6.27.20176.5001" IncludeAssets="compile;build">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.0" />
     <PackageReference Include="OasysGH" Version="0.5.2-beta" />
     <PackageReference Include="RhinoCommon" Version="6.27.20176.5001">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>compile;build</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Data.SQLite" Version="1.0.117" />
   </ItemGroup>
   
   <ItemGroup>
