@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Parameters;
+using Newtonsoft.Json.Linq;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -74,9 +75,9 @@ namespace GsaGH.Helpers.GsaAPI
         else
         {
           if (double.IsPositiveInfinity(result.XX))
-            x = Angle.MaxValue;
+            x = new Angle(360, AngleUnit.Degree);
           else
-            x = Angle.MinValue;
+            x = new Angle(-360, AngleUnit.Degree);
         }
       }
       else
@@ -90,9 +91,9 @@ namespace GsaGH.Helpers.GsaAPI
         else
         {
           if (double.IsPositiveInfinity(result.YY))
-            y = Angle.MaxValue;
+            y = new Angle(360, AngleUnit.Degree);
           else
-            y = Angle.MinValue;
+            y = new Angle(-360, AngleUnit.Degree);
         }
       }
       else
@@ -106,9 +107,9 @@ namespace GsaGH.Helpers.GsaAPI
         else
         {
           if (double.IsPositiveInfinity(result.ZZ))
-            z = Angle.MaxValue;
+            z = new Angle(360, AngleUnit.Degree);
           else
-            z = Angle.MinValue;
+            z = new Angle(-360, AngleUnit.Degree);
         }
       }
       else
@@ -116,7 +117,7 @@ namespace GsaGH.Helpers.GsaAPI
       double pyth = Math.Sqrt(Math.Pow(x.Value, 2) + Math.Pow(y.Value, 2) + Math.Pow(z.Value, 2));
       IQuantity xyz;
       if (double.IsInfinity((double)pyth))
-        xyz = Angle.MaxValue;
+        xyz = new Angle(360, AngleUnit.Degree);
       else
         xyz = new Angle(new Angle(pyth, AngleUnit.Radian).As(unit), unit);
       return new GsaResultQuantity() { X = x, Y = y, Z = z, XYZ = xyz };
