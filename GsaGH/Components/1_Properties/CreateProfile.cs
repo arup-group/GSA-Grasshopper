@@ -59,7 +59,7 @@ namespace GsaGH.Components
       { "T Section", "ITSectionProfile" },
     };
 
-    public static readonly List<string> EasterCat = new List<string>() {
+    private static readonly List<string> EasterCat = new List<string>() {
       "▌─────────────────────────▐█─────▐" + Environment.NewLine +
       "▌────▄──────────────────▄█▓█▌────▐" + Environment.NewLine +
       "▌───▐██▄───────────────▄▓░░▓▓────▐" + Environment.NewLine +
@@ -118,7 +118,6 @@ namespace GsaGH.Components
     private List<string> _typeNames = new List<string>(); // list of displayed types
 
     // Sections
-    // list of displayed sections
     private List<string> _sectionList = SqlReader.Instance.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
     private int _catalogueIndex = -1; //-1 is all
     private int _typeIndex = -1;
@@ -131,13 +130,39 @@ namespace GsaGH.Components
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private FoldMode _mode = FoldMode.Other;
 
-    public CreateProfile() : base("Create Profile",
+    public CreateProfile() : base(
+      "Create Profile",
       "Profile",
       "Create Profile text-string for a GSA Section",
       CategoryName.Name(),
       SubCategoryName.Cat1())
     {
       this.Hidden = true; // sets the initial state of the component to hidden
+    }
+
+    private static bool MatchAndAdd(string item, string pattern, ref List<string> list, bool tryHard = false)
+    {
+      string input = item.ToLower().Replace(".", String.Empty);
+      if (Regex.Match(input, pattern, RegexOptions.Singleline).Success)
+      {
+        list.Add(item);
+        return true;
+      }
+      else if (tryHard && Regex.Match(pattern, "he[abcm]", RegexOptions.Singleline).Success)
+      {
+        string[] substring = pattern.Split(new string[] { "he" }, StringSplitOptions.None);
+        int count = 1;
+        if (substring[substring.Length - 1].Length > 1 && !Char.IsNumber(substring[substring.Length - 1][1]))
+          count = 2;
+
+        pattern = "he" + substring[substring.Length - 1].Remove(0, count) + substring[substring.Length - 1].Substring(0, count);
+        if (Regex.Match(input, pattern, RegexOptions.Singleline).Success)
+        {
+          list.Add(item);
+          return true;
+        }
+      }
+      return false;
     }
 
     private static Tuple<List<string>, List<int>> GetTypesDataFromSQLite(int catalogueIndex, string filePath, bool inclSuperseeded)
@@ -201,7 +226,7 @@ namespace GsaGH.Components
         string inSearch = "";
         if (DA.GetData(0, ref inSearch))
         {
-          this._search = inSearch.Trim().ToLower().Replace("*", ".*").Replace(" ", ".*");
+          this._search = inSearch.Trim().ToLower().Replace(".", string.Empty).Replace("*", ".*").Replace(" ", ".*");
           if (this._search == "cat")
           {
             string eventName = "EasterCat";
@@ -216,13 +241,14 @@ namespace GsaGH.Components
             this._search = s[s.Length - 1];
           }
 
+          // boolean to save state of search string being 'problematic' to avoid checking this every single time
+          bool tryHard = Regex.Match(this._search, "he[abcm]", RegexOptions.Singleline).Success;
+
           // filter by search pattern
           List<string> filteredlist = new List<string>();
           if (this.SelectedItems[3] != "All")
           {
-            if (Regex.Match(this.SelectedItems[3].ToLower().Replace(".", String.Empty), this._search, RegexOptions.Singleline).Success)
-              filteredlist.Add(this.SelectedItems[3]);
-            else
+            if (!MatchAndAdd(this.SelectedItems[3], this._search, ref filteredlist, tryHard))
             {
               this.ProfileString = new List<string>();
               this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No profile found that matches selected profile and search!");
@@ -232,9 +258,10 @@ namespace GsaGH.Components
           {
             for (int k = 0; k < this._sectionList.Count; k++)
             {
-              if (Regex.Match(this._sectionList[k].ToLower().Replace(".", String.Empty), this._search, RegexOptions.Singleline).Success)
-                filteredlist.Add(this._sectionList[k]);
+              if (MatchAndAdd(this._sectionList[k], this._search, ref filteredlist, tryHard))
+              {
 
+              }
               else if (!this._search.Any(char.IsDigit))
               {
                 string test = this._sectionList[k].ToString();
