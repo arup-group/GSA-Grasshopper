@@ -149,6 +149,18 @@ namespace GsaGH.Helpers.Export
               initialNodeCount -= difference;
             }
           }
+          if (elem3ds != null && elem3ds.Count > 0)
+          {
+            foreach (GsaElement3d e3d in elem3ds)
+            {
+              int expectedCollapsedNodeCount = e3d.NgonMesh.TopologyVertices.Count;
+              int actualNodeCount = 0;
+              foreach (List<int> topoint in e3d.TopoInt)
+                actualNodeCount += topoint.Count;
+              int difference = actualNodeCount - expectedCollapsedNodeCount;
+              initialNodeCount -= difference;
+            }
+          }
           double nodeSurvivalRate = (double)newNodeCount / (double)initialNodeCount;
           
           int elemCount = apiElemDict.Count;
