@@ -28,25 +28,23 @@ namespace GsaGH.Helpers.GsaAPI
 
       Parallel.ForEach(globalResults.Keys, key =>
       {
-              // lists for results
+        // lists for results
         Element3DResult elementResults = globalResults[key];
         ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyzRes.AsParallel().AsOrdered();
 
-        List<Double3> trans_vals = elementResults.Displacement.ToList();
+        ReadOnlyCollection<Double3> trans_vals = elementResults.Displacement;
         Parallel.For(1, trans_vals.Count, i => //foreach (Double3 val in trans_vals)
-              {
-            xyzRes[i] = GetQuantityResult(trans_vals[i], resultLengthUnit);
-
-          });
+        {
+          xyzRes[i] = GetQuantityResult(trans_vals[i], resultLengthUnit);
+        });
         xyzRes[trans_vals.Count] = GetQuantityResult(trans_vals[0], resultLengthUnit); // add centre point at the end
 
-              // add vector lists to main lists
+        // add vector lists to main lists
         r.xyzResults.TryAdd(key, xyzRes);
       });
 
       r.UpdateMinMax();
-
       return r;
     }
     /// <summary>
@@ -63,34 +61,33 @@ namespace GsaGH.Helpers.GsaAPI
 
       Parallel.ForEach(globalResults.Keys, key =>
       {
-              // lists for results
+        // lists for results
         Element3DResult elementResults = globalResults[key];
         ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyzRes.AsParallel().AsOrdered();
         ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xxyyzzRes.AsParallel().AsOrdered();
 
-        List<Tensor3> stress_vals = elementResults.Stress.ToList();
+        ReadOnlyCollection<Tensor3> stress_vals = elementResults.Stress;
         Parallel.For(1, stress_vals.Count * 2, i => // (Tensor3 val in stress_vals)
-              {
-            if (i == stress_vals.Count)
-              return;
-                  // split computation into two parts by doubling the i-counter
-            if (i < stress_vals.Count)
-              xyzRes[i] = GetQuantityResult(stress_vals[i], stressUnit);
-            else
-              xxyyzzRes[i - stress_vals.Count] = GetQuantityResult(stress_vals[i - stress_vals.Count], stressUnit, true);
-          });
+        {
+          if (i == stress_vals.Count)
+            return;
+          // split computation into two parts by doubling the i-counter
+          if (i < stress_vals.Count)
+            xyzRes[i] = GetQuantityResult(stress_vals[i], stressUnit);
+          else
+            xxyyzzRes[i - stress_vals.Count] = GetQuantityResult(stress_vals[i - stress_vals.Count], stressUnit, true);
+        });
         xyzRes[stress_vals.Count] = GetQuantityResult(stress_vals[0], stressUnit); // add centre point at the end
         xxyyzzRes[stress_vals.Count] = GetQuantityResult(stress_vals[0], stressUnit, true);
 
-              // add vector lists to main lists
+        // add vector lists to main lists
         r.xyzResults.TryAdd(key, xyzRes);
         r.xxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
-
       return r;
     }
     /// <summary>
@@ -107,34 +104,33 @@ namespace GsaGH.Helpers.GsaAPI
 
       Parallel.ForEach(globalResults.Keys, key =>
       {
-              // lists for results
+        // lists for results
         Element2DResult elementResults = globalResults[key];
         ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyzRes.AsParallel().AsOrdered();
         ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xxyyzzRes.AsParallel().AsOrdered();
 
-        List<Tensor3> stresses = elementResults.Stress.ToList();
+        ReadOnlyCollection<Tensor3> stresses = elementResults.Stress;
         Parallel.For(1, stresses.Count * 2, i => // (Tensor3 stress in stresses)
-              {
-            if (i == stresses.Count)
-              return;
-                  // split computation into two parts by doubling the i-counter
-            if (i < stresses.Count)
-              xyzRes[i] = GetQuantityResult(stresses[i], stressUnit, false);
-            else
-              xxyyzzRes[i - stresses.Count] = GetQuantityResult(stresses[i - stresses.Count], stressUnit, true);
-          });
+        {
+          if (i == stresses.Count)
+            return;
+          // split computation into two parts by doubling the i-counter
+          if (i < stresses.Count)
+            xyzRes[i] = GetQuantityResult(stresses[i], stressUnit, false);
+          else
+            xxyyzzRes[i - stresses.Count] = GetQuantityResult(stresses[i - stresses.Count], stressUnit, true);
+        });
         xyzRes[stresses.Count] = GetQuantityResult(stresses[0], stressUnit, false); // add centre point at the end
         xxyyzzRes[stresses.Count] = GetQuantityResult(stresses[0], stressUnit, true);
 
-              // add vector lists to main lists
+        // add vector lists to main lists
         r.xyzResults.TryAdd(key, xyzRes);
         r.xxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
-
       return r;
     }
     /// <summary>
@@ -151,27 +147,26 @@ namespace GsaGH.Helpers.GsaAPI
 
       Parallel.ForEach(globalResults.Keys, key =>
       {
-              // lists for results
+        // lists for results
         Element2DResult elementResults = globalResults[key];
         ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyzRes.AsParallel().AsOrdered();
         ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xxyyzzRes.AsParallel().AsOrdered();
 
-        List<Vector2> shears = elementResults.Shear.ToList();
+        ReadOnlyCollection<Vector2> shears = elementResults.Shear;
         Parallel.For(1, shears.Count, i => // (Vector2 shear in shears)
-              {
-            xyzRes[i] = GetQuantityResult(shears[i], forceUnit);
-          });
+        {
+          xyzRes[i] = GetQuantityResult(shears[i], forceUnit);
+        });
         xyzRes[shears.Count] = GetQuantityResult(shears[0], forceUnit); // add centre point at the end
 
-              // add vector lists to main lists
+        // add vector lists to main lists
         r.xyzResults.TryAdd(key, xyzRes);
         r.xxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
-
       return r;
     }
     /// <summary>
@@ -189,7 +184,7 @@ namespace GsaGH.Helpers.GsaAPI
 
       Parallel.ForEach(globalResults.Keys, key =>
       {
-              // lists for results
+        // lists for results
         Element2DResult elementResults = globalResults[key];
         ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyzRes.AsParallel().AsOrdered();
@@ -199,17 +194,17 @@ namespace GsaGH.Helpers.GsaAPI
         ReadOnlyCollection<Tensor2> forces = elementResults.Force;
         ReadOnlyCollection<Tensor2> moments = elementResults.Moment;
         Parallel.For(1, forces.Count + moments.Count, i => // (Tensor2 force in forces)
-          {
-            if (i == forces.Count)
-              return;
+        {
+          if (i == forces.Count)
+            return;
 
-            // combine forces and momemts (list lengths must be the same) to run
-            // calculations in parallel by doubling the i-counter
-            if (i < forces.Count)
-              xyzRes[i] = GetQuantityResult(forces[i], forceUnit);
-            else
-              xxyyzzRes[i - forces.Count] = GetQuantityResult(moments[i - forces.Count], momentUnit);
-          });
+          // combine forces and momemts (list lengths must be the same) to run
+          // calculations in parallel by doubling the i-counter
+          if (i < forces.Count)
+            xyzRes[i] = GetQuantityResult(forces[i], forceUnit);
+          else
+            xxyyzzRes[i - forces.Count] = GetQuantityResult(moments[i - forces.Count], momentUnit);
+        });
         xyzRes[forces.Count] = GetQuantityResult(forces[0], forceUnit); // add centre point at the end
         xxyyzzRes[moments.Count] = GetQuantityResult(moments[0], momentUnit);
 
@@ -234,7 +229,6 @@ namespace GsaGH.Helpers.GsaAPI
       });
 
       r.UpdateMinMax();
-
       return r;
     }
     /// <summary>
@@ -251,34 +245,33 @@ namespace GsaGH.Helpers.GsaAPI
 
       Parallel.ForEach(globalResults.Keys, key =>
       {
-              // lists for results
+        // lists for results
         Element2DResult elementResults = globalResults[key];
         ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyzRes.AsParallel().AsOrdered();
         ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xxyyzzRes.AsParallel().AsOrdered();
 
-        List<Double6> disp = elementResults.Displacement.ToList();
+        ReadOnlyCollection<Double6> disp = elementResults.Displacement;
         Parallel.For(1, disp.Count * 2, i => // (Double6 val in values)
-              {
-            if (i == disp.Count)
-              return;
-                  // split computation into two parts by doubling the i-counter
-            if (i < disp.Count)
-              xyzRes[i] = GetQuantityResult(disp[i], resultLengthUnit);
-            else
-              xxyyzzRes[i - disp.Count] = GetQuantityResult(disp[i - disp.Count], AngleUnit.Radian);
-          });
+        {
+          if (i == disp.Count)
+            return;
+          // split computation into two parts by doubling the i-counter
+          if (i < disp.Count)
+            xyzRes[i] = GetQuantityResult(disp[i], resultLengthUnit);
+          else
+            xxyyzzRes[i - disp.Count] = GetQuantityResult(disp[i - disp.Count], AngleUnit.Radian);
+        });
         xyzRes[disp.Count] = GetQuantityResult(disp[0], resultLengthUnit); // add centre point at the end
         xxyyzzRes[disp.Count - disp.Count] = GetQuantityResult(disp[0], AngleUnit.Radian);
 
-              // add vector lists to main lists
+        // add vector lists to main lists
         r.xyzResults.TryAdd(key, xyzRes);
         r.xxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
-
       return r;
     }
     /// <summary>
@@ -296,32 +289,30 @@ namespace GsaGH.Helpers.GsaAPI
 
       Parallel.ForEach(globalResults.Keys, key =>
       {
-              // lists for results
+        // lists for results
         Element1DResult elementResults = globalResults[key];
-        List<Double6> values = new List<Double6>();
         ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyzRes.AsParallel().AsOrdered();
         ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xxyyzzRes.AsParallel().AsOrdered();
 
-        values = elementResults.Force.ToList();
+        ReadOnlyCollection<Double6> values = elementResults.Force;
 
-              // loop through the results
+        // loop through the results
         Parallel.For(0, values.Count, i =>
-              {
-            Double6 result = values[i];
-
-                  // add the values to the vector lists
-            xyzRes[i] = GetQuantityResult(result, forceUnit, true);
-            xxyyzzRes[i] = GetQuantityResult(result, momentUnit, true);
-          });
-              // add the vector list to the out tree
+        {
+          Double6 result = values[i];
+          
+          // add the values to the vector lists
+          xyzRes[i] = GetQuantityResult(result, forceUnit, true);
+          xxyyzzRes[i] = GetQuantityResult(result, momentUnit, true);
+        });
+        // add the vector list to the out tree
         r.xyzResults.TryAdd(key, xyzRes);
         r.xxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
-
       return r;
     }
     /// <summary>
@@ -340,7 +331,6 @@ namespace GsaGH.Helpers.GsaAPI
       {
         // lists for results
         Element1DResult elementResults = globalResults[key];
-        List<double> values = new List<double>();
         ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyzRes.AsParallel().AsOrdered();
 
@@ -351,15 +341,13 @@ namespace GsaGH.Helpers.GsaAPI
         }
         else
         {
-          values = elementResults.StrainEnergyDensity.ToList();
+          ReadOnlyCollection<double> values = elementResults.StrainEnergyDensity;
 
           // loop through the results
           Parallel.For(0, values.Count, i =>
           {
-            double result = values[i];
-
             // add the values to the vector lists
-            xyzRes[i] = GetQuantityResult(result, energyUnit);
+            xyzRes[i] = GetQuantityResult(values[i], energyUnit);
           });
           // add the vector list to the out tree
           r.xyzResults.TryAdd(key, xyzRes);
@@ -367,7 +355,6 @@ namespace GsaGH.Helpers.GsaAPI
       });
 
       r.UpdateMinMax();
-
       return r;
     }
     /// <summary>
@@ -384,33 +371,31 @@ namespace GsaGH.Helpers.GsaAPI
 
       Parallel.ForEach(globalResults.Keys, key =>
       {
-              // lists for results
+        // lists for results
         Element1DResult elementResults = globalResults[key];
-        List<Double6> values = new List<Double6>();
         ConcurrentDictionary<int, GsaResultQuantity> xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xyzRes.AsParallel().AsOrdered();
         ConcurrentDictionary<int, GsaResultQuantity> xxyyzzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
         xxyyzzRes.AsParallel().AsOrdered();
 
-              // set the result type dependent on user selection in dropdown
-        values = elementResults.Displacement.ToList();
+        // set the result type dependent on user selection in dropdown
+        ReadOnlyCollection<Double6> values = elementResults.Displacement;
 
-              // loop through the results
+        // loop through the results
         Parallel.For(0, values.Count, i =>
-              {
-            Double6 result = values[i];
+        {
+          Double6 result = values[i];
 
-                  // add the values to the vector lists
-            xyzRes[i] = GetQuantityResult(result, resultLengthUnit);
-            xxyyzzRes[i] = GetQuantityResult(result, AngleUnit.Radian);
-          });
-              // add the vector list to the out tree
+          // add the values to the vector lists
+          xyzRes[i] = GetQuantityResult(result, resultLengthUnit);
+          xxyyzzRes[i] = GetQuantityResult(result, AngleUnit.Radian);
+        });
+        // add the vector list to the out tree
         r.xyzResults.TryAdd(key, xyzRes);
         r.xxyyzzResults.TryAdd(key, xxyyzzRes);
       });
 
       r.UpdateMinMax();
-
       return r;
     }
     /// <summary>
@@ -476,7 +461,6 @@ namespace GsaGH.Helpers.GsaAPI
       });
 
       r.UpdateMinMax();
-
       return r;
     }
     /// <summary>
@@ -513,7 +497,6 @@ namespace GsaGH.Helpers.GsaAPI
       });
 
       r.UpdateMinMax();
-
       return r;
     }
   }
