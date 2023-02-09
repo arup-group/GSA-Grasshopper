@@ -89,7 +89,6 @@ namespace GsaGH.Helpers.Export
       Members.ConvertMember1D(mem1ds, ref apiMembers, ref apiNodes, modelUnit, ref apiSections, ref apiSectionModifiers, ref apiMaterials);
       Members.ConvertMember2D(mem2ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp2ds, ref apiMaterials, ref apiaxes);
       Members.ConvertMember3D(mem3ds, ref apiMembers, ref apiNodes, modelUnit, ref apiProp3ds, ref apiMaterials);
-      
       #endregion
 
       #region Node loads
@@ -103,7 +102,8 @@ namespace GsaGH.Helpers.Export
       // Geometry
       ReadOnlyDictionary<int, Node> apiNodeDict = apiNodes.Dictionary;
       gsa.SetNodes(apiNodeDict);
-      gsa.SetElements(apiElements.Dictionary);
+      ReadOnlyDictionary<int, Element> apiElemDict = apiElements.Dictionary;
+      gsa.SetElements(apiElemDict);
       ReadOnlyDictionary<int, Member> apiMemDict = apiMembers.Dictionary;
       gsa.SetMembers(apiMemDict);
       // node loads
@@ -136,18 +136,37 @@ namespace GsaGH.Helpers.Export
           }
 
           int newNodeCount = gsa.Nodes().Keys.Count;
+          
+          if (elem2ds != null && elem2ds.Count > 0)
+          {
+            foreach (GsaElement2d e2d in elem2ds) 
+            {
+              int expectedCollapsedNodeCount = e2d.Mesh.TopologyVertices.Count;
+              int actualNodeCount = 0;
+              foreach(List<int> topoint in e2d.TopoInt)
+                actualNodeCount+= topoint.Count;
+              int difference = actualNodeCount - expectedCollapsedNodeCount;
+              initialNodeCount -= difference;
+            }
+          }
           double nodeSurvivalRate = (double)newNodeCount / (double)initialNodeCount;
-          if (nodeSurvivalRate < 0.5)
+          
+          int elemCount = apiElemDict.Count;
+          int memCount = apiMemDict.Count;
+          double warningSurvivalRate = elemCount > memCount ? 0.5 : 0.75;
+          double remarkSurvivalRate = elemCount > memCount ? 0.75 : 0.90;
+
+          if (nodeSurvivalRate < warningSurvivalRate)
             owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
-              new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString().Replace(" ", string.Empty)
+              new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)
               + " of the nodes where removed by the Collapse Coincident Nodes method." + System.Environment.NewLine
-              + "This is rather high, maybe worth checking you have set a reasonable tolerance?" 
+              + "This indicates that you have set a tolerance that is too low."
               + System.Environment.NewLine + "Right-click the component to change the tolerance.");
-          else if (nodeSurvivalRate < 0.9)
+          else if (nodeSurvivalRate < remarkSurvivalRate)
             owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark,
-              new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString().Replace(" ", string.Empty)
+              new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)
               + " of the nodes where removed by the Collapse Coincident Nodes method." + System.Environment.NewLine
-              + "This is rather high, maybe worth checking you have set a reasonable tolerance?"
+              + "This indicates that you have set a tolerance that is too low."
               + System.Environment.NewLine + "Right-click the component to change the tolerance.");
         }
       }
