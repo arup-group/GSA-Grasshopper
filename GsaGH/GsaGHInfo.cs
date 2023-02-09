@@ -27,6 +27,7 @@ namespace GsaGH
       System.Environment.SetEnvironmentVariable(name, value, target);
 
       // ### Reference GSA API dlls ###
+      string gsaVersion = "";
       // check if GSA is installed
       if (!File.Exists(InstallPath + "\\GsaAPI.dll"))
       {
@@ -40,8 +41,9 @@ namespace GsaGH
       {
         // Try load GSA
         Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-        FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
-        if (myFileVersionInfo.FileBuildPart < 63)
+        FileVersionInfo gsaVers = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
+        gsaVersion = gsaVers.FileMajorPart + "." + gsaVers.FileMinorPart + "." + gsaVers.FileBuildPart;
+        if (gsaVers.FileBuildPart < 63)
         {
           Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper require GSA 10.1.63 installed. Please upgrade GSA.");
           GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
@@ -49,6 +51,7 @@ namespace GsaGH
           PostHog.PluginLoaded(PluginInfo.Instance, exception.Message);
           return GH_LoadingInstruction.Abort;
         }
+
       }
       catch (Exception e)
       {
@@ -88,7 +91,7 @@ namespace GsaGH
       // ### Setup OasysGH and shared Units ###
       Utility.InitialiseMainMenuAndDefaultUnits();
 
-      PostHog.PluginLoaded(GsaGH.PluginInfo.Instance);
+      PostHog.PluginLoaded(GsaGH.PluginInfo.Instance, gsaVersion);
 
       return GH_LoadingInstruction.Proceed;
     }
