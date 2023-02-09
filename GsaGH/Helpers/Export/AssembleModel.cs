@@ -121,12 +121,19 @@ namespace GsaGH.Helpers.Export
         // provide feedback to user if we have removed unreasonable amount of nodes
         if (owner != null)
         {
-          double minMeshSize = apiMemDict.Values.Where(x => x.MeshSize != 0).Select(x => x.MeshSize).Min();
-          if (minMeshSize < toleranceCoincidentNodes)
-            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
-              "The smallest mesh size (" + minMeshSize + ") is smaller than the set tolerance (" + toleranceCoincidentNodes + ")."
-              + System.Environment.NewLine + "This is likely to produce an undisarable mesh."
-              + System.Environment.NewLine + "Right-click the component to change the tolerance.");
+          try
+          {
+            double minMeshSize = apiMemDict.Values.Where(x => x.MeshSize != 0).Select(x => x.MeshSize).Min();
+            if (minMeshSize < toleranceCoincidentNodes)
+              owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+                "The smallest mesh size (" + minMeshSize + ") is smaller than the set tolerance (" + toleranceCoincidentNodes + ")."
+                + System.Environment.NewLine + "This is likely to produce an undisarable mesh."
+                + System.Environment.NewLine + "Right-click the component to change the tolerance.");
+          }
+          catch (System.InvalidOperationException)
+          {
+            // if linq .Where returns an empty list (all mesh sizes are zero)
+          }
 
           int newNodeCount = gsa.Nodes().Keys.Count;
           double nodeSurvivalRate = (double)newNodeCount / (double)initialNodeCount;
