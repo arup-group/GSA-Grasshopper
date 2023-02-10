@@ -35,6 +35,7 @@ namespace GsaGH.Parameters
         this._guid = Guid.NewGuid();
         this._section = value;
         this._material = new GsaMaterial(this);
+        this.IsReferencedByID = false;
       }
     }
     #region section properties
@@ -141,6 +142,7 @@ namespace GsaGH.Parameters
         this._section.MaterialType = Helpers.Export.Materials.ConvertType(_material);
         this._section.MaterialAnalysisProperty = _material.AnalysisProperty;
         this._section.MaterialGradeProperty = _material.GradeProperty;
+        this.IsReferencedByID = false;
       }
     }
     public GsaSectionModifier Modifier
@@ -153,6 +155,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._modifier = value;
+        this.IsReferencedByID = false;
       }
     }
     #region GsaAPI members
@@ -166,6 +169,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._section.Name = value;
+        this.IsReferencedByID = false;
       }
     }
     public int Pool
@@ -178,6 +182,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._section.Pool = value;
+        this.IsReferencedByID = false;
       }
     }
     public int MaterialID
@@ -191,6 +196,7 @@ namespace GsaGH.Parameters
         this.CloneApiObject();
         this._section.MaterialAnalysisProperty = value;
         this._material.AnalysisProperty = this._section.MaterialAnalysisProperty;
+        this.IsReferencedByID = false;
       }
     }
     public string Profile
@@ -205,6 +211,7 @@ namespace GsaGH.Parameters
         {
           this.CloneApiObject();
           this._section.Profile = value;
+          this.IsReferencedByID = false;
         }
       }
     }
@@ -218,6 +225,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._section.Colour = value;
+        this.IsReferencedByID = false;
       }
     }
     private void CloneApiObject()
