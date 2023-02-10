@@ -45,7 +45,7 @@ namespace GsaGH
         gsaVersion = gsaVers.FileMajorPart + "." + gsaVers.FileMinorPart + "." + gsaVers.FileBuildPart;
         if (gsaVers.FileBuildPart < 63)
         {
-          Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper require GSA 10.1.63 installed. Please upgrade GSA.");
+          Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper requires GSA 10.1.63 installed. Please upgrade GSA.");
           GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
           Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
           PostHog.PluginLoaded(PluginInfo.Instance, exception.Message);
