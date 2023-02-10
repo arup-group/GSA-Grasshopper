@@ -100,18 +100,88 @@ namespace GsaGH.Helpers.Export
 
       #region set geometry in model
       // Geometry
-      gsa.SetNodes(apiNodes.Dictionary);
-      gsa.SetElements(apiElements.Dictionary);
-      gsa.SetMembers(apiMembers.Dictionary);
+      ReadOnlyDictionary<int, Node> apiNodeDict = apiNodes.Dictionary;
+      gsa.SetNodes(apiNodeDict);
+      ReadOnlyDictionary<int, Element> apiElemDict = apiElements.Dictionary;
+      gsa.SetElements(apiElemDict);
+      ReadOnlyDictionary<int, Member> apiMemDict = apiMembers.Dictionary;
+      gsa.SetMembers(apiMemDict);
       // node loads
       gsa.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(nodeLoads_displ));
       gsa.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(nodeLoads_node));
       gsa.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(nodeLoads_settle));
 
+      int initialNodeCount = apiNodeDict.Keys.Count;
       if (createElementsFromMembers && apiMembers.Count > 0)
         gsa.CreateElementsFromMembers();
       if (toleranceCoincidentNodes > 0)
+      {
         gsa.CollapseCoincidentNodes(toleranceCoincidentNodes);
+        
+        // provide feedback to user if we have removed unreasonable amount of nodes
+        if (owner != null)
+        {
+          try
+          {
+            double minMeshSize = apiMemDict.Values.Where(x => x.MeshSize != 0).Select(x => x.MeshSize).Min();
+            if (minMeshSize < toleranceCoincidentNodes)
+              owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+                "The smallest mesh size (" + minMeshSize + ") is smaller than the set tolerance (" + toleranceCoincidentNodes + ")."
+                + System.Environment.NewLine + "This is likely to produce an undisarable mesh."
+                + System.Environment.NewLine + "Right-click the component to change the tolerance.");
+          }
+          catch (System.InvalidOperationException)
+          {
+            // if linq .Where returns an empty list (all mesh sizes are zero)
+          }
+
+          int newNodeCount = gsa.Nodes().Keys.Count;
+          
+          if (elem2ds != null && elem2ds.Count > 0)
+          {
+            foreach (GsaElement2d e2d in elem2ds) 
+            {
+              int expectedCollapsedNodeCount = e2d.Mesh.TopologyVertices.Count;
+              int actualNodeCount = 0;
+              foreach(List<int> topoint in e2d.TopoInt)
+                actualNodeCount+= topoint.Count;
+              int difference = actualNodeCount - expectedCollapsedNodeCount;
+              initialNodeCount -= difference;
+            }
+          }
+          if (elem3ds != null && elem3ds.Count > 0)
+          {
+            foreach (GsaElement3d e3d in elem3ds)
+            {
+              int expectedCollapsedNodeCount = e3d.NgonMesh.TopologyVertices.Count;
+              int actualNodeCount = 0;
+              foreach (List<int> topoint in e3d.TopoInt)
+                actualNodeCount += topoint.Count;
+              int difference = actualNodeCount - expectedCollapsedNodeCount;
+              initialNodeCount -= difference;
+            }
+          }
+          double nodeSurvivalRate = (double)newNodeCount / (double)initialNodeCount;
+          
+          int elemCount = apiElemDict.Count;
+          int memCount = apiMemDict.Count;
+          double warningSurvivalRate = elemCount > memCount ? 0.5 : 0.75;
+          double remarkSurvivalRate = elemCount > memCount ? 0.75 : 0.90;
+
+          if (nodeSurvivalRate < warningSurvivalRate)
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+              new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)
+              + " of the nodes where removed by the Collapse Coincident Nodes method." + System.Environment.NewLine
+              + "This indicates that you have set a tolerance that is too low."
+              + System.Environment.NewLine + "Right-click the component to change the tolerance.");
+          else if (nodeSurvivalRate < remarkSurvivalRate)
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark,
+              new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)
+              + " of the nodes where removed by the Collapse Coincident Nodes method." + System.Environment.NewLine
+              + "This indicates that you have set a tolerance that is too low."
+              + System.Environment.NewLine + "Right-click the component to change the tolerance.");
+        }
+      }
       #endregion
 
       #region Loads

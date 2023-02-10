@@ -98,7 +98,7 @@ namespace GsaGH.Components
         if (models.Count > 0)
         {
           if (models.Count > 1)
-            model = Helpers.Export.MergeModels.MergeModel(models);
+            model = Helpers.Export.MergeModels.MergeModel(models, this);
           else
             model = models[0].Clone();
         }

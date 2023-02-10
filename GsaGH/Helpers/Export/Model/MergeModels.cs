@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH.Units;
@@ -12,7 +13,7 @@ namespace GsaGH.Helpers.Export
 {
   public class MergeModels
   {
-    public static GsaModel MergeModel(List<GsaModel> models)
+    public static GsaModel MergeModel(List<GsaModel> models, GH_Component owner)
     {
       if (models != null)
       {
@@ -22,10 +23,10 @@ namespace GsaGH.Helpers.Export
           models.Reverse();
           for (int i = 0; i < models.Count - 1; i++)
           {
-            model = MergeModels.MergeModel(model, models[i].Clone());
+            model = MergeModels.MergeModel(model, models[i].Clone(), owner);
           }
           GsaModel clone = models[models.Count - 1].Clone();
-          clone = MergeModels.MergeModel(clone, model);
+          clone = MergeModels.MergeModel(clone, model, owner);
           return clone;
         }
         else if (models.Count > 0)
@@ -34,7 +35,7 @@ namespace GsaGH.Helpers.Export
       return null;
     }
 
-    public static GsaModel MergeModel(GsaModel mainModel, GsaModel appendModel)
+    public static GsaModel MergeModel(GsaModel mainModel, GsaModel appendModel, GH_Component owner)
     {
       // open the copyfrom model
       Model model = appendModel.Model;
@@ -134,7 +135,7 @@ namespace GsaGH.Helpers.Export
       List<GsaGridPlaneSurface> gps = gpsgoo.Select(n => n.Value).ToList();
 
       // return new assembled model
-      mainModel.Model = AssembleModel.Assemble(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter, DefaultUnits.Tolerance.Meters, false, null);
+      mainModel.Model = AssembleModel.Assemble(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter, DefaultUnits.Tolerance.Meters, false, owner);
       return mainModel;
     }
   }
