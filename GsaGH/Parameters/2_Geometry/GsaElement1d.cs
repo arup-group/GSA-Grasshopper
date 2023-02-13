@@ -337,9 +337,9 @@ namespace GsaGH.Parameters
         OrientationNode = this.ApiElement.OrientationNode,
         ParentMember = this.ApiElement.ParentMember,
         Property = this.ApiElement.Property,
-        Topology = new ReadOnlyCollection<int>(this.ApiElement.Topology.ToList()),
         Type = this.ApiElement.Type //GsaToModel.Element1dType((int)Element.Type)
       };
+      elem.Topology = new ReadOnlyCollection<int>(this.ApiElement.Topology.ToList());
       elem.SetEndRelease(0, this.ApiElement.GetEndRelease(0));
       elem.SetEndRelease(1, this.ApiElement.GetEndRelease(1));
       if ((Color)ApiElement.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
