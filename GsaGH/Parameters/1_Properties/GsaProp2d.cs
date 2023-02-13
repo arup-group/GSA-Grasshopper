@@ -39,6 +39,7 @@ namespace GsaGH.Parameters
         this._guid = Guid.NewGuid();
         this._prop2d = value;
         this._material = new GsaMaterial(this);
+        this.IsReferencedByID = false;
       }
     }
     public int Id
@@ -71,6 +72,7 @@ namespace GsaGH.Parameters
         this._prop2d.MaterialType = Helpers.Export.Materials.ConvertType(_material);
         this._prop2d.MaterialAnalysisProperty = this._material.AnalysisProperty;
         this._prop2d.MaterialGradeProperty = this._material.GradeProperty;
+        this.IsReferencedByID = false;
       }
     }
     #region GsaAPI members
@@ -84,6 +86,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop2d.Name = value;
+        this.IsReferencedByID = false;
       }
     }
     public int MaterialID
@@ -96,19 +99,13 @@ namespace GsaGH.Parameters
       set
       {
         this.CloneApiObject();
+        this.IsReferencedByID = false;
         this._prop2d.MaterialAnalysisProperty = value;
         this._material.AnalysisProperty = this._prop2d.MaterialAnalysisProperty;
       }
     }
     public Length Thickness
     {
-      set
-      {
-        this.CloneApiObject();
-        IQuantity length = new Length(0, value.Unit);
-        string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-        this._prop2d.Description = value.Value.ToString() + "(" + unitAbbreviation + ")";
-      }
       get
       {
         if (this._prop2d.Description.Length == 0)
@@ -126,6 +123,14 @@ namespace GsaGH.Parameters
         else
           return new Length(double.Parse(this._prop2d.Description, CultureInfo.InvariantCulture), LengthUnit.Millimeter);
       }
+      set
+      {
+        this.CloneApiObject();
+        IQuantity length = new Length(0, value.Unit);
+        string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+        this._prop2d.Description = value.Value.ToString() + "(" + unitAbbreviation + ")";
+        this.IsReferencedByID = false;
+      }
     }
     public string Description
     {
@@ -137,6 +142,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop2d.Description = value;
+        this.IsReferencedByID = false;
       }
     }
     public int AxisProperty
@@ -149,6 +155,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop2d.AxisProperty = value;
+        this.IsReferencedByID = false;
       }
     }
     public Property2D_Type Type
@@ -161,6 +168,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop2d.Type = value;
+        this.IsReferencedByID = false;
       }
     }
     public Color Colour
@@ -173,6 +181,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop2d.Colour = value;
+        this.IsReferencedByID = false;
       }
     }
     #endregion
@@ -194,6 +203,7 @@ namespace GsaGH.Parameters
         this._localAxis = value;
         CloneApiObject();
         this._prop2d.AxisProperty = -2;
+        this.IsReferencedByID = false;
       }
     }
     #endregion
