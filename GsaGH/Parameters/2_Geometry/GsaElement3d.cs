@@ -56,7 +56,7 @@ namespace GsaGH.Parameters
     }
     internal Element GetApiObjectClone(int i)
     {
-      return new Element()
+      Element dup = new Element()
       {
         Group = this._elements[i].Group,
         IsDummy = this._elements[i].IsDummy,
@@ -66,9 +66,10 @@ namespace GsaGH.Parameters
         Offset = this._elements[i].Offset,
         ParentMember = this._elements[i].ParentMember,
         Property = this._elements[i].Property,
-        Topology = new ReadOnlyCollection<int>(this._elements[i].Topology.ToList()),
         Type = this._elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
       };
+      dup.Topology = new ReadOnlyCollection<int>(this._elements[i].Topology.ToList());
+      return dup;
     }
     public int Count
     {
