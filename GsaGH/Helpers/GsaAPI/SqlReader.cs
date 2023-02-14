@@ -33,6 +33,9 @@ namespace GsaGH.Helpers.GsaAPI
     public static SqlReader Initialize()
     {
       string codeBase = Assembly.GetCallingAssembly().CodeBase;
+      string codeBaseFoo = Assembly.GetExecutingAssembly().CodeBase;
+      string codeBaseFooToo = Assembly.GetEntryAssembly().CodeBase;
+
       UriBuilder uri = new UriBuilder(codeBase);
       string path = Uri.UnescapeDataString(uri.Path);
       path = Uri.UnescapeDataString(uri.Path);
