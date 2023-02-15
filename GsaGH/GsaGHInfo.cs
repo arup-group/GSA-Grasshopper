@@ -11,12 +11,21 @@ namespace GsaGH
 {
   public class AddReferencePriority : GH_AssemblyPriority
   {
-    public static string PluginPath;
+    public static string PluginPath
+    {
+      get 
+      {
+        if (_pluginPath == null)
+          _pluginPath = TryFindPluginPath("GSA.gha");
+        return _pluginPath;
+      }
+    }
+    private static string _pluginPath;
     public static string InstallPath = Helpers.GsaAPI.InstallationFolder.GetPath;
     
     public override GH_LoadingInstruction PriorityLoad()
     {
-      if (!TryFindPluginPath("GSA.gha"))
+      if (TryFindPluginPath("GSA.gha") == "")
         return GH_LoadingInstruction.Abort;
 
       // ### Set system environment variables to allow user rights to read below dlls ###
@@ -96,7 +105,7 @@ namespace GsaGH
       return GH_LoadingInstruction.Proceed;
     }
 
-    private bool TryFindPluginPath(string keyword)
+    private static string TryFindPluginPath(string keyword)
     {
       // ### Search for plugin path ###
 
@@ -123,8 +132,7 @@ namespace GsaGH
             if (files.Length > 0)
             {
               path = files[0].Replace(keyword, string.Empty);
-              PluginPath = Path.GetDirectoryName(path);
-              return true;
+              return Path.GetDirectoryName(path);
             }
           }
           string message =
@@ -139,11 +147,10 @@ namespace GsaGH
           GH_LoadingException gH_LoadingException = new GH_LoadingException(GsaGHInfo.ProductName + ": " + keyword + " loading failed", exception);
           Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
           PostHog.PluginLoaded(GsaGH.PluginInfo.Instance, message);
-          return false;
+          return "";
         }
       }
-      PluginPath = Path.GetDirectoryName(path);
-      return true;
+      return Path.GetDirectoryName(path);
     }
   }
 
