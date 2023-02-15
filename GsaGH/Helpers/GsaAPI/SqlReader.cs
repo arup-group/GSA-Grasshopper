@@ -13,10 +13,10 @@ namespace GsaGH.Helpers.GsaAPI
   /// Class containing functions to interface with SQLite db files.
   /// In case of problems loading SQLite the singleton is executed in a separate AppDomain.
   /// </summary>
-  public class SqlReader : MarshalByRefObject
+  public class MicrosoftSQLiteReader : MarshalByRefObject
   {
-    public static SqlReader Instance { get { return lazy.Value; } }
-    private static readonly Lazy<SqlReader> lazy = new Lazy<SqlReader>(() => Initialize());
+    public static MicrosoftSQLiteReader Instance { get { return lazy.Value; } }
+    private static readonly Lazy<MicrosoftSQLiteReader> lazy = new Lazy<MicrosoftSQLiteReader>(() => Initialize());
 
     [HandleProcessCorruptedStateExceptions] // access violation
     static void UEHandler(object sender, UnhandledExceptionEventArgs e)
@@ -30,21 +30,22 @@ namespace GsaGH.Helpers.GsaAPI
       throw new Exception(ex.ToString() + "     " + assemblies);
     }
 
-    public static SqlReader Initialize()
+    public static MicrosoftSQLiteReader Initialize()
     {
       string codeBase = Assembly.GetCallingAssembly().CodeBase;
-      string codeBaseFoo = Assembly.GetExecutingAssembly().CodeBase;
-      string codeBaseFooToo = Assembly.GetEntryAssembly().CodeBase;
 
       UriBuilder uri = new UriBuilder(codeBase);
       string path = Uri.UnescapeDataString(uri.Path);
-      path = Uri.UnescapeDataString(uri.Path);
       try
       {
         AppDomain.CurrentDomain.UnhandledException += UEHandler;
-        Assembly SQLiteInterop = Assembly.LoadFile(Path.GetDirectoryName(path) + @"\Microsoft.Data.Sqlite.dll");
+        //Assembly SQLiteInterop = Assembly.LoadFile(Path.GetDirectoryName(path) + @"\Microsoft.Data.Sqlite.dll");
 
-        return new SqlReader();
+        string foo = System.IO.Path.GetDirectoryName(typeof(MicrosoftSQLiteReader).Assembly.Location);
+        string foo2 = AppDomain.CurrentDomain.BaseDirectory;
+        string foo3 = AddReferencePriority.PluginPath;
+
+        return new MicrosoftSQLiteReader();
       }
       // try using a second AppDomain
       catch (Exception)
@@ -66,7 +67,7 @@ namespace GsaGH.Helpers.GsaAPI
 
         // Create an instance of MarshalbyRefType in the second AppDomain.
         // A proxy to the object is returned.
-        SqlReader reader = (SqlReader)ad.CreateInstanceAndUnwrap(exeAssembly, typeof(SqlReader).FullName);
+        MicrosoftSQLiteReader reader = (MicrosoftSQLiteReader)ad.CreateInstanceAndUnwrap(exeAssembly, typeof(MicrosoftSQLiteReader).FullName);
         return reader;
       }
     }
@@ -77,7 +78,7 @@ namespace GsaGH.Helpers.GsaAPI
       return null;
     }
 
-    public SqlReader()
+    public MicrosoftSQLiteReader()
     {
     }
 
