@@ -426,7 +426,7 @@ namespace GsaGH.Components
         else if (profile.StartsWith("CAT"))
         {
           string prof = profile.Split(' ')[2];
-          List<double> sqlValues = SqlReader.Instance.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+          List<double> sqlValues = MicrosoftSQLiteReader.Instance.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
           unit = LengthUnit.Meter;
           if (sqlValues.Count == 2)
           {

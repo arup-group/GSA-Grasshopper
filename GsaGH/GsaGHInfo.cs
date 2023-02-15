@@ -13,7 +13,7 @@ namespace GsaGH
   {
     public static string PluginPath;
     public static string InstallPath = Helpers.GsaAPI.InstallationFolder.GetPath;
-
+    
     public override GH_LoadingInstruction PriorityLoad()
     {
       if (!TryFindPluginPath("GSA.gha"))
@@ -145,8 +145,6 @@ namespace GsaGH
       PluginPath = Path.GetDirectoryName(path);
       return true;
     }
-
-
   }
 
   internal sealed class PluginInfo
