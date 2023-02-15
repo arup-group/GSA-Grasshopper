@@ -32,19 +32,11 @@ namespace GsaGH.Helpers.GsaAPI
 
     public static MicrosoftSQLiteReader Initialize()
     {
-      string codeBase = Assembly.GetCallingAssembly().CodeBase;
-
-      UriBuilder uri = new UriBuilder(codeBase);
+      UriBuilder uri = new UriBuilder(AddReferencePriority.PluginPath);
       string path = Uri.UnescapeDataString(uri.Path);
       try
       {
         AppDomain.CurrentDomain.UnhandledException += UEHandler;
-        //Assembly SQLiteInterop = Assembly.LoadFile(Path.GetDirectoryName(path) + @"\Microsoft.Data.Sqlite.dll");
-
-        string foo = System.IO.Path.GetDirectoryName(typeof(MicrosoftSQLiteReader).Assembly.Location);
-        string foo2 = AppDomain.CurrentDomain.BaseDirectory;
-        string foo3 = AddReferencePriority.PluginPath;
-
         return new MicrosoftSQLiteReader();
       }
       // try using a second AppDomain
