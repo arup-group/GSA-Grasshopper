@@ -107,18 +107,19 @@ namespace GsaGH.Components
     //});
 
     // Catalogues
-    private readonly Tuple<List<string>, List<int>> _cataloguedata = MicrosoftSQLiteReader.Instance.GetCataloguesDataFromSQLite(Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+    private readonly Tuple<List<string>, List<int>> _cataloguedata;
     private List<int> _catalogueNumbers = new List<int>(); // internal db catalogue numbers
     private List<string> _catalogueNames = new List<string>(); // list of displayed catalogues
     private bool _inclSS;
 
     // Types
-    private Tuple<List<string>, List<int>> _typedata = MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(-1, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
+    private Tuple<List<string>, List<int>> _typedata;
     private List<int> _typeNumbers = new List<int>(); //  internal db type numbers
     private List<string> _typeNames = new List<string>(); // list of displayed types
 
     // Sections
-    private List<string> _sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
+    private List<string> _sectionList;
+
     private int _catalogueIndex = -1; //-1 is all
     private int _typeIndex = -1;
 
@@ -138,7 +139,9 @@ namespace GsaGH.Components
       SubCategoryName.Cat1())
     {
       this.Hidden = true; // sets the initial state of the component to hidden
-    }
+      this._cataloguedata = MicrosoftSQLiteReader.Instance.GetCataloguesDataFromSQLite(Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+      this._typedata = MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(-1, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
+      this._sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false); ;
 
     private static bool MatchAndAdd(string item, string pattern, ref List<string> list, bool tryHard = false)
     {
@@ -752,7 +755,7 @@ namespace GsaGH.Components
                   }
                   else
                   {
-                    this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Cannot convert internal edge  to Polyline");
+                    this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Cannot convert internal edge to Polyline");
                     return;
                   }
                 }
