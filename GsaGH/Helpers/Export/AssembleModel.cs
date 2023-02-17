@@ -168,16 +168,21 @@ namespace GsaGH.Helpers.Export
           double warningSurvivalRate = elemCount > memCount ? 0.1 : 0.5;
           double remarkSurvivalRate = elemCount > memCount ? 0.5 : 0.75;
 
-          if (nodeSurvivalRate < warningSurvivalRate)
+          if (newNodeCount == 1)
+            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+              "After collapsing coincident nodes only one node remained." + System.Environment.NewLine
+              + "This indicates that you have set a tolerance that is too low."
+              + System.Environment.NewLine + "Right-click the component to change the tolerance.");
+          else if (nodeSurvivalRate < warningSurvivalRate)
             owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
               new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)
-              + " of the nodes were removed by the Collapse Coincident Nodes method." + System.Environment.NewLine
+              + " of the nodes were removed after collapsing coincident nodes." + System.Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."
               + System.Environment.NewLine + "Right-click the component to change the tolerance.");
           else if (nodeSurvivalRate < remarkSurvivalRate)
             owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark,
               new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)
-              + " of the nodes were removed by the Collapse Coincident Nodes method." + System.Environment.NewLine
+              + " of the nodes were removed after collapsing coincident nodes." + System.Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."
               + System.Environment.NewLine + "Right-click the component to change the tolerance.");
         }
