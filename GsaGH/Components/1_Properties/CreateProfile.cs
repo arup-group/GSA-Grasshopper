@@ -141,7 +141,8 @@ namespace GsaGH.Components
       this.Hidden = true; // sets the initial state of the component to hidden
       this._cataloguedata = MicrosoftSQLiteReader.Instance.GetCataloguesDataFromSQLite(Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
       this._typedata = MicrosoftSQLiteReader.Instance.GetTypesDataFromSQLite(-1, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
-      this._sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false); ;
+      this._sectionList = MicrosoftSQLiteReader.Instance.GetSectionsDataFromSQLite(new List<int> { -1 }, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"), false);
+    }
 
     private static bool MatchAndAdd(string item, string pattern, ref List<string> list, bool tryHard = false)
     {
