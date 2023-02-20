@@ -1,11 +1,43 @@
-﻿using GsaGH.Parameters;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers
 {
   internal class PostHog
   {
+    internal static void Debug(Dictionary<string, object> properties)
+    {
+      string eventName = "Debug";
+      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+    }
+
+    internal static void Load(GsaLoad.LoadTypes loadType, ReferenceType refType, string subType = "-")
+    {
+      string eventName = "Load";
+      bool objLoad = refType != ReferenceType.None;
+      Dictionary<string, object> properties = new Dictionary<string, object>()
+        {
+          { "loadType", loadType.ToString() },
+          { "objectLoad", objLoad },
+          { "refType", refType.ToString() },
+          { "loadSubType", subType },
+        };
+      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+    }
+
+    internal static void Load(bool refType, string subType = "-")
+    {
+      string eventName = "Load";
+      Dictionary<string, object> properties = new Dictionary<string, object>()
+        {
+          { "loadType", "Node" },
+          { "objectLoad", refType },
+          { "refType", refType ? "Node" : "None" },
+          { "loadSubType", subType },
+        };
+      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+    }
+
     internal static void Result(GsaResult.CaseType caseType, int dimension, GsaResultsValues.ResultType resultType, string subType = "-")
     {
       string eventName = "Result";
@@ -28,32 +60,6 @@ namespace GsaGH.Helpers
           { "elementType", dimension },
           { "resultType", resultType },
           { "resultSubType", subType },
-        };
-      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
-    }
-
-    internal static void Load(GsaLoad.LoadTypes loadType, ReferenceType refType, string subType = "-")
-    {
-      string eventName = "Load";
-      bool objLoad = refType != ReferenceType.None;
-      Dictionary<string, object> properties = new Dictionary<string, object>()
-        {
-          { "loadType", loadType.ToString() },
-          { "objectLoad", objLoad },
-          { "refType", refType.ToString() },
-          { "loadSubType", subType },
-        };
-      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
-    }
-    internal static void Load(bool refType, string subType = "-")
-    {
-      string eventName = "Load";
-      Dictionary<string, object> properties = new Dictionary<string, object>()
-        {
-          { "loadType", "Node" },
-          { "objectLoad", refType },
-          { "refType", refType ? "Node" : "None" },
-          { "loadSubType", subType },
         };
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
     }

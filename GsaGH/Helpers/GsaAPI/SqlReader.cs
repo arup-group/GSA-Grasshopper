@@ -1,11 +1,11 @@
-﻿using Microsoft.Data.Sqlite;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using Microsoft.Data.Sqlite;
 
 namespace GsaGH.Helpers.GsaAPI
 {
@@ -27,16 +27,36 @@ namespace GsaGH.Helpers.GsaAPI
       foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
         assemblies += ass.ToString() + "; ";
 
+      Helpers.PostHog.Debug(new Dictionary<string, object>() {
+        { "source", "UEHandler" },
+        { "exception", ex.ToString() },
+        { "assemblies", assemblies },
+      });
+
       throw new Exception(ex.ToString() + "     " + assemblies);
     }
 
     public static MicrosoftSQLiteReader Initialize()
     {
-      UriBuilder uri = new UriBuilder(AddReferencePriority.PluginPath);
-      string path = Uri.UnescapeDataString(uri.Path);
+      string codeBase = Assembly.GetCallingAssembly().CodeBase;
+      UriBuilder uri = new UriBuilder(codeBase);
+      string codeBasePath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+
+      string pluginPath = AddReferencePriority.PluginPath;
+
+      Dictionary<string, object> properties = new Dictionary<string, object>() {
+        { "source", "Initialize" },
+        { "codeBasePath", codeBasePath },
+        { "pluginPath", pluginPath }
+      };
+
+      Helpers.PostHog.Debug(properties);
+
       try
       {
         AppDomain.CurrentDomain.UnhandledException += UEHandler;
+        Assembly SQLiteInterop = Assembly.LoadFile(pluginPath + @"\Microsoft.Data.Sqlite.dll");
+
         return new MicrosoftSQLiteReader();
       }
       // try using a second AppDomain
@@ -45,23 +65,54 @@ namespace GsaGH.Helpers.GsaAPI
         // Get the full name of the EXE assembly.
         string exeAssembly = Assembly.GetCallingAssembly().FullName;
 
-        // Construct and initialize settings for a second AppDomain.
-        AppDomainSetup ads = new AppDomainSetup();
-        ads.ApplicationBase = Path.GetDirectoryName(path);
-        ads.PrivateBinPath = @"x64";
-        ads.DisallowBindingRedirects = false;
-        ads.DisallowCodeDownload = true;
-        ads.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+        AppDomain ad2 = CreateAppDomain("SQLite AppDomain", pluginPath);
+        ad2.UnhandledException += UEHandler;
 
-        // Create the second AppDomain.
-        AppDomain ad = AppDomain.CreateDomain("SQLite AppDomain", null, ads);
-        ad.UnhandledException += UEHandler;
+        try
+        {
+          // Create an instance of MarshalbyRefType in the second AppDomain.
+          // A proxy to the object is returned.
+          MicrosoftSQLiteReader reader = (MicrosoftSQLiteReader)ad2.CreateInstanceAndUnwrap(exeAssembly, typeof(MicrosoftSQLiteReader).FullName);
 
-        // Create an instance of MarshalbyRefType in the second AppDomain.
-        // A proxy to the object is returned.
-        MicrosoftSQLiteReader reader = (MicrosoftSQLiteReader)ad.CreateInstanceAndUnwrap(exeAssembly, typeof(MicrosoftSQLiteReader).FullName);
-        return reader;
+          Helpers.PostHog.Debug(new Dictionary<string, object>() {
+            { "source", "AppDomain" },
+            { "source", "AppDomain" },
+            { "applicationBase", "pluginPath" },
+          });
+
+          return reader;
+        }
+        catch (Exception)
+        {
+          // try again with codeBasePath
+          AppDomain ad3 = CreateAppDomain("SQLite AppDomain", codeBasePath);
+          ad3.UnhandledException += UEHandler;
+
+          MicrosoftSQLiteReader reader = (MicrosoftSQLiteReader)ad3.CreateInstanceAndUnwrap(exeAssembly, typeof(MicrosoftSQLiteReader).FullName);
+
+          Helpers.PostHog.Debug(new Dictionary<string, object>() {
+            { "source", "AppDomain" },
+            { "source", "AppDomain" },
+            { "applicationBase", "codeBasePath" },
+          });
+
+          return reader;
+        }
       }
+    }
+
+    public static AppDomain CreateAppDomain(string friendlyName, string applicationBase)
+    {
+      AppDomainSetup ads = new AppDomainSetup();
+      ads.ApplicationBase = applicationBase;
+      ads.PrivateBinPath = @"runtimes\win-x64\native";
+      ads.DisallowBindingRedirects = false;
+      ads.DisallowCodeDownload = true;
+      ads.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+
+      AppDomain ad = AppDomain.CreateDomain(friendlyName, null, ads);
+
+      return ad;
     }
 
     public override object InitializeLifetimeService()
