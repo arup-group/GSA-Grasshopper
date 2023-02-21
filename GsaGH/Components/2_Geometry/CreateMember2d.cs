@@ -10,10 +10,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create new 2D Member
-    /// </summary>
-    public class CreateMember2d : GH_OasysComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to create new 2D Member
+  /// </summary>
+  public class CreateMember2d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("01450bfc-7ac1-4c51-97a2-42d81d6476b6");
@@ -90,7 +90,15 @@ namespace GsaGH.Components
           }
 
           // build new member with brep, crv and pts
-          GsaMember2d mem = new GsaMember2d(brep, crvs, pts);
+          GsaMember2d mem = new GsaMember2d();
+          try
+          {
+            mem = new GsaMember2d(brep, crvs, pts);
+          }
+          catch (Exception e)
+          {
+            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+          }
 
           // 3 section
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
@@ -104,12 +112,11 @@ namespace GsaGH.Components
             }
             else
             {
-              if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                mem.Property = new GsaProp2d(idd);
+              if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
+                mem.Property = new GsaProp2d(id);
               else
               {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
-                return;
               }
             }
           }

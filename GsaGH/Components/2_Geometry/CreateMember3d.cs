@@ -10,10 +10,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create new 3d Member
-    /// </summary>
-    public class CreateMember3d : GH_OasysComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to create new 3d Member
+  /// </summary>
+  public class CreateMember3d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("08a48fa5-8aaa-43fb-a095-9142794684f7");
@@ -58,15 +58,35 @@ namespace GsaGH.Components
         if (GH_Convert.ToBrep(gh_typ.Value, ref brep, GH_Conversion.Both))
         {
           if (brep.IsValid)
-            mem = new GsaMember3d(brep);
+          {
+            try
+            {
+              mem = new GsaMember3d(brep);
+            }
+            catch (Exception e)
+            {
+              this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+              return;
+            }
+          }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "S input is not a valid Brep geometry");
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "S input is not a valid Brep geometry");
             return;
           }
         }
         else if (GH_Convert.ToMesh(gh_typ.Value, ref mesh, GH_Conversion.Both))
-          mem = new GsaMember3d(mesh);
+        {
+          try
+          {
+            mem = new GsaMember3d(mesh);
+          }
+          catch (Exception e)
+          {
+            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+            return;
+          }
+        }
         else
         {
           AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input to a 3D Member");
@@ -81,23 +101,22 @@ namespace GsaGH.Components
           if (gh_typ.Value is GsaProp3dGoo)
           {
             gh_typ.CastTo(ref prop3d);
-            mem.Property = prop3d;
+            mem.Prop3d = prop3d;
           }
           else if (gh_typ.Value is GsaMaterialGoo)
           {
             GsaMaterial mat = new GsaMaterial();
             gh_typ.CastTo(ref mat);
             prop3d = new GsaProp3d(mat);
-            mem.Property = prop3d;
+            mem.Prop3d = prop3d;
           }
           else
           {
-            if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-              mem.PropertyID = idd; //new GsaProp3d(idd);
+            if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
+              mem.Prop3d = new GsaProp3d(id);
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
-              return;
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert PA input to a 2D Property of reference integer");
             }
           }
         }
@@ -105,9 +124,7 @@ namespace GsaGH.Components
         // 2 mesh size
         double meshSize = 0;
         if (DA.GetData(2, ref meshSize))
-        {
           mem.MeshSize = meshSize;
-        }
 
         DA.SetData(0, new GsaMember3dGoo(mem));
       }

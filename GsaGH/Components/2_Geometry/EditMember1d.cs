@@ -19,10 +19,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a 1D Member
-    /// </summary>
-    public class EditMember1d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+  /// <summary>
+  /// Component to edit a 1D Member
+  /// </summary>
+  public class EditMember1d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("06ae2d01-b152-49c1-9356-c83714c4e5f4");
@@ -158,15 +158,11 @@ namespace GsaGH.Components
         {
           GsaSection section = new GsaSection();
           if (gh_typ.Value is GsaSectionGoo)
-          {
             gh_typ.CastTo(ref section);
-          }
           else
           {
-            if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-            {
-              section = new GsaSection(idd);
-            }
+            if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
+              section = new GsaSection(id);
             else
             {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");

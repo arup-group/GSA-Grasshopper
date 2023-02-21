@@ -2,8 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Parameters;
+using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export
@@ -136,6 +138,50 @@ namespace GsaGH.Helpers.Export
       if (gridplanesurface.GridPlane.Name == "")
         gridplanesurface.GridPlane.Name = "Grid plane " + gridplaneidcounter;
 
+      // set API elevation converted to [m]
+      if (gridplanesurface.Elevation != "0")
+      {
+        Length elevation = new Length();
+        try
+        {
+          elevation = Length.Parse(gridplanesurface.Elevation);
+        }
+        catch (Exception)
+        {
+          if (double.TryParse(gridplanesurface.Elevation, out double elev))
+            elevation = new Length(elev, modelUnit);
+        }
+        gridplanesurface.GridPlane.Elevation = elevation.Meters;
+      }
+      if (gridplanesurface.StoreyToleranceAbove != "auto")
+      {
+        Length tolerance = new Length();
+        try
+        {
+          tolerance = Length.Parse(gridplanesurface.StoreyToleranceAbove);
+        }
+        catch (Exception)
+        {
+          if (double.TryParse(gridplanesurface.StoreyToleranceAbove, out double tol))
+            tolerance = new Length(tol, modelUnit);
+        }
+        gridplanesurface.GridPlane.ToleranceAbove = tolerance.Meters;
+      }
+      if (gridplanesurface.StoreyToleranceBelow != "auto")
+      {
+        Length tolerance = new Length();
+        try
+        {
+          tolerance = Length.Parse(gridplanesurface.StoreyToleranceBelow);
+        }
+        catch (Exception)
+        {
+          if (double.TryParse(gridplanesurface.StoreyToleranceBelow, out double tol))
+            tolerance = new Length(tol, modelUnit);
+        }
+        gridplanesurface.GridPlane.ToleranceBelow = tolerance.Meters;
+      }
+
       int gp_ID = gridplanesurface.GridPlaneId;
       // see if grid plane Id has been set by user
       if (gridplanesurface.GridPlaneId > 0)
@@ -211,6 +257,19 @@ namespace GsaGH.Helpers.Export
 
       if (gridplanesurface.GridSurface.Name == "")
         gridplanesurface.GridSurface.Name = "Grid surface " + gridsurfaceidcounter;
+
+      // set API tolerance converted to [m]
+      Length tolerance = new Length();
+      try
+      {
+        tolerance = Length.Parse(gridplanesurface.Tolerance);
+      }
+      catch (Exception)
+      {
+        if (double.TryParse(gridplanesurface.Tolerance, out double tol))
+          tolerance = new Length(tol, modelUnit);
+      }
+      gridplanesurface.GridSurface.Tolerance = tolerance.Meters;
 
       // add referenced loads
       if (model != null && gridplanesurface.ReferenceType != ReferenceType.None)

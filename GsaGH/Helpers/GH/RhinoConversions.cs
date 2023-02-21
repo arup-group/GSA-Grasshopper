@@ -11,6 +11,8 @@ using OasysUnits.Units;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using System.Collections.ObjectModel;
+using OasysUnits;
+using GsaGH.Helpers.Import;
 
 namespace GsaGH.Helpers.GH
 {
@@ -139,12 +141,15 @@ namespace GsaGH.Helpers.GH
       }
       else
       {
+        if (tolerance < 0)
+          tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry); // use the user set unit
+        if (crv.SpanCount == 1 && crv.Degree > 2)
+        {
+          crv = crv.ToPolyline(tolerance, 2, 0, 0);
+        }
         if (crv.SpanCount > 1) // polyline (or assumed polyline, we will take controlpoints)
         {
           m_crv = new PolyCurve();
-
-          if (tolerance < 0)
-            tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry); // use the user set unit
 
           if (!crv.IsPolyline())
             crv = crv.ToPolyline(tolerance, 2, 0, 0);
@@ -724,7 +729,7 @@ namespace GsaGH.Helpers.GH
       return new Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>>(elems, topoPts, topoInts, faceInts);
     }
 
-    public static Mesh ConvertBrepToMesh(Brep brep, List<Curve> curves, List<Point3d> points, double meshSize, LengthUnit unit, List<GsaMember1d> mem1ds = null, List<GsaNode> nodes = null)
+    public static Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> ConvertBrepToMesh(Brep brep, List<Point3d> points, List<GsaNode> in_nodes, List<Curve> in_curves, List<GsaElement1d> in_elem1ds, List<GsaMember1d> in_mem1ds, double meshSize, LengthUnit unit, Length tolerance)
     {
       Brep in_brep = brep.DuplicateBrep();
       in_brep.Faces.ShrinkFaces();
@@ -732,83 +737,135 @@ namespace GsaGH.Helpers.GH
       // set up unroller
       Unroller unroller = new Unroller(in_brep);
 
-      List<Curve> memcrvs = new List<Curve>();
-      if (mem1ds != null)
+      List<int> types = new List<int>();
+      if (in_curves != null)
       {
-        memcrvs = mem1ds.ConvertAll(x => (Curve)x.PolyCurve);
-        unroller.AddFollowingGeometry(memcrvs);
+        foreach (Curve crv in in_curves)
+        {
+          unroller.AddFollowingGeometry(crv);
+          types.Add(0);
+        }
       }
-      List<Point3d> nodepts = new List<Point3d>();
-      if (nodes != null)
+      if (in_elem1ds != null)
       {
-        nodepts = nodes.ConvertAll(x => x.Point);
-        unroller.AddFollowingGeometry(nodepts);
+        foreach (GsaElement1d elem in in_elem1ds)
+        {
+          unroller.AddFollowingGeometry(elem.Line);
+          types.Add(1);
+        }
+      }
+      if (in_mem1ds != null)
+      {
+        foreach (GsaMember1d mem1d in in_mem1ds)
+        {
+          unroller.AddFollowingGeometry(mem1d.PolyCurve);
+          types.Add(2);
+        }
       }
 
-      unroller.AddFollowingGeometry(points);
-      unroller.AddFollowingGeometry(curves);
-      unroller.RelativeTolerance = DefaultUnits.Tolerance.As(unit);
-      //unroller.AbsoluteTolerance = double.PositiveInfinity;
-      //unroller.ExplodeOutput = false;
+      List<int> nodeIds= new List<int>();
+      int nodeid = 0;
+      if (in_nodes != null)
+      {
+        foreach (GsaNode node in in_nodes)
+        {
+          in_brep.Surfaces[0].ClosestPoint(node.Point, out double u, out double v);
+          TextDot dot = new TextDot(node.Name, in_brep.Surfaces[0].PointAt(u, v));
+          unroller.AddFollowingGeometry(dot);
+          nodeIds.Add(nodeid++);
+        }
+      }
+      if (points != null)
+        unroller.AddFollowingGeometry(points);
+
+      unroller.RelativeTolerance = tolerance.As(unit) * 2;
+      unroller.AbsoluteTolerance = tolerance.As(unit);
 
       // create list of flattened geometry
       Point3d[] inclPts;
       Curve[] inclCrvs;
-      TextDot[] unused;
+      TextDot[] inclNodes;
       // perform unroll
-      Brep[] flattened = unroller.PerformUnroll(out inclCrvs, out inclPts, out unused);
+      Brep[] flattened = unroller.PerformUnroll(out inclCrvs, out inclPts, out inclNodes);
       if (flattened.Length == 0)
       {
-        throw new Exception(" Unable to unroll surface for re-meshing, the curvature is likely too high! Try with a more non-dramatic curvature.");
+        throw new Exception(" Unable to unroll surface for re-meshing, the curvature is likely too high! Try with a less 'dramatic' curvature.");
+      }
+
+      List<Curve> curves = new List<Curve>();
+      List<GsaElement1d> elem1ds = new List<GsaElement1d>();
+      List<GsaMember1d> mem1ds = new List<GsaMember1d>();
+      int nCrvs = in_curves == null ? 0 : in_curves.Count;
+      int nElem1ds = in_elem1ds == null ? 0 : in_elem1ds.Count;
+      Dictionary<int, GsaSection> elemSections = new Dictionary<int, GsaSection>();
+      Dictionary<int, GsaSection> memSections = new Dictionary<int, GsaSection>();
+      int elemid = 1;
+      int memid = 1;
+      foreach (Curve crv in inclCrvs)
+      {
+        int id = unroller.FollowingGeometryIndex(crv);
+        int type = types[id];
+        switch (type)
+        {
+          case 0:
+            curves.Add(crv);
+            break;
+          case 1:
+            in_elem1ds[id - nCrvs].Line = new LineCurve(crv.PointAtStart, crv.PointAtEnd);
+            in_elem1ds[id - nCrvs].Id = elemid;
+            elemSections.Add(elemid++, in_elem1ds[id - nCrvs].Section);
+            elem1ds.Add(in_elem1ds[id - nCrvs]);
+            break;
+          case 2:
+            GsaMember1d mem1d = new GsaMember1d(crv);
+            mem1d.ApiMember = in_mem1ds[id - nCrvs - nElem1ds].GetAPI_MemberClone();
+            mem1d.MeshSize = in_mem1ds[id - nCrvs - nElem1ds].MeshSize;
+            mem1d.Id = memid;
+            memSections.Add(memid++, in_mem1ds[id - nCrvs - nElem1ds].Section);
+            mem1ds.Add(mem1d);
+            break;
+        }
+      }
+
+      List<GsaNode> nodes = new List<GsaNode>();
+      List<Point3d> inclusionPoints = inclPts.ToList();
+      foreach (TextDot dot in inclNodes)
+      {
+        int id = unroller.FollowingGeometryIndex(dot);
+        nodes.Add(in_nodes[id]);
+        inclusionPoints.Add(dot.Point);
+        nodeIds[id] = -1;
+      }
+      for(int i = 0; i < nodeIds.Count; i++)
+      {
+        if (nodeIds[i] >= 0)
+        {
+          in_brep.Surfaces[0].ClosestPoint(in_nodes[i].Point, out double u, out double v);
+          Point3d pt = flattened[0].Surfaces[0].PointAt(u, v);
+          inclusionPoints.Add(pt);
+          in_nodes[i].Point = pt;
+          nodes.Add(in_nodes[i]);
+        }
       }
 
       // create 2d member from flattened geometry
-      GsaMember2d mem = new GsaMember2d(flattened[0], inclCrvs.ToList(), inclPts.ToList());
+      GsaMember2d mem = new GsaMember2d(flattened[0], curves, inclusionPoints);
       mem.MeshSize = meshSize;
-
-      // add to temp list for input in assemble function
-      List<GsaMember2d> mem2ds = new List<GsaMember2d>();
-      mem2ds.Add(mem);
-
-      if (mem1ds != null)
-      {
-        for (int i = 0; i < mem1ds.Count; i++)
-        {
-          GsaMember1d mem1d = new GsaMember1d(inclCrvs[i]);
-          mem1d.MeshSize = mem1ds[i].MeshSize;
-          mem1ds[i] = mem1d;
-        }
-      }
-      if (nodes != null)
-      {
-        for (int i = 0; i < nodes.Count; i++)
-        {
-          nodes[i].Point = inclPts[i];
-        }
-      }
+      mem.Type = MemberType.GENERIC_2D;
 
       // assemble temp model
-      Model model = Export.AssembleModel.Assemble(null, nodes, null, null, null, mem1ds, mem2ds, null, null, null, null, null, null, null, null, unit, DefaultUnits.Tolerance.Meters, true);
+      Model model = Export.AssembleModel.Assemble(null, nodes, elem1ds, null, null, mem1ds, new List<GsaMember2d> { mem }, null, null, null, null, null, null, null, null, unit, tolerance.Meters, true, null);
 
-      ConcurrentDictionary<int, Element> elementDict = new ConcurrentDictionary<int, Element>(model.Elements());
-
+      ReadOnlyDictionary<int, Element> elementDict = model.Elements();
       // populate local axes dictionary
-      ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
       foreach (int id in elementDict.Keys)
-        elementLocalAxesDict.TryAdd(id, model.ElementDirectionCosine(id));
-
+        elementLocalAxesDict.Add(id, model.ElementDirectionCosine(id));
       // extract elements from model
+      ReadOnlyDictionary<int, Node> nodeDict = model.Nodes();
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-                = Import.Elements.GetElements(
-                    elementDict,
-                    new ConcurrentDictionary<int, Node>(model.Nodes()),
-                    new ConcurrentDictionary<int, Section>(model.Sections()),
-                    new ConcurrentDictionary<int, Prop2D>(model.Prop2Ds()),
-                    new ConcurrentDictionary<int, Prop3D>(model.Prop3Ds()),
-                    new ConcurrentDictionary<int, AnalysisMaterial>(model.AnalysisMaterials()),
-                    new ConcurrentDictionary<int, SectionModifier>(model.SectionModifiers()),
-                    elementLocalAxesDict,
-                    unit);
+                = Import.Elements.GetElements(elementDict, nodeDict, model.Sections(), model.Prop2Ds(), model.Prop3Ds(), model.AnalysisMaterials(), model.SectionModifiers(),
+                    elementLocalAxesDict, model.Axes(), unit, false);
 
       List<GsaElement2dGoo> elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.Ids).ToList();
       Mesh mesh = elem2dgoo[0].Value.Mesh;
@@ -825,9 +882,61 @@ namespace GsaGH.Helpers.GH
       }
 
       mesh.Faces.ConvertNonPlanarQuadsToTriangles(
-          DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry), Rhino.RhinoMath.DefaultAngleTolerance, 0);
+          tolerance.As(unit), Rhino.RhinoMath.DefaultAngleTolerance, 0);
 
-      return mesh;
+      List<GsaNode> out_nodes = null;
+      if (nodes != null && nodes.Count > 0)
+      {
+        Member mem2d = model.Members()[elem2dgoo[0].Value.API_Elements[0].ParentMember.Member];
+        List<int> topoInts = Topology.Topology_detangler(mem2d.Topology).Item4;
+        int add = points == null ? 0 : points.Count;
+        out_nodes = new List<GsaNode>();
+        for (int i = 0; i < nodes.Count; i++)
+        {
+          Vector3 pos = nodeDict[topoInts[i + add]].Position;
+          Point3d pt = new Point3d(pos.X, pos.Y, pos.Z);
+          flat.ClosestPoint(pt, out double u, out double v);
+          Point3d mapPt = orig.PointAt(u, v);
+          nodes[i].Point = mapPt;
+          out_nodes.Add(nodes[i]);
+        }
+      }
+
+      List<GsaElement1d> out_elem1ds = null;
+      if (inclCrvs != null && inclCrvs.Length > 0)
+      {
+        out_elem1ds = new List<GsaElement1d>();
+        ReadOnlyDictionary<int, Element> elemDict = model.Elements();
+        ReadOnlyDictionary<int, Section> sDict = model.Sections();
+        ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
+        ReadOnlyDictionary<int, AnalysisMaterial> aDict = model.AnalysisMaterials();
+        elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
+        foreach (int id in elemDict.Keys)
+          elementLocalAxesDict.Add(id, model.ElementDirectionCosine(id));
+        foreach (KeyValuePair<int, Element> kvp in elemDict)
+        {
+          Element elem = kvp.Value;
+          if (elem.Topology.Count != 2)
+            continue;
+          Vector3 posS = nodeDict[elem.Topology[0]].Position;
+          Point3d start = new Point3d(posS.X, posS.Y, posS.Z);
+          flat.ClosestPoint(start, out double us, out double vs);
+          Point3d mapPts = orig.PointAt(us, vs);
+          Vector3 posE = nodeDict[elem.Topology[1]].Position;
+          Point3d end = new Point3d(posE.X, posE.Y, posE.Z);
+          flat.ClosestPoint(end, out double ue, out double ve);
+          Point3d mapPte = orig.PointAt(ue, ve);
+          GsaElement1d elem1d = new GsaElement1d(elemDict, kvp.Key, nodeDict, sDict, modDict, aDict, elementLocalAxesDict, unit);
+          elem1d.Line = new LineCurve(mapPts, mapPte);
+          if (elem1d.ApiElement.ParentMember.Member > 0)
+            elem1d.Section = memSections[elem1d.ApiElement.ParentMember.Member];
+          else
+            elem1d.Section = elemSections[kvp.Key];
+          out_elem1ds.Add(elem1d);
+        }
+      }
+
+      return new Tuple<Mesh, List<GsaNode>, List<GsaElement1d>>(mesh, out_nodes, out_elem1ds);
     }
     public static Mesh ConvertMeshToTriMeshSolid(Mesh mesh)
     {

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.Windows.Forms;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
@@ -15,7 +14,6 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using Rhino.Runtime;
 
 namespace GsaGH.Components
 {
@@ -102,13 +100,13 @@ namespace GsaGH.Components
         if (models.Count > 0)
         {
           if (models.Count > 1)
-            model = Helpers.Export.MergeModels.MergeModel(models);
+            model = Helpers.Export.MergeModels.MergeModel(models, this);
           else
             model = models[0].Clone();
         }
       }
 
-      model.Model = Helpers.Export.AssembleModel.Assemble(model, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks, combinationCases, this.LengthUnit, DefaultUnits.Tolerance.Meters, this.ReMesh);
+      model.Model = Helpers.Export.AssembleModel.Assemble(model, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, analysisTasks, combinationCases, this.LengthUnit, this._tolerance, this.ReMesh, this);
 
       #region analysis
 
@@ -121,7 +119,7 @@ namespace GsaGH.Components
         {
           GsaAnalysisTask task = new GsaAnalysisTask();
           task.ID = model.Model.AddAnalysisTask();
-          task.CreateDeafultCases(model.Model);
+          task.CreateDefaultCases(model.Model);
           if (task.Cases == null || task.Cases.Count == 0)
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Model contains no loads and has not been analysed, but has been assembled.");
           else
@@ -147,6 +145,18 @@ namespace GsaGH.Components
                 tryAnalyse = false;
               }
             }
+          }
+        }
+
+        if (tryAnalyse)
+        {
+          if (!GsaGH.SolverRequiredDll.IsCorrectVersionLoaded())
+          {
+            tryAnalyse = false;
+            string message = "A dll required to run analysis has been previously loaded by another application. Please remove this file and try again:" + System.Environment.NewLine
+             + System.Environment.NewLine + GsaGH.SolverRequiredDll.loadedFromPath 
+            +System.Environment.NewLine + "Either uninstall the host application or delete the file.";
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, message);
           }
         }
 
@@ -183,6 +193,14 @@ namespace GsaGH.Components
     private List<bool> InitialCheckState = new List<bool>() { true, true };
     private bool Analysis = true;
     private bool ReMesh = true;
+    private double _tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+    private string _toleranceTxt = "";
+
+    protected override void BeforeSolveInstance()
+    {
+      base.BeforeSolveInstance();
+      this.UpdateMessage();
+    }
 
     public override void InitialiseDropdowns()
     {
@@ -232,6 +250,65 @@ namespace GsaGH.Components
     {
       Params.Input[2].Name = "GSA Geometry in [" + Length.GetAbbreviation(this.LengthUnit) + "]";
     }
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+    {
+      Menu_AppendSeparator(menu);
+
+      ToolStripTextBox tolerance = new ToolStripTextBox();
+      this._toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
+      tolerance.Text = this._toleranceTxt;
+      tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
+      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
+
+      ToolStripMenuItem toleranceMenu = new ToolStripMenuItem("Set Tolerance", Properties.Resources.Units);
+      toleranceMenu.Enabled = true;
+      toleranceMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+
+      GH_MenuCustomControl menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) =>
+      {
+        this.UpdateMessage();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      };
+      menu.Items.Add(toleranceMenu);
+
+      Menu_AppendSeparator(menu);
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      ExpireSolution(true);
+    }
+    private void MaintainText(ToolStripTextBox tolerance)
+    {
+      this._toleranceTxt = tolerance.Text;
+      if (Length.TryParse(_toleranceTxt, out Length res))
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
+      else
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 255, 100, 100);
+    }
+    private void UpdateMessage()
+    {
+      if (this._toleranceTxt != "")
+      {
+        try
+        {
+          Length newTolerance = Length.Parse(_toleranceTxt);
+          this._tolerance = newTolerance.As(this.LengthUnit);
+        }
+        catch (Exception e)
+        {
+          MessageBox.Show(e.Message);
+          return;
+        }
+      }
+      Length tol = new Length(this._tolerance, this.LengthUnit);
+      this.Message = "Tol: " + tol.ToString();
+      if (tol.Meters < 0.001)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
+      if (tol.Meters > 0.25)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
+    }
     #endregion
 
     #region (de)serialization
@@ -239,12 +316,19 @@ namespace GsaGH.Components
     {
       writer.SetBoolean("Analyse", this.Analysis);
       writer.SetBoolean("ReMesh", this.ReMesh);
+      writer.SetDouble("Tolerance", this._tolerance);
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
       this.Analysis = reader.GetBoolean("Analyse");
       this.ReMesh = reader.GetBoolean("ReMesh");
+      this.InitialCheckState = new List<bool>() { this.Analysis, this.ReMesh };
+      if (reader.ItemExists("Tolerance"))
+        this._tolerance = reader.GetDouble("Tolerance");
+      else
+        this._tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+      this.UpdateMessage();
       return base.Read(reader);
     }
     #endregion

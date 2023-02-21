@@ -56,7 +56,7 @@ namespace GsaGHTests.Helpers.Export
         CreateModelTest.CreateModelFromGeometry(new List<GsaNodeGoo>() { node1, node2 }, null, null, null, null, null, ModelUnit.m));
 
       TestNode(node1.Value, LengthUnit.Meter, 2, modelGoo.Value);
-      TestNode(node2.Value, LengthUnit.Meter, 3, modelGoo.Value);
+      TestNode(node2.Value, LengthUnit.Meter, 1, modelGoo.Value);
     }
   }
 }

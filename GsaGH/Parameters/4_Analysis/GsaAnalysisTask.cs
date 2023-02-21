@@ -77,7 +77,7 @@ namespace GsaGH.Parameters
     #endregion
 
     #region methods
-    internal void CreateDeafultCases(Model model)
+    internal void CreateDefaultCases(Model model)
     {
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple = Helpers.Import.Analyses.GetAnalysisTasksAndCombinations(model);
       this.Cases = tuple.Item2.Select(x => x.Value).ToList();

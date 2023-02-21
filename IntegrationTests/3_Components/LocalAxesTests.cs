@@ -11,7 +11,17 @@ namespace IntegrationTests.Components
   [Collection("GrasshopperFixture collection")]
   public class LocalAxesTests
   {
-    public static GH_Document Document()
+    public static GH_Document Document
+    {
+      get
+      {
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
+      }
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
     {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
@@ -26,7 +36,7 @@ namespace IntegrationTests.Components
     [Fact]
     public void LocalAxesTest()
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
 
       IGH_Param paramLine = Helper.FindParameter(doc, "line");
       IGH_Param paramX1 = Helper.FindParameter(doc, "X1");

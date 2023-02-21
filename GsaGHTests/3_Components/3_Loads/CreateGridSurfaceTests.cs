@@ -38,11 +38,11 @@ namespace GsaGHTests.Components.Loads
       output.CastTo(ref gridSurface);
 
       Assert.Equal(42, gridSurface.GridPlaneId);
-      Assert.Equal(10, gridSurface.Elevation);
+      Assert.Equal("10", gridSurface.Elevation);
       Assert.Equal("test", gridSurface.GridPlane.Name);
       Assert.Equal(42, gridSurface.GridSurfaceId);
       Assert.Equal("test", gridSurface.GridSurface.Name);
-      Assert.Equal(99, gridSurface.GridSurface.Tolerance);
+      Assert.Equal("99", gridSurface.Tolerance);
       Assert.Equal(Span_Type.ONE_WAY, gridSurface.GridSurface.SpanType);
     }
   }

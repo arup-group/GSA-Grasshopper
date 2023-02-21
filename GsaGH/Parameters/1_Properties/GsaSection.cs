@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
@@ -8,10 +10,10 @@ using OasysUnits;
 
 namespace GsaGH.Parameters
 {
-    /// <summary>
-    /// Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section"/>
-    /// </summary>
-    public class GsaSection
+  /// <summary>
+  /// Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section"/>
+  /// </summary>
+  public class GsaSection
   {
     #region fields
     private int _id = 0;
@@ -33,6 +35,7 @@ namespace GsaGH.Parameters
         this._guid = Guid.NewGuid();
         this._section = value;
         this._material = new GsaMaterial(this);
+        this.IsReferencedByID = false;
       }
     }
     #region section properties
@@ -117,10 +120,11 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this._guid = Guid.NewGuid();
+        this.CloneApiObject();
         this._id = value;
       }
     }
+    internal bool IsReferencedByID { get; set; } = false;
     public GsaMaterial Material
     {
       get
@@ -138,6 +142,7 @@ namespace GsaGH.Parameters
         this._section.MaterialType = Helpers.Export.Materials.ConvertType(_material);
         this._section.MaterialAnalysisProperty = _material.AnalysisProperty;
         this._section.MaterialGradeProperty = _material.GradeProperty;
+        this.IsReferencedByID = false;
       }
     }
     public GsaSectionModifier Modifier
@@ -148,7 +153,9 @@ namespace GsaGH.Parameters
       }
       set
       {
+        this.CloneApiObject();
         this._modifier = value;
+        this.IsReferencedByID = false;
       }
     }
     #region GsaAPI members
@@ -160,9 +167,9 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this._guid = Guid.NewGuid();
         this.CloneApiObject();
         this._section.Name = value;
+        this.IsReferencedByID = false;
       }
     }
     public int Pool
@@ -173,9 +180,9 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this._guid = Guid.NewGuid();
         this.CloneApiObject();
         this._section.Pool = value;
+        this.IsReferencedByID = false;
       }
     }
     public int MaterialID
@@ -186,10 +193,10 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this._guid = Guid.NewGuid();
         this.CloneApiObject();
         this._section.MaterialAnalysisProperty = value;
         this._material.AnalysisProperty = this._section.MaterialAnalysisProperty;
+        this.IsReferencedByID = false;
       }
     }
     public string Profile
@@ -200,9 +207,12 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this._guid = Guid.NewGuid();
-        this.CloneApiObject();
-        this._section.Profile = value;
+        if (ValidProfile(value))
+        {
+          this.CloneApiObject();
+          this._section.Profile = value;
+          this.IsReferencedByID = false;
+        }
       }
     }
     public Color Colour
@@ -213,9 +223,9 @@ namespace GsaGH.Parameters
       }
       set
       {
-        this._guid = Guid.NewGuid();
         this.CloneApiObject();
         this._section.Colour = value;
+        this.IsReferencedByID = false;
       }
     }
     private void CloneApiObject()
@@ -240,6 +250,7 @@ namespace GsaGH.Parameters
         sec.Colour = this._section.Colour;
 
       this._section = sec;
+      this._modifier = this.Modifier.Duplicate(true);
       this._guid = Guid.NewGuid();
     }
     #endregion
@@ -260,6 +271,7 @@ namespace GsaGH.Parameters
     public GsaSection(int id)
     {
       this._id = id;
+      this.IsReferencedByID = true;
     }
 
     public GsaSection(string profile)
@@ -272,17 +284,37 @@ namespace GsaGH.Parameters
       this._section.Profile = profile;
       this._id = id;
     }
+
+    internal GsaSection(ReadOnlyDictionary<int, Section> sDict, int id, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id)
+    {
+      if (!sDict.ContainsKey(id))
+        return;
+      this._section = sDict[id];
+      this.IsReferencedByID = false;
+      // modifier
+      if (modDict.ContainsKey(id))
+        this._modifier = new GsaSectionModifier(modDict[id]);
+      // material
+      if (this._section.MaterialAnalysisProperty != 0 && matDict.ContainsKey(this._section.MaterialAnalysisProperty))
+        this._material.AnalysisMaterial = matDict[this._section.MaterialAnalysisProperty];
+      this._material = new GsaMaterial(this);
+    }
     #endregion
 
     #region methods
-    public GsaSection Duplicate()
+    public GsaSection Duplicate(bool cloneApiElement = false)
     {
-      GsaSection dup = new GsaSection();
-      dup._section = this._section;
-      dup._id = this._id;
-      dup._material = this._material.Duplicate();
-      dup._modifier = this._modifier.Duplicate();
-      dup._guid = new Guid(_guid.ToString());
+      GsaSection dup = new GsaSection
+      {
+        _section = this._section,
+        _id = this._id,
+        _material = this._material.Duplicate(),
+        _modifier = this._modifier.Duplicate(cloneApiElement),
+        _guid = new Guid(this._guid.ToString()),
+        IsReferencedByID = this.IsReferencedByID
+      };
+      if (cloneApiElement)
+        dup.CloneApiObject();
       return dup;
     }
 
@@ -293,6 +325,16 @@ namespace GsaGH.Parameters
       string mat = Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
       string mod = this._modifier.IsModified ? " modified" : "";
       return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim().Replace("  ", " ");
+    }
+
+    internal static bool ValidProfile(string profile)
+    {
+      Section test = new Section();
+      test.Profile = profile;
+      if (test.Area == 0)
+        return false;
+      else
+        return true;
     }
     #endregion
   }

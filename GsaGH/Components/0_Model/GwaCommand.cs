@@ -1,33 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Net.Sockets;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Eto.Forms;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Parameters;
-using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
-using Rhino.Geometry;
-using Rhino.PlugIns;
-using Rhino.Runtime;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create a GSA model from GWA string
-    /// </summary>
-    public class GwaCommand : GH_OasysComponent
+  /// <summary>
+  /// Component to create a GSA model from GWA string
+  /// </summary>
+  public class GwaCommand : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("ed3e5d61-9942-49d4-afc7-310285c783c6");
@@ -66,19 +51,11 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      Interop.Gsa_10_1.ComAuto m = new Interop.Gsa_10_1.ComAuto();
-      string temp = Path.GetTempPath() + Guid.NewGuid().ToString() + ".gwb";
-
-      GsaModelGoo model = null;
-      if (DA.GetData(0, ref model))
-      {
-        model.Value.Model.SaveAs(temp);
-        m.Open(temp);
-      }
-      else
-        m.NewFile();
-
-      m.SetLocale(Interop.Gsa_10_1.Locale.LOC_EN_GB);
+      GsaModelGoo gooModel = null;
+      GsaModel model = null;
+      if (DA.GetData(0, ref gooModel))
+        model = gooModel.Value;
+      Interop.Gsa_10_1.ComAuto m = GsaComHelper.GetGsaComModel(model);
 
       string gwa = "";
       List<string> strings = new List<string>();
@@ -86,31 +63,10 @@ namespace GsaGH.Components
         foreach (string s in strings)
           gwa += s + "\n";
       DA.SetData(1, m.GwaCommand(gwa));
-      m.SaveAs(temp);
-      GsaModel gsaGH = new GsaModel();
-      gsaGH.Model.Open(temp);
+      
+      GsaModel gsaGH = GsaComHelper.GetGsaGhModel();
       DA.SetData(0, new GsaModelGoo(gsaGH));
-      m.Close();
-      m = null;
-      PostHogGWA(gwa);
-    }
-
-    private void PostHogGWA(string gwa)
-    {
-      string[] commands = gwa.Split('\n');
-      foreach (string command in commands)
-      {
-        if (command == "") { continue; }
-        string key = command.Split('.')[0].Split(',')[0].Split('\t')[0].Split(' ')[0];
-        if (key == "") { continue; }
-        string eventName = "GwaCommand";
-        Dictionary<string, object> properties = new Dictionary<string, object>()
-        {
-          { key, command },
-          { "existingModel", this.Params.Input.Count > 0 },
-        };
-        _ = PostHog.SendToPostHog(GsaGH.PluginInfo.Instance, eventName, properties);
-      }
+      PostHog.GWA(gwa, this.Params.Input.Count > 0);
     }
   }
 }

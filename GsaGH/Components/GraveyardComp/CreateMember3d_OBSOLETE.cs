@@ -89,19 +89,19 @@ namespace GsaGH.Components
           if (gh_typ.Value is GsaProp3dGoo)
           {
             gh_typ.CastTo(ref prop3d);
-            mem.Property = prop3d;
+            mem.Prop3d = prop3d;
           }
           else if (gh_typ.Value is GsaMaterialGoo)
           {
             GsaMaterial mat = new GsaMaterial();
             gh_typ.CastTo(ref mat);
             prop3d = new GsaProp3d(mat);
-            mem.Property = prop3d;
+            mem.Prop3d = prop3d;
           }
           else
           {
-            if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-              mem.PropertyID = idd; //new GsaProp3d(idd);
+            if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
+              mem.Prop3d = new GsaProp3d(id);
             else
             {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");

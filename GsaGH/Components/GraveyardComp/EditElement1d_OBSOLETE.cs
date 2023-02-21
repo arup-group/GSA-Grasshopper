@@ -256,7 +256,7 @@ namespace GsaGH.Components
         DA.SetData(13, elem.IsDummy);
 
         try { DA.SetData(14, elem.ParentMember); } catch (Exception) { }
-        DA.SetDataList(15, new Collection<int>(elem.API_Element.Topology));
+        DA.SetDataList(15, new Collection<int>(elem.ApiElement.Topology));
       }
     }
   }

@@ -86,15 +86,15 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.ResultType.Combination && result.SelectedPermutationIDs.Count > 1)
+          if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination case contains "
                 + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
-          if (result.Type == GsaResult.ResultType.Combination)
+          if (result.Type == GsaResult.CaseType.Combination)
             _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
-          if (result.Type == GsaResult.ResultType.AnalysisCase)
+          if (result.Type == GsaResult.CaseType.AnalysisCase)
             _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
         }
         else
@@ -154,13 +154,13 @@ namespace GsaGH.Components
             if (_disp == DisplayValue.X)
               res = result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, EnergyResultUnit)[0];
             else
-              res = result.Element1DStrainEnergyDensityValues(elementlist, EnergyResultUnit)[0];
+              res = result.Element1DAverageStrainEnergyDensityValues(elementlist, EnergyResultUnit)[0];
             break;
         }
 
         // get geometry for display from results class
         List<int> elementIDs = new List<int>();
-        if (result.Type == GsaResult.ResultType.AnalysisCase)
+        if (result.Type == GsaResult.CaseType.AnalysisCase)
           elementIDs = result.ACaseElement1DResults.Values.First().Select(x => x.Key).ToList();
         else
           elementIDs = result.ComboElement1DResults.Values.First().Select(x => x.Key).ToList();
@@ -295,11 +295,11 @@ namespace GsaGH.Components
         int significantDigits = (int)rounded[2];
 
         // Loop through segmented lines and set result colour into ResultLine format
-        DataTree<ResultLineGoo> resultLines = new DataTree<ResultLineGoo>();
+        DataTree<LineResultGoo> resultLines = new DataTree<LineResultGoo>();
 
         Parallel.ForEach(elems, element =>
         {
-          ConcurrentDictionary<int, ResultLineGoo> resLns = new ConcurrentDictionary<int, ResultLineGoo>();
+          ConcurrentDictionary<int, LineResultGoo> resLns = new ConcurrentDictionary<int, LineResultGoo>();
 
           // list for element geometry and info
           if (element.Value.IsDummy) { return; }
@@ -318,8 +318,8 @@ namespace GsaGH.Components
               Vector3d startTranslation = new Vector3d(0, 0, 0);
               Vector3d endTranslation = new Vector3d(0, 0, 0);
 
-              double t1 = 0;
-              double t2 = 0;
+              IQuantity t1 = null;
+              IQuantity t2 = null;
 
               Point3d start = new Point3d(ln.PointAt((double)i / (positionsCount - 1)));
               Point3d end = new Point3d(ln.PointAt((double)(i + 1) / (positionsCount - 1)));
@@ -333,28 +333,26 @@ namespace GsaGH.Components
                   switch (_disp)
                   {
                     case (DisplayValue.X):
-                      t1 = xyzResults[key][i].X.As(LengthUnit);
-                      t2 = xyzResults[key][i + 1].X.As(LengthUnit);
-                      startTranslation.X = t1 * _defScale;
-                      endTranslation.X = t2 * _defScale;
+                      t1 = xyzResults[key][i].X.ToUnit(LengthUnit);
+                      t2 = xyzResults[key][i + 1].X.ToUnit(LengthUnit);
+                      startTranslation.X = t1.Value * _defScale;
+                      endTranslation.X = t2.Value * _defScale;
                       break;
                     case (DisplayValue.Y):
-                      t1 = xyzResults[key][i].Y.As(LengthUnit);
-                      t2 = xyzResults[key][i + 1].Y.As(LengthUnit);
-                      startTranslation.Y = t1 * _defScale;
-                      endTranslation.Y = t2 * _defScale;
+                      t1 = xyzResults[key][i].Y.ToUnit(LengthUnit);
+                      t2 = xyzResults[key][i + 1].Y.ToUnit(LengthUnit);
+                      startTranslation.Y = t1.Value * _defScale;
+                      endTranslation.Y = t2.Value * _defScale;
                       break;
                     case (DisplayValue.Z):
-                      t1 = xyzResults[key][i].Z.As(LengthUnit);
-                      t2 = xyzResults[key][i + 1].Z.As(LengthUnit);
-                      startTranslation.Z = t1 * _defScale;
-                      endTranslation.Z = t2 * _defScale;
+                      t1 = xyzResults[key][i].Z.ToUnit(LengthUnit);
+                      t2 = xyzResults[key][i + 1].Z.ToUnit(LengthUnit);
+                      startTranslation.Z = t1.Value * _defScale;
+                      endTranslation.Z = t2.Value * _defScale;
                       break;
                     case (DisplayValue.resXYZ):
-                      t1 = xyzResults[key][i].XYZ.As(LengthUnit);
-                      t2 = xyzResults[key][i + 1].XYZ.As(LengthUnit);
-                      startTranslation.X = t1 * _defScale;
-                      endTranslation.X = t2 * _defScale;
+                      t1 = xyzResults[key][i].XYZ.ToUnit(LengthUnit);
+                      t2 = xyzResults[key][i + 1].XYZ.ToUnit(LengthUnit);
                       startTranslation.X = xyzResults[key][i].X.As(LengthUnit) * _defScale;
                       startTranslation.Y = xyzResults[key][i].Y.As(LengthUnit) * _defScale;
                       startTranslation.Z = xyzResults[key][i].Z.As(LengthUnit) * _defScale;
@@ -363,20 +361,20 @@ namespace GsaGH.Components
                       endTranslation.Z = xyzResults[key][i + 1].Z.As(LengthUnit) * _defScale;
                       break;
                     case (DisplayValue.XX):
-                      t1 = xxyyzzResults[key][i].X.As(AngleUnit.Radian);
-                      t2 = xxyyzzResults[key][i + 1].X.As(AngleUnit.Radian);
+                      t1 = xxyyzzResults[key][i].X.ToUnit(AngleUnit.Radian);
+                      t2 = xxyyzzResults[key][i + 1].X.ToUnit(AngleUnit.Radian);
                       break;
                     case (DisplayValue.YY):
-                      t1 = xxyyzzResults[key][i].Y.As(AngleUnit.Radian);
-                      t2 = xxyyzzResults[key][i + 1].Y.As(AngleUnit.Radian);
+                      t1 = xxyyzzResults[key][i].Y.ToUnit(AngleUnit.Radian);
+                      t2 = xxyyzzResults[key][i + 1].Y.ToUnit(AngleUnit.Radian);
                       break;
                     case (DisplayValue.ZZ):
-                      t1 = xxyyzzResults[key][i].Z.As(AngleUnit.Radian);
-                      t2 = xxyyzzResults[key][i + 1].Z.As(AngleUnit.Radian);
+                      t1 = xxyyzzResults[key][i].Z.ToUnit(AngleUnit.Radian);
+                      t2 = xxyyzzResults[key][i + 1].Z.ToUnit(AngleUnit.Radian);
                       break;
                     case (DisplayValue.resXXYYZZ):
-                      t1 = xxyyzzResults[key][i].XYZ.As(AngleUnit.Radian);
-                      t2 = xxyyzzResults[key][i + 1].XYZ.As(AngleUnit.Radian);
+                      t1 = xxyyzzResults[key][i].XYZ.ToUnit(AngleUnit.Radian);
+                      t2 = xxyyzzResults[key][i + 1].XYZ.ToUnit(AngleUnit.Radian);
                       break;
                   }
                   start.Transform(Transform.Translation(startTranslation));
@@ -387,49 +385,49 @@ namespace GsaGH.Components
                   switch (_disp)
                   {
                     case (DisplayValue.X):
-                      t1 = xyzResults[key][i].X.As(DefaultUnits.ForceUnit);
-                      t2 = xyzResults[key][i + 1].X.As(DefaultUnits.ForceUnit);
+                      t1 = xyzResults[key][i].X.ToUnit(DefaultUnits.ForceUnit);
+                      t2 = xyzResults[key][i + 1].X.ToUnit(DefaultUnits.ForceUnit);
                       break;
                     case (DisplayValue.Y):
-                      t1 = xyzResults[key][i].Y.As(DefaultUnits.ForceUnit);
-                      t2 = xyzResults[key][i + 1].Y.As(DefaultUnits.ForceUnit);
+                      t1 = xyzResults[key][i].Y.ToUnit(DefaultUnits.ForceUnit);
+                      t2 = xyzResults[key][i + 1].Y.ToUnit(DefaultUnits.ForceUnit);
                       break;
                     case (DisplayValue.Z):
-                      t1 = xyzResults[key][i].Z.As(DefaultUnits.ForceUnit);
-                      t2 = xyzResults[key][i + 1].Z.As(DefaultUnits.ForceUnit);
+                      t1 = xyzResults[key][i].Z.ToUnit(DefaultUnits.ForceUnit);
+                      t2 = xyzResults[key][i + 1].Z.ToUnit(DefaultUnits.ForceUnit);
                       break;
                     case (DisplayValue.resXYZ):
-                      t1 = xyzResults[key][i].XYZ.As(DefaultUnits.ForceUnit);
-                      t2 = xyzResults[key][i + 1].XYZ.As(DefaultUnits.ForceUnit);
+                      t1 = xyzResults[key][i].XYZ.ToUnit(DefaultUnits.ForceUnit);
+                      t2 = xyzResults[key][i + 1].XYZ.ToUnit(DefaultUnits.ForceUnit);
                       break;
                     case (DisplayValue.XX):
-                      t1 = xxyyzzResults[key][i].X.As(DefaultUnits.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].X.As(DefaultUnits.MomentUnit);
+                      t1 = xxyyzzResults[key][i].X.ToUnit(DefaultUnits.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].X.ToUnit(DefaultUnits.MomentUnit);
                       break;
                     case (DisplayValue.YY):
-                      t1 = xxyyzzResults[key][i].Y.As(DefaultUnits.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].Y.As(DefaultUnits.MomentUnit);
+                      t1 = xxyyzzResults[key][i].Y.ToUnit(DefaultUnits.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].Y.ToUnit(DefaultUnits.MomentUnit);
                       break;
                     case (DisplayValue.ZZ):
-                      t1 = xxyyzzResults[key][i].Z.As(DefaultUnits.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].Z.As(DefaultUnits.MomentUnit);
+                      t1 = xxyyzzResults[key][i].Z.ToUnit(DefaultUnits.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].Z.ToUnit(DefaultUnits.MomentUnit);
                       break;
                     case (DisplayValue.resXXYYZZ):
-                      t1 = xxyyzzResults[key][i].XYZ.As(DefaultUnits.MomentUnit);
-                      t2 = xxyyzzResults[key][i + 1].XYZ.As(DefaultUnits.MomentUnit);
+                      t1 = xxyyzzResults[key][i].XYZ.ToUnit(DefaultUnits.MomentUnit);
+                      t2 = xxyyzzResults[key][i + 1].XYZ.ToUnit(DefaultUnits.MomentUnit);
                       break;
                   }
                   break;
                 case FoldMode.StrainEnergy:
                   if (_disp == DisplayValue.X)
                   {
-                    t1 = xyzResults[key][i].X.As(DefaultUnits.EnergyUnit);
-                    t2 = xyzResults[key][i + 1].X.As(DefaultUnits.EnergyUnit);
+                    t1 = xyzResults[key][i].X.ToUnit(DefaultUnits.EnergyUnit);
+                    t2 = xyzResults[key][i + 1].X.ToUnit(DefaultUnits.EnergyUnit);
                   }
                   else
                   {
-                    t1 = xyzResults[key][i].X.As(DefaultUnits.EnergyUnit);
-                    t2 = xyzResults[key][i].X.As(DefaultUnits.EnergyUnit);
+                    t1 = xyzResults[key][i].X.ToUnit(DefaultUnits.EnergyUnit);
+                    t2 = xyzResults[key][i].X.ToUnit(DefaultUnits.EnergyUnit);
                   }
                   break;
               }
@@ -437,22 +435,22 @@ namespace GsaGH.Components
               Line segmentline = new Line(start, end);
 
               //normalised value between -1 and 1
-              double tnorm1 = 2 * (t1 - dmin) / (dmax - dmin) - 1;
-              double tnorm2 = 2 * (t2 - dmin) / (dmax - dmin) - 1;
+              double tnorm1 = 2 * (t1.Value - dmin) / (dmax - dmin) - 1;
+              double tnorm2 = 2 * (t2.Value - dmin) / (dmax - dmin) - 1;
 
               // get colour for that normalised value
               Color valcol1 = double.IsNaN(tnorm1) ? Color.Black : gH_Gradient.ColourAt(tnorm1);
               Color valcol2 = double.IsNaN(tnorm2) ? Color.Black : gH_Gradient.ColourAt(tnorm2);
 
               // set the size of the line ends for ResultLine class. Size is calculated from 0-base, so not a normalised value between extremes
-              float size1 = (t1 >= 0 && dmax != 0) ?
-                          Math.Max(2, (float)(t1 / dmax * scale)) :
-                          Math.Max(2, (float)(Math.Abs(t1) / Math.Abs(dmin) * scale));
+              float size1 = (t1.Value >= 0 && dmax != 0) ?
+                          Math.Max(2, (float)(t1.Value / dmax * scale)) :
+                          Math.Max(2, (float)(Math.Abs(t1.Value) / Math.Abs(dmin) * scale));
               if (double.IsNaN(size1))
                 size1 = 1;
-              float size2 = (t2 >= 0 && dmax != 0) ?
-                          Math.Max(2, (float)(t2 / dmax * scale)) :
-                          Math.Max(2, (float)(Math.Abs(t2) / Math.Abs(dmin) * scale));
+              float size2 = (t2.Value >= 0 && dmax != 0) ?
+                          Math.Max(2, (float)(t2.Value / dmax * scale)) :
+                          Math.Max(2, (float)(Math.Abs(t2.Value) / Math.Abs(dmin) * scale));
               if (double.IsNaN(size2))
                 size2 = 1;
 
@@ -460,7 +458,7 @@ namespace GsaGH.Components
               lock (resultLines)
               {
                 resultLines.Add(
-                        new ResultLineGoo(segmentline, t1, t2, valcol1, valcol2, size1, size2),
+                        new LineResultGoo(segmentline, t1, t2, valcol1, valcol2, size1, size2),
                         new GH_Path(key));
               }
             }

@@ -8,7 +8,7 @@ namespace GsaGH.Helpers.Export
   internal class GsaIntDictionary<T>
   {
     private IDictionary<int, T> _dictionary;
-    private int _maxKey = 0;
+    private int _firstEmptyKey = 1;
 
     internal int Count => _dictionary.Count;
     internal ReadOnlyDictionary<int, T> Dictionary => new ReadOnlyDictionary<int, T>(_dictionary);
@@ -16,22 +16,21 @@ namespace GsaGH.Helpers.Export
     internal GsaIntDictionary(ReadOnlyDictionary<int, T> dictionary)
     {
       _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-      if (_dictionary.Count > 0)
-        _maxKey = _dictionary.Keys.Max();
+      //if (_dictionary.Count > 0)
+      //  _maxKey = _dictionary.Keys.Max();
     }
 
     internal int AddValue(T value)
     {
-      _maxKey++;
-      _dictionary[_maxKey] = value;
-      return _maxKey;
+      while (_dictionary.ContainsKey(_firstEmptyKey))
+        _firstEmptyKey++;
+      _dictionary[_firstEmptyKey] = value;
+      return _firstEmptyKey;
     }
 
     internal void SetValue(int key, T value)
     {
       _dictionary[key] = value;
-      if (_maxKey <= key)
-        _maxKey = key;
     }
   }
 
@@ -39,7 +38,7 @@ namespace GsaGH.Helpers.Export
   {
     private IDictionary<int, T> _dictionary;
     private IDictionary<Guid, int> _guidDictionary;
-    private int _maxKey = 0;
+    private int _firstEmptyKey = 1;
 
     internal int Count => _dictionary.Count;
     internal ReadOnlyDictionary<int, T> Dictionary => new ReadOnlyDictionary<int, T>(_dictionary);
@@ -49,26 +48,23 @@ namespace GsaGH.Helpers.Export
     {
       _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
       _guidDictionary = dictionary.ToDictionary(kvp => Guid.NewGuid(), kvp => kvp.Key);
-      if (_dictionary.Count > 0)
-        _maxKey = _dictionary.Keys.Max();
     }
 
     internal int AddValue(Guid guid, T value)
     {
       if (_guidDictionary.ContainsKey(guid))
         return _guidDictionary[guid];
-      _maxKey++;
-      _dictionary[_maxKey] = value;
-      _guidDictionary[guid] = _maxKey;
-      return _maxKey;
+      while (_dictionary.ContainsKey(_firstEmptyKey))
+        _firstEmptyKey++;
+      _dictionary[_firstEmptyKey] = value;
+      _guidDictionary[guid] = _firstEmptyKey;
+      return _firstEmptyKey;
     }
 
     internal void SetValue(int key, Guid guid, T value)
     {
       _dictionary[key] = value;
       _guidDictionary[guid] = key;
-      if (_maxKey <= key)
-        _maxKey = key;
     }
   }
 
@@ -76,7 +72,7 @@ namespace GsaGH.Helpers.Export
   {
     private IDictionary<int, T> _dictionary;
     private IDictionary<Guid, Collection<int>> _guidDictionary;
-    private int _maxKey = 0;
+    private int _firstEmptyKey = 1;
 
     internal int Count => _dictionary.Count;
     internal ReadOnlyDictionary<int, T> Dictionary => new ReadOnlyDictionary<int, T>(_dictionary);
@@ -86,31 +82,28 @@ namespace GsaGH.Helpers.Export
     {
       _dictionary = dictionary.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
       _guidDictionary = dictionary.ToDictionary(kvp => Guid.NewGuid(), kvp => new Collection<int>() { kvp.Key });
-      if (_dictionary.Count > 0)
-        _maxKey = _dictionary.Keys.Max();
     }
 
     internal int AddValue(Guid guid, T value)
     {
-      _maxKey++;
+      while (_dictionary.ContainsKey(_firstEmptyKey))
+        _firstEmptyKey++;
       if (_guidDictionary.ContainsKey(guid))
       {
-        _dictionary[_maxKey] = value;
-        _guidDictionary[guid].Add(_maxKey);
+        _dictionary[_firstEmptyKey] = value;
+        _guidDictionary[guid].Add(_firstEmptyKey);
       }
       else
       {
-        _dictionary[_maxKey] = value;
-        _guidDictionary[guid] = new Collection<int>() { _maxKey };
+        _dictionary[_firstEmptyKey] = value;
+        _guidDictionary[guid] = new Collection<int>() { _firstEmptyKey };
       }
-      return _maxKey;
+      return _firstEmptyKey;
     }
 
     internal void SetValue(int key, Guid guid, T value, bool overwrite)
     {
       _dictionary[key] = value;
-      if (_maxKey <= key)
-        _maxKey = key;
       if (_guidDictionary.ContainsKey(guid) && !overwrite)
       {
         if (!_guidDictionary[guid].Contains(key))

@@ -136,7 +136,7 @@ namespace GsaGH.Components
           }
 
           // build new element2d with brep, crv and pts
-          GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize.Value, mem1ds, nodes, LengthUnit);
+          GsaElement2d elem2d = new GsaElement2d(brep, crvs, pts, meshSize.Value, mem1ds, nodes, LengthUnit, DefaultUnits.Tolerance);
 
           // 3 section
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();

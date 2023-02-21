@@ -28,7 +28,8 @@ namespace GsaGH.Parameters
       Force,
       Stress,
       Shear,
-      StrainEnergy
+      StrainEnergy,
+      Footfall
     }
     internal ResultType Type { get; set; }
     internal void UpdateMinMax()
@@ -137,6 +138,13 @@ namespace GsaGH.Parameters
     internal Dictionary<string, GsaResultsValues> ACaseElement2DDisplacementValues { get; set; } = new Dictionary<string, GsaResultsValues>();
 
     /// <summary>
+    /// Analysis Case 1DElement Footfall Result VALUES Dictionary 
+    /// Append to this dictionary to chache results
+    /// key = Tuple<elementList, numberOfDivisions>
+    /// </summary>
+    internal Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues> ACaseElement2DFootfallValues { get; set; } = new Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues>();
+
+    /// <summary>
     /// Analysis Case 2DElement Force Result VALUES Dictionary 
     /// Append to this dictionary to chache results
     /// key = elementList
@@ -179,6 +187,20 @@ namespace GsaGH.Parameters
     internal Dictionary<Tuple<string, int>, GsaResultsValues> ACaseElement1DForceValues { get; set; } = new Dictionary<Tuple<string, int>, GsaResultsValues>();
 
     /// <summary>
+    /// Analysis Case 1DElement Strain Energy Density Result VALUES Dictionary 
+    /// Append to this dictionary to chache results
+    /// key = Tuple<elementList, numberOfDivisions>
+    /// </summary>
+    internal Dictionary<Tuple<string, int>, GsaResultsValues> ACaseElement1DStrainEnergyDensityValues { get; set; } = new Dictionary<Tuple<string, int>, GsaResultsValues>();
+
+    /// <summary>
+    /// Analysis Case 1DElement Footfall Result VALUES Dictionary 
+    /// Append to this dictionary to chache results
+    /// key = Tuple<elementList, numberOfDivisions>
+    /// </summary>
+    internal Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues> ACaseElement1DFootfallValues { get; set; } = new Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues>();
+
+    /// <summary>
     /// Analysis Case Node API Result Dictionary 
     /// Append to this dictionary to chache results
     /// key = elementList
@@ -199,6 +221,12 @@ namespace GsaGH.Parameters
     /// </summary>
     internal Dictionary<string, GsaResultsValues> ACaseNodeReactionForceValues { get; set; } = new Dictionary<string, GsaResultsValues>();
 
+    /// <summary>
+    /// Analysis Case Node Footfall Result VALUES Dictionary 
+    /// Append to this dictionary to chache results
+    /// key = elementList
+    /// </summary>
+    internal Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues> ACaseNodeFootfallValues { get; set; } = new Dictionary<Tuple<string, FootfallResultType>, GsaResultsValues>();
     #endregion
 
     #region combination members
@@ -285,12 +313,28 @@ namespace GsaGH.Parameters
     internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>> ComboElement1DResults { get; set; } = new Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
 
     /// <summary>
+    /// Combination Case 1DElement API Result Dictionary 
+    /// Append to this dictionary to chache results
+    /// key = Tuple<elementList, permutations>
+    /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
+    /// </summary>
+    internal Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>> ComboElement1DResultsInclStrainEnergyDensity { get; set; } = new Dictionary<Tuple<string, int>, ReadOnlyDictionary<int, ReadOnlyCollection<Element1DResult>>>();
+
+    /// <summary>
     /// Combination Case 1DElement Forces Result VALUES Dictionary 
     /// Append to this dictionary to chache results
     /// key = Tuple<elementList, permutations>
     /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
     /// </summary>
     internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>> ComboElement1DForceValues { get; set; } = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
+
+    /// <summary>
+    /// Combination Case 1DElement Strain Energy Density Result VALUES Dictionary 
+    /// Append to this dictionary to chache results
+    /// key = Tuple<elementList, permutations>
+    /// value = Dictionary<elementID, Dictionary<numberOfDivisions, results>>
+    /// </summary>
+    internal Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>> ComboElement1DStrainEnergyDensityValues { get; set; } = new Dictionary<Tuple<string, int>, ConcurrentDictionary<int, GsaResultsValues>>();
 
     /// <summary>
     /// Combination Case 1DElement Displacement Result VALUES Dictionary 
@@ -328,20 +372,22 @@ namespace GsaGH.Parameters
 
     internal int CaseID { get; set; }
     internal string CaseName { get; set; }
-    public enum ResultType
+    public enum CaseType
     {
       AnalysisCase,
       Combination
     }
-    internal ResultType Type { get; set; }
+    internal CaseType Type { get; set; }
     internal GsaModel Model { get; set; }
+
+    #region constructors
     public GsaResult()
     { }
     internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseID)
     {
       this.Model = model;
       this.AnalysisCaseResult = result;
-      this.Type = ResultType.AnalysisCase;
+      this.Type = CaseType.AnalysisCase;
       this.CaseID = caseID;
       this.CaseName = model.Model.AnalysisCaseName(this.CaseID);
     }
@@ -349,7 +395,7 @@ namespace GsaGH.Parameters
     {
       this.Model = model;
       this.CombinationCaseResult = result;
-      this.Type = ResultType.Combination;
+      this.Type = CaseType.Combination;
       this.CaseID = caseID;
       this.SelectedPermutationIDs = permutations.OrderBy(x => x).ToList();
     }
@@ -358,12 +404,13 @@ namespace GsaGH.Parameters
     {
       this.Model = model;
       this.CombinationCaseResult = result;
-      this.Type = ResultType.Combination;
+      this.Type = CaseType.Combination;
       this.CaseID = caseID;
       this.SelectedPermutationIDs = new List<int>() { permutation };
     }
+    #endregion
 
-    #region output methods
+    #region methods
     /// <summary>
     /// Get node displacement values 
     /// For analysis case the length of the list will be 1
@@ -376,7 +423,7 @@ namespace GsaGH.Parameters
     {
       if (nodelist.ToLower() == "all" || nodelist == "")
         nodelist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseNodeDisplacementValues.ContainsKey(nodelist)) // see if values exist
         {
@@ -410,6 +457,35 @@ namespace GsaGH.Parameters
     }
 
     /// <summary>
+    /// Get node footfall result values 
+    /// For analysis case results only
+    /// This method will use cache data if it exists
+    /// </summary>
+    /// <param name="nodelist"></param>
+    /// <returns></returns>
+    internal GsaResultsValues NodeFootfallValues(string nodelist, FootfallResultType type)
+    {
+      if (nodelist.ToLower() == "all" || nodelist == "")
+        nodelist = "All";
+      if (this.Type == CaseType.AnalysisCase)
+      {
+        Tuple<string, FootfallResultType> key = new Tuple<string, FootfallResultType>(nodelist, type);
+        if (!this.ACaseNodeFootfallValues.ContainsKey(key)) // see if values exist
+        {
+          // compute result values and add to dictionary for cache
+          this.ACaseNodeFootfallValues.Add(key,
+              ResultHelper.GetNodeFootfallResultValues(nodelist, this.Model, type, this.CaseID));
+        }
+        return ACaseNodeFootfallValues[key];
+      }
+      else
+      {
+        // can only get Footfall for Analysis Case
+        throw new Exception("Cannot get Footfall results for a Combination Case.");
+      }
+    }
+
+    /// <summary>
     /// Get node displacement values 
     /// For analysis case the length of the list will be 1
     /// This method will use cache data if it exists
@@ -436,7 +512,7 @@ namespace GsaGH.Parameters
         nodelist = "All";
       }
 
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseNodeReactionForceValues.ContainsKey(nodelist)) // see if values exist
         {
@@ -497,7 +573,7 @@ namespace GsaGH.Parameters
         nodelist = "All";
       }
 
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseNodeReactionForceValues.ContainsKey(nodelist)) // see if values exist
         {
@@ -544,7 +620,7 @@ namespace GsaGH.Parameters
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement1DDisplacementValues.ContainsKey(key)) // see if values exist
         {
@@ -577,6 +653,37 @@ namespace GsaGH.Parameters
     }
 
     /// <summary>
+    /// Get beam footfall values 
+    /// For analysis case results only
+    /// This method will use cache data if it exists
+    /// </summary>
+    /// <param name="elementlist"></param>
+    /// <param name="lengthUnit"></param>
+    /// <returns></returns>
+    internal List<GsaResultsValues> Element1DFootfallValues(string elementlist, FootfallResultType type)
+    {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
+      Tuple<string, FootfallResultType> key = new Tuple<string, FootfallResultType>(elementlist, type);
+      if (this.Type == CaseType.AnalysisCase)
+      {
+        if (!this.ACaseElement1DFootfallValues.ContainsKey(key)) // see if values exist
+        {
+          GsaResultsValues nodeFootfallResultValues = this.NodeFootfallValues("All", type);
+          // compute result values and add to dictionary for cache
+          this.ACaseElement1DFootfallValues.Add(key,
+              ResultHelper.GetElement1DFootfallResultValues(elementlist, this.Model, nodeFootfallResultValues));
+        }
+        return new List<GsaResultsValues>() { ACaseElement1DFootfallValues[key] };
+      }
+      else
+      {
+        // can only get Footfall for Analysis Case
+        throw new Exception("Cannot get Footfall results for a Combination Case.");
+      }
+    }
+
+    /// <summary>
     /// Get beam force values 
     /// For analysis case the length of the list will be 1
     /// This method will use cache data if it exists
@@ -590,7 +697,7 @@ namespace GsaGH.Parameters
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement1DForceValues.ContainsKey(key)) // see if values exist
         {
@@ -635,9 +742,9 @@ namespace GsaGH.Parameters
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, positionsCount);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
-        if (!this.ACaseElement1DForceValues.ContainsKey(key)) // see if values exist
+        if (!this.ACaseElement1DStrainEnergyDensityValues.ContainsKey(key)) // see if values exist
         {
           if (!this.ACaseElement1DResults.ContainsKey(key)) // see if result exist
           {
@@ -645,25 +752,25 @@ namespace GsaGH.Parameters
             this.ACaseElement1DResults.Add(key, AnalysisCaseResult.Element1DResults(elementlist, positionsCount));
           }
           // compute result values and add to dictionary for cache
-          this.ACaseElement1DForceValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit));
+          this.ACaseElement1DStrainEnergyDensityValues.Add(key,
+              ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit, false));
         }
-        return new List<GsaResultsValues>() { ACaseElement1DForceValues[key] };
+        return new List<GsaResultsValues>() { ACaseElement1DStrainEnergyDensityValues[key] };
       }
       else
       {
-        if (!this.ComboElement1DForceValues.ContainsKey(key)) // see if values exist
+        if (!this.ComboElement1DStrainEnergyDensityValues.ContainsKey(key)) // see if values exist
         {
-          if (!this.ComboElement1DResults.ContainsKey(key)) // see if result exist
+          if (!this.ComboElement1DResultsInclStrainEnergyDensity.ContainsKey(key)) // see if result exist
           {
             // if the results hasn't already been taken out and add them to our dictionary
-            this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, positionsCount, true));
+            this.ComboElement1DResultsInclStrainEnergyDensity.Add(key, CombinationCaseResult.Element1DResults(elementlist, positionsCount, true));
           }
           // compute result values and add to dictionary for cache
-          this.ComboElement1DForceValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], energyUnit, SelectedPermutationIDs));
+          this.ComboElement1DStrainEnergyDensityValues.Add(key,
+              ResultHelper.GetElement1DResultValues(ComboElement1DResultsInclStrainEnergyDensity[key], energyUnit, SelectedPermutationIDs, false));
         }
-        return new List<GsaResultsValues>(ComboElement1DForceValues[key].Values);
+        return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key].Values);
       }
     }
 
@@ -675,14 +782,14 @@ namespace GsaGH.Parameters
     /// <param name="elementlist"></param>
     /// <param name="energyUnit"></param>
     /// <returns></returns>
-    internal List<GsaResultsValues> Element1DStrainEnergyDensityValues(string elementlist, EnergyUnit energyUnit)
+    internal List<GsaResultsValues> Element1DAverageStrainEnergyDensityValues(string elementlist, EnergyUnit energyUnit)
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, int> key = new Tuple<string, int>(elementlist, 1);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
-        if (!this.ACaseElement1DForceValues.ContainsKey(key)) // see if values exist
+        if (!this.ACaseElement1DStrainEnergyDensityValues.ContainsKey(key)) // see if values exist
         {
           if (!this.ACaseElement1DResults.ContainsKey(key)) // see if result exist
           {
@@ -690,14 +797,14 @@ namespace GsaGH.Parameters
             this.ACaseElement1DResults.Add(key, AnalysisCaseResult.Element1DResults(elementlist, 1));
           }
           // compute result values and add to dictionary for cache
-          this.ACaseElement1DForceValues.Add(key,
+          this.ACaseElement1DStrainEnergyDensityValues.Add(key,
               ResultHelper.GetElement1DResultValues(ACaseElement1DResults[key], energyUnit, true));
         }
-        return new List<GsaResultsValues>() { ACaseElement1DForceValues[key] };
+        return new List<GsaResultsValues>() { ACaseElement1DStrainEnergyDensityValues[key] };
       }
       else
       {
-        if (!this.ComboElement1DForceValues.ContainsKey(key)) // see if values exist
+        if (!this.ComboElement1DStrainEnergyDensityValues.ContainsKey(key)) // see if values exist
         {
           if (!this.ComboElement1DResults.ContainsKey(key)) // see if result exist
           {
@@ -705,10 +812,10 @@ namespace GsaGH.Parameters
             this.ComboElement1DResults.Add(key, CombinationCaseResult.Element1DResults(elementlist, 1, true));
           }
           // compute result values and add to dictionary for cache
-          this.ComboElement1DForceValues.Add(key,
+          this.ComboElement1DStrainEnergyDensityValues.Add(key,
               ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], energyUnit, SelectedPermutationIDs, true));
         }
-        return new List<GsaResultsValues>(ComboElement1DForceValues[key].Values);
+        return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key].Values);
       }
     }
 
@@ -724,7 +831,7 @@ namespace GsaGH.Parameters
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement2DDisplacementValues.ContainsKey(elementlist)) // see if values exist
         {
@@ -757,6 +864,36 @@ namespace GsaGH.Parameters
     }
 
     /// <summary>
+    /// Get beam footfall values 
+    /// For analysis case results only
+    /// This method will use cache data if it exists
+    /// </summary>
+    /// <param name="elementlist"></param>
+    /// <returns></returns>
+    internal List<GsaResultsValues> Element2DFootfallValues(string elementlist, FootfallResultType type)
+    {
+      if (elementlist.ToLower() == "all" || elementlist == "")
+        elementlist = "All";
+      Tuple<string, FootfallResultType> key = new Tuple<string, FootfallResultType>(elementlist, type);
+      if (this.Type == CaseType.AnalysisCase)
+      {
+        if (!this.ACaseElement2DFootfallValues.ContainsKey(key)) // see if values exist
+        {
+          GsaResultsValues nodeFootfallResultValues = this.NodeFootfallValues("All", type);
+          // compute result values and add to dictionary for cache
+          this.ACaseElement2DFootfallValues.Add(key,
+              ResultHelper.GetElement2DFootfallResultValues(elementlist, this.Model, nodeFootfallResultValues));
+        }
+        return new List<GsaResultsValues>() { ACaseElement2DFootfallValues[key] };
+      }
+      else
+      {
+        // can only get Footfall for Analysis Case
+        throw new Exception("Cannot get Footfall results for a Combination Case.");
+      }
+    }
+
+    /// <summary>
     /// Get 2D force values 
     /// For analysis case the length of the list will be 1
     /// This method will use cache data if it exists
@@ -769,7 +906,7 @@ namespace GsaGH.Parameters
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement2DForceValues.ContainsKey(elementlist)) // see if values exist
         {
@@ -813,7 +950,7 @@ namespace GsaGH.Parameters
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement2DShearValues.ContainsKey(elementlist)) // see if values exist
         {
@@ -859,7 +996,7 @@ namespace GsaGH.Parameters
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
       Tuple<string, double> key = new Tuple<string, double>(elementlist, layer);
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement2DStressValues.ContainsKey(key)) // see if values exist
         {
@@ -903,7 +1040,7 @@ namespace GsaGH.Parameters
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement3DDisplacementValues.ContainsKey(elementlist)) // see if values exist
         {
@@ -947,7 +1084,7 @@ namespace GsaGH.Parameters
     {
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
-      if (this.Type == ResultType.AnalysisCase)
+      if (this.Type == CaseType.AnalysisCase)
       {
         if (!this.ACaseElement3DStressValues.ContainsKey(elementlist)) // see if values exist
         {
@@ -978,9 +1115,7 @@ namespace GsaGH.Parameters
         return new List<GsaResultsValues>(ComboElement3DStressValues[elementlist].Values);
       }
     }
-    #endregion
 
-    #region other methods
     public GsaResult Duplicate()
     {
       return this;
@@ -988,9 +1123,9 @@ namespace GsaGH.Parameters
     public override string ToString()
     {
       string txt = "";
-      if (Type == ResultType.AnalysisCase)
+      if (Type == CaseType.AnalysisCase)
         txt = "A" + CaseID;
-      else if (Type == ResultType.Combination)
+      else if (Type == CaseType.Combination)
       {
         txt = "C" + CaseID;
         if (SelectedPermutationIDs.Count > 0)
@@ -1003,7 +1138,6 @@ namespace GsaGH.Parameters
       }
       return txt.Trim().Replace("  ", " ");
     }
-
     #endregion
   }
 }

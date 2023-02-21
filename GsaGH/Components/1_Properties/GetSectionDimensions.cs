@@ -1,29 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
-using OasysGH.Units.Helpers;
 using OasysGH.Units;
-using OasysUnits.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
-using GsaGH.Helpers.GsaAPI;
-using System.Globalization;
-using OasysGH.Helpers;
-using System.Collections.Generic;
-using System.IO;
-using GsaGH.Helpers;
-using GsaGH.Helpers.GH;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get geometric dimensions of a section
-    /// </summary>
-    public class GetSectionDimensions : GH_OasysComponent, IGH_VariableParameterComponent
+  /// <summary>
+  /// Component to get geometric dimensions of a section
+  /// </summary>
+  public class GetSectionDimensions : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("98765d83-2b23-47c1-ad1d-201b5a2eed8b");
@@ -74,10 +72,21 @@ namespace GsaGH.Components
         {
           string profileIn = "";
           gh_typ.CastTo(ref profileIn);
-          gsaSection = new GsaSection(profileIn);
+          if (GsaSection.ValidProfile(profileIn))
+            gsaSection = new GsaSection(profileIn);
+          else
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid profile syntax: " + profileIn);
+            return;
+          }
         }
 
         string profile = gsaSection.Profile;
+        if (profile.Trim() == "")
+        {
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Profile not set in Section");
+          return;
+        }
         string[] parts = profile.Split(' ');
 
         LengthUnit unit = LengthUnit.Millimeter; // default unit for sections is mm
@@ -417,19 +426,37 @@ namespace GsaGH.Components
         else if (profile.StartsWith("CAT"))
         {
           string prof = profile.Split(' ')[2];
-          List<double> sqlValues = SqlReader.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+          List<double> sqlValues = MicrosoftSQLiteReader.Instance.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
           unit = LengthUnit.Meter;
+          if (sqlValues.Count == 2)
+          {
 
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(this.LengthUnit))); //Depth
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width Top
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width Bottom
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Top
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Bottom
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[2], unit).ToUnit(this.LengthUnit)));  //Web Thk Bottom
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[4], unit).ToUnit(this.LengthUnit))); //Root radius
-          DA.SetData(i++, null); //Spacing
-          DA.SetData(i, "CAT");
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(this.LengthUnit))); //Depth
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(this.LengthUnit))); //Width
+            DA.SetData(i++, null); //Width Top
+            DA.SetData(i++, null); //Width Bottom
+            DA.SetData(i++, null); //Flange Thk Top
+            DA.SetData(i++, null); //Flange Thk Bottom
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Web Thk Bottom
+            DA.SetData(i++, null); //root radius
+            DA.SetData(i++, null); //Spacing
+          }
+          else
+          {
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(this.LengthUnit))); //Depth
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width Top
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width Bottom
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Top
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Bottom
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[2], unit).ToUnit(this.LengthUnit))); //Web Thk Bottom
+            if (sqlValues.Count > 4)
+              DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[4], unit).ToUnit(this.LengthUnit))); //Root radius
+            else
+              DA.SetData(i++, new GH_UnitNumber(Length.Zero.ToUnit(this.LengthUnit))); // welded section don´t have a root radius
+            DA.SetData(i++, null); //Spacing
+          }
+          DA.SetData(i, "CAT " + profile.Split(' ')[1]);
         }
         else
           AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to get dimensions for type " + type[0]);
@@ -485,19 +512,22 @@ namespace GsaGH.Components
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       return base.Read(reader);
     }
-
-    #region IGH_VariableParameterComponent null implementation
     public virtual void VariableParameterMaintenance()
     {
-      AreaUnit areaUnit = UnitsHelper.GetAreaUnit(this.LengthUnit);
-      AreaMomentOfInertiaUnit inertiaUnit = UnitsHelper.GetAreaMomentOfInertiaUnit(this.LengthUnit);
+      string abb = Length.GetAbbreviation(this.LengthUnit);
 
-      this.Params.Output[0].Name = "Area [" + Area.GetAbbreviation(areaUnit) + "]";
-      this.Params.Output[1].Name = "Moment of Inertia y-y [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      this.Params.Output[2].Name = "Moment of Inertia z-z [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      this.Params.Output[3].Name = "Moment of Inertia y-z [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
-      this.Params.Output[3].Name = "Torsion constant [" + AreaMomentOfInertia.GetAbbreviation(inertiaUnit) + "]";
+      this.Params.Output[0].Name = "Depth [" + abb + "]";
+      this.Params.Output[1].Name = "Width [" + abb + "]";
+      this.Params.Output[2].Name = "Width Top [" + abb + "]";
+      this.Params.Output[3].Name = "Width Bottom [" + abb + "]";
+      this.Params.Output[4].Name = "Flange Thk Top [" + abb + "]";
+      this.Params.Output[5].Name = "Flange Thk Bottom [" + abb + "]";
+      this.Params.Output[6].Name = "Web Thk [" + abb + "]";
+      this.Params.Output[7].Name = "Radius [" + abb + "]";
+      this.Params.Output[8].Name = "Spacing [" + abb + "]";
     }
+
+    #region IGH_VariableParameterComponent null implementation
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;

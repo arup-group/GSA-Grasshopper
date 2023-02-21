@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA reaction forces
-    /// </summary>
-    public class ReactionForce : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA reaction forces
+  /// </summary>
+  public class ReactionForce : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4f06d674-c736-4d9c-89d9-377bc424c547");
@@ -118,15 +118,18 @@ namespace GsaGH.Components
             AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
             return;
           }
-          Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, ForceUnit, MomentUnit);
+          Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, this.ForceUnit, this.MomentUnit);
           List<GsaResultsValues> vals = resultgetter.Item1;
           List<int> sortedIDs = resultgetter.Item2;
 
-          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 1 } : result.SelectedPermutationIDs);
+          if (permutations.Count == 1 && permutations[0] == -1)
+            permutations = Enumerable.Range(1, vals.Count).ToList();
 
-          for (int index = 0; index < vals.Count; index++)
+          // loop through all permutations (analysis case will just have one)
+          foreach (int perm in permutations)
           {
-            GH_Path p = p = new GH_Path(result.CaseID, permutations[index]);
+            GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm);
 
             List<GH_UnitNumber> transX = new List<GH_UnitNumber>();
             List<GH_UnitNumber> transY = new List<GH_UnitNumber>();
@@ -146,12 +149,12 @@ namespace GsaGH.Components
                 {
                   int ID = sortedIDs[j];
                   ids.Add(ID);
-                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[index].xyzResults[ID];
+                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].xyzResults[ID];
                   GsaResultQuantity values = res[0]; // there is only one result per node
-                  transX.Add(new GH_UnitNumber(values.X.ToUnit(ForceUnit))); // use ToUnit to capture changes in dropdown
-                  transY.Add(new GH_UnitNumber(values.Y.ToUnit(ForceUnit)));
-                  transZ.Add(new GH_UnitNumber(values.Z.ToUnit(ForceUnit)));
-                  transXYZ.Add(new GH_UnitNumber(values.XYZ));
+                  transX.Add(new GH_UnitNumber(values.X.ToUnit(this.ForceUnit))); // use ToUnit to capture changes in dropdown
+                  transY.Add(new GH_UnitNumber(values.Y.ToUnit(this.ForceUnit)));
+                  transZ.Add(new GH_UnitNumber(values.Z.ToUnit(this.ForceUnit)));
+                  transXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(this.ForceUnit)));
                 }
               }
               if (item == 1)
@@ -159,25 +162,25 @@ namespace GsaGH.Components
                 for (int j = 0; j < sortedIDs.Count; j++)
                 {
                   int ID = sortedIDs[j];
-                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[index].xxyyzzResults[ID];
+                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].xxyyzzResults[ID];
                   GsaResultQuantity values = res[0]; // there is only one result per node
-                  rotX.Add(new GH_UnitNumber(values.X.ToUnit(MomentUnit))); // use ToUnit to capture changes in dropdown
-                  rotY.Add(new GH_UnitNumber(values.Y.ToUnit(MomentUnit)));
-                  rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(MomentUnit)));
-                  rotXYZ.Add(new GH_UnitNumber(values.XYZ));
+                  rotX.Add(new GH_UnitNumber(values.X.ToUnit(this.MomentUnit))); // use ToUnit to capture changes in dropdown
+                  rotY.Add(new GH_UnitNumber(values.Y.ToUnit(this.MomentUnit)));
+                  rotZ.Add(new GH_UnitNumber(values.Z.ToUnit(this.MomentUnit)));
+                  rotXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(this.MomentUnit)));
                 }
               }
             });
 
-            out_transX.AddRange(transX, p);
-            out_transY.AddRange(transY, p);
-            out_transZ.AddRange(transZ, p);
-            out_transXYZ.AddRange(transXYZ, p);
-            out_rotX.AddRange(rotX, p);
-            out_rotY.AddRange(rotY, p);
-            out_rotZ.AddRange(rotZ, p);
-            out_rotXYZ.AddRange(rotXYZ, p);
-            outIDs.AddRange(ids, p);
+            out_transX.AddRange(transX, path);
+            out_transY.AddRange(transY, path);
+            out_transZ.AddRange(transZ, path);
+            out_transXYZ.AddRange(transXYZ, path);
+            out_rotX.AddRange(rotX, path);
+            out_rotY.AddRange(rotY, path);
+            out_rotZ.AddRange(rotZ, path);
+            out_rotXYZ.AddRange(rotXYZ, path);
+            outIDs.AddRange(ids, path);
           }
         }
 
@@ -190,6 +193,8 @@ namespace GsaGH.Components
         DA.SetDataTree(6, out_rotZ);
         DA.SetDataTree(7, out_rotXYZ);
         DA.SetDataTree(8, outIDs);
+
+        Helpers.PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force);
       }
     }
 

@@ -34,6 +34,13 @@ namespace GsaGH.Parameters
         GsaProp3d prop = new GsaProp3d(id);
         return new GsaProp3dGoo(prop);
       }
+
+      if (data.GetType() == typeof(GsaMaterialGoo))
+      {
+        GsaProp3d prop = new GsaProp3d(((GsaMaterialGoo)data).Value);
+        return new GsaProp3dGoo(prop);
+      }
+
       return base.PreferredCast(data);
     }
   }

@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Grasshopper.GUI;
+using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -14,6 +16,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Grasshopper.Kernel.Parameters;
 
 namespace GsaGH.Components
 {
@@ -176,92 +179,23 @@ namespace GsaGH.Components
       #endregion
 
       // Assemble model
-      Model gsa = Helpers.Export.AssembleModel.Assemble(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, this.LengthUnit, DefaultUnits.Tolerance.Meters, true);
+      Model gsa = Helpers.Export.AssembleModel.Assemble(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, this.LengthUnit, this._tolerance, true, this);
 
-      #region meshing
-      // Create elements from members
-      gsa.CreateElementsFromMembers();
-      #endregion
+      this.UpdateMessage();
 
       // extract nodes from model
-      ConcurrentBag<GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodes(new ConcurrentDictionary<int, Node>(gsa.Nodes()), LengthUnit);
+      ConcurrentBag<GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodes(gsa.Nodes(), this.LengthUnit, null, false);
 
-      ConcurrentDictionary<int, Element> elementDict = new ConcurrentDictionary<int, Element>(gsa.Elements());
-
+      
       // populate local axes dictionary
-      ConcurrentDictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new ConcurrentDictionary<int, ReadOnlyCollection<double>>();
+      ReadOnlyDictionary<int, Element> elementDict = gsa.Elements();
+      Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
       foreach (int id in elementDict.Keys)
-        elementLocalAxesDict.TryAdd(id, gsa.ElementDirectionCosine(id));
+        elementLocalAxesDict.Add(id, gsa.ElementDirectionCosine(id));
 
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Helpers.Import.Elements.GetElements(
-              elementDict,
-              new ConcurrentDictionary<int, Node>(gsa.Nodes()),
-              new ConcurrentDictionary<int, Section>(gsa.Sections()),
-              new ConcurrentDictionary<int, Prop2D>(gsa.Prop2Ds()),
-              new ConcurrentDictionary<int, Prop3D>(gsa.Prop3Ds()),
-              new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials()),
-              new ConcurrentDictionary<int, SectionModifier>(gsa.SectionModifiers()),
-              elementLocalAxesDict,
-              LengthUnit);
-
-      // post process materials (as they currently have a bug when running parallel!)
-
-      ConcurrentDictionary<int, AnalysisMaterial> amDict = new ConcurrentDictionary<int, AnalysisMaterial>(gsa.AnalysisMaterials());
-
-      if (elementTuple.Item1 != null)
-      {
-        foreach (GsaElement1dGoo element in elementTuple.Item1)
-        {
-          if (element.Value.Section != null && element.Value.Section.API_Section != null)
-          {
-            if (element.Value.Section.API_Section.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Section.API_Section.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              element.Value.Section.Material = new GsaMaterial(element.Value.Section, apimaterial);
-            }
-            else
-              element.Value.Section.Material = new GsaMaterial(element.Value.Section);
-          }
-        }
-      }
-      if (elementTuple.Item2 != null)
-      {
-        foreach (GsaElement2dGoo element in elementTuple.Item2)
-        {
-          if (element.Value.Properties != null && element.Value.Properties[0].API_Prop2d != null)
-          {
-            if (element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Properties[0].API_Prop2d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              foreach (GsaProp2d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop, apimaterial);
-            }
-            else
-              foreach (GsaProp2d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop);
-          }
-        }
-      }
-      if (elementTuple.Item3 != null)
-      {
-        foreach (GsaElement3dGoo element in elementTuple.Item3)
-        {
-          if (element.Value.Properties != null && element.Value.Properties[0].API_Prop3d != null)
-          {
-            if (element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty > 0)
-            {
-              amDict.TryGetValue(element.Value.Properties[0].API_Prop3d.MaterialAnalysisProperty, out AnalysisMaterial apimaterial);
-              foreach (GsaProp3d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop, apimaterial);
-            }
-            else
-              foreach (GsaProp3d prop in element.Value.Properties)
-                prop.Material = new GsaMaterial(prop);
-          }
-        }
-      }
+          = Helpers.Import.Elements.GetElements(elementDict, gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(), gsa.SectionModifiers(), elementLocalAxesDict, gsa.Axes(), this.LengthUnit, false);
 
       // expose internal model if anyone wants to use it
       GsaModel outModel = new GsaModel();
@@ -272,7 +206,7 @@ namespace GsaGH.Components
       DA.SetDataList(0, nodes.OrderBy(item => item.Value.Id));
       DA.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.Id));
       DA.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.Ids.First()));
-      DA.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.IDs.First()));
+      DA.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.Ids.First()));
       DA.SetData(4, new GsaModelGoo(outModel));
 
       // custom display settings for element2d mesh
@@ -344,6 +278,14 @@ namespace GsaGH.Components
 
     #region Custom UI
     private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+    private double _tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+    private string _toleranceTxt = "";
+
+    protected override void BeforeSolveInstance()
+    {
+      base.BeforeSolveInstance();
+      this.UpdateMessage();
+    }
 
     public override void InitialiseDropdowns()
     {
@@ -383,6 +325,83 @@ namespace GsaGH.Components
       Params.Input[i++].Name = "1D Members [" + unitAbbreviation + "]";
       Params.Input[i++].Name = "2D Members [" + unitAbbreviation + "]";
       Params.Input[i++].Name = "3D Members [" + unitAbbreviation + "]";
+    }
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
+    {
+      Menu_AppendSeparator(menu);
+
+      ToolStripTextBox tolerance = new ToolStripTextBox();
+      this._toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
+      tolerance.Text = this._toleranceTxt;
+      tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
+      tolerance.TextChanged += (s, e) => MaintainText(tolerance);
+
+      ToolStripMenuItem toleranceMenu = new ToolStripMenuItem("Set Tolerance", Properties.Resources.Units);
+      toleranceMenu.Enabled = true;
+      toleranceMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+
+      GH_MenuCustomControl menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) =>
+      {
+        this.UpdateMessage();
+        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        ExpireSolution(true);
+      };
+      menu.Items.Add(toleranceMenu);
+
+      Menu_AppendSeparator(menu);
+
+      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
+      ExpireSolution(true);
+    }
+
+    private void MaintainText(ToolStripTextBox tolerance)
+    {
+      this._toleranceTxt = tolerance.Text;
+      if (Length.TryParse(_toleranceTxt, out Length res))
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
+      else
+        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 255, 100, 100);
+    }
+    private void UpdateMessage()
+    {
+      if (this._toleranceTxt != "")
+      {
+        try
+        {
+          Length newTolerance = Length.Parse(_toleranceTxt);
+          this._tolerance = newTolerance.As(this.LengthUnit);
+        }
+        catch (Exception e)
+        {
+          MessageBox.Show(e.Message);
+          return;
+        }
+      }
+      Length tol = new Length(this._tolerance, this.LengthUnit);
+      this.Message = "Tol: " + tol.ToString();
+      if (tol.Meters < 0.001)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
+      if (tol.Meters > 0.25)
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
+    }
+    #endregion
+
+    #region (de)serialization
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+    {
+      writer.SetDouble("Tolerance", this._tolerance);
+      return base.Write(writer);
+    }
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      if (reader.ItemExists("Tolerance"))
+        this._tolerance = reader.GetDouble("Tolerance");
+      else
+        this._tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+      this.UpdateMessage();
+      return base.Read(reader);
     }
     #endregion
   }

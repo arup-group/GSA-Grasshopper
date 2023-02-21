@@ -12,7 +12,17 @@ namespace IntegrationTests.Parameters
   [Collection("GrasshopperFixture collection")]
   public class GetCreateAnalysisTaskAndCaseTest
   {
-    public static GH_Document Document()
+    public static GH_Document Document
+    {
+      get
+      {
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
+      }
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
     {
       string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
@@ -141,12 +151,12 @@ namespace IntegrationTests.Parameters
     [Fact]
     public void NoRuntimeErrorTest()
     {
-      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
     }
 
     IGH_Param TestHelper(string groupIdentifier)
     {
-      IGH_Param param = Helper.FindParameter(Document(), groupIdentifier);
+      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       return param;
     }
   }

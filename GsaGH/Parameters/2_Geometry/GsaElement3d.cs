@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -55,7 +56,7 @@ namespace GsaGH.Parameters
     }
     internal Element GetApiObjectClone(int i)
     {
-      return new Element()
+      Element dup = new Element()
       {
         Group = this._elements[i].Group,
         IsDummy = this._elements[i].IsDummy,
@@ -65,9 +66,10 @@ namespace GsaGH.Parameters
         Offset = this._elements[i].Offset,
         ParentMember = this._elements[i].ParentMember,
         Property = this._elements[i].Property,
-        Topology = new ReadOnlyCollection<int>(this._elements[i].Topology.ToList()),
         Type = this._elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
       };
+      dup.Topology = new ReadOnlyCollection<int>(this._elements[i].Topology.ToList());
+      return dup;
     }
     public int Count
     {
@@ -106,7 +108,7 @@ namespace GsaGH.Parameters
         this._topo = value;
       }
     }
-    public List<int> IDs
+    public List<int> Ids
     {
       get
       {
@@ -360,17 +362,27 @@ namespace GsaGH.Parameters
       UpdatePreview();
     }
 
-    internal GsaElement3d(List<Element> elements, List<int> ids, Mesh mesh, List<GsaProp3d> prop3ds)
+    internal GsaElement3d(Element element, int id, Mesh mesh, GsaProp3d prop3d)
     {
-      this._elements = elements;
+      this._elements = new List<Element>() { element };
       this._mesh = mesh;
       Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem3d(mesh, 0);
       this._topo = convertMesh.Item2;
       this._topoInt = convertMesh.Item3;
       this._faceInt = convertMesh.Item4;
-
-      this._ids = ids;
-
+      this._ids = new List<int>() { id };
+      this._props = new List<GsaProp3d>() { prop3d };
+      UpdatePreview();
+    }
+    internal GsaElement3d(ConcurrentDictionary<int, Element> elements, Mesh mesh, List<GsaProp3d> prop3ds)
+    {
+      this._elements = elements.Values.ToList();
+      this._mesh = mesh;
+      Tuple<List<Element>, List<Point3d>, List<List<int>>, List<List<int>>> convertMesh = Helpers.GH.RhinoConversions.ConvertMeshToElem3d(mesh, 0);
+      this._topo = convertMesh.Item2;
+      this._topoInt = convertMesh.Item3;
+      this._faceInt = convertMesh.Item4;
+      this._ids = elements.Keys.ToList();
       this._props = prop3ds;
       UpdatePreview();
     }
@@ -396,9 +408,10 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      if (!this._mesh.IsValid)
+      if (!(this._mesh.Ngons.Count > 0))
         return "Null";
-      string type = Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == this.Types.First()).Key + " ";
+      List<string> types = this.Types.Select(t => Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == t).Key).ToList();
+      string type = string.Join("/", types.Distinct());
       string info = "N:" + this.NgonMesh.Vertices.Count + " E:" + this.API_Elements.Count;
       return string.Join(" ", type.Trim(), info.Trim()).Trim().Replace("  ", " ");
     }
@@ -428,7 +441,7 @@ namespace GsaGH.Parameters
         return null;
 
       GsaElement3d dup = this.Duplicate(true);
-      dup.IDs = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
+      dup.Ids = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
 
       Mesh xMs = dup.NgonMesh.DuplicateMesh();
       xMs.Transform(xform);
@@ -442,7 +455,7 @@ namespace GsaGH.Parameters
         return null;
 
       GsaElement3d dup = this.Duplicate(true);
-      dup.IDs = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
+      dup.Ids = new List<int>(new int[dup.NgonMesh.Faces.Count()]);
 
       Mesh xMs = dup.NgonMesh.DuplicateMesh();
       xmorph.Morph(xMs);

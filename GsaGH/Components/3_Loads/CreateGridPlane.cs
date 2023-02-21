@@ -7,11 +7,12 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysUnits;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    public class CreateGridPlane : GH_OasysDropDownComponent
+  public class CreateGridPlane : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("95c9281a-739b-4480-a2d0-8b04ab0250bd");
@@ -33,7 +34,7 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Plane", "P", "Plane for Axis and Grid Plane definition. Note that an XY-plane will be created with an axis origin Z = 0 " +
           "and the height location will be controlled by Grid Plane elevation. For all none-XY plane inputs, the Grid Plane elevation will be 0", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Grid Plane ID", "ID", "GSA Grid Plane ID. Setting this will replace any existing Grid Planes in GSA model", GH_ParamAccess.item, 0);
-      pManager.AddNumberParameter("Grid Elevation in model units", "Ev", "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Grid Elevation in model units", "Ev", "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Grid Plane Name", GH_ParamAccess.item);
 
       pManager[0].Optional = true;
@@ -71,21 +72,40 @@ namespace GsaGH.Components
       }
 
       // 2 Grid elevation
-      double elevation = 0;
-      if (DA.GetData(2, ref elevation))
+      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
+      if (DA.GetData(2, ref gh_typ))
       {
-        gps.Elevation = elevation;
-
-        // if elevation is set we want to move the plane in it's normal direction
-        Vector3d vec = pln.Normal;
-        vec.Unitize();
-        vec.X *= elevation;
-        vec.Y *= elevation;
-        vec.Z *= elevation;
-        Transform xform = Transform.Translation(vec);
-        pln.Transform(xform);
-        gps.Plane = pln;
-        // note this wont move the Grid Plane Axis gps.Axis
+        string elevation_in = gh_typ.Value.ToString();
+        double elevation = 0;
+        if (elevation_in != "" && elevation_in.ToLower() != "0")
+        {
+          try
+          {
+            Length newElevation = Length.Parse(elevation_in);
+            gps.Elevation = elevation_in;
+            elevation = newElevation.Value;
+          }
+          catch (Exception e)
+          {
+            if (double.TryParse(elevation_in, out elevation))
+              gps.Elevation = elevation_in;
+            else
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+          }
+        }
+        if (elevation != 0)
+        {
+          // if elevation is set we want to move the plane in it's normal direction
+          Vector3d vec = pln.Normal;
+          vec.Unitize();
+          vec.X *= elevation;
+          vec.Y *= elevation;
+          vec.Z *= elevation;
+          Transform xform = Transform.Translation(vec);
+          pln.Transform(xform);
+          gps.Plane = pln;
+          // note this wont move the Grid Plane Axis gps.Axis
+        }
       }
 
       // 3 Name
@@ -105,14 +125,48 @@ namespace GsaGH.Components
         gps.GridPlane.IsStoreyType = true;
 
         // 4 tolerance above
-        double toleranceAbove = 0;
-        if (DA.GetData(4, ref toleranceAbove))
-          gps.GridPlane.ToleranceAbove = toleranceAbove;
+        gh_typ = new GH_ObjectWrapper();
+        if (DA.GetData(4, ref gh_typ))
+        {
+          string tol_in = gh_typ.Value.ToString();
+          if (tol_in != "" && tol_in.ToLower() != "auto")
+          {
+            try
+            {
+              Length newTolerance = Length.Parse(tol_in);
+              gps.StoreyToleranceAbove = tol_in;
+            }
+            catch (Exception e)
+            {
+              if (double.TryParse(tol_in, out double tolerance))
+                gps.StoreyToleranceAbove = tol_in;
+              else
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+            }
+          }
+        }
 
         // 5 tolerance below
-        double toleranceBelow = 0;
-        if (DA.GetData(5, ref toleranceBelow))
-          gps.GridPlane.ToleranceBelow = toleranceBelow;
+        gh_typ = new GH_ObjectWrapper();
+        if (DA.GetData(5, ref gh_typ))
+        {
+          string tol_in = gh_typ.Value.ToString();
+          if (tol_in != "" && tol_in.ToLower() != "auto")
+          {
+            try
+            {
+              Length newTolerance = Length.Parse(tol_in);
+              gps.StoreyToleranceBelow = tol_in;
+            }
+            catch (Exception e)
+            {
+              if (double.TryParse(tol_in, out double tolerance))
+                gps.StoreyToleranceBelow = tol_in;
+              else
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+            }
+          }
+        }
       }
 
       DA.SetData(0, new GsaGridPlaneSurfaceGoo(gps));
@@ -182,17 +236,16 @@ namespace GsaGH.Components
         {
           Params.RegisterInputParam(new Param_GenericObject());
           Params.RegisterInputParam(new Param_GenericObject());
-
         }
 
         Params.Input[4].NickName = "tA";
-        Params.Input[4].Name = "Tolerance Above in model units";
+        Params.Input[4].Name = "Tolerance Above";
         Params.Input[4].Description = "Tolerance Above Grid Plane";
         Params.Input[4].Access = GH_ParamAccess.item;
         Params.Input[4].Optional = true;
 
         Params.Input[5].NickName = "tB";
-        Params.Input[5].Name = "Tolerance Below in model units";
+        Params.Input[5].Name = "Tolerance Below";
         Params.Input[5].Description = "Tolerance Below Grid Plane";
         Params.Input[5].Access = GH_ParamAccess.item;
         Params.Input[5].Optional = true;
@@ -220,8 +273,8 @@ namespace GsaGH.Components
       _mode = FoldMode.Storey;
 
       //add input parameters
-      Params.RegisterInputParam(new Param_Number());
-      Params.RegisterInputParam(new Param_Number());
+      Params.RegisterInputParam(new Param_GenericObject());
+      Params.RegisterInputParam(new Param_GenericObject());
     }
     #endregion
 

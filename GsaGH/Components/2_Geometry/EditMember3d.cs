@@ -123,17 +123,14 @@ namespace GsaGH.Components
           else
           {
             if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
-            {
-              prop3d.Id = id;
-              mem.PropertyID = id;
-            }
+              prop3d = new GsaProp3d(id);
             else
             {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 3D Property of reference integer");
               return;
             }
           }
-          mem.Property = prop3d;
+          mem.Prop3d = prop3d;
         }
 
         // 4 mesh size
@@ -190,7 +187,7 @@ namespace GsaGH.Components
         DA.SetData(0, new GsaMember3dGoo(mem));
         DA.SetData(1, mem.Id);
         DA.SetData(2, mem.SolidMesh);
-        DA.SetData(3, new GsaProp3dGoo(mem.Property));
+        DA.SetData(3, new GsaProp3dGoo(mem.Prop3d));
         DA.SetData(4, mem.MeshSize);
         DA.SetData(5, mem.MeshWithOthers);
         DA.SetData(6, mem.Name);

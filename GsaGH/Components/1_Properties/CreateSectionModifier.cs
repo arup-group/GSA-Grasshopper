@@ -15,10 +15,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create a new Offset
-    /// </summary>
-    public class CreateSectionModifier : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to create a new Offset
+  /// </summary>
+  public class CreateSectionModifier : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e65d2554-75a9-4fac-9f12-1400e84aeee9");
@@ -79,21 +79,21 @@ namespace GsaGH.Components
         if (this.Params.Input[3].SourceCount > 0)
           modifier.JModifier = Input.UnitNumber(this, DA, 3, inertiaUnit, true);
         if (this.Params.Input[4].SourceCount > 0)
-          modifier.K11Modifier = CustomInput.RatioInDecimalFractionToDecimalFraction(this, DA, 4);
+          modifier.K11Modifier = Input.RatioInDecimalFractionToDecimalFraction(this, DA, 4);
         if (this.Params.Input[5].SourceCount > 0)
-          modifier.K22Modifier = CustomInput.RatioInDecimalFractionToDecimalFraction(this, DA, 5);
+          modifier.K22Modifier = Input.RatioInDecimalFractionToDecimalFraction(this, DA, 5);
         if (this.Params.Input[6].SourceCount > 0)
           modifier.VolumeModifier = Input.UnitNumber(this, DA, 6, volUnit, true);
       }
       else
       {
-        modifier.AreaModifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 0);
-        modifier.I11Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 1);
-        modifier.I22Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 2);
-        modifier.JModifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 3);
-        modifier.K11Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 4);
-        modifier.K22Modifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 5);
-        modifier.VolumeModifier = CustomInput.RatioInDecimalFractionToPercentage(this, DA, 6);
+        modifier.AreaModifier = Input.RatioInDecimalFractionToPercentage(this, DA, 0);
+        modifier.I11Modifier = Input.RatioInDecimalFractionToPercentage(this, DA, 1);
+        modifier.I22Modifier = Input.RatioInDecimalFractionToPercentage(this, DA, 2);
+        modifier.JModifier = Input.RatioInDecimalFractionToPercentage(this, DA, 3);
+        modifier.K11Modifier = Input.RatioInDecimalFractionToPercentage(this, DA, 4);
+        modifier.K22Modifier = Input.RatioInDecimalFractionToPercentage(this, DA, 5);
+        modifier.VolumeModifier = Input.RatioInDecimalFractionToPercentage(this, DA, 6);
       }
 
       modifier.AdditionalMass = (LinearDensity)Input.UnitNumber(this, DA, 7, DensityUnit, true);

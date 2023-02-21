@@ -9,13 +9,14 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    public class CreateGridSurface : GH_OasysDropDownComponent
+  public class CreateGridSurface : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("b9405f78-317b-474f-b258-4a178a70bc02");
@@ -155,18 +156,21 @@ namespace GsaGH.Components
           GsaMember1dGoo goo = (GsaMember1dGoo)gh_typ.Value;
           gps.RefObjectGuid = goo.Value.Guid;
           gps.ReferenceType = ReferenceType.Member;
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaMember2dGoo)
         {
           GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
           gps.RefObjectGuid = goo.Value.Guid;
           gps.ReferenceType = ReferenceType.Member;
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaMember3dGoo)
         {
           GsaMember3dGoo goo = (GsaMember3dGoo)gh_typ.Value;
           gps.RefObjectGuid = goo.Value.Guid;
           gps.ReferenceType = ReferenceType.Member;
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaSectionGoo)
         {
@@ -205,10 +209,26 @@ namespace GsaGH.Components
       }
 
       // 4 Tolerance
-      double tolerance = 0;
-      if (DA.GetData(4, ref tolerance))
+      gh_typ = new GH_ObjectWrapper();
+      if (DA.GetData(4, ref gh_typ))
       {
-        gs.Tolerance = tolerance;
+        string tol_in = gh_typ.Value.ToString();
+        
+        if (tol_in != "")
+        {
+          try
+          {
+            Length newTolerance = Length.Parse(tol_in);
+            gps.Tolerance = tol_in;
+          }
+          catch (Exception e)
+          {
+            if (double.TryParse(tol_in, out double tolerance))
+              gps.Tolerance = tol_in;
+            else
+              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+          }
+        }
       }
 
       switch (_mode)

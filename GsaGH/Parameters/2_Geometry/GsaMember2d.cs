@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
@@ -12,10 +13,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
-    /// <summary>
-    /// Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
-    /// </summary>
-    public class GsaMember2d
+  /// <summary>
+  /// Member2d class, this class defines the basic properties and methods for any Gsa Member 2d
+  /// </summary>
+  public class GsaMember2d
   {
     #region fields
     private Brep _brep; // brep for visualisation /member2d
@@ -35,11 +36,23 @@ namespace GsaGH.Parameters
     private List<Point3d> _inclPts; //slist of points for inclusion /member2d
 
     private Guid _guid = Guid.NewGuid();
+    private int _id = 0;
     #endregion
 
     #region properties
-    public int Id { get; set; } = 0;
-    internal Member ApiMember { get; set; } = new Member();
+    public int Id
+    {
+      get
+      {
+        return _id;
+      }
+      set
+      {
+        this.CloneApiObject();
+        _id = value;
+      }
+    }
+    internal Member ApiMember { get; set; } = new Member() { Type = MemberType.GENERIC_2D };
     // mesh size in Rhino/Grasshopper world, might be different to internal GSA mesh size
     public double MeshSize { get; set; } = 0;
     public GsaProp2d Property { get; set; } = new GsaProp2d();
@@ -203,9 +216,7 @@ namespace GsaGH.Parameters
     #endregion
 
     #region constructors
-    public GsaMember2d()
-    {
-    }
+    public GsaMember2d() { }
 
     public GsaMember2d(Brep brep, List<Curve> includeCurves = null, List<Point3d> includePoints = null, int prop = 0)
     {
@@ -237,38 +248,13 @@ namespace GsaGH.Parameters
         throw new Exception(" Error with Mem2D: Unable to build Brep, please verify input geometry is valid and tolerance is set accordingly with your geometry under GSA Plugin Unit Settings or if unset under Rhino unit settings");
     }
 
-    internal GsaMember2d(Member member, LengthUnit modelUnit, int id, List<Point3d> topology, List<string> topologyType, List<List<Point3d>> voidTopology, List<List<string>> voidTopologyType, List<List<Point3d>> inlcusionLinesTopology, List<List<string>> inclusionTopologyType, List<Point3d> includePoints, GsaProp2d prop, GH_Component owner = null)
+    internal GsaMember2d(Member member, int id, List<Point3d> topology, List<string> topologyType, List<List<Point3d>> voidTopology, List<List<string>> voidTopologyType, List<List<Point3d>> inlcusionLinesTopology, List<List<string>> inclusionTopologyType, List<Point3d> includePoints, ReadOnlyDictionary<int, Prop2D> properties, ReadOnlyDictionary<int, AnalysisMaterial> materials, ReadOnlyDictionary<int, Axis> axDict, LengthUnit modelUnit)
     {
       this.ApiMember = member;
-      this.Id = id;
-      // scale mesh size to model units
       this.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
+      this._id = id;
 
-      // this will always be overridden by the next if statement?!
-      if (topology.Count == 0)
-      {
-        this._brep = null;
-        this._edgeCrv = null;
-        this._inclPts = null;
-        return;
-      }
-
-      if (topology.Count < 3) // we need minimum 3 nodes to create a 2D member
-      {
-        this._brep = null;
-        this._edgeCrv = null;
-        this._inclPts = null;
-        string error = "Invalid topology Mem2D ID: " + id + ".";
-        if (owner == null)
-        {
-          throw new Exception(error);
-        }
-        else
-          owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, error);
-        return;
-      }
-
-      if (topology[0] != topology[topology.Count - 1])
+      if (topology[0] != topology[topology.Count - 1]) // add last point to close boundary
       {
         topology.Add(topology[0]);
         topologyType.Add("");
@@ -317,12 +303,11 @@ namespace GsaGH.Parameters
       }
       this._inclCrvsTopo = inlcusionLinesTopology;
       this._inclCrvsTopoType = inclusionTopologyType;
-
       this._inclPts = includePoints;
 
-      this._brep = Helpers.GH.RhinoConversions.BuildBrep(this._edgeCrv, this._voidCrvs, new Length(0.25, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
+      this._brep = Helpers.GH.RhinoConversions.BuildBrep(this._edgeCrv, this._voidCrvs, new Length(0.001, LengthUnit.Meter).As(DefaultUnits.LengthUnitGeometry));
 
-      this.Property = prop;
+      this.Property = new GsaProp2d(properties, this.ApiMember.Property, materials, axDict, modelUnit);
     }
     #endregion
 
@@ -392,11 +377,11 @@ namespace GsaGH.Parameters
 
     public GsaMember2d UpdateGeometry(Brep brep = null, List<Curve> inclCrvs = null, List<Point3d> inclPts = null)
     {
-      if (brep == null)
+      if (brep == null && this._brep != null)
         brep = this._brep.DuplicateBrep();
-      if (inclCrvs == null)
+      if (inclCrvs == null && this._inclCrvs != null)
         inclCrvs = this._inclCrvs.Select(x => (Curve)x).ToList();
-      if (inclPts == null)
+      if (inclPts == null && this._inclPts != null)
         inclPts = this._inclPts.ToList();
 
       GsaMember2d dup = new GsaMember2d(brep, inclCrvs, inclPts);

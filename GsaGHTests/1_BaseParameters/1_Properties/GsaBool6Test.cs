@@ -2,6 +2,9 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;
+using OasysUnits.Units;
+using Rhino.Geometry;
+using System.Collections.Generic;
 using Xunit;
 
 namespace GsaGHTests.Parameters
@@ -54,6 +57,40 @@ namespace GsaGHTests.Parameters
       Assert.Equal(xx, original.XX);
       Assert.Equal(yy, original.YY);
       Assert.Equal(zz, original.ZZ);
+    }
+
+    [Fact]
+    public void AssembleWithElementTest()
+    {
+      GsaElement1d e1d = new GsaElement1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0)));
+      e1d.ReleaseStart = new GsaBool6(true, false, true, false, true, false);
+      e1d.ReleaseEnd = new GsaBool6(false, true, false, true, false, true);
+
+      GsaModel assembled = new GsaModel();
+      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(null, null, new List<GsaElement1d>() { e1d }, null, null, null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false, null);
+
+      GsaBool6 startAssembled = new GsaBool6(assembled.Model.Elements()[1].Release(0));
+      GsaBool6 endAssembled = new GsaBool6(assembled.Model.Elements()[1].Release(1));
+
+      Duplicates.AreEqual(e1d.ReleaseStart, startAssembled);
+      Duplicates.AreEqual(e1d.ReleaseEnd, endAssembled);
+    }
+
+    [Fact]
+    public void AssembleWitMemberTest()
+    {
+      GsaMember1d m1d = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0)));
+      m1d.ReleaseStart = new GsaBool6(true, false, true, false, true, false);
+      m1d.ReleaseEnd = new GsaBool6(false, true, false, true, false, true);
+
+      GsaModel assembled = new GsaModel();
+      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(null, null, null, null, null, new List<GsaMember1d>() { m1d }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false, null);
+
+      GsaBool6 startAssembled = new GsaBool6(assembled.Model.Members()[1].GetEndRelease(0).Releases);
+      GsaBool6 endAssembled = new GsaBool6(assembled.Model.Members()[1].GetEndRelease(1).Releases);
+
+      Duplicates.AreEqual(m1d.ReleaseStart, startAssembled);
+      Duplicates.AreEqual(m1d.ReleaseEnd, endAssembled);
     }
   }
 }

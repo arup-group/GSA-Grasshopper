@@ -264,12 +264,15 @@ namespace GsaGH.Helpers.Import
         srfDict.TryGetValue(gridSrfId, out GridSurface gs);
         gps.GridSurface = gs;
         gps.GridSurfaceId = gridSrfId;
+        gps.Tolerance = new Length(gs.Tolerance, LengthUnit.Meter).ToUnit(unit).ToString().Replace(" ", string.Empty).Replace(",", string.Empty);
 
         // Get Grid Plane
         plnDict.TryGetValue(gs.GridPlane, out GridPlane gp);
         gps.GridPlane = gp;
         gps.GridPlaneId = gs.GridPlane;
-        gps.Elevation = gp.Elevation;
+        gps.Elevation = new Length(gp.Elevation, LengthUnit.Meter).ToUnit(unit).ToString().Replace(" ", string.Empty).Replace(",", string.Empty);
+        gps.StoreyToleranceAbove = gp.ToleranceAbove == 0 ? "auto" : new Length(gp.ToleranceAbove, LengthUnit.Meter).ToUnit(unit).ToString().Replace(" ", string.Empty).Replace(",", string.Empty); 
+        gps.StoreyToleranceBelow = gp.ToleranceBelow == 0 ? "auto" : new Length(gp.ToleranceBelow, LengthUnit.Meter).ToUnit(unit).ToString().Replace(" ", string.Empty).Replace(",", string.Empty);
 
         // Get Axis
         axDict.TryGetValue(gp.AxisProperty, out Axis ax);

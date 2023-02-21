@@ -3,6 +3,7 @@ using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Grasshopper.Kernel.Types;
 using Xunit;
+using Grasshopper.Kernel.Data;
 
 namespace GsaGHTests.Analysis
 {
@@ -33,7 +34,8 @@ namespace GsaGHTests.Analysis
       Assert.Equal(2, case2.Value);
       Assert.Equal(1, case3.Value);
 
-      GH_Integer perm3 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 2, 2, 0);
+      GH_Path path = new GH_Path(1);
+      GH_Integer perm3 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 2, path, 0);
       Assert.Equal(1, perm3.Value);
     }
   }

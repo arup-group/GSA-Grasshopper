@@ -11,7 +11,17 @@ namespace IntegrationTests.Components
   [Collection("GrasshopperFixture collection")]
   public class CreateGridPlaneTests
   {
-    public static GH_Document Document()
+    public static GH_Document Document
+    {
+      get
+      {
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
+      }
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
     {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
       string fileName = thisClass.Name + ".gh";
@@ -26,13 +36,13 @@ namespace IntegrationTests.Components
     [Fact]
     public void GridPlaneSurfaceTest()
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
       GH_Component comp = Helper.FindComponent(doc, "gps");
       Assert.NotNull(comp);
       GsaGridPlaneSurfaceGoo output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
       GsaGridPlaneSurface gps = output.Value;
       Assert.Equal(42, gps.GridPlaneId);
-      Assert.Equal(10, gps.Elevation);
+      Assert.Equal("10", gps.Elevation);
       Assert.Equal("test", gps.GridPlane.Name);
     }
   }

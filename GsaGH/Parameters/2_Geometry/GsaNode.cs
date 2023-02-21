@@ -21,12 +21,24 @@ namespace GsaGH.Parameters
     internal Brep previewSupportSymbol;
     internal Text3d previewText;
 
+    private int _id = 0;
     private Plane _plane;
     private Node _node = new Node();
     #endregion
 
     #region properties
-    public int Id { get; set; }
+    public int Id
+    {
+      get
+      {
+        return _id;
+      }
+      set
+      {
+        this.CloneApiObject();
+        _id = value;
+      }
+    }
     public Plane LocalAxis
     {
       get
@@ -168,16 +180,16 @@ namespace GsaGH.Parameters
 
     internal GsaNode(Node node, int id, LengthUnit unit, Plane localAxis = new Plane())
     {
-      _node = node;
-      CloneApiObject();
+      this._node = node;
+      this.CloneApiObject();
       if (unit != LengthUnit.Meter)
       {
-        _node.Position.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
-        _node.Position.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
-        _node.Position.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
+        this._node.Position.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
+        this._node.Position.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
+        this._node.Position.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
       }
-      Id = id;
-      _plane = localAxis;
+      this._id = id;
+      this._plane = localAxis;
       this.UpdatePreview();
     }
 
@@ -275,32 +287,32 @@ namespace GsaGH.Parameters
     {
       Node node = new Node
       {
-        AxisProperty = _node.AxisProperty,
-        DamperProperty = _node.DamperProperty,
-        MassProperty = _node.MassProperty,
-        Name = _node.Name.ToString(),
+        AxisProperty = this._node.AxisProperty,
+        DamperProperty = this._node.DamperProperty,
+        MassProperty = this._node.MassProperty,
+        Name = this._node.Name.ToString(),
         Restraint = new NodalRestraint
         {
-          X = _node.Restraint.X,
-          Y = _node.Restraint.Y,
-          Z = _node.Restraint.Z,
-          XX = _node.Restraint.XX,
-          YY = _node.Restraint.YY,
-          ZZ = _node.Restraint.ZZ,
+          X = this._node.Restraint.X,
+          Y = this._node.Restraint.Y,
+          Z = this._node.Restraint.Z,
+          XX = this._node.Restraint.XX,
+          YY = this._node.Restraint.YY,
+          ZZ = this._node.Restraint.ZZ,
         },
-        SpringProperty = _node.SpringProperty,
+        SpringProperty = this._node.SpringProperty,
         Position = new Vector3
         {
-          X = _node.Position.X,
-          Y = _node.Position.Y,
-          Z = _node.Position.Z
+          X = this._node.Position.X,
+          Y = this._node.Position.Y,
+          Z = this._node.Position.Z
         }
       };
 
-      if ((Color)_node.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
-        node.Colour = _node.Colour;
+      if ((Color)this._node.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
+        node.Colour = this._node.Colour;
 
-      _node = node;
+      this._node = node;
     }
 
     internal Node GetApiNodeToUnit(LengthUnit unit = LengthUnit.Meter)

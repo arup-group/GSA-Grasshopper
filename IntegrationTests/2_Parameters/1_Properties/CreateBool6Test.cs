@@ -10,7 +10,17 @@ namespace IntegrationTests.Parameters
   [Collection("GrasshopperFixture collection")]
   public class CreateBool6Test
   {
-    public static GH_Document Document()
+    public static GH_Document Document
+    {
+      get
+      {
+        if (_document == null)
+          _document = OpenDocument();
+        return _document;
+      }
+    }
+    private static GH_Document _document = null;
+    private static GH_Document OpenDocument()
     {
       string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
@@ -62,9 +72,10 @@ namespace IntegrationTests.Parameters
     [InlineData("XX", false)]
     [InlineData("YY", true)]
     [InlineData("ZZ", false)]
+    [InlineData("Cast", true)]
     public void OutputTest(string groupIdentifier, bool expected)
     {
-      GH_Document doc = Document();
+      GH_Document doc = Document;
 
       IGH_Param param = Helper.FindParameter(doc, groupIdentifier);
 
@@ -80,7 +91,7 @@ namespace IntegrationTests.Parameters
     [Fact]
     public void NoRuntimeErrorTest()
     {
-      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
     }
   }
 }

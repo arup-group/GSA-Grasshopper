@@ -7,6 +7,7 @@ using OasysGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
+using Rhino.Geometry;
 using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
@@ -106,6 +107,17 @@ namespace GsaGHTests.Properties
       Assert.Equal("MyPropediprop", name.Value);
       Assert.Equal(ColorRGBA.White, colour.Value);
       Assert.Equal("Curved Shell", type.Value);
+    }
+
+    [Fact]
+    public void SetPlaneFromNewComponent()
+    {
+      GsaProp2d prop2d = new GsaProp2d();
+      var comp = ComponentMother();
+
+      ComponentTestHelper.SetInput(comp, new GH_Plane(Plane.WorldYZ), 4);
+      GH_Plane axisPlane = (GH_Plane)ComponentTestHelper.GetOutput(comp, 4);
+      Assert.Equal(new GH_Plane(Plane.WorldYZ).ToString(), axisPlane.ToString());
     }
   }
 }

@@ -17,7 +17,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    public class CreateNodeLoad : GH_OasysDropDownComponent
+  public class CreateNodeLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
@@ -116,15 +116,16 @@ namespace GsaGH.Components
         else if (GH_Convert.ToPoint3d(gh_typ.Value, ref refPt, GH_Conversion.Both))
         {
           nodeLoad.RefPoint = refPt;
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Point loading in GsaGH will automatically find the corrosponding node and apply the load to that node by ID. If you save the file and continue working in GSA please note that the point-load relationship will be lost.");
         }
         else if (GH_Convert.ToString(gh_typ.Value, out string nodeList, GH_Conversion.Both))
           nodeLoad.NodeLoad.Nodes = nodeList;
       }
 
-      // 3 Name
+      // 2 Name
       string name = "";
       GH_String gh_name = new GH_String();
-      if (DA.GetData(3, ref gh_name))
+      if (DA.GetData(2, ref gh_name))
       {
         if (GH_Convert.ToString(gh_name, out name, GH_Conversion.Both))
           nodeLoad.NodeLoad.Name = name;
@@ -195,7 +196,6 @@ namespace GsaGH.Components
       GsaLoad gsaLoad = new GsaLoad(nodeLoad);
       DA.SetData(0, new GsaLoadGoo(gsaLoad));
     }
-
 
     #region Custom UI
     private enum FoldMode
@@ -293,7 +293,7 @@ namespace GsaGH.Components
         this._mode = FoldMode.Node_Force;
       else
         this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0].Replace(' ', '_'));
-      
+
       switch (this._mode)
       {
         case FoldMode.Node_Force:

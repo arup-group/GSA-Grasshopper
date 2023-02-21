@@ -2,7 +2,10 @@
 using GsaGHTests.Helpers;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using System.Collections.Generic;
+using System.Numerics;
 using Xunit;
+using static Rhino.UI.Controls.CollapsibleSectionImpl;
 
 namespace GsaGHTests.Parameters
 {
@@ -103,6 +106,26 @@ namespace GsaGHTests.Parameters
       Assert.Equal(factor2, original.MomentAmplificationFactorWeakAxis);
       Assert.Equal(factor3, original.LateralTorsionalBucklingFactor);
       Assert.False(original.LengthIsSet);
+    }
+
+    [Fact]
+    public void AssembleWitMemberTest()
+    {
+      GsaMember1d m1d = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0)));
+      m1d.ApiMember.MomentAmplificationFactorStrongAxis = 1.5;
+      m1d.ApiMember.MomentAmplificationFactorWeakAxis = 2.5;
+      m1d.ApiMember.LateralTorsionalBucklingFactor = 0.75;
+
+      GsaBucklingLengthFactors originalFactors = new GsaBucklingLengthFactors(m1d);
+
+      GsaModel assembled = new GsaModel();
+      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(null, null, null, null, null, new List<GsaMember1d>() { m1d }, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false, null);
+
+      GsaAPI.Member assembledMem1d = assembled.Model.Members()[1];
+
+      Assert.Equal(1.5, assembledMem1d.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(2.5, assembledMem1d.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(0.75, assembledMem1d.LateralTorsionalBucklingFactor);
     }
   }
 }

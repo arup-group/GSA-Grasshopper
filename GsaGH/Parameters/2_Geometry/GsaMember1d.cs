@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.Import;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Collections;
@@ -17,8 +20,8 @@ namespace GsaGH.Parameters
   public class GsaMember1d
   {
     #region fields
-    internal List<Line> previewGreenLines;
-    internal List<Line> previewRedLines;
+    internal List<Line> PreviewGreenLines;
+    internal List<Line> PreviewRedLines;
 
     private PolyCurve _crv = new PolyCurve(); // Polyline for visualisation /member1d/member2d
     private List<Point3d> _topo; // list of topology points for visualisation /member1d/member2d
@@ -26,43 +29,23 @@ namespace GsaGH.Parameters
     private GsaBool6 _rel1;
     private GsaBool6 _rel2;
     private GsaNode _orientationNode;
-    private GsaLocalAxes _localAxes = null;
     private Guid _guid = Guid.NewGuid();
-
-    private Line previewSX1;
-    private Line previewSX2;
-    private Line previewSY1;
-    private Line previewSY2;
-    private Line previewSY3;
-    private Line previewSY4;
-    private Line previewSZ1;
-    private Line previewSZ2;
-    private Line previewSZ3;
-    private Line previewSZ4;
-    private Line previewEX1;
-    private Line previewEX2;
-    private Line previewEY1;
-    private Line previewEY2;
-    private Line previewEY3;
-    private Line previewEY4;
-    private Line previewEZ1;
-    private Line previewEZ2;
-    private Line previewEZ3;
-    private Line previewEZ4;
-    private Line previewSXX;
-    private Line previewSYY1;
-    private Line previewSYY2;
-    private Line previewSZZ1;
-    private Line previewSZZ2;
-    private Line previewEXX;
-    private Line previewEYY1;
-    private Line previewEYY2;
-    private Line previewEZZ1;
-    private Line previewEZZ2;
+    private int _id = 0;
     #endregion
 
     #region properties
-    public int Id { get; set; } = 0;
+    public int Id
+    {
+      get
+      {
+        return _id;
+      }
+      set
+      {
+        this.CloneApiObject();
+        _id = value;
+      }
+    }
     internal Member ApiMember { get; set; } = new Member();
     public double MeshSize { get; set; } = 0;
     public GsaSection Section { get; set; } = new GsaSection();
@@ -287,27 +270,7 @@ namespace GsaGH.Parameters
     #endregion
 
     #region constructors
-    public GsaMember1d()
-    {
-    }
-
-    internal GsaMember1d(Member member, LengthUnit modelUnit, int id, List<Point3d> topology, List<string> topo_type, GsaSection section, GsaNode orientationNode)
-    {
-      this.ApiMember = member;
-      // scale mesh size to model units
-      this.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
-      this.Id = id;
-      this._crv = Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
-      this._topo = topology;
-      this._topoType = topo_type;
-      this.Section = section;
-      this._rel1 = new GsaBool6(this.ApiMember.GetEndRelease(0).Releases);
-      this._rel2 = new GsaBool6(this.ApiMember.GetEndRelease(1).Releases);
-      // is this check necessary?
-      if (orientationNode != null)
-        this._orientationNode = orientationNode;
-      this.UpdatePreview();
-    }
+    public GsaMember1d() { }
 
     public GsaMember1d(Curve crv, int prop = 0)
     {
@@ -323,9 +286,26 @@ namespace GsaGH.Parameters
 
       this.UpdatePreview();
     }
+
+    internal GsaMember1d(Member member, int id, List<Point3d> topology, List<string> topo_type, ReadOnlyDictionary<int, Node> nDict,
+      ReadOnlyDictionary<int, Section> sDict, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict,
+      Dictionary<int, ReadOnlyCollection<double>> localAxesDict, LengthUnit modelUnit)
+    {
+      this.ApiMember = member;
+      this.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
+      this._id = id;
+      this._crv = Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topo_type);
+      this._topo = topology;
+      this._topoType = topo_type;
+      this._rel1 = new GsaBool6(this.ApiMember.GetEndRelease(0).Releases);
+      this._rel2 = new GsaBool6(this.ApiMember.GetEndRelease(1).Releases);
+      this.LocalAxes = new GsaLocalAxes(localAxesDict[id]);
+      this.Section = new GsaSection(sDict, this.ApiMember.Property, modDict, matDict);
+      this.UpdatePreview();
+    }
     #endregion
 
-    #region methods
+      #region methods
     public GsaMember1d Duplicate(bool cloneApiMember = false)
     {
       GsaMember1d dup = new GsaMember1d();
@@ -405,6 +385,13 @@ namespace GsaGH.Parameters
       this.ApiMember = this.GetAPI_MemberClone();
       this._guid = Guid.NewGuid();
     }
+    
+    internal void UpdateCurveFromTopology()
+    {
+      if (this._crv == null)
+        return;
+      this._crv = Helpers.GH.RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(this._topo, this._topoType);
+    }
 
     private void UpdatePreview()
     {
@@ -412,47 +399,12 @@ namespace GsaGH.Parameters
       {
         if (this._rel1.X || this._rel1.Y || this._rel1.Z || this._rel1.XX || this._rel1.YY || this._rel1.ZZ || this._rel2.X || this._rel2.Y || this._rel2.Z || this._rel2.XX || this._rel2.YY || this._rel2.ZZ)
         {
-          previewGreenLines = new List<Line>
-          {
-            previewSX1,
-            previewSX2,
-            previewSY1,
-            previewSY2,
-            previewSY3,
-            previewSY4,
-            previewSZ1,
-            previewSZ2,
-            previewSZ3,
-            previewSZ4,
-            previewEX1,
-            previewEX2,
-            previewEY1,
-            previewEY2,
-            previewEY3,
-            previewEY4,
-            previewEZ1,
-            previewEZ2,
-            previewEZ3,
-            previewEZ4
-          };
-          previewRedLines = new List<Line>
-          {
-            previewSXX,
-            previewSYY1,
-            previewSYY2,
-            previewSZZ1,
-            previewSZZ2,
-            previewEXX,
-            previewEYY1,
-            previewEYY2,
-            previewEZZ1,
-            previewEZZ2
-          };
-          Helpers.Graphics.Display.Preview1D(this._crv, this.ApiMember.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2,
-          ref previewGreenLines, ref previewRedLines);
+          Tuple<List<Line>, List<Line>> previewCurves = Helpers.Graphics.Display.Preview1D(this._crv, this.ApiMember.OrientationAngle * Math.PI / 180.0, this._rel1, this._rel2);
+          PreviewGreenLines = previewCurves.Item1;
+          PreviewRedLines = previewCurves.Item2;
         }
         else
-          previewGreenLines = null;
+          PreviewGreenLines = null;
       }
     }
     #endregion

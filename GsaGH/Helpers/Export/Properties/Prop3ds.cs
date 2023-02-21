@@ -1,8 +1,7 @@
-﻿using GsaAPI;
-using System;
-using System.Collections.Generic;
-using GsaGH.Parameters;
+﻿using System.Collections.Generic;
 using System.Linq;
+using GsaAPI;
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export
 {
@@ -24,16 +23,19 @@ namespace GsaGH.Helpers.Export
     internal static int ConvertProp3d(GsaProp3d prop3d, ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (prop3d == null) { return 0; }
-      if (prop3d.API_Prop3d == null) { return prop3d.Id; }
+      if (prop3d.IsReferencedByID || prop3d.API_Prop3d == null) { return prop3d.Id; }
       return AddProp3d(prop3d, ref apiProp3ds, ref apiMaterials);
     }
 
     internal static void ConvertProp3d(List<GsaProp3d> prop3Ds, ref GsaGuidDictionary<Prop3D> apiProp3ds, ref GsaGuidDictionary<AnalysisMaterial> apiMaterials)
     {
       if (prop3Ds != null)
+      {
+        prop3Ds = prop3Ds.OrderByDescending(p => p.Id).ToList();
         for (int i = 0; i < prop3Ds.Count; i++)
           if (prop3Ds[i] != null)
             ConvertProp3d(prop3Ds[i], ref apiProp3ds, ref apiMaterials);
+      }
     }
   }
 }

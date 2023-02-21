@@ -2,7 +2,9 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+using OasysUnits.Units;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace GsaGHTests.Parameters
@@ -67,6 +69,19 @@ namespace GsaGHTests.Parameters
       // get duplicate GUID
       Guid dupGUID = dup.Guid;
       Assert.Equal(dupGUID, originalGUID);
+    }
+
+    [Fact]
+    public void TestCreateModelFromModel()
+    {
+      GsaModel original = new GsaModel();
+      original.Model.Open(GsaFile.Steel_Design_Simple);
+
+      GsaModel assembled = new GsaModel();
+      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(original, null, null, null, null, null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false, null);
+
+      // Assert
+      Duplicates.AreEqual(original, assembled, true);
     }
   }
 }

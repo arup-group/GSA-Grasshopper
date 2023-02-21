@@ -8,10 +8,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create a new Section
-    /// </summary>
-    public class CreateSection : GH_OasysComponent
+  /// <summary>
+  /// Component to create a new Section
+  /// </summary>
+  public class CreateSection : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("1167c4aa-b98b-47a7-ae85-1a3c976a1973");
@@ -51,7 +51,13 @@ namespace GsaGH.Components
       {
         if (GH_Convert.ToString(gh_profile, out string profile, GH_Conversion.Both))
         {
-          gsaSection = new GsaSection(profile);
+          if (GsaSection.ValidProfile(profile))
+            gsaSection = new GsaSection(profile);
+          else
+          {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid profile syntax: " + profile);
+            return;
+          }
 
           // 3 Material
           GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();

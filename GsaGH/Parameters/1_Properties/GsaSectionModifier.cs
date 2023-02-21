@@ -286,18 +286,20 @@ namespace GsaGH.Parameters
 
     private void CloneApiObject()
     {
-      SectionModifier dup = new SectionModifier();
-      dup.AreaModifier = new SectionModifierAttribute(this._sectionModifier.AreaModifier.Option, this._sectionModifier.AreaModifier.Value);
-      dup.I11Modifier = new SectionModifierAttribute(this._sectionModifier.I11Modifier.Option, this._sectionModifier.I11Modifier.Value);
-      dup.I22Modifier = new SectionModifierAttribute(this._sectionModifier.I22Modifier.Option, this._sectionModifier.I22Modifier.Value);
-      dup.JModifier = new SectionModifierAttribute(this._sectionModifier.JModifier.Option, this._sectionModifier.JModifier.Value);
-      dup.K11Modifier = new SectionModifierAttribute(this._sectionModifier.K11Modifier.Option, this._sectionModifier.K11Modifier.Value);
-      dup.K22Modifier = new SectionModifierAttribute(this._sectionModifier.K22Modifier.Option, this._sectionModifier.K22Modifier.Value);
-      dup.VolumeModifier = new SectionModifierAttribute(this._sectionModifier.VolumeModifier.Option, this._sectionModifier.VolumeModifier.Value);
-      dup.AdditionalMass = this._sectionModifier.AdditionalMass;
-      dup.StressOption = this._sectionModifier.StressOption;
-      dup.IsBendingAxesPrincipal = this._sectionModifier.IsBendingAxesPrincipal;
-      dup.IsReferencePointCentroid = this._sectionModifier.IsReferencePointCentroid;
+      SectionModifier dup = new SectionModifier
+      {
+        AreaModifier = new SectionModifierAttribute(this._sectionModifier.AreaModifier.Option, this._sectionModifier.AreaModifier.Value),
+        I11Modifier = new SectionModifierAttribute(this._sectionModifier.I11Modifier.Option, this._sectionModifier.I11Modifier.Value),
+        I22Modifier = new SectionModifierAttribute(this._sectionModifier.I22Modifier.Option, this._sectionModifier.I22Modifier.Value),
+        JModifier = new SectionModifierAttribute(this._sectionModifier.JModifier.Option, this._sectionModifier.JModifier.Value),
+        K11Modifier = new SectionModifierAttribute(this._sectionModifier.K11Modifier.Option, this._sectionModifier.K11Modifier.Value),
+        K22Modifier = new SectionModifierAttribute(this._sectionModifier.K22Modifier.Option, this._sectionModifier.K22Modifier.Value),
+        VolumeModifier = new SectionModifierAttribute(this._sectionModifier.VolumeModifier.Option, this._sectionModifier.VolumeModifier.Value),
+        AdditionalMass = this._sectionModifier.AdditionalMass,
+        StressOption = this._sectionModifier.StressOption,
+        IsBendingAxesPrincipal = this._sectionModifier.IsBendingAxesPrincipal,
+        IsReferencePointCentroid = this._sectionModifier.IsReferencePointCentroid
+      };
       this._sectionModifier = dup;
     }
     #endregion
@@ -314,11 +316,14 @@ namespace GsaGH.Parameters
     #endregion
 
     #region methods
-    public GsaSectionModifier Duplicate()
+    public GsaSectionModifier Duplicate(bool cloneApiObject = false)
     {
-      GsaSectionModifier dup = new GsaSectionModifier();
-      dup._sectionModifier = this._sectionModifier;
-      dup.CloneApiObject();
+      GsaSectionModifier dup = new GsaSectionModifier
+      {
+        _sectionModifier = this._sectionModifier
+      };
+      if (cloneApiObject)
+        dup.CloneApiObject();
       return dup;
     }
 

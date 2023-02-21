@@ -18,10 +18,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a 1D Element
-    /// </summary>
-    public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to edit a 1D Element
+  /// </summary>
+  public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -161,10 +161,8 @@ namespace GsaGH.Components
           }
           else
           {
-            if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-            {
-              section = new GsaSection(idd);
-            }
+            if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
+              section = new GsaSection(id);
             else
             {
               AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
@@ -288,7 +286,7 @@ namespace GsaGH.Components
 
         try { DA.SetData(14, elem.ParentMember); } catch (Exception) { }
         DataTree<int> topo = new DataTree<int>();
-        topo.AddRange(elem.API_Element.Topology, new GH_Path(elem.Id));
+        topo.AddRange(elem.ApiElement.Topology, new GH_Path(elem.Id));
         DA.SetDataTree(15, topo);
       }
     }

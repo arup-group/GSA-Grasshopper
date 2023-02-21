@@ -11,10 +11,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a 3D Element
-    /// </summary>
-    public class EditElement3d : GH_OasysComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to edit a 3D Element
+  /// </summary>
+  public class EditElement3d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("040f2915-543d-41ef-9a64-0c4055e47a63");
@@ -104,7 +104,7 @@ namespace GsaGH.Components
               in_ids.Add(id);
             }
           }
-          elem.IDs = in_ids;
+          elem.Ids = in_ids;
         }
 
 
@@ -126,10 +126,8 @@ namespace GsaGH.Components
             }
             else
             {
-              if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-              {
-                prop3Ds.Add(new GsaProp3d(idd));
-              }
+              if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
+                prop3Ds.Add(new GsaProp3d(id));
               else
               {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
@@ -235,7 +233,7 @@ namespace GsaGH.Components
         }
 
         DA.SetData(0, new GsaElement3dGoo(elem));
-        DA.SetDataList(1, elem.IDs);
+        DA.SetDataList(1, elem.Ids);
         DA.SetDataList(2, out_meshes);
         DA.SetDataList(3, new List<GsaProp3dGoo>(elem.Properties.ConvertAll(prop3d => new GsaProp3dGoo(prop3d))));
         DA.SetDataList(4, elem.Groups);

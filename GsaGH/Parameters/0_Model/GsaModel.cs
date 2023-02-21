@@ -14,7 +14,7 @@ namespace GsaGH.Parameters
   {
     #region properties
     public Model Model { get; set; } = new Model();
-    public string FileName { get; set; }
+    public string FileNameAndPath { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
     public LengthUnit ModelUnit { get; set; } = LengthUnit.Undefined;
     
@@ -42,7 +42,7 @@ namespace GsaGH.Parameters
     {
       GsaModel clone = new GsaModel();
       clone.Model = this.Model.Clone();
-      clone.FileName = this.FileName;
+      clone.FileNameAndPath = this.FileNameAndPath;
       clone.ModelUnit = this.ModelUnit;
       clone.Guid = Guid.NewGuid();
       return clone;
@@ -56,8 +56,8 @@ namespace GsaGH.Parameters
       // create shallow copy
       GsaModel dup = new GsaModel();
       dup.Model = this.Model;
-      if (this.FileName != null)
-        dup.FileName = this.FileName.ToString();
+      if (this.FileNameAndPath != null)
+        dup.FileNameAndPath = this.FileNameAndPath.ToString();
       dup.Guid = new Guid(this.Guid.ToString());
       dup.ModelUnit = this.ModelUnit;
       return dup;
@@ -65,24 +65,19 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string s = "Invalid";
+      string s = "New GsaGH Model";
       if (this.Model != null && this.Titles != null)
       {
-        s = Titles.Title;
-        if (s == "" && this.FileName != null)
+        if (this.FileNameAndPath != null && this.FileNameAndPath != "")
+          s = Path.GetFileName(this.FileNameAndPath).Replace(".gwb", string.Empty);
+        
+        if (Titles != null && Titles.Title != null && Titles.Title != "")
         {
-          if (this.FileName != "" && this.FileName.EndsWith(".gwb"))
-          {
-            s = Path.GetFileName(this.FileName);
-            s = s.Substring(0, s.Length - 4);
-          }
+          if (s == "" || s == "Invalid")
+            s = Titles.Title;
           else
-          {
-            s = "Nameless";
-          }
+            s += " {" + Titles.Title + "}";
         }
-        else
-          s = "New GsaGH Model";
       }
       if (this.ModelUnit != LengthUnit.Undefined)
         s += " [" + Length.GetAbbreviation(this.ModelUnit) + "]";

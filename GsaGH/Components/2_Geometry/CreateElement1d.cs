@@ -9,10 +9,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create new 1D Element
-    /// </summary>
-    public class CreateElement1d : GH_OasysComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to create new 1D Element
+  /// </summary>
+  public class CreateElement1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("88c58aae-4cd8-4d37-b63f-d828571e6941");
@@ -65,8 +65,8 @@ namespace GsaGH.Components
             }
             else
             {
-              if (GH_Convert.ToInt32(gh_typ.Value, out int idd, GH_Conversion.Both))
-                elem.Section.Id = idd;
+              if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
+                elem.Section = new GsaSection(id);
               else
               {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");

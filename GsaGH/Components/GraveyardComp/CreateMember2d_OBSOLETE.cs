@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaGH.Components.GraveyardComp;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
@@ -16,10 +19,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create new 2D Member
-    /// </summary>
-    public class CreateMember2d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to create new 2D Member
+  /// </summary>
+  public class CreateMember2d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("df0c2786-9e46-4500-ab63-0c4162a580d4");
@@ -167,6 +170,22 @@ namespace GsaGH.Components
       Params.Input[4].Name = "Mesh Size [" + Length.GetAbbreviation(this.LengthUnit) + "]";
     }
     #endregion
+
+    public override bool Read(GH_IO.Serialization.GH_IReader reader)
+    {
+      if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData"))
+        base.Read(reader);
+      else
+      {
+        BaseReader.Read(reader, this);
+        IsInitialised = true;
+        UpdateUIFromSelectedItems();
+      }
+      GH_IReader attributes = reader.FindChunk("Attributes");
+      this.Attributes.Bounds = (System.Drawing.RectangleF)attributes.Items[0].InternalData;
+      this.Attributes.Pivot = (System.Drawing.PointF)attributes.Items[1].InternalData;
+      return true;
+    }
   }
 }
 

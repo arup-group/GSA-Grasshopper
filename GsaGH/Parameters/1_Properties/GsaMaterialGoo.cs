@@ -28,21 +28,21 @@ namespace GsaGH.Parameters
 
       if (typeof(Q).IsAssignableFrom(typeof(GsaProp3d)))
       {
-        if (Value == null)
+        if (this.Value == null)
           target = default;
         else
         {
-          target = (Q)(object)new GsaProp3d(Value);
+          target = (Q)(object)new GsaProp3d(this.Value);
         }
         return true;
       }
       if (typeof(Q).IsAssignableFrom(typeof(GsaProp3dGoo)))
       {
-        if (Value == null)
+        if (this.Value == null)
           target = default;
         else
         {
-          target = (Q)(object)new GsaProp3dGoo(new GsaProp3d(Value));
+          target = (Q)(object)new GsaProp3dGoo(new GsaProp3d(this.Value));
         }
         return true;
       }
