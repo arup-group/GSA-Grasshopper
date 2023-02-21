@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to GSA 2D Element displacement values
-    /// </summary>
-    public class Elem2dDisplacement : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to GSA 2D Element displacement values
+  /// </summary>
+  public class Elem2dDisplacement : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("22f87d33-4f9a-49d6-9f3d-b366e446a75f");
@@ -116,14 +116,16 @@ namespace GsaGH.Components
             return;
           }
 
-          List<GsaResultsValues> vals = result.Element2DDisplacementValues(elementlist, LengthUnit);
+          List<GsaResultsValues> vals = result.Element2DDisplacementValues(elementlist, this.LengthUnit);
 
-          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 1 } : result.SelectedPermutationIDs);
+          if (permutations.Count == 1 && permutations[0] == -1)
+            permutations = Enumerable.Range(1, vals.Count).ToList();
 
           // loop through all permutations (analysis case will just have one)
-          for (int index = 0; index < vals.Count; index++)
+          foreach (int perm in permutations)
           {
-            if (vals[index].xyzResults.Count == 0 & vals[index].xxyyzzResults.Count == 0)
+            if (vals[perm - 1].xyzResults.Count == 0 & vals[perm - 1].xxyyzzResults.Count == 0)
             {
               string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
               AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element2D results.");
@@ -135,36 +137,36 @@ namespace GsaGH.Components
               {
                 //do xyz part of results
                 // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xyzResults)
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
+                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
-                  out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(LengthUnit))), p); // use ToUnit to capture changes in dropdown
-                  out_transY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(LengthUnit))), p);
-                  out_transZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(LengthUnit))), p);
-                  out_transXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(LengthUnit))), p);
+                  out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.LengthUnit))), path); // use ToUnit to capture changes in dropdown
+                  out_transY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.LengthUnit))), path);
+                  out_transZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.LengthUnit))), path);
+                  out_transXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.LengthUnit))), path);
                 }
               }
               if (thread == 1)
               {
                 //do xxyyzz
                 // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xxyyzzResults)
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
 
-                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
+                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
                   if (res.Count == 0) { continue; }
 
-                  out_rotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)), p); // always use [rad] units
-                  out_rotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), p);
-                  out_rotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), p);
-                  out_rotXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ)), p);
+                  out_rotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)), path); // always use [rad] units
+                  out_rotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), path);
+                  out_rotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), path);
+                  out_rotXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ)), path);
                 }
               }
             });
@@ -179,6 +181,8 @@ namespace GsaGH.Components
         DA.SetDataTree(5, out_rotY);
         DA.SetDataTree(6, out_rotZ);
         DA.SetDataTree(7, out_rotXYZ);
+
+        Helpers.PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Displacement);
       }
     }
 

@@ -8,10 +8,10 @@ using OasysGH.UI;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to create a new Bool6
-    /// </summary>
-    public class CreateBool6 : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to create a new Bool6
+  /// </summary>
+  public class CreateBool6 : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("1d5f7b92-57a2-4c53-a8c7-419f066a7430");

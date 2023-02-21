@@ -14,10 +14,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get geometric properties of a section
-    /// </summary>
-    public class GetMaterialProperties : GH_OasysComponent, IGH_VariableParameterComponent
+  /// <summary>
+  /// Component to get geometric properties of a section
+  /// </summary>
+  public class GetMaterialProperties : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon

@@ -426,22 +426,37 @@ namespace GsaGH.Components
         else if (profile.StartsWith("CAT"))
         {
           string prof = profile.Split(' ')[2];
-          List<double> sqlValues = SqlReader.Instance.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+          List<double> sqlValues = MicrosoftSQLiteReader.Instance.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
           unit = LengthUnit.Meter;
+          if (sqlValues.Count == 2)
+          {
 
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(this.LengthUnit))); //Depth
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width Top
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width Bottom
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Top
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Bottom
-          DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[2], unit).ToUnit(this.LengthUnit))); //Web Thk Bottom
-          if (sqlValues.Count > 4)
-            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[4], unit).ToUnit(this.LengthUnit))); //Root radius
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(this.LengthUnit))); //Depth
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(this.LengthUnit))); //Width
+            DA.SetData(i++, null); //Width Top
+            DA.SetData(i++, null); //Width Bottom
+            DA.SetData(i++, null); //Flange Thk Top
+            DA.SetData(i++, null); //Flange Thk Bottom
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Web Thk Bottom
+            DA.SetData(i++, null); //root radius
+            DA.SetData(i++, null); //Spacing
+          }
           else
-            DA.SetData(i++, new GH_UnitNumber(Length.Zero.ToUnit(this.LengthUnit))); // welded section don´t have a root radius
-          DA.SetData(i++, null); //Spacing
-          DA.SetData(i, "CAT");
+          {
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(this.LengthUnit))); //Depth
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width Top
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(this.LengthUnit))); //Width Bottom
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Top
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(this.LengthUnit))); //Flange Thk Bottom
+            DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[2], unit).ToUnit(this.LengthUnit))); //Web Thk Bottom
+            if (sqlValues.Count > 4)
+              DA.SetData(i++, new GH_UnitNumber(new Length(sqlValues[4], unit).ToUnit(this.LengthUnit))); //Root radius
+            else
+              DA.SetData(i++, new GH_UnitNumber(Length.Zero.ToUnit(this.LengthUnit))); // welded section don´t have a root radius
+            DA.SetData(i++, null); //Spacing
+          }
+          DA.SetData(i, "CAT " + profile.Split(' ')[1]);
         }
         else
           AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to get dimensions for type " + type[0]);

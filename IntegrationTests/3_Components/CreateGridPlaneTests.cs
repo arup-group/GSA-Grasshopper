@@ -42,7 +42,7 @@ namespace IntegrationTests.Components
       GsaGridPlaneSurfaceGoo output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
       GsaGridPlaneSurface gps = output.Value;
       Assert.Equal(42, gps.GridPlaneId);
-      Assert.Equal(10, gps.Elevation);
+      Assert.Equal("10", gps.Elevation);
       Assert.Equal("test", gps.GridPlane.Name);
     }
   }

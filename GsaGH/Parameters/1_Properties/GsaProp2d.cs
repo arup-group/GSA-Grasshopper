@@ -10,6 +10,7 @@ using OasysGH;
 using GsaGH.Helpers.GsaAPI;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel.Types;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
@@ -23,6 +24,7 @@ namespace GsaGH.Parameters
     private Guid _guid = Guid.NewGuid();
     private GsaMaterial _material = new GsaMaterial();
     private Prop2D _prop2d = new Prop2D();
+    private Plane _localAxis = Plane.Unset;
     #endregion
 
     #region properties
@@ -37,6 +39,7 @@ namespace GsaGH.Parameters
         this._guid = Guid.NewGuid();
         this._prop2d = value;
         this._material = new GsaMaterial(this);
+        this.IsReferencedByID = false;
       }
     }
     public int Id
@@ -69,6 +72,7 @@ namespace GsaGH.Parameters
         this._prop2d.MaterialType = Helpers.Export.Materials.ConvertType(_material);
         this._prop2d.MaterialAnalysisProperty = this._material.AnalysisProperty;
         this._prop2d.MaterialGradeProperty = this._material.GradeProperty;
+        this.IsReferencedByID = false;
       }
     }
     #region GsaAPI members
@@ -82,6 +86,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop2d.Name = value;
+        this.IsReferencedByID = false;
       }
     }
     public int MaterialID
@@ -94,19 +99,13 @@ namespace GsaGH.Parameters
       set
       {
         this.CloneApiObject();
+        this.IsReferencedByID = false;
         this._prop2d.MaterialAnalysisProperty = value;
         this._material.AnalysisProperty = this._prop2d.MaterialAnalysisProperty;
       }
     }
     public Length Thickness
     {
-      set
-      {
-        this.CloneApiObject();
-        IQuantity length = new Length(0, value.Unit);
-        string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-        this._prop2d.Description = value.Value.ToString() + "(" + unitAbbreviation + ")";
-      }
       get
       {
         if (this._prop2d.Description.Length == 0)
@@ -124,6 +123,14 @@ namespace GsaGH.Parameters
         else
           return new Length(double.Parse(this._prop2d.Description, CultureInfo.InvariantCulture), LengthUnit.Millimeter);
       }
+      set
+      {
+        this.CloneApiObject();
+        IQuantity length = new Length(0, value.Unit);
+        string unitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+        this._prop2d.Description = value.Value.ToString() + "(" + unitAbbreviation + ")";
+        this.IsReferencedByID = false;
+      }
     }
     public string Description
     {
@@ -135,6 +142,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop2d.Description = value;
+        this.IsReferencedByID = false;
       }
     }
     public int AxisProperty
@@ -147,6 +155,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop2d.AxisProperty = value;
+        this.IsReferencedByID = false;
       }
     }
     public Property2D_Type Type
@@ -159,6 +168,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop2d.Type = value;
+        this.IsReferencedByID = false;
       }
     }
     public Color Colour
@@ -171,6 +181,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop2d.Colour = value;
+        this.IsReferencedByID = false;
       }
     }
     #endregion
@@ -179,6 +190,20 @@ namespace GsaGH.Parameters
       get
       {
         return this._guid;
+      }
+    }
+    public Plane LocalAxis
+    {
+      get
+      {
+        return this._localAxis;
+      }
+      set
+      {
+        this._localAxis = value;
+        CloneApiObject();
+        this._prop2d.AxisProperty = -2;
+        this.IsReferencedByID = false;
       }
     }
     #endregion
@@ -200,7 +225,7 @@ namespace GsaGH.Parameters
       this._id = id;
     }
 
-    internal GsaProp2d(ReadOnlyDictionary<int, Prop2D> pDict, int id, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id)
+    internal GsaProp2d(ReadOnlyDictionary<int, Prop2D> pDict, int id, ReadOnlyDictionary<int, AnalysisMaterial> matDict, ReadOnlyDictionary<int, Axis> axDict, LengthUnit unit) : this(id)
     {
       if (!pDict.ContainsKey(id))
         return;
@@ -209,6 +234,20 @@ namespace GsaGH.Parameters
       // material
       if (this._prop2d.MaterialAnalysisProperty != 0 && matDict.ContainsKey(this._prop2d.MaterialAnalysisProperty))
         this._material.AnalysisMaterial = matDict[this._prop2d.MaterialAnalysisProperty];
+      if (this._prop2d.AxisProperty > 0)
+      {
+        if (axDict != null && axDict.ContainsKey(this._prop2d.AxisProperty))
+        {
+          Axis ax = axDict[this._prop2d.AxisProperty];
+          this.LocalAxis = new Plane(new Point3d(
+            new Length(ax.Origin.X, LengthUnit.Meter).As(unit), 
+            new Length(ax.Origin.Y, LengthUnit.Meter).As(unit), 
+            new Length(ax.Origin.Z, LengthUnit.Meter).As(unit)),
+            new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
+            new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z)
+            );
+        }
+      }
       this._material = new GsaMaterial(this);
     }
     #endregion
@@ -224,6 +263,7 @@ namespace GsaGH.Parameters
         _id = this._id,
         _material = this._material.Duplicate(),
         _guid = new Guid(this._guid.ToString()),
+        _localAxis = new Plane(this._localAxis),
         IsReferencedByID = this.IsReferencedByID
       };
       if (cloneApiElement)

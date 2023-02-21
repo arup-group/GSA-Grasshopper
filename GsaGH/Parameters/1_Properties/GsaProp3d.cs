@@ -31,6 +31,7 @@ namespace GsaGH.Parameters
         this._guid = Guid.NewGuid();
         this._prop3d = value;
         this._material = new GsaMaterial(this);
+        this.IsReferencedByID = false;
       }
     }
     public int Id
@@ -63,6 +64,7 @@ namespace GsaGH.Parameters
         this._prop3d.MaterialType = Helpers.Export.Materials.ConvertType(this._material);
         this._prop3d.MaterialAnalysisProperty = this._material.AnalysisProperty;
         this._prop3d.MaterialGradeProperty = this._material.GradeProperty;
+        this.IsReferencedByID = false;
       }
     }
     #region GsaAPI members
@@ -76,6 +78,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop3d.Name = value;
+        this.IsReferencedByID = false;
       }
     }
     public int MaterialID
@@ -89,6 +92,7 @@ namespace GsaGH.Parameters
         this.CloneApiObject();
         this._prop3d.MaterialAnalysisProperty = value;
         this._material.AnalysisProperty = this._prop3d.MaterialAnalysisProperty;
+        this.IsReferencedByID = false;
       }
     }
     public int AxisProperty
@@ -103,6 +107,7 @@ namespace GsaGH.Parameters
         value = Math.Min(1, value);
         value = Math.Max(0, value);
         this._prop3d.AxisProperty = value * -1;
+        this.IsReferencedByID = false;
       }
     }
     public Color Colour
@@ -115,6 +120,7 @@ namespace GsaGH.Parameters
       {
         this.CloneApiObject();
         this._prop3d.Colour = value;
+        this.IsReferencedByID = false;
       }
     }
     #endregion

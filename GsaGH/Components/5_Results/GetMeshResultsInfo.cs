@@ -60,8 +60,25 @@ namespace GsaGH.Components
       List<GH_UnitNumber> values = new List<GH_UnitNumber>();
       for (int i = 0; i < res.ResultValues.Count; i++)
       {
-        values.AddRange(res.ResultValues[i].Select(r => new GH_UnitNumber(r)));
         vertices.AddRange(res.Vertices[i]);
+        values.AddRange(res.ResultValues[i].Select(r => new GH_UnitNumber(r)));
+        if (res.Vertices[i].Count < res.ResultValues[i].Count)
+        {
+          double x = 0;
+          double y = 0;
+          double z = 0;
+          foreach(Point3d p in res.Vertices[i])
+          {
+            x += p.X;
+            y += p.Y;
+            z += p.Z;
+          }
+          Point3d pt = new Point3d(
+            x / res.Vertices[i].Count,
+            y / res.Vertices[i].Count,
+            z / res.Vertices[i].Count);
+          vertices.Add(pt);
+        }
       }
 
       DA.SetDataList(1, vertices);

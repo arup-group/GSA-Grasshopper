@@ -1,9 +1,7 @@
-﻿using GsaAPI;
-using System;
-using System.Collections.Generic;
-using GsaGH.Parameters;
+﻿using System.Collections.Generic;
 using System.Linq;
-using static System.Collections.Specialized.BitVector32;
+using GsaAPI;
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export
 {

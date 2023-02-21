@@ -444,10 +444,9 @@ namespace GsaGH.Parameters
           Offset = this._elements[i].Offset,
           ParentMember = this._elements[i].ParentMember,
           Property = this._elements[i].Property,
-          Topology = new ReadOnlyCollection<int>(this._elements[i].Topology.ToList()),
           Type = this._elements[i].Type //GsaToModel.Element2dType((int)Elements[i].Type)
         });
-
+        elems[i].Topology = new ReadOnlyCollection<int>(this._elements[i].Topology.ToList());
         //if ((System.Drawing.Color)mthis._elements[i].Colour != System.Drawing.Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
         //    elems[i].Colour = mthis._elements[i].Colour;
 

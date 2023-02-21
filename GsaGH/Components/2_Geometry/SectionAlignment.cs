@@ -16,10 +16,10 @@ using static GsaGH.Parameters.GsaOffset;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to automatically create offset based on section profile
-    /// </summary>
-    public class SectionAlignment : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to automatically create offset based on section profile
+  /// </summary>
+  public class SectionAlignment : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4dc655a2-366e-486e-b8c3-10b2063b7aac");
@@ -348,7 +348,7 @@ namespace GsaGH.Components
             else if (profile.StartsWith("CAT"))
             {
               string prof = profile.Split(' ')[2];
-              List<double> sqlValues = SqlReader.Instance.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
+              List<double> sqlValues = MicrosoftSQLiteReader.Instance.GetCatalogueProfileValues(prof, Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
               unit = LengthUnit.Meter;
 
               depth = new Length(sqlValues[0], unit);

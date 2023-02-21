@@ -16,17 +16,18 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a Prop2d and ouput the information
-    /// </summary>
-    public class EditProp2d : GH_OasysComponent, IGH_VariableParameterComponent
+  /// <summary>
+  /// Component to edit a Prop2d and ouput the information
+  /// </summary>
+  public class EditProp2d : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
-    public override Guid ComponentGuid => new Guid("6f18fffc-e03c-45cd-9d4c-b02bb6e2d10a");
+    public override Guid ComponentGuid => new Guid("dfb17a0f-a856-4a54-ae5c-d794961f3c52");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditProp2d;
@@ -46,7 +47,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Prop2d Number", "ID", "Set 2D Property Number. If ID is set it will replace any existing 2D Property in the model", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Th", "Set Property Thickness", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Axis", "Ax", "Set Axis as integer: Global (0) or Topological (-1)", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Axis", "Ax", "Input a Plane to set a custom Axis or input an integer (Global (0) or Topological (-1)) to reference a predefined Axis in the model", GH_ParamAccess.item);
       pManager.AddTextParameter("Prop2d Name", "Na", "Set Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour", "Co", "Set 2D Property Colour", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "Ty", "Set 2D Property Type." + Environment.NewLine +
@@ -72,7 +73,7 @@ namespace GsaGH.Components
       pManager.AddIntegerParameter("Prop2d Number", "ID", "2D Property Number", GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(this.LengthUnit) + "]", "Th", "Get Property Thickness", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Axis", "Ax", "Get Axis: Global (0) or Topological (1)", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Axis", "Ax", "Get Local Axis either as Plane for custom or an integer (Global (0) or Topological (1)) for referenced Axis.", GH_ParamAccess.item);
       pManager.AddTextParameter("Prop2d Name", "Na", "Name of 2D Proerty", GH_ParamAccess.item);
       pManager.AddColourParameter("Prop2d Colour", "Co", "2D Property Colour", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "Ty", "2D Property Type", GH_ParamAccess.item);
@@ -126,13 +127,17 @@ namespace GsaGH.Components
           prop.Thickness = (Length)Input.UnitNumber(this, DA, 3, this.LengthUnit, true);
 
         // 4 Axis
-        GH_Integer ghax = new GH_Integer();
+        GH_ObjectWrapper ghax = new GH_ObjectWrapper();
         if (DA.GetData(4, ref ghax))
         {
-          if (GH_Convert.ToInt32(ghax, out int axis, GH_Conversion.Both))
+          Plane pln = new Plane();
+          if (ghax.Value.GetType() == typeof(GH_Plane))
           {
-            prop.AxisProperty = axis;
+            if (GH_Convert.ToPlane(ghax.Value, ref pln, GH_Conversion.Both))
+              prop.LocalAxis = pln;
           }
+          else if (GH_Convert.ToInt32(ghax.Value, out int axis, GH_Conversion.Both))
+            prop.AxisProperty = axis;
         }
 
         // 5 name
@@ -173,7 +178,10 @@ namespace GsaGH.Components
           DA.SetData(3, new GH_UnitNumber(Length.Zero));
         else
           DA.SetData(3, new GH_UnitNumber(prop.Thickness.ToUnit(this.LengthUnit)));
-        DA.SetData(4, ax);
+        if (prop.AxisProperty == -2)
+          DA.SetData(4, new GH_Plane(prop.LocalAxis));
+        else
+          DA.SetData(4, ax);
         DA.SetData(5, nm);
         DA.SetData(6, colour);
 

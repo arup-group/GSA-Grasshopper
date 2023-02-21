@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
@@ -54,8 +55,10 @@ namespace GsaGH.Components
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
       pManager.AddColourParameter("Colour", "Co", "Optional list of colours to override default colours" +
           Environment.NewLine + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
+      pManager.AddIntervalParameter("Min/Max Domain", "I", "Opitonal Domain for custom Min to Max contour colours", GH_ParamAccess.item);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
+      pManager[3].Optional = true;
     }
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
@@ -86,15 +89,15 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.ResultType.Combination && result.SelectedPermutationIDs.Count > 1)
+          if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
             AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination Case " + result.CaseID + " contains "
                 + result.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
-          if (result.Type == GsaResult.ResultType.Combination)
+          if (result.Type == GsaResult.CaseType.Combination)
             _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
-          if (result.Type == GsaResult.ResultType.AnalysisCase)
+          if (result.Type == GsaResult.CaseType.AnalysisCase)
             _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
         }
         else
@@ -126,6 +129,11 @@ namespace GsaGH.Components
         }
         Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = Helpers.Graphics.Colours.Stress_Gradient(colors);
 
+        // Get interval min/max
+        GH_Interval gH_Interval = new GH_Interval();
+        Interval customMinMax = Interval.Unset;
+        if (DA.GetData(3, ref gH_Interval))
+          GH_Convert.ToInterval(gH_Interval, ref customMinMax, GH_Conversion.Both);
         #endregion
         // get results from results class
         GsaResultsValues res = new GsaResultsValues();
@@ -228,12 +236,20 @@ namespace GsaGH.Components
             dmin = dmin_xxyyzz;
             break;
         }
-
+        if (customMinMax != Interval.Unset)
+        {
+          dmin = customMinMax.Min;
+          dmax = customMinMax.Max;
+        }
         List<double> rounded = Helpers.GsaAPI.ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
         int significantDigits = (int)rounded[2];
-
+        if (customMinMax != Interval.Unset)
+        {
+          dmin = customMinMax.Min;
+          dmax = customMinMax.Max;
+        }
         #region create mesh
         MeshResultGoo resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(), new List<List<Point3d>>());
         ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
@@ -424,6 +440,9 @@ namespace GsaGH.Components
         DA.SetData(0, resultMeshes);
         DA.SetDataList(1, cs);
         DA.SetDataList(2, ts);
+
+        GsaResultsValues.ResultType resultType = (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType), _mode.ToString());
+        Helpers.PostHog.Result(result.Type, 3, resultType, this._disp.ToString());
       }
     }
 
@@ -580,6 +599,16 @@ namespace GsaGH.Components
 
     public override void VariableParameterMaintenance()
     {
+      if (this.Params.Input.Count != 4)
+      {
+        this.Params.RegisterInputParam(new Param_Interval());
+        this.Params.Input[3].Name = "Min/Max Domain";
+        this.Params.Input[3].NickName = "I";
+        this.Params.Input[3].Description = "Opitonal Domain for custom Min to Max contour colours";
+        this.Params.Input[3].Optional = true;
+        this.Params.Input[3].Access = GH_ParamAccess.item;
+      }
+
       if (this._mode == FoldMode.Displacement)
       {
         if ((int)_disp < 4)

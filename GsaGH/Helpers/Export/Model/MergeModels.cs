@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Parameters;
 using OasysGH.Units;
@@ -12,7 +13,7 @@ namespace GsaGH.Helpers.Export
 {
   public class MergeModels
   {
-    public static GsaModel MergeModel(List<GsaModel> models)
+    public static GsaModel MergeModel(List<GsaModel> models, GH_Component owner)
     {
       if (models != null)
       {
@@ -22,10 +23,10 @@ namespace GsaGH.Helpers.Export
           models.Reverse();
           for (int i = 0; i < models.Count - 1; i++)
           {
-            model = MergeModels.MergeModel(model, models[i].Clone());
+            model = MergeModels.MergeModel(model, models[i].Clone(), owner);
           }
           GsaModel clone = models[models.Count - 1].Clone();
-          clone = MergeModels.MergeModel(clone, model);
+          clone = MergeModels.MergeModel(clone, model, owner);
           return clone;
         }
         else if (models.Count > 0)
@@ -34,7 +35,7 @@ namespace GsaGH.Helpers.Export
       return null;
     }
 
-    public static GsaModel MergeModel(GsaModel mainModel, GsaModel appendModel)
+    public static GsaModel MergeModel(GsaModel mainModel, GsaModel appendModel, GH_Component owner)
     {
       // open the copyfrom model
       Model model = appendModel.Model;
@@ -48,6 +49,7 @@ namespace GsaGH.Helpers.Export
       ReadOnlyDictionary<int, Prop3D> p3Dict = model.Prop3Ds();
       ReadOnlyDictionary<int, AnalysisMaterial> amDict = model.AnalysisMaterials();
       ReadOnlyDictionary<int, SectionModifier> modDict = model.SectionModifiers();
+      ReadOnlyDictionary<int, Axis> axDict = model.Axes();
       // populate local axes dictionary
       Dictionary<int, ReadOnlyCollection<double>> localElemAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
       foreach (int id in eDict.Keys)
@@ -65,7 +67,7 @@ namespace GsaGH.Helpers.Export
 
       // get elements
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Import.Elements.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localElemAxesDict, LengthUnit.Meter, true);
+          = Import.Elements.GetElements(eDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localElemAxesDict, axDict, LengthUnit.Meter, true);
       // convert from Goo-type
       List<GsaElement1d> elem1ds = elementTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -83,7 +85,7 @@ namespace GsaGH.Helpers.Export
 
       // get members
       Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> memberTuple
-          = Import.Members.GetMembers(mDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localMemAxesDict, LengthUnit.Meter, true);
+          = Import.Members.GetMembers(mDict, nDict, sDict, pDict, p3Dict, amDict, modDict, localMemAxesDict, axDict, LengthUnit.Meter, true);
       // convert from Goo-type
       List<GsaMember1d> mem1ds = memberTuple.Item1.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -99,7 +101,7 @@ namespace GsaGH.Helpers.Export
       List<GsaSection> sections = goosections.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
       sections.Select(c => { c.Id = 0; return c; }).ToList();
-      List<GsaProp2dGoo> gooprop2Ds = Import.Properties.GetProp2ds(pDict, model.AnalysisMaterials());
+      List<GsaProp2dGoo> gooprop2Ds = Import.Properties.GetProp2ds(pDict, model.AnalysisMaterials(), axDict);
       // convert from Goo-type
       List<GsaProp2d> prop2Ds = gooprop2Ds.Select(n => n.Value).ToList();
       // change all members in List's ID to 0;
@@ -119,7 +121,6 @@ namespace GsaGH.Helpers.Export
 
       IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
       IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
-      IReadOnlyDictionary<int, Axis> axDict = model.Axes();
 
       gooloads.AddRange(Import.Loads.GetGridPointLoads(model.GridPointLoads(), srfDict, plnDict, axDict, LengthUnit.Meter));
       gooloads.AddRange(Import.Loads.GetGridLineLoads(model.GridLineLoads(), srfDict, plnDict, axDict, LengthUnit.Meter));
@@ -134,7 +135,7 @@ namespace GsaGH.Helpers.Export
       List<GsaGridPlaneSurface> gps = gpsgoo.Select(n => n.Value).ToList();
 
       // return new assembled model
-      mainModel.Model = AssembleModel.Assemble(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter, DefaultUnits.Tolerance.Meters, false, null);
+      mainModel.Model = AssembleModel.Assemble(mainModel, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, null, sections, prop2Ds, prop3Ds, loads, gps, null, null, LengthUnit.Meter, DefaultUnits.Tolerance.Meters, false, owner);
       return mainModel;
     }
   }

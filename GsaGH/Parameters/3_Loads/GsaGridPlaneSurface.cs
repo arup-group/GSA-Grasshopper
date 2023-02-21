@@ -31,8 +31,26 @@ namespace GsaGH.Parameters
     #endregion
 
     #region properties
-    public double Elevation { get; set; } = 0;
-    public double Tolerance { get; set; } = 0;
+    /// <summary>
+    /// String either in the format of a double (will be converted into Model Units)
+    /// or in the format of a OasysUnits.Length ('5 m')
+    /// </summary>
+    public string Elevation { get; set; } = "0";
+    /// <summary>
+    /// String either in the format of a double (will be converted into Model Units)
+    /// or in the format of a OasysUnits.Length ('5 m')
+    /// </summary>
+    public string Tolerance { get; set; } = "10 mm";
+    /// <summary>
+    /// String either in the format of a double (will be converted into Model Units)
+    /// or in the format of a OasysUnits.Length ('5 m'). '0' equals 'auto'.
+    /// </summary>
+    public string StoreyToleranceAbove { get; set; } = "auto";
+    /// <summary>
+    /// String either in the format of a double (will be converted into Model Units)
+    /// or in the format of a OasysUnits.Length ('5 m'). '0' equals 'auto'.
+    /// </summary>
+    public string StoreyToleranceBelow { get; set; } = "auto";
     public string AxisName { get; set; } = "";
     public Guid GridSurfaceGUID => _gridSrfGuid;
     public Guid GridPlaneGUID => _gridPlnGuid;
@@ -166,6 +184,8 @@ namespace GsaGH.Parameters
         },
         Elevation = this.Elevation,
         Tolerance = this.Tolerance,
+        StoreyToleranceAbove = this.StoreyToleranceAbove,
+        StoreyToleranceBelow = this.StoreyToleranceBelow,
         AxisName = this.AxisName,
         GridPlaneId = _gridPlnId,
         GridSurfaceId = _gridSrfId
@@ -203,8 +223,8 @@ namespace GsaGH.Parameters
         gp += "Global grid ";
       else
         gp += $"O:{this._pln.Origin}, X:{this._pln.XAxis}, Y:{this._pln.YAxis}";
-      if (this.Elevation != 0)
-        gp += " E:" + new Length(this.Elevation, LengthUnit.Meter).ToUnit(DefaultUnits.LengthUnitGeometry).ToString("g").Replace(" ", string.Empty) + " ";
+      if (this.Elevation != "0")
+        gp += " E:" + this.Elevation.Replace(" ", string.Empty).Replace(",", string.Empty) + " ";
       if (this.GridPlane.IsStoreyType)
         gp += "Storey ";
 
@@ -234,7 +254,22 @@ namespace GsaGH.Parameters
       Axis axis = new Axis();
       axis.Origin.X = new Length(this.Plane.Origin.X, modelUnit).Meters;
       axis.Origin.Y = new Length(this.Plane.Origin.Y, modelUnit).Meters;
-      axis.Origin.Z = new Length(this.Plane.Origin.Z - this.Elevation, modelUnit).Meters;
+      axis.Origin.Z = new Length(this.Plane.Origin.Z, modelUnit).Meters;
+      if (this.Elevation != "0")
+      {
+        Length elevation = new Length();
+        try
+        {
+          elevation = Length.Parse(this.Elevation);
+        }
+        catch (Exception)
+        {
+          if (double.TryParse(this.Elevation, out double elev))
+            elevation = new Length(elev, modelUnit);
+        }
+        axis.Origin.Z -= elevation.As(modelUnit);
+      }
+      
       axis.XVector.X = this.Plane.XAxis.X;
       axis.XVector.Y = this.Plane.XAxis.Y;
       axis.XVector.Z = this.Plane.XAxis.Z;

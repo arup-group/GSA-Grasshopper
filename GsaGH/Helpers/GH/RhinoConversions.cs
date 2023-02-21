@@ -865,7 +865,7 @@ namespace GsaGH.Helpers.GH
       ReadOnlyDictionary<int, Node> nodeDict = model.Nodes();
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
                 = Import.Elements.GetElements(elementDict, nodeDict, model.Sections(), model.Prop2Ds(), model.Prop3Ds(), model.AnalysisMaterials(), model.SectionModifiers(),
-                    elementLocalAxesDict, unit, false);
+                    elementLocalAxesDict, model.Axes(), unit, false);
 
       List<GsaElement2dGoo> elem2dgoo = elementTuple.Item2.OrderBy(item => item.Value.Ids).ToList();
       Mesh mesh = elem2dgoo[0].Value.Mesh;

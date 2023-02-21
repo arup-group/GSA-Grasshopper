@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA beam displacement values
-    /// </summary>
-    public class BeamDisplacement : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA beam displacement values
+  /// </summary>
+  public class BeamDisplacement : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -103,8 +103,6 @@ namespace GsaGH.Components
       List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
       if (DA.GetDataList(0, gh_types))
       {
-        List<GsaResult> results = new List<GsaResult>();
-
         for (int i = 0; i < gh_types.Count; i++) // loop through all case/combinations
         {
           GH_ObjectWrapper gh_typ = gh_types[i];
@@ -123,14 +121,16 @@ namespace GsaGH.Components
             return;
           }
 
-          List<GsaResultsValues> vals = result.Element1DDisplacementValues(elementlist, positionsCount, LengthUnit);
+          List<GsaResultsValues> vals = result.Element1DDisplacementValues(elementlist, positionsCount, this.LengthUnit);
 
-          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 1 } : result.SelectedPermutationIDs);
+          if (permutations.Count == 1 && permutations[0] == -1)
+            permutations = Enumerable.Range(1, vals.Count).ToList();
 
           // loop through all permutations (analysis case will just have one)
-          for (int index = 0; index < vals.Count; index++)
+          foreach (int perm in permutations)
           {
-            if (vals[index].xyzResults.Count == 0 & vals[index].xxyyzzResults.Count == 0)
+            if (vals[perm - 1].xyzResults.Count == 0 & vals[perm - 1].xxyyzzResults.Count == 0)
             {
               string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
               AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element1D results.");
@@ -142,36 +142,36 @@ namespace GsaGH.Components
               {
                 //do xyz part of results
                 // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xyzResults)
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
+                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
-                  out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(LengthUnit))), p); // use ToUnit to capture changes in dropdown
-                  out_transY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(LengthUnit))), p);
-                  out_transZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(LengthUnit))), p);
-                  out_transXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(LengthUnit))), p);
+                  out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.LengthUnit))), path); // use ToUnit to capture changes in dropdown
+                  out_transY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.LengthUnit))), path);
+                  out_transZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.LengthUnit))), path);
+                  out_transXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.LengthUnit))), path);
                 }
               }
               if (thread == 1)
               {
                 //do xxyyzz
                 // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xxyyzzResults)
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
+                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
-                  out_rotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)), p); // always use [rad] units
-                  out_rotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), p);
-                  out_rotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), p);
-                  out_rotXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ)), p);
+                  out_rotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)), path); // always use [rad] units
+                  out_rotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), path);
+                  out_rotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), path);
+                  out_rotXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ)), path);
                 }
               }
             });
@@ -186,6 +186,8 @@ namespace GsaGH.Components
         DA.SetDataTree(5, out_rotY);
         DA.SetDataTree(6, out_rotZ);
         DA.SetDataTree(7, out_rotXYZ);
+
+        Helpers.PostHog.Result(result.Type, 1, GsaResultsValues.ResultType.Displacement);
       }
     }
 

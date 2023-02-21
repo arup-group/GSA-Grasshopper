@@ -100,7 +100,7 @@ namespace GsaGH.Components
         if (models.Count > 0)
         {
           if (models.Count > 1)
-            model = Helpers.Export.MergeModels.MergeModel(models);
+            model = Helpers.Export.MergeModels.MergeModel(models, this);
           else
             model = models[0].Clone();
         }
@@ -153,9 +153,10 @@ namespace GsaGH.Components
           if (!GsaGH.SolverRequiredDll.IsCorrectVersionLoaded())
           {
             tryAnalyse = false;
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "A dll required to run analysis has been previously loaded by another application. Please remove this file and try again:");
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, GsaGH.SolverRequiredDll.loadedFromPath);
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Either uninstall the host application or delete the file.");
+            string message = "A dll required to run analysis has been previously loaded by another application. Please remove this file and try again:" + System.Environment.NewLine
+             + System.Environment.NewLine + GsaGH.SolverRequiredDll.loadedFromPath 
+            +System.Environment.NewLine + "Either uninstall the host application or delete the file.";
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, message);
           }
         }
 
@@ -192,7 +193,7 @@ namespace GsaGH.Components
     private List<bool> InitialCheckState = new List<bool>() { true, true };
     private bool Analysis = true;
     private bool ReMesh = true;
-    private double _tolerance = DefaultUnits.Tolerance.Meters;
+    private double _tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
     private string _toleranceTxt = "";
 
     protected override void BeforeSolveInstance()
@@ -255,8 +256,8 @@ namespace GsaGH.Components
       Menu_AppendSeparator(menu);
 
       ToolStripTextBox tolerance = new ToolStripTextBox();
-      _toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
-      tolerance.Text = _toleranceTxt;
+      this._toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
+      tolerance.Text = this._toleranceTxt;
       tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
 
@@ -280,7 +281,7 @@ namespace GsaGH.Components
     }
     private void MaintainText(ToolStripTextBox tolerance)
     {
-      _toleranceTxt = tolerance.Text;
+      this._toleranceTxt = tolerance.Text;
       if (Length.TryParse(_toleranceTxt, out Length res))
         tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
       else
@@ -293,7 +294,7 @@ namespace GsaGH.Components
         try
         {
           Length newTolerance = Length.Parse(_toleranceTxt);
-          _tolerance = newTolerance.Meters;
+          this._tolerance = newTolerance.As(this.LengthUnit);
         }
         catch (Exception e)
         {
@@ -301,7 +302,7 @@ namespace GsaGH.Components
           return;
         }
       }
-      Length tol = new Length(_tolerance, this.LengthUnit);
+      Length tol = new Length(this._tolerance, this.LengthUnit);
       this.Message = "Tol: " + tol.ToString();
       if (tol.Meters < 0.001)
         AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");

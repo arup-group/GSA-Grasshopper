@@ -1,10 +1,7 @@
-﻿using GsaAPI;
-using System;
-using System.Collections.Generic;
-using GsaGH.Parameters;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using GsaGH.Helpers.Import;
+using GsaAPI;
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export
 {

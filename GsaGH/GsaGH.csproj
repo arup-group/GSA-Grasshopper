@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>GSALogo128.png</PackageIcon>
-    <Version>0.9.41-beta</Version>
+    <Version>0.9.46-beta</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <Description>Official Oasys GSA Grasshopper Plugin
@@ -35,6 +35,12 @@ Copyright © Oasys 1985 - 2022</Description>
   </Target>
   
   <ItemGroup>
+    <Compile Remove="Components\6_Lab\**" />
+    <EmbeddedResource Remove="Components\6_Lab\**" />
+    <None Remove="Components\6_Lab\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>GsaGHTests</_Parameter1>
     </AssemblyAttribute>
@@ -44,12 +50,12 @@ Copyright © Oasys 1985 - 2022</Description>
     <PackageReference Include="Grasshopper" Version="6.27.20176.5001" IncludeAssets="compile;build">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="OasysGH" Version="0.5.0-beta" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.0" />
+    <PackageReference Include="OasysGH" Version="0.5.2-beta" />
     <PackageReference Include="RhinoCommon" Version="6.27.20176.5001">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>compile;build</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Data.SQLite" Version="1.0.117" />
   </ItemGroup>
   
   <ItemGroup>
@@ -92,6 +98,21 @@ Copyright © Oasys 1985 - 2022</Description>
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   
 </Project>

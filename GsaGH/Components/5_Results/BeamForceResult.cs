@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to get GSA beam force values
-    /// </summary>
-    public class BeamForces : GH_OasysDropDownComponent
+  /// <summary>
+  /// Component to get GSA beam force values
+  /// </summary>
+  public class BeamForces : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("5dee1b78-7b47-4c65-9d17-446140fc4e0d");
@@ -125,14 +125,16 @@ namespace GsaGH.Components
             return;
           }
 
-          List<GsaResultsValues> vals = result.Element1DForceValues(elementlist, positionsCount, ForceUnit, MomentUnit);
+          List<GsaResultsValues> vals = result.Element1DForceValues(elementlist, positionsCount, this.ForceUnit, this.MomentUnit);
 
-          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 0 } : result.SelectedPermutationIDs);
+          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 1 } : result.SelectedPermutationIDs);
+          if (permutations.Count == 1 && permutations[0] == -1)
+            permutations = Enumerable.Range(1, vals.Count).ToList();
 
           // loop through all permutations (analysis case will just have one)
-          for (int index = 0; index < vals.Count; index++)
+          foreach (int perm in permutations)
           {
-            if (vals[index].xyzResults.Count == 0 & vals[index].xxyyzzResults.Count == 0)
+            if (vals[perm - 1].xyzResults.Count == 0 & vals[perm - 1].xxyyzzResults.Count == 0)
             {
               string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
               AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element1D results.");
@@ -144,36 +146,36 @@ namespace GsaGH.Components
               {
                 //do xyz part of results
                 // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xyzResults)
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
+                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
-                  out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(ForceUnit))), p); // use ToUnit to capture changes in dropdown
-                  out_transY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(ForceUnit))), p);
-                  out_transZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(ForceUnit))), p);
-                  out_transXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(ForceUnit))), p);
+                  out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.ForceUnit))), path); // use ToUnit to capture changes in dropdown
+                  out_transY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.ForceUnit))), path);
+                  out_transZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.ForceUnit))), path);
+                  out_transXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.ForceUnit))), path);
                 }
               }
               if (thread == 1)
               {
                 //do xxyyzz
                 // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[index].xxyyzzResults)
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults)
                 {
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path p = new GH_Path(result.CaseID, permutations[index], elementID);
+                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
-                  out_rotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(MomentUnit))), p); // always use [rad] units
-                  out_rotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(MomentUnit))), p);
-                  out_rotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(MomentUnit))), p);
-                  out_rotXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(MomentUnit))), p);
+                  out_rotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.MomentUnit))), path); // always use [rad] units
+                  out_rotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.MomentUnit))), path);
+                  out_rotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.MomentUnit))), path);
+                  out_rotXYZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.MomentUnit))), path);
                 }
               }
             });
@@ -188,6 +190,8 @@ namespace GsaGH.Components
         DA.SetDataTree(5, out_rotY);
         DA.SetDataTree(6, out_rotZ);
         DA.SetDataTree(7, out_rotXYZ);
+
+        Helpers.PostHog.Result(result.Type, 1, GsaResultsValues.ResultType.Force);
       }
     }
 

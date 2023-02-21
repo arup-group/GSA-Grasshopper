@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
@@ -9,6 +10,8 @@ using GsaGH.Helpers.GsaAPI;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Collections;
 using Rhino.Geometry;
 
@@ -20,7 +23,7 @@ namespace GsaGH.Components
   public class EditMember2d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
-    public override Guid ComponentGuid => new Guid("54bcb967-d3a1-4878-925b-5fd765d1b476");
+    public override Guid ComponentGuid => new Guid("e28ff1bf-b2ea-450a-8fd1-14e3d0981340");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditMem2d;
@@ -58,6 +61,8 @@ namespace GsaGH.Components
 
       pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Set target mesh size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?", GH_ParamAccess.item);
+      pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Member Orientation Angle", GH_ParamAccess.item);
+
       pManager.AddTextParameter("Member2d Name", "Na", "Set Name of Member2d", GH_ParamAccess.item);
       pManager.AddColourParameter("Member2d Colour", "Co", "Set Member 2d Colour", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Dummy Member", "Dm", "Set Member to Dummy", GH_ParamAccess.item);
@@ -91,6 +96,7 @@ namespace GsaGH.Components
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset", GH_ParamAccess.item);
       pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Get Member Mesh Size", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Member Orientation Angle in radians", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member", GH_ParamAccess.item);
       pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
@@ -256,25 +262,33 @@ namespace GsaGH.Components
             mem.MeshWithOthers = mbool;
         }
 
-        // 12 name
+        // 12 orientation angle
+        GH_Number ghangle = new GH_Number();
+        if (DA.GetData(12, ref ghangle))
+        {
+          if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
+            mem.OrientationAngle = new Angle(angle, this.AngleUnit);
+        }
+
+        // 13 name
         GH_String ghnm = new GH_String();
-        if (DA.GetData(12, ref ghnm))
+        if (DA.GetData(13, ref ghnm))
         {
           if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
             mem.Name = name;
         }
 
-        // 13 Colour
+        // 14 Colour
         GH_Colour ghcol = new GH_Colour();
-        if (DA.GetData(13, ref ghcol))
+        if (DA.GetData(14, ref ghcol))
         {
           if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
             mem.Colour = col;
         }
 
-        // 14 Dummy
+        // 15 Dummy
         GH_Boolean ghdum = new GH_Boolean();
-        if (DA.GetData(14, ref ghdum))
+        if (DA.GetData(15, ref ghdum))
         {
           if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
             mem.IsDummy = dum;
@@ -298,13 +312,29 @@ namespace GsaGH.Components
 
         DA.SetData(10, mem.MeshSize);
         DA.SetData(11, mem.MeshWithOthers);
+        DA.SetData(12, mem.OrientationAngle.Radians);
 
-        DA.SetData(12, mem.Name);
-        DA.SetData(13, mem.Colour);
-        DA.SetData(14, mem.IsDummy);
-        DA.SetData(15, mem.ApiMember.Topology.ToString());
+        DA.SetData(13, mem.Name);
+        DA.SetData(14, mem.Colour);
+        DA.SetData(15, mem.IsDummy);
+        DA.SetData(16, mem.ApiMember.Topology.ToString());
       }
     }
+
+    protected override void BeforeSolveInstance()
+    {
+      base.BeforeSolveInstance();
+      Param_Number angleParameter = Params.Input[12] as Param_Number;
+      if (angleParameter != null)
+      {
+        if (angleParameter.UseDegrees)
+          this.AngleUnit = AngleUnit.Degree;
+        else
+          this.AngleUnit = AngleUnit.Radian;
+      }
+    }
+    AngleUnit AngleUnit = AngleUnit.Radian;
+
     #region IGH_VariableParameterComponent null implementation
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;
     bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) => false;

@@ -9,10 +9,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to retrieve non-geometric objects from a GSA model
-    /// </summary>
-    public class GetProperties : GH_OasysComponent
+  /// <summary>
+  /// Component to retrieve non-geometric objects from a GSA model
+  /// </summary>
+  public class GetProperties : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("f5926fb3-06e5-4b18-b037-6234fff16586");
@@ -50,7 +50,7 @@ namespace GsaGH.Components
         Model model = gsaModel.Model;
 
         List<GsaSectionGoo> sections = Helpers.Import.Properties.GetSections(model.Sections(), model.AnalysisMaterials(), model.SectionModifiers());
-        List<GsaProp2dGoo> prop2Ds = Helpers.Import.Properties.GetProp2ds(model.Prop2Ds(), model.AnalysisMaterials());
+        List<GsaProp2dGoo> prop2Ds = Helpers.Import.Properties.GetProp2ds(model.Prop2Ds(), model.AnalysisMaterials(), model.Axes());
         List<GsaProp3dGoo> prop3Ds = Helpers.Import.Properties.GetProp3ds(model.Prop3Ds(), model.AnalysisMaterials());
 
         DA.SetDataList(0, sections);

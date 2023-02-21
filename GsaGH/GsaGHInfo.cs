@@ -11,12 +11,21 @@ namespace GsaGH
 {
   public class AddReferencePriority : GH_AssemblyPriority
   {
-    public static string PluginPath;
+    public static string PluginPath
+    {
+      get 
+      {
+        if (_pluginPath == null)
+          _pluginPath = TryFindPluginPath("GSA.gha");
+        return _pluginPath;
+      }
+    }
+    private static string _pluginPath;
     public static string InstallPath = Helpers.GsaAPI.InstallationFolder.GetPath;
-
+    
     public override GH_LoadingInstruction PriorityLoad()
     {
-      if (!TryFindPluginPath("GSA.gha"))
+      if (TryFindPluginPath("GSA.gha") == "")
         return GH_LoadingInstruction.Abort;
 
       // ### Set system environment variables to allow user rights to read below dlls ###
@@ -27,6 +36,7 @@ namespace GsaGH
       System.Environment.SetEnvironmentVariable(name, value, target);
 
       // ### Reference GSA API dlls ###
+      string gsaVersion = "";
       // check if GSA is installed
       if (!File.Exists(InstallPath + "\\GsaAPI.dll"))
       {
@@ -40,16 +50,17 @@ namespace GsaGH
       {
         // Try load GSA
         Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-        Assembly SQLite = Assembly.LoadFile(InstallPath + "\\System.Data.SQLite.dll");
-        FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
-        if (myFileVersionInfo.FileBuildPart < 63)
+        FileVersionInfo gsaVers = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
+        gsaVersion = gsaVers.FileMajorPart + "." + gsaVers.FileMinorPart + "." + gsaVers.FileBuildPart;
+        if (gsaVers.FileBuildPart < 63)
         {
-          Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper require GSA 10.1.63 installed. Please upgrade GSA.");
+          Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper requires GSA 10.1.63 installed. Please upgrade GSA.");
           GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
           Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
           PostHog.PluginLoaded(PluginInfo.Instance, exception.Message);
           return GH_LoadingInstruction.Abort;
         }
+
       }
       catch (Exception e)
       {
@@ -89,12 +100,12 @@ namespace GsaGH
       // ### Setup OasysGH and shared Units ###
       Utility.InitialiseMainMenuAndDefaultUnits();
 
-      PostHog.PluginLoaded(GsaGH.PluginInfo.Instance);
+      PostHog.PluginLoaded(GsaGH.PluginInfo.Instance, gsaVersion);
 
       return GH_LoadingInstruction.Proceed;
     }
 
-    private bool TryFindPluginPath(string keyword)
+    private static string TryFindPluginPath(string keyword)
     {
       // ### Search for plugin path ###
 
@@ -121,8 +132,7 @@ namespace GsaGH
             if (files.Length > 0)
             {
               path = files[0].Replace(keyword, string.Empty);
-              PluginPath = Path.GetDirectoryName(path);
-              return true;
+              return Path.GetDirectoryName(path);
             }
           }
           string message =
@@ -137,14 +147,11 @@ namespace GsaGH
           GH_LoadingException gH_LoadingException = new GH_LoadingException(GsaGHInfo.ProductName + ": " + keyword + " loading failed", exception);
           Grasshopper.Instances.ComponentServer.LoadingExceptions.Add(gH_LoadingException);
           PostHog.PluginLoaded(GsaGH.PluginInfo.Instance, message);
-          return false;
+          return "";
         }
       }
-      PluginPath = Path.GetDirectoryName(path);
-      return true;
+      return Path.GetDirectoryName(path);
     }
-
-
   }
 
   internal sealed class PluginInfo
@@ -163,6 +170,7 @@ namespace GsaGH
     private PluginInfo() { }
   }
 
+  
 
   public static class SolverRequiredDll
   {
@@ -204,7 +212,7 @@ namespace GsaGH
     internal const string Company = "Oasys";
     internal const string Copyright = "Copyright © Oasys 1985 - 2023";
     internal const string Contact = "https://www.oasys-software.com/";
-    internal const string Vers = "0.9.41";
+    internal const string Vers = "0.9.46";
     internal static bool isBeta = true;
     internal static string Disclaimer = PluginName + " is pre-release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using " + PluginName + " should not be relied upon without thorough and independent checking. ";
     internal const string ProductName = "GSA";

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using GsaAPI;
 using GsaGH.Parameters;
+using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Import
 {
@@ -46,7 +47,7 @@ namespace GsaGH.Helpers.Import
     /// </summary>
     /// <param name="pDict">Dictionary of pre-filtered 2D Properties to import</param>
     /// <returns></returns>
-    internal static List<GsaProp2dGoo> GetProp2ds(IReadOnlyDictionary<int, Prop2D> pDict, ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials)
+    internal static List<GsaProp2dGoo> GetProp2ds(IReadOnlyDictionary<int, Prop2D> pDict, ReadOnlyDictionary<int, AnalysisMaterial> analysisMaterials, ReadOnlyDictionary<int, Axis> axDict = null)
     {
       List<GsaProp2dGoo> prop2ds = new List<GsaProp2dGoo>();
 
@@ -61,6 +62,19 @@ namespace GsaGH.Helpers.Import
           {
             if (analysisMaterials.ContainsKey(prop.API_Prop2d.MaterialAnalysisProperty))
               prop.Material.AnalysisMaterial = analysisMaterials[apisection.MaterialAnalysisProperty];
+          }
+
+          // Axis property 0 = Global, -1 = Topological
+          if(prop.API_Prop2d.AxisProperty > 0)
+          {
+            if (axDict != null && axDict.ContainsKey(prop.API_Prop2d.AxisProperty))
+            {
+              Axis ax = axDict[prop.API_Prop2d.AxisProperty];
+              prop.LocalAxis = new Plane(new Point3d(ax.Origin.X, ax.Origin.Y, ax.Origin.Z),
+                new Vector3d(ax.XVector.X, ax.XVector.Y, ax.XVector.Z),
+                new Vector3d(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z)
+                );
+            }
           }
 
           prop2ds.Add(new GsaProp2dGoo(prop));

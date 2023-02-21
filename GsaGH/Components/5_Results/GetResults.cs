@@ -13,10 +13,10 @@ using OasysUnits;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to select results from a GSA Model
-    /// </summary>
-    public class GetResult : GH_OasysComponent
+  /// <summary>
+  /// Component to select results from a GSA Model
+  /// </summary>
+  public class GetResult : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -55,7 +55,7 @@ namespace GsaGH.Components
     ReadOnlyDictionary<int, AnalysisCaseResult> _analysisCaseResults;
     ReadOnlyDictionary<int, CombinationCaseResult> _combinationCaseResults;
     int tempNodeID = 0;
-    Dictionary<Tuple<GsaResult.ResultType, int>, GsaResult> Result; // this is the cache object!
+    Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult> Result; // this is the cache object!
     protected override void SolveInstance(IGH_DataAccess DA)
     {
       // Model to work on
@@ -74,7 +74,7 @@ namespace GsaGH.Components
             if (in_Model.Guid != _modelGUID) // only get results if GUID is not similar
             {
               model = in_Model;
-              Result = new Dictionary<Tuple<GsaResult.ResultType, int>, GsaResult>();
+              Result = new Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>();
               _analysisCaseResults = null;
               _combinationCaseResults = null;
             }
@@ -84,7 +84,7 @@ namespace GsaGH.Components
             // first time
             model = in_Model;
             _modelGUID = model.Guid;
-            Result = new Dictionary<Tuple<GsaResult.ResultType, int>, GsaResult>();
+            Result = new Dictionary<Tuple<GsaResult.CaseType, int>, GsaResult>();
           }
         }
         else
@@ -94,7 +94,7 @@ namespace GsaGH.Components
         }
 
         // Get case type
-        GsaResult.ResultType resultType = GsaResult.ResultType.AnalysisCase;
+        GsaResult.CaseType resultType = GsaResult.CaseType.AnalysisCase;
         GH_String gh_Type = new GH_String();
         if (DA.GetData(1, ref gh_Type))
         {
@@ -103,11 +103,11 @@ namespace GsaGH.Components
           {
             if (type.ToUpper().StartsWith("A"))
             {
-              resultType = GsaResult.ResultType.AnalysisCase;
+              resultType = GsaResult.CaseType.AnalysisCase;
             }
             else if (type.ToUpper().StartsWith("C"))
             {
-              resultType = GsaResult.ResultType.Combination;
+              resultType = GsaResult.CaseType.Combination;
             }
             else
             {
@@ -134,7 +134,7 @@ namespace GsaGH.Components
 
         // Get permutation case 
         List<int> permutationIDs = new List<int>();
-        if (resultType != GsaResult.ResultType.AnalysisCase)
+        if (resultType != GsaResult.CaseType.AnalysisCase)
         {
           List<int> gh_perms = new List<int>();
           if (DA.GetDataList(3, gh_perms))
@@ -153,7 +153,7 @@ namespace GsaGH.Components
         // Get results from model and create result object
         switch (resultType)
         {
-          case GsaResult.ResultType.AnalysisCase:
+          case GsaResult.CaseType.AnalysisCase:
             if (_analysisCaseResults == null)
             {
               _analysisCaseResults = model.Model.Results();
@@ -170,14 +170,14 @@ namespace GsaGH.Components
               return;
             }
 
-            if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, caseID)))
+            if (!Result.ContainsKey(new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.AnalysisCase, caseID)))
             {
-              Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.AnalysisCase, caseID),
+              Result.Add(new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.AnalysisCase, caseID),
                   new GsaResult(model, _analysisCaseResults[caseID], caseID));
             }
             break;
 
-          case GsaResult.ResultType.Combination:
+          case GsaResult.CaseType.Combination:
             if (_combinationCaseResults == null)
             {
               _combinationCaseResults = model.Model.CombinationCaseResults();
@@ -212,15 +212,15 @@ namespace GsaGH.Components
               }
             }
 
-            if (!Result.ContainsKey(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, caseID)))
+            if (!Result.ContainsKey(new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.Combination, caseID)))
             {
-              Result.Add(new Tuple<GsaResult.ResultType, int>(GsaResult.ResultType.Combination, caseID),
+              Result.Add(new Tuple<GsaResult.CaseType, int>(GsaResult.CaseType.Combination, caseID),
                   new GsaResult(model, _combinationCaseResults[caseID], caseID, permutationIDs));
             }
             break;
         }
         
-        DA.SetData(0, new GsaResultGoo(Result[new Tuple<GsaResult.ResultType, int>(resultType, caseID)]));
+        DA.SetData(0, new GsaResultGoo(Result[new Tuple<GsaResult.CaseType, int>(resultType, caseID)]));
       }
     }
   }
