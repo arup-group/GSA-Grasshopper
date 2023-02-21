@@ -242,7 +242,7 @@ namespace GsaGH.Components
         // #### outputs ####
         DA.SetData(0, new GsaElement1dGoo(elem));
         DA.SetData(1, elem.Id);
-        DA.SetData(2, elem.Line);
+        DA.SetData(2, elem.Line.Line);
         DA.SetData(3, new GsaSectionGoo(elem.Section));
         DA.SetData(4, elem.Group);
         DA.SetData(5, elem.Type);

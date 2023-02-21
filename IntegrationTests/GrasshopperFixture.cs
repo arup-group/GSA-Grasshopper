@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 using Xunit;
 
@@ -31,11 +33,17 @@ namespace IntegrationTests
 
       LoadRefs();
       Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
+      TryGsaCOM();
 
       InitializeCore();
 
       // setup headless units
       OasysGH.Units.Utility.SetupUnitsDuringLoad(true);
+    }
+    public static void TryGsaCOM()
+    {
+      Interop.Gsa_10_1.ComAuto GSA = GsaComObject.Instance;
+      GSA.NewFile();
     }
 
     public void LoadRefs()
