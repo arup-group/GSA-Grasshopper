@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 using Xunit;
 
@@ -40,9 +42,8 @@ namespace IntegrationTests
     }
     public static void TryGsaCOM()
     {
-      Interop.Gsa_10_1.ComAuto m = new Interop.Gsa_10_1.ComAuto();
-      m.NewFile();
-      m.SetLocale(Interop.Gsa_10_1.Locale.LOC_EN_GB);
+      Interop.Gsa_10_1.ComAuto GSA = GsaComObject.Instance;
+      GSA.NewFile();
     }
 
     public void LoadRefs()
