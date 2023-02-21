@@ -39,10 +39,6 @@ steps:
     & 'C:\Program Files\Oasys\*\GSA.exe' /Register
   displayName: 'Register GSA COM'
   failOnStderr: false
-  
-- powershell: |
-    Get-ChildItem HKLM:\Software\Classes -ErrorAction SilentlyContinue | Where-Object { $_.PSChildName -match '^\w+\.\w+$' -and (Test-Path -Path "$($_.PSPath)\CLSID") } | Get-ChildItem
-  displayName: 'List COM objects'
 
 - powershell: |
     Get-ChildItem -Path "HKLM:\Software\Classes\CLSID\{DA9D8CF0-713B-4E11-B1EB-5C2C47FD32A5}"  
