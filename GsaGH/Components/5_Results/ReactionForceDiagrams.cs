@@ -336,7 +336,7 @@ namespace GsaGH.Components
     public override void SetSelected(int i, int j)
     {
       this._disp = (DisplayValue)j;
-      this.SelectedItems[1] = this.DropDownItems[1][j];
+      this.SelectedItems[i] = this.DropDownItems[i][j];
       base.UpdateUI();
     }
     #endregion
