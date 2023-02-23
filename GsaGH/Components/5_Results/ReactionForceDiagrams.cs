@@ -60,7 +60,9 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddGenericParameter("Result Point", "P", "Contoured Points with result values", GH_ParamAccess.list);
+      pManager.AddPointParameter("Anchor Point", "A", "Support Node location", GH_ParamAccess.list);
+      pManager.AddVectorParameter("Vector", "V", "Reaction Force Vector", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Value", "V", "Reaction Force Value", GH_ParamAccess.list);
     }
     #endregion
 
@@ -134,55 +136,6 @@ namespace GsaGH.Components
         Enum xxyyzzunit = this.MomentUnit;
 
         #region Result point values
-        // ### Coloured Result Points ###
-
-        // round max and min to reasonable numbers
-        double dmax = 0;
-        double dmin = 0;
-        switch (_disp)
-        {
-          case (DisplayValue.X):
-            dmax = res.dmax_x.As(xyzunit);
-            dmin = res.dmin_x.As(xyzunit);
-            break;
-          case (DisplayValue.Y):
-            dmax = res.dmax_y.As(xyzunit);
-            dmin = res.dmin_y.As(xyzunit);
-            break;
-          case (DisplayValue.Z):
-            dmax = res.dmax_z.As(xyzunit);
-            dmin = res.dmin_z.As(xyzunit);
-            break;
-          case (DisplayValue.resXYZ):
-            dmax = res.dmax_xyz.As(xyzunit);
-            dmin = res.dmin_xyz.As(xyzunit);
-            break;
-          case (DisplayValue.XX):
-            dmax = res.dmax_xx.As(xxyyzzunit);
-            dmin = res.dmin_xx.As(xxyyzzunit);
-            break;
-          case (DisplayValue.YY):
-            dmax = res.dmax_yy.As(xxyyzzunit);
-            dmin = res.dmin_yy.As(xxyyzzunit);
-            break;
-          case (DisplayValue.ZZ):
-            dmax = res.dmax_zz.As(xxyyzzunit);
-            dmin = res.dmin_zz.As(xxyyzzunit);
-            break;
-          case (DisplayValue.resXXYYZZ):
-            dmax = res.dmax_xxyyzz.As(xxyyzzunit);
-            dmin = res.dmin_xxyyzz.As(xxyyzzunit);
-            break;
-        }
-        
-        List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
-        dmax = rounded[0];
-        dmin = rounded[1];
-        int significantDigits = (int)rounded[2];
-
-        // Loop through nodes and set result colour into ResultPoint format
-        ConcurrentDictionary<int, PointResultGoo> pts = new ConcurrentDictionary<int, PointResultGoo>();
-
         LengthUnit lengthUnit = result.Model.ModelUnit;
         this.undefinedModelLengthUnit = false;
         if (lengthUnit == LengthUnit.Undefined)
@@ -195,6 +148,9 @@ namespace GsaGH.Components
         // Get nodes for point location and restraint check in case of reaction force
         ConcurrentDictionary<int, GsaNodeGoo> gsanodes = Helpers.Import.Nodes.GetNodeDictionary(nodes, lengthUnit);
 
+        // Lists to collect results
+        ConcurrentDictionary<int, Point3d> 
+
         Parallel.ForEach(gsanodes, node =>
         {
           if (node.Value.Value != null)
@@ -202,64 +158,61 @@ namespace GsaGH.Components
             int nodeID = node.Value.Value.Id;
             if (xyzResults.ContainsKey(nodeID))
             {
-              if (!(dmin == 0 & dmax == 0))
+              // create vector starting point
+              Point3d pt = new Point3d(node.Value.Value.Point);
+
+              // create Vector
+              Vector3d vec = new Vector3d();
+
+              IQuantity t = null;
+
+              // pick the right value to display
+              switch (_disp)
               {
-                // create vector starting point
-                Point3d def = new Point3d(node.Value.Value.Point);
-
-                // create Vector
-                Vector3d vec = new Vector3d();
-
-                IQuantity t = null;
-
-                // pick the right value to display
-                switch (_disp)
-                {
-                  case (DisplayValue.X):
-                    vec = new Vector3d(xyzResults[nodeID][0].X.As(this.ForceUnit) * scale, 0, 0);
-                    t = xyzResults[nodeID][0].X.ToUnit(this.ForceUnit);
-                    break;
-                  case (DisplayValue.Y):
-                    vec = new Vector3d(0, xyzResults[nodeID][0].Y.As(this.ForceUnit) * scale, 0);
-                    t = xyzResults[nodeID][0].Y.ToUnit(this.ForceUnit);
-                    break;
-                  case (DisplayValue.Z):
-                    vec = new Vector3d(0, 0, xyzResults[nodeID][0].Z.As(this.ForceUnit) * scale);
-                    t = xyzResults[nodeID][0].Z.ToUnit(this.ForceUnit);
-                    break;
-                  case (DisplayValue.resXYZ):
-                    vec = new Vector3d(
-                      xyzResults[nodeID][0].X.As(this.ForceUnit) * scale, 
-                      xyzResults[nodeID][0].Y.As(this.ForceUnit) * scale, 
-                      xyzResults[nodeID][0].Z.As(this.ForceUnit) * scale);
-                    t = xyzResults[nodeID][0].XYZ.ToUnit(this.ForceUnit);
-                    break;
-                  case (DisplayValue.XX):
-                    vec = new Vector3d(xxyyzzResults[nodeID][0].X.As(this.MomentUnit) * scale, 0, 0);
-                    t = xxyyzzResults[nodeID][0].X.ToUnit(this.MomentUnit);
-                    break;
-                  case (DisplayValue.YY):
-                    vec = new Vector3d(0, xxyyzzResults[nodeID][0].X.As(this.MomentUnit) * scale, 0);
-                    t = xxyyzzResults[nodeID][0].Y.ToUnit(this.MomentUnit);
-                    break;
-                  case (DisplayValue.ZZ):
-                    vec = new Vector3d(0, 0, xxyyzzResults[nodeID][0].X.As(this.MomentUnit) * scale);
-                    t = xxyyzzResults[nodeID][0].Z.ToUnit(this.MomentUnit);
-                    break;
-                  case (DisplayValue.resXXYYZZ):
-                    vec = new Vector3d(
-                      xxyyzzResults[nodeID][0].X.As(this.MomentUnit) * scale,
-                      xxyyzzResults[nodeID][0].Y.As(this.MomentUnit) * scale,
-                      xxyyzzResults[nodeID][0].Z.As(this.MomentUnit) * scale);
-                    t = xxyyzzResults[nodeID][0].XYZ.ToUnit(this.MomentUnit);
-                    break;
-                }
-                
-                // create custom vector display object from
-                // pt
-                // vector
-                // t (for displaying the value as text)
+                case (DisplayValue.X):
+                  vec = new Vector3d(xyzResults[nodeID][0].X.As(this.ForceUnit) * scale, 0, 0);
+                  t = xyzResults[nodeID][0].X.ToUnit(this.ForceUnit);
+                  break;
+                case (DisplayValue.Y):
+                  vec = new Vector3d(0, xyzResults[nodeID][0].Y.As(this.ForceUnit) * scale, 0);
+                  t = xyzResults[nodeID][0].Y.ToUnit(this.ForceUnit);
+                  break;
+                case (DisplayValue.Z):
+                  vec = new Vector3d(0, 0, xyzResults[nodeID][0].Z.As(this.ForceUnit) * scale);
+                  t = xyzResults[nodeID][0].Z.ToUnit(this.ForceUnit);
+                  break;
+                case (DisplayValue.resXYZ):
+                  vec = new Vector3d(
+                    xyzResults[nodeID][0].X.As(this.ForceUnit) * scale,
+                    xyzResults[nodeID][0].Y.As(this.ForceUnit) * scale,
+                    xyzResults[nodeID][0].Z.As(this.ForceUnit) * scale);
+                  t = xyzResults[nodeID][0].XYZ.ToUnit(this.ForceUnit);
+                  break;
+                case (DisplayValue.XX):
+                  vec = new Vector3d(xxyyzzResults[nodeID][0].X.As(this.MomentUnit) * scale, 0, 0);
+                  t = xxyyzzResults[nodeID][0].X.ToUnit(this.MomentUnit);
+                  break;
+                case (DisplayValue.YY):
+                  vec = new Vector3d(0, xxyyzzResults[nodeID][0].X.As(this.MomentUnit) * scale, 0);
+                  t = xxyyzzResults[nodeID][0].Y.ToUnit(this.MomentUnit);
+                  break;
+                case (DisplayValue.ZZ):
+                  vec = new Vector3d(0, 0, xxyyzzResults[nodeID][0].X.As(this.MomentUnit) * scale);
+                  t = xxyyzzResults[nodeID][0].Z.ToUnit(this.MomentUnit);
+                  break;
+                case (DisplayValue.resXXYYZZ):
+                  vec = new Vector3d(
+                    xxyyzzResults[nodeID][0].X.As(this.MomentUnit) * scale,
+                    xxyyzzResults[nodeID][0].Y.As(this.MomentUnit) * scale,
+                    xxyyzzResults[nodeID][0].Z.As(this.MomentUnit) * scale);
+                  t = xxyyzzResults[nodeID][0].XYZ.ToUnit(this.MomentUnit);
+                  break;
               }
+
+              // create custom vector display object from
+              // pt
+              // vector
+              // t (for displaying the value as text)
             }
           }
         });
@@ -267,6 +220,8 @@ namespace GsaGH.Components
 
         // set outputs
         DA.SetDataList(0, pts.OrderBy(x => x.Key).Select(y => y.Value).ToList());
+        GH_UnitNumber
+
 
         Helpers.PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force, this._disp.ToString());
       }
