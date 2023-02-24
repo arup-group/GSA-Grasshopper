@@ -60,7 +60,7 @@ namespace GsaGH.Helpers.GsaAPI
         return new MicrosoftSQLiteReader();
       }
       // try using a second AppDomain
-      catch (Exception)
+      catch (Exception ex1)
       {
         // Get the full name of the EXE assembly.
         string exeAssembly = Assembly.GetCallingAssembly().FullName;
@@ -72,29 +72,32 @@ namespace GsaGH.Helpers.GsaAPI
         {
           // Create an instance of MarshalbyRefType in the second AppDomain.
           // A proxy to the object is returned.
-          MicrosoftSQLiteReader reader = (MicrosoftSQLiteReader)ad2.CreateInstanceAndUnwrap(exeAssembly, typeof(MicrosoftSQLiteReader).FullName);
 
           Helpers.PostHog.Debug(new Dictionary<string, object>() {
             { "source", "AppDomain" },
-            { "source", "AppDomain" },
+            { "attempt", "first" },
+            { "exception", ex1.ToString() },
             { "applicationBase", "pluginPath" },
           });
 
+          MicrosoftSQLiteReader reader = (MicrosoftSQLiteReader)ad2.CreateInstanceAndUnwrap(exeAssembly, typeof(MicrosoftSQLiteReader).FullName);
+
           return reader;
         }
-        catch (Exception)
+        catch (Exception ex2)
         {
           // try again with codeBasePath
           AppDomain ad3 = CreateAppDomain("SQLite AppDomain", codeBasePath);
           ad3.UnhandledException += UEHandler;
 
-          MicrosoftSQLiteReader reader = (MicrosoftSQLiteReader)ad3.CreateInstanceAndUnwrap(exeAssembly, typeof(MicrosoftSQLiteReader).FullName);
-
           Helpers.PostHog.Debug(new Dictionary<string, object>() {
             { "source", "AppDomain" },
-            { "source", "AppDomain" },
+            { "attempt", "second" },
+            { "exception", ex2.ToString() },
             { "applicationBase", "codeBasePath" },
           });
+
+          MicrosoftSQLiteReader reader = (MicrosoftSQLiteReader)ad3.CreateInstanceAndUnwrap(exeAssembly, typeof(MicrosoftSQLiteReader).FullName);
 
           return reader;
         }
