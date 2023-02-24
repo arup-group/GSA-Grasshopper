@@ -22,10 +22,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create AdSec profile
-  /// </summary>
-  public class CreateProfile : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to create AdSec profile
+    /// </summary>
+    public class CreateProfile : GH_OasysDropDownComponent
   {
     private enum FoldMode
     {

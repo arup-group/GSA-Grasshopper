@@ -5,13 +5,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Export
 {
-  internal class AssembleModel
+    internal class AssembleModel
   {
     /// <summary>
     /// 

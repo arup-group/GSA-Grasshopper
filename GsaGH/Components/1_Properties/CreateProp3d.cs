@@ -8,10 +8,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Prop2d
-  /// </summary>
-  public class CreateProp3d : GH_OasysComponent
+    /// <summary>
+    /// Component to create a new Prop2d
+    /// </summary>
+    public class CreateProp3d : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4919553a-8d96-4170-a357-74cfbe930897");

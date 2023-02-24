@@ -20,10 +20,10 @@ using Grasshopper.Kernel.Parameters;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Node
-  /// </summary>
-  public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a Node
+    /// </summary>
+    public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");

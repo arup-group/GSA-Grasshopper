@@ -18,10 +18,10 @@ using OasysGH.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to open an existing GSA model
-  /// </summary>
-  public class SaveModel : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to open an existing GSA model
+    /// </summary>
+    public class SaveModel : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");

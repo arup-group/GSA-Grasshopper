@@ -17,7 +17,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  public class CreateFaceLoads : GH_OasysDropDownComponent
+    public class CreateFaceLoads : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");

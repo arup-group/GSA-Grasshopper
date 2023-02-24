@@ -16,7 +16,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridSurface : GH_OasysDropDownComponent
+    public class CreateGridSurface : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("b9405f78-317b-474f-b258-4a178a70bc02");

@@ -10,13 +10,14 @@ using OasysUnits.Units;
 using OasysUnits;
 using Rhino.Geometry;
 using System.Collections.ObjectModel;
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Helpers.Import
 {
-  /// <summary>
-  /// Class containing functions to import various object types from GSA
-  /// </summary>
-  internal class Members
+    /// <summary>
+    /// Class containing functions to import various object types from GSA
+    /// </summary>
+    internal class Members
   {
     internal static Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>
         GetMembers(ReadOnlyDictionary<int, Member> mDict, ReadOnlyDictionary<int, Node> nDict,

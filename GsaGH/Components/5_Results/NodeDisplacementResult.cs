@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get GSA node displacement values
-  /// </summary>
-  public class NodeDisplacement : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get GSA node displacement values
+    /// </summary>
+    public class NodeDisplacement : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("83844063-3da9-4d96-95d3-ea39f96f3e2a");

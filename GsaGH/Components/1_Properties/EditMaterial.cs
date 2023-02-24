@@ -9,10 +9,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Material and ouput the information
-  /// </summary>
-  public class EditMaterial : GH_OasysComponent
+    /// <summary>
+    /// Component to edit a Material and ouput the information
+    /// </summary>
+    public class EditMaterial : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("865f73c7-a057-481a-834b-c7e12873dd39");

@@ -26,10 +26,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get Element3d results
-  /// </summary>
-  public class Elem3dContourResults : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get Element3d results
+    /// </summary>
+    public class Elem3dContourResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("033035c6-16d9-4cc7-b2b3-cf5d5fac4108");

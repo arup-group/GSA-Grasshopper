@@ -26,10 +26,10 @@ using Grasshopper.Kernel.Parameters;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to display GSA node result contours
-  /// </summary>
-  public class NodeContourResults : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to display GSA node result contours
+    /// </summary>
+    public class NodeContourResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("742b1398-4eee-49e6-98d0-00afac6813e6");

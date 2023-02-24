@@ -13,10 +13,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Node
-  /// </summary>
-  public class LocalAxes : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a Node
+    /// </summary>
+    public class LocalAxes : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4a322b8e-031a-4c90-b8df-b32d162a3274");

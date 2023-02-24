@@ -20,10 +20,10 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Material and ouput the information
-  /// </summary>
-  public class EditSectionModifier : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to edit a Material and ouput the information
+    /// </summary>
+    public class EditSectionModifier : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("db2046cc-236d-44a5-aa88-1394dbc4558f");

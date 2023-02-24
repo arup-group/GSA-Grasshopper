@@ -28,10 +28,10 @@ using OasysGH.Helpers;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get Element1D results
-  /// </summary>
-  public class Elem1dContourResults : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get Element1D results
+    /// </summary>
+    public class Elem1dContourResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("ce7a8f84-4c72-4fd4-a207-485e8bf7ac38");
