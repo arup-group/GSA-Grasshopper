@@ -53,7 +53,7 @@ namespace GsaGH.Components
 
     protected override void SolveInstance(IGH_DataAccess DA)
     {
-      this.AddRuntimeRemarkMsg("It is currently not possible to set titles back into a GSA model."
+      this.AddRuntimeRemark("It is currently not possible to set titles back into a GSA model."
           + Environment.NewLine + "Any chances made here will not be reflected in a your model."
           + Environment.NewLine + "You can currently use this to get information from an existing GSA model;"
           + Environment.NewLine + "when opening a model the values in this component will be set automatically");

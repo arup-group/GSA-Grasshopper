@@ -165,7 +165,7 @@ namespace GsaGH.Components
 
           DA.SetData(0, new GsaElement2dGoo(elem2d));
 
-          this.AddRuntimeRemarkMsg("This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
+          this.AddRuntimeRemark("This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
         }
       }
     }

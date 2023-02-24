@@ -184,7 +184,7 @@ namespace GsaGH.Components
               {
                 offset.Z = new Length(z, DefaultUnits.LengthUnitGeometry);
                 string unitAbbreviation = string.Concat(offset.Z.ToString().Where(char.IsLetter));
-                this.AddRuntimeRemarkMsg("Offset input converted to Z-offset in [" + unitAbbreviation + "]"
+                this.AddRuntimeRemark("Offset input converted to Z-offset in [" + unitAbbreviation + "]"
                     + Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings");
               }
               else

@@ -348,7 +348,7 @@ namespace GsaGH.Components
         {
           lengthUnit = this.LengthUnit;
           this.undefinedModelLengthUnit = true;
-          this.AddRuntimeRemarkMsg("Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in " + lengthUnit.ToString() + ". This can be changed by right-clicking the component -> 'Select Units'");
+          this.AddRuntimeRemark("Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in " + lengthUnit.ToString() + ". This can be changed by right-clicking the component -> 'Select Units'");
         }
         else
           this.LengthUnit = lengthUnit;

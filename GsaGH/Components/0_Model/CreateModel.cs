@@ -226,9 +226,9 @@ namespace GsaGH.Components
       Length tol = new Length(this._tolerance, this.LengthUnit);
       this.Message = "Tol: " + tol.ToString();
       if (tol.Meters < 0.001)
-        this.AddRuntimeRemarkMsg("Set tolerance is quite small, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite small, you can change this by right-clicking the component.");
       if (tol.Meters > 0.25)
-        this.AddRuntimeRemarkMsg("Set tolerance is quite large, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     #endregion
 

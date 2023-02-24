@@ -14,7 +14,7 @@ namespace GsaGH
       activeObject.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, text);
     }
 
-    public static void AddRuntimeRemarkMsg(this IGH_ActiveObject activeObject, string text)
+    public static void AddRuntimeRemark(this IGH_ActiveObject activeObject, string text)
     {
       activeObject.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, text);
     }

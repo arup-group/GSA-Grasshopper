@@ -164,7 +164,7 @@ namespace GsaGH.Components
 
           DA.SetData(0, new GsaElement2dGoo(elem2d, false));
 
-          this.AddRuntimeRemarkMsg("This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
+          this.AddRuntimeRemark("This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
         }
       }
     }
@@ -263,9 +263,9 @@ namespace GsaGH.Components
       }
       this.Message = "Tol: " + Tolerance.ToString();
       if (Tolerance.Meters < 0.001)
-        this.AddRuntimeRemarkMsg("Set tolerance is quite small, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite small, you can change this by right-clicking the component.");
       if (Tolerance.Meters > 0.25)
-        this.AddRuntimeRemarkMsg("Set tolerance is quite large, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
