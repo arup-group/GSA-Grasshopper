@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel.Types.Transforms;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -116,12 +117,7 @@ namespace GsaGH.Components
       GsaResultsValues forceValues = reactionForceValues.Item1[0];
       filteredNodes = string.Join(" ", reactionForceValues.Item2);
 
-      // get geometry for display from results class
-      var xyzResults = forceValues.xyzResults;
-      var xxyyzzResults = forceValues.xxyyzzResults;
-
       #region Result point values
-
       LengthUnit lengthUnit = GetLenghtUnit(gsaResult);
 
       // Get nodes for point location and restraint check in case of reaction force
@@ -131,63 +127,8 @@ namespace GsaGH.Components
       // Lists to collect results
       Parallel.ForEach(nodes, node =>
       {
-        int nodeId = node.Key;
-        if (!xyzResults.ContainsKey(nodeId)) return;
-
-        var vector3d = new Vector3d();// create Vector
-        IQuantity forceValue = null;
-
-        // pick the right value to display
-        switch (_disp)
-        {
-          case (DisplayValue.X):
-            var xVal = xyzResults[nodeId][0].X;
-            vector3d = new Vector3d(xVal.As(this.ForceUnit) * scale, 0, 0);
-            forceValue = xVal.ToUnit(this.ForceUnit);
-            break;
-          case (DisplayValue.Y):
-            var yVal = xyzResults[nodeId][0].Y;
-            vector3d = new Vector3d(0, yVal.As(this.ForceUnit) * scale, 0);
-            forceValue = yVal.ToUnit(this.ForceUnit);
-            break;
-          case (DisplayValue.Z):
-            var zVal = xyzResults[nodeId][0].Z;
-            vector3d = new Vector3d(0, 0, zVal.As(this.ForceUnit) * scale);
-            forceValue = zVal.ToUnit(this.ForceUnit);
-            break;
-          case (DisplayValue.ResXYZ):
-            vector3d = new Vector3d(
-              xyzResults[nodeId][0].X.As(this.ForceUnit) * scale,
-              xyzResults[nodeId][0].Y.As(this.ForceUnit) * scale,
-              xyzResults[nodeId][0].Z.As(this.ForceUnit) * scale);
-            forceValue = xyzResults[nodeId][0].XYZ.ToUnit(this.ForceUnit);
-            break;
-          case (DisplayValue.XX):
-            var xxVal = xxyyzzResults[nodeId][0].X;
-            vector3d = new Vector3d(xxVal.As(this.MomentUnit) * scale, 0, 0);
-            forceValue = xxVal.ToUnit(this.MomentUnit);
-            break;
-          case (DisplayValue.YY):
-            var yyVal = xxyyzzResults[nodeId][0].Y;
-            vector3d = new Vector3d(0, yyVal.As(this.MomentUnit) * scale, 0);
-            forceValue = yyVal.ToUnit(this.MomentUnit);
-            break;
-          case (DisplayValue.ZZ):
-            var zzVal = xxyyzzResults[nodeId][0].Z;
-            vector3d = new Vector3d(0, 0, zzVal.As(this.MomentUnit) * scale);
-            forceValue = zzVal.ToUnit(this.MomentUnit);
-            break;
-          case (DisplayValue.ResXXYYZZ):
-            vector3d = new Vector3d(
-              xxyyzzResults[nodeId][0].X.As(this.MomentUnit) * scale,
-              xxyyzzResults[nodeId][0].Y.As(this.MomentUnit) * scale,
-              xxyyzzResults[nodeId][0].Z.As(this.MomentUnit) * scale);
-            forceValue = xxyyzzResults[nodeId][0].XYZ.ToUnit(this.MomentUnit);
-            break;
-        }
-
-        var reactionVector = new ReactionForceVector(nodeId, node.Value.Value.Point, vector3d, forceValue);
-        _reactionForceVectors.Add(reactionVector);
+        var reactionForceVector = GenerateReactionForceVectors(node, forceValues, scale);
+        if(reactionForceVector != null) _reactionForceVectors.Add(reactionForceVector);
       });
       #endregion
 
@@ -218,9 +159,67 @@ namespace GsaGH.Components
 
     }
 
-    private static void GenerateReactionForceVectors()
+    private ReactionForceVector GenerateReactionForceVectors(KeyValuePair<int,GsaNodeGoo> node, GsaResultsValues forceValues, double scale)
     {
+      var nodeId = node.Key;
+      var xyzResults = forceValues.xyzResults;
+      var xxyyzzResults = forceValues.xxyyzzResults;
+      
+      if (!xyzResults.ContainsKey(nodeId)) return null;
 
+      var vector3d = new Vector3d();// create Vector
+      IQuantity forceValue = null;
+      
+      // pick the right value to display
+      switch (_disp)
+      {
+        case (DisplayValue.X):
+          var xVal = xyzResults[nodeId][0].X;
+          vector3d = new Vector3d(xVal.As(this.ForceUnit) * scale, 0, 0);
+          forceValue = xVal.ToUnit(this.ForceUnit);
+          break;
+        case (DisplayValue.Y):
+          var yVal = xyzResults[nodeId][0].Y;
+          vector3d = new Vector3d(0, yVal.As(this.ForceUnit) * scale, 0);
+          forceValue = yVal.ToUnit(this.ForceUnit);
+          break;
+        case (DisplayValue.Z):
+          var zVal = xyzResults[nodeId][0].Z;
+          vector3d = new Vector3d(0, 0, zVal.As(this.ForceUnit) * scale);
+          forceValue = zVal.ToUnit(this.ForceUnit);
+          break;
+        case (DisplayValue.ResXYZ):
+          vector3d = new Vector3d(
+            xyzResults[nodeId][0].X.As(this.ForceUnit) * scale,
+            xyzResults[nodeId][0].Y.As(this.ForceUnit) * scale,
+            xyzResults[nodeId][0].Z.As(this.ForceUnit) * scale);
+          forceValue = xyzResults[nodeId][0].XYZ.ToUnit(this.ForceUnit);
+          break;
+        case (DisplayValue.XX):
+          var xxVal = xxyyzzResults[nodeId][0].X;
+          vector3d = new Vector3d(xxVal.As(this.MomentUnit) * scale, 0, 0);
+          forceValue = xxVal.ToUnit(this.MomentUnit);
+          break;
+        case (DisplayValue.YY):
+          var yyVal = xxyyzzResults[nodeId][0].Y;
+          vector3d = new Vector3d(0, yyVal.As(this.MomentUnit) * scale, 0);
+          forceValue = yyVal.ToUnit(this.MomentUnit);
+          break;
+        case (DisplayValue.ZZ):
+          var zzVal = xxyyzzResults[nodeId][0].Z;
+          vector3d = new Vector3d(0, 0, zzVal.As(this.MomentUnit) * scale);
+          forceValue = zzVal.ToUnit(this.MomentUnit);
+          break;
+        case (DisplayValue.ResXXYYZZ):
+          vector3d = new Vector3d(
+            xxyyzzResults[nodeId][0].X.As(this.MomentUnit) * scale,
+            xxyyzzResults[nodeId][0].Y.As(this.MomentUnit) * scale,
+            xxyyzzResults[nodeId][0].Z.As(this.MomentUnit) * scale);
+          forceValue = xxyyzzResults[nodeId][0].XYZ.ToUnit(this.MomentUnit);
+          break;
+      }
+
+      return new ReactionForceVector(nodeId, node.Value.Value.Point, vector3d, forceValue);
     }
 
     private bool IsGhObjectValid(GH_ObjectWrapper ghObject)
