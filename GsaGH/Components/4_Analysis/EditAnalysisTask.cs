@@ -131,7 +131,7 @@ namespace GsaGH.Components
 
         DA.SetData(0, new GsaAnalysisTaskGoo(gsaTask));
         //if (gsaTask.Type != GsaAnalysisTask.AnalysisType.Static)
-        //  this.AddRuntimeRemarkMsg("Please note that currently only 'Static' analysis tasks will work as input to the 'Analyse' component." + Environment.NewLine +
+        //  this.AddRuntimeRemark("Please note that currently only 'Static' analysis tasks will work as input to the 'Analyse' component." + Environment.NewLine +
         //    "As a workaround, it is possible to use either a seed model or the GWA component with the desired analysis tasks (and their dependencies) already set up.");
         DA.SetData(1, gsaTask.Name);
         if (gsaTask.Cases != null)

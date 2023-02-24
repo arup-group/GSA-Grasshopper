@@ -180,7 +180,7 @@ namespace GsaGH.Helpers.Export
               + "This indicates that you have set a tolerance that is too low."
               + System.Environment.NewLine + "Right-click the component to change the tolerance.");
           else if (nodeSurvivalRate < remarkSurvivalRate)
-            owner.AddRuntimeRemarkMsg(
+            owner.AddRuntimeRemark(
               new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)
               + " of the nodes were removed after collapsing coincident nodes." + System.Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."

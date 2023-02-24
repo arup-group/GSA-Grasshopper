@@ -76,7 +76,7 @@ namespace GsaGH.Components
       }
 
       if (cases == null)
-        this.AddRuntimeRemarkMsg("Default Task has been created; it will by default contain all cases found in model");
+        this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
 
       if (_analtype != GsaAnalysisTask.AnalysisType.Static)
         this.AddRuntimeWarning("It is currently not possible to adjust the solver settings. " +

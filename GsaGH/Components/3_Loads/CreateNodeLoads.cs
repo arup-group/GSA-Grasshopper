@@ -116,7 +116,7 @@ namespace GsaGH.Components
         else if (GH_Convert.ToPoint3d(gh_typ.Value, ref refPt, GH_Conversion.Both))
         {
           nodeLoad.RefPoint = refPt;
-          this.AddRuntimeRemarkMsg("Point loading in GsaGH will automatically find the corrosponding node and apply the load to that node by ID. If you save the file and continue working in GSA please note that the point-load relationship will be lost.");
+          this.AddRuntimeRemark("Point loading in GsaGH will automatically find the corrosponding node and apply the load to that node by ID. If you save the file and continue working in GSA please note that the point-load relationship will be lost.");
         }
         else if (GH_Convert.ToString(gh_typ.Value, out string nodeList, GH_Conversion.Both))
           nodeLoad.NodeLoad.Nodes = nodeList;
@@ -186,7 +186,7 @@ namespace GsaGH.Components
           case "YY":
           case "ZZ":
             load = ((Angle)Input.UnitNumber(this, DA, 4, AngleUnit.Radian)).Radians;
-            this.AddRuntimeRemarkMsg("Direction input is set to be rotational type, the output load has been set to as a rotation in Radian unit.");
+            this.AddRuntimeRemark("Direction input is set to be rotational type, the output load has been set to as a rotation in Radian unit.");
             break;
         }
       }

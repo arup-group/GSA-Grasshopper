@@ -124,7 +124,7 @@ namespace GsaGH.Components
             this.AddRuntimeWarning("Model contains no loads and has not been analysed, but has been assembled.");
           else
           {
-            this.AddRuntimeRemarkMsg("Model contained no Analysis Tasks. Default Task has been created containing all cases found in model");
+            this.AddRuntimeRemark("Model contained no Analysis Tasks. Default Task has been created containing all cases found in model");
             foreach (GsaAnalysisCase ca in task.Cases)
               model.Model.AddAnalysisCaseToTask(task.ID, ca.Name, ca.Description);
             gsaTasks = model.Model.AnalysisTasks();
@@ -305,9 +305,9 @@ namespace GsaGH.Components
       Length tol = new Length(this._tolerance, this.LengthUnit);
       this.Message = "Tol: " + tol.ToString();
       if (tol.Meters < 0.001)
-        this.AddRuntimeRemarkMsg("Set tolerance is quite small, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite small, you can change this by right-clicking the component.");
       if (tol.Meters > 0.25)
-        this.AddRuntimeRemarkMsg("Set tolerance is quite large, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     #endregion
 

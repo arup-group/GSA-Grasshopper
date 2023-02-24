@@ -155,7 +155,7 @@ namespace GsaGH.Components
             if (this.Params.Input[2].SourceCount == 0 && this._expansionType == ExpansionType.Use_GPS_Settings)
             {
               this._expansionType = ExpansionType.To_1D;
-              this.AddRuntimeRemarkMsg("Input Brep has automatically been converted to a GridPlaneSurface." + System.Environment.NewLine + "The default expansion type is set to be onto 1D Elements." + System.Environment.NewLine + "You can change this by right-clicking the component.");
+              this.AddRuntimeRemark("Input Brep has automatically been converted to a GridPlaneSurface." + System.Environment.NewLine + "The default expansion type is set to be onto 1D Elements." + System.Environment.NewLine + "You can change this by right-clicking the component.");
               this.UpdateMessage();
             }
 

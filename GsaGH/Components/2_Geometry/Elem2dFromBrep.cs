@@ -91,7 +91,7 @@ namespace GsaGH.Components
           }
           if (brep.Surfaces[0].IsPlanar())
           {
-            this.AddRuntimeRemarkMsg("Input Surface is planar. You may want to use Member2D component as this component is intended to help mesh non-planar Breps and provides less functionality than Member2D.");
+            this.AddRuntimeRemark("Input Surface is planar. You may want to use Member2D component as this component is intended to help mesh non-planar Breps and provides less functionality than Member2D.");
           }
 
           // 1 Points
@@ -199,7 +199,7 @@ namespace GsaGH.Components
           if (tuple.Item3 != null)
             DA.SetDataList(2, new List<GsaElement1dGoo>(tuple.Item3.Select(elem => new GsaElement1dGoo(elem, false))));
 
-          this.AddRuntimeRemarkMsg("This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) are unlikely to produce good results");
+          this.AddRuntimeRemark("This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) are unlikely to produce good results");
         }
       }
     }
@@ -298,9 +298,9 @@ namespace GsaGH.Components
       }
       this.Message = "Tol: " + Tolerance.ToString();
       if (Tolerance.Meters < 0.001)
-        this.AddRuntimeRemarkMsg("Set tolerance is quite small, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite small, you can change this by right-clicking the component.");
       if (Tolerance.Meters > 0.25)
-        this.AddRuntimeRemarkMsg("Set tolerance is quite large, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {

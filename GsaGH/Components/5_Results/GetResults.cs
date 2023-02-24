@@ -143,12 +143,12 @@ namespace GsaGH.Components
           }
           else
           {
-            this.AddRuntimeRemarkMsg("By default, all permutations have been selected.");
+            this.AddRuntimeRemark("By default, all permutations have been selected.");
             permutationIDs = new List<int>() { -1 };
           }
         }
         if (this.Params.Input[1].SourceCount == 0 && this.Params.Input[2].SourceCount == 0)
-          this.AddRuntimeRemarkMsg("By default, Analysis Case 1 has been selected.");
+          this.AddRuntimeRemark("By default, Analysis Case 1 has been selected.");
 
         // Get results from model and create result object
         switch (resultType)

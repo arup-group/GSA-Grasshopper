@@ -96,7 +96,7 @@ namespace GsaGH.Components
       {
         node.Point = new Point3d(0, 0, 0);
         if (Params.Input[2].SourceCount == 0)
-          this.AddRuntimeRemarkMsg("New node created at {0, 0, 0}");
+          this.AddRuntimeRemark("New node created at {0, 0, 0}");
       }
 
       if (node != null)

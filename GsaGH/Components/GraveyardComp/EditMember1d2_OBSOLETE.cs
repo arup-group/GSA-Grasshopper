@@ -253,7 +253,7 @@ namespace GsaGH.Components
         {
           mem.MeshSize = ((Length)Input.UnitNumber(this, DA, 12, DefaultUnits.LengthUnitGeometry, true)).Meters;
           if (DefaultUnits.LengthUnitGeometry != OasysUnits.Units.LengthUnit.Meter)
-            this.AddRuntimeRemarkMsg("Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
+            this.AddRuntimeRemark("Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
                 + Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }
 
