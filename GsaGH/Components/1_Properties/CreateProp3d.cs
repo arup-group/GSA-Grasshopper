@@ -57,7 +57,7 @@ namespace GsaGH.Components
             prop.Material = new GsaMaterial(idd);
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PV input to a 3D Property of reference integer");
+            this.AddRuntimeError("Unable to convert PV input to a 3D Property of reference integer");
             return;
           }
         }

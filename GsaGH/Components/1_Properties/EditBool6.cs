@@ -91,7 +91,7 @@ namespace GsaGH.Components
         DA.SetData(6, mybool.ZZ);
       }
       else
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Bool6 is Null");
+        this.AddRuntimeError("Bool6 is Null");
     }
   }
 }

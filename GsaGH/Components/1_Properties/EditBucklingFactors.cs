@@ -105,7 +105,7 @@ namespace GsaGH.Components
         DA.SetData(6, (fls.LengthIsSet && fls.LateralTorsionalBucklingFactor.HasValue) ? new GH_UnitNumber(fls.Length * fls.LateralTorsionalBucklingFactor) : null);
       }
       else
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Buckling Factors is Null");
+        this.AddRuntimeError("Buckling Factors is Null");
     }
   }
 }

@@ -81,7 +81,7 @@ namespace GsaGH.Components
       GsaMember3d mem = new GsaMember3d();
       if (DA.GetData(0, ref gsaMember3d))
       {
-        if (gsaMember3d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member3D input is null"); }
+        if (gsaMember3d == null) { this.AddRuntimeWarning("Member3D input is null"); }
         mem = gsaMember3d.Duplicate(true);
       }
 
@@ -108,7 +108,7 @@ namespace GsaGH.Components
             mem = mem.UpdateGeometry(mesh);
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input to a 3D Member");
+            this.AddRuntimeError("Unable to convert Geometry input to a 3D Member");
             return;
           }
         }
@@ -126,7 +126,7 @@ namespace GsaGH.Components
               prop3d = new GsaProp3d(id);
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 3D Property of reference integer");
+              this.AddRuntimeError("Unable to convert PA input to a 3D Property of reference integer");
               return;
             }
           }

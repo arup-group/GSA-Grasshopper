@@ -105,7 +105,7 @@ namespace GsaGH.Components
           GH_ObjectWrapper gh_typ = gh_types[i];
           if (gh_typ == null || gh_typ.Value == null)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+            this.AddRuntimeWarning("Input is null");
             return;
           }
           if (gh_typ.Value is GsaResultGoo)
@@ -114,7 +114,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
+            this.AddRuntimeError("Error converting input to GSA Result");
             return;
           }
 

@@ -89,7 +89,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input " + Params.Input[0].NickName + " to GSA Model");
+          this.AddRuntimeError("Error converting input " + Params.Input[0].NickName + " to GSA Model");
           return;
         }
 
@@ -111,7 +111,7 @@ namespace GsaGH.Components
             }
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input " + Params.Input[1].NickName + " to 'Analysis' or 'Combination'");
+              this.AddRuntimeError("Error converting input " + Params.Input[1].NickName + " to 'Analysis' or 'Combination'");
               return;
             }
           }
@@ -127,7 +127,7 @@ namespace GsaGH.Components
             caseID = analCase;
           if (caseID < 1)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input " + Params.Input[2].NickName + " must be above 0");
+            this.AddRuntimeError("Input " + Params.Input[2].NickName + " must be above 0");
             return;
           }
         }
@@ -143,12 +143,12 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "By default, all permutations have been selected.");
+            this.AddRuntimeRemarkMsg("By default, all permutations have been selected.");
             permutationIDs = new List<int>() { -1 };
           }
         }
         if (this.Params.Input[1].SourceCount == 0 && this.Params.Input[2].SourceCount == 0)
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "By default, Analysis Case 1 has been selected.");
+          this.AddRuntimeRemarkMsg("By default, Analysis Case 1 has been selected.");
 
         // Get results from model and create result object
         switch (resultType)
@@ -159,14 +159,14 @@ namespace GsaGH.Components
               _analysisCaseResults = model.Model.Results();
               if (_analysisCaseResults == null || _analysisCaseResults.Count == 0)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No Analysis Case Results exist in Model");
+                this.AddRuntimeError("No Analysis Case Results exist in Model");
                 return;
               }
             }
 
             if (!_analysisCaseResults.ContainsKey(caseID))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Case does not exist in model");
+              this.AddRuntimeError("Analysis Case does not exist in model");
               return;
             }
 
@@ -183,14 +183,14 @@ namespace GsaGH.Components
               _combinationCaseResults = model.Model.CombinationCaseResults();
               if (_combinationCaseResults == null || _combinationCaseResults.Count == 0)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No Combination Case Results exist in Model");
+                this.AddRuntimeError("No Combination Case Results exist in Model");
                 return;
               }
             }
 
             if (!_combinationCaseResults.ContainsKey(caseID))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Combination Case does not exist in model");
+              this.AddRuntimeError("Combination Case does not exist in model");
               return;
             }
 
@@ -207,7 +207,7 @@ namespace GsaGH.Components
             {
               if (permutationIDs.Max() > nP)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Combination Case C" + caseID + " only contains " + nP + " permutations but the highest permutation in input is " + permutationIDs.Max());
+                this.AddRuntimeError("Combination Case C" + caseID + " only contains " + nP + " permutations but the highest permutation in input is " + permutationIDs.Max());
                 return;
               }
             }

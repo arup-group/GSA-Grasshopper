@@ -80,7 +80,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input " + Params.Input[0].NickName + " to GSA Model");
+          this.AddRuntimeError("Error converting input " + Params.Input[0].NickName + " to GSA Model");
           return;
         }
 

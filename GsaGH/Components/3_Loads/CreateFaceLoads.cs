@@ -95,9 +95,9 @@ namespace GsaGH.Components
           faceLoad.RefObjectGuid = goo.Value.Guid;
           faceLoad.ReferenceType = ReferenceType.Member;
           if (_mode != FoldMode.Uniform)
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+            this.AddRuntimeWarning("Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
           else
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+            this.AddRuntimeRemarkMsg("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaProp2dGoo)
         {
@@ -207,7 +207,7 @@ namespace GsaGH.Components
             faceLoad.FaceLoad.SetValue(0, ((Pressure)Input.UnitNumber(this, DA, 6, ForcePerAreaUnit)).NewtonsPerSquareMeter);
             //faceLoad.Position.X = r; //note Vector2 currently only get in GsaAPI
             //faceLoad.Position.Y = s;
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning: the position cannot be set in GsaAPI at the moment");
+            this.AddRuntimeWarning("Warning: the position cannot be set in GsaAPI at the moment");
           }
           break;
 
@@ -228,7 +228,7 @@ namespace GsaGH.Components
 
             //faceLoad.FaceLoad. = edge; //note implementation of edge-load is not yet supported in GsaAPI
 
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning: edge-load is not yet supported in GsaAPI");
+            this.AddRuntimeWarning("Warning: edge-load is not yet supported in GsaAPI");
           }
           break;
 

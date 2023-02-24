@@ -66,7 +66,7 @@ namespace GsaGH.Components
       {
         if (gps == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Null GridPlaneSurface");
+          this.AddRuntimeWarning("Null GridPlaneSurface");
           return;
         }
 

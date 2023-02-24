@@ -112,7 +112,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
+            this.AddRuntimeError("Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
                 Environment.NewLine + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
             return;
           }

@@ -90,7 +90,7 @@ namespace GsaGH.Components
             if (double.TryParse(elevation_in, out elevation))
               gps.Elevation = elevation_in;
             else
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+              this.AddRuntimeWarning(e.Message);
           }
         }
         if (elevation != 0)
@@ -141,7 +141,7 @@ namespace GsaGH.Components
               if (double.TryParse(tol_in, out double tolerance))
                 gps.StoreyToleranceAbove = tol_in;
               else
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+                this.AddRuntimeWarning(e.Message);
             }
           }
         }
@@ -163,7 +163,7 @@ namespace GsaGH.Components
               if (double.TryParse(tol_in, out double tolerance))
                 gps.StoreyToleranceBelow = tol_in;
               else
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+                this.AddRuntimeWarning(e.Message);
             }
           }
         }

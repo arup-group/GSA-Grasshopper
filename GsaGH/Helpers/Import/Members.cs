@@ -101,7 +101,7 @@ namespace GsaGH.Helpers.Import
               {
                 string error = " Invalid topology Mem1D ID: " + key + ".";
                 if (owner != null)
-                  owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, error);
+                  owner.AddRuntimeWarning(error);
                 return;
               }
 
@@ -115,7 +115,7 @@ namespace GsaGH.Helpers.Import
               {
                 string error = " Invalid topology Mem2D ID: " + key + ".";
                 if (owner != null)
-                  owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, error);
+                  owner.AddRuntimeWarning(error);
                 return;
               }
 

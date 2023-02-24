@@ -63,7 +63,7 @@ namespace GsaGH.Components
       {
         if (gsaMaterial.AnalysisMaterial == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "One or more materials are not custom material");
+          this.AddRuntimeWarning("One or more materials are not custom material");
           return;
         }
 

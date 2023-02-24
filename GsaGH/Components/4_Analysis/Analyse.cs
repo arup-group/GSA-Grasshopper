@@ -89,7 +89,7 @@ namespace GsaGH.Components
           mem1ds == null & mem2ds == null & mem3ds == null & sections == null
           & prop2Ds == null & loads == null & gridPlaneSurfaces == null)
       {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameters failed to collect data");
+        this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
       #endregion
@@ -121,10 +121,10 @@ namespace GsaGH.Components
           task.ID = model.Model.AddAnalysisTask();
           task.CreateDefaultCases(model.Model);
           if (task.Cases == null || task.Cases.Count == 0)
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Model contains no loads and has not been analysed, but has been assembled.");
+            this.AddRuntimeWarning("Model contains no loads and has not been analysed, but has been assembled.");
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model contained no Analysis Tasks. Default Task has been created containing all cases found in model");
+            this.AddRuntimeRemarkMsg("Model contained no Analysis Tasks. Default Task has been created containing all cases found in model");
             foreach (GsaAnalysisCase ca in task.Cases)
               model.Model.AddAnalysisCaseToTask(task.ID, ca.Name, ca.Description);
             gsaTasks = model.Model.AnalysisTasks();
@@ -141,7 +141,7 @@ namespace GsaGH.Components
             if (apielems[key].IsDummy == false)
             {
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to analyse model. Element ID " + key + " has no property set!");
+                this.AddRuntimeError("Unable to analyse model. Element ID " + key + " has no property set!");
                 tryAnalyse = false;
               }
             }
@@ -156,7 +156,7 @@ namespace GsaGH.Components
             string message = "A dll required to run analysis has been previously loaded by another application. Please remove this file and try again:" + System.Environment.NewLine
              + System.Environment.NewLine + GsaGH.SolverRequiredDll.loadedFromPath 
             +System.Environment.NewLine + "Either uninstall the host application or delete the file.";
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, message);
+            this.AddRuntimeError(message);
           }
         }
 
@@ -169,13 +169,13 @@ namespace GsaGH.Components
               if (model.Model.Analyse(task.Key))
                 PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse", apielems.Count);
               else
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
+                this.AddRuntimeWarning("Analysis Case " + task.Key + " could not be analysed");
               if (!model.Model.Results().ContainsKey(task.Key))
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case " + task.Key + " could not be analysed");
+                this.AddRuntimeWarning("Analysis Case " + task.Key + " could not be analysed");
             }
             catch (Exception e)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+              this.AddRuntimeError(e.Message);
             }
           }
           model.Guid = Guid.NewGuid();
@@ -305,9 +305,9 @@ namespace GsaGH.Components
       Length tol = new Length(this._tolerance, this.LengthUnit);
       this.Message = "Tol: " + tol.ToString();
       if (tol.Meters < 0.001)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
+        this.AddRuntimeRemarkMsg("Set tolerance is quite small, you can change this by right-clicking the component.");
       if (tol.Meters > 0.25)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
+        this.AddRuntimeRemarkMsg("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     #endregion
 

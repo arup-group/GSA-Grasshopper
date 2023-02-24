@@ -59,7 +59,7 @@ namespace GsaGH.Helpers.Export
             {
               string warning = "One or more GravityLoads with reference to a " + load.GravityLoad.ReferenceType + " could not be added to the model. Ensure the reference " + load.GravityLoad.ReferenceType + " has been added to the model.";
               if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning))
-                owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, warning);
+                owner.AddRuntimeWarning(warning);
               break;
             }
           }
@@ -79,7 +79,7 @@ namespace GsaGH.Helpers.Export
             {
               string warning = "One or more BeamLoads with reference to a " + load.BeamLoad.ReferenceType + " could not be added to the model. Ensure the reference " + load.BeamLoad.ReferenceType + " has been added to the model.";
               if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning))
-                owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, warning);
+                owner.AddRuntimeWarning(warning);
               break;
             }
           }
@@ -99,7 +99,7 @@ namespace GsaGH.Helpers.Export
             {
               string warning = "One or more FaceLoads with reference to a " + load.FaceLoad.ReferenceType + " could not be added to the model. Ensure the reference " + load.FaceLoad.ReferenceType + " has been added to the model.";
               if (!owner.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Contains(warning))
-                owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, warning);
+                owner.AddRuntimeWarning(warning);
               break;
             }
           }

@@ -129,7 +129,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Material Type input");
+            this.AddRuntimeError("Unable to convert Material Type input");
             return;
           }
         }
@@ -150,7 +150,7 @@ namespace GsaGH.Components
         DA.SetData(3, material.GradeProperty);
       }
       else
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Material is Null");
+        this.AddRuntimeError("Material is Null");
     }
   }
 }

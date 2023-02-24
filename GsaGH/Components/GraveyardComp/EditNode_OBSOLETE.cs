@@ -79,8 +79,8 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaNodeGoo)
         {
           gh_typ.CastTo(ref node);
-          if (node == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
-          if (node.ApiNode == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
+          if (node == null) { this.AddRuntimeError("Node input is null"); }
+          if (node.ApiNode == null) { this.AddRuntimeError("Node input is null"); }
         }
         else if (GH_Convert.ToPoint3d(gh_typ.Value, ref tempPt, GH_Conversion.Both))
         {
@@ -88,7 +88,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert input to Node");
+          this.AddRuntimeError("Unable to convert input to Node");
           return;
         }
       }
@@ -96,7 +96,7 @@ namespace GsaGH.Components
       {
         node.Point = new Point3d(0, 0, 0);
         if (Params.Input[2].SourceCount == 0)
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "New node created at {0, 0, 0}");
+          this.AddRuntimeRemarkMsg("New node created at {0, 0, 0}");
       }
 
       if (node != null)

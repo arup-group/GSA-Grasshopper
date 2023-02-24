@@ -84,7 +84,7 @@ namespace GsaGH.Components
         for (int i = 0; i < gh_types.Count; i++)
         {
           gh_typ = gh_types[i];
-          if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Node input (index: " + i + ") is null and has been ignored"); continue; }
+          if (gh_typ == null) { Params.Owner.AddRuntimeWarning("Node input (index: " + i + ") is null and has been ignored"); continue; }
 
           if (gh_typ.Value is GsaNodeGoo)
           {
@@ -94,7 +94,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Node input");
+            this.AddRuntimeError("Error in Node input");
             return;
           }
         }
@@ -106,7 +106,7 @@ namespace GsaGH.Components
         for (int i = 0; i < gh_types.Count; i++)
         {
           gh_typ = gh_types[i];
-          if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input (index: " + i + ") is null and has been ignored"); continue; }
+          if (gh_typ == null) { Params.Owner.AddRuntimeWarning("Member1D input (index: " + i + ") is null and has been ignored"); continue; }
 
           if (gh_typ.Value is GsaMember1dGoo)
           {
@@ -116,7 +116,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Mem1D input");
+            this.AddRuntimeError("Error in Mem1D input");
             return;
           }
         }
@@ -130,7 +130,7 @@ namespace GsaGH.Components
         for (int i = 0; i < gh_types.Count; i++)
         {
           gh_typ = gh_types[i];
-          if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input (index: " + i + ") is null and has been ignored"); continue; }
+          if (gh_typ == null) { Params.Owner.AddRuntimeWarning("Member2D input (index: " + i + ") is null and has been ignored"); continue; }
 
           if (gh_typ.Value is GsaMember2dGoo)
           {
@@ -140,7 +140,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Mem2D input");
+            this.AddRuntimeError("Error in Mem2D input");
             return;
           }
         }
@@ -154,7 +154,7 @@ namespace GsaGH.Components
         for (int i = 0; i < gh_types.Count; i++)
         {
           gh_typ = gh_types[i];
-          if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member3D input (index: " + i + ") is null and has been ignored"); continue; }
+          if (gh_typ == null) { Params.Owner.AddRuntimeWarning("Member3D input (index: " + i + ") is null and has been ignored"); continue; }
 
           if (gh_typ.Value is GsaMember3dGoo)
           {
@@ -164,7 +164,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in Mem3D input");
+            this.AddRuntimeError("Error in Mem3D input");
             return;
           }
         }
@@ -173,7 +173,7 @@ namespace GsaGH.Components
       // manually add a warning if no input is set, as all three inputs are optional
       if (in_mem1ds.Count < 1 & in_mem2ds.Count < 1 & in_mem3ds.Count < 1)
       {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameters failed to collect data");
+        this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
       #endregion
@@ -382,9 +382,9 @@ namespace GsaGH.Components
       Length tol = new Length(this._tolerance, this.LengthUnit);
       this.Message = "Tol: " + tol.ToString();
       if (tol.Meters < 0.001)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
+        this.AddRuntimeRemarkMsg("Set tolerance is quite small, you can change this by right-clicking the component.");
       if (tol.Meters > 0.25)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
+        this.AddRuntimeRemarkMsg("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     #endregion
 
