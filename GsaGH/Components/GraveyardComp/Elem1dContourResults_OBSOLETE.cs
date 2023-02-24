@@ -88,7 +88,7 @@ namespace GsaGH.Components
           result = ((GsaResultGoo)gh_typ.Value).Value;
           if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination case contains "
+            this.AddRuntimeWarning("Combination case contains "
                 + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
@@ -99,7 +99,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
+          this.AddRuntimeError("Error converting input to GSA Result");
           return;
         }
 

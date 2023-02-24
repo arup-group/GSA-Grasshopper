@@ -98,7 +98,7 @@ namespace GsaGH.Components
           for (int i = 0; i < gh_types.Count; i++)
           {
             GH_ObjectWrapper gh_typ2 = gh_types[i];
-            if (gh_typ2 == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case input (index: " + i + ") is null and has been ignored"); continue; }
+            if (gh_typ2 == null) { Params.Owner.AddRuntimeWarning("Analysis Case input (index: " + i + ") is null and has been ignored"); continue; }
             if (gh_typ2.Value is GsaAnalysisCaseGoo)
             {
               cases.Add(((GsaAnalysisCaseGoo)gh_typ2.Value).Value.Duplicate());
@@ -108,7 +108,7 @@ namespace GsaGH.Components
               string typ = gh_typ2.Value.GetType().ToString();
               typ = typ.Replace("GsaGH.Parameters.", "");
               typ = typ.Replace("Goo", "");
-              Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Analysis Case input parameter of type " +
+              Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type " +
                   typ + " to GsaAnalysisCase");
               return;
             }
@@ -131,7 +131,7 @@ namespace GsaGH.Components
 
         DA.SetData(0, new GsaAnalysisTaskGoo(gsaTask));
         //if (gsaTask.Type != GsaAnalysisTask.AnalysisType.Static)
-        //  AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Please note that currently only 'Static' analysis tasks will work as input to the 'Analyse' component." + Environment.NewLine +
+        //  this.AddRuntimeRemarkMsg("Please note that currently only 'Static' analysis tasks will work as input to the 'Analyse' component." + Environment.NewLine +
         //    "As a workaround, it is possible to use either a seed model or the GWA component with the desired analysis tasks (and their dependencies) already set up.");
         DA.SetData(1, gsaTask.Name);
         if (gsaTask.Cases != null)
@@ -146,7 +146,7 @@ namespace GsaGH.Components
         string type = gh_typ.Value.GetType().ToString();
         type = type.Replace("GsaGH.Parameters.", "");
         type = type.Replace("Goo", "");
-        Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Analysis Task input parameter of type " +
+        Params.Owner.AddRuntimeError("Unable to convert Analysis Task input parameter of type " +
             type + " to GsaAnalysisTask");
         return;
       }

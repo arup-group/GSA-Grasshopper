@@ -255,7 +255,7 @@ namespace GsaGH.Components
             if (!MatchAndAdd(this.SelectedItems[3], this._search, ref filteredlist, tryHard))
             {
               this.ProfileString = new List<string>();
-              this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No profile found that matches selected profile and search!");
+              this.AddRuntimeWarning("No profile found that matches selected profile and search!");
             }
           }
           else if (this._search != "")
@@ -288,7 +288,7 @@ namespace GsaGH.Components
           }
           else
           {
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No profile found that matches selection and search!");
+            this.AddRuntimeWarning("No profile found that matches selection and search!");
             return;
           }
         }
@@ -543,14 +543,14 @@ namespace GsaGH.Components
           int pileCount = 0;
           if (!DA.GetData(2, ref pileCount))
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert input PileCount to integer.");
+            this.AddRuntimeError("Unable to convert input PileCount to integer.");
             return;
           }
 
           bool isWallNotSection = false;
           if (!DA.GetData(3, ref isWallNotSection))
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert input isWall to boolean.");
+            this.AddRuntimeError("Unable to convert input isWall to boolean.");
             return;
           }
 
@@ -647,7 +647,7 @@ namespace GsaGH.Components
                 ctrl_pts = tempCrv.ToList();
               else
               {
-                this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Cannot convert edge to Polyline");
+                this.AddRuntimeError("Cannot convert edge to Polyline");
                 return;
               }
 
@@ -756,7 +756,7 @@ namespace GsaGH.Components
                   }
                   else
                   {
-                    this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Cannot convert internal edge to Polyline");
+                    this.AddRuntimeError("Cannot convert internal edge to Polyline");
                     return;
                   }
                 }
@@ -790,7 +790,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to create profile");
+          this.AddRuntimeError("Unable to create profile");
           return;
         }
 
@@ -798,11 +798,11 @@ namespace GsaGH.Components
         //{
         //    Oasys.Collections.IList<Oasys.AdSec.IWarning> warn = profile.Validate();
         //    foreach (Oasys.AdSec.IWarning warning in warn)
-        //        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, warning.Description);
+        //        AddRuntimeError(warning.Description);
         //}
         //catch (Exception e)
         //{
-        //    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+        //    AddRuntimeError(e.Message);
         //    return;
         //}
 

@@ -61,7 +61,7 @@ namespace GsaGH.Components
           gh_typ.CastTo(ref mem);
           if (mem == null)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is null");
+            this.AddRuntimeError("Input is null");
             return;
           }
           axes = mem.LocalAxes;
@@ -71,7 +71,7 @@ namespace GsaGH.Components
             model.Model = Helpers.Export.AssembleModel.Assemble(model, new List<GsaNode>(), new List<GsaElement1d>(), new List<GsaElement2d>(), new List<GsaElement3d>(), new List<GsaMember1d>() { mem }, new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(), new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(), new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(), new List<GsaCombinationCase>(), LengthUnit.Meter, -1, false, null);
 
             axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Members´s local axes might deviate from the local axes in the assembled GSA model.");
+            this.AddRuntimeWarning("Members´s local axes might deviate from the local axes in the assembled GSA model.");
           }
           midPt = mem.PolyCurve.PointAtNormalizedLength(0.5);
           size = mem.PolyCurve.GetLength() * 0.05;
@@ -81,7 +81,7 @@ namespace GsaGH.Components
           gh_typ.CastTo(ref elem);
           if (elem == null)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is null");
+            this.AddRuntimeError("Input is null");
             return;
           }
           axes = elem.LocalAxes;
@@ -91,14 +91,14 @@ namespace GsaGH.Components
             model.Model = Helpers.Export.AssembleModel.Assemble(model, new List<GsaNode>(), new List<GsaElement1d>() { elem }, new List<GsaElement2d>(), new List<GsaElement3d>(), new List<GsaMember1d>(), new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(), new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(), new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(), new List<GsaCombinationCase>(), LengthUnit.Meter, -1, false, null);
 
             axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element´s local axes might deviate from the local axes in the assembled GSA model.");
+            this.AddRuntimeWarning("Element´s local axes might deviate from the local axes in the assembled GSA model.");
           }
           midPt = elem.Line.PointAtNormalizedLength(0.5);
           size = elem.Line.GetLength() * 0.05;
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert input to Element1D or Member1D");
+          this.AddRuntimeError("Unable to convert input to Element1D or Member1D");
           return;
         }
 

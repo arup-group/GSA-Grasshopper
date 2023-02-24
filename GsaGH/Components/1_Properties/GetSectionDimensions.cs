@@ -76,7 +76,7 @@ namespace GsaGH.Components
             gsaSection = new GsaSection(profileIn);
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid profile syntax: " + profileIn);
+            this.AddRuntimeWarning("Invalid profile syntax: " + profileIn);
             return;
           }
         }
@@ -84,7 +84,7 @@ namespace GsaGH.Components
         string profile = gsaSection.Profile;
         if (profile.Trim() == "")
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Profile not set in Section");
+          this.AddRuntimeWarning("Profile not set in Section");
           return;
         }
         string[] parts = profile.Split(' ');
@@ -459,7 +459,7 @@ namespace GsaGH.Components
           DA.SetData(i, "CAT " + profile.Split(' ')[1]);
         }
         else
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to get dimensions for type " + type[0]);
+          this.AddRuntimeError("Unable to get dimensions for type " + type[0]);
       }
     }
 

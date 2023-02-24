@@ -55,7 +55,7 @@ namespace GsaGH.Components
             gsaSection = new GsaSection(profile);
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid profile syntax: " + profile);
+            this.AddRuntimeWarning("Invalid profile syntax: " + profile);
             return;
           }
 
@@ -75,7 +75,7 @@ namespace GsaGH.Components
                 gsaSection.Material = new GsaMaterial(idd);
               else
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+                this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
                 return;
               }
             }

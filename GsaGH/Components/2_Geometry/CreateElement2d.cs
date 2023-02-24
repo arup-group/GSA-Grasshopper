@@ -49,7 +49,7 @@ namespace GsaGH.Components
       GH_Mesh ghmesh = new GH_Mesh();
       if (DA.GetData(0, ref ghmesh))
       {
-        if (ghmesh == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Mesh input is null"); }
+        if (ghmesh == null) { this.AddRuntimeWarning("Mesh input is null"); }
         Mesh mesh = new Mesh();
         if (GH_Convert.ToMesh(ghmesh, ref mesh, GH_Conversion.Both))
         {
@@ -65,7 +65,7 @@ namespace GsaGH.Components
               prop2d = new GsaProp2d(id);
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property or reference integer");
+              this.AddRuntimeError("Unable to convert PA input to a 2D Property or reference integer");
               return;
             }
 

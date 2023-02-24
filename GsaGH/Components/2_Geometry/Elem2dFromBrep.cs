@@ -70,13 +70,13 @@ namespace GsaGH.Components
       GH_Brep ghbrep = new GH_Brep();
       if (DA.GetData(0, ref ghbrep))
       {
-        if (ghbrep == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Brep input is null"); }
+        if (ghbrep == null) { this.AddRuntimeWarning("Brep input is null"); }
         Brep brep = new Brep();
         if (GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
         {
           if (!brep.IsValidGeometry(out string log))
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input Brep is not valid: " + log);
+            this.AddRuntimeError("Input Brep is not valid: " + log);
             return;
           }
           if (brep.Surfaces.Count > 1)
@@ -85,13 +85,13 @@ namespace GsaGH.Components
             inBrep.Faces.ShrinkFaces();
             if (inBrep.Surfaces.Count > 1)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input Brep contains more than one surface. This component is will only work with single surfaces.");
+              this.AddRuntimeError("Input Brep contains more than one surface. This component is will only work with single surfaces.");
               return;
             }
           }
           if (brep.Surfaces[0].IsPlanar())
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Input Surface is planar. You may want to use Member2D component as this component is intended to help mesh non-planar Breps and provides less functionality than Member2D.");
+            this.AddRuntimeRemarkMsg("Input Surface is planar. You may want to use Member2D component as this component is intended to help mesh non-planar Breps and provides less functionality than Member2D.");
           }
 
           // 1 Points
@@ -118,7 +118,7 @@ namespace GsaGH.Components
                 string type = gh_types[i].Value.GetType().ToString();
                 type = type.Replace("GsaGH.Parameters.", "");
                 type = type.Replace("Goo", "");
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert incl. Point/Node input parameter of type " +
+                this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type " +
                     type + " to point or node");
               }
             }
@@ -155,7 +155,7 @@ namespace GsaGH.Components
                 string type = gh_types[i].Value.GetType().ToString();
                 type = type.Replace("GsaGH.Parameters.", "");
                 type = type.Replace("Goo", "");
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert incl. Curve/Mem1D input parameter of type " +
+                this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type " +
                     type + " to curve or 1D Member");
               }
             }
@@ -181,7 +181,7 @@ namespace GsaGH.Components
                 prop2d.Id = idd;
               else
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
+                this.AddRuntimeError("Unable to convert PA input to a 2D Property of reference integer");
                 return;
               }
             }
@@ -199,7 +199,7 @@ namespace GsaGH.Components
           if (tuple.Item3 != null)
             DA.SetDataList(2, new List<GsaElement1dGoo>(tuple.Item3.Select(elem => new GsaElement1dGoo(elem, false))));
 
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) are unlikely to produce good results");
+          this.AddRuntimeRemarkMsg("This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) are unlikely to produce good results");
         }
       }
     }
@@ -298,9 +298,9 @@ namespace GsaGH.Components
       }
       this.Message = "Tol: " + Tolerance.ToString();
       if (Tolerance.Meters < 0.001)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
+        this.AddRuntimeRemarkMsg("Set tolerance is quite small, you can change this by right-clicking the component.");
       if (Tolerance.Meters > 0.25)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
+        this.AddRuntimeRemarkMsg("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {

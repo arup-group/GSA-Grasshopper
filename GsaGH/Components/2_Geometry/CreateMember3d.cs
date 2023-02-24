@@ -51,7 +51,7 @@ namespace GsaGH.Components
       GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
       if (DA.GetData(0, ref gh_typ))
       {
-        if (gh_typ == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Solid input is null"); }
+        if (gh_typ == null) { this.AddRuntimeWarning("Solid input is null"); }
         GsaMember3d mem = new GsaMember3d();
         Brep brep = new Brep();
         Mesh mesh = new Mesh();
@@ -65,13 +65,13 @@ namespace GsaGH.Components
             }
             catch (Exception e)
             {
-              this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+              this.AddRuntimeWarning(e.Message);
               return;
             }
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "S input is not a valid Brep geometry");
+            this.AddRuntimeWarning("S input is not a valid Brep geometry");
             return;
           }
         }
@@ -83,13 +83,13 @@ namespace GsaGH.Components
           }
           catch (Exception e)
           {
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+            this.AddRuntimeWarning(e.Message);
             return;
           }
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Geometry input to a 3D Member");
+          this.AddRuntimeError("Unable to convert Geometry input to a 3D Member");
           return;
         }
 
@@ -116,7 +116,7 @@ namespace GsaGH.Components
               mem.Prop3d = new GsaProp3d(id);
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert PA input to a 2D Property of reference integer");
+              this.AddRuntimeWarning("Unable to convert PA input to a 2D Property of reference integer");
             }
           }
         }

@@ -79,21 +79,21 @@ namespace GsaGH.Components
           GsaMember1dGoo goo = (GsaMember1dGoo)gh_typ.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
           gravityLoad.ReferenceType = ReferenceType.Member;
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+          this.AddRuntimeRemarkMsg("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaMember2dGoo)
         {
           GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
           gravityLoad.ReferenceType = ReferenceType.Member;
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+          this.AddRuntimeRemarkMsg("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaMember3dGoo)
         {
           GsaMember3dGoo goo = (GsaMember3dGoo)gh_typ.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
           gravityLoad.ReferenceType = ReferenceType.Member;
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+          this.AddRuntimeRemarkMsg("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaSectionGoo)
         {
@@ -137,7 +137,7 @@ namespace GsaGH.Components
       factor.X = vect.X; factor.Y = vect.Y; factor.Z = vect.Z;
 
       if (vect.Z > 0)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Just a friendly note that your gravity vector is pointing upwards and that is not normal.");
+        this.AddRuntimeRemarkMsg("Just a friendly note that your gravity vector is pointing upwards and that is not normal.");
 
       gravityLoad.GravityLoad.Factor = factor;
 

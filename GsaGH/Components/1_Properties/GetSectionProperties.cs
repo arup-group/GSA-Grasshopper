@@ -75,7 +75,7 @@ namespace GsaGH.Components
             gsaSection = new GsaSection(profile);
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid profile syntax: " + profile);
+            this.AddRuntimeWarning("Invalid profile syntax: " + profile);
             return;
           }
         }

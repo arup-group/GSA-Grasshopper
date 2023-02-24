@@ -84,7 +84,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + Environment.NewLine + status.ToString());
+            this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
             return;
           }
         }
@@ -101,7 +101,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model");
+          this.AddRuntimeError("Unable to open Model");
           return;
         }
       }
@@ -125,7 +125,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to open Model" + Environment.NewLine + status.ToString());
+          this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
           return;
         }
       }

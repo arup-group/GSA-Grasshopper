@@ -125,7 +125,7 @@ namespace GsaGH.Helpers.Export
           {
             double minMeshSize = apiMemDict.Values.Where(x => x.MeshSize != 0).Select(x => x.MeshSize).Min();
             if (minMeshSize < toleranceCoincidentNodes)
-              owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+              owner.AddRuntimeWarning(
                 "The smallest mesh size (" + minMeshSize + ") is smaller than the set tolerance (" + toleranceCoincidentNodes + ")."
                 + System.Environment.NewLine + "This is likely to produce an undisarable mesh."
                 + System.Environment.NewLine + "Right-click the component to change the tolerance.");
@@ -169,18 +169,18 @@ namespace GsaGH.Helpers.Export
           double remarkSurvivalRate = elemCount > memCount ? 0.5 : 0.75;
 
           if (newNodeCount == 1)
-            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+            owner.AddRuntimeWarning(
               "After collapsing coincident nodes only one node remained." + System.Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."
               + System.Environment.NewLine + "Right-click the component to change the tolerance.");
           else if (nodeSurvivalRate < warningSurvivalRate)
-            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+            owner.AddRuntimeWarning(
               new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)
               + " of the nodes were removed after collapsing coincident nodes." + System.Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."
               + System.Environment.NewLine + "Right-click the component to change the tolerance.");
           else if (nodeSurvivalRate < remarkSurvivalRate)
-            owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark,
+            owner.AddRuntimeRemarkMsg(
               new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString("g0").Replace(" ", string.Empty)
               + " of the nodes were removed after collapsing coincident nodes." + System.Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."

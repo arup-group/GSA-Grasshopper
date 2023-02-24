@@ -162,7 +162,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Load");
+          this.AddRuntimeError("Error converting input to GSA Load");
           return;
         }
       }
@@ -235,7 +235,7 @@ namespace GsaGH.Components
       }
       catch (Exception e)
       {
-        this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+        this.AddRuntimeError(e.Message);
       }
     }
     #endregion

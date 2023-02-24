@@ -69,7 +69,7 @@ namespace GsaGH.Components
         material.AnalysisProperty = anal;
         if (anal == 0)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Material ID cannot be 0 - that is 'from Grade'. " +
+          this.AddRuntimeError("Analysis Material ID cannot be 0 - that is 'from Grade'. " +
                Environment.NewLine + "Leave blank or use -1 for automatic assigning.");
           return;
         }

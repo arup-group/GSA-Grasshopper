@@ -119,7 +119,7 @@ namespace GsaGH.Components
       GsaMember1d mem = new GsaMember1d();
       if (DA.GetData(0, ref gsaMember1d))
       {
-        if (gsaMember1d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input is null"); }
+        if (gsaMember1d == null) { this.AddRuntimeWarning("Member1D input is null"); }
         mem = gsaMember1d.Duplicate();
       }
 
@@ -168,7 +168,7 @@ namespace GsaGH.Components
             }
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+              this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
               return;
             }
           }
@@ -194,7 +194,7 @@ namespace GsaGH.Components
             if (Mappings.ElementTypeMapping.ContainsKey(typestring))
               mem.Type = Mappings.MemberTypeMapping[typestring];
             else
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element1D Type");
+              this.AddRuntimeError("Unable to change Element1D Type");
           }
         }
 
@@ -209,7 +209,7 @@ namespace GsaGH.Components
             if (Mappings.ElementTypeMapping.ContainsKey(typestring))
               mem.Type1D = Mappings.ElementTypeMapping[typestring];
             else
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element1D Type");
+              this.AddRuntimeError("Unable to change Element1D Type");
           }
         }
 
@@ -254,7 +254,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert Orientation Node input to GsaNode");
+            this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
           }
         }
 
@@ -290,7 +290,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert Orientation Node input to GsaNode");
+            this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
           }
         }
 

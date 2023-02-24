@@ -58,7 +58,7 @@ namespace GsaGH.Components
         for (int i = 0; i < gh_types.Count; i++)
         {
           GH_ObjectWrapper gh_typ = gh_types[i];
-          if (gh_typ == null) { Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Analysis Case input (index: " + i + ") is null and has been ignored"); continue; }
+          if (gh_typ == null) { Params.Owner.AddRuntimeWarning("Analysis Case input (index: " + i + ") is null and has been ignored"); continue; }
           if (gh_typ.Value is GsaAnalysisCaseGoo)
           {
             cases.Add(((GsaAnalysisCaseGoo)gh_typ.Value).Value.Duplicate());
@@ -68,7 +68,7 @@ namespace GsaGH.Components
             string type = gh_typ.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", "");
             type = type.Replace("Goo", "");
-            Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Analysis Case input parameter of type " +
+            Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type " +
                 type + " to GsaAnalysisCase");
             return;
           }
@@ -76,10 +76,10 @@ namespace GsaGH.Components
       }
 
       if (cases == null)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Default Task has been created; it will by default contain all cases found in model");
+        this.AddRuntimeRemarkMsg("Default Task has been created; it will by default contain all cases found in model");
 
       if (_analtype != GsaAnalysisTask.AnalysisType.Static)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "It is currently not possible to adjust the solver settings. " +
+        this.AddRuntimeWarning("It is currently not possible to adjust the solver settings. " +
             Environment.NewLine + "Please verify the solver settings in GSA ('Task and Cases' -> 'Analysis Tasks')");
 
       GsaAnalysisTask task = new GsaAnalysisTask();

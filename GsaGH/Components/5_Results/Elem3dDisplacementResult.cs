@@ -103,7 +103,7 @@ namespace GsaGH.Components
           GH_ObjectWrapper gh_typ = gh_types[i];
           if (gh_typ == null || gh_typ.Value == null)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+            this.AddRuntimeWarning("Input is null");
             return;
           }
           if (gh_typ.Value is GsaResultGoo)
@@ -112,7 +112,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
+            this.AddRuntimeError("Error converting input to GSA Result");
             return;
           }
 
@@ -128,7 +128,7 @@ namespace GsaGH.Components
             if (vals[perm - 1].xyzResults.Count == 0 & vals[perm - 1].xxyyzzResults.Count == 0)
             {
               string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element3D results.");
+              this.AddRuntimeWarning("Case " + acase + " contains no Element3D results.");
               continue;
             }
             Parallel.For(0, 2, thread => // split computation in two for xyz and xxyyzz

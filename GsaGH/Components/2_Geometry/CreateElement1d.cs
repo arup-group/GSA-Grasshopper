@@ -48,7 +48,7 @@ namespace GsaGH.Components
       GH_Line ghln = new GH_Line();
       if (DA.GetData(0, ref ghln))
       {
-        if (ghln == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Line input is null"); }
+        if (ghln == null) { this.AddRuntimeWarning("Line input is null"); }
         Line ln = new Line();
         if (GH_Convert.ToLine(ghln, ref ln, GH_Conversion.Both))
         {
@@ -69,7 +69,7 @@ namespace GsaGH.Components
                 elem.Section = new GsaSection(id);
               else
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+                this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
                 return;
               }
             }

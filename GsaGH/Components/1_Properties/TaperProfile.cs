@@ -56,7 +56,7 @@ namespace GsaGH.Components
 
       if (startParts[0] != endParts[0])
       {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Start and End Profile types must be similar");
+        this.AddRuntimeError("Start and End Profile types must be similar");
         return;
       }
 
@@ -68,12 +68,12 @@ namespace GsaGH.Components
           {
             if (!startParts[1].StartsWith("P"))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "It is only possible to taper between two Perimeter / bridge profiles");
+              this.AddRuntimeError("It is only possible to taper between two Perimeter / bridge profiles");
               return;
             }
             if (startParts.Length != endParts.Length)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Start and End Profile must contain similar number of points");
+              this.AddRuntimeError("Start and End Profile must contain similar number of points");
               return;
             }
           }
@@ -93,12 +93,12 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Start and End Profile types must be similar");
+          this.AddRuntimeError("Start and End Profile types must be similar");
         }
       }
       else
       {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Profile type must be 'STD'");
+        this.AddRuntimeError("Profile type must be 'STD'");
       }
     }
   }
