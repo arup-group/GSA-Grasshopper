@@ -26,6 +26,68 @@ namespace GsaGH.Components._5_Results
   /// </summary>
   public class ReactionForceDiagrams : GH_OasysDropDownComponent
   {
+    #region core
+    protected override void RegisterInputParams(GH_InputParamManager pManager)
+    {
+      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
+      pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + Environment.NewLine +
+                                                          "Node list should take the form:" + Environment.NewLine +
+                                                          " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
+                                                          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
+      pManager.AddNumberParameter("Scalar", "x:X", "Scale the result display size", GH_ParamAccess.item, 1);
+      pManager[1].Optional = true;
+      pManager[2].Optional = true;
+    }
+
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+    {
+      pManager.AddPointParameter("Anchor Point", "A", "Support Node Location", GH_ParamAccess.list);
+      pManager.AddVectorParameter("Vector", "V", "Reaction Force Vector", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Value", "Val", "Reaction Force Value", GH_ParamAccess.list);
+      pManager.HideParameter(0);
+    }
+
+    protected override void SolveInstance(IGH_DataAccess dataAccess)
+    {
+      var gsaResult = new GsaResult();
+      var ghObject = new GH_ObjectWrapper();
+
+      if (!dataAccess.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject)) return;
+
+      _reactionForceVectors.Clear();
+
+      #region get input values
+      gsaResult = (ghObject.Value as GsaResultGoo).Value;
+      this._case = GetCase(gsaResult);
+      string filteredNodes = GetNodeFilters(dataAccess);
+      double scale = GetScalarValue(dataAccess);
+      #endregion
+
+      // get stuff for drawing
+      Tuple<List<GsaResultsValues>, List<int>> reactionForceValues = gsaResult.NodeReactionForceValues(filteredNodes, this._forceUnit, this._momentUnit);
+      GsaResultsValues forceValues = reactionForceValues.Item1[0];
+      filteredNodes = string.Join(" ", reactionForceValues.Item2);
+
+      #region Result point values
+      LengthUnit lengthUnit = GetLengthUnit(gsaResult);
+
+      // Get nodes for point location and restraint check in case of reaction force
+      ReadOnlyDictionary<int, Node> gsaFilteredNodes = gsaResult.Model.Model.Nodes(filteredNodes);
+      ConcurrentDictionary<int, GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit);
+
+      Parallel.ForEach(nodes, node =>
+      {
+        var reactionForceVector = GenerateReactionForceVector(node, forceValues, scale);
+        if (reactionForceVector != null) _reactionForceVectors.Add(reactionForceVector);
+      });
+      #endregion
+
+      this.SetOutputs(dataAccess);
+      Helpers.PostHog.Result(gsaResult.Type, 0, GsaResultsValues.ResultType.Force, this._selectedDisplayValue.ToString());
+    }
+
+    #endregion
+
     #region nested classes, enums
     private class ReactionForceVector
     {
@@ -168,29 +230,6 @@ namespace GsaGH.Components._5_Results
     #endregion
 
     #region protected methods
-
-      #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
-      pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
-      pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + Environment.NewLine +
-          "Node list should take the form:" + Environment.NewLine +
-          " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
-          "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-      pManager.AddNumberParameter("Scalar", "x:X", "Scale the result display size", GH_ParamAccess.item, 1);
-      pManager[1].Optional = true;
-      pManager[2].Optional = true;
-    }
-
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
-      pManager.AddPointParameter("Anchor Point", "A", "Support Node Location", GH_ParamAccess.list);
-      pManager.AddVectorParameter("Vector", "V", "Reaction Force Vector", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Value", "Val", "Reaction Force Value", GH_ParamAccess.list);
-      pManager.HideParameter(0);
-    }
-    #endregion
-
       #region menu override
     protected override void BeforeSolveInstance()
     {
@@ -222,44 +261,6 @@ namespace GsaGH.Components._5_Results
     }
 
     #endregion
-    protected override void SolveInstance(IGH_DataAccess dataAccess)
-    {
-      var gsaResult = new GsaResult();
-      var ghObject = new GH_ObjectWrapper();
-
-      if (!dataAccess.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject)) return;
-
-      _reactionForceVectors.Clear();
-
-      #region get input values
-      gsaResult = (ghObject.Value as GsaResultGoo).Value;
-      this._case = GetCase(gsaResult);
-      string filteredNodes = GetNodeFilters(dataAccess);
-      double scale = GetScalarValue(dataAccess);
-      #endregion
-
-      // get stuff for drawing
-      Tuple<List<GsaResultsValues>, List<int>> reactionForceValues = gsaResult.NodeReactionForceValues(filteredNodes, this._forceUnit, this._momentUnit);
-      GsaResultsValues forceValues = reactionForceValues.Item1[0];
-      filteredNodes = string.Join(" ", reactionForceValues.Item2);
-
-      #region Result point values
-      LengthUnit lengthUnit = GetLengthUnit(gsaResult);
-
-      // Get nodes for point location and restraint check in case of reaction force
-      ReadOnlyDictionary<int, Node> gsaFilteredNodes = gsaResult.Model.Model.Nodes(filteredNodes);
-      ConcurrentDictionary<int, GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit);
-
-      Parallel.ForEach(nodes, node =>
-      {
-        var reactionForceVector = GenerateReactionForceVector(node, forceValues, scale);
-        if(reactionForceVector != null) _reactionForceVectors.Add(reactionForceVector);
-      });
-      #endregion
-
-      this.SetOutputs(dataAccess);
-      Helpers.PostHog.Result(gsaResult.Type, 0, GsaResultsValues.ResultType.Force, this._selectedDisplayValue.ToString());
-    }
     #endregion
 
     #region private methods
