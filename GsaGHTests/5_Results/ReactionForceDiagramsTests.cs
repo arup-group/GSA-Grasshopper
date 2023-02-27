@@ -1,5 +1,5 @@
 ﻿using Grasshopper.Kernel;
-using GsaGH.Components._5_Results;
+using GsaGH.Components;
 using GsaGH.Helpers.GH;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using GsaGH.Parameters;
 using Rhino.Geometry;
 using Xunit;
 
-namespace GsaGHTests._5_Results
+namespace GsaGHTests
 {
   [Collection("GrasshopperFixture collection")]
   public class ReactionForceDiagramsTests
