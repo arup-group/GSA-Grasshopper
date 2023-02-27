@@ -17,10 +17,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 2D Member
-  /// </summary>
-  public class EditMember2d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to edit a 2D Member
+    /// </summary>
+    public class EditMember2d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e28ff1bf-b2ea-450a-8fd1-14e3d0981340");

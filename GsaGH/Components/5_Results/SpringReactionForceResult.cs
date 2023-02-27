@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get GSA spring reaction forces
-  /// </summary>
-  public class SpringReactionForce : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get GSA spring reaction forces
+    /// </summary>
+    public class SpringReactionForce : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("60f6a109-577d-4e90-8790-7f8cf110b230");

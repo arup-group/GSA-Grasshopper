@@ -17,10 +17,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Prop2d
-  /// </summary>
-  public class CreateProp2d : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to create a new Prop2d
+    /// </summary>
+    public class CreateProp2d : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("d693b4ad-7aaf-450e-a436-afbb9d2061fc");

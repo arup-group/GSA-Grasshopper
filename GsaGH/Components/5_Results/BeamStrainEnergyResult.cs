@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get GSA Beam strain energy density results
-  /// </summary>
-  public class BeamStrainEnergy : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get GSA Beam strain energy density results
+    /// </summary>
+    public class BeamStrainEnergy : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("c1a927cb-ad0e-4a69-94ce-9ad079047d21");

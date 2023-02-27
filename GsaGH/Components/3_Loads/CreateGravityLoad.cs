@@ -10,7 +10,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGravityLoad : GH_OasysComponent
+    public class CreateGravityLoad : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("f9099874-92fa-4608-b4ed-a788df85a407");

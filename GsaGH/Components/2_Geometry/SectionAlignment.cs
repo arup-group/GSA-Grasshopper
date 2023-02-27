@@ -16,10 +16,10 @@ using static GsaGH.Parameters.GsaOffset;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to automatically create offset based on section profile
-  /// </summary>
-  public class SectionAlignment : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to automatically create offset based on section profile
+    /// </summary>
+    public class SectionAlignment : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4dc655a2-366e-486e-b8c3-10b2063b7aac");

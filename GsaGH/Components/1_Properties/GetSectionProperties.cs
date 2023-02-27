@@ -17,10 +17,10 @@ using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get geometric properties of a section
-  /// </summary>
-  public class GetSectionProperties : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to get geometric properties of a section
+    /// </summary>
+    public class GetSectionProperties : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("fc59d2f7-496e-4862-8f66-31f1068fcab7");

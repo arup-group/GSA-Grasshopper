@@ -15,10 +15,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create new 1D Member
-  /// </summary>
-  public class CreateMember1d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new 1D Member
+    /// </summary>
+    public class CreateMember1d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("5c5b9efa-cdae-4be5-af40-ff2b590801dd");

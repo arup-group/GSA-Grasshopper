@@ -16,10 +16,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to assemble and analyse a GSA model
-  /// </summary>
-  public class CreateModel : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to assemble and analyse a GSA model
+    /// </summary>
+    public class CreateModel : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon

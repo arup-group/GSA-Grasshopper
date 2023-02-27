@@ -15,10 +15,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to select results from a GSA Model
-  /// </summary>
-  public class ResultsInfo : GH_OasysComponent
+    /// <summary>
+    /// Component to select results from a GSA Model
+    /// </summary>
+    public class ResultsInfo : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon

@@ -19,10 +19,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Node
-  /// </summary>
-  public class Elem2dFromBrep2_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a Node
+    /// </summary>
+    public class Elem2dFromBrep2_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("83948408-c55d-49b9-b9a7-98034bcf3ce1");

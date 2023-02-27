@@ -17,10 +17,10 @@ using Grasshopper.Kernel.Data;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to select results from a GSA Model
-  /// </summary>
-  public class SelectResult : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to select results from a GSA Model
+    /// </summary>
+    public class SelectResult : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon

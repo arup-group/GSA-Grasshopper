@@ -20,10 +20,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
-  /// </summary>
-  public class Elem2dForces : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to retrieve non-geometric objects from a GSA model
+    /// </summary>
+    public class Elem2dForces : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -11,7 +12,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Export
 {
-  internal partial class Loads
+    internal partial class Loads
   {
     internal static void ConvertLoad(List<GsaLoad> loads,
         ref List<GravityLoad> gravityLoads, ref List<BeamLoad> beamLoads, ref List<FaceLoad> faceLoads,

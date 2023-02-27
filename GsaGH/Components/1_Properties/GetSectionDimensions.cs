@@ -18,10 +18,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get geometric dimensions of a section
-  /// </summary>
-  public class GetSectionDimensions : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to get geometric dimensions of a section
+    /// </summary>
+    public class GetSectionDimensions : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("98765d83-2b23-47c1-ad1d-201b5a2eed8b");

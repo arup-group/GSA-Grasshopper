@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Export
 {
-  internal class GetInputsForModelAssembly
+    internal class GetInputsForModelAssembly
   {
     internal static List<GsaModel> GetModels(GH_Component owner, IGH_DataAccess DA, int inputid, bool isOptional = false)
     {

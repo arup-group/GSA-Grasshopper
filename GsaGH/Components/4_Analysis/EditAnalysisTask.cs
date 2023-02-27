@@ -13,10 +13,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit GSA analysis tasks
-  /// </summary>
-  public class EditAnalysisTask : GH_OasysComponent
+    /// <summary>
+    /// Component to edit GSA analysis tasks
+    /// </summary>
+    public class EditAnalysisTask : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("efc2aae5-7ebf-4032-89d5-8fec8830989d");

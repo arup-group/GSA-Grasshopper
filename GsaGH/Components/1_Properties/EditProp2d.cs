@@ -20,10 +20,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Prop2d and ouput the information
-  /// </summary>
-  public class EditProp2d : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to edit a Prop2d and ouput the information
+    /// </summary>
+    public class EditProp2d : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon

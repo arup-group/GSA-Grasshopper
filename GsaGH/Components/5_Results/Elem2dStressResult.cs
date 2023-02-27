@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to retrieve non-geometric objects from a GSA model
-  /// </summary>
-  public class Elem2dStress : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to retrieve non-geometric objects from a GSA model
+    /// </summary>
+    public class Elem2dStress : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("b5eb8a78-e0dd-442b-bbd7-0384d6c944cb");
