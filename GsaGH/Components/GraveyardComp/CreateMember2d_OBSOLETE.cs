@@ -19,10 +19,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create new 2D Member
-  /// </summary>
-  public class CreateMember2d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new 2D Member
+    /// </summary>
+    public class CreateMember2d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("df0c2786-9e46-4500-ab63-0c4162a580d4");
@@ -70,7 +70,7 @@ namespace GsaGH.Components
       GH_Brep ghbrep = new GH_Brep();
       if (DA.GetData(0, ref ghbrep))
       {
-        if (ghbrep == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Brep input is null"); }
+        if (ghbrep == null) { this.AddRuntimeWarning("Brep input is null"); }
         Brep brep = new Brep();
         if (GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
         {
@@ -119,7 +119,7 @@ namespace GsaGH.Components
                 mem.Property = new GsaProp2d(idd);
               else
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
+                this.AddRuntimeError("Unable to convert PA input to a 2D Property of reference integer");
                 return;
               }
             }

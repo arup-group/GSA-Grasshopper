@@ -125,7 +125,7 @@ namespace GsaGH.Components
       GsaMember1d gsaMember1d = new GsaMember1d();
       if (DA.GetData(0, ref gsaMember1d))
       {
-        if (gsaMember1d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input is null"); }
+        if (gsaMember1d == null) { this.AddRuntimeWarning("Member1D input is null"); }
         GsaMember1d mem = gsaMember1d.Duplicate();
 
         // #### inputs ####
@@ -171,7 +171,7 @@ namespace GsaGH.Components
             }
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+              this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
               return;
             }
           }
@@ -243,7 +243,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert Orientation Node input to GsaNode");
+            this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
           }
         }
 
@@ -253,7 +253,7 @@ namespace GsaGH.Components
         {
           mem.MeshSize = ((Length)Input.UnitNumber(this, DA, 12, DefaultUnits.LengthUnitGeometry, true)).Meters;
           if (DefaultUnits.LengthUnitGeometry != OasysUnits.Units.LengthUnit.Meter)
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
+            this.AddRuntimeRemark("Mesh size input set in [" + string.Concat(mem.MeshSize.ToString().Where(char.IsLetter)) + "]. "
                 + Environment.NewLine + "Note that this is based on your unit settings and may be changed to a different unit if you share this file or change your 'Length - geometry' unit settings. Use a UnitNumber input to use a specific unit.");
         }
 

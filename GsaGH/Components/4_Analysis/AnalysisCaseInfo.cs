@@ -8,10 +8,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get information about GSA Analysis Cases
-  /// </summary>
-  public class AnalysisCaseInfo : GH_OasysComponent
+    /// <summary>
+    /// Component to get information about GSA Analysis Cases
+    /// </summary>
+    public class AnalysisCaseInfo : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("6f5f7379-4469-4ce8-9a1a-85adc3c2126a");
@@ -59,7 +59,7 @@ namespace GsaGH.Components
           string type = gh_typ.Value.GetType().ToString();
           type = type.Replace("GsaGH.Parameters.", "");
           type = type.Replace("Goo", "");
-          Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Analysis Case input parameter of type " +
+          Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type " +
               type + " to GsaAnalysisCase");
           return;
         }

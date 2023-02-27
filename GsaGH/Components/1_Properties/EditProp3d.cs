@@ -8,10 +8,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Prop3d and ouput the information
-  /// </summary>
-  public class EditProp3d : GH_OasysComponent
+    /// <summary>
+    /// Component to edit a Prop3d and ouput the information
+    /// </summary>
+    public class EditProp3d : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -89,7 +89,7 @@ namespace GsaGH.Components
               prop.MaterialID = idd;
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+              this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
               return;
             }
           }
@@ -134,7 +134,7 @@ namespace GsaGH.Components
         DA.SetData(5, colour);
       }
       else
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Prop3d is Null");
+        this.AddRuntimeError("Prop3d is Null");
     }
   }
 }

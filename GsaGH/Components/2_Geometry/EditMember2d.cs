@@ -17,10 +17,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 2D Member
-  /// </summary>
-  public class EditMember2d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to edit a 2D Member
+    /// </summary>
+    public class EditMember2d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e28ff1bf-b2ea-450a-8fd1-14e3d0981340");
@@ -113,7 +113,7 @@ namespace GsaGH.Components
       {
         if (gsaMember2d == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input is null");
+          this.AddRuntimeWarning("Member2D input is null");
           return;
         }
         mem = gsaMember2d.Duplicate(true);
@@ -187,7 +187,7 @@ namespace GsaGH.Components
               prop2d = new GsaProp2d(id);
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
+              this.AddRuntimeError("Unable to convert PA input to a 2D Property of reference integer");
               return;
             }
           }
@@ -216,7 +216,7 @@ namespace GsaGH.Components
             }
             catch (ArgumentException)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Member Type");
+              this.AddRuntimeError("Unable to change Member Type");
             }
           }
         }
@@ -235,7 +235,7 @@ namespace GsaGH.Components
             }
             catch (ArgumentException)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Analysis Element Type");
+              this.AddRuntimeError("Unable to change Analysis Element Type");
             }
           }
         }

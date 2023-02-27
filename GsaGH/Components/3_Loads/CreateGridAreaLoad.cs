@@ -19,7 +19,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridAreaLoad : GH_OasysDropDownComponent
+    public class CreateGridAreaLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("146f1bf8-8d2b-468f-bdb8-0237bee75262");
@@ -116,7 +116,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
+            this.AddRuntimeError("Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
                 Environment.NewLine + "If no input here then the brep's best-fit plane will be used");
             return;
           }
@@ -155,7 +155,7 @@ namespace GsaGH.Components
             if (this.Params.Input[2].SourceCount == 0 && this._expansionType == ExpansionType.Use_GPS_Settings)
             {
               this._expansionType = ExpansionType.To_1D;
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Input Brep has automatically been converted to a GridPlaneSurface." + System.Environment.NewLine + "The default expansion type is set to be onto 1D Elements." + System.Environment.NewLine + "You can change this by right-clicking the component.");
+              this.AddRuntimeRemark("Input Brep has automatically been converted to a GridPlaneSurface." + System.Environment.NewLine + "The default expansion type is set to be onto 1D Elements." + System.Environment.NewLine + "You can change this by right-clicking the component.");
               this.UpdateMessage();
             }
 
@@ -195,7 +195,7 @@ namespace GsaGH.Components
           gridareaload.GridAreaLoad.PolyLineDefinition = desc;
         }
         else
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not convert Brep edge to Polyline");
+          this.AddRuntimeError("Could not convert Brep edge to Polyline");
       }
 
       // now we can set the gridplanesurface:

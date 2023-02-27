@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get GSA spring reaction forces
-  /// </summary>
-  public class SpringReactionForce : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get GSA spring reaction forces
+    /// </summary>
+    public class SpringReactionForce : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("60f6a109-577d-4e90-8790-7f8cf110b230");
@@ -106,7 +106,7 @@ namespace GsaGH.Components
           GH_ObjectWrapper gh_typ = gh_types[i];
           if (gh_typ == null || gh_typ.Value == null)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+            this.AddRuntimeWarning("Input is null");
             return;
           }
           if (gh_typ.Value is GsaResultGoo)
@@ -115,7 +115,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
+            this.AddRuntimeError("Error converting input to GSA Result");
             return;
           }
           Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.SpringReactionForceValues(nodeList, this.ForceUnit, this.MomentUnit);

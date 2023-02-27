@@ -20,10 +20,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Prop2d and ouput the information
-  /// </summary>
-  public class EditProp2d : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to edit a Prop2d and ouput the information
+    /// </summary>
+    public class EditProp2d : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -116,7 +116,7 @@ namespace GsaGH.Components
               prop.MaterialID = idd;
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+              this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
               return;
             }
           }
@@ -188,7 +188,7 @@ namespace GsaGH.Components
         DA.SetData(7, Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
       }
       else
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Prop2d is Null");
+        this.AddRuntimeError("Prop2d is Null");
     }
 
     #region Custom UI

@@ -18,7 +18,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridSurface_OBSOLETE : GH_OasysDropDownComponent
+    public class CreateGridSurface_OBSOLETE : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("1052955c-cf97-4378-81d3-8491e0defad0");
@@ -112,7 +112,7 @@ namespace GsaGH.Components
             }
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Cannot convert your input to GridPlaneSurface or Plane");
+              this.AddRuntimeError("Cannot convert your input to GridPlaneSurface or Plane");
               return;
             }
           }
@@ -147,8 +147,8 @@ namespace GsaGH.Components
         string type = gh_typ.Value.ToString().ToUpper();
         if (type.StartsWith("GSA "))
         {
-          Params.Owner.AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
-              "You cannot input a Node/Element/Member in ElementList input!" + System.Environment.NewLine +
+          Params.Owner.AddRuntimeError(
+            "You cannot input a Node/Element/Member in ElementList input!" + System.Environment.NewLine +
               "Element list should take the form:" + System.Environment.NewLine +
               "'1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)'" + System.Environment.NewLine +
               "Refer to GSA help file for definition of lists and full vocabulary.");
@@ -198,7 +198,7 @@ namespace GsaGH.Components
             Angle direction = new Angle(dir, this.AngleUnit);
 
             if (direction.Degrees > 180 || direction.Degrees < -180)
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
+              this.AddRuntimeWarning("Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
             gs.Direction = direction.Degrees;
             if (dir != 0.0)
               changeGS = true;

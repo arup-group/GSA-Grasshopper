@@ -11,10 +11,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 3D Element
-  /// </summary>
-  public class EditElement3d : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a 3D Element
+    /// </summary>
+    public class EditElement3d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("040f2915-543d-41ef-9a64-0c4055e47a63");
@@ -71,7 +71,7 @@ namespace GsaGH.Components
       GsaElement3d gsaElement3d = new GsaElement3d();
       if (DA.GetData(0, ref gsaElement3d))
       {
-        if (gsaElement3d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element3D input is null"); }
+        if (gsaElement3d == null) { this.AddRuntimeWarning("Element3D input is null"); }
         GsaElement3d elem = gsaElement3d.Duplicate(true);
 
         // #### inputs ####
@@ -88,7 +88,7 @@ namespace GsaGH.Components
           {
             if (i > elem.API_Elements.Count)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "ID input List Length is longer than number of elements." + Environment.NewLine + "Excess ID's have been ignored");
+              this.AddRuntimeWarning("ID input List Length is longer than number of elements." + Environment.NewLine + "Excess ID's have been ignored");
               continue;
             }
             if (GH_Convert.ToInt32(ghID[i], out int id, GH_Conversion.Both))
@@ -97,7 +97,7 @@ namespace GsaGH.Components
               {
                 if (id > 0)
                 {
-                  AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "ID input(" + i + ") = " + id + " already exist in your input list." + Environment.NewLine + "You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
+                  this.AddRuntimeWarning("ID input(" + i + ") = " + id + " already exist in your input list." + Environment.NewLine + "You must provide a list of unique IDs, or set ID = 0 if you want to let GSA handle the numbering");
                   continue;
                 }
               }
@@ -116,7 +116,7 @@ namespace GsaGH.Components
           for (int i = 0; i < gh_types.Count; i++)
           {
             if (i > elem.API_Elements.Count)
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "PA input List Length is longer than number of elements." + Environment.NewLine + "Excess PA's have been ignored");
+              this.AddRuntimeWarning("PA input List Length is longer than number of elements." + Environment.NewLine + "Excess PA's have been ignored");
             GH_ObjectWrapper gh_typ = gh_types[i];
             GsaProp3d prop3d = new GsaProp3d();
             if (gh_typ.Value is GsaProp3dGoo)
@@ -130,7 +130,7 @@ namespace GsaGH.Components
                 prop3Ds.Add(new GsaProp3d(id));
               else
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
+                this.AddRuntimeError("Unable to convert PA input to a 2D Property of reference integer");
                 return;
               }
             }
@@ -147,7 +147,7 @@ namespace GsaGH.Components
           {
             if (i > elem.API_Elements.Count)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Group input List Length is longer than number of elements." + Environment.NewLine + "Excess Group numbers have been ignored");
+              this.AddRuntimeWarning("Group input List Length is longer than number of elements." + Environment.NewLine + "Excess Group numbers have been ignored");
               continue;
             }
             if (GH_Convert.ToInt32(ghgrp[i], out int grp, GH_Conversion.Both))
@@ -165,7 +165,7 @@ namespace GsaGH.Components
           {
             if (i > elem.API_Elements.Count)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Name input List Length is longer than number of elements." + Environment.NewLine + "Excess Names have been ignored");
+              this.AddRuntimeWarning("Name input List Length is longer than number of elements." + Environment.NewLine + "Excess Names have been ignored");
               continue;
             }
             if (GH_Convert.ToString(ghnm[i], out string name, GH_Conversion.Both))
@@ -183,7 +183,7 @@ namespace GsaGH.Components
           {
             if (i > elem.API_Elements.Count)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Colour input List Length is longer than number of elements." + Environment.NewLine + "Excess Colours have been ignored");
+              this.AddRuntimeWarning("Colour input List Length is longer than number of elements." + Environment.NewLine + "Excess Colours have been ignored");
               continue;
             }
             if (GH_Convert.ToColor(ghcol[i], out System.Drawing.Color col, GH_Conversion.Both))
@@ -201,7 +201,7 @@ namespace GsaGH.Components
           {
             if (i > elem.API_Elements.Count)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Dummy input List Length is longer than number of elements." + Environment.NewLine + "Excess Dummy booleans have been ignored");
+              this.AddRuntimeWarning("Dummy input List Length is longer than number of elements." + Environment.NewLine + "Excess Dummy booleans have been ignored");
               continue;
             }
             if (GH_Convert.ToBoolean(ghdum[i], out bool dum, GH_Conversion.Both))

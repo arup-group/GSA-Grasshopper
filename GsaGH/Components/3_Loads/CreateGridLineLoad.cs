@@ -17,7 +17,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridLineLoad : GH_OasysDropDownComponent
+    public class CreateGridLineLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e1f22e6f-8550-4078-8613-ea5ed2ede2b9");
@@ -111,7 +111,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
+            this.AddRuntimeError("Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
                 Environment.NewLine + "If no input here then the line's best-fit plane will be used");
             return;
           }
@@ -180,7 +180,7 @@ namespace GsaGH.Components
           gridlineload.GridLineLoad.PolyLineDefinition = desc;
         }
         else
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not convert Curve to Polyline");
+          this.AddRuntimeError("Could not convert Curve to Polyline");
       }
 
       // now we can set the gridplanesurface:

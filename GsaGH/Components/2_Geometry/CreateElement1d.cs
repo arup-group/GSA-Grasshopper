@@ -9,10 +9,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create new 1D Element
-  /// </summary>
-  public class CreateElement1d : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new 1D Element
+    /// </summary>
+    public class CreateElement1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("88c58aae-4cd8-4d37-b63f-d828571e6941");
@@ -48,7 +48,7 @@ namespace GsaGH.Components
       GH_Line ghln = new GH_Line();
       if (DA.GetData(0, ref ghln))
       {
-        if (ghln == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Line input is null"); }
+        if (ghln == null) { this.AddRuntimeWarning("Line input is null"); }
         Line ln = new Line();
         if (GH_Convert.ToLine(ghln, ref ln, GH_Conversion.Both))
         {
@@ -69,7 +69,7 @@ namespace GsaGH.Components
                 elem.Section = new GsaSection(id);
               else
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+                this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
                 return;
               }
             }

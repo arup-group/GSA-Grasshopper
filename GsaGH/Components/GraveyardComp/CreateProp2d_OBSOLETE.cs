@@ -15,10 +15,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Prop2d
-  /// </summary>
-  public class CreateProp2d_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to create a new Prop2d
+    /// </summary>
+    public class CreateProp2d_OBSOLETE : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon
@@ -223,7 +223,7 @@ namespace GsaGH.Components
               }
               else
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+                this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
                 return;
               }
             }

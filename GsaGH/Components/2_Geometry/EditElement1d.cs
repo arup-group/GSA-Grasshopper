@@ -18,10 +18,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 1D Element
-  /// </summary>
-  public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a 1D Element
+    /// </summary>
+    public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -123,7 +123,7 @@ namespace GsaGH.Components
       GsaElement1d elem = new GsaElement1d();
       if (DA.GetData(0, ref gsaElement1d))
       {
-        if (gsaElement1d == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Element1D input is null"); }
+        if (gsaElement1d == null) { this.AddRuntimeWarning("Element1D input is null"); }
         elem = gsaElement1d.Duplicate(true);
       }
 
@@ -165,7 +165,7 @@ namespace GsaGH.Components
               section = new GsaSection(id);
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+              this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
               return;
             }
           }
@@ -194,7 +194,7 @@ namespace GsaGH.Components
             }
             catch (ArgumentException)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element Type");
+              this.AddRuntimeError("Unable to change Element Type");
             }
           }
         }
@@ -240,7 +240,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert Orientation Node input to GsaNode");
+            this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
           }
         }
 

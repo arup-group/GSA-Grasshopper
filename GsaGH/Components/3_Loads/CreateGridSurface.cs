@@ -16,7 +16,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateGridSurface : GH_OasysDropDownComponent
+    public class CreateGridSurface : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("b9405f78-317b-474f-b258-4a178a70bc02");
@@ -107,7 +107,7 @@ namespace GsaGH.Components
             }
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Cannot convert your input to GridPlaneSurface or Plane");
+              this.AddRuntimeError("Cannot convert your input to GridPlaneSurface or Plane");
               return;
             }
           }
@@ -156,21 +156,21 @@ namespace GsaGH.Components
           GsaMember1dGoo goo = (GsaMember1dGoo)gh_typ.Value;
           gps.RefObjectGuid = goo.Value.Guid;
           gps.ReferenceType = ReferenceType.Member;
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+          this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaMember2dGoo)
         {
           GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
           gps.RefObjectGuid = goo.Value.Guid;
           gps.ReferenceType = ReferenceType.Member;
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+          this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaMember3dGoo)
         {
           GsaMember3dGoo goo = (GsaMember3dGoo)gh_typ.Value;
           gps.RefObjectGuid = goo.Value.Guid;
           gps.ReferenceType = ReferenceType.Member;
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+          this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
         }
         else if (gh_typ.Value is GsaSectionGoo)
         {
@@ -226,7 +226,7 @@ namespace GsaGH.Components
             if (double.TryParse(tol_in, out double tolerance))
               gps.Tolerance = tol_in;
             else
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.Message);
+              this.AddRuntimeWarning(e.Message);
           }
         }
       }
@@ -244,7 +244,7 @@ namespace GsaGH.Components
             Angle direction = new Angle(dir, this.AngleUnit);
 
             if (direction.Degrees > 180 || direction.Degrees < -180)
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
+              this.AddRuntimeWarning("Angle value must be between -180 and 180 degrees"); // to be updated when GsaAPI support units
             gs.Direction = direction.Degrees;
             if (dir != 0.0)
               changeGS = true;

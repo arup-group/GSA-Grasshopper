@@ -15,7 +15,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  public class LoadProp : GH_OasysDropDownComponent
+    public class LoadProp : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("0df96bee-3440-4699-b08d-d805220d1f68");
@@ -162,7 +162,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Load");
+          this.AddRuntimeError("Error converting input to GSA Load");
           return;
         }
       }
@@ -235,7 +235,7 @@ namespace GsaGH.Components
       }
       catch (Exception e)
       {
-        this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+        this.AddRuntimeError(e.Message);
       }
     }
     #endregion

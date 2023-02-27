@@ -16,10 +16,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to assemble and analyse a GSA model
-  /// </summary>
-  public class CreateModel : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to assemble and analyse a GSA model
+    /// </summary>
+    public class CreateModel : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -87,7 +87,7 @@ namespace GsaGH.Components
           mem1ds == null & mem2ds == null & mem3ds == null & sections == null
           & prop2Ds == null & loads == null & gridPlaneSurfaces == null)
       {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input parameters failed to collect data");
+       this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
       #endregion
@@ -226,9 +226,9 @@ namespace GsaGH.Components
       Length tol = new Length(this._tolerance, this.LengthUnit);
       this.Message = "Tol: " + tol.ToString();
       if (tol.Meters < 0.001)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite small, you can change this by right-clicking the component.");
       if (tol.Meters > 0.25)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     #endregion
 

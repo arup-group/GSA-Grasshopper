@@ -114,7 +114,7 @@ namespace GsaGH.Components
       {
         if (gsaMember2d == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member2D input is null");
+          this.AddRuntimeWarning("Member2D input is null");
         }
         mem = gsaMember2d.Duplicate();
       }
@@ -195,7 +195,7 @@ namespace GsaGH.Components
             }
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
+              this.AddRuntimeError("Unable to convert PA input to a 2D Property of reference integer");
               return;
             }
           }
@@ -221,7 +221,7 @@ namespace GsaGH.Components
             if (Mappings.MemberTypeMapping.ContainsKey(typestring))
               mem.Type = Mappings.MemberTypeMapping[typestring];
             else
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Member Type");
+              this.AddRuntimeError("Unable to change Member Type");
           }
         }
 
@@ -236,7 +236,7 @@ namespace GsaGH.Components
             if (Mappings.AnalysisOrderMapping.ContainsKey(typestring))
               mem.Type2D = Mappings.AnalysisOrderMapping[typestring];
             else
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Analysis Element Type");
+              this.AddRuntimeError("Unable to change Analysis Element Type");
           }
         }
 

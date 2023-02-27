@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get GSA reaction forces
-  /// </summary>
-  public class ReactionForce : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get GSA reaction forces
+    /// </summary>
+    public class ReactionForce : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4f06d674-c736-4d9c-89d9-377bc424c547");
@@ -106,7 +106,7 @@ namespace GsaGH.Components
           GH_ObjectWrapper gh_typ = gh_types[i];
           if (gh_typ == null || gh_typ.Value == null)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+            this.AddRuntimeWarning("Input is null");
             return;
           }
           if (gh_typ.Value is GsaResultGoo)
@@ -115,7 +115,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
+            this.AddRuntimeError("Error converting input to GSA Result");
             return;
           }
           Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, this.ForceUnit, this.MomentUnit);

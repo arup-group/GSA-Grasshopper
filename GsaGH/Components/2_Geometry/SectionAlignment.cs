@@ -16,10 +16,10 @@ using static GsaGH.Parameters.GsaOffset;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to automatically create offset based on section profile
-  /// </summary>
-  public class SectionAlignment : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to automatically create offset based on section profile
+    /// </summary>
+    public class SectionAlignment : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4dc655a2-366e-486e-b8c3-10b2063b7aac");
@@ -84,14 +84,14 @@ namespace GsaGH.Components
           gh_typ.CastTo(ref mem1d);
           if (mem1d == null)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is null");
+            this.AddRuntimeError("Input is null");
             return;
           }
           mem1d = mem1d.Duplicate();
           profile = mem1d.Section.Profile;
           if(profile == "")
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Member has no section attached");
+            this.AddRuntimeError("Member has no section attached");
             return;
           }
         }
@@ -100,14 +100,14 @@ namespace GsaGH.Components
           gh_typ.CastTo(ref elem1d);
           if (elem1d == null)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is null");
+            this.AddRuntimeError("Input is null");
             return;
           }
           elem1d = elem1d.Duplicate();
           profile = elem1d.Section.Profile;
           if (profile == "")
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Element has no section attached");
+            this.AddRuntimeError("Element has no section attached");
             return;
           }
         }
@@ -116,7 +116,7 @@ namespace GsaGH.Components
           gh_typ.CastTo(ref mem2d);
           if (mem2d == null)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is null");
+            this.AddRuntimeError("Input is null");
             return;
           }
           mem2d = mem2d.Duplicate();
@@ -127,7 +127,7 @@ namespace GsaGH.Components
           gh_typ.CastTo(ref elem2d);
           if (elem2d == null)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input is null");
+            this.AddRuntimeError("Input is null");
             return;
           }
           elem2d = elem2d.Duplicate();
@@ -135,7 +135,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert input to Element1D or Member1D");
+          this.AddRuntimeError("Unable to convert input to Element1D or Member1D");
           return;
         }
 
@@ -149,7 +149,7 @@ namespace GsaGH.Components
           }
           catch (ArgumentException)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Could not convert input Al to recognisable Alignment. Input is " + alignment);
+            this.AddRuntimeError("Could not convert input Al to recognisable Alignment. Input is " + alignment);
             return;
           }
         }
@@ -179,7 +179,7 @@ namespace GsaGH.Components
             // angle
             if (profile.StartsWith("STD A"))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
+              this.AddRuntimeWarning("Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
               depth = new Length(double.Parse(parts[2]), unit);
               width = new Length(double.Parse(parts[3]), unit);
             }
@@ -187,7 +187,7 @@ namespace GsaGH.Components
             // channel
             else if (profile.StartsWith("STD CH ") || profile.StartsWith("STD CH("))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
+              this.AddRuntimeWarning("Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
               depth = new Length(double.Parse(parts[2]), unit);
               width = new Length(double.Parse(parts[3]), unit);
             }
@@ -230,7 +230,7 @@ namespace GsaGH.Components
             // IGeneralCProfile
             else if (profile.StartsWith("STD GC"))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
+              this.AddRuntimeWarning("Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
               depth = new Length(double.Parse(parts[2]), unit);
               width = new Length(double.Parse(parts[3]), unit);
             }
@@ -238,7 +238,7 @@ namespace GsaGH.Components
             // IGeneralZProfile
             else if (profile.StartsWith("STD GZ"))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
+              this.AddRuntimeWarning("Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
               depth = new Length(double.Parse(parts[2]), unit);
               if (alignmentType == AlignmentType.Top_Left || alignmentType == AlignmentType.Mid_Left || alignmentType == AlignmentType.Bottom_Left)
                 width = new Length(double.Parse(parts[4]), unit);
@@ -251,7 +251,7 @@ namespace GsaGH.Components
             // IIBeamAsymmetricalProfile
             else if (profile.StartsWith("STD GI"))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
+              this.AddRuntimeWarning("Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
               depth = new Length(double.Parse(parts[2]), unit);
               double top = double.Parse(parts[3]);
               double bottom = double.Parse(parts[4]);
@@ -317,7 +317,7 @@ namespace GsaGH.Components
             // ISheetPileProfile
             else if (profile.StartsWith("STD SHT"))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile);
+              this.AddRuntimeError("Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile);
               return;
             }
 
@@ -331,7 +331,7 @@ namespace GsaGH.Components
             // ITrapezoidProfile
             else if (profile.StartsWith("STD TR"))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
+              this.AddRuntimeWarning("Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
               depth = new Length(double.Parse(parts[2]), unit);
               double top = double.Parse(parts[3]);
               double bottom = double.Parse(parts[4]);
@@ -341,7 +341,7 @@ namespace GsaGH.Components
             // ITSectionProfile
             else if (profile.StartsWith("STD T"))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
+              this.AddRuntimeWarning("Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
               depth = new Length(double.Parse(parts[2]), unit);
               width = new Length(double.Parse(parts[3]), unit);
             }
@@ -355,7 +355,7 @@ namespace GsaGH.Components
               width = new Length(sqlValues[1], unit);
             }
             else
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to get dimensions for Profile " + profile);
+              this.AddRuntimeError("Unable to get dimensions for Profile " + profile);
 
 
             switch (alignmentType)
@@ -451,7 +451,7 @@ namespace GsaGH.Components
         }
         catch(Exception)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid profile");
+          this.AddRuntimeError("Invalid profile");
           return;
         }
         DA.SetData(1, new GsaOffsetGoo(alignmentOffset));
