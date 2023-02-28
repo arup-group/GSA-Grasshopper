@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
@@ -18,6 +10,13 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GsaGH.Components
 {
@@ -33,13 +32,15 @@ namespace GsaGH.Components
       public readonly Point3d StartingPoint;
       public readonly Vector3d ForceVector;
       public readonly IQuantity ForceValue;
+      public readonly DisplayValue Type;
 
-      public ReactionForceVector(int nodeId, Point3d startingPoint, Vector3d forceVector, IQuantity forceValue)
+      public ReactionForceVector(int nodeId, Point3d startingPoint, Vector3d forceVector, IQuantity forceValue, DisplayValue type)
       {
         this.NodeId = nodeId;
         this.StartingPoint = startingPoint;
         this.ForceVector = forceVector;
         this.ForceValue = forceValue;
+        this.Type = type;
       }
     }
 
@@ -163,7 +164,7 @@ namespace GsaGH.Components
 
     #endregion
 
-      #region Custom UI
+    #region Custom UI
     public override void InitialiseDropdowns()
     {
       this.SpacerDescriptions = new List<string>(new[]
@@ -235,6 +236,11 @@ namespace GsaGH.Components
 
         args.Display.DrawArrowHead(p, force.ForceVector, Color.Red, 20, 0);
         args.Display.DrawArrow(line, Color.Blue);
+
+        if (force.Type == DisplayValue.ResXYZ || force.Type == DisplayValue.X || force.Type == DisplayValue.Y || force.Type == DisplayValue.Z)
+          args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaDarkPurple);
+        else //moments
+          args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaGold);
       });
     }
 
@@ -499,18 +505,15 @@ namespace GsaGH.Components
           break;
       }
 
-      return new ReactionForceVector(nodeId, node.Value.Value.Point, vector3d, forceValue);
+      return new ReactionForceVector(nodeId, node.Value.Value.Point, vector3d, forceValue, _selectedDisplayValue);
     }
 
     private void SetOutputs(IGH_DataAccess dataAccess)
     {
       var orderedReactionForceVectors = _reactionForceVectors.OrderBy(x => x.NodeId);
-      foreach (var forceVector in orderedReactionForceVectors)
-      {
-        dataAccess.SetData(0, forceVector.StartingPoint);
-        dataAccess.SetData(1, forceVector.ForceVector);
-        dataAccess.SetData(2, forceVector.ForceValue);
-      }
+      dataAccess.SetDataList(0, orderedReactionForceVectors.Select(a => a.StartingPoint));
+      dataAccess.SetDataList(1, orderedReactionForceVectors.Select(a => a.ForceVector));
+      dataAccess.SetDataList(2, orderedReactionForceVectors.Select(a => a.ForceValue));
     }
     #endregion
 
