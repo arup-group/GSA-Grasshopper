@@ -14,7 +14,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -233,18 +232,10 @@ namespace GsaGH.Components
         else //moments 
         {
           args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaGold);
-
-          Point3d p = new Point3d(line.To);
-
-          Vector3d motion = line.Direction;
-          motion.Unitize();
-          args.Display.Viewport.GetWorldToScreenScale(p, out double pixelsPerUnit);
-
+          
           int arrowHeadScreenSize = 20;
-
-          Transform t = Transform.Translation(motion * -1 * arrowHeadScreenSize / pixelsPerUnit);
-          p.Transform(t);
-
+          Point3d p = this.CalculateArrowHeadPosition(line, args, arrowHeadScreenSize);
+          
           args.Display.DrawArrowHead(p, force.ForceVector, Helpers.Graphics.Colours.GsaGold, arrowHeadScreenSize, 0);
         }
       });
@@ -521,6 +512,21 @@ namespace GsaGH.Components
       dataAccess.SetDataList(1, orderedReactionForceVectors.Select(a => a.ForceVector));
       dataAccess.SetDataList(2, orderedReactionForceVectors.Select(a => a.ForceValue));
     }
+
+    private Point3d CalculateArrowHeadPosition(Line line, IGH_PreviewArgs args, double arrowHeadScreenSize)
+    {
+      var point = new Point3d(line.To);
+      var motion = line.Direction;
+      
+      motion.Unitize();
+      args.Display.Viewport.GetWorldToScreenScale(point, out var pixelsPerUnit);
+      
+      var t = Transform.Translation(motion * -1 * arrowHeadScreenSize / pixelsPerUnit);
+      point.Transform(t);
+
+      return point;
+    }
+
     #endregion
 
     #endregion
