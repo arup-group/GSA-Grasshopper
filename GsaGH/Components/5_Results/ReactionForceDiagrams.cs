@@ -223,9 +223,17 @@ namespace GsaGH.Components
       _reactionForceVectors.ForEach(force =>
       {
         var line = new Line(force.StartingPoint, force.ForceVector);
+        line.Flip();
         line.Transform(Transform.Scale(force.StartingPoint, -1));
 
-        args.Display.DrawArrowHead(force.StartingPoint, force.ForceVector, Color.Red, 20, 0);
+        Point3d p = new Point3d(line.To);
+        Vector3d motion = line.Direction;
+        //motion.Transform(Transform.Scale(force.StartingPoint, -1));
+        motion.Unitize();
+        Transform t = Transform.Translation(motion * 0.05);
+        p.Transform(t);
+
+        args.Display.DrawArrowHead(p, force.ForceVector, Color.Red, 20, 0);
         args.Display.DrawArrow(line, Color.Blue);
       });
     }
