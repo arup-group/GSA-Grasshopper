@@ -22,7 +22,7 @@ using System.Windows.Forms;
 namespace GsaGH.Components
 {
   /// <summary>
-  /// Component to display GSA node result contours
+  /// Component to display GSA reaction forces
   /// </summary>
   public class ReactionForceDiagrams : GH_OasysDropDownComponent
   {
@@ -234,13 +234,18 @@ namespace GsaGH.Components
         {
           args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaGold);
 
-          // scaling needs to be fixed
           Point3d p = new Point3d(line.To);
+
           Vector3d motion = line.Direction;
           motion.Unitize();
-          Transform t = Transform.Translation(motion * -0.02);
+          args.Display.Viewport.GetWorldToScreenScale(p, out double pixelsPerUnit);
+
+          int arrowHeadScreenSize = 20;
+
+          Transform t = Transform.Translation(motion * -1 * arrowHeadScreenSize / pixelsPerUnit);
           p.Transform(t);
-          args.Display.DrawArrowHead(p, force.ForceVector, Helpers.Graphics.Colours.GsaGold, 20, 0);
+
+          args.Display.DrawArrowHead(p, force.ForceVector, Helpers.Graphics.Colours.GsaGold, arrowHeadScreenSize, 0);
         }
       });
     }
