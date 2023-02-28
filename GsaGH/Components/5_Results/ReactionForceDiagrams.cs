@@ -14,6 +14,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -76,13 +77,13 @@ namespace GsaGH.Components
 
     #region fields and properties
 
-      #region public/internal/protected internal
+    #region public/internal/protected internal
     public override Guid ComponentGuid => new Guid("5bc139e5-614b-4f2d-887c-a980f1cbb32c");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     #endregion
 
-      #region protected and private
+    #region protected and private
     private string _case = "";
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
@@ -102,7 +103,7 @@ namespace GsaGH.Components
       SubCategoryName.Cat5())
     { }
 
-      #region core
+    #region core
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
@@ -195,7 +196,7 @@ namespace GsaGH.Components
     }
     #endregion
 
-      #region (de)serialization
+    #region (de)serialization
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
     {
       writer.SetInt32("Display", (int)_selectedDisplayValue);
@@ -216,7 +217,7 @@ namespace GsaGH.Components
       return base.Read(reader);
     }
     #endregion
-    
+
     public override void DrawViewportWires(IGH_PreviewArgs args)
     {
       base.DrawViewportWires(args);
@@ -227,27 +228,27 @@ namespace GsaGH.Components
         line.Flip();
         line.Transform(Transform.Scale(force.StartingPoint, -1));
 
-        Point3d p = new Point3d(line.To);
-        Vector3d motion = line.Direction;
-        //motion.Transform(Transform.Scale(force.StartingPoint, -1));
-        motion.Unitize();
-        Transform t = Transform.Translation(motion * 0.05);
-        p.Transform(t);
-
-        args.Display.DrawArrowHead(p, force.ForceVector, Color.Red, 20, 0);
-        args.Display.DrawArrow(line, Color.Blue);
-
         if (force.Type == DisplayValue.ResXYZ || force.Type == DisplayValue.X || force.Type == DisplayValue.Y || force.Type == DisplayValue.Z)
           args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaDarkPurple);
-        else //moments
+        else //moments 
+        {
           args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaGold);
+
+          // scaling needs to be fixed
+          Point3d p = new Point3d(line.To);
+          Vector3d motion = line.Direction;
+          motion.Unitize();
+          Transform t = Transform.Translation(motion * -0.02);
+          p.Transform(t);
+          args.Display.DrawArrowHead(p, force.ForceVector, Helpers.Graphics.Colours.GsaGold, 20, 0);
+        }
       });
     }
 
     #endregion
 
     #region protected methods
-      #region menu override
+    #region menu override
     protected override void BeforeSolveInstance()
     {
       this.Message = (int)this._selectedDisplayValue < 4
@@ -262,7 +263,7 @@ namespace GsaGH.Components
       var unitsMenu = new ToolStripMenuItem("Select Units", Properties.Resources.Units);
       var forceUnitsMenu = GenerateForceUnitsMenu("Force");
       var momentUnitsMenu = GenerateMomentUnitsMenu("Moment");
-      
+
       var toolStripItems = new List<ToolStripItem> { forceUnitsMenu, momentUnitsMenu };
 
       if (_undefinedModelLengthUnit)
@@ -282,7 +283,7 @@ namespace GsaGH.Components
 
     #region private methods
 
-      #region menu helpers
+    #region menu helpers
     private void UpdateModel(string unit)
     {
       this._lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
@@ -313,10 +314,10 @@ namespace GsaGH.Components
                  null,
                  (s, e) => { UpdateForce(unit); }
                )
-               {
-                 Checked = unit == Force.GetAbbreviation(this._forceUnit),
-                 Enabled = true,
-               }))
+      {
+        Checked = unit == Force.GetAbbreviation(this._forceUnit),
+        Enabled = true,
+      }))
       {
         forceUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
@@ -332,10 +333,10 @@ namespace GsaGH.Components
                  null,
                  (s, e) => { UpdateMoment(unit); }
                )
-               {
-                 Checked = unit == Moment.GetAbbreviation(this._momentUnit),
-                 Enabled = true,
-               }))
+      {
+        Checked = unit == Moment.GetAbbreviation(this._momentUnit),
+        Enabled = true,
+      }))
       {
         momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
@@ -347,10 +348,10 @@ namespace GsaGH.Components
     {
       var modelUnitsMenu = new ToolStripMenuItem(menuTitle) { Enabled = true };
       foreach (var toolStripMenuItem in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length).Select(unit => new ToolStripMenuItem(unit, null, (s, e) => { UpdateModel(unit); })
-               {
-                 Checked = unit == Length.GetAbbreviation(this._lengthUnit),
-                 Enabled = true,
-               }))
+      {
+        Checked = unit == Length.GetAbbreviation(this._lengthUnit),
+        Enabled = true,
+      }))
       {
         modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
@@ -359,7 +360,7 @@ namespace GsaGH.Components
     }
     #endregion
 
-      #region Inputs ReactionForceVector methods
+    #region Inputs ReactionForceVector methods
     private static double GetScalarValue(IGH_DataAccess dataAccess)
     {
       var ghScale = new GH_Number();
@@ -407,7 +408,7 @@ namespace GsaGH.Components
     }
     #endregion
 
-      #region solvingInstance helpers
+    #region solvingInstance helpers
     private bool IsGhObjectValid(GH_ObjectWrapper ghObject)
     {
       var valid = false;
@@ -445,18 +446,18 @@ namespace GsaGH.Components
 
       return lengthUnit;
     }
-  
-    private ReactionForceVector GenerateReactionForceVector(KeyValuePair<int,GsaNodeGoo> node, GsaResultsValues forceValues, double scale)
+
+    private ReactionForceVector GenerateReactionForceVector(KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale)
     {
       var nodeId = node.Key;
       var xyzResults = forceValues.xyzResults;
       var xxyyzzResults = forceValues.xxyyzzResults;
-      
+
       if (!xyzResults.ContainsKey(nodeId)) return null;
 
       var vector3d = new Vector3d();
       IQuantity forceValue = null;
-      
+
       switch (_selectedDisplayValue)
       {
         case (DisplayValue.X):
