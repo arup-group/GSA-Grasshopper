@@ -15,10 +15,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create new 1D Member
-  /// </summary>
-  public class CreateMember1d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to create new 1D Member
+    /// </summary>
+    public class CreateMember1d_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("5c5b9efa-cdae-4be5-af40-ff2b590801dd");
@@ -54,13 +54,13 @@ namespace GsaGH.Components
       GH_Curve ghcrv = new GH_Curve();
       if (DA.GetData(0, ref ghcrv))
       {
-        if (ghcrv == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Curve input is null"); }
+        if (ghcrv == null) { this.AddRuntimeWarning("Curve input is null"); }
         Curve crv = null;
         if (GH_Convert.ToCurve(ghcrv, ref crv, GH_Conversion.Both))
         {
           GsaMember1d mem = new GsaMember1d(crv);
           if (mem.PolyCurve.GetLength() < DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Service message from you favourite Oasys dev team: Based on your Default Unit Settings (changed in the Oasys Menu), one or more input curves have relatively short length less than the set tolerance (" + DefaultUnits.Tolerance.ToString().Replace(" ", string.Empty) + ". This may convert into a zero-length line when assembling the GSA Model, thus creating invalid topology that cannot be analysed. You can ignore this message if you are creating your model in another unit (set on 'Analyse' or 'CreateModel' components) than " + DefaultUnits.LengthUnitGeometry.ToString() + ".");
+            this.AddRuntimeRemark("Service message from you favourite Oasys dev team: Based on your Default Unit Settings (changed in the Oasys Menu), one or more input curves have relatively short length less than the set tolerance (" + DefaultUnits.Tolerance.ToString().Replace(" ", string.Empty) + ". This may convert into a zero-length line when assembling the GSA Model, thus creating invalid topology that cannot be analysed. You can ignore this message if you are creating your model in another unit (set on 'Analyse' or 'CreateModel' components) than " + DefaultUnits.LengthUnitGeometry.ToString() + ".");
 
           GsaBool6 rel1 = new GsaBool6
           {
@@ -101,7 +101,7 @@ namespace GsaGH.Components
                 mem.Section = new GsaSection(idd);
               else
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+                this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
                 return;
               }
             }

@@ -19,10 +19,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit Buckling Length Factors and ouput the information
-  /// </summary>
-  public class EditBucklingFactors : GH_OasysComponent
+    /// <summary>
+    /// Component to edit Buckling Length Factors and ouput the information
+    /// </summary>
+    public class EditBucklingFactors : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -105,7 +105,7 @@ namespace GsaGH.Components
         DA.SetData(6, (fls.LengthIsSet && fls.LateralTorsionalBucklingFactor.HasValue) ? new GH_UnitNumber(fls.Length * fls.LateralTorsionalBucklingFactor) : null);
       }
       else
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Buckling Factors is Null");
+        this.AddRuntimeError("Buckling Factors is Null");
     }
   }
 }

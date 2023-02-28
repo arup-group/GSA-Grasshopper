@@ -26,10 +26,10 @@ using OasysGH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to retrieve geometric objects from a GSA model
-  /// </summary>
-  public class GetGeometry : GH_OasysTaskCapableComponent<GetGeometry.SolveResults>, IGH_PreviewObject, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to retrieve geometric objects from a GSA model
+    /// </summary>
+    public class GetGeometry : GH_OasysTaskCapableComponent<GetGeometry.SolveResults>, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
@@ -149,7 +149,7 @@ namespace GsaGH.Components
       }
       catch (Exception e)
       {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, e.InnerException.Message);
+        this.AddRuntimeWarning(e.InnerException.Message);
       }
       return results;
     }
@@ -169,7 +169,7 @@ namespace GsaGH.Components
             gh_typ.CastTo(ref gsaModel);
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
+            this.AddRuntimeError("Error converting input to GSA Model");
             return;
           }
 
@@ -228,7 +228,7 @@ namespace GsaGH.Components
             gh_typ.CastTo(ref gsaModel);
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
+            this.AddRuntimeError("Error converting input to GSA Model");
             return;
           }
 
@@ -286,8 +286,8 @@ namespace GsaGH.Components
           List<int> invalid1delem = results.Elem1ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
           if (invalid1delem.Count > 0)
           {
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Element1D definition for Element IDs:");
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, string.Join(" ", invalid1delem.OrderBy(x => x)));
+            this.AddRuntimeWarning("Invalid Element1D definition for Element IDs:");
+            this.AddRuntimeWarning(string.Join(" ", invalid1delem.OrderBy(x => x)));
           }
           if (_mode == FoldMode.List)
             data.SetDataList(1, results.Elem1ds.OrderBy(item => item.Value.Id));
@@ -374,8 +374,8 @@ namespace GsaGH.Components
           List<int> invalid1dmem = results.Mem1ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
           if (invalid1dmem.Count > 0)
           {
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member1D definition for Member IDs:");
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, string.Join(" ", invalid1dmem.OrderBy(x => x)));
+            this.AddRuntimeWarning("Invalid Member1D definition for Member IDs:");
+            this.AddRuntimeWarning(string.Join(" ", invalid1dmem.OrderBy(x => x)));
           }
           if (_mode == FoldMode.List)
             data.SetDataList(4, results.Mem1ds.OrderBy(item => item.Value.Id));
@@ -392,8 +392,8 @@ namespace GsaGH.Components
           List<int> invalid2dmem = results.Mem2ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
           if (invalid2dmem.Count > 0)
           {
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member2D definition for Member IDs:");
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, string.Join(" ", invalid2dmem.OrderBy(x => x)));
+            this.AddRuntimeWarning("Invalid Member2D definition for Member IDs:");
+            this.AddRuntimeWarning(string.Join(" ", invalid2dmem.OrderBy(x => x)));
           }
           if (_mode == FoldMode.List)
             data.SetDataList(5, results.Mem2ds.OrderBy(item => item.Value.Id));
@@ -410,8 +410,8 @@ namespace GsaGH.Components
           List<int> invalid3dmem = results.Mem3ds.Where(x => !x.IsValid).Select(x => x.Value.Id).ToList();
           if (invalid3dmem.Count > 0)
           {
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid Member3D definition for Member IDs:");
-            this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, string.Join(" ", invalid3dmem.OrderBy(x => x)));
+            this.AddRuntimeWarning("Invalid Member3D definition for Member IDs:");
+            this.AddRuntimeWarning(string.Join(" ", invalid3dmem.OrderBy(x => x)));
           }
           if (_mode == FoldMode.List)
             data.SetDataList(6, results.Mem3ds.OrderBy(item => item.Value.Id));

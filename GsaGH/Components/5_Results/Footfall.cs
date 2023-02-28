@@ -10,10 +10,10 @@ using OasysGH.Helpers;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to select results from a GSA Model
-  /// </summary>
-  public class FootfallResults : GH_OasysComponent
+    /// <summary>
+    /// Component to select results from a GSA Model
+    /// </summary>
+    public class FootfallResults : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -58,7 +58,7 @@ namespace GsaGH.Components
       {
         if (gh_typ == null || gh_typ.Value == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+          this.AddRuntimeWarning("Input is null");
           return;
         }
         if (gh_typ.Value is GsaResultGoo)
@@ -66,13 +66,13 @@ namespace GsaGH.Components
           result = ((GsaResultGoo)gh_typ.Value).Value;
           if (result.Type == GsaResult.CaseType.Combination)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Footfall Result only available for Analysis Cases");
+            this.AddRuntimeError("Footfall Result only available for Analysis Cases");
             return;
           }
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
+          this.AddRuntimeError("Error converting input to GSA Result");
           return;
         }
 

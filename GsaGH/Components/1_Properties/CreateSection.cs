@@ -8,10 +8,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Section
-  /// </summary>
-  public class CreateSection : GH_OasysComponent
+    /// <summary>
+    /// Component to create a new Section
+    /// </summary>
+    public class CreateSection : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("1167c4aa-b98b-47a7-ae85-1a3c976a1973");
@@ -55,7 +55,7 @@ namespace GsaGH.Components
             gsaSection = new GsaSection(profile);
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid profile syntax: " + profile);
+            this.AddRuntimeWarning("Invalid profile syntax: " + profile);
             return;
           }
 
@@ -75,7 +75,7 @@ namespace GsaGH.Components
                 gsaSection.Material = new GsaMaterial(idd);
               else
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+                this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
                 return;
               }
             }

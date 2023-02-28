@@ -76,7 +76,7 @@ namespace GsaGH.Components
           gh_typ.CastTo(ref gsaModel);
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
+          this.AddRuntimeError("Error converting input to GSA Model");
           return;
         }
 
@@ -94,7 +94,7 @@ namespace GsaGH.Components
         gsaModel.Model.Results().TryGetValue(analCase, out analysisCaseResult);
         if (analysisCaseResult == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No results exist for Analysis Case " + analCase + " in file");
+          this.AddRuntimeError("No results exist for Analysis Case " + analCase + " in file");
           return;
         }
         #endregion

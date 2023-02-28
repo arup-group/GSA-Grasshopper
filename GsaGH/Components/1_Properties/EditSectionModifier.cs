@@ -20,10 +20,10 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Material and ouput the information
-  /// </summary>
-  public class EditSectionModifier : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to edit a Material and ouput the information
+    /// </summary>
+    public class EditSectionModifier : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("db2046cc-236d-44a5-aa88-1394dbc4558f");
@@ -133,7 +133,7 @@ namespace GsaGH.Components
               }
               catch (Exception e)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+                this.AddRuntimeError(e.Message);
                 return;
               }
             }
@@ -156,7 +156,7 @@ namespace GsaGH.Components
               }
               catch (Exception e)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+                this.AddRuntimeError(e.Message);
                 return;
               }
             }
@@ -179,7 +179,7 @@ namespace GsaGH.Components
               }
               catch (Exception e)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+                this.AddRuntimeError(e.Message);
                 return;
               }
             }
@@ -202,7 +202,7 @@ namespace GsaGH.Components
               }
               catch (Exception e)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+                this.AddRuntimeError(e.Message);
                 return;
               }
             }
@@ -231,7 +231,7 @@ namespace GsaGH.Components
               }
               catch (Exception e)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+                this.AddRuntimeError(e.Message);
                 return;
               }
             }
@@ -250,7 +250,7 @@ namespace GsaGH.Components
               // check that unit is of right type
               if (!unitNumber.Value.QuantityInfo.UnitType.Equals(typeof(LinearDensityUnit)))
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + this.Params.Input[8].NickName + " input: Wrong unit type"
+                this.AddRuntimeError("Error in " + this.Params.Input[8].NickName + " input: Wrong unit type"
                     + Environment.NewLine + "Unit type is " + unitNumber.Value.QuantityInfo.Name + " but must be LinearDensity");
                 return;
               }
@@ -268,11 +268,11 @@ namespace GsaGH.Components
               if (LinearDensity.TryParse(txt, out LinearDensity res))
                 modifier.AdditionalMass = res;
               else
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + this.Params.Input[8].NickName + " to LinearDensity");
+                this.AddRuntimeError("Unable to convert " + this.Params.Input[8].NickName + " to LinearDensity");
             }
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert " + this.Params.Input[8].NickName + " to UnitNumber");
+              this.AddRuntimeError("Unable to convert " + this.Params.Input[8].NickName + " to UnitNumber");
               return;
             }
           }
@@ -299,7 +299,7 @@ namespace GsaGH.Components
               modifier.StressOption = GsaSectionModifier.StressOptionType.UseUnmodified;
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + this.Params.Input[11].NickName + " input: Must be either 0, 1 or 2 but is " + stress);
+              this.AddRuntimeError("Error in " + this.Params.Input[11].NickName + " input: Must be either 0, 1 or 2 but is " + stress);
               return;
             }
           }
@@ -313,13 +313,13 @@ namespace GsaGH.Components
               modifier.StressOption = GsaSectionModifier.StressOptionType.UseModified;
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + this.Params.Input[11].NickName + " input: Must contain the one of the following phrases 'no', 'unmod' or 'mod' (case insensitive), but input is '" + stress + "'");
+              this.AddRuntimeError("Error in " + this.Params.Input[11].NickName + " input: Must contain the one of the following phrases 'no', 'unmod' or 'mod' (case insensitive), but input is '" + stress + "'");
               return;
             }
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error in " + this.Params.Input[11].NickName + " input: Must be either 0, 1 or 2 or contain the one of the following phrases 'no', 'unmod' or mod' (case insensitive), but input is " + stress + "'");
+            this.AddRuntimeError("Error in " + this.Params.Input[11].NickName + " input: Must be either 0, 1 or 2 or contain the one of the following phrases 'no', 'unmod' or mod' (case insensitive), but input is " + stress + "'");
             return;
           }
         }

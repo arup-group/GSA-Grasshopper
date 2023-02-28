@@ -16,10 +16,10 @@ using GsaGH.Helpers.GH;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get GSA global performance results
-  /// </summary>
-  public class GlobalPerformanceResults : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get GSA global performance results
+    /// </summary>
+    public class GlobalPerformanceResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("9a0b6077-1cb6-405c-85d3-c24a533d6d43");
@@ -77,7 +77,7 @@ namespace GsaGH.Components
         #region Inputs
         if (gh_typ == null || gh_typ.Value == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+          this.AddRuntimeWarning("Input is null");
           return;
         }
         if (gh_typ.Value is GsaResultGoo)
@@ -85,13 +85,13 @@ namespace GsaGH.Components
           result = ((GsaResultGoo)gh_typ.Value).Value;
           if (result.Type == GsaResult.CaseType.Combination)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Global Result only available for Analysis Cases");
+            this.AddRuntimeError("Global Result only available for Analysis Cases");
             return;
           }
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
+          this.AddRuntimeError("Error converting input to GSA Result");
           return;
         }
         #endregion

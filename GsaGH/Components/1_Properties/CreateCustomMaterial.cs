@@ -15,10 +15,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to create a new Material
-  /// </summary>
-  public class CreateCustomMaterial : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to create a new Material
+    /// </summary>
+    public class CreateCustomMaterial : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("83bfce91-9204-4fe4-b81d-0036babf0c6d");
@@ -69,7 +69,7 @@ namespace GsaGH.Components
         material.AnalysisProperty = anal;
         if (anal == 0)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Material ID cannot be 0 - that is 'from Grade'. " +
+          this.AddRuntimeError("Analysis Material ID cannot be 0 - that is 'from Grade'. " +
                Environment.NewLine + "Leave blank or use -1 for automatic assigning.");
           return;
         }

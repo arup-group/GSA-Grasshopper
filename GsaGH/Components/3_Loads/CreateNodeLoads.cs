@@ -17,7 +17,7 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  public class CreateNodeLoad : GH_OasysDropDownComponent
+    public class CreateNodeLoad : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
@@ -116,7 +116,7 @@ namespace GsaGH.Components
         else if (GH_Convert.ToPoint3d(gh_typ.Value, ref refPt, GH_Conversion.Both))
         {
           nodeLoad.RefPoint = refPt;
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Point loading in GsaGH will automatically find the corrosponding node and apply the load to that node by ID. If you save the file and continue working in GSA please note that the point-load relationship will be lost.");
+          this.AddRuntimeRemark("Point loading in GsaGH will automatically find the corrosponding node and apply the load to that node by ID. If you save the file and continue working in GSA please note that the point-load relationship will be lost.");
         }
         else if (GH_Convert.ToString(gh_typ.Value, out string nodeList, GH_Conversion.Both))
           nodeLoad.NodeLoad.Nodes = nodeList;
@@ -162,14 +162,14 @@ namespace GsaGH.Components
           case "Z":
             load = ((Force)Input.UnitNumber(this, DA, 4, ForceUnit)).Newtons;
             if (_mode != FoldMode.Node_Force)
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Direction input set to imply a 'Force' but type is set to 'Moment'. The output Node Load has been created to be of type 'Force'.");
+              this.AddRuntimeWarning("Direction input set to imply a 'Force' but type is set to 'Moment'. The output Node Load has been created to be of type 'Force'.");
             break;
           case "XX":
           case "YY":
           case "ZZ":
             load = ((Moment)Input.UnitNumber(this, DA, 4, MomentUnit)).NewtonMeters;
             if (_mode != FoldMode.Node_Moment)
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Direction input set to imply a 'Moment' force but type is set to 'Force'. The output Node Load has been created to be of type 'Moment'.");
+              this.AddRuntimeWarning("Direction input set to imply a 'Moment' force but type is set to 'Force'. The output Node Load has been created to be of type 'Moment'.");
             break;
         }
       }
@@ -186,7 +186,7 @@ namespace GsaGH.Components
           case "YY":
           case "ZZ":
             load = ((Angle)Input.UnitNumber(this, DA, 4, AngleUnit.Radian)).Radians;
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Direction input is set to be rotational type, the output load has been set to as a rotation in Radian unit.");
+            this.AddRuntimeRemark("Direction input is set to be rotational type, the output load has been set to as a rotation in Radian unit.");
             break;
         }
       }

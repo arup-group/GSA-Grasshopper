@@ -26,10 +26,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get Element2d results
-  /// </summary>
-  public class Elem2dContourResults : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to get Element2d results
+    /// </summary>
+    public class Elem2dContourResults : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e2b011dc-c5ca-46fd-87f5-b888b27ef684");
@@ -85,7 +85,7 @@ namespace GsaGH.Components
         #region Inputs
         if (gh_typ == null || gh_typ.Value == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Input is null");
+          this.AddRuntimeWarning("Input is null");
           return;
         }
         if (gh_typ.Value is GsaResultGoo)
@@ -93,7 +93,7 @@ namespace GsaGH.Components
           result = ((GsaResultGoo)gh_typ.Value).Value;
           if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination Case " + result.CaseID + " contains "
+            this.AddRuntimeWarning("Combination Case " + result.CaseID + " contains "
                 + result.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
@@ -104,7 +104,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Result");
+          this.AddRuntimeError("Error converting input to GSA Result");
           return;
         }
 
@@ -192,7 +192,7 @@ namespace GsaGH.Components
         if ((_isShear ? resShear.dmax_x : res.dmax_x) == null)
         {
           string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Case " + acase + " contains no Element2D results.");
+          this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
           return;
         }
 
@@ -348,7 +348,7 @@ namespace GsaGH.Components
         {
           lengthUnit = this.LengthUnit;
           this.undefinedModelLengthUnit = true;
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in " + lengthUnit.ToString() + ". This can be changed by right-clicking the component -> 'Select Units'");
+          this.AddRuntimeRemark("Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in " + lengthUnit.ToString() + ". This can be changed by right-clicking the component -> 'Select Units'");
         }
         else
           this.LengthUnit = lengthUnit;

@@ -8,10 +8,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Section and ouput the information
-  /// </summary>
-  public class EditSection : GH_OasysComponent
+    /// <summary>
+    /// Component to edit a Section and ouput the information
+    /// </summary>
+    public class EditSection : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -99,7 +99,7 @@ namespace GsaGH.Components
               gsaSection.MaterialID = idd;
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+              this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
               return;
             }
           }
@@ -156,7 +156,7 @@ namespace GsaGH.Components
         DA.SetData(7, colour);
       }
       else
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Section is Null");
+        this.AddRuntimeError("Section is Null");
     }
   }
 }

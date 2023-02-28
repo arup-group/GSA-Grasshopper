@@ -7,10 +7,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Bool6 and ouput the information
-  /// </summary>
-  public class EditBool6 : GH_OasysComponent
+    /// <summary>
+    /// Component to edit a Bool6 and ouput the information
+    /// </summary>
+    public class EditBool6 : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("dad5064c-6648-45a5-8d98-afaae861e3b9");
@@ -91,7 +91,7 @@ namespace GsaGH.Components
         DA.SetData(6, mybool.ZZ);
       }
       else
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Bool6 is Null");
+        this.AddRuntimeError("Bool6 is Null");
     }
   }
 }

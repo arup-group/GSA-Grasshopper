@@ -14,10 +14,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get geometric properties of a section
-  /// </summary>
-  public class GetMaterialProperties : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to get geometric properties of a section
+    /// </summary>
+    public class GetMaterialProperties : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -63,7 +63,7 @@ namespace GsaGH.Components
       {
         if (gsaMaterial.AnalysisMaterial == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "One or more materials are not custom material");
+          this.AddRuntimeWarning("One or more materials are not custom material");
           return;
         }
 

@@ -9,10 +9,10 @@ using OasysGH.Components;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Material and ouput the information
-  /// </summary>
-  public class EditMaterial : GH_OasysComponent
+    /// <summary>
+    /// Component to edit a Material and ouput the information
+    /// </summary>
+    public class EditMaterial : GH_OasysComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("865f73c7-a057-481a-834b-c7e12873dd39");
@@ -129,7 +129,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert Material Type input");
+            this.AddRuntimeError("Unable to convert Material Type input");
             return;
           }
         }
@@ -150,7 +150,7 @@ namespace GsaGH.Components
         DA.SetData(3, material.GradeProperty);
       }
       else
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Material is Null");
+        this.AddRuntimeError("Material is Null");
     }
   }
 }

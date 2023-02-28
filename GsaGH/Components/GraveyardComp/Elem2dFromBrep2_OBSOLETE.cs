@@ -19,10 +19,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Node
-  /// </summary>
-  public class Elem2dFromBrep2_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
+    /// <summary>
+    /// Component to edit a Node
+    /// </summary>
+    public class Elem2dFromBrep2_OBSOLETE : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("83948408-c55d-49b9-b9a7-98034bcf3ce1");
@@ -67,7 +67,7 @@ namespace GsaGH.Components
       GH_Brep ghbrep = new GH_Brep();
       if (DA.GetData(0, ref ghbrep))
       {
-        if (ghbrep == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Brep input is null"); }
+        if (ghbrep == null) { this.AddRuntimeWarning("Brep input is null"); }
         Brep brep = new Brep();
         if (GH_Convert.ToBrep(ghbrep, ref brep, GH_Conversion.Both))
         {
@@ -95,7 +95,7 @@ namespace GsaGH.Components
                 string type = gh_types[i].Value.GetType().ToString();
                 type = type.Replace("GsaGH.Parameters.", "");
                 type = type.Replace("Goo", "");
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert incl. Point/Node input parameter of type " +
+                this.AddRuntimeError("Unable to convert incl. Point/Node input parameter of type " +
                     type + " to point or node");
               }
             }
@@ -125,7 +125,7 @@ namespace GsaGH.Components
                 string type = gh_types[i].Value.GetType().ToString();
                 type = type.Replace("GsaGH.Parameters.", "");
                 type = type.Replace("Goo", "");
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert incl. Curve/Mem1D input parameter of type " +
+                this.AddRuntimeError("Unable to convert incl. Curve/Mem1D input parameter of type " +
                     type + " to curve or 1D Member");
               }
             }
@@ -150,7 +150,7 @@ namespace GsaGH.Components
                 prop2d.Id = idd;
               else
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PA input to a 2D Property of reference integer");
+                this.AddRuntimeError("Unable to convert PA input to a 2D Property of reference integer");
                 return;
               }
             }
@@ -164,7 +164,7 @@ namespace GsaGH.Components
 
           DA.SetData(0, new GsaElement2dGoo(elem2d, false));
 
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
+          this.AddRuntimeRemark("This component is work-in-progress and provided 'as-is'. It will unroll the surface, do the meshing, map the mesh back on the original surface. Only single surfaces will work. Surfaces of high curvature and not-unrollable geometries (like a sphere) is unlikely to produce good results");
         }
       }
     }
@@ -263,9 +263,9 @@ namespace GsaGH.Components
       }
       this.Message = "Tol: " + Tolerance.ToString();
       if (Tolerance.Meters < 0.001)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite small, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite small, you can change this by right-clicking the component.");
       if (Tolerance.Meters > 0.25)
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "Set tolerance is quite large, you can change this by right-clicking the component.");
+        this.AddRuntimeRemark("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {

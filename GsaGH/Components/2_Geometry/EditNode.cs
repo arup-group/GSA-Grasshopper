@@ -11,10 +11,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a Node
-  /// </summary>
-  public class EditNode : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to edit a Node
+    /// </summary>
+    public class EditNode : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("418e222d-16b8-4a8e-bb3d-98ad72b913d8");
@@ -85,8 +85,8 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaNodeGoo)
         {
           gh_typ.CastTo(ref node);
-          if (node == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
-          if (node.ApiNode == null) { AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Node input is null"); }
+          if (node == null) { this.AddRuntimeError("Node input is null"); }
+          if (node.ApiNode == null) { this.AddRuntimeError("Node input is null"); }
         }
         else if (GH_Convert.ToPoint3d(gh_typ.Value, ref tempPt, GH_Conversion.Both))
         {
@@ -94,7 +94,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert input to Node");
+          this.AddRuntimeError("Unable to convert input to Node");
           return;
         }
       }
@@ -102,7 +102,7 @@ namespace GsaGH.Components
       {
         node.Point = new Point3d(0, 0, 0);
         if (Params.Input[2].SourceCount == 0)
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, "New node created at {0, 0, 0}");
+          this.AddRuntimeRemark("New node created at {0, 0, 0}");
       }
 
       if (node != null)

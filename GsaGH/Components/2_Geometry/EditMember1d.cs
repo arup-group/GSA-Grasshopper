@@ -19,10 +19,10 @@ using Rhino.Geometry;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to edit a 1D Member
-  /// </summary>
-  public class EditMember1d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to edit a 1D Member
+    /// </summary>
+    public class EditMember1d : GH_OasysComponent, IGH_PreviewObject, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("06ae2d01-b152-49c1-9356-c83714c4e5f4");
@@ -119,7 +119,7 @@ namespace GsaGH.Components
       {
         if (gsaMember1d == null)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Member1D input is null");
+          this.AddRuntimeWarning("Member1D input is null");
         }
         mem = gsaMember1d.Duplicate(true);
       }
@@ -165,7 +165,7 @@ namespace GsaGH.Components
               section = new GsaSection(id);
             else
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert PB input to a Section Property of reference integer");
+              this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
               return;
             }
           }
@@ -194,7 +194,7 @@ namespace GsaGH.Components
             }
             catch (ArgumentException)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Member Type");
+              this.AddRuntimeError("Unable to change Member Type");
             }
           }
         }
@@ -213,7 +213,7 @@ namespace GsaGH.Components
             }
             catch (ArgumentException)
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to change Element Type");
+              this.AddRuntimeError("Unable to change Element Type");
             }
           }
         }
@@ -259,7 +259,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to convert Orientation Node input to GsaNode");
+            this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
           }
         }
 
@@ -295,7 +295,7 @@ namespace GsaGH.Components
           }
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Unable to change buckling length factors");
+            this.AddRuntimeWarning("Unable to change buckling length factors");
           }
         }
 

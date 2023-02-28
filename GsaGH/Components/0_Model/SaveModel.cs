@@ -18,10 +18,10 @@ using OasysGH.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to open an existing GSA model
-  /// </summary>
-  public class SaveModel : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to open an existing GSA model
+    /// </summary>
+    public class SaveModel : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
@@ -66,7 +66,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
+          this.AddRuntimeError("Error converting input to GSA Model");
           return;
         }
 
@@ -96,7 +96,7 @@ namespace GsaGH.Components
         model.FileNameAndPath = fileNameAndPath;
       }
       else
-        this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, mes);
+        this.AddRuntimeError(mes);
     }
 
     #region Custom UI

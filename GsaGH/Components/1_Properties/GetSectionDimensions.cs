@@ -18,10 +18,10 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to get geometric dimensions of a section
-  /// </summary>
-  public class GetSectionDimensions : GH_OasysComponent, IGH_VariableParameterComponent
+    /// <summary>
+    /// Component to get geometric dimensions of a section
+    /// </summary>
+    public class GetSectionDimensions : GH_OasysComponent, IGH_VariableParameterComponent
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("98765d83-2b23-47c1-ad1d-201b5a2eed8b");
@@ -76,7 +76,7 @@ namespace GsaGH.Components
             gsaSection = new GsaSection(profileIn);
           else
           {
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid profile syntax: " + profileIn);
+            this.AddRuntimeWarning("Invalid profile syntax: " + profileIn);
             return;
           }
         }
@@ -84,7 +84,7 @@ namespace GsaGH.Components
         string profile = gsaSection.Profile;
         if (profile.Trim() == "")
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Profile not set in Section");
+          this.AddRuntimeWarning("Profile not set in Section");
           return;
         }
         string[] parts = profile.Split(' ');
@@ -459,7 +459,7 @@ namespace GsaGH.Components
           DA.SetData(i, "CAT " + profile.Split(' ')[1]);
         }
         else
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to get dimensions for type " + type[0]);
+          this.AddRuntimeError("Unable to get dimensions for type " + type[0]);
       }
     }
 

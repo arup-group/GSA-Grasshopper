@@ -17,10 +17,10 @@ using Grasshopper.Kernel.Data;
 
 namespace GsaGH.Components
 {
-  /// <summary>
-  /// Component to select results from a GSA Model
-  /// </summary>
-  public class SelectResult : GH_OasysDropDownComponent
+    /// <summary>
+    /// Component to select results from a GSA Model
+    /// </summary>
+    public class SelectResult : GH_OasysDropDownComponent
   {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
@@ -99,7 +99,7 @@ namespace GsaGH.Components
         }
         else
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error converting input to GSA Model");
+          this.AddRuntimeError("Error converting input to GSA Model");
           return;
         }
 
@@ -202,14 +202,14 @@ namespace GsaGH.Components
               this._analysisCaseResults = this._gsaModel.Model.Results();
               if (this._analysisCaseResults == null || this._analysisCaseResults.Count == 0)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No Analysis Case Results exist in Model");
+                this.AddRuntimeError("No Analysis Case Results exist in Model");
                 return;
               }
             }
 
             if (!this._analysisCaseResults.ContainsKey(this._caseID))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Analysis Case A" + this._caseID + " does not exist in model");
+              this.AddRuntimeError("Analysis Case A" + this._caseID + " does not exist in model");
               return;
             }
 
@@ -226,14 +226,14 @@ namespace GsaGH.Components
               this._combinationCaseResults = this._gsaModel.Model.CombinationCaseResults();
               if (this._combinationCaseResults == null || _combinationCaseResults.Count == 0)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "No Combination Case Results exist in Model");
+                this.AddRuntimeError("No Combination Case Results exist in Model");
                 return;
               }
             }
 
             if (!this._combinationCaseResults.ContainsKey(this._caseID))
             {
-              AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Combination Case does not exist in model");
+              this.AddRuntimeError("Combination Case does not exist in model");
               return;
             }
 
@@ -245,12 +245,12 @@ namespace GsaGH.Components
             {
               if (this._permutationIDs.Count == 0)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Combination Case C" + this._caseID + " does not contain results");
+                this.AddRuntimeWarning("Combination Case C" + this._caseID + " does not contain results");
                 return;
               }
               if (this._permutationIDs.Max() > nP)
               {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Combination Case C" + this._caseID + " only contains " + nP + " permutations but the highest permutation in input is " + this._permutationIDs.Max());
+                this.AddRuntimeError("Combination Case C" + this._caseID + " only contains " + nP + " permutations but the highest permutation in input is " + this._permutationIDs.Max());
                 return;
               }
             }
