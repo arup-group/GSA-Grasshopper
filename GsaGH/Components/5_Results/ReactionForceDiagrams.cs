@@ -224,7 +224,10 @@ namespace GsaGH.Components
       _reactionForceVectors.ForEach(force =>
       {
         var line = new Line(force.StartingPoint, force.ForceVector);
-        line.Flip();
+        line.Transform(Transform.Scale(force.StartingPoint, -1));
+
+        args.Display.DrawArrowHead(force.StartingPoint, force.ForceVector, Color.Red, 20, 0);
+        args.Display.DrawArrow(line, Color.Blue);
 
         if (force.Type == DisplayValue.ResXYZ || force.Type == DisplayValue.X || force.Type == DisplayValue.Y || force.Type == DisplayValue.Z)
           args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaDarkPurple);
