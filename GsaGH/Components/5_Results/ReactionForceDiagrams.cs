@@ -223,8 +223,10 @@ namespace GsaGH.Components
       _reactionForceVectors.ForEach(force =>
       {
         var line = new Line(force.StartingPoint, force.ForceVector);
-        line.Flip();
-        args.Display.DrawArrow(line, Color.Red);
+        line.Transform(Transform.Scale(force.StartingPoint, -1));
+
+        args.Display.DrawArrowHead(force.StartingPoint, force.ForceVector, Color.Red, 20, 0);
+        args.Display.DrawArrow(line, Color.Blue);
       });
     }
 
