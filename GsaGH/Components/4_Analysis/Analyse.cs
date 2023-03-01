@@ -228,9 +228,8 @@ namespace GsaGH.Components
     public override void SetSelected(int i, int j)
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
-
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
-
+      this.UpdateMessage();
       base.UpdateUI();
     }
     public void SetAnalysis(List<bool> value)
@@ -242,7 +241,6 @@ namespace GsaGH.Components
     public override void UpdateUIFromSelectedItems()
     {
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
-
       base.UpdateUIFromSelectedItems();
     }
 
@@ -301,6 +299,7 @@ namespace GsaGH.Components
           return;
         }
       }
+      this._tolerance = this._tolerance.ToUnit(this.LengthUnit);
       this.Message = "Tol: " + this._tolerance.ToString().Replace(" ", string.Empty);
       if (this._tolerance.Meters < 0.001)
         this.AddRuntimeRemark("Set tolerance is quite small, you can change this by right-clicking the component.");
