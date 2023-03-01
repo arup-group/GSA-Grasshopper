@@ -854,7 +854,7 @@ namespace GsaGH.Helpers.GH
       mem.Type = MemberType.GENERIC_2D;
 
       // assemble temp model
-      Model model = Export.AssembleModel.Assemble(null, nodes, elem1ds, null, null, mem1ds, new List<GsaMember2d> { mem }, null, null, null, null, null, null, null, null, unit, tolerance.Meters, true, null);
+      Model model = Export.AssembleModel.Assemble(null, nodes, elem1ds, null, null, mem1ds, new List<GsaMember2d> { mem }, null, null, null, null, null, null, null, null, unit, tolerance, true, null);
 
       ReadOnlyDictionary<int, Element> elementDict = model.Elements();
       // populate local axes dictionary

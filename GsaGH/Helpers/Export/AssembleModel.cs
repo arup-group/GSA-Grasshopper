@@ -41,7 +41,7 @@ namespace GsaGH.Helpers.Export
         List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds,
         List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
         List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
-        LengthUnit modelUnit, double toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner)
+        LengthUnit modelUnit, Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner)
     {
       // Set model to work on
       Model gsa = new Model();
@@ -115,9 +115,9 @@ namespace GsaGH.Helpers.Export
       int initialNodeCount = apiNodeDict.Keys.Count;
       if (createElementsFromMembers && apiMembers.Count > 0)
         gsa.CreateElementsFromMembers();
-      if (toleranceCoincidentNodes > 0)
+      if (toleranceCoincidentNodes.Value > 0)
       {
-        gsa.CollapseCoincidentNodes(toleranceCoincidentNodes);
+        gsa.CollapseCoincidentNodes(toleranceCoincidentNodes.Meters);
         
         // provide feedback to user if we have removed unreasonable amount of nodes
         if (owner != null)
@@ -125,9 +125,9 @@ namespace GsaGH.Helpers.Export
           try
           {
             double minMeshSize = apiMemDict.Values.Where(x => x.MeshSize != 0).Select(x => x.MeshSize).Min();
-            if (minMeshSize < toleranceCoincidentNodes)
+            if (minMeshSize < toleranceCoincidentNodes.Meters)
               owner.AddRuntimeWarning(
-                "The smallest mesh size (" + minMeshSize + ") is smaller than the set tolerance (" + toleranceCoincidentNodes + ")."
+                "The smallest mesh size (" + minMeshSize + ") is smaller than the set tolerance (" + toleranceCoincidentNodes.Meters + ")."
                 + System.Environment.NewLine + "This is likely to produce an undisarable mesh."
                 + System.Environment.NewLine + "Right-click the component to change the tolerance.");
           }

@@ -100,7 +100,7 @@ namespace GsaGH.Components
         if (models.Count > 0)
         {
           if (models.Count > 1)
-            model = Helpers.Export.MergeModels.MergeModel(models, this);
+            model = Helpers.Export.MergeModels.MergeModel(models, this, this._tolerance);
           else
             model = models[0].Clone();
         }
@@ -193,7 +193,7 @@ namespace GsaGH.Components
     private List<bool> InitialCheckState = new List<bool>() { true, true };
     private bool Analysis = true;
     private bool ReMesh = true;
-    private double _tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+    private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = "";
 
     protected override void BeforeSolveInstance()
@@ -256,7 +256,7 @@ namespace GsaGH.Components
       Menu_AppendSeparator(menu);
 
       ToolStripTextBox tolerance = new ToolStripTextBox();
-      this._toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
+      this._toleranceTxt = _tolerance.ToUnit(this.LengthUnit).ToString().Replace(" ", string.Empty);
       tolerance.Text = this._toleranceTxt;
       tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
@@ -293,8 +293,7 @@ namespace GsaGH.Components
       {
         try
         {
-          Length newTolerance = Length.Parse(_toleranceTxt);
-          this._tolerance = newTolerance.As(this.LengthUnit);
+          this._tolerance = Length.Parse(_toleranceTxt);
         }
         catch (Exception e)
         {
@@ -302,11 +301,10 @@ namespace GsaGH.Components
           return;
         }
       }
-      Length tol = new Length(this._tolerance, this.LengthUnit);
-      this.Message = "Tol: " + tol.ToString();
-      if (tol.Meters < 0.001)
+      this.Message = "Tol: " + this._tolerance.ToString().Replace(" ", string.Empty);
+      if (this._tolerance.Meters < 0.001)
         this.AddRuntimeRemark("Set tolerance is quite small, you can change this by right-clicking the component.");
-      if (tol.Meters > 0.25)
+      if (this._tolerance.Meters > 0.25)
         this.AddRuntimeRemark("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     #endregion
@@ -316,7 +314,7 @@ namespace GsaGH.Components
     {
       writer.SetBoolean("Analyse", this.Analysis);
       writer.SetBoolean("ReMesh", this.ReMesh);
-      writer.SetDouble("Tolerance", this._tolerance);
+      writer.SetDouble("Tolerance", this._tolerance.Value);
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
@@ -324,12 +322,16 @@ namespace GsaGH.Components
       this.Analysis = reader.GetBoolean("Analyse");
       this.ReMesh = reader.GetBoolean("ReMesh");
       this.InitialCheckState = new List<bool>() { this.Analysis, this.ReMesh };
+      bool flag = base.Read(reader);
       if (reader.ItemExists("Tolerance"))
-        this._tolerance = reader.GetDouble("Tolerance");
+      {
+        double tol = reader.GetDouble("Tolerance");
+        this._tolerance = new Length(tol, this.LengthUnit);
+      }
       else
-        this._tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+        this._tolerance = DefaultUnits.Tolerance;
       this.UpdateMessage();
-      return base.Read(reader);
+      return flag;
     }
     #endregion
   }
