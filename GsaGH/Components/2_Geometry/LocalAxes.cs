@@ -10,13 +10,14 @@ using OasysGH;
 using OasysGH.Components;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using OasysUnits;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a Node
-    /// </summary>
-    public class LocalAxes : GH_OasysComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to edit a Node
+  /// </summary>
+  public class LocalAxes : GH_OasysComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("4a322b8e-031a-4c90-b8df-b32d162a3274");
@@ -68,7 +69,7 @@ namespace GsaGH.Components
           if (axes == null)
           {
             GsaModel model = new GsaModel();
-            model.Model = Helpers.Export.AssembleModel.Assemble(model, new List<GsaNode>(), new List<GsaElement1d>(), new List<GsaElement2d>(), new List<GsaElement3d>(), new List<GsaMember1d>() { mem }, new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(), new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(), new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(), new List<GsaCombinationCase>(), LengthUnit.Meter, -1, false, null);
+            model.Model = Helpers.Export.AssembleModel.Assemble(model, new List<GsaNode>(), new List<GsaElement1d>(), new List<GsaElement2d>(), new List<GsaElement3d>(), new List<GsaMember1d>() { mem }, new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(), new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(), new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(), new List<GsaCombinationCase>(), LengthUnit.Meter, Length.Zero, false, null);
 
             axes = new GsaLocalAxes(model.Model.MemberDirectionCosine(1));
             this.AddRuntimeWarning("Members´s local axes might deviate from the local axes in the assembled GSA model.");
@@ -88,7 +89,7 @@ namespace GsaGH.Components
           if (axes == null)
           {
             GsaModel model = new GsaModel();
-            model.Model = Helpers.Export.AssembleModel.Assemble(model, new List<GsaNode>(), new List<GsaElement1d>() { elem }, new List<GsaElement2d>(), new List<GsaElement3d>(), new List<GsaMember1d>(), new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(), new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(), new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(), new List<GsaCombinationCase>(), LengthUnit.Meter, -1, false, null);
+            model.Model = Helpers.Export.AssembleModel.Assemble(model, new List<GsaNode>(), new List<GsaElement1d>() { elem }, new List<GsaElement2d>(), new List<GsaElement3d>(), new List<GsaMember1d>(), new List<GsaMember2d>(), new List<GsaMember3d>(), new List<GsaSection>(), new List<GsaProp2d>(), new List<GsaProp3d>(), new List<GsaLoad>(), new List<GsaGridPlaneSurface>(), new List<GsaAnalysisTask>(), new List<GsaCombinationCase>(), LengthUnit.Meter, Length.Zero, false, null);
 
             axes = new GsaLocalAxes(model.Model.ElementDirectionCosine(1));
             this.AddRuntimeWarning("Element´s local axes might deviate from the local axes in the assembled GSA model.");

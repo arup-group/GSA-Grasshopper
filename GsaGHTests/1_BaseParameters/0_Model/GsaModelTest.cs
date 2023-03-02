@@ -3,6 +3,7 @@ using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using System;
@@ -80,7 +81,7 @@ namespace GsaGHTests.Parameters
       original.Model.Open(GsaFile.Steel_Design_Simple);
 
       GsaModel assembled = new GsaModel();
-      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(original, null, null, null, null, null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, -1, false, null);
+      assembled.Model = GsaGH.Helpers.Export.AssembleModel.Assemble(original, null, null, null, null, null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, false, null);
 
       // Assert
       Duplicates.AreEqual(original, assembled, true);
