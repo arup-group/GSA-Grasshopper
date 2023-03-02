@@ -1,9 +1,11 @@
 ﻿using GsaAPI;
+using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -83,6 +85,21 @@ namespace GsaGHTests.Parameters
 
       // Assert
       Duplicates.AreEqual(original, assembled, true);
+    }
+
+    [Theory]
+    [InlineData(LengthUnit.Meter, 12800.0)]
+    [InlineData(LengthUnit.Foot, 452027.734035)]
+    public void TestGetBoundingBox(LengthUnit modelUnit, double expectedVolume)
+    {
+      GsaModel model = new GsaModel();
+      model.Model.Open(GsaFile.Steel_Design_Complex);
+
+      model.ModelUnit = modelUnit;
+      BoundingBox bbox = model.BoundingBox;
+
+      // Assert
+      Assert.Equal(expectedVolume, bbox.Volume, 6);
     }
   }
 }
