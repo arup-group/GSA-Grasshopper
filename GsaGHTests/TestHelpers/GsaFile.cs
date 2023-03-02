@@ -15,6 +15,17 @@ namespace GsaGHTests.Helper
     }
     private static string _Steel_Design_Simple = "";
 
+    internal static string Steel_Design_Complex
+    {
+      get
+      {
+        if (_Steel_Design_Complex == "")
+          _Steel_Design_Complex = DownloadFile("https://samples.oasys-software.com/gsa/10.1/Steel/Steel_Design_Complex.gwb");
+        return _Steel_Design_Complex;
+      }
+    }
+    private static string _Steel_Design_Complex = "";
+
     private static string DownloadFile(string url)
     {
       string path = System.IO.Path.GetTempPath();

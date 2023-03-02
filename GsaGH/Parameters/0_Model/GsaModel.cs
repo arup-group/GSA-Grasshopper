@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using GsaAPI;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
@@ -17,7 +21,17 @@ namespace GsaGH.Parameters
     public string FileNameAndPath { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
     public LengthUnit ModelUnit { get; set; } = LengthUnit.Undefined;
-    
+    public BoundingBox BoundingBox 
+    { 
+      get
+      {
+        if (!_boundingBox.IsValid)
+          _boundingBox = this.GetBoundingBox();
+        return _boundingBox;
+      }
+    }
+    private BoundingBox _boundingBox = Rhino.Geometry.BoundingBox.Empty;
+
     internal GsaAPI.Titles Titles
     {
       get
@@ -45,6 +59,7 @@ namespace GsaGH.Parameters
       clone.FileNameAndPath = this.FileNameAndPath;
       clone.ModelUnit = this.ModelUnit;
       clone.Guid = Guid.NewGuid();
+      clone._boundingBox = this._boundingBox;
       return clone;
     }
 
@@ -60,6 +75,7 @@ namespace GsaGH.Parameters
         dup.FileNameAndPath = this.FileNameAndPath.ToString();
       dup.Guid = new Guid(this.Guid.ToString());
       dup.ModelUnit = this.ModelUnit;
+      dup._boundingBox = this._boundingBox;
       return dup;
     }
 
@@ -82,6 +98,25 @@ namespace GsaGH.Parameters
       if (this.ModelUnit != LengthUnit.Undefined)
         s += " [" + Length.GetAbbreviation(this.ModelUnit) + "]";
       return s;
+    }
+
+    private BoundingBox GetBoundingBox()
+    {
+      ConcurrentDictionary<int, Node> outNodes = new ConcurrentDictionary<int, Node>(this.Model.Nodes());
+      ConcurrentBag<Point3d> pts = new ConcurrentBag<Point3d>();
+      Parallel.ForEach(outNodes, node =>
+      {
+        pts.Add(Helpers.Import.Nodes.Point3dFromNode(node.Value, LengthUnit.Meter));
+      });
+
+      if (this.ModelUnit != LengthUnit.Undefined && this.ModelUnit != LengthUnit.Meter)
+      {
+        double factor = 1 / new Length(1, this.ModelUnit).Meters;
+        Transform scale = Transform.Scale(new Point3d(0,0,0), factor);
+        return new BoundingBox(pts, scale);
+      }
+
+      return new BoundingBox(pts);
     }
     #endregion
   }
