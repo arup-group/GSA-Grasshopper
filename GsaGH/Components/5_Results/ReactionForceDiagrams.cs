@@ -9,11 +9,14 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Display;
 using Rhino.Geometry;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,50 +29,6 @@ namespace GsaGH.Components
   public class ReactionForceDiagrams : GH_OasysDropDownComponent
   {
     #region nested classes, enums
-    private class ReactionForceVector
-    {
-      public readonly int Id;
-      public readonly Point3d StartingPoint;
-      public readonly Vector3d Direction;
-      public readonly IQuantity ForceValue;
-      
-      private readonly ForceType _forceType;
-      private readonly Line _reactionForceLine;
-
-      public ReactionForceVector(int id, Point3d startingPoint, Vector3d direction, IQuantity forceValue, ForceType forceType)
-      {
-        this.Id = id;
-        this.StartingPoint = startingPoint;
-        this.Direction = direction;
-        this.ForceValue = forceValue;
-        this._forceType = forceType;
-        this._reactionForceLine = CreateReactionForceLine();
-      }
-      
-      public Line GetReactionForceLine() => this._reactionForceLine;
-      public ForceType GetForceType() => this._forceType;
-
-      public Point3d CalculateExtraArrowHeadPosition(double pixelsPerUnit)
-      {
-        var point = new Point3d(this._reactionForceLine.To);
-        var direction = this._reactionForceLine.Direction;
-
-        direction.Unitize();
-        var t = Transform.Translation(direction * -1 * ArrowHeadScreenSize / pixelsPerUnit);
-        point.Transform(t);
-
-        return point;
-      }
-
-      private Line CreateReactionForceLine()
-      {
-        var line = new Line(this.StartingPoint, this.Direction);
-        line.Flip();
-        line.Transform(Transform.Scale(this.StartingPoint, -1));
-        return line;
-      }
-    }
-
     private enum DisplayValue
     {
       X,
@@ -81,13 +40,6 @@ namespace GsaGH.Components
       ZZ,
       ResXXYYZZ
     }
-
-    private enum ForceType
-    {
-      Force,
-      Moment
-    }
-
     #endregion
 
     #region readonly fields
@@ -123,7 +75,7 @@ namespace GsaGH.Components
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private DisplayValue _selectedDisplayValue = DisplayValue.ResXYZ;
-    private const int ArrowHeadScreenSize = 20;
+    private bool _showText = true;
     #endregion
 
     #endregion
@@ -258,16 +210,29 @@ namespace GsaGH.Components
       _reactionForceVectors.ForEach(force =>
       {
         var line = force.GetReactionForceLine();
+        var color = Helpers.Graphics.Colours.GsaDarkPurple;
+        args.Display.Viewport.GetWorldToScreenScale(line.To, out var pixelsPerUnit);
+        
         if (force.GetForceType() == ForceType.Force)
-          args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaDarkPurple);
+          args.Display.DrawArrow(line, color);
         else //moments 
         {
+          color = Helpers.Graphics.Colours.GsaGold;
+          int arrowHeadScreenSize = 20;
           args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaGold);
-
-          args.Display.Viewport.GetWorldToScreenScale(line.To, out var pixelsPerUnit);
-          var point = force.CalculateExtraArrowHeadPosition(pixelsPerUnit);
-          args.Display.DrawArrowHead(point, force.Direction, Helpers.Graphics.Colours.GsaGold, ArrowHeadScreenSize, 0);
+          
+          var point = force.CalculateExtraStartOffsetPoint(pixelsPerUnit, arrowHeadScreenSize);
+          args.Display.DrawArrowHead(point, force.Direction, color , arrowHeadScreenSize, 0);
         }
+
+        if (!_showText) return;
+
+        const int offset = 30;
+        var endOffsetPoint = force.CalculateExtraEndOffsetPoint(pixelsPerUnit, offset);
+        var positionOnTheScreen = args.Display.Viewport.WorldToClient(endOffsetPoint);
+
+        args.Display.Draw2dText(force.ForceValue.ToString(),color, positionOnTheScreen, true);
+
       });
     }
 
@@ -285,6 +250,7 @@ namespace GsaGH.Components
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
     {
       Menu_AppendSeparator(menu);
+      Menu_AppendItem(menu, "Show Text", ShowText, true, _showText);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Properties.Resources.Units);
       var forceUnitsMenu = GenerateForceUnitsMenu("Force");
@@ -327,6 +293,13 @@ namespace GsaGH.Components
     private void UpdateMoment(string unit)
     {
       this._momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
+      this.ExpirePreview(true);
+      base.UpdateUI();
+    }
+
+    private void ShowText(object sender, EventArgs e)
+    {
+      _showText = !_showText;
       this.ExpirePreview(true);
       base.UpdateUI();
     }
