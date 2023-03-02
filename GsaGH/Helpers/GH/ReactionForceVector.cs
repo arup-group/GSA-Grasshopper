@@ -1,11 +1,5 @@
-﻿using GsaAPI;
-using OasysUnits;
+﻿using OasysUnits;
 using Rhino.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GsaGH.Helpers.GH
 {
@@ -28,8 +22,8 @@ namespace GsaGH.Helpers.GH
     public ReactionForceVector(int id, Point3d startingPoint, Vector3d direction, IQuantity forceValue, ForceType forceType)
     {
       this.Id = id;
-      this.StartingPoint = startingPoint;
-      this.Direction = direction;
+      this.StartingPoint = startingPoint == Point3d.Unset ? Point3d.Origin : startingPoint;
+      this.Direction = direction == Vector3d.Unset ? Vector3d.Zero : direction;
       this.ForceValue = forceValue;
       this._forceType = forceType;
       this._reactionForceLine = CreateReactionForceLine();
@@ -54,6 +48,8 @@ namespace GsaGH.Helpers.GH
 
     private Point3d TransformPoint(Point3d point, double pixelsPerUnit, int offset)
     {
+      if(pixelsPerUnit == 0 || offset == 0) return point;
+
       var direction = this._reactionForceLine.Direction;
 
       direction.Unitize();
