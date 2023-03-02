@@ -28,19 +28,45 @@ namespace GsaGH.Components
     #region nested classes, enums
     private class ReactionForceVector
     {
-      public readonly int NodeId;
+      public readonly int Id;
       public readonly Point3d StartingPoint;
-      public readonly Vector3d ForceVector;
+      public readonly Vector3d Direction;
       public readonly IQuantity ForceValue;
-      public readonly DisplayValue Type;
+      
+      private readonly ForceType _forceType;
+      private readonly Line _reactionForceLine;
 
-      public ReactionForceVector(int nodeId, Point3d startingPoint, Vector3d forceVector, IQuantity forceValue, DisplayValue type)
+      public ReactionForceVector(int id, Point3d startingPoint, Vector3d direction, IQuantity forceValue, ForceType forceType)
       {
-        this.NodeId = nodeId;
+        this.Id = id;
         this.StartingPoint = startingPoint;
-        this.ForceVector = forceVector;
+        this.Direction = direction;
         this.ForceValue = forceValue;
-        this.Type = type;
+        this._forceType = forceType;
+        this._reactionForceLine = CreateReactionForceLine();
+      }
+      
+      public Line GetReactionForceLine() => this._reactionForceLine;
+      public ForceType GetForceType() => this._forceType;
+
+      public Point3d CalculateExtraArrowHeadPosition(double pixelsPerUnit)
+      {
+        var point = new Point3d(this._reactionForceLine.To);
+        var direction = this._reactionForceLine.Direction;
+
+        direction.Unitize();
+        var t = Transform.Translation(direction * -1 * ArrowHeadScreenSize / pixelsPerUnit);
+        point.Transform(t);
+
+        return point;
+      }
+
+      private Line CreateReactionForceLine()
+      {
+        var line = new Line(this.StartingPoint, this.Direction);
+        line.Flip();
+        line.Transform(Transform.Scale(this.StartingPoint, -1));
+        return line;
       }
     }
 
@@ -55,6 +81,13 @@ namespace GsaGH.Components
       ZZ,
       ResXXYYZZ
     }
+
+    private enum ForceType
+    {
+      Force,
+      Moment
+    }
+
     #endregion
 
     #region readonly fields
@@ -90,6 +123,7 @@ namespace GsaGH.Components
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private DisplayValue _selectedDisplayValue = DisplayValue.ResXYZ;
+    private const int ArrowHeadScreenSize = 20;
     #endregion
 
     #endregion
@@ -223,20 +257,16 @@ namespace GsaGH.Components
 
       _reactionForceVectors.ForEach(force =>
       {
-        var line = new Line(force.StartingPoint, force.ForceVector);
-        line.Flip();
-        line.Transform(Transform.Scale(force.StartingPoint, -1));
-
-        if (force.Type == DisplayValue.ResXYZ || force.Type == DisplayValue.X || force.Type == DisplayValue.Y || force.Type == DisplayValue.Z)
+        var line = force.GetReactionForceLine();
+        if (force.GetForceType() == ForceType.Force)
           args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaDarkPurple);
         else //moments 
         {
           args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaGold);
-          
-          int arrowHeadScreenSize = 20;
-          Point3d p = this.CalculateArrowHeadPosition(line, args, arrowHeadScreenSize);
-          
-          args.Display.DrawArrowHead(p, force.ForceVector, Helpers.Graphics.Colours.GsaGold, arrowHeadScreenSize, 0);
+
+          args.Display.Viewport.GetWorldToScreenScale(line.To, out var pixelsPerUnit);
+          var point = force.CalculateExtraArrowHeadPosition(pixelsPerUnit);
+          args.Display.DrawArrowHead(point, force.Direction, Helpers.Graphics.Colours.GsaGold, ArrowHeadScreenSize, 0);
         }
       });
     }
@@ -451,28 +481,29 @@ namespace GsaGH.Components
 
       if (!xyzResults.ContainsKey(nodeId)) return null;
 
-      var vector3d = new Vector3d();
+      var direction = new Vector3d();
       IQuantity forceValue = null;
+      ForceType forceType = ForceType.Force;
 
       switch (_selectedDisplayValue)
       {
         case (DisplayValue.X):
           var xVal = xyzResults[nodeId][0].X;
-          vector3d = new Vector3d(xVal.As(this._forceUnit) * scale, 0, 0);
+          direction = new Vector3d(xVal.As(this._forceUnit) * scale, 0, 0);
           forceValue = xVal.ToUnit(this._forceUnit);
           break;
         case (DisplayValue.Y):
           var yVal = xyzResults[nodeId][0].Y;
-          vector3d = new Vector3d(0, yVal.As(this._forceUnit) * scale, 0);
+          direction = new Vector3d(0, yVal.As(this._forceUnit) * scale, 0);
           forceValue = yVal.ToUnit(this._forceUnit);
           break;
         case (DisplayValue.Z):
           var zVal = xyzResults[nodeId][0].Z;
-          vector3d = new Vector3d(0, 0, zVal.As(this._forceUnit) * scale);
+          direction = new Vector3d(0, 0, zVal.As(this._forceUnit) * scale);
           forceValue = zVal.ToUnit(this._forceUnit);
           break;
         case (DisplayValue.ResXYZ):
-          vector3d = new Vector3d(
+          direction = new Vector3d(
             xyzResults[nodeId][0].X.As(this._forceUnit) * scale,
             xyzResults[nodeId][0].Y.As(this._forceUnit) * scale,
             xyzResults[nodeId][0].Z.As(this._forceUnit) * scale);
@@ -480,51 +511,41 @@ namespace GsaGH.Components
           break;
         case (DisplayValue.XX):
           var xxVal = xxyyzzResults[nodeId][0].X;
-          vector3d = new Vector3d(xxVal.As(this._momentUnit) * scale, 0, 0);
+          direction = new Vector3d(xxVal.As(this._momentUnit) * scale, 0, 0);
           forceValue = xxVal.ToUnit(this._momentUnit);
+          forceType = ForceType.Moment;
           break;
         case (DisplayValue.YY):
           var yyVal = xxyyzzResults[nodeId][0].Y;
-          vector3d = new Vector3d(0, yyVal.As(this._momentUnit) * scale, 0);
+          direction = new Vector3d(0, yyVal.As(this._momentUnit) * scale, 0);
           forceValue = yyVal.ToUnit(this._momentUnit);
+          forceType = ForceType.Moment;
           break;
         case (DisplayValue.ZZ):
           var zzVal = xxyyzzResults[nodeId][0].Z;
-          vector3d = new Vector3d(0, 0, zzVal.As(this._momentUnit) * scale);
+          direction = new Vector3d(0, 0, zzVal.As(this._momentUnit) * scale);
           forceValue = zzVal.ToUnit(this._momentUnit);
+          forceType = ForceType.Moment;
           break;
         case (DisplayValue.ResXXYYZZ):
-          vector3d = new Vector3d(
+          direction = new Vector3d(
             xxyyzzResults[nodeId][0].X.As(this._momentUnit) * scale,
             xxyyzzResults[nodeId][0].Y.As(this._momentUnit) * scale,
             xxyyzzResults[nodeId][0].Z.As(this._momentUnit) * scale);
           forceValue = xxyyzzResults[nodeId][0].XYZ.ToUnit(this._momentUnit);
+          forceType = ForceType.Moment;
           break;
       }
 
-      return new ReactionForceVector(nodeId, node.Value.Value.Point, vector3d, forceValue, _selectedDisplayValue);
+      return new ReactionForceVector(nodeId, node.Value.Value.Point, direction, forceValue, forceType);
     }
 
     private void SetOutputs(IGH_DataAccess dataAccess)
     {
-      var orderedReactionForceVectors = _reactionForceVectors.OrderBy(x => x.NodeId);
+      var orderedReactionForceVectors = _reactionForceVectors.OrderBy(x => x.Id);
       dataAccess.SetDataList(0, orderedReactionForceVectors.Select(a => a.StartingPoint));
-      dataAccess.SetDataList(1, orderedReactionForceVectors.Select(a => a.ForceVector));
+      dataAccess.SetDataList(1, orderedReactionForceVectors.Select(a => a.Direction));
       dataAccess.SetDataList(2, orderedReactionForceVectors.Select(a => a.ForceValue));
-    }
-
-    private Point3d CalculateArrowHeadPosition(Line line, IGH_PreviewArgs args, double arrowHeadScreenSize)
-    {
-      var point = new Point3d(line.To);
-      var motion = line.Direction;
-      
-      motion.Unitize();
-      args.Display.Viewport.GetWorldToScreenScale(point, out var pixelsPerUnit);
-      
-      var t = Transform.Translation(motion * -1 * arrowHeadScreenSize / pixelsPerUnit);
-      point.Transform(t);
-
-      return point;
     }
 
     #endregion
