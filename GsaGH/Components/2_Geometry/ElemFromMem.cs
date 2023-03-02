@@ -20,10 +20,10 @@ using Grasshopper.Kernel.Parameters;
 
 namespace GsaGH.Components
 {
-    /// <summary>
-    /// Component to edit a Node
-    /// </summary>
-    public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
+  /// <summary>
+  /// Component to edit a Node
+  /// </summary>
+  public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
   {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
@@ -186,7 +186,7 @@ namespace GsaGH.Components
       // extract nodes from model
       ConcurrentBag<GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodes(gsa.Nodes(), this.LengthUnit, null, false);
 
-      
+
       // populate local axes dictionary
       ReadOnlyDictionary<int, Element> elementDict = gsa.Elements();
       Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
@@ -278,7 +278,7 @@ namespace GsaGH.Components
 
     #region Custom UI
     private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-    private double _tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+    private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = "";
 
     protected override void BeforeSolveInstance()
@@ -308,12 +308,8 @@ namespace GsaGH.Components
     {
       this.SelectedItems[i] = this.DropDownItems[i][j];
       this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+      this.UpdateMessage();
       base.UpdateUI();
-    }
-    public override void UpdateUIFromSelectedItems()
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
-      base.UpdateUIFromSelectedItems();
     }
 
     public override void VariableParameterMaintenance()
@@ -332,7 +328,7 @@ namespace GsaGH.Components
       Menu_AppendSeparator(menu);
 
       ToolStripTextBox tolerance = new ToolStripTextBox();
-      this._toleranceTxt = new Length(_tolerance, this.LengthUnit).ToString();
+      this._toleranceTxt = _tolerance.ToUnit(this.LengthUnit).ToString().Replace(" ", string.Empty);
       tolerance.Text = this._toleranceTxt;
       tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
@@ -370,8 +366,7 @@ namespace GsaGH.Components
       {
         try
         {
-          Length newTolerance = Length.Parse(_toleranceTxt);
-          this._tolerance = newTolerance.As(this.LengthUnit);
+          this._tolerance = Length.Parse(_toleranceTxt);
         }
         catch (Exception e)
         {
@@ -379,11 +374,11 @@ namespace GsaGH.Components
           return;
         }
       }
-      Length tol = new Length(this._tolerance, this.LengthUnit);
-      this.Message = "Tol: " + tol.ToString();
-      if (tol.Meters < 0.001)
+      this._tolerance = this._tolerance.ToUnit(this.LengthUnit);
+      this.Message = "Tol: " + this._tolerance.ToString().Replace(" ", string.Empty);
+      if (this._tolerance.Meters < 0.001)
         this.AddRuntimeRemark("Set tolerance is quite small, you can change this by right-clicking the component.");
-      if (tol.Meters > 0.25)
+      if (this._tolerance.Meters > 0.25)
         this.AddRuntimeRemark("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     #endregion
@@ -391,17 +386,22 @@ namespace GsaGH.Components
     #region (de)serialization
     public override bool Write(GH_IO.Serialization.GH_IWriter writer)
     {
-      writer.SetDouble("Tolerance", this._tolerance);
+      writer.SetDouble("Tolerance", this._tolerance.Value);
       return base.Write(writer);
     }
     public override bool Read(GH_IO.Serialization.GH_IReader reader)
     {
+      bool flag = base.Read(reader);
+      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
       if (reader.ItemExists("Tolerance"))
-        this._tolerance = reader.GetDouble("Tolerance");
+      {
+        double tol = reader.GetDouble("Tolerance");
+        this._tolerance = new Length(tol, this.LengthUnit);
+      }
       else
-        this._tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
+        this._tolerance = DefaultUnits.Tolerance;
       this.UpdateMessage();
-      return base.Read(reader);
+      return flag;
     }
     #endregion
   }
