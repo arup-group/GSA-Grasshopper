@@ -3,6 +3,7 @@ using GsaGH.Components;
 using GsaGH.Helpers.GH;
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
@@ -244,6 +245,24 @@ namespace GsaGHTests
       }
 
       Assert.Equal(actualOutputs.Count, expectedOutputs.Count);
+    }
+
+    [Fact]
+    public void WhenAppendAdditionalComponentsMenuItems_ThenMenu_ShouldContainExtraElements()
+    {
+      var obj = new ReactionForceDiagrams();
+      ToolStripDropDown menu = new ToolStripDropDown();
+      obj.AppendAdditionalMenuItems(menu);
+
+      var expectedMenuItems = new ToolStripItemCollection(menu,
+        new ToolStripItem[]
+        {
+          new ToolStripMenuItem("Show Text") { Checked = true },
+          new ToolStripMenuItem("Select Units") { },
+          new ToolStripMenuItem("Force") { },
+          new ToolStripMenuItem("Moment") { },
+        });
+      Assert.Contains(expectedMenuItems, menu.Items[0]);
     }
   }
 }

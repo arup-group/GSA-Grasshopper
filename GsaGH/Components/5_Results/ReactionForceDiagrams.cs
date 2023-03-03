@@ -113,7 +113,7 @@ namespace GsaGH.Components
 
       if (!dataAccess.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject)) return;
 
-      _reactionForceVectors.Clear();
+      _reactionForceVectors.RemoveRange(0, _reactionForceVectors.Count());
 
       #region get input values
       gsaResult = (ghObject.Value as GsaResultGoo).Value;
