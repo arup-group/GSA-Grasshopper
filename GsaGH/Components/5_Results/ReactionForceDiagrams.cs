@@ -40,7 +40,6 @@ namespace GsaGH.Components
     #endregion
 
     #region readonly fields
-    private readonly List<ReactionForceVector> _reactionForceVectors = new List<ReactionForceVector>();
 
     private readonly List<string> _reactionStringList = new List<string>(new string[]
     {
@@ -65,6 +64,7 @@ namespace GsaGH.Components
     #endregion
 
     #region protected and private
+    private ConcurrentBag<ReactionForceVector> _reactionForceVectors = new ConcurrentBag<ReactionForceVector>();
     private string _case = "";
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
@@ -113,8 +113,6 @@ namespace GsaGH.Components
 
       if (!dataAccess.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject)) return;
 
-      _reactionForceVectors.RemoveRange(0, _reactionForceVectors.Count());
-
       #region get input values
       gsaResult = (ghObject.Value as GsaResultGoo).Value;
       this._case = GetCase(gsaResult);
@@ -134,6 +132,7 @@ namespace GsaGH.Components
       ReadOnlyDictionary<int, Node> gsaFilteredNodes = gsaResult.Model.Model.Nodes(filteredNodes);
       ConcurrentDictionary<int, GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit);
 
+      _reactionForceVectors = new ConcurrentBag<ReactionForceVector>();
       Parallel.ForEach(nodes, node =>
       {
         var reactionForceVector = GenerateReactionForceVector(node, forceValues, scale);
@@ -204,7 +203,7 @@ namespace GsaGH.Components
     {
       base.DrawViewportWires(args);
 
-      _reactionForceVectors.ForEach(force =>
+      foreach (var force in _reactionForceVectors)
       {
         var line = force.GetReactionForceLine();
         var color = Helpers.Graphics.Colours.GsaDarkPurple;
@@ -230,7 +229,7 @@ namespace GsaGH.Components
 
         args.Display.Draw2dText(force.ForceValue.ToString(),color, positionOnTheScreen, true);
 
-      });
+      };
     }
 
     #endregion
