@@ -166,8 +166,8 @@ namespace GsaGH.Helpers.Export
           
           int elemCount = apiElemDict.Count;
           int memCount = apiMemDict.Count;
-          double warningSurvivalRate = elemCount > memCount ? 0.1 : 0.5;
-          double remarkSurvivalRate = elemCount > memCount ? 0.5 : 0.75;
+          double warningSurvivalRate = elemCount > memCount ? 0.05 : 0.2; // warning if >95% of nodes are removed for elements or >80% for members
+          double remarkSurvivalRate = elemCount > memCount ? 0.2 : 0.33; // remark if >80% of nodes are removed for elements or >66% for members
 
           if (newNodeCount == 1)
             owner.AddRuntimeWarning(
