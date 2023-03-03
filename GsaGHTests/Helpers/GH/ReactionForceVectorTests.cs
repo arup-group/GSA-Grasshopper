@@ -1,4 +1,4 @@
-﻿using GsaGH.Helpers.GH;
+﻿using GsaGH.Helpers.Graphics.ResultDiagrams;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
@@ -6,7 +6,7 @@ using Xunit;
 
 namespace GsaGHTests.Helpers.GH
 {
-  [Collection("GrasshopperFixture collection")]
+    [Collection("GrasshopperFixture collection")]
   public class ReactionForceVectorTests
   {
     [Fact]
