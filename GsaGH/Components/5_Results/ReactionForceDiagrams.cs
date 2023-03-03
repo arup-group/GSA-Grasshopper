@@ -2,6 +2,7 @@
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Graphics.ResultDiagrams;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -39,8 +40,7 @@ namespace GsaGH.Components
     }
     #endregion
 
-    #region readonly fields
-
+    #region fields and properties
     private readonly List<string> _reactionStringList = new List<string>(new string[]
     {
       "Reaction Fx",
@@ -53,31 +53,21 @@ namespace GsaGH.Components
       "Resolved |M|",
     });
 
-    #endregion
-
-    #region fields and properties
-
-    #region public/internal/protected internal
     public override Guid ComponentGuid => new Guid("5bc139e5-614b-4f2d-887c-a980f1cbb32c");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    #endregion
+    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ReactionForceDiagram;
 
-    #region protected and private
     private ConcurrentBag<ReactionForceVector> _reactionForceVectors = new ConcurrentBag<ReactionForceVector>();
-    private string _case = "";
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private bool _undefinedModelLengthUnit = false;
+    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private DisplayValue _selectedDisplayValue = DisplayValue.ResXYZ;
     private bool _showText = true;
     #endregion
 
-    #endregion
-
-    #region public methods
     public ReactionForceDiagrams() : base("Reaction Force Diagrams",
       "ReactionForce",
       "Diplays GSA Node Reaction Force Results as Vector Diagrams",
@@ -85,7 +75,7 @@ namespace GsaGH.Components
       SubCategoryName.Cat5())
     { }
 
-    #region core
+    #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager)
     {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
@@ -105,6 +95,7 @@ namespace GsaGH.Components
       pManager.AddGenericParameter("Value", "Val", "Reaction Force Value", GH_ParamAccess.list);
       pManager.HideParameter(0);
     }
+    #endregion
 
     protected override void SolveInstance(IGH_DataAccess dataAccess)
     {
@@ -113,19 +104,15 @@ namespace GsaGH.Components
 
       if (!dataAccess.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject)) return;
 
-      #region get input values
       gsaResult = (ghObject.Value as GsaResultGoo).Value;
-      this._case = GetCase(gsaResult);
       string filteredNodes = GetNodeFilters(dataAccess);
       double scale = GetScalarValue(dataAccess);
-      #endregion
 
       // get stuff for drawing
       Tuple<List<GsaResultsValues>, List<int>> reactionForceValues = gsaResult.NodeReactionForceValues(filteredNodes, this._forceUnit, this._momentUnit);
       GsaResultsValues forceValues = reactionForceValues.Item1[0];
       filteredNodes = string.Join(" ", reactionForceValues.Item2);
 
-      #region Result point values
       LengthUnit lengthUnit = GetLengthUnit(gsaResult);
 
       // Get nodes for point location and restraint check in case of reaction force
@@ -138,13 +125,10 @@ namespace GsaGH.Components
         var reactionForceVector = GenerateReactionForceVector(node, forceValues, scale);
         if (reactionForceVector != null) _reactionForceVectors.Add(reactionForceVector);
       });
-      #endregion
 
       this.SetOutputs(dataAccess);
       Helpers.PostHog.Result(gsaResult.Type, 0, GsaResultsValues.ResultType.Force, this._selectedDisplayValue.ToString());
     }
-
-    #endregion
 
     #region Custom UI
     public override void InitialiseDropdowns()
@@ -199,6 +183,7 @@ namespace GsaGH.Components
     }
     #endregion
 
+    #region custom preview
     public override void DrawViewportWires(IGH_PreviewArgs args)
     {
       base.DrawViewportWires(args);
@@ -234,7 +219,6 @@ namespace GsaGH.Components
 
     #endregion
 
-    #region protected methods
     #region menu override
     protected override void BeforeSolveInstance()
     {
@@ -254,7 +238,7 @@ namespace GsaGH.Components
 
       var toolStripItems = new List<ToolStripItem> { forceUnitsMenu, momentUnitsMenu };
 
-      if (_undefinedModelLengthUnit)
+      if (this._lengthUnit == LengthUnit.Undefined)
       {
         var modelUnitsMenu = GenerateModelGeometryUnitsMenu("Model geometry");
         toolStripItems.Insert(0, modelUnitsMenu);
@@ -265,11 +249,7 @@ namespace GsaGH.Components
       menu.Items.Add(unitsMenu);
       Menu_AppendSeparator(menu);
     }
-
     #endregion
-    #endregion
-
-    #region private methods
 
     #region menu helpers
     private void UpdateModel(string unit)
@@ -376,30 +356,6 @@ namespace GsaGH.Components
         nodeList = "All";
 
       return nodeList;
-    }
-
-    private string GetCase(GsaResult gsaResult)
-    {
-      var caseName = string.Empty;
-      switch (gsaResult.Type)
-      {
-        case GsaResult.CaseType.Combination when gsaResult.SelectedPermutationIDs.Count > 1:
-          this.AddRuntimeWarning("Combination Case " + gsaResult.CaseID + " contains "
-                                 + gsaResult.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
-                                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-          break;
-        case GsaResult.CaseType.Combination:
-          caseName = "Case C" + gsaResult.CaseID + " P" + gsaResult.SelectedPermutationIDs[0];
-          break;
-        case GsaResult.CaseType.AnalysisCase:
-          caseName = "Case A" + gsaResult.CaseID + Environment.NewLine + gsaResult.CaseName;
-          break;
-        default:
-          caseName = string.Empty;
-          break;
-      }
-
-      return caseName;
     }
     #endregion
 
@@ -516,8 +472,6 @@ namespace GsaGH.Components
       dataAccess.SetDataList(1, orderedReactionForceVectors.Select(a => a.Direction));
       dataAccess.SetDataList(2, orderedReactionForceVectors.Select(a => a.ForceValue));
     }
-
-    #endregion
 
     #endregion
   }
