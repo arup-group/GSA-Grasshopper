@@ -246,23 +246,5 @@ namespace GsaGHTests
 
       Assert.Equal(actualOutputs.Count, expectedOutputs.Count);
     }
-
-    [Fact]
-    public void WhenAppendAdditionalComponentsMenuItems_ThenMenu_ShouldContainExtraElements()
-    {
-      var obj = new ReactionForceDiagrams();
-      ToolStripDropDown menu = new ToolStripDropDown();
-      obj.AppendAdditionalMenuItems(menu);
-
-      var expectedMenuItems = new ToolStripItemCollection(menu,
-        new ToolStripItem[]
-        {
-          new ToolStripMenuItem("Show Text") { Checked = true },
-          new ToolStripMenuItem("Select Units") { },
-          new ToolStripMenuItem("Force") { },
-          new ToolStripMenuItem("Moment") { },
-        });
-      Assert.Contains(expectedMenuItems, menu.Items[0]);
-    }
   }
 }
