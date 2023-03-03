@@ -93,14 +93,14 @@ namespace GsaGH.Components
           result = ((GsaResultGoo)gh_typ.Value).Value;
           if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
-            this.AddRuntimeWarning("Combination Case " + result.CaseID + " contains "
+            this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
                 + result.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.CaseType.Combination)
-            _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
+            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIDs[0];
           if (result.Type == GsaResult.CaseType.AnalysisCase)
-            _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
+            _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
         }
         else
         {
@@ -189,14 +189,14 @@ namespace GsaGH.Components
           _disp = DisplayValue.X;
         }
 
-        if ((_isShear ? resShear.dmax_x : res.dmax_x) == null)
+        if ((_isShear ? resShear.DmaxX : res.DmaxX) == null)
         {
           string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
           this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
           return;
         }
 
-        double dmax_x = (_isShear) ? resShear.dmax_x.As(xyzunit) : res.dmax_x.As(xyzunit);
+        double dmax_x = (_isShear) ? resShear.DmaxX.As(xyzunit) : res.DmaxX.As(xyzunit);
         double dmax_y = 0;
         double dmax_z = 0;
         double dmax_xyz = 0;
@@ -214,26 +214,26 @@ namespace GsaGH.Components
         double dmin_xxyyzz = 0;
         if (_mode != FoldMode.Footfall)
         {
-          dmax_y = (_isShear) ? resShear.dmax_y.As(xyzunit) : res.dmax_y.As(xyzunit);
-          dmax_z = res.dmax_z.As(xyzunit);
-          dmax_xyz = (_mode == FoldMode.Displacement) ? res.dmax_xyz.As(xyzunit) : 0;
-          dmin_x = (_isShear) ? resShear.dmin_x.As(xyzunit) : res.dmin_x.As(xyzunit);
-          dmin_y = (_isShear) ? resShear.dmin_y.As(xyzunit) : res.dmin_y.As(xyzunit);
-          dmin_z = res.dmin_z.As(xyzunit);
-          dmin_xyz = (_mode == FoldMode.Displacement) ? res.dmin_xyz.As(xyzunit) : 0;
-          dmax_xx = (_isShear) ? 0 : res.dmax_xx.As(xxyyzzunit);
-          dmax_yy = (_isShear) ? 0 : res.dmax_yy.As(xxyyzzunit);
-          dmax_zz = (_isShear) ? 0 : res.dmax_zz.As(xxyyzzunit);
-          dmax_xxyyzz = (_mode == FoldMode.Force) ? res.dmax_xxyyzz.As(xxyyzzunit) : 0;
-          dmin_xx = (_isShear) ? 0 : res.dmin_xx.As(xxyyzzunit);
-          dmin_yy = (_isShear) ? 0 : res.dmin_yy.As(xxyyzzunit);
-          dmin_zz = (_isShear) ? 0 : res.dmin_zz.As(xxyyzzunit);
-          dmin_xxyyzz = (_mode == FoldMode.Force) ? res.dmin_xxyyzz.As(xxyyzzunit) : 0;
+          dmax_y = (_isShear) ? resShear.DmaxY.As(xyzunit) : res.DmaxY.As(xyzunit);
+          dmax_z = res.DmaxZ.As(xyzunit);
+          dmax_xyz = (_mode == FoldMode.Displacement) ? res.DmaxXyz.As(xyzunit) : 0;
+          dmin_x = (_isShear) ? resShear.DminX.As(xyzunit) : res.DminX.As(xyzunit);
+          dmin_y = (_isShear) ? resShear.DminY.As(xyzunit) : res.DminY.As(xyzunit);
+          dmin_z = res.DminZ.As(xyzunit);
+          dmin_xyz = (_mode == FoldMode.Displacement) ? res.DminXyz.As(xyzunit) : 0;
+          dmax_xx = (_isShear) ? 0 : res.DmaxXx.As(xxyyzzunit);
+          dmax_yy = (_isShear) ? 0 : res.DmaxYy.As(xxyyzzunit);
+          dmax_zz = (_isShear) ? 0 : res.DmaxZz.As(xxyyzzunit);
+          dmax_xxyyzz = (_mode == FoldMode.Force) ? res.DmaxXxyyzz.As(xxyyzzunit) : 0;
+          dmin_xx = (_isShear) ? 0 : res.DminXx.As(xxyyzzunit);
+          dmin_yy = (_isShear) ? 0 : res.DminYy.As(xxyyzzunit);
+          dmin_zz = (_isShear) ? 0 : res.DminZz.As(xxyyzzunit);
+          dmin_xxyyzz = (_mode == FoldMode.Force) ? res.DminXxyyzz.As(xxyyzzunit) : 0;
         }
         if (_mode == FoldMode.Force && _disp == DisplayValue.resXYZ)
         {
-          dmax_xyz = res.dmax_xyz.As(xxyyzzunit);
-          dmin_xyz = res.dmin_xyz.As(xxyyzzunit);
+          dmax_xyz = res.DmaxXyz.As(xxyyzzunit);
+          dmin_xyz = res.DminXyz.As(xxyyzzunit);
         }
 
         #region Result mesh values

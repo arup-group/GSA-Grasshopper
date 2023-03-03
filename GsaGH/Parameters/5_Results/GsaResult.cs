@@ -1,13 +1,13 @@
-﻿using System;
+﻿using GsaAPI;
+using GsaGH.Helpers.GsaAPI;
+using OasysUnits;
+using OasysUnits.Units;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using GsaAPI;
-using GsaGH.Helpers.GsaAPI;
-using OasysUnits;
-using OasysUnits.Units;
 
 namespace GsaGH.Parameters
 {
@@ -37,34 +37,34 @@ namespace GsaGH.Parameters
       if (xyzResults.Count > 0)
       {
         // update max and min values
-        dmax_x = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
-        dmax_y = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
-        try { dmax_z = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max(); } catch (Exception) { } // shear does not set this value
-        try { dmax_xyz = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ).Max()).Max(); } catch (Exception) { } // resultant may not always be computed
-        dmin_x = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
-        dmin_y = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
-        try { dmin_z = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min(); } catch (Exception) { } // shear does not set this value
-        try { dmin_xyz = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ).Min()).Min(); } catch (Exception) { } // resultant may not always be computed
+        DmaxX = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
+        DmaxY = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
+        try { DmaxZ = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max(); } catch (Exception) { } // shear does not set this value
+        try { DmaxXyz = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ).Max()).Max(); } catch (Exception) { } // resultant may not always be computed
+        DminX = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
+        DminY = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
+        try { DminZ = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min(); } catch (Exception) { } // shear does not set this value
+        try { DminXyz = xyzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ).Min()).Min(); } catch (Exception) { } // resultant may not always be computed
       }
       if (xxyyzzResults.Count > 0)
       {
         try // some cases doesnt compute xxyyzz results at all
         {
-          dmax_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
-          dmax_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
-          dmax_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
+          DmaxXx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Max()).Max();
+          DmaxYy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Max()).Max();
+          DmaxZz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Max()).Max();
         }
         catch (Exception) { }
-        try { dmax_xxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ).Max()).Max(); } catch (Exception) { } // resultant may not always be computed
+        try { DmaxXxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ).Max()).Max(); } catch (Exception) { } // resultant may not always be computed
         try // some cases doesnt compute xxyyzz results at all
         {
-          dmin_xx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
-          dmin_yy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
-          dmin_zz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
+          DminXx = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.X).Min()).Min();
+          DminYy = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Y).Min()).Min();
+          DminZz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.Z).Min()).Min();
         }
         catch (Exception) { }
 
-        try { dmin_xxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ).Min()).Min(); } catch (Exception) { } // resultant may not always be computed
+        try { DminXxyyzz = xxyyzzResults.AsParallel().Select(list => list.Value.Values.Select(res => res.XYZ).Min()).Min(); } catch (Exception) { } // resultant may not always be computed
       }
     }
     /// <summary>
@@ -73,22 +73,22 @@ namespace GsaGH.Parameters
     /// </summary>
     internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults { get; set; } = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
     internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults { get; set; } = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
-    internal IQuantity dmax_x { get; set; }
-    internal IQuantity dmax_y { get; set; }
-    internal IQuantity dmax_z { get; set; }
-    internal IQuantity dmax_xx { get; set; }
-    internal IQuantity dmax_yy { get; set; }
-    internal IQuantity dmax_zz { get; set; }
-    internal IQuantity dmax_xyz { get; set; }
-    internal IQuantity dmax_xxyyzz { get; set; }
-    internal IQuantity dmin_x { get; set; }
-    internal IQuantity dmin_y { get; set; }
-    internal IQuantity dmin_z { get; set; }
-    internal IQuantity dmin_xx { get; set; }
-    internal IQuantity dmin_yy { get; set; }
-    internal IQuantity dmin_zz { get; set; }
-    internal IQuantity dmin_xyz { get; set; }
-    internal IQuantity dmin_xxyyzz { get; set; }
+    internal IQuantity DmaxX { get; set; }
+    internal IQuantity DmaxY { get; set; }
+    internal IQuantity DmaxZ { get; set; }
+    internal IQuantity DmaxXx { get; set; }
+    internal IQuantity DmaxYy { get; set; }
+    internal IQuantity DmaxZz { get; set; }
+    internal IQuantity DmaxXyz { get; set; }
+    internal IQuantity DmaxXxyyzz { get; set; }
+    internal IQuantity DminX { get; set; }
+    internal IQuantity DminY { get; set; }
+    internal IQuantity DminZ { get; set; }
+    internal IQuantity DminXx { get; set; }
+    internal IQuantity DminYy { get; set; }
+    internal IQuantity DminZz { get; set; }
+    internal IQuantity DminXyz { get; set; }
+    internal IQuantity DminXxyyzz { get; set; }
 
     internal GsaResultsValues()
     { }
@@ -370,7 +370,7 @@ namespace GsaGH.Parameters
 
     #endregion
 
-    internal int CaseID { get; set; }
+    internal int CaseId { get; set; }
     internal string CaseName { get; set; }
     public enum CaseType
     {
@@ -388,15 +388,15 @@ namespace GsaGH.Parameters
       this.Model = model;
       this.AnalysisCaseResult = result;
       this.Type = CaseType.AnalysisCase;
-      this.CaseID = caseID;
-      this.CaseName = model.Model.AnalysisCaseName(this.CaseID);
+      this.CaseId = caseID;
+      this.CaseName = model.Model.AnalysisCaseName(this.CaseId);
     }
     internal GsaResult(GsaModel model, CombinationCaseResult result, int caseID, List<int> permutations)
     {
       this.Model = model;
       this.CombinationCaseResult = result;
       this.Type = CaseType.Combination;
-      this.CaseID = caseID;
+      this.CaseId = caseID;
       this.SelectedPermutationIDs = permutations.OrderBy(x => x).ToList();
     }
 
@@ -405,7 +405,7 @@ namespace GsaGH.Parameters
       this.Model = model;
       this.CombinationCaseResult = result;
       this.Type = CaseType.Combination;
-      this.CaseID = caseID;
+      this.CaseId = caseID;
       this.SelectedPermutationIDs = new List<int>() { permutation };
     }
     #endregion
@@ -469,12 +469,12 @@ namespace GsaGH.Parameters
         nodelist = "All";
       if (this.Type == CaseType.AnalysisCase)
       {
-        Tuple<string, FootfallResultType> key = new Tuple<string, FootfallResultType>(nodelist, type);
+        var key = new Tuple<string, FootfallResultType>(nodelist, type);
         if (!this.ACaseNodeFootfallValues.ContainsKey(key)) // see if values exist
         {
           // compute result values and add to dictionary for cache
           this.ACaseNodeFootfallValues.Add(key,
-              ResultHelper.GetNodeFootfallResultValues(nodelist, this.Model, type, this.CaseID));
+              ResultHelper.GetNodeFootfallResultValues(nodelist, this.Model, type, this.CaseId));
         }
         return ACaseNodeFootfallValues[key];
       }
@@ -1124,10 +1124,10 @@ namespace GsaGH.Parameters
     {
       string txt = "";
       if (Type == CaseType.AnalysisCase)
-        txt = "A" + CaseID;
+        txt = "A" + CaseId;
       else if (Type == CaseType.Combination)
       {
-        txt = "C" + CaseID;
+        txt = "C" + CaseId;
         if (SelectedPermutationIDs.Count > 0)
         {
           if (SelectedPermutationIDs.Count > 1)

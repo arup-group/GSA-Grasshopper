@@ -154,7 +154,7 @@ namespace GsaGH.Components
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
+                  GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
                   out_X.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.ForceUnit))), path); // use ToUnit to capture changes in dropdown
                   out_Y.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.ForceUnit))), path);
@@ -173,7 +173,7 @@ namespace GsaGH.Components
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
+                  GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
                   out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.MomentUnit))), path); // always use [rad] units
                   out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.MomentUnit))), path);
@@ -192,7 +192,7 @@ namespace GsaGH.Components
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
 
-                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
+                  GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
                   out_qX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.ForceUnit))), path); // always use [rad] units
                   out_qY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.ForceUnit))), path);

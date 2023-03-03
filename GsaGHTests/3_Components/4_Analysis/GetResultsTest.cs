@@ -22,7 +22,7 @@ namespace GsaGHTests.Analysis
 
       GsaResultGoo result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(GsaResult.CaseType.AnalysisCase, result.Value.Type);
-      Assert.Equal(1, result.Value.CaseID);
+      Assert.Equal(1, result.Value.CaseId);
       Assert.Equal(GH_RuntimeMessageLevel.Remark, comp.RuntimeMessageLevel);
       Assert.Equal("By default, Analysis Case 1 has been selected.", comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark)[0]);
     }
@@ -41,7 +41,7 @@ namespace GsaGHTests.Analysis
 
       GsaResultGoo result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(GsaResult.CaseType.AnalysisCase, result.Value.Type);
-      Assert.Equal(2, result.Value.CaseID);
+      Assert.Equal(2, result.Value.CaseId);
       Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
     }
 
@@ -59,7 +59,7 @@ namespace GsaGHTests.Analysis
 
       GsaResultGoo result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(GsaResult.CaseType.Combination, result.Value.Type);
-      Assert.Equal(1, result.Value.CaseID);
+      Assert.Equal(1, result.Value.CaseId);
       Assert.Equal(new List<int>() { 1 }, result.Value.SelectedPermutationIDs);
       Assert.Equal(GH_RuntimeMessageLevel.Remark, comp.RuntimeMessageLevel);
       Assert.Equal("By default, all permutations have been selected.", comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark)[0]);
@@ -80,7 +80,7 @@ namespace GsaGHTests.Analysis
 
       GsaResultGoo result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(GsaResult.CaseType.Combination, result.Value.Type);
-      Assert.Equal(1, result.Value.CaseID);
+      Assert.Equal(1, result.Value.CaseId);
       Assert.Equal(new List<int>() { 1 }, result.Value.SelectedPermutationIDs);
       Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
     }

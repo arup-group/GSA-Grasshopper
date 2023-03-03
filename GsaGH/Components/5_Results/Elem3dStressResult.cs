@@ -141,7 +141,7 @@ namespace GsaGH.Components
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
+                  GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
                   out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.StresshUnit))), path); // use ToUnit to capture changes in dropdown
                   out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.StresshUnit))), path);
@@ -159,7 +159,7 @@ namespace GsaGH.Components
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
+                  GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
 
                   out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.StresshUnit))), path);
                   out_YZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.StresshUnit))), path);

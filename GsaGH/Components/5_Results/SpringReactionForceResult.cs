@@ -129,7 +129,7 @@ namespace GsaGH.Components
           // loop through all permutations (analysis case will just have one)
           foreach (int perm in permutations)
           {
-            GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm);
+            GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIDs == null ? 0 : perm);
 
             List<GH_UnitNumber> transX = new List<GH_UnitNumber>();
             List<GH_UnitNumber> transY = new List<GH_UnitNumber>();

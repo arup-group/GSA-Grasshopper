@@ -1,48 +1,40 @@
-﻿using Rhino.Geometry;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using System.Drawing;
-using Rhino.Display;
 using OasysUnits;
+using Rhino.Display;
+using Rhino.Geometry;
+using System.Drawing;
 
 namespace GsaGH.Parameters
 {
   public class PointResultGoo : GH_GeometricGoo<Point3d>, IGH_PreviewData
   {
-    public PointResultGoo(Point3d point, IQuantity result, Color colour, float size)
+    public PointResultGoo(Point3d point, IQuantity result, Color color, float size)
     : base(point)
     {
-      m_result = result;
-      m_size = size;
-      m_colour = colour;
+      MResult = result;
+      _mSize = size;
+      _mColor = color;
     }
 
-    internal IQuantity m_result;
-    private float m_size;
-    private Color m_colour;
+    private readonly float _mSize;
+    private readonly Color _mColor;
 
-    public override string ToString()
-    {
-      return string.Format("PointResult: P:({0:0.0},{1:0.0},{2:0.0}) R:{3:0.0}", Value.X, Value.Y, Value.Z, m_result);
-    }
-    public override string TypeName
-    {
-      get { return "Result Point"; }
-    }
-    public override string TypeDescription
-    {
-      get { return "A GSA result point type."; }
-    }
+    internal IQuantity MResult;
 
-    public override IGH_GeometricGoo DuplicateGeometry()
-    {
-      return new PointResultGoo(Value, m_result, m_colour, m_size);
-    }
+    public override string ToString() => $"PointResult: P:({Value.X:0.0},{Value.Y:0.0},{Value.Z:0.0}) R:{MResult:0.0}";
+    
+    public override string TypeName => "Result Point";
+
+    public override string TypeDescription => "A GSA result point type.";
+
+    public override IGH_GeometricGoo DuplicateGeometry() => new PointResultGoo(Value, MResult, _mColor, _mSize);
+    
     public override BoundingBox Boundingbox
     {
       get
       {
-        BoundingBox box = new BoundingBox(Value, Value);
+        var box = new BoundingBox(Value, Value);
         box.Inflate(1);
         return box;
       }
@@ -51,7 +43,7 @@ namespace GsaGH.Parameters
     {
       Point3d point = Value;
       point.Transform(xform);
-      BoundingBox box = new BoundingBox(point, point);
+      var box = new BoundingBox(point, point);
       box.Inflate(1);
       return box;
     }
@@ -59,18 +51,16 @@ namespace GsaGH.Parameters
     {
       Point3d point = Value;
       point.Transform(xform);
-      return new PointResultGoo(point, m_result, m_colour, m_size);
+      return new PointResultGoo(point, MResult, _mColor, _mSize);
     }
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
       Point3d point = xmorph.MorphPoint(Value);
-      return new PointResultGoo(point, m_result, m_colour, m_size);
+      return new PointResultGoo(point, MResult, _mColor, _mSize);
     }
 
-    public override object ScriptVariable()
-    {
-      return Value;
-    }
+    public override object ScriptVariable() => Value;
+    
     public override bool CastTo<TQ>(out TQ target)
     {
       if (typeof(TQ).IsAssignableFrom(typeof(Point3d)))
@@ -87,13 +77,13 @@ namespace GsaGH.Parameters
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Number)))
       {
-        target = (TQ)(object)new GH_Number(m_result.Value);
+        target = (TQ)(object)new GH_Number(MResult.Value);
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Colour)))
       {
-        target = (TQ)(object)new GH_Colour(m_colour);
+        target = (TQ)(object)new GH_Colour(_mColor);
         return true;
       }
 
@@ -115,23 +105,19 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      Point3d point = Point3d.Unset;
-      if (GH_Convert.ToPoint3d(source, ref point, GH_Conversion.Both))
-      {
-        Value = point;
-        return true;
-      }
-
-      return false;
+      var point = Point3d.Unset;
+      if (!GH_Convert.ToPoint3d(source, ref point, GH_Conversion.Both)) return false;
+      
+      Value = point;
+      
+      return true;
     }
 
-    public BoundingBox ClippingBox
-    {
-      get { return Boundingbox; }
-    }
+    public BoundingBox ClippingBox => Boundingbox;
+
     public void DrawViewportWires(GH_PreviewWireArgs args)
     {
-      args.Pipeline.DrawPoint(Value, PointStyle.RoundSimple, m_size, m_colour);
+      args.Pipeline.DrawPoint(Value, PointStyle.RoundSimple, _mSize, _mColor);
     }
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }
   }

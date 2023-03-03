@@ -91,14 +91,14 @@ namespace GsaGH.Components
           result = ((GsaResultGoo)gh_typ.Value).Value;
           if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIDs.Count > 1)
           {
-            this.AddRuntimeWarning("Combination Case " + result.CaseID + " contains "
+            this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
                 + result.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.CaseType.Combination)
-            _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
+            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIDs[0];
           if (result.Type == GsaResult.CaseType.AnalysisCase)
-            _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
+            _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
         }
         else
         {
@@ -163,21 +163,21 @@ namespace GsaGH.Components
           xxyyzzunit = this.StressUnitResult;
         }
 
-        double dmax_x = res.dmax_x.As(xyzunit);
-        double dmax_y = res.dmax_y.As(xyzunit);
-        double dmax_z = res.dmax_z.As(xyzunit);
-        double dmax_xyz = (_mode == FoldMode.Displacement) ? res.dmax_xyz.As(xyzunit) : 0;
-        double dmin_x = res.dmin_x.As(xyzunit);
-        double dmin_y = res.dmin_y.As(xyzunit);
-        double dmin_z = res.dmin_z.As(xyzunit);
-        double dmin_xyz = (_mode == FoldMode.Displacement) ? res.dmin_xyz.As(xyzunit) : 0;
-        double dmax_xx = (_mode == FoldMode.Displacement) ? 0 : res.dmax_xx.As(xxyyzzunit);
-        double dmax_yy = (_mode == FoldMode.Displacement) ? 0 : res.dmax_yy.As(xxyyzzunit);
-        double dmax_zz = (_mode == FoldMode.Displacement) ? 0 : res.dmax_zz.As(xxyyzzunit);
+        double dmax_x = res.DmaxX.As(xyzunit);
+        double dmax_y = res.DmaxY.As(xyzunit);
+        double dmax_z = res.DmaxZ.As(xyzunit);
+        double dmax_xyz = (_mode == FoldMode.Displacement) ? res.DmaxXyz.As(xyzunit) : 0;
+        double dmin_x = res.DminX.As(xyzunit);
+        double dmin_y = res.DminY.As(xyzunit);
+        double dmin_z = res.DminZ.As(xyzunit);
+        double dmin_xyz = (_mode == FoldMode.Displacement) ? res.DminXyz.As(xyzunit) : 0;
+        double dmax_xx = (_mode == FoldMode.Displacement) ? 0 : res.DmaxXx.As(xxyyzzunit);
+        double dmax_yy = (_mode == FoldMode.Displacement) ? 0 : res.DmaxYy.As(xxyyzzunit);
+        double dmax_zz = (_mode == FoldMode.Displacement) ? 0 : res.DmaxZz.As(xxyyzzunit);
         double dmax_xxyyzz = 0;
-        double dmin_xx = (_mode == FoldMode.Displacement) ? 0 : res.dmin_xx.As(xxyyzzunit);
-        double dmin_yy = (_mode == FoldMode.Displacement) ? 0 : res.dmin_yy.As(xxyyzzunit);
-        double dmin_zz = (_mode == FoldMode.Displacement) ? 0 : res.dmin_zz.As(xxyyzzunit);
+        double dmin_xx = (_mode == FoldMode.Displacement) ? 0 : res.DminXx.As(xxyyzzunit);
+        double dmin_yy = (_mode == FoldMode.Displacement) ? 0 : res.DminYy.As(xxyyzzunit);
+        double dmin_zz = (_mode == FoldMode.Displacement) ? 0 : res.DminZz.As(xxyyzzunit);
         double dmin_xxyyzz = 0;
 
         #region Result mesh values

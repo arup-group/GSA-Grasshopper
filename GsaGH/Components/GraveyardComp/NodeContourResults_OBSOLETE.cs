@@ -91,9 +91,9 @@ namespace GsaGH.Components
                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.CaseType.Combination)
-            _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
+            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIDs[0];
           if (result.Type == GsaResult.CaseType.AnalysisCase)
-            _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
+            _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
         }
         else
         {
@@ -161,22 +161,22 @@ namespace GsaGH.Components
           xxyyzzunit = DefaultUnits.MomentUnit;
         }
 
-        double dmax_x = res.dmax_x.As(xyzunit);
-        double dmax_y = res.dmax_y.As(xyzunit);
-        double dmax_z = res.dmax_z.As(xyzunit);
-        double dmax_xyz = res.dmax_xyz.As(xyzunit);
-        double dmin_x = res.dmin_x.As(xyzunit);
-        double dmin_y = res.dmin_y.As(xyzunit);
-        double dmin_z = res.dmin_z.As(xyzunit);
-        double dmin_xyz = res.dmin_xyz.As(xyzunit);
-        double dmax_xx = res.dmax_xx.As(xxyyzzunit);
-        double dmax_yy = res.dmax_yy.As(xxyyzzunit);
-        double dmax_zz = res.dmax_zz.As(xxyyzzunit);
-        double dmax_xxyyzz = res.dmax_xxyyzz.As(xxyyzzunit);
-        double dmin_xx = res.dmin_xx.As(xxyyzzunit);
-        double dmin_yy = res.dmin_yy.As(xxyyzzunit);
-        double dmin_zz = res.dmin_zz.As(xxyyzzunit);
-        double dmin_xxyyzz = res.dmin_xxyyzz.As(xxyyzzunit);
+        double dmax_x = res.DmaxX.As(xyzunit);
+        double dmax_y = res.DmaxY.As(xyzunit);
+        double dmax_z = res.DmaxZ.As(xyzunit);
+        double dmax_xyz = res.DmaxXyz.As(xyzunit);
+        double dmin_x = res.DminX.As(xyzunit);
+        double dmin_y = res.DminY.As(xyzunit);
+        double dmin_z = res.DminZ.As(xyzunit);
+        double dmin_xyz = res.DminXyz.As(xyzunit);
+        double dmax_xx = res.DmaxXx.As(xxyyzzunit);
+        double dmax_yy = res.DmaxYy.As(xxyyzzunit);
+        double dmax_zz = res.DmaxZz.As(xxyyzzunit);
+        double dmax_xxyyzz = res.DmaxXxyyzz.As(xxyyzzunit);
+        double dmin_xx = res.DminXx.As(xxyyzzunit);
+        double dmin_yy = res.DminYy.As(xxyyzzunit);
+        double dmin_zz = res.DminZz.As(xxyyzzunit);
+        double dmin_xxyyzz = res.DminXxyyzz.As(xxyyzzunit);
 
         #region Result point values
         // ### Coloured Result Points ###
