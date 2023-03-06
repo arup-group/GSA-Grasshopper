@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using GsaAPI;
-using OasysUnits;
-using OasysUnits.Units;
-using Rhino.Geometry;
 
 namespace GsaGH.Parameters
 {
@@ -26,84 +20,182 @@ namespace GsaGH.Parameters
   public class GsaList
   {
     #region properties
-    internal Collection<Point3d> _nodeLocations;
-    internal Collection<GsaElement1d> _element1ds;
-    internal Collection<GsaElement2d> _element2ds;
-    internal Collection<GsaElement3d> _element3ds;
-    internal Collection<GsaMember1d> _member1ds;
-    internal Collection<GsaMember2d> _member2ds;
-    internal Collection<GsaMember3d> _member3ds;
     public string Name { get; set; }
-    public string Definition { get; set; }
+    public int Id { get; set; }
+    public string Definition { get; private set; }
     public EntityType EntityType { get; set; } = EntityType.Undefined;
+
+    private ConcurrentBag<GsaNodeGoo> _nodes;
+    private Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> _elements;
+    private Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> _members;
+    private List<int> _cases;
     #endregion
 
     #region constructors
-    public GsaList()
+    public GsaList() { }
+    internal GsaList(int Id, EntityList list, ConcurrentBag<GsaNodeGoo> nodes)
     {
+      this.EntityType = EntityType.Node;
+      this.Id = Id;
+      this.Name = list.Name;
+      this.Definition = list.Definition;
+      this._nodes = nodes;
+    }
+    internal GsaList(int Id, EntityList list, Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elements)
+    {
+      this.EntityType = EntityType.Element;
+      this.Id = Id;
+      this.Name = list.Name;
+      this.Definition = list.Definition;
+      this._elements = elements;
+    }
+    internal GsaList(int Id, EntityList list, Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> members)
+    {
+      this.EntityType = EntityType.Member;
+      this.Id = Id;
+      this.Name = list.Name;
+      this.Definition = list.Definition;
+      this._members = members;
+    }
+    internal GsaList(int Id, EntityList list, List<int> cases)
+    {
+      this.EntityType = EntityType.Case;
+      this.Id = Id;
+      this.Name = list.Name;
+      this.Definition = list.Definition;
+      this._cases = cases;
+    }
+    internal GsaList(int Id, EntityList list)
+    {
+      this.EntityType = EntityType.Undefined;
+      this.Id = Id;
+      this.Name = list.Name;
+      this.Definition = list.Definition;
     }
     #endregion
 
     #region methods
     public GsaList Duplicate()
     {
-      GsaList dup = new GsaList();
-      dup.Name = this.Name;
-      dup.Definition = this.Definition;
-      dup.EntityType = this.EntityType;
-
+      GsaList dup = new GsaList
+      {
+        Id = this.Id,
+        Name = this.Name,
+        Definition = this.Definition,
+        EntityType = this.EntityType,
+      };
       switch (dup.EntityType)
       {
         case EntityType.Node:
-          dup._nodeLocations = new Collection<Point3d>(this._nodeLocations);
+          dup._nodes = new ConcurrentBag<GsaNodeGoo>(this._nodes);
           break;
         case EntityType.Element:
-          dup._element1ds = new Collection<GsaElement1d>(this._element1ds);
-          dup._element2ds = new Collection<GsaElement1d>(this._element2ds);
-          dup._element3ds = new Collection<GsaElement1d>(this._element3ds);
+          dup._elements = new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>(this._elements.Item1, this._elements.Item2, this._elements.Item3);
+          break;
+        case EntityType.Member:
+          dup._members = new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>(this._members.Item1, this._members.Item2, this._members.Item3);
+          break;
+        case EntityType.Case:
+          dup._cases = new List<int>(this._cases);
+          break;
       }
-
       return dup;
+    }
+
+    internal List<object> GetListObjects()
+    {
+      List<object> list = null;
+      switch (this.EntityType)
+      {
+        case EntityType.Node:
+          list = new List<object>(this._nodes.OrderBy(x => x.Value.Id));
+          break;
+        case EntityType.Element:
+          list = new List<object>();
+          if (this._elements.Item1 != null)
+            list.AddRange(this._elements.Item1.OrderBy(x => x.Value.Id));
+          if (this._elements.Item2 != null)
+            list.AddRange(this._elements.Item2.OrderBy(x => x.Value.Ids.Min()));
+          if (this._elements.Item3 != null)
+            list.AddRange(this._elements.Item3.OrderBy(x => x.Value.Ids.Min()));
+          break;
+        case EntityType.Member:
+          list = new List<object>();
+          if (this._members.Item1 != null)
+            list.AddRange(this._members.Item1.OrderBy(x => x.Value.Id));
+          if (this._members.Item2 != null)
+            list.AddRange(this._members.Item2.OrderBy(x => x.Value.Id));
+          if (this._members.Item3 != null)
+            list.AddRange(this._members.Item3.OrderBy(x => x.Value.Id));
+          break;
+        case EntityType.Case:
+          list = new List<object>() { this._cases };
+          break;
+        case EntityType.Undefined:
+          if (this.Definition != null && this.Definition != "")
+            list = new List<object>(new List<string>() { this.Definition });
+          break;
+      }
+      return list;
     }
 
     public override string ToString()
     {
-      string s = "New GsaGH Model";
-      if (this.Model != null && this.Titles != null)
+      string s = this.Id + ": " + this.Name;
+      if (this.EntityType != EntityType.Undefined)
+        s += " containing ";
+      switch (this.EntityType)
       {
-        if (this.FileNameAndPath != null && this.FileNameAndPath != "")
-          s = Path.GetFileName(this.FileNameAndPath).Replace(".gwb", string.Empty);
-        
-        if (Titles != null && Titles.Title != null && Titles.Title != "")
-        {
-          if (s == "" || s == "Invalid")
-            s = Titles.Title;
-          else
-            s += " {" + Titles.Title + "}";
-        }
+        case EntityType.Node:
+          s += this._nodes.Count;
+          break;
+        case EntityType.Element:
+          s += (this._elements.Item1.Count + this._elements.Item2.Count + this._elements.Item3.Count);
+          break;
+        case EntityType.Member:
+          s += (this._members.Item1.Count + this._members.Item2.Count + this._members.Item3.Count);
+          break;
+        case EntityType.Case:
+          s += this._cases.Count;
+          break;
       }
-      if (this.ModelUnit != LengthUnit.Undefined)
-        s += " [" + Length.GetAbbreviation(this.ModelUnit) + "]";
+      if (this.EntityType != EntityType.Undefined)
+        s += " " + this.EntityType.ToString() + "s";
+      else if (this.Definition != null)
+        s += " (" + this.Definition + ")";
       return s;
     }
 
-    private BoundingBox GetBoundingBox()
+    internal static EntityType GetEntityFromAPI(GsaAPI.EntityType type)
     {
-      ConcurrentDictionary<int, Node> outNodes = new ConcurrentDictionary<int, Node>(this.Model.Nodes());
-      ConcurrentBag<Point3d> pts = new ConcurrentBag<Point3d>();
-      Parallel.ForEach(outNodes, node =>
+      switch (type)
       {
-        pts.Add(Helpers.Import.Nodes.Point3dFromNode(node.Value, LengthUnit.Meter));
-      });
-
-      if (this.ModelUnit != LengthUnit.Undefined && this.ModelUnit != LengthUnit.Meter)
-      {
-        double factor = 1 / new Length(1, this.ModelUnit).Meters;
-        Transform scale = Transform.Scale(new Point3d(0,0,0), factor);
-        return new BoundingBox(pts, scale);
+        case GsaAPI.EntityType.Node:
+          return EntityType.Node;
+        case GsaAPI.EntityType.Element:
+          return EntityType.Element;
+        case GsaAPI.EntityType.Member:
+          return EntityType.Member;
+        case GsaAPI.EntityType.Case:
+          return EntityType.Case;
       }
+      return EntityType.Undefined;
+    }
 
-      return new BoundingBox(pts);
+    internal static GsaAPI.EntityType GetAPIEntityType(EntityType type)
+    {
+      switch (type)
+      {
+        case EntityType.Node:
+          return GsaAPI.EntityType.Node;
+        case EntityType.Element:
+          return GsaAPI.EntityType.Element;
+        case EntityType.Member:
+          return GsaAPI.EntityType.Member;
+        case EntityType.Case:
+          return GsaAPI.EntityType.Case;
+      }
+      return GsaAPI.EntityType.Undefined;
     }
     #endregion
   }
