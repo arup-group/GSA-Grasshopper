@@ -7,7 +7,7 @@ using GsaAPI;
 using OasysUnits;
 using OasysUnits.Units;
 using OasysGH;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using System.Collections.ObjectModel;
 using Grasshopper.Kernel.Types;
 using Rhino.Geometry;

@@ -47,32 +47,32 @@ namespace GsaGH.Helpers.GH
       if (round)
       {
         // round origin coordinates
-        pln.OriginX = GsaAPI.ResultHelper.RoundToSignificantDigits(pln.OriginX, dig);
-        pln.OriginY = GsaAPI.ResultHelper.RoundToSignificantDigits(pln.OriginY, dig);
-        pln.OriginZ = GsaAPI.ResultHelper.RoundToSignificantDigits(pln.OriginZ, dig);
+        pln.OriginX = GsaApi.ResultHelper.RoundToSignificantDigits(pln.OriginX, dig);
+        pln.OriginY = GsaApi.ResultHelper.RoundToSignificantDigits(pln.OriginY, dig);
+        pln.OriginZ = GsaApi.ResultHelper.RoundToSignificantDigits(pln.OriginZ, dig);
 
         // unitize and round x-axis
         pln.XAxis.Unitize();
         Vector3d xaxis = pln.XAxis;
-        xaxis.X = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.X), dig);
-        xaxis.Y = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Y), dig);
-        xaxis.Z = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Z), dig);
+        xaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.X), dig);
+        xaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Y), dig);
+        xaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(xaxis.Z), dig);
         pln.XAxis = xaxis;
 
         // unitize and round y-axis
         pln.YAxis.Unitize();
         Vector3d yaxis = pln.YAxis;
-        yaxis.X = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.X), dig);
-        yaxis.Y = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Y), dig);
-        yaxis.Z = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Z), dig);
+        yaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.X), dig);
+        yaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Y), dig);
+        yaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(yaxis.Z), dig);
         pln.YAxis = yaxis;
 
         // unitize and round z-axis
         pln.ZAxis.Unitize();
         Vector3d zaxis = pln.ZAxis;
-        zaxis.X = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.X), dig);
-        zaxis.Y = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Y), dig);
-        zaxis.Z = GsaAPI.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Z), dig);
+        zaxis.X = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.X), dig);
+        zaxis.Y = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Y), dig);
+        zaxis.Z = GsaApi.ResultHelper.RoundToSignificantDigits(Math.Abs(zaxis.Z), dig);
         pln.ZAxis = zaxis;
       }
       else

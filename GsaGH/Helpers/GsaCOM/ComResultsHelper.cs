@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static GsaGH.Parameters.GsaResult;
 
-namespace GsaGH.Helpers.GsaAPI
+namespace GsaGH.Helpers.GsaApi
 {
   internal enum FootfallResultType
   {

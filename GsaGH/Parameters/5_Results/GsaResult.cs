@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using OasysUnits.Units;
 

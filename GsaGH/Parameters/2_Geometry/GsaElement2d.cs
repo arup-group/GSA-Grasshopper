@@ -9,7 +9,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 

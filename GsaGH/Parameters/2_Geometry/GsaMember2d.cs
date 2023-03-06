@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;

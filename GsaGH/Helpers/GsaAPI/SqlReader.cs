@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using Microsoft.Data.Sqlite;
 
-namespace GsaGH.Helpers.GsaAPI
+namespace GsaGH.Helpers.GsaApi
 {
   /// <summary>
   /// Class containing functions to interface with SQLite db files.

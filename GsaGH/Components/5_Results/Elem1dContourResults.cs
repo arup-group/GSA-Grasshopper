@@ -12,7 +12,7 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
@@ -327,7 +327,7 @@ namespace GsaGH.Components
           dmin = customMinMax.Min;
           dmax = customMinMax.Max;
         }
-        List<double> rounded = Helpers.GsaAPI.ResultHelper.SmartRounder(dmax, dmin);
+        List<double> rounded = Helpers.GsaApi.ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
         int significantDigits = (int)rounded[2];

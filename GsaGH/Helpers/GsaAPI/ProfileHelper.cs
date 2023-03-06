@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Rhino.Geometry;
 
-namespace GsaGH.Helpers.GsaAPI
+namespace GsaGH.Helpers.GsaApi
 {
   /// <summary>
   /// Profile class holds information about a profile

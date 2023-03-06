@@ -5,7 +5,7 @@ using GsaAPI;
 using static GsaGH.Parameters.GsaMaterial;
 using static GsaGH.Parameters.GsaOffset;
 
-namespace GsaGH.Helpers.GsaAPI
+namespace GsaGH.Helpers.GsaApi
 {
   internal class Mappings
   {

@@ -11,7 +11,7 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Helpers.GsaAPI
+namespace GsaGH.Helpers.GsaApi
 {
   internal partial class ResultHelper
   {

@@ -51,7 +51,7 @@ namespace GsaGHTests.Parameters
       GsaModel m = new GsaModel();
 
       // get the GSA install path
-      string installPath = GsaGH.Helpers.GsaAPI.InstallationFolder.GetPath;
+      string installPath = GsaGH.Helpers.GsaApi.InstallationFolder.GetPath;
 
       // open existing GSA model (steel design sample)
       ReturnValue returnValue = m.Model.Open(installPath + "\\Samples\\Steel\\Steel_Design_Simple.gwb");

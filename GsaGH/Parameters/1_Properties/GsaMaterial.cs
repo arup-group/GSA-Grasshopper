@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GH_IO.Serialization;
 using GsaAPI;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters
 {

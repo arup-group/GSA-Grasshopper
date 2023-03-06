@@ -21,7 +21,7 @@ namespace GsaGH
       }
     }
     private static string _pluginPath;
-    public static string InstallPath = Helpers.GsaAPI.InstallationFolder.GetPath;
+    public static string InstallPath = Helpers.GsaApi.InstallationFolder.GetPath;
     
     public override GH_LoadingInstruction PriorityLoad()
     {
@@ -52,7 +52,7 @@ namespace GsaGH
         Assembly GsaAPI = Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
         FileVersionInfo gsaVers = FileVersionInfo.GetVersionInfo(InstallPath + "\\GsaAPI.dll");
         gsaVersion = gsaVers.FileMajorPart + "." + gsaVers.FileMinorPart + "." + gsaVers.FileBuildPart;
-        if (gsaVers.FileBuildPart < 63)
+        if (gsaVers.FileBuildPart < 65)
         {
           Exception exception = new Exception("Version " + GsaGH.GsaGHInfo.Vers + " of GSA-Grasshopper requires GSA 10.1.63 installed. Please upgrade GSA.");
           GH_LoadingException gH_LoadingException = new GH_LoadingException("GSA Version Error: Upgrade required", exception);
@@ -60,7 +60,6 @@ namespace GsaGH
           PostHog.PluginLoaded(PluginInfo.Instance, exception.Message);
           return GH_LoadingInstruction.Abort;
         }
-
       }
       catch (Exception e)
       {

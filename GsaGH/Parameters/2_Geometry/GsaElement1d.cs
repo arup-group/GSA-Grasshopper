@@ -8,7 +8,7 @@ using Rhino.Geometry;
 using Grasshopper.Kernel.Types;
 using OasysUnits.Units;
 using OasysUnits;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Components;
 using GH_IO.Serialization;
 using System.Collections.Concurrent;

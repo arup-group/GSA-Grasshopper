@@ -253,7 +253,7 @@ namespace GsaGH.Components
             break;
         }
 
-        List<double> rounded = Helpers.GsaAPI.ResultHelper.SmartRounder(dmax, dmin);
+        List<double> rounded = Helpers.GsaApi.ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
         int significantDigits = (int)rounded[2];

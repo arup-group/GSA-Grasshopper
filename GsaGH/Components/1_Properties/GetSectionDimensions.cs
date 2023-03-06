@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;

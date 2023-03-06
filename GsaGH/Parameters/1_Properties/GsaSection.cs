@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using OasysGH.Units;
 using OasysUnits;
 

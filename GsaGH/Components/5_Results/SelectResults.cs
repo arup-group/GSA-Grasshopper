@@ -11,7 +11,7 @@ using OasysGH;
 using OasysGH.Components;
 using OasysUnits;
 using Grasshopper;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using Rhino.Commands;
 using Grasshopper.Kernel.Data;
 

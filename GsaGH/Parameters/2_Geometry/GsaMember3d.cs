@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters

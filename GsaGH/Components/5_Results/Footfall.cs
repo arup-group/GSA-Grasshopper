@@ -88,8 +88,8 @@ namespace GsaGH.Components
         if (nodeList.ToLower() == "all" || nodeList == "")
           nodeList = "All";
 
-        GsaResultsValues res = result.NodeFootfallValues(nodeList, Helpers.GsaAPI.FootfallResultType.Resonant);
-        GsaResultsValues tra = result.NodeFootfallValues(nodeList, Helpers.GsaAPI.FootfallResultType.Transient);
+        GsaResultsValues res = result.NodeFootfallValues(nodeList, Helpers.GsaApi.FootfallResultType.Resonant);
+        GsaResultsValues tra = result.NodeFootfallValues(nodeList, Helpers.GsaApi.FootfallResultType.Transient);
 
         DA.SetData(0, res.dmax_x.Value);
         DA.SetData(1, tra.dmax_x.Value);

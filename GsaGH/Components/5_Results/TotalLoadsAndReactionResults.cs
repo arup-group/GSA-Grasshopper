@@ -5,7 +5,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaAPI;
+using GsaGH.Helpers.GsaApi;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
