@@ -2,7 +2,6 @@
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Graphics.ResultDiagrams;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
@@ -58,7 +57,7 @@ namespace GsaGH.Components
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.ReactionForceDiagram;
 
-    private ConcurrentBag<ReactionForceVector> _reactionForceVectors = new ConcurrentBag<ReactionForceVector>();
+    private ConcurrentDictionary<int, VectorResultGoo> _reactionForceVectors = new ConcurrentDictionary<int, VectorResultGoo>();
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private bool _undefinedModelLengthUnit = false;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
@@ -91,7 +90,7 @@ namespace GsaGH.Components
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
       pManager.AddPointParameter("Anchor Point", "A", "Support Node Location", GH_ParamAccess.list);
-      pManager.AddVectorParameter("Vector", "V", "Reaction Force Vector", GH_ParamAccess.list);
+      pManager.AddGenericParameter("Vector", "V", "Reaction Force Vector", GH_ParamAccess.list);
       pManager.AddGenericParameter("Value", "Val", "Reaction Force Value", GH_ParamAccess.list);
       pManager.HideParameter(0);
     }
@@ -119,11 +118,11 @@ namespace GsaGH.Components
       ReadOnlyDictionary<int, Node> gsaFilteredNodes = gsaResult.Model.Model.Nodes(filteredNodes);
       ConcurrentDictionary<int, GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit);
 
-      _reactionForceVectors = new ConcurrentBag<ReactionForceVector>();
+      _reactionForceVectors = new ConcurrentDictionary<int, VectorResultGoo>();
       Parallel.ForEach(nodes, node =>
       {
-        var reactionForceVector = GenerateReactionForceVector(node, forceValues, scale);
-        if (reactionForceVector != null) _reactionForceVectors.Add(reactionForceVector);
+          var reactionForceVector = GenerateReactionForceVector(node, forceValues, scale);
+          if (reactionForceVector != null) _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
       });
 
       this.SetOutputs(dataAccess);
@@ -190,30 +189,7 @@ namespace GsaGH.Components
 
       foreach (var force in _reactionForceVectors)
       {
-        var line = force.GetReactionForceLine();
-        var color = Helpers.Graphics.Colours.GsaDarkPurple;
-        args.Display.Viewport.GetWorldToScreenScale(line.To, out var pixelsPerUnit);
-        
-        if (force.GetForceType() == ForceType.Force)
-          args.Display.DrawArrow(line, color);
-        else //moments 
-        {
-          color = Helpers.Graphics.Colours.GsaGold;
-          int arrowHeadScreenSize = 20;
-          args.Display.DrawArrow(line, Helpers.Graphics.Colours.GsaGold);
-          
-          var point = force.CalculateExtraStartOffsetPoint(pixelsPerUnit, arrowHeadScreenSize);
-          args.Display.DrawArrowHead(point, force.Direction, color , arrowHeadScreenSize, 0);
-        }
-
-        if (!_showText) return;
-
-        const int offset = 30;
-        var endOffsetPoint = force.CalculateExtraEndOffsetPoint(pixelsPerUnit, offset);
-        var positionOnTheScreen = args.Display.Viewport.WorldToClient(endOffsetPoint);
-
-        args.Display.Draw2dText(force.ForceValue.ToString(),color, positionOnTheScreen, true);
-
+        force.Value.ShowText(_showText);
       };
     }
 
@@ -398,7 +374,7 @@ namespace GsaGH.Components
       return lengthUnit;
     }
 
-    private ReactionForceVector GenerateReactionForceVector(KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale)
+    private VectorResultGoo GenerateReactionForceVector(KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale)
     {
       var nodeId = node.Key;
       var xyzResults = forceValues.xyzResults;
@@ -408,7 +384,7 @@ namespace GsaGH.Components
 
       var direction = new Vector3d();
       IQuantity forceValue = null;
-      ForceType forceType = ForceType.Force;
+      var isForce = true;
 
       switch (_selectedDisplayValue)
       {
@@ -435,42 +411,59 @@ namespace GsaGH.Components
           forceValue = xyzResults[nodeId][0].XYZ.ToUnit(this._forceUnit);
           break;
         case (DisplayValue.XX):
+          isForce = false;
           var xxVal = xxyyzzResults[nodeId][0].X;
           direction = new Vector3d(xxVal.As(this._momentUnit) * scale, 0, 0);
           forceValue = xxVal.ToUnit(this._momentUnit);
-          forceType = ForceType.Moment;
           break;
         case (DisplayValue.YY):
+          isForce = false;
           var yyVal = xxyyzzResults[nodeId][0].Y;
           direction = new Vector3d(0, yyVal.As(this._momentUnit) * scale, 0);
           forceValue = yyVal.ToUnit(this._momentUnit);
-          forceType = ForceType.Moment;
           break;
         case (DisplayValue.ZZ):
+          isForce = false;
           var zzVal = xxyyzzResults[nodeId][0].Z;
           direction = new Vector3d(0, 0, zzVal.As(this._momentUnit) * scale);
           forceValue = zzVal.ToUnit(this._momentUnit);
-          forceType = ForceType.Moment;
           break;
         case (DisplayValue.ResXXYYZZ):
+          isForce = false;
           direction = new Vector3d(
             xxyyzzResults[nodeId][0].X.As(this._momentUnit) * scale,
             xxyyzzResults[nodeId][0].Y.As(this._momentUnit) * scale,
             xxyyzzResults[nodeId][0].Z.As(this._momentUnit) * scale);
           forceValue = xxyyzzResults[nodeId][0].XYZ.ToUnit(this._momentUnit);
-          forceType = ForceType.Moment;
           break;
       }
 
-      return new ReactionForceVector(nodeId, node.Value.Value.Point, direction, forceValue, forceType);
+      var vectorResult = new VectorResultGoo(node.Value.Value.Point, direction, forceValue);
+
+      if (isForce) 
+        return vectorResult;
+
+      return vectorResult.SetColor(Helpers.Graphics.Colours.GsaGold)
+          .DrawArrowHead(true);
     }
 
     private void SetOutputs(IGH_DataAccess dataAccess)
     {
-      var orderedReactionForceVectors = _reactionForceVectors.OrderBy(x => x.Id);
-      dataAccess.SetDataList(0, orderedReactionForceVectors.Select(a => a.StartingPoint));
-      dataAccess.SetDataList(1, orderedReactionForceVectors.Select(a => a.Direction));
-      dataAccess.SetDataList(2, orderedReactionForceVectors.Select(a => a.ForceValue));
+      var orderedDict = _reactionForceVectors.OrderBy(index => index.Key);
+      var startingPoints = new List<Point3d>();
+      var vectors = new List<VectorResultGoo>();
+      var forceValues = new List<IQuantity>();
+
+      foreach (var keyValuePair in orderedDict)
+      {
+        startingPoints.Add(keyValuePair.Value.StartingPoint);
+        vectors.Add(keyValuePair.Value);
+        forceValues.Add(keyValuePair.Value.ForceValue);
+      }
+
+      dataAccess.SetDataList(0, startingPoints);
+      dataAccess.SetDataList(1, vectors);
+      dataAccess.SetDataList(2, forceValues);
     }
 
     #endregion
