@@ -81,19 +81,67 @@ namespace GsaGH.Parameters
       return dup;
     }
 
+    internal void SetListObjects(List<object> objects)
+    {
+      switch (this.EntityType)
+      {
+        case EntityType.Node:
+          this._nodes = new ConcurrentBag<GsaNodeGoo>(objects.Select(x => new GsaNodeGoo((GsaNode)x)));
+          break;
+
+        case EntityType.Element:
+          ConcurrentBag<GsaElement1dGoo> elem1ds = new ConcurrentBag<GsaElement1dGoo>();
+          ConcurrentBag<GsaElement2dGoo> elem2ds = new ConcurrentBag<GsaElement2dGoo>();
+          ConcurrentBag<GsaElement3dGoo> elem3ds = new ConcurrentBag<GsaElement3dGoo>();
+          foreach (object elem in objects)
+          {
+            if (elem is GsaElement1d elem1d)
+              elem1ds.Add(new GsaElement1dGoo(elem1d));
+            else if (elem is GsaElement2d elem2d)
+              elem2ds.Add(new GsaElement2dGoo(elem2d));
+            else if (elem is GsaElement3d elem3d)
+              elem3ds.Add(new GsaElement3dGoo(elem3d));
+          }
+          this._elements = new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>(elem1ds, elem2ds, elem3ds);
+          break;
+
+        case EntityType.Member:
+          ConcurrentBag<GsaMember1dGoo> mem1ds = new ConcurrentBag<GsaMember1dGoo>();
+          ConcurrentBag<GsaMember2dGoo> mem2ds = new ConcurrentBag<GsaMember2dGoo>();
+          ConcurrentBag<GsaMember3dGoo> mem3ds = new ConcurrentBag<GsaMember3dGoo>();
+          foreach (object mem in objects)
+          {
+            if (mem is GsaMember1d mem1d)
+              mem1ds.Add(new GsaMember1dGoo(mem1d));
+            else if (mem is GsaMember2d mem2d)
+              mem2ds.Add(new GsaMember2dGoo(mem2d));
+            else if (mem is GsaMember3d mem3d)
+              mem3ds.Add(new GsaMember3dGoo(mem3d));
+          }
+          this._members = new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>(mem1ds, mem2ds, mem3ds);
+          break;
+
+        case EntityType.Case:
+          this._cases = objects.Select(x => (int)x).ToList();
+          break;
+      }
+    }
+
     internal List<object> GetListObjects(LengthUnit unit)
     {
+      if (this._model != null)
+        this.PopulateListObjectsFromModel(unit);
       List<object> list = null;
       switch (this.EntityType)
       {
         case EntityType.Node:
           if (this._nodes == null)
-            PopulateListObjectsFromModel(unit);
+            return new List<object>();
           list = new List<object>(this._nodes.OrderBy(x => x.Value.Id));
           break;
         case EntityType.Element:
           if (this._elements == null)
-            PopulateListObjectsFromModel(unit);
+            return new List<object>();
           list = new List<object>();
           if (this._elements.Item1 != null)
             list.AddRange(this._elements.Item1.OrderBy(x => x.Value.Id));
@@ -104,7 +152,7 @@ namespace GsaGH.Parameters
           break;
         case EntityType.Member:
           if (this._members == null)
-            PopulateListObjectsFromModel(unit);
+            return new List<object>();
           list = new List<object>();
           if (this._members.Item1 != null)
             list.AddRange(this._members.Item1.OrderBy(x => x.Value.Id));
@@ -115,7 +163,7 @@ namespace GsaGH.Parameters
           break;
         case EntityType.Case:
           if (this._cases == null)
-            PopulateListObjectsFromModel(unit);
+            return new List<object>();
           list = new List<object>() { this._cases };
           break;
         case EntityType.Undefined:
@@ -125,8 +173,8 @@ namespace GsaGH.Parameters
       }
       return list;
     }
-    
-    internal void PopulateListObjectsFromModel(LengthUnit unit)
+
+    private void PopulateListObjectsFromModel(LengthUnit unit)
     {
       if (this._model == null)
         return;
@@ -140,11 +188,11 @@ namespace GsaGH.Parameters
           Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
           foreach (int id in this._model.Model.Elements(this.Definition).Keys)
             elementLocalAxesDict.Add(id, this._model.Model.ElementDirectionCosine(id));
-          
+
           this._elements = Elements.GetElements(
-          this._model.Model.Elements(this.Definition), this._model.Model.Nodes(), 
-          this._model.Model.Sections(), this._model.Model.Prop2Ds(), this._model.Model.Prop3Ds(), 
-          this._model.Model.AnalysisMaterials(), this._model.Model.SectionModifiers(), 
+          this._model.Model.Elements(this.Definition), this._model.Model.Nodes(),
+          this._model.Model.Sections(), this._model.Model.Prop2Ds(), this._model.Model.Prop3Ds(),
+          this._model.Model.AnalysisMaterials(), this._model.Model.SectionModifiers(),
           elementLocalAxesDict, this._model.Model.Axes(), unit, false);
           break;
 
@@ -153,14 +201,14 @@ namespace GsaGH.Parameters
           foreach (int id in this._model.Model.Members(this.Definition).Keys)
             memberLocalAxesDict.Add(id, this._model.Model.MemberDirectionCosine(id));
           this._members = Members.GetMembers(
-          this._model.Model.Members(this.Definition), this._model.Model.Nodes(), 
+          this._model.Model.Members(this.Definition), this._model.Model.Nodes(),
           this._model.Model.Sections(), this._model.Model.Prop2Ds(), this._model.Model.Prop3Ds(),
-          this._model.Model.AnalysisMaterials(), this._model.Model.SectionModifiers(), 
+          this._model.Model.AnalysisMaterials(), this._model.Model.SectionModifiers(),
           memberLocalAxesDict, this._model.Model.Axes(), unit, false);
           break;
 
         case EntityType.Case:
-          GsaAPI.EntityList tempApiList = new GsaAPI.EntityList() 
+          GsaAPI.EntityList tempApiList = new GsaAPI.EntityList()
           { Type = GsaAPI.EntityType.Case, Name = this.Name, Definition = this.Definition };
           this._cases = this._model.Model.ExpandList(tempApiList).ToList();
           break;
@@ -173,35 +221,30 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string s = "ID:" + this.Id + " " + this.Name;
+      string s = "ID:" + this.Id + " " + this.Name + " ";
       switch (this.EntityType)
       {
         case EntityType.Node:
           if (this._nodes != null)
-            s += " containing " + this._nodes.Count + " " + this.EntityType.ToString() + "s";
+            s += "containing " + this._nodes.Count + " " + this.EntityType.ToString() + "s";
           else
-            s += " " + this.EntityType.ToString() + "s (" + this.Definition + ")";
+            s += this.EntityType.ToString() + "s (" + this.Definition + ")";
           break;
         case EntityType.Element:
           if (this._elements != null)
-            s += " containing " + (this._elements.Item1.Count + this._elements.Item2.Count + this._elements.Item3.Count) + " " + this.EntityType.ToString() + "s";
+            s += "containing " + (this._elements.Item1.Count + this._elements.Item2.Count + this._elements.Item3.Count) + " " + this.EntityType.ToString() + "s";
           else
-            s += " " + this.EntityType.ToString() + "s (" + this.Definition + ")";
+            s += this.EntityType.ToString() + "s (" + this.Definition + ")";
           break;
         case EntityType.Member:
           if (this._members != null)
-            s += (this._members.Item1.Count + this._members.Item2.Count + this._members.Item3.Count) + " " + this.EntityType.ToString() + "s";
+            s += "containing " + (this._members.Item1.Count + this._members.Item2.Count + this._members.Item3.Count) + " " + this.EntityType.ToString() + "s";
           else
-            s += " " + this.EntityType.ToString() + "s (" + this.Definition + ")";
+            s += this.EntityType.ToString() + "s (" + this.Definition + ")";
           break;
         case EntityType.Case:
-          if (this._cases != null)
-            s += this._cases.Count + " " + this.EntityType.ToString() + "s";
-          else
-            s += " " + this.EntityType.ToString() + "s (" + this.Definition + ")";
-          break;
         case EntityType.Undefined:
-          s += " " + this.EntityType.ToString() + " (" + this.Definition + ")";
+          s += this.EntityType.ToString() + " (" + this.Definition + ")";
           break;
       }
       return s;
