@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers.Import;
-using Interop.Gsa_10_1;
 using OasysUnits.Units;
 
 namespace GsaGH.Parameters
@@ -58,20 +56,26 @@ namespace GsaGH.Parameters
         Name = this.Name,
         Definition = this.Definition,
         EntityType = this.EntityType,
+        _model = this._model
       };
+
       switch (dup.EntityType)
       {
         case EntityType.Node:
-          dup._nodes = new ConcurrentBag<GsaNodeGoo>(this._nodes);
+          if (this._nodes != null)
+            dup._nodes = new ConcurrentBag<GsaNodeGoo>(this._nodes);
           break;
         case EntityType.Element:
-          dup._elements = new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>(this._elements.Item1, this._elements.Item2, this._elements.Item3);
+          if (this._elements != null)
+            dup._elements = new Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>>(this._elements.Item1, this._elements.Item2, this._elements.Item3);
           break;
         case EntityType.Member:
-          dup._members = new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>(this._members.Item1, this._members.Item2, this._members.Item3);
+          if (this._members != null)
+            dup._members = new Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>>(this._members.Item1, this._members.Item2, this._members.Item3);
           break;
         case EntityType.Case:
-          dup._cases = new List<int>(this._cases);
+          if (this._cases != null)
+            dup._cases = new List<int>(this._cases);
           break;
       }
       return dup;
@@ -169,28 +173,37 @@ namespace GsaGH.Parameters
 
     public override string ToString()
     {
-      string s = this.Id + ": " + this.Name;
-      if (this.EntityType != EntityType.Undefined)
-        s += " containing ";
+      string s = "ID:" + this.Id + " " + this.Name;
       switch (this.EntityType)
       {
         case EntityType.Node:
-          s += this._nodes.Count;
+          if (this._nodes != null)
+            s += " containing " + this._nodes.Count + " " + this.EntityType.ToString() + "s";
+          else
+            s += " " + this.EntityType.ToString() + "s (" + this.Definition + ")";
           break;
         case EntityType.Element:
-          s += (this._elements.Item1.Count + this._elements.Item2.Count + this._elements.Item3.Count);
+          if (this._elements != null)
+            s += " containing " + (this._elements.Item1.Count + this._elements.Item2.Count + this._elements.Item3.Count) + " " + this.EntityType.ToString() + "s";
+          else
+            s += " " + this.EntityType.ToString() + "s (" + this.Definition + ")";
           break;
         case EntityType.Member:
-          s += (this._members.Item1.Count + this._members.Item2.Count + this._members.Item3.Count);
+          if (this._members != null)
+            s += (this._members.Item1.Count + this._members.Item2.Count + this._members.Item3.Count) + " " + this.EntityType.ToString() + "s";
+          else
+            s += " " + this.EntityType.ToString() + "s (" + this.Definition + ")";
           break;
         case EntityType.Case:
-          s += this._cases.Count;
+          if (this._cases != null)
+            s += this._cases.Count + " " + this.EntityType.ToString() + "s";
+          else
+            s += " " + this.EntityType.ToString() + "s (" + this.Definition + ")";
+          break;
+        case EntityType.Undefined:
+          s += " " + this.EntityType.ToString() + " (" + this.Definition + ")";
           break;
       }
-      if (this.EntityType != EntityType.Undefined)
-        s += " " + this.EntityType.ToString() + "s";
-      else if (this.Definition != null)
-        s += " (" + this.Definition + ")";
       return s;
     }
 
