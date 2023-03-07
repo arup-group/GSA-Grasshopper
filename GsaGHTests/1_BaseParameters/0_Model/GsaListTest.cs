@@ -24,14 +24,14 @@ namespace GsaGHTests.Parameters
       // Act
       m.AddList(apilist);
 
-      GsaModel model = new GsaModel() { Model = m, ModelUnit = LengthUnit.Meter };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model, LengthUnit.Meter)[0];
+      GsaModel model = new GsaModel() { Model = m };
+      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
 
       Assert.Equal(1, list.Id);
       Assert.Equal("undef List", list.Name);
       Assert.Equal("1 to 5 not 3", list.Definition);
       Assert.Equal(GsaGH.Parameters.EntityType.Undefined, list.EntityType);
-      Assert.Equal("1 to 5 not 3", (string)list.GetListObjects()[0]);
+      Assert.Equal("1 to 5 not 3", (string)list.GetListObjects(LengthUnit.Undefined)[0]);
     }
 
     //[Fact]
@@ -84,15 +84,15 @@ namespace GsaGHTests.Parameters
 
       // Act
       m.AddList(apilist);
-      GsaModel model = new GsaModel() { Model = m, ModelUnit = LengthUnit.Meter };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model, LengthUnit.Meter)[0];
+      GsaModel model = new GsaModel() { Model = m };
+      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
 
       // Assert
       Assert.Equal(1, list.Id);
       Assert.Equal("node List", list.Name);
       Assert.Equal("all not 2", list.Definition);
       Assert.Equal(GsaGH.Parameters.EntityType.Node, list.EntityType);
-      List<object> nodes = list.GetListObjects();
+      List<object> nodes = list.GetListObjects(LengthUnit.Meter);
       Assert.Equal(2, nodes.Count);
       Assert.Equal(1, ((GsaNodeGoo)nodes[0]).Value.Id);
       Assert.Equal(3, ((GsaNodeGoo)nodes[1]).Value.Id);
@@ -128,15 +128,15 @@ namespace GsaGHTests.Parameters
 
       // Act
       m.AddList(apilist);
-      GsaModel model = new GsaModel() { Model = m, ModelUnit = LengthUnit.Meter };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model, LengthUnit.Meter)[0];
+      GsaModel model = new GsaModel() { Model = m };
+      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
 
       // Assert
       Assert.Equal(1, list.Id);
       Assert.Equal("elem List", list.Name);
       Assert.Equal("1 2 4", list.Definition);
       Assert.Equal(GsaGH.Parameters.EntityType.Element, list.EntityType);
-      List<object> elems = list.GetListObjects();
+      List<object> elems = list.GetListObjects(LengthUnit.Meter);
       Assert.Equal(3, elems.Count);
       Assert.Equal(1, ((GsaElement1dGoo)elems[0]).Value.Id);
       Assert.Equal(2, ((GsaElement1dGoo)elems[1]).Value.Id);
@@ -171,15 +171,15 @@ namespace GsaGHTests.Parameters
 
       // Act
       m.AddList(apilist);
-      GsaModel model = new GsaModel() { Model = m, ModelUnit = LengthUnit.Meter };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model, LengthUnit.Meter)[0];
+      GsaModel model = new GsaModel() { Model = m };
+      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
 
       // Assert
       Assert.Equal(1, list.Id);
       Assert.Equal("mem List", list.Name);
       Assert.Equal("all not 1", list.Definition);
       Assert.Equal(GsaGH.Parameters.EntityType.Member, list.EntityType);
-      List<object> mems = list.GetListObjects();
+      List<object> mems = list.GetListObjects(LengthUnit.Meter);
       Assert.Equal(2, mems.Count);
       Assert.Equal(3, ((GsaMember1dGoo)mems[0]).Value.Id);
       Assert.Equal(10, ((GsaMember1dGoo)mems[0]).Value.Topology[0].X);
