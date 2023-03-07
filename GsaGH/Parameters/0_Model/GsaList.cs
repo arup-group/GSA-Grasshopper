@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.Import;
+using Interop.Gsa_10_1;
+using OasysUnits.Units;
 
 namespace GsaGH.Parameters
 {
@@ -25,6 +30,7 @@ namespace GsaGH.Parameters
     public string Definition { get; private set; }
     public EntityType EntityType { get; set; } = EntityType.Undefined;
 
+    private GsaModel _model;
     private ConcurrentBag<GsaNodeGoo> _nodes;
     private Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> _elements;
     private Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> _members;
@@ -33,44 +39,13 @@ namespace GsaGH.Parameters
 
     #region constructors
     public GsaList() { }
-    internal GsaList(int Id, EntityList list, ConcurrentBag<GsaNodeGoo> nodes)
+    internal GsaList(int Id, EntityList list, GsaModel model)
     {
-      this.EntityType = EntityType.Node;
+      this.EntityType = GetEntityFromAPI(list.Type);
       this.Id = Id;
       this.Name = list.Name;
       this.Definition = list.Definition;
-      this._nodes = nodes;
-    }
-    internal GsaList(int Id, EntityList list, Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elements)
-    {
-      this.EntityType = EntityType.Element;
-      this.Id = Id;
-      this.Name = list.Name;
-      this.Definition = list.Definition;
-      this._elements = elements;
-    }
-    internal GsaList(int Id, EntityList list, Tuple<ConcurrentBag<GsaMember1dGoo>, ConcurrentBag<GsaMember2dGoo>, ConcurrentBag<GsaMember3dGoo>> members)
-    {
-      this.EntityType = EntityType.Member;
-      this.Id = Id;
-      this.Name = list.Name;
-      this.Definition = list.Definition;
-      this._members = members;
-    }
-    internal GsaList(int Id, EntityList list, List<int> cases)
-    {
-      this.EntityType = EntityType.Case;
-      this.Id = Id;
-      this.Name = list.Name;
-      this.Definition = list.Definition;
-      this._cases = cases;
-    }
-    internal GsaList(int Id, EntityList list)
-    {
-      this.EntityType = EntityType.Undefined;
-      this.Id = Id;
-      this.Name = list.Name;
-      this.Definition = list.Definition;
+      this._model = model;
     }
     #endregion
 
@@ -102,15 +77,19 @@ namespace GsaGH.Parameters
       return dup;
     }
 
-    internal List<object> GetListObjects()
+    internal List<object> GetListObjects(LengthUnit unit)
     {
       List<object> list = null;
       switch (this.EntityType)
       {
         case EntityType.Node:
+          if (this._nodes == null)
+            PopulateListObjectsFromModel(unit);
           list = new List<object>(this._nodes.OrderBy(x => x.Value.Id));
           break;
         case EntityType.Element:
+          if (this._elements == null)
+            PopulateListObjectsFromModel(unit);
           list = new List<object>();
           if (this._elements.Item1 != null)
             list.AddRange(this._elements.Item1.OrderBy(x => x.Value.Id));
@@ -120,6 +99,8 @@ namespace GsaGH.Parameters
             list.AddRange(this._elements.Item3.OrderBy(x => x.Value.Ids.Min()));
           break;
         case EntityType.Member:
+          if (this._members == null)
+            PopulateListObjectsFromModel(unit);
           list = new List<object>();
           if (this._members.Item1 != null)
             list.AddRange(this._members.Item1.OrderBy(x => x.Value.Id));
@@ -129,6 +110,8 @@ namespace GsaGH.Parameters
             list.AddRange(this._members.Item3.OrderBy(x => x.Value.Id));
           break;
         case EntityType.Case:
+          if (this._cases == null)
+            PopulateListObjectsFromModel(unit);
           list = new List<object>() { this._cases };
           break;
         case EntityType.Undefined:
@@ -137,6 +120,51 @@ namespace GsaGH.Parameters
           break;
       }
       return list;
+    }
+    
+    internal void PopulateListObjectsFromModel(LengthUnit unit)
+    {
+      if (this._model == null)
+        return;
+      switch (this.EntityType)
+      {
+        case EntityType.Node:
+          this._nodes = Nodes.GetNodes(this._model.Model.Nodes(this.Definition), unit, this._model.Model.Axes());
+          break;
+
+        case EntityType.Element:
+          Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
+          foreach (int id in this._model.Model.Elements(this.Definition).Keys)
+            elementLocalAxesDict.Add(id, this._model.Model.ElementDirectionCosine(id));
+          
+          this._elements = Elements.GetElements(
+          this._model.Model.Elements(this.Definition), this._model.Model.Nodes(), 
+          this._model.Model.Sections(), this._model.Model.Prop2Ds(), this._model.Model.Prop3Ds(), 
+          this._model.Model.AnalysisMaterials(), this._model.Model.SectionModifiers(), 
+          elementLocalAxesDict, this._model.Model.Axes(), unit, false);
+          break;
+
+        case EntityType.Member:
+          Dictionary<int, ReadOnlyCollection<double>> memberLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
+          foreach (int id in this._model.Model.Members(this.Definition).Keys)
+            memberLocalAxesDict.Add(id, this._model.Model.MemberDirectionCosine(id));
+          this._members = Members.GetMembers(
+          this._model.Model.Members(this.Definition), this._model.Model.Nodes(), 
+          this._model.Model.Sections(), this._model.Model.Prop2Ds(), this._model.Model.Prop3Ds(),
+          this._model.Model.AnalysisMaterials(), this._model.Model.SectionModifiers(), 
+          memberLocalAxesDict, this._model.Model.Axes(), unit, false);
+          break;
+
+        case EntityType.Case:
+          GsaAPI.EntityList tempApiList = new GsaAPI.EntityList() 
+          { Type = GsaAPI.EntityType.Case, Name = this.Name, Definition = this.Definition };
+          this._cases = this._model.Model.ExpandList(tempApiList).ToList();
+          break;
+
+        case EntityType.Undefined:
+        default:
+          break;
+      }
     }
 
     public override string ToString()
