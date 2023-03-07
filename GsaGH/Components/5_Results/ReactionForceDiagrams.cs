@@ -440,8 +440,7 @@ namespace GsaGH.Components
 
       var vectorResult = new VectorResultGoo(node.Value.Value.Point, direction, forceValue);
 
-      if (isForce) 
-        return vectorResult;
+      if (isForce) return vectorResult;
 
       return vectorResult.SetColor(Helpers.Graphics.Colours.GsaGold)
           .DrawArrowHead(true);

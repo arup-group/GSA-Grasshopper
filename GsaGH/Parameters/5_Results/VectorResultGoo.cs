@@ -13,7 +13,7 @@ namespace GsaGH.Parameters
   public class VectorResultGoo : GH_GeometricGoo<GH_Vector>, IGH_PreviewData
   {
     public readonly Point3d StartingPoint;
-    public readonly Vector3d Direction;
+    public Vector3d Direction { get; private set; }
     public readonly IQuantity ForceValue;
 
     private Line _reactionForceLine;
@@ -32,7 +32,7 @@ namespace GsaGH.Parameters
       ForceValue = forceValue;
 
       _reactionForceLine = this.CreateReactionForceLine(Direction);
-      Value = this.GetGHVector();
+      Value = this.GetGhVector();
     }
 
     public override string ToString() => $"VectorResult: Starting point: {StartingPoint}, Direction:{Direction}, Force:{ForceValue:0.0}";
@@ -56,9 +56,8 @@ namespace GsaGH.Parameters
 
     public override IGH_GeometricGoo Transform(Transform xform)
     {
-      var vector = Value;
-      vector.Value.Transform(xform);
-      this._reactionForceLine = CreateReactionForceLine(vector.Value);
+      Direction.Transform(xform);
+      this._reactionForceLine = CreateReactionForceLine(Direction);
       return this;
     }
 
@@ -188,10 +187,9 @@ namespace GsaGH.Parameters
       return line;
     }
 
-    private GH_Vector GetGHVector() => new GH_Vector(new Vector3d(
+    private GH_Vector GetGhVector() => new GH_Vector(new Vector3d(
       _reactionForceLine.ToX - _reactionForceLine.FromX,
       _reactionForceLine.ToY - _reactionForceLine.FromY,
       _reactionForceLine.ToZ - _reactionForceLine.FromZ));
-
   }
 }
