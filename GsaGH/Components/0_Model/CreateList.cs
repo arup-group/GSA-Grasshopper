@@ -5,8 +5,6 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units.Helpers;
-using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -23,7 +21,8 @@ namespace GsaGH.Components
 
     public CreateList() : base("Create List",
       "CreateList",
-      "Create a GSA List with Name, Type and Definition or reference objects (Nodes, Elements, Members)",
+      "Create a GSA List with Name, Type and Definition or reference objects (Nodes, Elements, Members)."
+      + System.Environment.NewLine + "You can add a GSA List to a model through the 'GSA' input.",
       CategoryName.Name(),
       SubCategoryName.Cat0())
     { }
@@ -41,7 +40,8 @@ namespace GsaGH.Components
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager)
     {
-      pManager.AddParameter(new GsaListParameter());
+      pManager.AddParameter(new GsaListParameter(), "GSA List", "L", "GSA Entity List parameter."
+      + System.Environment.NewLine + "You can add a GSA List to a model through the 'GSA' input.", GH_ParamAccess.item);
     }
     #endregion
 
