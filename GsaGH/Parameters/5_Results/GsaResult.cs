@@ -1128,9 +1128,9 @@ namespace GsaGH.Parameters
       else if (Type == CaseType.Combination)
       {
         txt = "C" + CaseId;
-        if (SelectedPermutationIDs.Count > 0)
+        if (SelectedPermutationIds.Count > 0)
         {
-          if (SelectedPermutationIDs.Count > 1)
+          if (SelectedPermutationIds.Count > 1)
             txt = txt + " P:" + SelectedPermutationIDs.Count;
           else
             txt = txt + " p" + SelectedPermutationIDs[0];
