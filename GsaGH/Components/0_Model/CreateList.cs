@@ -5,6 +5,8 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Units.Helpers;
+using OasysUnits.Units;
 
 namespace GsaGH.Components
 {
@@ -56,7 +58,34 @@ namespace GsaGH.Components
 
       List<object> listObjects = Inputs.GetObjectsForLists(this, DA, 2, this.Type);
 
-      list.SetListObjects(listObjects);
+      try
+      {
+        list.SetListObjects(listObjects);
+      }
+      catch (System.ArgumentException)
+      {
+        string message = "";
+        switch (this.Type)
+        {
+          case EntityType.Node:
+            message = "Invalid node list\n\nThe node list should take the form:\n 1 11 to 72 step 2 not (XY3 31 to 45)\nwhere:\nPS(n)  ->  Springs (of property n)\nPM(n)  ->  Masses (of property n)\nPD(n)  ->  Dampers (of property n)\nXn  ->  Nodes on global X line through node n\nYn  ->  ditto for Y\nZn  ->  ditto for Z\nXYn  ->  Nodes on global XY plane through node n\nYZn  ->  ditto for YZ\nZXn  ->  ditto for ZX\n\n* may be used in place of a node number to refer to\nthe highest numbered node.";
+            break;
+
+          case EntityType.Element:
+            message = "Invalid element list\n\nThe element list should take the form:\n 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)\nwhere:\nGn  ->  Elements in group n\nPn  ->  Elements of property n\nPB(n)  ->  Beams, bars, rods, struts and ties (of property n)\nPS(n)  ->  Springs (of property n)\nPA(n)  ->  2D elements (of property n)\nPV(n)  ->  3D elements (of property n)\nPL(n)  ->  Links (of property n)\nPC(n)  ->  Cables (of property n)\nPG(n)  ->  Spacers (of property n)\nPD(n)  ->  Dampers (of property n)\nM(n)  ->  Elements (of analysis material n)\nMS(n)  ->  Steel elements (of grade n)\nMC(n)  ->  Concrete elements (of grade n)\nMP(n)  ->  FRP elements (of grade n)\nXn  ->  Elements on global X line through node n\nYn  ->  ditto for Y\nZn  ->  ditto for Z\nXYn  ->  Elements on global XY plane through node n\nYZn  ->  ditto for YZ\nZXn  ->  ditto for ZX\n\n* may be used in place of an element or property number\nto refer to the highest numbered element or property.\n\nElements included in assemblies & grid surfaces may be referred to by:\n\"name\"  ->  where name is the name of the assembly or grid surface.";
+            break;
+
+          case EntityType.Member:
+            message = "Invalid member list\n\nThe member list should take the form:\n 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)\nwhere:\nGn  ->  Members in group n\nPn  ->  Members of property n\nPB(n)  ->  1D beam, bar, rod, strut and tie members (of property n)\nPA(n)  ->  2D members (of property n)n\nM(n)  ->  Members (of analysis material n)\nMS(n)  ->  Steel members (of grade n)\nMC(n)  ->  Concrete members (of grade n)\nMP(n)  ->  FRP members (of grade n)\nXn  ->  Members on global X line through node n\nYn  ->  ditto for Y\nZn  ->  ditto for Z\nXYn  ->  Members on global XY plane passing through node n\nYZn  ->  ditto for YZ\nZXn  ->  ditto for ZX\n\n* may be used in place of a member or property number\nto refer to the highest numbered member or property.";
+            break;
+
+          case EntityType.Case:
+          case EntityType.Undefined:
+            message = "Invalid list\n\nThe list should take the form:\n 1 11 to 72 step 2 not (31 to 45 step 3)";
+            break;
+        }
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, message);
+      }
 
       DA.SetData(0, list);
     }
@@ -90,6 +119,12 @@ namespace GsaGH.Components
       this.SelectedItems[i] = this.DropDownItems[i][j];
       this.Type = (EntityType)Enum.Parse(typeof(EntityType), this.SelectedItems[i]);
       base.UpdateUI();
+    }
+
+    public override void UpdateUIFromSelectedItems()
+    {
+      this.Type = (EntityType)Enum.Parse(typeof(EntityType), this.SelectedItems[0]);
+      base.UpdateUIFromSelectedItems();
     }
     #endregion
   }
