@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Grasshopper;
-using Grasshopper.Kernel;
-using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Types;
+﻿using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
-using OasysGH.Units;
-using OasysGH.Units.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
+using System;
 
 namespace GsaGH.Components
 {
@@ -54,8 +43,8 @@ namespace GsaGH.Components
       LineResultGoo res = null;
       DA.GetData(0, ref res);
       DA.SetData(0, res.Value);
-      DA.SetData(1, new GH_UnitNumber(res.m_result1));
-      DA.SetData(2, new GH_UnitNumber(res.m_result2));
+      DA.SetData(1, new GH_UnitNumber(res.Result1));
+      DA.SetData(2, new GH_UnitNumber(res.Result2));
     }
   }
 }

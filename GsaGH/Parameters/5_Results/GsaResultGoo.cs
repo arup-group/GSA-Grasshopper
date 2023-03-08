@@ -1,5 +1,4 @@
-﻿using System;
-using Grasshopper.Kernel.Types;
+﻿using Grasshopper.Kernel.Types;
 using OasysGH;
 using OasysGH.Parameters;
 

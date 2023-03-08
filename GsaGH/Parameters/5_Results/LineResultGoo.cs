@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysUnits;
 using Rhino.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace GsaGH.Parameters
 {
@@ -13,68 +13,51 @@ namespace GsaGH.Parameters
   /// </summary>
   public class LineResultGoo : GH_GeometricGoo<Line>, IGH_PreviewData
   {
-    public LineResultGoo(Line line, IQuantity result1, IQuantity result2, Color colour1, Color colour2, float size1, float size2) : base(line)
+    public LineResultGoo(Line line, IQuantity result1, IQuantity result2, Color color1, Color color2, float size1, float size2) : base(line)
     {
-      m_result1 = result1;
-      m_result2 = result2;
-      m_size1 = size1;
-      m_size2 = size2;
-      m_colour1 = colour1;
-      m_colour2 = colour2;
+      Result1 = result1;
+      Result2 = result2;
+      _size1 = size1;
+      _size2 = size2;
+      _color1 = color1;
+      _color2 = color2;
 
-      Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = new Grasshopper.GUI.Gradient.GH_Gradient();
-      gH_Gradient.AddGrip(0, m_colour1);
-      gH_Gradient.AddGrip(1, m_colour2);
-      previewResultSegments = new List<Line>();
-      previewResultColours = new List<Color>();
-      previewResultThk = new List<int>();
+      var gHGradient = new Grasshopper.GUI.Gradient.GH_Gradient();
+      gHGradient.AddGrip(0, _color1);
+      gHGradient.AddGrip(1, _color2);
+      PreviewResultSegments = new List<Line>();
+      PreviewResultColors = new List<Color>();
+      PreviewResultThk = new List<int>();
 
-      previewResultColours.Add(gH_Gradient.ColourAt(0));
-      previewResultThk.Add((int)Math.Abs(((m_size2 - m_size1) * 0 + m_size1)));
-      previewResultSegments.Add(new Line(Value.PointAt(0), Value.PointAt(0.5)));
+      PreviewResultColors.Add(gHGradient.ColourAt(0));
+      PreviewResultThk.Add((int)Math.Abs(((_size2 - _size1) * 0 + _size1)));
+      PreviewResultSegments.Add(new Line(Value.PointAt(0), Value.PointAt(0.5)));
 
-      previewResultColours.Add(gH_Gradient.ColourAt(1));
-      previewResultThk.Add((int)Math.Abs(((m_size2 - m_size1) * 1 + m_size1)));
-      previewResultSegments.Add(new Line(Value.PointAt(0.5), Value.PointAt(1)));
+      PreviewResultColors.Add(gHGradient.ColourAt(1));
+      PreviewResultThk.Add((int)Math.Abs(((_size2 - _size1) * 1 + _size1)));
+      PreviewResultSegments.Add(new Line(Value.PointAt(0.5), Value.PointAt(1)));
     }
 
-    internal IQuantity m_result1;
-    internal IQuantity m_result2;
-    private float m_size1;
-    private float m_size2;
-    private Color m_colour1;
-    private Color m_colour2;
-    internal List<Line> previewResultSegments;
-    internal List<Color> previewResultColours;
-    internal List<int> previewResultThk;
+    private readonly float _size1;
+    private readonly float _size2;
+    private readonly Color _color1;
+    private readonly Color _color2;
 
-    public override string ToString()
-    {
-      return string.Format("LineResult: L:{0:0.0}, R1:{1:0.0}, R2:{2:0.0}", Value.Length, m_result1, m_result2);
-    }
+    internal IQuantity Result1;
+    internal IQuantity Result2;
+    internal List<Line> PreviewResultSegments;
+    internal List<Color> PreviewResultColors;
+    internal List<int> PreviewResultThk;
 
-    public override string TypeName
-    {
-      get { return "Result Line"; }
-    }
+    public override string ToString() => $"LineResult: L:{Value.Length:0.0}, R1:{Result1:0.0}, R2:{Result2:0.0}";
 
-    public override string TypeDescription
-    {
-      get { return "A GSA result line type."; }
-    }
+    public override string TypeName => "Result Line";
 
-    public override IGH_GeometricGoo DuplicateGeometry()
-    {
-      return new LineResultGoo(Value, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
-    }
+    public override string TypeDescription => "A GSA result line type.";
 
-    public override BoundingBox Boundingbox
-    {
-      get
-      {
-        return Value.BoundingBox;
-      }
-    }
+    public override IGH_GeometricGoo DuplicateGeometry() => new LineResultGoo(Value, Result1, Result2, _color1, _color2, _size1, _size2);
+
+    public override BoundingBox Boundingbox => Value.BoundingBox;
 
     public override BoundingBox GetBoundingBox(Transform xform)
     {
@@ -87,21 +70,18 @@ namespace GsaGH.Parameters
     {
       Line ln = Value;
       ln.Transform(xform);
-      return new LineResultGoo(ln, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
+      return new LineResultGoo(ln, Result1, Result2, _color1, _color2, _size1, _size2);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
       Point3d start = xmorph.MorphPoint(Value.From);
       Point3d end = xmorph.MorphPoint(Value.To);
-      Line ln = new Line(start, end);
-      return new LineResultGoo(ln, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
+      var ln = new Line(start, end);
+      return new LineResultGoo(ln, Result1, Result2, _color1, _color2, _size1, _size2);
     }
 
-    public override object ScriptVariable()
-    {
-      return Value;
-    }
+    public override object ScriptVariable() => Value;
 
     public override bool CastTo<TQ>(out TQ target)
     {
@@ -141,14 +121,11 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      Line line = new Line();
-      if (GH_Convert.ToLine(source, ref line, GH_Conversion.Both))
-      {
-        Value = line;
-        return true;
-      }
+      var line = new Line();
+      if (!GH_Convert.ToLine(source, ref line, GH_Conversion.Both)) return false;
+      Value = line;
 
-      return false;
+      return true;
     }
 
     public BoundingBox ClippingBox
@@ -158,11 +135,11 @@ namespace GsaGH.Parameters
 
     public void DrawViewportWires(GH_PreviewWireArgs args)
     {
-      for (int i = 0; i < previewResultSegments.Count; i++)
+      for (int i = 0; i < PreviewResultSegments.Count; i++)
         args.Pipeline.DrawLine(
-            previewResultSegments[i],
-            previewResultColours[i],
-            previewResultThk[i]);
+            PreviewResultSegments[i],
+            PreviewResultColors[i],
+            PreviewResultThk[i]);
     }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }

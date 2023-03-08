@@ -81,16 +81,16 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIDs.Count > 1)
+          if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIds.Count > 1)
           {
             this.AddRuntimeWarning("Combination case contains "
-                + result.SelectedPermutationIDs.Count + " - only one permutation can be displayed at a time." +
+                + result.SelectedPermutationIds.Count + " - only one permutation can be displayed at a time." +
                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.CaseType.Combination)
-            _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
+            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
           if (result.Type == GsaResult.CaseType.AnalysisCase)
-            _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
+            _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
         }
         else
         {
@@ -159,21 +159,21 @@ namespace GsaGH.Components
           xxyyzzunit = DefaultUnits.StressUnitResult;
         }
 
-        double dmax_x = (_isShear) ? resShear.dmax_x.As(xyzunit) : res.dmax_x.As(xyzunit);
-        double dmax_y = (_isShear) ? resShear.dmax_y.As(xyzunit) : res.dmax_y.As(xyzunit);
-        double dmax_z = res.dmax_z.As(xyzunit);
-        double dmax_xyz = (_mode == FoldMode.Displacement) ? res.dmax_xyz.As(xyzunit) : 0;
-        double dmin_x = (_isShear) ? resShear.dmin_x.As(xyzunit) : res.dmin_x.As(xyzunit);
-        double dmin_y = (_isShear) ? resShear.dmin_y.As(xyzunit) : res.dmin_y.As(xyzunit);
-        double dmin_z = res.dmin_z.As(xyzunit);
-        double dmin_xyz = (_mode == FoldMode.Displacement) ? res.dmin_xyz.As(xyzunit) : 0;
-        double dmax_xx = (_isShear) ? 0 : res.dmax_xx.As(xxyyzzunit);
-        double dmax_yy = (_isShear) ? 0 : res.dmax_yy.As(xxyyzzunit);
-        double dmax_zz = (_isShear) ? 0 : res.dmax_zz.As(xxyyzzunit);
+        double dmax_x = (_isShear) ? resShear.DmaxX.As(xyzunit) : res.DmaxX.As(xyzunit);
+        double dmax_y = (_isShear) ? resShear.DmaxY.As(xyzunit) : res.DmaxY.As(xyzunit);
+        double dmax_z = res.DmaxZ.As(xyzunit);
+        double dmax_xyz = (_mode == FoldMode.Displacement) ? res.DmaxXyz.As(xyzunit) : 0;
+        double dmin_x = (_isShear) ? resShear.DminX.As(xyzunit) : res.DminX.As(xyzunit);
+        double dmin_y = (_isShear) ? resShear.DminY.As(xyzunit) : res.DminY.As(xyzunit);
+        double dmin_z = res.DminZ.As(xyzunit);
+        double dmin_xyz = (_mode == FoldMode.Displacement) ? res.DminXyz.As(xyzunit) : 0;
+        double dmax_xx = (_isShear) ? 0 : res.DmaxXx.As(xxyyzzunit);
+        double dmax_yy = (_isShear) ? 0 : res.DmaxYy.As(xxyyzzunit);
+        double dmax_zz = (_isShear) ? 0 : res.DmaxZz.As(xxyyzzunit);
         double dmax_xxyyzz = 0;
-        double dmin_xx = (_isShear) ? 0 : res.dmin_xx.As(xxyyzzunit);
-        double dmin_yy = (_isShear) ? 0 : res.dmin_yy.As(xxyyzzunit);
-        double dmin_zz = (_isShear) ? 0 : res.dmin_zz.As(xxyyzzunit);
+        double dmin_xx = (_isShear) ? 0 : res.DminXx.As(xxyyzzunit);
+        double dmin_yy = (_isShear) ? 0 : res.DminYy.As(xxyyzzunit);
+        double dmin_zz = (_isShear) ? 0 : res.DminZz.As(xxyyzzunit);
         double dmin_xxyyzz = 0;
 
         #region Result mesh values
