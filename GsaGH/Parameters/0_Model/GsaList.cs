@@ -83,6 +83,28 @@ namespace GsaGH.Parameters
 
     internal void SetListObjects(List<object> objects)
     {
+      var def = new List<string>();
+      for (int i = objects.Count - 1; i >= 0; i--)
+      {
+        if (objects[i] is string txt)
+        {
+          def.Add(txt);
+          objects.RemoveAt(i);
+        }
+      }
+      if (def.Count > 0)
+      {
+        def.Reverse();
+        string definition = string.Join(" ", def);
+        // pass the definition through the API here to catch any errors
+        var apiList = new EntityList() 
+        { 
+          Type = GetAPIEntityType(this.EntityType),
+          Definition = definition 
+        };
+        this.Definition = apiList.Definition;
+      }
+
       switch (this.EntityType)
       {
         case EntityType.Node:
