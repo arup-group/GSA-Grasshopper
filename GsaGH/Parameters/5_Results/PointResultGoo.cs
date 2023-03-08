@@ -20,7 +20,7 @@ namespace GsaGH.Parameters
     private readonly float _mSize;
     private readonly Color _mColor;
 
-    internal IQuantity MResult;
+    internal IQuantity Result;
 
     public override string ToString() => $"PointResult: P:({Value.X:0.0},{Value.Y:0.0},{Value.Z:0.0}) R:{MResult:0.0}";
     
