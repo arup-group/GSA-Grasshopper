@@ -114,7 +114,7 @@ namespace GsaGH.Parameters
 
     public void DrawViewportWires(GH_PreviewWireArgs args)
     {
-      args.Viewport.GetWorldToScreenScale(_reactionForceLine.To, out var pixelsPerUnit);
+      args.Viewport.GetWorldToScreenScale(_reactionForceLine.To, out double pixelsPerUnit);
       
       args.Pipeline.DrawArrow(_reactionForceLine, _color);
       if (_drawArrowHead)

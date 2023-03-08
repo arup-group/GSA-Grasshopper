@@ -262,7 +262,7 @@ namespace GsaGH.Components
             }
             else
             {
-              this._resultCache[new Tuple<GsaResult.CaseType, int>(this._resultType, this._caseID)].SelectedPermutationIDs = this._permutationIDs;
+              this._resultCache[new Tuple<GsaResult.CaseType, int>(this._resultType, this._caseID)].SelectedPermutationIds = this._permutationIDs;
             }
             break;
         }

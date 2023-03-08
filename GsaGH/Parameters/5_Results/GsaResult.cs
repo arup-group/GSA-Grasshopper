@@ -238,7 +238,7 @@ namespace GsaGH.Parameters
     /// <summary>
     /// User set permutation ID. If -1 => return all.
     /// </summary>
-    internal List<int> SelectedPermutationIDs { get; set; }
+    internal List<int> SelectedPermutationIds { get; set; }
 
     /// <summary>
     /// Combination Case 3DElement API Result Dictionary 
@@ -397,7 +397,7 @@ namespace GsaGH.Parameters
       this.CombinationCaseResult = result;
       this.Type = CaseType.Combination;
       this.CaseId = caseID;
-      this.SelectedPermutationIDs = permutations.OrderBy(x => x).ToList();
+      this.SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
     }
 
     internal GsaResult(GsaModel model, CombinationCaseResult result, int caseID, int permutation)
@@ -406,7 +406,7 @@ namespace GsaGH.Parameters
       this.CombinationCaseResult = result;
       this.Type = CaseType.Combination;
       this.CaseId = caseID;
-      this.SelectedPermutationIDs = new List<int>() { permutation };
+      this.SelectedPermutationIds = new List<int>() { permutation };
     }
     #endregion
 
@@ -449,7 +449,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboNodeDisplacementValues.Add(nodelist,
-              ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], lengthUnit, SelectedPermutationIDs));
+              ResultHelper.GetNodeResultValues(ComboNodeResults[nodelist], lengthUnit, SelectedPermutationIds));
         }
         return new Tuple<List<GsaResultsValues>, List<int>>(
           new List<GsaResultsValues>(ComboNodeDisplacementValues[nodelist].Values), Model.Model.Nodes(nodelist).Keys.ToList());
@@ -539,7 +539,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboNodeReactionForceValues.Add(nodelist,
-              ResultHelper.GetNodeReactionForceResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, SelectedPermutationIDs, supportnodeIDs));
+              ResultHelper.GetNodeReactionForceResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, SelectedPermutationIds, supportnodeIDs));
         }
         return new Tuple<List<GsaResultsValues>, List<int>>(
             new List<GsaResultsValues>(ComboNodeReactionForceValues[nodelist].Values), ComboNodeReactionForceValues[nodelist].Values.First().xyzResults.Keys.OrderBy(x => x).ToList());
@@ -600,7 +600,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboNodeReactionForceValues.Add(nodelist,
-              ResultHelper.GetNodeSpringForceResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, SelectedPermutationIDs, supportnodeIDs));
+              ResultHelper.GetNodeSpringForceResultValues(ComboNodeResults[nodelist], forceUnit, momentUnit, SelectedPermutationIds, supportnodeIDs));
         }
         return new Tuple<List<GsaResultsValues>, List<int>>(
             new List<GsaResultsValues>(ComboNodeReactionForceValues[nodelist].Values), ComboNodeReactionForceValues[nodelist].Values.First().xyzResults.Keys.OrderBy(x => x).ToList());
@@ -646,7 +646,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement1DDisplacementValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], lengthUnit, SelectedPermutationIDs));
+              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], lengthUnit, SelectedPermutationIds));
         }
         return new List<GsaResultsValues>(ComboElement1DDisplacementValues[key].Values);
       }
@@ -723,7 +723,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement1DForceValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], forceUnit, momentUnit, SelectedPermutationIDs));
+              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], forceUnit, momentUnit, SelectedPermutationIds));
         }
         return new List<GsaResultsValues>(ComboElement1DForceValues[key].Values);
       }
@@ -768,7 +768,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement1DStrainEnergyDensityValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ComboElement1DResultsInclStrainEnergyDensity[key], energyUnit, SelectedPermutationIDs, false));
+              ResultHelper.GetElement1DResultValues(ComboElement1DResultsInclStrainEnergyDensity[key], energyUnit, SelectedPermutationIds, false));
         }
         return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key].Values);
       }
@@ -813,7 +813,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement1DStrainEnergyDensityValues.Add(key,
-              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], energyUnit, SelectedPermutationIDs, true));
+              ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], energyUnit, SelectedPermutationIds, true));
         }
         return new List<GsaResultsValues>(ComboElement1DStrainEnergyDensityValues[key].Values);
       }
@@ -857,7 +857,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement2DDisplacementValues.Add(elementlist,
-              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], lengthUnit, SelectedPermutationIDs));
+              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], lengthUnit, SelectedPermutationIds));
         }
         return new List<GsaResultsValues>(ComboElement2DDisplacementValues[elementlist].Values);
       }
@@ -932,7 +932,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement2DForceValues.Add(elementlist,
-              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, momentUnit, SelectedPermutationIDs));
+              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, momentUnit, SelectedPermutationIds));
         }
         return new List<GsaResultsValues>(ComboElement2DForceValues[elementlist].Values);
       }
@@ -976,7 +976,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement2DShearValues.Add(elementlist,
-              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, SelectedPermutationIDs));
+              ResultHelper.GetElement2DResultValues(ComboElement2DResults[new Tuple<string, double>(elementlist, 0)], forceUnit, SelectedPermutationIds));
         }
         return new List<GsaResultsValues>(ComboElement2DShearValues[elementlist].Values);
       }
@@ -1022,7 +1022,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement2DStressValues.Add(key,
-              ResultHelper.GetElement2DResultValues(ComboElement2DResults[key], stressUnit, SelectedPermutationIDs));
+              ResultHelper.GetElement2DResultValues(ComboElement2DResults[key], stressUnit, SelectedPermutationIds));
         }
         return new List<GsaResultsValues>(ComboElement2DStressValues[key].Values);
       }
@@ -1066,7 +1066,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement3DDisplacementValues.Add(elementlist,
-              ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], lengthUnit, SelectedPermutationIDs));
+              ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], lengthUnit, SelectedPermutationIds));
         }
         return new List<GsaResultsValues>(ComboElement3DDisplacementValues[elementlist].Values);
       }
@@ -1110,7 +1110,7 @@ namespace GsaGH.Parameters
           }
           // compute result values and add to dictionary for cache
           this.ComboElement3DStressValues.Add(elementlist,
-              ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], stressUnit, SelectedPermutationIDs));
+              ResultHelper.GetElement3DResultValues(ComboElement3DResults[elementlist], stressUnit, SelectedPermutationIds));
         }
         return new List<GsaResultsValues>(ComboElement3DStressValues[elementlist].Values);
       }
@@ -1131,9 +1131,9 @@ namespace GsaGH.Parameters
         if (SelectedPermutationIds.Count > 0)
         {
           if (SelectedPermutationIds.Count > 1)
-            txt = txt + " P:" + SelectedPermutationIDs.Count;
+            txt = txt + " P:" + SelectedPermutationIds.Count;
           else
-            txt = txt + " p" + SelectedPermutationIDs[0];
+            txt = txt + " p" + SelectedPermutationIds[0];
         }
       }
       return txt.Trim().Replace("  ", " ");

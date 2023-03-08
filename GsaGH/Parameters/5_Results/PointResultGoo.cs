@@ -12,7 +12,7 @@ namespace GsaGH.Parameters
     public PointResultGoo(Point3d point, IQuantity result, Color color, float size)
     : base(point)
     {
-      MResult = result;
+      Result = result;
       _mSize = size;
       _mColor = color;
     }
@@ -22,13 +22,13 @@ namespace GsaGH.Parameters
 
     internal IQuantity Result;
 
-    public override string ToString() => $"PointResult: P:({Value.X:0.0},{Value.Y:0.0},{Value.Z:0.0}) R:{MResult:0.0}";
+    public override string ToString() => $"PointResult: P:({Value.X:0.0},{Value.Y:0.0},{Value.Z:0.0}) R:{Result:0.0}";
     
     public override string TypeName => "Result Point";
 
     public override string TypeDescription => "A GSA result point type.";
 
-    public override IGH_GeometricGoo DuplicateGeometry() => new PointResultGoo(Value, MResult, _mColor, _mSize);
+    public override IGH_GeometricGoo DuplicateGeometry() => new PointResultGoo(Value, Result, _mColor, _mSize);
     
     public override BoundingBox Boundingbox
     {
@@ -51,12 +51,12 @@ namespace GsaGH.Parameters
     {
       Point3d point = Value;
       point.Transform(xform);
-      return new PointResultGoo(point, MResult, _mColor, _mSize);
+      return new PointResultGoo(point, Result, _mColor, _mSize);
     }
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
       Point3d point = xmorph.MorphPoint(Value);
-      return new PointResultGoo(point, MResult, _mColor, _mSize);
+      return new PointResultGoo(point, Result, _mColor, _mSize);
     }
 
     public override object ScriptVariable() => Value;
@@ -77,7 +77,7 @@ namespace GsaGH.Parameters
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Number)))
       {
-        target = (TQ)(object)new GH_Number(MResult.Value);
+        target = (TQ)(object)new GH_Number(Result.Value);
         return true;
       }
 
