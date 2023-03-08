@@ -20,6 +20,12 @@ namespace GsaGH.Helpers.GH
           GH_ObjectWrapper gh_typ = gh_types[i];
           if (gh_typ == null) { owner.AddRuntimeWarning("Input (index: " + i + ") is null and has been ignored"); continue; }
 
+          if (gh_typ.Value is GH_String txt)
+          {
+            list.Add(txt.Value);
+            continue;
+          }
+
           switch (type)
           {
             case EntityType.Node:
