@@ -53,7 +53,7 @@ namespace GsaGH.Components
       PointResultGoo res = null;
       DA.GetData(0, ref res);
       DA.SetData(0, res.Value);
-      DA.SetData(1, new GH_UnitNumber(res._result));
+      DA.SetData(1, new GH_UnitNumber(res.Result));
     }
   }
 }
