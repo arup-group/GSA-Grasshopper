@@ -12,20 +12,20 @@ namespace GsaGH.Parameters
     public PointResultGoo(Point3d point, IQuantity result, Color color, float size, int id)
     : base(point)
     {
-      _result = result;
+      Result = result;
       _size = size;
       _color = color;
-      _id = id;
+      NodeId = id;
     }
 
-    internal IQuantity _result;
+    public int NodeId;
+    public IQuantity Result;
     private float _size;
     private Color _color;
-    private int _id;
 
     public override string ToString()
     {
-      return string.Format("PointResult: P:({0:0.0},{1:0.0},{2:0.0}) R:{3:0.0}", Value.X, Value.Y, Value.Z, _result);
+      return string.Format("PointResult: P:({0:0.0},{1:0.0},{2:0.0}) R:{3:0.0}", Value.X, Value.Y, Value.Z, Result);
     }
     public override string TypeName
     {
@@ -38,7 +38,7 @@ namespace GsaGH.Parameters
 
     public override IGH_GeometricGoo DuplicateGeometry()
     {
-      return new PointResultGoo(Value, _result, _color, _size, _id);
+      return new PointResultGoo(Value, Result, _color, _size, NodeId);
     }
     public override BoundingBox Boundingbox
     {
@@ -61,12 +61,12 @@ namespace GsaGH.Parameters
     {
       Point3d point = Value;
       point.Transform(xform);
-      return new PointResultGoo(point, _result, _color, _size, _id);
+      return new PointResultGoo(point, Result, _color, _size, NodeId);
     }
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
       Point3d point = xmorph.MorphPoint(Value);
-      return new PointResultGoo(point, _result, _color, _size, _id);
+      return new PointResultGoo(point, Result, _color, _size, NodeId);
     }
 
     public override object ScriptVariable() => Value;
@@ -87,13 +87,13 @@ namespace GsaGH.Parameters
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Number)))
       {
-        target = (TQ)(object)new GH_Number(_result.Value);
+        target = (TQ)(object)new GH_Number(Result.Value);
         return true;
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer)))
       {
-        target = (TQ)(object)new GH_Integer(_id);
+        target = (TQ)(object)new GH_Integer(NodeId);
         return true;
       }
 
@@ -127,6 +127,9 @@ namespace GsaGH.Parameters
         Value = point;
         return true;
       }
+
+      return false;
+    }
 
     public BoundingBox ClippingBox => Boundingbox;
 

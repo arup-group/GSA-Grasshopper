@@ -4,16 +4,14 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysUnits;
 using Rhino.Geometry;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GsaGH.Parameters
 {
   public class MeshResultGoo : GH_GeometricGoo<Mesh>, IGH_PreviewData
   {
-    internal List<List<IQuantity>> ResultValues = new List<List<IQuantity>>();
-    internal List<List<Point3d>> Vertices = new List<List<Point3d>>();
-    internal List<int> _ids = new List<int>();
+    public List<List<IQuantity>> ResultValues = new List<List<IQuantity>>();
+    public List<List<Point3d>> Vertices = new List<List<Point3d>>();
+    public List<int> ElementIds = new List<int>();
     private List<Mesh> _tempMeshes = new List<Mesh>();
     private bool _finalised = false;
 
@@ -22,7 +20,7 @@ namespace GsaGH.Parameters
     {
       this.ResultValues = results;
       this.Vertices = vertices;
-      this._ids = ids;
+      this.ElementIds = ids;
     }
 
     public Mesh ValidMesh
@@ -49,20 +47,20 @@ namespace GsaGH.Parameters
       }
     }
 
-    public void Add(Mesh temp_mesh, List<IQuantity> results, List<Point3d> vertices)
+    public void Add(Mesh tempMesh, List<IQuantity> results, List<Point3d> vertices, int id)
     {
       _tempMeshes.Add(tempMesh);
       ResultValues.Add(results);
       Vertices.Add(vertices);
-      _ids.Add(id);
+      ElementIds.Add(id);
       _finalised = false;
     }
-    public void Add(List<Mesh> temp_mesh, List<List<IQuantity>> results, List<List<Point3d>> vertices)
+    public void Add(List<Mesh> tempMesh, List<List<IQuantity>> results, List<List<Point3d>> vertices, List<int> ids)
     {
       _tempMeshes.AddRange(tempMesh);
       ResultValues.AddRange(results);
       Vertices.AddRange(vertices);
-      _ids.AddRange(ids);
+      ElementIds.AddRange(ids);
       Finalise();
     }
     public void Finalise()
@@ -82,7 +80,7 @@ namespace GsaGH.Parameters
 
     public override string TypeDescription => "A GSA result mesh type.";
 
-    public override IGH_GeometricGoo DuplicateGeometry() => new MeshResultGoo(Value, ResultValues, Vertices);
+    public override IGH_GeometricGoo DuplicateGeometry() => new MeshResultGoo(Value, ResultValues, Vertices, ElementIds);
     
     public override BoundingBox Boundingbox => Value.GetBoundingBox(false);
 
@@ -109,7 +107,7 @@ namespace GsaGH.Parameters
         vertices.Add(duplicates);
       }
 
-      return new MeshResultGoo(m, this.ResultValues, vertices, _ids);
+      return new MeshResultGoo(m, this.ResultValues, vertices, ElementIds);
     }
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
@@ -126,7 +124,7 @@ namespace GsaGH.Parameters
         }
         vertices.Add(duplicates);
       }
-      return new MeshResultGoo(m, ResultValues, Vertices, _ids);
+      return new MeshResultGoo(m, ResultValues, Vertices, ElementIds);
     }
 
     public override object ScriptVariable() => Value;
@@ -175,6 +173,9 @@ namespace GsaGH.Parameters
         Value = m;
         return true;
       }
+
+      return false;
+    }
 
     public BoundingBox ClippingBox => Boundingbox;
 
