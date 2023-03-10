@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysUnits;
 using Rhino.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace GsaGH.Parameters
 {
@@ -50,33 +50,15 @@ namespace GsaGH.Parameters
     private Color _color1;
     private Color _color2;
 
-    public override string ToString()
-    {
-      return string.Format("LineResult: L:{0:0.0}, R1:{1:0.0}, R2:{2:0.0}", Value.Length, _result1, _result2);
-    }
+    public override string ToString() => $"LineResult: L:{Value.Length:0.0}, R1:{Result1:0.0}, R2:{Result2:0.0}";
 
-    public override string TypeName
-    {
-      get { return "Result Line"; }
-    }
+    public override string TypeName => "Result Line";
 
-    public override string TypeDescription
-    {
-      get { return "A GSA result line type."; }
-    }
+    public override string TypeDescription => "A GSA result line type.";
 
-    public override IGH_GeometricGoo DuplicateGeometry()
-    {
-      return new LineResultGoo(Value, _result1, _result2, _color1, _color2, _size1, _size2, _id);
-    }
+    public override IGH_GeometricGoo DuplicateGeometry() => new LineResultGoo(Value, Result1, Result2, _color1, _color2, _size1, _size2);
 
-    public override BoundingBox Boundingbox
-    {
-      get
-      {
-        return Value.BoundingBox;
-      }
-    }
+    public override BoundingBox Boundingbox => Value.BoundingBox;
 
     public override BoundingBox GetBoundingBox(Transform xform)
     {
@@ -100,10 +82,7 @@ namespace GsaGH.Parameters
       return new LineResultGoo(ln, _result1, _result2, _color1, _color2, _size1, _size2, _id);
     }
 
-    public override object ScriptVariable()
-    {
-      return Value;
-    }
+    public override object ScriptVariable() => Value;
 
     public override bool CastTo<TQ>(out TQ target)
     {
@@ -149,14 +128,11 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      Line line = new Line();
-      if (GH_Convert.ToLine(source, ref line, GH_Conversion.Both))
-      {
-        Value = line;
-        return true;
-      }
+      var line = new Line();
+      if (!GH_Convert.ToLine(source, ref line, GH_Conversion.Both)) return false;
+      Value = line;
 
-      return false;
+      return true;
     }
 
     public BoundingBox ClippingBox
@@ -166,11 +142,11 @@ namespace GsaGH.Parameters
 
     public void DrawViewportWires(GH_PreviewWireArgs args)
     {
-      for (int i = 0; i < previewResultSegments.Count; i++)
+      for (int i = 0; i < PreviewResultSegments.Count; i++)
         args.Pipeline.DrawLine(
-            previewResultSegments[i],
-            previewResultColours[i],
-            previewResultThk[i]);
+            PreviewResultSegments[i],
+            PreviewResultColors[i],
+            PreviewResultThk[i]);
     }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }

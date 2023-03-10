@@ -91,8 +91,8 @@ namespace GsaGH.Components
         GsaResultsValues res = result.NodeFootfallValues(nodeList, Helpers.GsaAPI.FootfallResultType.Resonant);
         GsaResultsValues tra = result.NodeFootfallValues(nodeList, Helpers.GsaAPI.FootfallResultType.Transient);
 
-        DA.SetData(0, res.dmax_x.Value);
-        DA.SetData(1, tra.dmax_x.Value);
+        DA.SetData(0, res.DmaxX.Value);
+        DA.SetData(1, tra.DmaxX.Value);
 
         Helpers.PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Footfall, "Max");
       }

@@ -98,16 +98,16 @@ namespace GsaGH.Components
         if (gh_typ.Value is GsaResultGoo)
         {
           result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIDs.Count > 1)
+          if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIds.Count > 1)
           {
-            this.AddRuntimeWarning("Combination Case " + result.CaseID + " contains "
-                + result.SelectedPermutationIDs.Count + " permutations - only one permutation can be displayed at a time." +
+            this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
+                + result.SelectedPermutationIds.Count + " permutations - only one permutation can be displayed at a time." +
                 Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
           if (result.Type == GsaResult.CaseType.Combination)
-            _case = "Case C" + result.CaseID + " P" + result.SelectedPermutationIDs[0];
+            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
           if (result.Type == GsaResult.CaseType.AnalysisCase)
-            _case = "Case A" + result.CaseID + Environment.NewLine + result.CaseName;
+            _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
         }
         else
         {
@@ -203,29 +203,29 @@ namespace GsaGH.Components
           xyzunit = RatioUnit.DecimalFraction;
         }
 
-        if (res.dmax_x == null)
+        if (res.DmaxX == null)
         {
           string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
           this.AddRuntimeWarning("Case " + acase + " contains no Element1D results.");
           return;
         }
 
-        double dmax_x = res.dmax_x.As(xyzunit);
-        double dmax_y = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmax_y.As(xyzunit);
-        double dmax_z = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmax_z.As(xyzunit);
-        double dmax_xyz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmax_xyz.As(xyzunit);
-        double dmin_x = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmin_x.As(xyzunit);
-        double dmin_y = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmin_y.As(xyzunit);
-        double dmin_z = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmin_z.As(xyzunit);
-        double dmin_xyz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmin_xyz.As(xyzunit);
-        double dmax_xx = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmax_xx.As(xxyyzzunit);
-        double dmax_yy = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmax_yy.As(xxyyzzunit);
-        double dmax_zz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmax_zz.As(xxyyzzunit);
-        double dmax_xxyyzz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmax_xxyyzz.As(xxyyzzunit);
-        double dmin_xx = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmin_xx.As(xxyyzzunit);
-        double dmin_yy = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmin_yy.As(xxyyzzunit);
-        double dmin_zz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmin_zz.As(xxyyzzunit);
-        double dmin_xxyyzz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.dmin_xxyyzz.As(xxyyzzunit);
+        double dmax_x = res.DmaxX.As(xyzunit);
+        double dmax_y = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DmaxY.As(xyzunit);
+        double dmax_z = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DmaxZ.As(xyzunit);
+        double dmax_xyz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DmaxXyz.As(xyzunit);
+        double dmin_x = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DminX.As(xyzunit);
+        double dmin_y = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DminY.As(xyzunit);
+        double dmin_z = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DminZ.As(xyzunit);
+        double dmin_xyz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DminXyz.As(xyzunit);
+        double dmax_xx = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DmaxXx.As(xxyyzzunit);
+        double dmax_yy = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DmaxYy.As(xxyyzzunit);
+        double dmax_zz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DmaxZz.As(xxyyzzunit);
+        double dmax_xxyyzz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DmaxXxyyzz.As(xxyyzzunit);
+        double dmin_xx = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DminXx.As(xxyyzzunit);
+        double dmin_yy = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DminYy.As(xxyyzzunit);
+        double dmin_zz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DminZz.As(xxyyzzunit);
+        double dmin_xxyyzz = _mode == FoldMode.StrainEnergy || _mode == FoldMode.Footfall ? 0 : res.DminXxyyzz.As(xxyyzzunit);
 
         #region Result line values
         // ### Coloured Result Lines ###

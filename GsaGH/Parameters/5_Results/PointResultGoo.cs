@@ -1,9 +1,9 @@
-﻿using Rhino.Geometry;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using System.Drawing;
-using Rhino.Display;
 using OasysUnits;
+using Rhino.Display;
+using Rhino.Geometry;
+using System.Drawing;
 
 namespace GsaGH.Parameters
 {
@@ -44,7 +44,7 @@ namespace GsaGH.Parameters
     {
       get
       {
-        BoundingBox box = new BoundingBox(Value, Value);
+        var box = new BoundingBox(Value, Value);
         box.Inflate(1);
         return box;
       }
@@ -53,7 +53,7 @@ namespace GsaGH.Parameters
     {
       Point3d point = Value;
       point.Transform(xform);
-      BoundingBox box = new BoundingBox(point, point);
+      var box = new BoundingBox(point, point);
       box.Inflate(1);
       return box;
     }
@@ -69,10 +69,8 @@ namespace GsaGH.Parameters
       return new PointResultGoo(point, _result, _color, _size, _id);
     }
 
-    public override object ScriptVariable()
-    {
-      return Value;
-    }
+    public override object ScriptVariable() => Value;
+    
     public override bool CastTo<TQ>(out TQ target)
     {
       if (typeof(TQ).IsAssignableFrom(typeof(Point3d)))
@@ -130,13 +128,8 @@ namespace GsaGH.Parameters
         return true;
       }
 
-      return false;
-    }
+    public BoundingBox ClippingBox => Boundingbox;
 
-    public BoundingBox ClippingBox
-    {
-      get { return Boundingbox; }
-    }
     public void DrawViewportWires(GH_PreviewWireArgs args)
     {
       args.Pipeline.DrawPoint(Value, PointStyle.RoundSimple, _size, _color);
