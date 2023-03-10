@@ -13,44 +13,46 @@ namespace GsaGH.Parameters
   /// </summary>
   public class LineResultGoo : GH_GeometricGoo<Line>, IGH_PreviewData
   {
-    public LineResultGoo(Line line, IQuantity result1, IQuantity result2, Color colour1, Color colour2, float size1, float size2) : base(line)
+    public LineResultGoo(Line line, IQuantity result1, IQuantity result2, Color color1, Color color2, float size1, float size2, int id) : base(line)
     {
-      m_result1 = result1;
-      m_result2 = result2;
-      m_size1 = size1;
-      m_size2 = size2;
-      m_colour1 = colour1;
-      m_colour2 = colour2;
+      _id = id;
+      _result1 = result1;
+      _result2 = result2;
+      _size1 = size1;
+      _size2 = size2;
+      _color1 = color1;
+      _color2 = color2;
 
       Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = new Grasshopper.GUI.Gradient.GH_Gradient();
-      gH_Gradient.AddGrip(0, m_colour1);
-      gH_Gradient.AddGrip(1, m_colour2);
+      gH_Gradient.AddGrip(0, _color1);
+      gH_Gradient.AddGrip(1, _color2);
       previewResultSegments = new List<Line>();
       previewResultColours = new List<Color>();
       previewResultThk = new List<int>();
 
       previewResultColours.Add(gH_Gradient.ColourAt(0));
-      previewResultThk.Add((int)Math.Abs(((m_size2 - m_size1) * 0 + m_size1)));
+      previewResultThk.Add((int)Math.Abs(((_size2 - _size1) * 0 + _size1)));
       previewResultSegments.Add(new Line(Value.PointAt(0), Value.PointAt(0.5)));
 
       previewResultColours.Add(gH_Gradient.ColourAt(1));
-      previewResultThk.Add((int)Math.Abs(((m_size2 - m_size1) * 1 + m_size1)));
+      previewResultThk.Add((int)Math.Abs(((_size2 - _size1) * 1 + _size1)));
       previewResultSegments.Add(new Line(Value.PointAt(0.5), Value.PointAt(1)));
     }
 
-    internal IQuantity m_result1;
-    internal IQuantity m_result2;
-    private float m_size1;
-    private float m_size2;
-    private Color m_colour1;
-    private Color m_colour2;
+    internal int _id;
+    internal IQuantity _result1;
+    internal IQuantity _result2;
     internal List<Line> previewResultSegments;
     internal List<Color> previewResultColours;
     internal List<int> previewResultThk;
+    private float _size1;
+    private float _size2;
+    private Color _color1;
+    private Color _color2;
 
     public override string ToString()
     {
-      return string.Format("LineResult: L:{0:0.0}, R1:{1:0.0}, R2:{2:0.0}", Value.Length, m_result1, m_result2);
+      return string.Format("LineResult: L:{0:0.0}, R1:{1:0.0}, R2:{2:0.0}", Value.Length, _result1, _result2);
     }
 
     public override string TypeName
@@ -65,7 +67,7 @@ namespace GsaGH.Parameters
 
     public override IGH_GeometricGoo DuplicateGeometry()
     {
-      return new LineResultGoo(Value, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
+      return new LineResultGoo(Value, _result1, _result2, _color1, _color2, _size1, _size2, _id);
     }
 
     public override BoundingBox Boundingbox
@@ -87,7 +89,7 @@ namespace GsaGH.Parameters
     {
       Line ln = Value;
       ln.Transform(xform);
-      return new LineResultGoo(ln, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
+      return new LineResultGoo(ln, _result1, _result2, _color1, _color2, _size1, _size2, _id);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
@@ -95,7 +97,7 @@ namespace GsaGH.Parameters
       Point3d start = xmorph.MorphPoint(Value.From);
       Point3d end = xmorph.MorphPoint(Value.To);
       Line ln = new Line(start, end);
-      return new LineResultGoo(ln, m_result1, m_result2, m_colour1, m_colour2, m_size1, m_size2);
+      return new LineResultGoo(ln, _result1, _result2, _color1, _color2, _size1, _size2, _id);
     }
 
     public override object ScriptVariable()
@@ -120,6 +122,12 @@ namespace GsaGH.Parameters
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve)))
       {
         target = (TQ)(object)new GH_Curve(Value.ToNurbsCurve());
+        return true;
+      }
+
+      if (typeof(TQ).IsAssignableFrom(typeof(GH_Integer)))
+      {
+        target = (TQ)(object)new GH_Integer(_id);
         return true;
       }
 
