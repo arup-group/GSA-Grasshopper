@@ -197,7 +197,7 @@ namespace GsaGHTests.Parameters
 
       var actualObject = obj.Morph(new TwistSpaceMorph()
       );
-      var expectedObject = new VectorResultGoo(startingPoint, vector3d, force, 4);
+      var expectedObject = new VectorResultGoo(startingPoint, vector3d, force, 44);
 
       Assert.Equal(expectedObject.Boundingbox.Diagonal, actualObject.Boundingbox.Diagonal);
       Assert.Equal(expectedObject.Boundingbox.Max, actualObject.Boundingbox.Max);
