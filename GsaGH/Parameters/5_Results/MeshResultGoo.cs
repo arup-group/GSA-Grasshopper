@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -184,10 +185,17 @@ namespace GsaGH.Parameters
       if (Value == null) { return; }
       if (Grasshopper.CentralSettings.PreviewMeshEdges == false) { return; }
 
-      args.Pipeline.DrawMeshWires(Value,
-        args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
+      Color color = args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
           ? Helpers.Graphics.Colours.Element2dEdge
-          : Helpers.Graphics.Colours.Element2dEdgeSelected, 1);
+          : Helpers.Graphics.Colours.Element2dEdgeSelected;
+
+      if (Value.Ngons.Count > 0)
+      {
+        for(int i = 0; i < Value.TopologyEdges.Count; i++)
+          args.Pipeline.DrawLine(Value.TopologyEdges.EdgeLine(i), color, 1);
+      }
+
+      args.Pipeline.DrawMeshWires(Value, color, 1);
     }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args)
