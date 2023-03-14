@@ -7,13 +7,11 @@ using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 
-namespace GsaGH.Components
-{
+namespace GsaGH.Components {
   /// <summary>
   /// Component to create a new Material
   /// </summary>
-  public class CreateMaterial : GH_OasysDropDownComponent
-  {
+  public class CreateMaterial : GH_OasysDropDownComponent {
     public static List<string> MaterialTypes = new List<string>() {
       "Generic",
       "Steel",
@@ -22,7 +20,7 @@ namespace GsaGH.Components
       "Aluminium",
       "FRP",
       "Glass",
-      "Fabric"
+      "Fabric",
     };
 
     #region Name and Ribbon Layout
@@ -36,38 +34,31 @@ namespace GsaGH.Components
       GsaMaterialGoo.Name.Replace(" ", string.Empty),
       "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
       CategoryName.Name(),
-      SubCategoryName.Cat1())
-    {
-      this.Hidden = true; // sets the initial state of the component to hidden
+      SubCategoryName.Cat1()) {
+        Hidden = true; // sets the initial state of the component to hidden
     }
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddIntegerParameter("Grade", "Grd", "Material Grade (default = 1)", GH_ParamAccess.item, 1);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaMaterialParameter(), "Material", "Mat", "GSA Standard Material (reference)", GH_ParamAccess.item);
     }
     #endregion
 
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      GsaMaterial material = new GsaMaterial();
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var material = new GsaMaterial();
 
-      GH_Integer gh_grade = new GH_Integer();
-      if (DA.GetData(0, ref gh_grade))
-      {
-        int grade = 1;
-        GH_Convert.ToInt32(gh_grade, out grade, GH_Conversion.Both);
+      var ghGrade = new GH_Integer();
+      if (da.GetData(0, ref ghGrade)) {
+        GH_Convert.ToInt32(ghGrade, out int grade, GH_Conversion.Both);
         material.GradeProperty = grade;
       }
 
-      switch (this.SelectedItems[0])
-      {
+      switch (SelectedItems[0]) {
         case "Steel":
           material.MaterialType = GsaMaterial.MatType.STEEL;
           break;
@@ -89,31 +80,29 @@ namespace GsaGH.Components
         case "Fabric":
           material.MaterialType = GsaMaterial.MatType.FABRIC;
           break;
-        case "Generic":
         default:
           material.MaterialType = GsaMaterial.MatType.GENERIC;
           break;
       }
-      DA.SetData(0, new GsaMaterialGoo(material));
+
+      da.SetData(0, new GsaMaterialGoo(material));
     }
 
     #region Custom UI
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[] { "Material type" });
+    public override void InitialiseDropdowns() {
+      SpacerDescriptions = new List<string>(new [] { "Material type" });
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+      DropDownItems = new List<List<string>>();
+      SelectedItems = new List<string>();
 
-      this.DropDownItems.Add(new List<string>(MaterialTypes));
-      this.SelectedItems.Add(MaterialTypes[3]);
+      DropDownItems.Add(new List<string>(MaterialTypes));
+      SelectedItems.Add(MaterialTypes[3]);
 
-      this.IsInitialised = true;
+      IsInitialised = true;
     }
 
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
+    public override void SetSelected(int i, int j) {
+      SelectedItems[i] = DropDownItems[i][j];
       base.UpdateUI();
     }
     #endregion
