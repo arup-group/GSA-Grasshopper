@@ -59,11 +59,15 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
-      if (da.GetData(0, ref ghTyp)) {
-        if (ghTyp.Value is GsaSectionGoo && ghTyp.CastTo(out GsaSection gsaSection)) {
+      if (da.GetData(0, ref ghTyp))
+      {
+	      var gsaSection = new GsaSection();
+        if (ghTyp.Value is GsaSectionGoo && ghTyp.CastTo(ref gsaSection)) {
         }
-        else {
-          ghTyp.CastTo(out string profileIn);
+        else
+        {
+	        string profileIn = string.Empty;
+          ghTyp.CastTo(ref profileIn);
           if (GsaSection.ValidProfile(profileIn))
             gsaSection = new GsaSection(profileIn);
           else {

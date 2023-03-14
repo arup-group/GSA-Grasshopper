@@ -59,10 +59,12 @@ namespace GsaGH.Components {
         return;
       }
 
-      if (ghTyp.Value is GsaSectionGoo && ghTyp.CastTo(out GsaSection gsaSection)) {
+      var gsaSection = new GsaSection();
+      if (ghTyp.Value is GsaSectionGoo && ghTyp.CastTo(ref gsaSection)) {
       }
       else {
-        ghTyp.CastTo(out string profile);
+        string profile = string.Empty;
+        ghTyp.CastTo(ref profile);
         if (GsaSection.ValidProfile(profile))
           gsaSection = new GsaSection(profile);
         else {

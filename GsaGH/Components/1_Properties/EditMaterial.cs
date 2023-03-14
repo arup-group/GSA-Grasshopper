@@ -73,9 +73,11 @@ namespace GsaGH.Components {
 
         // 2 Material type
         var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(2, ref ghTyp)) {
+        if (da.GetData(2, ref ghTyp))
+        {
+	        MaterialType materialType = MaterialType.GENERIC;
           if (ghTyp.Value is MaterialType)
-            ghTyp.CastTo(out MaterialType _);
+            ghTyp.CastTo(ref materialType);
           switch (ghTyp.Value)
           {
             case GH_Integer _:

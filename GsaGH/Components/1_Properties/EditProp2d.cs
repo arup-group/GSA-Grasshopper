@@ -94,9 +94,11 @@ namespace GsaGH.Components {
 
         // 2 Material
         var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(2, ref ghTyp)) {
+        if (da.GetData(2, ref ghTyp))
+        {
+	        var material = new GsaMaterial();
           if (ghTyp.Value is GsaMaterialGoo) {
-            ghTyp.CastTo(out GsaMaterial material);
+            ghTyp.CastTo(ref material);
             prop.Material = material ?? new GsaMaterial();
           }
           else {

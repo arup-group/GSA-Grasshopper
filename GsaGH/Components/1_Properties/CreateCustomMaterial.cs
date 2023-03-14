@@ -109,7 +109,7 @@ namespace GsaGH.Components {
         case FoldMode.Aluminium:
           material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
           break;
-        case FoldMode.Frp:
+        case FoldMode.FRP:
           material.MaterialType = GsaMaterial.MatType.FRP;
           break;
         case FoldMode.Glass:
@@ -130,7 +130,8 @@ namespace GsaGH.Components {
       Concrete,
       Timber,
       Aluminium,
-      Frp,
+      // ReSharper disable once InconsistentNaming
+      FRP,
       Glass,
       Fabric,
     }

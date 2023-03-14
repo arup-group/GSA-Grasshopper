@@ -78,9 +78,11 @@ namespace GsaGH.Components {
 
         // 3 Material
         var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(3, ref ghTyp)) {
+        if (da.GetData(3, ref ghTyp))
+        {
+	        var material = new GsaMaterial();
           if (ghTyp.Value is GsaMaterialGoo) {
-            ghTyp.CastTo(out GsaMaterial material);
+            ghTyp.CastTo(ref material);
             gsaSection.Material = material ?? new GsaMaterial();
           }
           else {
@@ -95,9 +97,11 @@ namespace GsaGH.Components {
 
         // 4 Section modifier
         ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(4, ref ghTyp)) {
+        if (da.GetData(4, ref ghTyp))
+        {
+	        var modifier = new GsaSectionModifier();
           if (ghTyp.Value is GsaSectionModifierGoo) {
-            ghTyp.CastTo(out GsaSectionModifier modifier);
+            ghTyp.CastTo( ref modifier);
             gsaSection.Modifier = modifier ?? new GsaSectionModifier();
           }
         }
