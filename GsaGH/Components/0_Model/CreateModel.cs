@@ -1,7 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using GH_IO.Serialization;
@@ -32,13 +29,13 @@ namespace GsaGH.Components {
       "Model",
       "Assemble a GSA Model",
       CategoryName.Name(),
-      SubCategoryName.Cat0()) { 
-        Hidden = true;
+      SubCategoryName.Cat0()) {
+      Hidden = true;
     } // sets the initial state of the component to hidden
     #endregion
 
     #region input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager) { 
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "Model(s)", "GSA", "Existing GSA Model(s) to append to" + Environment.NewLine +
           "If you input more than one model they will be merged" + Environment.NewLine + "with first model in list taking priority for IDs"
           , GH_ParamAccess.list);
@@ -57,12 +54,12 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       #region GetData
-      List<GsaModel> models 
+      List<GsaModel> models
         = Helpers.Export.GetInputsForModelAssembly.GetModels(this, da, 0, true);
 
-      (List<GsaSection> sections, 
+      (List<GsaSection> sections,
           List<GsaProp2d> prop2Ds,
-          List<GsaProp3d> prop3Ds) 
+          List<GsaProp3d> prop3Ds)
         = Helpers.Export.GetInputsForModelAssembly.GetProperties(this, da, 1, true);
 
       (List<GsaNode> nodes,
@@ -83,9 +80,9 @@ namespace GsaGH.Components {
         = Helpers.Export.GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
       // manually add a warning if no input is set, as all inputs are optional
-      if (models is null & nodes is null & elem1ds is null & elem2ds is null & 
+      if (models is null & nodes is null & elem1ds is null & elem2ds is null &
           mem1ds is null & mem2ds is null & mem3ds is null & sections is null &
-          prop2Ds is null & loads is null & gridPlaneSurfaces is null) { 
+          prop2Ds is null & loads is null & gridPlaneSurfaces is null) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
@@ -101,16 +98,16 @@ namespace GsaGH.Components {
       }
 
       model.Model = Helpers.Export.AssembleModel.Assemble(
-        model, 
-        nodes, 
-        elem1ds, elem2ds, elem3ds, 
-        mem1ds, mem2ds, mem3ds, 
-        sections, 
-        prop2Ds, prop3Ds, 
-        loads, 
-        gridPlaneSurfaces, 
-        analysisTasks, 
-        combinationCases, 
+        model,
+        nodes,
+        elem1ds, elem2ds, elem3ds,
+        mem1ds, mem2ds, mem3ds,
+        sections,
+        prop2Ds, prop3Ds,
+        loads,
+        gridPlaneSurfaces,
+        analysisTasks,
+        combinationCases,
         _lengthUnit, _tolerance, _reMesh, this);
 
       UpdateMessage();

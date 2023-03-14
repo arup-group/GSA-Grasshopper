@@ -185,7 +185,7 @@ csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
 # License header
-file_header_template = Licensed to the .NET Foundation under one or more agreements.\nThe .NET Foundation licenses this file to you under the MIT license.
+file_header_template =
 csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = false:error
 csharp_style_allow_embedded_statements_on_same_line_experimental = false:silent
 csharp_style_allow_blank_lines_between_consecutive_braces_experimental = false:error
