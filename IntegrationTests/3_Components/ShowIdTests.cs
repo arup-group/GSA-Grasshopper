@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Xml.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using OasysGH.Helpers;
+using Rhino.UI;
 using Xunit;
 
 namespace IntegrationTests.Components
@@ -47,6 +50,7 @@ namespace IntegrationTests.Components
     [InlineData("NodeRes2dIds", new int[] { 1, 2, 3, 4, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34 })]
     [InlineData("Res2dIds", new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 })]
     [InlineData("NodeRes1dIds", new int[] { 1, 2, 4, 5, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24 })]
+    [InlineData("ResVectIds", new int[] { 1, 2 })]
     public void TestShowIds(string name, int[] expectedVals)
     {
       GH_Document doc = Document;
@@ -57,7 +61,6 @@ namespace IntegrationTests.Components
     }
 
     [Fact]
-
     public void TestGraftedShowIds()
     {
       GH_Document doc = Document;
@@ -68,8 +71,19 @@ namespace IntegrationTests.Components
         List<GH_Integer> output = (List<GH_Integer>)param.VolatileData.get_Branch(new GH_Path(branch));
         for (int i = 0; i < expectedVals.Length; i++)
           Assert.Equal(expectedVals[i], output[i].Value);
-
       }
+    }
+
+    [Fact]
+    public void TestNoWarningOrErrors()
+    {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning, "warning");
+
+      GH_Document doc = Document;
+      IGH_Param param = Helper.FindParameter(doc, "invalidTest");
+      var output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
+      Assert.True(output.Value);
     }
   }
 }
