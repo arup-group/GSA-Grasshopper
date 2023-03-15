@@ -9,6 +9,11 @@ namespace GsaGH.Parameters
 {
   public class PointResultGoo : GH_GeometricGoo<Point3d>, IGH_PreviewData
   {
+    public readonly int NodeId;
+    public readonly IQuantity Result;
+    private float _size;
+    private Color _color;
+
     public PointResultGoo(Point3d point, IQuantity result, Color color, float size, int id)
     : base(point)
     {
@@ -17,11 +22,6 @@ namespace GsaGH.Parameters
       _color = color;
       NodeId = id;
     }
-
-    public int NodeId;
-    public IQuantity Result;
-    private float _size;
-    private Color _color;
 
     public override string ToString()
     {

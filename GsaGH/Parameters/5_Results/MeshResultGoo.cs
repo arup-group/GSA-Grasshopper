@@ -10,9 +10,9 @@ namespace GsaGH.Parameters
 {
   public class MeshResultGoo : GH_GeometricGoo<Mesh>, IGH_PreviewData
   {
-    public List<List<IQuantity>> ResultValues = new List<List<IQuantity>>();
-    public List<List<Point3d>> Vertices = new List<List<Point3d>>();
-    public List<int> ElementIds = new List<int>();
+    public readonly List<List<IQuantity>> ResultValues = new List<List<IQuantity>>();
+    public readonly List<List<Point3d>> Vertices = new List<List<Point3d>>();
+    public readonly List<int> ElementIds = new List<int>();
     private List<Mesh> _tempMeshes = new List<Mesh>();
     private bool _finalised = false;
 

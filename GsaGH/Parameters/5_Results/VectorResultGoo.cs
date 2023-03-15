@@ -12,10 +12,10 @@ namespace GsaGH.Parameters
   /// </summary>
   public class VectorResultGoo : GH_GeometricGoo<GH_Vector>, IGH_PreviewData
   {
-    public Point3d StartingPoint;
+    public readonly Point3d StartingPoint;
+    public readonly IQuantity ForceValue;
+    public readonly int NodeId;
     public Vector3d Direction { get; private set; }
-    public IQuantity ForceValue;
-    public int NodeId;
 
     private Line _reactionForceLine;
     private Color _color = Helpers.Graphics.Colours.GsaDarkPurple;

@@ -13,9 +13,9 @@ namespace GsaGH.Parameters
   /// </summary>
   public class LineResultGoo : GH_GeometricGoo<Line>, IGH_PreviewData
   {
-    public int ElementId;
-    public IQuantity Result1;
-    public IQuantity Result2;
+    public readonly int ElementId;
+    public readonly IQuantity Result1;
+    public readonly IQuantity Result2;
     internal List<Line> resultLineSegments;
     internal List<Color> _previewResultColours;
     internal List<int> _previewResultThk;
