@@ -57,17 +57,15 @@ namespace GsaGH.Parameters
 
     public override IGH_GeometricGoo Transform(Transform xform)
     {
-      Direction.Transform(xform);
-      this._reactionForceLine = CreateReactionForceLine(Direction);
-      return this;
+      var sPoint = StartingPoint;
+      sPoint.Transform(xform);
+      return new VectorResultGoo(sPoint, Direction, ForceValue, NodeId);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
-      var start = xmorph.MorphPoint(_reactionForceLine.From);
-      var end = xmorph.MorphPoint(_reactionForceLine.To);
-      _reactionForceLine = new Line(start, end);
-      return this;
+      var sPoint = xmorph.MorphPoint(StartingPoint);
+      return new VectorResultGoo(sPoint, Direction, ForceValue, NodeId);
     }
 
     public override object ScriptVariable() => Value;
