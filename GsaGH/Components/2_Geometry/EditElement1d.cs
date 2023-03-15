@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel;
@@ -16,31 +15,27 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Components
-{
-    /// <summary>
-    /// Component to edit a 1D Element
-    /// </summary>
-    public class EditElement1d : GH_OasysComponent, IGH_PreviewObject
-  {
+namespace GsaGH.Components {
+  /// <summary>
+  /// Component to edit a 1D Element
+  /// </summary>
+  public class EditElement1d : GH_OasysComponent {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("e0bae222-f7ac-4440-a146-2df8b66b2389");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.EditElem1d;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.EditElem1d;
 
     public EditElement1d() : base("Edit 1D Element",
       "Elem1dEdit",
       "Modify GSA 1D Element",
       CategoryName.Name(),
-      SubCategoryName.Cat2())
-    { }
+      SubCategoryName.Cat2()) { }
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaElement1dParameter(), GsaElement1dGoo.Name, GsaElement1dGoo.NickName, GsaElement1dGoo.Description + " to get or set information for. Leave blank to create a new " + GsaElement1dGoo.Name, GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Set Element Number. If ID is set it will replace any existing 1D Element in the model", GH_ParamAccess.item);
       pManager.AddLineParameter("Line", "L", "Reposition Element Line", GH_ParamAccess.item);
@@ -77,8 +72,7 @@ namespace GsaGH.Components
       pManager.HideParameter(2);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaElement1dParameter(), GsaElement1dGoo.Name, GsaElement1dGoo.NickName, GsaElement1dGoo.Description + " with applied changes.", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Get Element Number. If ID is set it will replace any existing 1D Element in the model", GH_ParamAccess.item);
       pManager.AddLineParameter("Line", "L", "Element Line", GH_ParamAccess.item);
@@ -103,192 +97,174 @@ namespace GsaGH.Components
     }
     #endregion
 
-    protected override void BeforeSolveInstance()
-    {
+    protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      Param_Number angleParameter = Params.Input[9] as Param_Number;
-      if (angleParameter != null)
-      {
-        if (angleParameter.UseDegrees)
-          this.AngleUnit = AngleUnit.Degree;
-        else
-          this.AngleUnit = AngleUnit.Radian;
+      if (Params.Input[9] is Param_Number angleParameter) {
+        _angleUnit = angleParameter.UseDegrees
+          ? AngleUnit.Degree
+          : AngleUnit.Radian;
       }
     }
-    AngleUnit AngleUnit = AngleUnit.Radian;
 
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      GsaElement1d gsaElement1d = new GsaElement1d();
-      GsaElement1d elem = new GsaElement1d();
-      if (DA.GetData(0, ref gsaElement1d))
-      {
-        if (gsaElement1d == null) { this.AddRuntimeWarning("Element1D input is null"); }
+    private AngleUnit _angleUnit = AngleUnit.Radian;
+
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gsaElement1d = new GsaElement1d();
+      var elem = new GsaElement1d();
+      if (da.GetData(0, ref gsaElement1d)) {
+        if (gsaElement1d == null) {
+          this.AddRuntimeWarning("Element1D input is null");
+        }
         elem = gsaElement1d.Duplicate(true);
       }
 
-      if (elem != null)
-      {
-        // #### inputs ####
-        // 1 ID
-        GH_Integer ghID = new GH_Integer();
-        if (DA.GetData(1, ref ghID))
-        {
-          if (GH_Convert.ToInt32(ghID, out int id, GH_Conversion.Both))
-            elem.Id = id;
-        }
-
-        // 2 curve
-        GH_Line ghcrv = new GH_Line();
-        if (DA.GetData(2, ref ghcrv))
-        {
-          Line crv = new Line();
-          if (GH_Convert.ToLine(ghcrv, ref crv, GH_Conversion.Both))
-          {
-            LineCurve ln = new LineCurve(crv);
-            elem.Line = ln;
-          }
-        }
-
-        // 3 section
-        GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-        if (DA.GetData(3, ref gh_typ))
-        {
-          GsaSection section = new GsaSection();
-          if (gh_typ.Value is GsaSectionGoo)
-          {
-            gh_typ.CastTo(ref section);
-          }
-          else
-          {
-            if (GH_Convert.ToInt32(gh_typ.Value, out int id, GH_Conversion.Both))
-              section = new GsaSection(id);
-            else
-            {
-              this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
-              return;
-            }
-          }
-          elem.Section = section;
-        }
-
-        // 4 Group
-        GH_Integer ghgrp = new GH_Integer();
-        if (DA.GetData(4, ref ghgrp))
-        {
-          if (GH_Convert.ToInt32(ghgrp, out int grp, GH_Conversion.Both))
-            elem.Group = grp; //elem.Element.Group = grp;
-        }
-
-        // 5 type
-        GH_String ghstring = new GH_String();
-        if (DA.GetData(5, ref ghstring))
-        {
-          if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both))
-            elem.Type = (ElementType)typeInt;
-          else if (GH_Convert.ToString(ghstring, out string typestring, GH_Conversion.Both))
-          {
-            try
-            {
-              elem.Type = Mappings.GetElementType(typestring);
-            }
-            catch (ArgumentException)
-            {
-              this.AddRuntimeError("Unable to change Element Type");
-            }
-          }
-        }
-
-        // 6 offset
-        GsaOffset offset = new GsaOffset();
-        if (DA.GetData(6, ref offset))
-        {
-          elem.Offset = offset;
-        }
-
-        // 7 start release
-        GsaBool6 start = new GsaBool6();
-        if (DA.GetData(7, ref start))
-        {
-          elem.ReleaseStart = start;
-        }
-
-        // 8 end release
-        GsaBool6 end = new GsaBool6();
-        if (DA.GetData(8, ref end))
-        {
-          elem.ReleaseEnd = end;
-        }
-
-        // 9 orientation angle
-        GH_Number ghangle = new GH_Number();
-        if (DA.GetData(9, ref ghangle))
-        {
-          if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
-            elem.OrientationAngle = new Angle(angle, this.AngleUnit);
-        }
-
-        // 10 orientation node
-        gh_typ = new GH_ObjectWrapper();
-        if (DA.GetData(10, ref gh_typ))
-        {
-          GsaNode node = new GsaNode();
-          if (gh_typ.Value is GsaNodeGoo)
-          {
-            gh_typ.CastTo(ref node);
-            elem.OrientationNode = node;
-          }
-          else
-          {
-            this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
-          }
-        }
-
-        // 11 name
-        GH_String ghnm = new GH_String();
-        if (DA.GetData(11, ref ghnm))
-        {
-          if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
-            elem.Name = name;
-        }
-
-        // 12 Colour
-        GH_Colour ghcol = new GH_Colour();
-        if (DA.GetData(12, ref ghcol))
-        {
-          if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
-            elem.Colour = col;
-        }
-
-        // 13 Dummy
-        GH_Boolean ghdum = new GH_Boolean();
-        if (DA.GetData(13, ref ghdum))
-        {
-          if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
-            elem.IsDummy = dum;
-        }
-
-        // #### outputs ####
-        DA.SetData(0, new GsaElement1dGoo(elem));
-        DA.SetData(1, elem.Id);
-        DA.SetData(2, new GH_Line(elem.Line.Line));
-        DA.SetData(3, new GsaSectionGoo(elem.Section));
-        DA.SetData(4, elem.Group);
-        DA.SetData(5, Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
-        DA.SetData(6, new GsaOffsetGoo(elem.Offset));
-        DA.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
-        DA.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
-        DA.SetData(9, elem.OrientationAngle.Radians);
-        DA.SetData(10, new GsaNodeGoo(elem.OrientationNode));
-        DA.SetData(11, elem.Name);
-        DA.SetData(12, elem.Colour);
-        DA.SetData(13, elem.IsDummy);
-
-        try { DA.SetData(14, elem.ParentMember); } catch (Exception) { }
-        DataTree<int> topo = new DataTree<int>();
-        topo.AddRange(elem.ApiElement.Topology, new GH_Path(elem.Id));
-        DA.SetDataTree(15, topo);
+      if (elem == null) {
+        return;
       }
+
+      // #### inputs ####
+      // 1 ID
+      var ghId = new GH_Integer();
+      if (da.GetData(1, ref ghId)) {
+        if (GH_Convert.ToInt32(ghId, out int id, GH_Conversion.Both))
+          elem.Id = id;
+      }
+
+      // 2 curve
+      var ghcrv = new GH_Line();
+      if (da.GetData(2, ref ghcrv)) {
+        var crv = new Line();
+        if (GH_Convert.ToLine(ghcrv, ref crv, GH_Conversion.Both)) {
+          var ln = new LineCurve(crv);
+          elem.Line = ln;
+        }
+      }
+
+      // 3 section
+      var ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(3, ref ghTyp)) {
+        var section = new GsaSection();
+        if (ghTyp.Value is GsaSectionGoo) {
+          ghTyp.CastTo(ref section);
+        }
+        else {
+          if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both))
+            section = new GsaSection(id);
+          else {
+            this.AddRuntimeError("Unable to convert PB input to a Section Property of reference integer");
+            return;
+          }
+        }
+        elem.Section = section;
+      }
+
+      // 4 Group
+      var ghGrp = new GH_Integer();
+      if (da.GetData(4, ref ghGrp)) {
+        if (GH_Convert.ToInt32(ghGrp, out int grp, GH_Conversion.Both))
+          elem.Group = grp;
+      }
+
+      // 5 type
+      var ghString = new GH_String();
+      if (da.GetData(5, ref ghString)) {
+        if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both))
+          elem.Type = (ElementType)typeInt;
+        else if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
+          try {
+            elem.Type = Mappings.GetElementType(typestring);
+          }
+          catch (ArgumentException) {
+            this.AddRuntimeError("Unable to change Element Type");
+          }
+        }
+      }
+
+      // 6 offset
+      var offset = new GsaOffset();
+      if (da.GetData(6, ref offset)) {
+        elem.Offset = offset;
+      }
+
+      // 7 start release
+      var start = new GsaBool6();
+      if (da.GetData(7, ref start)) {
+        elem.ReleaseStart = start;
+      }
+
+      // 8 end release
+      var end = new GsaBool6();
+      if (da.GetData(8, ref end)) {
+        elem.ReleaseEnd = end;
+      }
+
+      // 9 orientation angle
+      var ghangle = new GH_Number();
+      if (da.GetData(9, ref ghangle)) {
+        if (GH_Convert.ToDouble(ghangle, out double angle, GH_Conversion.Both))
+          elem.OrientationAngle = new Angle(angle, _angleUnit);
+      }
+
+      // 10 orientation node
+      ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(10, ref ghTyp)) {
+        var node = new GsaNode();
+        if (ghTyp.Value is GsaNodeGoo) {
+          ghTyp.CastTo(ref node);
+          elem.OrientationNode = node;
+        }
+        else {
+          this.AddRuntimeWarning("Unable to convert Orientation Node input to GsaNode");
+        }
+      }
+
+      // 11 name
+      var ghnm = new GH_String();
+      if (da.GetData(11, ref ghnm)) {
+        if (GH_Convert.ToString(ghnm, out string name, GH_Conversion.Both))
+          elem.Name = name;
+      }
+
+      // 12 Colour
+      var ghcol = new GH_Colour();
+      if (da.GetData(12, ref ghcol)) {
+        if (GH_Convert.ToColor(ghcol, out System.Drawing.Color col, GH_Conversion.Both))
+          elem.Colour = col;
+      }
+
+      // 13 Dummy
+      var ghdum = new GH_Boolean();
+      if (da.GetData(13, ref ghdum)) {
+        if (GH_Convert.ToBoolean(ghdum, out bool dum, GH_Conversion.Both))
+          elem.IsDummy = dum;
+      }
+
+      // #### outputs ####
+      da.SetData(0, new GsaElement1dGoo(elem));
+      da.SetData(1, elem.Id);
+      da.SetData(2, new GH_Line(elem.Line.Line));
+      da.SetData(3, new GsaSectionGoo(elem.Section));
+      da.SetData(4, elem.Group);
+      da.SetData(5, Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
+      da.SetData(6, new GsaOffsetGoo(elem.Offset));
+      da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
+      da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
+      da.SetData(9, elem.OrientationAngle.Radians);
+      da.SetData(10, new GsaNodeGoo(elem.OrientationNode));
+      da.SetData(11, elem.Name);
+      da.SetData(12, elem.Colour);
+      da.SetData(13, elem.IsDummy);
+
+      try {
+        da.SetData(14, elem.ParentMember);
+      }
+      catch (Exception) {
+        // ignored
+      }
+
+      var topo = new DataTree<int>();
+      topo.AddRange(elem.ApiElement.Topology, new GH_Path(elem.Id));
+      da.SetDataTree(15, topo);
     }
   }
 }

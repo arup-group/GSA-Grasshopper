@@ -3,8 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Grasshopper.GUI;
 using System.Windows.Forms;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -16,33 +16,28 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using Grasshopper.Kernel.Parameters;
 
-namespace GsaGH.Components
-{
+namespace GsaGH.Components {
   /// <summary>
   /// Component to edit a Node
   /// </summary>
-  public class ElemFromMem : GH_OasysDropDownComponent, IGH_PreviewObject
-  {
+  public class ElemFromMem : GH_OasysDropDownComponent {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("3de73a08-b72c-45e4-a650-e4c6515266c5");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.CreateElemsFromMems;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.CreateElemsFromMems;
 
     public ElemFromMem() : base("Elements from Members",
       "ElemFromMem",
       "Create Elements from Members",
       CategoryName.Name(),
-      SubCategoryName.Cat2())
-    { }
+      SubCategoryName.Cat2()) { }
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       pManager.AddGenericParameter("Nodes [" + unitAbbreviation + "]", "No", "Nodes to be included in meshing", GH_ParamAccess.list);
       pManager.AddGenericParameter("1D Members [" + unitAbbreviation + "]", "M1D", "1D Members to create 1D Elements from", GH_ParamAccess.list);
@@ -60,8 +55,7 @@ namespace GsaGH.Components
       pManager.HideParameter(3);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddGenericParameter("Nodes", "No", "GSA Nodes", GH_ParamAccess.list);
       pManager.HideParameter(0);
       pManager.AddGenericParameter("1D Elements", "E1D", "GSA 1D Elements", GH_ParamAccess.list);
@@ -71,51 +65,42 @@ namespace GsaGH.Components
     }
     #endregion
 
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
+    protected override void SolveInstance(IGH_DataAccess da) {
       #region inputs
       // Get Member1d input
-      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-      List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
+      var ghTyp = new GH_ObjectWrapper();
+      var ghTypes = new List<GH_ObjectWrapper>();
 
-      List<GsaNode> in_nodes = new List<GsaNode>();
-      if (DA.GetDataList(0, gh_types))
-      {
-        for (int i = 0; i < gh_types.Count; i++)
-        {
-          gh_typ = gh_types[i];
-          if (gh_typ == null) { Params.Owner.AddRuntimeWarning("Node input (index: " + i + ") is null and has been ignored"); continue; }
+      var inNodes = new List<GsaNode>();
+      if (da.GetDataList(0, ghTypes)) {
+        for (int i = 0; i < ghTypes.Count; i++) {
+          ghTyp = ghTypes[i];
+          if (ghTyp == null) { Params.Owner.AddRuntimeWarning("Node input (index: " + i + ") is null and has been ignored"); continue; }
 
-          if (gh_typ.Value is GsaNodeGoo)
-          {
-            GsaNode gsanode = new GsaNode();
-            gh_typ.CastTo(ref gsanode);
-            in_nodes.Add(gsanode);
+          if (ghTyp.Value is GsaNodeGoo) {
+            var gsanode = new GsaNode();
+            ghTyp.CastTo(ref gsanode);
+            inNodes.Add(gsanode);
           }
-          else
-          {
+          else {
             this.AddRuntimeError("Error in Node input");
             return;
           }
         }
       }
 
-      List<GsaMember1d> in_mem1ds = new List<GsaMember1d>();
-      if (DA.GetDataList(1, gh_types))
-      {
-        for (int i = 0; i < gh_types.Count; i++)
-        {
-          gh_typ = gh_types[i];
-          if (gh_typ == null) { Params.Owner.AddRuntimeWarning("Member1D input (index: " + i + ") is null and has been ignored"); continue; }
+      var inMem1ds = new List<GsaMember1d>();
+      if (da.GetDataList(1, ghTypes)) {
+        for (int i = 0; i < ghTypes.Count; i++) {
+          ghTyp = ghTypes[i];
+          if (ghTyp == null) { Params.Owner.AddRuntimeWarning("Member1D input (index: " + i + ") is null and has been ignored"); continue; }
 
-          if (gh_typ.Value is GsaMember1dGoo)
-          {
-            GsaMember1d gsamem1 = new GsaMember1d();
-            gh_typ.CastTo(ref gsamem1);
-            in_mem1ds.Add(gsamem1);
+          if (ghTyp.Value is GsaMember1dGoo) {
+            var gsamem1 = new GsaMember1d();
+            ghTyp.CastTo(ref gsamem1);
+            inMem1ds.Add(gsamem1);
           }
-          else
-          {
+          else {
             this.AddRuntimeError("Error in Mem1D input");
             return;
           }
@@ -123,23 +108,19 @@ namespace GsaGH.Components
       }
 
       // Get Member2d input
-      gh_types = new List<GH_ObjectWrapper>();
-      List<GsaMember2d> in_mem2ds = new List<GsaMember2d>();
-      if (DA.GetDataList(2, gh_types))
-      {
-        for (int i = 0; i < gh_types.Count; i++)
-        {
-          gh_typ = gh_types[i];
-          if (gh_typ == null) { Params.Owner.AddRuntimeWarning("Member2D input (index: " + i + ") is null and has been ignored"); continue; }
+      ghTypes = new List<GH_ObjectWrapper>();
+      var inMem2ds = new List<GsaMember2d>();
+      if (da.GetDataList(2, ghTypes)) {
+        for (int i = 0; i < ghTypes.Count; i++) {
+          ghTyp = ghTypes[i];
+          if (ghTyp == null) { Params.Owner.AddRuntimeWarning("Member2D input (index: " + i + ") is null and has been ignored"); continue; }
 
-          if (gh_typ.Value is GsaMember2dGoo)
-          {
-            GsaMember2d gsamem2 = new GsaMember2d();
-            gh_typ.CastTo(ref gsamem2);
-            in_mem2ds.Add(gsamem2);
+          if (ghTyp.Value is GsaMember2dGoo) {
+            var gsamem2 = new GsaMember2d();
+            ghTyp.CastTo(ref gsamem2);
+            inMem2ds.Add(gsamem2);
           }
-          else
-          {
+          else {
             this.AddRuntimeError("Error in Mem2D input");
             return;
           }
@@ -147,23 +128,19 @@ namespace GsaGH.Components
       }
 
       // Get Member3d input
-      gh_types = new List<GH_ObjectWrapper>();
-      List<GsaMember3d> in_mem3ds = new List<GsaMember3d>();
-      if (DA.GetDataList(3, gh_types))
-      {
-        for (int i = 0; i < gh_types.Count; i++)
-        {
-          gh_typ = gh_types[i];
-          if (gh_typ == null) { Params.Owner.AddRuntimeWarning("Member3D input (index: " + i + ") is null and has been ignored"); continue; }
+      ghTypes = new List<GH_ObjectWrapper>();
+      var inMem3ds = new List<GsaMember3d>();
+      if (da.GetDataList(3, ghTypes)) {
+        for (int i = 0; i < ghTypes.Count; i++) {
+          ghTyp = ghTypes[i];
+          if (ghTyp == null) { Params.Owner.AddRuntimeWarning("Member3D input (index: " + i + ") is null and has been ignored"); continue; }
 
-          if (gh_typ.Value is GsaMember3dGoo)
-          {
-            GsaMember3d gsamem3 = new GsaMember3d();
-            gh_typ.CastTo(ref gsamem3);
-            in_mem3ds.Add(gsamem3);
+          if (ghTyp.Value is GsaMember3dGoo) {
+            var gsamem3 = new GsaMember3d();
+            ghTyp.CastTo(ref gsamem3);
+            inMem3ds.Add(gsamem3);
           }
-          else
-          {
+          else {
             this.AddRuntimeError("Error in Mem3D input");
             return;
           }
@@ -171,176 +148,161 @@ namespace GsaGH.Components
       }
 
       // manually add a warning if no input is set, as all three inputs are optional
-      if (in_mem1ds.Count < 1 & in_mem2ds.Count < 1 & in_mem3ds.Count < 1)
-      {
+      if ((inMem1ds.Count < 1)
+          & (inMem2ds.Count < 1)
+          & (inMem3ds.Count < 1)) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
       #endregion
 
       // Assemble model
-      Model gsa = Helpers.Export.AssembleModel.Assemble(null, in_nodes, null, null, null, in_mem1ds, in_mem2ds, in_mem3ds, null, null, null, null, null, null, null, this.LengthUnit, this._tolerance, true, this);
+      Model gsa = Helpers.Export.AssembleModel.Assemble(null, inNodes, null, null, null, inMem1ds, inMem2ds, inMem3ds, null, null, null, null, null, null, null, _lengthUnit, _tolerance, true, this);
 
-      this.UpdateMessage();
+      UpdateMessage();
 
       // extract nodes from model
-      ConcurrentBag<GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodes(gsa.Nodes(), this.LengthUnit, null, false);
-
+      ConcurrentBag<GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodes(gsa.Nodes(), _lengthUnit);
 
       // populate local axes dictionary
       ReadOnlyDictionary<int, Element> elementDict = gsa.Elements();
-      Dictionary<int, ReadOnlyCollection<double>> elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
-      foreach (int id in elementDict.Keys)
-        elementLocalAxesDict.Add(id, gsa.ElementDirectionCosine(id));
+      var elementLocalAxesDict = elementDict.Keys.ToDictionary(id => id, id => gsa.ElementDirectionCosine(id));
 
       // extract elements from model
       Tuple<ConcurrentBag<GsaElement1dGoo>, ConcurrentBag<GsaElement2dGoo>, ConcurrentBag<GsaElement3dGoo>> elementTuple
-          = Helpers.Import.Elements.GetElements(elementDict, gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(), gsa.SectionModifiers(), elementLocalAxesDict, gsa.Axes(), this.LengthUnit, false);
+          = Helpers.Import.Elements.GetElements(elementDict, gsa.Nodes(), gsa.Sections(), gsa.Prop2Ds(), gsa.Prop3Ds(), gsa.AnalysisMaterials(), gsa.SectionModifiers(), elementLocalAxesDict, gsa.Axes(), _lengthUnit, false);
 
       // expose internal model if anyone wants to use it
-      GsaModel outModel = new GsaModel();
-      outModel.Model = gsa;
+      var outModel = new GsaModel {
+        Model = gsa,
+        ModelUnit = _lengthUnit,
+      };
 
-      outModel.ModelUnit = this.LengthUnit;
-
-      DA.SetDataList(0, nodes.OrderBy(item => item.Value.Id));
-      DA.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.Id));
-      DA.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.Ids.First()));
-      DA.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.Ids.First()));
-      DA.SetData(4, new GsaModelGoo(outModel));
+      da.SetDataList(0, nodes.OrderBy(item => item.Value.Id));
+      da.SetDataList(1, elementTuple.Item1.OrderBy(item => item.Value.Id));
+      da.SetDataList(2, elementTuple.Item2.OrderBy(item => item.Value.Ids.First()));
+      da.SetDataList(3, elementTuple.Item3.OrderBy(item => item.Value.Ids.First()));
+      da.SetData(4, new GsaModelGoo(outModel));
 
       // custom display settings for element2d mesh
-      element2ds = elementTuple.Item2;
+      _element2ds = elementTuple.Item2;
     }
-    ConcurrentBag<GsaElement2dGoo> element2ds;
-    public override void DrawViewportMeshes(IGH_PreviewArgs args)
-    {
+
+    private ConcurrentBag<GsaElement2dGoo> _element2ds;
+    public override void DrawViewportMeshes(IGH_PreviewArgs args) {
 
       base.DrawViewportMeshes(args);
 
-      if (element2ds != null)
-      {
-        foreach (GsaElement2dGoo element in element2ds)
-        {
-          if (element == null) { continue; }
-          //Draw shape.
-          if (element.Value.Mesh != null)
-          {
-            if (!(element.Value.API_Elements[0].ParentMember.Member > 0)) // only draw mesh shading if no parent member exist.
-            {
-              if (this.Attributes.Selected)
-                args.Display.DrawMeshShaded(element.Value.Mesh, Helpers.Graphics.Colours.Element2dFaceSelected);
-              else
-                args.Display.DrawMeshShaded(element.Value.Mesh, Helpers.Graphics.Colours.Element2dFace);
-            }
-          }
+      if (_element2ds == null) {
+        return;
+      }
+
+      foreach (GsaElement2dGoo element in _element2ds) {
+        if (element == null
+            || element.Value.Mesh == null
+            || element.Value.API_Elements[0].ParentMember.Member > 0) {
+          continue;
         }
+
+        args.Display.DrawMeshShaded(element.Value.Mesh,
+          Attributes.Selected
+            ? Helpers.Graphics.Colours.Element2dFaceSelected
+            : Helpers.Graphics.Colours.Element2dFace);
       }
     }
 
-    public override void DrawViewportWires(IGH_PreviewArgs args)
-    {
+    public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
 
-      if (element2ds != null)
-      {
-        foreach (GsaElement2dGoo element in element2ds)
+      if (_element2ds == null) {
+        return;
+      }
+
+      foreach (GsaElement2dGoo element in _element2ds) {
+        if (element == null
+            || element.Value.Mesh == null) {
+          continue;
+        }
+
+        if (element.Value.API_Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
         {
-          if (element == null) { continue; }
-          //Draw lines
-          if (element.Value.Mesh != null)
-          {
-            if (element.Value.API_Elements[0].ParentMember.Member > 0) // only draw mesh shading if no parent member exist.
-            {
-              for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-              {
-                if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i).Length > 1)
-                  args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
-              }
-            }
-            else
-            {
-              if (this.Attributes.Selected)
-              {
-                for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-                  args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
-              }
-              else
-              {
-                for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
-                  args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), Helpers.Graphics.Colours.Element2dEdge, 1);
-              }
-            }
+          for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++) {
+            if (element.Value.Mesh.TopologyEdges.GetConnectedFaces(i).Length > 1)
+              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), System.Drawing.Color.FromArgb(255, 229, 229, 229), 1);
+          }
+        }
+        else {
+          if (Attributes.Selected) {
+            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), Helpers.Graphics.Colours.Element2dEdgeSelected, 2);
+          }
+          else {
+            for (int i = 0; i < element.Value.Mesh.TopologyEdges.Count; i++)
+              args.Display.DrawLine(element.Value.Mesh.TopologyEdges.EdgeLine(i), Helpers.Graphics.Colours.Element2dEdge, 1);
           }
         }
       }
     }
 
     #region Custom UI
-    private LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Length _tolerance = DefaultUnits.Tolerance;
     private string _toleranceTxt = "";
 
-    protected override void BeforeSolveInstance()
-    {
+    protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
-      this.UpdateMessage();
+      UpdateMessage();
     }
 
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[]
+    public override void InitialiseDropdowns() {
+      SpacerDescriptions = new List<string>(new []
         {
-          "Unit"
+          "Unit",
         });
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+      DropDownItems = new List<List<string>>();
+      SelectedItems = new List<string>();
 
       // Length
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      this.IsInitialised = true;
+      IsInitialised = true;
     }
 
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
-      this.UpdateMessage();
+    public override void SetSelected(int i, int j) {
+      SelectedItems[i] = DropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
+      UpdateMessage();
       base.UpdateUI();
     }
 
-    public override void VariableParameterMaintenance()
-    {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
+    public override void VariableParameterMaintenance() {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       int i = 0;
       Params.Input[i++].Name = "Nodes [" + unitAbbreviation + "]";
       Params.Input[i++].Name = "1D Members [" + unitAbbreviation + "]";
       Params.Input[i++].Name = "2D Members [" + unitAbbreviation + "]";
-      Params.Input[i++].Name = "3D Members [" + unitAbbreviation + "]";
+      Params.Input[i].Name = "3D Members [" + unitAbbreviation + "]";
     }
 
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
-    {
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
 
-      ToolStripTextBox tolerance = new ToolStripTextBox();
-      this._toleranceTxt = _tolerance.ToUnit(this.LengthUnit).ToString().Replace(" ", string.Empty);
-      tolerance.Text = this._toleranceTxt;
+      var tolerance = new ToolStripTextBox();
+      _toleranceTxt = _tolerance.ToUnit(_lengthUnit).ToString().Replace(" ", string.Empty);
+      tolerance.Text = _toleranceTxt;
       tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
 
-      ToolStripMenuItem toleranceMenu = new ToolStripMenuItem("Set Tolerance", Properties.Resources.Units);
-      toleranceMenu.Enabled = true;
-      toleranceMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Properties.Resources.Units) {
+      Enabled = true,
+      ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
 
-      GH_MenuCustomControl menu2 = new GH_MenuCustomControl(toleranceMenu.DropDown, tolerance.Control, true, 200);
-      toleranceMenu.DropDownItems[1].MouseUp += (s, e) =>
-      {
-        this.UpdateMessage();
+      toleranceMenu.DropDownItems[1].MouseUp += (s, e) => {
+        UpdateMessage();
         (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
         ExpireSolution(true);
       };
@@ -352,55 +314,46 @@ namespace GsaGH.Components
       ExpireSolution(true);
     }
 
-    private void MaintainText(ToolStripTextBox tolerance)
-    {
-      this._toleranceTxt = tolerance.Text;
-      if (Length.TryParse(_toleranceTxt, out Length res))
-        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 180, 255, 150);
-      else
-        tolerance.BackColor = System.Drawing.Color.FromArgb(255, 255, 100, 100);
+    private void MaintainText(ToolStripTextBox tolerance) {
+      _toleranceTxt = tolerance.Text;
+      tolerance.BackColor = Length.TryParse(_toleranceTxt, out Length _)
+        ? System.Drawing.Color.FromArgb(255, 180, 255, 150)
+        : System.Drawing.Color.FromArgb(255, 255, 100, 100);
     }
-    private void UpdateMessage()
-    {
-      if (this._toleranceTxt != "")
-      {
-        try
-        {
-          this._tolerance = Length.Parse(_toleranceTxt);
+    private void UpdateMessage() {
+      if (_toleranceTxt != "") {
+        try {
+          _tolerance = Length.Parse(_toleranceTxt);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
           MessageBox.Show(e.Message);
           return;
         }
       }
-      this._tolerance = this._tolerance.ToUnit(this.LengthUnit);
-      this.Message = "Tol: " + this._tolerance.ToString().Replace(" ", string.Empty);
-      if (this._tolerance.Meters < 0.001)
+      _tolerance = _tolerance.ToUnit(_lengthUnit);
+      Message = "Tol: " + _tolerance.ToString().Replace(" ", string.Empty);
+      if (_tolerance.Meters < 0.001)
         this.AddRuntimeRemark("Set tolerance is quite small, you can change this by right-clicking the component.");
-      if (this._tolerance.Meters > 0.25)
+      if (_tolerance.Meters > 0.25)
         this.AddRuntimeRemark("Set tolerance is quite large, you can change this by right-clicking the component.");
     }
     #endregion
 
     #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      writer.SetDouble("Tolerance", this._tolerance.Value);
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer) {
+      writer.SetDouble("Tolerance", _tolerance.Value);
       return base.Write(writer);
     }
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
+    public override bool Read(GH_IO.Serialization.GH_IReader reader) {
       bool flag = base.Read(reader);
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
-      if (reader.ItemExists("Tolerance"))
-      {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[0]);
+      if (reader.ItemExists("Tolerance")) {
         double tol = reader.GetDouble("Tolerance");
-        this._tolerance = new Length(tol, this.LengthUnit);
+        _tolerance = new Length(tol, _lengthUnit);
       }
       else
-        this._tolerance = DefaultUnits.Tolerance;
-      this.UpdateMessage();
+        _tolerance = DefaultUnits.Tolerance;
+      UpdateMessage();
       return flag;
     }
     #endregion
