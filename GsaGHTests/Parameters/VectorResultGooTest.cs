@@ -127,7 +127,7 @@ namespace GsaGHTests.Parameters
     {
       var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton), 0);
 
-      var expectedObj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton), 0);
+      var expectedObj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton), 99);
 
       var actualObj = obj.DuplicateGeometry();
 
@@ -136,6 +136,7 @@ namespace GsaGHTests.Parameters
       Assert.Equal(expectedObj.TypeName, actualObj.TypeName);
       Assert.Equal(expectedObj.TypeDescription, actualObj.TypeDescription);
       Assert.Equal(expectedObj.ToString(), actualObj.ToString());
+      Assert.Equal(expectedObj.NodeId, ((VectorResultGoo)actualObj).NodeId);
     }
 
     [Fact]
