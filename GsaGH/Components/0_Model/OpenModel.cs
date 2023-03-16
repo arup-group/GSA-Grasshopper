@@ -25,7 +25,7 @@ namespace GsaGH.Components {
       "Open an existing GSA model",
       CategoryName.Name(),
       SubCategoryName.Cat0()) {
-        Hidden = true;
+      Hidden = true;
     } // sets the initial state of the component to hidden
     #endregion
 
@@ -48,43 +48,41 @@ namespace GsaGH.Components {
       if (da.GetData(0, ref ghTyp)) {
         switch (ghTyp.Value) {
           case GH_String _: {
-            if (GH_Convert.ToString(ghTyp, out string tempFile, GH_Conversion.Both))
-              _fileName = tempFile;
+              if (GH_Convert.ToString(ghTyp, out string tempFile, GH_Conversion.Both))
+                _fileName = tempFile;
 
-            if (!_fileName.EndsWith(".gwb"))
-              _fileName += ".gwb";
+              if (!_fileName.EndsWith(".gwb"))
+                _fileName += ".gwb";
 
-            ReturnValue status = model.Open(_fileName);
+              ReturnValue status = model.Open(_fileName);
 
-            if (status == 0) {
-              var gsaModel = new GsaModel {
-                Model = model,
-                FileNameAndPath = _fileName,
-              };
+              if (status == 0) {
+                var gsaModel = new GsaModel {
+                  Model = model,
+                  FileNameAndPath = _fileName,
+                };
 
-              GetTitles(model);
-              GetUnit(ref gsaModel);
+                GetTitles(model);
+                GetUnit(ref gsaModel);
 
-              da.SetData(0, new GsaModelGoo(gsaModel));
+                da.SetData(0, new GsaModelGoo(gsaModel));
 
-              OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB", (int)(new FileInfo(_fileName).Length / 1024));
+                OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB", (int)(new FileInfo(_fileName).Length / 1024));
 
-              return;
-            }
-            else {
+                return;
+              }
               this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
               return;
             }
-          }
           case Model _: {
-            ghTyp.CastTo(ref model);
-            var gsaModel = new GsaModel {
-              Model = model,
-            };
+              ghTyp.CastTo(ref model);
+              var gsaModel = new GsaModel {
+                Model = model,
+              };
 
-            da.SetData(0, new GsaModelGoo(gsaModel));
-            return;
-          }
+              da.SetData(0, new GsaModelGoo(gsaModel));
+              return;
+            }
           default:
             this.AddRuntimeError("Unable to open Model");
             return;
@@ -103,11 +101,9 @@ namespace GsaGH.Components {
           GetUnit(ref gsaModel);
 
           da.SetData(0, new GsaModelGoo(gsaModel));
-          return;
         }
         else {
           this.AddRuntimeError("Unable to open Model" + Environment.NewLine + status.ToString());
-          return;
         }
       }
     }
@@ -149,7 +145,8 @@ namespace GsaGH.Components {
       var fdi = new Rhino.UI.OpenFileDialog { Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*" }; //"GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*"
       bool res = fdi.ShowOpenDialog();
 
-      if (!res) return;
+      if (!res)
+        return;
 
       // == DialogResult.OK)
       _fileName = fdi.FileName;
