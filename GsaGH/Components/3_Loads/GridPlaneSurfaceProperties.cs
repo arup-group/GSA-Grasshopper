@@ -2,42 +2,36 @@
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using GsaAPI;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units.Helpers;
 using OasysGH.Units;
-using OasysUnits.Units;
+using OasysGH.Units.Helpers;
 using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Geometry;
-using OasysGH.Parameters;
-using GsaGH.Helpers.GH;
 
-namespace GsaGH.Components
-{
-    public class GridPlaneSurfaceProperties : GH_OasysComponent, IGH_VariableParameterComponent
-  {
+namespace GsaGH.Components {
+  public class GridPlaneSurfaceProperties : GH_OasysComponent, IGH_VariableParameterComponent {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("cb5c1d72-e414-447b-b5db-ce18d76e2f4d");
     public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GridPlaneProperties;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.GridPlaneProperties;
 
     public GridPlaneSurfaceProperties() : base("Grid Plane Surface Properties",
       "GridPlaneSurfaceProp",
       "Get GSA Grid Plane Surface Properties",
       CategoryName.Name(),
-      SubCategoryName.Cat3())
-    { }
+      SubCategoryName.Cat3()) { }
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaGridPlaneParameter(), "Grid Plane Surface", "GPS", "Grid Plane Surface to get a bit more info out of.", GH_ParamAccess.item);
     }
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddPlaneParameter("Grid Plane", "P", "Grid Plane (Axis + Elevation)", GH_ParamAccess.item); //0
       pManager.AddIntegerParameter("Grid Plane ID", "IdG", " Grid Plane ID", GH_ParamAccess.item); //1
       pManager.AddTextParameter("Grid Plane Name", "NaP", "Grid Plane Name", GH_ParamAccess.item); //2
@@ -59,122 +53,112 @@ namespace GsaGH.Components
       pManager.AddBooleanParameter("Simplified Tributary Area", "Sf", "Grid Surface Simplified Tributary Area", GH_ParamAccess.item); //17
     }
     #endregion
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      GsaGridPlaneSurface gps = new GsaGridPlaneSurface();
-      if (DA.GetData(0, ref gps))
-      {
-        if (gps == null)
-        {
-          this.AddRuntimeWarning("Null GridPlaneSurface");
-          return;
-        }
-
-        DA.SetData(0, gps == null ? Plane.Unset : gps.Plane);
-        DA.SetData(1, gps.GridPlane == null ? 0 : gps.GridPlaneId);
-        DA.SetData(2, gps.GridPlane == null ? null : gps.GridPlane.Name);
-        DA.SetData(3, gps.GridPlane == null ? false : gps.GridPlane.IsStoreyType);
-        Plane axis = new Plane();
-        if (gps.GridPlane != null)
-        {
-          axis = new Plane(gps.Plane);
-          if (gps.Elevation != "0")
-          {
-            Length elevation = new Length();
-            try
-            {
-              elevation = Length.Parse(gps.Elevation);
-            }
-            catch (Exception)
-            {
-              if (double.TryParse(gps.Elevation, out double elev))
-                elevation = new Length(elev, this.LengthUnit);
-            }
-            axis.OriginZ -= elevation.As(this.LengthUnit);
-          }
-        }
-        DA.SetData(4, gps.GridPlane == null ? Plane.Unset : axis);
-        DA.SetData(5, gps.AxisId);
-        DA.SetData(6, gps.GridPlane == null ? "0" : gps.Elevation);
-        DA.SetData(7, gps.GridPlane == null ? "" : gps.StoreyToleranceAbove);
-        DA.SetData(8, gps.GridPlane == null ? "" : gps.StoreyToleranceBelow);
-
-        DA.SetData(9, gps.GridSurfaceId);
-        DA.SetData(10, gps.GridSurface.Name);
-        DA.SetData(11, gps.GridSurface.Elements);
-        string elemtype = gps.GridSurface.ElementType.ToString();
-        DA.SetData(12, Char.ToUpper(elemtype[0]) + elemtype.Substring(1).ToLower().Replace("_", " "));
-        DA.SetData(13, gps.Tolerance);
-        string spantype = gps.GridSurface.SpanType.ToString();
-        DA.SetData(14, Char.ToUpper(spantype[0]) + spantype.Substring(1).ToLower().Replace("_", " "));
-        DA.SetData(15, gps.GridSurface.Direction);
-        string expantype = gps.GridSurface.ExpansionType.ToString();
-        DA.SetData(16, Char.ToUpper(expantype[0]) + expantype.Substring(1).ToLower().Replace("_", " "));
-        bool simple = false;
-        if (gps.GridSurface.SpanType == GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS)
-          simple = true;
-        DA.SetData(17, simple);
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gsaGridPlaneSurface = new GsaGridPlaneSurface();
+      if (!da.GetData(0, ref gsaGridPlaneSurface)) {
+        return;
       }
+
+      if (gsaGridPlaneSurface == null) {
+        this.AddRuntimeWarning("Null GridPlaneSurface");
+        return;
+      }
+
+      da.SetData(0, gsaGridPlaneSurface == null ? Plane.Unset : gsaGridPlaneSurface.Plane);
+      da.SetData(1, gsaGridPlaneSurface.GridPlane == null ? 0 : gsaGridPlaneSurface.GridPlaneId);
+      da.SetData(2, gsaGridPlaneSurface.GridPlane?.Name);
+      da.SetData(3, gsaGridPlaneSurface.GridPlane == null ? false : gsaGridPlaneSurface.GridPlane.IsStoreyType);
+      var axis = new Plane();
+      if (gsaGridPlaneSurface.GridPlane != null) {
+        axis = new Plane(gsaGridPlaneSurface.Plane);
+        if (gsaGridPlaneSurface.Elevation != "0") {
+          var elevation = new Length();
+          try {
+            elevation = Length.Parse(gsaGridPlaneSurface.Elevation);
+          }
+          catch (Exception) {
+            if (double.TryParse(gsaGridPlaneSurface.Elevation, out double elev))
+              elevation = new Length(elev, _lengthUnit);
+          }
+          axis.OriginZ -= elevation.As(_lengthUnit);
+        }
+      }
+      da.SetData(4, gsaGridPlaneSurface.GridPlane == null ? Plane.Unset : axis);
+      da.SetData(5, gsaGridPlaneSurface.AxisId);
+      da.SetData(6, gsaGridPlaneSurface.GridPlane == null ? "0" : gsaGridPlaneSurface.Elevation);
+      da.SetData(7, gsaGridPlaneSurface.GridPlane == null ? "" : gsaGridPlaneSurface.StoreyToleranceAbove);
+      da.SetData(8, gsaGridPlaneSurface.GridPlane == null ? "" : gsaGridPlaneSurface.StoreyToleranceBelow);
+
+      da.SetData(9, gsaGridPlaneSurface.GridSurfaceId);
+      da.SetData(10, gsaGridPlaneSurface.GridSurface.Name);
+      da.SetData(11, gsaGridPlaneSurface.GridSurface.Elements);
+      string elemtype = gsaGridPlaneSurface.GridSurface.ElementType.ToString();
+      da.SetData(12, char.ToUpper(elemtype[0]) + elemtype.Substring(1).ToLower().Replace("_", " "));
+      da.SetData(13, gsaGridPlaneSurface.Tolerance);
+      string spantype = gsaGridPlaneSurface.GridSurface.SpanType.ToString();
+      da.SetData(14, char.ToUpper(spantype[0]) + spantype.Substring(1).ToLower().Replace("_", " "));
+      da.SetData(15, gsaGridPlaneSurface.GridSurface.Direction);
+      string expantype = gsaGridPlaneSurface.GridSurface.ExpansionType.ToString();
+      da.SetData(16, char.ToUpper(expantype[0]) + expantype.Substring(1).ToLower().Replace("_", " "));
+      bool simple = gsaGridPlaneSurface.GridSurface.SpanType == GridSurface.Span_Type.TWO_WAY_SIMPLIFIED_TRIBUTARY_AREAS;
+      da.SetData(17, simple);
     }
 
     #region Custom UI
-    protected override void BeforeSolveInstance()
-    {
-      this.Message = Length.GetAbbreviation(this.LengthUnit);
+    protected override void BeforeSolveInstance() {
+      Message = Length.GetAbbreviation(_lengthUnit);
     }
 
-    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
-    {
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
 
-      ToolStripMenuItem unitsMenu = new ToolStripMenuItem("Select unit", Properties.Resources.Units);
-      unitsMenu.Enabled = true;
-      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length))
-      {
-        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); });
-        toolStripMenuItem.Checked = unit == Length.GetAbbreviation(this.LengthUnit);
-        toolStripMenuItem.Enabled = true;
-        unitsMenu.DropDownItems.Add(toolStripMenuItem);
+      var unitsMenu = new ToolStripMenuItem("Select unit", Properties.Resources.Units){
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }){
+          Checked = unit == Length.GetAbbreviation(_lengthUnit),
+          Enabled = true, 
+      };
+
+      unitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
       menu.Items.Add(unitsMenu);
 
       Menu_AppendSeparator(menu);
     }
 
-    private void Update(string unit)
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      this.Message = unit;
+    private void Update(string unit) {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
     }
 
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
-      writer.SetString("LengthUnit", this.LengthUnit.ToString());
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer) {
+      writer.SetString("LengthUnit", _lengthUnit.ToString());
       return base.Write(writer);
     }
 
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
+    public override bool Read(GH_IO.Serialization.GH_IReader reader) {
       if (reader.ItemExists("LengthUnit"))
-        this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
       else
-        this.LengthUnit = LengthUnit.Meter;
+        _lengthUnit = LengthUnit.Meter;
       return base.Read(reader);
     }
 
     #region IGH_VariableParameterComponent null implementation
-    public virtual void VariableParameterMaintenance()
-    {
-      string unit = Length.GetAbbreviation(this.LengthUnit);
+    public virtual void VariableParameterMaintenance() {
+      string unit = Length.GetAbbreviation(_lengthUnit);
 
-      this.Params.Output[6].Name = "Elevation [" + unit + "]";
-      this.Params.Output[7].Name = "Grid Plane Tolerance Above [" + unit + "]";
-      this.Params.Output[8].Name = "Grid Plane Tolerance Below [" + unit + "]";
-      this.Params.Output[13].Name = "Grid Surface Tolerance [" + unit + "]";
+      Params.Output[6].Name = "Elevation [" + unit + "]";
+      Params.Output[7].Name = "Grid Plane Tolerance Above [" + unit + "]";
+      Params.Output[8].Name = "Grid Plane Tolerance Below [" + unit + "]";
+      Params.Output[13].Name = "Grid Surface Tolerance [" + unit + "]";
     }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) => false;

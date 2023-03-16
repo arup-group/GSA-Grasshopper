@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -15,39 +14,36 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Components
-{
-    public class CreateNodeLoad : GH_OasysDropDownComponent
-  {
+namespace GsaGH.Components {
+  public class CreateNodeLoad : GH_OasysDropDownComponent {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("dd16896d-111d-4436-b0da-9c05ff6efd81");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.NodeLoad;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.NodeLoad;
 
     public CreateNodeLoad() : base("Create Node Load",
       "NodeLoad",
       "Create GSA Node Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
+      SubCategoryName.Cat3()) {
+        Hidden = true;
+    } // sets the initial state of the component to hidden
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       string funit = " ";
-      switch (this._mode)
-      {
-        case FoldMode.Node_Force:
-          funit = "Value [" + Force.GetAbbreviation(this.ForceUnit) + "]";
+      switch (_mode) {
+        case FoldMode.NodeForce:
+          funit = "Value [" + Force.GetAbbreviation(_forceUnit) + "]";
           break;
-        case FoldMode.Node_Moment:
-          funit = "Value [" + Moment.GetAbbreviation(this.MomentUnit) + "]";
+        case FoldMode.NodeMoment:
+          funit = "Value [" + Moment.GetAbbreviation(_momentUnit) + "]";
           break;
-        case FoldMode.Applied_Displ:
+        case FoldMode.AppliedDispl:
         case FoldMode.Settlement:
-          funit = "Value [" + Length.GetAbbreviation(this.LengthUnit) + "]";
+          funit = "Value [" + Length.GetAbbreviation(_lengthUnit) + "]";
           break;
       }
 
@@ -71,24 +67,21 @@ namespace GsaGH.Components
       pManager[3].Optional = true;
 
     }
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaLoadParameter(), "Node Load", "Ld", "GSA Node Load", GH_ParamAccess.item);
     }
     #endregion
 
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      GsaNodeLoad nodeLoad = new GsaNodeLoad();
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var nodeLoad = new GsaNodeLoad();
 
       // Node load type
-      switch (_mode)
-      {
-        case FoldMode.Node_Force:
-        case FoldMode.Node_Moment:
+      switch (_mode) {
+        case FoldMode.NodeForce:
+        case FoldMode.NodeMoment:
           nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
           break;
-        case FoldMode.Applied_Displ:
+        case FoldMode.AppliedDispl:
           nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;
           break;
         case FoldMode.Settlement:
@@ -96,96 +89,90 @@ namespace GsaGH.Components
           break;
       }
 
-      // 0 Load case
-      int lc = 1;
-      GH_Integer gh_lc = new GH_Integer();
-      if (DA.GetData(0, ref gh_lc))
-        GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
-      nodeLoad.NodeLoad.Case = lc;
+      int loadCase = 1;
+      var ghInteger = new GH_Integer();
+      if (da.GetData(0, ref ghInteger))
+        GH_Convert.ToInt32(ghInteger, out loadCase, GH_Conversion.Both);
+      nodeLoad.NodeLoad.Case = loadCase;
 
-      // 1 element/beam list
-      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-      if (DA.GetData(1, ref gh_typ))
-      {
-        Point3d refPt = new Point3d();
-        if (gh_typ.Value is GsaNodeGoo)
-        {
-          GsaNodeGoo goo = (GsaNodeGoo)gh_typ.Value;
+      var ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(1, ref ghTyp)) {
+        var refPt = new Point3d();
+        if (ghTyp.Value is GsaNodeGoo goo) {
           nodeLoad.RefPoint = goo.Value.Point;
         }
-        else if (GH_Convert.ToPoint3d(gh_typ.Value, ref refPt, GH_Conversion.Both))
-        {
+        else if (GH_Convert.ToPoint3d(ghTyp.Value, ref refPt, GH_Conversion.Both)) {
           nodeLoad.RefPoint = refPt;
           this.AddRuntimeRemark("Point loading in GsaGH will automatically find the corrosponding node and apply the load to that node by ID. If you save the file and continue working in GSA please note that the point-load relationship will be lost.");
         }
-        else if (GH_Convert.ToString(gh_typ.Value, out string nodeList, GH_Conversion.Both))
+        else if (GH_Convert.ToString(ghTyp.Value, out string nodeList, GH_Conversion.Both))
           nodeLoad.NodeLoad.Nodes = nodeList;
       }
 
-      // 2 Name
-      string name = "";
-      GH_String gh_name = new GH_String();
-      if (DA.GetData(2, ref gh_name))
-      {
-        if (GH_Convert.ToString(gh_name, out name, GH_Conversion.Both))
+      var ghName = new GH_String();
+      if (da.GetData(2, ref ghName)) {
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
           nodeLoad.NodeLoad.Name = name;
       }
 
-      // 3 direction
       string dir = "Z";
       Direction direc = Direction.Z;
 
-      GH_String gh_dir = new GH_String();
-      if (DA.GetData(3, ref gh_dir))
-        GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
+      var ghDir = new GH_String();
+      if (da.GetData(3, ref ghDir))
+        GH_Convert.ToString(ghDir, out dir, GH_Conversion.Both);
       dir = dir.ToUpper().Trim();
-      if (dir == "X")
-        direc = Direction.X;
-      if (dir == "Y")
-        direc = Direction.Y;
-      if (dir == "XX")
-        direc = Direction.XX;
-      if (dir == "YY")
-        direc = Direction.YY;
-      if (dir == "ZZ")
-        direc = Direction.ZZ;
+      switch (dir)
+      {
+        case "X":
+          direc = Direction.X;
+          break;
+        case "Y":
+          direc = Direction.Y;
+          break;
+        case "XX":
+          direc = Direction.XX;
+          break;
+        case "YY":
+          direc = Direction.YY;
+          break;
+        case "ZZ":
+          direc = Direction.ZZ;
+          break;
+      }
 
       nodeLoad.NodeLoad.Direction = direc;
 
       double load = 0;
-      if (_mode == FoldMode.Node_Force || _mode == FoldMode.Node_Moment)
-      {
-        switch (dir)
-        {
+      if (_mode == FoldMode.NodeForce || _mode == FoldMode.NodeMoment) {
+        switch (dir) {
           case "X":
           case "Y":
           case "Z":
-            load = ((Force)Input.UnitNumber(this, DA, 4, ForceUnit)).Newtons;
-            if (_mode != FoldMode.Node_Force)
+            load = ((Force)Input.UnitNumber(this, da, 4, _forceUnit)).Newtons;
+            if (_mode != FoldMode.NodeForce)
               this.AddRuntimeWarning("Direction input set to imply a 'Force' but type is set to 'Moment'. The output Node Load has been created to be of type 'Force'.");
             break;
           case "XX":
           case "YY":
           case "ZZ":
-            load = ((Moment)Input.UnitNumber(this, DA, 4, MomentUnit)).NewtonMeters;
-            if (_mode != FoldMode.Node_Moment)
+            load = ((Moment)Input.UnitNumber(this, da, 4, _momentUnit)).NewtonMeters;
+            if (_mode != FoldMode.NodeMoment)
               this.AddRuntimeWarning("Direction input set to imply a 'Moment' force but type is set to 'Force'. The output Node Load has been created to be of type 'Moment'.");
             break;
         }
       }
-      else
-      {
-        switch (dir)
-        {
+      else {
+        switch (dir) {
           case "X":
           case "Y":
           case "Z":
-            load = ((Length)Input.UnitNumber(this, DA, 4, LengthUnit)).Meters;
+            load = ((Length)Input.UnitNumber(this, da, 4, _lengthUnit)).Meters;
             break;
           case "XX":
           case "YY":
           case "ZZ":
-            load = ((Angle)Input.UnitNumber(this, DA, 4, AngleUnit.Radian)).Radians;
+            load = ((Angle)Input.UnitNumber(this, da, 4, AngleUnit.Radian)).Radians;
             this.AddRuntimeRemark("Direction input is set to be rotational type, the output load has been set to as a rotation in Radian unit.");
             break;
         }
@@ -193,136 +180,128 @@ namespace GsaGH.Components
 
       nodeLoad.NodeLoad.Value = load;
 
-      GsaLoad gsaLoad = new GsaLoad(nodeLoad);
-      DA.SetData(0, new GsaLoadGoo(gsaLoad));
+      var gsaLoad = new GsaLoad(nodeLoad);
+      da.SetData(0, new GsaLoadGoo(gsaLoad));
     }
 
     #region Custom UI
-    private enum FoldMode
-    {
-      Node_Force,
-      Node_Moment,
-      Applied_Displ,
-      Settlement
+    private enum FoldMode {
+      NodeForce,
+      NodeMoment,
+      AppliedDispl,
+      Settlement,
     }
-    readonly List<string> _type = new List<string>(new string[]
+
+    private readonly List<string> _type = new List<string>(new []
     {
       "Node Force",
       "Node Moment",
       "Applied Displ",
-      "Settlement"
+      "Settlement",
     });
-    private FoldMode _mode = FoldMode.Node_Force;
-    private ForceUnit ForceUnit = DefaultUnits.ForceUnit;
-    private MomentUnit MomentUnit = DefaultUnits.MomentUnit;
-    private LengthUnit LengthUnit = DefaultUnits.LengthUnitResult;
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[]
+    private FoldMode _mode = FoldMode.NodeForce;
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
+    public override void InitialiseDropdowns() {
+      SpacerDescriptions = new List<string>(new []
         {
-          "Type", "Unit"
+          "Type",
+          "Unit",
         });
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+      DropDownItems = new List<List<string>>();
+      SelectedItems = new List<string>();
 
       // Type
-      this.DropDownItems.Add(this._type);
-      this.SelectedItems.Add(this._mode.ToString().Replace('_', ' '));
+      DropDownItems.Add(_type);
+      SelectedItems.Add(_mode.ToString().Replace('_', ' '));
 
       // Force
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
-      this.SelectedItems.Add(Force.GetAbbreviation(this.ForceUnit));
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      SelectedItems.Add(Force.GetAbbreviation(_forceUnit));
 
-      this.IsInitialised = true;
+      IsInitialised = true;
     }
 
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
+    public override void SetSelected(int i, int j) {
+      SelectedItems[i] = DropDownItems[i][j];
 
       if (i == 0) // change is made to the first dropdown list
       {
-        switch (SelectedItems[0])
-        {
+        switch (SelectedItems[0]) {
           case "Node Force":
-            this._mode = FoldMode.Node_Force;
-            this.DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force);
-            this.SelectedItems[1] = Force.GetAbbreviation(this.ForceUnit);
+            _mode = FoldMode.NodeForce;
+            DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force);
+            SelectedItems[1] = Force.GetAbbreviation(_forceUnit);
             break;
           case "Node Moment":
-            this._mode = FoldMode.Node_Moment;
-            this.DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment);
-            this.SelectedItems[1] = Moment.GetAbbreviation(this.MomentUnit);
+            _mode = FoldMode.NodeMoment;
+            DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment);
+            SelectedItems[1] = Moment.GetAbbreviation(_momentUnit);
             break;
           case "Applied Displ":
-            this._mode = FoldMode.Applied_Displ;
-            this.DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length);
-            this.SelectedItems[1] = Length.GetAbbreviation(this.LengthUnit);
+            _mode = FoldMode.AppliedDispl;
+            DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length);
+            SelectedItems[1] = Length.GetAbbreviation(_lengthUnit);
             break;
           case "Settlement":
-            this._mode = FoldMode.Settlement;
-            this.DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length);
-            this.SelectedItems[1] = Length.GetAbbreviation(this.LengthUnit);
+            _mode = FoldMode.Settlement;
+            DropDownItems[1] = UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length);
+            SelectedItems[1] = Length.GetAbbreviation(_lengthUnit);
             break;
         }
       }
-      else
-      {
-        switch (this._mode)
-        {
-          case FoldMode.Node_Force:
-            this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[1]);
+      else {
+        switch (_mode) {
+          case FoldMode.NodeForce:
+            _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[1]);
             break;
-          case FoldMode.Node_Moment:
-            this.MomentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), this.SelectedItems[1]);
+          case FoldMode.NodeMoment:
+            _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), SelectedItems[1]);
             break;
-          case FoldMode.Applied_Displ:
+          case FoldMode.AppliedDispl:
           case FoldMode.Settlement:
-            this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+            _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
             break;
         }
       }
 
       base.UpdateUI();
     }
-    public override void UpdateUIFromSelectedItems()
-    {
-      string md = this.SelectedItems[0].Replace(' ', '_');
+    public override void UpdateUIFromSelectedItems() {
+      string md = SelectedItems[0].Replace(' ', '_');
       if (md.ToLower() == "node")
-        this._mode = FoldMode.Node_Force;
+        _mode = FoldMode.NodeForce;
       else
-        this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0].Replace(' ', '_'));
+        _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0].Replace(' ', '_'));
 
-      switch (this._mode)
-      {
-        case FoldMode.Node_Force:
-          this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[1]);
+      switch (_mode) {
+        case FoldMode.NodeForce:
+          _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[1]);
           break;
-        case FoldMode.Node_Moment:
-          this.MomentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), this.SelectedItems[1]);
+        case FoldMode.NodeMoment:
+          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), SelectedItems[1]);
           break;
-        case FoldMode.Applied_Displ:
+        case FoldMode.AppliedDispl:
         case FoldMode.Settlement:
-          this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[1]);
+          _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[1]);
           break;
       }
       base.UpdateUIFromSelectedItems();
     }
 
-    public override void VariableParameterMaintenance()
-    {
-      switch (this._mode)
-      {
-        case FoldMode.Node_Force:
-          Params.Input[4].Name = "Value [" + Force.GetAbbreviation(this.ForceUnit) + "]";
+    public override void VariableParameterMaintenance() {
+      switch (_mode) {
+        case FoldMode.NodeForce:
+          Params.Input[4].Name = "Value [" + Force.GetAbbreviation(_forceUnit) + "]";
           break;
-        case FoldMode.Node_Moment:
-          Params.Input[4].Name = "Value [" + Moment.GetAbbreviation(this.MomentUnit) + "]";
+        case FoldMode.NodeMoment:
+          Params.Input[4].Name = "Value [" + Moment.GetAbbreviation(_momentUnit) + "]";
           break;
-        case FoldMode.Applied_Displ:
+        case FoldMode.AppliedDispl:
         case FoldMode.Settlement:
-          Params.Input[4].Name = "Value [" + Length.GetAbbreviation(this.LengthUnit) + "]";
+          Params.Input[4].Name = "Value [" + Length.GetAbbreviation(_lengthUnit) + "]";
           break;
       }
     }

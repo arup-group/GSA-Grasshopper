@@ -15,28 +15,26 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
 
-namespace GsaGH.Components
-{
-    public class CreateGridLineLoad : GH_OasysDropDownComponent
-  {
+namespace GsaGH.Components {
+  public class CreateGridLineLoad : GH_OasysDropDownComponent {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("e1f22e6f-8550-4078-8613-ea5ed2ede2b9");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.LineLoad;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.LineLoad;
 
     public CreateGridLineLoad() : base("Create Grid Line Load",
       "LineLoad",
       "Create GSA Grid Line Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
+      SubCategoryName.Cat3()) {
+        Hidden = true;
+    } // sets the initial state of the component to hidden
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
-      string unitAbbreviation = ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      string unitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
       pManager.AddCurveParameter("PolyLine", "L", "PolyLine. If you input grid plane below only x and y coordinate positions will be used from this polyline, but if not a new Grid Plane Surface (best-fit plane) will be created from PolyLine control points.", GH_ParamAccess.item);
@@ -63,119 +61,91 @@ namespace GsaGH.Components
       pManager[6].Optional = true;
       pManager[8].Optional = true;
     }
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaLoadParameter(), "Grid Line Load", "Ld", "GSA Grid Line Load", GH_ParamAccess.item);
     }
     #endregion
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      GsaGridLineLoad gridlineload = new GsaGridLineLoad();
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gridlineload = new GsaGridLineLoad();
 
       // 0 Load case
       int lc = 1;
-      GH_Integer gh_lc = new GH_Integer();
-      if (DA.GetData(0, ref gh_lc))
-        GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
+      var ghLc = new GH_Integer();
+      if (da.GetData(0, ref ghLc))
+        GH_Convert.ToInt32(ghLc, out lc, GH_Conversion.Both);
       gridlineload.GridLineLoad.Case = lc;
 
       // Do plane input first as to see if we need to project polyline onto grid plane
       // 2 Plane 
-      Plane pln = Plane.WorldXY;
+      Plane plane = Plane.WorldXY;
       bool planeSet = false;
-      GsaGridPlaneSurface grdplnsrf = new GsaGridPlaneSurface();
-      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-      if (DA.GetData(2, ref gh_typ))
-      {
-        if (gh_typ.Value is GsaGridPlaneSurfaceGoo)
-        {
-          GsaGridPlaneSurface temppln = new GsaGridPlaneSurface();
-          gh_typ.CastTo(ref temppln);
-          grdplnsrf = temppln.Duplicate();
-          pln = grdplnsrf.Plane;
-          planeSet = true;
-        }
-        else if (gh_typ.Value is Plane)
-        {
-          gh_typ.CastTo(ref pln);
-          grdplnsrf = new GsaGridPlaneSurface(pln);
-          planeSet = true;
-        }
-        else
-        {
-          int id = 0;
-          if (GH_Convert.ToInt32(gh_typ.Value, out id, GH_Conversion.Both))
-          {
-            gridlineload.GridLineLoad.GridSurface = id;
-            gridlineload.GridPlaneSurface = null;
-          }
-          else
-          {
-            this.AddRuntimeError("Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
-                Environment.NewLine + "If no input here then the line's best-fit plane will be used");
-            return;
-          }
+      var gridPlaneSurface = new GsaGridPlaneSurface();
+      var ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(2, ref ghTyp)) {
+        switch (ghTyp.Value) {
+          case GsaGridPlaneSurfaceGoo _: {
+              var temppln = new GsaGridPlaneSurface();
+              ghTyp.CastTo(ref temppln);
+              gridPlaneSurface = temppln.Duplicate();
+              plane = gridPlaneSurface.Plane;
+              planeSet = true;
+              break;
+            }
+          case Plane _:
+            ghTyp.CastTo(ref plane);
+            gridPlaneSurface = new GsaGridPlaneSurface(plane);
+            planeSet = true;
+            break;
+          default: {
+              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+                gridlineload.GridLineLoad.GridSurface = id;
+                gridlineload.GridPlaneSurface = null;
+              }
+              else {
+                this.AddRuntimeError("Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. " +
+                                     Environment.NewLine + "If no input here then the line's best-fit plane will be used");
+                return;
+              }
+
+              break;
+            }
         }
       }
 
       // we wait setting the gridplanesurface until we have run the polyline input
 
-      // 1 Polyline
-      Polyline ln = new Polyline();
-      GH_Curve gh_crv = new GH_Curve();
-      if (DA.GetData(1, ref gh_crv))
-      {
-        Curve crv = null;
-        GH_Convert.ToCurve(gh_crv, ref crv, GH_Conversion.Both);
+      var ghCurve = new GH_Curve();
+      if (da.GetData(1, ref ghCurve)) {
+        Curve curve = null;
+        GH_Convert.ToCurve(ghCurve, ref curve, GH_Conversion.Both);
 
-        //convert to polyline
-        if (crv.TryGetPolyline(out ln))
-        {
-          // get control points
-          List<Point3d> ctrl_pts = ln.ToList();
+        if (curve.TryGetPolyline(out Polyline ln)) {
+          var controlPoints = ln.ToList();
 
-          // plane
-          if (!planeSet)
-          {
-            // create best-fit plane from pts
-            pln = Helpers.GH.RhinoConversions.CreateBestFitUnitisedPlaneFromPts(ctrl_pts);
+          if (!planeSet) {
+            plane = RhinoConversions.CreateBestFitUnitisedPlaneFromPts(controlPoints);
 
-            // create grid plane surface from best fit plane
-            grdplnsrf = new GsaGridPlaneSurface(pln, true);
+            gridPlaneSurface = new GsaGridPlaneSurface(plane, true);
           }
-          else
-          {
-            // project original curve onto grid plane
-            crv = Curve.ProjectToPlane(crv, pln);
+          else {
+            curve = Curve.ProjectToPlane(curve, plane);
 
-            // convert to polyline again
-            crv.TryGetPolyline(out ln);
+            curve.TryGetPolyline(out ln);
 
-            //get control points again
-            ctrl_pts = ln.ToList();
+            controlPoints = ln.ToList();
           }
-
-          // string to write polyline description to
           string desc = "";
 
-          // loop through all points
-          for (int i = 0; i < ctrl_pts.Count; i++)
-          {
+          for (int i = 0; i < controlPoints.Count; i++) {
             if (i > 0)
               desc += " ";
 
-            // get control points in local plane coordinates
-            Point3d temppt = new Point3d();
-            pln.RemapToPlaneSpace(ctrl_pts[i], out temppt);
-
-            // write point to string
+            plane.RemapToPlaneSpace(controlPoints[i], out Point3d temppt);
             // format accepted by GSA: (0,0) (0,1) (1,2) (3,4) (4,0)(m)
             desc += "(" + temppt.X + "," + temppt.Y + ")";
           }
-          // add units to the end
           desc += "(" + DefaultUnits.LengthUnitGeometry + ")";
 
-          // set polyline in grid line load
           gridlineload.GridLineLoad.Type = GridLineLoad.PolyLineType.EXPLICIT_POLYLINE;
           gridlineload.GridLineLoad.PolyLineDefinition = desc;
         }
@@ -183,106 +153,94 @@ namespace GsaGH.Components
           this.AddRuntimeError("Could not convert Curve to Polyline");
       }
 
-      // now we can set the gridplanesurface:
-      if (gridlineload.GridPlaneSurface != null)
-      {
+      if (gridlineload.GridPlaneSurface != null) {
         if (gridlineload.GridPlaneSurface.GridSurfaceId == 0)
-          gridlineload.GridPlaneSurface = grdplnsrf;
+          gridlineload.GridPlaneSurface = gridPlaneSurface;
       }
 
       // 3 direction
       string dir = "Z";
       Direction direc = Direction.Z;
 
-      GH_String gh_dir = new GH_String();
-      if (DA.GetData(3, ref gh_dir))
-        GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
+      var ghDir = new GH_String();
+      if (da.GetData(3, ref ghDir))
+        GH_Convert.ToString(ghDir, out dir, GH_Conversion.Both);
       dir = dir.ToUpper();
-      if (dir == "X")
-        direc = Direction.X;
-      if (dir == "Y")
-        direc = Direction.Y;
+      switch (dir) {
+        case "X":
+          direc = Direction.X;
+          break;
+        case "Y":
+          direc = Direction.Y;
+          break;
+      }
 
       gridlineload.GridLineLoad.Direction = direc;
 
       // 4 Axis
-      int axis = 0;
       gridlineload.GridLineLoad.AxisProperty = 0;
-      GH_Integer gh_ax = new GH_Integer();
-      if (DA.GetData(4, ref gh_ax))
-      {
-        GH_Convert.ToInt32(gh_ax, out axis, GH_Conversion.Both);
+      var ghAxis = new GH_Integer();
+      if (da.GetData(4, ref ghAxis)) {
+        GH_Convert.ToInt32(ghAxis, out int axis, GH_Conversion.Both);
         if (axis == 0 || axis == -1)
           gridlineload.GridLineLoad.AxisProperty = axis;
       }
 
       // 5 Projected
-      bool proj = false;
-      GH_Boolean gh_proj = new GH_Boolean();
-      if (DA.GetData(5, ref gh_proj))
-      {
-        if (GH_Convert.ToBoolean(gh_proj, out proj, GH_Conversion.Both))
+      var ghProj = new GH_Boolean();
+      if (da.GetData(5, ref ghProj)) {
+        if (GH_Convert.ToBoolean(ghProj, out bool proj, GH_Conversion.Both))
           gridlineload.GridLineLoad.IsProjected = proj;
       }
 
-      // 6 Name
-      string name = "";
-      GH_String gh_name = new GH_String();
-      if (DA.GetData(6, ref gh_name))
-      {
-        if (GH_Convert.ToString(gh_name, out name, GH_Conversion.Both))
+      var ghName = new GH_String();
+      if (da.GetData(6, ref ghName)) {
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
           gridlineload.GridLineLoad.Name = name;
       }
 
-      // 7 load value
-      double load1 = ((ForcePerLength)Input.UnitNumber(this, DA, 7, this.ForcePerLengthUnit)).NewtonsPerMeter;
+      double load1 = ((ForcePerLength)Input.UnitNumber(this, da, 7, _forcePerLengthUnit)).NewtonsPerMeter;
       gridlineload.GridLineLoad.ValueAtStart = load1;
 
-      // 8 load value
       double load2 = load1;
-      if (DA.GetData(8, ref load2))
-        load2 = ((ForcePerLength)Input.UnitNumber(this, DA, 8, this.ForcePerLengthUnit, true)).NewtonsPerMeter;
+      if (da.GetData(8, ref load2))
+        load2 = ((ForcePerLength)Input.UnitNumber(this, da, 8, _forcePerLengthUnit, true)).NewtonsPerMeter;
       gridlineload.GridLineLoad.ValueAtEnd = load2;
 
-      // convert to goo
-      GsaLoad gsaLoad = new GsaLoad(gridlineload);
-      DA.SetData(0, new GsaLoadGoo(gsaLoad));
+      var gsaLoad = new GsaLoad(gridlineload);
+      da.SetData(0, new GsaLoadGoo(gsaLoad));
     }
 
     #region Custom UI
-    ForcePerLengthUnit ForcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
+    private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
 
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[]
+    public override void InitialiseDropdowns() {
+      SpacerDescriptions = new List<string>(new[]
         {
-          "Unit"
+          "Unit",
         });
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+      DropDownItems = new List<List<string>>();
+      SelectedItems = new List<string>();
 
       // ForcePerLength
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerLength)));
-      this.SelectedItems.Add(ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit));
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerLength)));
+      SelectedItems.Add(ForcePerLength.GetAbbreviation(_forcePerLengthUnit));
 
-      this.IsInitialised = true;
+      IsInitialised = true;
     }
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[i]);
+    public override void SetSelected(int i, int j) {
+      SelectedItems[i] = DropDownItems[i][j];
+      _forcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[i]);
       base.UpdateUI();
     }
 
-    public override void UpdateUIFromSelectedItems()
-    {
-      this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[0]);
+    public override void UpdateUIFromSelectedItems() {
+      _forcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
-    public override void VariableParameterMaintenance()
-    {
-      string unitAbbreviation = ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit);
+    public override void VariableParameterMaintenance() {
+      string unitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
       Params.Input[7].Name = "Value Start [" + unitAbbreviation + "]";
       Params.Input[8].Name = "Value End [" + unitAbbreviation + "]";
     }

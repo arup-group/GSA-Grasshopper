@@ -14,28 +14,26 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
-namespace GsaGH.Components
-{
-    public class CreateBeamLoads : GH_OasysDropDownComponent
-  {
+namespace GsaGH.Components {
+  public class CreateBeamLoads : GH_OasysDropDownComponent {
     #region Name and Ribbon Layout
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.BeamLoad;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.BeamLoad;
 
     public CreateBeamLoads() : base("Create Beam Load",
       "BeamLoad",
       "Create GSA Beam Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
+      SubCategoryName.Cat3()) {
+        Hidden = true;
+    } // sets the initial state of the component to hidden
     public override Guid ComponentGuid => new Guid("e034b346-a6e8-4dd1-b12c-6104baa2586e");
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
-      string unitAbbreviation = ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit);
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      string unitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
 
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (default 1)", GH_ParamAccess.item, 1);
       pManager.AddGenericParameter("Element list", "G1D", "Section, 1D Elements or 1D Members to apply load to; either input Section, Element1d, or Member1d, or a text string." + Environment.NewLine +
@@ -66,68 +64,63 @@ namespace GsaGH.Components
 
       _mode = FoldMode.Uniform;
     }
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaLoadParameter(), "Beam Load", "Ld", "GSA Beam Load", GH_ParamAccess.item);
     }
     #endregion
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      GsaBeamLoad beamLoad = new GsaBeamLoad();
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var beamLoad = new GsaBeamLoad();
 
       // 0 Load case
       int lc = 1;
-      GH_Integer gh_lc = new GH_Integer();
-      if (DA.GetData(0, ref gh_lc))
-        GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
+      var ghLc = new GH_Integer();
+      if (da.GetData(0, ref ghLc))
+        GH_Convert.ToInt32(ghLc, out lc, GH_Conversion.Both);
       beamLoad.BeamLoad.Case = lc;
 
       // 1 element/beam list
-      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-      if (DA.GetData(1, ref gh_typ))
-      {
-        if (gh_typ.Value is GsaElement1dGoo)
-        {
-          GsaElement1dGoo goo = (GsaElement1dGoo)gh_typ.Value;
-          beamLoad.RefObjectGuid = goo.Value.Guid;
-          beamLoad.ReferenceType = ReferenceType.Element;
+      var ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(1, ref ghTyp)) {
+        switch (ghTyp.Value) {
+          case GsaElement1dGoo value: {
+              beamLoad.RefObjectGuid = value.Value.Guid;
+              beamLoad.ReferenceType = ReferenceType.Element;
+              break;
+            }
+          case GsaMember1dGoo value: {
+              beamLoad.RefObjectGuid = value.Value.Guid;
+              beamLoad.ReferenceType = ReferenceType.Member;
+              if (_mode != FoldMode.Uniform)
+                this.AddRuntimeWarning("Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
+              else
+                this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
+          case GsaSectionGoo value: {
+              beamLoad.RefObjectGuid = value.Value.Guid;
+              beamLoad.ReferenceType = ReferenceType.Section;
+              break;
+            }
+          default: {
+              if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both))
+                beamLoad.BeamLoad.Elements = beamList;
+              break;
+            }
         }
-        else if (gh_typ.Value is GsaMember1dGoo)
-        {
-          GsaMember1dGoo goo = (GsaMember1dGoo)gh_typ.Value;
-          beamLoad.RefObjectGuid = goo.Value.Guid;
-          beamLoad.ReferenceType = ReferenceType.Member;
-          if (_mode != FoldMode.Uniform)
-            this.AddRuntimeWarning("Member loading will not automatically redistribute non-linear loading to child elements. Any non-uniform loading made from Members is likely not what you are after. Please check the load in GSA.");
-          else
-            this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-        }
-        else if (gh_typ.Value is GsaSectionGoo)
-        {
-          GsaSectionGoo goo = (GsaSectionGoo)gh_typ.Value;
-          beamLoad.RefObjectGuid = goo.Value.Guid;
-          beamLoad.ReferenceType = ReferenceType.Section;
-        }
-        else if (GH_Convert.ToString(gh_typ.Value, out string beamList, GH_Conversion.Both))
-          beamLoad.BeamLoad.Elements = beamList;
       }
 
       // 2 Name
-      string name = "";
-      GH_String gh_name = new GH_String();
-      if (DA.GetData(2, ref gh_name))
-      {
-        if (GH_Convert.ToString(gh_name, out name, GH_Conversion.Both))
+      var ghName = new GH_String();
+      if (da.GetData(2, ref ghName)) {
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
           beamLoad.BeamLoad.Name = name;
       }
 
       // 3 axis
-      int axis = 0;
       beamLoad.BeamLoad.AxisProperty = 0; //Note there is currently a bug/undocumented in GsaAPI that cannot translate an integer into axis type (Global, Local or edformed local)
-      GH_Integer gh_ax = new GH_Integer();
-      if (DA.GetData(3, ref gh_ax))
-      {
-        GH_Convert.ToInt32(gh_ax, out axis, GH_Conversion.Both);
+      var ghAx = new GH_Integer();
+      if (da.GetData(3, ref ghAx)) {
+        GH_Convert.ToInt32(ghAx, out int axis, GH_Conversion.Both);
         if (axis == 0 || axis == -1)
           beamLoad.BeamLoad.AxisProperty = axis;
       }
@@ -136,93 +129,79 @@ namespace GsaGH.Components
       string dir = "Z";
       Direction direc = Direction.Z;
 
-      GH_String gh_dir = new GH_String();
-      if (DA.GetData(4, ref gh_dir))
-        GH_Convert.ToString(gh_dir, out dir, GH_Conversion.Both);
+      var ghDir = new GH_String();
+      if (da.GetData(4, ref ghDir))
+        GH_Convert.ToString(ghDir, out dir, GH_Conversion.Both);
       dir = dir.ToUpper().Trim();
-      if (dir == "X")
-        direc = Direction.X;
-      if (dir == "Y")
-        direc = Direction.Y;
-      if (dir == "XX")
-        direc = Direction.XX;
-      if (dir == "YY")
-        direc = Direction.YY;
-      if (dir == "ZZ")
-        direc = Direction.ZZ;
+      switch (dir) {
+        case "X":
+          direc = Direction.X;
+          break;
+        case "Y":
+          direc = Direction.Y;
+          break;
+        case "XX":
+          direc = Direction.XX;
+          break;
+        case "YY":
+          direc = Direction.YY;
+          break;
+        case "ZZ":
+          direc = Direction.ZZ;
+          break;
+      }
 
       beamLoad.BeamLoad.Direction = direc;
 
       // 5 projection
       bool prj = false;
-      GH_Boolean gh_prj = new GH_Boolean();
-      if (DA.GetData(5, ref gh_prj))
-        GH_Convert.ToBoolean(gh_prj, out prj, GH_Conversion.Both);
+      var ghPrj = new GH_Boolean();
+      if (da.GetData(5, ref ghPrj))
+        GH_Convert.ToBoolean(ghPrj, out prj, GH_Conversion.Both);
       beamLoad.BeamLoad.IsProjected = prj;
 
       // 6 value (1)
-      ForcePerLength load1 = (ForcePerLength)Input.UnitNumber(this, DA, 6, ForcePerLengthUnit);
+      var load1 = (ForcePerLength)Input.UnitNumber(this, da, 6, _forcePerLengthUnit);
 
-      switch (_mode)
-      {
+      switch (_mode) {
         case FoldMode.Point:
-          if (_mode == FoldMode.Point)
-          {
+          if (_mode == FoldMode.Point) {
             beamLoad.BeamLoad.Type = BeamLoadType.POINT;
-
-            // 7 pos (1)
             double pos = 0;
-            if (DA.GetData(7, ref pos))
+            if (da.GetData(7, ref pos))
               pos *= -1;
 
-            // set position and value
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
             beamLoad.BeamLoad.SetPosition(0, pos);
           }
           break;
 
         case FoldMode.Uniform:
-          if (_mode == FoldMode.Uniform)
-          {
+          if (_mode == FoldMode.Uniform) {
             beamLoad.BeamLoad.Type = BeamLoadType.UNIFORM;
-            // set value
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
           }
           break;
 
         case FoldMode.Linear:
-          if (_mode == FoldMode.Linear)
-          {
+          if (_mode == FoldMode.Linear) {
             beamLoad.BeamLoad.Type = BeamLoadType.LINEAR;
-
-            // 7 value (2)
-            ForcePerLength load2 = (ForcePerLength)Input.UnitNumber(this, DA, 7, ForcePerLengthUnit);
-
-            // set value
+            var load2 = (ForcePerLength)Input.UnitNumber(this, da, 7, _forcePerLengthUnit);
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
             beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
           }
           break;
 
         case FoldMode.Patch:
-          if (_mode == FoldMode.Patch)
-          {
+          if (_mode == FoldMode.Patch) {
             beamLoad.BeamLoad.Type = BeamLoadType.PATCH;
-
-            // 7 pos (1)
             double pos1 = 0;
-            if (DA.GetData(7, ref pos1))
+            if (da.GetData(7, ref pos1))
               pos1 *= -1;
-
-            // 9 pos (2)
             double pos2 = 1;
-            if (DA.GetData(9, ref pos2))
+            if (da.GetData(9, ref pos2))
               pos2 *= -1;
-
-            // 8 value (2)
-            ForcePerLength load2 = (ForcePerLength)Input.UnitNumber(this, DA, 8, ForcePerLengthUnit);
-
-            // set value
+            var load2 = (ForcePerLength)Input.UnitNumber(this, da, 8, _forcePerLengthUnit);
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
             beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
             beamLoad.BeamLoad.SetPosition(0, pos1);
@@ -231,24 +210,15 @@ namespace GsaGH.Components
           break;
 
         case FoldMode.Trilinear:
-          if (_mode == FoldMode.Trilinear)
-          {
+          if (_mode == FoldMode.Trilinear) {
             beamLoad.BeamLoad.Type = BeamLoadType.TRILINEAR;
-
-            // 7 pos (1)
             double pos1 = 0;
-            if (DA.GetData(7, ref pos1))
+            if (da.GetData(7, ref pos1))
               pos1 *= -1;
-
-            // 9 pos (2)
             double pos2 = 1;
-            if (DA.GetData(9, ref pos2))
+            if (da.GetData(9, ref pos2))
               pos2 *= -1;
-
-            // 8 value (2)
-            ForcePerLength load2 = (ForcePerLength)Input.UnitNumber(this, DA, 8, ForcePerLengthUnit);
-
-            // set value
+            var load2 = (ForcePerLength)Input.UnitNumber(this, da, 8, _forcePerLengthUnit);
             beamLoad.BeamLoad.SetValue(0, load1.NewtonsPerMeter);
             beamLoad.BeamLoad.SetValue(1, load2.NewtonsPerMeter);
             beamLoad.BeamLoad.SetPosition(0, pos1);
@@ -257,61 +227,58 @@ namespace GsaGH.Components
           break;
       }
 
-      GsaLoad gsaLoad = new GsaLoad(beamLoad);
-      DA.SetData(0, new GsaLoadGoo(gsaLoad));
+      var gsaLoad = new GsaLoad(beamLoad);
+      da.SetData(0, new GsaLoadGoo(gsaLoad));
     }
 
     #region Custom UI
-    private enum FoldMode
-    {
+    private enum FoldMode {
       Point,
       Uniform,
       Linear,
       Patch,
-      Trilinear
+      Trilinear,
     }
 
-    readonly List<string> _loadTypeOptions = new List<string>(new string[]
+    private readonly List<string> _loadTypeOptions = new List<string>(new[]
     {
       "Point",
       "Uniform",
       "Linear",
       "Patch",
-      "Trilinear"
+      "Trilinear",
     });
 
     private FoldMode _mode = FoldMode.Uniform;
-    private ForcePerLengthUnit ForcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
+    private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
 
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[]
+    public override void InitialiseDropdowns() {
+      SpacerDescriptions = new List<string>(new[]
         {
-          "Type", "Unit"
+          "Type",
+          "Unit",
         });
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+      DropDownItems = new List<List<string>>();
+      SelectedItems = new List<string>();
 
       // Type
-      this.DropDownItems.Add(this._loadTypeOptions);
-      this.SelectedItems.Add(this._mode.ToString());
+      DropDownItems.Add(_loadTypeOptions);
+      SelectedItems.Add(_mode.ToString());
 
       // ForcePerLength
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength));
-      this.SelectedItems.Add(ForcePerLength.GetAbbreviation((this.ForcePerLengthUnit)));
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength));
+      SelectedItems.Add(ForcePerLength.GetAbbreviation((_forcePerLengthUnit)));
 
-      this.IsInitialised = true;
+      IsInitialised = true;
     }
 
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
+    public override void SetSelected(int i, int j) {
+      SelectedItems[i] = DropDownItems[i][j];
 
       if (i == 0) // change is made to the first dropdown list
       {
-        switch (SelectedItems[0])
-        {
+        switch (SelectedItems[0]) {
           case "Point":
             Mode1Clicked();
             break;
@@ -330,15 +297,13 @@ namespace GsaGH.Components
         }
       }
       else
-        this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[1]);
+        _forcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[1]);
       base.UpdateUI();
     }
-    public override void UpdateUIFromSelectedItems()
-    {
-      this._mode = (FoldMode)Enum.Parse(typeof(FoldMode), this.SelectedItems[0]);
-      this.DuringLoad = true;
-      switch (SelectedItems[0])
-      {
+    public override void UpdateUIFromSelectedItems() {
+      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), SelectedItems[0]);
+      _duringLoad = true;
+      switch (SelectedItems[0]) {
         case "Point":
           Mode1Clicked();
           break;
@@ -355,190 +320,171 @@ namespace GsaGH.Components
           Mode5Clicked();
           break;
       }
-      this.DuringLoad = false;
-      this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[1]);
+      _duringLoad = false;
+      _forcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
-    public override void VariableParameterMaintenance()
-    {
-      string unitAbbreviation = ForcePerLength.GetAbbreviation(this.ForcePerLengthUnit);
+    public override void VariableParameterMaintenance() {
+      string unitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
 
-      if (_mode == FoldMode.Point)
-      {
-        Params.Input[6].NickName = "V";
-        Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
-        Params.Input[6].Description = "Load Value";
-        Params.Input[6].Access = GH_ParamAccess.item;
-        Params.Input[6].Optional = false;
+      switch (_mode) {
+        case FoldMode.Point:
+          Params.Input[6].NickName = "V";
+          Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
+          Params.Input[6].Description = "Load Value";
+          Params.Input[6].Access = GH_ParamAccess.item;
+          Params.Input[6].Optional = false;
 
-        Params.Input[7].NickName = "t";
-        Params.Input[7].Name = "Position (%)";
-        Params.Input[7].Description = "Line parameter where point load act (between 0.0 and 1.0)";
-        Params.Input[7].Access = GH_ParamAccess.item;
-        Params.Input[7].Optional = true;
-      }
+          Params.Input[7].NickName = "t";
+          Params.Input[7].Name = "Position (%)";
+          Params.Input[7].Description = "Line parameter where point load act (between 0.0 and 1.0)";
+          Params.Input[7].Access = GH_ParamAccess.item;
+          Params.Input[7].Optional = true;
+          break;
+        case FoldMode.Uniform:
+          Params.Input[6].NickName = "V";
+          Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
+          Params.Input[6].Description = "Load Value";
+          Params.Input[6].Access = GH_ParamAccess.item;
+          Params.Input[6].Optional = false;
+          break;
+        case FoldMode.Linear:
+          Params.Input[6].NickName = "V1";
+          Params.Input[6].Name = "Value Start [" + unitAbbreviation + "]";
+          Params.Input[6].Description = "Load Value at Beam Start";
+          Params.Input[6].Access = GH_ParamAccess.item;
+          Params.Input[6].Optional = true;
 
-      if (_mode == FoldMode.Uniform)
-      {
-        Params.Input[6].NickName = "V";
-        Params.Input[6].Name = "Value [" + unitAbbreviation + "]";
-        Params.Input[6].Description = "Load Value";
-        Params.Input[6].Access = GH_ParamAccess.item;
-        Params.Input[6].Optional = false;
-      }
+          Params.Input[7].NickName = "V2";
+          Params.Input[7].Name = "Value End [" + unitAbbreviation + "]";
+          Params.Input[7].Description = "Load Value at Beam End";
+          Params.Input[7].Access = GH_ParamAccess.item;
+          Params.Input[7].Optional = true;
+          break;
+        case FoldMode.Patch:
+          Params.Input[6].NickName = "V1";
+          Params.Input[6].Name = "Load t1 [" + unitAbbreviation + "]";
+          Params.Input[6].Description = "Load Value at Position 1";
+          Params.Input[6].Access = GH_ParamAccess.item;
+          Params.Input[6].Optional = true;
 
-      if (_mode == FoldMode.Linear)
-      {
-        Params.Input[6].NickName = "V1";
-        Params.Input[6].Name = "Value Start [" + unitAbbreviation + "]";
-        Params.Input[6].Description = "Load Value at Beam Start";
-        Params.Input[6].Access = GH_ParamAccess.item;
-        Params.Input[6].Optional = true;
+          Params.Input[7].NickName = "t1";
+          Params.Input[7].Name = "Position 1 [%]";
+          Params.Input[7].Description = "Line parameter where patch load begins (between 0.0 and 1.0, but less than t2)";
+          Params.Input[7].Access = GH_ParamAccess.item;
+          Params.Input[7].Optional = true;
 
-        Params.Input[7].NickName = "V2";
-        Params.Input[7].Name = "Value End [" + unitAbbreviation + "]";
-        Params.Input[7].Description = "Load Value at Beam End";
-        Params.Input[7].Access = GH_ParamAccess.item;
-        Params.Input[7].Optional = true;
-      }
+          Params.Input[8].NickName = "V2";
+          Params.Input[8].Name = "Load t2 [" + unitAbbreviation + "]";
+          Params.Input[8].Description = "Load Value at Position 2";
+          Params.Input[8].Access = GH_ParamAccess.item;
+          Params.Input[8].Optional = true;
 
-      if (_mode == FoldMode.Patch)
-      {
-        Params.Input[6].NickName = "V1";
-        Params.Input[6].Name = "Load t1 [" + unitAbbreviation + "]";
-        Params.Input[6].Description = "Load Value at Position 1";
-        Params.Input[6].Access = GH_ParamAccess.item;
-        Params.Input[6].Optional = true;
+          Params.Input[9].NickName = "t2";
+          Params.Input[9].Name = "Position 2 [%]";
+          Params.Input[9].Description = "Line parameter where patch load ends (between 0.0 and 1.0, but bigger than t1)";
+          Params.Input[9].Access = GH_ParamAccess.item;
+          Params.Input[9].Optional = true;
+          break;
+        case FoldMode.Trilinear:
+          Params.Input[6].NickName = "V1";
+          Params.Input[6].Name = "Load t1 [" + unitAbbreviation + "]";
+          Params.Input[6].Description = "Load Value at Position 1";
+          Params.Input[6].Access = GH_ParamAccess.item;
+          Params.Input[6].Optional = true;
 
-        Params.Input[7].NickName = "t1";
-        Params.Input[7].Name = "Position 1 [%]";
-        Params.Input[7].Description = "Line parameter where patch load begins (between 0.0 and 1.0, but less than t2)";
-        Params.Input[7].Access = GH_ParamAccess.item;
-        Params.Input[7].Optional = true;
+          Params.Input[7].NickName = "t1";
+          Params.Input[7].Name = "Position 1 [%]";
+          Params.Input[7].Description = "Line parameter where L1 applies (between 0.0 and 1.0, but less than t2)";
+          Params.Input[7].Access = GH_ParamAccess.item;
+          Params.Input[7].Optional = true;
 
-        Params.Input[8].NickName = "V2";
-        Params.Input[8].Name = "Load t2 [" + unitAbbreviation + "]";
-        Params.Input[8].Description = "Load Value at Position 2";
-        Params.Input[8].Access = GH_ParamAccess.item;
-        Params.Input[8].Optional = true;
+          Params.Input[8].NickName = "V2";
+          Params.Input[8].Name = "Load t2 [" + unitAbbreviation + "]";
+          Params.Input[8].Description = "Load Value at Position 2";
+          Params.Input[8].Access = GH_ParamAccess.item;
+          Params.Input[8].Optional = true;
 
-        Params.Input[9].NickName = "t2";
-        Params.Input[9].Name = "Position 2 [%]";
-        Params.Input[9].Description = "Line parameter where patch load ends (between 0.0 and 1.0, but bigger than t1)";
-        Params.Input[9].Access = GH_ParamAccess.item;
-        Params.Input[9].Optional = true;
-      }
-
-      if (_mode == FoldMode.Trilinear)
-      {
-        Params.Input[6].NickName = "V1";
-        Params.Input[6].Name = "Load t1 [" + unitAbbreviation + "]";
-        Params.Input[6].Description = "Load Value at Position 1";
-        Params.Input[6].Access = GH_ParamAccess.item;
-        Params.Input[6].Optional = true;
-
-        Params.Input[7].NickName = "t1";
-        Params.Input[7].Name = "Position 1 [%]";
-        Params.Input[7].Description = "Line parameter where L1 applies (between 0.0 and 1.0, but less than t2)";
-        Params.Input[7].Access = GH_ParamAccess.item;
-        Params.Input[7].Optional = true;
-
-        Params.Input[8].NickName = "V2";
-        Params.Input[8].Name = "Load t2 [" + unitAbbreviation + "]";
-        Params.Input[8].Description = "Load Value at Position 2";
-        Params.Input[8].Access = GH_ParamAccess.item;
-        Params.Input[8].Optional = true;
-
-        Params.Input[9].NickName = "t2";
-        Params.Input[9].Name = "Position 2 [%]";
-        Params.Input[9].Description = "Line parameter where L2 applies (between 0.0 and 1.0, but bigger than t1)";
-        Params.Input[9].Access = GH_ParamAccess.item;
-        Params.Input[9].Optional = true;
+          Params.Input[9].NickName = "t2";
+          Params.Input[9].Name = "Position 2 [%]";
+          Params.Input[9].Description = "Line parameter where L2 applies (between 0.0 and 1.0, but bigger than t1)";
+          Params.Input[9].Access = GH_ParamAccess.item;
+          Params.Input[9].Optional = true;
+          break;
       }
     }
     #endregion
 
     #region menu override
-    bool DuringLoad = false;
-    private void Mode1Clicked()
-    {
-      if (!this.DuringLoad && _mode == FoldMode.Point)
+    private bool _duringLoad;
+    private void Mode1Clicked() {
+      if (!_duringLoad && _mode == FoldMode.Point)
         return;
 
       RecordUndoEvent("Point Parameters");
       _mode = FoldMode.Point;
 
-      //remove input parameters
       while (Params.Input.Count > 7)
         Params.UnregisterInputParameter(Params.Input[7], true);
       Params.RegisterInputParam(new Param_GenericObject());
     }
-    private void Mode2Clicked()
-    {
-      if (!this.DuringLoad && _mode == FoldMode.Uniform)
+    private void Mode2Clicked() {
+      if (!_duringLoad && _mode == FoldMode.Uniform)
         return;
 
       RecordUndoEvent("Uniform Parameters");
       _mode = FoldMode.Uniform;
 
-      //remove input parameters
       while (Params.Input.Count > 7)
         Params.UnregisterInputParameter(Params.Input[7], true);
     }
-    private void Mode3Clicked()
-    {
-      if (!this.DuringLoad && _mode == FoldMode.Linear)
+    private void Mode3Clicked() {
+      if (!_duringLoad && _mode == FoldMode.Linear)
         return;
 
       RecordUndoEvent("Linear Parameters");
       _mode = FoldMode.Linear;
 
-      //remove input parameters
       while (Params.Input.Count > 7)
         Params.UnregisterInputParameter(Params.Input[7], true);
 
-      //add input parameters
       Params.RegisterInputParam(new Param_GenericObject());
     }
-    private void Mode4Clicked()
-    {
-      if (!this.DuringLoad && _mode == FoldMode.Patch)
+    private void Mode4Clicked() {
+      if (!_duringLoad && _mode == FoldMode.Patch)
         return;
 
       RecordUndoEvent("Patch Parameters");
       _mode = FoldMode.Patch;
 
-      if (_mode != FoldMode.Trilinear)
-      {
-        //remove input parameters
-        while (Params.Input.Count > 7)
-          Params.UnregisterInputParameter(Params.Input[7], true);
-
-        //add input parameters
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new Param_Number());
+      if (_mode == FoldMode.Trilinear) {
+        return;
       }
+
+      while (Params.Input.Count > 7)
+        Params.UnregisterInputParameter(Params.Input[7], true);
+
+      Params.RegisterInputParam(new Param_Number());
+      Params.RegisterInputParam(new Param_GenericObject());
+      Params.RegisterInputParam(new Param_Number());
     }
-    private void Mode5Clicked()
-    {
-      if (!this.DuringLoad && _mode == FoldMode.Trilinear)
+    private void Mode5Clicked() {
+      if (!_duringLoad && _mode == FoldMode.Trilinear)
         return;
 
       RecordUndoEvent("Trilinear Parameters");
       _mode = FoldMode.Trilinear;
 
-      if (_mode != FoldMode.Patch)
-      {
-        //remove input parameters
-        while (Params.Input.Count > 7)
-          Params.UnregisterInputParameter(Params.Input[7], true);
-
-        //add input parameters
-        Params.RegisterInputParam(new Param_Number());
-        Params.RegisterInputParam(new Param_GenericObject());
-        Params.RegisterInputParam(new Param_Number());
+      if (_mode == FoldMode.Patch) {
+        return;
       }
+
+      while (Params.Input.Count > 7)
+        Params.UnregisterInputParameter(Params.Input[7], true);
+
+      Params.RegisterInputParam(new Param_Number());
+      Params.RegisterInputParam(new Param_GenericObject());
+      Params.RegisterInputParam(new Param_Number());
     }
     #endregion
   }

@@ -8,27 +8,25 @@ using OasysGH;
 using OasysGH.Components;
 using Rhino.Geometry;
 
-namespace GsaGH.Components
-{
-    public class CreateGravityLoad : GH_OasysComponent
-  {
+namespace GsaGH.Components {
+  public class CreateGravityLoad : GH_OasysComponent {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("f9099874-92fa-4608-b4ed-a788df85a407");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GravityLoad;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.GravityLoad;
 
     public CreateGravityLoad() : base("Create Gravity Load",
       "GravityLoad",
       "Create GSA Gravity Load",
       CategoryName.Name(),
-      SubCategoryName.Cat3())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
+      SubCategoryName.Cat3()) {
+        Hidden = true;
+    } // sets the initial state of the component to hidden
     #endregion
 
     #region input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddIntegerParameter("Load case", "LC", "Load case number (by default 1)", GH_ParamAccess.item, 1);
       pManager.AddGenericParameter("Element list", "El", "Properties, Elements or Members to apply load to; either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string." + Environment.NewLine +
           "Text string with Element list should take the form:" + Environment.NewLine +
@@ -41,108 +39,103 @@ namespace GsaGH.Components
       pManager[2].Optional = true;
       pManager[3].Optional = true;
     }
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaLoadParameter(), "Gravity load", "Ld", "GSA Gravity Load", GH_ParamAccess.item);
     }
     #endregion
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      GsaGravityLoad gravityLoad = new GsaGravityLoad();
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var gravityLoad = new GsaGravityLoad();
 
       //Load case
       int lc = 1;
-      GH_Integer gh_lc = new GH_Integer();
-      if (DA.GetData(0, ref gh_lc))
-        GH_Convert.ToInt32(gh_lc, out lc, GH_Conversion.Both);
+      var ghLc = new GH_Integer();
+      if (da.GetData(0, ref ghLc))
+        GH_Convert.ToInt32(ghLc, out lc, GH_Conversion.Both);
       gravityLoad.GravityLoad.Case = lc;
 
       // element/member list
-      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-      if (DA.GetData(1, ref gh_typ))
-      {
+      var ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(1, ref ghTyp)) {
         gravityLoad.GravityLoad.Elements = "";
-        if (gh_typ.Value is GsaElement1dGoo)
-        {
-          GsaElement1dGoo goo = (GsaElement1dGoo)gh_typ.Value;
+        if (ghTyp.Value is GsaElement1dGoo) {
+          var goo = (GsaElement1dGoo)ghTyp.Value;
           gravityLoad.RefObjectGuid = goo.Value.Guid;
           gravityLoad.ReferenceType = ReferenceType.Element;
         }
-        if (gh_typ.Value is GsaElement2dGoo)
-        {
-          GsaElement2dGoo goo = (GsaElement2dGoo)gh_typ.Value;
-          gravityLoad.RefObjectGuid = goo.Value.Guid;
-          gravityLoad.ReferenceType = ReferenceType.Element;
+        switch (ghTyp.Value) {
+          case GsaElement2dGoo value: {
+              gravityLoad.RefObjectGuid = value.Value.Guid;
+              gravityLoad.ReferenceType = ReferenceType.Element;
+              break;
+            }
+          case GsaMember1dGoo value: {
+              gravityLoad.RefObjectGuid = value.Value.Guid;
+              gravityLoad.ReferenceType = ReferenceType.Member;
+              this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
+          case GsaMember2dGoo value: {
+              gravityLoad.RefObjectGuid = value.Value.Guid;
+              gravityLoad.ReferenceType = ReferenceType.Member;
+              this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
+          case GsaMember3dGoo value: {
+              gravityLoad.RefObjectGuid = value.Value.Guid;
+              gravityLoad.ReferenceType = ReferenceType.Member;
+              this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+              break;
+            }
+          case GsaSectionGoo value: {
+              gravityLoad.RefObjectGuid = value.Value.Guid;
+              gravityLoad.ReferenceType = ReferenceType.Section;
+              break;
+            }
+          case GsaProp2dGoo value: {
+              gravityLoad.RefObjectGuid = value.Value.Guid;
+              gravityLoad.ReferenceType = ReferenceType.Prop2d;
+              break;
+            }
+          case GsaProp3dGoo value: {
+              gravityLoad.RefObjectGuid = value.Value.Guid;
+              gravityLoad.ReferenceType = ReferenceType.Prop3d;
+              break;
+            }
+          default: {
+              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both))
+                gravityLoad.GravityLoad.Elements = elemList;
+              break;
+            }
         }
-        else if (gh_typ.Value is GsaMember1dGoo)
-        {
-          GsaMember1dGoo goo = (GsaMember1dGoo)gh_typ.Value;
-          gravityLoad.RefObjectGuid = goo.Value.Guid;
-          gravityLoad.ReferenceType = ReferenceType.Member;
-          this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-        }
-        else if (gh_typ.Value is GsaMember2dGoo)
-        {
-          GsaMember2dGoo goo = (GsaMember2dGoo)gh_typ.Value;
-          gravityLoad.RefObjectGuid = goo.Value.Guid;
-          gravityLoad.ReferenceType = ReferenceType.Member;
-          this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-        }
-        else if (gh_typ.Value is GsaMember3dGoo)
-        {
-          GsaMember3dGoo goo = (GsaMember3dGoo)gh_typ.Value;
-          gravityLoad.RefObjectGuid = goo.Value.Guid;
-          gravityLoad.ReferenceType = ReferenceType.Member;
-          this.AddRuntimeRemark("Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements. If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
-        }
-        else if (gh_typ.Value is GsaSectionGoo)
-        {
-          GsaSectionGoo goo = (GsaSectionGoo)gh_typ.Value;
-          gravityLoad.RefObjectGuid = goo.Value.Guid;
-          gravityLoad.ReferenceType = ReferenceType.Section;
-        }
-        else if (gh_typ.Value is GsaProp2dGoo)
-        {
-          GsaProp2dGoo goo = (GsaProp2dGoo)gh_typ.Value;
-          gravityLoad.RefObjectGuid = goo.Value.Guid;
-          gravityLoad.ReferenceType = ReferenceType.Prop2d;
-        }
-        else if (gh_typ.Value is GsaProp3dGoo)
-        {
-          GsaProp3dGoo goo = (GsaProp3dGoo)gh_typ.Value;
-          gravityLoad.RefObjectGuid = goo.Value.Guid;
-          gravityLoad.ReferenceType = ReferenceType.Prop3d;
-        }
-        else if (GH_Convert.ToString(gh_typ.Value, out string elemList, GH_Conversion.Both))
-          gravityLoad.GravityLoad.Elements = elemList;
       }
       else
         gravityLoad.GravityLoad.Elements = "All";
 
       // 2 Name
-      string name = "";
-      GH_String gh_name = new GH_String();
-      if (DA.GetData(2, ref gh_name))
-      {
-        if (GH_Convert.ToString(gh_name, out name, GH_Conversion.Both))
+      var ghName = new GH_String();
+      if (da.GetData(2, ref ghName)) {
+        if (GH_Convert.ToString(ghName, out string name, GH_Conversion.Both))
           gravityLoad.GravityLoad.Name = name;
       }
 
       //factor
-      Vector3 factor = new Vector3();
-      Vector3d vect = new Vector3d(0, 0, -1);
-      GH_Vector gh_factor = new GH_Vector();
-      if (DA.GetData(3, ref gh_factor))
-        GH_Convert.ToVector3d(gh_factor, ref vect, GH_Conversion.Both);
-      factor.X = vect.X; factor.Y = vect.Y; factor.Z = vect.Z;
+      var vect = new Vector3d(0, 0, -1);
+      var ghFactor = new GH_Vector();
+      if (da.GetData(3, ref ghFactor))
+        GH_Convert.ToVector3d(ghFactor, ref vect, GH_Conversion.Both);
+      var factor = new Vector3() {
+        X = vect.X,
+        Y = vect.Y,
+        Z = vect.Z,
+      };
 
       if (vect.Z > 0)
         this.AddRuntimeRemark("Just a friendly note that your gravity vector is pointing upwards and that is not normal.");
 
       gravityLoad.GravityLoad.Factor = factor;
 
-      GsaLoad gsaLoad = new GsaLoad(gravityLoad);
-      DA.SetData(0, new GsaLoadGoo(gsaLoad));
+      var gsaLoad = new GsaLoad(gravityLoad);
+      da.SetData(0, new GsaLoadGoo(gsaLoad));
     }
   }
 }
