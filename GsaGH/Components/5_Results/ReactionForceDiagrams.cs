@@ -83,7 +83,7 @@ namespace GsaGH.Components
                                                           "Node list should take the form:" + Environment.NewLine +
                                                           " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
                                                           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-      pManager.AddNumberParameter("Scalar", "x:X", "Scale the result display size to a specific size. Autoscaling by default.", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Scalar", "x:X", "Scale the result vectors to a specific size. If left empty, automatic scaling based on model size and maximum result by load cases will be computed.", GH_ParamAccess.item);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
     }

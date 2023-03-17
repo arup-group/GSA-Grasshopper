@@ -183,7 +183,7 @@ namespace GsaGHTests
       {
         Name = "Scalar",
         NickName = "x:X",
-        Description = "Scale the result display size",
+        Description = "Scale the result vectors to a specific size. If left empty, automatic scaling based on model size and maximum result by load cases will be computed.",
         Access = GH_ParamAccess.item, 
         Optional = true
       };
