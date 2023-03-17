@@ -46,6 +46,7 @@ namespace GsaGHTests.CustomComponent
     [InlineData(typeof(NodeContourResults), true)]
     [InlineData(typeof(NodeDisplacement))]
     [InlineData(typeof(ReactionForce))]
+    [InlineData(typeof(ReactionForceDiagrams))]
     //[InlineData(typeof(SelectResults))] SelectResults depends on input model to populate dropdown
     [InlineData(typeof(SpringReactionForce))]
     [InlineData(typeof(TotalLoadsAndReactionResults))]

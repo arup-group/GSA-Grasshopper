@@ -122,14 +122,14 @@ namespace GsaGH.Components
           List<GsaResultsValues> vals = nodedisp.Item1;
           List<int> sortedIDs = nodedisp.Item2;
 
-          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 1 } : result.SelectedPermutationIDs);
+          List<int> permutations = (result.SelectedPermutationIds == null ? new List<int>() { 1 } : result.SelectedPermutationIds);
           if (permutations.Count == 1 && permutations[0] == -1)
             permutations = Enumerable.Range(1, vals.Count).ToList();
 
           // loop through all permutations (analysis case will just have one)
           foreach (int perm in permutations)
           {
-            GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm);
+            GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm);
 
             List<GH_UnitNumber> transX = new List<GH_UnitNumber>();
             List<GH_UnitNumber> transY = new List<GH_UnitNumber>();

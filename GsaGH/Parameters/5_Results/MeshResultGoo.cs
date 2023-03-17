@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysUnits;
 using Rhino.Geometry;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GsaGH.Parameters
 {
   public class MeshResultGoo : GH_GeometricGoo<Mesh>, IGH_PreviewData
   {
-    internal List<List<IQuantity>> ResultValues = new List<List<IQuantity>>();
-    internal List<List<Point3d>> Vertices = new List<List<Point3d>>();
+    internal List<List<IQuantity>> ResultValues;
+    internal List<List<Point3d>> Vertices;
+
     private List<Mesh> _tempMeshes = new List<Mesh>();
     private bool _finalised = false;
 
@@ -28,7 +29,7 @@ namespace GsaGH.Parameters
         if (!_finalised)
           Finalise();
 
-        Mesh m = new Mesh();
+        var m = new Mesh();
         Mesh x = Value;
 
         m.Vertices.AddVertices(x.Vertices.ToList());
@@ -36,29 +37,25 @@ namespace GsaGH.Parameters
 
         List<MeshNgon> ngons = x.GetNgonAndFacesEnumerable().ToList();
 
-        for (int i = 0; i < ngons.Count; i++)
+        foreach (var faceId in ngons.Select(ngon => ngon.FaceIndexList().Select(u => (int)u).ToList()).SelectMany(faceIndex => faceIndex))
         {
-          List<int> faceindex = ngons[i].FaceIndexList().Select(u => (int)u).ToList();
-          for (int j = 0; j < faceindex.Count; j++)
-          {
-            m.Faces.AddFace(x.Faces[faceindex[j]]);
-          }
+          m.Faces.AddFace(x.Faces[faceId]);
         }
         m.RebuildNormals();
         return m;
       }
     }
 
-    public void Add(Mesh temp_mesh, List<IQuantity> results, List<Point3d> vertices)
+    public void Add(Mesh tempMesh, List<IQuantity> results, List<Point3d> vertices)
     {
-      _tempMeshes.Add(temp_mesh);
+      _tempMeshes.Add(tempMesh);
       ResultValues.Add(results);
       Vertices.Add(vertices);
       _finalised = false;
     }
-    public void Add(List<Mesh> temp_mesh, List<List<IQuantity>> results, List<List<Point3d>> vertices)
+    public void Add(List<Mesh> tempMesh, List<List<IQuantity>> results, List<List<Point3d>> vertices)
     {
-      _tempMeshes.AddRange(temp_mesh);
+      _tempMeshes.AddRange(tempMesh);
       ResultValues.AddRange(results);
       Vertices.AddRange(vertices);
       Finalise();
@@ -74,30 +71,16 @@ namespace GsaGH.Parameters
       _finalised = true;
     }
 
-    public override string ToString()
-    {
-      return string.Format("MeshResult: V:{0:0}, F:{1:0}, R:{2:0}", Value.Vertices.Count, Value.Faces.Count, ResultValues.Count);
-    }
-    public override string TypeName
-    {
-      get { return "Result Mesh"; }
-    }
-    public override string TypeDescription
-    {
-      get { return "A GSA result mesh type."; }
-    }
+    public override string ToString() => $"MeshResult: V:{Value.Vertices.Count:0}, F:{Value.Faces.Count:0}, R:{ResultValues.Count:0}";
+    
+    public override string TypeName => "Result Mesh";
 
-    public override IGH_GeometricGoo DuplicateGeometry()
-    {
-      return new MeshResultGoo(Value, ResultValues, Vertices);
-    }
-    public override BoundingBox Boundingbox
-    {
-      get
-      {
-        return Value.GetBoundingBox(false);
-      }
-    }
+    public override string TypeDescription => "A GSA result mesh type.";
+
+    public override IGH_GeometricGoo DuplicateGeometry() => new MeshResultGoo(Value, ResultValues, Vertices);
+    
+    public override BoundingBox Boundingbox => Value.GetBoundingBox(false);
+
     public override BoundingBox GetBoundingBox(Transform xform)
     {
       Mesh m = Value;
@@ -108,13 +91,13 @@ namespace GsaGH.Parameters
     {
       Mesh m = Value.DuplicateMesh();
       m.Transform(xform);
-      List<List<Point3d>> vertices = new List<List<Point3d>>();
-      foreach (List<Point3d> vertex in this.Vertices) 
+      var vertices = new List<List<Point3d>>();
+      foreach (var vertex in this.Vertices) 
       {
-        List<Point3d> duplicates = new List<Point3d>();
-        foreach (Point3d point in vertex) 
+        var duplicates = new List<Point3d>();
+        foreach (var point in vertex) 
         { 
-          Point3d dup = new Point3d(point);
+          var dup = new Point3d(point);
           dup.Transform(xform);
           duplicates.Add(dup);
         }
@@ -127,13 +110,13 @@ namespace GsaGH.Parameters
     {
       Mesh m = Value.DuplicateMesh();
       xmorph.Morph(m);
-      List<List<Point3d>> vertices = new List<List<Point3d>>();
-      foreach (List<Point3d> vertex in this.Vertices)
+      var vertices = new List<List<Point3d>>();
+      foreach (var vertex in this.Vertices)
       {
-        List<Point3d> duplicates = new List<Point3d>();
-        foreach (Point3d point in vertex)
+        var duplicates = new List<Point3d>();
+        foreach (var point in vertex)
         {
-          Point3d dup = new Point3d(point);
+          var dup = new Point3d(point);
           duplicates.Add(xmorph.MorphPoint(dup));
         }
         vertices.Add(duplicates);
@@ -141,10 +124,8 @@ namespace GsaGH.Parameters
       return new MeshResultGoo(m, ResultValues, Vertices);
     }
 
-    public override object ScriptVariable()
-    {
-      return Value;
-    }
+    public override object ScriptVariable() => Value;
+    
     public override bool CastTo<TQ>(out TQ target)
     {
       if (typeof(TQ).IsAssignableFrom(typeof(Mesh)))
@@ -184,28 +165,24 @@ namespace GsaGH.Parameters
       }
 
       Mesh m = new Mesh();
-      if (GH_Convert.ToMesh(source, ref m, GH_Conversion.Both))
-      {
-        Value = m;
-        return true;
-      }
-
-      return false;
+      if (!GH_Convert.ToMesh(source, ref m, GH_Conversion.Both)) return false;
+      
+      Value = m;
+      
+      return true;
     }
 
-    public BoundingBox ClippingBox
-    {
-      get { return Boundingbox; }
-    }
+    public BoundingBox ClippingBox => Boundingbox;
+
     public void DrawViewportWires(GH_PreviewWireArgs args)
     {
       if (Value == null) { return; }
       if (Grasshopper.CentralSettings.PreviewMeshEdges == false) { return; }
 
-      if (args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0)) // this is a workaround to change colour between selected and not
-        args.Pipeline.DrawMeshWires(Value, Helpers.Graphics.Colours.Element2dEdge, 1);
-      else
-        args.Pipeline.DrawMeshWires(Value, Helpers.Graphics.Colours.Element2dEdgeSelected, 1);
+      args.Pipeline.DrawMeshWires(Value,
+        args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
+          ? Helpers.Graphics.Colours.Element2dEdge
+          : Helpers.Graphics.Colours.Element2dEdgeSelected, 1);
     }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args)

@@ -118,7 +118,7 @@ namespace GsaGH.Components
 
           List<GsaResultsValues> vals = result.Element2DDisplacementValues(elementlist, this.LengthUnit);
 
-          List<int> permutations = (result.SelectedPermutationIDs == null ? new List<int>() { 1 } : result.SelectedPermutationIDs);
+          List<int> permutations = (result.SelectedPermutationIds == null ? new List<int>() { 1 } : result.SelectedPermutationIds);
           if (permutations.Count == 1 && permutations[0] == -1)
             permutations = Enumerable.Range(1, vals.Count).ToList();
 
@@ -143,7 +143,7 @@ namespace GsaGH.Components
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
                   if (res.Count == 0) { continue; }
 
-                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
+                  GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm, elementID);
 
                   out_transX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.LengthUnit))), path); // use ToUnit to capture changes in dropdown
                   out_transY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.LengthUnit))), path);
@@ -160,7 +160,7 @@ namespace GsaGH.Components
                   int elementID = kvp.Key;
                   ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
 
-                  GH_Path path = new GH_Path(result.CaseID, result.SelectedPermutationIDs == null ? 0 : perm, elementID);
+                  GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm, elementID);
                   if (res.Count == 0) { continue; }
 
                   out_rotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)), path); // always use [rad] units

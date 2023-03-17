@@ -76,9 +76,6 @@ namespace GsaGH.Helpers.Import
         outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict), duplicateApiObjects));
       });
       return outNodes;
-
-      // use linq parallel
-      //return nDict.AsParallel().Select(node => new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
     }
     internal static ConcurrentDictionary<int, GsaNodeGoo> GetNodeDictionary(ReadOnlyDictionary<int, Node> nDict, LengthUnit unit, ReadOnlyDictionary<int, Axis> axDict = null)
     {
@@ -88,9 +85,6 @@ namespace GsaGH.Helpers.Import
         outNodes.TryAdd(node.Key, new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
       });
       return outNodes;
-
-      // use linq parallel
-      //return nDict.AsParallel().Select(node => new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)));
     }
 
     /// <summary>
@@ -155,18 +149,6 @@ namespace GsaGH.Helpers.Import
           new Vector3d(new Length(x, LengthUnit.Meter).As(modelUnit),
                       new Length(y, LengthUnit.Meter).As(modelUnit),
                       new Length(z, LengthUnit.Meter).As(modelUnit));
-    }
-    internal static Node UpdateNodePositionUnit(Node node, LengthUnit unit)
-    {
-      if (unit != LengthUnit.Meter) // convert from meter to input unit if not meter
-      {
-        Vector3 pos = new Vector3();
-        pos.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
-        pos.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
-        pos.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
-        node.Position = pos;
-      }
-      return node;
     }
   }
 }

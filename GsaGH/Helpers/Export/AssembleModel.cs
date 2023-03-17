@@ -41,7 +41,7 @@ namespace GsaGH.Helpers.Export
         List<GsaSection> sections, List<GsaProp2d> prop2Ds, List<GsaProp3d> prop3Ds,
         List<GsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
         List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
-        LengthUnit modelUnit, double toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner)
+        LengthUnit modelUnit, Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner)
     {
       // Set model to work on
       Model gsa = new Model();
@@ -115,9 +115,9 @@ namespace GsaGH.Helpers.Export
       int initialNodeCount = apiNodeDict.Keys.Count;
       if (createElementsFromMembers && apiMembers.Count > 0)
         gsa.CreateElementsFromMembers();
-      if (toleranceCoincidentNodes > 0)
+      if (toleranceCoincidentNodes.Value > 0)
       {
-        gsa.CollapseCoincidentNodes(toleranceCoincidentNodes);
+        gsa.CollapseCoincidentNodes(toleranceCoincidentNodes.Meters);
         
         // provide feedback to user if we have removed unreasonable amount of nodes
         if (owner != null)
@@ -125,9 +125,9 @@ namespace GsaGH.Helpers.Export
           try
           {
             double minMeshSize = apiMemDict.Values.Where(x => x.MeshSize != 0).Select(x => x.MeshSize).Min();
-            if (minMeshSize < toleranceCoincidentNodes)
+            if (minMeshSize < toleranceCoincidentNodes.Meters)
               owner.AddRuntimeWarning(
-                "The smallest mesh size (" + minMeshSize + ") is smaller than the set tolerance (" + toleranceCoincidentNodes + ")."
+                "The smallest mesh size (" + minMeshSize + ") is smaller than the set tolerance (" + toleranceCoincidentNodes.Meters + ")."
                 + System.Environment.NewLine + "This is likely to produce an undisarable mesh."
                 + System.Environment.NewLine + "Right-click the component to change the tolerance.");
           }
@@ -166,8 +166,8 @@ namespace GsaGH.Helpers.Export
           
           int elemCount = apiElemDict.Count;
           int memCount = apiMemDict.Count;
-          double warningSurvivalRate = elemCount > memCount ? 0.1 : 0.5;
-          double remarkSurvivalRate = elemCount > memCount ? 0.5 : 0.75;
+          double warningSurvivalRate = elemCount > memCount ? 0.05 : 0.2; // warning if >95% of nodes are removed for elements or >80% for members
+          double remarkSurvivalRate = elemCount > memCount ? 0.2 : 0.33; // remark if >80% of nodes are removed for elements or >66% for members
 
           if (newNodeCount == 1)
             owner.AddRuntimeWarning(
