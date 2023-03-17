@@ -126,8 +126,8 @@ namespace GsaGH.Components
       _reactionForceVectors = new ConcurrentDictionary<int, VectorResultGoo>();
       Parallel.ForEach(nodes, node =>
       {
-          var reactionForceVector = GenerateReactionForceVector(node, forceValues, scale);
-          if (reactionForceVector != null) _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
+        var reactionForceVector = GenerateReactionForceVector(node, forceValues, scale);
+        if (reactionForceVector != null) _reactionForceVectors.TryAdd(node.Key, reactionForceVector);
       });
 
       this.SetOutputs(dataAccess);
@@ -374,52 +374,43 @@ namespace GsaGH.Components
 
     private double ComputeScale(GsaResultsValues forceValues, BoundingBox bbox)
     {
-      double abs = 1;
+      var values = new List<double>(8);
       switch (_selectedDisplayValue)
       {
         case (DisplayValue.X):
-          abs = Math.Max(
-            forceValues.DmaxX.As(this._forceUnit),
-            Math.Abs(forceValues.DminX.As(this._forceUnit)));
-          break;
         case (DisplayValue.Y):
-          abs = Math.Max(
-            forceValues.DmaxY.As(this._forceUnit),
-            Math.Abs(forceValues.DminY.As(this._forceUnit)));
-          break;
         case (DisplayValue.Z):
-          abs = Math.Max(
-            forceValues.DmaxZ.As(this._forceUnit),
-            Math.Abs(forceValues.DminZ.As(this._forceUnit)));
-          break;
         case (DisplayValue.ResXYZ):
-          abs = Math.Max(
+          values = new List<double>() {
+            forceValues.DmaxX.As(this._forceUnit),
+            forceValues.DmaxY.As(this._forceUnit),
+            forceValues.DmaxZ.As(this._forceUnit),
             forceValues.DmaxXyz.As(this._forceUnit),
-            Math.Abs(forceValues.DminXyz.As(this._forceUnit)));
+            forceValues.DminXyz.As(this._forceUnit),
+            Math.Abs(forceValues.DminX.As(this._forceUnit)),
+            Math.Abs(forceValues.DminY.As(this._forceUnit)),
+            Math.Abs(forceValues.DminZ.As(this._forceUnit))
+          };
           break;
+
         case (DisplayValue.XX):
-          abs = Math.Max(
-            forceValues.DmaxXx.As(this._forceUnit),
-            Math.Abs(forceValues.DminXx.As(this._forceUnit)));
-          break;
         case (DisplayValue.YY):
-          abs = Math.Max(
-            forceValues.DmaxYy.As(this._forceUnit),
-            Math.Abs(forceValues.DminYy.As(this._forceUnit)));
-          break;
         case (DisplayValue.ZZ):
-          abs = Math.Max(
-            forceValues.DmaxZz.As(this._forceUnit),
-            Math.Abs(forceValues.DminZz.As(this._forceUnit)));
-          break;
         case (DisplayValue.ResXXYYZZ):
-          abs = Math.Max(
-            forceValues.DmaxXxyyzz.As(this._forceUnit),
-            Math.Abs(forceValues.DminXxyyzz.As(this._forceUnit)));
+          values = new List<double>() {
+            forceValues.DmaxXx.As(this._momentUnit),
+            forceValues.DmaxYy.As(this._momentUnit),
+            forceValues.DmaxZz.As(this._momentUnit),
+            forceValues.DmaxXxyyzz.As(this._momentUnit),
+            forceValues.DminXxyyzz.As(this._momentUnit),
+            Math.Abs(forceValues.DminXx.As(this._momentUnit)),
+            Math.Abs(forceValues.DminYy.As(this._momentUnit)),
+            Math.Abs(forceValues.DminZz.As(this._momentUnit))
+          };
           break;
       }
       double factor = 0.000001;
-      return bbox.Area * abs * factor;
+      return bbox.Area * values.Max() * factor;
     }
 
     private VectorResultGoo GenerateReactionForceVector(KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale)
