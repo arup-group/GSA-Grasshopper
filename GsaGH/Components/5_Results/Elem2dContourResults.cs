@@ -1121,7 +1121,7 @@ namespace GsaGH.Components {
       writer.SetDouble("valMax", _maxValue);
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
-      writer.SetBoolean("_legend", _showLegend);
+      writer.SetBoolean("legend", _showLegend);
       writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("force", ForcePerLength.GetAbbreviation(_forcePerLengthUnit));
@@ -1138,7 +1138,7 @@ namespace GsaGH.Components {
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
-      _showLegend = reader.GetBoolean("_legend");
+      _showLegend = reader.GetBoolean("legend");
 
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));

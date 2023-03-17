@@ -30,7 +30,7 @@ namespace GsaGHTests.CustomComponent
     [InlineData(typeof(CreateGridSurface))]
     [InlineData(typeof(CreateNodeLoad))]
     [InlineData(typeof(LoadProp))]
-    [InlineData(typeof(GH_Analyse), true)]
+    [InlineData(typeof(GhAnalyse), true)]
     [InlineData(typeof(CreateAnalysisTask))]
     [InlineData(typeof(BeamDisplacement), true)]
     [InlineData(typeof(BeamForces))]
@@ -53,7 +53,7 @@ namespace GsaGHTests.CustomComponent
     public void DropDownComponentTest(Type t, bool ignoreSpacerDescriptionCount = false)
     {
       // ignore space description count for components that has more UI features than just the dropdown
-      GH_OasysDropDownComponent comp = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
+      var comp = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       OasysDropDownComponentTestHelper.ChangeDropDownTest(comp, ignoreSpacerDescriptionCount);
     }
   }
