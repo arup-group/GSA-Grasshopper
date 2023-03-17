@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel.Types.Transforms;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -82,7 +83,7 @@ namespace GsaGH.Components
                                                           "Node list should take the form:" + Environment.NewLine +
                                                           " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
                                                           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-      pManager.AddNumberParameter("Scalar", "x:X", "Scale the result display size", GH_ParamAccess.item, 1);
+      pManager.AddNumberParameter("Scalar", "x:X", "Scale the result display size to a specific size. Autoscaling by default.", GH_ParamAccess.item);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
     }
@@ -105,7 +106,6 @@ namespace GsaGH.Components
 
       gsaResult = (ghObject.Value as GsaResultGoo).Value;
       string filteredNodes = GetNodeFilters(dataAccess);
-      double scale = GetScalarValue(dataAccess);
 
       // get stuff for drawing
       Tuple<List<GsaResultsValues>, List<int>> reactionForceValues = gsaResult.NodeReactionForceValues(filteredNodes, this._forceUnit, this._momentUnit);
@@ -117,6 +117,11 @@ namespace GsaGH.Components
       // Get nodes for point location and restraint check in case of reaction force
       ReadOnlyDictionary<int, Node> gsaFilteredNodes = gsaResult.Model.Model.Nodes(filteredNodes);
       ConcurrentDictionary<int, GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit);
+
+      // get scale or compute autoscale
+      double scale = 1;
+      if (!dataAccess.GetData(2, ref scale))
+        scale = ComputeScale(forceValues, gsaResult.Model.BoundingBox);
 
       _reactionForceVectors = new ConcurrentDictionary<int, VectorResultGoo>();
       Parallel.ForEach(nodes, node =>
@@ -312,13 +317,6 @@ namespace GsaGH.Components
     #endregion
 
     #region Inputs ReactionForceVector methods
-    private static double GetScalarValue(IGH_DataAccess dataAccess)
-    {
-      var ghScale = new GH_Number();
-      dataAccess.GetData(2, ref ghScale);
-      return GH_Convert.ToDouble(ghScale, out var scale, GH_Conversion.Both) ? scale : 0.0d;
-    }
-
     private static string GetNodeFilters(IGH_DataAccess dataAccess)
     {
       var nodeList = string.Empty;
@@ -372,6 +370,56 @@ namespace GsaGH.Components
       );
 
       return lengthUnit;
+    }
+
+    private double ComputeScale(GsaResultsValues forceValues, BoundingBox bbox)
+    {
+      double abs = 1;
+      switch (_selectedDisplayValue)
+      {
+        case (DisplayValue.X):
+          abs = Math.Max(
+            forceValues.DmaxX.As(this._forceUnit),
+            Math.Abs(forceValues.DminX.As(this._forceUnit)));
+          break;
+        case (DisplayValue.Y):
+          abs = Math.Max(
+            forceValues.DmaxY.As(this._forceUnit),
+            Math.Abs(forceValues.DminY.As(this._forceUnit)));
+          break;
+        case (DisplayValue.Z):
+          abs = Math.Max(
+            forceValues.DmaxZ.As(this._forceUnit),
+            Math.Abs(forceValues.DminZ.As(this._forceUnit)));
+          break;
+        case (DisplayValue.ResXYZ):
+          abs = Math.Max(
+            forceValues.DmaxXyz.As(this._forceUnit),
+            Math.Abs(forceValues.DminXyz.As(this._forceUnit)));
+          break;
+        case (DisplayValue.XX):
+          abs = Math.Max(
+            forceValues.DmaxXx.As(this._forceUnit),
+            Math.Abs(forceValues.DminXx.As(this._forceUnit)));
+          break;
+        case (DisplayValue.YY):
+          abs = Math.Max(
+            forceValues.DmaxYy.As(this._forceUnit),
+            Math.Abs(forceValues.DminYy.As(this._forceUnit)));
+          break;
+        case (DisplayValue.ZZ):
+          abs = Math.Max(
+            forceValues.DmaxZz.As(this._forceUnit),
+            Math.Abs(forceValues.DminZz.As(this._forceUnit)));
+          break;
+        case (DisplayValue.ResXXYYZZ):
+          abs = Math.Max(
+            forceValues.DmaxXxyyzz.As(this._forceUnit),
+            Math.Abs(forceValues.DminXxyyzz.As(this._forceUnit)));
+          break;
+      }
+      double factor = 0.000001;
+      return bbox.Area * abs * factor;
     }
 
     private VectorResultGoo GenerateReactionForceVector(KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale)
