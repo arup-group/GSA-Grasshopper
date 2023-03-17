@@ -1,25 +1,27 @@
-﻿using Grasshopper.Kernel;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using OasysUnits;
 using Rhino.Geometry;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GsaGH.Parameters
 {
   public class MeshResultGoo : GH_GeometricGoo<Mesh>, IGH_PreviewData
   {
-    internal List<List<IQuantity>> ResultValues;
-    internal List<List<Point3d>> Vertices;
-
+    public readonly List<List<IQuantity>> ResultValues = new List<List<IQuantity>>();
+    public readonly List<List<Point3d>> Vertices = new List<List<Point3d>>();
+    public readonly List<int> ElementIds = new List<int>();
     private List<Mesh> _tempMeshes = new List<Mesh>();
     private bool _finalised = false;
 
-    public MeshResultGoo(Mesh mesh, List<List<IQuantity>> results, List<List<Point3d>> vertices)
+    public MeshResultGoo(Mesh mesh, List<List<IQuantity>> results, List<List<Point3d>> vertices, List<int> ids)
     : base(mesh)
     {
       this.ResultValues = results;
       this.Vertices = vertices;
+      this.ElementIds = ids;
     }
 
     public Mesh ValidMesh
@@ -46,18 +48,20 @@ namespace GsaGH.Parameters
       }
     }
 
-    public void Add(Mesh tempMesh, List<IQuantity> results, List<Point3d> vertices)
+    public void Add(Mesh tempMesh, List<IQuantity> results, List<Point3d> vertices, int id)
     {
       _tempMeshes.Add(tempMesh);
       ResultValues.Add(results);
       Vertices.Add(vertices);
+      ElementIds.Add(id);
       _finalised = false;
     }
-    public void Add(List<Mesh> tempMesh, List<List<IQuantity>> results, List<List<Point3d>> vertices)
+    public void Add(List<Mesh> tempMesh, List<List<IQuantity>> results, List<List<Point3d>> vertices, List<int> ids)
     {
       _tempMeshes.AddRange(tempMesh);
       ResultValues.AddRange(results);
       Vertices.AddRange(vertices);
+      ElementIds.AddRange(ids);
       Finalise();
     }
     public void Finalise()
@@ -77,7 +81,7 @@ namespace GsaGH.Parameters
 
     public override string TypeDescription => "A GSA result mesh type.";
 
-    public override IGH_GeometricGoo DuplicateGeometry() => new MeshResultGoo(Value, ResultValues, Vertices);
+    public override IGH_GeometricGoo DuplicateGeometry() => new MeshResultGoo(Value, ResultValues, Vertices, ElementIds);
     
     public override BoundingBox Boundingbox => Value.GetBoundingBox(false);
 
@@ -104,7 +108,7 @@ namespace GsaGH.Parameters
         vertices.Add(duplicates);
       }
 
-      return new MeshResultGoo(m, this.ResultValues, vertices);
+      return new MeshResultGoo(m, this.ResultValues, vertices, ElementIds);
     }
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
@@ -121,7 +125,7 @@ namespace GsaGH.Parameters
         }
         vertices.Add(duplicates);
       }
-      return new MeshResultGoo(m, ResultValues, Vertices);
+      return new MeshResultGoo(m, ResultValues, Vertices, ElementIds);
     }
 
     public override object ScriptVariable() => Value;
@@ -165,11 +169,13 @@ namespace GsaGH.Parameters
       }
 
       Mesh m = new Mesh();
-      if (!GH_Convert.ToMesh(source, ref m, GH_Conversion.Both)) return false;
-      
-      Value = m;
-      
-      return true;
+      if (GH_Convert.ToMesh(source, ref m, GH_Conversion.Both))
+      {
+        Value = m;
+        return true;
+      }
+
+      return false;
     }
 
     public BoundingBox ClippingBox => Boundingbox;
@@ -179,10 +185,17 @@ namespace GsaGH.Parameters
       if (Value == null) { return; }
       if (Grasshopper.CentralSettings.PreviewMeshEdges == false) { return; }
 
-      args.Pipeline.DrawMeshWires(Value,
-        args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
+      Color color = args.Color == System.Drawing.Color.FromArgb(255, 150, 0, 0) // this is a workaround to change colour between selected and not
           ? Helpers.Graphics.Colours.Element2dEdge
-          : Helpers.Graphics.Colours.Element2dEdgeSelected, 1);
+          : Helpers.Graphics.Colours.Element2dEdgeSelected;
+
+      if (Value.Ngons.Count > 0)
+      {
+        for(int i = 0; i < Value.TopologyEdges.Count; i++)
+          args.Pipeline.DrawLine(Value.TopologyEdges.EdgeLine(i), color, 1);
+      }
+
+      args.Pipeline.DrawMeshWires(Value, color, 1);
     }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args)

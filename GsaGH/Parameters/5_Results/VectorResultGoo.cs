@@ -13,8 +13,9 @@ namespace GsaGH.Parameters
   public class VectorResultGoo : GH_GeometricGoo<GH_Vector>, IGH_PreviewData
   {
     public readonly Point3d StartingPoint;
-    public Vector3d Direction { get; private set; }
     public readonly IQuantity ForceValue;
+    public readonly int NodeId;
+    public Vector3d Direction { get; private set; }
 
     private Line _reactionForceLine;
     private Color _color = Helpers.Graphics.Colours.GsaDarkPurple;
@@ -25,12 +26,12 @@ namespace GsaGH.Parameters
     /// Goo wrapper GH_Vector class for reaction force vectors.
     /// Default color: Gsa_Purple
     /// </summary>
-    public VectorResultGoo(Point3d startingPoint, Vector3d direction, IQuantity forceValue)
+    public VectorResultGoo(Point3d startingPoint, Vector3d direction, IQuantity forceValue, int id)
     {
       StartingPoint = startingPoint == Point3d.Unset ? Point3d.Origin : startingPoint;
       Direction = direction == Vector3d.Unset ? Vector3d.Zero : direction;
       ForceValue = forceValue;
-
+      NodeId = id;
       _reactionForceLine = this.CreateReactionForceLine(Direction);
       Value = this.GetGhVector();
     }
@@ -42,7 +43,7 @@ namespace GsaGH.Parameters
     public override string TypeDescription => "A GSA result vector3d type.";
 
     public override IGH_GeometricGoo DuplicateGeometry() =>
-      new VectorResultGoo(StartingPoint, Direction, ForceValue);
+      new VectorResultGoo(StartingPoint, Direction, ForceValue, NodeId);
 
     public override BoundingBox Boundingbox => new BoundingBox( new List<Point3d>(){ _reactionForceLine.From, _reactionForceLine.To});
 
@@ -56,17 +57,15 @@ namespace GsaGH.Parameters
 
     public override IGH_GeometricGoo Transform(Transform xform)
     {
-      Direction.Transform(xform);
-      this._reactionForceLine = CreateReactionForceLine(Direction);
-      return this;
+      var sPoint = StartingPoint;
+      sPoint.Transform(xform);
+      return new VectorResultGoo(sPoint, Direction, ForceValue, NodeId);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph)
     {
-      var start = xmorph.MorphPoint(_reactionForceLine.From);
-      var end = xmorph.MorphPoint(_reactionForceLine.To);
-      _reactionForceLine = new Line(start, end);
-      return this;
+      var sPoint = xmorph.MorphPoint(StartingPoint);
+      return new VectorResultGoo(sPoint, Direction, ForceValue, NodeId);
     }
 
     public override object ScriptVariable() => Value;

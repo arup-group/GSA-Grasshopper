@@ -414,7 +414,7 @@ namespace GsaGH.Components
                     Math.Max(2, (float)(Math.Abs(t.Value) / Math.Abs(dmin) * scale));
 
                 // add our special resultpoint to the list of points
-                pts[nodeID] = new PointResultGoo(def, t, valcol, size);
+                pts[nodeID] = new PointResultGoo(def, t, valcol, size, nodeID);
               }
             }
           }
