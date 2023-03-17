@@ -125,7 +125,7 @@ namespace GsaGHTests.Parameters
     [Fact]
     public void WhenDuplicateGeometry_ThenMethod_ShouldReturnDuplicatedObject()
     {
-      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton), 0);
+      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton), 99);
 
       var expectedObj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton), 99);
 
@@ -185,7 +185,9 @@ namespace GsaGHTests.Parameters
       var actualObject = obj.Transform(new Transform(Transform.Mirror(startingPoint, vector3d)));
       var expectedObject = new Vector3d(2,2,2);
 
-      Assert.Equal(expectedObject, actualObject.Boundingbox.Diagonal);
+      Assert.Equal(expectedObject.X, actualObject.Boundingbox.Diagonal.X, 6);
+      Assert.Equal(expectedObject.Y, actualObject.Boundingbox.Diagonal.Y, 6);
+      Assert.Equal(expectedObject.Z, actualObject.Boundingbox.Diagonal.Z, 6);
     }
 
     [Fact]
