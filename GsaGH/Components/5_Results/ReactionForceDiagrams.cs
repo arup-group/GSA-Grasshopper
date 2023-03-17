@@ -477,7 +477,7 @@ namespace GsaGH.Components
           break;
       }
 
-      var vectorResult = new VectorResultGoo(node.Value.Value.Point, direction, forceValue);
+      var vectorResult = new VectorResultGoo(node.Value.Value.Point, direction, forceValue, nodeId);
 
       if (isForce) return vectorResult;
 

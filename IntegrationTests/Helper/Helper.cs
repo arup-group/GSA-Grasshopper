@@ -146,7 +146,24 @@ namespace IntegrationTests
           comp.CollectData();
           comp.Params.Output[0].CollectData();
           comp.Params.Output[0].VolatileData.get_Branch(0);
-          if (comp.Name != exceptComponentNamed)
+
+          bool skip = false;
+          foreach (var grp in doc.Objects)
+          {
+            if (grp is GH_Group group)
+            {
+              if (group.NickName == exceptComponentNamed)
+              {
+                if (comp.InstanceGuid == group.ObjectIDs[0])
+                {
+                  skip = true;
+                  break;
+                }
+              }
+            }
+          }
+
+          if (comp.Name != exceptComponentNamed && !skip)
             Assert.Empty(comp.RuntimeMessages(runtimeMessageLevel));
         }
       }

@@ -334,7 +334,7 @@ namespace GsaGH.Components
         }
 
         #region create mesh
-        MeshResultGoo resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(), new List<List<Point3d>>());
+        MeshResultGoo resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(), new List<List<Point3d>>(), new List<int>());
         ConcurrentDictionary<int, Mesh> meshes = new ConcurrentDictionary<int, Mesh>();
         meshes.AsParallel().AsOrdered();
         ConcurrentDictionary<int, List<IQuantity>> values = new ConcurrentDictionary<int, List<IQuantity>>();
@@ -475,11 +475,10 @@ namespace GsaGH.Components
             verticies[key] = tempmesh.Vertices.Select(pt => (Point3d)pt).ToList();
           meshes[key] = tempmesh;
           values[key] = vals;
-
           #endregion
         });
         #endregion
-        resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList());
+        resultMeshes.Add(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(), meshes.Keys.ToList());
 
         #region Legend
         // ### Legend ###

@@ -458,7 +458,7 @@ namespace GsaGH.Components
               lock (resultLines)
               {
                 resultLines.Add(
-                        new LineResultGoo(segmentline, t1, t2, valcol1, valcol2, size1, size2),
+                        new LineResultGoo(segmentline, t1, t2, valcol1, valcol2, size1, size2, key),
                         new GH_Path(key));
               }
             }

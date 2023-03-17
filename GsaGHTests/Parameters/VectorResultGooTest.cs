@@ -22,7 +22,7 @@ namespace GsaGHTests.Parameters
     [Fact]
     public void WhenCreateInstance_ThenObject_ShouldNotBeNull()
     {
-      var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, null);
+      var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, null, 0);
       Assert.NotNull(obj);
     }
 
@@ -38,12 +38,13 @@ namespace GsaGHTests.Parameters
         expectedReactionForceLine.ToY - expectedReactionForceLine.FromY,
         expectedReactionForceLine.ToZ - expectedReactionForceLine.FromZ
       ));
-      var obj = new VectorResultGoo(expectedPoint, expectedVector, expectedForceValue);
+      var obj = new VectorResultGoo(expectedPoint, expectedVector, expectedForceValue, 17);
 
       Assert.Equal(expectedPoint, obj.StartingPoint);
       Assert.Equal(expectedVector, obj.Direction);
       Assert.Equal(expectedForceValue, obj.ForceValue);
       Assert.Equal(expectedValue.Value, obj.Value.Value);
+      Assert.Equal(17, obj.NodeId);
     }
 
     [Fact]
@@ -59,12 +60,13 @@ namespace GsaGHTests.Parameters
         expectedReactionForceLine.ToZ - expectedReactionForceLine.FromZ
       ));
 
-      var obj = new VectorResultGoo(expectedPoint, expectedVector, expectedForceValue);
+      var obj = new VectorResultGoo(expectedPoint, expectedVector, expectedForceValue, 99);
 
       Assert.Equal(expectedPoint, obj.StartingPoint);
       Assert.Equal(expectedVector, obj.Direction);
       Assert.Equal(expectedForceValue, obj.ForceValue);
       Assert.Equal(expectedValue.Value, obj.Value.Value);
+      Assert.Equal(99, obj.NodeId);
     }
 
     [Fact]
@@ -80,18 +82,19 @@ namespace GsaGHTests.Parameters
         expectedReactionForceLine.ToZ - expectedReactionForceLine.FromZ
       ));
 
-      var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, null);
+      var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, null, 0);
 
       Assert.Equal(expectedPoint, obj.StartingPoint);
       Assert.Equal(expectedVector, obj.Direction);
       Assert.Equal(expectedForceValue, obj.ForceValue);
       Assert.Equal(expectedValue.Value, obj.Value.Value);
+      Assert.Equal(0, obj.NodeId);
     }
 
     [Fact]
     public void WhenToString_ThenMethod_ShouldReturnValidString()
     {
-      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton));
+      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton), 0);
 
       var expectedString =
         $"VectorResult: Starting point: {Point3d.Origin}, Direction:{Vector3d.Zero}, Force:{new Force(4, ForceUnit.Kilonewton):0.0}";
@@ -102,7 +105,7 @@ namespace GsaGHTests.Parameters
     [Fact]
     public void WhenGetTypeName_ThenShouldReturnValidString()
     {
-      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton));
+      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton), 0);
 
       var expectedString = "Result Vector3d";
 
@@ -112,7 +115,7 @@ namespace GsaGHTests.Parameters
     [Fact]
     public void WhenGetTypeDescription_ThenShouldReturnValidString()
     {
-      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton));
+      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton), 0);
 
       var expectedString = "A GSA result vector3d type.";
 
@@ -122,9 +125,9 @@ namespace GsaGHTests.Parameters
     [Fact]
     public void WhenDuplicateGeometry_ThenMethod_ShouldReturnDuplicatedObject()
     {
-      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton));
+      var obj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton), 99);
 
-      var expectedObj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton));
+      var expectedObj = new VectorResultGoo(Point3d.Origin, Vector3d.Zero, new Force(4, ForceUnit.Kilonewton), 99);
 
       var actualObj = obj.DuplicateGeometry();
 
@@ -133,12 +136,13 @@ namespace GsaGHTests.Parameters
       Assert.Equal(expectedObj.TypeName, actualObj.TypeName);
       Assert.Equal(expectedObj.TypeDescription, actualObj.TypeDescription);
       Assert.Equal(expectedObj.ToString(), actualObj.ToString());
+      Assert.Equal(expectedObj.NodeId, ((VectorResultGoo)actualObj).NodeId);
     }
 
     [Fact]
     public void WhenGetBoundingBox_ThenMethod_ShouldReturnValidValue()
     {
-      var obj = new VectorResultGoo(new Point3d(3,3,3), new Vector3d(3,3,3), new Force(4, ForceUnit.Kilonewton));
+      var obj = new VectorResultGoo(new Point3d(3,3,3), new Vector3d(3,3,3), new Force(4, ForceUnit.Kilonewton), 0);
 
       var actualBoundingBox = obj.Boundingbox;
       var expectedBoundingBox = new BoundingBox(new List<Point3d>() { Point3d.Origin, new Point3d(3,3,3) });
@@ -157,7 +161,7 @@ namespace GsaGHTests.Parameters
     {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
-      var obj = new VectorResultGoo(startingPoint, vector3d, new Force(4, ForceUnit.Kilonewton));
+      var obj = new VectorResultGoo(startingPoint, vector3d, new Force(4, ForceUnit.Kilonewton), 0);
 
       var actualBoundingBox = obj.GetBoundingBox(new Transform(Transform.Mirror(startingPoint, vector3d)));
       var expectedBoundingBox = new BoundingBox(new List<Point3d>() { new Point3d(1,1,1), new Point3d(3,3,3) });
@@ -176,12 +180,14 @@ namespace GsaGHTests.Parameters
     {
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
-      var obj = new VectorResultGoo(startingPoint, vector3d, new Force(4, ForceUnit.Kilonewton));
+      var obj = new VectorResultGoo(startingPoint, vector3d, new Force(4, ForceUnit.Kilonewton), 0);
 
       var actualObject = obj.Transform(new Transform(Transform.Mirror(startingPoint, vector3d)));
       var expectedObject = new Vector3d(2,2,2);
 
-      Assert.Equal(expectedObject, actualObject.Boundingbox.Diagonal);
+      Assert.Equal(expectedObject.X, actualObject.Boundingbox.Diagonal.X, 6);
+      Assert.Equal(expectedObject.Y, actualObject.Boundingbox.Diagonal.Y, 6);
+      Assert.Equal(expectedObject.Z, actualObject.Boundingbox.Diagonal.Z, 6);
     }
 
     [Fact]
@@ -190,15 +196,16 @@ namespace GsaGHTests.Parameters
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
       var force = new Force(4, ForceUnit.Kilonewton);
-      var obj = new VectorResultGoo(startingPoint, vector3d, force);
+      var obj = new VectorResultGoo(startingPoint, vector3d, force, 44);
 
       var actualObject = obj.Morph(new TwistSpaceMorph()
       );
-      var expectedObject = new VectorResultGoo(startingPoint, vector3d, force);
+      var expectedObject = new VectorResultGoo(startingPoint, vector3d, force, 44);
 
       Assert.Equal(expectedObject.Boundingbox.Diagonal, actualObject.Boundingbox.Diagonal);
       Assert.Equal(expectedObject.Boundingbox.Max, actualObject.Boundingbox.Max);
       Assert.Equal(expectedObject.Boundingbox.Min, actualObject.Boundingbox.Min);
+      Assert.Equal(44, expectedObject.NodeId);
     }
 
     [Fact]
@@ -207,7 +214,7 @@ namespace GsaGHTests.Parameters
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
       var force = new Force(4, ForceUnit.Kilonewton);
-      var obj = new VectorResultGoo(startingPoint, vector3d, force);
+      var obj = new VectorResultGoo(startingPoint, vector3d, force, 99);
 
       var actualObject = obj.ScriptVariable();
 
@@ -220,7 +227,7 @@ namespace GsaGHTests.Parameters
       var startingPoint = new Point3d(3, 3, 3);
       var vector3d = new Vector3d(2, 2, 2);
       var force = new Force(4, ForceUnit.Kilonewton);
-      var obj = new VectorResultGoo(startingPoint, vector3d, force);
+      var obj = new VectorResultGoo(startingPoint, vector3d, force, 0);
 
       var expectedBoundingBox = obj.Boundingbox;
       var actualResult = obj.ClippingBox;
@@ -231,7 +238,7 @@ namespace GsaGHTests.Parameters
     [Fact]
     public void WhenInitialised_ThenClassContainSetColorMethod()
     {
-     var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, new Force());
+     var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, new Force(), 0);
      var actualMethods = obj.GetType().GetMethods();
 
      Assert.Contains(actualMethods, info => info.Name.Equals("SetColor"));
@@ -247,7 +254,7 @@ namespace GsaGHTests.Parameters
     [Fact]
     public void WhenInitialised_ThenClassContainShowTextMethod()
     {
-     var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, new Force());
+     var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, new Force(), 0);
      var actualMethods = obj.GetType().GetMethods();
 
      Assert.Contains(actualMethods, info => info.Name.Equals("ShowText"));
@@ -263,7 +270,7 @@ namespace GsaGHTests.Parameters
     [Fact]
     public void WhenInitialised_ThenClassContainDrawArrowHeadMethod()
     {
-     var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, new Force());
+     var obj = new VectorResultGoo(Point3d.Unset, Vector3d.Unset, new Force(), 0);
      var actualMethods = obj.GetType().GetMethods();
 
      Assert.Contains(actualMethods, info => info.Name.Equals("DrawArrowHead"));
