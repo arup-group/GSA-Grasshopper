@@ -17,30 +17,28 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
-namespace GsaGH.Components
-{
-    /// <summary>
-    /// Component to get GSA node displacement values
-    /// </summary>
-    public class NodeDisplacement : GH_OasysDropDownComponent
-  {
+namespace GsaGH.Components {
+  /// <summary>
+  /// Component to get GSA node displacement values
+  /// </summary>
+  public class NodeDisplacement : GH_OasysDropDownComponent {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("83844063-3da9-4d96-95d3-ea39f96f3e2a");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.NodeDisplacement;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.NodeDisplacement;
 
     public NodeDisplacement() : base("Node Displacements",
       "NodeDisp",
       "Node Translation and Rotation result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
+      SubCategoryName.Cat5()) {
+        Hidden = true;
+    } // sets the initial state of the component to hidden
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.list);
       pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + Environment.NewLine +
           "Node list should take the form:" + Environment.NewLine +
@@ -49,9 +47,8 @@ namespace GsaGH.Components
       pManager[1].Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation } " +
                     Environment.NewLine + "fx. {1;2} is Case 1, Permutation 2, where each branch " +
@@ -69,174 +66,157 @@ namespace GsaGH.Components
     }
     #endregion
 
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      // Result to work on
-      GsaResult result = new GsaResult();
-
-      // Get filer case
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var result = new GsaResult();
       string nodeList = "All";
-      GH_String gh_Type = new GH_String();
-      if (DA.GetData(1, ref gh_Type))
-        GH_Convert.ToString(gh_Type, out nodeList, GH_Conversion.Both);
+      var ghType = new GH_String();
+      if (da.GetData(1, ref ghType))
+        GH_Convert.ToString(ghType, out nodeList, GH_Conversion.Both);
 
       if (nodeList.ToLower() == "all" || nodeList == "")
         nodeList = "All";
 
-      // data trees to output
-      DataTree<GH_UnitNumber> out_transX = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_transY = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_transZ = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_transXYZ = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_rotX = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_rotY = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_rotZ = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_rotXYZ = new DataTree<GH_UnitNumber>();
-      DataTree<int> outIDs = new DataTree<int>();
+      var outTransX = new DataTree<GH_UnitNumber>();
+      var outTransY = new DataTree<GH_UnitNumber>();
+      var outTransZ = new DataTree<GH_UnitNumber>();
+      var outTransXyz = new DataTree<GH_UnitNumber>();
+      var outRotX = new DataTree<GH_UnitNumber>();
+      var outRotY = new DataTree<GH_UnitNumber>();
+      var outRotZ = new DataTree<GH_UnitNumber>();
+      var outRotXyz = new DataTree<GH_UnitNumber>();
+      var outIDs = new DataTree<int>();
 
-      // Get Model
-      List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
-      if (DA.GetDataList(0, gh_types))
+      var ghTypes = new List<GH_ObjectWrapper>();
+      if (!da.GetDataList(0, ghTypes)) {
+        return;
+      }
+
+      foreach (GH_ObjectWrapper ghTyp in ghTypes)
       {
-        List<GsaResult> results = new List<GsaResult>();
-
-        for (int i = 0; i < gh_types.Count; i++)
+        switch (ghTyp?.Value)
         {
-          GH_ObjectWrapper gh_typ = gh_types[i];
-          if (gh_typ == null || gh_typ.Value == null)
-          {
+          case null:
             this.AddRuntimeWarning("Input is null");
             return;
-          }
-          if (gh_typ.Value is GsaResultGoo)
-          {
-            result = ((GsaResultGoo)gh_typ.Value).Value;
-          }
-          else
-          {
+          case GsaResultGoo goo:
+            result = goo.Value;
+            break;
+          default:
             this.AddRuntimeError("Error converting input to GSA Result");
             return;
-          }
+        }
 
-          Tuple<List<GsaResultsValues>, List<int>> nodedisp = result.NodeDisplacementValues(nodeList, this.LengthUnit);
-          List<GsaResultsValues> vals = nodedisp.Item1;
-          List<int> sortedIDs = nodedisp.Item2;
+        (List<GsaResultsValues> vals, List<int> sortedIDs) = result.NodeDisplacementValues(nodeList, _lengthUnit);
 
-          List<int> permutations = (result.SelectedPermutationIds == null ? new List<int>() { 1 } : result.SelectedPermutationIds);
-          if (permutations.Count == 1 && permutations[0] == -1)
-            permutations = Enumerable.Range(1, vals.Count).ToList();
+        List<int> permutations = result.SelectedPermutationIds ?? new List<int>() { 1 };
+        if (permutations.Count == 1 && permutations[0] == -1)
+          permutations = Enumerable.Range(1, vals.Count).ToList();
 
-          // loop through all permutations (analysis case will just have one)
-          foreach (int perm in permutations)
+        foreach (int perm in permutations) {
+          var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm);
+
+          var transX = new List<GH_UnitNumber>();
+          var transY = new List<GH_UnitNumber>();
+          var transZ = new List<GH_UnitNumber>();
+          var transXyz = new List<GH_UnitNumber>();
+          var rotX = new List<GH_UnitNumber>();
+          var rotY = new List<GH_UnitNumber>();
+          var rotZ = new List<GH_UnitNumber>();
+          var rotXyz = new List<GH_UnitNumber>();
+          var ids = new List<int>();
+
+          Parallel.For(0, 2, item => // split into two tasks
           {
-            GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm);
-
-            List<GH_UnitNumber> transX = new List<GH_UnitNumber>();
-            List<GH_UnitNumber> transY = new List<GH_UnitNumber>();
-            List<GH_UnitNumber> transZ = new List<GH_UnitNumber>();
-            List<GH_UnitNumber> transXYZ = new List<GH_UnitNumber>();
-            List<GH_UnitNumber> rotX = new List<GH_UnitNumber>();
-            List<GH_UnitNumber> rotY = new List<GH_UnitNumber>();
-            List<GH_UnitNumber> rotZ = new List<GH_UnitNumber>();
-            List<GH_UnitNumber> rotXYZ = new List<GH_UnitNumber>();
-            List<int> ids = new List<int>();
-
-            Parallel.For(0, 2, item => // split into two tasks
+            switch (item)
             {
-              if (item == 0)
-              {
-                for (int j = 0; j < sortedIDs.Count; j++)
+              case 0: {
+                foreach (int id in sortedIDs)
                 {
-                  int ID = sortedIDs[j];
-                  ids.Add(ID);
-                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].xyzResults[ID];
+                  ids.Add(id);
+                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].xyzResults[id];
                   GsaResultQuantity values = res[0]; // there is only one result per node
-                  transX.Add(new GH_UnitNumber(values.X.ToUnit(this.LengthUnit))); // use ToUnit to capture changes in dropdown
-                  transY.Add(new GH_UnitNumber(values.Y.ToUnit(this.LengthUnit)));
-                  transZ.Add(new GH_UnitNumber(values.Z.ToUnit(this.LengthUnit)));
-                  transXYZ.Add(new GH_UnitNumber(values.XYZ.ToUnit(this.LengthUnit)));
+                  transX.Add(new GH_UnitNumber(values.X.ToUnit(_lengthUnit))); // use ToUnit to capture changes in dropdown
+                  transY.Add(new GH_UnitNumber(values.Y.ToUnit(_lengthUnit)));
+                  transZ.Add(new GH_UnitNumber(values.Z.ToUnit(_lengthUnit)));
+                  transXyz.Add(new GH_UnitNumber(values.XYZ.ToUnit(_lengthUnit)));
                 }
+
+                break;
               }
-              if (item == 1)
-              {
-                for (int j = 0; j < sortedIDs.Count; j++)
+              case 1: {
+                foreach (GsaResultQuantity values in sortedIDs.Select(id => vals[perm - 1].xxyyzzResults[id]).Select(res => res[0]))
                 {
-                  int ID = sortedIDs[j];
-                  ConcurrentDictionary<int, GsaResultQuantity> res = vals[perm - 1].xxyyzzResults[ID];
-                  GsaResultQuantity values = res[0]; // there is only one result per node
                   rotX.Add(new GH_UnitNumber(values.X));
                   rotY.Add(new GH_UnitNumber(values.Y));
                   rotZ.Add(new GH_UnitNumber(values.Z));
-                  rotXYZ.Add(new GH_UnitNumber(values.XYZ));
+                  rotXyz.Add(new GH_UnitNumber(values.XYZ));
                 }
+
+                break;
               }
-            });
+            }
+          });
 
-            out_transX.AddRange(transX, path);
-            out_transY.AddRange(transY, path);
-            out_transZ.AddRange(transZ, path);
-            out_transXYZ.AddRange(transXYZ, path);
-            out_rotX.AddRange(rotX, path);
-            out_rotY.AddRange(rotY, path);
-            out_rotZ.AddRange(rotZ, path);
-            out_rotXYZ.AddRange(rotXYZ, path);
-            outIDs.AddRange(ids, path);
-          }
+          outTransX.AddRange(transX, path);
+          outTransY.AddRange(transY, path);
+          outTransZ.AddRange(transZ, path);
+          outTransXyz.AddRange(transXyz, path);
+          outRotX.AddRange(rotX, path);
+          outRotY.AddRange(rotY, path);
+          outRotZ.AddRange(rotZ, path);
+          outRotXyz.AddRange(rotXyz, path);
+          outIDs.AddRange(ids, path);
         }
-
-        DA.SetDataTree(0, out_transX);
-        DA.SetDataTree(1, out_transY);
-        DA.SetDataTree(2, out_transZ);
-        DA.SetDataTree(3, out_transXYZ);
-        DA.SetDataTree(4, out_rotX);
-        DA.SetDataTree(5, out_rotY);
-        DA.SetDataTree(6, out_rotZ);
-        DA.SetDataTree(7, out_rotXYZ);
-        DA.SetDataTree(8, outIDs);
-
-        Helpers.PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Displacement);
       }
+
+      da.SetDataTree(0, outTransX);
+      da.SetDataTree(1, outTransY);
+      da.SetDataTree(2, outTransZ);
+      da.SetDataTree(3, outTransXyz);
+      da.SetDataTree(4, outRotX);
+      da.SetDataTree(5, outRotY);
+      da.SetDataTree(6, outRotZ);
+      da.SetDataTree(7, outRotXyz);
+      da.SetDataTree(8, outIDs);
+
+      Helpers.PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Displacement);
     }
 
     #region Custom UI
-    private LengthUnit LengthUnit = DefaultUnits.LengthUnitResult;
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[]
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
+    public override void InitialiseDropdowns() {
+      SpacerDescriptions = new List<string>(new []
         {
           "Unit",
         });
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+      DropDownItems = new List<List<string>>();
+      SelectedItems = new List<string>();
 
       // Length
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      this.SelectedItems.Add(Length.GetAbbreviation(this.LengthUnit));
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
+      SelectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
-      this.IsInitialised = true;
+      IsInitialised = true;
     }
 
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[i]);
+    public override void SetSelected(int i, int j) {
+      SelectedItems[i] = DropDownItems[i][j];
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[i]);
       base.UpdateUI();
     }
-    public override void UpdateUIFromSelectedItems()
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), this.SelectedItems[0]);
+    public override void UpdateUIFromSelectedItems() {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), SelectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
 
-    public override void VariableParameterMaintenance()
-    {
-      string unitAbbreviation = Length.GetAbbreviation(this.LengthUnit);
+    public override void VariableParameterMaintenance() {
+      string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
       int i = 0;
       Params.Output[i++].Name = "Translations X [" + unitAbbreviation + "]";
       Params.Output[i++].Name = "Translations Y [" + unitAbbreviation + "]";
       Params.Output[i++].Name = "Translations Z [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "Translations |XYZ| [" + unitAbbreviation + "]";
+      Params.Output[i].Name = "Translations |XYZ| [" + unitAbbreviation + "]";
     }
     #endregion
   }

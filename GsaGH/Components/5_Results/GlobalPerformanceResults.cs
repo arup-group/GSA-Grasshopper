@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Parameters;
+using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaAPI;
+using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
@@ -12,40 +13,36 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using GsaGH.Helpers.GH;
 
-namespace GsaGH.Components
-{
-    /// <summary>
-    /// Component to get GSA global performance results
-    /// </summary>
-    public class GlobalPerformanceResults : GH_OasysDropDownComponent
-  {
+namespace GsaGH.Components {
+  /// <summary>
+  /// Component to get GSA global performance results
+  /// </summary>
+  public class GlobalPerformanceResults : GH_OasysDropDownComponent {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("9a0b6077-1cb6-405c-85d3-c24a533d6d43");
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.GlobalPerformance;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.GlobalPerformance;
 
     public GlobalPerformanceResults() : base("Global Performance Results",
       "GlobalPerformance",
       "Get Global Performance (Dynamic, Model Stability, and Buckling) Results from a GSA model",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
+      SubCategoryName.Cat5()) {
+        Hidden = true;
+    } // sets the initial state of the component to hidden
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
-      string massUnitAbbreviation = Mass.GetAbbreviation(MassUnit);
-      string inertiaUnitAbbreviation = AreaMomentOfInertia.GetAbbreviation(InertiaUnit);
-      string forceperlengthUnitAbbreviation = ForcePerLength.GetAbbreviation(ForcePerLengthUnit);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      string massUnitAbbreviation = Mass.GetAbbreviation(_massUnit);
+      string inertiaUnitAbbreviation = AreaMomentOfInertia.GetAbbreviation(_inertiaUnit);
+      string forceperlengthUnitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
 
       pManager.AddGenericParameter("Effective Mass X [" + massUnitAbbreviation + "]", "Σmx", "Effective Mass in GSA Model in X-direction", GH_ParamAccess.item);
       pManager.AddGenericParameter("Effective Mass Y [" + massUnitAbbreviation + "]", "Σmy", "Effective Mass in GSA Model in Y-direction", GH_ParamAccess.item);
@@ -65,177 +62,164 @@ namespace GsaGH.Components
     }
     #endregion
 
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      // Result to work on
-      GsaResult result = new GsaResult();
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var result = new GsaResult();
+      var ghTyp = new GH_ObjectWrapper();
+      if (!da.GetData(0, ref ghTyp)) {
+        return;
+      }
 
-      // Get Model
-      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-      if (DA.GetData(0, ref gh_typ))
+      #region Inputs
+      switch (ghTyp?.Value)
       {
-        #region Inputs
-        if (gh_typ == null || gh_typ.Value == null)
-        {
+        case null:
           this.AddRuntimeWarning("Input is null");
           return;
-        }
-        if (gh_typ.Value is GsaResultGoo)
+        case GsaResultGoo goo:
         {
-          result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.CaseType.Combination)
-          {
+          result = goo.Value;
+          if (result.Type == GsaResult.CaseType.Combination) {
             this.AddRuntimeError("Global Result only available for Analysis Cases");
             return;
           }
+
+          break;
         }
-        else
-        {
+        default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
-        }
-        #endregion
-
-        #region Get results from GSA
-        // ### Get results ###
-        //Get analysis case from model
-        AnalysisCaseResult analysisCaseResult = result.AnalysisCaseResult;
-        #endregion
-        int i = 0;
-
-        GsaResultQuantity mass = ResultHelper.GetQuantityResult(analysisCaseResult.Global.EffectiveMass, MassUnit);
-        DA.SetData(i++, new GH_UnitNumber(mass.X));
-        DA.SetData(i++, new GH_UnitNumber(mass.Y));
-        DA.SetData(i++, new GH_UnitNumber(mass.Z));
-        DA.SetData(i++, new GH_UnitNumber(mass.XYZ));
-
-        if (analysisCaseResult.Global.EffectiveInertia != null)
-        {
-          GsaResultQuantity stiff = ResultHelper.GetQuantityResult(analysisCaseResult.Global.EffectiveInertia, InertiaUnit);
-          DA.SetData(i++, new GH_UnitNumber(stiff.X));
-          DA.SetData(i++, new GH_UnitNumber(stiff.Y));
-          DA.SetData(i++, new GH_UnitNumber(stiff.Z));
-          DA.SetData(i++, new GH_UnitNumber(stiff.XYZ));
-        }
-        else
-        {
-          DA.SetData(i++, null);
-          DA.SetData(i++, null);
-          DA.SetData(i++, null);
-          DA.SetData(i++, null);
-        }
-
-        if (analysisCaseResult.Global.Mode != 0)
-          DA.SetData(i++, analysisCaseResult.Global.Mode);
-        else
-          DA.SetData(i++, null);
-
-        if (analysisCaseResult.Global.ModalMass != 0)
-        {
-          IQuantity mmass = new Mass(analysisCaseResult.Global.ModalMass, MassUnit.Kilogram);
-          DA.SetData(i++, new GH_UnitNumber(mmass.ToUnit(MassUnit)));
-        }
-        else
-          DA.SetData(i++, null);
-
-        if (!(analysisCaseResult.Global.Frequency == 0 && analysisCaseResult.Global.LoadFactor == 0))
-        {
-          IQuantity mstiff = new ForcePerLength(analysisCaseResult.Global.ModalStiffness, ForcePerLengthUnit.NewtonPerMeter);
-          DA.SetData(i++, new GH_UnitNumber(mstiff.ToUnit(ForcePerLengthUnit)));
-        }
-        else
-          DA.SetData(i++, null);
-
-        if (analysisCaseResult.Global.ModalGeometricStiffness != 0)
-        {
-          IQuantity geostiff = new ForcePerLength(analysisCaseResult.Global.ModalGeometricStiffness, ForcePerLengthUnit.NewtonPerMeter);
-          DA.SetData(i++, new GH_UnitNumber(geostiff.ToUnit(ForcePerLengthUnit)));
-        }
-        else
-          DA.SetData(i++, null);
-
-        if (analysisCaseResult.Global.Frequency != 0)
-          DA.SetData(i++, new GH_UnitNumber(new Frequency(analysisCaseResult.Global.Frequency, FrequencyUnit.Hertz)));
-        else
-          DA.SetData(i++, null);
-
-        if (analysisCaseResult.Global.LoadFactor != 0)
-          DA.SetData(i++, analysisCaseResult.Global.LoadFactor);
-        else
-          DA.SetData(i++, null);
-
-        if (analysisCaseResult.Global.Frequency == 0 && analysisCaseResult.Global.LoadFactor == 0 && analysisCaseResult.Global.ModalStiffness != 0)
-          DA.SetData(i++, analysisCaseResult.Global.ModalStiffness);
-        else
-          DA.SetData(i++, null);
-
-        Helpers.PostHog.Result(result.Type, -1, "Global", "Performance");
       }
+
+      #endregion
+
+      #region Get results from GSA
+      AnalysisCaseResult analysisCaseResult = result.AnalysisCaseResult;
+      #endregion
+      int i = 0;
+
+      GsaResultQuantity mass = ResultHelper.GetQuantityResult(analysisCaseResult.Global.EffectiveMass, _massUnit);
+      da.SetData(i++, new GH_UnitNumber(mass.X));
+      da.SetData(i++, new GH_UnitNumber(mass.Y));
+      da.SetData(i++, new GH_UnitNumber(mass.Z));
+      da.SetData(i++, new GH_UnitNumber(mass.XYZ));
+
+      if (analysisCaseResult.Global.EffectiveInertia != null) {
+        GsaResultQuantity stiff = ResultHelper.GetQuantityResult(analysisCaseResult.Global.EffectiveInertia, _inertiaUnit);
+        da.SetData(i++, new GH_UnitNumber(stiff.X));
+        da.SetData(i++, new GH_UnitNumber(stiff.Y));
+        da.SetData(i++, new GH_UnitNumber(stiff.Z));
+        da.SetData(i++, new GH_UnitNumber(stiff.XYZ));
+      }
+      else {
+        da.SetData(i++, null);
+        da.SetData(i++, null);
+        da.SetData(i++, null);
+        da.SetData(i++, null);
+      }
+
+      if (analysisCaseResult.Global.Mode != 0)
+        da.SetData(i++, analysisCaseResult.Global.Mode);
+      else
+        da.SetData(i++, null);
+
+      if (analysisCaseResult.Global.ModalMass != 0) {
+        IQuantity mmass = new Mass(analysisCaseResult.Global.ModalMass, MassUnit.Kilogram);
+        da.SetData(i++, new GH_UnitNumber(mmass.ToUnit(_massUnit)));
+      }
+      else
+        da.SetData(i++, null);
+
+      if (!(analysisCaseResult.Global.Frequency == 0 && analysisCaseResult.Global.LoadFactor == 0)) {
+        IQuantity mstiff = new ForcePerLength(analysisCaseResult.Global.ModalStiffness, ForcePerLengthUnit.NewtonPerMeter);
+        da.SetData(i++, new GH_UnitNumber(mstiff.ToUnit(_forcePerLengthUnit)));
+      }
+      else
+        da.SetData(i++, null);
+
+      if (analysisCaseResult.Global.ModalGeometricStiffness != 0) {
+        IQuantity geostiff = new ForcePerLength(analysisCaseResult.Global.ModalGeometricStiffness, ForcePerLengthUnit.NewtonPerMeter);
+        da.SetData(i++, new GH_UnitNumber(geostiff.ToUnit(_forcePerLengthUnit)));
+      }
+      else
+        da.SetData(i++, null);
+
+      da.SetData(i++,
+        analysisCaseResult.Global.Frequency != 0
+          ? new GH_UnitNumber(new Frequency(analysisCaseResult.Global.Frequency, FrequencyUnit.Hertz))
+          : null);
+
+      if (analysisCaseResult.Global.LoadFactor != 0)
+        da.SetData(i++, analysisCaseResult.Global.LoadFactor);
+      else
+        da.SetData(i++, null);
+
+      if (analysisCaseResult.Global.Frequency == 0 && analysisCaseResult.Global.LoadFactor == 0 && analysisCaseResult.Global.ModalStiffness != 0)
+        da.SetData(i, analysisCaseResult.Global.ModalStiffness);
+      else
+        da.SetData(i, null);
+
+      Helpers.PostHog.Result(result.Type, -1, "Global", "Performance");
     }
 
     #region Custom UI
-    MassUnit MassUnit = DefaultUnits.MassUnit;
-    AreaMomentOfInertiaUnit InertiaUnit = AreaMomentOfInertiaUnit.MeterToTheFourth;
-    ForcePerLengthUnit ForcePerLengthUnit = ForcePerLengthUnit.KilonewtonPerMeter;
+    private MassUnit _massUnit = DefaultUnits.MassUnit;
+    private AreaMomentOfInertiaUnit _inertiaUnit = AreaMomentOfInertiaUnit.MeterToTheFourth;
+    private ForcePerLengthUnit _forcePerLengthUnit = ForcePerLengthUnit.KilonewtonPerMeter;
 
-    public override void InitialiseDropdowns()
-    {
-      if (DefaultUnits.LengthUnitGeometry == LengthUnit.Foot | DefaultUnits.LengthUnitGeometry == LengthUnit.Inch)
-      {
-        this.InertiaUnit = AreaMomentOfInertiaUnit.FootToTheFourth;
-        this.ForcePerLengthUnit = ForcePerLengthUnit.KilopoundForcePerFoot;
+    public override void InitialiseDropdowns() {
+      if (DefaultUnits.LengthUnitGeometry == LengthUnit.Foot | DefaultUnits.LengthUnitGeometry == LengthUnit.Inch) {
+        _inertiaUnit = AreaMomentOfInertiaUnit.FootToTheFourth;
+        _forcePerLengthUnit = ForcePerLengthUnit.KilopoundForcePerFoot;
       }
 
-      this.SpacerDescriptions = new List<string>(new string[]
+      SpacerDescriptions = new List<string>(new []
         {
-          "Mass Unit", "Inertia Unit", "Stiffness Unit"
+          "Mass Unit",
+          "Inertia Unit",
+          "Stiffness Unit",
         });
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+      DropDownItems = new List<List<string>>();
+      SelectedItems = new List<string>();
 
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.Mass)));
-      this.SelectedItems.Add(Mass.GetAbbreviation(this.MassUnit));
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.Mass)));
+      SelectedItems.Add(Mass.GetAbbreviation(_massUnit));
 
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.AreaMomentOfInertia)));
-      this.SelectedItems.Add(AreaMomentOfInertia.GetAbbreviation((this.InertiaUnit)));
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.AreaMomentOfInertia)));
+      SelectedItems.Add(AreaMomentOfInertia.GetAbbreviation((_inertiaUnit)));
 
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerLength)));
-      this.SelectedItems.Add(ForcePerLength.GetAbbreviation((this.ForcePerLengthUnit)));
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations((EngineeringUnits.ForcePerLength)));
+      SelectedItems.Add(ForcePerLength.GetAbbreviation((_forcePerLengthUnit)));
 
-      this.IsInitialised = true;
+      IsInitialised = true;
     }
 
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
-      switch (i)
-      {
+    public override void SetSelected(int i, int j) {
+      SelectedItems[i] = DropDownItems[i][j];
+      switch (i) {
         case 0:
-          this.MassUnit = (MassUnit)UnitsHelper.Parse(typeof(MassUnit), SelectedItems[i]);
+          _massUnit = (MassUnit)UnitsHelper.Parse(typeof(MassUnit), SelectedItems[i]);
           break;
         case 1:
-          this.InertiaUnit = (AreaMomentOfInertiaUnit)UnitsHelper.Parse(typeof(AreaMomentOfInertiaUnit), SelectedItems[i]);
+          _inertiaUnit = (AreaMomentOfInertiaUnit)UnitsHelper.Parse(typeof(AreaMomentOfInertiaUnit), SelectedItems[i]);
           break;
         case 2:
-          this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[i]);
+          _forcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[i]);
           break;
       }
       base.UpdateUI();
     }
-    public override void UpdateUIFromSelectedItems()
-    {
-      this.MassUnit = (MassUnit)UnitsHelper.Parse(typeof(MassUnit), SelectedItems[0]);
-      this.InertiaUnit = (AreaMomentOfInertiaUnit)UnitsHelper.Parse(typeof(AreaMomentOfInertiaUnit), SelectedItems[1]);
-      this.ForcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[2]);
+    public override void UpdateUIFromSelectedItems() {
+      _massUnit = (MassUnit)UnitsHelper.Parse(typeof(MassUnit), SelectedItems[0]);
+      _inertiaUnit = (AreaMomentOfInertiaUnit)UnitsHelper.Parse(typeof(AreaMomentOfInertiaUnit), SelectedItems[1]);
+      _forcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[2]);
       base.UpdateUIFromSelectedItems();
     }
 
-    public override void VariableParameterMaintenance()
-    {
-      string massUnitAbbreviation = Mass.GetAbbreviation(MassUnit);
-      string inertiaUnitAbbreviation = AreaMomentOfInertia.GetAbbreviation(InertiaUnit);
-      string forceperlengthUnitAbbreviation = ForcePerLength.GetAbbreviation(ForcePerLengthUnit);
+    public override void VariableParameterMaintenance() {
+      string massUnitAbbreviation = Mass.GetAbbreviation(_massUnit);
+      string inertiaUnitAbbreviation = AreaMomentOfInertia.GetAbbreviation(_inertiaUnit);
+      string forceperlengthUnitAbbreviation = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
 
       int i = 0;
       Params.Output[i++].Name = "Effective Mass X [" + massUnitAbbreviation + "]";
@@ -249,7 +233,7 @@ namespace GsaGH.Components
       i++;
       Params.Output[i++].Name = "Modal Mass [" + massUnitAbbreviation + "]";
       Params.Output[i++].Name = "Modal Stiffness [" + forceperlengthUnitAbbreviation + "]";
-      Params.Output[i++].Name = "Modal Geometric Stiffness [" + forceperlengthUnitAbbreviation + "]";
+      Params.Output[i].Name = "Modal Geometric Stiffness [" + forceperlengthUnitAbbreviation + "]";
     }
     #endregion
   }

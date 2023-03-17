@@ -18,31 +18,29 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 
-namespace GsaGH.Components
-{
-    /// <summary>
-    /// Component to retrieve non-geometric objects from a GSA model
-    /// </summary>
-    public class Elem2dForces : GH_OasysDropDownComponent
-  {
+namespace GsaGH.Components {
+  /// <summary>
+  /// Component to retrieve non-geometric objects from a GSA model
+  /// </summary>
+  public class Elem2dForces : GH_OasysDropDownComponent {
     #region Name and Ribbon Layout
     // This region handles how the component in displayed on the ribbon including name, exposure level and icon
     public override Guid ComponentGuid => new Guid("ea42e671-710e-4fd3-a113-1724049159cf");
     public override GH_Exposure Exposure => GH_Exposure.quinary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Forces2D;
+    protected override System.Drawing.Bitmap Icon => Properties.Resources.Forces2D;
 
     public Elem2dForces() : base("2D Forces and Moments",
       "Forces2D",
       "2D Projected Force and Moment result values",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-    { this.Hidden = true; } // sets the initial state of the component to hidden
+      SubCategoryName.Cat5()) {
+        Hidden = true;
+    } // sets the initial state of the component to hidden
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.list);
       pManager.AddTextParameter("Element filter list", "El", "Filter results by list." + Environment.NewLine +
           "Element list should take the form:" + Environment.NewLine +
@@ -50,10 +48,9 @@ namespace GsaGH.Components
           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
-      string forceunitAbbreviation = ForcePerLength.GetAbbreviation(this.ForceUnit);
-      string momentunitAbbreviation = Force.GetAbbreviation(this.MomentUnit);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      string forceunitAbbreviation = ForcePerLength.GetAbbreviation(_forceUnit);
+      string momentunitAbbreviation = Force.GetAbbreviation(_momentUnit);
 
       string forcerule = Environment.NewLine + "+ve in plane force resultant: tensile";
       string momentrule = Environment.NewLine + "+ve moments correspond to +ve stress on the top (eg. Mx +ve if top Sxx +ve)";
@@ -76,195 +73,193 @@ namespace GsaGH.Components
     }
     #endregion
 
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      // Result to work on
-      GsaResult result = new GsaResult();
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var result = new GsaResult();
 
-      // Get filer case
       string elementlist = "All";
-      GH_String gh_Type = new GH_String();
-      if (DA.GetData(1, ref gh_Type))
-        GH_Convert.ToString(gh_Type, out elementlist, GH_Conversion.Both);
+      var ghType = new GH_String();
+      if (da.GetData(1, ref ghType))
+        GH_Convert.ToString(ghType, out elementlist, GH_Conversion.Both);
 
       if (elementlist.ToLower() == "all" || elementlist == "")
         elementlist = "All";
 
-      // data trees to output
-      DataTree<GH_UnitNumber> out_X = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_Y = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_XY = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_qX = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_qY = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_XX = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_YY = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_XXYY = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_WAXX = new DataTree<GH_UnitNumber>();
-      DataTree<GH_UnitNumber> out_WAYY = new DataTree<GH_UnitNumber>();
+      var outX = new DataTree<GH_UnitNumber>();
+      var outY = new DataTree<GH_UnitNumber>();
+      var outXy = new DataTree<GH_UnitNumber>();
+      var outQx = new DataTree<GH_UnitNumber>();
+      var outQy = new DataTree<GH_UnitNumber>();
+      var outXx = new DataTree<GH_UnitNumber>();
+      var outYy = new DataTree<GH_UnitNumber>();
+      var outXxyy = new DataTree<GH_UnitNumber>();
+      var outWaxx = new DataTree<GH_UnitNumber>();
+      var outWayy = new DataTree<GH_UnitNumber>();
 
-      // Get Model
-      List<GH_ObjectWrapper> gh_types = new List<GH_ObjectWrapper>();
-      if (DA.GetDataList(0, gh_types))
+      var ghTypes = new List<GH_ObjectWrapper>();
+      if (!da.GetDataList(0, ghTypes)) {
+        return;
+      }
+
+      foreach (GH_ObjectWrapper ghTyp in ghTypes)
       {
-        List<GsaResult> results = new List<GsaResult>();
-
-        for (int i = 0; i < gh_types.Count; i++) // loop through all case/combinations
+        switch (ghTyp?.Value)
         {
-          GH_ObjectWrapper gh_typ = gh_types[i];
-          if (gh_typ == null || gh_typ.Value == null)
-          {
+          case null:
             this.AddRuntimeWarning("Input is null");
             return;
-          }
-          if (gh_typ.Value is GsaResultGoo)
-          {
-            result = ((GsaResultGoo)gh_typ.Value).Value;
-          }
-          else
-          {
+          case GsaResultGoo goo:
+            result = goo.Value;
+            break;
+          default:
             this.AddRuntimeError("Error converting input to GSA Result");
             return;
-          }
-
-          List<GsaResultsValues> vals = result.Element2DForceValues(elementlist, this.ForceUnit, this.MomentUnit);
-          List<GsaResultsValues> valsShear = result.Element2DShearValues(elementlist, this.ForceUnit);
-
-          List<int> permutations = (result.SelectedPermutationIds == null ? new List<int>() { 1 } : result.SelectedPermutationIds);
-          if (permutations.Count == 1 && permutations[0] == -1)
-            permutations = Enumerable.Range(1, vals.Count).ToList();
-
-          // loop through all permutations (analysis case will just have one)
-          foreach (int perm in permutations)
-          {
-            if (vals[perm - 1].xyzResults.Count == 0 & vals[perm - 1].xxyyzzResults.Count == 0)
-            {
-              string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-              this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
-              continue;
-            }
-            Parallel.For(0, 3, thread => // split computation in three for xyz and xxyyzz and shear
-            {
-              if (thread == 0)
-              {
-                //do xyz part of results
-                // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults)
-                {
-                  int elementID = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) { continue; }
-
-                  GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm, elementID);
-
-                  out_X.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.ForceUnit))), path); // use ToUnit to capture changes in dropdown
-                  out_Y.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.ForceUnit))), path);
-                  out_XY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.ForceUnit))), path);
-                  // Wood-Armer moment M*x is stored in .XYZ
-                  out_WAXX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.MomentUnit))), path);
-                }
-              }
-              if (thread == 1)
-              {
-                //do xxyyzz
-                // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults)
-                {
-                  int elementID = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) { continue; }
-
-                  GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm, elementID);
-
-                  out_XX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.MomentUnit))), path); // always use [rad] units
-                  out_YY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.MomentUnit))), path);
-                  out_XXYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(this.MomentUnit))), path);
-                  // Wood-Armer moment M*y 
-                  out_WAYY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(this.MomentUnit))), path);
-                }
-              }
-              if (thread == 2)
-              {
-                //do shear
-
-                // loop through all elements
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in valsShear[perm - 1].xyzResults)
-                {
-                  int elementID = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-
-                  GH_Path path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm, elementID);
-
-                  out_qX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(this.ForceUnit))), path); // always use [rad] units
-                  out_qY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(this.ForceUnit))), path);
-                }
-              }
-            });
-          }
         }
 
-        DA.SetDataTree(0, out_X);
-        DA.SetDataTree(1, out_Y);
-        DA.SetDataTree(2, out_XY);
-        DA.SetDataTree(3, out_qX);
-        DA.SetDataTree(4, out_qY);
-        DA.SetDataTree(5, out_XX);
-        DA.SetDataTree(6, out_YY);
-        DA.SetDataTree(7, out_XXYY);
+        List<GsaResultsValues> vals = result.Element2DForceValues(elementlist, _forceUnit, _momentUnit);
+        List<GsaResultsValues> valsShear = result.Element2DShearValues(elementlist, _forceUnit);
 
-        Helpers.PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Force);
-        DA.SetDataTree(8, out_WAXX);
-        DA.SetDataTree(9, out_WAYY);
+        List<int> permutations = result.SelectedPermutationIds ?? new List<int>() { 1 };
+        if (permutations.Count == 1 && permutations[0] == -1)
+          permutations = Enumerable.Range(1, vals.Count).ToList();
+
+        foreach (int perm in permutations) {
+          if (vals[perm - 1].xyzResults.Count == 0 & vals[perm - 1].xxyyzzResults.Count == 0) {
+            string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
+            this.AddRuntimeWarning("Case " + acase + " contains no Element2D results.");
+            continue;
+          }
+          Parallel.For(0, 3, thread => // split computation in three for xyz and xxyyzz and shear
+          {
+            switch (thread)
+            {
+              case 0: {
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xyzResults) {
+                  int elementId = kvp.Key;
+                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) { continue; }
+
+                  var path = new GH_Path(
+                    result.CaseId,
+                    result.SelectedPermutationIds == null
+                      ? 0
+                      : perm,
+                    elementId);
+
+                  outX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_forceUnit))), path); // use ToUnit to capture changes in dropdown
+                  outY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_forceUnit))), path);
+                  outXy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_forceUnit))), path);
+                  // Wood-Armer moment M*x is stored in .XYZ
+                  outWaxx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(_momentUnit))), path);
+                }
+                break;
+              }
+              case 1: {
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[perm - 1].xxyyzzResults) {
+                  int elementId = kvp.Key;
+                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+                  if (res.Count == 0) { continue; }
+
+                  var path = new GH_Path(
+                    result.CaseId,
+                    result.SelectedPermutationIds == null
+                      ? 0
+                      : perm,
+                    elementId);
+
+                  outXx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_momentUnit))), path); // always use [rad] units
+                  outYy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_momentUnit))), path);
+                  outXxyy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_momentUnit))), path);
+                  // Wood-Armer moment M*y 
+                  outWayy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.XYZ.ToUnit(_momentUnit))), path);
+                }
+                break;
+              }
+              case 2: {
+                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in valsShear[perm - 1].xyzResults) {
+                  int elementId = kvp.Key;
+                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+
+                  var path = new GH_Path(
+                    result.CaseId,
+                    result.SelectedPermutationIds == null
+                      ? 0
+                      : perm,
+                    elementId);
+
+                  outQx.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_forceUnit))), path); // always use [rad] units
+                  outQy.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_forceUnit))), path);
+                }
+
+                break;
+              }
+            }
+          });
+        }
       }
+
+      da.SetDataTree(0, outX);
+      da.SetDataTree(1, outY);
+      da.SetDataTree(2, outXy);
+      da.SetDataTree(3, outQx);
+      da.SetDataTree(4, outQy);
+      da.SetDataTree(5, outXx);
+      da.SetDataTree(6, outYy);
+      da.SetDataTree(7, outXxyy);
+
+      Helpers.PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Force);
+      da.SetDataTree(8, outWaxx);
+      da.SetDataTree(9, outWayy);
     }
 
     #region Custom UI
-    private ForcePerLengthUnit ForceUnit = DefaultUnits.ForcePerLengthUnit;
-    private ForceUnit MomentUnit = DefaultUnits.ForceUnit;
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[]
+    private ForcePerLengthUnit _forceUnit = DefaultUnits.ForcePerLengthUnit;
+    private ForceUnit _momentUnit = DefaultUnits.ForceUnit;
+    public override void InitialiseDropdowns() {
+      SpacerDescriptions = new List<string>(new []
         {
-          "Force Unit", "Moment Unit"
+          "Force Unit",
+          "Moment Unit",
         });
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+      DropDownItems = new List<List<string>>();
+      SelectedItems = new List<string>();
 
       // force
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength));
-      this.SelectedItems.Add(ForcePerLength.GetAbbreviation(this.ForceUnit));
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength));
+      SelectedItems.Add(ForcePerLength.GetAbbreviation(_forceUnit));
 
       // moment
-      this.DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
-      this.SelectedItems.Add(Force.GetAbbreviation(this.MomentUnit));
+      DropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
+      SelectedItems.Add(Force.GetAbbreviation(_momentUnit));
 
-      this.IsInitialised = true;
+      IsInitialised = true;
     }
 
-    public override void SetSelected(int i, int j)
-    {
-      this.SelectedItems[i] = this.DropDownItems[i][j];
-      if (i == 0)
-        this.ForceUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[i]);
-      else if (i == 1)
-        this.MomentUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[i]);
+    public override void SetSelected(int i, int j) {
+      SelectedItems[i] = DropDownItems[i][j];
+      switch (i)
+      {
+        case 0:
+          _forceUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[i]);
+          break;
+        case 1:
+          _momentUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[i]);
+          break;
+      }
       base.UpdateUI();
     }
-    public override void UpdateUIFromSelectedItems()
-    {
-      this.ForceUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), this.SelectedItems[0]);
-      this.MomentUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), this.SelectedItems[1]);
+    public override void UpdateUIFromSelectedItems() {
+      _forceUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), SelectedItems[0]);
+      _momentUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), SelectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
 
-    public override void VariableParameterMaintenance()
-    {
-      string forceunitAbbreviation = ForcePerLength.GetAbbreviation(this.ForceUnit);
-      string momentunitAbbreviation = Force.GetAbbreviation(this.MomentUnit);
+    public override void VariableParameterMaintenance() {
+      string forceunitAbbreviation = ForcePerLength.GetAbbreviation(_forceUnit);
+      string momentunitAbbreviation = Force.GetAbbreviation(_momentUnit);
 
-      if (this.Params.Output.Count != 10)
-      {
-        this.Params.RegisterOutputParam(new Param_GenericObject());
+      if (Params.Output.Count != 10) {
+        Params.RegisterOutputParam(new Param_GenericObject());
         string momentrule = Environment.NewLine + "+ve moments correspond to +ve stress on the top (eg. Mx +ve if top Sxx +ve)";
         string note = Environment.NewLine + "DataTree organised as { CaseID ; Permutation ; ElementID } " +
                       Environment.NewLine + "fx. {1;2;3} is Case 1, Permutation 2, Element 3, where each " +
@@ -275,7 +270,7 @@ namespace GsaGH.Components
         Params.Output[8].Description = "Element Wood-Armer Moments (Mx + sgn(Mx)·|Mxy|) around Local Element X-axis." + momentrule + note;
         Params.Output[8].Access = GH_ParamAccess.tree;
 
-        this.Params.RegisterOutputParam(new Param_GenericObject());
+        Params.RegisterOutputParam(new Param_GenericObject());
         Params.Output[9].NickName = "M*y";
         Params.Output[9].Description = "Element Wood-Armer Moments (My + sgn(My)·|Mxy|) around Local Element Y-axis." + momentrule + note;
         Params.Output[9].Access = GH_ParamAccess.tree;
@@ -293,7 +288,7 @@ namespace GsaGH.Components
       Params.Output[i++].Name = "Moment Y [" + momentunitAbbreviation + "]";
       Params.Output[i++].Name = "Moment XY [" + momentunitAbbreviation + "]";
       Params.Output[i++].Name = "Wood-Armer X [" + momentunitAbbreviation + "]";
-      Params.Output[i++].Name = "Wood-Armer Y [" + momentunitAbbreviation + "]";
+      Params.Output[i].Name = "Wood-Armer Y [" + momentunitAbbreviation + "]";
     }
     #endregion
   }

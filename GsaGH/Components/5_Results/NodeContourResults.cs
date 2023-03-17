@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Parameters;
+using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaAPI;
+using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
@@ -20,34 +24,27 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Display;
 using Rhino.Geometry;
-using GsaGH.Helpers.GH;
-using System.Collections.ObjectModel;
-using Grasshopper.Kernel.Parameters;
 
-namespace GsaGH.Components
-{
-    /// <summary>
-    /// Component to display GSA node result contours
-    /// </summary>
-    public class NodeContourResults : GH_OasysDropDownComponent
-  {
+namespace GsaGH.Components {
+  /// <summary>
+  /// Component to display GSA node result contours
+  /// </summary>
+  public class NodeContourResults : GH_OasysDropDownComponent {
     #region Name and Ribbon Layout
     public override Guid ComponentGuid => new Guid("742b1398-4eee-49e6-98d0-00afac6813e6");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override System.Drawing.Bitmap Icon => GsaGH.Properties.Resources.Result0D;
+    protected override Bitmap Icon => Properties.Resources.Result0D;
 
     public NodeContourResults() : base("Node Contour Results",
       "ContourNode",
       "Diplays GSA Node Results as Contours",
       CategoryName.Name(),
-      SubCategoryName.Cat5())
-    { }
+      SubCategoryName.Cat5()) { }
     #endregion
 
     #region Input and output
-    protected override void RegisterInputParams(GH_InputParamManager pManager)
-    {
+    protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultsParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
       pManager.AddTextParameter("Node filter list", "No", "Filter results by list." + Environment.NewLine +
           "Node list should take the form:" + Environment.NewLine +
@@ -63,9 +60,8 @@ namespace GsaGH.Components
       pManager[4].Optional = true;
     }
 
-    protected override void RegisterOutputParams(GH_OutputParamManager pManager)
-    {
-      IQuantity length = new Length(0, LengthResultUnit);
+    protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
+      IQuantity length = new Length(0, _lengthResultUnit);
       string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
       pManager.AddGenericParameter("Result Point", "P", "Contoured Points with result values", GH_ParamAccess.list);
@@ -74,453 +70,391 @@ namespace GsaGH.Components
     }
     #endregion
 
-    protected override void SolveInstance(IGH_DataAccess DA)
-    {
-      // Result to work on
-      GsaResult result = new GsaResult();
-      this._case = "";
-      this.resType = "";
+    protected override void SolveInstance(IGH_DataAccess da) {
+      var result = new GsaResult();
+      _case = "";
+      _resType = "";
 
-      // Get Model
-      GH_ObjectWrapper gh_typ = new GH_ObjectWrapper();
-      if (DA.GetData(0, ref gh_typ))
+      var ghTyp = new GH_ObjectWrapper();
+      if (!da.GetData(0, ref ghTyp)) {
+        return;
+      }
+
+      #region Inputs
+      switch (ghTyp?.Value)
       {
-        #region Inputs
-        if (gh_typ == null || gh_typ.Value == null)
-        {
+        case null:
           this.AddRuntimeWarning("Input is null");
           return;
-        }
-        if (gh_typ.Value is GsaResultGoo)
+        case GsaResultGoo goo:
         {
-          result = ((GsaResultGoo)gh_typ.Value).Value;
-          if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIds.Count > 1)
-          {
+          result = goo.Value;
+          if (result.Type == GsaResult.CaseType.Combination && result.SelectedPermutationIds.Count > 1) {
             this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
-                + result.SelectedPermutationIds.Count + " permutations - only one permutation can be displayed at a time." +
-                Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
+                                   + result.SelectedPermutationIds.Count + " permutations - only one permutation can be displayed at a time." +
+                                   Environment.NewLine + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
           }
-          if (result.Type == GsaResult.CaseType.Combination)
-            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-          if (result.Type == GsaResult.CaseType.AnalysisCase)
-            _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+          switch (result.Type)
+          {
+            case GsaResult.CaseType.Combination:
+              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+              break;
+            case GsaResult.CaseType.AnalysisCase:
+              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+              break;
+          }
+
+          break;
         }
-        else
-        {
+        default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
-        }
+      }
 
-        // Get node filter list
-        string nodeList = "All";
-        GH_String gh_noList = new GH_String();
-        if (DA.GetData(1, ref gh_noList))
+      string nodeList = "All";
+      var ghNoList = new GH_String();
+      if (da.GetData(1, ref ghNoList)) {
+        if (GH_Convert.ToString(ghNoList, out string tempnodeList, GH_Conversion.Both))
+          nodeList = tempnodeList;
+      }
+
+      if (nodeList.ToLower() == "all" || nodeList == "")
+        nodeList = "All";
+
+      var ghColours = new List<GH_Colour>();
+      var colors = new List<Color>();
+      if (da.GetDataList(2, ghColours)) {
+        foreach (GH_Colour ghColor in ghColours)
         {
-          if (GH_Convert.ToString(gh_noList, out string tempnodeList, GH_Conversion.Both))
-            nodeList = tempnodeList;
+          GH_Convert.ToColor(ghColor, out Color color, GH_Conversion.Both);
+          colors.Add(color);
         }
+      }
+      Grasshopper.GUI.Gradient.GH_Gradient gHGradient = Helpers.Graphics.Colours.Stress_Gradient(colors);
 
-        if (nodeList.ToLower() == "all" || nodeList == "")
-          nodeList = "All";
+      var gHInterval = new GH_Interval();
+      Interval customMinMax = Interval.Unset;
+      if (da.GetData(3, ref gHInterval))
+        GH_Convert.ToInterval(gHInterval, ref customMinMax, GH_Conversion.Both);
 
-        // Get colours
-        List<GH_Colour> gh_Colours = new List<GH_Colour>();
-        List<System.Drawing.Color> colors = new List<System.Drawing.Color>();
-        if (DA.GetDataList(2, gh_Colours))
-        {
-          for (int i = 0; i < gh_Colours.Count; i++)
-          {
-            Color color = new Color();
-            GH_Convert.ToColor(gh_Colours[i], out color, GH_Conversion.Both);
-            colors.Add(color);
-          }
-        }
-        Grasshopper.GUI.Gradient.GH_Gradient gH_Gradient = Helpers.Graphics.Colours.Stress_Gradient(colors);
+      var ghScale = new GH_Number();
+      da.GetData(4, ref ghScale);
+      GH_Convert.ToDouble(ghScale, out double scale, GH_Conversion.Both);
+      #endregion
 
-        // Get interval min/max
-        GH_Interval gH_Interval = new GH_Interval();
-        Interval customMinMax = Interval.Unset;
-        if (DA.GetData(3, ref gH_Interval))
-          GH_Convert.ToInterval(gH_Interval, ref customMinMax, GH_Conversion.Both);
+      var res = new GsaResultsValues();
+      switch (_mode) {
+        case FoldMode.Displacement:
+          Tuple<List<GsaResultsValues>, List<int>> nodedisp = result.NodeDisplacementValues(nodeList, _lengthResultUnit);
+          res = nodedisp.Item1[0];
+          break;
 
-        // Get scalar 
-        GH_Number gh_Scale = new GH_Number();
-        DA.GetData(4, ref gh_Scale);
-        double scale = 1;
-        GH_Convert.ToDouble(gh_Scale, out scale, GH_Conversion.Both);
-        #endregion
+        case FoldMode.Reaction:
+          Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit);
+          res = resultgetter.Item1[0];
+          nodeList = string.Join(" ", resultgetter.Item2);
+          break;
 
-        // get stuff for drawing
-        GsaResultsValues res = new GsaResultsValues();
-        switch (_mode)
-        {
-          case FoldMode.Displacement:
-            Tuple<List<GsaResultsValues>, List<int>> nodedisp = result.NodeDisplacementValues(nodeList, this.LengthResultUnit);
-            res = nodedisp.Item1[0];
-            break;
+        case FoldMode.Footfall:
+          var footfallType = (FootfallResultType)Enum.Parse(typeof(FootfallResultType), SelectedItems[1]);
+          res = result.NodeFootfallValues(nodeList, footfallType);
+          break;
+      }
 
-          case FoldMode.Reaction:
-            Tuple<List<GsaResultsValues>, List<int>> resultgetter = result.NodeReactionForceValues(nodeList, this.ForceUnit, this.MomentUnit);
-            res = resultgetter.Item1[0];
-            nodeList = string.Join(" ", resultgetter.Item2);
-            break;
+      ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes(nodeList);
 
-          case FoldMode.Footfall:
-            FootfallResultType footfallType = (FootfallResultType)Enum.Parse(typeof(FootfallResultType), this.SelectedItems[1]);
-            res = result.NodeFootfallValues(nodeList, footfallType);
-            break;
-        }
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.xyzResults;
+      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
 
-        // get geometry for display from results class
-        ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes(nodeList);
-
-        ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults = res.xyzResults;
-        ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults = res.xxyyzzResults;
-
-        Enum xyzunit = this.LengthResultUnit;
-        Enum xxyyzzunit = AngleUnit.Radian;
-        if (_mode == FoldMode.Reaction)
-        {
-          xyzunit = this.ForceUnit;
-          xxyyzzunit = this.MomentUnit;
-        }
-        if (_mode == FoldMode.Footfall) 
-        {
+      Enum xyzunit = _lengthResultUnit;
+      Enum xxyyzzunit = AngleUnit.Radian;
+      switch (_mode)
+      {
+        case FoldMode.Reaction:
+          xyzunit = _forceUnit;
+          xxyyzzunit = _momentUnit;
+          break;
+        case FoldMode.Footfall:
           xyzunit = RatioUnit.DecimalFraction;
           xxyyzzunit = AngleUnit.Radian;
           _disp = DisplayValue.X;
-        }
-
-        double dmax_x = res.DmaxX.As(xyzunit);
-        double dmax_y = _mode == FoldMode.Footfall ? 0 : res.DmaxY.As(xyzunit);
-        double dmax_z = _mode == FoldMode.Footfall ? 0 : res.DmaxZ.As(xyzunit);
-        double dmax_xyz = _mode == FoldMode.Footfall ? 0 : res.DmaxXyz.As(xyzunit);
-        double dmin_x = _mode == FoldMode.Footfall ? 0 : res.DminX.As(xyzunit);
-        double dmin_y = _mode == FoldMode.Footfall ? 0 : res.DminY.As(xyzunit);
-        double dmin_z = _mode == FoldMode.Footfall ? 0 : res.DminZ.As(xyzunit);
-        double dmin_xyz = _mode == FoldMode.Footfall ? 0 : res.DminXyz.As(xyzunit);
-        double dmax_xx = _mode == FoldMode.Footfall ? 0 : res.DmaxXx.As(xxyyzzunit);
-        double dmax_yy = _mode == FoldMode.Footfall ? 0 : res.DmaxYy.As(xxyyzzunit);
-        double dmax_zz = _mode == FoldMode.Footfall ? 0 : res.DmaxZz.As(xxyyzzunit);
-        double dmax_xxyyzz = _mode == FoldMode.Footfall ? 0 : res.DmaxXxyyzz.As(xxyyzzunit);
-        double dmin_xx =  _mode == FoldMode.Footfall ? 0 : res.DminXx.As(xxyyzzunit);
-        double dmin_yy = _mode == FoldMode.Footfall ? 0 : res.DminYy.As(xxyyzzunit);
-        double dmin_zz = _mode == FoldMode.Footfall ? 0 : res.DminZz.As(xxyyzzunit);
-        double dmin_xxyyzz = _mode == FoldMode.Footfall ? 0 : res.DminXxyyzz.As(xxyyzzunit);
-
-        #region Result point values
-        // ### Coloured Result Points ###
-
-        // round max and min to reasonable numbers
-        double dmax = 0;
-        double dmin = 0;
-        switch (_disp)
-        {
-          case (DisplayValue.X):
-            dmax = dmax_x;
-            dmin = dmin_x;
-            if (_mode == FoldMode.Displacement)
-              resType = "Translation, Ux";
-            else
-              resType = "Reaction Force, Fx";
-            break;
-          case (DisplayValue.Y):
-            dmax = dmax_y;
-            dmin = dmin_y;
-            if (_mode == FoldMode.Displacement)
-              resType = "Translation, Uy";
-            else
-              resType = "Reaction Force, Fy";
-            break;
-          case (DisplayValue.Z):
-            dmax = dmax_z;
-            dmin = dmin_z;
-            if (_mode == FoldMode.Displacement)
-              resType = "Translation, Uz";
-            else
-              resType = "Reaction Force, Fz";
-            break;
-          case (DisplayValue.resXYZ):
-            dmax = dmax_xyz;
-            dmin = dmin_xyz;
-            if (_mode == FoldMode.Displacement)
-              resType = "Res. Trans., |U|";
-            else
-              resType = "Res. Rxn. Force, |F|";
-            break;
-          case (DisplayValue.XX):
-            dmax = dmax_xx;
-            dmin = dmin_xx;
-            if (_mode == FoldMode.Displacement)
-              resType = "Rotation, Rxx";
-            else
-              resType = "Reaction Moment, Mxx";
-            break;
-          case (DisplayValue.YY):
-            dmax = dmax_yy;
-            dmin = dmin_yy;
-            if (_mode == FoldMode.Displacement)
-              resType = "Rotation, Ryy";
-            else
-              resType = "Reaction Moment, Ryy";
-            break;
-          case (DisplayValue.ZZ):
-            dmax = dmax_zz;
-            dmin = dmin_zz;
-            if (_mode == FoldMode.Displacement)
-              resType = "Rotation, Rzz";
-            else
-              resType = "Reaction Moment, Rzz";
-            break;
-          case (DisplayValue.resXXYYZZ):
-            dmax = dmax_xxyyzz;
-            dmin = dmin_xxyyzz;
-            if (_mode == FoldMode.Displacement)
-              resType = "Res. Rot., |R|";
-            else
-              resType = "Res. Rxn. Mom., |M|";
-            break;
-        }
-        if (_mode == FoldMode.Footfall)
-          resType = "Response Factor [-]";
-
-        if (customMinMax != Interval.Unset)
-        {
-          dmin = customMinMax.Min;
-          dmax = customMinMax.Max;
-        }
-        List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
-        dmax = rounded[0];
-        dmin = rounded[1];
-        int significantDigits = (int)rounded[2];
-        if (customMinMax != Interval.Unset)
-        {
-          dmin = customMinMax.Min;
-          dmax = customMinMax.Max;
-        }
-
-        // Loop through nodes and set result colour into ResultPoint format
-        ConcurrentDictionary<int, PointResultGoo> pts = new ConcurrentDictionary<int, PointResultGoo>();
-
-        LengthUnit lengthUnit = result.Model.ModelUnit;
-        this.undefinedModelLengthUnit = false;
-        if (lengthUnit == LengthUnit.Undefined)
-        {
-          lengthUnit = this.LengthUnit;
-          this.undefinedModelLengthUnit = true;
-          this.AddRuntimeRemark("Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in " + lengthUnit.ToString() + ". This can be changed by right-clicking the component -> 'Select Units'");
-        }
-
-        // Get nodes for point location and restraint check in case of reaction force
-        ConcurrentDictionary<int, GsaNodeGoo> gsanodes = Helpers.Import.Nodes.GetNodeDictionary(nodes, lengthUnit);
-
-        Parallel.ForEach(gsanodes, node =>
-        {
-          if (node.Value.Value != null)
-          {
-            int nodeID = node.Value.Value.Id;
-            if (xyzResults.ContainsKey(nodeID))
-            {
-              if (!(dmin == 0 & dmax == 0))
-              {
-                // create deflection point
-                Point3d def = new Point3d(node.Value.Value.Point);
-
-                IQuantity t = null;
-                switch (_mode)
-                {
-                  case FoldMode.Displacement:
-                    Vector3d translation = new Vector3d(0, 0, 0);
-                    // pick the right value to display
-                    switch (_disp)
-                    {
-                      case (DisplayValue.X):
-                        t = xyzResults[nodeID][0].X.ToUnit(this.LengthResultUnit);
-                        translation.X = xyzResults[nodeID][0].X.As(lengthUnit) * _defScale;
-                        break;
-                      case (DisplayValue.Y):
-                        t = xyzResults[nodeID][0].Y.ToUnit(this.LengthResultUnit);
-                        translation.Y = xyzResults[nodeID][0].Y.As(lengthUnit) * _defScale;
-                        break;
-                      case (DisplayValue.Z):
-                        t = xyzResults[nodeID][0].Z.ToUnit(this.LengthResultUnit);
-                        translation.Z = xyzResults[nodeID][0].Z.As(lengthUnit) * _defScale;
-                        break;
-                      case (DisplayValue.resXYZ):
-                        t = xyzResults[nodeID][0].XYZ.ToUnit(this.LengthResultUnit);
-                        translation.X = xyzResults[nodeID][0].X.As(lengthUnit) * _defScale;
-                        translation.Y = xyzResults[nodeID][0].Y.As(lengthUnit) * _defScale;
-                        translation.Z = xyzResults[nodeID][0].Z.As(lengthUnit) * _defScale;
-                        break;
-                      case (DisplayValue.XX):
-                        t = xxyyzzResults[nodeID][0].X.ToUnit(AngleUnit.Radian);
-                        break;
-                      case (DisplayValue.YY):
-                        t = xxyyzzResults[nodeID][0].Y.ToUnit(AngleUnit.Radian);
-                        break;
-                      case (DisplayValue.ZZ):
-                        t = xxyyzzResults[nodeID][0].Z.ToUnit(AngleUnit.Radian);
-                        break;
-                      case (DisplayValue.resXXYYZZ):
-                        t = xxyyzzResults[nodeID][0].XYZ.ToUnit(AngleUnit.Radian);
-                        break;
-                    }
-                    def.Transform(Transform.Translation(translation));
-                    break;
-                  case FoldMode.Reaction:
-                    // pick the right value to display
-                    switch (_disp)
-                    {
-                      case (DisplayValue.X):
-                        t = xyzResults[nodeID][0].X.ToUnit(this.ForceUnit);
-                        break;
-                      case (DisplayValue.Y):
-                        t = xyzResults[nodeID][0].Y.ToUnit(this.ForceUnit);
-                        break;
-                      case (DisplayValue.Z):
-                        t = xyzResults[nodeID][0].Z.ToUnit(this.ForceUnit);
-                        break;
-                      case (DisplayValue.resXYZ):
-                        t = xyzResults[nodeID][0].XYZ.ToUnit(this.ForceUnit);
-                        break;
-                      case (DisplayValue.XX):
-                        t = xxyyzzResults[nodeID][0].X.ToUnit(this.MomentUnit);
-                        break;
-                      case (DisplayValue.YY):
-                        t = xxyyzzResults[nodeID][0].Y.ToUnit(this.MomentUnit);
-                        break;
-                      case (DisplayValue.ZZ):
-                        t = xxyyzzResults[nodeID][0].Z.ToUnit(this.MomentUnit);
-                        break;
-                      case (DisplayValue.resXXYYZZ):
-                        t = xxyyzzResults[nodeID][0].XYZ.ToUnit(this.MomentUnit);
-                        break;
-                    }
-                    break;
-                  case FoldMode.Footfall:
-                    t = xyzResults[nodeID][0].X.ToUnit(RatioUnit.DecimalFraction);
-                    break;
-                }
-
-                //normalised value between -1 and 1
-                double tnorm = 2 * (t.Value - dmin) / (dmax - dmin) - 1;
-
-                // get colour for that normalised value
-                Color valcol = gH_Gradient.ColourAt(tnorm);
-
-                // set the size of the point for ResultPoint class. Size is calculated from 0-base, so not a normalised value between extremes
-                float size = (t.Value >= 0 && dmax != 0) ?
-                    Math.Max(2, (float)(t.Value / dmax * scale)) :
-                    Math.Max(2, (float)(Math.Abs(t.Value) / Math.Abs(dmin) * scale));
-
-                // add our special resultpoint to the list of points
-                pts[nodeID] = new PointResultGoo(def, t, valcol, size);
-              }
-            }
-          }
-        });
-        #endregion
-
-        #region Legend
-        // ### Legend ###
-        // loop through number of grip points in gradient to create legend
-        int gripheight = legend.Height / gH_Gradient.GripCount;
-        legendValues = new List<string>();
-        legendValuesPosY = new List<int>();
-
-        //Find Colour and Values for legend output
-        List<GH_UnitNumber> ts = new List<GH_UnitNumber>();
-        List<Color> cs = new List<Color>();
-
-        for (int i = 0; i < gH_Gradient.GripCount; i++)
-        {
-          double t = dmin + (dmax - dmin) / ((double)gH_Gradient.GripCount - 1) * (double)i;
-          if (t > 1)
-          {
-            double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
-            scl = Math.Max(scl, 1);
-            t = scl * Math.Round(t / scl, 3);
-          }
-          else
-            t = Math.Round(t, significantDigits);
-          //t = ResultHelper.RoundToSignificantDigits(t, significantDigits);
-
-          Color gradientcolour = gH_Gradient.ColourAt(2 * (double)i / ((double)gH_Gradient.GripCount - 1) - 1);
-          cs.Add(gradientcolour);
-
-          // create legend for viewport
-          int starty = i * gripheight;
-          int endy = starty + gripheight;
-          for (int y = starty; y < endy; y++)
-          {
-            for (int x = 0; x < legend.Width; x++)
-              legend.SetPixel(x, legend.Height - y - 1, gradientcolour);
-          }
-          if (_mode == FoldMode.Displacement)
-          {
-            if ((int)_disp < 4)
-            {
-              Length displacement = new Length(t, this.LengthResultUnit);
-              legendValues.Add(displacement.ToString("f" + significantDigits));
-              ts.Add(new GH_UnitNumber(displacement));
-            }
-            else
-            {
-              Angle rotation = new Angle(t, AngleUnit.Radian);
-              legendValues.Add(rotation.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(rotation));
-            }
-          }
-          if (_mode == FoldMode.Reaction)
-          {
-            if ((int)_disp < 4)
-            {
-              Force reactionForce = new Force(t, this.ForceUnit);
-              legendValues.Add(reactionForce.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(reactionForce));
-              this.Message = Force.GetAbbreviation(this.ForceUnit);
-            }
-            else
-            {
-              Moment reactionMoment = new Moment(t, this.MomentUnit);
-              legendValues.Add(reactionMoment.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(reactionMoment));
-              this.Message = Moment.GetAbbreviation(this.MomentUnit);
-            }
-          }
-          if (_mode == FoldMode.Footfall)
-          {
-            Ratio responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-            legendValues.Add(responseFactor.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(responseFactor));
-            this.Message = "";
-          }
-          if (Math.Abs(t) > 1)
-            legendValues[i] = legendValues[i].Replace(",", string.Empty); // remove thousand separator
-          legendValuesPosY.Add(legend.Height - starty + gripheight / 2 - 2);
-        }
-        #endregion
-
-        // set outputs
-        DA.SetDataList(0, pts.OrderBy(x => x.Key).Select(y => y.Value).ToList());
-        DA.SetDataList(1, cs);
-        DA.SetDataList(2, ts);
-
-        GsaResultsValues.ResultType resultType = _mode == FoldMode.Reaction ? GsaResultsValues.ResultType.Force : (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType), _mode.ToString());
-        Helpers.PostHog.Result(result.Type, 0, resultType, this._disp.ToString());
+          break;
       }
+
+      double dmaxX = res.DmaxX.As(xyzunit);
+      double dmaxY = _mode == FoldMode.Footfall ? 0 : res.DmaxY.As(xyzunit);
+      double dmaxZ = _mode == FoldMode.Footfall ? 0 : res.DmaxZ.As(xyzunit);
+      double dmaxXyz = _mode == FoldMode.Footfall ? 0 : res.DmaxXyz.As(xyzunit);
+      double dminX = _mode == FoldMode.Footfall ? 0 : res.DminX.As(xyzunit);
+      double dminY = _mode == FoldMode.Footfall ? 0 : res.DminY.As(xyzunit);
+      double dminZ = _mode == FoldMode.Footfall ? 0 : res.DminZ.As(xyzunit);
+      double dminXyz = _mode == FoldMode.Footfall ? 0 : res.DminXyz.As(xyzunit);
+      double dmaxXx = _mode == FoldMode.Footfall ? 0 : res.DmaxXx.As(xxyyzzunit);
+      double dmaxYy = _mode == FoldMode.Footfall ? 0 : res.DmaxYy.As(xxyyzzunit);
+      double dmaxZz = _mode == FoldMode.Footfall ? 0 : res.DmaxZz.As(xxyyzzunit);
+      double dmaxXxyyzz = _mode == FoldMode.Footfall ? 0 : res.DmaxXxyyzz.As(xxyyzzunit);
+      double dminXx = _mode == FoldMode.Footfall ? 0 : res.DminXx.As(xxyyzzunit);
+      double dminYy = _mode == FoldMode.Footfall ? 0 : res.DminYy.As(xxyyzzunit);
+      double dminZz = _mode == FoldMode.Footfall ? 0 : res.DminZz.As(xxyyzzunit);
+      double dminXxyyzz = _mode == FoldMode.Footfall ? 0 : res.DminXxyyzz.As(xxyyzzunit);
+
+      #region Result point values
+      double dmax = 0;
+      double dmin = 0;
+      switch (_disp) {
+        case (DisplayValue.X):
+          dmax = dmaxX;
+          dmin = dminX;
+          _resType = _mode == FoldMode.Displacement ? "Translation, Ux" : "Reaction Force, Fx";
+          break;
+        case (DisplayValue.Y):
+          dmax = dmaxY;
+          dmin = dminY;
+          _resType = _mode == FoldMode.Displacement ? "Translation, Uy" : "Reaction Force, Fy";
+          break;
+        case (DisplayValue.Z):
+          dmax = dmaxZ;
+          dmin = dminZ;
+          _resType = _mode == FoldMode.Displacement ? "Translation, Uz" : "Reaction Force, Fz";
+          break;
+        case (DisplayValue.resXYZ):
+          dmax = dmaxXyz;
+          dmin = dminXyz;
+          _resType = _mode == FoldMode.Displacement ? "Res. Trans., |U|" : "Res. Rxn. Force, |F|";
+          break;
+        case (DisplayValue.XX):
+          dmax = dmaxXx;
+          dmin = dminXx;
+          _resType = _mode == FoldMode.Displacement ? "Rotation, Rxx" : "Reaction Moment, Mxx";
+          break;
+        case (DisplayValue.YY):
+          dmax = dmaxYy;
+          dmin = dminYy;
+          _resType = _mode == FoldMode.Displacement ? "Rotation, Ryy" : "Reaction Moment, Ryy";
+          break;
+        case (DisplayValue.ZZ):
+          dmax = dmaxZz;
+          dmin = dminZz;
+          _resType = _mode == FoldMode.Displacement ? "Rotation, Rzz" : "Reaction Moment, Rzz";
+          break;
+        case (DisplayValue.resXXYYZZ):
+          dmax = dmaxXxyyzz;
+          dmin = dminXxyyzz;
+          _resType = _mode == FoldMode.Displacement ? "Res. Rot., |R|" : "Res. Rxn. Mom., |M|";
+          break;
+      }
+      if (_mode == FoldMode.Footfall)
+        _resType = "Response Factor [-]";
+
+      if (customMinMax != Interval.Unset) {
+        dmin = customMinMax.Min;
+        dmax = customMinMax.Max;
+      }
+      List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
+      dmax = rounded[0];
+      dmin = rounded[1];
+      int significantDigits = (int)rounded[2];
+      if (customMinMax != Interval.Unset) {
+        dmin = customMinMax.Min;
+        dmax = customMinMax.Max;
+      }
+      var pointResultGoos = new ConcurrentDictionary<int, PointResultGoo>();
+
+      LengthUnit lengthUnit = result.Model.ModelUnit;
+      _undefinedModelLengthUnit = false;
+      if (lengthUnit == LengthUnit.Undefined) {
+        lengthUnit = _lengthUnit;
+        _undefinedModelLengthUnit = true;
+        this.AddRuntimeRemark("Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in " + lengthUnit.ToString() + ". This can be changed by right-clicking the component -> 'Select Units'");
+      }
+
+      ConcurrentDictionary<int, GsaNodeGoo> gsanodes = Helpers.Import.Nodes.GetNodeDictionary(nodes, lengthUnit);
+
+      Parallel.ForEach(gsanodes, node => {
+        if (node.Value.Value == null) {
+          return;
+        }
+
+        int nodeId = node.Value.Value.Id;
+        if (!xyzResults.ContainsKey(nodeId) || dmin == 0 & dmax == 0) {
+          return;
+        }
+
+        var def = new Point3d(node.Value.Value.Point);
+
+        IQuantity t = null;
+        switch (_mode) {
+          case FoldMode.Displacement:
+            var translation = new Vector3d(0, 0, 0);
+            switch (_disp) {
+              case (DisplayValue.X):
+                t = xyzResults[nodeId][0].X.ToUnit(_lengthResultUnit);
+                translation.X = xyzResults[nodeId][0].X.As(lengthUnit) * _defScale;
+                break;
+              case (DisplayValue.Y):
+                t = xyzResults[nodeId][0].Y.ToUnit(_lengthResultUnit);
+                translation.Y = xyzResults[nodeId][0].Y.As(lengthUnit) * _defScale;
+                break;
+              case (DisplayValue.Z):
+                t = xyzResults[nodeId][0].Z.ToUnit(_lengthResultUnit);
+                translation.Z = xyzResults[nodeId][0].Z.As(lengthUnit) * _defScale;
+                break;
+              case (DisplayValue.resXYZ):
+                t = xyzResults[nodeId][0].XYZ.ToUnit(_lengthResultUnit);
+                translation.X = xyzResults[nodeId][0].X.As(lengthUnit) * _defScale;
+                translation.Y = xyzResults[nodeId][0].Y.As(lengthUnit) * _defScale;
+                translation.Z = xyzResults[nodeId][0].Z.As(lengthUnit) * _defScale;
+                break;
+              case (DisplayValue.XX):
+                t = xxyyzzResults[nodeId][0].X.ToUnit(AngleUnit.Radian);
+                break;
+              case (DisplayValue.YY):
+                t = xxyyzzResults[nodeId][0].Y.ToUnit(AngleUnit.Radian);
+                break;
+              case (DisplayValue.ZZ):
+                t = xxyyzzResults[nodeId][0].Z.ToUnit(AngleUnit.Radian);
+                break;
+              case (DisplayValue.resXXYYZZ):
+                t = xxyyzzResults[nodeId][0].XYZ.ToUnit(AngleUnit.Radian);
+                break;
+            }
+            def.Transform(Transform.Translation(translation));
+            break;
+          case FoldMode.Reaction:
+            switch (_disp) {
+              case (DisplayValue.X):
+                t = xyzResults[nodeId][0].X.ToUnit(_forceUnit);
+                break;
+              case (DisplayValue.Y):
+                t = xyzResults[nodeId][0].Y.ToUnit(_forceUnit);
+                break;
+              case (DisplayValue.Z):
+                t = xyzResults[nodeId][0].Z.ToUnit(_forceUnit);
+                break;
+              case (DisplayValue.resXYZ):
+                t = xyzResults[nodeId][0].XYZ.ToUnit(_forceUnit);
+                break;
+              case (DisplayValue.XX):
+                t = xxyyzzResults[nodeId][0].X.ToUnit(_momentUnit);
+                break;
+              case (DisplayValue.YY):
+                t = xxyyzzResults[nodeId][0].Y.ToUnit(_momentUnit);
+                break;
+              case (DisplayValue.ZZ):
+                t = xxyyzzResults[nodeId][0].Z.ToUnit(_momentUnit);
+                break;
+              case (DisplayValue.resXXYYZZ):
+                t = xxyyzzResults[nodeId][0].XYZ.ToUnit(_momentUnit);
+                break;
+            }
+            break;
+          case FoldMode.Footfall:
+            t = xyzResults[nodeId][0].X.ToUnit(RatioUnit.DecimalFraction);
+            break;
+        }
+
+        double tnorm = 2 * (t.Value - dmin) / (dmax - dmin) - 1;
+        Color valcol = gHGradient.ColourAt(tnorm);
+        float size = (t.Value >= 0 && dmax != 0) ?
+          Math.Max(2, (float)(t.Value / dmax * scale)) :
+          Math.Max(2, (float)(Math.Abs(t.Value) / Math.Abs(dmin) * scale));
+
+        pointResultGoos[nodeId] = new PointResultGoo(def, t, valcol, size);
+      });
+      #endregion
+
+      #region Legend
+      int gripheight = _legend.Height / gHGradient.GripCount;
+      _legendValues = new List<string>();
+      _legendValuesPosY = new List<int>();
+
+      var ts = new List<GH_UnitNumber>();
+      var cs = new List<Color>();
+
+      for (int i = 0; i < gHGradient.GripCount; i++) {
+        double t = dmin + (dmax - dmin) / ((double)gHGradient.GripCount - 1) * i;
+        if (t > 1) {
+          double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
+          scl = Math.Max(scl, 1);
+          t = scl * Math.Round(t / scl, 3);
+        }
+        else
+          t = Math.Round(t, significantDigits);
+
+        Color gradientcolour = gHGradient.ColourAt(2 * (double)i / ((double)gHGradient.GripCount - 1) - 1);
+        cs.Add(gradientcolour);
+
+        int starty = i * gripheight;
+        int endy = starty + gripheight;
+        for (int y = starty; y < endy; y++) {
+          for (int x = 0; x < _legend.Width; x++)
+            _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
+        }
+        switch (_mode)
+        {
+          case FoldMode.Displacement when (int)_disp < 4:
+          {
+            var displacement = new Length(t, _lengthResultUnit);
+            _legendValues.Add(displacement.ToString("f" + significantDigits));
+            ts.Add(new GH_UnitNumber(displacement));
+            break;
+          }
+          case FoldMode.Displacement:
+          {
+            var rotation = new Angle(t, AngleUnit.Radian);
+            _legendValues.Add(rotation.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(rotation));
+            break;
+          }
+          case FoldMode.Reaction when (int)_disp < 4:
+          {
+            var reactionForce = new Force(t, _forceUnit);
+            _legendValues.Add(reactionForce.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(reactionForce));
+            Message = Force.GetAbbreviation(_forceUnit);
+            break;
+          }
+          case FoldMode.Reaction:
+          {
+            var reactionMoment = new Moment(t, _momentUnit);
+            _legendValues.Add(reactionMoment.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(reactionMoment));
+            Message = Moment.GetAbbreviation(_momentUnit);
+            break;
+          }
+          case FoldMode.Footfall:
+          {
+            var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+            _legendValues.Add(responseFactor.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(responseFactor));
+            Message = "";
+            break;
+          }
+        }
+
+        if (Math.Abs(t) > 1)
+          _legendValues[i] = _legendValues[i].Replace(",", string.Empty); // remove thousand separator
+        _legendValuesPosY.Add(_legend.Height - starty + gripheight / 2 - 2);
+      }
+      #endregion
+
+      da.SetDataList(0, pointResultGoos.OrderBy(x => x.Key).Select(y => y.Value).ToList());
+      da.SetDataList(1, cs);
+      da.SetDataList(2, ts);
+
+      GsaResultsValues.ResultType resultType = _mode == FoldMode.Reaction ? GsaResultsValues.ResultType.Force : (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType), _mode.ToString());
+      Helpers.PostHog.Result(result.Type, 0, resultType, _disp.ToString());
     }
 
     #region Custom UI
-    private enum FoldMode
-    {
+    private enum FoldMode {
       Displacement,
       Reaction,
-      Footfall
+      Footfall,
     }
 
-    private enum DisplayValue
-    {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    private enum DisplayValue {
       X,
       Y,
       Z,
@@ -528,16 +462,16 @@ namespace GsaGH.Components
       XX,
       YY,
       ZZ,
-      resXXYYZZ
+      resXXYYZZ,
     }
-    readonly List<string> _type = new List<string>(new string[]
+
+    private readonly List<string> _type = new List<string>(new []
     {
             "Displacement",
             "Reaction",
-            "Footfall"
+            "Footfall",
     });
-
-    readonly List<string> _displacement = new List<string>(new string[]
+    private readonly List<string> _displacement = new List<string>(new []
     {
             "Translation Ux",
             "Translation Uy",
@@ -546,10 +480,9 @@ namespace GsaGH.Components
             "Rotation Rxx",
             "Rotation Ryy",
             "Rotation Rzz",
-            "Resolved |R|"
+            "Resolved |R|",
     });
-
-    readonly List<string> _reaction = new List<string>(new string[]
+    private readonly List<string> _reaction = new List<string>(new []
     {
             "Reaction Fx",
             "Reaction Fy",
@@ -560,274 +493,269 @@ namespace GsaGH.Components
             "Reaction Mzz",
             "Resolved |M|",
     });
-
-    readonly List<string> _footfall = new List<string>(new string[]
+    private readonly List<string> _footfall = new List<string>(new []
     {
             "Resonant",
-            "Transient"
+            "Transient",
     });
+    private double _minValue;
+    private double _maxValue = 1000;
+    private double _defScale = 250;
+    private int _noDigits;
+    private bool _slider = true;
+    private string _case = "";
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
+    private bool _undefinedModelLengthUnit;
+    private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+    private FoldMode _mode = FoldMode.Displacement;
+    private DisplayValue _disp = DisplayValue.resXYZ;
 
-    double _minValue = 0;
-    double _maxValue = 1000;
-    double _defScale = 250;
-    int _noDigits = 0;
-    bool _slider = true;
-    string _case = "";
-    LengthUnit LengthUnit = DefaultUnits.LengthUnitGeometry;
-    LengthUnit LengthResultUnit = DefaultUnits.LengthUnitResult;
-    bool undefinedModelLengthUnit = false;
-    ForceUnit ForceUnit = DefaultUnits.ForceUnit;
-    MomentUnit MomentUnit = DefaultUnits.MomentUnit;
-    FoldMode _mode = FoldMode.Displacement;
-    DisplayValue _disp = DisplayValue.resXYZ;
-
-    public override void InitialiseDropdowns()
-    {
-      this.SpacerDescriptions = new List<string>(new string[]
+    public override void InitialiseDropdowns() {
+      SpacerDescriptions = new List<string>(new []
         {
-          "Result Type", "Component", "Deform Shape"
+          "Result Type",
+          "Component",
+          "Deform Shape",
         });
 
-      this.DropDownItems = new List<List<string>>();
-      this.SelectedItems = new List<string>();
+      DropDownItems = new List<List<string>>();
+      SelectedItems = new List<string>();
 
       // type
-      this.DropDownItems.Add(this._type);
-      this.SelectedItems.Add(this.DropDownItems[0][0]);
+      DropDownItems.Add(_type);
+      SelectedItems.Add(DropDownItems[0][0]);
 
       // component
-      this.DropDownItems.Add(this._displacement);
-      this.SelectedItems.Add(this.DropDownItems[1][3]);
+      DropDownItems.Add(_displacement);
+      SelectedItems.Add(DropDownItems[1][3]);
 
-      this.IsInitialised = true;
+      IsInitialised = true;
     }
-    public override void CreateAttributes()
-    {
+    public override void CreateAttributes() {
       if (!IsInitialised)
         InitialiseDropdowns();
-      m_attributes = new OasysGH.UI.DropDownSliderComponentAttributes(this, SetSelected, this.DropDownItems, this.SelectedItems, this._slider, SetVal, SetMaxMin, this._defScale, this._maxValue, this._minValue, this._noDigits, this.SpacerDescriptions);
+      m_attributes = new OasysGH.UI.DropDownSliderComponentAttributes(this, SetSelected, DropDownItems, SelectedItems, _slider, SetVal, SetMaxMin, _defScale, _maxValue, _minValue, _noDigits, SpacerDescriptions);
     }
 
-    public override void SetSelected(int i, int j)
-    {
-      if (i == 0) // if change is made to first list
+    public override void SetSelected(int i, int j) {
+      switch (i)
       {
-        if (j == 0)
+        // if change is made to first list
+        case 0:
         {
-          if (this.DropDownItems[1] != this._displacement)
+          switch (j)
           {
-            this.DropDownItems[1] = _displacement;
-            this.SelectedItems[0] = this.DropDownItems[0][0];
-            this.SelectedItems[1] = this.DropDownItems[1][3];
-            this.Mode1Clicked();
+            case 0: {
+              if (DropDownItems[1] != _displacement) {
+                DropDownItems[1] = _displacement;
+                SelectedItems[0] = DropDownItems[0][0];
+                SelectedItems[1] = DropDownItems[1][3];
+                Mode1Clicked();
+              }
+
+              break;
+            }
+            case 1: {
+              if (DropDownItems[1] != _reaction) {
+                DropDownItems[1] = _reaction;
+                SelectedItems[0] = DropDownItems[0][1];
+                SelectedItems[1] = DropDownItems[1][3];
+                Mode2Clicked();
+              }
+
+              break;
+            }
+            case 2: {
+              if (DropDownItems[1] != _footfall) {
+                DropDownItems[1] = _footfall;
+                SelectedItems[0] = DropDownItems[0][2];
+                SelectedItems[1] = DropDownItems[1][0];
+                Mode3Clicked();
+              }
+
+              break;
+            }
           }
+
+          break;
         }
-        if (j == 1)
-        {
-          if (this.DropDownItems[1] != this._reaction)
-          {
-            this.DropDownItems[1] = this._reaction;
-            this.SelectedItems[0] = this.DropDownItems[0][1];
-            this.SelectedItems[1] = this.DropDownItems[1][3];
-            this.Mode2Clicked();
-          }
-        }
-        if (j == 2)
-        {
-          if (this.DropDownItems[1] != this._footfall)
-          {
-            this.DropDownItems[1] = this._footfall;
-            this.SelectedItems[0] = this.DropDownItems[0][2];
-            this.SelectedItems[1] = this.DropDownItems[1][0];
-            this.Mode3Clicked();
-          }
-        }
+        case 1:
+          _disp = (DisplayValue)j;
+          SelectedItems[1] = DropDownItems[1][j];
+          break;
       }
-      else if (i == 1)
-      {
-        this._disp = (DisplayValue)j;
-        this.SelectedItems[1] = this.DropDownItems[1][j];
-      }
+
       base.UpdateUI();
     }
 
-    public void SetVal(double value)
-    {
-      this._defScale = value;
+    public void SetVal(double value) {
+      _defScale = value;
     }
 
-    public void SetMaxMin(double max, double min)
-    {
-      this._maxValue = max;
-      this._minValue = min;
+    public void SetMaxMin(double max, double min) {
+      _maxValue = max;
+      _minValue = min;
     }
 
-    public override void VariableParameterMaintenance()
-    {
-      if (this.Params.Input.Count != 5)
-      {
-        Param_Number scale = (Param_Number)this.Params.Input[3];
-        this.Params.UnregisterInputParameter(this.Params.Input[3], false);
-        this.Params.RegisterInputParam(new Param_Interval());
-        this.Params.Input[3].Name = "Min/Max Domain";
-        this.Params.Input[3].NickName = "I";
-        this.Params.Input[3].Description = "Opitonal Domain for custom Min to Max contour colours";
-        this.Params.Input[3].Optional = true;
-        this.Params.Input[3].Access = GH_ParamAccess.item;
-        this.Params.RegisterInputParam(scale);
+    public override void VariableParameterMaintenance() {
+      if (Params.Input.Count != 5) {
+        var scale = (Param_Number)Params.Input[3];
+        Params.UnregisterInputParameter(Params.Input[3], false);
+        Params.RegisterInputParam(new Param_Interval());
+        Params.Input[3].Name = "Min/Max Domain";
+        Params.Input[3].NickName = "I";
+        Params.Input[3].Description = "Opitonal Domain for custom Min to Max contour colours";
+        Params.Input[3].Optional = true;
+        Params.Input[3].Access = GH_ParamAccess.item;
+        Params.RegisterInputParam(scale);
       }
 
-      if (this._mode == FoldMode.Displacement)
+      switch (_mode)
       {
-        if ((int)_disp < 4)
-          this.Params.Output[2].Name = "Values [" + Length.GetAbbreviation(this.LengthResultUnit) + "]";
-        else
-          this.Params.Output[2].Name = "Values [rad]";
+        case FoldMode.Displacement when (int)_disp < 4:
+          Params.Output[2].Name = "Values [" + Length.GetAbbreviation(_lengthResultUnit) + "]";
+          break;
+        case FoldMode.Displacement:
+          Params.Output[2].Name = "Values [rad]";
+          break;
+        case FoldMode.Reaction when (int)_disp < 4:
+          Params.Output[2].Name = "Values [" + Force.GetAbbreviation(_forceUnit) + "]";
+          break;
+        case FoldMode.Reaction:
+          Params.Output[2].Name = "Values [" + Moment.GetAbbreviation(_momentUnit) + "]";
+          break;
+        case FoldMode.Footfall:
+          Params.Output[2].Name = "Values [-]";
+          break;
       }
-
-      if (this._mode == FoldMode.Reaction)
-      {
-        if ((int)this._disp < 4)
-          this.Params.Output[2].Name = "Values [" + Force.GetAbbreviation(this.ForceUnit) + "]";
-        else
-          this.Params.Output[2].Name = "Values [" + Moment.GetAbbreviation(this.MomentUnit) + "]";
-      }
-
-      if (this._mode == FoldMode.Footfall)
-        this.Params.Output[2].Name = "Values [-]";
     }
     #endregion
 
     #region menu override
-    protected override void BeforeSolveInstance()
-    {
-      switch (this._mode)
-      {
+    protected override void BeforeSolveInstance() {
+      switch (_mode) {
         case FoldMode.Displacement:
-          if ((int)this._disp < 4)
-            this.Message = Length.GetAbbreviation(this.LengthResultUnit);
-          else
-            this.Message = Angle.GetAbbreviation(AngleUnit.Radian);
+          Message = (int)_disp < 4
+            ? Length.GetAbbreviation(_lengthResultUnit)
+            : Angle.GetAbbreviation(AngleUnit.Radian);
           break;
 
         case FoldMode.Reaction:
-          if ((int)this._disp < 4)
-            this.Message = Force.GetAbbreviation(this.ForceUnit);
-          else
-            this.Message = Moment.GetAbbreviation(this.MomentUnit);
+          Message = (int)_disp < 4
+            ? Force.GetAbbreviation(_forceUnit)
+            : Moment.GetAbbreviation(_momentUnit);
           break;
 
         case FoldMode.Footfall:
-          this.Message = "";
+          Message = "";
           break;
       }
     }
-    private void ReDrawComponent()
-    {
-      System.Drawing.PointF pivot = new System.Drawing.PointF(this.Attributes.Pivot.X, this.Attributes.Pivot.Y);
-      this.CreateAttributes();
-      this.Attributes.Pivot = pivot;
-      this.Attributes.ExpireLayout();
-      this.Attributes.PerformLayout();
+    private void ReDrawComponent() {
+      var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
+      CreateAttributes();
+      Attributes.Pivot = pivot;
+      Attributes.ExpireLayout();
+      Attributes.PerformLayout();
     }
 
-    private void Mode1Clicked()
-    {
-      if (this._mode == FoldMode.Displacement)
+    private void Mode1Clicked() {
+      if (_mode == FoldMode.Displacement)
         return;
 
-      RecordUndoEvent(this._mode.ToString() + " Parameters");
-      this._mode = FoldMode.Displacement;
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.Displacement;
 
-      this._slider = true;
-      this._defScale = 100;
+      _slider = true;
+      _defScale = 100;
 
-      this.ReDrawComponent();
+      ReDrawComponent();
     }
 
-    private void Mode2Clicked()
-    {
-      if (this._mode == FoldMode.Reaction)
+    private void Mode2Clicked() {
+      if (_mode == FoldMode.Reaction)
         return;
 
-      RecordUndoEvent(this._mode.ToString() + " Parameters");
-      this._mode = FoldMode.Reaction;
-      this._slider = false;
-      this._defScale = 0;
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.Reaction;
+      _slider = false;
+      _defScale = 0;
 
-      this.ReDrawComponent();
+      ReDrawComponent();
     }
 
-    private void Mode3Clicked()
-    {
-      if (this._mode == FoldMode.Footfall)
+    private void Mode3Clicked() {
+      if (_mode == FoldMode.Footfall)
         return;
 
-      RecordUndoEvent(this._mode.ToString() + " Parameters");
-      this._mode = FoldMode.Footfall;
-      this._slider = false;
-      this._defScale = 0;
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.Footfall;
+      _slider = false;
+      _defScale = 0;
 
-      this.ReDrawComponent();
+      ReDrawComponent();
     }
 
-    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
-    {
+    protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
       Menu_AppendSeparator(menu);
       Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
 
-      Grasshopper.Kernel.Special.GH_GradientControl gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
+      var gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
-      ToolStripMenuItem extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => { CreateGradient(); });
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => { CreateGradient(); });
       menu.Items.Add(extract);
 
-      ToolStripMenuItem lengthUnitsMenu = new ToolStripMenuItem("Displacement");
-      lengthUnitsMenu.Enabled = true;
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length))
-      {
-        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateLength(unit); });
-        toolStripMenuItem.Checked = unit == Length.GetAbbreviation(this.LengthResultUnit);
-        toolStripMenuItem.Enabled = true;
+      var lengthUnitsMenu = new ToolStripMenuItem("Displacement") {
+        Enabled = true,
+      };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateLength(unit); }) {
+          Checked = unit == Length.GetAbbreviation(_lengthResultUnit),
+          Enabled = true,
+        };
         lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      ToolStripMenuItem forceUnitsMenu = new ToolStripMenuItem("Force");
-      forceUnitsMenu.Enabled = true;
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force))
-      {
-        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateForce(unit); });
-        toolStripMenuItem.Checked = unit == Force.GetAbbreviation(this.ForceUnit);
-        toolStripMenuItem.Enabled = true;
+      var forceUnitsMenu = new ToolStripMenuItem("Force") {
+        Enabled = true,
+      };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateForce(unit); }) {
+          Checked = unit == Force.GetAbbreviation(_forceUnit),
+          Enabled = true,
+        };
         forceUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      ToolStripMenuItem momentUnitsMenu = new ToolStripMenuItem("Moment");
-      momentUnitsMenu.Enabled = true;
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment))
-      {
-        ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateMoment(unit); });
-        toolStripMenuItem.Checked = unit == Moment.GetAbbreviation(this.MomentUnit);
-        toolStripMenuItem.Enabled = true;
+      var momentUnitsMenu = new ToolStripMenuItem("Moment") {
+        Enabled = true,
+      };
+      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Moment)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateMoment(unit); }) {
+          Checked = unit == Moment.GetAbbreviation(_momentUnit),
+          Enabled = true,
+        };
         momentUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      ToolStripMenuItem unitsMenu = new ToolStripMenuItem("Select Units", Properties.Resources.Units);
+      var unitsMenu = new ToolStripMenuItem("Select Units", Properties.Resources.Units);
 
-      if (undefinedModelLengthUnit)
-      {
-        ToolStripMenuItem modelUnitsMenu = new ToolStripMenuItem("Model geometry");
-        modelUnitsMenu.Enabled = true;
-        foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length))
-        {
-          ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateModel(unit); });
-          toolStripMenuItem.Checked = unit == Length.GetAbbreviation(this.LengthUnit);
-          toolStripMenuItem.Enabled = true;
+      if (_undefinedModelLengthUnit) {
+        var modelUnitsMenu = new ToolStripMenuItem("Model geometry") {
+          Enabled = true,
+        };
+        foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
+          var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { UpdateModel(unit); }) {
+            Checked = unit == Length.GetAbbreviation(_lengthUnit),
+            Enabled = true,
+          };
           modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
         }
         unitsMenu.DropDownItems.AddRange(new ToolStripItem[] { modelUnitsMenu, lengthUnitsMenu, forceUnitsMenu, momentUnitsMenu });
       }
-      else
-      {
+      else {
         unitsMenu.DropDownItems.AddRange(new ToolStripItem[] { lengthUnitsMenu, forceUnitsMenu, momentUnitsMenu });
       }
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
@@ -836,44 +764,38 @@ namespace GsaGH.Components
 
       Menu_AppendSeparator(menu);
     }
-    private void UpdateModel(string unit)
-    {
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      this.ExpirePreview(true);
+    private void UpdateModel(string unit) {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      ExpirePreview(true);
       base.UpdateUI();
     }
-    private void UpdateLength(string unit)
-    {
-      this.LengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      this.ExpirePreview(true);
+    private void UpdateLength(string unit) {
+      _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      ExpirePreview(true);
       base.UpdateUI();
     }
-    private void UpdateForce(string unit)
-    {
-      this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
-      this.ExpirePreview(true);
+    private void UpdateForce(string unit) {
+      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
+      ExpirePreview(true);
       base.UpdateUI();
     }
-    private void UpdateMoment(string unit)
-    {
-      this.MomentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
-      this.ExpirePreview(true);
+    private void UpdateMoment(string unit) {
+      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
+      ExpirePreview(true);
       base.UpdateUI();
     }
 
-    bool _showLegend = true;
-    private void ShowLegend(object sender, EventArgs e)
-    {
+    private bool _showLegend = true;
+    private void ShowLegend(object sender, EventArgs e) {
       _showLegend = !_showLegend;
-      this.ExpirePreview(true);
+      ExpirePreview(true);
     }
 
-    private void CreateGradient()
-    {
-      Grasshopper.Kernel.Special.GH_GradientControl gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
+    private void CreateGradient() {
+      var gradient = new Grasshopper.Kernel.Special.GH_GradientControl();
       gradient.CreateAttributes();
 
-      gradient.Gradient = Helpers.Graphics.Colours.Stress_Gradient(null);
+      gradient.Gradient = Helpers.Graphics.Colours.Stress_Gradient();
       gradient.Gradient.NormalizeGrips();
       gradient.Params.Input[0].AddVolatileData(new GH_Path(0), 0, -1);
       gradient.Params.Input[1].AddVolatileData(new GH_Path(0), 0, 1);
@@ -881,38 +803,37 @@ namespace GsaGH.Components
         new GH_Path(0),
         new List<double>() { -1, -0.666, -0.333, 0, 0.333, 0.666, 1 });
 
-      gradient.Attributes.Pivot = new PointF(this.Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50, this.Params.Input[2].Attributes.Bounds.Y - gradient.Attributes.Bounds.Height / 4 - 6);
+      gradient.Attributes.Pivot = new PointF(Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50, Params.Input[2].Attributes.Bounds.Y - gradient.Attributes.Bounds.Height / 4 - 6);
 
       Grasshopper.Instances.ActiveCanvas.Document.AddObject(gradient, false);
-      this.Params.Input[2].RemoveAllSources();
-      this.Params.Input[2].AddSource(gradient.Params.Output[0]);
+      Params.Input[2].RemoveAllSources();
+      Params.Input[2].AddSource(gradient.Params.Output[0]);
 
-      this.UpdateUI();
+      UpdateUI();
     }
     #endregion
 
     #region draw legend
-    Bitmap legend = new Bitmap(15, 120);
-    List<string> legendValues;
-    List<int> legendValuesPosY;
-    string resType;
-    public override void DrawViewportWires(IGH_PreviewArgs args)
-    {
+    private readonly Bitmap _legend = new Bitmap(15, 120);
+    private List<string> _legendValues;
+    private List<int> _legendValuesPosY;
+    private string _resType;
+    public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
-      if (legendValues != null & _showLegend)
-      {
-        args.Display.DrawBitmap(new DisplayBitmap(legend), args.Viewport.Bounds.Right - 110, 20);
-        for (int i = 0; i < legendValues.Count; i++)
-          args.Display.Draw2dText(legendValues[i], Color.Black, new Point2d(args.Viewport.Bounds.Right - 85, legendValuesPosY[i]), false);
-        args.Display.Draw2dText(resType, Color.Black, new Point2d(args.Viewport.Bounds.Right - 110, 7), false);
-        args.Display.Draw2dText(_case, Color.Black, new Point2d(args.Viewport.Bounds.Right - 110, 145), false);
+      if (!(_legendValues != null & _showLegend)) {
+        return;
       }
+
+      args.Display.DrawBitmap(new DisplayBitmap(_legend), args.Viewport.Bounds.Right - 110, 20);
+      for (int i = 0; i < _legendValues.Count; i++)
+        args.Display.Draw2dText(_legendValues[i], Color.Black, new Point2d(args.Viewport.Bounds.Right - 85, _legendValuesPosY[i]), false);
+      args.Display.Draw2dText(_resType, Color.Black, new Point2d(args.Viewport.Bounds.Right - 110, 7), false);
+      args.Display.Draw2dText(_case, Color.Black, new Point2d(args.Viewport.Bounds.Right - 110, 145), false);
     }
     #endregion
 
     #region (de)serialization
-    public override bool Write(GH_IO.Serialization.GH_IWriter writer)
-    {
+    public override bool Write(GH_IO.Serialization.GH_IWriter writer) {
       writer.SetInt32("Mode", (int)_mode);
       writer.SetInt32("Display", (int)_disp);
       writer.SetBoolean("slider", _slider);
@@ -921,15 +842,14 @@ namespace GsaGH.Components
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
       writer.SetBoolean("legend", _showLegend);
-      writer.SetString("model", Length.GetAbbreviation(this.LengthUnit));
-      writer.SetString("length", Length.GetAbbreviation(this.LengthResultUnit));
-      writer.SetString("force", Force.GetAbbreviation(this.ForceUnit));
-      writer.SetString("moment", Moment.GetAbbreviation(this.MomentUnit));
+      writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
+      writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
+      writer.SetString("force", Force.GetAbbreviation(_forceUnit));
+      writer.SetString("moment", Moment.GetAbbreviation(_momentUnit));
       return base.Write(writer);
     }
 
-    public override bool Read(GH_IO.Serialization.GH_IReader reader)
-    {
+    public override bool Read(GH_IO.Serialization.GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
       _disp = (DisplayValue)reader.GetInt32("Display");
       _slider = reader.GetBoolean("slider");
@@ -938,10 +858,10 @@ namespace GsaGH.Components
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
       _showLegend = reader.GetBoolean("legend");
-      this.LengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
-      this.LengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
-      this.ForceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
-      this.MomentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
+      _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
+      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
+      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
       return base.Read(reader);
     }
     #endregion
