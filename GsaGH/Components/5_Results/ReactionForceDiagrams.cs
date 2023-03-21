@@ -1,6 +1,12 @@
-﻿using Grasshopper.Kernel;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Grasshopper.Kernel.Types.Transforms;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -11,13 +17,6 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace GsaGH.Components
 {
@@ -83,7 +82,7 @@ namespace GsaGH.Components
                                                           "Node list should take the form:" + Environment.NewLine +
                                                           " 1 11 to 72 step 2 not (XY3 31 to 45)" + Environment.NewLine +
                                                           "Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item, "All");
-      pManager.AddNumberParameter("Scalar", "x:X", "Scale the result vectors to a specific size. If left empty, automatic scaling based on model size and maximum result by load cases will be computed.", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Scalar", "x:X", "Optional factor to scale the result vectors.", GH_ParamAccess.item);
       pManager[1].Optional = true;
       pManager[2].Optional = true;
     }
@@ -118,10 +117,12 @@ namespace GsaGH.Components
       ReadOnlyDictionary<int, Node> gsaFilteredNodes = gsaResult.Model.Model.Nodes(filteredNodes);
       ConcurrentDictionary<int, GsaNodeGoo> nodes = Helpers.Import.Nodes.GetNodeDictionary(gsaFilteredNodes, lengthUnit);
 
-      // get scale or compute autoscale
-      double scale = 1;
-      if (!dataAccess.GetData(2, ref scale))
-        scale = ComputeScale(forceValues, gsaResult.Model.BoundingBox);
+      // compute autoscale
+      double scale = ComputeScale(forceValues, gsaResult.Model.BoundingBox);
+      // optional factor
+      double factor = 1;
+      if (dataAccess.GetData(2, ref factor))
+        scale *= factor;
 
       _reactionForceVectors = new ConcurrentDictionary<int, VectorResultGoo>();
       Parallel.ForEach(nodes, node =>
