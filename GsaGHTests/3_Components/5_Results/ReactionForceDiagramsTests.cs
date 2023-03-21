@@ -1,16 +1,13 @@
-﻿using Grasshopper.Kernel;
+﻿using System;
+using System.Collections.Generic;
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using GsaGH.Components;
 using GsaGH.Helpers.GH;
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using Grasshopper.Kernel.Parameters;
-using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
-using Rhino.Geometry;
 using Xunit;
 
-namespace GsaGHTests
+namespace GsaGHTests.Results
 {
   [Collection("GrasshopperFixture collection")]
   public class ReactionForceDiagramsTests
@@ -71,7 +68,7 @@ namespace GsaGHTests
     {
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
-      
+
       var expectedValues = new List<List<string>>
       { new List<string> {
         "Reaction Fx",
@@ -93,7 +90,7 @@ namespace GsaGHTests
       obj.InitialiseDropdowns();
 
       var expectedValues = new List<string>
-      { 
+      {
         "Resolved |F|",
       };
       Assert.Equal(expectedValues, obj.SelectedItems);
@@ -114,7 +111,7 @@ namespace GsaGHTests
       var obj = new ReactionForceDiagrams();
       obj.InitialiseDropdowns();
 
-      Assert.Equal(obj.SpacerDescriptions, new List<string>(){"Component"});
+      Assert.Equal(obj.SpacerDescriptions, new List<string>() { "Component" });
     }
     #endregion
 
@@ -137,7 +134,7 @@ namespace GsaGHTests
     {
       var obj = new ReactionForceDiagrams();
       obj.CreateAttributes();
-      
+
       Assert.NotNull(obj.Attributes);
     }
     #endregion
@@ -151,7 +148,7 @@ namespace GsaGHTests
 
       Assert.Equal(obj.SelectedItems[0], defaultValue);
 
-      obj.SetSelected(0,0);
+      obj.SetSelected(0, 0);
 
       Assert.Equal(obj.SelectedItems[0], expectedValue);
     }
@@ -165,7 +162,7 @@ namespace GsaGHTests
         Name = "Result",
         NickName = "Res",
         Description = "GSA Result",
-        Access = GH_ParamAccess.item, 
+        Access = GH_ParamAccess.item,
         Optional = false
       };
       var expectedStringParam = new Param_String()
@@ -183,8 +180,8 @@ namespace GsaGHTests
       {
         Name = "Scalar",
         NickName = "x:X",
-        Description = "Scale the result vectors to a specific size. If left empty, automatic scaling based on model size and maximum result by load cases will be computed.",
-        Access = GH_ParamAccess.item, 
+        Description = "Optional factor to scale the result vectors.",
+        Access = GH_ParamAccess.item,
         Optional = true
       };
 
