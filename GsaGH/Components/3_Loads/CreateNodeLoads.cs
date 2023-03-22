@@ -27,7 +27,7 @@ namespace GsaGH.Components {
       "Create GSA Node Load",
       CategoryName.Name(),
       SubCategoryName.Cat3()) {
-        Hidden = true;
+      Hidden = true;
     } // sets the initial state of the component to hidden
     #endregion
 
@@ -79,13 +79,13 @@ namespace GsaGH.Components {
       switch (_mode) {
         case FoldMode.NodeForce:
         case FoldMode.NodeMoment:
-          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.NODE_LOAD;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.NodeLoad;
           break;
         case FoldMode.AppliedDispl:
-          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.APPLIED_DISP;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.AppliedDisp;
           break;
         case FoldMode.Settlement:
-          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.SETTLEMENT;
+          nodeLoad.Type = GsaNodeLoad.NodeLoadTypes.Settlement;
           break;
       }
 
@@ -122,8 +122,7 @@ namespace GsaGH.Components {
       if (da.GetData(3, ref ghDir))
         GH_Convert.ToString(ghDir, out dir, GH_Conversion.Both);
       dir = dir.ToUpper().Trim();
-      switch (dir)
-      {
+      switch (dir) {
         case "X":
           direc = Direction.X;
           break;
@@ -192,7 +191,7 @@ namespace GsaGH.Components {
       Settlement,
     }
 
-    private readonly List<string> _type = new List<string>(new []
+    private readonly List<string> _type = new List<string>(new[]
     {
       "Node Force",
       "Node Moment",
@@ -204,7 +203,7 @@ namespace GsaGH.Components {
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Type",
           "Unit",

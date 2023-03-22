@@ -1,22 +1,16 @@
-﻿using Grasshopper.Kernel.Types;
-using GsaGH.Components;
+﻿using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Components.Properties;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using OasysUnits.Units;
-using OasysUnits;
 using Rhino.Geometry;
 using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
-namespace GsaGHTests.Components.Geometry
-{
+namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
-  public class CreateMember3dTests
-  {
-    public static GH_OasysComponent ComponentMother()
-    {
+  public class CreateMember3dTests {
+    public static GH_OasysComponent ComponentMother() {
       var comp = new CreateMember3d();
       comp.CreateAttributes();
 
@@ -32,14 +26,13 @@ namespace GsaGHTests.Components.Geometry
     }
 
     [Fact]
-    public void CreateComponentTest()
-    {
+    public void CreateComponentTest() {
       // Arrange & Act
-      var comp = ComponentMother();
+      GH_OasysComponent comp = ComponentMother();
 
       // Assert
-      GsaMember3dGoo output = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(MatType.CONCRETE, output.Value.Prop3d.Material.MaterialType);
+      var output = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(MatType.Concrete, output.Value.Prop3d.Material.MaterialType);
       Assert.Equal(0.5, output.Value.MeshSize);
     }
   }

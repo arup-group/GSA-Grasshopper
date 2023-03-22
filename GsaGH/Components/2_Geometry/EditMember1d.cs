@@ -31,7 +31,8 @@ namespace GsaGH.Components {
       "Mem1dEdit",
       "Modify GSA 1D Member",
       CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+      SubCategoryName.Cat2()) {
+    }
     #endregion
 
     #region Input and output
@@ -290,8 +291,8 @@ namespace GsaGH.Components {
       da.SetData(2, mem.PolyCurve);
       da.SetData(3, new GsaSectionGoo(mem.Section));
       da.SetData(4, mem.Group);
-      da.SetData(5, Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
-      da.SetData(6, Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
+      da.SetData(5, Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+      da.SetData(6, Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == mem.Type1D).Key);
 
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
 
@@ -334,8 +335,7 @@ namespace GsaGH.Components {
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); })
-        {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
           Enabled = true,
           Checked = unit == Length.GetAbbreviation(_lengthUnit),
         };

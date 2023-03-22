@@ -54,7 +54,7 @@ namespace GsaGHTests.Parameters
 
       // Assert
       Assert.Equal(LoadTypes.Node, load.LoadType);
-      Assert.Equal(NodeLoadTypes.NODE_LOAD, load.NodeLoad.Type);
+      Assert.Equal(NodeLoadTypes.NodeLoad, load.NodeLoad.Type);
     }
 
     [Theory]

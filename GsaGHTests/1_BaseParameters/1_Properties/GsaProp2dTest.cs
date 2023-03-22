@@ -4,16 +4,13 @@ using GsaGHTests.Helpers;
 using OasysUnits.Units;
 using Xunit;
 
-namespace GsaGHTests.Parameters
-{
+namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaProp2dTests
-  {
+  public class GsaProp2dTests {
     [Fact]
-    public void DuplicateTest()
-    {
+    public void DuplicateTest() {
       // Arrange
-      GsaProp2d original = new GsaProp2d();
+      var original = new GsaProp2d();
       original.Name = "Name";
       original.Thickness = new OasysUnits.Length(200, LengthUnit.Millimeter);
 
@@ -25,8 +22,7 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestCreateProp2d()
-    {
+    public void TestCreateProp2d() {
       int axisProperty = 1;
       int materialGradeProperty = 4;
       MaterialType materialType = MaterialType.GENERIC;
@@ -35,15 +31,13 @@ namespace GsaGHTests.Parameters
       Property2D_Type type = Property2D_Type.LOAD;
 
       // create new 2D property
-      GsaProp2d prop = new GsaProp2d
-      {
+      var prop = new GsaProp2d {
         AxisProperty = axisProperty,
         Name = name,
         Description = description,
         Type = type
       };
-      GsaMaterial mat = new GsaMaterial((int)materialType)
-      {
+      var mat = new GsaMaterial((int)materialType) {
         GradeProperty = materialGradeProperty
       };
       prop.Material = mat;
@@ -61,8 +55,7 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestDuplicateProp2d()
-    {
+    public void TestDuplicateProp2d() {
       int axisProperty = 0;
       int materialAnalysisProperty = 13;
       MaterialType materialType = MaterialType.UNDEF;
@@ -71,15 +64,13 @@ namespace GsaGHTests.Parameters
       Property2D_Type type = Property2D_Type.SHELL;
 
       // create new 2D property
-      GsaProp2d orig = new GsaProp2d(14)
-      {
+      var orig = new GsaProp2d(14) {
         AxisProperty = axisProperty,
         Name = name,
         Description = description,
         Type = type
       };
-      GsaMaterial mat = new GsaMaterial((int)materialType)
-      {
+      var mat = new GsaMaterial((int)materialType) {
         AnalysisProperty = materialAnalysisProperty,
       };
       orig.Material = mat;
@@ -93,7 +84,7 @@ namespace GsaGHTests.Parameters
       orig.AxisProperty = 1;
       orig.Material.GradeProperty = 4;
       orig.Material.AnalysisProperty = 42;
-      orig.Material.MaterialType = GsaMaterial.MatType.FABRIC;
+      orig.Material.MaterialType = GsaMaterial.MatType.Fabric;
       orig.Name = "kris";
       orig.Description = "less cool property";
       orig.Type = Property2D_Type.CURVED_SHELL;

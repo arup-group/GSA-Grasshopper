@@ -29,7 +29,7 @@ namespace GsaGH.Components {
       "Create a Custom GSA Analysis Material",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
+      Hidden = true;
     } // sets the initial state of the component to hidden
     #endregion
 
@@ -91,32 +91,31 @@ namespace GsaGH.Components {
 
       material.GradeProperty = 0; //will be ignored
 
-      switch (_mode)
-      {
+      switch (_mode) {
         // element type (picked in dropdown)
         case FoldMode.Generic:
-          material.MaterialType = GsaMaterial.MatType.GENERIC;
+          material.MaterialType = GsaMaterial.MatType.Generic;
           break;
         case FoldMode.Steel:
-          material.MaterialType = GsaMaterial.MatType.STEEL;
+          material.MaterialType = GsaMaterial.MatType.Steel;
           break;
         case FoldMode.Concrete:
-          material.MaterialType = GsaMaterial.MatType.CONCRETE;
+          material.MaterialType = GsaMaterial.MatType.Concrete;
           break;
         case FoldMode.Timber:
-          material.MaterialType = GsaMaterial.MatType.TIMBER;
+          material.MaterialType = GsaMaterial.MatType.Timber;
           break;
         case FoldMode.Aluminium:
-          material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
+          material.MaterialType = GsaMaterial.MatType.Aluminium;
           break;
-        case FoldMode.FRP:
-          material.MaterialType = GsaMaterial.MatType.FRP;
+        case FoldMode.Frp:
+          material.MaterialType = GsaMaterial.MatType.Frp;
           break;
         case FoldMode.Glass:
-          material.MaterialType = GsaMaterial.MatType.GLASS;
+          material.MaterialType = GsaMaterial.MatType.Glass;
           break;
         case FoldMode.Fabric:
-          material.MaterialType = GsaMaterial.MatType.FABRIC;
+          material.MaterialType = GsaMaterial.MatType.Fabric;
           break;
       }
 
@@ -130,8 +129,7 @@ namespace GsaGH.Components {
       Concrete,
       Timber,
       Aluminium,
-      // ReSharper disable once InconsistentNaming
-      FRP,
+      Frp,
       Glass,
       Fabric,
     }
@@ -142,7 +140,7 @@ namespace GsaGH.Components {
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Material Type",
           "Stress Unit",

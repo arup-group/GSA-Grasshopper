@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
@@ -8,13 +7,11 @@ using GsaGH.Helpers.GsaAPI;
 using OasysGH.Units;
 using OasysUnits;
 
-namespace GsaGH.Parameters
-{
+namespace GsaGH.Parameters {
   /// <summary>
   /// Section class, this class defines the basic properties and methods for any <see cref="GsaAPI.Section"/>
   /// </summary>
-  public class GsaSection
-  {
+  public class GsaSection {
     #region fields
     private int _id = 0;
     private Guid _guid = Guid.NewGuid();
@@ -24,312 +21,253 @@ namespace GsaGH.Parameters
     #endregion
 
     #region properties
-    internal Section API_Section
-    {
-      get
-      {
-        return this._section;
+    internal Section API_Section {
+      get {
+        return _section;
       }
-      set
-      {
-        this._guid = Guid.NewGuid();
-        this._section = value;
-        this._material = new GsaMaterial(this);
-        this.IsReferencedByID = false;
+      set {
+        _guid = Guid.NewGuid();
+        _section = value;
+        _material = new GsaMaterial(this);
+        IsReferencedByID = false;
       }
     }
     #region section properties
-    public Area Area
-    {
-      get
-      {
-        Area area = new Area(this._section.Area, UnitSystem.SI);
+    public Area Area {
+      get {
+        var area = new Area(_section.Area, UnitSystem.SI);
         return new Area(area.As(DefaultUnits.SectionAreaUnit), DefaultUnits.SectionAreaUnit);
       }
     }
-    public AreaMomentOfInertia Iyy
-    {
-      get
-      {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(this._section.Iyy, UnitSystem.SI);
+    public AreaMomentOfInertia Iyy {
+      get {
+        var inertia = new AreaMomentOfInertia(_section.Iyy, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
-    public AreaMomentOfInertia Iyz
-    {
-      get
-      {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(this._section.Iyz, UnitSystem.SI);
+    public AreaMomentOfInertia Iyz {
+      get {
+        var inertia = new AreaMomentOfInertia(_section.Iyz, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
-    public AreaMomentOfInertia Izz
-    {
-      get
-      {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(this._section.Izz, UnitSystem.SI);
+    public AreaMomentOfInertia Izz {
+      get {
+        var inertia = new AreaMomentOfInertia(_section.Izz, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
-    public AreaMomentOfInertia J
-    {
-      get
-      {
-        AreaMomentOfInertia inertia = new AreaMomentOfInertia(this._section.J, UnitSystem.SI);
+    public AreaMomentOfInertia J {
+      get {
+        var inertia = new AreaMomentOfInertia(_section.J, UnitSystem.SI);
         return new AreaMomentOfInertia(inertia.As(DefaultUnits.SectionAreaMomentOfInertiaUnit), DefaultUnits.SectionAreaMomentOfInertiaUnit);
       }
     }
-    public double Ky
-    {
-      get
-      {
-        return this._section.Ky;
+    public double Ky {
+      get {
+        return _section.Ky;
       }
     }
-    public double Kz
-    {
-      get
-      {
-        return this._section.Kz;
+    public double Kz {
+      get {
+        return _section.Kz;
       }
     }
-    public IQuantity SurfaceAreaPerLength
-    {
-      get
-      {
-        Area area = new Area(this._section.SurfaceAreaPerLength, UnitSystem.SI);
-        Length len = new Length(1, DefaultUnits.LengthUnitSection);
+    public IQuantity SurfaceAreaPerLength {
+      get {
+        var area = new Area(_section.SurfaceAreaPerLength, UnitSystem.SI);
+        var len = new Length(1, DefaultUnits.LengthUnitSection);
         Area unitArea = len * len;
-        Area areaOut = new Area(area.As(unitArea.Unit), unitArea.Unit);
+        var areaOut = new Area(area.As(unitArea.Unit), unitArea.Unit);
         return areaOut / len;
       }
     }
-    public VolumePerLength VolumePerLength
-    {
-      get
-      {
-        return new VolumePerLength(this._section.VolumePerLength, UnitSystem.SI);
+    public VolumePerLength VolumePerLength {
+      get {
+        return new VolumePerLength(_section.VolumePerLength, UnitSystem.SI);
       }
     }
     #endregion
-    public int Id
-    {
-      get
-      {
-        return this._id;
+    public int Id {
+      get {
+        return _id;
       }
-      set
-      {
-        this.CloneApiObject();
-        this._id = value;
+      set {
+        CloneApiObject();
+        _id = value;
       }
     }
     internal bool IsReferencedByID { get; set; } = false;
-    public GsaMaterial Material
-    {
-      get
-      {
-        return this._material;
+    public GsaMaterial Material {
+      get {
+        return _material;
       }
-      set
-      {
-        this._material = value;
-        if (this._section == null)
-          this._section = new Section();
+      set {
+        _material = value;
+        if (_section == null)
+          _section = new Section();
         else
-          this.CloneApiObject();
+          CloneApiObject();
 
-        this._section.MaterialType = Helpers.Export.Materials.ConvertType(_material);
-        this._section.MaterialAnalysisProperty = _material.AnalysisProperty;
-        this._section.MaterialGradeProperty = _material.GradeProperty;
-        this.IsReferencedByID = false;
+        _section.MaterialType = Helpers.Export.Materials.ConvertType(_material);
+        _section.MaterialAnalysisProperty = _material.AnalysisProperty;
+        _section.MaterialGradeProperty = _material.GradeProperty;
+        IsReferencedByID = false;
       }
     }
-    public GsaSectionModifier Modifier
-    {
-      get
-      {
-        return this._modifier;
+    public GsaSectionModifier Modifier {
+      get {
+        return _modifier;
       }
-      set
-      {
-        this.CloneApiObject();
-        this._modifier = value;
-        this.IsReferencedByID = false;
+      set {
+        CloneApiObject();
+        _modifier = value;
+        IsReferencedByID = false;
       }
     }
     #region GsaAPI members
-    public string Name
-    {
-      get
-      {
+    public string Name {
+      get {
         return _section.Name;
       }
-      set
-      {
-        this.CloneApiObject();
-        this._section.Name = value;
-        this.IsReferencedByID = false;
+      set {
+        CloneApiObject();
+        _section.Name = value;
+        IsReferencedByID = false;
       }
     }
-    public int Pool
-    {
-      get
-      {
-        return this._section.Pool;
+    public int Pool {
+      get {
+        return _section.Pool;
       }
-      set
-      {
-        this.CloneApiObject();
-        this._section.Pool = value;
-        this.IsReferencedByID = false;
+      set {
+        CloneApiObject();
+        _section.Pool = value;
+        IsReferencedByID = false;
       }
     }
-    public int MaterialID
-    {
-      get
-      {
-        return this._section.MaterialAnalysisProperty;
+    public int MaterialID {
+      get {
+        return _section.MaterialAnalysisProperty;
       }
-      set
-      {
-        this.CloneApiObject();
-        this._section.MaterialAnalysisProperty = value;
-        this._material.AnalysisProperty = this._section.MaterialAnalysisProperty;
-        this.IsReferencedByID = false;
+      set {
+        CloneApiObject();
+        _section.MaterialAnalysisProperty = value;
+        _material.AnalysisProperty = _section.MaterialAnalysisProperty;
+        IsReferencedByID = false;
       }
     }
-    public string Profile
-    {
-      get
-      {
-        return this._section.Profile.Replace("%", " ");
+    public string Profile {
+      get {
+        return _section.Profile.Replace("%", " ");
       }
-      set
-      {
-        if (ValidProfile(value))
-        {
-          this.CloneApiObject();
-          this._section.Profile = value;
-          this.IsReferencedByID = false;
+      set {
+        if (ValidProfile(value)) {
+          CloneApiObject();
+          _section.Profile = value;
+          IsReferencedByID = false;
         }
       }
     }
-    public Color Colour
-    {
-      get
-      {
-        return (Color)this._section.Colour;
+    public Color Colour {
+      get {
+        return (Color)_section.Colour;
       }
-      set
-      {
-        this.CloneApiObject();
-        this._section.Colour = value;
-        this.IsReferencedByID = false;
+      set {
+        CloneApiObject();
+        _section.Colour = value;
+        IsReferencedByID = false;
       }
     }
-    private void CloneApiObject()
-    {
+    private void CloneApiObject() {
       // temp profile clone 
-      string prfl = this._section.Profile.Replace("%", " ");
+      string prfl = _section.Profile.Replace("%", " ");
       string[] pfs = prfl.Split(' ');
       if (pfs.Last() == "S/S")
         prfl = string.Join(" ", pfs[0], pfs[1], pfs[2]);
 
-      Section sec = new Section()
-      {
-        MaterialAnalysisProperty = this._section.MaterialAnalysisProperty,
-        MaterialGradeProperty = this._section.MaterialGradeProperty,
-        MaterialType = this._section.MaterialType,
-        Name = this._section.Name.ToString(),
-        Pool = this._section.Pool,
+      var sec = new Section() {
+        MaterialAnalysisProperty = _section.MaterialAnalysisProperty,
+        MaterialGradeProperty = _section.MaterialGradeProperty,
+        MaterialType = _section.MaterialType,
+        Name = _section.Name.ToString(),
+        Pool = _section.Pool,
         Profile = prfl
         //Profile = this._section.Profile
       };
       if ((Color)_section.Colour != Color.FromArgb(0, 0, 0)) // workaround to handle that System.Drawing.Color is non-nullable type
-        sec.Colour = this._section.Colour;
+        sec.Colour = _section.Colour;
 
-      this._section = sec;
-      this._modifier = this.Modifier.Duplicate(true);
-      this._guid = Guid.NewGuid();
+      _section = sec;
+      _modifier = Modifier.Duplicate(true);
+      _guid = Guid.NewGuid();
     }
     #endregion
-    public Guid Guid
-    {
-      get
-      {
-        return this._guid;
+    public Guid Guid {
+      get {
+        return _guid;
       }
     }
     #endregion
 
     #region constructors
-    public GsaSection()
-    {
+    public GsaSection() {
     }
 
-    public GsaSection(int id)
-    {
-      this._id = id;
-      this.IsReferencedByID = true;
+    public GsaSection(int id) {
+      _id = id;
+      IsReferencedByID = true;
     }
 
-    public GsaSection(string profile)
-    {
-      this._section.Profile = profile;
+    public GsaSection(string profile) {
+      _section.Profile = profile;
     }
 
-    public GsaSection(string profile, int id = 0)
-    {
-      this._section.Profile = profile;
-      this._id = id;
+    public GsaSection(string profile, int id = 0) {
+      _section.Profile = profile;
+      _id = id;
     }
 
-    internal GsaSection(ReadOnlyDictionary<int, Section> sDict, int id, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id)
-    {
+    internal GsaSection(ReadOnlyDictionary<int, Section> sDict, int id, ReadOnlyDictionary<int, SectionModifier> modDict, ReadOnlyDictionary<int, AnalysisMaterial> matDict) : this(id) {
       if (!sDict.ContainsKey(id))
         return;
-      this._section = sDict[id];
-      this.IsReferencedByID = false;
+      _section = sDict[id];
+      IsReferencedByID = false;
       // modifier
       if (modDict.ContainsKey(id))
-        this._modifier = new GsaSectionModifier(modDict[id]);
+        _modifier = new GsaSectionModifier(modDict[id]);
       // material
-      if (this._section.MaterialAnalysisProperty != 0 && matDict.ContainsKey(this._section.MaterialAnalysisProperty))
-        this._material.AnalysisMaterial = matDict[this._section.MaterialAnalysisProperty];
-      this._material = new GsaMaterial(this);
+      if (_section.MaterialAnalysisProperty != 0 && matDict.ContainsKey(_section.MaterialAnalysisProperty))
+        _material.AnalysisMaterial = matDict[_section.MaterialAnalysisProperty];
+      _material = new GsaMaterial(this);
     }
     #endregion
 
     #region methods
-    public GsaSection Duplicate(bool cloneApiElement = false)
-    {
-      GsaSection dup = new GsaSection
-      {
-        _section = this._section,
-        _id = this._id,
-        _material = this._material.Duplicate(),
-        _modifier = this._modifier.Duplicate(cloneApiElement),
-        _guid = new Guid(this._guid.ToString()),
-        IsReferencedByID = this.IsReferencedByID
+    public GsaSection Duplicate(bool cloneApiElement = false) {
+      var dup = new GsaSection {
+        _section = _section,
+        _id = _id,
+        _material = _material.Duplicate(),
+        _modifier = _modifier.Duplicate(cloneApiElement),
+        _guid = new Guid(_guid.ToString()),
+        IsReferencedByID = IsReferencedByID
       };
       if (cloneApiElement)
         dup.CloneApiObject();
       return dup;
     }
 
-    public override string ToString()
-    {
-      string pb = this.Id > 0 ? "PB" + this.Id + " " : "";
-      string prof = this._section.Profile.Replace("%", " ") + " ";
-      string mat = Mappings.MaterialTypeMapping.FirstOrDefault(x => x.Value == this.Material.MaterialType).Key + " ";
-      string mod = this._modifier.IsModified ? " modified" : "";
+    public override string ToString() {
+      string pb = Id > 0 ? "PB" + Id + " " : "";
+      string prof = _section.Profile.Replace("%", " ") + " ";
+      string mat = Mappings.s_materialTypeMapping.FirstOrDefault(x => x.Value == Material.MaterialType).Key + " ";
+      string mod = _modifier.IsModified ? " modified" : "";
       return string.Join(" ", pb.Trim(), prof.Trim(), mat.Trim(), mod.Trim()).Trim().Replace("  ", " ");
     }
 
-    internal static bool ValidProfile(string profile)
-    {
-      Section test = new Section();
+    internal static bool ValidProfile(string profile) {
+      var test = new Section();
       test.Profile = profile;
       if (test.Area == 0)
         return false;

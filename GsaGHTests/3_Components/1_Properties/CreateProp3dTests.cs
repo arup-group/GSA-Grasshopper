@@ -5,13 +5,10 @@ using OasysGH.Components;
 using Xunit;
 using static GsaGH.Parameters.GsaMaterial;
 
-namespace GsaGHTests.Components.Properties
-{
+namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
-  public class CreateProp3dTests
-  {
-    public static GH_OasysComponent ComponentMother()
-    {
+  public class CreateProp3dTests {
+    public static GH_OasysComponent ComponentMother() {
       var comp = new CreateProp3d();
       comp.CreateAttributes();
 
@@ -21,14 +18,13 @@ namespace GsaGHTests.Components.Properties
     }
 
     [Fact]
-    public void CreateComponent()
-    {
+    public void CreateComponent() {
       // Arrange & Act
-      var comp = ComponentMother();
+      GH_OasysComponent comp = ComponentMother();
 
       // Assert
-      GsaProp3dGoo output = (GsaProp3dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(MatType.CONCRETE, output.Value.Material.MaterialType);
+      var output = (GsaProp3dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(MatType.Concrete, output.Value.Material.MaterialType);
     }
   }
 }

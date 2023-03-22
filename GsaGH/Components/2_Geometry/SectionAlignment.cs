@@ -29,7 +29,8 @@ namespace GsaGH.Components {
       "Align",
       "Automatically create Offset based on desired Alignment and Section profile",
       CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+      SubCategoryName.Cat2()) {
+    }
     #endregion
 
     #region Input and output
@@ -74,62 +75,57 @@ namespace GsaGH.Components {
 
       string profile = "";
 
-      switch (ghTyp.Value)
-      {
-        case GsaMember1dGoo _:
-        {
-          ghTyp.CastTo(ref mem1d);
-          if (mem1d == null) {
-            this.AddRuntimeError("Input is null");
-            return;
-          }
-          mem1d = mem1d.Duplicate();
-          profile = mem1d.Section.Profile;
-          if (profile == "") {
-            this.AddRuntimeError("Member has no section attached");
-            return;
-          }
+      switch (ghTyp.Value) {
+        case GsaMember1dGoo _: {
+            ghTyp.CastTo(ref mem1d);
+            if (mem1d == null) {
+              this.AddRuntimeError("Input is null");
+              return;
+            }
+            mem1d = mem1d.Duplicate();
+            profile = mem1d.Section.Profile;
+            if (profile == "") {
+              this.AddRuntimeError("Member has no section attached");
+              return;
+            }
 
-          break;
-        }
-        case GsaElement1dGoo _:
-        {
-          ghTyp.CastTo(ref elem1d);
-          if (elem1d == null) {
-            this.AddRuntimeError("Input is null");
-            return;
+            break;
           }
-          elem1d = elem1d.Duplicate();
-          profile = elem1d.Section.Profile;
-          if (profile == "") {
-            this.AddRuntimeError("Element has no section attached");
-            return;
-          }
+        case GsaElement1dGoo _: {
+            ghTyp.CastTo(ref elem1d);
+            if (elem1d == null) {
+              this.AddRuntimeError("Input is null");
+              return;
+            }
+            elem1d = elem1d.Duplicate();
+            profile = elem1d.Section.Profile;
+            if (profile == "") {
+              this.AddRuntimeError("Element has no section attached");
+              return;
+            }
 
-          break;
-        }
-        case GsaMember2dGoo _:
-        {
-          ghTyp.CastTo(ref mem2d);
-          if (mem2d == null) {
-            this.AddRuntimeError("Input is null");
-            return;
+            break;
           }
-          mem2d = mem2d.Duplicate();
-          oneD = false;
-          break;
-        }
-        case GsaElement2dGoo _:
-        {
-          ghTyp.CastTo(ref elem2d);
-          if (elem2d == null) {
-            this.AddRuntimeError("Input is null");
-            return;
+        case GsaMember2dGoo _: {
+            ghTyp.CastTo(ref mem2d);
+            if (mem2d == null) {
+              this.AddRuntimeError("Input is null");
+              return;
+            }
+            mem2d = mem2d.Duplicate();
+            oneD = false;
+            break;
           }
-          elem2d = elem2d.Duplicate();
-          oneD = false;
-          break;
-        }
+        case GsaElement2dGoo _: {
+            ghTyp.CastTo(ref elem2d);
+            if (elem2d == null) {
+              this.AddRuntimeError("Input is null");
+              return;
+            }
+            elem2d = elem2d.Duplicate();
+            oneD = false;
+            break;
+          }
         default:
           this.AddRuntimeError("Unable to convert input to Element1D or Member1D");
           return;
@@ -221,16 +217,15 @@ namespace GsaGH.Components {
           else if (profile.StartsWith("STD GZ")) {
             this.AddRuntimeWarning("Only possible to automatically assign alignment to double symmetric sections at the moment. Input section profile: " + profile + ". Please check output.");
             depth = new Length(double.Parse(parts[2]), unit);
-            switch (alignmentType)
-            {
-              case AlignmentType.Top_Left:
-              case AlignmentType.Mid_Left:
-              case AlignmentType.Bottom_Left:
+            switch (alignmentType) {
+              case AlignmentType.TopLeft:
+              case AlignmentType.MidLeft:
+              case AlignmentType.BottomLeft:
                 width = new Length(double.Parse(parts[4]), unit);
                 break;
-              case AlignmentType.Top_Right:
-              case AlignmentType.Mid_Right:
-              case AlignmentType.Bottom_Right:
+              case AlignmentType.TopRight:
+              case AlignmentType.MidRight:
+              case AlignmentType.BottomRight:
                 width = new Length(double.Parse(parts[3]), unit);
                 break;
               default:
@@ -338,38 +333,38 @@ namespace GsaGH.Components {
             case AlignmentType.Centroid:
               break;
 
-            case AlignmentType.Top_Centre:
+            case AlignmentType.TopCentre:
               alignmentOffset.Z = depth * -1 / 2;
               break;
 
-            case AlignmentType.Bottom_Centre:
+            case AlignmentType.BottomCentre:
               alignmentOffset.Z = depth / 2;
               break;
 
-            case AlignmentType.Top_Left:
+            case AlignmentType.TopLeft:
               alignmentOffset.Z = depth * -1 / 2;
               alignmentOffset.Y = width * -1 / 2;
               break;
 
-            case AlignmentType.Top_Right:
+            case AlignmentType.TopRight:
               alignmentOffset.Z = depth * -1 / 2;
               alignmentOffset.Y = width / 2;
               break;
 
-            case AlignmentType.Mid_Left:
+            case AlignmentType.MidLeft:
               alignmentOffset.Y = width * -1 / 2;
               break;
 
-            case AlignmentType.Mid_Right:
+            case AlignmentType.MidRight:
               alignmentOffset.Y = width / 2;
               break;
 
-            case AlignmentType.Bottom_Left:
+            case AlignmentType.BottomLeft:
               alignmentOffset.Z = depth / 2;
               alignmentOffset.Y = width * -1 / 2;
               break;
 
-            case AlignmentType.Bottom_Right:
+            case AlignmentType.BottomRight:
               alignmentOffset.Z = depth / 2;
               alignmentOffset.Y = width / 2;
               break;
@@ -391,16 +386,15 @@ namespace GsaGH.Components {
         }
         else {
           if (mem2d != null) {
-            switch (alignmentType)
-            {
-              case AlignmentType.Top_Left:
-              case AlignmentType.Top_Centre:
-              case AlignmentType.Top_Right:
+            switch (alignmentType) {
+              case AlignmentType.TopLeft:
+              case AlignmentType.TopCentre:
+              case AlignmentType.TopRight:
                 alignmentOffset.Z = mem2d.Property.Thickness * -1 / 2;
                 break;
-              case AlignmentType.Bottom_Left:
-              case AlignmentType.Bottom_Centre:
-              case AlignmentType.Bottom_Right:
+              case AlignmentType.BottomLeft:
+              case AlignmentType.BottomCentre:
+              case AlignmentType.BottomRight:
                 alignmentOffset.Z = mem2d.Property.Thickness / 2;
                 break;
             }
@@ -411,19 +405,17 @@ namespace GsaGH.Components {
           }
           if (elem2d != null) {
             var offsets = new List<GsaOffset>();
-            foreach (GsaProp2d prop in elem2d.Properties)
-            {
+            foreach (GsaProp2d prop in elem2d.Properties) {
               alignmentOffset = new GsaOffset();
-              switch (alignmentType)
-              {
-                case AlignmentType.Top_Left:
-                case AlignmentType.Top_Centre:
-                case AlignmentType.Top_Right:
+              switch (alignmentType) {
+                case AlignmentType.TopLeft:
+                case AlignmentType.TopCentre:
+                case AlignmentType.TopRight:
                   alignmentOffset.Z = prop.Thickness * -1 / 2;
                   break;
-                case AlignmentType.Bottom_Left:
-                case AlignmentType.Bottom_Centre:
-                case AlignmentType.Bottom_Right:
+                case AlignmentType.BottomLeft:
+                case AlignmentType.BottomCentre:
+                case AlignmentType.BottomRight:
                   alignmentOffset.Z = prop.Thickness / 2;
                   break;
               }
@@ -447,7 +439,7 @@ namespace GsaGH.Components {
     #region Custom UI
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new [] { "Alignment" });
+      SpacerDescriptions = new List<string>(new[] { "Alignment" });
 
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();

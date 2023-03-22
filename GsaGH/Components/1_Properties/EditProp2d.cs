@@ -34,7 +34,7 @@ namespace GsaGH.Components {
       "Modify GSA 2D Property",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
+      Hidden = true;
     } // sets the initial state of the component to hidden
     #endregion
 
@@ -94,9 +94,8 @@ namespace GsaGH.Components {
 
         // 2 Material
         var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(2, ref ghTyp))
-        {
-	        var material = new GsaMaterial();
+        if (da.GetData(2, ref ghTyp)) {
+          var material = new GsaMaterial();
           if (ghTyp.Value is GsaMaterialGoo) {
             ghTyp.CastTo(ref material);
             prop.Material = material ?? new GsaMaterial();
@@ -169,7 +168,7 @@ namespace GsaGH.Components {
         da.SetData(5, nm);
         da.SetData(6, colour);
 
-        da.SetData(7, Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
+        da.SetData(7, Mappings.s_prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.Type).Key);
       }
       else
         this.AddRuntimeError("Prop2d is Null");
@@ -189,8 +188,7 @@ namespace GsaGH.Components {
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
       foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); })
-        {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => { Update(unit); }) {
           Checked = unit == Length.GetAbbreviation(_lengthUnit),
           Enabled = true,
         };

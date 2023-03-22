@@ -20,7 +20,7 @@ namespace GsaGH.Components {
       : base("Create Material", "Material", "Create GSA Material by reference to existing type and grade",
         CategoryName.Name(),
         SubCategoryName.Cat1()) {
-        Hidden = true;
+      Hidden = true;
     } // sets the initial state of the component to hidden
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -54,7 +54,7 @@ namespace GsaGH.Components {
         case "Aluminium":
           Mode5Clicked();
           break;
-        case "FRP":
+        case "Frp":
           Mode6Clicked();
           break;
         case "Glass":
@@ -68,14 +68,14 @@ namespace GsaGH.Components {
     #endregion
 
     #region Input and output
-    private readonly List<string> _dropDownItems = new List<string>(new []
+    private readonly List<string> _dropDownItems = new List<string>(new[]
     {
             "Generic",
             "Steel",
             "Concrete",
             "Timber",
             "Aluminium",
-            "FRP",
+            "Frp",
             "Glass",
             "Fabric",
     });
@@ -106,31 +106,30 @@ namespace GsaGH.Components {
         material.GradeProperty = grade;
       }
 
-      switch (_mode)
-      {
+      switch (_mode) {
         case FoldMode.Generic:
-          material.MaterialType = GsaMaterial.MatType.GENERIC;
+          material.MaterialType = GsaMaterial.MatType.Generic;
           break;
         case FoldMode.Steel:
-          material.MaterialType = GsaMaterial.MatType.STEEL;
+          material.MaterialType = GsaMaterial.MatType.Steel;
           break;
         case FoldMode.Concrete:
-          material.MaterialType = GsaMaterial.MatType.CONCRETE;
+          material.MaterialType = GsaMaterial.MatType.Concrete;
           break;
         case FoldMode.Timber:
-          material.MaterialType = GsaMaterial.MatType.TIMBER;
+          material.MaterialType = GsaMaterial.MatType.Timber;
           break;
         case FoldMode.Aluminium:
-          material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
+          material.MaterialType = GsaMaterial.MatType.Aluminium;
           break;
-        case FoldMode.FRP:
-          material.MaterialType = GsaMaterial.MatType.FRP;
+        case FoldMode.Frp:
+          material.MaterialType = GsaMaterial.MatType.Frp;
           break;
         case FoldMode.Glass:
-          material.MaterialType = GsaMaterial.MatType.GLASS;
+          material.MaterialType = GsaMaterial.MatType.Glass;
           break;
         case FoldMode.Fabric:
-          material.MaterialType = GsaMaterial.MatType.FABRIC;
+          material.MaterialType = GsaMaterial.MatType.Fabric;
           break;
       }
 
@@ -143,8 +142,7 @@ namespace GsaGH.Components {
       Concrete,
       Timber,
       Aluminium,
-      // ReSharper disable once InconsistentNaming
-      FRP,
+      Frp,
       Glass,
       Fabric,
     }
@@ -212,12 +210,12 @@ namespace GsaGH.Components {
       ExpireSolution(true);
     }
     private void Mode6Clicked() {
-      if (_mode == FoldMode.FRP)
+      if (_mode == FoldMode.Frp)
         return;
 
       RecordUndoEvent(_mode + "Parameters");
 
-      _mode = FoldMode.FRP;
+      _mode = FoldMode.Frp;
 
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       Params.OnParametersChanged();

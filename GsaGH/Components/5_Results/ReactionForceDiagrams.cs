@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -25,21 +24,20 @@ namespace GsaGH.Components {
   /// </summary>
   public class ReactionForceDiagrams : GH_OasysDropDownComponent {
     #region nested classes, enums
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     private enum DisplayValue {
       X,
       Y,
       Z,
-      ResXYZ,
-      XX,
-      YY,
-      ZZ,
-      ResXXYYZZ
+      ResXyz,
+      Xx,
+      Yy,
+      Zz,
+      ResXxyyzz,
     }
     #endregion
 
     #region fields and properties
-    private readonly List<string> _reactionStringList = new List<string>(new []
+    private readonly List<string> _reactionStringList = new List<string>(new[]
     {
       "Reaction Fx",
       "Reaction Fy",
@@ -61,7 +59,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    private DisplayValue _selectedDisplayValue = DisplayValue.ResXYZ;
+    private DisplayValue _selectedDisplayValue = DisplayValue.ResXyz;
     private bool _showText = true;
     #endregion
 
@@ -69,7 +67,8 @@ namespace GsaGH.Components {
       "ReactionForce",
       "Diplays GSA Node Reaction Force Results as Vector Diagrams",
       CategoryName.Name(),
-      SubCategoryName.Cat5()) { }
+      SubCategoryName.Cat5()) {
+    }
 
     #region Input and output
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -362,32 +361,32 @@ namespace GsaGH.Components {
           direction = new Vector3d(0, 0, zVal.As(_forceUnit) * scale);
           forceValue = zVal.ToUnit(_forceUnit);
           break;
-        case (DisplayValue.ResXYZ):
+        case (DisplayValue.ResXyz):
           direction = new Vector3d(
             xyzResults[nodeId][0].X.As(_forceUnit) * scale,
             xyzResults[nodeId][0].Y.As(_forceUnit) * scale,
             xyzResults[nodeId][0].Z.As(_forceUnit) * scale);
           forceValue = xyzResults[nodeId][0].XYZ.ToUnit(_forceUnit);
           break;
-        case (DisplayValue.XX):
+        case (DisplayValue.Xx):
           isForce = false;
           IQuantity xxVal = xxyyzzResults[nodeId][0].X;
           direction = new Vector3d(xxVal.As(_momentUnit) * scale, 0, 0);
           forceValue = xxVal.ToUnit(_momentUnit);
           break;
-        case (DisplayValue.YY):
+        case (DisplayValue.Yy):
           isForce = false;
           IQuantity yyVal = xxyyzzResults[nodeId][0].Y;
           direction = new Vector3d(0, yyVal.As(_momentUnit) * scale, 0);
           forceValue = yyVal.ToUnit(_momentUnit);
           break;
-        case (DisplayValue.ZZ):
+        case (DisplayValue.Zz):
           isForce = false;
           IQuantity zzVal = xxyyzzResults[nodeId][0].Z;
           direction = new Vector3d(0, 0, zzVal.As(_momentUnit) * scale);
           forceValue = zzVal.ToUnit(_momentUnit);
           break;
-        case (DisplayValue.ResXXYYZZ):
+        case (DisplayValue.ResXxyyzz):
           isForce = false;
           direction = new Vector3d(
             xxyyzzResults[nodeId][0].X.As(_momentUnit) * scale,

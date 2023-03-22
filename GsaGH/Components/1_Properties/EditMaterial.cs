@@ -23,7 +23,7 @@ namespace GsaGH.Components {
       "Modify GSA Material",
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true;
+      Hidden = true;
     } // sets the initial state of the component to hidden
     #endregion
 
@@ -73,79 +73,73 @@ namespace GsaGH.Components {
 
         // 2 Material type
         var ghTyp = new GH_ObjectWrapper();
-        if (da.GetData(2, ref ghTyp))
-        {
-	        MaterialType materialType = MaterialType.GENERIC;
+        if (da.GetData(2, ref ghTyp)) {
+          MaterialType materialType = MaterialType.GENERIC;
           if (ghTyp.Value is MaterialType)
             ghTyp.CastTo(ref materialType);
-          switch (ghTyp.Value)
-          {
-            case GH_Integer _:
-            {
-              GH_Convert.ToInt32(ghTyp, out int typ, GH_Conversion.Both);
-              switch (typ)
-              {
-                case 1:
-                  material.MaterialType = GsaMaterial.MatType.STEEL;
-                  break;
-                case 2:
-                  material.MaterialType = GsaMaterial.MatType.CONCRETE;
-                  break;
-                case 5:
-                  material.MaterialType = GsaMaterial.MatType.FRP;
-                  break;
-                case 3:
-                  material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
-                  break;
-                case 7:
-                  material.MaterialType = GsaMaterial.MatType.TIMBER;
-                  break;
-                case 4:
-                  material.MaterialType = GsaMaterial.MatType.GLASS;
-                  break;
-                case 8:
-                  material.MaterialType = GsaMaterial.MatType.FABRIC;
-                  break;
-                case 0:
-                  material.MaterialType = GsaMaterial.MatType.GENERIC;
-                  break;
-              }
+          switch (ghTyp.Value) {
+            case GH_Integer _: {
+                GH_Convert.ToInt32(ghTyp, out int typ, GH_Conversion.Both);
+                switch (typ) {
+                  case 1:
+                    material.MaterialType = GsaMaterial.MatType.Steel;
+                    break;
+                  case 2:
+                    material.MaterialType = GsaMaterial.MatType.Concrete;
+                    break;
+                  case 5:
+                    material.MaterialType = GsaMaterial.MatType.Frp;
+                    break;
+                  case 3:
+                    material.MaterialType = GsaMaterial.MatType.Aluminium;
+                    break;
+                  case 7:
+                    material.MaterialType = GsaMaterial.MatType.Timber;
+                    break;
+                  case 4:
+                    material.MaterialType = GsaMaterial.MatType.Glass;
+                    break;
+                  case 8:
+                    material.MaterialType = GsaMaterial.MatType.Fabric;
+                    break;
+                  case 0:
+                    material.MaterialType = GsaMaterial.MatType.Generic;
+                    break;
+                }
 
-              break;
-            }
-            case GH_String _:
-            {
-              GH_Convert.ToString(ghTyp, out string typ, GH_Conversion.Both);
-              switch (typ.ToUpper())
-              {
-                case "STEEL":
-                  material.MaterialType = GsaMaterial.MatType.STEEL;
-                  break;
-                case "CONCRETE":
-                  material.MaterialType = GsaMaterial.MatType.CONCRETE;
-                  break;
-                case "FRP":
-                  material.MaterialType = GsaMaterial.MatType.FRP;
-                  break;
-                case "ALUMINIUM":
-                  material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
-                  break;
-                case "TIMBER":
-                  material.MaterialType = GsaMaterial.MatType.TIMBER;
-                  break;
-                case "GLASS":
-                  material.MaterialType = GsaMaterial.MatType.GLASS;
-                  break;
-                case "FABRIC":
-                  material.MaterialType = GsaMaterial.MatType.FABRIC;
-                  break;
-                case "GENERIC":
-                  material.MaterialType = GsaMaterial.MatType.GENERIC;
-                  break;
+                break;
               }
+            case GH_String _: {
+                GH_Convert.ToString(ghTyp, out string typ, GH_Conversion.Both);
+                switch (typ.ToUpper()) {
+                  case "STEEL":
+                    material.MaterialType = GsaMaterial.MatType.Steel;
+                    break;
+                  case "CONCRETE":
+                    material.MaterialType = GsaMaterial.MatType.Concrete;
+                    break;
+                  case "FRP":
+                    material.MaterialType = GsaMaterial.MatType.Frp;
+                    break;
+                  case "ALUMINIUM":
+                    material.MaterialType = GsaMaterial.MatType.Aluminium;
+                    break;
+                  case "TIMBER":
+                    material.MaterialType = GsaMaterial.MatType.Timber;
+                    break;
+                  case "GLASS":
+                    material.MaterialType = GsaMaterial.MatType.Glass;
+                    break;
+                  case "FABRIC":
+                    material.MaterialType = GsaMaterial.MatType.Fabric;
+                    break;
+                  case "GENERIC":
+                    material.MaterialType = GsaMaterial.MatType.Generic;
+                    break;
+                }
 
-              break;
-            }
+                break;
+              }
             default:
               this.AddRuntimeError("Unable to convert Material Type input");
               return;

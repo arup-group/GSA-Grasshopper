@@ -35,7 +35,7 @@ namespace GsaGH.Components {
       "Create a " + GsaMaterialGoo.Description + " for a " + GsaSectionGoo.Description,
       CategoryName.Name(),
       SubCategoryName.Cat1()) {
-        Hidden = true; // sets the initial state of the component to hidden
+      Hidden = true; // sets the initial state of the component to hidden
     }
     #endregion
 
@@ -60,28 +60,28 @@ namespace GsaGH.Components {
 
       switch (SelectedItems[0]) {
         case "Steel":
-          material.MaterialType = GsaMaterial.MatType.STEEL;
+          material.MaterialType = GsaMaterial.MatType.Steel;
           break;
         case "Concrete":
-          material.MaterialType = GsaMaterial.MatType.CONCRETE;
+          material.MaterialType = GsaMaterial.MatType.Concrete;
           break;
         case "Timber":
-          material.MaterialType = GsaMaterial.MatType.TIMBER;
+          material.MaterialType = GsaMaterial.MatType.Timber;
           break;
         case "Aluminium":
-          material.MaterialType = GsaMaterial.MatType.ALUMINIUM;
+          material.MaterialType = GsaMaterial.MatType.Aluminium;
           break;
         case "FRP":
-          material.MaterialType = GsaMaterial.MatType.FRP;
+          material.MaterialType = GsaMaterial.MatType.Frp;
           break;
         case "Glass":
-          material.MaterialType = GsaMaterial.MatType.GLASS;
+          material.MaterialType = GsaMaterial.MatType.Glass;
           break;
         case "Fabric":
-          material.MaterialType = GsaMaterial.MatType.FABRIC;
+          material.MaterialType = GsaMaterial.MatType.Fabric;
           break;
         default:
-          material.MaterialType = GsaMaterial.MatType.GENERIC;
+          material.MaterialType = GsaMaterial.MatType.Generic;
           break;
       }
 
@@ -90,7 +90,7 @@ namespace GsaGH.Components {
 
     #region Custom UI
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new [] { "Material type" });
+      SpacerDescriptions = new List<string>(new[] { "Material type" });
 
       DropDownItems = new List<List<string>>();
       SelectedItems = new List<string>();

@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,7 +39,8 @@ namespace GsaGH.Components {
       "ContourNode",
       "Diplays GSA Node Results as Contours",
       CategoryName.Name(),
-      SubCategoryName.Cat5()) { }
+      SubCategoryName.Cat5()) {
+    }
     #endregion
 
     #region Input and output
@@ -78,8 +78,7 @@ namespace GsaGH.Components {
       #region Inputs
       if (ghTyp.Value is GsaResultGoo goo) {
         result = goo.Value;
-        switch (result.Type)
-        {
+        switch (result.Type) {
           case GsaResult.CaseType.Combination when result.SelectedPermutationIds.Count > 1:
             this.AddRuntimeWarning("Combination case contains "
                                    + result.SelectedPermutationIds.Count + " - only one permutation can be displayed at a time." +
@@ -109,8 +108,7 @@ namespace GsaGH.Components {
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();
       if (da.GetDataList(2, ghColours)) {
-        foreach (GH_Colour t in ghColours)
-        {
+        foreach (GH_Colour t in ghColours) {
           GH_Convert.ToColor(t, out Color color, GH_Conversion.Both);
           colors.Add(color);
         }
@@ -185,27 +183,27 @@ namespace GsaGH.Components {
           dmin = dminZ;
           _resType = _mode == FoldMode.Displacement ? "Translation, Uz" : "Reaction Force, Fz";
           break;
-        case (DisplayValue.resXYZ):
+        case (DisplayValue.ResXyz):
           dmax = dmaxXyz;
           dmin = dminXyz;
           _resType = _mode == FoldMode.Displacement ? "Res. Trans., |U|" : "Res. Rxn. Force, |F|";
           break;
-        case (DisplayValue.XX):
+        case (DisplayValue.Xx):
           dmax = dmaxXx;
           dmin = dminXx;
           _resType = _mode == FoldMode.Displacement ? "Rotation, Rxx" : "Reaction Moment, Mxx";
           break;
-        case (DisplayValue.YY):
+        case (DisplayValue.Yy):
           dmax = dmaxYy;
           dmin = dminYy;
           _resType = _mode == FoldMode.Displacement ? "Rotation, Ryy" : "Reaction Moment, Ryy";
           break;
-        case (DisplayValue.ZZ):
+        case (DisplayValue.Zz):
           dmax = dmaxZz;
           dmin = dminZz;
           _resType = _mode == FoldMode.Displacement ? "Rotation, Rzz" : "Reaction Moment, Rzz";
           break;
-        case (DisplayValue.resXXYYZZ):
+        case (DisplayValue.ResXxyyzz):
           dmax = dmaxXxyyzz;
           dmin = dminXxyyzz;
           _resType = _mode == FoldMode.Displacement ? "Res. Rot., |R|" : "Res. Rxn. Mom., |M|";
@@ -251,22 +249,22 @@ namespace GsaGH.Components {
                 t = xyzResults[nodeId][0].Z.ToUnit(_lengthUnit);
                 translation.Z = t.Value * _defScale;
                 break;
-              case (DisplayValue.resXYZ):
+              case (DisplayValue.ResXyz):
                 t = xyzResults[nodeId][0].XYZ.ToUnit(_lengthUnit);
                 translation.X = xyzResults[nodeId][0].X.As(_lengthUnit) * _defScale;
                 translation.Y = xyzResults[nodeId][0].Y.As(_lengthUnit) * _defScale;
                 translation.Z = xyzResults[nodeId][0].Z.As(_lengthUnit) * _defScale;
                 break;
-              case (DisplayValue.XX):
+              case (DisplayValue.Xx):
                 t = xxyyzzResults[nodeId][0].X.ToUnit(AngleUnit.Radian);
                 break;
-              case (DisplayValue.YY):
+              case (DisplayValue.Yy):
                 t = xxyyzzResults[nodeId][0].Y.ToUnit(AngleUnit.Radian);
                 break;
-              case (DisplayValue.ZZ):
+              case (DisplayValue.Zz):
                 t = xxyyzzResults[nodeId][0].Z.ToUnit(AngleUnit.Radian);
                 break;
-              case (DisplayValue.resXXYYZZ):
+              case (DisplayValue.ResXxyyzz):
                 t = xxyyzzResults[nodeId][0].XYZ.ToUnit(AngleUnit.Radian);
                 break;
             }
@@ -283,19 +281,19 @@ namespace GsaGH.Components {
               case (DisplayValue.Z):
                 t = xyzResults[nodeId][0].Z.ToUnit(DefaultUnits.ForceUnit);
                 break;
-              case (DisplayValue.resXYZ):
+              case (DisplayValue.ResXyz):
                 t = xyzResults[nodeId][0].XYZ.ToUnit(DefaultUnits.ForceUnit);
                 break;
-              case (DisplayValue.XX):
+              case (DisplayValue.Xx):
                 t = xxyyzzResults[nodeId][0].X.ToUnit(DefaultUnits.MomentUnit);
                 break;
-              case (DisplayValue.YY):
+              case (DisplayValue.Yy):
                 t = xxyyzzResults[nodeId][0].Y.ToUnit(DefaultUnits.MomentUnit);
                 break;
-              case (DisplayValue.ZZ):
+              case (DisplayValue.Zz):
                 t = xxyyzzResults[nodeId][0].Z.ToUnit(DefaultUnits.MomentUnit);
                 break;
-              case (DisplayValue.resXXYYZZ):
+              case (DisplayValue.ResXxyyzz):
                 t = xxyyzzResults[nodeId][0].XYZ.ToUnit(DefaultUnits.MomentUnit);
                 break;
             }
@@ -333,36 +331,31 @@ namespace GsaGH.Components {
           for (int x = 0; x < _legend.Width; x++)
             _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
         }
-        switch (_mode)
-        {
-          case FoldMode.Displacement when (int)_disp < 4:
-          {
-            Length displacement = new Length(t, _lengthUnit).ToUnit(_lengthResultUnit);
-            _legendValues.Add(displacement.ToString("f" + significantDigits));
-            ts.Add(new GH_UnitNumber(displacement));
-            break;
-          }
-          case FoldMode.Displacement:
-          {
-            var rotation = new Angle(t, AngleUnit.Radian);
-            _legendValues.Add(rotation.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(rotation));
-            break;
-          }
-          case FoldMode.Reaction when (int)_disp < 4:
-          {
-            var reactionForce = new Force(t, DefaultUnits.ForceUnit);
-            _legendValues.Add(reactionForce.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(reactionForce));
-            break;
-          }
-          case FoldMode.Reaction:
-          {
-            var reactionMoment = new Moment(t, DefaultUnits.MomentUnit);
-            _legendValues.Add(t.ToString("F" + significantDigits) + " " + Moment.GetAbbreviation(DefaultUnits.MomentUnit));
-            ts.Add(new GH_UnitNumber(reactionMoment));
-            break;
-          }
+        switch (_mode) {
+          case FoldMode.Displacement when (int)_disp < 4: {
+              Length displacement = new Length(t, _lengthUnit).ToUnit(_lengthResultUnit);
+              _legendValues.Add(displacement.ToString("f" + significantDigits));
+              ts.Add(new GH_UnitNumber(displacement));
+              break;
+            }
+          case FoldMode.Displacement: {
+              var rotation = new Angle(t, AngleUnit.Radian);
+              _legendValues.Add(rotation.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(rotation));
+              break;
+            }
+          case FoldMode.Reaction when (int)_disp < 4: {
+              var reactionForce = new Force(t, DefaultUnits.ForceUnit);
+              _legendValues.Add(reactionForce.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(reactionForce));
+              break;
+            }
+          case FoldMode.Reaction: {
+              var reactionMoment = new Moment(t, DefaultUnits.MomentUnit);
+              _legendValues.Add(t.ToString("F" + significantDigits) + " " + Moment.GetAbbreviation(DefaultUnits.MomentUnit));
+              ts.Add(new GH_UnitNumber(reactionMoment));
+              break;
+            }
         }
 
         if (Math.Abs(t) > 1)
@@ -379,27 +372,26 @@ namespace GsaGH.Components {
     #region Custom UI
     private enum FoldMode {
       Displacement,
-      Reaction
+      Reaction,
     }
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     private enum DisplayValue {
       X,
       Y,
       Z,
-      resXYZ,
-      XX,
-      YY,
-      ZZ,
-      resXXYYZZ
+      ResXyz,
+      Xx,
+      Yy,
+      Zz,
+      ResXxyyzz,
     }
 
-    private readonly List<string> _type = new List<string>(new []
+    private readonly List<string> _type = new List<string>(new[]
     {
             "Displacement",
             "Reaction",
     });
-    private readonly List<string> _displacement = new List<string>(new []
+    private readonly List<string> _displacement = new List<string>(new[]
     {
             "Translation Ux",
             "Translation Uy",
@@ -410,7 +402,7 @@ namespace GsaGH.Components {
             "Rotation Rzz",
             "Resolved |R|",
     });
-    private readonly List<string> _reaction = new List<string>(new []
+    private readonly List<string> _reaction = new List<string>(new[]
     {
             "Reaction Fx",
             "Reaction Fy",
@@ -431,10 +423,10 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private FoldMode _mode = FoldMode.Displacement;
-    private DisplayValue _disp = DisplayValue.resXYZ;
+    private DisplayValue _disp = DisplayValue.ResXyz;
 
     public override void InitialiseDropdowns() {
-      SpacerDescriptions = new List<string>(new []
+      SpacerDescriptions = new List<string>(new[]
         {
           "Result Type",
           "Component",
@@ -466,36 +458,33 @@ namespace GsaGH.Components {
     }
 
     public override void SetSelected(int dropdownlistidd, int selectedidd) {
-      switch (dropdownlistidd)
-      {
-        case 0:
-        {
-          switch (selectedidd)
-          {
-            case 0: {
-              if (DropDownItems[1] != _displacement) {
-                DropDownItems[1] = _displacement;
-                SelectedItems[0] = DropDownItems[0][0];
-                SelectedItems[1] = DropDownItems[1][3];
-                Mode1Clicked();
-              }
+      switch (dropdownlistidd) {
+        case 0: {
+            switch (selectedidd) {
+              case 0: {
+                  if (DropDownItems[1] != _displacement) {
+                    DropDownItems[1] = _displacement;
+                    SelectedItems[0] = DropDownItems[0][0];
+                    SelectedItems[1] = DropDownItems[1][3];
+                    Mode1Clicked();
+                  }
 
-              break;
-            }
-            case 1: {
-              if (DropDownItems[1] != _reaction) {
-                DropDownItems[1] = _reaction;
-                SelectedItems[0] = DropDownItems[0][1];
-                SelectedItems[1] = DropDownItems[1][3];
-                Mode2Clicked();
-              }
+                  break;
+                }
+              case 1: {
+                  if (DropDownItems[1] != _reaction) {
+                    DropDownItems[1] = _reaction;
+                    SelectedItems[0] = DropDownItems[0][1];
+                    SelectedItems[1] = DropDownItems[1][3];
+                    Mode2Clicked();
+                  }
 
-              break;
+                  break;
+                }
             }
+
+            break;
           }
-
-          break;
-        }
         case 1:
           _disp = (DisplayValue)selectedidd;
           SelectedItems[1] = DropDownItems[1][selectedidd];
@@ -523,31 +512,27 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      switch (_mode)
-      {
-        case FoldMode.Displacement when (int)_disp < 4:
-        {
-          IQuantity length = new Length(0, _lengthUnit);
-          string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-          Params.Output[2].Name = "Values [" + lengthunitAbbreviation + "]";
-          break;
-        }
+      switch (_mode) {
+        case FoldMode.Displacement when (int)_disp < 4: {
+            IQuantity length = new Length(0, _lengthUnit);
+            string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
+            Params.Output[2].Name = "Values [" + lengthunitAbbreviation + "]";
+            break;
+          }
         case FoldMode.Displacement:
           Params.Output[2].Name = "Values [rad]";
           break;
-        case FoldMode.Reaction when (int)_disp < 4:
-        {
-          IQuantity force = new Force(0, DefaultUnits.ForceUnit);
-          string forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
-          Params.Output[2].Name = "Values [" + forceunitAbbreviation + "]";
-          break;
-        }
-        case FoldMode.Reaction:
-        {
-          string momentunitAbbreviation = Moment.GetAbbreviation(DefaultUnits.MomentUnit);
-          Params.Output[2].Name = "Values [" + momentunitAbbreviation + "]";
-          break;
-        }
+        case FoldMode.Reaction when (int)_disp < 4: {
+            IQuantity force = new Force(0, DefaultUnits.ForceUnit);
+            string forceunitAbbreviation = string.Concat(force.ToString().Where(char.IsLetter));
+            Params.Output[2].Name = "Values [" + forceunitAbbreviation + "]";
+            break;
+          }
+        case FoldMode.Reaction: {
+            string momentunitAbbreviation = Moment.GetAbbreviation(DefaultUnits.MomentUnit);
+            Params.Output[2].Name = "Values [" + momentunitAbbreviation + "]";
+            break;
+          }
       }
     }
     #endregion

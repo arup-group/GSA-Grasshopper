@@ -32,7 +32,8 @@ namespace GsaGH.Components {
       "Elem1dEdit",
       "Modify GSA 1D Element",
       CategoryName.Name(),
-      SubCategoryName.Cat2()) { }
+      SubCategoryName.Cat2()) {
+    }
     #endregion
 
     #region Input and output
@@ -234,7 +235,7 @@ namespace GsaGH.Components {
       da.SetData(2, new GH_Line(elem.Line.Line));
       da.SetData(3, new GsaSectionGoo(elem.Section));
       da.SetData(4, elem.Group);
-      da.SetData(5, Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
+      da.SetData(5, Mappings.s_elementTypeMapping.FirstOrDefault(x => x.Value == elem.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
       da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
       da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
@@ -244,7 +245,9 @@ namespace GsaGH.Components {
       da.SetData(12, elem.Colour);
       da.SetData(13, elem.IsDummy);
 
-      try { da.SetData(14, elem.ParentMember); }
+      try {
+        da.SetData(14, elem.ParentMember);
+      }
       catch (Exception) {
         // ignored
       }

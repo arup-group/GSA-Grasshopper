@@ -27,7 +27,8 @@ namespace GsaGH.Components {
     public EditMember2d2_OBSOLETE()
       : base("Edit 2D Member", "Mem2dEdit", "Modify GSA 2D Member",
             CategoryName.Name(),
-            SubCategoryName.Cat2()) { }
+            SubCategoryName.Cat2()) {
+    }
     #endregion
 
     #region Input and output
@@ -131,8 +132,7 @@ namespace GsaGH.Components {
         ghPoints = new List<GH_Point>();
         if (da.GetDataList(3, ghPoints)) {
           points = new List<Point3d>();
-          foreach (GH_Point point in ghPoints)
-          {
+          foreach (GH_Point point in ghPoints) {
             var pt = new Point3d();
             if (GH_Convert.ToPoint3d(point, ref pt, GH_Conversion.Both))
               points.Add(pt);
@@ -142,8 +142,7 @@ namespace GsaGH.Components {
         ghCurves = new List<GH_Curve>();
         if (da.GetDataList(4, ghCurves)) {
           curves = new List<Curve>();
-          foreach (GH_Curve curve in ghCurves)
-          {
+          foreach (GH_Curve curve in ghCurves) {
             Curve crv = null;
             if (GH_Convert.ToCurve(curve, ref crv, GH_Conversion.Both))
               curves.Add(crv);
@@ -243,8 +242,8 @@ namespace GsaGH.Components {
       da.SetDataList(4, mem.InclusionLines);
       da.SetData(5, new GsaProp2dGoo(mem.Property));
       da.SetData(6, mem.Group);
-      da.SetData(7, Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
-      da.SetData(8, Mappings.AnalysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);
+      da.SetData(7, Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+      da.SetData(8, Mappings.s_analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);
       da.SetData(9, new GsaOffsetGoo(mem.Offset));
       da.SetData(10, mem.MeshSize);
       da.SetData(11, mem.MeshWithOthers);

@@ -2,17 +2,14 @@
 using GsaGHTests.Helpers;
 using Xunit;
 
-namespace GsaGHTests.Parameters
-{
+namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaMaterialTest
-  {
+  public class GsaMaterialTest {
     [Fact]
-    public void DuplicateTest()
-    {
+    public void DuplicateTest() {
       // Arrange
-      GsaMaterial original = new GsaMaterial();
-      original.MaterialType = GsaMaterial.MatType.ALUMINIUM;
+      var original = new GsaMaterial();
+      original.MaterialType = GsaMaterial.MatType.Aluminium;
 
       // Act
       GsaMaterial duplicate = original.Duplicate();

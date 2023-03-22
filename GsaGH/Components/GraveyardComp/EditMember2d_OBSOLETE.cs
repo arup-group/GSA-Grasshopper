@@ -34,7 +34,8 @@ namespace GsaGH.Components {
     public EditMember2d_OBSOLETE()
       : base("Edit 2D Member", "Mem2dEdit", "Modify GSA 2D Member",
             CategoryName.Name(),
-            SubCategoryName.Cat2()) { }
+            SubCategoryName.Cat2()) {
+    }
     #endregion
 
     #region Input and output
@@ -137,8 +138,7 @@ namespace GsaGH.Components {
 
         if (da.GetDataList(3, ghPoints)) {
           pts = new List<Point3d>();
-          foreach (GH_Point point in ghPoints)
-          {
+          foreach (GH_Point point in ghPoints) {
             var pt = new Point3d();
             if (GH_Convert.ToPoint3d(point, ref pt, GH_Conversion.Both)) {
               pts.Add(pt);
@@ -148,8 +148,7 @@ namespace GsaGH.Components {
 
         if (da.GetDataList(4, ghCurves)) {
           curves = new List<Curve>();
-          foreach (GH_Curve curve in ghCurves)
-          {
+          foreach (GH_Curve curve in ghCurves) {
             Curve crv = null;
             if (GH_Convert.ToCurve(curve, ref crv, GH_Conversion.Both)) {
               curves.Add(crv);
@@ -187,8 +186,8 @@ namespace GsaGH.Components {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both))
           mem.Type = (MemberType)typeInt;
         if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
-          if (Mappings.MemberTypeMapping.ContainsKey(typestring))
-            mem.Type = Mappings.MemberTypeMapping[typestring];
+          if (Mappings.s_memberTypeMapping.ContainsKey(typestring))
+            mem.Type = Mappings.s_memberTypeMapping[typestring];
           else
             this.AddRuntimeError("Unable to change Member Type");
         }
@@ -199,8 +198,8 @@ namespace GsaGH.Components {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both))
           mem.Type2D = (AnalysisOrder)typeInt;
         if (GH_Convert.ToString(ghString, out string typestring, GH_Conversion.Both)) {
-          if (Mappings.AnalysisOrderMapping.ContainsKey(typestring))
-            mem.Type2D = Mappings.AnalysisOrderMapping[typestring];
+          if (Mappings.s_analysisOrderMapping.ContainsKey(typestring))
+            mem.Type2D = Mappings.s_analysisOrderMapping[typestring];
           else
             this.AddRuntimeError("Unable to change Analysis Element Type");
         }
@@ -250,8 +249,8 @@ namespace GsaGH.Components {
       da.SetData(5, new GsaProp2dGoo(mem.Property));
       da.SetData(6, mem.Group);
 
-      da.SetData(7, Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
-      da.SetData(8, Mappings.AnalysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);
+      da.SetData(7, Mappings.s_memberTypeMapping.FirstOrDefault(x => x.Value == mem.Type).Key);
+      da.SetData(8, Mappings.s_analysisOrderMapping.FirstOrDefault(x => x.Value == mem.Type2D).Key);
 
       da.SetData(9, new GsaOffsetGoo(mem.Offset));
 

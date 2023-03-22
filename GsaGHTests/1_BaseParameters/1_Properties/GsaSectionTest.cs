@@ -6,16 +6,13 @@ using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
 
-namespace GsaGHTests.Parameters
-{
+namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaSectionTest
-  {
+  public class GsaSectionTest {
     [Fact]
-    public void DuplicateTest()
-    {
+    public void DuplicateTest() {
       // Arrange
-      GsaSection original = new GsaSection();
+      var original = new GsaSection();
       original.Name = "Name";
 
       // Act
@@ -26,23 +23,22 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestCreateSection()
-    {
+    public void TestCreateSection() {
       // string defining the profile
       string profile = "STD CHS 200 10";
       double myarea = Math.PI / 4 * Math.Pow(200, 2)
           - Math.PI / 4 * Math.Pow(200 - 2 * 10, 2);
-      Area area_expected = new Area(myarea, AreaUnit.SquareMillimeter);
+      var area_expected = new Area(myarea, AreaUnit.SquareMillimeter);
 
       // create new section
-      GsaSection sect = new GsaSection(profile);
+      var sect = new GsaSection(profile);
 
       Assert.Equal(area_expected.Value, sect.Area.SquareMillimeters, 10);
 
       // set other properties in section
 
       sect.Material.GradeProperty = 2;
-      sect.Material.MaterialType = GsaMaterial.MatType.CONCRETE;
+      sect.Material.MaterialType = GsaMaterial.MatType.Concrete;
       sect.Name = "mariam";
       sect.Pool = 4;
 
@@ -55,41 +51,38 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestCreateSectionProfile()
-    {
+    public void TestCreateSectionProfile() {
       // string defining the profile
       string profile = "STD R 15 20";
       double myarea = 15 * 20;
-      Area area_expected = new Area(myarea, AreaUnit.SquareMillimeter);
+      var area_expected = new Area(myarea, AreaUnit.SquareMillimeter);
 
       // create new section with profile and ID
-      GsaSection sect = new GsaSection(profile, 15);
+      var sect = new GsaSection(profile, 15);
 
       Assert.Equal(area_expected, sect.Area);
       Assert.Equal(15, sect.Id);
     }
 
     [Fact]
-    public void TestCreateGsaSectionCat()
-    {
+    public void TestCreateGsaSectionCat() {
       string profile = "CAT HE HE200.B";
-      GsaSection section = new GsaSection(profile);
+      var section = new GsaSection(profile);
 
-      Area area_expected = new Area(7808.121, AreaUnit.SquareMillimeter);
+      var area_expected = new Area(7808.121, AreaUnit.SquareMillimeter);
       Assert.Equal(area_expected.Value, section.Area.SquareMillimeters, 10);
     }
 
     [Fact]
-    public void TestDuplicateSection()
-    {
+    public void TestDuplicateSection() {
       string profile = "CAT HE HE200.B";
       double myarea1 = 7808.121;
-      GsaSection orig = new GsaSection(profile);
+      var orig = new GsaSection(profile);
 
       // set other properties in section
       orig.MaterialID = 1;
       orig.Material.GradeProperty = 2;
-      orig.Material.MaterialType = GsaMaterial.MatType.STEEL;
+      orig.Material.MaterialType = GsaMaterial.MatType.Steel;
       orig.Name = "mariam";
       orig.Pool = 12;
 
@@ -99,10 +92,10 @@ namespace GsaGHTests.Parameters
       // make some changes to original
       string profile2 = "STD%R%15%20";
       double myarea2 = 15 * 20;
-      Area area_expected = new Area(myarea2, AreaUnit.SquareMillimeter);
+      var area_expected = new Area(myarea2, AreaUnit.SquareMillimeter);
       orig.Profile = profile2;
       orig.Material.AnalysisProperty = 4;
-      orig.Material.MaterialType = GsaMaterial.MatType.TIMBER;
+      orig.Material.MaterialType = GsaMaterial.MatType.Timber;
       orig.Name = "kris";
       orig.Pool = 99;
 
@@ -128,9 +121,8 @@ namespace GsaGHTests.Parameters
     }
 
     [Fact]
-    public void TestDuplicateEmptySection()
-    {
-      GsaSection section = new GsaSection();
+    public void TestDuplicateEmptySection() {
+      var section = new GsaSection();
 
       GsaSection dup = section.Duplicate();
       Assert.NotNull(dup);

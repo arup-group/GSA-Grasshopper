@@ -26,8 +26,7 @@ namespace GsaGH.Helpers.Export {
 
       GetGridPlaneSurfaceCounters(loads, ref gridplaneidcounter, ref gridsurfaceidcounter);
 
-      foreach (GsaLoad load in loads.Where(gsaLoad => gsaLoad != null))
-      {
+      foreach (GsaLoad load in loads.Where(gsaLoad => gsaLoad != null)) {
         ConvertLoad(load, ref gravityLoads, ref beamLoads, ref faceLoads, ref gridPointLoads, ref gridLineLoads, ref gridAreaLoads, ref existingAxes, ref axisidcounter, ref existingGridPlanes, ref gridplaneidcounter, ref existingGridSurfaces, ref gridsurfaceidcounter, ref gpGuid, ref gsGuid, unit, ref memberElementRelationship, model, apiSections, apiProp2ds, apiProp3ds, apiElements, apiMembers, owner);
       }
     }
@@ -179,15 +178,14 @@ namespace GsaGH.Helpers.Export {
     internal static void ConvertNodeLoad(GsaLoad load, ref List<NodeLoad> nodeLoadsNode, ref List<NodeLoad> nodeLoadsDispl, ref List<NodeLoad> nodeLoadsSettle, ref GsaIntDictionary<Node> apiNodes, LengthUnit unit) {
       if (load.NodeLoad.RefPoint != Point3d.Unset)
         load.NodeLoad.NodeLoad.Nodes = Nodes.AddNode(ref apiNodes, load.NodeLoad.RefPoint, unit).ToString();
-      switch (load.NodeLoad.Type)
-      {
-        case GsaNodeLoad.NodeLoadTypes.APPLIED_DISP:
+      switch (load.NodeLoad.Type) {
+        case GsaNodeLoad.NodeLoadTypes.AppliedDisp:
           nodeLoadsDispl.Add(load.NodeLoad.NodeLoad);
           break;
-        case GsaNodeLoad.NodeLoadTypes.NODE_LOAD:
+        case GsaNodeLoad.NodeLoadTypes.NodeLoad:
           nodeLoadsNode.Add(load.NodeLoad.NodeLoad);
           break;
-        case GsaNodeLoad.NodeLoadTypes.SETTLEMENT:
+        case GsaNodeLoad.NodeLoadTypes.Settlement:
           nodeLoadsSettle.Add(load.NodeLoad.NodeLoad);
           break;
       }
